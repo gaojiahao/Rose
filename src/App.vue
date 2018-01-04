@@ -1,16 +1,14 @@
 <template>
   <div id="app">
     <keep-alive>
-      <router-view/>>
+      <router-view v-wechat-title="$route.meta.title"></router-view>
     </keep-alive>
-      
-      
-      <nav class="weui-tabbar">
-        <router-link class="weui-tabbar__item" v-for="tab in tablist" :to="tab.path">
-            <p class="weui-tabbar__label">{{tab.title}}</p>
-        </router-link>
-
-      </nav>
+	  <nav class="navbar">
+	    <router-link  v-for="tab in tablist" :to="tab.path">
+	    	<span class="iconfont" :class="tab.icon"></span>
+	      <p>{{tab.title}}</p>
+	    </router-link>	
+	  </nav>
   </div>
 </template>
 
@@ -19,21 +17,63 @@ export default {
   data(){
     return {
         tablist:[
-            {title:'我的待办',path:'/to_do'},
-            {title:'我的已办',path:'/finish'},            
+            {title:'我的待办',path:'/to_do',icon: 'icon-daiban'},
+            {title:'我的已办',path:'/finish',icon:'icon-yiban'},            
         ]
     }
   }
+  
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+	.navbar{
+	width:100%;
+	height:49px;
+	position: absolute;
+	left:0;
+	bottom:0;
+	z-index:10;
+	display: flex;
+	background: #f8f8f8;
+}
+.navbar:before{
+	content:'';
+	display: block;
+	height:1px;
+	width:100%;
+	border-top:1px solid #d2d2d2;
+	position:absolute;
+	top:-1px;
+	left:0;
+	transform: scaleY(0.5);
+	
+}
+.navbar a{
+	flex:1;
+	text-align: center;
+	color: #000;
+}
+.navbar .iconfont{
+	display: block;
+	width: 100%;
+	height: 30px;
+	text-align: center;
+	line-height: 36px;
+	color: #666;
+	margin-bottom:1px;
+}
+.navbar a.router-link-active .iconfont{
+	color: #10AEFF;
+}
+.navbar a.router-link-active p{
+	color: #10AEFF;
+}
+.page{
+	width:100%;
+	position: absolute;
+	left:0;
+	top:0;
+	bottom:49px;
 }
 </style>
