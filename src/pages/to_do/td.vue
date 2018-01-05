@@ -161,10 +161,8 @@
 				if(iscroll.maxScrollY < 0){
 					this.isLoadMore = true;
 				}
-				//homeScroll.refresh();
 			})
 			iscroll.on("scroll",()=>{
-				//console.log(iscroll.y)
 				if(iscroll.y<=iscroll.maxScrollY-30){
 					alert("加载更多");
 					
