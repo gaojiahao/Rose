@@ -1,5 +1,6 @@
 <template>
-    <div id="td" class="page">
+	<div>
+		<div id="td" class="page">
     	<div class='wrapper'>
 	    	<div class="weui-search-bar" id="searchBar">
 	            <form class="weui-search-bar__form">
@@ -16,7 +17,7 @@
 	            <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 	        </div>
 	        <ul class='list'>
-        	<li>
+        	<li @click="goDetail()">
         		<span class='task_name'>售后申请列表</span>
         		<p>
         			<span class='do_user'>宇文玥</span>
@@ -141,7 +142,12 @@
 				<span>加载中</span>
 			</div>
     	</div>
+   
     </div>
+     <router-view></router-view>
+	</div>
+    
+    
 </template>
 
 <script>
@@ -149,6 +155,11 @@
     	data(){
     		return{
     			isLoadMore:false
+    		}
+    	},
+    	methods:{
+    		goDetail(){
+    			this.$router.push("/to_do/detail")
     		}
     	},
 		mounted(){ 		
@@ -163,8 +174,7 @@
 			})
 			iscroll.on("scroll",()=>{
 				if(iscroll.y<=iscroll.maxScrollY-30){
-					alert("加载更多");
-					
+					alert("加载更多");					
 				}
 			})
     	}
@@ -198,10 +208,8 @@ li .task_name{
 	margin-bottom: 3px;
 }
 .status{
-	padding: 1px;
-	display: inline-block;	
-	/*border:1px solid #10AEFF;*/
-	border-radius: 5px;
+	padding: 1px 2px;
+	display: inline-block;
 	text-align: center;
 	background-color:#10AEFF;
 	color:#fff

@@ -42,7 +42,7 @@ export default {
 	display: block;
 	height:1px;
 	width:100%;
-	border-top:1px solid #d2d2d2;
+	border-top:1px solid #CCCCCC;
 	position:absolute;
 	top:-1px;
 	left:0;
@@ -52,16 +52,14 @@ export default {
 .navbar a{
 	flex:1;
 	text-align: center;
-	color: #000;
+	color: #666;
 }
 .navbar .iconfont{
 	display: block;
 	width: 100%;
-	height: 30px;
 	text-align: center;
-	line-height: 36px;
 	color: #666;
-	margin-bottom:1px;
+	margin-top:4px;
 }
 .navbar a.router-link-active .iconfont{
 	color: #10AEFF;

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import To_do from '../pages/to_do/td.vue'
 import Finish from '../pages/finish/finish.vue'
+import Td_detail from "../pages/to_do/td_detail.vue"
 import VueWechatTitle from 'vue-wechat-title';  
 Vue.use(VueWechatTitle)
 
@@ -15,7 +16,15 @@ Vue.use(Router)
 //})
 export default new Router({
   routes: [
-    { path:'/to_do',  component:To_do , meta: {title: '我的待办'}},
+    { path:'/to_do',  
+    	component:To_do ,
+    	meta: {title: '我的待办'},
+    	children:[
+	    	{ path:'detail',
+	    	 component:Td_detail
+	    	}
+    	 ]
+    	},
     { path:'/finish', component:Finish ,meta: {title: '我的已办'}},
     { path:'/', redirect:'/to_do'}
   ]
