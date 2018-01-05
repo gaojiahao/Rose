@@ -7,6 +7,7 @@
 	    <router-link  v-for="tab in tablist" :to="tab.path">
 	    	<span class="iconfont" :class="tab.icon"></span>
 	      <p>{{tab.title}}</p>
+	      <span class="weui-badge" style="position: absolute;top: 0;right:40%;">8</span>
 	    </router-link>	
 	  </nav>
   </div>
@@ -53,6 +54,10 @@ export default {
 	flex:1;
 	text-align: center;
 	color: #666;
+	position: relative;
+}
+.navbar a:last-child .weui-badge{
+	display: none;
 }
 .navbar .iconfont{
 	display: block;
