@@ -1,7 +1,6 @@
 <template>
     <div id="td" class="page">
     	<div class='wrapper'>
-	    	<header>我的待办</header>
 	    	<div class="weui-search-bar" id="searchBar">
 	            <form class="weui-search-bar__form">
 	                <div class="weui-search-bar__box">
@@ -89,8 +88,59 @@
         		</p>       		
         		<i class="date">12-12</i>
         	</li>
+        	<li>
+        		<span class='task_name'>售后申请列表</span>
+        		<p>
+        			
+        			<span class='do_user'>宇文玥</span>
+        		</p>
+        		<p>
+        			<em class='status over'>已逾期</em>
+        			<em class='code'>SSXQ_1801_0003</em>
+        		</p>       		
+        		<i class="date">12-12</i>
+        	</li>
+        	<li>
+        		<span class='task_name'>售后申请列表</span>
+        		<p>
+        			<!--<em class='iconfont icon-daiban'></em>-->
+        			<span class='do_user'>宇文玥</span>
+        		</p>        		
+        		<p>
+        			<em class='status'>进行中</em>
+        			<em class='code'>SSXQ_1801_0003</em>
+        		</p>       		
+        		<i class="date">12-12</i>
+        	</li>
+        	<li>
+        		<span class='task_name'>售后申请列表</span>
+        		<p>
+        			
+        			<span class='do_user'>宇文玥</span>
+        		</p>
+        		<p>
+        			<em class='status near'>将临近</em>
+        			<em class='code over'>SSXQ_1801_0003</em>
+        		</p>       		
+        		<i class="date">12-12</i>
+        	</li>
+        	<li>
+        		<span class='task_name'>售后申请列表</span>
+        		<p>
+        			
+        			<span class='do_user'>宇文玥</span>
+        		</p>
+        		<p>
+        			<em class='status over'>已逾期</em>
+        			<em class='code'>SSXQ_1801_0003</em>
+        		</p>       		
+        		<i class="date">12-12</i>
+        	</li>
         	
         </ul>
+    		<div class="bottom"  v-if="isLoadMore">
+				<span>加载中</span>
+			</div>
     	</div>
     </div>
 </template>
@@ -99,13 +149,27 @@
     export default{
     	data(){
     		return{
-    			
+    			isLoadMore:false
     		}
     	},
 		mounted(){ 		
 			 var iscroll = new IScroll('#td', {
 				probeType: 3
 			});
+			iscroll.on('scrollStart', ()=>{
+			
+				if(iscroll.maxScrollY < 0){
+					this.isLoadMore = true;
+				}
+				//homeScroll.refresh();
+			})
+			iscroll.on("scroll",()=>{
+				//console.log(iscroll.y)
+				if(iscroll.y<=iscroll.maxScrollY-30){
+					alert("加载更多");
+					
+				}
+			})
     	}
     	
     }
@@ -114,14 +178,6 @@
 <style>
 	#td{
 		overflow: hidden;
-	}
-	header{
-		height:40px;
-		text-align: center;
-		line-height: 40px;
-		font-size:16px;
-		background: #0089DC;
-		color:#fff;
 	}
 .list{	
 	width:100%;
@@ -169,6 +225,12 @@ li .task_name{
 	position: absolute;
 	right:15px;
 	top:20px;
+}
+.bottom{
+	width:100%;
+	height:30px;
+	line-height: 30px;
+	text-align: center;
 }
 </style>
 
