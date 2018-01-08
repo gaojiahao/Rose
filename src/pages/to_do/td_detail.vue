@@ -1,6 +1,5 @@
 <template>
     <div id="td_detail">
-    	
         <div class='detail'>
 			<button @click="$router.back()">返回</button>
         	售后申请列表 
