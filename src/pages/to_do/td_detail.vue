@@ -1,8 +1,8 @@
 <template>
     <div id="td_detail">
+    	<button @click="$router.back()">返回</button>
         <div class='detail'>
-			<button @click="$router.back()">返回</button>
-        	售后申请列表
+        	<p class='title'>售后申请列表 </p>
         	<p class="status1">进行中</p>
         </div>
         <ul>
@@ -61,32 +61,30 @@
 	z-index:100;	
 	background: #fff;
 }
+#td_detail button{
+	margin:5px 0 0 15px;
+}
 .detail{
 	width:100%;
 	border-bottom: 1px solid #ccc;
-	padding:15px;
+	padding: 5px 15px;
+}
+.detail p{
+	line-height: 30px;
+	color:lightslategrey;
+}
+p.title{
 	font-size:16px;
 	color:#000;
 	font-weight: 700;
-	text-align:center;
-	position:relative;
 }
-.detail button{
-	position:absolute;
-	left:15px;
-	top:15px;
-	padding:1px;
-}
-.detail .status1{
-	width:56px;
-	font-size:14px;
+p.status1{
+	width:50px;
+	line-height: 20px;
 	padding: 2px 0;
 	text-align: center;
 	color:#fff ;
 	background:#10AEFF ;
-	position:absolute;
-	right:15px;
-	top:14px;
 }
 #td_detail ul{
 	border-bottom: 1px solid #ccc;

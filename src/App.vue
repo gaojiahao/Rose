@@ -4,13 +4,10 @@
       <router-view v-wechat-title="$route.meta.title"></router-view>
     </keep-alive>
 	  <nav class="navbar">
-	    <router-link  v-for="tab in tablist" :to="tab.path" :key="tab.title">
-				<span style="position:relative;">
-					<span class="iconfont" :class="tab.icon">
-					</span>
-					<span class="weui-badge" style="position: absolute;top: -28px;right:-16px;">8</span>     
-				</span> 
-			 	<p>{{tab.title}}</p>
+	    <router-link  v-for="tab in tablist" :to="tab.path">
+	    	<span class="iconfont" :class="tab.icon"></span>
+	      <p>{{tab.title}}</p>
+	      <span class="weui-badge" style="position: absolute;top: 0;right:40%;">8</span>
 	    </router-link>	
 	  </nav>
   </div>
@@ -40,7 +37,6 @@ export default {
 	z-index:10;
 	display: flex;
 	background: #f8f8f8;
-
 }
 .navbar:before{
 	content:'';
@@ -59,7 +55,6 @@ export default {
 	text-align: center;
 	color: #666;
 	position: relative;
-	cursor:pointer;
 }
 .navbar a:last-child .weui-badge{
 	display: none;
@@ -70,7 +65,6 @@ export default {
 	text-align: center;
 	color: #666;
 	margin-top:4px;
-	position:relative;
 }
 .navbar a.router-link-active .iconfont{
 	color: #10AEFF;
