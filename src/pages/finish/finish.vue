@@ -73,7 +73,7 @@
     		}
     	},
 		mounted(){ 		
-			 var iscroll = new IScroll('#td', {
+			 var iscroll = new IScroll('#finish', {
 				probeType: 3
 			});
 			iscroll.on('scrollStart', ()=>{
