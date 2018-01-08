@@ -17,7 +17,7 @@
 	            <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 	        </div>
 	        <ul class='list'>
-        	<li @click="goDetail()">
+        	<li @click="goDetail(11111)">
         		<span class='task_name'>售后申请列表</span>
         		<p>
         			<span class='do_user'>宇文玥</span>
@@ -151,6 +151,7 @@
 </template>
 
 <script>
+	import { getLogin } from '../../service/service.js'
     export default{
     	data(){
     		return{
@@ -159,7 +160,8 @@
     	},
     	methods:{
     		goDetail(){
-    			this.$router.push("/to_do/detail")
+				//this.$router.push("/to_do/detail");
+				this.$router.push({path: '/to_do/detail', query: { code: "123" ,num:111}})
     		}
     	},
 		mounted(){ 		
@@ -177,8 +179,16 @@
 					alert("加载更多");					
 				}
 			})
-    	}
-    	
+		},
+		created(){
+			
+			const code = this.$route.params.code;			
+			getLogin()
+			.then((result)=>{
+				console.log(result);
+			})
+		}
+			
     }
 </script>
 
