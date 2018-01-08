@@ -1,8 +1,9 @@
 <template>
     <div id="td_detail">
-    	<button @click="$router.back()">返回</button>
+    	
         <div class='detail'>
-        	<p class='title'>售后申请列表 </p>
+			<button @click="$router.back()">返回</button>
+        	售后申请列表 
         	<p class="status1">进行中</p>
         </div>
         <ul>
@@ -48,6 +49,19 @@
 </template>
 
 <script>
+export default{
+	data(){
+		return{
+
+		}
+	},
+	created(){
+		let str = location.href;
+		var arr = str.split("?");
+		var arr1 = arr[1].split("&");
+		console.log(arr1[0].split("=")[1]);
+	}
+}
     
 </script>
 
@@ -61,30 +75,32 @@
 	z-index:100;	
 	background: #fff;
 }
-#td_detail button{
-	margin:5px 0 0 15px;
-}
 .detail{
 	width:100%;
 	border-bottom: 1px solid #ccc;
-	padding: 5px 15px;
-}
-.detail p{
-	line-height: 30px;
-	color:lightslategrey;
-}
-p.title{
-	font-size:16px;
+	padding: 15px;
+	font-size:20px;
 	color:#000;
 	font-weight: 700;
+	text-align: center;
+	position: relative;
 }
-p.status1{
+.detail button{
+	position: absolute;
+	left: 15px;
+	top:18px;
+}
+.detail .status1{
 	width:50px;
 	line-height: 20px;
 	padding: 2px 0;
 	text-align: center;
 	color:#fff ;
 	background:#10AEFF ;
+	position:absolute;
+	right: 15px;
+	top:18px;
+	font-size:12px;
 }
 #td_detail ul{
 	border-bottom: 1px solid #ccc;
