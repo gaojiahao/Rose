@@ -1,65 +1,109 @@
 <template>
     <div id="td_detail">
-        <div class='detail'>
-			<button @click="$router.back()">返回</button>
-        	{{detailInfo.requireName}}
-        	<p class="status1">{{detailInfo.status}}</p>
+		<div style="overflow: hidden;" class="taskDetail">
+			<div class='wrapper'>
+				<div class='detail'>
+					<p class="name">{{detailInfo.requireName}}</p>
+					<p class="status1">{{detailInfo.status}}</p>
+				</div>
+				<ul>
+					<li>
+						<span>需求名称:</span>
+						<i>{{detailInfo.requireName}}</i>
+					</li>
+					<li>
+						<span>发&nbsp;起&nbsp;人:</span>
+						<i>{{detailInfo.crtName}}</i>
+					</li>
+					<li>
+						<span>发起时间:</span>
+						<i>{{detailInfo.crtTime}}</i>
+					</li>
+					<li>
+						<span>优&nbsp;先&nbsp;级:</span>
+						<i>{{detailInfo.level}}</i>
+					</li>
+					<li v-if="detailInfo.status=='进行中'">
+						<span style="color:#E64340;" >预计交付日：</span>
+						<input type="date"/>
+					</li>
+				</ul>
+				<div class='process'>
+					<div class='agree_status'>
+						<div v-for="tab in infoList" class='allInfo'>
+							<div class='info' >
+								<i class='iconfont icon-shenfenzheng'></i>
+								<p>
+									<span>{{tab.userName}}</span>
+									<span>{{tab.nodeName}}</span>
+									<span>{{tab.endTime}}</span>
+								</p>
+								<i class=" weui-icon weui-icon-success" v-if="tab.status"></i>
+								<i class=" weui-icon weui-icon-waiting" v-if="!tab.status" style="top:15px;"></i>
+								<em class='taskStatus'>{{tab.status}}</em>
+								
+							</div>
+							<div class='iconfont icon-xia arrow' ></div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>        
+		<div class="btn">
+			<span @click="agree()">同意</span>
+			<span @click="reject()">拒绝</span>
+		</div>
+		<div class="js_dialog" id="iosDialog1" style="opacity: 1;" v-if="showDialog">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__bd">{{dialogInfo}}</div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default" @click="close()">确认</a>
+                    <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" @click="close()">取消</a>
+                </div>
+            </div>
         </div>
-        <ul>
-        	<li>
-        		<span>需求名称:</span>
-        		<i>{{detailInfo.requireName}}</i>
-        	</li>
-        	<li>
-        		<span>发&nbsp;起&nbsp;人:</span>
-        		<i>{{detailInfo.crtName}}</i>
-        	</li>
-        	<li>
-        		<span>发起时间:</span>
-        		<i>{{detailInfo.crtTime}}</i>
-        	</li>
-        </ul>
-        <div class='process'>
-        	<div class='agree_status'>
-        		<div class='info'>
-        			<i class='iconfont icon-shenfenzheng'></i>
-        			<p>
-        				<span>{{detailInfo.crtName}}</span>
-        				<span>发起申请</span>
-        			</p>
-        			<i class=" weui-icon weui-icon-success"></i>
-        			<em class='create_date'>{{detailInfo.crtTime}}</em>
-        		</div>
-        		<div class='info'>
-        			<i class='iconfont icon-shenfenzheng'></i>
-        			<p>
-        				<span>我</span>
-        				<span>接受正在处理</span>
-        			</p>
-        			<i class="weui-icon weui-icon-warn"></i>
-        			<em class='create_date'>{{detailInfo.startTime}}</em>
-        		</div>
-        	</div>
-        </div>
-        
-		
-		
     </div>
 </template>
 
 <script>
+import { getListTask} from '../../service/service.js'
 export default{
 	data(){
 		return{
-			detailInfo:{}
+			infoList:[],
+			detailInfo:{},
+			showDialog:false,
+			dialogInfo:"确定同意该请求吗？"
 		}
 	},
-	mounted(){
-		this.$event.$on("info",(res)=>{
-			console.log(res);
-			this.detailInfo = res;
-			console.log(this.detailInfo);
+	methods:{
+		agree(){
+			this.showDialog = true;
+		},
+		reject(){
+			this.dialogInfo = "确定拒绝该请求吗";
+			this.showDialog = true;
+		},
+		close(){
+			this.showDialog = false;
+		}
+
+	},
+	created(){
+		this.detailInfo = this.$route.query.info;
+		getListTask(this.detailInfo.businessKey).then((result)=>{
+			this.infoList = result;
+			
 		})
+	},
+	mounted(){
+		 let detailScroll = new IScroll('.taskDetail', {
+					probeType: 3
+			});
+		
+			
 	}
 	
 }
@@ -86,10 +130,12 @@ export default{
 	text-align: center;
 	position: relative;
 }
-.detail button{
-	position: absolute;
-	left: 15px;
-	top:18px;
+.detail .name{
+	display:inline-block;
+	width:200px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .detail .status1{
 	width:50px;
@@ -109,6 +155,7 @@ export default{
 }
 #td_detail ul li{
 	line-height: 30px;
+	display: flex;
 	
 }
 ul li span{
@@ -117,29 +164,53 @@ ul li span{
 }
 ul li i{
 	color:#000;
+	flex:1;
+	margin-left:5px;
 }
 .btn{
 	width:100%;
-	position: absolute;
+	position: fixed;
 	left:0;
-	bottom: 10px;
+	bottom:0; 
+	text-align: center;
+	display: flex;
+	height:40px;
+	line-height: 40px;
+	color:#fff;
+	font-size:16px;
+}
+.btn span{
+	flex:1;
+}
+.btn span:first-child{
+	background-color: #09bb07;
+}
+.btn span:last-child{
+	background-color: #E64340;
 }
 .process{
 	width:100%;
+	overflow: hidden;
+	margin-bottom:30px;
 }
 .process .agree_status{	
 	margin:15px;
 }
 .agree_status .info{
 	border:1px solid #ccc;
-	padding: 10px;
+	padding: 5px 10px;
 	position: relative;
-	margin-top:30px;
 	vertical-align: middle;
+}
+.allInfo:first-child{
+	margin-top:10px;
+}
+.allInfo:last-child .arrow{
+	display: none;
 }
 .info .iconfont{
 	position: absolute;
-	top:12px;
+	top:20px;
 }
 .info p{
 	display: inline-block;
@@ -147,15 +218,19 @@ ul li i{
 }
 .info p span{
 	display: block;
+	margin-bottom:5px;
 }
-.create_date{
+.taskStatus{
 	position: absolute;
-	right:10px;
-	top:3px;
+	right:26px;
+	top:7px;
 }
 .weui-icon{
 	position:absolute;
 	right:25px;
-	top:28px;
+	top:35px;
+}
+.arrow{
+	text-align: center;
 }
 </style>
