@@ -1,171 +1,64 @@
 <template>
 	<div>
 		<div id="td" class="page">
-    	<div class='wrapper'>
-	    	<div class="weui-search-bar" id="searchBar">
-	            <form class="weui-search-bar__form">
-	                <div class="weui-search-bar__box">
-	                    <i class="weui-icon-search"></i>
-	                    <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
-	                    <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
-	                </div>
-	                <label class="weui-search-bar__label" id="searchText">
-	                    <i class="weui-icon-search"></i>
-	                    <span>搜索</span>
-	                </label>
-	            </form>
-	            <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
-	        </div>
-	        <ul class='list'>
-        	<li @click="goDetail(11111)">
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			<span class='do_user'>宇文玥</span>
-        		</p>        		
-        		<p>
-        			<em class='status'>进行中</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status near'>将临近</em>
-        			<em class='code over'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status over'>已逾期</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			<!--<em class='iconfont icon-daiban'></em>-->
-        			<span class='do_user'>宇文玥</span>
-        		</p>        		
-        		<p>
-        			<em class='status'>进行中</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status near'>将临近</em>
-        			<em class='code over'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status over'>已逾期</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status over'>已逾期</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			<!--<em class='iconfont icon-daiban'></em>-->
-        			<span class='do_user'>宇文玥</span>
-        		</p>        		
-        		<p>
-        			<em class='status'>进行中</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status near'>将临近</em>
-        			<em class='code over'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	<li>
-        		<span class='task_name'>售后申请列表</span>
-        		<p>
-        			
-        			<span class='do_user'>宇文玥</span>
-        		</p>
-        		<p>
-        			<em class='status over'>已逾期</em>
-        			<em class='code'>SSXQ_1801_0003</em>
-        		</p>       		
-        		<i class="date">12-12</i>
-        	</li>
-        	
-        </ul>
-    		<div class="bottom"  v-if="isLoadMore">
-				<span>加载中</span>
-			</div>
+			<div class='wrapper'>
+				<div class="weui-search-bar" id="searchBar">
+					<form class="weui-search-bar__form">
+						<div class="weui-search-bar__box">
+							<i class="weui-icon-search"></i>
+							<input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
+							<a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+						</div>
+						<label class="weui-search-bar__label" id="searchText">
+							<i class="weui-icon-search"></i>
+							<span>搜索</span>
+						</label>
+					</form>
+					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+				</div>
+				<ul class='list' >
+					<li @click="goDetail(tab)" v-for="tab in listArr">
+						<span class='task_name'>{{tab.requireName}}</span>
+						<p>
+							<span class='do_user'>发起人：{{tab.crtName}}</span>
+						</p>        		
+						<p>
+							<em class='status'>{{tab.status}}</em>
+							<em class='code'>{{tab.businessKey}}</em>
+						</p>       		
+						<i class="date">{{tab.startTime}}</i>
+					</li>
+				</ul>
+				<div class="bottom"  v-if="isLoadMore">
+					<span>{{more}}</span>
+				</div>
+			</div>   
     	</div>
-   
-    </div>
-     <router-view></router-view>
+    	 <router-view></router-view>
 	</div>
-    
-    
 </template>
 
 <script>
-	import { getLogin } from '../../service/service.js'
+	import { getLogin,getTask } from '../../service/service.js'
+	let iscroll;
     export default{
     	data(){
     		return{
-    			isLoadMore:false
+				isLoadMore:false,
+				token:"",
+				listArr:[],
+				more:"加载中"
     		}
     	},
     	methods:{
-    		goDetail(){
-				//this.$router.push("/to_do/detail");
-				this.$router.push({path: '/to_do/detail', query: { code: "123" ,num:111}})
+    		goDetail(tab){
+				this.$router.push("/to_do/detail");
+				this.$event.$emit("info",tab);
+				
     		}
     	},
 		mounted(){ 		
-			 var iscroll = new IScroll('#td', {
+			iscroll = new IScroll('#td', {
 				probeType: 3
 			});
 			iscroll.on('scrollStart', ()=>{
@@ -173,19 +66,25 @@
 				if(iscroll.maxScrollY < 0){
 					this.isLoadMore = true;
 				}
+				iscroll.refresh();
 			})
 			iscroll.on("scroll",()=>{
 				if(iscroll.y<=iscroll.maxScrollY-30){
-					alert("加载更多");					
+					this.more = "没有数据了"				
 				}
 			})
 		},
-		created(){
-			
-			const code = this.$route.params.code;			
-			getLogin()
-			.then((result)=>{
+		created(){					
+			getLogin().then((result)=>{
 				console.log(result);
+				this.token = result.token;
+				console.log(this.token);
+			}),
+			getTask().then((res)=>{
+				console.log(res);
+				this.listArr = res.tableContent;
+				console.log(this.listArr);
+				
 			})
 		}
 			
@@ -195,6 +94,9 @@
 <style>
 	#td{
 		overflow: hidden;
+	}
+	.weui-search-bar:before{
+		border-top:none;
 	}
 .list{	
 	width:100%;
@@ -208,6 +110,10 @@
 }
 li .task_name{
 	display:block;
+	width:200px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	font-size:16px;
 	color: #666666;	
 	margin-bottom: 3px;
@@ -234,12 +140,14 @@ li .task_name{
 }
 .code{
 	display: inline-block;
-	color:#D2D2D2;
 }
 .date{
 	position: absolute;
 	right:15px;
-	top:20px;
+	top:13px;
+	width:100px;
+	text-align: center;
+	color:#666;
 }
 .bottom{
 	width:100%;
