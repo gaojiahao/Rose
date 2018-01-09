@@ -7,6 +7,7 @@ import axios from 'axios'
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios;
+Vue.prototype.$event = new Vue();
 
 /* eslint-disable no-new */
 new Vue({
