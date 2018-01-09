@@ -18,15 +18,25 @@
 				</div>
 				<ul class='list' >
 					<li @click="goDetail(tab)" v-for="tab in listArr">
-						<span class='task_name'>{{tab.requireName}}</span>
+						<p>
+							<span class='task_name'>{{tab.requireName}}</span>
+							<i class="date">{{tab.startTime.substring(0,10)}}</i>
+						</p>
+						
+						<p>
+							<span class='do_user'>操作名称：{{tab.nodeName}}</span>
+							<em class='status'>{{tab.status}}</em>
+							
+						</p>  
 						<p>
 							<span class='do_user'>发起人：{{tab.crtName}}</span>
-						</p>        		
-						<p>
-							<em class='status'>{{tab.status}}</em>
+						</p>      		
+						<p>							
 							<em class='code'>{{tab.businessKey}}</em>
+							
 						</p>       		
-						<i class="date">{{tab.startTime}}</i>
+						
+						
 					</li>
 				</ul>
 				<div class="bottom"  v-if="isLoadMore">
@@ -39,7 +49,7 @@
 </template>
 
 <script>
-	import { getLogin,getTask } from '../../service/service.js'
+	import { getLogin,getTask} from '../../service/service.js'
 	let iscroll;
     export default{
     	data(){
@@ -47,13 +57,20 @@
 				isLoadMore:false,
 				token:"",
 				listArr:[],
-				more:"加载中"
+				more:"加载中",
+				num:0,
+				arr:[]
     		}
-    	},
+		},
     	methods:{
     		goDetail(tab){
-				this.$router.push("/to_do/detail");
-				this.$event.$emit("info",tab);
+					this.$router.push({path:"/to_do/detail",query:{
+						info:tab
+					}})
+				
+				
+				// this.$router.push("/to_do/detail/"+tab);
+				// this.$event.$emit("info",tab);
 				
     		}
     	},
@@ -74,16 +91,32 @@
 				}
 			})
 		},
-		created(){					
+		created(){
+			//url中获取code
+			var url = location.href;
+			// var arr = url.split("?");
+			// var arr1 = arr[1].split("&")
+			// let code = arr1[0].split("=")[1];
+			/*getLogin(code).then((result)=>{
+				console.log(result);
+				this.token = result.token;
+				console.log(this.token);
+			}),
+			getTask(this.token).then((res)=>{
+				console.log(res);
+				this.listArr = res.tableContent;
+				console.log(this.listArr);
+				
+			})*/	
+			//测试代码
 			getLogin().then((result)=>{
 				console.log(result);
 				this.token = result.token;
 				console.log(this.token);
 			}),
 			getTask().then((res)=>{
-				console.log(res);
 				this.listArr = res.tableContent;
-				console.log(this.listArr);
+				this.num =  res.tableContent.length;
 				
 			})
 		}
@@ -103,12 +136,17 @@
 }
 .list li{
 	border-bottom:1px solid #e5e5e5;
-	padding:10px  15px;
+	padding:10px 15px;
 	overflow: hidden;
-	position: relative;
 	color:lightslategrey
 }
-li .task_name{
+li p{
+	width:100%;
+	height: 22px;
+	line-height: 22px;
+	margin-bottom:4px;
+} 
+p .task_name{
 	display:block;
 	width:200px;
 	overflow: hidden;
@@ -117,18 +155,25 @@ li .task_name{
 	font-size:16px;
 	color: #666666;	
 	margin-bottom: 3px;
+	font-weight: 700;
+	float:left;
 }
-.do_user{
-	display: inline-block;
-	font-size:12px;
-	margin-bottom: 3px;
+
+p .do_user{
+	font-size:14px;
+	float:left;
 }
-.status{
-	padding: 1px 2px;
+p .status{
+	/* position: absolute;
+	right:40px;
+	top:50px; */
+	line-height: 22px;
+	padding: 0 2px;
 	display: inline-block;
 	text-align: center;
 	background-color:#10AEFF;
-	color:#fff
+	color:#fff;
+	float:right;
 }
 .status.near{
 	background-color:#FFBE00 ;
@@ -142,10 +187,7 @@ li .task_name{
 	display: inline-block;
 }
 .date{
-	position: absolute;
-	right:15px;
-	top:13px;
-	width:100px;
+	float: right;
 	text-align: center;
 	color:#666;
 }
