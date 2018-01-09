@@ -2,21 +2,21 @@
     <div id="td_detail">
         <div class='detail'>
 			<button @click="$router.back()">返回</button>
-        	售后申请列表 
-        	<p class="status1">进行中</p>
+        	{{detailInfo.requireName}}
+        	<p class="status1">{{detailInfo.status}}</p>
         </div>
         <ul>
         	<li>
         		<span>需求名称:</span>
-        		<i>增加应用-综合报表</i>
+        		<i>{{detailInfo.requireName}}</i>
         	</li>
         	<li>
-        		<span>提&nbsp;交&nbsp;人:</span>
-        		<i>欧阳锋</i>
+        		<span>发&nbsp;起&nbsp;人:</span>
+        		<i>{{detailInfo.crtName}}</i>
         	</li>
         	<li>
-        		<span>创建时间:</span>
-        		<i>2017-12-12 21:05:13</i>
+        		<span>发起时间:</span>
+        		<i>{{detailInfo.crtTime}}</i>
         	</li>
         </ul>
         <div class='process'>
@@ -24,11 +24,11 @@
         		<div class='info'>
         			<i class='iconfont icon-shenfenzheng'></i>
         			<p>
-        				<span>王建国</span>
+        				<span>{{detailInfo.crtName}}</span>
         				<span>发起申请</span>
         			</p>
         			<i class=" weui-icon weui-icon-success"></i>
-        			<em class='create_date'>2017-12-21</em>
+        			<em class='create_date'>{{detailInfo.crtTime}}</em>
         		</div>
         		<div class='info'>
         			<i class='iconfont icon-shenfenzheng'></i>
@@ -37,7 +37,7 @@
         				<span>接受正在处理</span>
         			</p>
         			<i class="weui-icon weui-icon-warn"></i>
-        			<em class='create_date'>2017-12-21</em>
+        			<em class='create_date'>{{detailInfo.startTime}}</em>
         		</div>
         	</div>
         </div>
@@ -51,15 +51,17 @@
 export default{
 	data(){
 		return{
-
+			detailInfo:{}
 		}
 	},
-	created(){
-		let str = location.href;
-		var arr = str.split("?");
-		var arr1 = arr[1].split("&");
-		console.log(arr1[0].split("=")[1]);
+	mounted(){
+		this.$event.$on("info",(res)=>{
+			console.log(res);
+			this.detailInfo = res;
+			console.log(this.detailInfo);
+		})
 	}
+	
 }
     
 </script>
