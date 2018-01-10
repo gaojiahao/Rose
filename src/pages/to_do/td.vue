@@ -67,7 +67,7 @@
 		mounted(){ 		
 			iscroll = new IScroll('#td', {
 				probeType: 2,
-				top:true
+				tap:true
 			});
 			iscroll.on('scrollStart', ()=>{			
 				if(iscroll.maxScrollY < 0){
