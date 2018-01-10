@@ -55,7 +55,6 @@
     	data(){
     		return{
 				isLoadMore:false,
-				token:"",
 				listArr:[],
 				more:"加载中",
 				num:0,
@@ -67,11 +66,6 @@
 					this.$router.push({path:"/to_do/detail",query:{
 						info:tab
 					}})
-				
-				
-				// this.$router.push("/to_do/detail/"+tab);
-				// this.$event.$emit("info",tab);
-				
     		}
     	},
 		mounted(){ 		
@@ -92,33 +86,47 @@
 			})
 		},
 		created(){
-			//url中获取code
-			var url = location.href;
-			// var arr = url.split("?");
-			// var arr1 = arr[1].split("&")
-			// let code = arr1[0].split("=")[1];
-			/*getLogin(code).then((result)=>{
-				console.log(result);
-				this.token = result.token;
-				console.log(this.token);
-			}),
-			getTask(this.token).then((res)=>{
-				console.log(res);
-				this.listArr = res.tableContent;
-				console.log(this.listArr);
+			var token = localStorage.getItem("token");
+			if(token){
+				getTask(token).then((res)=>{
+					this.listArr = res.tableContent;
+					this.num =  res.tableContent.length;
+					
+				})
+			}
+			else{
+				// console.log("222");
+				// this.$router.push("https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https://rfd.roletask.com/Rose&response_type=code&scope=snsapi_base&agentid=AGENTID&state=STATE#wechat_redirect")
+				// var url = location.href;
+				// var arr = url.split("?");
+				// var arr1 = arr[1].split("&")
+				// var code = arr1[0].split("=")[1];
+				// console.log(code);
+				getLogin("NxZV65SSME44GY_XOycz1ue1tv7KZymBi0DbGt8x3Pc").then((result)=>{
+					localStorage.setItem("token",result.token);
+				})
+				var newtoken = localStorage.getItem("token");
+				console.log(newtoken);
 				
-			})*/	
+				getTask("af42c1f656bf487cacb602ece0c29dc4MOBILE").then((res)=>{
+					this.listArr = res.tableContent;
+					this.num =  res.tableContent.length;
+					
+				})
+			}
 			//测试代码
-			getLogin().then((result)=>{
-				console.log(result);
-				this.token = result.token;
-				console.log(this.token);
-			}),
-			getTask().then((res)=>{
-				this.listArr = res.tableContent;
-				this.num =  res.tableContent.length;
+			
+			// getLogin().then((result)=>{
+			// 	console.log(result);
+			// 	this.token = result.token;
+			// 	localStorage.setItem("token",result.token)
+			// 	console.log(this.token);
+			// }),
+			// getTask().then((res)=>{
+			// 	this.listArr = res.tableContent;
+			// 	this.num =  res.tableContent.length;
 				
-			})
+			// })
 		}
 			
     }
