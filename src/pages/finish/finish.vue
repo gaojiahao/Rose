@@ -73,7 +73,7 @@ let iscroll;
 		mounted(){ 		
 			iscroll = new IScroll('#finish', {
 				probeType: 2,
-				top:true
+				tap:true
 			});
 			iscroll.on('scrollStart', ()=>{
 			
