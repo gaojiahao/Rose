@@ -64,7 +64,7 @@
                 </div>
             </div>
         </div>
-    </div>
+	</div>
 </template>
 
 <script>
@@ -92,8 +92,14 @@ export default{
 
 	},
 	created(){
+		var url = location.href;
+		var arr = url.split("?");
+		var arr1 = arr[1].split("&")
+		let code = arr1[0].split("=")[1];
+		console.log(code);
 		this.detailInfo = this.$route.query.info;
-		getListTask(this.detailInfo.businessKey).then((result)=>{
+		let token  = localStorage.getItem("token");
+		getListTask(this.detailInfo.businessKey,token).then((result)=>{
 			this.infoList = result;
 			
 		})
