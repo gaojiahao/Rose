@@ -102,7 +102,7 @@ export default{
 	mounted(){
 		 let detailScroll = new IScroll('.taskDetail', {
 				probeType: 2,
-				top:true
+				tap:true
 			});
 		
 			
