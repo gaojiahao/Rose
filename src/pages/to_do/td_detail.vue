@@ -1,6 +1,6 @@
 <template>
     <div id="td_detail">
-		<div style="overflow: hidden;" class="taskDetail">
+		<div class="taskDetail">
 			<div class='wrapper'>
 				<div class='detail'>
 					<p class="name">{{detailInfo.requireName}}</p>
@@ -50,7 +50,7 @@
 				</div>
 			</div>
 		</div>        
-		<div class="btn">
+		<div class="btn" v-if="detailInfo.status!='已生效'">
 			<span @click="agree()">同意</span>
 			<span @click="reject()">拒绝</span>
 		</div>
@@ -101,8 +101,8 @@ export default{
 	},
 	mounted(){
 		 let detailScroll = new IScroll('.taskDetail', {
-				probeType: 2,
-				tap:true
+				probeType: 2
+				
 			});
 		
 			
@@ -121,6 +121,10 @@ export default{
 	bottom:0;
 	z-index:100;	
 	background: #fff;
+}
+#td_detail .taskDetail{
+	width:100%;
+	overflow: hidden;
 }
 .detail{
 	width:100%;
