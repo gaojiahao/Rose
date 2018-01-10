@@ -11,6 +11,7 @@ export function getLogin(code){
 	})
 }
 export function getTask(token){
+	console.log(token);
 	return new Promise((resolve, reject)=>{
 		axios.get("/H_roleplay-si/ds/getMyToDoTask", {headers:{
 			"authorization":token
