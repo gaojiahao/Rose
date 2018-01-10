@@ -48,12 +48,13 @@
 						
 					</div>
 				</div>
+				<div class="btn" v-if="detailInfo.status!='已生效'">
+					<span @click="agree()">同意</span>
+					<span @click="reject()">拒绝</span>
+				</div>
 			</div>
 		</div>        
-		<div class="btn" v-if="detailInfo.status!='已生效'">
-			<span @click="agree()">同意</span>
-			<span @click="reject()">拒绝</span>
-		</div>
+		
 		<div class="js_dialog" id="iosDialog1" style="opacity: 1;" v-if="showDialog">
             <div class="weui-mask"></div>
             <div class="weui-dialog">
@@ -69,6 +70,7 @@
 
 <script>
 import { getListTask} from '../../service/service.js'
+ let detailScroll;
 export default{
 	data(){
 		return{
@@ -94,16 +96,28 @@ export default{
 	created(){
 		this.detailInfo = this.$route.query.info;
 		let token  = localStorage.getItem("token");
+		console.log(token);
 		getListTask(this.detailInfo.businessKey,token).then((result)=>{
 			this.infoList = result;
 			
 		})
 	},
 	mounted(){
-		 let detailScroll = new IScroll('.taskDetail', {
-				probeType: 2
-				
+		// detailScroll = new IScroll('#td_detail .taskDetail');
+		// detailScroll.on('scrollStart', ()=>{			
+		// 	detailScroll.refresh();
+		// })
+					detailScroll = new IScroll('.taskDetail', {
+				probeType: 2,
+				click:true
 			});
+			detailScroll.on('scrollStart', ()=>{			
+				detailScroll.refresh();
+			})
+			detailScroll.on("scroll",()=>{
+				
+			})
+
 		
 			
 	}
@@ -125,6 +139,11 @@ export default{
 #td_detail .taskDetail{
 	width:100%;
 	overflow: hidden;
+	position:absolute;
+	left:0;
+	top:0;
+	bottom:0;
+
 }
 .detail{
 	width:100%;
@@ -175,9 +194,6 @@ ul li i{
 }
 .btn{
 	width:100%;
-	position: fixed;
-	left:0;
-	bottom:0; 
 	text-align: center;
 	display: flex;
 	height:40px;
@@ -204,7 +220,7 @@ ul li i{
 }
 .agree_status .info{
 	border:1px solid #ccc;
-	padding: 5px 10px;
+	padding: 15px 10px;
 	position: relative;
 	vertical-align: middle;
 }
