@@ -92,11 +92,6 @@ export default{
 
 	},
 	created(){
-		var url = location.href;
-		var arr = url.split("?");
-		var arr1 = arr[1].split("&")
-		let code = arr1[0].split("=")[1];
-		console.log(code);
 		this.detailInfo = this.$route.query.info;
 		let token  = localStorage.getItem("token");
 		getListTask(this.detailInfo.businessKey,token).then((result)=>{
@@ -106,7 +101,8 @@ export default{
 	},
 	mounted(){
 		 let detailScroll = new IScroll('.taskDetail', {
-					probeType: 3
+				probeType: 2,
+				top:true
 			});
 		
 			
