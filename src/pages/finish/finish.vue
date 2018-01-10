@@ -88,7 +88,8 @@ let iscroll;
 			})
 		},
 		created(){
-			getDoneTask().then((res)=>{
+			var token = localStorage.getItem("token")
+			getDoneTask(token).then((res)=>{
 				this.doneList = res.tableContent;
 				
 			})
