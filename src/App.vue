@@ -26,8 +26,7 @@ export default {
 	},
 	created(){
 		this.$event.$on("num",(res)=>{
-
-			this.num = res;
+				this.num = res;
 		})
 	}
   
