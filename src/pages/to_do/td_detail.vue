@@ -103,20 +103,15 @@ export default{
 		})
 	},
 	mounted(){
-		// detailScroll = new IScroll('#td_detail .taskDetail');
-		// detailScroll.on('scrollStart', ()=>{			
-		// 	detailScroll.refresh();
-		// })
-					detailScroll = new IScroll('.taskDetail', {
+		
+			detailScroll = new IScroll('.taskDetail', {
 				probeType: 2,
 				click:true
 			});
 			detailScroll.on('scrollStart', ()=>{			
 				detailScroll.refresh();
 			})
-			detailScroll.on("scroll",()=>{
-				
-			})
+			
 
 		
 			
