@@ -64,7 +64,7 @@ let iscroll;
     	methods:{
     		
     		goDetail(tab){
-				this.$router.push({path:"/to_do/detail",query:{
+				this.$router.push({path:"to_do/detail",query:{
 					info:tab
 				}})
     		}

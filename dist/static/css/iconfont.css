@@ -11,10 +11,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-/*.icon-daiban:before { content: "\e63f";}
-.icon-yiban:before { content: "\e62d"; }*/
 .icon-daiban:before { content: "\e63f";  }
 .icon-yiban:before { content: "\e64a"; }
 .icon-shenfenzheng:before { content: "\e625"; }
-
+.icon-xia:before { content: "\e64f"; }
