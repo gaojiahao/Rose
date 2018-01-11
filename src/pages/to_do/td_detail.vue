@@ -24,7 +24,7 @@
 						<i>{{detailInfo.level}}</i>
 					</li>
 					<li v-if="detailInfo.status=='进行中'">
-						<span style="color:#E64340;" >预计交付日：</span>
+						<span>预计交付日：</span>
 						<input type="date"/>
 					</li>
 				</ul>
@@ -45,6 +45,8 @@
 							</div>
 							<div class='iconfont icon-xia arrow' ></div>
 						</div>
+						<!-- <div class='iconfont icon-xia arrow' v-if="detailInfo.status=='已生效'"></div> -->
+						<div class='process_over' v-if="detailInfo.status=='已生效'">流程结束</div>
 						
 					</div>
 				</div>
@@ -222,12 +224,12 @@ ul li i{
 .allInfo:first-child{
 	margin-top:10px;
 }
-.allInfo:last-child .arrow{
-	display: none;
-}
 .info .iconfont{
 	position: absolute;
 	top:20px;
+}
+.allInfo:last-child .arrow{
+	display: none;
 }
 .info p{
 	display: inline-block;
@@ -240,7 +242,13 @@ ul li i{
 .taskStatus{
 	position: absolute;
 	right:26px;
-	top:7px;
+	top:13px;
+}
+.process_over{
+	border: 1px solid #ccc;
+    padding: 10px;
+	text-align: center;
+	color:#E64340;
 }
 .weui-icon{
 	position:absolute;
