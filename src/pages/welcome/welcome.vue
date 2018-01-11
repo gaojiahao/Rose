@@ -11,8 +11,8 @@
     		}
 		},
 		created(){
-			//var url = localtion.href;
-			var url = "https://rfd.roletask.com/Rose/?code=3tz_liBG1FUh-JqFBWlm6FPZbdosksAS6hLcs1Zl8wE&state=1#/to_do";
+			var url = localtion.href;
+			//var url = "https://rfd.roletask.com/Rose/?code=3tz_liBG1FUh-JqFBWlm6FPZbdosksAS6hLcs1Zl8wE&state=1#/to_do";
 			// 判断是否是从推送消息进来			
 			if(url.indexOf('code')>0){				
 				var arr = url.split("?");
