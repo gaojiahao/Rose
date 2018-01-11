@@ -4,6 +4,7 @@ import To_do from '../pages/to_do/td.vue'
 import Finish from '../pages/finish/finish.vue'
 import Td_detail from "../pages/to_do/td_detail.vue"
 import VueWechatTitle from 'vue-wechat-title';  
+import Welcome from "../pages/welcome/welcome.vue"
 Vue.use(VueWechatTitle)
 
 Vue.use(Router)
@@ -25,7 +26,8 @@ export default new Router({
 	    	}
     	 ]
     	},
-    { path:'/finish', component:Finish ,meta: {title: '我的已办'}},
-    { path:'/', redirect:'/to_do'}
+		{ path:'/finish', component:Finish ,meta: {title: '我的已办'}},
+		{ path:'/welcome', component:Welcome },
+    { path:'/', redirect:'/welcome'}
   ]
 })
