@@ -84,7 +84,7 @@ let iscroll;
 			})
 			iscroll.on("scroll",()=>{
 				if(iscroll.y<=iscroll.maxScrollY-30){
-					this.more = "没有数据了"				
+					this.more = "加载中"				
 				}
 			})
 		},
