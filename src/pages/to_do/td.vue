@@ -53,7 +53,7 @@
     		return{
 				isLoadMore:false,
 				listArr:[],
-				more:"加载中",
+				more:"",
 				arr:[]
     		}
 		},
@@ -70,49 +70,29 @@
 				click:true
 			});
 			iscroll.on('scrollStart', ()=>{			
-				if(iscroll.maxScrollY < 0){
-					this.isLoadMore = true;
-				}
 				iscroll.refresh();
 			})
-			iscroll.on("scroll",()=>{
-				if(iscroll.y<=iscroll.maxScrollY-30){
-					this.more = "没有数据了"				
+			iscroll.on("scrollEnd",()=>{
+				let realY = iscroll.maxScrollY +40;
+				if(iscroll.y >iscroll.maxScrollY && iscroll.y <realY){
+					iscroll.scrollTo(0, iscroll.maxScrollY, 200);
+				}
+				if(iscroll.y<=iscroll.maxScrollY){
+					this.isLoadMore = true;
+					this.more = "加载中"	;		
 				}
 			})
 		},
 		created(){
-			//window.location.reload();
-			var url = "https://rfd.roletask.com/Rose/?code=KgE5dJDiGDClAyurkZoLrK2Bm-QXUypYBi2HnkMpmcU&state=1#/to_do";
-			// 判断是否是从推送消息进来
-			var arr = url.split("?");
-			var arr1 = arr[1].split("&")
-			var code = arr1[0].split("=")[1];			
-			getLogin(code).then((result)=>{
-				localStorage.setItem("token",result.token);
-			})
-			// if(url.indexOf('code')>0){				
-			// 	var arr = url.split("?");
-			// 	var arr1 = arr[1].split("&")
-			// 	var code = arr1[0].split("=")[1];
-			// 	getLogin(code).then((result)=>{
-			// 		localStorage.setItem("token",result.token);
-			// 	})
-			// }
-			// else{
-			// 	// 用户主动点击进入页面
-			// 	var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3A%2F%2Frfd.roletask.com%2FRose&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
-			// 	window.location.href = rr;
-			// }
-			var token = localStorage.getItem("token");
+			let  token = localStorage.getItem("token");
 			console.log(token);
-			if(token){
-				getTask(token).then((res)=>{
-					this.listArr = res.tableContent;
-					this.$event.$emit("num",res.tableContent.length);
-					
-				})
-			}
+			getTask(token).then((res)=>{
+				console.log(res);
+				this.listArr = res.tableContent;
+				this.$event.$emit("num",res.tableContent.length);
+				
+			})
+			
 			
 		}
 			
