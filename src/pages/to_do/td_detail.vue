@@ -5,7 +5,7 @@
 			<p class="status1">{{detailInfo.status}}</p>
 		</div>
 		<ul>
-			<li>
+			<li v-if="detailInfo.requireName">
 				<span>需求名称:</span>
 				<i>{{detailInfo.requireName}}</i>
 			</li>
@@ -17,7 +17,7 @@
 				<span>发起时间:</span>
 				<i>{{detailInfo.crtTime}}</i>
 			</li>
-			<li>
+			<li v-if="detailInfo.level">
 				<span>优&nbsp;先&nbsp;级:</span>
 				<i>{{detailInfo.level}}</i>
 			</li>
