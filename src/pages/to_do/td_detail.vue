@@ -1,62 +1,56 @@
 <template>
     <div id="td_detail">
-		<div class="taskDetail">
+		<div class='detail'>
+			<p class="name">{{detailInfo.requireName}}</p>
+			<p class="status1">{{detailInfo.status}}</p>
+		</div>
+		<ul>
+			<li>
+				<span>需求名称:</span>
+				<i>{{detailInfo.requireName}}</i>
+			</li>
+			<li>
+				<span>发&nbsp;起&nbsp;人:</span>
+				<i>{{detailInfo.crtName}}</i>
+			</li>
+			<li>
+				<span>发起时间:</span>
+				<i>{{detailInfo.crtTime}}</i>
+			</li>
+			<li>
+				<span>优&nbsp;先&nbsp;级:</span>
+				<i>{{detailInfo.level}}</i>
+			</li>
+			<li>
+				<span>预计交付日：</span>
+				<input type="date"/>
+			</li>
+		</ul>
+		<div class='process limit'>
 			<div class='wrapper'>
-				<div class='detail'>
-					<p class="name">{{detailInfo.requireName}}</p>
-					<p class="status1">{{detailInfo.status}}</p>
-				</div>
-				<ul>
-					<li>
-						<span>需求名称:</span>
-						<i>{{detailInfo.requireName}}</i>
-					</li>
-					<li>
-						<span>发&nbsp;起&nbsp;人:</span>
-						<i>{{detailInfo.crtName}}</i>
-					</li>
-					<li>
-						<span>发起时间:</span>
-						<i>{{detailInfo.crtTime}}</i>
-					</li>
-					<li>
-						<span>优&nbsp;先&nbsp;级:</span>
-						<i>{{detailInfo.level}}</i>
-					</li>
-					<li v-if="detailInfo.status=='进行中'">
-						<span>预计交付日：</span>
-						<input type="date"/>
-					</li>
-				</ul>
-				<div class='process'>
-					<div class='agree_status'>
-						<div v-for="tab in infoList" class='allInfo'>
-							<div class='info' >
-								<i class='iconfont icon-shenfenzheng'></i>
-								<p>
-									<span>{{tab.userName}}</span>
-									<span>{{tab.nodeName}}</span>
-									<span>{{tab.endTime}}</span>
-								</p>
-								<i class=" weui-icon weui-icon-success" v-if="tab.status"></i>
-								<i class=" weui-icon weui-icon-waiting" v-if="!tab.status" style="top:15px;"></i>
-								<em class='taskStatus'>{{tab.status}}</em>
-								
-							</div>
-							<div class='iconfont icon-xia arrow' ></div>
+				<div class='agree_status'>
+					<div v-for="tab in infoList" class='allInfo'>
+						<div class='info' >
+							<i class='iconfont icon-shenfenzheng'></i>
+							<p>
+								<span>{{tab.userName}}</span>
+								<span>{{tab.nodeName}}</span>
+								<span>{{tab.endTime}}</span>
+							</p>
+							<i class=" weui-icon weui-icon-success" v-if="tab.status"></i>
+							<i class=" weui-icon weui-icon-waiting" v-if="!tab.status" style="top:15px;"></i>
+							<em class='taskStatus'>{{tab.status}}</em>
+							
 						</div>
-						<!-- <div class='iconfont icon-xia arrow' v-if="detailInfo.status=='已生效'"></div> -->
-						<div class='process_over' v-if="detailInfo.status=='已生效'">流程结束</div>
-						
+						<div class='iconfont icon-xia arrow' ></div>
 					</div>
 				</div>
-				<div class="btn" v-if="detailInfo.status!='已生效'">
-					<span @click="agree()">同意</span>
-					<span @click="reject()">拒绝</span>
-				</div>
-			</div>
-		</div>        
-		
+			</div>					
+		</div>
+		<div class="btn">
+			<span @click="agree()">同意</span>
+			<span @click="reject()">拒绝</span>
+		</div>			      
 		<div class="js_dialog" id="iosDialog1" style="opacity: 1;" v-if="showDialog">
             <div class="weui-mask"></div>
             <div class="weui-dialog">
@@ -85,9 +79,10 @@ export default{
 	methods:{
 		agree(){
 			this.showDialog = true;
+			this.dialogInfo = "确定同意该请求吗？";
 		},
 		reject(){
-			this.dialogInfo = "确定拒绝该请求吗";
+			this.dialogInfo = "确定拒绝该请求吗?";
 			this.showDialog = true;
 		},
 		close(){
@@ -106,7 +101,7 @@ export default{
 	},
 	mounted(){
 		
-			detailScroll = new IScroll('.taskDetail', {
+			detailScroll = new IScroll('.process', {
 				probeType: 2,
 				click:true
 			});
@@ -190,6 +185,9 @@ ul li i{
 	margin-left:5px;
 }
 .btn{
+	position: absolute;
+	left: 0;
+	bottom:0;
 	width:100%;
 	text-align: center;
 	display: flex;
@@ -210,7 +208,15 @@ ul li i{
 .process{
 	width:100%;
 	overflow: hidden;
-	margin-bottom:30px;
+	/* margin-bottom:60px; */
+	/* position: absolute;
+	left: 0;
+	top:300px; */
+	
+}
+.process.limit{
+	height: 350px;
+	border-bottom: 1px solid #ccc;
 }
 .process .agree_status{	
 	margin:15px;
