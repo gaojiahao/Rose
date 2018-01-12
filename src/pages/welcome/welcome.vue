@@ -20,8 +20,9 @@
 						that.$router.replace("/to_do");	
 						
 					}
-					else{	
-						var url = "https://rfd.roletask.com/Rose/#/welcome?code=eIkb8TazsYrigpwZ2zGZF7oxduu1NHjSWAgtOJvoAWw&state=1";
+					else{
+						var url = location.href;	
+						//var url = "https://rfd.roletask.com/Rose/#/welcome?code=eIkb8TazsYrigpwZ2zGZF7oxduu1NHjSWAgtOJvoAWw&state=1";
 						// 判断是否是从推送消息进来			
 						if(url.indexOf('code')>0){				
 							var arr = url.split("?");
