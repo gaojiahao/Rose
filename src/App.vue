@@ -21,7 +21,7 @@ export default {
             {title:'我的待办',path:'/to_do',icon: 'icon-daiban'},
             {title:'我的已办',path:'/finish',icon:'icon-yiban'},            
 				],
-				num:0
+				num:"0"
     }
 	},
 	created(){
