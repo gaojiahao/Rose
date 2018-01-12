@@ -11,15 +11,17 @@ export function getLogin(code){
 	})
 }
 export function getTask(token){
-	console.log(token);
 	return new Promise((resolve, reject)=>{
 		axios.get("/H_roleplay-si/ds/getMyToDoTask", {headers:{
 			"authorization":token
 			}
 		})
 		.then((response)=>{
-			const result = response.data;
+			console.log(response);
+			const result = response;
 			resolve(result);
+		}).catch((error)=>{
+			resolve(error);
 		})
 		
 		
