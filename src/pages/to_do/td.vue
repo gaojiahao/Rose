@@ -35,6 +35,10 @@
 							
 						</p>       		
 					</li>
+					<!-- <li class="no_task" v-if="listArr.length==0">
+						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
+						<p>无任务</p>
+					</li> -->
 				</ul>
 				<div class="bottom"  v-if="isLoadMore">
 					<span>{{more}}</span>
@@ -53,13 +57,13 @@
     		return{
 				isLoadMore:false,
 				listArr:[],
-				more:"",
+				more:"加载中",
 				arr:[]
     		}
 		},
     	methods:{
     		goDetail(tab){
-					this.$router.push({path:"to_do/detail",query:{
+					this.$router.push({path:"/to_do/do_detail",query:{
 						info:tab
 					}})
     		}
@@ -79,19 +83,19 @@
 				}
 				if(iscroll.y<=iscroll.maxScrollY){
 					this.isLoadMore = true;
-					this.more = "加载中"	;		
+					this.more = "没有数据了"	;		
 				}
 			})
 		},
 		created(){
-			let  token = localStorage.getItem("token");
-			console.log(token);
+			var token = localStorage.getItem("token");
 			getTask(token).then((res)=>{
 				console.log(res);
-				this.listArr = res.tableContent;
-				this.$event.$emit("num",res.tableContent.length);
+				this.listArr = res.data.tableContent;
+				this.$event.$emit("num",res.data.tableContent.length);
 				
 			})
+			window.scrollTo(0,0);
 			
 			
 		}
@@ -113,8 +117,12 @@
 .list li{
 	border-bottom:1px solid #e5e5e5;
 	padding:10px 15px;
-	overflow: hidden;
 	color:lightslategrey
+}
+li.no_task{
+	text-align:center; 
+	border:none;
+	margin-top:30px;
 }
 li p{
 	width:100%;
