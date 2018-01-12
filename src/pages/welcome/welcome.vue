@@ -11,25 +11,55 @@
     		}
 		},
 		created(){
-			var url = location.href;
-			//var url = "https://rfd.roletask.com/Rose/?code=3tz_liBG1FUh-JqFBWlm6FPZbdosksAS6hLcs1Zl8wE&state=1#/to_do";
-			// 判断是否是从推送消息进来			
-			if(url.indexOf('code')>0){				
-				var arr = url.split("?");
-				var arr1 = arr[1].split("&")
-				var code = arr1[0].split("=")[1];
-				getLogin(code).then((result)=>{
-					localStorage.setItem("token",result.token);	
-					this.$router.push("/to_do");				
+			var token = localStorage.getItem("token");
+			var that = this;
+			setTimeout(function(){
+				getTask(token).then((res)=>{
+					if(res.status == 200){
+						console.log(res.data);
+						that.$router.replace("/to_do");	
+						
+					}
+					else{	
+						var url = "https://rfd.roletask.com/Rose/#/welcome?code=eIkb8TazsYrigpwZ2zGZF7oxduu1NHjSWAgtOJvoAWw&state=1";
+						// 判断是否是从推送消息进来			
+						if(url.indexOf('code')>0){				
+							var arr = url.split("?");
+							var arr1 = arr[1].split("&")
+							var code = arr1[0].split("=")[1];
+							getLogin(code).then((result)=>{
+								localStorage.setItem("token",result.token);	
+								that.$router.replace("/to_do");				
+							})				
+							
+						}
+						else{
+							// 用户主动点击进入页面
+							var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose%2f%23%2fto_do&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
+							window.location.href = rr;
+						}
+					}
 				})
+			},0)
+			
+			//var url = location.href;
+			// var url = "https://rfd.roletask.com/Rose?code=UUyGn0LD8gcbH_iZz2WwY-CDkaoE9U4QBE-_Ew5R_iQ&state=1";
+			// // 判断是否是从推送消息进来			
+			// if(url.indexOf('code')>0){				
+			// 	var arr = url.split("?");
+			// 	var arr1 = arr[1].split("&")
+			// 	var code = arr1[0].split("=")[1];
+			// 	getLogin(code).then((result)=>{
+			// 		localStorage.setItem("token",result.token);	
+			// 		this.$router.push("/to_do");				
+			// 	})				
 				
-				
-			}
-			else{
-				// 用户主动点击进入页面
-				var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose%2f%23%2fto_do&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
-				window.location.href = rr;
-			}
+			// }
+			// else{
+			// 	// 用户主动点击进入页面
+			// 	var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose%2f%23%2fto_do&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
+			// 	window.location.href = rr;
+			// }
 			
 			
 		}
@@ -38,12 +68,12 @@
 </script>
 
 <style>
-	#td{
-		overflow: hidden;
-	}
-	.weui-search-bar:before{
-		border-top:none;
-	}
+#td{
+	overflow: hidden;
+}
+.weui-search-bar:before{
+	border-top:none;
+}
 .list{	
 	width:100%;
 	z-index: 100;
