@@ -37,9 +37,11 @@
 						<p>							
 							<em class='code'>完成时间：{{tab.endTime}}</em>
 						</p>        		
-						
-						
 					</li>
+					<!-- <li class="no_task" v-if="doneList.length==0">
+						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
+						<p>无任务</p>
+					</li> -->
 				</ul>
 				<div class="bottom"  v-if="isLoadMore">
 					<span>{{more}}</span>
@@ -64,7 +66,7 @@ let iscroll;
     	methods:{
     		
     		goDetail(tab){
-				this.$router.push({path:"to_do/detail",query:{
+				this.$router.push({path:"/finish/done_detail",query:{
 					info:tab
 				}})
     		}
@@ -84,16 +86,18 @@ let iscroll;
 			})
 			iscroll.on("scroll",()=>{
 				if(iscroll.y<=iscroll.maxScrollY-30){
-					this.more = "加载中"				
+					this.more = "没有数据了"				
 				}
 			})
 		},
 		created(){
+			window.scrollTo(0,0);
 			var token = localStorage.getItem("token")
 			getDoneTask(token).then((res)=>{
 				this.doneList = res.tableContent;
 				
 			})
+			
 		}
     	
     }
@@ -115,8 +119,12 @@ let iscroll;
 .list li{
 	border-bottom:1px solid #e5e5e5;
 	padding:10px 15px;
-	overflow: hidden;
 	color:lightslategrey
+}
+li.no_task{
+	text-align:center; 
+	border:none;
+	margin-top:30px;
 }
 li p{
 	width:100%;
