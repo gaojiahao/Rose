@@ -1,4 +1,5 @@
 <template>
+
 	<div>
 		<div id="td" class="page">
 			<div class='wrapper'>
@@ -45,19 +46,22 @@
 				</div>
 			</div>   
     	</div>
-    	 <router-view></router-view>
+		
+			<router-view></router-view>
+		
 	</div>
 </template>
 
 <script>
 	import { getLogin,getTask} from '../../service/service.js'
+	import BScroll from 'better-scroll'
 	let iscroll;
     export default{
     	data(){
     		return{
 				isLoadMore:false,
 				listArr:[],
-				more:"加载中",
+				more:"加载中...",
 				arr:[]
     		}
 		},
@@ -68,24 +72,42 @@
 					}})
     		}
     	},
-		mounted(){ 		
-			iscroll = new IScroll('#td', {
-				probeType: 2,
-				click:true
-			});
-			iscroll.on('scrollStart', ()=>{			
+		mounted(){ 	
+			iscroll = new BScroll("#td",{
+				probeType:2,
+				click:true,
+				scrollY:true,
+				pullUpLoad:{
+					threshold:-50
+				}
+			})
+			iscroll.on("scrollStart",()=>{
 				iscroll.refresh();
 			})
-			iscroll.on("scrollEnd",()=>{
-				let realY = iscroll.maxScrollY +40;
-				if(iscroll.y >iscroll.maxScrollY && iscroll.y <realY){
-					iscroll.scrollTo(0, iscroll.maxScrollY, 200);
-				}
-				if(iscroll.y<=iscroll.maxScrollY){
-					this.isLoadMore = true;
-					this.more = "没有数据了"	;		
-				}
+			iscroll.on("pullingUp",()=>{
+				this.isLoadMore = true;
+				var that = this;
+				setTimeout(() => {
+					this.more = "没有数据了"
+				}, 1000);
 			})
+			// iscroll = new IScroll('#td', {
+			// 	probeType: 2,
+			// 	click:true
+			// });
+			// iscroll.on('scrollStart', ()=>{			
+			// 	iscroll.refresh();
+			// })
+			// iscroll.on("scrollEnd",()=>{
+			// 	let realY = iscroll.maxScrollY +40;
+			// 	if(iscroll.y >iscroll.maxScrollY && iscroll.y <realY){
+			// 		iscroll.scrollTo(0, iscroll.maxScrollY, 200);
+			// 	}
+			// 	if(iscroll.y<=iscroll.maxScrollY){
+			// 		this.isLoadMore = true;
+			// 		this.more = "没有数据了"	;		
+			// 	}
+			// })
 		},
 		created(){
 			var token = localStorage.getItem("token");
@@ -107,79 +129,6 @@
 	#td{
 		overflow: hidden;
 	}
-	.weui-search-bar:before{
-		border-top:none;
-	}
-.list{	
-	width:100%;
-	z-index: 100;
-}
-.list li{
-	border-bottom:1px solid #e5e5e5;
-	padding:10px 15px;
-	color:lightslategrey
-}
-li.no_task{
-	text-align:center; 
-	border:none;
-	margin-top:30px;
-}
-li p{
-	width:100%;
-	height: 22px;
-	line-height: 22px;
-	margin-bottom:4px;
-} 
-p .task_name{
-	display:block;
-	width:200px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	font-size:16px;
-	color: #666666;	
-	margin-bottom: 3px;
-	font-weight: 700;
-	float:left;
-}
-
-p .do_user{
-	font-size:14px;
-	float:left;
-}
-p .status{
-	/* position: absolute;
-	right:40px;
-	top:50px; */
-	line-height: 22px;
-	padding: 0 2px;
-	display: inline-block;
-	text-align: center;
-	background-color:#10AEFF;
-	color:#fff;
-	float:right;
-}
-.status.near{
-	background-color:#FFBE00 ;
 	
-}
-.status.over{
-	background-color:#F76260;
-	
-}
-.code{
-	display: inline-block;
-}
-.date{
-	float: right;
-	text-align: center;
-	color:#666;
-}
-.bottom{
-	width:100%;
-	height:30px;
-	line-height: 30px;
-	text-align: center;
-}
 </style>
 

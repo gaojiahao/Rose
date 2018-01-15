@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="finish" class="page">
+		<div id="finish" class="page" ref="content">
 			<div class='wrapper'>
 				<div class="weui-search-bar" id="searchBar">
 					<form class="weui-search-bar__form">
@@ -48,13 +48,15 @@
 				</div>
 			</div>   
     	</div>
-    	 <router-view></router-view>
+    	
+		<router-view></router-view>
+		
 	</div>
 </template>
 
 <script>
 import { getLogin,getDoneTask } from '../../service/service.js'
-let iscroll;
+import BScroll from 'better-scroll'
     export default{
     	data(){
     		return{
@@ -69,36 +71,86 @@ let iscroll;
 				this.$router.push({path:"/finish/done_detail",query:{
 					info:tab
 				}})
-    		}
+			},
+			// initScroll(){
+			// 	if(!this.scroll){
+			// 		console.log("11")
+			// 		this.iscroll = new BScroll(this.$refs.content,{
+			// 			click:true,
+			// 			probeType:2
+			// 		})
+			// 		this.iscroll.on("touchend",(pos)=>{
+			// 			if(pos.y <= (this.scroll.maxScrollY + 50) ) {
+			// 				this.isLoadMore = true;
+			// 				this.more = "没有数据了"
+			// 			}
+			// 		})
+			// 	}
+			// 	else{
+			// 		console.log("222")
+			// 		this.scroll.refresh();
+			// 	}
+				
+			// }
     	
-    	},
-		mounted(){ 		
-			iscroll = new IScroll('#finish', {
-				probeType: 2,
-				click:true
-			});
-			iscroll.on('scrollStart', ()=>{
-			
-				if(iscroll.maxScrollY < 0){
-					this.isLoadMore = true;
-				}
-				iscroll.refresh();
-			})
-			iscroll.on("scroll",()=>{
-				if(iscroll.y<=iscroll.maxScrollY-30){
-					this.more = "没有数据了"				
-				}
-			})
 		},
 		created(){
-			window.scrollTo(0,0);
-			var token = localStorage.getItem("token")
+			var token = localStorage.getItem("token");
 			getDoneTask(token).then((res)=>{
 				this.doneList = res.tableContent;
-				
+				// this.$nextTick(()=>{
+				// 	this.initScroll();
+				// })
 			})
 			
+		},
+		mounted(){						
+			this.$nextTick(()=>{     
+				var iscroll = new BScroll(this.$refs.content,{
+					probeType:2,
+					scrollY:true,
+					click:true,
+					pullUpLoad:{
+						threshold:-50
+						}
+				})				
+			
+				iscroll.on("pullingUp",()=>{
+					this.isLoadMore = true;
+					var that = this;
+					this.$nextTick(function(){   
+						iscroll.finishPullUp();                                    
+						iscroll.refresh();  
+					});
+					setTimeout(() => {
+						this.more = "没有数据了"
+					}, 1000);
+				})
+			
+			})
+				
+				
+			
+			
+
+			// iscroll = new IScroll('#finish', {
+			// 	probeType: 2,
+			// 	click:true
+			// });
+			// iscroll.on('scrollStart', ()=>{
+			
+			// 	if(iscroll.maxScrollY < 0){
+			// 		this.isLoadMore = true;
+			// 	}
+			// 	iscroll.refresh();
+			// })
+			// iscroll.on("scroll",()=>{
+			// 	if(iscroll.y<=iscroll.maxScrollY-30){
+			// 		this.more = "没有数据了"				
+			// 	}
+			// })
 		}
+		
     	
     }
 </script>
@@ -110,77 +162,5 @@ let iscroll;
 #finish .status{
 	background-color:#09BB07 ;
 }
-.weui-search-bar:before{
-	border-top:none;
-}
-.list{	
-	width:100%;
-}
-.list li{
-	border-bottom:1px solid #e5e5e5;
-	padding:10px 15px;
-	color:lightslategrey
-}
-li.no_task{
-	text-align:center; 
-	border:none;
-	margin-top:30px;
-}
-li p{
-	width:100%;
-	height: 22px;
-	line-height: 22px;
-	margin-bottom:4px;
-} 
-p .task_name{
-	display:block;
-	width:200px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	font-size:16px;
-	color: #666666;	
-	margin-bottom: 3px;
-	font-weight: 700;
-	float:left;
-}
 
-p .do_user{
-	font-size:14px;
-	float:left;
-}
-p .status{
-	/* position: absolute;
-	right:40px;
-	top:50px; */
-	line-height: 22px;
-	padding: 0 2px;
-	display: inline-block;
-	text-align: center;
-	background-color:#10AEFF;
-	color:#fff;
-	float:right;
-}
-.status.near{
-	background-color:#FFBE00 ;
-	
-}
-.status.over{
-	background-color:#F76260;
-	
-}
-.code{
-	display: inline-block;
-}
-.date{
-	float: right;
-	text-align: center;
-	color:#666;
-}
-.bottom{
-	width:100%;
-	height:30px;
-	line-height: 30px;
-	text-align: center;
-}	
 </style>

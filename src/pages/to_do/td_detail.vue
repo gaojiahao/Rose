@@ -1,4 +1,6 @@
 <template>
+<transition enter-active-class="slideInRight"
+		leave-active-class="slideOutRight">
     <div id="td_detail">
 		<div class='detail'>
 			<p class="name">{{detailInfo.requireName}}</p>
@@ -62,10 +64,12 @@
             </div>
         </div>
 	</div>
+</transition>
 </template>
 
 <script>
 import { getListTask} from '../../service/service.js'
+import BScroll from 'better-scroll'
  let detailScroll;
 export default{
 	data(){
@@ -100,14 +104,17 @@ export default{
 		})
 	},
 	mounted(){
-		
-			detailScroll = new IScroll('.process', {
-				probeType: 2,
-				click:true
-			});
-			detailScroll.on('scrollStart', ()=>{			
-				detailScroll.refresh();
+			detailScroll = new BScroll(".process",{
+				probeType:2
+				
 			})
+			// detailScroll = new IScroll('.process', {
+			// 	probeType: 2,
+			// 	click:true
+			// });
+			// detailScroll.on('scrollStart', ()=>{			
+			// 	detailScroll.refresh();
+			// })
 			
 
 		
@@ -215,7 +222,7 @@ ul li i{
 	
 }
 .process.limit{
-	height: 350px;
+	height: 370px;
 	border-bottom: 1px solid #ccc;
 }
 .process .agree_status{	
@@ -229,6 +236,9 @@ ul li i{
 }
 .allInfo:first-child{
 	margin-top:10px;
+}
+.allInfo:last-child{
+	margin-bottom:50px;
 }
 .info .iconfont{
 	position: absolute;

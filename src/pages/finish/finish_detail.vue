@@ -1,8 +1,10 @@
 <template>
+ <transition enter-active-class="slideInRight"
+			leave-active-class="slideOutRight"> 
     <div id="finish_detail">
 		<div class="taskDetail">
 			<div class='wrapper'>
-				<div class='detail'>
+				<div class='detail' >
 					<p class="name">{{detailInfo.requireName}}</p>
 					<p class="status1 done_status">{{detailInfo.status}}</p>
 				</div>
@@ -49,10 +51,12 @@
 			</div>
 		</div>        
 	</div>
+ </transition>
 </template>
 
 <script>
 import { getListTask} from '../../service/service.js'
+import BScroll from 'better-scroll'
  let detailScroll;
 export default{
 	data(){
@@ -71,14 +75,16 @@ export default{
 		})
 	},
 	mounted(){
-		
-			detailScroll = new IScroll('.taskDetail', {
-				probeType: 2,
-				click:true
-			});
-			detailScroll.on('scrollStart', ()=>{			
-				detailScroll.refresh();
+			detailScroll = new BScroll(".taskDetail",{
+				probeType:2
 			})
+			// detailScroll = new IScroll('.taskDetail', {
+			// 	probeType: 2,
+			// 	click:true
+			// });
+			// detailScroll.on('scrollStart', ()=>{			
+			// 	detailScroll.refresh();
+			// })
 			
 
 		

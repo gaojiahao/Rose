@@ -85,4 +85,84 @@ export default {
 	top:0;
 	bottom:49px;
 }
+.slideInRight{
+	animation-duration: 300ms;
+}
+.slideOutRight{
+	animation-duration: 300ms;
+}
+.weui-search-bar:before{
+		border-top:none;
+	}
+.list{	
+	width:100%;
+	z-index: 100;
+}
+.list li{
+	border-bottom:1px solid #e5e5e5;
+	padding:10px 15px;
+	color:lightslategrey
+}
+li.no_task{
+	text-align:center; 
+	border:none;
+	margin-top:30px;
+}
+li p{
+	width:100%;
+	height: 22px;
+	line-height: 22px;
+	margin-bottom:4px;
+} 
+p .task_name{
+	display:block;
+	width:200px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size:16px;
+	color: #666666;	
+	margin-bottom: 3px;
+	font-weight: 700;
+	float:left;
+}
+
+p .do_user{
+	font-size:14px;
+	float:left;
+}
+p .status{
+	/* position: absolute;
+	right:40px;
+	top:50px; */
+	line-height: 22px;
+	padding: 0 2px;
+	display: inline-block;
+	text-align: center;
+	background-color:#10AEFF;
+	color:#fff;
+	float:right;
+}
+.status.near{
+	background-color:#FFBE00 ;
+	
+}
+.status.over{
+	background-color:#F76260;
+	
+}
+.code{
+	display: inline-block;
+}
+.date{
+	float: right;
+	text-align: center;
+	color:#666;
+}
+.bottom{
+	width:100%;
+	height:30px;
+	line-height: 30px;
+	text-align: center;
+}
 </style>
