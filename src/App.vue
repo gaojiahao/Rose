@@ -89,6 +89,7 @@ export default {
 }
 .slideInRight{
 	animation-duration: 300ms;
+	transition-delay: 0.5s;
 }
 .slideOutRight{
 	animation-duration: 300ms;
