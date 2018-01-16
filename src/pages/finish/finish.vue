@@ -17,7 +17,9 @@
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
 				<ul class='list' id='finishTask' >
-					<li @click="goDetail(tab)" v-for="tab in doneList">
+					<li @click="goDetail(1111)" v-for="tab in doneList">{{tab}}</li>
+					
+					<!-- <li @click="goDetail(tab)" v-for="tab in doneList">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -37,19 +39,17 @@
 						<p>							
 							<em class='code'>完成时间：{{tab.endTime}}</em>
 						</p>        		
-					</li>
+					</li> -->
 					<!-- <li class="no_task" v-if="doneList.length==0">
 						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
 						<p>无任务</p>
 					</li> -->
 				</ul>
-				<div class="bottom" v-if="show">
-					<span>{{more}}</span>
-				</div> 
 			</div>   
     	</div>
     	
-		<router-view></router-view>
+			<router-view></router-view>
+    	
 		
 	</div>
 </template>
@@ -61,28 +61,50 @@ import { getLogin,getDoneTask } from '../../service/service.js'
     		return{				
 				doneList:[],
 				mescroll:null,
-				more:"",
-				show:false
+				show:true,
+				list:[]
 				
     		}
     	},
     	methods:{
-    		
     		goDetail(tab){
 				this.$router.push({path:"/finish/done_detail",query:{
 					info:tab
 				}})
 			},
-			upCallback() {
-				this.show = true;
-				this.more = "没有数据了"	;
+			upCallback(page) {
+				var self = this;
+				getListDataFromNet(page.num, page.size, function(curPageData) {
+					if(page.num == 1) self.doneList = [];
+					self.doneList = self.doneList.concat(curPageData);
+					self.mescroll.endSuccess(curPageData.length);
+					console.log(self.doneList);
+				
+				}, function() {
+					//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+					self.mescroll.endErr();
+				});
+				function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+					setTimeout(function () {
+						var data=self.list;
+						var listData=[];//模拟分页数据
+						for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+							if(i==data.length) break;
+							listData.push(data[i]);
+						}
+						successCallback&&successCallback(listData);//成功回调
+						
+					},500)
+				}
+				
+				
 			}
     	
 		},
 		created(){
 			var token = localStorage.getItem("token");
 				getDoneTask(token).then((res)=>{
-					this.doneList = res.tableContent;
+					this.list = res.tableContent;
 					
 				})
 			
@@ -92,15 +114,15 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 			self.mescroll = new MeScroll("finish",{
 				up:{
 					isBounce:false,
-					use:false,
-					callback: self.upCallback()
+					use:self.show,
+					page:{
+						num:0,
+						size:10
+					},
+					callback: self.upCallback
 				},
 				down:{
 					use:false
-				},
-				scrollbar:{
-					use : "false", 
- 					 barClass : "mescroll-bar" 
 				}
 			})
 		}
