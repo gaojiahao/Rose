@@ -2,7 +2,7 @@
  <transition enter-active-class="slideInRight"
 			leave-active-class="slideOutRight"> 
     <div id="finish_detail">
-		<div class="taskDetail">
+		<div id="taskDetail">
 			<div class='wrapper'>
 				<div class='detail' >
 					<p class="name">{{detailInfo.requireName}}</p>
@@ -56,8 +56,6 @@
 
 <script>
 import { getListTask} from '../../service/service.js'
-import BScroll from 'better-scroll'
- let detailScroll;
 export default{
 	data(){
 		return{
@@ -75,18 +73,16 @@ export default{
 		})
 	},
 	mounted(){
-			detailScroll = new BScroll(".taskDetail",{
-				probeType:2,
-				bounce:false,
-				deceleration:0.005
-			})
-			// detailScroll = new IScroll('.taskDetail', {
-			// 	probeType: 2,
-			// 	click:true
-			// });
-			// detailScroll.on('scrollStart', ()=>{			
-			// 	detailScroll.refresh();
-			// })
+		var self = this;
+		self.mescroll = new MeScroll("taskDetail",{
+			up:{
+				isBounce:false,
+				use:false
+			},
+			down:{
+				use:false
+			}
+		})
 			
 
 		
@@ -107,9 +103,9 @@ export default{
 	z-index:100;	
 	background: #fff;
 }
-#finish_detail .taskDetail{
+#taskDetail{
 	width:100%;
-	overflow: hidden;
+	overflow: auto;
 	position:absolute;
 	left:0;
 	top:0;

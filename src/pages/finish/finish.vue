@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="finish" class="page" ref="content">
+		<div id="finish" class="page mesroll" >
 			<div class='wrapper'>
 				<div class="weui-search-bar" id="searchBar">
 					<form class="weui-search-bar__form">
@@ -16,7 +16,7 @@
 					</form>
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
-				<ul class='list' >
+				<ul class='list' id='finishTask' >
 					<li @click="goDetail(tab)" v-for="tab in doneList">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
@@ -43,9 +43,9 @@
 						<p>无任务</p>
 					</li> -->
 				</ul>
-				<div class="bottom"  v-if="isLoadMore">
+				<div class="bottom" v-if="show">
 					<span>{{more}}</span>
-				</div>
+				</div> 
 			</div>   
     	</div>
     	
@@ -56,13 +56,14 @@
 
 <script>
 import { getLogin,getDoneTask } from '../../service/service.js'
-import BScroll from 'better-scroll'
     export default{
     	data(){
-    		return{
-				isLoadMore:false,
+    		return{				
 				doneList:[],
-				more:"加载中",
+				mescroll:null,
+				more:"",
+				show:false
+				
     		}
     	},
     	methods:{
@@ -72,94 +73,42 @@ import BScroll from 'better-scroll'
 					info:tab
 				}})
 			},
-			// initScroll(){
-			// 	if(!this.scroll){
-			// 		console.log("11")
-			// 		this.iscroll = new BScroll(this.$refs.content,{
-			// 			click:true,
-			// 			probeType:2
-			// 		})
-			// 		this.iscroll.on("touchend",(pos)=>{
-			// 			if(pos.y <= (this.scroll.maxScrollY + 50) ) {
-			// 				this.isLoadMore = true;
-			// 				this.more = "没有数据了"
-			// 			}
-			// 		})
-			// 	}
-			// 	else{
-			// 		console.log("222")
-			// 		this.scroll.refresh();
-			// 	}
-				
-			// }
+			upCallback() {
+				this.show = true;
+				this.more = "没有数据了"	;
+			}
     	
 		},
 		created(){
 			var token = localStorage.getItem("token");
-			getDoneTask(token).then((res)=>{
-				this.doneList = res.tableContent;
-				// this.$nextTick(()=>{
-				// 	this.initScroll();
-				// })
-			})
+				getDoneTask(token).then((res)=>{
+					this.doneList = res.tableContent;
+					
+				})
 			
 		},
 		mounted(){						
-			this.$nextTick(()=>{     
-				var iscroll = new BScroll(this.$refs.content,{
-					probeType:2,
-					scrollY:true,
-					click:true,
-					bounce:false,
-					deceleration:0.005,
-					pullUpLoad:{
-						threshold:-50
-						}
-				})				
-			
-				iscroll.on("pullingUp",()=>{
-					this.isLoadMore = true;
-					var that = this;
-					this.$nextTick(function(){   
-						iscroll.finishPullUp();                                    
-						iscroll.refresh();  
-					});
-					setTimeout(() => {
-						this.more = "没有数据了"
-					}, 1000);
-				})
-			
+			var self = this;
+			self.mescroll = new MeScroll("finish",{
+				up:{
+					isBounce:false,
+					use:false,
+					callback: self.upCallback()
+				},
+				down:{
+					use:false
+				}
 			})
-				
-				
-			
-			
-
-			// iscroll = new IScroll('#finish', {
-			// 	probeType: 2,
-			// 	click:true
-			// });
-			// iscroll.on('scrollStart', ()=>{
-			
-			// 	if(iscroll.maxScrollY < 0){
-			// 		this.isLoadMore = true;
-			// 	}
-			// 	iscroll.refresh();
-			// })
-			// iscroll.on("scroll",()=>{
-			// 	if(iscroll.y<=iscroll.maxScrollY-30){
-			// 		this.more = "没有数据了"				
-			// 	}
-			// })
 		}
-		
+					
+	}	
     	
-    }
+    
 </script>
 
 <style>
 #finish{
-	overflow: hidden;
+	overflow: auto;
 }
 #finish .status{
 	background-color:#09BB07 ;

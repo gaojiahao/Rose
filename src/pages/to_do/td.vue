@@ -41,7 +41,7 @@
 						<p>无任务</p>
 					</li> -->
 				</ul>
-				<div class="bottom"  v-if="isLoadMore">
+				<div class="bottom"  v-if="show">
 					<span>{{more}}</span>
 				</div>
 			</div>   
@@ -54,14 +54,13 @@
 
 <script>
 	import { getLogin,getTask} from '../../service/service.js'
-	import BScroll from 'better-scroll'
-	let iscroll;
+
     export default{
     	data(){
     		return{
-				isLoadMore:false,
+				show:false,
 				listArr:[],
-				more:"加载中...",
+				more:"",
 				arr:[]
     		}
 		},
@@ -70,46 +69,25 @@
 					this.$router.push({path:"/to_do/do_detail",query:{
 						info:tab
 					}})
-    		}
+			},
+			upCallback() {
+				this.show = true;
+				this.more = "没有数据"	;
+			}
     	},
 		mounted(){ 	
-			iscroll = new BScroll("#td",{
-				probeType:2,
-				click:true,
-				scrollY:true,
-				bounce:false,
-				deceleration:0.005,
-				pullUpLoad:{
-					threshold:-50
+			var self = this;
+			self.mescroll = new MeScroll("td",{
+				up:{
+					callback:self.upCallback(),
+					isBounce:false,
+					use:false					
+				},
+				down:{
+					use:false
 				}
+
 			})
-			iscroll.on("scrollStart",()=>{
-				iscroll.refresh();
-			})
-			iscroll.on("pullingUp",()=>{
-				this.isLoadMore = true;
-				var that = this;
-				setTimeout(() => {
-					this.more = "没有数据了"
-				}, 1000);
-			})
-			// iscroll = new IScroll('#td', {
-			// 	probeType: 2,
-			// 	click:true
-			// });
-			// iscroll.on('scrollStart', ()=>{			
-			// 	iscroll.refresh();
-			// })
-			// iscroll.on("scrollEnd",()=>{
-			// 	let realY = iscroll.maxScrollY +40;
-			// 	if(iscroll.y >iscroll.maxScrollY && iscroll.y <realY){
-			// 		iscroll.scrollTo(0, iscroll.maxScrollY, 200);
-			// 	}
-			// 	if(iscroll.y<=iscroll.maxScrollY){
-			// 		this.isLoadMore = true;
-			// 		this.more = "没有数据了"	;		
-			// 	}
-			// })
 		},
 		created(){
 			var token = localStorage.getItem("token");
@@ -119,7 +97,6 @@
 				this.$event.$emit("num",res.data.tableContent.length);
 				
 			})
-			window.scrollTo(0,0);
 			
 			
 		}
@@ -129,7 +106,7 @@
 
 <style>
 	#td{
-		overflow: hidden;
+		overflow:auto;
 	}
 	
 </style>

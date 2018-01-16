@@ -28,7 +28,7 @@
 				<input type="date"/>
 			</li>
 		</ul>
-		<div class='process limit'>
+		<div class='process limit' id='dProcess'>
 			<div class='wrapper'>
 				<div class='agree_status'>
 					<div v-for="tab in infoList" class='allInfo'>
@@ -69,8 +69,6 @@
 
 <script>
 import { getListTask} from '../../service/service.js'
-import BScroll from 'better-scroll'
- let detailScroll;
 export default{
 	data(){
 		return{
@@ -103,21 +101,17 @@ export default{
 			
 		})
 	},
-	mounted(){
-			detailScroll = new BScroll(".process",{
-				probeType:2,
-				bounce:false,
-				deceleration:0.005
-				
-			})
-			// detailScroll = new IScroll('.process', {
-			// 	probeType: 2,
-			// 	click:true
-			// });
-			// detailScroll.on('scrollStart', ()=>{			
-			// 	detailScroll.refresh();
-			// })
-			
+	mounted(){	
+		var self = this;
+		self.mescroll = new MeScroll("dProcess",{
+			up:{
+				isBounce:false,
+				use:false
+			},
+			down:{
+				use:false
+			}
+		})	
 
 		
 			
