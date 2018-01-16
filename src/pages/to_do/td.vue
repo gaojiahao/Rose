@@ -77,6 +77,8 @@
 				probeType:2,
 				click:true,
 				scrollY:true,
+				bounce:false,
+				deceleration:0.003,
 				pullUpLoad:{
 					threshold:-50
 				}

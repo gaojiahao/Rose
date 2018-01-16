@@ -76,7 +76,9 @@ export default{
 	},
 	mounted(){
 			detailScroll = new BScroll(".taskDetail",{
-				probeType:2
+				probeType:2,
+				bounce:false,
+				deceleration:0.003
 			})
 			// detailScroll = new IScroll('.taskDetail', {
 			// 	probeType: 2,
