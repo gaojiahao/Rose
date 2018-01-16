@@ -78,7 +78,7 @@ export default{
 			detailScroll = new BScroll(".taskDetail",{
 				probeType:2,
 				bounce:false,
-				deceleration:0.003
+				deceleration:0.005
 			})
 			// detailScroll = new IScroll('.taskDetail', {
 			// 	probeType: 2,

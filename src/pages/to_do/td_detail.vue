@@ -107,7 +107,7 @@ export default{
 			detailScroll = new BScroll(".process",{
 				probeType:2,
 				bounce:false,
-				deceleration:0.003
+				deceleration:0.005
 				
 			})
 			// detailScroll = new IScroll('.process', {

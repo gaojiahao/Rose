@@ -111,7 +111,7 @@ import BScroll from 'better-scroll'
 					scrollY:true,
 					click:true,
 					bounce:false,
-					deceleration:0.003,
+					deceleration:0.005,
 					pullUpLoad:{
 						threshold:-50
 						}

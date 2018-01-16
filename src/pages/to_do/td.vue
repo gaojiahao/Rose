@@ -78,7 +78,7 @@
 				click:true,
 				scrollY:true,
 				bounce:false,
-				deceleration:0.003,
+				deceleration:0.005,
 				pullUpLoad:{
 					threshold:-50
 				}
