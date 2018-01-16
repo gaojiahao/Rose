@@ -1,7 +1,6 @@
 <template>
-
 	<div>
-		<div id="td" class="page">
+		<div id="td" class="page mescroll">
 			<div class='wrapper'>
 				<div class="weui-search-bar" id="searchBar">
 					<form class="weui-search-bar__form">
@@ -17,7 +16,7 @@
 					</form>
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
-				<ul class='list' >
+				<ul class='list'>
 					<li @click="goDetail(tab)" v-for="tab in listArr">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
@@ -47,7 +46,7 @@
 			</div>   
     	</div>
 		
-			<router-view></router-view>
+		<router-view></router-view>
 		
 	</div>
 </template>
@@ -105,9 +104,6 @@
 </script>
 
 <style>
-	#td{
-		overflow:auto;
-	}
 	
 </style>
 

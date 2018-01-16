@@ -2,7 +2,7 @@
  <transition enter-active-class="slideInRight"
 			leave-active-class="slideOutRight"> 
     <div id="finish_detail">
-		<div id="taskDetail">
+		<div id="taskDetail" class="mescroll">
 			<div class='wrapper'>
 				<div class='detail' >
 					<p class="name">{{detailInfo.requireName}}</p>
@@ -105,7 +105,6 @@ export default{
 }
 #taskDetail{
 	width:100%;
-	overflow: auto;
 	position:absolute;
 	left:0;
 	top:0;

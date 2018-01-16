@@ -28,7 +28,7 @@
 				<input type="date"/>
 			</li>
 		</ul>
-		<div class='process limit' id='dProcess'>
+		<div class='process limit mescroll' id='dProcess'>
 			<div class='wrapper'>
 				<div class='agree_status'>
 					<div v-for="tab in infoList" class='allInfo'>
@@ -210,11 +210,6 @@ ul li i{
 }
 .process{
 	width:100%;
-	overflow: hidden;
-	/* margin-bottom:60px; */
-	/* position: absolute;
-	left: 0;
-	top:300px; */
 	
 }
 .process.limit{

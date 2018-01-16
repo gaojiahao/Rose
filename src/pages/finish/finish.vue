@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<div id="finish" class="page mesroll" >
+	<div style="height:100%;">
+		<div id="finish" class="page mescroll" >
 			<div class='wrapper'>
 				<div class="weui-search-bar" id="searchBar">
 					<form class="weui-search-bar__form">
@@ -97,6 +97,10 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 				},
 				down:{
 					use:false
+				},
+				scrollbar:{
+					use : "false", 
+ 					 barClass : "mescroll-bar" 
 				}
 			})
 		}
@@ -107,9 +111,6 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 </script>
 
 <style>
-#finish{
-	overflow: auto;
-}
 #finish .status{
 	background-color:#09BB07 ;
 }
