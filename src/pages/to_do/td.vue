@@ -17,8 +17,7 @@
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
 				<ul class='list'>
-					<li @click="goDetail(tab)" v-for="tab in listArr">{{tab}}</li>
-					<!-- <li @click="goDetail(tab)" v-for="tab in listArr">
+					<li @click="goDetail(tab)" v-for="tab in listArr">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -35,11 +34,7 @@
 							<em class='code'>{{tab.businessKey}}</em>
 							
 						</p>       		
-					</li> -->
-					<!-- <li class="no_task" v-if="listArr.length==0">
-						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
-						<p>无任务</p>
-					</li> -->
+					</li>
 				</ul>
 			</div>   
     	</div>
@@ -55,7 +50,6 @@
     export default{
     	data(){
     		return{
-				show:false,
 				listArr:[],
 				more:"",
 				list:[]
@@ -100,7 +94,11 @@
 			self.mescroll = new MeScroll("td",{
 				up:{
 					callback:self.upCallback,
-					isBounce:false										
+					isBounce:false,
+					page:{
+						num:0,
+						size:10
+					}										
 				},
 				down:{
 					use:false
