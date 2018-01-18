@@ -4,8 +4,8 @@
     <div id="finish_detail">
 		<div id="taskDetail" class="mescroll">
 			<div class='wrapper'>
-				<div class="head"> 表单信息</div>
-				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.transCode">
+				<div class="head"> 已办表单信息</div>
+				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.requirement">
 					<cell title="需求编码" :value="detailInfo.transCode" value-align="left" ></cell>
 					<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
 					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
@@ -14,6 +14,23 @@
 					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
 					<cell title="预计交付时间" :value="detailInfo.requirement.etc" value-align="left" v-if="detailInfo.requirement.etc"></cell>
 					<cell title="用户故事" :value="detailInfo.requirement.userStory" value-align="left" v-if="detailInfo.requirement.userStory"></cell>
+					<cell 
+						title="工作流"
+						is-link
+						:border-intent="false"
+						:arrow-direction="show ? 'up' : 'down'"
+						@click.native="show = !show"></cell>
+							
+				</group>
+				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.requirementProject">
+					<cell title="需求编码" :value="detailInfo.transCode" value-align="left" ></cell>
+					<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
+					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
+					<cell title="需求名称" :value="detailInfo.requirementProject.requireName" value-align="left" v-if="detailInfo.baseinfo.requireName"></cell>
+					<cell title="优先级" :value="detailInfo.requirementProject.level.value" value-align="left" v-if="detailInfo.requirementProject.level.value"></cell>
+					<cell title="优先级" :value="detailInfo.requirementProject.level" value-align="left" v-if="!detailInfo.requirementProject.level.value"></cell>
+					<cell title="预计交付时间" :value="detailInfo.requirementProject.etc" value-align="left" v-if="detailInfo.requirementProject.etc"></cell>
+					<cell title="用户故事" :value="detailInfo.requirementProject.userStory" value-align="left" v-if="detailInfo.requirementProject.userStory"></cell>
 					<cell 
 						title="工作流"
 						is-link
