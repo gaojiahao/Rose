@@ -68,7 +68,9 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 			upCallback(page) {
 				var self = this;
 				getListDataFromNet(page.num, page.size, function(curPageData) {
+					console.log(page.num,page.size);
 					if(page.num == 1) self.doneList = [];
+					console.log(curPageData);
 					self.doneList = self.doneList.concat(curPageData);
 					self.mescroll.endSuccess(curPageData.length);
 					console.log(self.doneList);
@@ -85,7 +87,11 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 							if(i==data.length) break;
 							listData.push(data[i]);
 						}
-						successCallback&&successCallback(listData);//成功回调
+						console.log(listData);
+						setTimeout(function(){
+							successCallback&&successCallback(listData);//成功回调
+						},0)
+						
 						
 					},500)
 				}
@@ -98,7 +104,7 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 			var token = localStorage.getItem("token");
 				getDoneTask(token).then((res)=>{
 					this.list = res.tableContent;
-					
+					//this.doneList =  res.tableContent.slice(0,10)
 				})
 			
 		},
