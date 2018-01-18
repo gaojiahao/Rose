@@ -4,7 +4,7 @@
       <router-view v-wechat-title="$route.meta.title"></router-view>
     </keep-alive>
 	  <nav class="navbar">
-	    <router-link  v-for="tab in tablist" :to="tab.path">
+	    <router-link  v-for="(tab,index) in tablist" :to="tab.path" :key="index">
 	    	<span class="iconfont" :class="tab.icon"></span>
 	      <p>{{tab.title}}</p>
 	      <span class="weui-badge" style="position: absolute;top: 0;right:40%;">{{num}}</span>
@@ -37,7 +37,7 @@ export default {
 	.navbar{
 	width:100%;
 	height:49px;
-	position: fixed;
+	position:absolute;
 	left:0;
 	bottom:0;
 	z-index:10;
@@ -89,7 +89,6 @@ export default {
 }
 .slideInRight{
 	animation-duration: 300ms;
-	transition-delay: 0.5s;
 }
 .slideOutRight{
 	animation-duration: 300ms;

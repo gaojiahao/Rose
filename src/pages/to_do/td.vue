@@ -16,8 +16,8 @@
 					</form>
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
-				<ul class='list'>
-					<li @click="goDetail(tab)" v-for="tab in listArr">
+				<ul class='list'>					
+					<li @click="goDetail(tab)" v-for="(tab,index) in listArr" :key="index">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -53,6 +53,7 @@
 				listArr:[],
 				more:"",
 				list:[]
+				//list:[1,23,41,414,425,263636,263,26236,62626,1636,6341636,434466,3,5,5,36,3626,25,256,262]
     		}
 		},
     	methods:{
@@ -108,6 +109,7 @@
 		},
 		created(){
 			var token = localStorage.getItem("token");
+			
 			getTask(token).then((res)=>{
 				console.log(res);
 				this.list = res.data.tableContent;

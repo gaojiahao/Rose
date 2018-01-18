@@ -16,7 +16,7 @@
 					</form>
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
-				<ul class='list' id='finishTask' >		
+				<ul class='list' id='finishTask' >	
 					<li @click="goDetail(tab)" v-for="tab in doneList">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
@@ -57,7 +57,6 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 				doneList:[],
 				mescroll:null,
 				list:[]
-				
     		}
     	},
     	methods:{

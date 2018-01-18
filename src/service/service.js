@@ -57,4 +57,20 @@ export function getListTask(transCode,token){
 		
 	})
 }
+export function getDetailInfo(time,token,id){
+	return new Promise((resolve,reject)=>{
+		axios.get("/H_roleplay-si/ds/getJsonDataByReferenceId",{headers:{
+			"authorization":token
+			},params:{
+				_dc:time,
+				referenceId:id,
+				
+			}
+		})
+		.then((response)=>{
+			const result = response.data.tableContent;
+			resolve(result);
+		})
+	})
+}
 
