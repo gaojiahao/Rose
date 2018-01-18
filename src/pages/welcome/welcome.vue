@@ -46,9 +46,6 @@
 </script>
 
 <style>
-#td{
-	overflow: hidden;
-}
 .weui-search-bar:before{
 	border-top:none;
 }
