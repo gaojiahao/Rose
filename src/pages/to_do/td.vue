@@ -64,6 +64,7 @@
 			},
 			upCallback(page) {
 				var self = this;
+				console.log(page);
 				getListDataFromNet(page.num, page.size, function(curPageData) {
 					if(page.num == 1) self.listArr = [];
 					self.listArr = self.listArr.concat(curPageData);
