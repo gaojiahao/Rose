@@ -1,5 +1,9 @@
 <template>
-  <router-view></router-view>
+<div>
+	<h1>欢迎</h1>
+ <router-view></router-view>
+</div>
+ 
 </template>
 
 <script>
