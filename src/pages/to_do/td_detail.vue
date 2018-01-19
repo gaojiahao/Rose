@@ -47,7 +47,7 @@
 			<span @click="confirm()">同意</span>
 			<span @click="reject()">拒绝</span>
 		</div>			      
-		<div v-transfer-dom>
+		<!-- <div v-transfer-dom>
 			<confirm v-model="showDialog"
 			@on-cancel="onCancel"
 			@on-confirm="onConfirm"
@@ -55,7 +55,7 @@
 				<x-input title="实际工时:" type="number"></x-input>
 				<x-textarea title="任务备注:"></x-textarea>	
 			</confirm>
-		</div>
+		</div> -->
 
 
 	</div>
@@ -65,7 +65,7 @@
 
 <script>
 import { getListTask,getDetailInfo} from '../../service/service.js'
-import { Group, Cell,Datetime,XInput,XTextarea,Confirm,TransferDomDirective as TransferDom } from 'vux'
+import { Group, Cell,Datetime,XInput,XTextarea,Confirm} from 'vux'
 export default{
 	data(){
 		return{
@@ -75,9 +75,9 @@ export default{
 			show:false
 		}
 	},
-	directives: {
-		TransferDom
-	},
+	// directives: {
+	// 	TransferDom
+	// },
 	components: {
 		Group,
 		Cell,
@@ -94,12 +94,12 @@ export default{
 		reject(){			
 			
 		},
-		onCancel () {
+		// onCancel () {
 			
-		},
-		onConfirm (msg) {
+		// },
+		// onConfirm (msg) {
 			
-		},		
+		// }		
 		change(value){
 			console.log(value);
 		}
