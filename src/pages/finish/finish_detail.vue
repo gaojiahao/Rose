@@ -4,24 +4,7 @@
     <div id="finish_detail">
 		<div id="taskDetail" class="mescroll">
 			<div class='wrapper'>
-				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.transCode">
-					<cell title="需求编码" :value="detailInfo.requireName" value-align="left" ></cell>
-					<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
-					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
-					<cell title="需求名称" :value="detailInfo.requirement.requireName" value-align="left" v-if="detailInfo.baseinfo.requireName"></cell>
-					<cell title="优先级" :value="detailInfo.requirement.level.value" value-align="left" v-if="detailInfo.requirement.level.value"></cell>
-					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
-					<cell title="预计交付时间" :value="detailInfo.requirement.etc" value-align="left" v-if="detailInfo.requirement.etc"></cell>
-					<cell title="用户故事" :value="detailInfo.requirement.userStory" value-align="left" v-if="detailInfo.requirement.userStory"></cell>
-					<cell 
-						title="工作流"
-						is-link
-						:border-intent="false"
-						:arrow-direction="show ? 'up' : 'down'"
-						@click.native="show = !show"></cell>
-							
-				</group>
-				<!-- <div class='detail' >
+				<div class='detail' >
 					<p class="name">{{detailInfo.requireName}}</p>
 					<p class="status1 done_status">{{detailInfo.status}}</p>
 				</div>
@@ -42,26 +25,30 @@
 						<span>优&nbsp;先&nbsp;级:</span>
 						<i>{{detailInfo.level}}</i>
 					</li>
-				</ul> -->
-				<div class='process' v-if="show">
+				</ul>
+				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.transCode">
+					<cell title="需求编码" :value="detailInfo.requireName" value-align="left" ></cell>
+				</group>
+				<div class='process'>
 					<div class='agree_status'>
-						<div v-for="(tab,index) in infoList" class='allInfo' :key="index">
-							<div class='info'>
+						<div v-for="tab in infoList" class='allInfo'>
+							<div class='info' >
 								<i class='iconfont icon-shenfenzheng'></i>
 								<p>
-									<span class='name'>{{tab.userName}}</span>
+									<span>{{tab.userName}}</span>
 									<span>{{tab.nodeName}}</span>
-									
+									<span>{{tab.endTime}}</span>
 								</p>
-								<p><span>{{tab.endTime}}</span></p>
-								<p v-if="tab.message"><span>审批意见：{{tab.message}}</span></p>
 								<i class=" weui-icon weui-icon-success" v-if="tab.status"></i>
 								<i class=" weui-icon weui-icon-waiting" v-if="!tab.status" style="top:15px;"></i>
+								<em class='taskStatus'>{{tab.status}}</em>
 								
 							</div>
 							<div class='iconfont icon-xia arrow' ></div>
 						</div>
-						<div class='process_over' v-if="detailInfo.status!='进行中'">流程结束</div>						
+						<!-- <div class='iconfont icon-xia arrow' v-if="detailInfo.status=='已生效'"></div> -->
+						<div class='process_over' v-if="detailInfo.status!='进行中'">流程结束</div>
+						
 					</div>
 				</div>
 			</div>
@@ -71,14 +58,13 @@
 </template>
 
 <script>
-import { getListTask,getDetailInfo} from '../../service/service.js'
+import { getListTask} from '../../service/service.js'
 import { Group, Cell,XDialog,Icon } from 'vux'
 export default{
 	data(){
 		return{
 			infoList:[],
-			detailInfo:{},
-			show:false
+			detailInfo:{}
 		}
 	},
 	components: {
@@ -90,18 +76,10 @@ export default{
 	created(){
 		this.detailInfo = this.$route.query.info;
 		let token  = localStorage.getItem("token");
-		let code = this.$route.query.info.businessKey;
 		console.log(token);
 		getListTask(this.detailInfo.businessKey,token).then((result)=>{
 			this.infoList = result;
 			
-		})
-		let time = new Date().getTime();
-		getDetailInfo(time,token,code).then((result)=>{
-			if(result.length>=1){
-				this.detailInfo = JSON.parse(result[0].json_data);
-			}
-			console.log(JSON.parse(result[0].json_data));
 		})
 	},
 	mounted(){
@@ -115,6 +93,9 @@ export default{
 				use:false
 			}
 		})
+			
+
+		
 			
 	}
 	
