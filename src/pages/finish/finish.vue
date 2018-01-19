@@ -16,10 +16,10 @@
 					</form>
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
-				<ul class='list' id='finishTask' >	
-					<li @click="goDetail(tab)" v-for="tab in doneList">
+				<ul class='list' id='finishTask' v-if="doneList.length>1">	
+					<li @click="goDetail(tab)" v-for="(tab,index) in doneList" :key="index">
 						<p>
-							<span class='task_name'>{{tab.requireName}}</span>
+							<span class='task_name' v-if="tab.requireName">{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
 						</p>
 						
@@ -67,7 +67,7 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 			},
 			upCallback(page) {
 				var self = this;
-				getListDataFromNet(page.num, page.size, function(curPageData) {
+				this.getListDataFromNet(page.num, page.size, function(curPageData) {
 					console.log(page.num,page.size);
 					if(page.num == 1) self.doneList = [];
 					console.log(curPageData);
@@ -79,25 +79,73 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 					//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
 					self.mescroll.endErr();
 				});
-				function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-					setTimeout(function () {
-						var data=self.list;
-						var listData=[];//模拟分页数据
-						for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-							if(i==data.length) break;
-							listData.push(data[i]);
-						}
-						console.log(listData);
-						setTimeout(function(){
-							successCallback&&successCallback(listData);//成功回调
-						},0)
+				// function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+				// 	setTimeout(function () {
+				// 		var data=self.list;
+				// 		var listData=[];//模拟分页数据
+				// 		for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+				// 			if(i==data.length) break;
+				// 			listData.push(data[i]);
+				// 		}
+				// 		console.log(listData);
+						
+				// 			successCallback&&successCallback(listData);//成功回调
 						
 						
-					},500)
-				}
+						
+				// 	},500)
+				// }
 				
 				
+			},
+			downCallback(){
+				var self = this;
+				this.getListDataFromNet(1, 10, function(data){
+					//联网成功的回调,隐藏下拉刷新的状态
+					self.mescroll.endSuccess();
+					//设置列表数据
+					self.doneList = data;
+				}, function(){
+					//联网失败的回调,隐藏下拉刷新的状态
+	                self.mescroll.endErr();
+				});
+				// function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+				// 	setTimeout(function () {
+				// 		var data=self.list;
+				// 		var listData=[];//模拟分页数据
+				// 		for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+				// 			if(i==data.length) break;
+				// 			listData.push(data[i]);
+				// 		}
+				// 		console.log(listData);
+						
+				// 			successCallback&&successCallback(listData);//成功回调
+						
+						
+						
+				// 	},500)
+				// }
+			},
+			getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+				var self = this;
+				setTimeout(function () {
+					
+					var data=self.list;
+					
+					var listData=[];//模拟分页数据
+					for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+						if(i==data.length) break;
+						listData.push(data[i]);
+					}
+					console.log(listData);
+					
+						successCallback&&successCallback(listData);//成功回调
+					
+					
+					
+				},500)
 			}
+			
     	
 		},
 		created(){
@@ -120,7 +168,7 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 					callback: self.upCallback
 				},
 				down:{
-					use:false
+					callback:self.downCallback
 				}
 			})
 		}
