@@ -1,6 +1,7 @@
 <template>
 	<div style="height:100%;">
-		<div id="finish" class="page mescroll" >
+		<h1>已办</h1>
+		<!-- <div id="finish" class="page mescroll" >
 			<div class='wrapper'>
 				<div class="weui-search-bar" id="searchBar">
 					<form class="weui-search-bar__form">
@@ -41,7 +42,7 @@
 					
 				</ul>
 			</div>   
-    	</div>
+    	</div> -->
     	
 			<router-view></router-view>
     	
@@ -50,130 +51,130 @@
 </template>
 
 <script>
-import { getLogin,getDoneTask } from '../../service/service.js'
-    export default{
-    	data(){
-    		return{				
-				doneList:[],
-				mescroll:null,
-				list:[]
-    		}
-    	},
-    	methods:{
-    		goDetail(tab){
-				this.$router.push({path:"/finish/done_detail",query:{
-					info:tab
-				}})
-			},
-			upCallback(page) {
-				var self = this;
-				this.getListDataFromNet(page.num, page.size, function(curPageData) {
-					console.log(page.num,page.size);
-					if(page.num == 1) self.doneList = [];
-					console.log(curPageData);
-					self.doneList = self.doneList.concat(curPageData);
-					self.mescroll.endSuccess(curPageData.length);
-					console.log(self.doneList);
+// import { getLogin,getDoneTask } from '../../service/service.js'
+//     export default{
+//     	data(){
+//     		return{				
+// 				doneList:[],
+// 				mescroll:null,
+// 				list:[]
+//     		}
+//     	},
+//     	methods:{
+//     		goDetail(tab){
+// 				this.$router.push({path:"/finish/done_detail",query:{
+// 					info:tab
+// 				}})
+// 			},
+// 			upCallback(page) {
+// 				var self = this;
+// 				this.getListDataFromNet(page.num, page.size, function(curPageData) {
+// 					console.log(page.num,page.size);
+// 					if(page.num == 1) self.doneList = [];
+// 					console.log(curPageData);
+// 					self.doneList = self.doneList.concat(curPageData);
+// 					self.mescroll.endSuccess(curPageData.length);
+// 					console.log(self.doneList);
 				
-				}, function() {
-					//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-					self.mescroll.endErr();
-				});
-				// function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-				// 	setTimeout(function () {
-				// 		var data=self.list;
-				// 		var listData=[];//模拟分页数据
-				// 		for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-				// 			if(i==data.length) break;
-				// 			listData.push(data[i]);
-				// 		}
-				// 		console.log(listData);
+// 				}, function() {
+// 					//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+// 					self.mescroll.endErr();
+// 				});
+// 				// function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+// 				// 	setTimeout(function () {
+// 				// 		var data=self.list;
+// 				// 		var listData=[];//模拟分页数据
+// 				// 		for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+// 				// 			if(i==data.length) break;
+// 				// 			listData.push(data[i]);
+// 				// 		}
+// 				// 		console.log(listData);
 						
-				// 			successCallback&&successCallback(listData);//成功回调
+// 				// 			successCallback&&successCallback(listData);//成功回调
 						
 						
 						
-				// 	},500)
-				// }
+// 				// 	},500)
+// 				// }
 				
 				
-			},
-			downCallback(){
-				var self = this;
-				this.getListDataFromNet(1, 10, function(data){
-					//联网成功的回调,隐藏下拉刷新的状态
-					self.mescroll.endSuccess();
-					//设置列表数据
-					self.doneList = data;
-				}, function(){
-					//联网失败的回调,隐藏下拉刷新的状态
-	                self.mescroll.endErr();
-				});
-				// function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-				// 	setTimeout(function () {
-				// 		var data=self.list;
-				// 		var listData=[];//模拟分页数据
-				// 		for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-				// 			if(i==data.length) break;
-				// 			listData.push(data[i]);
-				// 		}
-				// 		console.log(listData);
+// 			},
+// 			downCallback(){
+// 				var self = this;
+// 				this.getListDataFromNet(1, 10, function(data){
+// 					//联网成功的回调,隐藏下拉刷新的状态
+// 					self.mescroll.endSuccess();
+// 					//设置列表数据
+// 					self.doneList = data;
+// 				}, function(){
+// 					//联网失败的回调,隐藏下拉刷新的状态
+// 	                self.mescroll.endErr();
+// 				});
+// 				// function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+// 				// 	setTimeout(function () {
+// 				// 		var data=self.list;
+// 				// 		var listData=[];//模拟分页数据
+// 				// 		for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+// 				// 			if(i==data.length) break;
+// 				// 			listData.push(data[i]);
+// 				// 		}
+// 				// 		console.log(listData);
 						
-				// 			successCallback&&successCallback(listData);//成功回调
+// 				// 			successCallback&&successCallback(listData);//成功回调
 						
 						
 						
-				// 	},500)
-				// }
-			},
-			getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-				var self = this;
-				setTimeout(function () {
+// 				// 	},500)
+// 				// }
+// 			},
+// 			getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+// 				var self = this;
+// 				setTimeout(function () {
 					
-					var data=self.list;
+// 					var data=self.list;
 					
-					var listData=[];//模拟分页数据
-					for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-						if(i==data.length) break;
-						listData.push(data[i]);
-					}
-					console.log(listData);
+// 					var listData=[];//模拟分页数据
+// 					for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+// 						if(i==data.length) break;
+// 						listData.push(data[i]);
+// 					}
+// 					console.log(listData);
 					
-						successCallback&&successCallback(listData);//成功回调
+// 						successCallback&&successCallback(listData);//成功回调
 					
 					
 					
-				},500)
-			}
+// 				},500)
+// 			}
 			
     	
-		},
-		created(){
-			var token = localStorage.getItem("token");
-				getDoneTask(token).then((res)=>{
-					this.list = res.tableContent;
-					//this.doneList =  res.tableContent.slice(0,10)
-				})
+// 		},
+// 		created(){
+// 			var token = localStorage.getItem("token");
+// 				getDoneTask(token).then((res)=>{
+// 					this.list = res.tableContent;
+// 					//this.doneList =  res.tableContent.slice(0,10)
+// 				})
 			
-		},
-		mounted(){						
-			var self = this;
-			self.mescroll = new MeScroll("finish",{
-				up:{
-					isBounce:false,
-					page:{
-						num:0,
-						size:10
-					},
-					callback: self.upCallback
-				},
-				down:{
-					callback:self.downCallback
-				}
-			})
-		}
+// 		},
+// 		mounted(){						
+// 			var self = this;
+// 			self.mescroll = new MeScroll("finish",{
+// 				up:{
+// 					isBounce:false,
+// 					page:{
+// 						num:0,
+// 						size:10
+// 					},
+// 					callback: self.upCallback
+// 				},
+// 				down:{
+// 					callback:self.downCallback
+// 				}
+// 			})
+// 		}
 					
-	}	
+// 	}	
     	
     
 </script>
