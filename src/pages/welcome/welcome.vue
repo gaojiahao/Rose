@@ -10,7 +10,7 @@
     		}
 		},
 		created(){
-			this.$router.replace("/to_do")
+			this.$router.push("/to_do")
 			// var token = localStorage.getItem("token");
 			// var that = this;
 			// setTimeout(function(){
