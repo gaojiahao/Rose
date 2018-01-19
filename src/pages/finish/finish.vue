@@ -69,41 +69,41 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 				this.$router.push({path:"/finish/done_detail",query:{
 					info:tab
 				}})
-			},
-			upCallback(page) {
-				var self = this;
-				getListDataFromNet(page.num, page.size, function(curPageData) {
-					if(page.num == 1) self.doneList = [];
-					self.doneList = self.doneList.concat(curPageData);
-					self.mescroll.endSuccess(curPageData.length);
-					console.log(self.doneList);
-				
-				}, function() {
-					//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-					self.mescroll.endErr();
-				});
-				function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-					setTimeout(function () {
-						var data=self.list;
-						var listData=[];//模拟分页数据
-						for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-							if(i==data.length) break;
-							listData.push(data[i]);
-						}
-						successCallback&&successCallback(listData);//成功回调
-						
-					},500)
-				}
-				
-				
 			}
+		// 	upCallback(page) {
+		// 		var self = this;
+		// 		getListDataFromNet(page.num, page.size, function(curPageData) {
+		// 			if(page.num == 1) self.doneList = [];
+		// 			self.doneList = self.doneList.concat(curPageData);
+		// 			self.mescroll.endSuccess(curPageData.length);
+		// 			console.log(self.doneList);
+				
+		// 		}, function() {
+		// 			//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+		// 			self.mescroll.endErr();
+		// 		});
+		// 		function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+		// 			setTimeout(function () {
+		// 				var data=self.list;
+		// 				var listData=[];//模拟分页数据
+		// 				for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+		// 					if(i==data.length) break;
+		// 					listData.push(data[i]);
+		// 				}
+		// 				successCallback&&successCallback(listData);//成功回调
+						
+		// 			},500)
+		// 		}
+				
+				
+		// 	}
     	
 		},
 		created(){
 			var token = localStorage.getItem("token");
 				getDoneTask(token).then((res)=>{
-					this.list = res.tableContent;
-					
+					//this.list = res.tableContent;
+					this.doneList = res.tableContent;
 				})
 			
 		},
@@ -112,12 +112,12 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 			self.mescroll = new MeScroll("finish",{
 				up:{
 					isBounce:false,
-					use:self.show,
-					page:{
-						num:0,
-						size:10
-					},
-					callback: self.upCallback
+					use:false
+					// page:{
+					// 	num:0,
+					// 	size:10
+					// },
+					// callback: self.upCallback
 				},
 				down:{
 					use:false
