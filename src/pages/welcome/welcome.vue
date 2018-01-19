@@ -20,8 +20,8 @@
 					}
 					else{
 						console.log("进入了")
-						//var url = location.href;	
-						var url = "https://rfd.roletask.com/Rose/#/welcome?code=4YJ5psqjLSdlgcqXXqHmP56zIIXH9o4OooICgWOELW4&state=1";
+						var url = location.href;	
+						//var url = "https://rfd.roletask.com/Rose/#/welcome?code=4YJ5psqjLSdlgcqXXqHmP56zIIXH9o4OooICgWOELW4&state=1";
 						// 判断是否是从推送消息进来			
 						if(url.indexOf('code')>0){				
 							var arr = url.split("?");
