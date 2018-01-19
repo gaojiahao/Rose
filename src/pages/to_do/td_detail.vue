@@ -125,6 +125,7 @@ export default{
 				this.detailInfo = JSON.parse(result[0].json_data);
 			}
 			var t = JSON.parse(result[0].json_data);
+			console.log(t);
 		})
 	},
 	mounted(){	
@@ -157,17 +158,20 @@ export default{
 	z-index:100;	
 	background: #fff;
 }
-#mescroll{
+/* #mescroll{
 	width:100%;
 	position:absolute;
 	left:0;
 	top:0;
 	bottom:0;
-}
+} */
 #mescroll .head{
 	line-height: 40px;
 	text-align: center;
 	font-size:16px;
+}
+#mescroll .wrapper{
+	padding-bottom: 20px;
 }
 .vux-no-group-title,.vux-no-group-title{
 	margin-top:0 !important;
