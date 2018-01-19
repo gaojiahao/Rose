@@ -79,6 +79,7 @@
 					setTimeout(function () {
 						var data=self.list;
 						var listData=[];//模拟分页数据
+						console.log(pageNum,pageSize);//1,10
 						for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
 							if(i==data.length) break;
 							listData.push(data[i]);
@@ -89,6 +90,36 @@
 				}
 				
 				
+			},
+			downCallback(){
+				var self = this;
+				getListDataFromNet(1, 10, function(data){
+					//联网成功的回调,隐藏下拉刷新的状态
+					self.mescroll.endSuccess();
+					//设置列表数据
+					self.doneList = data;
+				}, function(){
+					//联网失败的回调,隐藏下拉刷新的状态
+	                seif.mescroll.endErr();
+				});
+				function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+					setTimeout(function () {
+						var data=self.list;
+						console.log(data);
+						console.log(pageNum,pageSize);
+						var listData=[];//模拟分页数据
+						for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+							if(i==data.length) break;
+							listData.push(data[i]);
+						}
+						console.log(listData);
+						
+							successCallback&&successCallback(listData);//成功回调
+						
+						
+						
+					},500)
+				}
 			}
     	},
 		mounted(){ 	
@@ -103,7 +134,8 @@
 					}										
 				},
 				down:{
-					use:false
+					use:true,
+					callback:self.downCallback
 				}
 
 			})
