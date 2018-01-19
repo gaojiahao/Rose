@@ -142,13 +142,16 @@ export default{
 	z-index:100;	
 	background: #fff;
 }
-#taskDetail{
+/* #taskDetail{
 	width:100%;
 	position:absolute;
 	left:0;
 	top:0;
 	bottom:0;
 
+} */
+#taskDetail .wrapper{
+	padding-bottom: 20px;
 }
 #taskDetail .head{
 	line-height: 40px;
