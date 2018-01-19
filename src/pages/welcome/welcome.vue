@@ -19,7 +19,6 @@
 						that.$router.replace("/to_do");	
 					}
 					else{
-						console.log("进入了")
 						var url = location.href;	
 						//var url = "https://rfd.roletask.com/Rose/#/welcome?code=iovaMyIglEd3U6FIle5hwvvwWofnHTKbTE97bOgjOFU&state=1";
 						// 判断是否是从推送消息进来			
