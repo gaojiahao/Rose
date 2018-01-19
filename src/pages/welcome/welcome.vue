@@ -1,7 +1,7 @@
 <template>
 <div>
 	<h1>欢迎</h1>
- <router-view></router-view>
+ 	<router-view></router-view>
 </div>
  
 </template>
@@ -14,7 +14,7 @@
     		}
 		},
 		created(){
-			this.$router.push("/to_do")
+			//this.$router.push("/to_do")
 			// var token = localStorage.getItem("token");
 			// var that = this;
 			// setTimeout(function(){
