@@ -4,9 +4,9 @@ body,html,h1,h2,h3,h4,h5,h6,p,form,fieldset,th,td,ul,ol,dl,dd,legend,input,selec
 }
 *{
 	box-sizing: border-box;
-	/* -webkit-touch-callout:none;
+	-webkit-touch-callout:none;
 	-webkit-user-select:none;
-	-webkit-tap-highlight-color:transparent; */
+	-webkit-tap-highlight-color:transparent;
 }
 body{
 	

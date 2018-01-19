@@ -37,7 +37,7 @@ export default {
 	.navbar{
 	width:100%;
 	height:49px;
-	position:absolute;
+	position: fixed;
 	left:0;
 	bottom:0;
 	z-index:10;
@@ -89,6 +89,7 @@ export default {
 }
 .slideInRight{
 	animation-duration: 300ms;
+	transition-delay: 0.5s;
 }
 .slideOutRight{
 	animation-duration: 300ms;

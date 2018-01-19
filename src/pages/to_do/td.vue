@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<h1>待办</h1>
-		<!-- <div id="td" class="page mescroll">
+		<div id="td" class="page mescroll">
 			<div class='wrapper'>
 				<div class="weui-search-bar" id="searchBar">
 					<form class="weui-search-bar__form">
@@ -17,8 +16,8 @@
 					</form>
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
-				<ul class='list'>					
-					<li @click="goDetail(tab)" v-for="(tab,index) in listArr" :key="index">
+				<ul class='list'>
+					<li @click="goDetail(tab)" v-for="tab in listArr">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -36,9 +35,13 @@
 							
 						</p>       		
 					</li>
+					<!-- <li class="no_task" v-if="listArr.length==0">
+						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
+						<p>无任务</p>
+					</li> -->
 				</ul>
 			</div>   
-    	</div> -->
+    	</div>
 		
 		<router-view></router-view>
 		
@@ -46,115 +49,82 @@
 </template>
 
 <script>
-	// import { getLogin,getTask} from '../../service/service.js'
+	import { getLogin,getTask} from '../../service/service.js'
+	import { Group, Cell } from 'vux'
 
-    // export default{
-    // 	data(){
-    // 		return{
-	// 			listArr:[],
-	// 			more:"",
-	// 			list:[]
-	// 			//list:[1,23,41,414,425,263636,263,26236,62626,1636,6341636,434466,3,5,5,36,3626,25,256,262]
-    // 		}
-	// 	},
-    // 	methods:{
-    // 		goDetail(tab){
-	// 				this.$router.push({path:"/to_do/do_detail",query:{
-	// 					info:tab
-	// 				}})
-	// 		},
-	// 		upCallback(page) {
-	// 			var self = this;
-	// 			console.log(page);
-	// 			getListDataFromNet(page.num, page.size, function(curPageData) {
-	// 				if(page.num == 1) self.listArr = [];
-	// 				self.listArr = self.listArr.concat(curPageData);
-	// 				self.mescroll.endSuccess(curPageData.length);
-	// 				console.log(self.listArr);
+    export default{
+    	data(){
+    		return{
+				show:false,
+				listArr:[],
+				more:"",
+				list:[]
+    		}
+		},
+		components: {
+			Group,
+			Cell
+		},
+    	methods:{
+    		goDetail(tab){
+					this.$router.push({path:"/to_do/do_detail",query:{
+						info:tab
+					}})
+			},
+			upCallback(page) {
+				var self = this;
+				getListDataFromNet(page.num, page.size, function(curPageData) {
+					if(page.num == 1) self.listArr = [];
+					self.listArr = self.listArr.concat(curPageData);
+					self.mescroll.endSuccess(curPageData.length);
+					console.log(self.listArr);
 				
-	// 			}, function() {
-	// 				//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-	// 				self.mescroll.endErr();
-	// 			});
-	// 			function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-	// 				setTimeout(function () {
-	// 					var data=self.list;
-	// 					var listData=[];//模拟分页数据
-	// 					console.log(pageNum,pageSize);//1,10
-	// 					for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-	// 						if(i==data.length) break;
-	// 						listData.push(data[i]);
-	// 					}
-	// 					successCallback&&successCallback(listData);//成功回调
+				}, function() {
+					//联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+					self.mescroll.endErr();
+				});
+				function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
+					setTimeout(function () {
+						var data=self.list;
+						var listData=[];//模拟分页数据
+						for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
+							if(i==data.length) break;
+							listData.push(data[i]);
+						}
+						successCallback&&successCallback(listData);//成功回调
 						
-	// 				},500)
-	// 			}
+					},500)
+				}
 				
 				
-	// 		},
-	// 		downCallback(){
-	// 			var self = this;
-	// 			getListDataFromNet(1, 10, function(data){
-	// 				//联网成功的回调,隐藏下拉刷新的状态
-	// 				self.mescroll.endSuccess();
-	// 				//设置列表数据
-	// 				self.doneList = data;
-	// 			}, function(){
-	// 				//联网失败的回调,隐藏下拉刷新的状态
-	//                 seif.mescroll.endErr();
-	// 			});
-	// 			function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback){
-	// 				setTimeout(function () {
-	// 					var data=self.list;
-	// 					console.log(data);
-	// 					console.log(pageNum,pageSize);
-	// 					var listData=[];//模拟分页数据
-	// 					for (var i = (pageNum-1)*pageSize; i < pageNum*pageSize; i++) {
-	// 						if(i==data.length) break;
-	// 						listData.push(data[i]);
-	// 					}
-	// 					console.log(listData);
-						
-	// 						successCallback&&successCallback(listData);//成功回调
-						
-						
-						
-	// 				},500)
-	// 			}
-	// 		}
-    // 	},
-	// 	mounted(){ 	
-	// 		var self = this;
-	// 		self.mescroll = new MeScroll("td",{
-	// 			up:{
-	// 				callback:self.upCallback,
-	// 				isBounce:false,
-	// 				page:{
-	// 					num:0,
-	// 					size:10
-	// 				}										
-	// 			},
-	// 			down:{
-	// 				use:true,
-	// 				callback:self.downCallback
-	// 			}
+			}
+    	},
+		mounted(){ 	
+			var self = this;
+			self.mescroll = new MeScroll("td",{
+				up:{
+					callback:self.upCallback,
+					isBounce:false										
+				},
+				down:{
+					use:false
+				}
 
-	// 		})
-	// 	},
-	// 	created(){
-	// 		var token = localStorage.getItem("token");
-			
-	// 		getTask(token).then((res)=>{
-	// 			console.log(res);
-	// 			this.list = res.data.tableContent;
-	// 			this.$event.$emit("num",res.data.tableContent.length);
+			})
+		},
+		created(){
+			var token = localStorage.getItem("token");
+			getTask(token).then((res)=>{
+				console.log(res);
+				this.list = res.data.tableContent;
+				this.$event.$emit("num",res.data.tableContent.length);
 				
-	// 		})
+			})
 			
 			
-	// 	}
+		}
 			
-    // }
+    }
 </script>
 
 <style>
