@@ -4,6 +4,23 @@
     <div id="finish_detail">
 		<div id="taskDetail" class="mescroll">
 			<div class='wrapper'>
+				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.transCode">
+					<cell title="需求编码" :value="detailInfo.requireName" value-align="left" ></cell>
+					<!-- <cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
+					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
+					<cell title="需求名称" :value="detailInfo.requirement.requireName" value-align="left" v-if="detailInfo.baseinfo.requireName"></cell>
+					<cell title="优先级" :value="detailInfo.requirement.level.value" value-align="left" v-if="detailInfo.requirement.level.value"></cell>
+					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
+					<cell title="预计交付时间" :value="detailInfo.requirement.etc" value-align="left" v-if="detailInfo.requirement.etc"></cell>
+					<cell title="用户故事" :value="detailInfo.requirement.userStory" value-align="left" v-if="detailInfo.requirement.userStory"></cell>
+					<cell 
+						title="工作流"
+						is-link
+						:border-intent="false"
+						:arrow-direction="show ? 'up' : 'down'"
+						@click.native="show = !show"></cell> -->
+							
+				</group>
 				<div class='detail' >
 					<p class="name">{{detailInfo.requireName}}</p>
 					<p class="status1 done_status">{{detailInfo.status}}</p>
@@ -56,12 +73,19 @@
 
 <script>
 import { getListTask} from '../../service/service.js'
+import { Group, Cell,XDialog,Icon } from 'vux'
 export default{
 	data(){
 		return{
 			infoList:[],
 			detailInfo:{}
 		}
+	},
+	components: {
+		Group,
+		Cell,
+		XDialog,
+		Icon
 	},
 	created(){
 		this.detailInfo = this.$route.query.info;
