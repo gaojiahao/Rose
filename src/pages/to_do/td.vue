@@ -17,7 +17,7 @@
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
 				<ul class='list'>
-					<li @click="goDetail(tab)" v-for="tab in listArr">
+					<li @click="goDetail(tab)" v-for="(tab,index) in listArr" :key="index">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -31,14 +31,9 @@
 							<span class='do_user'>发起人：{{tab.crtName}}</span>
 						</p>      		
 						<p>							
-							<em class='code'>{{tab.businessKey}}</em>
-							
+							<em class='code'>{{tab.businessKey}}</em>	
 						</p>       		
 					</li>
-					<!-- <li class="no_task" v-if="listArr.length==0">
-						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
-						<p>无任务</p>
-					</li> -->
 				</ul>
 			</div>   
     	</div>
@@ -49,7 +44,7 @@
 </template>
 
 <script>
-	import { getLogin,getTask} from '../../service/service.js'
+	import {getTask} from '../../service/service.js'
 	import { Group, Cell } from 'vux'
 
     export default{
@@ -57,7 +52,6 @@
     		return{
 				show:false,
 				listArr:[],
-				more:"",
 				list:[]
     		}
 		},
