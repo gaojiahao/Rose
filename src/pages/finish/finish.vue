@@ -104,6 +104,7 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 				getDoneTask(token).then((res)=>{
 					//this.list = res.tableContent;
 					this.doneList = res.tableContent;
+					console.log(res);
 				})
 			
 		},
@@ -133,6 +134,9 @@ import { getLogin,getDoneTask } from '../../service/service.js'
 <style>
 #finish .status{
 	background-color:#09BB07 ;
+}
+#finish .wrapper{
+	margin-bottom: 15px;
 }
 
 </style>
