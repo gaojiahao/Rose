@@ -135,9 +135,6 @@ p .do_user{
 	float:left;
 }
 p .status{
-	/* position: absolute;
-	right:40px;
-	top:50px; */
 	line-height: 22px;
 	padding: 0 2px;
 	display: inline-block;
