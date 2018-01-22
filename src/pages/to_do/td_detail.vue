@@ -2,10 +2,18 @@
 <transition enter-active-class="slideInRight"
 		leave-active-class="slideOutRight">
     <div id="td_detail">
-		<div class='detail'>
+		<!-- <div class='detail'>
 			<p class="name">{{detailInfo.requireName}}</p>
 			<p class="status1">{{detailInfo.status}}</p>
-		</div>
+		</div> -->
+		<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.requirement">
+			<cell title="需求编码" :value="detailInfo.transCode" value-align="left" ></cell>
+			<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
+			<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
+			<cell title="需求名称" :value="detailInfo.requirement.requireName" value-align="left" v-if="detailInfo.requirement"></cell>
+			<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
+			<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
+		</group>
 		<ul>
 			<li v-if="detailInfo.requireName">
 				<span>需求名称:</span>
@@ -68,7 +76,8 @@
 </template>
 
 <script>
-import { getListTask} from '../../service/service.js'
+import { getListTask,getDetailInfo} from '../../service/service.js'
+import { Group, Cell} from 'vux'
 export default{
 	data(){
 		return{
@@ -77,6 +86,10 @@ export default{
 			showDialog:false,
 			dialogInfo:"确定同意该请求吗？"
 		}
+	},
+	components: {
+		Group,
+		Cell
 	},
 	methods:{
 		agree(){
@@ -95,11 +108,21 @@ export default{
 	created(){
 		this.detailInfo = this.$route.query.info;
 		let token  = localStorage.getItem("token");
+		let code = this.$route.query.info.businessKey;
+		let time = new Date().getTime();
 		console.log(token);
 		getListTask(this.detailInfo.businessKey,token).then((result)=>{
 			this.infoList = result;
 			
 		})
+		getDetailInfo(time,token,code).then((result)=>{
+			if(result.length>=1){
+				this.detailInfo = JSON.parse(result[0].json_data);
+			}
+			var t = JSON.parse(result[0].json_data);
+			console.log(t);
+		})
+
 	},
 	mounted(){	
 		var self = this;
@@ -131,6 +154,9 @@ export default{
 	z-index:100;	
 	background: #fff;
 }
+.vux-no-group-title,.vux-no-group-title{
+	margin-top:0 !important;
+}
 #td_detail .taskDetail{
 	width:100%;
 	overflow: hidden;
@@ -139,35 +165,6 @@ export default{
 	top:0;
 	bottom:0;
 
-}
-.detail{
-	width:100%;
-	border-bottom: 1px solid #ccc;
-	padding: 15px;
-	font-size:20px;
-	color:#000;
-	font-weight: 700;
-	text-align: center;
-	position: relative;
-}
-.detail .name{
-	display:inline-block;
-	width:200px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.detail .status1{
-	width:50px;
-	line-height: 20px;
-	padding: 2px 0;
-	text-align: center;
-	color:#fff ;
-	background:#10AEFF ;
-	position:absolute;
-	right: 15px;
-	top:18px;
-	font-size:12px;
 }
 #td_detail ul{
 	border-bottom: 1px solid #ccc;
