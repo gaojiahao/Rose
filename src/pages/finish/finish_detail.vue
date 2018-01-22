@@ -4,7 +4,36 @@
     <div id="finish_detail">
 		<div id="taskDetail" class="mescroll">
 			<div class='wrapper'>
-				<div class='detail' >
+				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.baseinfo&&detailInfo.requirement">
+					<cell title="需求编码" :value="detailInfo.transCode" value-align="left" ></cell>
+					<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
+					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
+					<cell title="需求名称" :value="detailInfo.requirement.requireName" value-align="left" v-if="detailInfo.baseinfo.requireName"></cell>
+					<cell title="优先级" :value="detailInfo.requirement.level.value" value-align="left" v-if="detailInfo.requirement.level.value"></cell>
+					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
+					<cell title="预计交付时间" :value="detailInfo.requirement.etc" value-align="left" v-if="detailInfo.requirement.etc"></cell>
+					<cell title="用户故事" :value="detailInfo.requirement.userStory" value-align="left" v-if="detailInfo.requirement.userStory"></cell>
+					<cell 
+						title="工作流"
+						is-link
+						:border-intent="false"
+						:arrow-direction="show ? 'up' : 'down'"
+						@click.native="show = !show"></cell>
+							
+				</group>
+				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="!detailInfo.requirement">
+					<cell title="需求编码" :value="detailInfo.transCode" value-align="left" ></cell>
+					<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
+					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
+					<cell 
+						title="工作流"
+						is-link
+						:border-intent="false"
+						:arrow-direction="show ? 'up' : 'down'"
+						@click.native="show = !show"></cell>
+							
+				</group>
+				<!-- <div class='detail' >
 					<p class="name">{{detailInfo.requireName}}</p>
 					<p class="status1 done_status">{{detailInfo.status}}</p>
 				</div>
@@ -25,11 +54,8 @@
 						<span>优&nbsp;先&nbsp;级:</span>
 						<i>{{detailInfo.level}}</i>
 					</li>
-				</ul>
-				<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.transCode">
-					<cell title="需求编码" :value="detailInfo.requireName" value-align="left" ></cell>
-				</group>
-				<div class='process'>
+				</ul> -->
+				<div class='process' v-if="show">
 					<div class='agree_status'>
 						<div v-for="tab in infoList" class='allInfo'>
 							<div class='info' >
@@ -37,11 +63,15 @@
 								<p>
 									<span>{{tab.userName}}</span>
 									<span>{{tab.nodeName}}</span>
+									
+								</p>
+								<p>
 									<span>{{tab.endTime}}</span>
 								</p>
+								<p v-if="tab.message"><span>审批意见：{{tab.message}}</span></p>
 								<i class=" weui-icon weui-icon-success" v-if="tab.status"></i>
 								<i class=" weui-icon weui-icon-waiting" v-if="!tab.status" style="top:15px;"></i>
-								<em class='taskStatus'>{{tab.status}}</em>
+								
 								
 							</div>
 							<div class='iconfont icon-xia arrow' ></div>
@@ -58,13 +88,14 @@
 </template>
 
 <script>
-import { getListTask} from '../../service/service.js'
+import { getListTask,getDetailInfo} from '../../service/service.js'
 import { Group, Cell,XDialog,Icon } from 'vux'
 export default{
 	data(){
 		return{
 			infoList:[],
-			detailInfo:{}
+			detailInfo:{},
+			show:false,
 		}
 	},
 	components: {
@@ -76,10 +107,19 @@ export default{
 	created(){
 		this.detailInfo = this.$route.query.info;
 		let token  = localStorage.getItem("token");
+		let code = this.$route.query.info.businessKey;
+		let time = new Date().getTime();
 		console.log(token);
 		getListTask(this.detailInfo.businessKey,token).then((result)=>{
 			this.infoList = result;
 			
+		})
+		getDetailInfo(time,token,code).then((result)=>{
+			if(result.length>=1){
+				this.detailInfo = JSON.parse(result[0].json_data);
+			}
+			var t = JSON.parse(result[0].json_data);
+			console.log(t);
 		})
 	},
 	mounted(){
@@ -121,37 +161,8 @@ export default{
 	bottom:0;
 
 }
-.detail{
-	width:100%;
-	border-bottom: 1px solid #ccc;
-	padding: 15px;
-	font-size:20px;
-	color:#000;
-	font-weight: 700;
-	text-align: center;
-	position: relative;
-}
-.detail .name{
-	display:inline-block;
-	width:200px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.detail .status1{
-	width:50px;
-	line-height: 20px;
-	padding: 2px 0;
-	text-align: center;
-	color:#fff ;
-	background:#10AEFF ;
-	position:absolute;
-	right: 15px;
-	top:18px;
-	font-size:12px;
-}
-.status1.done_status{
-	background: #09bb07;
+.vux-no-group-title,.vux-no-group-title{
+	margin-top:0 !important;
 }
 #finish_detail ul{
 	border-bottom: 1px solid #ccc;
@@ -196,17 +207,12 @@ ul li i{
 	display: none;
 }
 .info p{
-	display: inline-block;
+	display: block;
 	margin-left:30px;
 }
 .info p span{
-	display: block;
+	display: inline-block;
 	margin-bottom:5px;
-}
-.taskStatus{
-	position: absolute;
-	right:26px;
-	top:13px;
 }
 .process_over{
 	border: 1px solid #ccc;
@@ -216,8 +222,8 @@ ul li i{
 }
 .weui-icon{
 	position:absolute;
-	right:25px;
-	top:35px;
+	right:15px;
+	top:25px;
 }
 .arrow{
 	text-align: center;
