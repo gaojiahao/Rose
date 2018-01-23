@@ -14,7 +14,9 @@ function resolve (dir) {
 let webpackConfig = {
   context: path.resolve(__dirname, '../'),
   entry: {
+    "babel-polyfill":"babel-polyfill",
     app: './src/main.js'
+   
   },
   output: {
     path: config.build.assetsRoot,
