@@ -2,18 +2,18 @@
 <transition enter-active-class="slideInRight"
 		leave-active-class="slideOutRight">
     <div id="td_detail">
-		<!-- <div class='detail'>
+		<div class='detail'>
 			<p class="name">{{detailInfo.requireName}}</p>
 			<p class="status1">{{detailInfo.status}}</p>
-		</div> -->
-		<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.requirement">
+		</div>
+		<!-- <group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="detailInfo.requirement">
 			<cell title="需求编码" :value="detailInfo.transCode" value-align="left" ></cell>
 			<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
 			<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
 			<cell title="需求名称" :value="detailInfo.requirement.requireName" value-align="left" v-if="detailInfo.requirement"></cell>
 			<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
 			<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>
-		</group>
+		</group> -->
 		<ul>
 			<li v-if="detailInfo.requireName">
 				<span>需求名称:</span>
@@ -77,7 +77,7 @@
 
 <script>
 import { getListTask,getDetailInfo} from '../../service/service.js'
-import { Group, Cell} from 'vux'
+// import { Group, Cell} from 'vux'
 export default{
 	data(){
 		return{
@@ -87,10 +87,10 @@ export default{
 			dialogInfo:"确定同意该请求吗？"
 		}
 	},
-	components: {
-		Group,
-		Cell
-	},
+	// components: {
+	// 	Group,
+	// 	Cell
+	// },
 	methods:{
 		agree(){
 			this.showDialog = true;
