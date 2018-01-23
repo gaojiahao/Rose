@@ -46,6 +46,7 @@
     "ora": "^1.2.0",
     "rimraf": "^2.6.0",
     "url-loader": "^0.5.8",
+    "uglifyjs-webpack-plugin": "^1.1.1",
     "yaml-loader": "^0.4.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
