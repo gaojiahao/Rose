@@ -319,13 +319,7 @@ export default{
 			}
 			var t = JSON.parse(result[0].json_data);
 		})
-		getDetailInfo(time,token,"QJ_1801_0023").then((result)=>{
-			if(result.length>=1){
-				this.detailInfo1 = JSON.parse(result[0].json_data);
-			}
-			var t = JSON.parse(result[0].json_data);
-			console.log(t);
-		})
+
 
 	},
 	mounted(){	
