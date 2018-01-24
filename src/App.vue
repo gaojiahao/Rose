@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style>
-	.navbar{
+.navbar{
 	width:100%;
 	height:49px;
 	position: fixed;

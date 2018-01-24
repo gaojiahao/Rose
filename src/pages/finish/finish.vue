@@ -17,7 +17,7 @@
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
 				<ul class='list' id='finishTask' >
-					<li @click="goDetail(tab)" v-for="tab in doneList">
+					<li @click="goDetail(tab.businessKey)" v-for="(tab,index) in doneList" :key="index">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -38,15 +38,11 @@
 							<em class='code'>完成时间：{{tab.endTime}}</em>
 						</p>        		
 					</li>
-					<!-- <li class="no_task" v-if="doneList.length==0">
-						<em class='iconfont icon-wujilu' style="font-size:50px;"></em>
-						<p>无任务</p>
-					</li> -->
 				</ul>
 			</div>   
     	</div>
     	
-			<router-view></router-view>
+		<router-view></router-view>
     	
 		
 	</div>
@@ -65,9 +61,9 @@ import { getLogin,getDoneTask } from '../../service/service.js'
     		}
     	},
     	methods:{
-    		goDetail(tab){
+    		goDetail(param){
 				this.$router.push({path:"/finish/done_detail",query:{
-					info:tab
+					data:param
 				}})
 			}
 		// 	upCallback(page) {

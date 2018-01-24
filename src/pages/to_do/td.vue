@@ -17,7 +17,7 @@
 					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
 				</div>
 				<ul class='list'>
-					<li @click="goDetail(tab)" v-for="(tab,index) in listArr" :key="index">
+					<li @click="goDetail(tab.businessKey)" v-for="(tab,index) in listArr" :key="index">
 						<p>
 							<span class='task_name'>{{tab.requireName}}</span>
 							<i class="date">{{tab.startTime.substring(0,10)}}</i>
@@ -54,9 +54,9 @@
     		}
 		},
     	methods:{
-    		goDetail(tab){
+    		goDetail(param){
 					this.$router.push({path:"/to_do/do_detail",query:{
-						info:tab
+						data:param
 					}})
 			}
 	  	},
