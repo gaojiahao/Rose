@@ -208,7 +208,8 @@ export default{
 			show:false,
 			bugshow:false,
 			storyshow:true,
-			show1:false
+			show1:false,
+			show2:false
 		}
 	},
 	components: {

@@ -319,7 +319,7 @@ export default{
 			}
 			var t = JSON.parse(result[0].json_data);
 		})
-
+ 
 
 	},
 	mounted(){	
