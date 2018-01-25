@@ -34,7 +34,7 @@ export default{
 					}
 					else{
 						// 用户主动点击进入页面
-						var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose%2f%23%2fto_do&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
+						var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose%2f%23%2fwelcome&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
 						window.location.href = rr;
 					}	
 					
