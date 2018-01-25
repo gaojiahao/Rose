@@ -6,6 +6,7 @@ import Td_detail from "../pages/to_do/td_detail.vue"
 import Finish_detail from "../pages/finish/finish_detail.vue"
 import VueWechatTitle from 'vue-wechat-title';  
 import Welcome from "../pages/welcome/welcome.vue"
+import Detail from "../pages/detail/detail.vue"
 Vue.use(VueWechatTitle)
 
 Vue.use(Router)
@@ -40,6 +41,10 @@ export default new Router({
 	{ 
 		path:'/welcome', 
 		component:Welcome		 
+	},
+	{
+		path:"/detail",
+		component:Detail
 	},
     { 
 		path:'/',
