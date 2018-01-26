@@ -18,8 +18,8 @@ export default {
   data(){
     return {
         tablist:[
-            {title:'我的待办',path:'/to_do',icon: 'icon-daiban'},
-            {title:'我的已办',path:'/finish',icon:'icon-yiban'},            
+            {title:'我的待办',path:'/Rose/to_do',icon: 'icon-daiban'},
+            {title:'我的已办',path:'/Rose/finish',icon:'icon-yiban'},            
 				],
 				num:"0"
     }
