@@ -55,7 +55,7 @@
 		},
     	methods:{
     		goDetail(param){
-					this.$router.push({path:"/to_do/do_detail",query:{
+					this.$router.push({path:"/Rose/to_do/do_detail",query:{
 						data:param
 					}})
 			}
