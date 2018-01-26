@@ -62,7 +62,7 @@ import { getLogin,getDoneTask } from '../../service/service.js'
     	},
     	methods:{
     		goDetail(param){
-				this.$router.push({path:"/finish/done_detail",query:{
+				this.$router.push({path:"/Rose/finish/done_detail",query:{
 					data:param
 				}})
 			}
