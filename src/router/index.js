@@ -18,8 +18,9 @@ Vue.use(Router)
 //next()
 //})
 export default new Router({
+	mode: 'history',
   routes: [
-    { path:'/to_do',  
+    { path:'/Rose/to_do',  
     	component:To_do ,
     	meta: {title: '我的待办'},
     	children:[
@@ -29,7 +30,7 @@ export default new Router({
     	]
     },
 	{ 
-		path:'/finish',
+		path:'/Rose/finish',
 		component:Finish ,
 		meta: {title: '我的已办'},
 		children:[
@@ -40,14 +41,19 @@ export default new Router({
 	},
 	{ 
 		path:'/welcome', 
-		component:Welcome		 
+		component:Welcome,
+		meta: {title: '加载中'}		 
 	},
 	{
-		path:"/detail",
+		path:"/Rose/detail",
 		component:Detail
 	},
     { 
 		path:'/',
+		redirect:"/welcome"
+	},
+	{
+		path:"*",
 		redirect:"/welcome"
 	}
 		
