@@ -1,7 +1,8 @@
 <template>
  <transition enter-active-class="slideInRight"
 			leave-active-class="slideOutRight"> 
-    <div id="finish_detail"  class="mescroll">
+    <div id="finish_detail">
+		<div id="mescroll" class="mescroll">
 		<div class="wrapper" v-if="detailInfo.baseinfo" >
 			<!-- CSBUG -->
 			<group label-width="4.5em" label-margin-right="2em" label-align="left" v-if="(detailInfo.transCode).indexOf('CSBUG')>=0">
@@ -35,8 +36,9 @@
 				<cell title="需求名称" :value="detailInfo.requirement.requireName" value-align="left"></cell>
 				<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
 				<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>	
-				<cell title="需求维度" :value="detailInfo.requirement.requireDemension.value" value-align="left" v-if="detailInfo.requirement.requireDemension.value"></cell>
-				<cell title="需求维度" :value="detailInfo.requirement.requireDemension" value-align="left" v-if="!detailInfo.requirement.requireDemension.value"></cell>							
+				<cell title="需求维度" :value="detailInfo.requirement.requireDemension.text" value-align="left" v-if="detailInfo.requirement.requireDemension.text"></cell>
+				<cell title="需求维度" :value="detailInfo.requirement.requireDemension" value-align="left" v-if="!detailInfo.requirement.requireDemension.text"></cell>	
+				<cell title="需求维度" :value="detailInfo.requirement.requireDemension" value-align="left" v-if="detailInfo.requirement.requireDemension.text==''"></cell>						
 				<cell title="优先级" :value="detailInfo.requirement.level.value" value-align="left" v-if="detailInfo.requirement.level.value"></cell>
 				<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>				
 				<cell 
@@ -192,6 +194,7 @@
 					
 				</div>
 			</div>			
+		</div>
 		</div>        
 	</div>
  </transition>
@@ -236,13 +239,17 @@ export default{
 	},
 	mounted(){
 		var self = this;
-		self.mescroll = new MeScroll("finish_detail",{
+		self.mescroll = new MeScroll("mescroll",{
 			up:{
 				isBounce:false,
-				use:false
+				use:false,
+				auto:false
+
 			},
 			down:{
-				use:false
+				use:false,
+				auto:false,
+				isLock:false
 			}
 		})
 			
@@ -258,11 +265,15 @@ export default{
 <style>
 #finish_detail{
 	width:100%;
+	height: 100%;
 	position:absolute;
 	left:0;
 	top:0;
-	bottom: 0;
 	z-index:100;	
+	background: #fff;
+}
+#mescroll .wrapper{
+	padding-bottom: 15px;
 	background: #fff;
 }
 .vux-no-group-title,.vux-no-group-title{
@@ -279,6 +290,7 @@ text-align: left !important;
 }
 #finish_detail .process{
 	width:100%;
+	background: #fff;
 	
 }
 .process .agree_status{	
