@@ -7,7 +7,7 @@
 	    <router-link  v-for="(tab,index) in tablist" :to="tab.path" :key="index">
 	    	<span class="iconfont" :class="tab.icon"></span>
 	      <p>{{tab.title}}</p>
-	      <span class="weui-badge" style="position: absolute;top: 0;right:40%;">{{num}}</span>
+	      <span class="weui-badge" style="position: absolute;top: 0;right:40%;" v-if="num>0">{{num}}</span>
 	    </router-link>	
 	  </nav>
   </div>
@@ -88,11 +88,10 @@ export default {
 	
 }
 .slideInRight{
-	animation-duration: 300ms;
-	transition-delay: 0.5s;
+	animation-duration: 600ms;
 }
 .slideOutRight{
-	animation-duration: 300ms;
+	animation-duration: 600ms;
 }
 .weui-search-bar:before{
 		border-top:none;
@@ -111,7 +110,7 @@ li.no_task{
 	border:none;
 	margin-top:30px;
 }
-li p{
+li>p{
 	width:100%;
 	height: 22px;
 	line-height: 22px;
