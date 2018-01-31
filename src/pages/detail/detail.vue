@@ -1,7 +1,7 @@
 <template>
 <!-- <transition enter-active-class="slideInRight"
 		leave-active-class="slideOutRight"> -->
-		
+<transition name="slide-fade">	
     <div id="td_detail" >
 		<div id="mescroll" class='mescroll'>
 			<div class='wrapper' v-if="detailInfo.baseinfo">
@@ -16,7 +16,7 @@
 					<cell title="严重程度" :value="detailInfo.baseinfoExt.varchar4.value" value-align="left"></cell>
 					<cell title="优先级" :value="detailInfo.requirement.level.value" value-align="left" v-if="detailInfo.requirement.level.value"></cell>
 					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>				
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="!detailInfo.requirement.etc"></datetime>
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>
 					<cell 
 						title="BUG重现步骤"
 						is-link
@@ -61,8 +61,8 @@
 					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>	
 					<cell title="需求维度" :value="detailInfo.requirement.requireDemension.value" value-align="left" ></cell>							
 					<cell title="优先级" :value="detailInfo.requirement.level.value" value-align="left" v-if="detailInfo.requirement.level.value"></cell>
-					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.value"></cell>				
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>			
+					<cell title="优先级" :value="detailInfo.requirement.level" value-align="left" v-if="!detailInfo.requirement.level.selection"></cell>				
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>			
 					<cell 
 						title="用户故事"
 						is-link
@@ -107,7 +107,7 @@
 					<cell title="实现方式" :value="detailInfo.requirementProject.provideType.value" value-align="left" v-if="detailInfo.requirementProject.provideType.value"></cell>
 					<cell title="优先级" :value="detailInfo.requirementProject.level.value" value-align="left" v-if="detailInfo.requirementProject.level.value"></cell>
 					<cell title="优先级" :value="detailInfo.requirementProject.level" value-align="left" v-if="!detailInfo.requirementProject.level.selection"></cell>
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>				
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>				
 					<cell 
 						title="用户故事"
 						is-link
@@ -141,7 +141,7 @@
 					<cell title="前后端" :value="detailInfo.baseinfoExt.varchar3.value" value-align="left" ></cell>	
 					<cell title="预计发布时间" :value="detailInfo.baseinfoExt.datetime1" value-align="left" ></cell>
 					<cell title="预计发布说明" :value="detailInfo.baseinfoExt.varchar1" value-align="left" ></cell>		
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>			
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>			
 					<cell 
 						title="工作流"
 						is-link
@@ -156,7 +156,7 @@
 					<cell title="需求名称" value="请假" value-align="left" ></cell>
 					<cell title="提交人" :value="detailInfo.baseinfo.creatorName" value-align="left" ></cell>
 					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>
 					<cell 
 						title="请假详情"
 						is-link
@@ -209,7 +209,7 @@
 					<cell title="职能经理" :value="detailInfo.baseinfoExt.varchar2.value" value-align="left" ></cell>
 					<cell title="周次" :value="detailInfo.baseinfoExt.varchar3.value" value-align="left" ></cell>
 					<cell title="例会时间" :value="detailInfo.baseinfoExt.varchar4" value-align="left" ></cell>
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>
 					<cell 
 						title="本周关键数据"
 						is-link
@@ -262,7 +262,7 @@
 					<cell title="应用类型" :value="detailInfo.transDetail.var8.value" value-align="left" ></cell>
 					<cell title="应用名称" :value="detailInfo.transDetail.var9" value-align="left" ></cell>
 					<cell title="问题简述" :value="detailInfo.transDetail.var10" value-align="left" ></cell>
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>
 					<cell 
 						title="工作流"
 						is-link
@@ -279,7 +279,7 @@
 					<cell title="创建时间" :value="detailInfo.baseinfo.crtTime" value-align="left" ></cell>
 					<cell title="标题" :value="detailInfo.requirement.requireName" value-align="left" ></cell>
 					<cell title="知识标签" :value="detailInfo.requirement.requireNature.value" value-align="left" ></cell>
-					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left"></datetime>
+					<datetime  format="YYYY-MM-DD HH:mm" @on-change="change" title="预计交付时间" placeholder="请选择" value-align="left" v-if="btnshow"></datetime>
 					<cell 
 						title="如何调坑里"
 						is-link
@@ -312,7 +312,7 @@
 					<cell title="需求类型" :value="detailInfo.requirementJob.requireNature.value" value-align="left" ></cell>
 					<cell title="应用类型" :value="detailInfo.requirementJob.appType.value" value-align="left" ></cell>
 					<cell title="应用名称" :value="detailInfo.requirementJob.appName" value-align="left" ></cell>
-					<cell title="实现方式" :value="detailInfo.requirementJob.provideType.value" value-align="left" ></cell>
+					<cell title="实现方式" :value="detailInfo.requirementJob.provideType.value" value-align="left" v-if="btnshow"></cell>
 					<cell 
 						title="用户故事"
 						is-link
@@ -375,7 +375,7 @@
 				
 			</div>
 		</div>
-		<div class="btn">
+		<div class="btn" v-if="btnshow">
 			<span @click="agree()">同意</span>
 			<span @click="reject()">拒绝</span>
 		</div>
@@ -384,14 +384,14 @@
 			@on-cancel="onCancel"
 			@on-confirm="onConfirm">
 				<group>
-					<x-input title="实际工时:" type="number"></x-input>
-					<x-textarea title="任务备注:"></x-textarea>	
+					<x-input title="实际工时:" type="number" v-model="taskTime"></x-input>
+					<x-textarea title="任务备注:" v-model="remark"></x-textarea>	
 				</group>
 			</confirm>
 		</div>				      
 	</div>
 	
-<!-- </transition> -->
+ </transition>
 </template>
 
 <script>
@@ -402,7 +402,6 @@ export default{
 		return{
 			infoList:[],
 			detailInfo:{},
-			showDialog:false,
 			show:false,
 			show1:false,
 			storyshow:true,
@@ -416,6 +415,9 @@ export default{
 			resolvetshow:false,
 			acceptshow:false,
 			failshow:false,
+			btnshow:true,
+			taskTime:"",
+			remark:"",
 			list:[]
 		}
 	},
@@ -439,10 +441,7 @@ export default{
 			this.confirmshow = true;
 		},
 		reject(){
-			this.showDialog = true;
-		},
-		close(){
-			this.showDialog = false;
+			this.confirmshow = true;
 		},
 		change(value){
 			console.log(value);
@@ -451,19 +450,22 @@ export default{
 			
 		},
 		onConfirm(){
-
+			console.log(this.taskTime);
+			console.log(this.remark);
 		}
 
 
 	},
 	created(){
-		//this.detailInfo = this.$route.query.data;
+		var path = this.$route.path;
+		if(path.indexOf("finish")>0){
+			this.btnshow = false;
+		}
 		let token  = localStorage.getItem("token");
 		let code = this.$route.query.data;
 		let time = new Date().getTime();
 		getListTask(code,token).then((result)=>{
 			this.infoList = result;
-			console.log(result);
 			
 		})
 		getDetailInfo(time,token,code).then((result)=>{
@@ -471,7 +473,6 @@ export default{
 				this.detailInfo = JSON.parse(result[0].json_data);
 			}
 			var t = JSON.parse(result[0].json_data);
-			console.log(t);
 		})
 
 	},
