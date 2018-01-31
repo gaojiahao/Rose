@@ -10,10 +10,14 @@ export function getLogin(code){
 		
 	})
 }
-export function getTask(token){
+export function getTask(token,page){
 	return new Promise((resolve, reject)=>{
 		axios.get("/H_roleplay-si/ds/getMyToDoTask", {headers:{
 			"authorization":token
+			},params:{
+				page:page,
+				start:0,
+				limit:10
 			}
 		})
 		.then((response)=>{
@@ -27,10 +31,14 @@ export function getTask(token){
 		
 	})
 }
-export function getDoneTask(token){
+export function getDoneTask(token,page){
 	return new Promise((resolve, reject)=>{
 		axios.get("/H_roleplay-si/ds/getMyDoneTask", {headers:{
 			"authorization":token
+			},params:{
+				page:page,
+				start:0,
+				limit:10
 			}
 		})
 		.then((response)=>{
