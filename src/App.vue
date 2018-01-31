@@ -34,6 +34,7 @@ export default {
 </script>
 
 <style>
+/*底部tab */
 .navbar{
 	width:100%;
 	height:49px;
@@ -78,6 +79,7 @@ export default {
 .navbar a.router-link-active p{
 	color: #10AEFF;
 }
+/*列表 */
 .page{
 	width:100%;
 	position: absolute;
@@ -87,15 +89,52 @@ export default {
 	height: auto;
 	
 }
+.slide-fade-enter-active{
+	/*transition:all .5s ease*/
+	animation:slideIn 0.5s ;	
+}
+.slide-fade-leave-active{
+/*transition:all .5s ease	*/
+	animation:slideOut 0.5s ;
+}
+@keyframes slideIn {
+  from {
+    transform: translate3d(100%, 0, 0);
+		-webkit-transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+		-webkit-transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes slideOut {
+  from {
+    transform: translate3d(0, 0, 0);
+		-webkit-transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
+		-webkit-transform: translate3d(100%, 0, 0);
+  }
+}
+/*.slide-fade-enter, .slide-fade-leave-to{
+  transform: translateX(100%);
+	-webkit-transform: translateX(100%);
+  opacity: 0;
+}*/
 .slideInRight{
 	animation-duration: 600ms;
 }
 .slideOutRight{
 	animation-duration: 600ms;
 }
-.weui-search-bar:before{
-		border-top:none;
-	}
+.weui-search-bar__label{
+	top:2px !important;
+}
 .list{	
 	width:100%;
 	z-index: 100;
