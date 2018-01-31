@@ -18,20 +18,20 @@ export default{
 		}
 	},
 	components: {
-    Spinner
-  },
+		Spinner
+	},
 	created(){
 		var token = localStorage.getItem("token");
 		var that = this;
 		setTimeout(function(){
-			getTask(token).then((res)=>{
+			getTask(token,"1").then((res)=>{
 				if(res.status == 200){
 					console.log(res.data);
 					that.$router.replace("/Rose/to_do");	
 				}else{
 					console.log("进入了")
 					var url = location.href;	
-					//var url = "https://rfd.roletask.com/Rose/welcome?code=TbF7kfoam1XJcvToqENKhwrtcMiI7zgPSDHt7b1gcmQ&state=1";
+					//var url = "https://rfd.roletask.com/welcome?code=vqZtrTcV3xvbwhs1e_KxFwFzQRvTuBnUNenL3Jj9oqw&state=1";
 					// 判断是否是从推送消息进来	
 					if(url.indexOf('welcome')>0&&url.indexOf("code")>0){				
 						var arr = url.split("?");
@@ -39,34 +39,34 @@ export default{
 						var code = arr1[0].split("=")[1];
 						getLogin(code).then((result)=>{
 							localStorage.setItem("token",result.token);	
-              that.$router.replace("/Rose/to_do");				
+              				that.$router.replace("/Rose/to_do");				
               
 						})	
-          }
-          else if(url.indexOf('detail')>0&&url.indexOf("code")>0){
+					}
+					else if(url.indexOf('detail')>0&&url.indexOf("code")>0){
 						var arr = url.split("?");
-            var arr1 = arr[1].split("&");
-            console.log(arr1);
-          	var code = arr1[1].split("=")[1];
-            var param = arr1[0].split("=")[1];
-            getLogin(code).then((result)=>{
-              localStorage.setItem("token",result.token);	
+						var arr1 = arr[1].split("&");
+						console.log(arr1);
+						var code = arr1[1].split("=")[1];
+						var param = arr1[0].split("=")[1];
+						getLogin(code).then((result)=>{
+						localStorage.setItem("token",result.token);	
 							that.$router.replace({path:"/Rose/detail",query:{
-								  data:param
+									data:param
 							}})
-							
-            })
-           
-          }else{
-           // 用户主动点击进入页面
+										
+						})
+					
+					}else{
+						// 用户主动点击进入页面
 						var rr = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3A%2F%2Frfd.roletask.com%2FRose%2Fwelcome&response_type=code&scope=snsapi_base&agentid=1000017&state=1#wechat_redirect'
 						window.location.href = rr;
-          }  
-        }
-      })
-    },0)
+					}  
+        		}
+      		})
+    	},0)
 		
-  }
+ 	 }
 }
 			
      
