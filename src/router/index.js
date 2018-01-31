@@ -25,7 +25,7 @@ export default new Router({
     	meta: {title: '我的待办'},
     	children:[
 	    	{ path:'do_detail',
-	    	 component:Td_detail
+			component:Detail
 	    	}
     	]
     },
@@ -35,7 +35,7 @@ export default new Router({
 		meta: {title: '我的已办'},
 		children:[
 			{ path:'done_detail',
-				component:Finish_detail
+				component:Detail
 			}
 		]
 	},
@@ -46,6 +46,7 @@ export default new Router({
 	},
 	{
 		path:"/Rose/detail",
+		meta: {title: '我的待办'},
 		component:Detail
 	},
     { 
