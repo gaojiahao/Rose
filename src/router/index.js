@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import To_do from '../pages/to_do/td.vue'
 import Finish from '../pages/finish/finish.vue'
-import Td_detail from "../pages/to_do/td_detail.vue"
-import Finish_detail from "../pages/finish/finish_detail.vue"
+// import Td_detail from "../pages/to_do/td_detail.vue"
+// import Finish_detail from "../pages/finish/finish_detail.vue"
 import VueWechatTitle from 'vue-wechat-title';  
 import Welcome from "../pages/welcome/welcome.vue"
 import Detail from "../pages/detail/detail.vue"
