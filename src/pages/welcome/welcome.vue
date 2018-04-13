@@ -2,6 +2,7 @@
 <div id="welcome">
 	<p class="icon-loading">
 		<spinner type="spiral"></spinner>
+		哈哈
 	</p>
 	
   <router-view></router-view>
