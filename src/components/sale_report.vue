@@ -5,7 +5,8 @@
         <group 
           label-align='left' 
           :title="index>0?'':'请选择对应的产品'" 
-          v-for="( item ,index ) in arr" 
+          v-for="( item ,index ) in arr"
+          :key="index"
           >
           <popup-picker 
             class="each_part"
@@ -73,6 +74,7 @@
         confirm-text="保存"
         cancel-text="不用"
     ></confirm>
+      <router-view></router-view>
   </div>
 </template>
 
@@ -139,7 +141,7 @@ export default {
      */
     goCount(){
       console.log('我要进入合计页面了')
-      this.$router.push({path:'/Rose/count'})
+      this.$router.push({path:'/saleReport/count'})
     },
     letMeTest(){
       let path = this.$router.path;

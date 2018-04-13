@@ -10,6 +10,7 @@
                 :title=item.title 
                 :placeholder=item.ph
                 :data=item.list
+                :key="index"
                 v-model=item.value
                 @on-change="getPickerValue( index , item.value)"
             >
@@ -27,6 +28,7 @@
             >
             确定
         </x-button>
+      <router-view></router-view>
   </div>
 </template>
 
@@ -81,7 +83,7 @@ export default {
 
         },
         goRp(){
-            this.$router.push({path:'/Rose/rp'})
+            this.$router.push({path:'/reportsOp/reports'})
         }
     }
 }

@@ -41,7 +41,7 @@
       </h2>
       
     </div>
-  <router-view></router-view> 
+  <!--<router-view></router-view>-->
  </div>
   
 </template>
@@ -76,21 +76,21 @@ export default {
      */ 
     goSP(){
       console.log('哈哈我点击了这里')
-      this.$router.push({ path:'/Rose/sp' })
+      this.$router.push({ path:'/saleReport' })
     },
 
     /*
      * 个人业绩
      */ 
     goMR(){
-      this.$router.push({path:'/Rose/mr'})
+      this.$router.push({path:'/myRecord'})
     },
 
     /*
      * 查看报表
      */ 
     goRP(){
-      this.$router.push({path:'/Rose/rp_op'})
+      this.$router.push({path:'/reportsOp'})
     }
   }
 }

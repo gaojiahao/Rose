@@ -12,14 +12,15 @@
           <tab-item 
               class="vux-center" 
               :selected="demo2 === item" 
-              v-for="(item, index) in list5" 
-              @click.native="onItemClick(index)" 
+              v-for="(item, index) in list5"
+              :key="index"
+              @click.native="onItemClick(index)"
               >
               {{item}}
           </tab-item>
       </tab>
       <div class="ranking_part">
-        <group id="ranking_group" v-for="( item,index ) in arr1"
+        <group id="ranking_group" v-for="( item,index ) in arr1" :key="index"
 >
           <cell
             :value=item.sales

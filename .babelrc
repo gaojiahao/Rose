@@ -1,7 +1,6 @@
 {
   "presets": [
     "stage-2",
-    "es2015",
     ["env", {
       "modules": false,
       "targets": {
@@ -9,5 +8,5 @@
       }
     }]
   ],
-  "plugins": ["transform-vue-jsx", "transform-runtime"]
+  "plugins": ["transform-runtime"]
 }
