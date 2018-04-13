@@ -54,10 +54,6 @@ app.use(require('connect-history-api-fallback')())
 // serve webpack bundle output
 app.use(devMiddleware)
 
-// app.use('/H_roleplay-si', proxyMiddleware({
-// 	target: 'https://furong.roletask.com',
-// 	changeOrigin: true
-// }));
 // enable hot-reload and state-preserving
 // compilation error display
 app.use(hotMiddleware)
@@ -66,7 +62,7 @@ app.use(hotMiddleware)
 var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))
 
-var uri = 'http://localhost:' + 9090
+var uri = 'http://localhost:' + port
 
 var _resolve
 var readyPromise = new Promise(resolve => {
