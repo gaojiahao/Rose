@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import optionService from '../service/optionService'
+import saleRepotService from '../service/saleRepotService'
 import { Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker} from 'vux'
 export default {
   components:{
@@ -142,7 +142,12 @@ export default {
       this.arr.splice(0,1); //删除新数据
     },
     end(){
-      var jsonData={
+      var data={
+        'isMobile':true,
+        'conn':20000,
+        'list':'trans_form_data',
+        'transCode':'XHXSDD',
+        'jsonData':{
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId": "cb587a98-d933-410b-ae14-0f5e02f3bd92",
           "baseinfoExt": {
@@ -162,7 +167,8 @@ export default {
           }],
           "transCode": "XHXSDD"
           }
-      optionService.subAmount(jsonData)
+      };
+      saleRepotService.subAmount(data)
     },
     /*
      *  进入合计页面 
@@ -178,7 +184,7 @@ export default {
     // this.letMeTest();
   },
   mounted(){
-   // this.end();
+      //this.end();
       this.mescroll = new MeScroll("mescroll",{
         up:{
           isBounce:false,

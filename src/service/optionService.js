@@ -30,13 +30,6 @@ let optionService = {
       url: '/ds/getAPartGroup',
     });
   },
-  //提交产品合计
-  subAmount(data){
-    return $axios.ajax({
-      url: '/ds/saveData?isMobile=true&conn=20000&list=trans_form_data&transCode=XHXSDD',
-      data:data,
-    });
-  }
 }
 
 export default optionService
