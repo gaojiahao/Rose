@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import OP from '@/components/option'
+import option from '@/components/option'
 import Home from '@/components/home'
 import saleReport from '@/components/sale_report'
 import myRecord from '@/components/my_record'
@@ -14,9 +14,9 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/Op',
+      path: '/option',
       name: 'Option',
-      component: OP
+      component: option
     },
     {
       path: '/Rose',
@@ -29,7 +29,7 @@ export default new Router({
       name: 'saleReport',
       component: saleReport,
       children: [
-        {path: 'count', name: 'count', component: count}
+        {path: 'count', name: 'Count', component: count}
       ]
     },
     {
@@ -47,7 +47,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/Op'
+      redirect: '/option'
     }
   ]
 })
