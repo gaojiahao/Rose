@@ -12,7 +12,7 @@
         </tab-item>
     </tab>
     <div class="my_info_part">
-        <divider>A类+项目类产品</divider>
+        <divider>项目类产品</divider>
         <form-preview 
             class="project_part"
             header-label="金额" 
@@ -32,6 +32,13 @@
             :body-items="list3">
         </form-preview>
 
+        <divider>A类产品</divider>
+        <form-preview 
+            class="project_part"
+            header-label="金额" 
+            header-value="¥230000.00" 
+            :body-items="list3">
+        </form-preview>
         <divider>B类产品</divider>
         <form-preview 
             class="project_part"
