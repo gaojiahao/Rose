@@ -16,6 +16,7 @@ let Rxports = {
    * @param return
    */
   ajax: (opts = {}) => {
+    
     return new Promise((resolve, reject) => {
       if (!opts.url) {
         alert('请填写接口地址');
@@ -25,7 +26,7 @@ let Rxports = {
         method: opts.type || 'GET',
         url: opts.url,
         headers: {
-          contentType: opts.contentType || '*/*',
+          'Content-Type': opts.contentType || '*/*',
           Authorization: tokenService.getToken()
         },
         // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
@@ -35,10 +36,11 @@ let Rxports = {
         responseType: opts.dataType || 'json'
       }
       if (opts.type && opts.type.toUpperCase() === 'POST') {
-        params.data = opts.data || {}
+        params.params = opts.data || {}
       } else {
         params.params = opts.data || {}
       }
+
       axios(params).then(function (res) {
         let data = res.data
         if (Number(res.status) === 200) {

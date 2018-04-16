@@ -38,8 +38,10 @@
           ></x-input>
         </group>
 
-        <p class="caution_part" v-if='arr[0].value!=""'>
+        <p class="caution_part" v-if='arr[0].value.length!=0'>
           您还需要添加新的项目？请点击 <span class="plus_tx" @click="createNew">新增</span>
+          <span>或</span>
+          <span class="plus_delect" @click="deleteNew">删除</span>
         </p>
         
         <group>
@@ -139,36 +141,55 @@ export default {
       }); //添加新数据
     },
     deleteNew(){
-      this.arr.splice(0,1); //删除新数据
+      if(this.arr.length==1){
+        this.arr=[
+          {
+            value: [],
+            qty:''
+          }
+        ]
+      }else{
+        this.arr.splice(this.arr.length-1,1); //删除新数据
+      }
+    },
+    //随机ID
+    guid() {
+        function S4() {
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        }
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    },
+    listData(){
+      saleRepotService.saleRepotList();
     },
     end(){
-      var data={
-        'isMobile':true,
-        'conn':20000,
-        'list':'trans_form_data',
-        'transCode':'XHXSDD',
-        'jsonData':{
+      var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
-          "referenceId": "cb587a98-d933-410b-ae14-0f5e02f3bd92",
+          "referenceId":this.guid(),
           "baseinfoExt": {
-            "id":"0b14e3c7-994c-4243-8d95-9fb7ae683033",
+            "id":this.guid(),
             "varchar1": "事业部",
             "varchar2": "部门",
             "varchar3": "省",
             "varchar4": "银行",
             },
           "transDetailUncalc": [{
-            "id": "0b14e3c7-994c-4243-8d95-9fb7ae683033",
-            "transObjCode": "0欧元足球纪念钞-伊朗",
-            "containerCode": "存货类型",
+            "id":this.guid(),
+            "transObjCode": "0欧元足球纪念钞-伊朗",//项目类产品名称
+            "containerCode": "存货类型",//类型
             "qty": 33,
-            "amount": 1089,
+            "amount": 1089,//总金额
             "fgCode": ""
           }],
           "transCode": "XHXSDD"
-          }
-      };
-      saleRepotService.subAmount(data)
+          };
+      saleRepotService.subAmount({
+        'isMobile':true,
+        'conn':20000,
+        'list':'trans_form_data',
+        'transCode':'XHXSDD',
+        jsonData:JSON.stringify(jsonData)
+      })
     },
     /*
      *  进入合计页面 
@@ -184,7 +205,8 @@ export default {
     // this.letMeTest();
   },
   mounted(){
-      //this.end();
+   this.listData();
+   this.end();
       this.mescroll = new MeScroll("mescroll",{
         up:{
           isBounce:false,
@@ -235,5 +257,8 @@ export default {
   left: 0;
   border-radius: 0;
   z-index: 99;
+}
+.plus_delect{
+  color: red;
 }
 </style>
