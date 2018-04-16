@@ -12,8 +12,8 @@
             class="each_part"
             title="项目类产品" 
             placeholder="请选择产品"
-            :data="list0"
-            v-model="value4"
+            :data="list"
+            v-model="item.value"
             :columns="2"
             @on-change="getPickerValue"
             show-name
@@ -23,9 +23,9 @@
           <cell 
             class="each_part"
             title="单价"
-            :value="value4[1]"
+            :value="item.value[1]"
             value-align="right" 
-            v-if="value4.length>0"
+            v-if="item.value.length>0"
           ></cell>
 
           <x-input 
@@ -33,12 +33,12 @@
             type="number" 
             text-align="right" 
             placeholder="请输入数量"
-            v-if="value4.length>0"
+            v-if="item.value.length>0"
             v-model="pro_num"
           ></x-input>
         </group>
 
-        <p class="caution_part" v-if='value4.length>0'>
+        <p class="caution_part" v-if='arr[0].value!=""'>
           您还需要添加新的项目？请点击 <span class="plus_tx" @click="createNew">新增</span>
         </p>
         
@@ -92,10 +92,8 @@ export default {
   },
   data () {
     return {
-      arr:['1'],//通过数据修改来增加节点
-      value4:[],
       show:false,
-      list0: [
+      list: [
       {
         name: '黄金999',
         value: '黄金999',
@@ -110,27 +108,33 @@ export default {
         parent: '黄金999'
       }, {
         name: '¥1000',
-        value: '足金888',
+        value: '￥888',
         parent: '足金888'
-      }],      
+      }],
+      arr:[
+        {
+          value:[]
+        }
+      ],//通过数据修改来增加节点      
       showNumber:false,
       showNewDiv:false,
       mescroll: null,
       pro_num:'',
-      status:[1,2,3,4,5]
+      status:[1,2,3,4,5],
     }
   },
   methods:{
     //监听选择栏
     getPickerValue(val){
-      console.log(this.value4[1]);
-      // console.log($refs.picker3);
+      console.log(val)
     },
     onChange(val){
       this.pro_num = '' //修改样式之后 数量输入框为空
     },
     createNew(){
-      this.arr.push(1); //添加新数据
+      this.arr.push({
+        value: []
+      }); //添加新数据
     },
     deleteNew(){
       this.arr.splice(0,1); //删除新数据
@@ -140,20 +144,16 @@ export default {
      *  进入合计页面 
      */
     goCount(){
-      console.log('我要进入合计页面了')
       this.$router.push({path:'/saleReport/count'})
     },
     letMeTest(){
       let path = this.$router.path;
-      console.log(path);
     }
   },
   created(){
     // this.letMeTest();
-    console.log('当前页面是销售预报模块')
   },
   mounted(){
-      
       this.mescroll = new MeScroll("mescroll",{
         up:{
           isBounce:false,
