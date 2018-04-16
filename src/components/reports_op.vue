@@ -1,9 +1,9 @@
 <template>
-  <div class="pages">
-    <h1 class="cp_title">{{value1[0]?value1[0]+'地区':'报表'}}</h1>
+  <div class="filter-container">
+    <h1 class="cp_title">{{region[0]?region[0]+'地区':'报表'}}</h1>
     <div class="select_part">
       <group class="each_group">
-        <popup-picker v-for="( item, index ) in arr1" class="each_picker" :title=item.title :placeholder=item.ph
+        <popup-picker v-for="( item, index ) in pickerList" class="each_picker" :title=item.title :placeholder=item.ph
                       :data=item.list :key="index" v-model=item.value @on-change="getPickerValue( index , item.value)">
         </popup-picker>
       </group>
@@ -11,13 +11,14 @@
         您还需要添加新的筛选条件？请点击 <span class="plus_tx" @click="createNew">新增</span>
       </p>
     </div>
-    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp" v-show='value1[0]'>确定
+    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp" v-show='region[0]'>确定
     </x-button>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+  import optionService from '../service/optionService'
   import {Group, XButton, PopupPicker} from 'vux'
 
   export default {
@@ -28,54 +29,103 @@
     },
     data() {
       return {
-        value1: [],
+        region: [],
         whichIndex: '',
         showMore: false,
-        arr1: [
-          {
-            title: '所在地区',
-            ph: '请选择地区',
-            value: [],
-            list: [['', '海南', '广东', '广西', '山西', '福建', '北京', '加州旅馆']]
-          }
-        ],
-        list1: [['', '海南', '广东', '广西', '山西', '福建', '北京', '加州旅馆']],
+        pickerList: [],
       }
     },
     methods: {
+      // TODO 获取地区
+      getRegion(params = {}) {
+        optionService.getRegion().then(data => {
+          let region = data.reduce((arr, item) => {
+            arr.push(item.name)
+            return arr
+          }, [''])
+          this.pickerList.push({
+            title: '所在地区',
+            ph: '请选择地区',
+            value: [],
+            list: [region]
+          })
+        })
+      },
+      // TODO 获取银行
+      getBank(params = {}) {
+        optionService.getBank().then(data => {
+          let bank = data.tableContent.reduce((arr, item) => {
+            arr.push(item.groupName)
+            return arr
+          }, [''])
+          this.pickerList.push({
+            title: '所在部门',
+            ph: '请选择部门',
+            value: [],
+            list: [bank]
+          })
+        })
+      },
+      // TODO 获取部门
+      getDept(params = {}) {
+        optionService.getDept().then(data => {
+          let dept = data.tableContent.reduce((arr, item) => {
+            arr.push(item.groupName)
+            return arr
+          }, [''])
+          this.pickerList.push({
+            title: '所在银行',
+            ph: '请选择地区',
+            value: [],
+            list: [dept]
+          })
+        })
+      },
       getPickerValue(index, value) {
+        console.log(index)
+        console.log(value)
         this.showMore = true;
         this.whichIndex = index
         if (index === 0) {
-          this.value1 = value;
-        }
-        else if (index === 2) {
+          this.region = value;
+        } else if (index === 2) {
           this.showMore = false;
         }
       },
       createNew() {
         // 新增
         let index = this.whichIndex;
-        let newOp1 = {title: '所在部门', ph: '请选择部门', value: [], list: [['', '事业部1', '事业部2', '事业部3']]}
-        let newOp2 = {title: '所在银行', ph: '请选择地区', value: [], list: [['', '中国银行', '中国工商银行', '招商银行', '中国民生银行']]}
         if (index === 0) {
-          this.arr1.push(newOp1);
+          // this.pickerList.push(newOp1);
+          this.getBank()
+          this.showMore = false;
+        } else if (index === 1) {
+          // this.pickerList.push(newOp2)
+          this.getDept()
           this.showMore = false;
         }
-        else if (index === 1) {
-          this.arr1.push(newOp2)
-          this.showMore = false;
-        }
-
       },
       goRp() {
-        this.$router.push({path: '/reportsOp/reports'})
-      }
+        let filterParams = {}
+        // this.$router.push({
+        //   path: '/reportsOp/reports'
+        // })
+        this.pickerList.forEach(item => {
+          console.log(item)
+        })
+      },
+    },
+    created() {
+      this.getRegion()
     }
   }
 </script>
 
 <style lang="scss">
+  .filter-container {
+
+  }
+
   .cp_title {
     width: 100%;
     height: 150px;

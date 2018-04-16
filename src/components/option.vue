@@ -6,12 +6,14 @@
         <popup-picker class="each_picker" title="所在地区" placeholder="请选择地区" :data="regionList" v-model="region"
                       @on-change="regionChange">
         </popup-picker>
-        <popup-picker title="所在银行" placeholder="请选择银行" :data="bankList" v-model="bank" v-if="showMore"
+        <popup-picker title="所在银行" placeholder="请选择银行" :data="bankList" v-model="bank" v-show="showMore"
                       @on-change="bankChange">
         </popup-picker>
-        <popup-picker title="所在部门" placeholder="请选择部门" :data="deptList" v-model="dept" @on-change='deptChange'
-                      v-if="showMore">
+        <popup-picker title="所属区域" placeholder="请选择区域" :data="deptList" v-model="dept" @on-change="deptChange"
+                      v-show="showMore">
         </popup-picker>
+        <popup-picker title="所属队长" placeholder="请选择队长" :data="captainList" v-model="captain" @on-change="captionChange"
+                      v-show="showMore"></popup-picker>
       </group>
     </div>
     <x-button class="each_select" :gradients="['#B99763', '#E7D0A2']" @click.native="goHome" v-if="showButton">确定
@@ -35,9 +37,11 @@
         region: [], // 地区
         bank: [], // 银行
         dept: [], // 部门
+        captain: [],
         regionList: [['']],
         bankList: [['']],
         deptList: [['']],
+        captainList: [['']],
         showMore: false,
         showButton: false
       }
@@ -56,20 +60,19 @@
       // TODO 部门切换
       deptChange(val) {
       },
+      // TODO 队长切换
+      captionChange() {
+      },
       goHome() {
         let prov = this.region[0] || '';
         let bank = this.bank[0] || '';
         let dept = this.dept[0] || '';
-        let tips = '';
-        if (!prov) {
-          tips = '请选择地区'
-        }
-        if (!bank) {
-          tips = '请选择银行'
-        }
-        if (!dept) {
-          tips = '请选择部门'
-        }
+        let captain = this.captain[0] || '';
+        let tips = !prov ? '请选择地区' :
+          (!bank ? '请选择银行' :
+            (!dept ? '请选择区域' :
+              (!captain ? '请选择队长' : '')));
+
         if (tips) {
           this.$vux.alert.show({
             content: tips
@@ -88,25 +91,44 @@
       },
       // TODO 获取地区
       getRegion(params = {}) {
-        optionService.getRegion()
-        this.regionList = [['', '海南', '广东', '广西', '山西', '福建', '北京', '加州旅馆']]
+        optionService.getRegion().then(data => {
+          let region = data.reduce((arr, item) => {
+            arr.push(item.name)
+            return arr
+          }, [''])
+          this.$set(this.regionList, '0', region)
+        })
       },
       // TODO 获取银行
       getBank(params = {}) {
-        optionService.getBank().then(res => {
-          this.bankList[0] = res.tableContent.map(item => {
-            return item.groupName
-          })
+        optionService.getBank().then(data => {
+          let bank = data.tableContent.reduce((arr, item) => {
+            arr.push(item.groupName)
+            return arr
+          }, [''])
+          this.$set(this.bankList, '0', bank)
         })
       },
       // TODO 获取部门
-      getDept(params = {}) {
-        optionService.getDept().then(res => {
-          this.deptList[0] = res.tableContent.map(item => {
-            return item.groupName
-          })
+      getDept() {
+        optionService.getDept().then(data => {
+          let dept = data.tableContent.reduce((arr, item) => {
+            arr.push(item.groupName)
+            return arr
+          }, [''])
+          this.$set(this.deptList, '0', dept)
         })
       },
+      // TODO 获取队长
+      getCaptain() {
+        optionService.getCaptain().then(data => {
+          let captain = data.tableContent.reduce((arr, item) => {
+            arr.push(item.nickname)
+            return arr
+          }, [''])
+          this.$set(this.captainList, '0', captain)
+        })
+      }
     },
     created() {
       // this.$vux.loading.show()
@@ -114,7 +136,9 @@
       // this.$router.replace({path: '/Rose'})
       this.getDept()
       this.getBank()
+      this.getCaptain()
       // tokenService.pcLogin()
+      this.captainList = [['', '队长']]
     }
   }
 </script>

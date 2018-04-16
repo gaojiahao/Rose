@@ -36,8 +36,8 @@ let tokenService = {
       contentType: 'application/json',
       data: {
         loginModel: 1,
-        password: '123456',
-        userCode: 'rfd133'
+        password: 'rfd120',
+        userCode: 'rfd120'
       }
     }).then((res) => {
       let data = res.data
