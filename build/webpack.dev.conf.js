@@ -7,6 +7,7 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+const opn = require('opn')
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -72,6 +73,7 @@ module.exports = new Promise((resolve, reject) => {
         : undefined
       }))
 
+      opn('http://localhost:8080')
       resolve(devWebpackConfig)
     }
   })

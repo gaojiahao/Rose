@@ -1,32 +1,17 @@
 <template>
   <div class="pages">
     <h1 class="cp_title">{{value1[0]?value1[0]+'地区':'报表'}}</h1>
-
     <div class="select_part">
       <group class="each_group">
-        <popup-picker
-          v-for="( item, index ) in arr1"
-          class="each_picker"
-          :title=item.title
-          :placeholder=item.ph
-          :data=item.list
-          :key="index"
-          v-model=item.value
-          @on-change="getPickerValue( index , item.value)"
-        >
+        <popup-picker v-for="( item, index ) in arr1" class="each_picker" :title=item.title :placeholder=item.ph
+                      :data=item.list :key="index" v-model=item.value @on-change="getPickerValue( index , item.value)">
         </popup-picker>
       </group>
-      <p class="caution_part" v-if='showMore'>
+      <p class="caution_part" v-show='showMore'>
         您还需要添加新的筛选条件？请点击 <span class="plus_tx" @click="createNew">新增</span>
       </p>
     </div>
-    <x-button
-      class="count_button"
-      :gradients="['#B99763', '#E7D0A2']"
-      @click.native="goRp"
-      v-if='value1[0]'
-    >
-      确定
+    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp" v-show='value1[0]'>确定
     </x-button>
     <router-view></router-view>
   </div>
