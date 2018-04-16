@@ -16,18 +16,30 @@ let optionService = {
   getRegion() {
     return $axios.ajax({
       url: '/base/dict/getListByValue',
+      data: {
+        value: 'ACCOUNTPROVINCE'
+      }
     });
   },
   // TODO 获取银行列表
-  getBank(data = {}) {
+  getBank() {
     return $axios.ajax({
       url: '/ds/getGroupBU',
     });
   },
   // TODO 获取部门
-  getDept(data = {}) {
+  getDept() {
     return $axios.ajax({
       url: '/ds/getAPartGroup',
+    });
+  },
+  // TODO 获取队长
+  getCaptain(data = {}){
+    return $axios.ajax({
+      url: '/ds/getRoleUser2Oneself',
+      data: {
+        roleId: '86'
+      }
     });
   }
 }
