@@ -34,12 +34,19 @@ let optionService = {
     });
   },
   // TODO 获取队长
-  getCaptain(data = {}){
+  getCaptain(data = {}) {
     return $axios.ajax({
       url: '/ds/getRoleUser2Oneself',
       data: {
         roleId: '86'
       }
+    })
+  },
+  //提交产品合计
+  subAmount(data) {
+    return $axios.ajax({
+      url: '/ds/saveData?isMobile=true&conn=20000&list=trans_form_data&transCode=XHXSDD',
+      data: data,
     });
   }
 }
