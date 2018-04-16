@@ -34,7 +34,7 @@
             text-align="right" 
             placeholder="请输入数量"
             v-if="item.value.length>0"
-            v-model="pro_num"
+            v-model.number="item.qty"
           ></x-input>
         </group>
 
@@ -45,14 +45,14 @@
         <group>
           <x-input 
           title="A类产品" 
-          type="number" 
+         v-model.number="Aclass"
           text-align="right" 
           placeholder="请输入金额"
           ></x-input>
 
           <x-input 
           title="B类产品" 
-          type="number" 
+          v-model.number="Bclass" 
           text-align="right" 
           placeholder="请输入金额"
           ></x-input>
@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import optionService from '../service/optionService'
 import { Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker} from 'vux'
 export default {
   components:{
@@ -105,41 +106,64 @@ export default {
       }, {
         name: '¥999',
         value: '¥999',
-        parent: '黄金999'
+        parent: '黄金999',
       }, {
         name: '¥1000',
         value: '￥888',
-        parent: '足金888'
+        parent: '足金888',
       }],
       arr:[
         {
-          value:[]
+          value:[],
+          qty:''
         }
-      ],//通过数据修改来增加节点      
+      ],
+      Aclass:'',
+      Bclass:'',     
       showNumber:false,
       showNewDiv:false,
       mescroll: null,
-      pro_num:'',
-      status:[1,2,3,4,5],
     }
   },
   methods:{
     //监听选择栏
     getPickerValue(val){
-      console.log(val)
+      
     },
     onChange(val){
-      this.pro_num = '' //修改样式之后 数量输入框为空
     },
     createNew(){
       this.arr.push({
-        value: []
+        value: [],
+        qty:''
       }); //添加新数据
     },
     deleteNew(){
       this.arr.splice(0,1); //删除新数据
     },
-
+    end(){
+      var jsonData={
+          "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
+          "referenceId": "cb587a98-d933-410b-ae14-0f5e02f3bd92",
+          "baseinfoExt": {
+            "id":"0b14e3c7-994c-4243-8d95-9fb7ae683033",
+            "varchar1": "事业部",
+            "varchar2": "部门",
+            "varchar3": "省",
+            "varchar4": "银行",
+            },
+          "transDetailUncalc": [{
+            "id": "0b14e3c7-994c-4243-8d95-9fb7ae683033",
+            "transObjCode": "0欧元足球纪念钞-伊朗",
+            "containerCode": "存货类型",
+            "qty": 33,
+            "amount": 1089,
+            "fgCode": ""
+          }],
+          "transCode": "XHXSDD"
+          }
+      optionService.subAmount(jsonData)
+    },
     /*
      *  进入合计页面 
      */
@@ -154,6 +178,7 @@ export default {
     // this.letMeTest();
   },
   mounted(){
+   // this.end();
       this.mescroll = new MeScroll("mescroll",{
         up:{
           isBounce:false,
