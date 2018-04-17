@@ -4,15 +4,26 @@
       <calendar @on-change="onChange" v-model="filterDate" title="时间段选择" popup-header-title="请选择时间段"
                 disable-future></calendar>
     </group>
-    <grid>
+    <div class="select-part">
+      <div class="each-select vux-1px-r ">
+        <span class="each-select-name">今日</span><i class="iconfont icon-xiaosanjiaodown"></i></div>
+      <div class="each-select vux-1px-r">
+        <span class="each-select-name">项目类产品<i class="iconfont icon-xiaosanjiaodown"></i></span>
+      </div>
+      <div class="each-select ">
+        <span class="each-select-name is-selected">A类产品</span>  
+      </div>
+    </div>
+    <!-- <grid>
       <grid-item label="项目类产品"></grid-item>
       <grid-item label="A类产品"></grid-item>
-    </grid>
-    <tab :line-width=2 active-color='#B99763' v-model="activeIndex" v-show="showTab">
+    </grid> -->
+    <!-- <tab :line-width=2 active-color='#B99763' v-model="activeIndex" v-show="showTab">
       <tab-item class="vux-center" :selected="curTab === item.value" v-for="(item, index) in tabList" :key="index"
                 @click.native="onItemClick(item)">{{item.name}}
       </tab-item>
-    </tab>
+    </tab> -->
+    
     <div class="rank-container">
       <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
         <cell :value=item.sales :title=item.name is-link :border-intent="false"
@@ -27,7 +38,7 @@
 </template>
 
 <script>
-  import {Tab, Cell, Group, TabItem, Calendar, CellFormPreview, Grid, GridItem, PopupPicker} from 'vux'
+  import {Tab, Cell, Group, TabItem, Calendar, CellFormPreview, Grid, GridItem, PopupPicker, Selector} from 'vux'
   import reportService from '../service/reportService'
 
   export default {
@@ -40,7 +51,8 @@
       CellFormPreview,
       Grid,
       GridItem,
-      PopupPicker
+      PopupPicker,
+      Selector
     },
     data() {
       return {
@@ -148,6 +160,28 @@
       text-align: center;
       background: -webkit-linear-gradient(left top, rgba(36, 104, 236, 1), rgba(46, 213, 251, 1));
     }
+    // 顶部栏
+    .select-part {
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      display: flex;
+      background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
+    }
+      .each-select {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        color: #fff;
+        font-weight: 200;
+      }
+      .each-select-name {
+        padding: 6px 0;
+      }
+      // 选中时状态
+      .is-selected {
+        border-bottom: 2px solid #fff;
+      }
     .rank-container {
       height: calc(100% - 44px);
       overflow: auto;
