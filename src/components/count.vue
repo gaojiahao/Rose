@@ -2,7 +2,7 @@
   <div class="pages">
 
     <group >
-      <cell class="count_part" title="最终合计" value="¥800000"></cell>
+      <cell class="count_part" title="最终合计" :value="total4"></cell>
       <cell-form-preview class="count_dt_part" :list="list4"></cell-form-preview>
     </group>
 
@@ -10,35 +10,23 @@
       <form-preview 
         class="project_part"
         header-label="金额" 
-        header-value="¥330000.00" 
+        :header-value="total1" 
         :body-items="list1">
       </form-preview>
-      <form-preview 
-        class="project_part"
-        header-label="金额" 
-        header-value="¥240000.00" 
-        :body-items="list2">
-      </form-preview>
-      <form-preview 
-        class="project_part"
-        header-label="金额" 
-        header-value="¥230000.00" 
-        :body-items="list3">
-      </form-preview>
 
-<load-more tip="A类产品" :show-loading='false'></load-more>
+    <load-more tip="A类产品" :show-loading='false'></load-more>
       <form-preview 
         class="project_part"
         header-label="金额" 
-        header-value="¥230000.00" 
-        :body-items="list3">
+        :header-value="total2" 
+        :body-items="list2">
       </form-preview>
 
     <load-more tip="B类产品" :show-loading='false'></load-more>
       <form-preview 
         class="project_part"
         header-label="金额" 
-        header-value="¥230000.00" 
+        :header-value="total3" 
         :body-items="list3">
       </form-preview>
 
@@ -50,19 +38,16 @@
         >
         确定提交
     </x-button>
-    <confirm 
-        v-model="show"
-        title="温馨提示" 
-        content="请确认提交数据是否正确？"
-        confirm-text="我已确认"
-        cancel-text="再去看看"
-    ></confirm>
+    <confirm></confirm>
   </div>
 </template>
 
 <script>
-import { Cell , Group, Confirm , Divider,  XButton, LoadMore, FormPreview, CellFormPreview  } from 'vux'
+import saleRepotService from '../service/saleRepotService'
+import { Alert, Cell , Group, Confirm ,  Divider,  XButton, LoadMore, FormPreview, CellFormPreview,querystring  } from 'vux'
+
 export default {
+    props:['childInfo'],
     components:{
         Cell,
         Group,
@@ -71,32 +56,18 @@ export default {
         Confirm,
         LoadMore,
         FormPreview,
-        CellFormPreview
+        CellFormPreview,
     },
     data(){
         return{
-            list1: 
-                [ 
-                    { label: '产品',value: '足金999' }, 
-                    { label: '数量',value: '10000件' }
-                ],
-            list2: 
-                [ 
-                    { label: '产品',value: '千金888' },
-                    { label: '数量',value: '10888件' }, 
-                ],
-            list3: 
-                [ 
-                    { label: '产品',value: '千足金666' }, 
-                    { label: '数量',value: '10666件' } 
-                ],
-            list4: 
-                [
-                    { label: '足金999',value: '20000 件/套' }, 
-                    { label: '千金888',value: '12312 件/套' }, 
-                    { label: '千足金666',value: '4232 件/套' }
-                ],
-            show:false    
+            list1:[],
+            list2:[],
+            list3:[],
+            list4:[],
+            total1:'',
+            total2:'',
+            total3:'',
+            total4:''
         }
     },
     methods:{
@@ -104,8 +75,80 @@ export default {
          * 提交数据
          */ 
         sendOrder(){
-            this.show = true;
+            var that=this;
+            console.log(that.childInfo)
+             this.$vux.confirm.show({
+                title: '温馨提示',
+                content: '请确认提交数据是否正确？',
+                confirmText:"我已确认",
+                cancelText:"再去看看",
+                onShow () {
+                console.log('plugin show')
+                },
+                onHide () {
+                console.log('plugin hide')
+                },
+                onCancel () {
+                console.log('plugin cancel')
+                },
+                onConfirm () {
+                saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data=>{
+                    if(data.success){
+                        that.$router.go(-1)
+                    }
+                })
+                }
+            })
+            
+        },
+        info(){
+            let total1=0;
+            let total2=0;
+            let total3=0;
+            let jsonData=JSON.parse(this.childInfo.jsonData).transDetailUncalc;
+            console.log(jsonData)
+            for(let i = 0 ;i<jsonData.length; i++){
+                if(jsonData[i].containerCode==''){
+                    this.list1.push({
+                        label:jsonData[i].transObjCode,
+                        value:jsonData[i].qty,
+                    });
+                    this.list4.push({
+                        label:jsonData[i].transObjCode,
+                        value:jsonData[i].qty+'件/套',
+                    })
+                    total1 +=jsonData[i].qty*jsonData[i].amount;
+
+                }else if(jsonData[i].containerCode=='A'){
+                    this.list2.push({
+                        label:jsonData[i].transObjCode,
+                        value:jsonData[i].qty,
+                    });
+                     this.list4.push({
+                        label:jsonData[i].transObjCode,
+                        value:'',
+                    })
+                    total2 =jsonData[i].amount;
+                }else if(jsonData[i].containerCode=='B'){
+                    this.list3.push({
+                        label:jsonData[i].transObjCode,
+                        value:jsonData[i].qty,
+                    });
+                     this.list4.push({
+                        label:jsonData[i].transObjCode,
+                        value:'',
+                    })
+                    total3 =jsonData[i].amount;
+                }
+            }
+            this.total1='￥'+total1;
+            this.total2='￥'+total2;
+            this.total3='￥'+total3;
+            this.total4='￥'+(total1+total2+total3);
         }
+    },
+    mounted(){
+        this.info()
     }
 }
 </script>

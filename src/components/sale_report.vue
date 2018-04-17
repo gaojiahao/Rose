@@ -24,7 +24,7 @@
           <cell 
             class="each_part"
             title="单价"
-            :value="item.value[1] | numberComma"
+            :value="'￥'+item.value[1] | numberComma"
             value-align="right" 
             v-if="item.value.length>0"
           ></cell>
@@ -49,15 +49,19 @@
         
         <group>
           <x-input 
-          title="A类产品" 
-         v-model.number="Aclass"
+          title="A类产品"
+          :value='Aclass | numberComma(3)' 
+          @input="Ainput" 
+          ref='input1'
           text-align="right" 
           placeholder="请输入金额"
           ></x-input>
 
           <x-input 
-          title="B类产品" 
-          v-model.number="Bclass" 
+          title="B类产品"
+          :value='Bclass | numberComma(3)'  
+          @input="Binput" 
+          ref='input2'
           text-align="right" 
           placeholder="请输入金额"
           ></x-input>
@@ -81,7 +85,7 @@
     ></confirm>
       <alert></alert>
       </div>
-      <router-view></router-view>
+      <router-view :childInfo="totalInfo"></router-view>
   </div>
 </template>
 
@@ -111,10 +115,11 @@ export default {
         }
       ],
       Aclass:'',
-      Bclass:'',     
+      Bclass:'',    
       showNumber:false,
       showNewDiv:false,
       mescroll: null,
+      totalInfo:''
     }
   },
   filters:{
@@ -156,7 +161,7 @@ export default {
       saleRepotService.saleRepotList().then(data=>{
         for(let i = 0 ; i<data.tableContent.length ; i++){
           this.list.push({
-            name:data.tableContent[i]['baseinfo.creatorName'],
+            name:data.tableContent[i]['trans_detail_uncalc.transObjCode'],
             value:data.tableContent[i]['baseinfo.creatorName']+'_'+i,
             parent:'0',
           },{
@@ -260,40 +265,51 @@ export default {
                 "fgCode": ""
               })
           }
-      saleRepotService.subAmount(querystring.stringify({
-        'isMobile':true,
-        'conn':20000,
-        'list':'trans_form_data',
-        'transCode':'XHXSDD',
-        'jsonData':JSON.stringify(jsonData)
-      })).then(data=>{
-        if(data.success){
-         this.$vux.alert.show({
-            title: '成功',
-            content: data.message,
-            onShow () {
+          this.totalInfo={
+            'isMobile':true,
+            'conn':20000,
+            'list':'trans_form_data',
+            'transCode':'XHXSDD',
+            'jsonData':JSON.stringify(jsonData)
+          }
+          that.$router.push({path:'/saleReport/count'})
+      // saleRepotService.subAmount(querystring.stringify({
+      //   'isMobile':true,
+      //   'conn':20000,
+      //   'list':'trans_form_data',
+      //   'transCode':'XHXSDD',
+      //   'jsonData':JSON.stringify(jsonData)
+      // })).then(data=>{
+      //   if(data.success){
+      //    this.$vux.alert.show({
+      //       title: '成功',
+      //       content: data.message,
+      //       onShow () {
 
-            },
-            onHide () {
-              that.$router.push({path:'/saleReport/count'})
-            }
-          })
-        }else{
-           this.$vux.alert.show({
-            title: '失败',
-            content: data.message,
-            onShow () {
+      //       },
+      //       onHide () {
+      //         that.$router.push({path:'/saleReport/count'})
+      //       }
+      //     })
+      //   }else{
+      //      this.$vux.alert.show({
+      //       title: '失败',
+      //       content: data.message,
+      //       onShow () {
 
-            },
-            onHide () {
+      //       },
+      //       onHide () {
               
-            }
-          })
-        }
-      })
+      //       }
+      //     })
+      //   }
+      // })
     },
-    alertGo(){
-     
+    Ainput(e){
+      this.Aclass=e.split(',').join('');
+    },
+    Binput(e){
+       this.Bclass=e.split(',').join('');
     },
     letMeTest(){
       let path = this.$router.path;
@@ -321,11 +337,9 @@ export default {
       //   console.log('我接收到值了')
       // })
   },
-  watch: {
-     $route (e) {
-       console.log(e)
-     }
-}
+  computed:{
+
+  }
 }
 </script>
 
