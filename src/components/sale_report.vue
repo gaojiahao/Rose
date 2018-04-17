@@ -182,8 +182,21 @@ export default {
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
           };
+          if(this.arr[0].value.length==0){
+              this.$vux.alert.show({
+                  title: '失败',
+                  content: '请选择项目产品',
+                  onShow () {
+
+                  },
+                  onHide () {
+                    
+                  }
+                })
+                return;
+            }
           for(let i =0 ;i<this.arr.length ; i++){
-              if(this.arr[i].qty==''){
+            if(this.arr[i].qty==''){
                 this.$vux.alert.show({
                   title: '失败',
                   content: '请填写数量',
@@ -206,24 +219,46 @@ export default {
                 })
               } 
             }
-          if(this.Aclass!=''){
-            jsonData.transDetailUncalc.push({
-              "id":this.guid(),
-              "transObjCode": "A类产品",//项目类产品名称
-              "containerCode": "A",//类型
-              "qty": '',
-              "amount": this.Aclass,//总金额
-              "fgCode": ""
-            })
-          }else if(this.Bclass!=''){
-            jsonData.transDetailUncalc.push({
-              "id":this.guid(),
-              "transObjCode": "B类产品",//项目类产品名称
-              "containerCode": "B",//类型
-              "qty": '',
-              "amount": this.Bclass,//总金额
-              "fgCode": ""
-            })
+            if(this.Aclass==''){
+              this.$vux.alert.show({
+                  title: '失败',
+                  content: '请填A类产品',
+                  onShow () {
+
+                  },
+                  onHide () {
+                    
+                  }
+                })
+                return;
+            }else if(this.Bclass==''){
+              this.$vux.alert.show({
+                  title: '失败',
+                  content: '请填B类产品',
+                  onShow () {
+
+                  },
+                  onHide () {
+                    
+                  }
+                })
+                return;
+            }else{
+              jsonData.transDetailUncalc.push({
+                "id":this.guid(),
+                "transObjCode": "A类产品",//项目类产品名称
+                "containerCode": "A",//类型
+                "qty": '',
+                "amount": this.Aclass,//总金额
+                "fgCode": ""
+              },{
+                "id":this.guid(),
+                "transObjCode": "B类产品",//项目类产品名称
+                "containerCode": "B",//类型
+                "qty": '',
+                "amount": this.Bclass,//总金额
+                "fgCode": ""
+              })
           }
       saleRepotService.subAmount(querystring.stringify({
         'isMobile':true,

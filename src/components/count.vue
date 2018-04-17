@@ -6,7 +6,7 @@
       <cell-form-preview class="count_dt_part" :list="list4"></cell-form-preview>
     </group>
 
-    <load-more tip="A类+项目类产品" :show-loading='false'></load-more>
+    <load-more tip="项目类产品" :show-loading='false'></load-more>
       <form-preview 
         class="project_part"
         header-label="金额" 
@@ -19,6 +19,14 @@
         header-value="¥240000.00" 
         :body-items="list2">
       </form-preview>
+      <form-preview 
+        class="project_part"
+        header-label="金额" 
+        header-value="¥230000.00" 
+        :body-items="list3">
+      </form-preview>
+
+<load-more tip="A类产品" :show-loading='false'></load-more>
       <form-preview 
         class="project_part"
         header-label="金额" 
