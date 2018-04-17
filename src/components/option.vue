@@ -23,7 +23,6 @@
 
 <script>
   import optionService from '../service/optionService'
-  import tokenService from '../service/tokenService'
   import {Group, XButton, PopupPicker} from 'vux'
 
   export default {
@@ -91,12 +90,15 @@
       },
       // TODO 获取地区
       getRegion(params = {}) {
-        optionService.getRegion().then(data => {
-          let region = data.reduce((arr, item) => {
-            arr.push(item.name)
-            return arr
-          }, [''])
-          this.$set(this.regionList, '0', region)
+        return new Promise((resolve, reject) => {
+          optionService.getRegion().then(data => {
+            let region = data.reduce((arr, item) => {
+              arr.push(item.name)
+              return arr
+            }, [''])
+            this.$set(this.regionList, '0', region)
+            resolve()
+          })
         })
       },
       // TODO 获取银行
@@ -132,13 +134,12 @@
     },
     created() {
       // this.$vux.loading.show()
-      this.getRegion()
       // this.$router.replace({path: '/Rose'})
-      this.getDept()
-      this.getBank()
-      this.getCaptain()
-      // tokenService.pcLogin()
-      this.captainList = [['', '队长']]
+      this.getRegion().then(() => {
+        this.getDept()
+        this.getBank()
+        this.getCaptain()
+      })
     }
   }
 </script>

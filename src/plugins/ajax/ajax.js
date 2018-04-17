@@ -15,41 +15,42 @@ let Rxports = {
    * @param {Function} error      发送请求前
    * @param return
    */
-  ajax: (opts = {}) => {
-    
+  ajax(opts = {}) {
     return new Promise((resolve, reject) => {
-      if (!opts.url) {
-        alert('请填写接口地址');
-        return false;
-      }
-      let params = {
-        method: opts.type || 'GET',
-        url: opts.url,
-        headers: {
-          'Content-Type': opts.contentType || '*/*',
-          Authorization: tokenService.getToken()
-        },
-        // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
-        // 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL
-        baseURL: conf.base_url,
-        timeout: opts.time || 10 * 1000,
-        responseType: opts.dataType || 'json'
-      }
-      if (opts.type && opts.type.toUpperCase() === 'POST') {
-        params.params = opts.data || {}
-      } else {
-        params.params = opts.data || {}
-      }
-
-      axios(params).then(function (res) {
-        let data = res.data
-        if (Number(res.status) === 200) {
-          resolve(data)
+      tokenService.getToken().then(token => {
+        if (!opts.url) {
+          alert('请填写接口地址');
+          return false;
         }
-      }).catch(function (error) {
-        let data = error.response && error.response.data
-        reject(error.response.data)
-      });
+        let params = {
+          method: opts.type || 'GET',
+          url: opts.url,
+          headers: {
+            'Content-Type': opts.contentType || '*/*',
+            Authorization: token
+          },
+          // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
+          // 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL
+          baseURL: conf.base_url,
+          timeout: opts.time || 10 * 1000,
+          responseType: opts.dataType || 'json'
+        }
+        if (opts.type && opts.type.toUpperCase() === 'POST') {
+          params.data = opts.data || {}
+        } else {
+          params.params = opts.data || {}
+        }
+
+        axios(params).then(function (res) {
+          let data = res.data
+          if (Number(res.status) === 200) {
+            resolve(data)
+          }
+        }).catch(function (error) {
+          let data = error.response && error.response.data
+          reject(error.response.data)
+        });
+      })
     })
   }
 };

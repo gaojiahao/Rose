@@ -1,49 +1,83 @@
 import axios from 'axios';
 import $axios from '../plugins/ajax'
+import conf from "../plugins/ajax/conf";
 
-const tokenKey = 'ROSE_LOGIN_TOKEN';
+const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
 let tokenService = {
   /**
    * 清除toke
    */
-  clean: function () {
-    window.localStorage.removeItem(tokenKey);
+  clean() {
+    window.localStorage.removeItem(TOKEN_KEY);
   },
   /**
    * 获取token
    */
-  getToken: function () {
-    return window.localStorage.getItem(tokenKey) || '';
+  getToken() {
+    return this.pcLogin()
   },
   /**
    * 设置企业微信token
    */
-  setWeixinToken: (token) => {
+  setWeixinToken(token) {
     window.localStorage.setItem('weixin_token', token);
   },
   /**
    * 设置token
    */
-  setToken: function (token) {
-    window.localStorage.setItem(tokenKey, token);
+  setToken(token) {
+    window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
+      key: token,
+      timestamp: +new Date()
+    }));
+  },
+  // TODO 检查是否登录
+  checkLogin() {
+    let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {}
+    if (token.key) {
+      let timestamp = token.timestamp
+      if (new Date() - timestamp > 7200000) { // 设置两小时过期时间
+        return ''
+      }
+    } else {
+      return ''
+    }
+    return token.key
   },
   // TODO 开发时用于获取账号的token
   pcLogin() {
-    $axios.ajax({
-      url: '/login',
-      type: 'POST',
-      contentType: 'application/json',
-      data: {
-        loginModel: 1,
-        password: 'rfd120',
-        userCode: 'rfd120'
+    return new Promise((resolve, reject) => {
+        let token = this.checkLogin()
+        if (token) {
+          resolve(token)
+        } else {
+          let params = {
+            method: 'post',
+            baseURL: '/H_roleplay-si',
+            url: '/login',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            data: {
+              loginModel: 1,
+              password: 'rfd120',
+              userCode: 'rfd120'
+            }
+          }
+
+          axios(params).then((res) => {
+            let data = res.data
+            this.clean()
+            this.setToken(data.token)
+            resolve(data.token)
+          }).catch(function (error) {
+            let data = error.response && error.response.data
+            reject(error.response.data)
+          });
+        }
       }
-    }).then((res) => {
-      let data = res.data
-      this.clean()
-      this.setToken(data.token)
-    })
+    )
   },
   /**
    * token 初始化

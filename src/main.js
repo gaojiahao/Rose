@@ -17,15 +17,15 @@ Vue.prototype.$event = new Vue();
 
 Vue.config.productionTip = false
 
-if (C.dev) {
-  tokenService.setToken(C.devToken);
-} else {
-  let params = querystring.parse(location.search.slice(1))
-  let QWCode = params.code
-  if (QWCode) {
-    tokenService.init(QWCode);
-  }
-}
+// if (C.dev) {
+//   tokenService.setToken(C.devToken);
+// } else {
+//   let params = querystring.parse(location.search.slice(1))
+//   let QWCode = params.code
+//   if (QWCode) {
+//     tokenService.init(QWCode);
+//   }
+// }
 
 new Vue({
   router,

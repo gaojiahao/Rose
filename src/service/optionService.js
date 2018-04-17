@@ -27,12 +27,21 @@ let optionService = {
       url: '/ds/getGroupBU',
     });
   },
-  // TODO 获取部门
+  // TODO 获取部门列表
   getDept() {
     return $axios.ajax({
       url: '/ds/getAPartGroup',
     });
   },
+  // TODO 获取队长列表
+  getCaptain() {
+    return $axios.ajax({
+      url: '/ds/getRoleUser2Oneself',
+      data: {
+        roleId: '86'
+      }
+    })
+  }
 }
 
 export default optionService
