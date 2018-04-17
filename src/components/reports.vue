@@ -2,7 +2,7 @@
   <div class="pages">
     <group>
       <calendar @on-change="onChange" v-model="filterDate" title="时间段选择" popup-header-title="请选择时间段"
-                disable-future></calendar>
+                disable-future v-show="false"></calendar>
     </group>
     <tab :line-width=2 active-color='#B99763' v-model="activeIndex" v-show="showTab">
       <tab-item class="vux-center" :selected="curTab === item" v-for="(item, index) in list5" :key="index"
@@ -109,6 +109,9 @@
         this.showTab = false
       }
     },
+    created(){
+
+    }
   }
 </script>
 

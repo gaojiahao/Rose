@@ -25,6 +25,7 @@
   import optionService from '../service/optionService'
   import {Group, XButton, PopupPicker} from 'vux'
 
+  const ROSE_OPTION_KEY = 'ROSE_OPTION'
   export default {
     components: {
       Group,
@@ -63,11 +64,11 @@
       captionChange() {
       },
       goHome() {
-        let prov = this.region[0] || '';
+        let region = this.region[0] || '';
         let bank = this.bank[0] || '';
         let dept = this.dept[0] || '';
         let captain = this.captain[0] || '';
-        let tips = !prov ? '请选择地区' :
+        let tips = !region ? '请选择地区' :
           (!bank ? '请选择银行' :
             (!dept ? '请选择区域' :
               (!captain ? '请选择队长' : '')));
@@ -78,15 +79,16 @@
           });
           return
         }
-        console.log(`${prov}----${bank}----${dept}`)
+        console.log(`${region}----${bank}----${dept}`)
         this.$router.replace({path: '/Rose'})
+        localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({region, bank, dept, captain}))
       },
       saveOption(data) {
-        optionService.saveOption()
+        // optionService.saveOption()
       },
       // TODO 获取输入参数
       getOption() {
-        optionService.getOption()
+        // optionService.getOption()
       },
       // TODO 获取地区
       getRegion(params = {}) {
@@ -134,12 +136,16 @@
     },
     created() {
       // this.$vux.loading.show()
-      // this.$router.replace({path: '/Rose'})
-      this.getRegion().then(() => {
-        this.getDept()
-        this.getBank()
-        this.getCaptain()
-      })
+      let option = localStorage.getItem(ROSE_OPTION_KEY)
+      if (option) {
+        this.$router.replace({path: '/Rose'})
+      } else {
+        this.getRegion().then(() => {
+          this.getDept()
+          this.getBank()
+          this.getCaptain()
+        })
+      }
     }
   }
 </script>

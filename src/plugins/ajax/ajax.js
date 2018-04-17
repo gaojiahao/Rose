@@ -47,8 +47,13 @@ let Rxports = {
             resolve(data)
           }
         }).catch(function (error) {
-          let data = error.response && error.response.data
-          reject(error.response.data)
+          let res = error.response
+          let data = (res && res.data) || {}
+          let message = data.message || '请求异常'
+          reject({
+            success: false,
+            message: message
+          })
         });
       })
     })

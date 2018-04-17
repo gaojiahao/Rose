@@ -107,11 +107,23 @@
       },
       goRp() {
         let filterParams = {}
-        // this.$router.push({
-        //   path: '/reportsOp/reports'
-        // })
-        this.pickerList.forEach(item => {
-          console.log(item)
+        this.pickerList.forEach((item, index) => {
+          switch (index) {
+            case 0:
+              filterParams.regeion = item.value[0]
+              break;
+            case 1:
+              filterParams.dept = item.value[0]
+              break;
+            case 2:
+              filterParams.bank = item.value[0]
+              break;
+          }
+        })
+        console.log(filterParams)
+        this.$router.push({
+          path: '/reportsOp/reports',
+          query: filterParams
         })
       },
     },
