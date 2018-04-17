@@ -1,17 +1,18 @@
 <template>
   <div class="filter-container">
-    <h1 class="cp_title">{{regeionTitle}}</h1>
+    <h1 class="cp_title">{{regionTitle}}</h1>
     <div class="select_part">
       <group class="each_group">
         <popup-picker v-for="( item, index ) in pickerList" class="each_picker" :title=item.title :placeholder=item.ph
                       :data=item.list :key="index" v-model=item.value @on-change="getPickerValue( index , item.value)">
         </popup-picker>
       </group>
-      <p class="caution_part" v-show='showMore'>
-        您还需要添加新的筛选条件？请点击 <span class="plus_tx" @click="createNew">新增</span>
-      </p>
+
+      <!--<p class="caution_part" v-show='showMore'>-->
+      <!--您还需要添加新的筛选条件？请点击 <span class="plus_tx" @click="createNew">新增</span>-->
+      <!--</p>-->
     </div>
-    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp" v-show='region[0]'>确定
+    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp">确定
     </x-button>
     <router-view></router-view>
   </div>
@@ -19,8 +20,10 @@
 
 <script>
   import optionService from '../service/optionService'
+  import saleReportService from '../service/saleRepotService'
   import {Group, XButton, PopupPicker} from 'vux'
 
+  const FILTER_OPTION = 'ROSE_FILER_OPTION'
   export default {
     components: {
       Group,
@@ -33,29 +36,33 @@
         whichIndex: '',
         showMore: false,
         pickerList: [],
+        regionList: [],
         bankList: [],
-        deptList: []
+        deptList: [],
+        projList: []
       }
     },
     computed: {
-      regeionTitle() {
+      regionTitle() {
         return this.region[0] ? this.region[0].split('-')[1] + '地区' : '报表'
       }
     },
     methods: {
       // TODO 获取地区
       getRegion(params = {}) {
-        optionService.getRegion().then(data => {
-          let region = data.reduce((arr, item) => {
-            arr.push(item.name);
-            return arr
-          }, ['']);
-          this.pickerList.push({
-            title: '所在地区',
-            ph: '请选择地区',
-            value: [],
-            list: [region]
-          })
+        return new Promise((resolve, reject) => {
+          if (this.regionList.length > 0) {
+            resolve(this.regionList)
+          } else {
+            optionService.getRegion().then(data => {
+              let region = data.reduce((arr, item) => {
+                arr.push(item.name);
+                return arr
+              }, ['']);
+              this.regionList = region
+              resolve(region)
+            })
+          }
         })
       },
       // TODO 获取银行
@@ -92,6 +99,23 @@
           }
         })
       },
+      // TODO 获取项目列表
+      getProj() {
+        return new Promise((resolve, reject) => {
+          if (this.projList.length > 0) {
+            resolve(this.projList)
+          } else {
+            saleReportService.saleRepotList().then(data => {
+              let proj = data.tableContent.reduce((arr, item) => {
+                arr.push(item['trans_detail_uncalc.transObjCode']);
+                return arr
+              }, ['']);
+              this.projList = proj
+              resolve(proj)
+            })
+          }
+        })
+      },
       getPickerValue(index, value) {
         this.showMore = true;
         this.whichIndex = index;
@@ -107,8 +131,8 @@
         if (index === 0) {
           this.getBank().then(bank => {
             this.pickerList.push({
-              title: '所在部门',
-              ph: '请选择部门',
+              title: '所在银行',
+              ph: '请选择银行',
               value: [],
               list: [bank]
             })
@@ -117,8 +141,8 @@
         } else if (index === 1) {
           this.getDept().then(dept => {
             this.pickerList.push({
-              title: '所在银行',
-              ph: '请选择地区',
+              title: '所在部门',
+              ph: '请选择部门',
               value: [],
               list: [dept]
             })
@@ -126,12 +150,13 @@
           this.showMore = false;
         }
       },
+      // TODO 跳转到过滤页
       goRp() {
         let filterParams = {}
         this.pickerList.forEach((item, index) => {
           switch (index) {
             case 0:
-              filterParams.regeion = item.value[0]
+              filterParams.region = item.value[0]
               break;
             case 1:
               filterParams.dept = item.value[0]
@@ -139,9 +164,19 @@
             case 2:
               filterParams.bank = item.value[0]
               break;
+            case 3:
+              filterParams.proj = item.value[0]
+              break;
           }
         })
+        if (!filterParams.region && !filterParams.dept && !filterParams.bank && !filterParams.proj) {
+          this.$vux.alert.show({
+            content: '请至少选择一个条件'
+          });
+          return
+        }
         console.log(filterParams)
+        sessionStorage.setItem(FILTER_OPTION, JSON.stringify(this.pickerList))
         this.$router.push({
           path: '/reportsOp/reports',
           query: filterParams
@@ -149,7 +184,80 @@
       },
     },
     created() {
-      this.getRegion()
+      (async () => {
+        this.pickerList = [
+          {
+            title: '所在地区',
+            ph: '请选择地区',
+            value: [],
+            list: []
+          },
+          {
+            title: '所在银行',
+            ph: '请选择银行',
+            value: [],
+            list: []
+          },
+          {
+            title: '所属区域',
+            ph: '请选择区域',
+            value: [],
+            list: []
+          },
+          {
+            title: '所属项目',
+            ph: '请选择项目',
+            value: [],
+            list: []
+          }
+        ]
+        let filter = JSON.parse(sessionStorage.getItem(FILTER_OPTION))
+        if (!filter) {
+          let tmpPickerList = []
+          await this.getRegion().then(region => {
+            tmpPickerList.push({
+              title: '所在地区',
+              ph: '请选择地区',
+              value: [],
+              list: [region]
+            })
+          })
+          await this.getBank().then(bank => {
+            tmpPickerList.push({
+              title: '所在银行',
+              ph: '请选择银行',
+              value: [],
+              list: [bank]
+            })
+          })
+          await this.getDept().then(dept => {
+            tmpPickerList.push({
+              title: '所属区域',
+              ph: '请选择区域',
+              value: [],
+              list: [dept]
+            })
+          })
+          await this.getProj().then(proj => {
+            tmpPickerList.push({
+              title: '所属项目',
+              ph: '请选择项目',
+              value: [],
+              list: [proj]
+            })
+          })
+          this.pickerList = tmpPickerList
+        } else {
+          await this.getRegion()
+          await this.getDept()
+          await this.getBank()
+          await this.getProj()
+          this.pickerList = filter
+        }
+      })()
+    },
+    destroyed() {
+      sessionStorage.removeItem(FILTER_OPTION)
     }
   }
 </script>

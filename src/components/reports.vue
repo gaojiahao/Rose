@@ -4,9 +4,13 @@
       <calendar @on-change="onChange" v-model="filterDate" title="时间段选择" popup-header-title="请选择时间段"
                 disable-future></calendar>
     </group>
+    <grid>
+      <grid-item label="项目类产品"></grid-item>
+      <grid-item label="A类产品"></grid-item>
+    </grid>
     <tab :line-width=2 active-color='#B99763' v-model="activeIndex" v-show="showTab">
-      <tab-item class="vux-center" :selected="curTab === item" v-for="(item, index) in tabList" :key="index"
-                @click.native="onItemClick(index)">{{item}}
+      <tab-item class="vux-center" :selected="curTab === item.value" v-for="(item, index) in tabList" :key="index"
+                @click.native="onItemClick(item)">{{item.name}}
       </tab-item>
     </tab>
     <div class="rank-container">
@@ -23,10 +27,9 @@
 </template>
 
 <script>
-  import {Tab, Cell, Group, TabItem, Calendar, CellFormPreview} from 'vux'
+  import {Tab, Cell, Group, TabItem, Calendar, CellFormPreview, Grid, GridItem, PopupPicker} from 'vux'
   import reportService from '../service/reportService'
 
-  const list = () => ['本日', '本周', '本月', '本年']
   export default {
     components: {
       Tab,
@@ -34,7 +37,10 @@
       Group,
       TabItem,
       Calendar,
-      CellFormPreview
+      CellFormPreview,
+      Grid,
+      GridItem,
+      PopupPicker
     },
     data() {
       return {
@@ -43,82 +49,88 @@
         filterDate: [],
         reportList: [],
         list: [],
-        curTab: '本日',
-        tabList: list()
+        curTab: 'days',
+        tabList: [
+          {
+            name: '本日',
+            value: 'days'
+          },
+          {
+            name: '本周',
+            value: 'weeks'
+          },
+          {
+            name: '本月',
+            value: 'months'
+          },
+          {
+            name: '本年',
+            value: 'years'
+          },
+        ],
+        reportData: {
+          days: [],
+          weeks: [],
+          months: [],
+          years: []
+        }
       }
     },
     methods: {
-      onItemClick(index) {
-        console.log(index);
+      onItemClick(item) {
+        this.curTab = item.value
+        this.reportList = this.reportData[item.value]
       },
       onChange(val) {
         console.log(val);
         this.showTab = false
+      },
+      // TODO 组装数据
+      assembleData(params = {}) {
+        reportService.getReport(params).then(data => {
+          let map = ['days', 'weeks', 'months', 'years']
+          // 数据组装
+          map.forEach(item => {
+            data[item].forEach(data => {
+              this.reportData[item].push({
+                name: data.creator,
+                sales: '',
+                showContent: false,
+                detail: [
+                  {
+                    label: '项目类产品',
+                    value: '1xxx件/套'
+                  },
+                  {
+                    label: 'A类产品',
+                    value: '￥999'
+                  },
+                  {
+                    label: 'B类产品',
+                    value: '￥999'
+                  }, {
+                    label: '所在部门',
+                    value: data.bmName
+                  }, {
+                    label: '所属银行',
+                    value: data.bankName
+                  }
+                ]
+              })
+            })
+          })
+          this.reportList = this.reportData.days
+        })
       }
     },
     created() {
-      let reportListData = [
-        {name: '托尼·斯塔克', sales: 400},
-        {name: '托尔', sales: 300},
-        {name: '布鲁斯·班纳', sales: 200},
-        {name: '斯蒂夫·罗杰斯', sales: 100},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '克林特·巴顿', sales: 400},
-        {name: '托尼·斯塔克', sales: 400},
-        {name: '托尔', sales: 300},
-        {name: '布鲁斯·班纳', sales: 200},
-        {name: '斯蒂夫·罗杰斯', sales: 100},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '克林特·巴顿', sales: 400},
-        {name: '托尼·斯塔克', sales: 400},
-        {name: '托尔', sales: 300},
-        {name: '布鲁斯·班纳', sales: 200},
-        {name: '斯蒂夫·罗杰斯', sales: 100},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '克林特·巴顿', sales: 400},
-        {name: '托尼·斯塔克', sales: 400},
-        {name: '托尔', sales: 300},
-        {name: '布鲁斯·班纳', sales: 200},
-        {name: '斯蒂夫·罗杰斯', sales: 100},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '克林特·巴顿', sales: 400},
-        {name: '托尼·斯塔克', sales: 400},
-        {name: '托尔', sales: 300},
-        {name: '布鲁斯·班纳', sales: 200},
-        {name: '斯蒂夫·罗杰斯', sales: 100},
-        {name: '娜塔莎·罗曼诺夫', sales: 600},
-        {name: '克林特·巴顿', sales: 400}
-      ]
-      this.reportList = reportListData.map(item => {
-        return Object.assign(item, {
-          showContent: false,
-          detail: [
-            {
-              label: '项目类产品',
-              value: '1xxx件/套'
-            },
-            {
-              label: 'A类产品',
-              value: '￥999'
-            },
-            {
-              label: 'B类产品',
-              value: '￥999'
-            }, {
-              label: '所在部门',
-              value: 'xx事业部'
-            }, {
-              label: '所属银行',
-              value: 'xx银行'
-            }
-          ]
-        })
-      })
-      reportService.getReport().then(data => {
-        console.log(data)
+      let query = this.$route.query
+      console.log(query)
+      this.assembleData({
+        sybName: query.region || '', // 区域
+        bankName: query.bank || '', // 银行
+        bmName: query.dept || '', // 部门
+        objName: query.proj || '', // 项目
       })
     }
   }

@@ -6,44 +6,49 @@
         <popup-picker class="each_picker" title="所在地区" placeholder="请选择地区" :data="regionList" v-model="region"
                       @on-change="regionChange">
         </popup-picker>
-        <popup-picker title="所在银行" placeholder="请选择银行" :data="bankList" v-model="bank" v-show="showMore"
-                      @on-change="bankChange">
+        <popup-picker title="所在银行" placeholder="请选择银行" :data="bankList" v-model="bank" @on-change="bankChange">
         </popup-picker>
-        <popup-picker title="所属区域" placeholder="请选择区域" :data="deptList" v-model="dept" @on-change="deptChange"
-                      v-show="showMore">
+        <popup-picker title="所属区域" placeholder="请选择区域" :data="deptList" v-model="dept" @on-change="deptChange">
         </popup-picker>
-        <popup-picker title="所属队长" placeholder="请选择队长" :data="captainList" v-model="captain" @on-change="captionChange"
-                      v-show="showMore"></popup-picker>
+        <!--<popup-picker title="所属队长" placeholder="请选择队长" :data="captainList" v-model="captain" @on-change="captionChange"-->
+        <!--v-show="showMore"></popup-picker>-->
+        <x-input title="所属队长" text-align="right" @on-change="searchCaptain" @on-focus="focusCaptain" placeholder="请输入队长"
+                 v-model="captain"></x-input>
+      </group>
+      <group class="captain-search-container">
+        <cell :title="item" v-for="(item, index) in captainList" @click.native="selectCaptain(item)"
+              :key="index"></cell>
       </group>
     </div>
-    <x-button class="each_select" :gradients="['#B99763', '#E7D0A2']" @click.native="goHome" v-if="showButton">确定
-    </x-button>
+    <x-button class="each_select" :gradients="['#B99763', '#E7D0A2']" @click.native="goHome">确定</x-button>
   </div>
 </template>
 
 <script>
   import optionService from '../service/optionService'
-  import {Group, XButton, PopupPicker} from 'vux'
+  import {Group, XButton, PopupPicker, XInput, Cell} from 'vux'
 
   const ROSE_OPTION_KEY = 'ROSE_OPTION'
   export default {
     components: {
       Group,
       XButton,
-      PopupPicker
+      PopupPicker,
+      XInput,
+      Cell
     },
     data() {
       return {
         region: [], // 地区
         bank: [], // 银行
         dept: [], // 部门
-        captain: [],
-        regionList: [['']],
-        bankList: [['']],
-        deptList: [['']],
-        captainList: [['']],
-        showMore: false,
-        showButton: false
+        captain: '', // 队长
+        regionList: [['']], // 地区列表
+        bankList: [['']], // 银行列表
+        deptList: [['']], // 部门列表
+        captainList: [], // 搜索的队长列表
+        showMore: false, // 判断银行、部门、队长是否展示
+        showButton: false, // 判断确定按钮是否展示
       }
     },
     methods: {
@@ -67,7 +72,7 @@
         let region = this.region[0] || '';
         let bank = this.bank[0] || '';
         let dept = this.dept[0] || '';
-        let captain = this.captain[0] || '';
+        let captain = this.captain || '';
         let tips = !region ? '请选择地区' :
           (!bank ? '请选择银行' :
             (!dept ? '请选择区域' :
@@ -124,14 +129,36 @@
         })
       },
       // TODO 获取队长
-      getCaptain() {
-        optionService.getCaptain().then(data => {
+      getCaptain(params) {
+        optionService.getCaptain(params).then(data => {
           let captain = data.tableContent.reduce((arr, item) => {
             arr.push(item.nickname)
             return arr
-          }, [''])
-          this.$set(this.captainList, '0', captain)
+          }, [])
+          this.captainList = captain
         })
+      },
+      // TODO
+      focusCaptain() {
+        this.hasSelected = false
+      },
+      // TODO 搜索队长
+      searchCaptain(val) {
+        console.log(val)
+        if (this.hasSelected) {
+          return
+        }
+        if (val) {
+          this.getCaptain({
+            value: val
+          })
+        }
+      },
+      // TODO 选中队长
+      selectCaptain(item) {
+        this.captain = item
+        this.captainList = []
+        this.hasSelected = true
       }
     },
     created() {
@@ -143,7 +170,7 @@
         this.getRegion().then(() => {
           this.getDept()
           this.getBank()
-          this.getCaptain()
+          // this.getCaptain()
         })
       }
     }
@@ -174,18 +201,34 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
-    .weui-cells {
-      background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
-      .weui-label {
+    .each_group {
+      .weui-input {
         color: #fff;
-        font-weight: 300;
+        &::placeholder {
+          color: #fff;
+        }
       }
-      .vux-popup-picker-placeholder {
-        color: #fff;
-        font-weight: 300;
+      .weui-cells {
+        background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
+        .weui-label {
+          color: #fff;
+          font-weight: 300;
+        }
+        .vux-popup-picker-placeholder {
+          color: #fff;
+          font-weight: 300;
+        }
+        .vux-cell-value {
+          color: #fff;
+        }
       }
-      .vux-cell-value {
-        color: #fff;
+    }
+    .captain-search-container {
+      margin-top: 10px;
+      height: 200px;
+      overflow: auto;
+      .weui-cells {
+        margin-top: 0;
       }
     }
     .each_select {

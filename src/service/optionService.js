@@ -34,11 +34,16 @@ let optionService = {
     });
   },
   // TODO 获取队长列表
-  getCaptain() {
+  getCaptain(data = {}) {
     return $axios.ajax({
       url: '/ds/getRoleUser2Oneself',
       data: {
-        roleId: '86'
+        roleId: '86',
+        filter: JSON.stringify([{
+          operator: 'like',
+          value: data.value || '',
+          property: 'nickname'
+        }])
       }
     })
   }
