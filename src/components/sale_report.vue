@@ -1,5 +1,6 @@
 <template>
   <div class="pages">
+    <div v-if='$route.name=="saleReport"'>
     <div id='mescroll' class="mescroll">
 
         <group 
@@ -23,7 +24,7 @@
           <cell 
             class="each_part"
             title="单价"
-            :value="item.value[1]"
+            :value="item.value[1] | numberComma"
             value-align="right" 
             v-if="item.value.length>0"
           ></cell>
@@ -40,8 +41,10 @@
 
         <p class="caution_part" v-if='arr[0].value.length!=0'>
           您还需要添加新的项目？请点击 <span class="plus_tx" @click="createNew">新增</span>
-          <span>或</span>
-          <span class="plus_delect" @click="deleteNew">删除</span>
+          <span v-if="arr.length>1">
+            <span>或</span>
+            <span class="plus_delect" @click="deleteNew">删除</span>
+          </span>
         </p>
         
         <group>
@@ -65,7 +68,7 @@
     <x-button 
         class="count_button" 
         :gradients="['#B99763', '#E7D0A2']"
-        @click.native="goCount"
+        @click.native="end"
         >
           进入合计
     </x-button>
@@ -76,13 +79,15 @@
         confirm-text="保存"
         cancel-text="不用"
     ></confirm>
+      <alert></alert>
+      </div>
       <router-view></router-view>
   </div>
 </template>
 
 <script>
 import saleRepotService from '../service/saleRepotService'
-import { Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker} from 'vux'
+import { Alert, Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker,querystring,numberComma} from 'vux'
 export default {
   components:{
     Cell,
@@ -91,29 +96,14 @@ export default {
     Confirm,
     XButton,
     Selector,
-    PopupPicker
+    PopupPicker,
+    Alert
   },
   data () {
     return {
+      alertEnd:false,
       show:false,
-      list: [
-      {
-        name: '黄金999',
-        value: '黄金999',
-        parent: 0
-      }, {
-        name: '足金888',
-        value: '足金888',
-        parent: 0
-      }, {
-        name: '¥999',
-        value: '¥999',
-        parent: '黄金999',
-      }, {
-        name: '¥1000',
-        value: '￥888',
-        parent: '足金888',
-      }],
+      list: [],
       arr:[
         {
           value:[],
@@ -126,6 +116,9 @@ export default {
       showNewDiv:false,
       mescroll: null,
     }
+  },
+  filters:{
+    numberComma
   },
   methods:{
     //监听选择栏
@@ -160,9 +153,22 @@ export default {
         return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     },
     listData(){
-      saleRepotService.saleRepotList();
+      saleRepotService.saleRepotList().then(data=>{
+        for(let i = 0 ; i<data.tableContent.length ; i++){
+          this.list.push({
+            name:data.tableContent[i]['baseinfo.creatorName'],
+            value:data.tableContent[i]['baseinfo.creatorName']+'_'+i,
+            parent:'0',
+          },{
+            name:data.tableContent[i]['trans_detail_uncalc.price'],
+            value:data.tableContent[i]['trans_detail_uncalc.price'],
+            parent:data.tableContent[i]['baseinfo.creatorName']+'_'+i,
+          });
+        }
+      })
     },
     end(){
+      var that=this;
       var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
@@ -173,29 +179,86 @@ export default {
             "varchar3": "省",
             "varchar4": "银行",
             },
-          "transDetailUncalc": [{
-            "id":this.guid(),
-            "transObjCode": "0欧元足球纪念钞-伊朗",//项目类产品名称
-            "containerCode": "存货类型",//类型
-            "qty": 33,
-            "amount": 1089,//总金额
-            "fgCode": ""
-          }],
+          "transDetailUncalc": [],
           "transCode": "XHXSDD"
           };
-      saleRepotService.subAmount({
+          for(let i =0 ;i<this.arr.length ; i++){
+              if(this.arr[i].qty==''){
+                this.$vux.alert.show({
+                  title: '失败',
+                  content: '请填写数量',
+                  onShow () {
+
+                  },
+                  onHide () {
+                    
+                  }
+                })
+                return;
+              }else{
+                jsonData.transDetailUncalc.push({
+                  "id":this.guid(),
+                  "transObjCode": this.arr[i].value[0].split('_')[0],//项目类产品名称
+                  "containerCode": "",//类型
+                  "qty": this.arr[i].qty,
+                  "amount": this.arr[i].qty*this.arr[i].value[1],//总金额
+                  "fgCode": ""
+                })
+              } 
+            }
+          if(this.Aclass!=''){
+            jsonData.transDetailUncalc.push({
+              "id":this.guid(),
+              "transObjCode": "A类产品",//项目类产品名称
+              "containerCode": "A",//类型
+              "qty": '',
+              "amount": this.Aclass,//总金额
+              "fgCode": ""
+            })
+          }else if(this.Bclass!=''){
+            jsonData.transDetailUncalc.push({
+              "id":this.guid(),
+              "transObjCode": "B类产品",//项目类产品名称
+              "containerCode": "B",//类型
+              "qty": '',
+              "amount": this.Bclass,//总金额
+              "fgCode": ""
+            })
+          }
+      saleRepotService.subAmount(querystring.stringify({
         'isMobile':true,
         'conn':20000,
         'list':'trans_form_data',
         'transCode':'XHXSDD',
-        jsonData:JSON.stringify(jsonData)
+        'jsonData':JSON.stringify(jsonData)
+      })).then(data=>{
+        if(data.success){
+         this.$vux.alert.show({
+            title: '成功',
+            content: data.message,
+            onShow () {
+
+            },
+            onHide () {
+              that.$router.push({path:'/saleReport/count'})
+            }
+          })
+        }else{
+           this.$vux.alert.show({
+            title: '失败',
+            content: data.message,
+            onShow () {
+
+            },
+            onHide () {
+              
+            }
+          })
+        }
       })
     },
-    /*
-     *  进入合计页面 
-     */
-    goCount(){
-      this.$router.push({path:'/saleReport/count'})
+    alertGo(){
+     
     },
     letMeTest(){
       let path = this.$router.path;
@@ -206,7 +269,6 @@ export default {
   },
   mounted(){
    this.listData();
-   this.end();
       this.mescroll = new MeScroll("mescroll",{
         up:{
           isBounce:false,
@@ -223,7 +285,12 @@ export default {
       // this.$event.$on('show',()=>{
       //   console.log('我接收到值了')
       // })
-  }
+  },
+  watch: {
+     $route (e) {
+       console.log(e)
+     }
+}
 }
 </script>
 

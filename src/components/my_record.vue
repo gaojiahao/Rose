@@ -53,6 +53,7 @@
 
 <script>
 import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview } from 'vux'
+import myReportService from '../service/myReportService'
 const list = () => ['本日', '本周', '本月', '本年']
 export default {
     components:{
@@ -95,6 +96,12 @@ export default {
         onItemClick (index) {
             console.log('on item click:', index)
         },
+        mylist(){
+            myReportService.myRepotList();
+        }
+    },
+    mounted(){
+        this.mylist();
     }
 }
 </script>

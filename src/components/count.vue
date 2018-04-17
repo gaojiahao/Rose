@@ -107,5 +107,6 @@ export default {
 .submit_button {
   border-radius: 0;
   margin-top: 10px;
+  z-index: 99;
 }
 </style>
