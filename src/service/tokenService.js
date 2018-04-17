@@ -37,7 +37,7 @@ let tokenService = {
     let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {}
     if (token.key) {
       let timestamp = token.timestamp
-      if (new Date() - timestamp > 7200000) { // 设置两小时过期时间
+      if (new Date() - timestamp > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
       }
     } else {
