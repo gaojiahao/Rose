@@ -18,16 +18,14 @@
       <form-preview 
         class="project_part"
         header-label="金额" 
-        :header-value="total2" 
-        :body-items="list2">
+        :header-value="total2">
       </form-preview>
 
     <load-more tip="B类产品" :show-loading='false'></load-more>
       <form-preview 
         class="project_part"
         header-label="金额" 
-        :header-value="total3" 
-        :body-items="list3">
+        :header-value="total3">
       </form-preview>
 
 
@@ -47,7 +45,6 @@ import saleRepotService from '../service/saleRepotService'
 import { Alert, Cell , Group, Confirm ,  Divider,  XButton, LoadMore, FormPreview, CellFormPreview,querystring  } from 'vux'
 
 export default {
-    props:['childInfo'],
     components:{
         Cell,
         Group,
@@ -67,7 +64,8 @@ export default {
             total1:'',
             total2:'',
             total3:'',
-            total4:''
+            total4:'',
+            childInfo:''
         }
     },
     methods:{
@@ -76,37 +74,35 @@ export default {
          */ 
         sendOrder(){
             var that=this;
-            console.log(that.childInfo)
              this.$vux.confirm.show({
                 title: '温馨提示',
                 content: '请确认提交数据是否正确？',
                 confirmText:"我已确认",
                 cancelText:"再去看看",
                 onShow () {
-                console.log('plugin show')
                 },
                 onHide () {
-                console.log('plugin hide')
                 },
                 onCancel () {
-                console.log('plugin cancel')
                 },
                 onConfirm () {
                 saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data=>{
                     if(data.success){
-                        that.$router.go(-1)
+                        that.$router.replace('/Rose');
+                        localStorage.removeItem('saleReport');
+                        localStorage.removeItem('saleReportInfo');
                     }
                 })
                 }
             })
             
         },
+        //获取数据
         info(){
             let total1=0;
             let total2=0;
             let total3=0;
             let jsonData=JSON.parse(this.childInfo.jsonData).transDetailUncalc;
-            console.log(jsonData)
             for(let i = 0 ;i<jsonData.length; i++){
                 if(jsonData[i].containerCode==''){
                     this.list1.push({
@@ -124,30 +120,32 @@ export default {
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
                     });
-                     this.list4.push({
-                        label:jsonData[i].transObjCode,
-                        value:'',
-                    })
+                    //  this.list4.push({
+                    //     label:jsonData[i].transObjCode,
+                    //     value:'',
+                    // })
                     total2 =jsonData[i].amount;
                 }else if(jsonData[i].containerCode=='B'){
                     this.list3.push({
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
                     });
-                     this.list4.push({
-                        label:jsonData[i].transObjCode,
-                        value:'',
-                    })
+                    //  this.list4.push({
+                    //     label:jsonData[i].transObjCode,
+                    //     value:'',
+                    // })
                     total3 =jsonData[i].amount;
                 }
             }
             this.total1='￥'+total1;
             this.total2='￥'+total2;
             this.total3='￥'+total3;
-            this.total4='￥'+(total1+total2+total3);
+            let num=Number(total1)+Number(total2)+Number(total3);
+            this.total4='￥'+num;
         }
     },
     mounted(){
+        this.childInfo=JSON.parse(localStorage.getItem('saleReportInfo')).saleReportRemark
         this.info()
     }
 }

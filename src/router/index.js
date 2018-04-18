@@ -7,6 +7,7 @@ import myRecord from '@/components/my_record'
 import count from '@/components/count'
 import reportsOp from '@/components/reports_op'
 import reports from '@/components/reports'
+import help from '@/components/help'
 
 Vue.use(Router)
 
@@ -28,9 +29,15 @@ export default new Router({
       path: '/saleReport',
       name: 'saleReport',
       component: saleReport,
-      children: [
-        {path: 'count', name: 'Count', component: count}
-      ]
+    },{
+      path: '/help',
+      name: 'help',
+      component: help,
+    },
+    {
+      path: '/count',
+      name: 'Count',
+      component: count,
     },
     {
       path: '/myRecord',

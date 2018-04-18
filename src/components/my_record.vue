@@ -102,16 +102,16 @@ export default {
                     })
                 }else if(m[i].objType=='A'){
                     this.list2Total += Number(m[i].amount);
-                        this.list2.push({
-                        label:'数量',
-                        value:'',
-                    })
+                    //     this.list2.push({
+                    //     label:'数量',
+                    //     value:'',
+                    // })
                 }else if(m[i].objType=='B'){
                     this.list3Total += Number(m[i].amount);
-                        this.list3.push({
-                        label:'数量',
-                        value:'',
-                    })
+                    //     this.list3.push({
+                    //     label:'数量',
+                    //     value:'',
+                    // })
                 }
             }
         }

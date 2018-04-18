@@ -1,8 +1,18 @@
 <template>
   <div class="pages">
-    <div v-if='$route.name=="saleReport"'>
+    <div v-if='$route.name=="help"'>
     <div id='mescroll' class="mescroll">
-
+        <group label-align='left' title="请选择支援的地区">
+          <popup-picker 
+            class="each_part"
+            title="所在地区" 
+            placeholder="请选择省份"
+            :data='areaList'
+            v-model="areaValue"
+            :columns="1"
+            @on-change="getPickerArea">
+          </popup-picker>
+        </group>
         <group 
           label-align='left' 
           :title="index>0?'':'请选择对应的产品'" 
@@ -85,6 +95,7 @@
 
 <script>
 import saleRepotService from '../service/saleRepotService'
+import optionService from '../service/optionService'
 import { Alert, Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker,querystring,numberComma} from 'vux'
 export default {
   components:{
@@ -112,7 +123,9 @@ export default {
       showNumber:false,
       showNewDiv:false,
       mescroll: null,
-      totalInfo:''
+      totalInfo:'',
+      areaList:[],
+      areaValue:[]
     }
   },
   filters:{
@@ -167,6 +180,26 @@ export default {
     },
     end(){
       var that=this;
+    //缓存支援地区
+    if(this.areaValue.length==0){
+        this.$vux.alert.show({
+            title: '失败',
+            content: '请选支援地区',
+            onShow () {
+
+            },
+            onHide () {
+            
+            }
+        })
+        return;
+    }
+    let bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
+    let captain =JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
+    let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
+    localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:this.areaValue[0]}))
+      
+      
       var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
@@ -180,6 +213,7 @@ export default {
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
           };
+         
           if(this.arr[0].value.length==0){
               this.$vux.alert.show({
                   title: '失败',
@@ -268,8 +302,7 @@ export default {
           this.totalInfo=totalInfo;
           localStorage.setItem('saleReportInfo',JSON.stringify({saleReportRemark:totalInfo,time:new Date().getTime()}))
           localStorage.setItem('saleReport',JSON.stringify({saleReportArr:this.arr,Aclass:this.Aclass,Bclass:this.Bclass,time:new Date().getTime()}))
-          that.$router.push({path:'/count'})
-          
+          that.$router.push({path:'/count'});
     },
     Ainput(e){
       this.Aclass=e.split(',').join('');
@@ -277,37 +310,39 @@ export default {
     Binput(e){
        this.Bclass=e.split(',').join('');
     },
-    timestampToTime(timestamp) {
-        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '-';
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-        var D = date.getDate() + ' ';
-        return Y+M+D;
-    },
-    DateDifference(Date1,Date2) {  
-        var sDate, newDate1, newDate2, Days;
-        var aDate = Date1.split("-");
-        var newDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]); //转换为07-10-2017格式  
-        var  aDate = Date2.split("-");
-        var newDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
-        var  Days = parseInt(Math.abs(newDate1 - newDate2) / 1000 / 60 / 60 / 24); //把差的毫秒数转换为天数  
-        return Days;
-    },
     letMeTest(){
       let path = this.$router.path;
-    }
+    },
+    //获取区域
+    getArea(){
+        optionService.getRegion().then(data=>{
+            for(let i = 0 ;i<data.length; i++){
+                this.areaList.push({
+                    name:data[i].name,
+                    value:data[i].name,
+                })
+            }
+        })
+    },
+    getPickerArea(e){
+        console.log(e)
+    },
   },
   created(){
     // this.letMeTest();
   },
   mounted(){
+   this.getArea();
     if(localStorage.getItem('saleReport')){
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
     }
+    if(localStorage.getItem('ROSE_OPTION')){
+        this.areaValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).region];
+    }
    this.listData();
-      this.mescroll = new MeScroll("mescroll",{
+   this.mescroll = new MeScroll("mescroll",{
         up:{
           isBounce:false,
           use:false,
@@ -320,7 +355,7 @@ export default {
 			  }
       
       }
-      )	
+    )	
       // this.$event.$on('show',()=>{
       //   console.log('我接收到值了')
       // })

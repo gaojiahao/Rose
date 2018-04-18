@@ -16,7 +16,7 @@
         <x-button 
           class="each_select" 
           :gradients="['#B99763', '#E7D0A2']" 
-          @click.native="goSP"
+          @click.native="gohelp"
         >销售预报提交（支援）
         </x-button>
 
@@ -75,10 +75,12 @@ export default {
      * 销售预报
      */ 
     goSP(){
-      console.log('哈哈我点击了这里')
       this.$router.push({ path:'/saleReport' })
     },
-
+    //支援
+    gohelp(){
+      this.$router.push({ path:'/help' })
+    },
     /*
      * 个人业绩
      */ 
