@@ -72,53 +72,42 @@ export default {
     },
     methods:{
         mylist(tab){
+            if(tab==0){
+                this.listpanl(this.remark.days)
+            }else if(tab==1){
+                this.listpanl(this.remark.weeks)
+            }else if(tab==2){
+                this.listpanl(this.remark.months)
+            }else if(tab==3){
+                this.listpanl(this.remark.years)
+            }
+        },
+        detaList(){
              myReportService.myRepotList().then(data=>{
                 this.remark=data;
-                if(tab==0){
-                    this.listpanl(this.remark.days)
-                }else if(tab==1){
-                    this.listpanl(this.remark.weeks)
-                }else if(tab==2){
-                    this.listpanl(this.remark.months)
-                }else if(tab==3){
-                    this.listpanl(this.remark.years)
-                }
             });
         },
         listpanl(m){
-            this.list1.length=0;
-            this.list2.length=0;
-            this.list3.length=0;
-            this.list4.length=0;
-            this.list1Total=0;
-            this.list2Total=0;
-            this.list3Total=0;
-            for(let i = 0 ;i<m.length; i++){
-                if(m[i].objType==''){
-                    this.list1Total += Number(m[i].amount);
-                    this.list1.push({
+            if(m==undefined||m.length==0){
+                this.list1Total=0;
+                this.list2Total=0;
+                this.list3Total=0;
+                this.list1.length=0;
+            }else{
+                this.list1Total=m[0].amount;
+                this.list2Total=m[0].aProduct;
+                this.list3Total=m[0].bProduct;
+                this.list1[0]={
                         label:'数量',
-                        value:m[i].qty,
-                    })
-                }else if(m[i].objType=='A'){
-                    this.list2Total += Number(m[i].amount);
-                    //     this.list2.push({
-                    //     label:'数量',
-                    //     value:'',
-                    // })
-                }else if(m[i].objType=='B'){
-                    this.list3Total += Number(m[i].amount);
-                    //     this.list3.push({
-                    //     label:'数量',
-                    //     value:'',
-                    // })
-                }
+                        value:m[0].qty,
+                    }
             }
         }
     },
     created(){
     },
     mounted(){
+        this.detaList();
         this.mylist(0);
     }
 }
