@@ -373,12 +373,12 @@ export default {
             }
         })
     },
-    //获取部门
+    //获取银行
     getBank(){
         optionService.getBank().then(data=>{
             for(let i = 0 ; i<data.tableContent.length ;i++){
-                data.tableContent[i].name=data.tableContent[i].groupName;
-                data.tableContent[i].value=data.tableContent[i].groupName;
+                data.tableContent[i].name=data.tableContent[i].bankName;
+                data.tableContent[i].value=data.tableContent[i].bankName;
             }
             this.bankList=data.tableContent;
         })
