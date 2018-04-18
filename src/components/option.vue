@@ -227,6 +227,7 @@
       margin-top: 10px;
       height: 200px;
       overflow: auto;
+      -webkit-overflow-scrolling: touch;
       .weui-cells {
         margin-top: 0;
       }

@@ -24,6 +24,7 @@
   import {Group, XButton, PopupPicker} from 'vux'
 
   const FILTER_OPTION = 'ROSE_FILER_OPTION'
+  const PROJ_LIST = 'ROSE_PROJ_LIST'
   export default {
     components: {
       Group,
@@ -111,12 +112,16 @@
                 return arr
               }, ['']);
               this.projList = proj
+              sessionStorage.setItem(PROJ_LIST, JSON.stringify(proj))
               resolve(proj)
             })
           }
         })
       },
       getPickerValue(index, value) {
+        if (!value) {
+          this.$set(this.pickerList[index], 'value', [])
+        }
         this.showMore = true;
         this.whichIndex = index;
         if (index === 0) {
@@ -205,7 +210,7 @@
             list: []
           },
           {
-            title: '所属项目',
+            title: '项目产品',
             ph: '请选择项目',
             value: [],
             list: []
@@ -240,7 +245,7 @@
           })
           await this.getProj().then(proj => {
             tmpPickerList.push({
-              title: '所属项目',
+              title: '项目产品',
               ph: '请选择项目',
               value: [],
               list: [proj]
