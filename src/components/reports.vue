@@ -37,6 +37,13 @@
                 @click.native="onItemClick(item)">{{item.name}}
       </tab-item>
     </tab> -->
+    <div class="page-controler">
+      <span class="each-page"><i class="iconfont icon-jiantou-copy"></i></span>
+        
+      <span class="each-page">2</span>
+      <span class="each-page"><i class="iconfont icon-jiantou"></i></span>
+    </div>
+
 
     <div class="rank-container" @click="hideDropList">
       <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
@@ -268,6 +275,21 @@
       text-align: center;
       background: -webkit-linear-gradient(left top, rgba(36, 104, 236, 1), rgba(46, 213, 251, 1));
     }
+    // 分页栏
+    .page-controler {
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      // align-items: center;
+    }
+      .each-page {
+        flex:1;
+      }
     // 顶部栏
     .select-part {
       width: 100%;
