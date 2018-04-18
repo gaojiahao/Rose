@@ -112,7 +112,7 @@
       getBank(params = {}) {
         optionService.getBank().then(data => {
           let bank = data.tableContent.reduce((arr, item) => {
-            arr.push(item.groupName)
+            arr.push(item.bankName)
             return arr
           }, [''])
           this.$set(this.bankList, '0', bank)

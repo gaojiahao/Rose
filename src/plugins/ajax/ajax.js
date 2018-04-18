@@ -49,7 +49,11 @@ let Rxports = {
         }).catch(function (error) {
           let res = error.response
           let data = (res && res.data) || {}
+          let status = (res && res.status) || 0
           let message = data.message || '请求异常'
+          if (status === 401) {
+            tokenService.login()
+          }
           reject({
             success: false,
             message: message

@@ -23,8 +23,8 @@
   import saleReportService from '../service/saleRepotService'
   import {Group, XButton, PopupPicker} from 'vux'
 
-  const FILTER_OPTION = 'ROSE_FILER_OPTION'
-  const PROJ_LIST = 'ROSE_PROJ_LIST'
+  const FILTER_OPTION = 'ROSE_FILER_OPTION'; // 存储筛选配置的key
+  const PROJ_LIST = 'ROSE_PROJ_LIST'; // 存储项目列表的key
   export default {
     components: {
       Group,
@@ -74,7 +74,7 @@
           } else {
             optionService.getBank().then(data => {
               let bank = data.tableContent.reduce((arr, item) => {
-                arr.push(item.groupName);
+                arr.push(item.bankName);
                 return arr
               }, ['']);
               this.bankList = bank
