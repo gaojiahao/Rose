@@ -1,18 +1,7 @@
 import $axios from '../plugins/ajax'
 
 let optionService = {
-  getOption(data = {}) {
-    return $axios.ajax({
-      url: '/trans/getModelData?refresh=1&dsCode=getSOList',
-      data: data,
-    });
-  },
-  saveOption(data = {}) {
-    return $axios.ajax({
-      url: '/trans/getModelData?refresh=1&dsCode=getSOList',
-      data: data,
-    });
-  },
+  // TODO 获取地区列表
   getRegion() {
     return $axios.ajax({
       url: '/base/dict/getListByValue',
@@ -24,7 +13,7 @@ let optionService = {
   // TODO 获取银行列表
   getBank() {
     return $axios.ajax({
-      url: '/ds/getGroupBU',
+      url: '/ds/getBankForWarehouse',
     });
   },
   // TODO 获取部门列表

@@ -47,7 +47,7 @@
           <cell-form-preview :border-intent="true" :list="item.detail"></cell-form-preview>
         </div>
       </group>
-      <divider v-show="reportList.length === 0">暂无数据</divider>
+      <divider class="no-data" v-show="reportList.length === 0">暂无数据</divider>
     </div>
   </div>
 </template>
@@ -180,7 +180,7 @@
                 detail.shift()
               }
               this.reportData[item].push({
-                name: `${index + 1}. ${data.creator}`,
+                name: `${(index + 1) + (this.page - 1) * 30}. ${data.creator}`,
                 sales: '',
                 showContent: false,
                 detail: detail
@@ -188,6 +188,9 @@
             })
           })
           this.reportList = this.reportData[this.dateSelected.value]
+        }).catch(err => {
+          this.resetReportData()
+          this.reportList = []
         })
       },
       // TODO 获取项目列表
@@ -319,6 +322,11 @@
       height: calc(100% - 40px);
       overflow: auto;
       -webkit-overflow-scrolling: touch;
+      .no-data {
+        position: absolute;
+        top: 50%;
+        margin: 0 40px;
+      }
     }
     .rank-item .weui-cells {
       margin-top: 0;
