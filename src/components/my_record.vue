@@ -72,20 +72,19 @@ export default {
     },
     methods:{
         mylist(tab){
-            if(tab==0){
-                this.listpanl(this.remark.days)
-            }else if(tab==1){
-                this.listpanl(this.remark.weeks)
-            }else if(tab==2){
-                this.listpanl(this.remark.months)
-            }else if(tab==3){
-                this.listpanl(this.remark.years)
-            }
-        },
-        detaList(){
-             myReportService.myRepotList().then(data=>{
+            myReportService.myRepotList().then(data=>{
                 this.remark=data;
+                if(tab==0){
+                    this.listpanl(this.remark.days)
+                }else if(tab==1){
+                    this.listpanl(this.remark.weeks)
+                }else if(tab==2){
+                    this.listpanl(this.remark.months)
+                }else if(tab==3){
+                    this.listpanl(this.remark.years)
+                }
             });
+            
         },
         listpanl(m){
             if(m==undefined||m.length==0){
@@ -107,7 +106,6 @@ export default {
     created(){
     },
     mounted(){
-        this.detaList();
         this.mylist(0);
     }
 }

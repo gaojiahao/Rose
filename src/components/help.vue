@@ -13,6 +13,29 @@
             @on-change="getPickerArea">
           </popup-picker>
         </group>
+
+        <group label-align='left' title="请选择支援的银行">
+          <popup-picker 
+            class="each_part"
+            title="所属银行" 
+            placeholder="请选择银行"
+            :data='bankList'
+            v-model="bankValue"
+            :columns="1">
+          </popup-picker>
+        </group>
+
+        <group label-align='left' title="请选择支援队长">
+          <popup-picker 
+            class="each_part"
+            title="支援队长" 
+            placeholder="请选择队长"
+            :data='teamLeaderList'
+            v-model="teamLeaderValue"
+            :columns="1">
+          </popup-picker>
+        </group>
+
         <group 
           label-align='left' 
           :title="index>0?'':'请选择对应的产品'" 
@@ -125,7 +148,11 @@ export default {
       mescroll: null,
       totalInfo:'',
       areaList:[],
-      areaValue:[]
+      areaValue:[],
+      bankList:[],
+      bankValue:[],
+      teamLeaderList:[],
+      teamLeaderValue:[],
     }
   },
   filters:{
@@ -193,11 +220,33 @@ export default {
             }
         })
         return;
+    }else if(this.bankValue.length==0){
+         this.$vux.alert.show({
+            title: '失败',
+            content: '请选支援银行',
+            onShow () {
+
+            },
+            onHide () {
+            
+            }
+        })
+        return;
+    }else if(this.teamLeaderValue.length==0){
+         this.$vux.alert.show({
+            title: '失败',
+            content: '请选支援队长',
+            onShow () {
+
+            },
+            onHide () {
+            
+            }
+        })
+        return;
     }
-    let bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
-    let captain =JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
     let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
-    localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:this.areaValue[0]}))
+    localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:this.bankValue[0],captain:this.teamLeaderValue[0],dept:dept,region:this.areaValue[0]}))
       
       
       var jsonData = {
@@ -324,8 +373,28 @@ export default {
             }
         })
     },
+    //获取部门
+    getBank(){
+        optionService.getBank().then(data=>{
+            for(let i = 0 ; i<data.tableContent.length ;i++){
+                data.tableContent[i].name=data.tableContent[i].groupName;
+                data.tableContent[i].value=data.tableContent[i].groupName;
+            }
+            this.bankList=data.tableContent;
+        })
+    },
+    //获取队长
+    teamLeader(){
+         optionService.getCaptain().then(data=>{
+             for(let i = 0 ; i<data.tableContent.length ;i++){
+                data.tableContent[i].name=data.tableContent[i].nickname;
+                data.tableContent[i].value=data.tableContent[i].nickname;
+            }
+            this.teamLeaderList=data.tableContent;
+         })
+    },
     getPickerArea(e){
-        console.log(e)
+        
     },
   },
   created(){
@@ -333,6 +402,8 @@ export default {
   },
   mounted(){
    this.getArea();
+   this.getBank();
+   this.teamLeader();
     if(localStorage.getItem('saleReport')){
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
@@ -340,6 +411,8 @@ export default {
     }
     if(localStorage.getItem('ROSE_OPTION')){
         this.areaValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).region];
+        this.bankValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).bank];
+        this.teamLeaderValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).captain];
     }
    this.listData();
    this.mescroll = new MeScroll("mescroll",{
