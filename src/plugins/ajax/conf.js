@@ -10,7 +10,7 @@ let Rxports = {
 	corpid:'ww082959ae67224850',
 	corpsecret:'Cd4Vgugvfpi21NEweNXXL0WZO-CjM1Kx5dNMWqnAeMA',
 	dev:process.env.NODE_ENV === 'development', //用于配置当前是否是开发模式
-	devToken:'585870b9153c4d04855b09aed3282b9c' //如果是开发模式下，请求接口token 使用该值
+	devToken:'656f701b59da4e009582ec48a344c6cfMOBILE' //如果是开发模式下，请求接口token 使用该值
 }
 
 export default Rxports;
