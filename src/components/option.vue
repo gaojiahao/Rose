@@ -85,7 +85,7 @@
           return
         }
         console.log(`${region}----${bank}----${dept}`)
-        this.$router.replace({path: '/Rose'})
+        this.$router.replace({path: '/Home'})
         localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({region, bank, dept, captain}))
       },
       saveOption(data) {
@@ -165,7 +165,7 @@
       // this.$vux.loading.show()
       let option = localStorage.getItem(ROSE_OPTION_KEY)
       if (option) {
-        this.$router.replace({path: '/Rose'})
+        this.$router.replace({path: '/Home'})
       } else {
         this.getRegion().then(() => {
           this.getDept()

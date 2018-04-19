@@ -88,7 +88,7 @@ export default {
                 onConfirm () {
                 saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data=>{
                     if(data.success){
-                        that.$router.replace('/Rose');
+                        that.$router.replace('/Home');
                         localStorage.removeItem('saleReport');
                         localStorage.removeItem('saleReportInfo');
                     }

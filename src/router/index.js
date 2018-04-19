@@ -15,12 +15,16 @@ export default new Router({
   mode: 'history',
   routes: [
     {
+      path: '/',
+      redirect: '/option'
+    },
+    {
       path: '/option',
       name: 'Option',
       component: option
     },
     {
-      path: '/Rose',
+      path: '/Home',
       name: 'Home',
       component: Home
     },
@@ -29,7 +33,7 @@ export default new Router({
       path: '/saleReport',
       name: 'saleReport',
       component: saleReport,
-    },{
+    }, {
       path: '/help',
       name: 'help',
       component: help,
