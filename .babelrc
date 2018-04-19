@@ -1,6 +1,7 @@
 {
   "presets": [
-    "stage-2",
+    "latest",
+    "stage-0",
     ["env", {
       "modules": false,
       "targets": {
@@ -8,5 +9,8 @@
       }
     }]
   ],
-  "plugins": ["transform-runtime"]
+  "plugins": [
+    "transform-runtime",
+    "transform-async-to-generator"  
+  ]
 }

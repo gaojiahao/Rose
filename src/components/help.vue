@@ -416,6 +416,7 @@ export default {
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
+      this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
     }
     if(localStorage.getItem('ROSE_OPTION')){
         this.areaValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).region];
@@ -461,7 +462,7 @@ export default {
           next()
         },
         onConfirm () {
-            localStorage.setItem('saleReport',JSON.stringify({saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,time:new Date().getTime()}))
+            localStorage.setItem('saleReport',JSON.stringify({saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,captain:that.helpCaptain,time:new Date().getTime()}))
           next()
         }
     })

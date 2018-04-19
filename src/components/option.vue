@@ -85,7 +85,7 @@
           return
         }
         console.log(`${region}----${bank}----${dept}`)
-        this.$router.replace({path: '/Rose'})
+        this.$router.replace({path: '/Home'})
         localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({region, bank, dept, captain}))
       },
       saveOption(data) {
@@ -102,7 +102,7 @@
             let region = data.reduce((arr, item) => {
               arr.push(item.name)
               return arr
-            }, [''])
+            }, [])
             this.$set(this.regionList, '0', region)
             resolve()
           })
@@ -114,7 +114,7 @@
           let bank = data.tableContent.reduce((arr, item) => {
             arr.push(item.bankName)
             return arr
-          }, [''])
+          }, [])
           this.$set(this.bankList, '0', bank)
         })
       },
@@ -124,7 +124,7 @@
           let dept = data.tableContent.reduce((arr, item) => {
             arr.push(item.groupName)
             return arr
-          }, [''])
+          }, [])
           this.$set(this.deptList, '0', dept)
         })
       },
@@ -165,7 +165,7 @@
       // this.$vux.loading.show()
       let option = localStorage.getItem(ROSE_OPTION_KEY)
       if (option) {
-        this.$router.replace({path: '/Rose'})
+        this.$router.replace({path: '/Home'})
       } else {
         this.getRegion().then(() => {
           this.getDept()

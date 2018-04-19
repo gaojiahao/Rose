@@ -16,16 +16,16 @@
       </div>
       <div class="each-select vux-1px-r" @click="projClick">
         <div>
-          <span class="each-select-name" :class="{'is-selected': tabSelected === 'Other'}">项目类产品</span>
+          <span class="each-select-name" :class="{'is-selected': objName !== ''}">项目类产品</span>
           <i class="iconfont icon-xiaosanjiaodown"></i>
         </div>
         <group class="proj-list-container" v-show="showProj">
           <cell :title="item" v-for="(item, index) in projList" :key="index"
-                @click.native.stop="projItemClick(item)" :class="{selected: item === projSelected}"></cell>
+                @click.native.stop="projItemClick(item)" :class="{selected: item === objName}"></cell>
         </group>
       </div>
       <div class="each-select " @click="aProjClick">
-        <span class="each-select-name" :class="{'is-selected': tabSelected === 'AProj'}">A类产品</span>
+        <span class="each-select-name" :class="{'is-selected': objName === ''}">A类产品</span>
       </div>
     </div>
     <!-- <grid>
@@ -37,13 +37,6 @@
                 @click.native="onItemClick(item)">{{item.name}}
       </tab-item>
     </tab> -->
-    <div class="page-controler">
-      <span class="each-page"><i class="iconfont icon-jiantou-copy"></i></span>
-        
-      <span class="each-page page-num">2</span>
-      <span class="each-page"><i class="iconfont icon-jiantou"></i></span>
-    </div>
-
 
     <div class="rank-container" @click="hideDropList">
       <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
@@ -55,6 +48,13 @@
         </div>
       </group>
       <divider class="no-data" v-show="reportList.length === 0">暂无数据</divider>
+    </div>
+
+    <div class="page-controler">
+      <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i class="iconfont icon-jiantou-copy"></i></span>
+      <span class="each-page page-num">{{curPage}}</span>
+      <span class="each-page" @click="pageNext" :class="{disabled: isDisabled}"><i
+        class="iconfont icon-jiantou"></i></span>
     </div>
   </div>
 </template>
@@ -78,6 +78,7 @@
   import saleReportService from '../service/saleRepotService'
 
   const PROJ_LIST = 'ROSE_PROJ_LIST'
+  const PAGE_SIZE = 30
   export default {
     components: {
       Tab,
@@ -94,11 +95,10 @@
     },
     data() {
       return {
-        showTab: true,
+        showTab: true, // 是否展示日期列表
         activeIndex: 0,
-        filterDate: [],
-        reportList: [],
-        list: [],
+        filterDate: [], // 日历的选中数据
+        reportList: [], // 当前展示的列表
         curTab: 'days',
         dateList: [
           {
@@ -117,7 +117,7 @@
             name: '本年',
             value: 'years'
           },
-        ],
+        ], // 日期列表
         reportData: { // 获取的后台数据
           days: [],
           weeks: [],
@@ -125,16 +125,17 @@
           years: []
         },
         filterParams: {}, // 过滤条件
-        showDate: false,
+        showDate: false, // 是否展示日期列表
         dateSelected: { // 选中的日期
           name: '本日',
           value: 'days'
         },
-        showProj: false,
-        projList: [],
-        projSelected: '项目类产品',
-        tabSelected: 'AProj',
-        page: 1
+        showProj: false, // 是否展示产品列表
+        projList: [], // 产品列表
+        page: 1, // 请求页码
+        curPage: 1, // 当前页码
+        objName: '', // 项目类型
+        isDisabled: false
       }
     },
     methods: {
@@ -157,7 +158,10 @@
       },
       // TODO 组装数据
       assembleData(params = {}) {
-        reportService.getReport(params).then(data => {
+        reportService.getReport(Object.assign(this.filterParams, {
+          objName: this.objName,
+          pageNo: this.page
+        })).then(data => {
           this.resetReportData()
           let map = ['days', 'weeks', 'months', 'years']
           // 数据组装
@@ -170,31 +174,33 @@
                 },
                 {
                   label: 'A类产品',
-                  value: `￥${numberComma(data.aProduct)}`
+                  value: `￥${numberComma(data.aProduct) || 0}`
                 },
                 /*{
                   label: 'B类产品',
                   value: '￥999'
                 }, */{
                   label: '所在部门',
-                  value: data.bmName
+                  value: data.bmName || ''
                 }, {
                   label: '所属银行',
-                  value: data.bankName
+                  value: data.bankName || ''
                 }
-              ]
-              if (this.tabSelected === 'AProj') {
+              ];
+              if (this.objName === '') {
                 detail.shift()
               }
               this.reportData[item].push({
-                name: `${(index + 1) + (this.page - 1) * 30}. ${data.creator}`,
+                name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
                 sales: '',
                 showContent: false,
                 detail: detail
               })
             })
           })
+          this.curPage = this.page
           this.reportList = this.reportData[this.dateSelected.value]
+          this.isDisabled = this.reportList.length < PAGE_SIZE
         }).catch(err => {
           this.resetReportData()
           this.reportList = []
@@ -220,7 +226,12 @@
       dateItemClick(item) {
         this.showDate = false;
         this.dateSelected = item;
-        this.reportList = this.reportData[item.value];
+        if (this.page === 1) {
+          this.reportList = this.reportData[item.value];
+        } else {
+          this.page = 1
+          this.assembleData()
+        }
       },
       // TODO 点击项目页签
       projClick() {
@@ -230,35 +241,47 @@
       // TODO 点击项目列表
       projItemClick(item) {
         this.showProj = false;
-        this.tabSelected = 'Other';
-        this.projSelected = item;
-        this.assembleData(Object.assign(this.filterParams, {
-          objName: item
-        }))
+        this.objName = item;
+        this.page = 1
+        this.assembleData()
       },
       // TODO 点击A类产品页签
       aProjClick() {
         this.showProj = false;
         this.showDate = false;
-        this.tabSelected = 'AProj';
-        this.projSelected = '项目类产品';
-        this.assembleData(Object.assign(this.filterParams, {
-          objName: ''
-        }));
-      }
+        this.objName = '';
+        this.page = 1
+        this.assembleData();
+      },
+      // TODO 返回上一页
+      pagePrev() {
+        if (this.page === 1) {
+          return
+        }
+        this.page--;
+        this.assembleData();
+      },
+      // TODO 进入下一页
+      pageNext() {
+        if (this.isDisabled) {
+          return
+        }
+        this.page++;
+        this.assembleData();
+      },
     },
     created() {
       let query = this.$route.query
+      console.log(query.proj)
       this.filterParams = {
-        sybName: query.region || '', // 区域
+        shengName: query.region || '', // 区域
         bankName: query.bank || '', // 银行
         bmName: query.dept || '', // 部门
         objName: query.proj || '', // 项目
       }
       // 如果选择了项目，则修改选中页签
       if (this.filterParams.objName) {
-        this.tabSelected = 'Other'
-        this.projSelected = this.filterParams.objName;
+        this.objName = this.filterParams.objName;
       }
       this.assembleData(this.filterParams)
       this.getProj()
@@ -268,6 +291,7 @@
 
 <style lang="scss">
   .reports-container {
+    overflow: hidden;
     .time_line {
       width: 100%;
       height: 40px;
@@ -290,10 +314,13 @@
       left: 0;
       // align-items: center;
     }
-      .each-page {
-        flex:1;
-        font-size: 18px;
+    .each-page {
+      flex: 1;
+      font-size: 18px;
+      &.disabled {
+        color: #ccc;
       }
+    }
     // 顶部栏
     .select-part {
       width: 100%;
@@ -342,7 +369,7 @@
       border-bottom: 2px solid #fff;
     }
     .rank-container {
-      height: calc(100% - 40px);
+      height: calc(100% - 80px);
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       .no-data {
