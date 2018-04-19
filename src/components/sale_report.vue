@@ -210,7 +210,7 @@ export default {
                 jsonData.transDetailUncalc.push({
                   "id":this.guid(),
                   "transObjCode": this.arr[i].value[0].split('_')[0],//项目类产品名称
-                  "containerCode": "",//类型
+                  "containerCode": "项目类产品",//类型
                   "qty": this.arr[i].qty,
                   "amount": this.arr[i].qty*this.arr[i].value[1],//总金额
                   "fgCode": ""

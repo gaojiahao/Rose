@@ -80,12 +80,16 @@
           </span>
         </p>
         
-        <group>
+        <group class="caution_inputs">
           <x-input 
           title="支援队长"
           text-align="right"
-          v-model="helpCaptain" 
+          v-model.trim="helpCaptain"
+          @on-change="captainSelect"
+          @on-focus="captainFocus" 
           placeholder="请输入队长"
+          ref="captainChooise"
+          class="helpCaptain"
           ></x-input>
 
           <x-input 
@@ -105,8 +109,11 @@
           text-align="right" 
           placeholder="请输入金额"
           ></x-input>
+          
+        <group class="captain-container" :class="captainShow==false?'captainHide':''">
+          <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
         </group>
-
+        </group>
 
     </div>
     <x-button 
@@ -160,7 +167,8 @@ export default {
       bankValue:[],
       teamLeaderList:[],
       teamLeaderValue:[],
-      helpCaptain:''
+      helpCaptain:'',
+      captainShow:false,
     }
   },
   filters:{
@@ -300,7 +308,7 @@ export default {
                 jsonData.transDetailUncalc.push({
                   "id":this.guid(),
                   "transObjCode": this.arr[i].value[0].split('_')[0],//项目类产品名称
-                  "containerCode": "",//类型
+                  "containerCode": "项目类产品",//类型
                   "qty": this.arr[i].qty,
                   "amount": this.arr[i].qty*this.arr[i].value[1],//总金额
                   "fgCode": ""
@@ -400,6 +408,24 @@ export default {
             this.teamLeaderList=data.tableContent;
          })
     },
+    //匹配队长
+    captainSelect(e){
+      if(this.captainShow==false||this.helpCaptain==''){
+        return;
+      }
+      optionService.getCaptain({value:e}).then(data=>{
+        this.teamLeaderList=data.tableContent;
+         })
+    },
+    captainFocus(){
+      this.captainShow=true;
+    },
+    //选择队长
+    getNickname(e){
+      this.helpCaptain=e;
+      this.captainShow=false;
+       this.teamLeaderList=[]
+    },
     getPickerArea(e){
         
     },
@@ -410,7 +436,7 @@ export default {
   mounted(){
    this.getArea();
    this.getBank();
-   this.teamLeader();
+  //  this.teamLeader();
     if(localStorage.getItem('saleReport')){
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
@@ -474,7 +500,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .mescroll {
   padding-bottom: 50px;
 }
@@ -507,5 +533,26 @@ export default {
 }
 .plus_delect{
   color: red;
+}
+.helpCaptain{
+  position: relative;
+}
+.captain-container{
+  position: absolute;
+  width: 100%;
+  top: 46px;
+  max-height: 132px;
+  overflow-y: scroll;
+  background: #ffffff;
+  z-index: 8;
+}
+.captain-container>.weui-cells{
+  margin-top: 0;
+}
+.caution_inputs>.weui-cells{
+  overflow: inherit;
+}
+.captainHide{
+  display: none;
 }
 </style>
