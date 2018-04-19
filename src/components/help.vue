@@ -25,7 +25,7 @@
           </popup-picker>
         </group>
 
-        <group label-align='left' title="请选择支援队长">
+        <!-- <group label-align='left' title="请选择支援队长">
           <popup-picker 
             class="each_part"
             title="支援队长" 
@@ -34,7 +34,7 @@
             v-model="teamLeaderValue"
             :columns="1">
           </popup-picker>
-        </group>
+        </group> -->
 
         <group 
           label-align='left' 
@@ -81,6 +81,13 @@
         </p>
         
         <group>
+          <x-input 
+          title="支援队长"
+          text-align="right"
+          v-model="helpCaptain" 
+          placeholder="请输入队长"
+          ></x-input>
+
           <x-input 
           title="A类产品"
           :value='Aclass | numberComma(3)' 
@@ -153,6 +160,7 @@ export default {
       bankValue:[],
       teamLeaderList:[],
       teamLeaderValue:[],
+      helpCaptain:''
     }
   },
   filters:{
@@ -232,10 +240,10 @@ export default {
             }
         })
         return;
-    }else if(this.teamLeaderValue.length==0){
+    }else if(this.helpCaptain==''){
          this.$vux.alert.show({
             title: '失败',
-            content: '请选支援队长',
+            content: '请填写支援队长',
             onShow () {
 
             },
@@ -246,7 +254,7 @@ export default {
         return;
     }
     let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
-    localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:this.bankValue[0],captain:this.teamLeaderValue[0],dept:dept,region:this.areaValue[0]}))
+    localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:this.bankValue[0],captain:this.helpCaptain,dept:dept,region:this.areaValue[0]}))
       
       
       var jsonData = {
@@ -412,7 +420,7 @@ export default {
     if(localStorage.getItem('ROSE_OPTION')){
         this.areaValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).region];
         this.bankValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).bank];
-        this.teamLeaderValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).captain];
+        //this.helpCaptain=JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
     }
    this.listData();
    this.mescroll = new MeScroll("mescroll",{
