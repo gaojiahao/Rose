@@ -12,8 +12,8 @@
         </popup-picker>
         <!--<popup-picker title="所属队长" placeholder="请选择队长" :data="captainList" v-model="captain" @on-change="captionChange"-->
         <!--v-show="showMore"></popup-picker>-->
-        <x-input title="所属队长" text-align="right" @on-change="searchCaptain" @on-focus="focusCaptain" placeholder="请输入队长"
-                 v-model="captain"></x-input>
+        <x-input title="所属队长" text-align="right" @on-change="searchCaptain" @on-focus="focusCaptain"
+                 @on-click-clear-icon="clearCaptain" placeholder="请输入队长" v-model="captain"></x-input>
       </group>
       <group class="captain-search-container">
         <cell :title="item" v-for="(item, index) in captainList" @click.native="selectCaptain(item)"
@@ -144,7 +144,6 @@
       },
       // TODO 搜索队长
       searchCaptain(val) {
-        console.log(val)
         if (this.hasSelected) {
           return
         }
@@ -159,7 +158,11 @@
         this.captain = item
         this.captainList = []
         this.hasSelected = true
-      }
+      },
+      // TODO 清空队长列表
+      clearCaptain() {
+        this.captainList = []
+      },
     },
     created() {
       // this.$vux.loading.show()
@@ -209,6 +212,7 @@
         }
       }
       .weui-cells {
+        margin-top: 0;
         background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
         .weui-label {
           color: #fff;
@@ -221,11 +225,19 @@
         .vux-cell-value {
           color: #fff;
         }
+        .weui-cell__bd {
+          padding-right: 11px;
+        }
       }
     }
     .captain-search-container {
-      margin-top: 10px;
-      height: 200px;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1;
+      margin-top: 5px;
+      width: 100%;
+      max-height: 120px;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       .weui-cells {
