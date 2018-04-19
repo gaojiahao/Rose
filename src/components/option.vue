@@ -210,6 +210,9 @@
         &::placeholder {
           color: #fff;
         }
+        &::-webkit-input-placeholder {
+          color: #fff;
+        }
       }
       .weui-cells {
         margin-top: 0;
