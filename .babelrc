@@ -1,7 +1,7 @@
 {
   "presets": [
+    "latest",
     "stage-0",
-    "es2015",
     ["env", {
       "modules": false,
       "targets": {
@@ -9,5 +9,8 @@
       }
     }]
   ],
-  "plugins": ["transform-runtime"]
+  "plugins": [
+    "transform-runtime",
+    "transform-async-to-generator"  
+  ]
 }
