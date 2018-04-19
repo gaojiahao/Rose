@@ -240,7 +240,19 @@ export default {
             }
         })
         return;
-    }else if(this.helpCaptain==''){
+    }else if(this.arr[0].value.length==0){
+          this.$vux.alert.show({
+              title: '失败',
+              content: '请选择项目产品',
+              onShow () {
+
+              },
+              onHide () {
+                
+              }
+            })
+            return;
+        }else if(this.helpCaptain==''){
          this.$vux.alert.show({
             title: '失败',
             content: '请填写支援队长',
@@ -271,19 +283,6 @@ export default {
           "transCode": "XHXSDD"
           };
          
-          if(this.arr[0].value.length==0){
-              this.$vux.alert.show({
-                  title: '失败',
-                  content: '请选择项目产品',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
-                })
-                return;
-            }
           for(let i =0 ;i<this.arr.length ; i++){
             if(this.arr[i].qty==''){
                 this.$vux.alert.show({
