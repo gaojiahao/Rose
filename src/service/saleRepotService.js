@@ -4,7 +4,7 @@ let saleReportService={
     //项目产品类列表
     saleRepotList(){
         return $axios.ajax({
-            url: '/ds/extr/269f5a62-54e4-45f7-bf65-3fd68c68245f',
+            url: '/ds/extr/fb14652e-6706-40f9-af82-35ffcfd205a0',
         });
     },
     //提交产品合计

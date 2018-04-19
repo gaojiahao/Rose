@@ -31,6 +31,7 @@
           class="each_select" 
           :gradients="['#B99763', '#E7D0A2']" 
           @click.native="goRP"
+          v-if="showLookReport"
         >查看报表
         </x-button>
 
@@ -48,6 +49,7 @@
 
 <script>
 import { XButton, Confirm } from 'vux'
+import tokenService from '../service/tokenService'
 
 export default {
   components:{
@@ -67,7 +69,8 @@ export default {
   },
   data(){
     return{
-      show:false
+      show:false,
+      showLookReport: true
     }
   },
   methods:{
@@ -94,6 +97,8 @@ export default {
     goRP(){
       this.$router.push({path:'/reportsOp'})
     }
+  },
+  created(){
   }
 }
 </script>

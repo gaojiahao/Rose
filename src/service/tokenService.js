@@ -1,6 +1,7 @@
 import axios from 'axios';
 import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
+import {querystring} from 'vux'
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
@@ -12,10 +13,10 @@ let tokenService = {
     window.localStorage.removeItem(TOKEN_KEY);
   },
   /**
-   * 获取token
+   * 获取token或者用户ID，默认获取token
    */
-  getToken() {
-    let token = this.checkLogin()
+  getToken(key = 'key') {
+    let token = this.checkLogin(key)
     if (token) {
       return new Promise((resolve, reject) => {
         resolve(token)
@@ -23,12 +24,6 @@ let tokenService = {
     } else {
       return this.login()
     }
-  },
-  /**
-   * 设置企业微信token
-   */
-  setWeixinToken(token) {
-    window.localStorage.setItem('weixin_token', token);
   },
   /**
    * 设置token
@@ -41,9 +36,9 @@ let tokenService = {
     }));
   },
   // TODO 检查是否登录
-  checkLogin() {
+  checkLogin(key = 'key') {
     let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {}
-    if (token.key) {
+    if (token[key]) {
       let timestamp = token.timestamp
       if (new Date() - timestamp > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
@@ -51,11 +46,19 @@ let tokenService = {
     } else {
       return ''
     }
-    return token.key
+    return token[key]
   },
   // TODO 开发时用于获取账号的token
   login() {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
+    if (isQYWX) {
+      return this.pcLogin()
+    } else {
+      return this.pcLogin()
+    }
+  },
+  // TODO PC端登录
+  pcLogin() {
     return new Promise((resolve, reject) => {
         let params = {
           method: 'post',
@@ -85,6 +88,21 @@ let tokenService = {
         });
       }
     )
+  },
+  // TODO 企业微信登录
+  QYWXLogin() {
+    return new Promise((resolve, reject) => {
+      let query = querystring.parse(location.search.slice(1))
+      let code = query.code || ''
+      axios.get('/H_roleplay-si/wxLogin?code=' + code + '&&state=1').then((res) => {
+        let data = res.data;
+        this.clean();
+        this.setToken({
+          token: data.token,
+          entityId: data.entityId
+        });
+      })
+    })
   },
   /**
    * token 初始化
