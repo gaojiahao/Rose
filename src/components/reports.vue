@@ -51,7 +51,7 @@
     </div>
 
     <div class="page-controler">
-      <span class="each-page" @click="pagePrev"><i class="iconfont icon-jiantou-copy"></i></span>
+      <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i class="iconfont icon-jiantou-copy"></i></span>
       <span class="each-page page-num">{{curPage}}</span>
       <span class="each-page" @click="pageNext" :class="{disabled: isDisabled}"><i
         class="iconfont icon-jiantou"></i></span>
