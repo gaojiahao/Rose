@@ -102,7 +102,7 @@
             let region = data.reduce((arr, item) => {
               arr.push(item.name)
               return arr
-            }, [''])
+            }, [])
             this.$set(this.regionList, '0', region)
             resolve()
           })
@@ -114,7 +114,7 @@
           let bank = data.tableContent.reduce((arr, item) => {
             arr.push(item.bankName)
             return arr
-          }, [''])
+          }, [])
           this.$set(this.bankList, '0', bank)
         })
       },
@@ -124,7 +124,7 @@
           let dept = data.tableContent.reduce((arr, item) => {
             arr.push(item.groupName)
             return arr
-          }, [''])
+          }, [])
           this.$set(this.deptList, '0', dept)
         })
       },

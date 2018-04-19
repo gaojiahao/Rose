@@ -66,8 +66,8 @@ let tokenService = {
           },
           data: {
             loginModel: 1,
-            password: 'rfd133',
-            userCode: '123456'
+            password: 'rfd120',
+            userCode: 'rfd120'
           }
         }
 
