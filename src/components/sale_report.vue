@@ -307,23 +307,6 @@ export default {
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
     }
    this.listData();
-      this.mescroll = new MeScroll("mescroll",{
-        up:{
-          isBounce:false,
-          use:false,
-          auto:false
-        },
-        down:{
-          use:false,
-          auto:false,
-          isLock:false
-			  }
-      
-      }
-      )	
-      // this.$event.$on('show',()=>{
-      //   console.log('我接收到值了')
-      // })
   },
   beforeRouteLeave(to,from,next){
     var that=this;
