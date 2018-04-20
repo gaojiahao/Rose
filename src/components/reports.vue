@@ -16,7 +16,7 @@
       </div>
       <div class="each-select vux-1px-r" @click="projClick">
         <div>
-          <span class="each-select-name" :class="{'is-selected': objName !== ''}">项目类产品</span>
+          <span class="each-select-name" :class="{'is-selected': objName !== ''}">{{objName | nameFilter}}</span>
           <i class="iconfont icon-xiaosanjiaodown"></i>
         </div>
         <group class="proj-list-container" v-show="showProj">
@@ -51,7 +51,8 @@
     </div>
 
     <div class="page-controler">
-      <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i class="iconfont icon-jiantou-copy"></i></span>
+      <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i
+        class="iconfont icon-jiantou-copy"></i></span>
       <span class="each-page page-num">{{curPage}}</span>
       <span class="each-page" @click="pageNext" :class="{disabled: isDisabled}"><i
         class="iconfont icon-jiantou"></i></span>
@@ -270,6 +271,12 @@
         this.assembleData();
       },
     },
+    filters: {
+      // TODO 项目类产品名称过滤
+      nameFilter(val) {
+        return val.length > 5 ? `${val}...` : val || '项目类产品'
+      }
+    },
     created() {
       let query = this.$route.query
       console.log(query.proj)
@@ -345,6 +352,7 @@
       max-height: 300px;
       color: #000;
       box-shadow: 1px 1px 5px #ccc;
+      overflow: auto;
       .weui-cells {
         margin-top: 0;
       }
