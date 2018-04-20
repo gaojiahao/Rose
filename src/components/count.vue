@@ -104,7 +104,7 @@ export default {
             let total3=0;
             let jsonData=JSON.parse(this.childInfo.jsonData).transDetailUncalc;
             for(let i = 0 ;i<jsonData.length; i++){
-                if(jsonData[i].containerCode==''){
+                if(jsonData[i].containerCode=='项目类产品'){
                     this.list1.push({
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
