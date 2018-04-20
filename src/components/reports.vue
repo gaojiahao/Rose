@@ -21,7 +21,7 @@
         </div>
         <group class="proj-list-container" v-show="showProj">
           <cell :title="item" v-for="(item, index) in projList" :key="index"
-                @click.native.stop="projItemClick(item, index)" :class="{selected: index === projIndex}"></cell>
+                @click.native.stop="projItemClick(item, index)" :class="{selected: item === objName}"></cell>
         </group>
       </div>
       <div class="each-select " @click="aProjClick">
@@ -133,7 +133,6 @@
         },
         showProj: false, // 是否展示产品列表
         projList: [], // 产品列表
-        projIndex: -1,
         page: 1, // 请求页码
         curPage: 1, // 当前页码
         objName: '', // 项目类型
@@ -244,7 +243,6 @@
       projItemClick(item, index) {
         this.showProj = false;
         this.objName = item;
-        this.projIndex = index;
         this.page = 1;
         this.assembleData()
       },
@@ -253,7 +251,6 @@
         this.showProj = false;
         this.showDate = false;
         this.objName = '';
-        this.projIndex = -1;
         this.page = 1;
         this.assembleData();
       },
@@ -284,10 +281,10 @@
       let query = this.$route.query
       console.log(query.proj)
       this.filterParams = {
-        shengName: query.region || '', // 区域
-        bankName: query.bank || '', // 银行
-        bmName: query.dept || '', // 部门
-        objName: query.proj || '', // 项目
+        shengName: query.region ? decodeURI(query.region) : '', // 区域
+        bankName: query.bank ? decodeURI(query.bank) : '', // 银行
+        bmName: query.dept ? decodeURI(query.dept) : '', // 部门
+        objName: query.proj ? decodeURI(query.proj) : '', // 项目
       }
       // 如果选择了项目，则修改选中页签
       if (this.filterParams.objName) {
