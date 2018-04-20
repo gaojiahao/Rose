@@ -161,16 +161,16 @@
         this.pickerList.forEach((item, index) => {
           switch (index) {
             case 0:
-              filterParams.region = encodeURI(item.value[0])
+              filterParams.region = encodeURI(item.value[0] || '')
               break;
             case 1:
-              filterParams.dept = encodeURI(item.value[0])
+              filterParams.dept = encodeURI(item.value[0] || '')
               break;
             case 2:
-              filterParams.bank = encodeURI(item.value[0])
+              filterParams.bank = encodeURI(item.value[0] || '')
               break;
             case 3:
-              filterParams.proj = encodeURI(item.value[0])
+              filterParams.proj = encodeURI(item.value[0] || '')
               break;
           }
         })
