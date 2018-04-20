@@ -5,9 +5,10 @@
   "author": "",
   "private": true,
   "scripts": {
+    "clean": "rm -rf dist",    
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "node build/build.js"
+    "build": "npm run clean && node build/build.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
