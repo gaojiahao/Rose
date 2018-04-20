@@ -40,25 +40,25 @@
           {
             title: '所在地区',
             ph: '请选择地区',
-            value: [''],
+            value: [],
             list: []
           },
           {
             title: '所在银行',
             ph: '请选择银行',
-            value: [''],
+            value: [],
             list: []
           },
           {
             title: '所属区域',
             ph: '请选择区域',
-            value: [''],
+            value: [],
             list: []
           },
           {
             title: '项目产品',
             ph: '请选择项目',
-            value: [''],
+            value: [],
             list: []
           }
         ],

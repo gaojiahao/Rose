@@ -174,6 +174,10 @@
                   value: `${data.qty || 0}件/套`
                 },
                 {
+                  label: '项目类金额',
+                  value: `￥${numberComma(data.amount) || 0}`
+                },
+                {
                   label: 'A类产品',
                   value: `￥${numberComma(data.aProduct) || 0}`
                 },
@@ -190,10 +194,11 @@
               ];
               if (this.objName === '') {
                 detail.shift()
+                detail.shift()
               }
               this.reportData[item].push({
                 name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                sales: '',
+                sales: this.objName ? `${data.qty || 0}件/套` : `￥${numberComma(data.aProduct) || 0}`,
                 showContent: false,
                 detail: detail
               })
