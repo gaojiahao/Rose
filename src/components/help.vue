@@ -12,9 +12,7 @@
             :columns="1"
             @on-change="getPickerArea">
           </popup-picker>
-        </group>
 
-        <group label-align='left' title="请选择支援的银行">
           <popup-picker 
             class="each_part"
             title="所属银行" 
@@ -23,18 +21,21 @@
             v-model="bankValue"
             :columns="1">
           </popup-picker>
-        </group>
 
-        <!-- <group label-align='left' title="请选择支援队长">
-          <popup-picker 
-            class="each_part"
-            title="支援队长" 
-            placeholder="请选择队长"
-            :data='teamLeaderList'
-            v-model="teamLeaderValue"
-            :columns="1">
-          </popup-picker>
-        </group> -->
+          <x-input 
+          title="支援队长"
+          text-align="right"
+          v-model.trim="helpCaptain"
+          @on-change="captainSelect"
+          @on-focus="captainFocus" 
+          placeholder="请输入队长"
+          ref="captainChooise"
+          class="helpCaptain"
+          ></x-input>
+        </group>
+        <group class="captain-container" :class="captainShow==false?'captainHide':''">
+          <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
+        </group>
 
         <group 
           label-align='left' 
@@ -81,16 +82,6 @@
         </p>
         
         <group class="caution_inputs">
-          <x-input 
-          title="支援队长"
-          text-align="right"
-          v-model.trim="helpCaptain"
-          @on-change="captainSelect"
-          @on-focus="captainFocus" 
-          placeholder="请输入队长"
-          ref="captainChooise"
-          class="helpCaptain"
-          ></x-input>
 
           <x-input 
           title="A类产品"
@@ -110,9 +101,6 @@
           placeholder="请输入金额"
           ></x-input>
           
-        <group class="captain-container" :class="captainShow==false?'captainHide':''">
-          <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
-        </group>
         </group>
 
     </div>
@@ -450,23 +438,6 @@ export default {
         //this.helpCaptain=JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
     }
    this.listData();
-   this.mescroll = new MeScroll("mescroll",{
-        up:{
-          isBounce:false,
-          use:false,
-          auto:false
-        },
-        down:{
-          use:false,
-          auto:false,
-          isLock:false
-			  }
-      
-      }
-    )	
-      // this.$event.$on('show',()=>{
-      //   console.log('我接收到值了')
-      // })
   },
   beforeRouteLeave(to,from,next){
     var that=this;
@@ -504,6 +475,7 @@ export default {
 <style>
 .mescroll {
   padding-bottom: 50px;
+  position: relative;
 }
 /* 底部提示文字 */
 .caution_part {
@@ -539,16 +511,16 @@ export default {
   position: relative;
 }
 .captain-container{
-  position: absolute;
   width: 100%;
-  top: 46px;
-  max-height: 132px;
+  max-height: 132px;  
+  position: absolute;
   overflow-y: scroll;
-  background: #ffffff;
+  background: #fff;
   z-index: 8;
 }
 .captain-container>.weui-cells{
   margin-top: 0;
+  background: #f0f2f5;
 }
 .caution_inputs>.weui-cells{
   overflow: inherit;
