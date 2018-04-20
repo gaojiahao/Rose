@@ -168,8 +168,7 @@ export default {
     end(){
       var that=this;
       var jsonData = {
-          //"listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
-          "listId": "8bf196b3-9be4-4a7e-ade1-c50602320f68",
+          "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
           "baseinfoExt": {
             "id":this.guid(),
