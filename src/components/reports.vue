@@ -21,7 +21,7 @@
         </div>
         <group class="proj-list-container" v-show="showProj">
           <cell :title="item" v-for="(item, index) in projList" :key="index"
-                @click.native.stop="projItemClick(item)" :class="{selected: item === objName}"></cell>
+                @click.native.stop="projItemClick(item, index)" :class="{selected: index === projIndex}"></cell>
         </group>
       </div>
       <div class="each-select " @click="aProjClick">
@@ -78,8 +78,8 @@
   import reportService from '../service/reportService'
   import saleReportService from '../service/saleRepotService'
 
-  const PROJ_LIST = 'ROSE_PROJ_LIST'
-  const PAGE_SIZE = 30
+  const PROJ_LIST = 'ROSE_PROJ_LIST';
+  const PAGE_SIZE = 30;
   export default {
     components: {
       Tab,
@@ -133,6 +133,7 @@
         },
         showProj: false, // 是否展示产品列表
         projList: [], // 产品列表
+        projIndex: -1,
         page: 1, // 请求页码
         curPage: 1, // 当前页码
         objName: '', // 项目类型
@@ -240,10 +241,11 @@
         this.showDate = false;
       },
       // TODO 点击项目列表
-      projItemClick(item) {
+      projItemClick(item, index) {
         this.showProj = false;
         this.objName = item;
-        this.page = 1
+        this.projIndex = index;
+        this.page = 1;
         this.assembleData()
       },
       // TODO 点击A类产品页签
@@ -251,7 +253,8 @@
         this.showProj = false;
         this.showDate = false;
         this.objName = '';
-        this.page = 1
+        this.projIndex = -1;
+        this.page = 1;
         this.assembleData();
       },
       // TODO 返回上一页
@@ -353,6 +356,7 @@
       color: #000;
       box-shadow: 1px 1px 5px #ccc;
       overflow: auto;
+      -webkit-overflow-scrolling: touch;
       .weui-cells {
         margin-top: 0;
       }
