@@ -36,7 +36,32 @@
         region: [],
         whichIndex: '',
         showMore: false,
-        pickerList: [],
+        pickerList: [
+          {
+            title: '所在地区',
+            ph: '请选择地区',
+            value: [''],
+            list: []
+          },
+          {
+            title: '所在银行',
+            ph: '请选择银行',
+            value: [''],
+            list: []
+          },
+          {
+            title: '所属区域',
+            ph: '请选择区域',
+            value: [''],
+            list: []
+          },
+          {
+            title: '项目产品',
+            ph: '请选择项目',
+            value: [''],
+            list: []
+          }
+        ],
         regionList: [],
         bankList: [],
         deptList: [],
@@ -160,17 +185,17 @@
         let filterParams = {}
         this.pickerList.forEach((item, index) => {
           switch (index) {
-            case 0:
-              filterParams.region = encodeURI(item.value[0] || '')
+            case 0: // 地区
+              filterParams.region = encodeURI(item.value[0] || '');
               break;
-            case 1:
-              filterParams.dept = encodeURI(item.value[0] || '')
+            case 1: // 银行
+              filterParams.bank = encodeURI(item.value[0] || '');
               break;
-            case 2:
-              filterParams.bank = encodeURI(item.value[0] || '')
+            case 2: // 部门、区域
+              filterParams.dept = encodeURI(item.value[0] || '');
               break;
-            case 3:
-              filterParams.proj = encodeURI(item.value[0] || '')
+            case 3: // 项目
+              filterParams.proj = encodeURI(item.value[0] || '');
               break;
           }
         })
@@ -190,32 +215,6 @@
     },
     created() {
       (async () => {
-        this.pickerList = [
-          {
-            title: '所在地区',
-            ph: '请选择地区',
-            value: [],
-            list: []
-          },
-          {
-            title: '所在银行',
-            ph: '请选择银行',
-            value: [],
-            list: []
-          },
-          {
-            title: '所属区域',
-            ph: '请选择区域',
-            value: [],
-            list: []
-          },
-          {
-            title: '项目产品',
-            ph: '请选择项目',
-            value: [],
-            list: []
-          }
-        ]
         let filter = JSON.parse(sessionStorage.getItem(FILTER_OPTION))
         if (!filter) {
           let tmpPickerList = []
