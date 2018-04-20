@@ -56,17 +56,6 @@ export default {
     XButton,
     Confirm
   },
-  watch:{
-    $route(to,from){
-      console.log(from);
-      console.log(to);
-      if(from.path === "/Home/sp"){
-        // this.$event.$emit('show')
-        // this.show = true;
-        // alert('你即将返回到home页面')
-      }
-    }
-  },
   data(){
     return{
       show:false,
@@ -97,8 +86,6 @@ export default {
     goRP(){
       this.$router.push({path:'/reportsOp'})
     }
-  },
-  created(){
   }
 }
 </script>

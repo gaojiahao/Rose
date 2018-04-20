@@ -120,20 +120,12 @@ export default {
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
                     });
-                    //  this.list4.push({
-                    //     label:jsonData[i].transObjCode,
-                    //     value:'',
-                    // })
                     total2 =jsonData[i].amount;
                 }else if(jsonData[i].containerCode=='B'){
                     this.list3.push({
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
                     });
-                    //  this.list4.push({
-                    //     label:jsonData[i].transObjCode,
-                    //     value:'',
-                    // })
                     total3 =jsonData[i].amount;
                 }
             }
