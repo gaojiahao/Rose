@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages pd_btm">
 
     <group >
       <cell class="count_part" title="最终合计" :value="total4"></cell>
@@ -157,5 +157,11 @@ export default {
   border-radius: 0;
   margin-top: 10px;
   z-index: 99;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+.pd_btm{
+    padding-bottom: 100px;
 }
 </style>
