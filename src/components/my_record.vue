@@ -75,22 +75,29 @@ export default {
     },
     methods:{
         mylist(tab){
-            myReportService.myRepotList().then(data=>{
-                this.remark=data;
-                if(tab==0){
-                    this.listpanl(this.remark.days)
-                }else if(tab==1){
-                    this.listpanl(this.remark.weeks)
-                }else if(tab==2){
-                    this.listpanl(this.remark.months)
-                }else if(tab==3){
-                    this.listpanl(this.remark.years)
-                }
-            });
+            if(tab==0){
+                this.listpanl(this.remark.days)
+            }else if(tab==1){
+                this.listpanl(this.remark.weeks)
+            }else if(tab==2){
+                this.listpanl(this.remark.months)
+            }else if(tab==3){
+                this.listpanl(this.remark.years)
+            }
             
         },
         listData(){
-
+            let ROSE_OPTION=JSON.parse(localStorage.getItem('ROSE_OPTION'));
+            let jsonData={
+                shengName:ROSE_OPTION.region,
+                bankName:ROSE_OPTION.bank,
+                sybName:ROSE_OPTION.dept,
+                bmName:ROSE_OPTION.captain,
+            }
+            myReportService.myRepotList(jsonData).then(data=>{
+                this.remark=data;
+                this.mylist(0);
+            });
         },
         listpanl(m){
             this.list1Total=0;
@@ -115,9 +122,10 @@ export default {
         }
     },
     created(){
+        
     },
     mounted(){
-        this.mylist(0);
+        this.listData();
     }
 }
 </script>
