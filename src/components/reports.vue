@@ -185,7 +185,7 @@
                   label: 'B类产品',
                   value: '￥999'
                 }, */{
-                  label: '所在部门',
+                  label: '所属区域',
                   value: data.bmName || ''
                 }, {
                   label: '所属银行',
