@@ -89,6 +89,9 @@ export default {
             });
             
         },
+        listData(){
+
+        },
         listpanl(m){
             this.list1Total=0;
             this.list2Total=0;
@@ -100,12 +103,12 @@ export default {
                         this.list1Total+=Number(m[i].amount);
                         this.list1.push({
                         label:m[i].objName,
-                        value:numberComma(parseInt(m[i].amount),3),
+                        value:numberComma(m[i].amount,3),
                     })
                 }else if(m[i].objType=='A'){
-                        this.list2Total=Number(m[i].amount)
+                        this.list2Total=m[i].amount
                 }else if(m[i].objType=='B'){
-                        this.list3Total=Number(m[i].amount)
+                        this.list3Total=m[i].amount
                 }
             }
             

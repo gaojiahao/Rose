@@ -2,7 +2,7 @@
   <div class="pages pd_btm">
 
     <group >
-      <cell class="count_part" title="最终合计" :value="total4"></cell>
+      <cell class="count_part" title="最终合计" :value="total4 | numberComma"></cell>
       <cell-form-preview class="count_dt_part" :list="list4"></cell-form-preview>
     </group>
 
@@ -10,7 +10,7 @@
       <form-preview 
         class="project_part"
         header-label="金额" 
-        :header-value="total1" 
+        :header-value="total1 | numberComma" 
         :body-items="list1">
       </form-preview>
 
@@ -18,14 +18,14 @@
       <form-preview 
         class="project_part"
         header-label="金额" 
-        :header-value="total2">
+        :header-value="total2 | numberComma">
       </form-preview>
 
     <load-more tip="B类产品" :show-loading='false'></load-more>
       <form-preview 
         class="project_part"
         header-label="金额" 
-        :header-value="total3">
+        :header-value="total3 | numberComma">
       </form-preview>
 
 
@@ -36,6 +36,7 @@
         >
         确定提交
     </x-button>
+    <alert></alert>
     <confirm></confirm>
   </div>
 </template>
@@ -46,6 +47,7 @@ import { Alert, Cell , Group, Confirm ,  Divider,  XButton, LoadMore, FormPrevie
 
 export default {
     components:{
+        Alert,
         Cell,
         Group,
         Divider,
@@ -91,9 +93,32 @@ export default {
                 onConfirm () {
                 saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data=>{
                     if(data.success){
-                        that.$router.replace('/Home');
-                        localStorage.removeItem('saleReport');
-                        localStorage.removeItem('saleReportInfo');
+                        that.$vux.alert.show({
+                        title: '成功',
+                        content: data.message,
+                            onShow () {
+                                
+                            },
+                            onHide () {
+                                that.$router.replace('/Home');
+                                localStorage.removeItem('saleReport');
+                                localStorage.removeItem('saleReportInfo');
+                            }
+                        })
+                        
+                    }
+                }).catch(data=>{
+                     if(data.success==false){
+                        that.$vux.alert.show({
+                        title: '失败',
+                        content: data.message,
+                            onShow () {
+                                
+                            },
+                            onHide () {
+                            }
+                        })
+                        
                     }
                 })
                 }
@@ -110,11 +135,11 @@ export default {
                 if(jsonData[i].containerCode=='项目类产品'){
                     this.list1.push({
                         label:jsonData[i].transObjCode,
-                        value:jsonData[i].qty,
+                        value:jsonData[i].qty+'件/套',
                     });
                     this.list4.push({
-                        label:jsonData[i].transObjCode,
-                        value:jsonData[i].qty+'件/套',
+                        label:'合计数量',
+                        value:jsonData[i].qty,
                     })
                     total1 =jsonData[i].amount;
 
@@ -132,11 +157,11 @@ export default {
                     total3 =jsonData[i].amount;
                 }
             }
-            this.total1='￥'+numberComma(total1,3);
-            this.total2='￥'+numberComma(total2,3);
-            this.total3='￥'+numberComma(total3,3);
+            this.total1='￥'+total1;
+            this.total2='￥'+total2;
+            this.total3='￥'+total3;
             let num=Number(total1)+Number(total2)+Number(total3);
-            this.total4='￥'+numberComma(num,3);
+            this.total4='￥'+num;
         }
     },
     mounted(){
