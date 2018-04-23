@@ -36,13 +36,15 @@
         </form-preview>
 
     </div>
-    <loading></loading>
+    <loading :show='spinner'></loading>
    </div>
 </template>
 
 <script>
-import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview,numberComma,Loading  } from 'vux'
+import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview,numberComma } from 'vux'
 import myReportService from '../service/myReportService'
+import { setTimeout } from 'timers';
+import loading from './loading';
 const list = () => ['本日', '本周', '本月', '本年']
 export default {
     components:{
@@ -52,7 +54,7 @@ export default {
         SwiperItem,
         FormPreview,
         CellFormPreview,
-        Loading
+        loading
     },
     data(){
         return{
@@ -70,6 +72,7 @@ export default {
                     { label: '千足金666',value: '4232 件/套' }
                 ],
             remark:'',
+            spinner:false
         }
     },
     filters:{
@@ -97,20 +100,14 @@ export default {
                 bmName:ROSE_OPTION.captain,
             }
             myReportService.myRepotList(jsonData).then(data=>{
-                this.$vux.loading.show({
-                    text: '加载中'
-                })
+                this.spinner=true;
                 if(data){
-                     setTimeout(() => {
-                        this.$vux.loading.hide()
-                    },1000)
+                    this.spinner=false;
                 }
                 this.remark=data;
                 this.mylist(0);
             }).catch(data=>{
-                 this.$vux.loading.show({
-                    text: '加载中'
-                })
+                this.spinner=true;
             })
         },
         listpanl(m){
@@ -124,7 +121,7 @@ export default {
                         this.list1Total+=Number(m[i].amount);
                         this.list1.push({
                         label:m[i].objName,
-                        value:'￥'+numberComma(m[i].amount,3)+' '+m[i].qty+'件/套',
+                        value:'￥'+numberComma(m[i].amount,3)+' '+'('+m[i].qty+'件/套'+')',
                     })
                 }else if(m[i].objType=='A'){
                         this.list2Total=m[i].amount
@@ -150,5 +147,12 @@ export default {
 .tab-swiper {
   background-color: #fff;
   height: 100%;
+}
+.spinner_task{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%,-50%,0);
+    z-index: 99;
 }
 </style>

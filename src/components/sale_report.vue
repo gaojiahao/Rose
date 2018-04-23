@@ -2,7 +2,22 @@
   <div class="pages">
     <div v-if='$route.name=="saleReport"'>
     <div id='mescroll' class="mescroll">
-
+        <group label-align='left' title="请选择所属队长">
+          
+          <x-input 
+          title="所属队长"
+          text-align="right"
+          v-model.trim="helpCaptain"
+          @on-change="captainSelect"
+          @on-focus="captainFocus" 
+          placeholder="请输入队长"
+          ref="captainChooise"
+          class="helpCaptain"
+          ></x-input>
+        </group>
+        <group class="captain-container" :class="captainShow==false?'captainHide':''">
+          <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
+        </group>
         <group 
           label-align='left' 
           :title="index>0?'':'请选择对应的产品'" 
@@ -85,6 +100,7 @@
 
 <script>
 import saleRepotService from '../service/saleRepotService'
+import optionService from '../service/optionService'
 import { Alert, Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker,querystring,numberComma} from 'vux'
 export default {
   components:{
@@ -112,13 +128,44 @@ export default {
       showNumber:false,
       showNewDiv:false,
       mescroll: null,
-      totalInfo:''
+      totalInfo:'',
+      teamLeaderList:[],
+      helpCaptain:'',
+      captainShow:false,
     }
   },
   filters:{
     numberComma
   },
   methods:{
+    //获取队长
+    teamLeader(){
+         optionService.getCaptain().then(data=>{
+             for(let i = 0 ; i<data.tableContent.length ;i++){
+                data.tableContent[i].name=data.tableContent[i].nickname;
+                data.tableContent[i].value=data.tableContent[i].nickname;
+            }
+            this.teamLeaderList=data.tableContent;
+         })
+    },
+    //匹配队长
+    captainSelect(e){
+      if(this.captainShow==false||this.helpCaptain==''){
+        return;
+      }
+      optionService.getCaptain({value:e}).then(data=>{
+        this.teamLeaderList=data.tableContent;
+         })
+    },
+    captainFocus(){
+      this.captainShow=true;
+    },
+    //选择队长
+    getNickname(e){
+      this.helpCaptain=e;
+      this.captainShow=false;
+       this.teamLeaderList=[]
+    },
     //监听选择栏
     getPickerValue(val){
       
@@ -167,15 +214,34 @@ export default {
     },
     end(){
       var that=this;
+      var captain =this.helpCaptain;
+      var dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
+      var region =JSON.parse(localStorage.getItem('ROSE_OPTION')).region;
+      var bank =JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
+      if(this.helpCaptain==''){
+         this.$vux.alert.show({
+            title: '失败',
+            content: '请填写所属队长',
+            onShow () {
+
+            },
+            onHide () {
+            
+            }
+        })
+        return;
+    }
+      localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:region}))
+
       var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
           "baseinfoExt": {
             "id":this.guid(),
-            "varchar1": JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
-            "varchar2": JSON.parse(localStorage.getItem('ROSE_OPTION')).captain,
-            "varchar3": JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
-            "varchar4": JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
+            "varchar1":dept,
+            "varchar2":captain,
+            "varchar3":region,
+            "varchar4":bank,
             },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
@@ -267,7 +333,7 @@ export default {
           }
           this.totalInfo=totalInfo;
           localStorage.setItem('saleReportInfo',JSON.stringify({saleReportRemark:totalInfo,time:new Date().getTime()}))
-          localStorage.setItem('saleReport',JSON.stringify({saleReportArr:this.arr,Aclass:this.Aclass,Bclass:this.Bclass,time:new Date().getTime()}))
+          localStorage.setItem('saleReport',JSON.stringify({saleReportArr:this.arr,Aclass:this.Aclass,Bclass:this.Bclass,captain:captain,time:new Date().getTime()}))
           that.$router.push({path:'/count'})
           
     },
@@ -305,6 +371,7 @@ export default {
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
+      this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
     }
    this.listData();
   },
@@ -328,7 +395,7 @@ export default {
           next()
         },
         onConfirm () {
-            localStorage.setItem('saleReport',JSON.stringify({saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,time:new Date().getTime()}))
+            localStorage.setItem('saleReport',JSON.stringify({saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,captain:that.helpCaptain,time:new Date().getTime()}))
           next()
         }
     })
@@ -341,7 +408,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style >
 .mescroll {
   padding-bottom: 50px;
 }
@@ -374,5 +441,26 @@ export default {
 }
 .plus_delect{
   color: red;
+}
+.helpCaptain{
+  position: relative;
+}
+.captain-container{
+  width: 100%;
+  max-height: 132px;  
+  position: absolute;
+  overflow-y: scroll;
+  background: #fff;
+  z-index: 8;
+}
+.captain-container>.weui-cells{
+  margin-top: 0;
+  background: #f0f2f5;
+}
+.caution_inputs>.weui-cells{
+  overflow: inherit;
+}
+.captainHide{
+  display: none;
 }
 </style>

@@ -381,8 +381,8 @@ export default {
     getBank(){
         optionService.getBank().then(data=>{
             for(let i = 0 ; i<data.tableContent.length ;i++){
-                data.tableContent[i].name=data.tableContent[i].bankName;
-                data.tableContent[i].value=data.tableContent[i].bankName;
+                //data.tableContent[i].name=data.tableContent[i].bankName;
+                data.tableContent[i].value=data.tableContent[i].name;
             }
             this.bankList=data.tableContent;
         })
