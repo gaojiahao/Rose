@@ -110,7 +110,7 @@ export default {
                         this.list1Total+=Number(m[i].amount);
                         this.list1.push({
                         label:m[i].objName,
-                        value:numberComma(m[i].amount,3),
+                        value:'￥'+numberComma(m[i].amount,3)+' '+m[i].qty+'件/套',
                     })
                 }else if(m[i].objType=='A'){
                         this.list2Total=m[i].amount
