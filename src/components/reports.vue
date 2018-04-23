@@ -231,7 +231,16 @@
       // TODO 点击本日、本周、本月、本年的列表
       dateItemClick(item) {
         this.showDate = false;
+        if (item.value === this.dateSelected.value) {
+          console.log('点击了相同的条目')
+          return
+        }
         this.dateSelected = item;
+        this.reportList = this.reportList.map(item => {
+          return Object.assign(item, {
+            showContent: false
+          })
+        })
         if (this.page === 1) {
           this.reportList = this.reportData[item.value];
         } else {
@@ -247,6 +256,10 @@
       // TODO 点击项目列表
       projItemClick(item, index) {
         this.showProj = false;
+        if (item === this.objName) {
+          console.log('点击了相同的条目')
+          return
+        }
         this.objName = item;
         this.page = 1;
         this.assembleData()
@@ -386,6 +399,9 @@
       height: calc(100% - 80px);
       overflow: auto;
       -webkit-overflow-scrolling: touch;
+      .weui-cell__ft {
+        padding-right: 20px;
+      }
       .no-data {
         position: absolute;
         top: 50%;
