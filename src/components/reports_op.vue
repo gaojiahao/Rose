@@ -171,8 +171,8 @@
         } else if (index === 1) {
           this.getDept().then(dept => {
             this.pickerList.push({
-              title: '所在部门',
-              ph: '请选择部门',
+              title: '所属区域',
+              ph: '请选择区域',
               value: [],
               list: [dept]
             })
