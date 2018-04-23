@@ -42,7 +42,7 @@
 
 <script>
 import saleRepotService from '../service/saleRepotService'
-import { Alert, Cell , Group, Confirm ,  Divider,  XButton, LoadMore, FormPreview, CellFormPreview,querystring  } from 'vux'
+import { Alert, Cell , Group, Confirm ,  Divider,  XButton, LoadMore, FormPreview, CellFormPreview,querystring,numberComma  } from 'vux'
 
 export default {
     components:{
@@ -67,6 +67,9 @@ export default {
             total4:'',
             childInfo:''
         }
+    },
+    filters:{
+        numberComma
     },
     methods:{
         /*
@@ -113,7 +116,7 @@ export default {
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty+'件/套',
                     })
-                    total1 +=jsonData[i].qty*jsonData[i].amount;
+                    total1 =jsonData[i].amount;
 
                 }else if(jsonData[i].containerCode=='A'){
                     this.list2.push({
@@ -129,11 +132,11 @@ export default {
                     total3 =jsonData[i].amount;
                 }
             }
-            this.total1='￥'+total1;
-            this.total2='￥'+total2;
-            this.total3='￥'+total3;
+            this.total1='￥'+numberComma(total1,3);
+            this.total2='￥'+numberComma(total2,3);
+            this.total3='￥'+numberComma(total3,3);
             let num=Number(total1)+Number(total2)+Number(total3);
-            this.total4='￥'+num;
+            this.total4='￥'+numberComma(num,3);
         }
     },
     mounted(){

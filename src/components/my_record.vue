@@ -16,7 +16,7 @@
         <form-preview 
             class="project_part"
             header-label="金额" 
-            :header-value="'￥'+list1Total" 
+            :header-value="'￥'+list1Total | numberComma" 
             :body-items="list1">
         </form-preview>
 
@@ -24,14 +24,14 @@
         <form-preview 
             class="project_part"
             header-label="金额" 
-            :header-value="'￥'+list2Total" 
+            :header-value="'￥'+list2Total | numberComma" 
             :body-items="list2">
         </form-preview>
         <divider>B类产品</divider>
         <form-preview 
             class="project_part"
             header-label="金额" 
-            :header-value="'￥'+list3Total" 
+            :header-value="'￥'+list3Total | numberComma" 
             :body-items="list3">
         </form-preview>
 
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview } from 'vux'
+import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview,numberComma } from 'vux'
 import myReportService from '../service/myReportService'
 const list = () => ['本日', '本周', '本月', '本年']
 export default {
@@ -70,6 +70,9 @@ export default {
             remark:'',
         }
     },
+    filters:{
+        numberComma
+    },
     methods:{
         mylist(tab){
             myReportService.myRepotList().then(data=>{
@@ -87,20 +90,25 @@ export default {
             
         },
         listpanl(m){
-            if(m==undefined||m.length==0){
-                this.list1Total=0;
-                this.list2Total=0;
-                this.list3Total=0;
-                this.list1.length=0;
-            }else{
-                this.list1Total=m[0].amount;
-                this.list2Total=m[0].aProduct;
-                this.list3Total=m[0].bProduct;
-                this.list1[0]={
-                        label:'数量',
-                        value:m[0].qty,
-                    }
+            this.list1Total=0;
+            this.list2Total=0;
+            this.list3Total=0;
+            this.list1.length=0;
+           
+            for(let i = 0 ;i<m.length ; i++){
+                if(m[i].objType=='项目类产品'){
+                        this.list1Total+=Number(m[i].amount);
+                        this.list1.push({
+                        label:m[i].objName,
+                        value:numberComma(parseInt(m[i].amount),3),
+                    })
+                }else if(m[i].objType=='A'){
+                        this.list2Total=Number(m[i].amount)
+                }else if(m[i].objType=='B'){
+                        this.list3Total=Number(m[i].amount)
+                }
             }
+            
         }
     },
     created(){
