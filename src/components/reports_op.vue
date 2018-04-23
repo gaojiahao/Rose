@@ -85,7 +85,7 @@
                 arr.push(item.name);
                 return arr
               }, ['']);
-              this.regionList = region
+              this.regionList = region;
               resolve(region)
             })
           }
@@ -102,7 +102,7 @@
                 arr.push(item.bankName);
                 return arr
               }, ['']);
-              this.bankList = bank
+              this.bankList = bank;
               resolve(bank)
             })
           }
@@ -119,7 +119,7 @@
                 arr.push(item.groupName);
                 return arr
               }, ['']);
-              this.deptList = dept
+              this.deptList = dept;
               resolve(dept)
             })
           }
@@ -136,16 +136,16 @@
                 arr.push(item['trans_detail_uncalc.transObjCode']);
                 return arr
               }, ['']);
-              this.projList = proj
-              sessionStorage.setItem(PROJ_LIST, JSON.stringify(proj))
+              this.projList = proj;
+              sessionStorage.setItem(PROJ_LIST, JSON.stringify(proj));
               resolve(proj)
             })
           }
         })
       },
       getPickerValue(index, value) {
-        if (!value) {
-          this.$set(this.pickerList[index], 'value', [])
+        if (!value[0]) {
+          this.pickerList[index].value = []
         }
         this.showMore = true;
         this.whichIndex = index;
@@ -166,7 +166,7 @@
               value: [],
               list: [bank]
             })
-          })
+          });
           this.showMore = false;
         } else if (index === 1) {
           this.getDept().then(dept => {
@@ -176,13 +176,13 @@
               value: [],
               list: [dept]
             })
-          })
+          });
           this.showMore = false;
         }
       },
       // TODO 跳转到过滤页
       goRp() {
-        let filterParams = {}
+        let filterParams = {};
         this.pickerList.forEach((item, index) => {
           switch (index) {
             case 0: // 地区
@@ -198,14 +198,14 @@
               filterParams.proj = encodeURI(item.value[0] || '');
               break;
           }
-        })
+        });
         if (!filterParams.region && !filterParams.dept && !filterParams.bank && !filterParams.proj) {
           this.$vux.alert.show({
             content: '请至少选择一个条件'
           });
           return
         }
-        console.log(filterParams)
+        console.log(filterParams);
         sessionStorage.setItem(FILTER_OPTION, JSON.stringify(this.pickerList))
         this.$router.push({
           path: '/reportsOp/reports',
@@ -217,7 +217,7 @@
       (async () => {
         let filter = JSON.parse(sessionStorage.getItem(FILTER_OPTION))
         if (!filter) {
-          let tmpPickerList = []
+          let tmpPickerList = [];
           await this.getRegion().then(region => {
             tmpPickerList.push({
               title: '所在地区',
@@ -225,7 +225,7 @@
               value: [],
               list: [region]
             })
-          })
+          });
           await this.getBank().then(bank => {
             tmpPickerList.push({
               title: '所在银行',
@@ -233,7 +233,7 @@
               value: [],
               list: [bank]
             })
-          })
+          });
           await this.getDept().then(dept => {
             tmpPickerList.push({
               title: '所属区域',
@@ -241,7 +241,7 @@
               value: [],
               list: [dept]
             })
-          })
+          });
           await this.getProj().then(proj => {
             tmpPickerList.push({
               title: '项目产品',
@@ -249,13 +249,13 @@
               value: [],
               list: [proj]
             })
-          })
+          });
           this.pickerList = tmpPickerList
         } else {
-          await this.getRegion()
-          await this.getDept()
-          await this.getBank()
-          await this.getProj()
+          await this.getRegion();
+          await this.getDept();
+          await this.getBank();
+          await this.getProj();
           this.pickerList = filter
         }
       })()

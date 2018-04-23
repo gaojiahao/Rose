@@ -19,7 +19,7 @@ let optionService = {
   // TODO 获取部门列表
   getDept() {
     return $axios.ajax({
-      url: '/ds/getAPartGroup',
+      url: '/ds/getUserGroupByParentId?parentId=990606',
     });
   },
   // TODO 获取队长列表

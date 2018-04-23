@@ -141,7 +141,7 @@
     },
     methods: {
       onItemClick(item) {
-        this.curTab = item.value
+        this.curTab = item.value;
         this.reportList = this.reportData[item.value]
       },
       onChange(val) {
@@ -163,8 +163,8 @@
           objName: this.objName,
           pageNo: this.page
         })).then(data => {
-          this.resetReportData()
-          let map = ['days', 'weeks', 'months', 'years']
+          this.resetReportData();
+          let map = ['days', 'weeks', 'months', 'years'];
           // 数据组装
           map.forEach(item => {
             data[item].forEach((data, index) => {
@@ -193,8 +193,8 @@
                 },
               ];
               if (this.objName === '') {
-                detail.shift()
-                detail.shift()
+                detail.shift();
+                detail.shift();
               }
               this.reportData[item].push({
                 name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
@@ -203,19 +203,19 @@
                 detail: detail
               })
             })
-          })
-          this.curPage = this.page
-          this.reportList = this.reportData[this.dateSelected.value]
+          });
+          this.curPage = this.page;
+          this.reportList = this.reportData[this.dateSelected.value];
           this.isDisabled = this.reportList.length < PAGE_SIZE
         }).catch(err => {
-          this.resetReportData()
+          this.resetReportData();
           this.reportList = []
         })
       },
       // TODO 获取项目列表
       getProj() {
-        let proj = JSON.parse(sessionStorage.getItem(PROJ_LIST))
-        proj.shift()
+        let proj = JSON.parse(sessionStorage.getItem(PROJ_LIST));
+        proj.shift();
         this.projList = proj
       },
       // TODO 隐藏下拉框
@@ -232,7 +232,7 @@
       dateItemClick(item) {
         this.showDate = false;
         if (item.value === this.dateSelected.value) {
-          console.log('点击了相同的条目')
+          console.log('点击了相同的条目');
           return
         }
         this.dateSelected = item;
@@ -240,11 +240,11 @@
           return Object.assign(item, {
             showContent: false
           })
-        })
+        });
         if (this.page === 1) {
           this.reportList = this.reportData[item.value];
         } else {
-          this.page = 1
+          this.page = 1;
           this.assembleData()
         }
       },
@@ -257,7 +257,7 @@
       projItemClick(item, index) {
         this.showProj = false;
         if (item === this.objName) {
-          console.log('点击了相同的条目')
+          console.log('点击了相同的条目');
           return
         }
         this.objName = item;
@@ -296,8 +296,7 @@
       }
     },
     created() {
-      let query = this.$route.query
-      console.log(query.proj)
+      let query = this.$route.query;
       this.filterParams = {
         shengName: query.region ? decodeURI(query.region) : '', // 区域
         bankName: query.bank ? decodeURI(query.bank) : '', // 银行
@@ -308,7 +307,7 @@
       if (this.filterParams.objName) {
         this.objName = this.filterParams.objName;
       }
-      this.assembleData(this.filterParams)
+      this.assembleData(this.filterParams);
       this.getProj()
     }
   }
