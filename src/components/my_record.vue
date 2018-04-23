@@ -36,11 +36,12 @@
         </form-preview>
 
     </div>
+    <loading></loading>
    </div>
 </template>
 
 <script>
-import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview,numberComma } from 'vux'
+import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview,numberComma,Loading  } from 'vux'
 import myReportService from '../service/myReportService'
 const list = () => ['本日', '本周', '本月', '本年']
 export default {
@@ -50,7 +51,8 @@ export default {
         Divider,
         SwiperItem,
         FormPreview,
-        CellFormPreview
+        CellFormPreview,
+        Loading
     },
     data(){
         return{
@@ -95,9 +97,21 @@ export default {
                 bmName:ROSE_OPTION.captain,
             }
             myReportService.myRepotList(jsonData).then(data=>{
+                this.$vux.loading.show({
+                    text: '加载中'
+                })
+                if(data){
+                     setTimeout(() => {
+                        this.$vux.loading.hide()
+                    },1000)
+                }
                 this.remark=data;
                 this.mylist(0);
-            });
+            }).catch(data=>{
+                 this.$vux.loading.show({
+                    text: '加载中'
+                })
+            })
         },
         listpanl(m){
             this.list1Total=0;
