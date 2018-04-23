@@ -49,7 +49,6 @@
       </group>
       <divider class="no-data" v-show="reportList.length === 0">暂无数据</divider>
     </div>
-
     <div class="page-controler">
       <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i
         class="iconfont icon-jiantou-copy"></i></span>
@@ -57,6 +56,7 @@
       <span class="each-page" @click="pageNext" :class="{disabled: isDisabled}"><i
         class="iconfont icon-jiantou"></i></span>
     </div>
+    <loading :show="showLoading"></loading>
   </div>
 </template>
 
@@ -77,6 +77,7 @@
   } from 'vux'
   import reportService from '../service/reportService'
   import saleReportService from '../service/saleRepotService'
+  import Loading from './loading'
 
   const PROJ_LIST = 'ROSE_PROJ_LIST';
   const PAGE_SIZE = 30;
@@ -92,7 +93,8 @@
       GridItem,
       PopupPicker,
       Selector,
-      Divider
+      Divider,
+      Loading
     },
     data() {
       return {
@@ -136,7 +138,8 @@
         page: 1, // 请求页码
         curPage: 1, // 当前页码
         objName: '', // 项目类型
-        isDisabled: false
+        isDisabled: false,
+        showLoading: false
       }
     },
     methods: {
@@ -159,10 +162,12 @@
       },
       // TODO 组装数据
       assembleData(params = {}) {
+        this.showLoading = true;
         reportService.getReport(Object.assign(this.filterParams, {
           objName: this.objName,
           pageNo: this.page
         })).then(data => {
+          this.showLoading = false;
           this.resetReportData();
           let map = ['days', 'weeks', 'months', 'years'];
           // 数据组装
@@ -208,6 +213,7 @@
           this.reportList = this.reportData[this.dateSelected.value];
           this.isDisabled = this.reportList.length < PAGE_SIZE
         }).catch(err => {
+          this.showLoading = false;
           this.resetReportData();
           this.reportList = []
         })
@@ -307,8 +313,11 @@
       if (this.filterParams.objName) {
         this.objName = this.filterParams.objName;
       }
-      this.assembleData(this.filterParams);
       this.getProj()
+    },
+    mounted(){
+      this.assembleData(this.filterParams);
+      // this.$refs.loading.showLoading()
     }
   }
 </script>

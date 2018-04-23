@@ -99,7 +99,7 @@
           } else {
             optionService.getBank().then(data => {
               let bank = data.tableContent.reduce((arr, item) => {
-                arr.push(item.bankName);
+                arr.push(item.name);
                 return arr
               }, ['']);
               this.bankList = bank;

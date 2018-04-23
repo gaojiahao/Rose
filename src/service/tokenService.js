@@ -16,13 +16,13 @@ let tokenService = {
    * 获取token或者用户ID，默认获取token
    */
   getToken(key = 'key') {
-    let token = this.checkLogin(key)
+    let token = this.checkLogin(key);
     if (token) {
       return new Promise((resolve, reject) => {
         resolve(token)
       })
     } else {
-      return this.login()
+      return this.login(key)
     }
   },
   /**
@@ -39,7 +39,7 @@ let tokenService = {
   checkLogin(key = 'key') {
     let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {}
     if (token[key]) {
-      let timestamp = token.timestamp
+      let timestamp = token.timestamp;
       if (new Date() - timestamp > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
       }
@@ -48,17 +48,17 @@ let tokenService = {
     }
     return token[key]
   },
-  // TODO 开发时用于获取账号的token
-  login() {
+  // TODO 开发时用于获取账号的登录信息
+  login(key) {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (isQYWX) {
-      return this.pcLogin()
+      return this.QYWXLogin(key)
     } else {
-      return this.pcLogin()
+      return this.pcLogin(key)
     }
   },
-  // TODO PC端登录
-  pcLogin() {
+  // TODO PC端登录，默认返回token
+  pcLogin(key = 'token') {
     return new Promise((resolve, reject) => {
         let params = {
           method: 'post',
@@ -72,16 +72,16 @@ let tokenService = {
             password: 'stark',
             userCode: 'rfd9527'
           }
-        }
+        };
 
         axios(params).then((res) => {
-          let data = res.data
-          this.clean()
+          let data = res.data;
+          this.clean();
           this.setToken({
             token: data.token,
             entityId: data.entityId
-          })
-          resolve(data.token)
+          });
+          resolve(data[key])
         }).catch(function (error) {
           let data = error.response && error.response.data
           reject(error.response.data)
@@ -89,11 +89,11 @@ let tokenService = {
       }
     )
   },
-  // TODO 企业微信登录
-  QYWXLogin() {
+  // TODO 企业微信登录，默认返回token
+  QYWXLogin(key = 'token') {
     return new Promise((resolve, reject) => {
-      let query = querystring.parse(location.search.slice(1))
-      let code = query.code || ''
+      let query = querystring.parse(location.search.slice(1));
+      let code = query.code || '';
       axios.get('/H_roleplay-si/wxLogin?code=' + code + '&&state=1').then((res) => {
         let data = res.data;
         this.clean();
@@ -101,6 +101,7 @@ let tokenService = {
           token: data.token,
           entityId: data.entityId
         });
+        resolve(data[key])
       })
     })
   },
