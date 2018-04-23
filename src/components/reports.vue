@@ -172,25 +172,25 @@
                 {
                   label: '项目类产品',
                   value: `${data.qty || 0}件/套`
-                },
-                {
+                }, {
                   label: '项目类金额',
                   value: `￥${numberComma(data.amount) || 0}`
-                },
-                {
+                }, {
                   label: 'A类产品',
                   value: `￥${numberComma(data.aProduct) || 0}`
-                },
-                /*{
+                }, /*{
                   label: 'B类产品',
                   value: '￥999'
-                }, */{
+                },*/ {
                   label: '所属区域',
-                  value: data.bmName || ''
+                  value: data.sybName || ''
                 }, {
                   label: '所属银行',
                   value: data.bankName || ''
-                }
+                }, {
+                  label: '所属队长',
+                  value: data.bmName || ''
+                },
               ];
               if (this.objName === '') {
                 detail.shift()
