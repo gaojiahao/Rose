@@ -17,7 +17,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/option'
+      redirect: '/Home'
     },
     {
       path: '/option',
@@ -59,7 +59,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/option'
+      redirect: '/Home'
     }
   ]
 })

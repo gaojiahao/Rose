@@ -37,10 +37,15 @@ let tokenService = {
   },
   // TODO 检查是否登录
   checkLogin(key = 'key') {
-    let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {}
+    let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {};
+    let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token[key]) {
       let timestamp = token.timestamp;
-      if (new Date() - timestamp > (12 * 3600 * 1000)) { // 设置12小时过期时间
+      let timeCalc = new Date() - timestamp;
+      if (isQYWX && (timeCalc > (2 * 3600 * 1000))) {
+        return
+      }
+      if (timeCalc > (12 * 3600 * 1000)) { // 设置12小时过期时间
         return ''
       }
     } else {
@@ -78,8 +83,8 @@ let tokenService = {
           let data = res.data;
           this.clean();
           this.setToken({
-            token: data.token,
-            entityId: data.entityId
+            token: data.token || '',
+            entityId: data.entityId || ''
           });
           resolve(data[key])
         }).catch(function (error) {
@@ -94,16 +99,29 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      axios.get('/H_roleplay-si/wxLogin?code=' + code + '&&state=1').then((res) => {
+      // code = 'ITXubjkvTI1EBwCy5fZEYJG9Iy_hRPgxQZ2GwuwiWls'
+      axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
         let data = res.data;
         this.clean();
         this.setToken({
-          token: data.token,
-          entityId: data.entityId
+          token: data.token || '',
+          entityId: data.entityId || ''
         });
         resolve(data[key])
-      })
+      }).catch(function (error) {
+        let data = error.response && error.response.data
+        reject(error.response.data)
+      });
     })
+  },
+  // TODO 获取用户信息
+  getUser() {
+    return $axios.ajax({
+      url: '/trans/getModelData?refresh=true&shengName=&bankName=&sybName=&dsCode=getUserDetails'
+    });
+  },
+  // TODO 判断是否为总裁
+  isPresident() {
   },
   /**
    * token 初始化

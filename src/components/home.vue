@@ -42,6 +42,7 @@
       </h2>
 
     </div>
+    <loading :show="showLoading"></loading>
     <!--<router-view></router-view>-->
   </div>
 
@@ -50,16 +51,20 @@
 <script>
   import {XButton, Confirm, querystring} from 'vux'
   import tokenService from '../service/tokenService'
+  import Loading from './loading'
 
+  const ROSE_OPTION_KEY = 'ROSE_OPTION';
   export default {
     components: {
       XButton,
-      Confirm
+      Confirm,
+      Loading
     },
     data() {
       return {
         show: false,
-        showLookReport: true
+        showLookReport: true, // 是否展示查看报表按钮
+        showLoading: false
       }
     },
     methods: {
@@ -88,7 +93,33 @@
       }
     },
     created() {
-      tokenService.getToken()
+      (async () => {
+        this.showLoading = true;
+        await tokenService.getToken().catch(err => {
+          this.showLoading = false;
+          this.$vux.alert.show({
+            content: err.message
+          })
+        });
+        await tokenService.getUser().then(data => {
+          console.log(data);
+          if (('' + data.uid) === '798') {
+            this.showLookReport = true
+          }
+          localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
+            region: data.shengName || '',
+            bank: data.bankName || '',
+            dept: data.sybName || '',
+            captain: data.bmName || ''
+          }))
+        }).catch(err => {
+          this.showLoading = false;
+          this.$vux.alert.show({
+            content: err.message
+          })
+        });
+        this.showLoading = false;
+      })()
     }
   }
 </script>

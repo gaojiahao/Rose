@@ -215,7 +215,10 @@
         }).catch(err => {
           this.showLoading = false;
           this.resetReportData();
-          this.reportList = []
+          this.reportList = [];
+          this.$vux.alert.show({
+            content: err.message
+          })
         })
       },
       // TODO 获取项目列表
