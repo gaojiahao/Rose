@@ -94,7 +94,7 @@ export default {
                 saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data=>{
                     if(data.success){
                         that.$vux.alert.show({
-                        title: '成功',
+                        title: '提交成功',
                         content: data.message,
                             onShow () {
                                 
@@ -110,7 +110,7 @@ export default {
                 }).catch(data=>{
                      if(data.success==false){
                         that.$vux.alert.show({
-                        title: '失败',
+                        title: '提交失败',
                         content: data.message,
                             onShow () {
                                 
