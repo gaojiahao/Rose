@@ -43,7 +43,19 @@
 
 <script>
 import saleRepotService from '../service/saleRepotService'
-import { Alert, Cell , Group, Confirm ,  Divider,  XButton, LoadMore, FormPreview, CellFormPreview,querystring,numberComma  } from 'vux'
+import { 
+    Cell,
+    Alert, 
+    Group, 
+    Confirm,  
+    Divider, 
+    XButton, 
+    LoadMore, 
+    FormPreview, 
+    numberComma,
+    querystring,
+    CellFormPreview
+} from 'vux'
 
 export default {
     components:{
@@ -78,27 +90,18 @@ export default {
          * 提交数据
          */ 
         sendOrder(){
-            var that=this;
-             this.$vux.confirm.show({
+            let that=this;
+            this.$vux.confirm.show({
                 title: '温馨提示',
                 content: '请确认提交数据是否正确？',
                 confirmText:"我已确认",
                 cancelText:"再去看看",
-                onShow () {
-                },
-                onHide () {
-                },
-                onCancel () {
-                },
                 onConfirm () {
                 saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data=>{
                     if(data.success){
                         that.$vux.alert.show({
-                        title: '提交成功',
+                        title: '提示',
                         content: data.message,
-                            onShow () {
-                                
-                            },
                             onHide () {
                                 that.$router.replace('/Home');
                                 localStorage.removeItem('saleReport');
@@ -108,17 +111,11 @@ export default {
                         
                     }
                 }).catch(data=>{
-                     if(data.success==false){
+                     if(data.success == false){
                         that.$vux.alert.show({
-                        title: '提交失败',
+                        title: '提示',
                         content: data.message,
-                            onShow () {
-                                
-                            },
-                            onHide () {
-                            }
                         })
-                        
                     }
                 })
                 }
@@ -154,18 +151,18 @@ export default {
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
                     });
-                    total3 =jsonData[i].amount;
+                    total3 = jsonData[i].amount;
                 }
             }
-            this.total1='￥'+total1;
-            this.total2='￥'+total2;
-            this.total3='￥'+total3;
-            let num=Number(total1)+Number(total2)+Number(total3);
-            this.total4='￥'+num;
+            this.total1 = '￥'+total1;
+            this.total2 = '￥'+total2;
+            this.total3 = '￥'+total3;
+            let num = Number(total1)+Number(total2)+Number(total3);
+            this.total4 = '￥'+num;
         }
     },
     mounted(){
-        this.childInfo=JSON.parse(localStorage.getItem('saleReportInfo')).saleReportRemark
+        this.childInfo = JSON.parse(localStorage.getItem('saleReportInfo')).saleReportRemark
         this.info()
     }
 }

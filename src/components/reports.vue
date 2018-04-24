@@ -28,15 +28,6 @@
         <span class="each-select-name" :class="{'is-selected': objName === ''}">A类产品</span>
       </div>
     </div>
-    <!-- <grid>
-      <grid-item label="项目类产品"></grid-item>
-      <grid-item label="A类产品"></grid-item>
-    </grid> -->
-    <!-- <tab :line-width=2 active-color='#B99763' v-model="activeIndex" v-show="showTab">
-      <tab-item class="vux-center" :selected="curTab === item.value" v-for="(item, index) in dateList" :key="index"
-                @click.native="onItemClick(item)">{{item.name}}
-      </tab-item>
-    </tab> -->
 
     <div class="rank-container" @click="hideDropList">
       <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
@@ -64,16 +55,16 @@
   import {
     Tab,
     Cell,
+    Grid,
     Group,
     TabItem,
-    Calendar,
-    CellFormPreview,
-    Grid,
-    GridItem,
-    PopupPicker,
-    Selector,
     Divider,
-    numberComma
+    GridItem,
+    Calendar,
+    Selector,
+    numberComma,
+    PopupPicker,
+    CellFormPreview,
   } from 'vux'
   import reportService from '../service/reportService'
   import saleReportService from '../service/saleRepotService'

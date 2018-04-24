@@ -7,10 +7,6 @@
                       :data=item.list :key="index" v-model=item.value @on-change="getPickerValue( index , item.value)">
         </popup-picker>
       </group>
-
-      <!--<p class="caution_part" v-show='showMore'>-->
-      <!--您还需要添加新的筛选条件？请点击 <span class="plus_tx" @click="createNew">新增</span>-->
-      <!--</p>-->
     </div>
     <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp">确定
     </x-button>

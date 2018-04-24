@@ -1,99 +1,97 @@
 <template>
   <div class="pages">
     <div v-if='$route.name=="saleReport"'>
-    <div id='mescroll' class="mescroll">
-        <group label-align='left' title="请选择所属队长">
+      <div id='mescroll' class="mescroll">
+          <group label-align='left' title="请选择所属队长">
+            
+            <x-input 
+            title="所属队长"
+            text-align="right"
+            v-model.trim="helpCaptain"
+            @on-change="captainSelect"
+            @on-focus="captainFocus" 
+            placeholder="请输入队长"
+            ref="captainChooise"
+            class="helpCaptain"
+            ></x-input>
+          </group>
+          <group class="captain-container" :class="captainShow==false?'captainHide':''">
+            <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
+          </group>
+          <group 
+            label-align='left' 
+            :title="index>0?'':'请选择对应的产品'" 
+            v-for="( item ,index ) in arr"
+            :key="index"
+            >
+            <popup-picker 
+              class="each_part"
+              title="项目类产品" 
+              placeholder="请选择产品"
+              :data="list"
+              v-model="item.value"
+              :columns="2"
+              show-name
+            >
+            </popup-picker>
+
+            <cell 
+              class="each_part"
+              title="单价"
+              :value="'￥'+item.value[1] | numberComma"
+              value-align="right" 
+              v-if="item.value.length>0"
+            ></cell>
+
+            <x-input 
+              title="数量" 
+              type="number" 
+              text-align="right" 
+              placeholder="请输入数量"
+              v-if="item.value.length>0"
+              v-model.number="item.qty"
+            ></x-input>
+          </group>
+
+          <p class="caution_part" v-if='arr[0].value.length!=0'>
+            您还需要添加新的项目？请点击 <span class="plus_tx" @click="createNew">新增</span>
+            <span v-if="arr.length>1">
+              <span>或</span>
+              <span class="plus_delect" @click="deleteNew">删除</span>
+            </span>
+          </p>
           
-          <x-input 
-          title="所属队长"
-          text-align="right"
-          v-model.trim="helpCaptain"
-          @on-change="captainSelect"
-          @on-focus="captainFocus" 
-          placeholder="请输入队长"
-          ref="captainChooise"
-          class="helpCaptain"
-          ></x-input>
-        </group>
-        <group class="captain-container" :class="captainShow==false?'captainHide':''">
-          <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
-        </group>
-        <group 
-          label-align='left' 
-          :title="index>0?'':'请选择对应的产品'" 
-          v-for="( item ,index ) in arr"
-          :key="index"
-          >
-          <popup-picker 
-            class="each_part"
-            title="项目类产品" 
-            placeholder="请选择产品"
-            :data="list"
-            v-model="item.value"
-            :columns="2"
-            @on-change="getPickerValue"
-            show-name
-          >
-          </popup-picker>
-
-          <cell 
-            class="each_part"
-            title="单价"
-            :value="'￥'+item.value[1] | numberComma"
-            value-align="right" 
-            v-if="item.value.length>0"
-          ></cell>
-
-          <x-input 
-            title="数量" 
-            type="number" 
+          <group>
+            <x-input 
+            title="A类产品"
+            :value='Aclass | numberComma(3)' 
+            @input="Ainput" 
+            ref='input1'
             text-align="right" 
-            placeholder="请输入数量"
-            v-if="item.value.length>0"
-            v-model.number="item.qty"
-          ></x-input>
-        </group>
+            placeholder="请输入金额"
+            ></x-input>
 
-        <p class="caution_part" v-if='arr[0].value.length!=0'>
-          您还需要添加新的项目？请点击 <span class="plus_tx" @click="createNew">新增</span>
-          <span v-if="arr.length>1">
-            <span>或</span>
-            <span class="plus_delect" @click="deleteNew">删除</span>
-          </span>
-        </p>
-        
-        <group>
-          <x-input 
-          title="A类产品"
-          :value='Aclass | numberComma(3)' 
-          @input="Ainput" 
-          ref='input1'
-          text-align="right" 
-          placeholder="请输入金额"
-          ></x-input>
-
-          <x-input 
-          title="B类产品"
-          :value='Bclass | numberComma(3)'  
-          @input="Binput" 
-          ref='input2'
-          text-align="right" 
-          placeholder="请输入金额"
-          ></x-input>
-        </group>
+            <x-input 
+            title="B类产品"
+            :value='Bclass | numberComma(3)'  
+            @input="Binput" 
+            ref='input2'
+            text-align="right" 
+            placeholder="请输入金额"
+            ></x-input>
+          </group>
 
 
-    </div>
-    <x-button 
-        class="count_button" 
-        :gradients="['#B99763', '#E7D0A2']"
-        @click.native="end"
-        >
-          进入合计
-    </x-button>
-    <confirm></confirm>
-      <alert></alert>
       </div>
+      <x-button 
+          id="count_button" 
+          :gradients="['#B99763', '#E7D0A2']"
+          @click.native="end"
+      >进入合计
+      </x-button>
+      <confirm></confirm>
+      <alert></alert>
+    </div>
       <router-view></router-view>
   </div>
 </template>
@@ -101,17 +99,27 @@
 <script>
 import saleRepotService from '../service/saleRepotService'
 import optionService from '../service/optionService'
-import { Alert, Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker,querystring,numberComma} from 'vux'
+import { 
+    Cell,
+    Alert, 
+    Group, 
+    XInput,
+    XButton,
+    Confirm,
+    Selector, 
+    PopupPicker,
+    numberComma
+  } from 'vux'
 export default {
   components:{
     Cell,
+    Alert,
     Group,
     XInput,
     Confirm,
     XButton,
     Selector,
-    PopupPicker,
-    Alert
+    PopupPicker
   },
   data () {
     return {
@@ -140,37 +148,31 @@ export default {
   methods:{
     //获取队长
     teamLeader(){
-         optionService.getCaptain().then(data=>{
-             for(let i = 0 ; i<data.tableContent.length ;i++){
-                data.tableContent[i].name=data.tableContent[i].nickname;
-                data.tableContent[i].value=data.tableContent[i].nickname;
+         optionService.getCaptain().then( data => {
+             for(let i = 0; i<data.tableContent.length; i++){
+                data.tableContent[i].name = data.tableContent[i].nickname;
+                data.tableContent[i].value = data.tableContent[i].nickname;
             }
-            this.teamLeaderList=data.tableContent;
+            this.teamLeaderList = data.tableContent;
          })
     },
     //匹配队长
     captainSelect(e){
-      if(this.captainShow==false||this.helpCaptain==''){
+      if(this.captainShow == false || this.helpCaptain == ''){
         return;
       }
-      optionService.getCaptain({value:e}).then(data=>{
-        this.teamLeaderList=data.tableContent;
-         })
+      optionService.getCaptain({value:e}).then( data => {
+        this.teamLeaderList = data.tableContent;
+      })
     },
     captainFocus(){
-      this.captainShow=true;
+      this.captainShow = true;
     },
     //选择队长
     getNickname(e){
-      this.helpCaptain=e;
-      this.captainShow=false;
-       this.teamLeaderList=[]
-    },
-    //监听选择栏
-    getPickerValue(val){
-      
-    },
-    onChange(val){
+      this.helpCaptain = e;
+      this.captainShow = false;
+      this.teamLeaderList = [];
     },
     createNew(){
       this.arr.push({
@@ -198,13 +200,15 @@ export default {
         return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     },
     listData(){
-      saleRepotService.saleRepotList().then(data=>{
-        for(let i = 0 ; i<data.tableContent.length ; i++){
-          this.list.push({
+      saleRepotService.saleRepotList().then( data => {
+        for(let i = 0; i<data.tableContent.length; i++){
+          this.list.push(
+          {
             name:data.tableContent[i]['trans_detail_uncalc.transObjCode'],
             value:data.tableContent[i]['trans_detail_uncalc.transObjCode']+'_'+i,
             parent:'0',
-          },{
+          },
+          {
             name:data.tableContent[i]['trans_detail_uncalc.price'],
             value:data.tableContent[i]['trans_detail_uncalc.price'],
             parent:data.tableContent[i]['trans_detail_uncalc.transObjCode']+'_'+i,
@@ -213,27 +217,21 @@ export default {
       })
     },
     end(){
-      var that=this;
-      var captain =this.helpCaptain;
-      var dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
-      var region =JSON.parse(localStorage.getItem('ROSE_OPTION')).region;
-      var bank =JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
-      if(this.helpCaptain==''){
+      let that = this;
+      let captain = this.helpCaptain;
+      let dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
+      let region = JSON.parse(localStorage.getItem('ROSE_OPTION')).region;
+      let bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
+      if(!this.helpCaptain){
          this.$vux.alert.show({
-            title: '失败',
-            content: '请填写所属队长',
-            onShow () {
-
-            },
-            onHide () {
-            
-            }
+            title: '提示',
+            content: '请填写队长信息'
         })
         return;
     }
       localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:region}))
 
-      var jsonData = {
+      let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
           "baseinfoExt": {
@@ -242,37 +240,25 @@ export default {
             "varchar2":captain,
             "varchar3":region,
             "varchar4":bank,
-            },
+          },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
           };
-          if(this.arr[0].value.length==0){
+          if(this.arr[0].value.length == 0){
               this.$vux.alert.show({
-                  title: '失败',
-                  content: '请选择项目产品',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
+                  title: '提示',
+                  content: '请选择项目产品'
                 })
-                return;
+              return;
             }
-          for(let i =0 ;i<this.arr.length ; i++){
-            if(this.arr[i].qty==''){
+          for(let i = 0; i<this.arr.length; i++){
+            if(!this.arr[i].qty){
                 this.$vux.alert.show({
-                  title: '失败',
-                  content: '请填写数量',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
+                  title: '提示',
+                  content: '请填写项目类产品数量'
                 })
                 return;
-              }else{
+            }else{
                 jsonData.transDetailUncalc.push({
                   "id":this.guid(),
                   "transObjCode": this.arr[i].value[0].split('_')[0],//项目类产品名称
@@ -283,134 +269,148 @@ export default {
                 })
               } 
             }
-            if(this.Aclass==''){
+            if(!this.Aclass){
               this.$vux.alert.show({
-                  title: '失败',
-                  content: '请填A类产品',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
+                  title: '提示',
+                  content: '请输入A类产品销售金额'
                 })
                 return;
-            }else if(this.Bclass==''){
+            }
+            else if(!this.Bclass){
               this.$vux.alert.show({
-                  title: '失败',
-                  content: '请填B类产品',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
+                  title: '提示',
+                  content: '请输入B类产品销售金额'
                 })
                 return;
-            }else{
-              jsonData.transDetailUncalc.push({
-                "id":this.guid(),
-                "transObjCode": "A类产品",//项目类产品名称
-                "containerCode": "A",//类型
-                "qty": '',
-                "amount": this.Aclass,//总金额
-                "fgCode": ""
-              },{
-                "id":this.guid(),
-                "transObjCode": "B类产品",//项目类产品名称
-                "containerCode": "B",//类型
-                "qty": '',
-                "amount": this.Bclass,//总金额
-                "fgCode": ""
-              })
-          }
-         let totalInfo={
-            'isMobile':true,
-            'conn':20000,
-            'list':'trans_form_data',
-            'transCode':'XHXSDD',
-            'jsonData':JSON.stringify(jsonData)
-          }
-          this.totalInfo=totalInfo;
-          localStorage.setItem('saleReportInfo',JSON.stringify({saleReportRemark:totalInfo,time:new Date().getTime()}))
-          localStorage.setItem('saleReport',JSON.stringify({saleReportArr:this.arr,Aclass:this.Aclass,Bclass:this.Bclass,captain:captain,time:new Date().getTime()}))
-          that.$router.push({path:'/count'})
+            }
+            else{
+              jsonData.transDetailUncalc.push(
+                {
+                  "id":this.guid(),
+                  "transObjCode": "A类产品",//项目类产品名称
+                  "containerCode": "A",//类型
+                  "qty": '',
+                  "amount": this.Aclass,//总金额
+                  "fgCode": ""
+                },
+                {
+                  "id":this.guid(),
+                  "transObjCode": "B类产品",//项目类产品名称
+                  "containerCode": "B",//类型
+                  "qty": '',
+                  "amount": this.Bclass,//总金额
+                  "fgCode": ""
+                })
+            }
+            let totalInfo = {
+                'isMobile':true,
+                'conn':20000,
+                'list':'trans_form_data',
+                'transCode':'XHXSDD',
+                'jsonData':JSON.stringify(jsonData)
+              }
+              this.totalInfo = totalInfo;
+              // 提交表单内容 缓存
+              localStorage.setItem(
+                'saleReportInfo',
+                JSON.stringify({
+                    saleReportRemark:totalInfo,
+                    time:new Date().getTime()
+                })
+              )
+              // 用户编辑内容 缓存
+              localStorage.setItem(
+                'saleReport',
+                JSON.stringify({
+                  saleReportArr:this.arr,
+                  Aclass:this.Aclass,
+                  Bclass:this.Bclass,
+                  time:new Date().getTime()
+                  })
+              )
+              // 单独缓存 用户队长
+              localStorage.setItem(
+                'SALE_CAP',
+                JSON.stringify({
+                  captain:this.helpCaptain
+                })
+              )
+              that.$router.push({path:'/count'})
           
     },
     Ainput(e){
-      this.Aclass=e.split(',').join('');
+      this.Aclass = e.split(',').join('');
     },
     Binput(e){
-       this.Bclass=e.split(',').join('');
+       this.Bclass = e.split(',').join('');
     },
     timestampToTime(timestamp) {
-        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '-';
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-        var D = date.getDate() + ' ';
+        let date = new Date(timestamp),//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+            Y = date.getFullYear() + '-',
+            M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-',
+            D = date.getDate() + ' ';
         return Y+M+D;
     },
     DateDifference(Date1,Date2) {  
-        var sDate, newDate1, newDate2, Days;
+        let sDate, 
+            newDate1, 
+            newDate2, 
+            Days;
+
         var aDate = Date1.split("-");
-        var newDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]); //转换为07-10-2017格式  
-        var  aDate = Date2.split("-");
-        var newDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
-        var  Days = parseInt(Math.abs(newDate1 - newDate2) / 1000 / 60 / 60 / 24); //把差的毫秒数转换为天数  
+            newDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]); //转换为07-10-2017格式
+              
+        var aDate = Date2.split("-");
+            newDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+            Days = parseInt(Math.abs(newDate1 - newDate2) / 1000 / 60 / 60 / 24); //把差的毫秒数转换为天数  
         return Days;
-    },
-    letMeTest(){
-      let path = this.$router.path;
     }
-  },
-  created(){
-    // this.letMeTest();
   },
   mounted(){
     //默认缓存
     if(localStorage.getItem('saleReport')){
-      this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
-      this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
-      this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
-      this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
+      this.arr = JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
+      this.Aclass = JSON.parse(localStorage.getItem('saleReport')).Aclass;
+      this.Bclass = JSON.parse(localStorage.getItem('saleReport')).Bclass;
+    }
+    if(localStorage.getItem('SALE_CAP')){
+      this.helpCaptain = JSON.parse(localStorage.getItem('SALE_CAP')).captain;
     }
    this.listData();
   },
   beforeRouteLeave(to,from,next){
-    var that=this;
-    if(that.arr[0].value.length==0&&that.helpCaptain==''||to.name=='Count'){
-       next()
-    }else{
+    let that=this;
+    if(that.arr[0].value.length==0 || to.name=='Count'){ next() }
+    else{
       this.$vux.confirm.show({
         title: '温馨提示',
         content: '要保存数据吗？',
         confirmText:"确认",
         cancelText:"取消",
-        onShow () {
-        },
-        onHide () {
-          
-        },
         onCancel () {
           localStorage.removeItem('saleReport');
           next()
         },
         onConfirm () {
-            localStorage.setItem('saleReport',JSON.stringify({
+          localStorage.setItem('saleReport',JSON.stringify({
               saleReportArr:that.arr,
               Aclass:that.Aclass,
               Bclass:that.Bclass,
-              captain:that.helpCaptain,
-              time:new Date().getTime()}))
+              time:new Date().getTime()
+            })
+          )
+          localStorage.setItem(
+              'SALE_CAP',
+              JSON.stringify({
+                captain:that.helpCaptain
+              })
+          )
           next()
         }
-    })
+      })
     }
       
-  },
-  computed:{
-
-  },
+  }
 }
 </script>
 
@@ -438,7 +438,7 @@ export default {
   top: 0;
 }
 /* 合计按钮  */
-.count_button {
+#count_button {
   position: fixed;
   bottom: 0;
   left: 0;
