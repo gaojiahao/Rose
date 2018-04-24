@@ -122,10 +122,10 @@
         });
         await tokenService.getUser().then(data => {
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
-            region: data.shengName || '',
-            bank: data.bankName || '',
-            dept: data.sybName || '',
-            captain: data.bmName || ''
+            region: data.homeProvince || '',  //省份地区
+            bank: data.homeBank || '',        //银行
+            dept: data.area || '',            //事业部
+            captain: data.bmName || ''        //队长（暂无）
           }))
         }).catch(err => {
           this.$vux.alert.show({
