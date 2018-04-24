@@ -121,9 +121,15 @@
 import saleRepotService from '../service/saleRepotService'
 import optionService from '../service/optionService'
 import { 
-  Alert, Group, Cell, Selector, 
-  XInput, XButton, Confirm, PopupPicker,
-  querystring,numberComma
+  Cell,
+  Alert, 
+  Group, 
+  XInput,  
+  XButton,
+  Confirm,
+  Selector, 
+  PopupPicker,
+  numberComma
 } from 'vux'
 
 export default {
@@ -237,7 +243,7 @@ export default {
       }
       let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
 
-      localStorage.setItem('zone_info',JSON.stringify({
+      localStorage.setItem('HELP_ZONE_INFO',JSON.stringify({
         bank:this.bankValue[0],
         areaValue:this.areaValue[0],
         captain:this.helpCaptain,
@@ -396,10 +402,10 @@ export default {
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
     }
-    if(localStorage.getItem('zone_info')){
-      this.areaValue=[ JSON.parse(localStorage.getItem('zone_info')).areaValue ] ;
-      this.bankValue = [ JSON.parse(localStorage.getItem('zone_info')).bank ] ;
-      this.helpCaptain = JSON.parse(localStorage.getItem('zone_info')).captain ;
+    if(localStorage.getItem('HELP_ZONE_INFO')){
+      this.areaValue=[ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue ] ;
+      this.bankValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank ] ;
+      this.helpCaptain = JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain ;
     }
    this.listData();
   },
@@ -426,7 +432,7 @@ export default {
               time:new Date().getTime()
             }));
             //缓存地区信息
-            localStorage.setItem('zone_info',JSON.stringify({
+            localStorage.setItem('HELP_ZONE_INFO',JSON.stringify({
               bank:that.bankValue[0],
               areaValue:that.areaValue[0],
               captain:that.helpCaptain,
