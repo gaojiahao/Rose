@@ -1,8 +1,12 @@
 <template>
   <div>
     <div id="app">
-
-      <h1 class="cp_title">销售预报</h1>
+         
+      <div class="cp_title">
+        销售预报
+        <span class="username">欢迎,{{username}}</span>   
+      </div>
+      
 
       <div class="select_part">
 
@@ -64,7 +68,8 @@
     data() {
       return {
         showLookReport: false, // 是否展示查看报表按钮
-        showLoading: false
+        showLoading: false,
+        username:''
       }
     },
     methods: {
@@ -110,6 +115,7 @@
           })
         });
         await tokenService.isPresident().then(data => {
+          this.username = data.nickname; //拿到当前用户
           if (`${data.statu}` === '1') { // statu为1则为总裁
             this.showLookReport = true
           }
@@ -133,6 +139,14 @@
 </script>
 
 <style scoped>
+  .username {
+    line-height: initial;
+    font-size: 16px;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%);
+  }
   /* 公司名  */
   .cp_title {
     width: 100%;
@@ -142,6 +156,7 @@
     font-size: 50px;
     font-weight: 200;
     color: #CFCFCF;
+    position: relative;
   }
 
   /* 技术支持公司名  */
