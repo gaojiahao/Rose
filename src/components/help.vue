@@ -10,7 +10,7 @@
             :data='areaList'
             v-model="areaValue"
             :columns="1"
-            @on-change="getPickerArea">
+            >
           </popup-picker>
 
           <popup-picker 
@@ -50,7 +50,6 @@
             :data="list"
             v-model="item.value"
             :columns="2"
-            @on-change="getPickerValue"
             show-name
           >
           </popup-picker>
@@ -121,17 +120,22 @@
 <script>
 import saleRepotService from '../service/saleRepotService'
 import optionService from '../service/optionService'
-import { Alert, Group, Cell, Selector, XInput, XButton, Confirm, PopupPicker,querystring,numberComma} from 'vux'
+import { 
+  Alert, Group, Cell, Selector, 
+  XInput, XButton, Confirm, PopupPicker,
+  querystring,numberComma
+} from 'vux'
+
 export default {
   components:{
     Cell,
     Group,
+    Alert,
     XInput,
     Confirm,
     XButton,
     Selector,
-    PopupPicker,
-    Alert
+    PopupPicker
   },
   data () {
     return {
@@ -163,12 +167,6 @@ export default {
     numberComma
   },
   methods:{
-    //监听选择栏
-    getPickerValue(val){
-      
-    },
-    onChange(val){
-    },
     createNew(){
       this.arr.push({
         value: [],
@@ -210,91 +208,62 @@ export default {
       })
     },
     end(){
-      var that=this;
-    //缓存支援地区
-    if(this.areaValue.length==0){
-        this.$vux.alert.show({
-            title: '失败',
-            content: '请选支援地区',
-            onShow () {
+      let that=this;
 
-            },
-            onHide () {
-            
-            }
-        })
-        return;
-    }else if(this.bankValue.length==0){
-         this.$vux.alert.show({
-            title: '失败',
-            content: '请选支援银行',
-            onShow () {
-
-            },
-            onHide () {
-            
-            }
-        })
-        return;
-    }else if(this.arr[0].value.length==0){
+      if(this.areaValue.length == 0){
           this.$vux.alert.show({
               title: '失败',
-              content: '请选择项目产品',
-              onShow () {
+              content: '请选支援地区'
+          })
+          return;
+      }else if(this.bankValue.length == 0){
+          this.$vux.alert.show({
+              title: '失败',
+              content: '请选支援银行'
+          })
+          return;
+      }else if(this.arr[0].value.length == 0){
+            this.$vux.alert.show({
+                title: '失败',
+                content: '请选择项目产品'
+              })
+              return;
+          }else if(this.helpCaptain == ''){
+          this.$vux.alert.show({
+              title: '失败',
+              content: '请填写支援队长'
+          })
+          return;
+      }
+      let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
 
-              },
-              onHide () {
-                
-              }
-            })
-            return;
-        }else if(this.helpCaptain==''){
-         this.$vux.alert.show({
-            title: '失败',
-            content: '请填写支援队长',
-            onShow () {
+      localStorage.setItem('zone_info',JSON.stringify({
+        bank:this.bankValue[0],
+        areaValue:this.areaValue[0],
+        captain:this.helpCaptain,
+      }))  
+      // localStorage.setItem('sale_captain',this.helpCaptain)
 
-            },
-            onHide () {
-            
-            }
-        })
-        return;
-    }
-    let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
-    localStorage.setItem('ROSE_OPTION',JSON.stringify({
-      bank:this.bankValue[0],captain:this.helpCaptain,dept:dept,region:this.areaValue[0]
-      }))
-    localStorage.setItem('helpInfo',JSON.stringify({
-      bank:this.bankValue[0],areaValue:this.areaValue[0],captain:this.helpCaptain,
-    }))  
-      localStorage.setItem('sale_captain',this.helpCaptain)
-      var jsonData = {
+      let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           //"listId": "8bf196b3-9be4-4a7e-ade1-c50602320f68",
           "referenceId":this.guid(),
           "baseinfoExt": {
             "id":this.guid(),
-            "varchar1": JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
-            "varchar2": JSON.parse(localStorage.getItem('ROSE_OPTION')).captain,
-            "varchar3": JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
-            "varchar4": JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
+            "letchar1": JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
+            "letchar2": JSON.parse(localStorage.getItem('ROSE_OPTION')).captain,
+            "letchar3": JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
+            "letchar4": JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
             },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
           };
          
-          for(let i =0 ;i<this.arr.length ; i++){
-            if(this.arr[i].qty==''){
+          for(let i = 0; i<this.arr.length; i++){
+            if(this.arr[i].qty == ''){
                 this.$vux.alert.show({
-                  title: '失败',
-                  content: '请填写数量',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
+                  title: '提示',
+                  content: '请填写项目类产品数量',
                 })
                 return;
               }else{
@@ -308,30 +277,18 @@ export default {
                 })
               } 
             }
-            if(this.Aclass==''){
+            if(this.Aclass == ''){
               this.$vux.alert.show({
-                  title: '失败',
-                  content: '请填A类产品',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
-                })
-                return;
-            }else if(this.Bclass==''){
+                  title: '提示',
+                  content: '请填A类产品'
+              })
+              return;
+            }else if(this.Bclass == ''){
               this.$vux.alert.show({
-                  title: '失败',
-                  content: '请填B类产品',
-                  onShow () {
-
-                  },
-                  onHide () {
-                    
-                  }
+                  title: '提示',
+                  content: '请填B类产品'
                 })
-                return;
+              return;
             }else{
               jsonData.transDetailUncalc.push({
                 "id":this.guid(),
@@ -349,16 +306,26 @@ export default {
                 "fgCode": ""
               })
           }
-         let totalInfo={
+         let totalInfo = {
             'isMobile':true,
             'conn':20000,
             'list':'trans_form_data',
             'transCode':'XHXSDD',
             'jsonData':JSON.stringify(jsonData)
           }
-          this.totalInfo=totalInfo;
-          localStorage.setItem('saleReportInfo',JSON.stringify({saleReportRemark:totalInfo,time:new Date().getTime()}))
-          localStorage.setItem('saleReport',JSON.stringify({saleReportArr:this.arr,Aclass:this.Aclass,Bclass:this.Bclass,time:new Date().getTime()}))
+          this.totalInfo = totalInfo;
+
+          localStorage.setItem('saleReportInfo',JSON.stringify({
+            saleReportRemark:totalInfo,
+            time:new Date().getTime()
+          }))
+          localStorage.setItem('saleReport',JSON.stringify({
+            saleReportArr:this.arr,
+            Aclass:this.Aclass,
+            Bclass:this.Bclass,
+            time:new Date().getTime()
+          }))
+
           that.$router.push({path:'/count'});
     },
     Ainput(e){
@@ -403,90 +370,73 @@ export default {
     },
     //匹配队长
     captainSelect(e){
-      if(this.captainShow==false||this.helpCaptain==''){
+      if(this.captainShow == false || this.helpCaptain == ''){
         return;
       }
-      optionService.getCaptain({value:e}).then(data=>{
-        this.teamLeaderList=data.tableContent;
-         })
+      optionService.getCaptain({value:e}).then( data=> {
+        this.teamLeaderList = data.tableContent;
+      })
     },
     captainFocus(){
-      this.captainShow=true;
+      this.captainShow = true;
     },
     //选择队长
     getNickname(e){
-      this.helpCaptain=e;
-      this.captainShow=false;
-       this.teamLeaderList=[]
-    },
-    getPickerArea(e){
-        
-    },
-  },
-  created(){
-    // this.letMeTest();
+      this.helpCaptain = e;
+      this.captainShow = false;
+      this.teamLeaderList = []
+    }
   },
   mounted(){
-   this.getArea();
-   this.getBank();
+    this.getArea();
+    this.getBank();
   //  this.teamLeader();
     if(localStorage.getItem('saleReport')){
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
     }
-    if(localStorage.getItem('helpInfo')){
-        if(JSON.parse(localStorage.getItem('helpInfo')).areaValue!=''){
-          this.areaValue=[JSON.parse(localStorage.getItem('helpInfo')).areaValue];
-        }
-        if(JSON.parse(localStorage.getItem('helpInfo')).bank!=''){
-          this.bankValue=[JSON.parse(localStorage.getItem('helpInfo')).bank];
-        }
-        
-    }
-    if(localStorage.getItem('sale_captain')){
-      this.helpCaptain=localStorage.getItem('sale_captain');
+    if(localStorage.getItem('zone_info')){
+      this.areaValue=[ JSON.parse(localStorage.getItem('zone_info')).areaValue ] ;
+      this.bankValue = [ JSON.parse(localStorage.getItem('zone_info')).bank ] ;
+      this.helpCaptain = JSON.parse(localStorage.getItem('zone_info')).captain ;
     }
    this.listData();
   },
   beforeRouteLeave(to,from,next){
-    var that=this;
-    if(that.arr[0].value.length==0&&that.bankValue.length==0&&that.areaValue.length==0&&that.helpCaptain==''||to.name=='Count'){
-       next()
-    }else{
+    let that = this;
+    if( that.arr[0].value.length == 0 || to.name == 'Count'){ next() }
+    else{
       that.$vux.confirm.show({
         title: '温馨提示',
         content: '要保存数据吗？',
         confirmText:"确认",
         cancelText:"取消",
-        onShow () {
-        },
-        onHide () {
-          
-        },
         onCancel () {
-          localStorage.removeItem('saleReport');
-          localStorage.removeItem('helpInfo');
-          localStorage.removeItem('sale_captain');
+          localStorage.removeItem('saleReport'); 
           next()
         },
         onConfirm () {
+            //缓存填写信息
             localStorage.setItem('saleReport',JSON.stringify({
-              saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,captain:that.helpCaptain,time:new Date().getTime()
-              }));
-            localStorage.setItem('helpInfo',JSON.stringify({
-              bank:that.bankValue[0],areaValue:that.areaValue[0],captain:that.helpCaptain,
+              saleReportArr:that.arr,
+              Aclass:that.Aclass,
+              Bclass:that.Bclass,
+              captain:that.helpCaptain,
+              time:new Date().getTime()
             }));
-            localStorage.setItem('sale_captain',that.helpCaptain) 
-          next()
+            //缓存地区信息
+            localStorage.setItem('zone_info',JSON.stringify({
+              bank:that.bankValue[0],
+              areaValue:that.areaValue[0],
+              captain:that.helpCaptain,
+            }))  
+            next()
         }
     })
     }
       
-  },
-  computed:{
-
-  },
+  }
 }
 </script>
 
