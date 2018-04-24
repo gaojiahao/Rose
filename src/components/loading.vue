@@ -1,7 +1,7 @@
 <template>
   <div class="loading-container" v-show="show">
     <div class="loading-wrapper">
-      <spinner class="loading-animation" type="crescent" size="5em"></spinner>
+      <spinner class="loading-animation" type="crescent" size="2em"></spinner>
     </div>
   </div>
 </template>
@@ -43,8 +43,8 @@
     .loading-wrapper {
       @extend %center;
       z-index: 100;
-      width: 7.6em;
-      min-height: 7.6em;
+      width: 3.5em;
+      min-height: 3.5em;
       background: rgba(17, 17, 17, 0.7);
       border-radius: 5px;
       .loading-animation {
