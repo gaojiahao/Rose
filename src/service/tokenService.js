@@ -88,8 +88,13 @@ let tokenService = {
           });
           resolve(data[key])
         }).catch(function (error) {
-          let data = error.response && error.response.data
-          reject(error.response.data)
+          let res = error.response;
+          let data = (res && res.data) || {};
+          let message = data.message || '请求异常';
+          reject({
+            success: false,
+            message: message
+          })
         });
       }
     )
@@ -99,7 +104,7 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      // code = 'ITXubjkvTI1EBwCy5fZEYJG9Iy_hRPgxQZ2GwuwiWls'
+      // code = 'vcg0t6Z14rLpxNJ9j-9ze4vV4fiMILTa-U9zguO2IMo'
       axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
         let data = res.data;
         this.clean();
@@ -109,8 +114,13 @@ let tokenService = {
         });
         resolve(data[key])
       }).catch(function (error) {
-        let data = error.response && error.response.data
-        reject(error.response.data)
+        let res = error.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
       });
     })
   },
@@ -122,6 +132,9 @@ let tokenService = {
   },
   // TODO 判断是否为总裁
   isPresident() {
+    return $axios.ajax({
+      url: '/trans/getModelData?refresh=true&dsCode=getPresident'
+    });
   },
   /**
    * token 初始化

@@ -62,8 +62,7 @@
     },
     data() {
       return {
-        show: false,
-        showLookReport: true, // 是否展示查看报表按钮
+        showLookReport: false, // 是否展示查看报表按钮
         showLoading: false
       }
     },
@@ -84,7 +83,6 @@
       goMR() {
         this.$router.push({path: '/myRecord'})
       },
-
       /*
        * 查看报表
        */
@@ -92,20 +90,26 @@
         this.$router.push({path: '/reportsOp'})
       }
     },
+    beforeCreate() {
+      let query = querystring.parse(location.search.slice(1));
+      if (process.env.NODE_ENV !== 'development' && !query.code) {
+        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+      }
+    },
     created() {
       (async () => {
         this.showLoading = true;
         await tokenService.getToken().catch(err => {
-          this.showLoading = false;
           this.$vux.alert.show({
             content: err.message
           })
         });
-        await tokenService.getUser().then(data => {
-          console.log(data);
-          if (('' + data.uid) === '798') {
+        await tokenService.isPresident().then(data => {
+          if (`${data.statu}` === '1') { // statu为1则为总裁
             this.showLookReport = true
           }
+        });
+        await tokenService.getUser().then(data => {
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
             region: data.shengName || '',
             bank: data.bankName || '',
@@ -113,7 +117,6 @@
             captain: data.bmName || ''
           }))
         }).catch(err => {
-          this.showLoading = false;
           this.$vux.alert.show({
             content: err.message
           })

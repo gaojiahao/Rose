@@ -1,7 +1,7 @@
 <template>
   <div class="loading-container" v-show="show">
     <div class="loading-wrapper">
-      <spinner class="loading-animation" type="crescent" size="50px"></spinner>
+      <spinner class="loading-animation" type="crescent" size="5em"></spinner>
     </div>
   </div>
 </template>
