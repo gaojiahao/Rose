@@ -142,6 +142,7 @@
   .username {
     line-height: initial;
     font-size: 16px;
+    font-weight: normal;
     position: absolute;
     left: 50%;
     bottom: 0;
