@@ -232,7 +232,6 @@ export default {
         return;
     }
       localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:region}))
-      localStorage.setItem('sale_captain',captain)
 
       var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
@@ -373,10 +372,7 @@ export default {
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
-      //this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
-    }
-    if(localStorage.getItem('sale_captain')){
-      this.helpCaptain=localStorage.getItem('sale_captain')
+      this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
     }
    this.listData();
   },
@@ -397,12 +393,15 @@ export default {
         },
         onCancel () {
           localStorage.removeItem('saleReport');
-          localStorage.removeItem('sale_captain');
           next()
         },
         onConfirm () {
-          localStorage.setItem('saleReport',JSON.stringify({saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,captain:that.helpCaptain,time:new Date().getTime()}))
-          localStorage.setItem('sale_captain',that.helpCaptain) 
+            localStorage.setItem('saleReport',JSON.stringify({
+              saleReportArr:that.arr,
+              Aclass:that.Aclass,
+              Bclass:that.Bclass,
+              captain:that.helpCaptain,
+              time:new Date().getTime()}))
           next()
         }
     })
