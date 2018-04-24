@@ -268,7 +268,7 @@ export default {
     localStorage.setItem('helpInfo',JSON.stringify({
       bank:this.bankValue[0],areaValue:this.areaValue[0],captain:this.helpCaptain,
     }))  
-      
+      localStorage.setItem('sale_captain',this.helpCaptain)
       var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           //"listId": "8bf196b3-9be4-4a7e-ade1-c50602320f68",
@@ -442,10 +442,10 @@ export default {
         if(JSON.parse(localStorage.getItem('helpInfo')).bank!=''){
           this.bankValue=[JSON.parse(localStorage.getItem('helpInfo')).bank];
         }
-        if(JSON.parse(localStorage.getItem('helpInfo')).captain!=''){
-          this.helpCaptain=JSON.parse(localStorage.getItem('helpInfo')).captain;
-        }
         
+    }
+    if(localStorage.getItem('sale_captain')){
+      this.helpCaptain=localStorage.getItem('sale_captain');
     }
    this.listData();
   },
@@ -467,6 +467,7 @@ export default {
         onCancel () {
           localStorage.removeItem('saleReport');
           localStorage.removeItem('helpInfo');
+          localStorage.removeItem('sale_captain');
           next()
         },
         onConfirm () {
@@ -475,7 +476,8 @@ export default {
               }));
             localStorage.setItem('helpInfo',JSON.stringify({
               bank:that.bankValue[0],areaValue:that.areaValue[0],captain:that.helpCaptain,
-            })); 
+            }));
+            localStorage.setItem('sale_captain',that.helpCaptain) 
           next()
         }
     })
