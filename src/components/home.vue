@@ -4,7 +4,7 @@
          
       <div class="cp_title">
         销售预报
-        <span class="username">欢迎,{{username}}</span>   
+        <span class="username" v-if="username">欢迎,{{username}}</span>   
       </div>
       
 
@@ -69,7 +69,7 @@
       return {
         showLookReport: false, // 是否展示查看报表按钮
         showLoading: false,
-        username:''
+        username:'' //用户名称
       }
     },
     methods: {
