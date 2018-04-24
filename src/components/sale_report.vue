@@ -367,11 +367,14 @@ export default {
     // this.letMeTest();
   },
   mounted(){
+    //默认缓存
     if(localStorage.getItem('saleReport')){
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
       this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
+    }else if(localStorage.getItem('ROSE_OPTION')){
+      this.helpCaptain=JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
     }
    this.listData();
   },
