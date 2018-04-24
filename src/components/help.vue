@@ -262,8 +262,12 @@ export default {
         return;
     }
     let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
-    localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:this.bankValue[0],captain:this.helpCaptain,dept:dept,region:this.areaValue[0]}))
-      
+    localStorage.setItem('ROSE_OPTION',JSON.stringify({
+      bank:this.bankValue[0],captain:this.helpCaptain,dept:dept,region:this.areaValue[0]
+      }))
+    localStorage.setItem('helpInfo',JSON.stringify({
+      bank:this.bankValue[0],areaValue:this.areaValue[0],captain:this.helpCaptain,
+    }))  
       
       var jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
@@ -430,21 +434,27 @@ export default {
       this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
-      this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
     }
-    if(localStorage.getItem('ROSE_OPTION')){
-        this.areaValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).region];
-        this.bankValue=[JSON.parse(localStorage.getItem('ROSE_OPTION')).bank];
-        //this.helpCaptain=JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
+    if(localStorage.getItem('helpInfo')){
+        if(JSON.parse(localStorage.getItem('helpInfo')).areaValue!=''){
+          this.areaValue=[JSON.parse(localStorage.getItem('helpInfo')).areaValue];
+        }
+        if(JSON.parse(localStorage.getItem('helpInfo')).bank!=''){
+          this.bankValue=[JSON.parse(localStorage.getItem('helpInfo')).bank];
+        }
+        if(JSON.parse(localStorage.getItem('helpInfo')).captain!=''){
+          this.helpCaptain=JSON.parse(localStorage.getItem('helpInfo')).captain;
+        }
+        
     }
    this.listData();
   },
   beforeRouteLeave(to,from,next){
     var that=this;
-    if(that.arr[0].value.length==0||to.name=='Count'){
+    if(that.arr[0].value.length==0&&that.bankValue.length==0&&that.areaValue.length==0&&that.helpCaptain==''||to.name=='Count'){
        next()
     }else{
-      this.$vux.confirm.show({
+      that.$vux.confirm.show({
         title: '温馨提示',
         content: '要保存数据吗？',
         confirmText:"确认",
@@ -456,10 +466,16 @@ export default {
         },
         onCancel () {
           localStorage.removeItem('saleReport');
+          localStorage.removeItem('helpInfo');
           next()
         },
         onConfirm () {
-            localStorage.setItem('saleReport',JSON.stringify({saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,captain:that.helpCaptain,time:new Date().getTime()}))
+            localStorage.setItem('saleReport',JSON.stringify({
+              saleReportArr:that.arr,Aclass:that.Aclass,Bclass:that.Bclass,captain:that.helpCaptain,time:new Date().getTime()
+              }));
+            localStorage.setItem('helpInfo',JSON.stringify({
+              bank:that.bankValue[0],areaValue:that.areaValue[0],captain:that.helpCaptain,
+            })); 
           next()
         }
     })

@@ -103,6 +103,7 @@ export default {
                                 that.$router.replace('/Home');
                                 localStorage.removeItem('saleReport');
                                 localStorage.removeItem('saleReportInfo');
+                                localStorage.removeItem('helpInfo');
                             }
                         })
                         

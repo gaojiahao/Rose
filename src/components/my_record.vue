@@ -123,7 +123,7 @@ export default {
                         this.list3Total = m[i].amount
                 }
             }
-            
+            this.list1Total=(this.list1Total).toFixed(2);
         }
     },
     mounted(){

@@ -373,14 +373,12 @@ export default {
       this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
       this.helpCaptain=JSON.parse(localStorage.getItem('saleReport')).captain;
-    }else if(localStorage.getItem('ROSE_OPTION')){
-      this.helpCaptain=JSON.parse(localStorage.getItem('ROSE_OPTION')).captain;
     }
    this.listData();
   },
   beforeRouteLeave(to,from,next){
     var that=this;
-    if(that.arr[0].value.length==0||to.name=='Count'){
+    if(that.arr[0].value.length==0&&that.helpCaptain==''||to.name=='Count'){
        next()
     }else{
       this.$vux.confirm.show({
