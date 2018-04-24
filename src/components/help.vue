@@ -250,10 +250,10 @@ export default {
           "referenceId":this.guid(),
           "baseinfoExt": {
             "id":this.guid(),
-            "letchar1": JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
-            "letchar2": JSON.parse(localStorage.getItem('ROSE_OPTION')).captain,
-            "letchar3": JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
-            "letchar4": JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
+            "varchar1": JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
+            "varchar2": JSON.parse(localStorage.getItem('ROSE_OPTION')).captain,
+            "varchar3": JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
+            "varchar4": JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
             },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
