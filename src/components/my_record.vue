@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { Tab, TabItem, Divider, SwiperItem, FormPreview, CellFormPreview,numberComma } from 'vux'
+import { Tab, TabItem, Divider, SwiperItem, FormPreview, numberComma, CellFormPreview } from 'vux'
 import myReportService from '../service/myReportService'
 import { setTimeout } from 'timers';
 import loading from './loading';
@@ -51,10 +51,10 @@ export default {
         Tab,
         TabItem,
         Divider,
+        loading,
         SwiperItem,
         FormPreview,
-        CellFormPreview,
-        loading
+        CellFormPreview
     },
     data(){
         return{
@@ -66,11 +66,6 @@ export default {
             list1Total:0,
             list2Total:0,
             list3Total:0,
-            list4:[
-                    { label: '足金999',value: '20000 件/套' }, 
-                    { label: '千金888',value: '12312 件/套' }, 
-                    { label: '千足金666',value: '4232 件/套' }
-                ],
             remark:'',
             spinner:false
         }
@@ -80,16 +75,15 @@ export default {
     },
     methods:{
         mylist(tab){
-            if(tab==0){
+            if(tab == 0){
                 this.listpanl(this.remark.days)
-            }else if(tab==1){
+            }else if(tab == 1){
                 this.listpanl(this.remark.weeks)
-            }else if(tab==2){
+            }else if(tab == 2){
                 this.listpanl(this.remark.months)
-            }else if(tab==3){
+            }else if(tab == 3){
                 this.listpanl(this.remark.years)
             }
-            
         },
         listData(){
             let ROSE_OPTION=JSON.parse(localStorage.getItem('ROSE_OPTION'));
@@ -100,40 +94,37 @@ export default {
                 bmName:ROSE_OPTION.captain,
             }
             myReportService.myRepotList(jsonData).then(data=>{
-                this.spinner=true;
+                this.spinner = true;
                 if(data){
-                    this.spinner=false;
+                    this.spinner = false;
                 }
-                this.remark=data;
+                this.remark = data;
                 this.mylist(0);
             }).catch(data=>{
-                this.spinner=true;
+                this.spinner = true;
             })
         },
         listpanl(m){
-            this.list1Total=0;
-            this.list2Total=0;
-            this.list3Total=0;
-            this.list1.length=0;
+            this.list1Total = 0;
+            this.list2Total = 0;
+            this.list3Total = 0;
+            this.list1.length = 0;
            
-            for(let i = 0 ;i<m.length ; i++){
-                if(m[i].objType=='项目类产品'){
-                        this.list1Total+=Number(m[i].amount);
+            for(let i = 0; i<m.length; i++){
+                if(m[i].objType == '项目类产品'){
+                        this.list1Total += Number(m[i].amount);
                         this.list1.push({
                         label:m[i].objName,
                         value:'￥'+numberComma(m[i].amount,3)+' '+'('+m[i].qty+'件/套'+')',
                     })
-                }else if(m[i].objType=='A'){
-                        this.list2Total=m[i].amount
-                }else if(m[i].objType=='B'){
-                        this.list3Total=m[i].amount
+                }else if(m[i].objType == 'A'){
+                        this.list2Total = m[i].amount
+                }else if(m[i].objType == 'B'){
+                        this.list3Total = m[i].amount
                 }
             }
             
         }
-    },
-    created(){
-        
     },
     mounted(){
         this.listData();
