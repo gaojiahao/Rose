@@ -54,6 +54,7 @@
   import Loading from './loading'
 
   const ROSE_OPTION_KEY = 'ROSE_OPTION';
+  const ROSE_LOGIN_CODE = 'ROSE_CODE';
   export default {
     components: {
       XButton,
@@ -92,7 +93,11 @@
     },
     beforeCreate() {
       let query = querystring.parse(location.search.slice(1));
-      if (process.env.NODE_ENV !== 'development' && !query.code) {
+      let code = sessionStorage.getItem(ROSE_LOGIN_CODE);
+      if (query.code) { // 获取到登录的code存储到session
+        sessionStorage.setItem(ROSE_LOGIN_CODE, query.code);
+      }
+      if (process.env.NODE_ENV !== 'development' && !code && !query.code) { // 若不为开发环境，且链接没有code，sessionStorage也没有存储，则认为当前环境为非企业微信环境
         window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
       }
     },
