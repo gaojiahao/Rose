@@ -83,6 +83,10 @@
               }, ['']);
               this.regionList = region;
               resolve(region)
+            }).catch(err => {
+              this.$vux.alert.show({
+                content: err.message
+              })
             })
           }
         })
@@ -100,6 +104,10 @@
               }, ['']);
               this.bankList = bank;
               resolve(bank)
+            }).catch(err => {
+              this.$vux.alert.show({
+                content: err.message
+              })
             })
           }
         })
@@ -117,6 +125,10 @@
               }, ['']);
               this.deptList = dept;
               resolve(dept)
+            }).catch(err => {
+              this.$vux.alert.show({
+                content: err.message
+              })
             })
           }
         })
@@ -135,6 +147,10 @@
               this.projList = proj;
               sessionStorage.setItem(PROJ_LIST, JSON.stringify(proj));
               resolve(proj)
+            }).catch(err => {
+              this.$vux.alert.show({
+                content: err.message
+              })
             })
           }
         })
