@@ -67,7 +67,7 @@
             type="number" 
             text-align="right" 
             placeholder="请输入数量"
-            v-if="item.value.length>0"
+            v-if="item.value[0]!='无'"
             v-model.number="item.qty"
           ></x-input>
         </group>
@@ -146,7 +146,18 @@ export default {
   data () {
     return {
       alertEnd:false,
-      list: [],
+      list: [
+        {
+          name:'无',
+          value:'无',
+          parent:0
+        },
+        {
+          name:0,
+          value:0,
+          parent:'无'
+        }
+      ],
       arr:[
         {
           value:[],
@@ -266,7 +277,7 @@ export default {
           };
          
           for(let i = 0; i<this.arr.length; i++){
-            if(this.arr[i].qty == ''){
+            if(this.arr[0].value[0] != '无' && this.arr[i].qty === ''){
                 this.$vux.alert.show({
                   title: '提示',
                   content: '请填写项目类产品数量',
@@ -275,21 +286,21 @@ export default {
               }else{
                 jsonData.transDetailUncalc.push({
                   "id":this.guid(),
-                  "transObjCode": this.arr[i].value[0].split('_')[0],//项目类产品名称
+                  "transObjCode": this.arr[i].value[0] === '无'? '' : this.arr[i].value[0].split('_')[0],//项目类产品名称
                   "containerCode": "项目类产品",//类型
-                  "qty": this.arr[i].qty,
+                  "qty": this.arr[i].value[0] === '无'?'':this.arr[i].qty,
                   "amount": this.arr[i].qty*this.arr[i].value[1],//总金额
                   "fgCode": ""
                 })
               } 
             }
-            if(this.Aclass == ''){
+            if(!this.Aclass){
               this.$vux.alert.show({
                   title: '提示',
                   content: '请填A类产品'
               })
               return;
-            }else if(this.Bclass == ''){
+            }else if(!this.Bclass){
               this.$vux.alert.show({
                   title: '提示',
                   content: '请填B类产品'
