@@ -8,7 +8,7 @@
       </div>
       
 
-      <div class="select_part">
+      <div class="select_part" v-if="username">
 
         <x-button
           class="each_select"
@@ -113,6 +113,7 @@
       (async () => {
         this.showLoading = true;
         await tokenService.getToken().catch(err => {
+          
           this.$vux.alert.show({
             content: err.message
           })
