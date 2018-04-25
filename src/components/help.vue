@@ -325,7 +325,7 @@ export default {
             saleReportRemark:totalInfo,
             time:new Date().getTime()
           }))
-          localStorage.setItem('saleReport',JSON.stringify({
+          localStorage.setItem('help_saleReport',JSON.stringify({
             saleReportArr:this.arr,
             Aclass:this.Aclass,
             Bclass:this.Bclass,
@@ -397,10 +397,10 @@ export default {
     this.getArea();
     this.getBank();
   //  this.teamLeader();
-    if(localStorage.getItem('saleReport')){
-      this.arr=JSON.parse(localStorage.getItem('saleReport')).saleReportArr;
-      this.Aclass=JSON.parse(localStorage.getItem('saleReport')).Aclass;
-      this.Bclass=JSON.parse(localStorage.getItem('saleReport')).Bclass;
+    if(localStorage.getItem('help_saleReport')){
+      this.arr=JSON.parse(localStorage.getItem('help_saleReport')).saleReportArr;
+      this.Aclass=JSON.parse(localStorage.getItem('help_saleReport')).Aclass;
+      this.Bclass=JSON.parse(localStorage.getItem('help_saleReport')).Bclass;
     }
     if(localStorage.getItem('HELP_ZONE_INFO')){
       this.areaValue=[ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue ] ;
@@ -419,12 +419,12 @@ export default {
         confirmText:"确认",
         cancelText:"取消",
         onCancel () {
-          localStorage.removeItem('saleReport'); 
+          localStorage.removeItem('help_saleReport'); 
           next()
         },
         onConfirm () {
             //缓存填写信息
-            localStorage.setItem('saleReport',JSON.stringify({
+            localStorage.setItem('help_saleReport',JSON.stringify({
               saleReportArr:that.arr,
               Aclass:that.Aclass,
               Bclass:that.Bclass,
