@@ -111,7 +111,8 @@ export default {
             this.list1.length = 0;
            
             for(let i = 0; i<m.length; i++){
-                if(m[i].objType == '项目类产品'){
+                
+                if(m[i].objType == '项目类产品' && m[i].objName){
                         this.list1Total += Number(m[i].amount);
                         this.list1.push({
                         label:m[i].objName,
