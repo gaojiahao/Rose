@@ -256,13 +256,13 @@ export default {
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
           };
-          // if(this.arr[0].value.length == 0){
-          //     this.$vux.alert.show({
-          //         title: '提示',
-          //         content: '请选择项目产品'
-          //       })
-          //     return;
-          //   }
+          if(this.arr[0].value.length == 0){
+              this.$vux.alert.show({
+                  title: '提示',
+                  content: '请选择项目产品'
+                })
+              return;
+            }
             console.log(this.arr.length);
           for(let i = 0; i<this.arr.length; i++){
             console.log(this.arr[0]);
