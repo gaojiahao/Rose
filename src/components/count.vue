@@ -104,7 +104,7 @@ export default {
                         content: data.message,
                             onHide () {
                                 that.$router.replace('/Home');
-                                localStorage.removeItem('saleReport');
+                                localStorage.removeItem('help_saleReport');
                                 localStorage.removeItem('saleReportInfo');
                             }
                         })
@@ -124,29 +124,38 @@ export default {
         },
         //获取数据
         info(){
-            let total1=0;
-            let total2=0;
-            let total3=0;
-            let jsonData=JSON.parse(this.childInfo.jsonData).transDetailUncalc;
+            let total1 = 0,     // 项目类产品金额
+                total2 = 0,     // A类金额
+                total3 = 0,     // B类金额
+                list4_num = 0   // 最终合计 数量
+
+            //从缓存中拿到上个页面提交的数据
+            let jsonData = JSON.parse(this.childInfo.jsonData).transDetailUncalc;
+
             for(let i = 0 ;i<jsonData.length; i++){
-                if(jsonData[i].containerCode=='项目类产品'){
+                if(jsonData[i].containerCode === '项目类产品' && jsonData[i].transObjCode){
+                    //项目类产品明细
                     this.list1.push({
                         label:jsonData[i].transObjCode,
-                        value:jsonData[i].qty+'件/套',
+                        value:`${jsonData[i].qty}件/套`,
                     });
-                    this.list4.push({
-                        label:'合计数量',
-                        value:jsonData[i].qty,
-                    })
-                    total1 =jsonData[i].amount;
+                    // 最终合计 数量
+                    list4_num += jsonData[i].qty;
 
-                }else if(jsonData[i].containerCode=='A'){
+                    this.list4=[{
+                        label:'合计数量',
+                        value:`${list4_num}件/套`
+                    }]
+                    //项目类产品金额汇总
+                    total1 += jsonData[i].amount;
+
+                }else if(jsonData[i].containerCode == 'A'){
                     this.list2.push({
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
                     });
                     total2 =jsonData[i].amount;
-                }else if(jsonData[i].containerCode=='B'){
+                }else if(jsonData[i].containerCode == 'B'){
                     this.list3.push({
                         label:jsonData[i].transObjCode,
                         value:jsonData[i].qty,
@@ -154,11 +163,11 @@ export default {
                     total3 = jsonData[i].amount;
                 }
             }
-            this.total1 = '￥'+total1;
-            this.total2 = '￥'+total2;
-            this.total3 = '￥'+total3;
+            this.total1 = '￥'+ total1;
+            this.total2 = '￥'+ total2;
+            this.total3 = '￥'+ total3;
             let num = Number(total1)+Number(total2)+Number(total3);
-            this.total4 = '￥'+num;
+            this.total4 = '￥'+ num;
         }
     },
     mounted(){
