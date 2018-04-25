@@ -14,6 +14,7 @@
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="goSP"
+          v-if="!showLookReport"
         >销售预报提交
         </x-button>
 
@@ -21,6 +22,7 @@
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="gohelp"
+          v-if="!showLookReport"
         >销售预报提交（支援）
         </x-button>
 
@@ -28,6 +30,7 @@
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="goMR"
+          v-if="!showLookReport"
         >个人业绩查看
         </x-button>
 

@@ -135,26 +135,6 @@ let tokenService = {
     return $axios.ajax({
       url: '/trans/getModelData?refresh=true&dsCode=getPresident'
     });
-  },
-  /**
-   * token 初始化
-   */
-  init: function (qwUserCode) {
-    axios.get('/H_roleplay-si/wxLogin?code=' + qwUserCode + '&&state=1').then((response) => {
-      const result = response.data;
-      this.clean();
-      this.setToken({
-        token: result.token,
-        entityId: result.entityId
-      });
-    })
-
-    // axios.get('https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=ww082959ae67224850&corpsecret=Cd4Vgugvfpi21NEweNXXL0WZO-CjM1Kx5dNMWqnAeMA')
-    //   .then((response) => {
-    //     const result = response.data;
-    //     this.clean();
-    //     this.setToken(result.token);
-    //   })
   }
 }
 export default tokenService;
