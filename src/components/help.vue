@@ -150,7 +150,7 @@ export default {
         {
           name:'无',
           value:'无',
-          parent:0
+          parent:'0'
         },
         {
           name:0,
@@ -312,14 +312,14 @@ export default {
                 "transObjCode": "A类产品",//项目类产品名称
                 "containerCode": "A",//类型
                 "qty": '',
-                "amount": this.Aclass,//总金额
+                "amount": Number(this.Aclass),//总金额
                 "fgCode": ""
               },{
                 "id":this.guid(),
                 "transObjCode": "B类产品",//项目类产品名称
                 "containerCode": "B",//类型
                 "qty": '',
-                "amount": this.Bclass,//总金额
+                "amount": Number(this.Bclass),//总金额
                 "fgCode": ""
               })
           }

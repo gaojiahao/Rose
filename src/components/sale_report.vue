@@ -128,7 +128,7 @@ export default {
         {
           name:'无',
           value:'无',
-          parent:0
+          parent:'0'
         },
         {
           name:0,
@@ -263,7 +263,6 @@ export default {
                 })
               return;
             }
-            console.log(this.arr.length);
           for(let i = 0; i<this.arr.length; i++){
             console.log(this.arr[0]);
             if(this.arr[0].value[0] != '无' && this.arr[i].qty === ''){
@@ -304,7 +303,7 @@ export default {
                   "transObjCode": "A类产品",//项目类产品名称
                   "containerCode": "A",//类型
                   "qty": '',
-                  "amount": this.Aclass,//总金额
+                  "amount": Number(this.Aclass),//总金额
                   "fgCode": ""
                 },
                 {
@@ -312,9 +311,10 @@ export default {
                   "transObjCode": "B类产品",//项目类产品名称
                   "containerCode": "B",//类型
                   "qty": '',
-                  "amount": this.Bclass,//总金额
+                  "amount": Number(this.Bclass),//总金额
                   "fgCode": ""
                 })
+                
             }
             let totalInfo = {
                 'isMobile':true,
