@@ -166,7 +166,7 @@ export default {
             this.total1 = '￥'+ total1;
             this.total2 = '￥'+ total2;
             this.total3 = '￥'+ total3;
-            let num = Number(total1)+Number(total2)+Number(total3);
+            let num = Number(total2)+Number(total3);
             this.total4 = '￥'+ num;
         }
     },
