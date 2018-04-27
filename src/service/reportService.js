@@ -17,7 +17,21 @@ let reportService = {
         pageNo: data.pageNo || 1,
       }
     });
-  }
+  },
+  // TODO 获取合计
+  getTotal(data = {}){
+    return $axios.ajax({
+      url: '/trans/getModelData',
+      data: {
+        refresh: true,
+        dsCode: 'getAmountAndQty',
+        shengName: data.shengName || '', // 区域
+        bankName: data.bankName || '', // 银行
+        sybName: data.bmName || '', // 部门
+        objName: data.objName || '', // 项目
+      }
+    });
+  },
 }
 
 export default reportService

@@ -280,6 +280,8 @@
 
 <style lang="scss">
   .filter-container {
+    position: relative;
+    height: 100%;
     .cp_title {
       width: 100%;
       height: 150px;
@@ -329,7 +331,7 @@
     /* button样式  */
     .weui-btn.count_button {
       width: 100%;
-      position: fixed;
+      position: absolute;
       bottom: 0;
       left: 0;
       border-radius: 0;

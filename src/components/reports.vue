@@ -28,7 +28,9 @@
         <span class="each-select-name" :class="{'is-selected': objName === ''}">A类产品</span>
       </div>
     </div>
-
+    <group class="total-group">
+      <cell title="合计" :value="totalText"></cell>
+    </group>
     <div class="rank-container" @click="hideDropList">
       <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
         <cell :value=item.sales :title=item.name is-link :border-intent="false"
@@ -96,6 +98,10 @@
         curTab: 'days',
         dateList: [
           {
+            name: '昨日',
+            value: 'yesterdays'
+          },
+          {
             name: '本日',
             value: 'days'
           },
@@ -112,12 +118,7 @@
             value: 'years'
           },
         ], // 日期列表
-        reportData: { // 获取的后台数据
-          days: [],
-          weeks: [],
-          months: [],
-          years: []
-        },
+        reportData: {}, // 获取的列表数据
         filterParams: {}, // 过滤条件
         showDate: false, // 是否展示日期列表
         dateSelected: { // 选中的日期
@@ -130,7 +131,9 @@
         curPage: 1, // 当前页码
         objName: '', // 项目类型
         isDisabled: false,
-        showLoading: false
+        showLoading: false,
+        totalData: {}, // 获取的合计数据
+        totalText: '', // 合计栏当前展示的文案
       }
     },
     methods: {
@@ -142,9 +145,10 @@
         console.log(val);
         // this.showTab = false
       },
-      // TODO 重置reportData的数据
-      resetReportData() {
-        this.reportData = {
+      // TODO 重置数据
+      resetData(key = 'reportData') {
+        this[key] = {
+          yesterdays: [],
           days: [],
           weeks: [],
           months: [],
@@ -157,23 +161,23 @@
         reportService.getReport(Object.assign(this.filterParams, {
           objName: this.objName,
           pageNo: this.page
-        })).then(data => {
+        })).then(repData => {
           this.showLoading = false;
-          this.resetReportData();
-          let map = ['days', 'weeks', 'months', 'years'];
+          this.resetData();
+          let map = ['yesterdays', 'days', 'weeks', 'months', 'years'];
           // 数据组装
           map.forEach(item => {
-            data[item].forEach((data, index) => {
+            repData[item] && repData[item].forEach((data, index) => {
               let detail = [
                 {
                   label: '项目类产品',
                   value: `${data.qty || 0}件/套`
                 }, {
                   label: '项目类金额',
-                  value: `￥${numberComma(data.amount) || 0}`
+                  value: `￥${numberComma(data.amount || 0)}`
                 }, {
                   label: 'A类产品',
-                  value: `￥${numberComma(data.aProduct) || 0}`
+                  value: `￥${numberComma(data.aProduct || 0)}`
                 }, /*{
                   label: 'B类产品',
                   value: '￥999'
@@ -184,17 +188,20 @@
                   label: '所属银行',
                   value: data.bankName || ''
                 }, {
+                  label: '所属地区',
+                  value: data.shengName || ''
+                }, {
                   label: '所属队长',
                   value: data.bmName || ''
                 },
               ];
-              if (this.objName === '') {
+              if (this.objName === '') { // A类产品不展示项目类数量和金额
                 detail.shift();
                 detail.shift();
               }
               this.reportData[item].push({
                 name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                sales: this.objName ? `${data.qty || 0}件/套` : `￥${numberComma(data.aProduct) || 0}`,
+                sales: this.objName ? `${data.qty || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
                 showContent: false,
                 detail: detail
               })
@@ -205,7 +212,7 @@
           this.isDisabled = this.reportList.length < PAGE_SIZE
         }).catch(err => {
           this.showLoading = false;
-          this.resetReportData();
+          this.resetData();
           this.reportList = [];
           this.$vux.alert.show({
             content: err.message
@@ -241,8 +248,10 @@
             showContent: false
           })
         });
-        if (this.page === 1) {
+        this.getTotalText();
+        if (this.page === 1) { // 若为第一页，则切换数据判断是否有下一页，若不是第一页则重新请求
           this.reportList = this.reportData[item.value];
+          this.isDisabled = this.reportList.length < PAGE_SIZE
         } else {
           this.page = 1;
           this.assembleData()
@@ -262,7 +271,8 @@
         }
         this.objName = item;
         this.page = 1;
-        this.assembleData()
+        this.assembleData();
+        this.getTotalText();
       },
       // TODO 点击A类产品页签
       aProjClick() {
@@ -271,6 +281,7 @@
         this.objName = '';
         this.page = 1;
         this.assembleData();
+        this.getTotalText();
       },
       // TODO 返回上一页
       pagePrev() {
@@ -288,6 +299,36 @@
         this.page++;
         this.assembleData();
       },
+      // TODO 获取合计
+      getTotal() {
+        reportService.getTotal(Object.assign(this.filterParams, {
+          objName: this.objName
+        })).then(data => {
+          this.totalData = data;
+          this.getTotalText();
+        })
+      },
+      // TODO 生成合计栏文案
+      getTotalText() {
+        let totalData = this.totalData[this.dateSelected.value] || [];
+        let total = {};
+        totalData.every(item => {
+          if (item.objName && item.objName === this.objName) {
+            total = item;
+            return false
+          }
+          if (item.objName === 'A类产品' && !this.objName) {
+            total = item;
+            return false
+          }
+          return true
+        });
+        if (!this.objName) { // A类产品展示金额，项目类产品展示数量
+          this.totalText = `￥${numberComma(total.amount || 0)}（共${total.number || 0}人）`;
+        } else {
+          this.totalText = `${total.qty || 0}件/套（共${total.number || 0}人）`;
+        }
+      },
     },
     filters: {
       // TODO 项目类产品名称过滤
@@ -297,21 +338,22 @@
     },
     created() {
       let query = this.$route.query;
+      this.resetData();
+      this.resetData('totalData');
+      // 设置筛选参数
       this.filterParams = {
         shengName: query.region ? decodeURI(query.region) : '', // 区域
         bankName: query.bank ? decodeURI(query.bank) : '', // 银行
         bmName: query.dept ? decodeURI(query.dept) : '', // 部门
         objName: query.proj ? decodeURI(query.proj) : '', // 项目
-      }
+      };
       // 如果选择了项目，则修改选中页签
       if (this.filterParams.objName) {
         this.objName = this.filterParams.objName;
       }
-      this.getProj()
-    },
-    mounted(){
-      this.assembleData(this.filterParams);
-      // this.$refs.loading.showLoading()
+      this.getProj();
+      this.assembleData();
+      this.getTotal();
     }
   }
 </script>
@@ -336,7 +378,7 @@
       line-height: 40px;
       text-align: center;
       display: flex;
-      position: fixed;
+      position: absolute;
       bottom: 0;
       left: 0;
       // align-items: center;
@@ -397,8 +439,13 @@
     .is-selected {
       border-bottom: 2px solid #fff;
     }
+    .total-group {
+      .weui-cells {
+        margin: 5px 0;
+      }
+    }
     .rank-container {
-      height: calc(100% - 80px);
+      height: calc(100% - 134px);
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       .weui-cell__ft {
