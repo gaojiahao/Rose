@@ -7,7 +7,7 @@
     <div class="select-part">
       <div class="each-select vux-1px-r" @click="dateClick">
         <div>
-          <span class="each-select-name">{{dateSelected.name}}</span><i class="iconfont icon-xiaosanjiaodown"></i>
+          <span class="each-select-name">{{dateSelected.name}}</span><i class="iconfont" :class="showDate?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
         </div>
         <group class="date-list-container" v-show="showDate">
           <cell :title="item.name" v-for="(item, index) in dateList" :key="index"
@@ -17,7 +17,7 @@
       <div class="each-select vux-1px-r" @click="projClick">
         <div>
           <span class="each-select-name" :class="{'is-selected': objName !== ''}">{{objName | nameFilter}}</span>
-          <i class="iconfont icon-xiaosanjiaodown"></i>
+          <i class="iconfont" :class="showProj?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
         </div>
         <group class="proj-list-container" v-show="showProj">
           <cell :title="item" v-for="(item, index) in projList" :key="index"
@@ -396,7 +396,8 @@
       height: 40px;
       line-height: 40px;
       display: flex;
-      background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
+      // background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
+      background: #5876A6;
     }
     .each-select {
       flex: 1;
