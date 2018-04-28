@@ -401,6 +401,7 @@
     }
     .each-select {
       flex: 1;
+      position: relative;
       text-align: center;
       font-size: 14px;
       color: #fff;
