@@ -267,10 +267,10 @@ export default {
           "referenceId":this.guid(),
           "baseinfoExt": {
             "id":this.guid(),
-            "varchar1": JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
-            "varchar2": JSON.parse(localStorage.getItem('ROSE_OPTION')).captain,
-            "varchar3": JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
-            "varchar4": JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
+            "varchar1": '',
+            "varchar2": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain,
+            "varchar3": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue,
+            "varchar4": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank,
             },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
