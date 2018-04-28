@@ -272,7 +272,7 @@
         this.objName = item;
         this.page = 1;
         this.assembleData();
-        this.getTotalText();
+        this.getTotal();
       },
       // TODO 点击A类产品页签
       aProjClick() {
@@ -281,7 +281,7 @@
         this.objName = '';
         this.page = 1;
         this.assembleData();
-        this.getTotalText();
+        this.getTotal();
       },
       // TODO 返回上一页
       pagePrev() {
@@ -429,7 +429,7 @@
         text-overflow: ellipsis;
       }
       .selected {
-        background: -webkit-linear-gradient(left top, #b08c58, #e4c998);
+        background-color: #5876A6;
         color: #fff;
       }
     }

@@ -13,7 +13,7 @@ let optionService = {
   // TODO 获取银行列表
   getBank() {
     return $axios.ajax({
-      url: '/ds/getSysDictByFathervalue&type?id=358&summary=%5B%5D&page=1&start=0&limit=50&filter=%5B%7B%22property%22%3A%22fvalue%22%2C%22operator%22%3A%22eq%22%2C%22value%22%3A%22BankHeadOffice%22%7D%2C%7B%22property%22%3A%22ftype%22%2C%22operator%22%3A%22eq%22%2C%22value%22%3A%22Bank%20Head%20Office%22%7D%5D',
+      url: '/base/dict/getChildren?query=&parentId=8fa32982-53a3-49db-832f-3759a38015de&page=1&start=0&limit=25',
     });
   },
   // TODO 获取部门列表

@@ -77,7 +77,7 @@
             resolve(this.regionList)
           } else {
             optionService.getRegion().then(data => {
-              let region = data.reduce((arr, item) => {
+              let region = data && data.reduce((arr, item) => {
                 arr.push(item.name);
                 return arr
               }, ['']);
@@ -98,7 +98,7 @@
             resolve(this.bankList)
           } else {
             optionService.getBank().then(data => {
-              let bank = data.tableContent.reduce((arr, item) => {
+              let bank = data && data.reduce((arr, item) => {
                 arr.push(item.name);
                 return arr
               }, ['']);
@@ -119,7 +119,7 @@
             resolve(this.deptList)
           } else {
             optionService.getDept().then(data => {
-              let dept = data.tableContent.reduce((arr, item) => {
+              let dept = data.tableContent && data.tableContent.reduce((arr, item) => {
                 arr.push(item.groupName);
                 return arr
               }, ['']);

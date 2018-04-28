@@ -17,7 +17,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/Home'
+      redirect: '/Home',
     },
     {
       path: '/option',
@@ -27,35 +27,60 @@ export default new Router({
     {
       path: '/Home',
       name: 'Home',
-      component: Home
+      component: Home,
+      meta: {
+        title: '销售预报'
+      }
     },
     // 销售预报提交
     {
       path: '/saleReport',
       name: 'saleReport',
       component: saleReport,
+      meta: {
+        title: '预报提交'
+      }
     }, {
       path: '/help',
       name: 'help',
       component: help,
+      meta: {
+        title: '支援预报提交'
+      }
     },
     {
       path: '/count',
       name: 'Count',
       component: count,
+      meta: {
+        title: '合计'
+      }
     },
     {
       path: '/myRecord',
       name: 'myRecord',
-      component: myRecord
+      component: myRecord,
+      meta: {
+        title: '个人业绩'
+      }
     },
     {
       path: '/reportsOp',
       name: 'reportsOp',
       component: reportsOp,
       children: [
-        {path: 'reports', component: reports, name: 'reports'}
-      ]
+        {
+          path: 'reports',
+          component: reports,
+          name: 'reports',
+          meta: {
+            title: '报表'
+          }
+        }
+      ],
+      meta: {
+        title: '查看报表'
+      }
     },
     {
       path: '*',

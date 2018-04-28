@@ -4,19 +4,22 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 import router from './router'
 import App from './App'
-import {querystring, AlertPlugin, LoadingPlugin,ConfirmPlugin} from 'vux'
-import C from "./plugins/ajax/conf";
-import tokenService from "./service/tokenService";
+import {querystring, AlertPlugin, LoadingPlugin, ConfirmPlugin} from 'vux'
 
-Vue.use(AlertPlugin)
-Vue.use(LoadingPlugin)
-Vue.use(ConfirmPlugin)
+Vue.use(AlertPlugin);
+Vue.use(LoadingPlugin);
+Vue.use(ConfirmPlugin);
 
 //声明全局空实例 用于传值
 Vue.prototype.$event = new Vue();
 // FastClick.attach(document.body)
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title || '销售预报';
+  next()
+});
 
 new Vue({
   router,
