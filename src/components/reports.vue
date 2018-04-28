@@ -397,7 +397,7 @@
       line-height: 40px;
       display: flex;
       // background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
-      background: #5877a6;
+      background: #5077AA;
     }
     .each-select {
       flex: 1;
@@ -430,7 +430,7 @@
         text-overflow: ellipsis;
       }
       .selected {
-        background-color: #5877a6;
+        background-color: #5077AA;
         color: #fff;
       }
     }
