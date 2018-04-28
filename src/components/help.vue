@@ -269,7 +269,7 @@ export default {
             "id":this.guid(),
             "varchar1": '',
             "varchar2": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain,
-            "varchar3": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).region,
+            "varchar3": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue,
             "varchar4": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank,
             },
           "transDetailUncalc": [],
