@@ -368,11 +368,11 @@ export default {
     //获取银行
     getBank(){
         optionService.getBank().then(data=>{
-            for(let i = 0 ; i<data.tableContent.length ;i++){
+            for(let i = 0 ; i<data.length ;i++){
                 //data.tableContent[i].name=data.tableContent[i].bankName;
-                data.tableContent[i].value=data.tableContent[i].name;
+                data[i].value=data[i].name;
             }
-            this.bankList=data.tableContent;
+            this.bankList=data;
         })
     },
     //获取队长
