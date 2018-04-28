@@ -5,7 +5,7 @@
                 disable-future></calendar>
     </group>
     <div class="select-part">
-      <div class="each-select vux-1px-r" @click="dateClick">
+      <div class="each-select " @click="dateClick">
         <div>
           <span class="each-select-name">{{dateSelected.name}}</span><i class="iconfont" :class="showDate?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
         </div>
@@ -14,7 +14,7 @@
                 @click.native.stop="dateItemClick(item)" :class="{selected: item.name === dateSelected.name}"></cell>
         </group>
       </div>
-      <div class="each-select vux-1px-r" @click="projClick">
+      <div class="each-select " @click="projClick">
         <div>
           <span class="each-select-name" :class="{'is-selected': objName !== ''}">{{objName | nameFilter}}</span>
           <i class="iconfont" :class="showProj?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
@@ -397,7 +397,7 @@
       line-height: 40px;
       display: flex;
       // background: -webkit-linear-gradient(left top, rgba(176, 140, 88, 1), rgba(228, 201, 152, 1));
-      background: #5876A6;
+      background: #6482AE;
     }
     .each-select {
       flex: 1;
@@ -429,7 +429,7 @@
         text-overflow: ellipsis;
       }
       .selected {
-        background-color: #5876A6;
+        background-color: #6482AE;
         color: #fff;
       }
     }
