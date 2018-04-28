@@ -13,6 +13,7 @@ let optionService = {
   // TODO 获取银行列表
   getBank() {
     return $axios.ajax({
+      
       url: '/base/dict/getChildren?query=&parentId=8fa32982-53a3-49db-832f-3759a38015de&page=1&start=0&limit=25',
     });
   },
