@@ -3,7 +3,6 @@
     <div v-if='$route.name=="saleReport"'>
       <div id='mescroll' class="mescroll">
           <group label-align='left' title="请选择所属队长">
-            
             <x-input 
             title="所属队长"
             text-align="right"
@@ -430,7 +429,12 @@ export default {
 
 <style >
 .mescroll {
+  width: 100%;
   padding-bottom: 50px;
+}
+.mescroll .weui-cells{
+  width: 100%;
+  box-sizing: border-box;
 }
 /* 底部提示文字 */
 .caution_part {
@@ -462,9 +466,6 @@ export default {
 .plus_delect{
   color: red;
 }
-.helpCaptain{
-  position: relative;
-}
 .captain-container{
   width: 100%;
   max-height: 132px;  
@@ -482,5 +483,8 @@ export default {
 }
 .captainHide{
   display: none;
+}
+.vux-popup-header {
+  width: 100%;
 }
 </style>

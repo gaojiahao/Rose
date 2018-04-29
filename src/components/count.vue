@@ -1,8 +1,8 @@
 <template>
   <div class="pages pd_btm">
 
-    <group >
-      <cell class="count_part" title="最终合计" :value="total4 | numberComma"></cell>
+    <group class="count_part">
+      <cell title="最终合计" :value="total4 | numberComma"></cell>
       <cell-form-preview class="count_dt_part" :list="list4"></cell-form-preview>
     </group>
 
@@ -30,7 +30,7 @@
 
 
     <x-button 
-        class="submit_button" 
+        id="submit_button" 
         :gradients="['#B99763', '#E7D0A2']" 
         @click.native="sendOrder"
         >
@@ -178,17 +178,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 /* 提交订单按钮  */
-.submit_button {
+#submit_button {
   border-radius: 0;
   margin-top: 10px;
-  z-index: 99;
-  position: fixed;
-  bottom: 0;
   width: 100%;
 }
-.pd_btm{
-    padding-bottom: 100px;
+.pd_btm .weui-cells {
+    width: 100%;
+    box-sizing: border-box;
+}
+.pd_btm .project_part{
+    width: 100%;
+    box-sizing: border-box;
 }
 </style>

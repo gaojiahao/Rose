@@ -104,7 +104,7 @@
 
     </div>
     <x-button 
-        class="count_button" 
+        id="count_button" 
         :gradients="['#B99763', '#E7D0A2']"
         @click.native="end"
         >
@@ -462,6 +462,10 @@ export default {
   padding-bottom: 50px;
   position: relative;
 }
+.mescroll .each_part {
+  width: 100%;
+  box-sizing: border-box;
+}
 /* 底部提示文字 */
 .caution_part {
   width: 100%;
@@ -482,7 +486,7 @@ export default {
   top: 0;
 }
 /* 合计按钮  */
-.count_button {
+#count_button {
   position: fixed;
   bottom: 0;
   left: 0;
