@@ -32,16 +32,18 @@
     <group class="total-group">
       <cell title="合计" :value="totalText"></cell>
     </group>
-    <div class="rank-container" @click="hideDropList">
-      <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
-        <cell :value=item.sales :title=item.name is-link :border-intent="false"
-              :arrow-direction="item.showContent ? 'up' : 'down'"
-              @click.native="item.showContent = !item.showContent"></cell>
-        <div v-show="item.showContent">
-          <cell-form-preview :border-intent="true" :list="item.detail"></cell-form-preview>
-        </div>
-      </group>
-      <divider class="no-data" v-show="reportList.length === 0">暂无数据</divider>
+    <div class="rank-container" @click="hideDropList" ref="rankContainer">
+      <div class="rank-wrapper">
+        <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
+          <cell :value=item.sales :title=item.name is-link :border-intent="false"
+                :arrow-direction="item.showContent ? 'up' : 'down'"
+                @click.native="item.showContent = !item.showContent"></cell>
+          <div v-show="item.showContent">
+            <cell-form-preview :border-intent="true" :list="item.detail"></cell-form-preview>
+          </div>
+        </group>
+        <divider class="no-data" v-show="reportList.length === 0">暂无数据</divider>
+      </div>
     </div>
     <div class="page-controler">
       <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i
@@ -72,6 +74,7 @@
   import reportService from '../service/reportService'
   import saleReportService from '../service/saleRepotService'
   import Loading from './loading'
+  import BScroll from 'better-scroll'
 
   const PROJ_LIST = 'ROSE_PROJ_LIST';
   const PAGE_SIZE = 30;
@@ -135,6 +138,7 @@
         showLoading: false,
         totalData: {}, // 获取的合计数据
         totalText: '', // 合计栏当前展示的文案
+        rankScroll: null
       }
     },
     methods: {
@@ -158,65 +162,68 @@
       },
       // TODO 组装数据
       assembleData(params = {}) {
-        this.showLoading = true;
-        reportService.getReport(Object.assign(this.filterParams, {
-          objName: this.objName,
-          pageNo: this.page
-        })).then(repData => {
-          this.showLoading = false;
-          this.resetData();
-          let map = ['yesterdays', 'days', 'weeks', 'months', 'years'];
-          // 数据组装
-          map.forEach(item => {
-            repData[item] && repData[item].forEach((data, index) => {
-              let detail = [
-                {
-                  label: '项目类产品',
-                  value: `${data.qty || 0}件/套`
-                }, {
-                  label: '项目类金额',
-                  value: `￥${numberComma(data.amount || 0)}`
-                }, {
-                  label: 'A类产品',
-                  value: `￥${numberComma(data.aProduct || 0)}`
-                }, /*{
+        return new Promise((resolve, reject) => {
+          this.showLoading = true;
+          reportService.getReport(Object.assign(this.filterParams, {
+            objName: this.objName,
+            pageNo: this.page
+          })).then(repData => {
+            this.showLoading = false;
+            this.resetData();
+            let map = ['yesterdays', 'days', 'weeks', 'months', 'years'];
+            // 数据组装
+            map.forEach(item => {
+              repData[item] && repData[item].forEach((data, index) => {
+                let detail = [
+                  {
+                    label: '项目类产品',
+                    value: `${data.qty || 0}件/套`
+                  }, {
+                    label: '项目类金额',
+                    value: `￥${numberComma(data.amount || 0)}`
+                  }, {
+                    label: 'A类产品',
+                    value: `￥${numberComma(data.aProduct || 0)}`
+                  }, /*{
                   label: 'B类产品',
                   value: '￥999'
                 },*/ {
-                  label: '所属区域',
-                  value: data.sybName || ''
-                }, {
-                  label: '所属银行',
-                  value: data.bankName || ''
-                }, {
-                  label: '所属地区',
-                  value: data.shengName || ''
-                }, {
-                  label: '所属队长',
-                  value: data.bmName || ''
-                },
-              ];
-              if (this.objName === '') { // A类产品不展示项目类数量和金额
-                detail.shift();
-                detail.shift();
-              }
-              this.reportData[item].push({
-                name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                sales: this.objName ? `${data.qty || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
-                showContent: false,
-                detail: detail
+                    label: '所属区域',
+                    value: data.sybName || ''
+                  }, {
+                    label: '所属银行',
+                    value: data.bankName || ''
+                  }, {
+                    label: '所属地区',
+                    value: data.shengName || ''
+                  }, {
+                    label: '所属队长',
+                    value: data.bmName || ''
+                  },
+                ];
+                if (this.objName === '') { // A类产品不展示项目类数量和金额
+                  detail.shift();
+                  detail.shift();
+                }
+                this.reportData[item].push({
+                  name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
+                  sales: this.objName ? `${data.qty || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
+                  showContent: false,
+                  detail: detail
+                })
               })
+            });
+            this.curPage = this.page;
+            this.reportList = this.reportData[this.dateSelected.value];
+            this.isDisabled = this.reportList.length < PAGE_SIZE
+            resolve();
+          }).catch(err => {
+            this.showLoading = false;
+            this.resetData();
+            this.reportList = [];
+            this.$vux.alert.show({
+              content: err.message
             })
-          });
-          this.curPage = this.page;
-          this.reportList = this.reportData[this.dateSelected.value];
-          this.isDisabled = this.reportList.length < PAGE_SIZE
-        }).catch(err => {
-          this.showLoading = false;
-          this.resetData();
-          this.reportList = [];
-          this.$vux.alert.show({
-            content: err.message
           })
         })
       },
@@ -290,7 +297,10 @@
           return
         }
         this.page--;
-        this.assembleData();
+        this.assembleData().then(() => {
+          // 滚动到顶部
+          this.rankScroll.scrollTo(0, 0);
+        });
       },
       // TODO 进入下一页
       pageNext() {
@@ -298,7 +308,10 @@
           return
         }
         this.page++;
-        this.assembleData();
+        this.assembleData().then(() => {
+          // 滚动到顶部
+          this.rankScroll.scrollTo(0, 0);
+        });
       },
       // TODO 获取合计
       getTotal() {
@@ -355,6 +368,13 @@
       this.getProj();
       this.assembleData();
       this.getTotal();
+    },
+    mounted() {
+      this.$nextTick(() => {
+        if (!this.rankScroll) {
+          this.rankScroll = new BScroll(this.$refs.rankContainer)
+        }
+      })
     }
   }
 </script>
@@ -453,8 +473,8 @@
     }
     .rank-container {
       height: calc(100% - 134px);
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow: hidden;
+      /*-webkit-overflow-scrolling: touch;*/
       .weui-cell__ft {
         padding-right: 20px;
       }
