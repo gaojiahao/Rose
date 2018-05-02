@@ -21,6 +21,7 @@ export default {
 @import '~vux/src/styles/reset.less';
 @import '~vux/src/styles/1px.less';
 @import '../static/css/iconfont/iconfont.css';
+@import '../static/css/common.css';
 
 html,body {
   width: 100%;
