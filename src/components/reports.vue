@@ -215,8 +215,14 @@
             });
             this.curPage = this.page;
             this.reportList = this.reportData[this.dateSelected.value];
-            this.isDisabled = this.reportList.length < PAGE_SIZE
-            resolve();
+            this.isDisabled = this.reportList.length < PAGE_SIZE;
+            this.$nextTick(() => {
+              if (!this.rankScroll) {
+                this.rankScroll = new BScroll(this.$refs.rankContainer)
+              }
+              this.rankScroll.refresh();
+              resolve();
+            });
           }).catch(err => {
             this.showLoading = false;
             this.resetData();
