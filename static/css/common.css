@@ -14,8 +14,17 @@
 }
 .vux-center{
     -webkit-justify-content:center;
-    -webkit-align-items: center;
+    -moz-box-pack:center;
+    -webkit--moz-box-pack:center;
+    box-pack:center;
+    -webkit-align-items:center;
+    box-align:center;
+    -moz-box-align:center;
+    -webkit-box-align:center;
 }
 .weui-cell{
-    -webkit-align-items: center;
+    -webkit-align-items:center;
+    box-align:center;
+    -moz-box-align:center;
+    -webkit-box-align:center;
 }
