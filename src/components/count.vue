@@ -1,32 +1,33 @@
 <template>
   <div class="pages pd_btm">
+    <div class="mescroll">
+        <group class="count_part">
+        <cell title="最终合计" :value="total4 | numberComma"></cell>
+        <cell-form-preview class="count_dt_part" :list="list4"></cell-form-preview>
+        </group>
 
-    <group class="count_part">
-      <cell title="最终合计" :value="total4 | numberComma"></cell>
-      <cell-form-preview class="count_dt_part" :list="list4"></cell-form-preview>
-    </group>
+        <load-more tip="项目类产品" :show-loading='false'></load-more>
+        <form-preview 
+            class="project_part"
+            header-label="金额" 
+            :header-value="total1 | numberComma" 
+            :body-items="list1">
+        </form-preview>
 
-    <load-more tip="项目类产品" :show-loading='false'></load-more>
-      <form-preview 
-        class="project_part"
-        header-label="金额" 
-        :header-value="total1 | numberComma" 
-        :body-items="list1">
-      </form-preview>
+        <load-more tip="A类产品" :show-loading='false'></load-more>
+        <form-preview 
+            class="project_part"
+            header-label="金额" 
+            :header-value="total2 | numberComma">
+        </form-preview>
 
-    <load-more tip="A类产品" :show-loading='false'></load-more>
-      <form-preview 
-        class="project_part"
-        header-label="金额" 
-        :header-value="total2 | numberComma">
-      </form-preview>
-
-    <load-more tip="B类产品" :show-loading='false'></load-more>
-      <form-preview 
-        class="project_part"
-        header-label="金额" 
-        :header-value="total3 | numberComma">
-      </form-preview>
+        <load-more tip="B类产品" :show-loading='false'></load-more>
+        <form-preview 
+            class="project_part"
+            header-label="金额" 
+            :header-value="total3 | numberComma">
+        </form-preview>
+    </div>
 
 
     <x-button 
@@ -179,11 +180,18 @@ export default {
 </script>
 
 <style>
+.mescroll {
+  width: 100%;
+  padding-bottom: 50px;
+}
 /* 提交订单按钮  */
 #submit_button {
+  width: 100%;
+  position: fixed;
+  left: 0;
+  bottom: 0;
   border-radius: 0;
   margin-top: 10px;
-  width: 100%;
 }
 .pd_btm .weui-cells {
     width: 100%;

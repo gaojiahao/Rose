@@ -462,10 +462,6 @@ export default {
   padding-bottom: 50px;
   position: relative;
 }
-.mescroll .each_part {
-  width: 100%;
-  box-sizing: border-box;
-}
 /* 底部提示文字 */
 .caution_part {
   width: 100%;
