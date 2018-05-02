@@ -4,7 +4,7 @@
     display: -moz-box;      /* 老版本语法: Firefox (buggy) */
     display: -ms-flexbox;   /* 混合版本语法: IE 10 */   
 }
-.vux-tab .vux-tab-item,.vux-cell-primary,.weui-cell__bd{
+.vux-tab .vux-tab-item,.vux-cell-primary,.weui-cell__bd,.vux-popup-header-title{
     -webkit-flex: 1;        /* Chrome */  
     -ms-flex:1;             /* IE 10 */ 
     -webkit-box-flex:1;     /* OLD - iOS 6-, Safari 3.1-6 */  
