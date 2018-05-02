@@ -218,7 +218,7 @@
             this.isDisabled = this.reportList.length < PAGE_SIZE;
             this.$nextTick(() => {
               if (!this.rankScroll) {
-                this.rankScroll = new BScroll(this.$refs.rankContainer)
+                this.rankScroll = new BScroll(this.$refs.rankContainer, {click: true})
               }
               this.rankScroll.refresh();
               resolve();
@@ -378,7 +378,7 @@
     mounted() {
       this.$nextTick(() => {
         if (!this.rankScroll) {
-          this.rankScroll = new BScroll(this.$refs.rankContainer)
+          this.rankScroll = new BScroll(this.$refs.rankContainer, {click: true})
         }
       })
     }
