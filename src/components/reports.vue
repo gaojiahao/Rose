@@ -177,7 +177,7 @@
                 let detail = [
                   {
                     label: '项目类产品',
-                    value: `${data.qty || 0}件/套`
+                    value: `${data.quantity || 0}件/套`
                   }, {
                     label: '项目类金额',
                     value: `￥${numberComma(data.amount || 0)}`
@@ -207,7 +207,7 @@
                 }
                 this.reportData[item].push({
                   name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                  sales: this.objName ? `${data.qty || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
+                  sales: this.objName ? `${data.quantity || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
                   showContent: false,
                   detail: detail
                 })
@@ -346,7 +346,7 @@
         if (!this.objName) { // A类产品展示金额，项目类产品展示数量
           this.totalText = `￥${numberComma(total.amount || 0)}（共${total.number || 0}人）`;
         } else {
-          this.totalText = `${total.qty || 0}件/套（共${total.number || 0}人）`;
+          this.totalText = `${total.quantity || 0}件/套（共${total.number || 0}人）`;
         }
       },
     },
