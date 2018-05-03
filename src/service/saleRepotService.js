@@ -4,7 +4,7 @@ let saleReportService={
     //项目产品类列表
     saleRepotList(){
         return $axios.ajax({
-            url: '/ds/extr/fb14652e-6706-40f9-af82-35ffcfd205a0',
+            url: '/ds/extr/fb14652e-6706-40f9-af82-35ffcfd205a0?page=1&start=0&limit=25&sort=[{"property":"trans_detail_uncalc.bankCharge","direction":"ASC"}]',
         });
     },
     //提交产品合计
