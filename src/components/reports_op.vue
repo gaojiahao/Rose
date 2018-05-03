@@ -8,8 +8,8 @@
         </popup-picker>
       </group>
     </div>
-    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp">确定
-    </x-button>
+    <x-button class="count_button" :gradients="['#B99763', '#E7D0A2']" @click.native="goRp">确定</x-button>
+    <loading :show="showLoading"></loading>
     <router-view></router-view>
   </div>
 </template>
@@ -18,6 +18,7 @@
   import optionService from '../service/optionService'
   import saleReportService from '../service/saleRepotService'
   import {Group, XButton, PopupPicker} from 'vux'
+  import Loading from './loading'
 
   const FILTER_OPTION = 'ROSE_FILER_OPTION'; // 存储筛选配置的key
   const PROJ_LIST = 'ROSE_PROJ_LIST'; // 存储项目列表的key
@@ -25,7 +26,8 @@
     components: {
       Group,
       XButton,
-      PopupPicker
+      PopupPicker,
+      Loading
     },
     data() {
       return {
@@ -61,7 +63,8 @@
         regionList: [],
         bankList: [],
         deptList: [],
-        projList: []
+        projList: [],
+        showLoading: false,
       }
     },
     computed: {
@@ -227,7 +230,8 @@
     },
     created() {
       (async () => {
-        let filter = JSON.parse(sessionStorage.getItem(FILTER_OPTION))
+        let filter = JSON.parse(sessionStorage.getItem(FILTER_OPTION));
+        this.showLoading = true;
         if (!filter) {
           let tmpPickerList = [];
           await this.getRegion().then(region => {
@@ -270,6 +274,7 @@
           await this.getProj();
           this.pickerList = filter
         }
+        this.showLoading = false;
       })()
     },
     destroyed() {

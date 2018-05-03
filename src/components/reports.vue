@@ -353,7 +353,7 @@
     filters: {
       // TODO 项目类产品名称过滤
       nameFilter(val) {
-        return val.length > 5 ? `${val}...` : val || '项目类产品'
+        return val.length > 5 ? `${val.slice(0, 5)}...` : val || '项目类产品'
       }
     },
     created() {
