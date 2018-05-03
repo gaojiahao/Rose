@@ -17,7 +17,8 @@
       </div>
       <div class="each-select " @click="projClick">
         <div>
-          <span class="each-select-name" :class="{'is-selected': objName !== ''}">{{objName | nameFilter}}</span>
+          <span class="each-select-name"
+                :class="{'is-selected': objName !== A_PROJ_NAME}">{{objName | nameFilter}}</span>
           <i class="iconfont title_right" :class="showProj?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
         </div>
         <group class="proj-list-container" v-show="showProj">
@@ -26,7 +27,7 @@
         </group>
       </div>
       <div class="each-select " @click="aProjClick">
-        <span class="each-select-name" :class="{'is-selected': objName === ''}">A类产品</span>
+        <span class="each-select-name" :class="{'is-selected': objName === A_PROJ_NAME}">A类产品</span>
       </div>
     </div>
     <group class="total-group">
@@ -78,6 +79,7 @@
 
   const PROJ_LIST = 'ROSE_PROJ_LIST';
   const PAGE_SIZE = 30;
+  const A_PROJ_NAME = 'A类产品'; // A类产品名称
   export default {
     components: {
       Tab,
@@ -95,6 +97,7 @@
     },
     data() {
       return {
+        A_PROJ_NAME: 'A类产品', // A类产品名称
         showTab: true, // 是否展示日期列表
         activeIndex: 0,
         filterDate: [], // 日历的选中数据
@@ -133,7 +136,7 @@
         projList: [], // 产品列表
         page: 1, // 请求页码
         curPage: 1, // 当前页码
-        objName: '', // 项目类型
+        objName: A_PROJ_NAME, // 项目类型
         isDisabled: false,
         showLoading: false,
         totalData: {}, // 获取的合计数据
@@ -201,7 +204,7 @@
                     value: data.bmName || ''
                   },
                 ];
-                if (this.objName === '') { // A类产品不展示项目类数量和金额
+                if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
                   detail.shift();
                   detail.shift();
                 }
@@ -292,7 +295,7 @@
       aProjClick() {
         this.showProj = false;
         this.showDate = false;
-        this.objName = '';
+        this.objName = this.A_PROJ_NAME;
         this.page = 1;
         this.assembleData();
         this.getTotal();
@@ -337,13 +340,13 @@
             total = item;
             return false
           }
-          if (item.objName === 'A类产品' && !this.objName) {
-            total = item;
-            return false
-          }
+          // if (item.objName === this.A_PROJ_NAME && !this.objName) {
+          //   total = item;
+          //   return false
+          // }
           return true
         });
-        if (!this.objName) { // A类产品展示金额，项目类产品展示数量
+        if (this.objName === this.A_PROJ_NAME) { // A类产品展示金额，项目类产品展示数量
           this.totalText = `￥${numberComma(total.amount || 0)}（共${total.number || 0}人）`;
         } else {
           this.totalText = `${total.quantity || 0}件/套（共${total.number || 0}人）`;
@@ -352,8 +355,12 @@
     },
     filters: {
       // TODO 项目类产品名称过滤
-      nameFilter(val) {
-        return val.length > 5 ? `${val.slice(0, 5)}...` : val || '项目类产品'
+      nameFilter(val, vm) {
+        if (val !== A_PROJ_NAME) {
+          return val.length > 5 ? `${val.slice(0, 5)}...` : val;
+        } else {
+          return '项目类产品';
+        }
       }
     },
     created() {
@@ -364,7 +371,7 @@
       this.filterParams = {
         shengName: query.region ? decodeURI(query.region) : '', // 区域
         bankName: query.bank ? decodeURI(query.bank) : '', // 银行
-        bmName: query.dept ? decodeURI(query.dept) : '', // 部门
+        sybName: query.dept ? decodeURI(query.dept) : '', // 部门
         objName: query.proj ? decodeURI(query.proj) : '', // 项目
       };
       // 如果选择了项目，则修改选中页签

@@ -5,33 +5,41 @@ let reportService = {
   getReport(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
-      data: {
+      data: Object.assign({
         refresh: true,
         dsCode: 'getStatementsList',
-        shengName: data.shengName || '', // 区域
-        bankName: data.bankName || '', // 银行
-        sybName: data.bmName || '', // 部门
-        objName: data.objName || '', // 项目
-        // pageSize: data.pageSize || 30,
-        // startRow: ((data.page || 1) - 1) * 30,
-        pageNo: data.pageNo || 1,
-      }
+      }, data)
     });
   },
   // TODO 获取合计
-  getTotal(data = {}){
+  getTotal(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
-      data: {
+      data: Object.assign({
         refresh: true,
         dsCode: 'getAmountAndQty',
-        shengName: data.shengName || '', // 区域
-        bankName: data.bankName || '', // 银行
-        sybName: data.bmName || '', // 部门
-        objName: data.objName || '', // 项目
-      }
+      }, data)
     });
   },
+  // TODO 获取列表,增加时间筛选
+  getReportByDate(data = {}) {
+    return $axios.ajax({
+      url: '/trans/getModelData',
+      data: Object.assign({
+        refresh: true,
+        dsCode: 'getStatementByTime',
+      }, data)
+    });
+  },
+  getTotalByDate(data = {}) {
+    return $axios.ajax({
+      url: '/trans/getModelData',
+      data: Object.assign({
+        refresh: true,
+        dsCode: 'getQtyByTime',
+      }, data)
+    });
+  }
 }
 
 export default reportService
