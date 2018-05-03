@@ -273,7 +273,7 @@ export default {
             }else{
                 jsonData.transDetailUncalc.push({
                   "id":this.guid(),
-                  "transObjCode": this.arr[i].value[0] === '无'? '' : this.arr[i].value[0].split('_')[0],//项目类产品名称
+                  "transObjCode": this.arr[i].value[0] === '无'? '无' : this.arr[i].value[0].split('_')[0],//项目类产品名称
                   "containerCode": "项目类产品",//类型
                   "qty": this.arr[i].value[0] === '无'?'':this.arr[i].qty,
                   "amount": this.arr[i].qty*this.arr[i].value[1],//总金额
