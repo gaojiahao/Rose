@@ -214,12 +214,12 @@
               break;
           }
         });
-        if (!filterParams.region && !filterParams.dept && !filterParams.bank && !filterParams.proj) {
+        /*if (!filterParams.region && !filterParams.dept && !filterParams.bank && !filterParams.proj) {
           this.$vux.alert.show({
             content: '请至少选择一个条件'
           });
           return
-        }
+        }*/
         console.log(filterParams);
         sessionStorage.setItem(FILTER_OPTION, JSON.stringify(this.pickerList))
         this.$router.push({
@@ -268,10 +268,10 @@
           });
           this.pickerList = tmpPickerList
         } else {
-          await this.getRegion();
+          /*await this.getRegion();
           await this.getDept();
           await this.getBank();
-          await this.getProj();
+          await this.getProj();*/
           this.pickerList = filter
         }
         this.showLoading = false;
