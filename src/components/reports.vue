@@ -69,6 +69,7 @@
     Calendar,
     Selector,
     numberComma,
+    numberPad,
     PopupPicker,
     CellFormPreview,
   } from 'vux'
@@ -139,7 +140,7 @@
         objName: A_PROJ_NAME, // 项目类型
         isDisabled: false,
         showLoading: false,
-        totalData: {}, // 获取的合计数据
+        totalData: [], // 获取的合计数据
         totalText: '', // 合计栏当前展示的文案
         rankScroll: null
       }
@@ -163,63 +164,56 @@
           years: []
         }
       },
-      // TODO 组装数据
-      assembleData(params = {}) {
+      // TODO 组装数据，有日期过滤
+      assembleData() {
         return new Promise((resolve, reject) => {
           this.showLoading = true;
-          reportService.getReport(Object.assign(this.filterParams, {
+          reportService.getReportByDate(Object.assign(this.filterParams, this.getDate(this.dateSelected.value), {
             objName: this.objName,
             pageNo: this.page
           })).then(repData => {
             this.showLoading = false;
-            this.resetData();
-            let map = ['yesterdays', 'days', 'weeks', 'months', 'years'];
+            this.reportList = [];
             // 数据组装
-            map.forEach(item => {
-              repData[item] && repData[item].forEach((data, index) => {
-                let detail = [
-                  {
-                    label: '项目类产品',
-                    value: `${data.quantity || 0}件/套`
-                  }, {
-                    label: '项目类金额',
-                    value: `￥${numberComma(data.amount || 0)}`
-                  }, {
-                    label: 'A类产品',
-                    value: `￥${numberComma(data.aProduct || 0)}`
-                  }, /*{
-                  label: 'B类产品',
-                  value: '￥999'
-                },*/ {
-                    label: '所属区域',
-                    value: data.sybName || ''
-                  }, {
-                    label: '所属银行',
-                    value: data.bankName || ''
-                  }, {
-                    label: '所属地区',
-                    value: data.shengName || ''
-                  }, {
-                    label: '所属队长',
-                    value: data.bmName || ''
-                  },
-                ];
-                if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
-                  detail.shift();
-                  detail.shift();
-                } else {
-                  detail.splice(2, 1); // 去掉A类产品的金额
-                }
-                this.reportData[item].push({
-                  name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                  sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
-                  showContent: false,
-                  detail: detail
-                })
+            repData.items && repData.items.forEach((data, index) => {
+              let detail = [
+                {
+                  label: '项目类产品',
+                  value: `${data.quantity || 0}件/套`
+                }, {
+                  label: '项目类金额',
+                  value: `￥${numberComma(data.amount || 0)}`
+                }, {
+                  label: 'A类产品',
+                  value: `￥${numberComma(data.aProduct || 0)}`
+                }, {
+                  label: '所属区域',
+                  value: data.sybName || ''
+                }, {
+                  label: '所属银行',
+                  value: data.bankName || ''
+                }, {
+                  label: '所属地区',
+                  value: data.shengName || ''
+                }, {
+                  label: '所属队长',
+                  value: data.bmName || ''
+                },
+              ];
+              if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
+                detail.shift();
+                detail.shift();
+              } else {
+                detail.splice(2, 1); // 去掉A类产品的金额
+              }
+              this.reportList.push({
+                name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
+                sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
+                showContent: false,
+                detail: detail
               })
             });
             this.curPage = this.page;
-            this.reportList = this.reportData[this.dateSelected.value];
             this.isDisabled = this.reportList.length < PAGE_SIZE;
             this.$nextTick(() => {
               if (!this.rankScroll) {
@@ -230,7 +224,6 @@
             });
           }).catch(err => {
             this.showLoading = false;
-            this.resetData();
             this.reportList = [];
             this.$vux.alert.show({
               content: err.message
@@ -262,19 +255,8 @@
           return
         }
         this.dateSelected = item;
-        this.reportList = this.reportList.map(item => {
-          return Object.assign(item, {
-            showContent: false
-          })
-        });
-        this.getTotalText();
-        if (this.page === 1) { // 若为第一页，则切换数据判断是否有下一页，若不是第一页则重新请求
-          this.reportList = this.reportData[item.value];
-          this.isDisabled = this.reportList.length < PAGE_SIZE
-        } else {
-          this.page = 1;
-          this.assembleData()
-        }
+        this.assembleData();
+        this.getTotal();
       },
       // TODO 点击项目页签
       projClick() {
@@ -324,28 +306,24 @@
           this.rankScroll.scrollTo(0, 0);
         });
       },
-      // TODO 获取合计
+      // TODO 获取合计，有日期过滤
       getTotal() {
-        reportService.getTotal(Object.assign(this.filterParams, {
+        reportService.getTotalByDate(Object.assign(this.filterParams, this.getDate(this.dateSelected.value), {
           objName: this.objName
         })).then(data => {
-          this.totalData = data;
+          this.totalData = data.items;
           this.getTotalText();
         })
       },
       // TODO 生成合计栏文案
       getTotalText() {
-        let totalData = this.totalData[this.dateSelected.value] || [];
+        let totalData = this.totalData || [];
         let total = {};
         totalData.every(item => {
           if (item.objName && item.objName === this.objName) {
             total = item;
             return false
           }
-          // if (item.objName === this.A_PROJ_NAME && !this.objName) {
-          //   total = item;
-          //   return false
-          // }
           return true
         });
         if (this.objName === this.A_PROJ_NAME) { // A类产品展示金额，项目类产品展示数量
@@ -353,6 +331,42 @@
         } else {
           this.totalText = `${total.quantity || 0}件/套（共${total.number || 0}人）`;
         }
+      },
+      // TODO 获取昨日、本日、本周、本月、本年的起始和结束日期
+      getDate(type = '') {
+        let now = new Date();
+        let dayTime = 24 * 3600 * 1000; // 一天的毫秒数
+        let date1 = '';
+        let date2 = `${now.getFullYear()}-${numberPad(now.getMonth() + 1)}-${numberPad(now.getDate())}`;
+        switch (type) {
+          case 'yesterdays':
+            let yesterdays = new Date(now - dayTime);
+            let yes = `${yesterdays.getFullYear()}-${numberPad(yesterdays.getMonth() + 1)}-${numberPad(yesterdays.getDate())}`;
+            date1 = yes;
+            date2 = yes;
+            break;
+          case 'days':
+            let days = `${now.getFullYear()}-${numberPad(now.getMonth() + 1)}-${numberPad(now.getDate())}`;
+            date1 = days;
+            break;
+          case 'weeks':
+            let curDay = now.getDay() !== 0 ? now.getDay() : 7;
+            let weeks = new Date(now - (curDay - 1) * dayTime); // 获取周一的日期
+            date1 = `${weeks.getFullYear()}-${numberPad(weeks.getMonth() + 1)}-${numberPad(weeks.getDate())}`;
+            break;
+          case 'months':
+            date1 = `${now.getFullYear()}-${numberPad(now.getMonth() + 1)}-01`;
+            break;
+          case 'years':
+            date1 = `${now.getFullYear()}-01-01`;
+            break;
+          default:
+            break;
+        }
+        return {
+          date1: date1,
+          date2: date2
+        };
       },
     },
     filters: {
@@ -367,8 +381,6 @@
     },
     created() {
       let query = this.$route.query;
-      this.resetData();
-      this.resetData('totalData');
       // 设置筛选参数
       this.filterParams = {
         shengName: query.region ? decodeURI(query.region) : '', // 区域

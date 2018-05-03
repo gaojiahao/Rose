@@ -1,7 +1,7 @@
 import $axios from '../plugins/ajax'
 
 let reportService = {
-  // TODO 获取报告列表
+  // TODO 获取报告列表(旧)
   getReport(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
@@ -11,7 +11,7 @@ let reportService = {
       }, data)
     });
   },
-  // TODO 获取合计
+  // TODO 获取合计(旧)
   getTotal(data = {}) {
     return $axios.ajax({
       url: '/trans/getModelData',
