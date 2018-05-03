@@ -207,10 +207,12 @@
                 if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
                   detail.shift();
                   detail.shift();
+                } else {
+                  detail.splice(2, 1); // 去掉A类产品的金额
                 }
                 this.reportData[item].push({
                   name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                  sales: this.objName ? `${data.quantity || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
+                  sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
                   showContent: false,
                   detail: detail
                 })
