@@ -57,9 +57,13 @@ let tokenService = {
   login(key) {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (isQYWX) {
-      return this.QYWXLogin(key)
+      return this.QYWXLogin(key);
     } else {
-      return this.pcLogin(key)
+      if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
+        return this.pcLogin(key);
+      } else {
+        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+      }
     }
   },
   // TODO PC端登录，默认返回token
