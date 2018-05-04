@@ -473,7 +473,7 @@
       .weui-cells {
         margin-top: 0;
         .weui-cell {
-          padding: 10px;
+          padding: 10px 5px;
           font-size: 14px;
         }
       }
