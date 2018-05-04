@@ -472,6 +472,10 @@
       -webkit-overflow-scrolling: touch;
       .weui-cells {
         margin-top: 0;
+        .weui-cell {
+          padding: 10px;
+          font-size: 14px;
+        }
       }
       .vux-cell-bd {
         width: 100%;
