@@ -120,7 +120,12 @@
           if (`${data.statu}` === '1') { // statu为1则为总裁
             this.showLookReport = true
           }
+        }).catch(err=>{
+          this.$vux.alert.show({
+            content: err.message
+          })
         });
+
         await tokenService.getUser().then(data => {
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
             region: data.homeProvince || '',  //省份地区
