@@ -3,7 +3,7 @@
         <div id='mescroll' class="mescroll">
             <div>
                 <div class="p_mod">
-                    <div class="wea_mod">周三,29℃</div>
+                    <div class="wea_mod">{{this.week}},{{this.low}}~{{this.high}}</div>
                     <div class="p_info">
                         <!-- <img class="p_head" src="../common/rb.jpeg" alt="aspect">
                         <p class="p_name">刘治增</p> -->
@@ -212,12 +212,18 @@
 <script>
 import { Tab, TabItem } from 'vux'
 import tokenService from '../service/tokenService'
+let mySwiper
+let mescroll
 export default{
     data(){
         return {
             userinfo:{
 
-            }
+            },
+            week:'',
+            high:'',
+            low:''
+
         }
     },
     components:{
@@ -255,11 +261,40 @@ export default{
                 }
             })
     },
-    updated(){
+    updated(){       
         mySwiper.update();
         mescroll.updated();
     },
-    beforeCreate(){
+    created(){
+        tokenService.getWeather().then(res=>{
+            console.log(res);
+            res.data.forecast.map((item,index)=>{
+                if(item.date.indexOf(this.week)>=0){
+                    this.high = item.high;
+                    this.low = item.low;
+                    return false
+                }
+            })
+
+        })
+        let date = new Date();
+        let myday = date.getDay();
+        console.log(date.getDay());
+        let xingqi = '';
+        switch(myday) 
+        { 
+        case 0:xingqi="星期日";break; 
+        case 1:xingqi="星期一";break; 
+        case 2:xingqi="星期二";break; 
+        case 3:xingqi="星期三";break; 
+        case 4:xingqi="星期四";break; 
+        case 5:xingqi="星期五";break; 
+        case 6:xingqi="星期六";break; 
+        default:xingqi="系统错误！" 
+        } 
+        console.log(xingqi);
+        this.week = xingqi;
+        
         (async()=>{
             let userid = await tokenService.getlocalStorage('userId');
             let info = await tokenService.getlocalStorage('userInfo');
@@ -269,10 +304,16 @@ export default{
                 // console.log(JSON.parse(info));
                 // console.log(JSON.parse(department));
                 console.log('11')
-                this.userinfo.userid = userid;
-                this.userinfo.name = JSON.parse(info).name;
-                this.userinfo.avatar = JSON.parse(info).avatar;
-                this.userinfo.department =JSON.parse(department)[0].name;
+                this.userinfo = {
+                   userid : userid,
+                   name : JSON.parse(info).name,
+                   avatar : JSON.parse(info).avatar,
+                   department : JSON.parse(department)[0].name
+                }
+                // this.userinfo.userid = userid;
+                // this.userinfo.name = JSON.parse(info).name;
+                // this.userinfo.avatar = JSON.parse(info).avatar;
+                // this.userinfo.department =JSON.parse(department)[0].name;
                 console.log(this.userinfo);
 
             }else{
