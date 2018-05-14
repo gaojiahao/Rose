@@ -15,8 +15,9 @@ let tokenService = {
   /**
    * 获取token或者用户ID，默认获取token
    */
-  getToken(key = 'key') {
+  getToken(key = 'token') {
     let token = this.checkLogin(key);
+    console.log(key)
     if (token) {
       return new Promise((resolve, reject) => {
         resolve(token)
@@ -31,12 +32,12 @@ let tokenService = {
   setToken(data) {
     window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
-      key: data.token,
+      token: data.token,
       timestamp: +new Date()
     }));
   },
   // TODO 检查是否登录
-  checkLogin(key = 'key') {
+  checkLogin(key = 'token') {
     let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token[key]) {
@@ -78,8 +79,8 @@ let tokenService = {
           },
           data: {
             loginModel: 1,
-            password: 'stark',
-            userCode: 'rfd9527'
+            password: '123456',
+            userCode: '038'
           }
         };
 
