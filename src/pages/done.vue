@@ -3,7 +3,7 @@
   <div class="pages">
       <div id='mescroll' class="mescroll">
             <div>
-                <div class="each_duty" v-for="(item,index) in Content" :key="index">
+                <div class="each_duty" v-for="(item,key,index) in Content" :key="index">
                     <div class="duty_top">
                         <p class="duty_name">
                             <span class="duty_status">
@@ -30,11 +30,13 @@
 <script>
 import { Icon, Search } from 'vux'
 import getDoneService from '../service/getDoneService'
+import business from './maps/business'
 export default {
     data(){
       return{
-          Content:'',
+          Content:[],
           pageNo:0,
+          upScroll: null,
       }
     },
     methods:{
@@ -47,7 +49,15 @@ export default {
                 limit:10
             }
             getDoneService.getDoneList(jsonPage).then(res=>{
-                this.Content=res.tableContent;
+                if(res.tableContent.length==0){
+                    this.upScroll.endErr();
+                    return;
+                }
+                for(let i = 0 ; i < res.tableContent.length ; i++){
+                    res.tableContent[i].processName=business[res.tableContent[i].businessKey.split('_')[0]];
+                }
+                this.Content=this.Content.concat(res.tableContent);
+                this.upScroll.endSuccess(); //无参
             })
         },
 
@@ -62,8 +72,8 @@ export default {
     },
     mounted(){
       let that=this;
-      let Mescroll = that.Mescroll,
-       mescroll = new Mescroll("mescroll",{
+      let Mescroll = that.Mescroll;
+      that.upScroll = new Mescroll("mescroll",{
             up:{
                 use:true,
                 isBounce: false,
