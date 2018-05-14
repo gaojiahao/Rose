@@ -183,7 +183,16 @@ let tokenService = {
       
       
     })
+    
 
+  },
+  getWeather(){
+    return $axios.ajax({
+      url:'/weather_mini',
+      data:{
+        citykey:101280601
+      }
+    })
   }
 }
 export default tokenService;
