@@ -13,6 +13,14 @@ module.exports = {
             pathRewrite: {
               '^/cgi-bin': '/cgi-bin'
             }
+          },
+          '/weather_mini':{
+            target: 'http://wthrcdn.etouch.cn',
+            changeOrigin: true,
+            pathRewrite: {
+              '^/weather_mini': '/weather_mini'
+            }
+
           }
           
     }
