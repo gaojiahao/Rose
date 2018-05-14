@@ -3,421 +3,24 @@
   <div class="pages">
       <div id='mescroll' class="mescroll">
             <div>
-                <div class="each_duty">
+                <div class="each_duty" v-for="(item,index) in Content" :key="index">
                     <div class="duty_top">
                         <p class="duty_name">
                             <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
+                                <span class="duty_status_name">{{item.processName}}</span>
                             </span>
-                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
+                            <span class="duty_name_text">{{item.requireName}}</span>
                         </p>
                     </div>
                         
                     <div class="duty_btm">
                         <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">林杰</span>
+                            {{item.businessKey}}
+                            <span class="duty_crt_man">{{item.crtName}}</span>
                         </p>
-                        <p class="duty_time">2018-03-07</p>
+                        <p class="duty_time">{{item.crtTime}}</p>
                     </div>
                     
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">产品</span>
-                            </span>
-                            小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">林杰</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                    
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">产品</span>
-                            </span>
-                            iOS手机App: 工作流任务消息 与 参与工作流
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">姜兴</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">BUG</span>
-                            </span>
-                            工单 网络慢时多次点击保存，返回多次提示信息，提示界面重叠
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">林孝清</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
-                </div>
-                <div class="each_duty">
-                    <div class="duty_top">
-                        <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span>
-                            </span>
-                            新增 项目类产品 应用
-                        </p>
-                    </div>
-                        
-                    <div class="duty_btm">
-                        <p class="duty_code">
-                            SSXQ_1803_0024
-                            <span class="duty_crt_man">刘治增</span>
-                        </p>
-                        <p class="duty_time">2018-03-07</p>
-                    </div>
                 </div>
             </div>
       </div>
@@ -426,30 +29,53 @@
 
 <script>
 import { Icon, Search } from 'vux'
+import getDoneService from '../service/getDoneService'
 export default {
-    // data(){
-    //   return{
+    data(){
+      return{
+          Content:'',
+          pageNo:0,
+      }
+    },
+    methods:{
 
-    //   }
-    // },
+        //获取所有代办列表
+        list(num){
+            let jsonPage={
+                page:num,
+                start:0,
+                limit:10
+            }
+            getDoneService.getDoneList(jsonPage).then(res=>{
+                this.Content=res.tableContent;
+            })
+        },
+
+        //上拉加载
+        upCallback(){
+            this.list (++this.pageNo);
+        }
+    },
     components:{
         Icon,
         Search
     },
     mounted(){
-      let Mescroll = this.Mescroll,
-          mescroll = new Mescroll("mescroll",{
-        up:{
-          use:false,
-          isBounce: true
-        },
-        down:{
-          use:false
-        }
-      })
+      let that=this;
+      let Mescroll = that.Mescroll,
+       mescroll = new Mescroll("mescroll",{
+            up:{
+                use:true,
+                isBounce: false,
+                callback:that.upCallback
+            },
+            down:{
+                use:false
+            }
+        })
     },
     updated(){
-      mescroll.updated();
+      
     }
 }
 </script>
