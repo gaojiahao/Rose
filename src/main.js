@@ -1,18 +1,31 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
+import FastClick from 'fastclick'
+import VueRouter from 'vue-router'
 import App from './App'
 import router from './router'
-import axios from 'axios'
+import adapation from './common/adapation'
+import Swiper from './common/swiper-4.2.2.min.js'
+import Mescroll from './common/mescroll.min.js'
+
+Vue.use(VueRouter)
+Vue.prototype.Swiper = Swiper;
+Vue.prototype.Mescroll = Mescroll;
+
+
+
+FastClick.attach(document.body)
 
 Vue.config.productionTip = false
-Vue.prototype.$http = axios;
-Vue.prototype.$event = new Vue();
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta || '消息';
+  next()
+});
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
   router,
-  template: '<App/>',
-  components: { App }
-})
+  render: h => h(App)
+}).$mount('#app-box')

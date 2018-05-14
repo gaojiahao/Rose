@@ -9,14 +9,10 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-
-
 let webpackConfig = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    "babel-polyfill":"babel-polyfill",
     app: './src/main.js'
-   
   },
   output: {
     path: config.build.assetsRoot,
@@ -42,13 +38,7 @@ let webpackConfig = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        query: {presets: ['es2015']},
-        exclude: /node_modules/
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
+        include: [resolve('src'), resolve('test')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -75,20 +65,29 @@ let webpackConfig = {
         }
       }
     ]
-  },
-  node: {
-    // prevent webpack from injecting useless setImmediate polyfill because Vue
-    // source contains it (although only uses it if it's native).
-    setImmediate: false,
-    // prevent webpack from injecting mocks to Node native modules
-    // that does not make sense for the client
-    dgram: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty'
   }
 }
+
+
 module.exports = vuxLoader.merge(webpackConfig, {
-  plugins: ['vux-ui', 'progress-bar', 'duplicate-style']
+  plugins: [
+    'vux-ui',
+    'progress-bar',
+    {
+      name: 'duplicate-style',
+      options: {
+        cssProcessorOptions : {
+          safe: true,
+          zindex: false,
+          autoprefixer: {
+            add: true,
+            browsers: [
+              'iOS >= 7',
+              'Android >= 4.1'
+            ]
+          }
+        }
+      }
+    }
+  ]
 })

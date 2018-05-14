@@ -1,7 +1,7 @@
 {
   "presets": [
-    "stage-2",
-    "es2015",
+    "latest",
+    "stage-0",
     ["env", {
       "modules": false,
       "targets": {
@@ -9,5 +9,8 @@
       }
     }]
   ],
-  "plugins": ["transform-vue-jsx", "transform-runtime"]
+  "plugins": [
+    "transform-runtime",
+    "transform-async-to-generator"  
+  ]
 }
