@@ -17,7 +17,6 @@ let tokenService = {
    */
   getToken(key = 'token') {
     let token = this.checkLogin(key);
-    console.log(key)
     if (token) {
       return new Promise((resolve, reject) => {
         resolve(token)
