@@ -6,177 +6,25 @@
           您有即将逾期的任务，快去看看！
           <icon type="cancel f_r"></icon>
         </div>
-        <div class="each_duty">
+        <div class="each_duty" v-for="(item, index) in listData" :key="index">
           <div class="duty_top">
             <p class="duty_name">
               <span class="duty_status">
-                <span class="duty_status_name">产品</span><span class="duty_status_info duty_wait_c">待处理</span>
+                <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info"
+                                                                               :class="item.statusClass">{{item.status}}</span>
               </span>
-              小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
+              {{item.requireName}}
             </p>
           </div>
-          <div class="duty_btm">
-            <p class="duty_code">SSXQ_1803_0024<span class="duty_crt_man">林杰</span></p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-          <span class="red_caution"></span>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span><span
-                              class="duty_status_info duty_wait_c">待处理</span>
-                            </span>
-              <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-            </p>
-          </div>
-
           <div class="duty_btm">
             <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林杰</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
+              {{item.code}}
+              <span class="duty_crt_man">{{item.crtName}}</span></p>
+            <p class="duty_time">{{item.time | filterTime}}</p>
           </div>
-          <span class="red_caution"></span>
+          <span class="red_caution" v-show="item.hasRedPoint"></span>
         </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">产品</span><span
-                              class="duty_status_info duty_wait_c">待处理</span>
-                            </span>
-              小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林杰</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-          <span class="red_caution"></span>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span><span
-                              class="duty_status_info duty_wait_c">待处理</span>
-                            </span>
-              <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林杰</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-          <span class="red_caution"></span>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">产品</span><span
-                              class="duty_status_info duty_wait_c">待处理</span>
-                            </span>
-              小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林杰</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-          <span class="red_caution"></span>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">实施</span><span
-                              class="duty_status_info duty_wait_c">待处理</span>
-                            </span>
-              <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林杰</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-          <span class="red_caution"></span>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">产品</span><span
-                              class="duty_status_info duty_wait_c">待处理</span>
-                            </span>
-              小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林杰</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-          <span class="red_caution"></span>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">产品</span><span class="duty_status_info duty_process_c">进行中</span>
-                            </span>
-              iOS手机App: 工作流任务消息 与 参与工作流
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">姜兴</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-        </div>
-        <div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-                            <span class="duty_status">
-                                <span class="duty_status_name">BUG</span><span class="duty_status_info duty_process_c">进行中</span>
-                            </span>
-              工单 网络慢时多次点击保存，返回多次提示信息，提示界面重叠
-            </p>
-          </div>
-
-          <div class="duty_btm">
-            <p class="duty_code">
-              SSXQ_1803_0024
-              <span class="duty_crt_man">林孝清</span>
-            </p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-        </div>
+        <divider class="no-data" v-show="listData.length === 0">暂无代办数据</divider>
         <!--<div class="each_duty">
           <div class="duty_top">
             <p class="duty_name">
@@ -197,23 +45,75 @@
 </template>
 
 <script>
-  import {Icon, Search} from 'vux'
+  import {numberPad, Divider, Icon, Search} from 'vux'
   import todoService from './../service/todoService'
+  import businessMap from './maps/business'
 
   export default {
     components: {
+      Divider,
       Icon,
-      Search
+      Search,
     },
     data() {
       return {
+        todoScroll: null,
         listData: [],
         page: 1
       }
     },
+    methods: {
+      // TODO 获取状态名字
+      getStatusName(item) {
+        let business = item.businessKey.split('_');
+        return businessMap[business[0]] || '未知项';
+      },
+      // TODO 获取状态、状态的class、是否展示红点
+      filterStatusAndClass(item) {
+        let obj = {
+          status: item.status || '',
+          hasRedPoint: false
+        };
+        switch (item.status) {
+          case '进行中':
+            if (item.endTime) {
+              obj.statusClass = 'duty_process_c';
+            } else {
+              obj.status = '待处理';
+              obj.statusClass = 'duty_wait_c';
+              obj.hasRedPoint = true;
+            }
+            break;
+          case '已生效':
+            obj.statusClass = 'duty_process_c';
+            break;
+          case '将逾期':
+            obj.statusClass = 'duty_urgent_c';
+            break;
+        }
+        return obj;
+      },
+    },
+    filters: {
+      // TODO 过滤日期
+      filterTime(val) {
+        let date = new Date(val.replace(/-/g, '/'));
+        return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+      }
+    },
     created() {
       todoService.getList().then(data => {
-        
+        let tmpList = [];
+        tmpList = data.tableContent && data.tableContent.map(item => {
+          return Object.assign({}, {
+            statusName: this.getStatusName(item),
+            requireName: item.requireName || '见详情',
+            code: item.businessKey || '',
+            crtName: item.crtName,
+            time: item.crtTime,
+          }, this.filterStatusAndClass(item));
+        });
+        this.listData = this.page === 1 ? tmpList : this.listData.concat(tmpList);
       })
     },
     mounted() {
@@ -224,12 +124,15 @@
             isBounce: true
           },
           down: {
-            use: false
+            use: true,
+            beforeLoading(){
+              console.log('beforeLoading')
+            },
           }
         })
     },
     updated() {
-      mescroll.updated();
+      // mescroll.updated();
     }
   }
 </script>
@@ -349,6 +252,9 @@
         left: .01rem;
         top: .4rem;
       }
+    }
+    .no-data {
+      margin: 0 .8rem;
     }
   }
 </style>
