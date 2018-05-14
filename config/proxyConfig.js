@@ -7,5 +7,13 @@ module.exports = {
               '^/H_roleplay-si': '/H_roleplay-si'
             }
           },
+          '/cgi-bin':{
+            target: 'https://qyapi.weixin.qq.com',
+            changeOrigin: true,
+            pathRewrite: {
+              '^/cgi-bin': '/cgi-bin'
+            }
+          }
+          
     }
   }

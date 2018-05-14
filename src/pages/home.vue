@@ -5,11 +5,13 @@
                 <div class="p_mod">
                     <div class="wea_mod">周三,29℃</div>
                     <div class="p_info">
-                        <img class="p_head" src="../common/rb.jpeg" alt="aspect">
-                        <p class="p_name">刘治增</p>
-                        <p class="p_dep">RT-企业微信与小程序</p>
+                        <!-- <img class="p_head" src="../common/rb.jpeg" alt="aspect">
+                        <p class="p_name">刘治增</p> -->
+                        <img class="p_head" :src="userinfo.avatar" alt="aspect">
+                        <p class="p_name">{{userinfo.name}}</p>
+                        <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips">您今天收到 <span class="tips_nums">2</span> 个新消息</div>
+                    <div class="p_tips">您最近收到 <span class="tips_nums">2</span> 个新消息</div>
                 </div>
                 <div class="msg_mod">
                     <div class="wait_mod">
@@ -209,7 +211,15 @@
 
 <script>
 import { Tab, TabItem } from 'vux'
+import tokenService from '../service/tokenService'
 export default{
+    data(){
+        return {
+            userinfo:{
+
+            }
+        }
+    },
     components:{
         Tab, 
         TabItem
@@ -220,6 +230,9 @@ export default{
         },
         goDONE(){
             this.$router.push({ path:'/done' })
+        },
+        onItemClick(){
+
         }
     },
     mounted(){
@@ -245,6 +258,48 @@ export default{
     updated(){
         mySwiper.update();
         mescroll.updated();
+    },
+    beforeCreate(){
+        (async()=>{
+            let userid = await tokenService.getlocalStorage('userId');
+            let info = await tokenService.getlocalStorage('userInfo');
+            let department = await tokenService.getlocalStorage('department');
+            //console.log(userid);
+            if(userid && info && department){
+                // console.log(JSON.parse(info));
+                // console.log(JSON.parse(department));
+                console.log('11')
+                this.userinfo.userid = userid;
+                this.userinfo.name = JSON.parse(info).name;
+                this.userinfo.avatar = JSON.parse(info).avatar;
+                this.userinfo.department =JSON.parse(department)[0].name;
+                console.log(this.userinfo);
+
+            }else{
+                console.log('22')
+                await tokenService.getUserid().then(res=>{
+                    console.log(res.UserId);
+                    localStorage.setItem('userId',res.UserId)
+                    this.userinfo.userid = res.UserId
+                })
+                console.log(this.userinfo.userid)
+                await tokenService.getUserInfo(this.userinfo.userid).then(res=>{
+                    console.log(res);
+                    localStorage.setItem('userInfo',JSON.stringify(res))
+                    this.userinfo.name = res.name;
+                    this.userinfo.avatar = res.avatar;
+                    this.userinfo.departmentId = res.department[0]
+                })
+                await tokenService.getDepartment(this.userinfo.departmentId).then(res=>{
+                    console.log(res);
+                    localStorage.setItem('department',JSON.stringify(res.department))
+                    this.userinfo.department = res.department[0].name
+                })
+                console.log(this.userinfo);
+            }
+            
+        })()
+        
     }
 }
 </script>

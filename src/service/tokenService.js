@@ -140,6 +140,51 @@ let tokenService = {
     return $axios.ajax({
       url: '/trans/getModelData?refresh=true&dsCode=getPresident'
     });
+  },
+  //请求用户信息
+  getUserid(code){
+    return $axios.ajax({
+      url:'/cgi-bin/user/getuserinfo',
+      data:{
+        access_token:'vRBAk0s-RL41V48ag7fXMeve0YzOy6tu9pdS0THnptp0UeBlzD27cfwXyX6YHECxtf3NpXwJ5iDMr0nVxNSJAO6ON1YHWlFMK03azdec09jxwmuwTZ_wOmmRHKMS_3096W-idbrfHS6Ss2PFcaR3BJDJWjBaKSVZ4CMQlxiI_iQvX2lt5f9SBtVzsK7IPE0T3p1dwvtYhyv2XG1JxZjB2A',
+        code:'qcUXcRAGMFkBu9FIagDEjmsRRcuxOTiGYrzDE23S1fc'
+      }
+
+    })
+
+  },
+  getUserInfo(userid){
+    return $axios.ajax({
+      url:'/cgi-bin/user/get',
+      data:{
+        access_token:'vRBAk0s-RL41V48ag7fXMeve0YzOy6tu9pdS0THnptp0UeBlzD27cfwXyX6YHECxtf3NpXwJ5iDMr0nVxNSJAO6ON1YHWlFMK03azdec09jxwmuwTZ_wOmmRHKMS_3096W-idbrfHS6Ss2PFcaR3BJDJWjBaKSVZ4CMQlxiI_iQvX2lt5f9SBtVzsK7IPE0T3p1dwvtYhyv2XG1JxZjB2A',
+        userid:userid
+      }
+
+    })
+
+  },
+  getDepartment(id){
+    return $axios.ajax({
+      url:'/cgi-bin/department/list',
+      data:{
+        access_token:'vRBAk0s-RL41V48ag7fXMeve0YzOy6tu9pdS0THnptp0UeBlzD27cfwXyX6YHECxtf3NpXwJ5iDMr0nVxNSJAO6ON1YHWlFMK03azdec09jxwmuwTZ_wOmmRHKMS_3096W-idbrfHS6Ss2PFcaR3BJDJWjBaKSVZ4CMQlxiI_iQvX2lt5f9SBtVzsK7IPE0T3p1dwvtYhyv2XG1JxZjB2A',
+        id:id
+      }
+    })
+  },
+  getlocalStorage(key){
+    return new Promise((resolve, reject)=>{
+      resolve(localStorage.getItem(key));
+      // axios.get("/H_roleplay-si/wxLogin?code="+code+"&state=1")
+      // .then((response)=>{
+      //   const result = response.data;
+      //   resolve(result);
+      // })
+      
+      
+    })
+
   }
 }
 export default tokenService;
