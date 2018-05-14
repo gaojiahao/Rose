@@ -93,6 +93,27 @@
         }
         return obj;
       },
+      // TODO 获取代办列表
+      getTodoList() {
+        return new Promise((resolve, reject) => {
+          todoService.getList({
+            page: this.page
+          }).then(data => {
+            let tmpList = [];
+            tmpList = data.tableContent && data.tableContent.map(item => {
+              return Object.assign({}, {
+                statusName: this.getStatusName(item),
+                requireName: item.requireName || '见详情',
+                code: item.businessKey || '',
+                crtName: item.crtName,
+                time: item.crtTime,
+              }, this.filterStatusAndClass(item));
+            });
+            this.listData = this.page === 1 ? tmpList : this.listData.concat(tmpList);
+            resolve();
+          })
+        })
+      }
     },
     filters: {
       // TODO 过滤日期
@@ -102,37 +123,31 @@
       }
     },
     created() {
-      todoService.getList().then(data => {
-        let tmpList = [];
-        tmpList = data.tableContent && data.tableContent.map(item => {
-          return Object.assign({}, {
-            statusName: this.getStatusName(item),
-            requireName: item.requireName || '见详情',
-            code: item.businessKey || '',
-            crtName: item.crtName,
-            time: item.crtTime,
-          }, this.filterStatusAndClass(item));
-        });
-        this.listData = this.page === 1 ? tmpList : this.listData.concat(tmpList);
-      })
+      this.getTodoList();
     },
     mounted() {
-      let Mescroll = this.Mescroll,
-        mescroll = new Mescroll("mescroll", {
-          up: {
-            use: false,
-            isBounce: true
-          },
-          down: {
-            use: true,
-            beforeLoading(){
-              console.log('beforeLoading')
+      let Mescroll = this.Mescroll;
+      this.$nextTick(() => {
+        if (!this.todoScroll) {
+          this.todoScroll = new Mescroll("mescroll", {
+            up: {
+              use: false,
+              isBounce: true,
+              auto: false
             },
-          }
-        })
-    },
-    updated() {
-      // mescroll.updated();
+            down: {
+              use: true,
+              autoShowLoading: false,
+              showLoading: (mescroll) => {
+                this.page = 1;
+                this.getTodoList().then(() => {
+                  mescroll.endDownScroll(false);
+                })
+              }
+            }
+          })
+        }
+      })
     }
   }
 </script>
