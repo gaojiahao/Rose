@@ -29,9 +29,17 @@ let tokenService = {
    * 设置token
    */
   setToken(data) {
+    // window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
+    //   entityId: data.entityId,
+    //   token: data.token,
+    //   timestamp: +new Date()
+    // }));
     window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
+      name:data.name,
+      department:data.department,
+      avatar:data.avatar,
       timestamp: +new Date()
     }));
   },
@@ -56,18 +64,22 @@ let tokenService = {
   // TODO 开发时用于获取账号的登录信息
   login(key) {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
-    if (isQYWX) {
-      return this.QYWXLogin(key);
-    } else {
-      if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
-        return this.pcLogin(key);
-      } else {
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
-      }
-    }
+    //本地测试模拟线上
+    return this.QYWXLogin(key);
+    //实际开发
+    // if (isQYWX) {
+    //   return this.QYWXLogin(key);
+    // } else {
+    //   if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
+    //     return this.pcLogin(key);
+    //   } else {
+    //     window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+    //   }
+    // }
   },
   // TODO PC端登录，默认返回token
   pcLogin(key = 'token') {
+    console.log('进入pc了')
     return new Promise((resolve, reject) => {
         let params = {
           method: 'post',
@@ -86,9 +98,17 @@ let tokenService = {
         axios(params).then((res) => {
           let data = res.data;
           this.clean();
+          // this.setToken({
+          //   token: data.token || '',
+          //   entityId: data.entityId || ''
+          // });
           this.setToken({
             token: data.token || '',
-            entityId: data.entityId || ''
+            entityId: data.entityId || '',
+            name:data.name || '',
+            department:data.department || '',
+            avatar:data.avatar || ''
+            
           });
           resolve(data[key])
         }).catch(function (error) {
@@ -105,16 +125,27 @@ let tokenService = {
   },
   // TODO 企业微信登录，默认返回token
   QYWXLogin(key = 'token') {
+    console.log('进入企业微信了')
     return new Promise((resolve, reject) => {
-      let query = querystring.parse(location.search.slice(1));
-      let code = query.code || '';
-      // code = 'vcg0t6Z14rLpxNJ9j-9ze4vV4fiMILTa-U9zguO2IMo'
+      // let query = querystring.parse(location.search.slice(1));
+      // let code = query.code || '';
+      let code = 'O5n6bhIM0pX3nqutIPt7ZhCYkxSf-qOeqFb7AATHIGc'
       axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
+        console.log(res);
         let data = res.data;
         this.clean();
+        // this.setToken({
+        //   token: data.token || '',
+        //   entityId: data.entityId || '',
+
+        // });
         this.setToken({
           token: data.token || '',
-          entityId: data.entityId || ''
+          entityId: data.entityId || '',
+          name:data.name || '',
+          department:data.department || '',
+          avatar:data.avatar || ''
+          
         });
         resolve(data[key])
       }).catch(function (error) {
@@ -128,64 +159,7 @@ let tokenService = {
       });
     })
   },
-  // TODO 获取用户信息
-  getUser() {
-    return $axios.ajax({
-      url: '/trans/getModelData?refresh=true&shengName=&bankName=&sybName=&dsCode=getUserDetails'
-    });
-  },
-  // TODO 判断是否为总裁
-  isPresident() {
-    return $axios.ajax({
-      url: '/trans/getModelData?refresh=true&dsCode=getPresident'
-    });
-  },
-  //请求用户信息
-  getUserid(code){
-    return $axios.ajax({
-      url:'/cgi-bin/user/getuserinfo',
-      data:{
-        access_token:'vRBAk0s-RL41V48ag7fXMeve0YzOy6tu9pdS0THnptp0UeBlzD27cfwXyX6YHECxtf3NpXwJ5iDMr0nVxNSJAO6ON1YHWlFMK03azdec09jxwmuwTZ_wOmmRHKMS_3096W-idbrfHS6Ss2PFcaR3BJDJWjBaKSVZ4CMQlxiI_iQvX2lt5f9SBtVzsK7IPE0T3p1dwvtYhyv2XG1JxZjB2A',
-        code:'qcUXcRAGMFkBu9FIagDEjmsRRcuxOTiGYrzDE23S1fc'
-      }
-
-    })
-
-  },
-  getUserInfo(userid){
-    return $axios.ajax({
-      url:'/cgi-bin/user/get',
-      data:{
-        access_token:'vRBAk0s-RL41V48ag7fXMeve0YzOy6tu9pdS0THnptp0UeBlzD27cfwXyX6YHECxtf3NpXwJ5iDMr0nVxNSJAO6ON1YHWlFMK03azdec09jxwmuwTZ_wOmmRHKMS_3096W-idbrfHS6Ss2PFcaR3BJDJWjBaKSVZ4CMQlxiI_iQvX2lt5f9SBtVzsK7IPE0T3p1dwvtYhyv2XG1JxZjB2A',
-        userid:userid
-      }
-
-    })
-
-  },
-  getDepartment(id){
-    return $axios.ajax({
-      url:'/cgi-bin/department/list',
-      data:{
-        access_token:'vRBAk0s-RL41V48ag7fXMeve0YzOy6tu9pdS0THnptp0UeBlzD27cfwXyX6YHECxtf3NpXwJ5iDMr0nVxNSJAO6ON1YHWlFMK03azdec09jxwmuwTZ_wOmmRHKMS_3096W-idbrfHS6Ss2PFcaR3BJDJWjBaKSVZ4CMQlxiI_iQvX2lt5f9SBtVzsK7IPE0T3p1dwvtYhyv2XG1JxZjB2A',
-        id:id
-      }
-    })
-  },
-  getlocalStorage(key){
-    return new Promise((resolve, reject)=>{
-      resolve(localStorage.getItem(key));
-      // axios.get("/H_roleplay-si/wxLogin?code="+code+"&state=1")
-      // .then((response)=>{
-      //   const result = response.data;
-      //   resolve(result);
-      // })
-      
-      
-    })
-    
-
-  },
+  //获取天气
   getWeather(){
     return $axios.ajax({
       url:'/weather_mini',
