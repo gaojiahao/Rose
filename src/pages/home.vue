@@ -5,13 +5,15 @@
                 <div class="p_mod">
                     <div class="wea_mod">{{this.week}},{{this.temperature}}℃</div>
                     <div class="p_info">
-                        <!-- <img class="p_head" src="../common/rb.jpeg" alt="aspect">
-                        <p class="p_name">刘治增</p> -->
                         <img class="p_head" :src="userinfo.avatar" alt="aspect">
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-if="listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-else>
+                        <i class="iconfont icon-dengguang"></i> 
+                        没有待办一身轻松
+                    </div>
                 </div>
                 <div class="msg_mod">
                     <div class="wait_mod">
@@ -25,11 +27,11 @@
                             </div>
                         </div>
                         <div class="wait_list_mod swiper-container">
-                            <div class="wait_list swiper-wrapper">
+                            <div class="wait_list swiper-wrapper"  v-if="listData.length > 0">
                                 <div 
-                                    class="each_duty swiper-slide"
-                                    v-for='(item,index) in listData'
-                                    :key='index'>
+                                class="each_duty swiper-slide"
+                                v-for='(item,index) in listData'
+                                :key='index'>
                                     <div class="duty_top">
                                         <p class="duty_name">
                                             <span class="duty_status">
@@ -48,45 +50,10 @@
                                     </div>
                                     <span class="red_caution"></span>
                                 </div>
-                                <!-- <div 
-                                    class="each_duty swiper-slide">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">实施</span><span class="duty_status_info duty_wait_c">待处理</span>
-                                            </span>
-                                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    <span class="red_caution"></span>
-                                </div>
-                                <div class="each_duty swiper-slide">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">实施</span><span class="duty_status_info duty_wait_c">待处理</span>
-                                            </span>
-                                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    <span class="red_caution"></span>
-                                </div> -->
+                            </div>
+                            <div class="when_null" v-else>
+                                <i class="iconfont icon-xiaolian"></i>
+                                <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
                             </div>
                         </div>
                     </div>
@@ -135,116 +102,6 @@
                                     </div>
                                     
                                 </div>
-                                <!-- <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">实施</span>
-                                            </span>
-                                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -269,13 +126,11 @@ export default{
             week:'',
             temperature:'',
             page: 1,
-            listData:[],
-            ssList:[],
-            cpList:[],
-            bugList:[],
+            listData:[],    //待办列表
+            ssList:[],      //实施列表
+            cpList:[],      //产品列表
+            bugList:[],     //bug列表
             showTaskList:[],
-
-
         }
     },
     components:{
@@ -283,21 +138,23 @@ export default{
         TabItem
     },
     methods:{
+        //前往待办
         goTODO(){
             this.$router.push({ path:'/to_do' })
         },
+        //前往已办
         goDONE(){
             this.$router.push({ path:'/done' })
         },
         onItemClick(i){
             console.log(i);
-            if(i==0){
+            if(i == 0){
                 this.showTaskList = this.ssList;
             }
-            else if(i==1){
+            else if(i == 1){
                 this.showTaskList = this.cpList;
             }
-            else if(i==2){
+            else if(i == 2){
                 this.showTaskList = this.bugList;
             }
 
@@ -307,16 +164,16 @@ export default{
             let date = new Date(),
                 myday = date.getDay(),
                 xingqi = '';
-            switch(myday) 
-            { 
-                case 0:xingqi="星期日";break; 
-                case 1:xingqi="星期一";break; 
-                case 2:xingqi="星期二";break; 
-                case 3:xingqi="星期三";break; 
-                case 4:xingqi="星期四";break; 
-                case 5:xingqi="星期五";break; 
-                case 6:xingqi="星期六";break; 
-                default:xingqi="系统错误！" 
+
+            switch(myday){ 
+                case 0 : xingqi = "星期日"; break; 
+                case 1 : xingqi = "星期一"; break; 
+                case 2 : xingqi = "星期二"; break; 
+                case 3 : xingqi = "星期三"; break; 
+                case 4 : xingqi = "星期四"; break; 
+                case 5 : xingqi = "星期五"; break; 
+                case 6 : xingqi = "星期六"; break; 
+                default : xingqi = "系统错误！" 
             } 
             //console.log(xingqi);
             this.week = xingqi;
@@ -334,11 +191,13 @@ export default{
                 }).then(data => {
                     let tmpList = [];
                     data.tableContent.map(item => {
-                         let date = new Date().getTime(),
+
+                        let date = new Date().getTime(),
                             oldDate = new Date(item.startTime).getTime(),
                             days = date-oldDate,
                             time  = parseInt(days / (1000 * 60 * 60 * 24));
-                        if(item.status=='进行中' && !item.endTime){
+
+                        if(item.status == '进行中' && !item.endTime){
                             let obj = Object.assign({}, {
                                 statusName: this.getStatusName(item),
                                 requireName: item.requireName || '见详情',
@@ -352,13 +211,14 @@ export default{
                     });
                     //console.log(tmpList);
                     this.listData = tmpList;
+                    console.log(this.listData.length);
                     resolve();
                 })
             })
         },
         //获取所有代办列表
         getDoneList(num){
-            let jsonPage={
+            let jsonPage = {
                 page:num,
                 start:0,
                 limit:10
@@ -367,14 +227,14 @@ export default{
                 res.tableContent.map(item=>{
                     item.processName=businessMap[item.businessKey.split('_')[0]];
                     //console.log(item)
-                    if(item.processName.indexOf('实施')>=0){
+                    if(item.processName.indexOf('实施') >= 0){
                         this.ssList.push(item);
                         this.showTaskList.push(item);
                     }
-                    else if(item.processName.indexOf('产品')>=0){
+                    else if(item.processName.indexOf('产品') >= 0){
                         this.cpList.push(item)
                     }
-                    else if(item.processName.indexOf('BUG')>=0){
+                    else if(item.processName.indexOf('BUG') >= 0){
                         this.bugList.push(item)
                     }
                 })
@@ -409,8 +269,8 @@ export default{
             })
     },
     updated(){       
-        mySwiper.update();
-        mescroll.updated();
+        // mySwiper.update();
+        // mescroll.updated();
     },
     created(){
         //获取天气
@@ -419,9 +279,11 @@ export default{
         })
         this.getDate();
         (async()=>{
+
             let userid = await tokenService.getlocalStorage('userId'),
                 info = await tokenService.getlocalStorage('userInfo'),
                 department = await tokenService.getlocalStorage('department');
+
             if(userid && info && department){
                 this.userinfo = {
                    userid : userid,
@@ -451,7 +313,6 @@ export default{
         })()
         this.getTodoList();
         this.getDoneList(1);
-        
     }
 }
 </script>
@@ -490,6 +351,15 @@ export default{
                 fill:#D2D2D2;
             }
         }
+    }
+    .when_null {
+        width: 100%;
+        font-size: .28rem;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        transform: translate(0,-50%);
+        color: #A3A3A3;
     }
     .mescroll {
         position: fixed;
