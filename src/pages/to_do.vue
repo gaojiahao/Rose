@@ -24,7 +24,6 @@
           </div>
           <span class="red_caution" v-show="item.hasRedPoint"></span>
         </div>
-        <divider class="no-data" v-show="listData.length === 0">暂无代办数据</divider>
         <!--<div class="each_duty">
           <div class="duty_top">
             <p class="duty_name">
@@ -45,21 +44,20 @@
 </template>
 
 <script>
-  import {numberPad, Divider, Icon, Search} from 'vux'
+  import {numberPad, Icon, Search} from 'vux'
   import todoService from './../service/todoService'
   import businessMap from './maps/business'
 
   export default {
     components: {
-      Divider,
       Icon,
       Search,
     },
     data() {
       return {
-        todoScroll: null,
-        listData: [],
-        page: 1
+        todoScroll: null, // 滚动对象
+        listData: [], // 数据对象
+        page: 1, // 页数
       }
     },
     methods: {
@@ -110,7 +108,7 @@
               }, this.filterStatusAndClass(item));
             });
             this.listData = this.page === 1 ? tmpList : this.listData.concat(tmpList);
-            resolve();
+            resolve(tmpList);
           })
         })
       }
@@ -123,7 +121,6 @@
       }
     },
     created() {
-      this.getTodoList();
     },
     mounted() {
       let Mescroll = this.Mescroll;
@@ -131,14 +128,24 @@
         if (!this.todoScroll) {
           this.todoScroll = new Mescroll("mescroll", {
             up: {
-              use: false,
+              use: true,
               isBounce: true,
-              auto: false
+              auto: true,
+              isBoth: false,
+              callback: (page, mescroll) => {
+                this.page = page.num;
+                this.getTodoList().then(data => {
+                  let len = data.length;
+                  let hasNext = len >= page.size;
+                  mescroll.endSuccess(len, hasNext)
+                });
+              }
             },
             down: {
               use: true,
-              autoShowLoading: false,
-              showLoading: (mescroll) => {
+              isBoth: false,
+              auto: false, // 初始化不执行
+              callback: (mescroll) => {
                 this.page = 1;
                 this.getTodoList().then(() => {
                   mescroll.endDownScroll(false);
@@ -267,9 +274,6 @@
         left: .01rem;
         top: .4rem;
       }
-    }
-    .no-data {
-      margin: 0 .8rem;
     }
   }
 </style>
