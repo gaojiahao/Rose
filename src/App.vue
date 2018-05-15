@@ -5,7 +5,7 @@
 </template>
 
 <script>
-
+require('../static/css/iconfont/iconfont.css')
 export default {
   name: 'app'
 }
@@ -14,8 +14,10 @@ export default {
 <style lang="less">
 @import '~vux/src/styles/reset.less';
 @import '~vux/src/styles/1px.less';
-@import url('./common/swiper-4.2.2.min.css');
-@import url('./common/mescroll.min.css');
+@import './common/swiper-4.2.2.min.css';
+@import './common/mescroll.min.css';
+
+
 body {
   width: 100%;
   height: 100%;
