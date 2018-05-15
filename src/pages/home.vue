@@ -3,7 +3,7 @@
         <div id='mescroll' class="mescroll">
             <div>
                 <div class="p_mod">
-                    <div class="wea_mod">{{this.week}},{{this.low}}~{{this.high}}</div>
+                    <div class="wea_mod">{{this.week}},{{this.temperature}}℃</div>
                     <div class="p_info">
                         <!-- <img class="p_head" src="../common/rb.jpeg" alt="aspect">
                         <p class="p_name">刘治增</p> -->
@@ -11,7 +11,7 @@
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips">您最近收到 <span class="tips_nums">2</span> 个新消息</div>
+                    <div class="p_tips">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
                 </div>
                 <div class="msg_mod">
                     <div class="wait_mod">
@@ -26,7 +26,30 @@
                         </div>
                         <div class="wait_list_mod swiper-container">
                             <div class="wait_list swiper-wrapper">
-                                <div class="each_duty swiper-slide">
+                                <div 
+                                    class="each_duty swiper-slide"
+                                    v-for='(item,index) in listData'
+                                    :key='index'>
+                                    <div class="duty_top">
+                                        <p class="duty_name">
+                                            <span class="duty_status">
+                                                <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info duty_wait_c">待处理</span>
+                                            </span>
+                                            <span class="duty_name_text">{{item.requireName}}</span>
+                                        </p>
+                                    </div>
+                                        
+                                    <div class="duty_btm">
+                                        <p class="duty_code">
+                                            {{item.code}}
+                                            <span class="duty_crt_man">{{item.crtName}}</span>
+                                        </p>
+                                        <p class="duty_time">{{item.time | filterTime}}</p>
+                                    </div>
+                                    <span class="red_caution"></span>
+                                </div>
+                                <!-- <div 
+                                    class="each_duty swiper-slide">
                                     <div class="duty_top">
                                         <p class="duty_name">
                                             <span class="duty_status">
@@ -63,7 +86,7 @@
                                         <p class="duty_time">2018-03-07</p>
                                     </div>
                                     <span class="red_caution"></span>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -90,7 +113,29 @@
                                 </tab>
                             </div>
                             <div class="ar_list_main">
-                                <div class="each_duty">
+                                <div class="each_duty"
+                                    v-for='(item1,index1) in showTaskList'
+                                    :index='index1'
+                                    v-if='index1<6'>
+                                    <div class="duty_top">
+                                        <p class="duty_name">
+                                            <span class="duty_status">
+                                                <span class="duty_status_name">{{item1.processName}}</span>
+                                            </span>
+                                            <span class="duty_name_text">{{item1.requireName}}</span>
+                                        </p>
+                                    </div>
+                                        
+                                    <div class="duty_btm">
+                                        <p class="duty_code">
+                                           {{item1.businessKey}}
+                                            <span class="duty_crt_man">{{item1.crtName}}</span>
+                                        </p>
+                                        <p class="duty_time">{{item1.crtTime | filterTime}}</p>
+                                    </div>
+                                    
+                                </div>
+                                <!-- <div class="each_duty">
                                     <div class="duty_top">
                                         <p class="duty_name">
                                             <span class="duty_status">
@@ -199,7 +244,7 @@
                                         </p>
                                         <p class="duty_time">2018-03-07</p>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -210,19 +255,26 @@
 </template>
 
 <script>
-import { Tab, TabItem } from 'vux'
+import { Tab, TabItem,numberPad } from 'vux'
 import tokenService from '../service/tokenService'
+import todoService from './../service/todoService'
+import getDoneService from '../service/getDoneService'
+import businessMap from './maps/business'
 let mySwiper
 let mescroll
 export default{
     data(){
         return {
-            userinfo:{
-
-            },
+            userinfo:{},
             week:'',
-            high:'',
-            low:''
+            temperature:'',
+            page: 1,
+            listData:[],
+            ssList:[],
+            cpList:[],
+            bugList:[],
+            showTaskList:[],
+
 
         }
     },
@@ -237,20 +289,115 @@ export default{
         goDONE(){
             this.$router.push({ path:'/done' })
         },
-        onItemClick(){
+        onItemClick(i){
+            console.log(i);
+            if(i==0){
+                this.showTaskList = this.ssList;
+            }
+            else if(i==1){
+                this.showTaskList = this.cpList;
+            }
+            else if(i==2){
+                this.showTaskList = this.bugList;
+            }
 
-        }
+        },
+        //获取当天时间
+        getDate(){
+            let date = new Date(),
+                myday = date.getDay(),
+                xingqi = '';
+            switch(myday) 
+            { 
+                case 0:xingqi="星期日";break; 
+                case 1:xingqi="星期一";break; 
+                case 2:xingqi="星期二";break; 
+                case 3:xingqi="星期三";break; 
+                case 4:xingqi="星期四";break; 
+                case 5:xingqi="星期五";break; 
+                case 6:xingqi="星期六";break; 
+                default:xingqi="系统错误！" 
+            } 
+            //console.log(xingqi);
+            this.week = xingqi;
+        },
+        // TODO 获取状态名字
+        getStatusName(item) {
+            let business = item.businessKey.split('_');
+            return businessMap[business[0]] || '未知项';
+        },
+        // TODO 获取代办列表
+        getTodoList() {
+            return new Promise((resolve, reject) => {
+                todoService.getList({
+                    page: this.page
+                }).then(data => {
+                    let tmpList = [];
+                    data.tableContent.map(item => {
+                         let date = new Date().getTime(),
+                            oldDate = new Date(item.startTime).getTime(),
+                            days = date-oldDate,
+                            time  = parseInt(days / (1000 * 60 * 60 * 24));
+                        if(item.status=='进行中' && !item.endTime){
+                            let obj = Object.assign({}, {
+                                statusName: this.getStatusName(item),
+                                requireName: item.requireName || '见详情',
+                                code: item.businessKey || '',
+                                crtName: item.crtName,
+                                time: item.crtTime,
+                            });
+                            tmpList.push(obj);
+                        }
+                       
+                    });
+                    //console.log(tmpList);
+                    this.listData = tmpList;
+                    resolve();
+                })
+            })
+        },
+        //获取所有代办列表
+        getDoneList(num){
+            let jsonPage={
+                page:num,
+                start:0,
+                limit:10
+            }
+            getDoneService.getDoneList().then(res=>{
+                res.tableContent.map(item=>{
+                    item.processName=businessMap[item.businessKey.split('_')[0]];
+                    //console.log(item)
+                    if(item.processName.indexOf('实施')>=0){
+                        this.ssList.push(item);
+                        this.showTaskList.push(item);
+                    }
+                    else if(item.processName.indexOf('产品')>=0){
+                        this.cpList.push(item)
+                    }
+                    else if(item.processName.indexOf('BUG')>=0){
+                        this.bugList.push(item)
+                    }
+                })
+            })
+        },
+    },
+    filters: {
+      // TODO 过滤日期
+      filterTime(val) {
+        let date = new Date(val.replace(/-/g, '/'));
+        return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+      }
     },
     mounted(){
         // 左右滑动
-        let Swiper = this.Swiper,
+        let Swiper = this.Swiper;
             mySwiper = new Swiper ('.swiper-container', {
             direction: 'horizontal',
             slidesPerView: 'auto'
         })
 
         //上下滑动
-        let Mescroll = this.Mescroll,
+        let Mescroll = this.Mescroll;
             mescroll = new Mescroll("mescroll",{
                 up:{
                     use:false,
@@ -266,80 +413,44 @@ export default{
         mescroll.updated();
     },
     created(){
+        //获取天气
         tokenService.getWeather().then(res=>{
-            console.log(res);
-            res.data.forecast.map((item,index)=>{
-                if(item.date.indexOf(this.week)>=0){
-                    this.high = item.high;
-                    this.low = item.low;
-                    return false
-                }
-            })
-
+            this.temperature = res.data.wendu;
         })
-        let date = new Date();
-        let myday = date.getDay();
-        console.log(date.getDay());
-        let xingqi = '';
-        switch(myday) 
-        { 
-        case 0:xingqi="星期日";break; 
-        case 1:xingqi="星期一";break; 
-        case 2:xingqi="星期二";break; 
-        case 3:xingqi="星期三";break; 
-        case 4:xingqi="星期四";break; 
-        case 5:xingqi="星期五";break; 
-        case 6:xingqi="星期六";break; 
-        default:xingqi="系统错误！" 
-        } 
-        console.log(xingqi);
-        this.week = xingqi;
-        
+        this.getDate();
         (async()=>{
-            let userid = await tokenService.getlocalStorage('userId');
-            let info = await tokenService.getlocalStorage('userInfo');
-            let department = await tokenService.getlocalStorage('department');
-            //console.log(userid);
+            let userid = await tokenService.getlocalStorage('userId'),
+                info = await tokenService.getlocalStorage('userInfo'),
+                department = await tokenService.getlocalStorage('department');
             if(userid && info && department){
-                // console.log(JSON.parse(info));
-                // console.log(JSON.parse(department));
-                console.log('11')
                 this.userinfo = {
                    userid : userid,
                    name : JSON.parse(info).name,
                    avatar : JSON.parse(info).avatar,
                    department : JSON.parse(department)[0].name
                 }
-                // this.userinfo.userid = userid;
-                // this.userinfo.name = JSON.parse(info).name;
-                // this.userinfo.avatar = JSON.parse(info).avatar;
-                // this.userinfo.department =JSON.parse(department)[0].name;
-                console.log(this.userinfo);
-
             }else{
-                console.log('22')
                 await tokenService.getUserid().then(res=>{
                     console.log(res.UserId);
                     localStorage.setItem('userId',res.UserId)
-                    this.userinfo.userid = res.UserId
+                    this.userinfo.userid = res.UserId;
                 })
-                console.log(this.userinfo.userid)
                 await tokenService.getUserInfo(this.userinfo.userid).then(res=>{
-                    console.log(res);
                     localStorage.setItem('userInfo',JSON.stringify(res))
                     this.userinfo.name = res.name;
                     this.userinfo.avatar = res.avatar;
                     this.userinfo.departmentId = res.department[0]
                 })
                 await tokenService.getDepartment(this.userinfo.departmentId).then(res=>{
-                    console.log(res);
                     localStorage.setItem('department',JSON.stringify(res.department))
                     this.userinfo.department = res.department[0].name
                 })
-                console.log(this.userinfo);
+                //console.log(this.userinfo);
             }
             
         })()
+        this.getTodoList();
+        this.getDoneList(1);
         
     }
 }
