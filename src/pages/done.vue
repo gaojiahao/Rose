@@ -31,6 +31,7 @@
 import { Icon, Search } from 'vux'
 import getDoneService from '../service/getDoneService'
 import business from './maps/business'
+import { setTimeout } from 'timers';
 export default {
     data(){
       return{
@@ -49,22 +50,28 @@ export default {
                 limit:10
             }
             getDoneService.getDoneList(jsonPage).then(res=>{
+                let hasNext=true;
                 if(res.tableContent.length==0){
-                    this.upScroll.endErr();
+                    //到底了
+                    hasNext=false;
+                    setTimeout(function(){
+                        hasNext=true;
+                    },300)
                     return;
                 }
                 for(let i = 0 ; i < res.tableContent.length ; i++){
+                    //数据映射替换
                     res.tableContent[i].processName=business[res.tableContent[i].businessKey.split('_')[0]];
                 }
                 this.Content=this.Content.concat(res.tableContent);
-                this.upScroll.endSuccess(); //无参
+                this.upScroll.endSuccess(res.tableContent.length,hasNext);
             })
         },
 
         //上拉加载
         upCallback(){
             this.list (++this.pageNo);
-        }
+        },
     },
     components:{
         Icon,
@@ -77,7 +84,8 @@ export default {
             up:{
                 use:true,
                 isBounce: false,
-                callback:that.upCallback
+                htmlNodata: '<p class="upwarp-nodata">-- END --</p>', 
+                callback:that.upCallback,
             },
             down:{
                 use:false
