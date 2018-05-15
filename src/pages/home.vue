@@ -290,7 +290,6 @@ export default{
             this.$router.push({ path:'/done' })
         },
         onItemClick(i){
-            console.log(i);
             if(i==0){
                 this.showTaskList = this.ssList;
             }
@@ -392,9 +391,9 @@ export default{
         // 左右滑动
         let Swiper = this.Swiper;
             mySwiper = new Swiper ('.swiper-container', {
-            direction: 'horizontal',
-            slidesPerView: 'auto'
-        })
+                direction: 'horizontal',
+                slidesPerView: 'auto'
+            })
 
         //上下滑动
         let Mescroll = this.Mescroll;
@@ -408,49 +407,28 @@ export default{
                 }
             })
     },
-    updated(){       
-        mySwiper.update();
-        mescroll.updated();
+    updated(){    
+        mySwiper.update()
+        // mescroll.updated();
     },
     created(){
         //获取天气
-        tokenService.getWeather().then(res=>{
-            this.temperature = res.data.wendu;
-        })
-        this.getDate();
         (async()=>{
-            let userid = await tokenService.getlocalStorage('userId'),
-                info = await tokenService.getlocalStorage('userInfo'),
-                department = await tokenService.getlocalStorage('department');
-            if(userid && info && department){
-                this.userinfo = {
-                   userid : userid,
-                   name : JSON.parse(info).name,
-                   avatar : JSON.parse(info).avatar,
-                   department : JSON.parse(department)[0].name
-                }
-            }else{
-                await tokenService.getUserid().then(res=>{
-                    console.log(res.UserId);
-                    localStorage.setItem('userId',res.UserId)
-                    this.userinfo.userid = res.UserId;
-                })
-                await tokenService.getUserInfo(this.userinfo.userid).then(res=>{
-                    localStorage.setItem('userInfo',JSON.stringify(res))
-                    this.userinfo.name = res.name;
-                    this.userinfo.avatar = res.avatar;
-                    this.userinfo.departmentId = res.department[0]
-                })
-                await tokenService.getDepartment(this.userinfo.departmentId).then(res=>{
-                    localStorage.setItem('department',JSON.stringify(res.department))
-                    this.userinfo.department = res.department[0].name
-                })
-                //console.log(this.userinfo);
+            this.getDate();
+            await  tokenService.getWeather().then(res=>{
+                this.temperature = res.data.wendu;
+            })
+            let info = localStorage.getItem('ROSE_LOGIN_TOKEN');
+            info = JSON.parse(info);
+            this.userinfo = {
+                name : info.name,
+                avatar : info.avatar,
+                department : info.department
             }
-            
+            this.getTodoList();
+            this.getDoneList(1);
         })()
-        this.getTodoList();
-        this.getDoneList(1);
+        
         
     }
 }
