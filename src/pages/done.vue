@@ -1,7 +1,7 @@
 
 <template>
   <div class="pages">
-      <div id='mescroll' class="mescroll">
+      <div id='mescroll' class="mescroll done_container">
             <div>
                 <div class="each_duty" v-for="(item,key,index) in Content" :key="index">
                     <div class="duty_top">
@@ -48,13 +48,9 @@ export default {
             let jsonPage={
                 page:num,
                 start:0,
-                limit:10
+                limit:7
             }
             getDoneService.getDoneList(jsonPage).then(res=>{
-                if(res.tableContent.length==0){
-                    //到底了
-                    return;
-                }
                 for(let i = 0 ; i < res.tableContent.length ; i++){
                     //数据映射替换
                     res.tableContent[i].processName=business[res.tableContent[i].businessKey.split('_')[0]];
@@ -82,6 +78,16 @@ export default {
                 isBounce: false,
                 htmlNodata: '<p class="upwarp-nodata">-- END --</p>', 
                 callback:that.upCallback,
+                page: {
+                    num: that.pageNo, //当前页 默认0,回调之前会加1; 即callback(page)会从1开始
+                    size: 7, //每页数据条数
+                    time: 300 //加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
+                },
+                empty: {
+                    warpId:'mescroll', 
+                    tip: "暂无相关数据~",
+                    supportTap: false
+                },
             },
             down:{
                 use:false
@@ -95,6 +101,11 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+    .pages{
+        .done_container{
+            height: 100vh;
+        }
+    }
     .mescroll {
         position: fixed;
 				top: 0;
