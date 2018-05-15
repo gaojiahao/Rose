@@ -48,7 +48,7 @@ export default {
             let jsonPage={
                 page:num,
                 start:0,
-                limit:7
+                limit:10
             }
             getDoneService.getDoneList(jsonPage).then(res=>{
                 for(let i = 0 ; i < res.tableContent.length ; i++){
@@ -80,7 +80,7 @@ export default {
                 callback:that.upCallback,
                 page: {
                     num: that.pageNo, //当前页 默认0,回调之前会加1; 即callback(page)会从1开始
-                    size: 7, //每页数据条数
+                    size: 10, //每页数据条数
                     time: 300 //加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
                 },
                 empty: {
