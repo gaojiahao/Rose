@@ -38,6 +38,7 @@ export default {
           Content:[],
           pageNo:0,
           upScroll: null,
+          hasNext:true,
       }
     },
     methods:{
@@ -50,13 +51,8 @@ export default {
                 limit:10
             }
             getDoneService.getDoneList(jsonPage).then(res=>{
-                let hasNext=true;
                 if(res.tableContent.length==0){
                     //到底了
-                    hasNext=false;
-                    setTimeout(function(){
-                        hasNext=true;
-                    },300)
                     return;
                 }
                 for(let i = 0 ; i < res.tableContent.length ; i++){
@@ -64,7 +60,7 @@ export default {
                     res.tableContent[i].processName=business[res.tableContent[i].businessKey.split('_')[0]];
                 }
                 this.Content=this.Content.concat(res.tableContent);
-                this.upScroll.endSuccess(res.tableContent.length,hasNext);
+                this.upScroll.endSuccess(res.tableContent.length,this.hasNext);
             })
         },
 
