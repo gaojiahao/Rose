@@ -51,6 +51,7 @@ export default {
                 limit:10
             }
             getDoneService.getDoneList(jsonPage).then(res=>{
+                
                 for(let i = 0 ; i < res.tableContent.length ; i++){
                     //数据映射替换
                     res.tableContent[i].processName=business[res.tableContent[i].businessKey.split('_')[0]];
