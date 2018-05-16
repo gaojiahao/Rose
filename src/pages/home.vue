@@ -5,8 +5,6 @@
                 <div class="p_mod">
                     <div class="wea_mod">{{this.week}},{{this.temperature}}℃</div>
                     <div class="p_info">
-                        <!-- <img class="p_head" src="../common/rb.jpeg" alt="aspect">
-                        <p class="p_name">刘治增</p> -->
                         <img class="p_head" :src="userinfo.avatar" alt="aspect">
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
@@ -48,45 +46,6 @@
                                     </div>
                                     <span class="red_caution"></span>
                                 </div>
-                                <!-- <div 
-                                    class="each_duty swiper-slide">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">实施</span><span class="duty_status_info duty_wait_c">待处理</span>
-                                            </span>
-                                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    <span class="red_caution"></span>
-                                </div>
-                                <div class="each_duty swiper-slide">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">实施</span><span class="duty_status_info duty_wait_c">待处理</span>
-                                            </span>
-                                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    <span class="red_caution"></span>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -101,10 +60,6 @@
                             </div>
                         </div>
                         <div class="ar_list_mod">
-                            <!-- <div class="for_plane">
-                                <p>板块调整中</p>
-                                <p>敬请期待</p>
-                            </div> -->
                             <div class="ar_list_top">
                                 <tab active-color='#3A3A3A'>
                                     <tab-item selected @on-item-click="onItemClick">实施</tab-item>
@@ -135,116 +90,6 @@
                                     </div>
                                     
                                 </div>
-                                <!-- <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">实施</span>
-                                            </span>
-                                            <span class="duty_name_text">微信端消息：新任务机会，任务即将到期，任务已逾期。</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            小程序-任务，用于抢单，PC端也可以抢单。也可以直接分配任务到人。
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">林杰</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                    
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div>
-                                <div class="each_duty">
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">产品</span>
-                                            </span>
-                                            iOS手机App: 工作流任务消息 与 参与工作流
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            SSXQ_1803_0024
-                                            <span class="duty_crt_man">姜兴</span>
-                                        </p>
-                                        <p class="duty_time">2018-03-07</p>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -274,8 +119,6 @@ export default{
             cpList:[],
             bugList:[],
             showTaskList:[],
-
-
         }
     },
     components:{
@@ -308,14 +151,14 @@ export default{
                 xingqi = '';
             switch(myday) 
             { 
-                case 0:xingqi="星期日";break; 
-                case 1:xingqi="星期一";break; 
-                case 2:xingqi="星期二";break; 
-                case 3:xingqi="星期三";break; 
-                case 4:xingqi="星期四";break; 
-                case 5:xingqi="星期五";break; 
-                case 6:xingqi="星期六";break; 
-                default:xingqi="系统错误！" 
+                case 0 : xingqi = "星期日"; break; 
+                case 1 : xingqi = "星期一"; break; 
+                case 2 : xingqi = "星期二"; break; 
+                case 3 : xingqi = "星期三"; break; 
+                case 4 : xingqi = "星期四"; break; 
+                case 5 : xingqi = "星期五"; break; 
+                case 6 : xingqi = "星期六"; break; 
+                default : xingqi = "系统错误！" 
             } 
             //console.log(xingqi);
             this.week = xingqi;
