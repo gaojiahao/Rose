@@ -7,12 +7,12 @@
           <icon type="cancel f_r"></icon>
         </div> -->
         <template v-if="listData.length > 0">
-          <div class="each_duty"  v-for="(item, index) in listData" :key="index" >
+          <div class="each_duty" v-for="(item, index) in listData" :key="index">
             <div class="duty_top">
               <p class="duty_name">
                 <span class="duty_status">
                   <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info"
-                                                                                :class="item.statusClass">{{item.status}}</span>
+                                                                                 :class="item.statusClass">{{item.status}}</span>
                 </span>
                 {{item.requireName}}
               </p>
@@ -49,7 +49,7 @@
         todoScroll: null, // 滚动对象
         listData: [], // 数据对象
         page: 1, // 页数
-        showSmile:false //当数据为无的时候展示笑脸
+        showSmile: false //当数据为无的时候展示笑脸
       }
     },
     methods: {
@@ -129,7 +129,7 @@
                 this.getTodoList().then(data => {
                   let len = data.length;
                   let hasNext = len >= page.size;
-                  if (!len) { //当没有数据的时候
+                  if (!len && this.page === 1) { //当没有数据的时候，且为第一页
                     this.showSmile = true;  //展示笑脸
                   }
                   mescroll.endSuccess(len, hasNext)
@@ -143,7 +143,7 @@
               callback: (mescroll) => {
                 this.page = 1;
                 this.getTodoList().then((data) => {
-                  if (data.length > 0){ //下拉刷新 重新获取数据
+                  if (data.length > 0) { //下拉刷新 重新获取数据
                     this.showSmile = false; //如果有数据 则笑脸消失
                   }
                   mescroll.endDownScroll(false);
@@ -163,11 +163,12 @@
     text-align: center;
     position: absolute;
     top: 50%;
-    transform: translate(0,-50%);
+    transform: translate(0, -50%);
     .smile_text {
       font-size: 1.5rem;
     }
   }
+
   .mescroll {
     position: fixed;
     top: 0;
