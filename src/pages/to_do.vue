@@ -2,42 +2,33 @@
   <div class="pages">
     <div id='mescroll' class="mescroll">
       <div>
-        <div class="top_caution" v-show="false">
+        <!-- <div class="top_caution" v-show="false">
           您有即将逾期的任务，快去看看！
           <icon type="cancel f_r"></icon>
+        </div> -->
+        <template v-if="listData.length > 0">
+          <div class="each_duty"  v-for="(item, index) in listData" :key="index" >
+            <div class="duty_top">
+              <p class="duty_name">
+                <span class="duty_status">
+                  <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info"
+                                                                                :class="item.statusClass">{{item.status}}</span>
+                </span>
+                {{item.requireName}}
+              </p>
+            </div>
+            <div class="duty_btm">
+              <p class="duty_code">
+                {{item.code}}
+                <span class="duty_crt_man">{{item.crtName}}</span></p>
+              <p class="duty_time">{{item.time | filterTime}}</p>
+            </div>
+            <span class="red_caution" v-show="item.hasRedPoint"></span>
+          </div>
+        </template>
+        <div class="when_null" v-if="showSmile">
+          <i class="iconfont icon-xiaolian smile_text"></i>
         </div>
-        <div class="each_duty" v-for="(item, index) in listData" :key="index">
-          <div class="duty_top">
-            <p class="duty_name">
-              <span class="duty_status">
-                <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info"
-                                                                               :class="item.statusClass">{{item.status}}</span>
-              </span>
-              {{item.requireName}}
-            </p>
-          </div>
-          <div class="duty_btm">
-            <p class="duty_code">
-              {{item.code}}
-              <span class="duty_crt_man">{{item.crtName}}</span></p>
-            <p class="duty_time">{{item.time | filterTime}}</p>
-          </div>
-          <span class="red_caution" v-show="item.hasRedPoint"></span>
-        </div>
-        <!--<div class="each_duty">
-          <div class="duty_top">
-            <p class="duty_name">
-              <span class="duty_status">
-                <span class="duty_status_name">实施</span><span class="duty_status_info duty_urgent_c">将逾期</span>
-              </span>
-              新增 项目类产品 应用
-            </p>
-          </div>
-          <div class="duty_btm">
-            <p class="duty_code">SSXQ_1803_0024<span class="duty_crt_man">刘治增</span></p>
-            <p class="duty_time">2018-03-07</p>
-          </div>
-        </div>-->
       </div>
     </div>
   </div>
@@ -58,6 +49,7 @@
         todoScroll: null, // 滚动对象
         listData: [], // 数据对象
         page: 1, // 页数
+        showSmile:false //当数据为无的时候展示笑脸
       }
     },
     methods: {
@@ -137,6 +129,9 @@
                 this.getTodoList().then(data => {
                   let len = data.length;
                   let hasNext = len >= page.size;
+                  if (!len) { //当没有数据的时候
+                    this.showSmile = true;  //展示笑脸
+                  }
                   mescroll.endSuccess(len, hasNext)
                 });
               }
@@ -147,7 +142,10 @@
               auto: false, // 初始化不执行
               callback: (mescroll) => {
                 this.page = 1;
-                this.getTodoList().then(() => {
+                this.getTodoList().then((data) => {
+                  if (data.length > 0){ //下拉刷新 重新获取数据
+                    this.showSmile = false; //如果有数据 则笑脸消失
+                  }
                   mescroll.endDownScroll(false);
                 })
               }
@@ -160,6 +158,16 @@
 </script>
 
 <style lang='scss' scoped>
+  .when_null {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    transform: translate(0,-50%);
+    .smile_text {
+      font-size: 1.5rem;
+    }
+  }
   .mescroll {
     position: fixed;
     top: 0;
