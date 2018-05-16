@@ -1,7 +1,7 @@
 module.exports = {
     proxy: {
           '/H_roleplay-si': {
-            target: 'https://rfd.roletask.com',
+            target: 'http://192.168.3.43',
             changeOrigin: true,
             pathRewrite: {
               '^/H_roleplay-si': '/H_roleplay-si'
