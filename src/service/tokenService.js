@@ -59,7 +59,9 @@ let tokenService = {
   // TODO 开发时用于获取账号的登录信息
   login(key) {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
-    //实际开发
+    //本地测试模拟线上
+    //return this.QYWXLogin(key);
+    实际开发
     if (isQYWX) {
       return this.QYWXLogin(key);
     } else {
@@ -72,6 +74,7 @@ let tokenService = {
   },
   // TODO PC端登录，默认返回token
   pcLogin(key = 'token') {
+    console.log('进入pc了')
     return new Promise((resolve, reject) => {
         let params = {
           method: 'post',
@@ -96,6 +99,7 @@ let tokenService = {
             name:data.name || '',
             department:data.department || '',
             avatar:data.avatar || ''
+            
           });
           resolve(data[key])
         }).catch(function (error) {
@@ -112,10 +116,11 @@ let tokenService = {
   },
   // TODO 企业微信登录，默认返回token
   QYWXLogin(key = 'token') {
+    console.log('进入企业微信了')
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      // let code = 'O5n6bhIM0pX3nqutIPt7ZhCYkxSf-qOeqFb7AATHIGc'
+      //let code = 'ARRpJRKgYHDVZitsyZrSD8yeLNSX7FqnxUsZwnizYjs'
       axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
         console.log(res);
         let data = res.data;
@@ -138,15 +143,6 @@ let tokenService = {
           message: message
         })
       });
-    })
-  },
-  //获取天气
-  getWeather(){
-    return $axios.ajax({
-      url:'/weather_mini',
-      data:{
-        citykey:101280601
-      }
     })
   }
 }

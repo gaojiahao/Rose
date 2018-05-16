@@ -3,7 +3,7 @@
         <div id='mescroll' class="mescroll">
             <div>
                 <div class="p_mod">
-                    <div class="wea_mod">{{this.week}},{{this.temperature}}℃</div>
+                    <div class="wea_mod">{{this.week}}</div>
                     <div class="p_info">
                         <img class="p_head" :src="userinfo.avatar" alt="aspect">
                         <p class="p_name">{{userinfo.name}}</p>
@@ -112,7 +112,6 @@ export default{
         return {
             userinfo:{},
             week:'',
-            temperature:'',
             page: 1,
             listData:[],
             ssList:[],
@@ -258,8 +257,8 @@ export default{
         //获取天气
         (async()=>{
             this.getDate();
-            await  tokenService.getWeather().then(res=>{
-                this.temperature = res.data.wendu;
+            await  tokenService.getToken().then(res=>{
+                console.log(res);
             })
             let info = localStorage.getItem('ROSE_LOGIN_TOKEN');
             info = JSON.parse(info);
