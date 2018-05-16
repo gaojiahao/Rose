@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HOME from '@/pages/home'
 import TO_DO from '@/pages/to_do'
 import DONE from '@/pages/done'
+import DETAIL from "@/pages/detail"
 
 
 Vue.use(Router)
@@ -31,6 +32,12 @@ export default new Router({
       name:'DONE',
       component:DONE,
       meta:'我的已办'
+    },
+    {
+      path:'/detail',
+      name:'DETAIL',
+      component:DETAIL,
+      meta:'任务详情'
     },
     {
       path:'*',
