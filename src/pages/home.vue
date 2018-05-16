@@ -9,7 +9,11 @@
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-if="listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-else>
+                        <i class="iconfont icon-dengguang"></i> 
+                        没有待办一身轻松
+                    </div>
                 </div>
                 <div class="msg_mod">
                     <div class="wait_mod">
@@ -23,7 +27,7 @@
                             </div>
                         </div>
                         <div class="wait_list_mod swiper-container">
-                            <div class="wait_list swiper-wrapper">
+                            <div class="wait_list swiper-wrapper" v-if="listData.length > 0">
                                 <div 
                                     class="each_duty swiper-slide"
                                     v-for='(item,index) in listData'
@@ -36,7 +40,6 @@
                                             <span class="duty_name_text">{{item.requireName}}</span>
                                         </p>
                                     </div>
-                                        
                                     <div class="duty_btm">
                                         <p class="duty_code">
                                             {{item.code}}
@@ -47,50 +50,58 @@
                                     <span class="red_caution"></span>
                                 </div>
                             </div>
+                            <div class="when_null" v-else>
+                                <i class="iconfont icon-xiaolian"></i>
+                                <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
+                            </div>
+
                         </div>
                     </div>
                     <div class="ar_mod">
                         <div class="ar_title_mod">
                             <p class="btm_text">PROCESSED</p>
                             <div class="xx_title">您的已办
-                                <span class="check_all" @click='goDONE'>
+                                <span class="check_all" @click='goDONE' v-if="showTaskList.length > 0">
                                     查看全部
                                     <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
                                 </span>
                             </div>
                         </div>
-                        <div class="ar_list_mod">
-                            <div class="ar_list_top">
-                                <tab active-color='#3A3A3A'>
-                                    <tab-item selected @on-item-click="onItemClick">实施</tab-item>
-                                    <tab-item @on-item-click="onItemClick">产品</tab-item>
-                                    <tab-item @on-item-click="onItemClick">BUG</tab-item>
-                                </tab>
-                            </div>
-                            <div class="ar_list_main">
-                                <div class="each_duty"
-                                    v-for='(item1,index1) in showTaskList'
-                                    :index='index1'
-                                    v-if='index1<6'>
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">{{item1.processName}}</span>
-                                            </span>
-                                            <span class="duty_name_text">{{item1.requireName}}</span>
-                                        </p>
-                                    </div>
-                                        
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                           {{item1.businessKey}}
-                                            <span class="duty_crt_man">{{item1.crtName}}</span>
-                                        </p>
-                                        <p class="duty_time">{{item1.crtTime | filterTime}}</p>
-                                    </div>
-                                    
+                        <div class="ar_list_mod" v-if="showTaskList.length > 0">
+                                <div class="ar_list_top">
+                                    <tab active-color='#3A3A3A'>
+                                        <tab-item selected @on-item-click="onItemClick">实施</tab-item>
+                                        <tab-item @on-item-click="onItemClick">产品</tab-item>
+                                        <tab-item @on-item-click="onItemClick">BUG</tab-item>
+                                    </tab>
                                 </div>
-                            </div>
+                                <div class="ar_list_main">
+                                    <div class="each_duty"
+                                        v-for='(item1,index1) in showTaskList'
+                                        :index='index1'
+                                        v-if='index1<6'>
+                                        <div class="duty_top">
+                                            <p class="duty_name">
+                                                <span class="duty_status">
+                                                    <span class="duty_status_name">{{item1.processName}}</span>
+                                                </span>
+                                                <span class="duty_name_text">{{item1.requireName}}</span>
+                                            </p>
+                                        </div>
+                                            
+                                        <div class="duty_btm">
+                                            <p class="duty_code">
+                                            {{item1.businessKey}}
+                                                <span class="duty_crt_man">{{item1.crtName}}</span>
+                                            </p>
+                                            <p class="duty_time">{{item1.crtTime | filterTime}}</p>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="when_null_ar" v-else>
+                            您尚未完成任务
                         </div>
                     </div>
                 </div>
@@ -254,7 +265,7 @@ export default{
         // mescroll.updated();
     },
     created(){
-        //获取天气
+        
         (async()=>{
             this.getDate();
             await  tokenService.getToken().then(res=>{
@@ -276,6 +287,22 @@ export default{
 }
 </script>
 <style lang='scss' scoped>
+    .when_null {
+        width: 100%;
+        font-size: .28rem;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        transform: translate(0,-50%);
+        color: #A3A3A3;
+    }
+    .when_null_ar {
+        width: 100%;
+        font-size: .28rem;
+        text-align: center;
+        color: #A3A3A3;
+        margin-top: 0.2rem;
+    }
     .xx_mod_title { //每个模块顶部的title样式
         width: 100%;
         height: .8rem;
@@ -477,7 +504,7 @@ export default{
                 }
             }
             .ar_mod {
-                
+                position: relative;
                 margin-top: .6rem;
                 .ar_title_mod {
                     @extend .xx_mod_title
