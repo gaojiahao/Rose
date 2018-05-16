@@ -9,8 +9,8 @@
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips" v-if="listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                    <div class="p_tips" v-else-if="listData.length === 0">
+                    <div class="p_tips" v-if="showNews&&listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-else-if="showNews&&listData.length === 0">
                         <i class="iconfont icon-dengguang"></i> 
                         没有待办一身轻松
                     </div>
@@ -28,7 +28,7 @@
                         </div>
                         <div class="wait_list_mod swiper-container">
                                 <div class="wait_list swiper-wrapper" >
-                                    <template v-if="listData.length > 0">
+                                    <template v-if="showNews&&listData.length > 0">
                                         <div 
                                             class="each_duty swiper-slide"
                                             v-for='(item,index) in listData'
@@ -51,7 +51,7 @@
                                             <span class="red_caution"></span>
                                         </div>
                                     </template>
-                                    <div class="when_null" v-else-if="listData.length === 0">
+                                    <div class="when_null" v-else-if="showNews&&listData.length === 0">
                                         <i class="iconfont icon-xiaolian"></i>
                                         <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
                                     </div>
@@ -62,13 +62,13 @@
                         <div class="ar_title_mod">
                             <p class="btm_text">PROCESSED</p>
                             <div class="xx_title">您的已办
-                                <span class="check_all" @click='goDONE' v-if="showTaskList.length > 0">
+                                <span class="check_all" @click='goDONE' v-if="showNews&&showTaskList.length > 0">
                                     查看全部
                                     <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
                                 </span>
                             </div>
                         </div>
-                        <div class="ar_list_mod" v-if="showTaskList.length > 0">
+                        <div class="ar_list_mod" v-if="showNews&&showTaskList.length > 0">
                                 <div class="ar_list_top">
                                     <tab active-color='#3A3A3A'>
                                         <tab-item selected @on-item-click="onItemClick">实施</tab-item>
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                         </div>
-                        <div class="when_null_ar" v-else-if="listData.length === 0">
+                        <div class="when_null_ar" v-else-if="showNews&&listData.length === 0">
                             您尚未完成任务
                         </div>
                     </div>
@@ -130,6 +130,7 @@ export default{
             cpList:[],
             bugList:[],
             showTaskList:[],
+            showNews:false
         }
     },
     components:{
