@@ -9,8 +9,8 @@
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips" v-if="showNews&&listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                    <div class="p_tips" v-else-if="showNews&&listData.length === 0">
+                    <div class="p_tips" v-if="showNews && listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-else-if="showNews && listData.length === 0">
                         <i class="iconfont icon-dengguang"></i> 
                         没有待办一身轻松
                     </div>
@@ -204,8 +204,10 @@ export default{
                         }
                        
                     });
-                    //console.log(tmpList);
+                    // console.log(tmpList.length);
+                    this.showNews = true;
                     this.listData = tmpList;
+                    
                     resolve();
                 })
             })
@@ -217,7 +219,7 @@ export default{
                 start:0,
                 limit:10
             }
-            getDoneService.getDoneList().then(res=>{
+            getDoneService.getDoneList().then( res=> {
                 res.tableContent.map( item => {
                     item.processName = businessMap[item.businessKey.split('_')[0]];
                     //console.log(item)
