@@ -29,11 +29,6 @@ let tokenService = {
    * 设置token
    */
   setToken(data) {
-    // window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
-    //   entityId: data.entityId,
-    //   token: data.token,
-    //   timestamp: +new Date()
-    // }));
     window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
@@ -65,17 +60,17 @@ let tokenService = {
   login(key) {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     //本地测试模拟线上
-    return this.QYWXLogin(key);
-    //实际开发
-    // if (isQYWX) {
-    //   return this.QYWXLogin(key);
-    // } else {
-    //   if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
-    //     return this.pcLogin(key);
-    //   } else {
-    //     window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
-    //   }
-    // }
+    //return this.QYWXLogin(key);
+    实际开发
+    if (isQYWX) {
+      return this.QYWXLogin(key);
+    } else {
+      if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
+        return this.pcLogin(key);
+      } else {
+        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+      }
+    }
   },
   // TODO PC端登录，默认返回token
   pcLogin(key = 'token') {
@@ -98,10 +93,6 @@ let tokenService = {
         axios(params).then((res) => {
           let data = res.data;
           this.clean();
-          // this.setToken({
-          //   token: data.token || '',
-          //   entityId: data.entityId || ''
-          // });
           this.setToken({
             token: data.token || '',
             entityId: data.entityId || '',
@@ -127,18 +118,13 @@ let tokenService = {
   QYWXLogin(key = 'token') {
     console.log('进入企业微信了')
     return new Promise((resolve, reject) => {
-      // let query = querystring.parse(location.search.slice(1));
-      // let code = query.code || '';
-      let code = 'O5n6bhIM0pX3nqutIPt7ZhCYkxSf-qOeqFb7AATHIGc'
+      let query = querystring.parse(location.search.slice(1));
+      let code = query.code || '';
+      //let code = 'ARRpJRKgYHDVZitsyZrSD8yeLNSX7FqnxUsZwnizYjs'
       axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
         console.log(res);
         let data = res.data;
         this.clean();
-        // this.setToken({
-        //   token: data.token || '',
-        //   entityId: data.entityId || '',
-
-        // });
         this.setToken({
           token: data.token || '',
           entityId: data.entityId || '',
@@ -157,15 +143,6 @@ let tokenService = {
           message: message
         })
       });
-    })
-  },
-  //获取天气
-  getWeather(){
-    return $axios.ajax({
-      url:'/weather_mini',
-      data:{
-        citykey:101280601
-      }
     })
   }
 }
