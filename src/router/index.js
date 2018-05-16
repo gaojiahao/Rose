@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import HOME from '@/pages/home'
 import TO_DO from '@/pages/to_do'
 import DONE from '@/pages/done'
-import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from 'constants';
+
 
 Vue.use(Router)
 

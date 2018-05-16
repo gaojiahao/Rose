@@ -18,7 +18,7 @@
                             {{item.businessKey}}
                             <span class="duty_crt_man">{{item.crtName}}</span>
                         </p>
-                        <p class="duty_time">{{item.crtTime}}</p>
+                        <p class="duty_time">{{item.crtTime | filterTime}}</p>
                     </div>
                     
                 </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { Icon, Search } from 'vux'
+import { Icon, Search ,numberPad} from 'vux'
 import getDoneService from '../service/getDoneService'
 import business from './maps/business'
 import { setTimeout } from 'timers';
@@ -69,6 +69,13 @@ export default {
     components:{
         Icon,
         Search
+    },
+    filters: {
+      // TODO 过滤日期
+      filterTime(val) {
+        let date = new Date(val.replace(/-/g, '/'));
+        return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+      }
     },
     mounted(){
       let that=this;
