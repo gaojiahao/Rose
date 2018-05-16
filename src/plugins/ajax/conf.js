@@ -5,8 +5,8 @@
 let Rxports = {
 	url_host:window.location.host,
 	base_url:'/H_roleplay-si',
-	AgentId:'1000017',
-	Secret:'5W9EORlDW5D90HooZCgNgAgGZ8KS_OsDXE4A64tqb4M',
+	AgentId:'1000033',
+	Secret:'k-8qOx2u6_MDtl6auOmAj68TtE04gzP398ZUCAU5KQ8',
 	corpid:'ww3c1aa17c16e380b7',
 	corpsecret:'Cd4Vgugvfpi21NEweNXXL0WZO-CjM1Kx5dNMWqnAeMA',
 	dev:process.env.NODE_ENV === 'development', //用于配置当前是否是开发模式
