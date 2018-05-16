@@ -10,7 +10,7 @@
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
                     <div class="p_tips" v-if="listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                    <div class="p_tips" v-else>
+                    <div class="p_tips" v-else-if="listData.length === 0">
                         <i class="iconfont icon-dengguang"></i> 
                         没有待办一身轻松
                     </div>
@@ -27,34 +27,35 @@
                             </div>
                         </div>
                         <div class="wait_list_mod swiper-container">
-                            <div class="wait_list swiper-wrapper" v-if="listData.length > 0">
-                                <div 
-                                    class="each_duty swiper-slide"
-                                    v-for='(item,index) in listData'
-                                    :key='index'>
-                                    <div class="duty_top">
-                                        <p class="duty_name">
-                                            <span class="duty_status">
-                                                <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info duty_wait_c">待处理</span>
-                                            </span>
-                                            <span class="duty_name_text">{{item.requireName}}</span>
-                                        </p>
+                                <div class="wait_list swiper-wrapper" >
+                                    <template v-if="listData.length > 0">
+                                        <div 
+                                            class="each_duty swiper-slide"
+                                            v-for='(item,index) in listData'
+                                            :key='index'>
+                                            <div class="duty_top">
+                                                <p class="duty_name">
+                                                    <span class="duty_status">
+                                                        <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info duty_wait_c">待处理</span>
+                                                    </span>
+                                                    <span class="duty_name_text">{{item.requireName}}</span>
+                                                </p>
+                                            </div>
+                                            <div class="duty_btm">
+                                                <p class="duty_code">
+                                                    {{item.code}}
+                                                    <span class="duty_crt_man">{{item.crtName}}</span>
+                                                </p>
+                                                <p class="duty_time">{{item.time | filterTime}}</p>
+                                            </div>
+                                            <span class="red_caution"></span>
+                                        </div>
+                                    </template>
+                                    <div class="when_null" v-else-if="listData.length === 0">
+                                        <i class="iconfont icon-xiaolian"></i>
+                                        <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
                                     </div>
-                                    <div class="duty_btm">
-                                        <p class="duty_code">
-                                            {{item.code}}
-                                            <span class="duty_crt_man">{{item.crtName}}</span>
-                                        </p>
-                                        <p class="duty_time">{{item.time | filterTime}}</p>
-                                    </div>
-                                    <span class="red_caution"></span>
                                 </div>
-                            </div>
-                            <div class="when_null" v-else>
-                                <i class="iconfont icon-xiaolian"></i>
-                                <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
-                            </div>
-
                         </div>
                     </div>
                     <div class="ar_mod">
@@ -100,7 +101,7 @@
                                     </div>
                                 </div>
                         </div>
-                        <div class="when_null_ar" v-else>
+                        <div class="when_null_ar" v-else-if="listData.length === 0">
                             您尚未完成任务
                         </div>
                     </div>
@@ -186,11 +187,11 @@ export default{
                 }).then(data => {
                     let tmpList = [];
                     data.tableContent.map(item => {
-                         let date = new Date().getTime(),
+                        let date = new Date().getTime(),
                             oldDate = new Date(item.startTime).getTime(),
                             days = date-oldDate,
                             time  = parseInt(days / (1000 * 60 * 60 * 24));
-                        if(item.status=='进行中' && !item.endTime){
+                        if( item.status == '进行中' && !item.endTime ){
                             let obj = Object.assign({}, {
                                 statusName: this.getStatusName(item),
                                 requireName: item.requireName || '见详情',
@@ -216,17 +217,17 @@ export default{
                 limit:10
             }
             getDoneService.getDoneList().then(res=>{
-                res.tableContent.map(item=>{
-                    item.processName=businessMap[item.businessKey.split('_')[0]];
+                res.tableContent.map( item => {
+                    item.processName = businessMap[item.businessKey.split('_')[0]];
                     //console.log(item)
-                    if(item.processName.indexOf('实施')>=0){
+                    if(item.processName.indexOf('实施') >= 0){
                         this.ssList.push(item);
                         this.showTaskList.push(item);
                     }
-                    else if(item.processName.indexOf('产品')>=0){
+                    else if(item.processName.indexOf('产品') >= 0){
                         this.cpList.push(item)
                     }
-                    else if(item.processName.indexOf('BUG')>=0){
+                    else if(item.processName.indexOf('BUG') >= 0){
                         this.bugList.push(item)
                     }
                 })
@@ -268,7 +269,7 @@ export default{
         
         (async()=>{
             this.getDate();
-            await  tokenService.getToken().then(res=>{
+            await tokenService.getToken().then(res=>{
                 console.log(res);
             })
             let info = localStorage.getItem('ROSE_LOGIN_TOKEN');
