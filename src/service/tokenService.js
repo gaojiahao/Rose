@@ -61,7 +61,7 @@ let tokenService = {
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     //本地测试模拟线上
     //return this.QYWXLogin(key);
-    实际开发
+    //实际开发
     if (isQYWX) {
       return this.QYWXLogin(key);
     } else {
