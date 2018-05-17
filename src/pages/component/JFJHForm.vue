@@ -2,14 +2,9 @@
     <group label-width="6em" label-margin-right="2em" label-align="left" v-if='detailInfo.transCode_fgPlanInv'>
         <cell 
             title="需求编码" 
-            value="detailInfo.transCode_fgPlanInv.values" 
+            :value="detailInfo.transCode_fgPlanInv.values" 
             value-align="left" >
         </cell>	
-        <cell 
-            title="需求名称" 
-            value="请假" 
-            value-align="left">
-        </cell>
         <cell 
             title="提交人" 
             :value="detailInfo.creatorName_fgPlanInv.values" 
@@ -38,7 +33,7 @@
             value-align="left">
         </datetime>				
         <cell 
-            title="请假详情"
+            title="专案项目"
             is-link
             :border-intent="false"
             :arrow-direction="qjInfo ? 'up' : 'down'"
@@ -48,19 +43,19 @@
             <div v-for="(item,index) in detailInfo.transDetail" :key="index" class='qgProcess'>
                 <ul>
                     <li>
-                        <label>请假原因:</label>
+                        <label>项目名称:</label>
                         <span>{{item.explain}}</span>
                     </li>
                     <li>
-                        <label>请假天数:</label>
+                        <label>服务名称:</label>
                         <span>{{item.num1}}</span>
                     </li>
                     <li>
-                        <label>请假类型:</label>
+                        <label>开始日期:</label>
                         <span>{{item.inventoryType.value}}</span>
                     </li>
                     <li>
-                        <label>开始时间:</label>
+                        <label>结束日期:</label>
                         <span>{{item.date1+item.starttime.value}}</span>
                     </li>
                     <li>
@@ -71,6 +66,14 @@
             </div>
             
         </div>
+        <cell 
+            title="技术方案说明"
+            is-link
+            :border-intent="false"
+            :arrow-direction="acceptStandard ? 'up' : 'down'"
+            @click.native="acceptStandard = !acceptStandard">
+        </cell>
+        <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
 
     </group>
 </template>

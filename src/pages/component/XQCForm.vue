@@ -6,11 +6,6 @@
             value-align="left" >
         </cell>	
         <cell 
-            title="需求名称" 
-            :value="detailInfo.ssRequireName_fgPlanInv.values" 
-            value-align="left">
-        </cell>
-        <cell 
             title="提交人" 
             :value="detailInfo.creatorName_fgPlanInv.values" 
             value-align="left" >
@@ -21,7 +16,12 @@
             value-align="left" >
         </cell>
         <cell 
-            title="需求维度" 
+            title="产品需求标题" 
+            :value="detailInfo.ssRequireName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="所属模块" 
             :value="detailInfo.ssAppType_fgPlanInv.values" 
             value-align="left">
         </cell>
@@ -64,23 +64,6 @@
             @click.native="acceptStandard = !acceptStandard">
         </cell>
         <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求技术分析"
-            is-link
-            :border-intent="false"
-            :arrow-direction="technicalAnalysis ? 'up' : 'down'"
-            @click.native="technicalAnalysis = !technicalAnalysis">
-        </cell>
-        <cell-box v-if="technicalAnalysis">{{detailInfo.ssTechnicalAnalysis_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求评审意见"
-            is-link
-            :border-intent="false"
-            :arrow-direction="approvalOpinion ? 'up' : 'down'"
-            @click.native="approvalOpinion = !approvalOpinion">
-        </cell>
-        <cell-box v-if="approvalOpinion">{{detailInfo.ssApprovalOpinion_fgPlanInv.values}}</cell-box>
-
     </group>
 </template>
 <script>

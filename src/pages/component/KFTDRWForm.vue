@@ -6,23 +6,53 @@
             value-align="left" >
         </cell>	
         <cell 
-            title="需求名称" 
+            title="应用名称" 
+            :value="detailInfo.ssReqProjectName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="任务标题" 
             :value="detailInfo.ssRequireName_fgPlanInv.values" 
             value-align="left">
         </cell>
         <cell 
-            title="提交人" 
+            title="相关方案" 
             :value="detailInfo.creatorName_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <cell 
-            title="创建时间" 
+            title="相关产品模块" 
             :value="detailInfo.crtTime_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <cell 
-            title="需求维度" 
+            title="相关需求" 
             :value="detailInfo.ssAppType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="相关周目标" 
+            :value="detailInfo.ssAppName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="相关专案" 
+            :value="detailInfo.ssRequireType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="计划工时" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="实际工时" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="执行者" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
             value-align="left">
         </cell>
         <!-- <cell 
@@ -42,45 +72,14 @@
             placeholder="请选择" 
             value-align="left">
         </datetime>				
-        <group>
-            <cell 
-                title="用户故事"
-                is-link
-                :border-intent="false"
-                :arrow-direction="storyshow ? 'up' : 'down'"
-                @click.native="storyshow = !storyshow">
-            </cell>
-            <div  
-                v-html="detailInfo.ssUserStory_fgPlanInv.values"
-                class='htmlfiel weui-cell' 
-                v-if='storyshow'>
-            </div>  
-        </group>
         <cell 
-            title="验收标准"
+            title="任务描述"
             is-link
             :border-intent="false"
             :arrow-direction="acceptStandard ? 'up' : 'down'"
             @click.native="acceptStandard = !acceptStandard">
         </cell>
         <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求技术分析"
-            is-link
-            :border-intent="false"
-            :arrow-direction="technicalAnalysis ? 'up' : 'down'"
-            @click.native="technicalAnalysis = !technicalAnalysis">
-        </cell>
-        <cell-box v-if="technicalAnalysis">{{detailInfo.ssTechnicalAnalysis_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求评审意见"
-            is-link
-            :border-intent="false"
-            :arrow-direction="approvalOpinion ? 'up' : 'down'"
-            @click.native="approvalOpinion = !approvalOpinion">
-        </cell>
-        <cell-box v-if="approvalOpinion">{{detailInfo.ssApprovalOpinion_fgPlanInv.values}}</cell-box>
-
     </group>
 </template>
 <script>

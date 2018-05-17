@@ -6,6 +6,11 @@
             value-align="left" >
         </cell>	
         <cell 
+            title="项目名称" 
+            :value="detailInfo.ssReqProjectName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
             title="需求名称" 
             :value="detailInfo.ssRequireName_fgPlanInv.values" 
             value-align="left">
@@ -21,8 +26,28 @@
             value-align="left" >
         </cell>
         <cell 
-            title="需求维度" 
+            title="需求类型" 
             :value="detailInfo.ssAppType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="应用类型" 
+            :value="detailInfo.ssAppType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="应用名称" 
+            :value="detailInfo.ssAppName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="业务类型" 
+            :value="detailInfo.ssRequireType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="实现方式" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
             value-align="left">
         </cell>
         <!-- <cell 

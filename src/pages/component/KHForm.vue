@@ -2,22 +2,32 @@
     <group label-width="6em" label-margin-right="2em" label-align="left" v-if='detailInfo.transCode_fgPlanInv'>
         <cell 
             title="需求编码" 
-            value="detailInfo.transCode_fgPlanInv.values" 
+            :value="detailInfo.transCode_fgPlanInv.values" 
             value-align="left" >
         </cell>	
-        <cell 
-            title="需求名称" 
-            value="请假" 
-            value-align="left">
-        </cell>
         <cell 
             title="提交人" 
             :value="detailInfo.creatorName_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <cell 
-            title="创建时间" 
+            title="客户编码" 
             :value="detailInfo.crtTime_fgPlanInv.values" 
+            value-align="left" >
+        </cell>
+        <cell 
+            title="客户名称" 
+            :value="detailInfo.creatorName_fgPlanInv.values" 
+            value-align="left" >
+        </cell>
+        <cell 
+            title="客户简称" 
+            :value="detailInfo.crtTime_fgPlanInv.values" 
+            value-align="left" >
+        </cell>
+        <cell 
+            title="地址" 
+            :value="detailInfo.creatorName_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <!-- <cell 
@@ -38,7 +48,7 @@
             value-align="left">
         </datetime>				
         <cell 
-            title="请假详情"
+            title="联系人"
             is-link
             :border-intent="false"
             :arrow-direction="qjInfo ? 'up' : 'down'"
@@ -48,29 +58,37 @@
             <div v-for="(item,index) in detailInfo.transDetail" :key="index" class='qgProcess'>
                 <ul>
                     <li>
-                        <label>请假原因:</label>
+                        <label>联系人:</label>
                         <span>{{item.explain}}</span>
                     </li>
                     <li>
-                        <label>请假天数:</label>
+                        <label>联系方式:</label>
                         <span>{{item.num1}}</span>
                     </li>
                     <li>
-                        <label>请假类型:</label>
+                        <label>地址:</label>
                         <span>{{item.inventoryType.value}}</span>
                     </li>
                     <li>
-                        <label>开始时间:</label>
+                        <label>电邮:</label>
                         <span>{{item.date1+item.starttime.value}}</span>
                     </li>
                     <li>
-                        <label>结束时间:</label>
+                        <label>备注:</label>
                         <span>{{item.date2+item.endtime.value}}</span>
                     </li>
                 </ul>	
             </div>
             
         </div>
+        <cell 
+            title="技术方案说明"
+            is-link
+            :border-intent="false"
+            :arrow-direction="acceptStandard ? 'up' : 'down'"
+            @click.native="acceptStandard = !acceptStandard">
+        </cell>
+        <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
 
     </group>
 </template>

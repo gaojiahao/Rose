@@ -6,30 +6,50 @@
             value-align="left" >
         </cell>	
         <cell 
-            title="需求名称" 
+            title="项目名称" 
+            :value="detailInfo.ssReqProjectName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="服务名称" 
             :value="detailInfo.ssRequireName_fgPlanInv.values" 
             value-align="left">
         </cell>
         <cell 
-            title="提交人" 
+            title="服务编码" 
             :value="detailInfo.creatorName_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <cell 
-            title="创建时间" 
+            title="服务id" 
             :value="detailInfo.crtTime_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <cell 
-            title="需求维度" 
+            title="标准工时" 
             :value="detailInfo.ssAppType_fgPlanInv.values" 
             value-align="left">
         </cell>
-        <!-- <cell 
-            title="优先级" 
-            :value="detailInfo.requirementProject.level.value" 
+        <cell 
+            title="数量" 
+            :value="detailInfo.ssAppName_fgPlanInv.values" 
             value-align="left">
-        </cell> -->
+        </cell>
+        <cell 
+            title="标准周期" 
+            :value="detailInfo.ssRequireType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="开始时间" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="结束时间" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
         <!-- <cell 
         title="预计交付时间" 
         :value="detailInfo.requirementProject.level.value" 
@@ -57,7 +77,7 @@
             </div>  
         </group>
         <cell 
-            title="验收标准"
+            title="项目基本信息"
             is-link
             :border-intent="false"
             :arrow-direction="acceptStandard ? 'up' : 'down'"
@@ -65,21 +85,13 @@
         </cell>
         <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
         <cell 
-            title="需求技术分析"
+            title="规划信息"
             is-link
             :border-intent="false"
             :arrow-direction="technicalAnalysis ? 'up' : 'down'"
             @click.native="technicalAnalysis = !technicalAnalysis">
         </cell>
         <cell-box v-if="technicalAnalysis">{{detailInfo.ssTechnicalAnalysis_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求评审意见"
-            is-link
-            :border-intent="false"
-            :arrow-direction="approvalOpinion ? 'up' : 'down'"
-            @click.native="approvalOpinion = !approvalOpinion">
-        </cell>
-        <cell-box v-if="approvalOpinion">{{detailInfo.ssApprovalOpinion_fgPlanInv.values}}</cell-box>
 
     </group>
 </template>

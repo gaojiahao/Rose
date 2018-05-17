@@ -6,8 +6,8 @@
             value-align="left" >
         </cell>	
         <cell 
-            title="需求名称" 
-            :value="detailInfo.ssRequireName_fgPlanInv.values" 
+            title="应用名称" 
+            :value="detailInfo.ssReqProjectName_fgPlanInv.values" 
             value-align="left">
         </cell>
         <cell 
@@ -21,8 +21,23 @@
             value-align="left" >
         </cell>
         <cell 
-            title="需求维度" 
+            title="产品模块" 
             :value="detailInfo.ssAppType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="产品模块经理" 
+            :value="detailInfo.ssAppName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="版本号" 
+            :value="detailInfo.ssRequireType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="产品经理名称" 
+            :value="detailInfo.ssProvideType_fgPlanInv.values" 
             value-align="left">
         </cell>
         <!-- <cell 
@@ -57,29 +72,13 @@
             </div>  
         </group>
         <cell 
-            title="验收标准"
+            title="模块说明"
             is-link
             :border-intent="false"
             :arrow-direction="acceptStandard ? 'up' : 'down'"
             @click.native="acceptStandard = !acceptStandard">
         </cell>
         <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求技术分析"
-            is-link
-            :border-intent="false"
-            :arrow-direction="technicalAnalysis ? 'up' : 'down'"
-            @click.native="technicalAnalysis = !technicalAnalysis">
-        </cell>
-        <cell-box v-if="technicalAnalysis">{{detailInfo.ssTechnicalAnalysis_fgPlanInv.values}}</cell-box>
-        <cell 
-            title="需求评审意见"
-            is-link
-            :border-intent="false"
-            :arrow-direction="approvalOpinion ? 'up' : 'down'"
-            @click.native="approvalOpinion = !approvalOpinion">
-        </cell>
-        <cell-box v-if="approvalOpinion">{{detailInfo.ssApprovalOpinion_fgPlanInv.values}}</cell-box>
 
     </group>
 </template>

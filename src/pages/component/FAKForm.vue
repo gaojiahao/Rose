@@ -6,8 +6,8 @@
             value-align="left" >
         </cell>	
         <cell 
-            title="需求名称" 
-            :value="detailInfo.ssRequireName_fgPlanInv.values" 
+            title="应用名称" 
+            :value="detailInfo.ssReqProjectName_fgPlanInv.values" 
             value-align="left">
         </cell>
         <cell 
@@ -16,13 +16,23 @@
             value-align="left" >
         </cell>
         <cell 
-            title="创建时间" 
+            title="方案标题" 
             :value="detailInfo.crtTime_fgPlanInv.values" 
             value-align="left" >
         </cell>
         <cell 
-            title="需求维度" 
+            title="相关需求" 
             :value="detailInfo.ssAppType_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="相关产品模块" 
+            :value="detailInfo.ssAppName_fgPlanInv.values" 
+            value-align="left">
+        </cell>
+        <cell 
+            title="相关周目标" 
+            :value="detailInfo.ssRequireType_fgPlanInv.values" 
             value-align="left">
         </cell>
         <!-- <cell 
@@ -57,7 +67,7 @@
             </div>  
         </group>
         <cell 
-            title="验收标准"
+            title="难点描述"
             is-link
             :border-intent="false"
             :arrow-direction="acceptStandard ? 'up' : 'down'"
@@ -65,7 +75,7 @@
         </cell>
         <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
         <cell 
-            title="需求技术分析"
+            title="解决方案"
             is-link
             :border-intent="false"
             :arrow-direction="technicalAnalysis ? 'up' : 'down'"
