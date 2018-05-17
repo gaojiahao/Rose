@@ -32,7 +32,8 @@
                                         <div 
                                             class="each_duty swiper-slide"
                                             v-for='(item,index) in listData'
-                                            :key='index'>
+                                            :key='index'
+                                            @click='goDoDetail(item.code)'>
                                             <div class="duty_top">
                                                 <p class="duty_name">
                                                     <span class="duty_status">
@@ -81,7 +82,7 @@
                                         v-for='(item1,index1) in showTaskList'
                                         :index='index1'
                                         v-if='index1<6'
-                                         @click='goDetail(item1.businessKey)'>
+                                        @click='goDoneDetail(item1.businessKey)'>
                                         <div class="duty_top">
                                             <p class="duty_name">
                                                 <span class="duty_status">
@@ -145,12 +146,22 @@ export default{
         goDONE(){
             this.$router.push({ path:'/done' })
         },
-        goDetail(code){
+        goDoDetail(code){
+             this.$router.push({
+                path : "/detail",
+                query : {
+                    code : code,
+                    status : 'do'
+                }
+            })
+        },
+        goDoneDetail(code){
             console.log(code);
             this.$router.push({
-                path:"/detail",
-                query:{
-					code:code
+                path : "/detail",
+                query : {
+                    code : code,
+                    status : 'done'
                 }
             })
         },
