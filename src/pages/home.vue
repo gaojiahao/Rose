@@ -1,7 +1,7 @@
 <template>
     <div class="pages">
         <div id='mescroll' class="mescroll">
-            <div>
+            <div v-if='showNews'>
                 <div class="p_mod">
                     <div class="wea_mod">{{this.week}}</div>
                     <div class="p_info">
@@ -9,8 +9,8 @@
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips" v-if="showNews && listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                    <div class="p_tips" v-else-if="showNews && listData.length === 0">
+                    <div class="p_tips" v-if="listData.length > 0">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-else-if="listData.length === 0">
                         <i class="iconfont icon-dengguang"></i> 
                         没有待办一身轻松
                     </div>
@@ -28,12 +28,13 @@
                         </div>
                         <div class="wait_list_mod swiper-container">
                                 <div class="wait_list swiper-wrapper" >
-                                    <template v-if="showNews&&listData.length > 0">
+                                    <template v-if="listData.length > 0">
                                         <div 
                                             class="each_duty swiper-slide"
                                             v-for='(item,index) in listData'
                                             :key='index'
-                                            @click='goDoDetail(item.code)'>
+                                            @click='goDoDetail(item.code)'
+                                            v-if='index<6'>
                                             <div class="duty_top">
                                                 <p class="duty_name">
                                                     <span class="duty_status">
@@ -63,13 +64,13 @@
                         <div class="ar_title_mod">
                             <p class="btm_text">PROCESSED</p>
                             <div class="xx_title">您的已办
-                                <span class="check_all" @click='goDONE' v-if="showNews&&showTaskList.length > 0">
+                                <span class="check_all" @click='goDONE' v-if="showTaskList.length > 0">
                                     查看全部
                                     <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
                                 </span>
                             </div>
                         </div>
-                        <div class="ar_list_mod" v-if="showNews&&showTaskList.length > 0">
+                        <div class="ar_list_mod" v-if="showTaskList.length > 0">
                                 <div class="ar_list_top">
                                     <tab active-color='#3A3A3A'>
                                         <tab-item selected @on-item-click="onItemClick">实施</tab-item>
@@ -109,12 +110,15 @@
                     </div>
                 </div>
             </div>
+            <div class='loadding' v-else>
+                <spinner type='dots' size='50px'></spinner>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { Tab, TabItem,numberPad } from 'vux'
+import { Tab, TabItem, numberPad, Spinner  } from 'vux'
 import tokenService from '../service/tokenService'
 import todoService from './../service/todoService'
 import getDoneService from '../service/getDoneService'
@@ -137,7 +141,8 @@ export default{
     },
     components:{
         Tab, 
-        TabItem
+        TabItem,
+        Spinner 
     },
     methods:{
         goTODO(){
@@ -166,13 +171,13 @@ export default{
             })
         },
         onItemClick(i){
-            if(i==0){
+            if(i == 0){
                 this.showTaskList = this.ssList;
             }
-            else if(i==1){
+            else if(i == 1){
                 this.showTaskList = this.cpList;
             }
-            else if(i==2){
+            else if(i == 2){
                 this.showTaskList = this.bugList;
             }
 
@@ -233,25 +238,19 @@ export default{
                 })
             })
         },
-        //获取所有代办列表
-        getDoneList(num){
-            let jsonPage={
-                page:num,
-                start:0,
-                limit:10
-            }
+        //获取所有已办列表
+        getDoneList(){
             getDoneService.getDoneList().then( res=> {
                 res.tableContent.map( item => {
-                    item.processName = businessMap[item.businessKey.split('_')[0]];
-                    //console.log(item)
-                    if(item.processName.indexOf('实施') >= 0){
+                    item.processName = this.getStatusName(item);
+                    if(item.businessKey.indexOf('SSXQ') >= 0){
                         this.ssList.push(item);
                         this.showTaskList.push(item);
                     }
-                    else if(item.processName.indexOf('产品') >= 0){
+                    else if(item.businessKey.indexOf('CPXQ') >= 0){
                         this.cpList.push(item)
                     }
-                    else if(item.processName.indexOf('BUG') >= 0){
+                    else if(item.businessKey.indexOf('CSBUG') >= 0){
                         this.bugList.push(item)
                     }
                 })
@@ -278,7 +277,11 @@ export default{
             mescroll = new Mescroll("mescroll",{
                 up:{
                     use:false,
-                    isBounce: true
+                    isBounce: true,
+                    onScroll : function(mescroll, y, isUp){ 
+                        console.log(mescroll);
+                        console.log(y);
+                    }
                 },
                 down:{
                     use:false
@@ -286,7 +289,8 @@ export default{
             })
     },
     updated(){    
-        mySwiper.update()
+        mySwiper.update();
+        //mescroll.scrollTo(100);
         // mescroll.updated();
     },
     created(){
@@ -294,7 +298,7 @@ export default{
         (async()=>{
             this.getDate();
             await tokenService.getToken().then(res=>{
-                console.log(res);
+                //console.log(res);
             })
             let info = localStorage.getItem('ROSE_LOGIN_TOKEN');
             info = JSON.parse(info);
@@ -304,7 +308,7 @@ export default{
                 department : info.department
             }
             this.getTodoList();
-            this.getDoneList(1);
+            this.getDoneList();
         })()
         
         
@@ -638,6 +642,12 @@ export default{
                     }
                 }
             }
+        }
+        .loadding{
+            position: relative;
+            top:50%;
+            margin-top:-50px;
+            text-align: center;
         }
     }
 </style>
