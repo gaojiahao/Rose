@@ -7,7 +7,7 @@
           <icon type="cancel f_r"></icon>
         </div> -->
         <template v-if="listData.length > 0">
-          <div class="each_duty" v-for="(item, index) in listData" :key="index">
+          <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.code)'>
             <div class="duty_top">
               <p class="duty_name">
                 <span class="duty_status">
@@ -102,6 +102,17 @@
             this.listData = this.page === 1 ? tmpList : this.listData.concat(tmpList);
             resolve(tmpList);
           })
+        })
+      },
+      //进入详情
+      goDetail(code) {
+        this.$router.push({
+          path : '/detail',
+          query : {
+            code : code,
+            status : 'do'
+          }
+         
         })
       }
     },
