@@ -3,7 +3,7 @@
   <div class="pages">
       <div id='mescroll' class="mescroll done_container">
             <div>
-                <div class="each_duty" v-for="(item,key,index) in Content" :key="index">
+                <div class="each_duty" v-for="(item,key,index) in Content" :key="index" @click='goDetail(item.businessKey)'>
                     <div class="duty_top">
                         <p class="duty_name">
                             <span class="duty_status">
@@ -60,7 +60,16 @@ export default {
                 this.upScroll.endSuccess(res.tableContent.length,this.hasNext);
             })
         },
+        goDetail(code){
+            this.$router.push({
+                path : '/detail',
+                query : {
+                    code : code,
+                    status : 'done'
+                }
+            })
 
+        },
         //上拉加载
         upCallback(){
             this.list (++this.pageNo);
