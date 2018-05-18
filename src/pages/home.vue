@@ -1,6 +1,6 @@
 <template>
     <div class="pages">
-        <div id='mescroll' class="mescroll">
+        <div id='mescroll' class="mescroll" ref='mescroll'>
             <div v-if='showNews'>
                 <div class="p_mod">
                     <div class="wea_mod">{{this.week}}</div>
@@ -161,7 +161,6 @@ export default{
             })
         },
         goDoneDetail(code){
-            console.log(code);
             this.$router.push({
                 path : "/detail",
                 query : {
@@ -198,7 +197,6 @@ export default{
                 case 6 : xingqi = "星期六"; break; 
                 default : xingqi = "系统错误！" 
             } 
-            //console.log(xingqi);
             this.week = xingqi;
         },
         // TODO 获取状态名字
@@ -230,10 +228,8 @@ export default{
                         }
                        
                     });
-                    // console.log(tmpList.length);
                     this.showNews = true;
-                    this.listData = tmpList;
-                    
+                    this.listData = tmpList;                    
                     resolve();
                 })
             })
@@ -277,24 +273,24 @@ export default{
             mescroll = new Mescroll("mescroll",{
                 up:{
                     use:false,
-                    isBounce: true,
-                    onScroll : function(mescroll, y, isUp){ 
-                        console.log(mescroll);
-                        console.log(y);
-                    }
+                    isBounce: true
                 },
                 down:{
                     use:false
                 }
             })
     },
-    updated(){    
+    updated(){ 
+        let position = localStorage.getItem('SAVE_POSITION');  
+        if (position) {
+            this.$nextTick(function () {
+                  mescroll.scrollTo(position,300);  
+            });
+        }
         mySwiper.update();
-        //mescroll.scrollTo(100);
         // mescroll.updated();
     },
     created(){
-        
         (async()=>{
             this.getDate();
             await tokenService.getToken().then(res=>{
@@ -312,6 +308,17 @@ export default{
         })()
         
         
+    },
+    beforeRouteEnter: (to, from, next) => {
+        if(from.path=='/'){
+            localStorage.setItem('SAVE_POSITION',0)
+        }
+        next()
+    },
+    beforeRouteLeave(to, from, next){
+        let scrollTop = this.$refs.mescroll.scrollTop ;
+        localStorage.setItem('SAVE_POSITION',scrollTop);       
+        next()
     }
 }
 </script>
