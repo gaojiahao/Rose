@@ -546,12 +546,12 @@ export default{
                     @extend .xx_mod_title
                 }
                 .ar_list_mod {
-                    padding: 0.2rem;
                     box-sizing: border-box;
                     width: 100%;
                     overflow: hidden;
                     position: relative;
                     .ar_list_main {
+                        padding: 0.2rem;
                         .each_duty {        //任务栏
                             margin: .4rem auto;
                             padding: .2rem .2rem;
