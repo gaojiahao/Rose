@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div id='mescroll' class="mescroll"></div>
+    <div id='mescroll' class="mescroll">
       <div>
           <!-- SSXQ -->
          <ssxq :detailInfo='formInfo' :status='taskStatus' v-if='code.indexOf("SSXQ")>=0'></ssxq>
