@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div id='mescroll' class="mescroll">
+    <div id='mescroll' class="mescroll"></div>
       <div>
           <!-- SSXQ -->
          <ssxq :detailInfo='formInfo' :status='taskStatus' v-if='code.indexOf("SSXQ")>=0'></ssxq>
@@ -49,6 +49,7 @@
         }
         getDetailService.getDetailInfo(formId,this.code).then( data=> {
           this.formInfo = data;
+          console.log(data);
         })
 
     },
@@ -88,9 +89,26 @@ text-align: left !important;
   color:#999;
   font-size:17px !important;
   line-height: 24px;
+  padding:10px 15px;
+  position: relative;
+  &:before{
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 1px;
+    border-top: 1px solid #D9D9D9;
+    color: #D9D9D9;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+  }
   span{
     font-size:17px !important;
   }
+
   
    
 }
