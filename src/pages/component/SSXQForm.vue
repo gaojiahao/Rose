@@ -68,7 +68,7 @@
             </cell>
             <div  
                 v-html="detailInfo.ssUserStory_fgPlanInv.values"
-                class='htmlfiel' 
+                class='htmlfiel vux-1px-t' 
                 v-if='storyshow'>
             </div>  
         </group>

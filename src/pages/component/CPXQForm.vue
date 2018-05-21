@@ -48,7 +48,7 @@
         </cell>
         <div  
             v-html="detailInfo.cpUserStory_fgPlanInv.values"
-            class='htmlfiel vux-cell-box' 
+            class='htmlfiel vux-1px-t' 
             v-if='storyshow'>
         </div>  
         <group>

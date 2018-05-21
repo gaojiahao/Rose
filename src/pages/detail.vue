@@ -1,7 +1,7 @@
 <template>
   <div class="pages">
     <div id='mescroll' class="mescroll">
-      <div>
+      <div class='vux-1px-b'>
           <!-- SSXQ -->
          <ssxq :detailInfo='formInfo' :status='taskStatus' v-if='code.indexOf("SSXQ")>=0'></ssxq>
          <!-- CPXQ -->
@@ -70,6 +70,14 @@
 </script>
 
 <style lang='scss' >
+.vux-1px-b:after{
+  border-color:#D9D9D9;
+  color:#D9D9D9;
+}
+.vux-1px-t:before{
+  border-color:#D9D9D9;
+  color:#D9D9D9;
+}
 .vux-no-group-title,.vux-no-group-title{
 	margin-top:0 !important;
 }
@@ -90,21 +98,6 @@ text-align: left !important;
   font-size:17px !important;
   line-height: 24px;
   padding:10px 15px;
-  position: relative;
-  &:before{
-    content: " ";
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    height: 1px;
-    border-top: 1px solid #D9D9D9;
-    color: #D9D9D9;
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
-    -webkit-transform: scaleY(0.5);
-    transform: scaleY(0.5);
-  }
   span{
     font-size:17px !important;
   }
