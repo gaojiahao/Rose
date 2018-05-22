@@ -105,12 +105,27 @@
                 v-else>
             </cell>
         </group>
+        <cell 
+            title="分配给" 
+            value-align="left" 
+            is-link 
+            @click.native="changeUser" 
+            :value='user'
+            v-if='detailInfo.assignedTo_fgPlanInv'>
+        </cell>
+        <div v-transfer-dom>
+            <popup v-model="show8" position="left" width="100%">
+               <group>
+                    <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
+                </group>
+            </popup>
+        </div>
        
 
     </group>
 </template>
 <script>
-import { Group, Cell , Datetime , CellBox} from 'vux'
+import { Group, Cell , Datetime , CellBox,Popup ,XInput,TransferDomDirective as TransferDom } from 'vux'
 export default {
     props:{
         'detailInfo':{
@@ -120,6 +135,10 @@ export default {
         'status':{
             type : Boolean,
             required : true
+        },
+        'assignedList':{
+            type : Array,
+            required : true
         }
     },
     data(){
@@ -127,19 +146,36 @@ export default {
             acceptStandard:false,
             storyshow:true,
             technicalAnalysis:false,
-            approvalOpinion:false
+            approvalOpinion:false,
+            show8:false,
+            user:''
 
         }
+    },
+    directives: {
+      TransferDom
     },
 	components: {
 		Group,
 		Cell,
 		Datetime,
-		CellBox,
+        CellBox,
+        Popup,
+        XInput
 	},
     methods:{
-        change(){
+        change(value){
+            //console.log(value);
+            this.$emit('date',value)
 
+        },
+        changeUser(){
+            this.show8 = !this.show8;
+        },
+        getUser(item){
+            this.show8 = false;
+            this.$emit("userId",item.userId)
+            this.user = item.nickname;
         }
     }
     
