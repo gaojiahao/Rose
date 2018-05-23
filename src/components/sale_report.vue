@@ -84,7 +84,7 @@
       </div>
       <x-button 
           id="count_button" 
-          :gradients="['#B99763', '#E7D0A2']"
+          :gradients="btnStatus==true?['#B99763', '#E7D0A2']:['#ddd','#ddd']"
           @click.native="end"
       >进入合计
       </x-button>
@@ -123,6 +123,7 @@ export default {
   data () {
     return {
       alertEnd:false,
+      btnStatus:true,
       list: [
         {
           name:'无',
@@ -228,6 +229,14 @@ export default {
       })
     },
     end(){
+      if(this.btnStatus==false){
+        this.$vux.alert.show({
+            title: '提交失败',
+            content: '当前时间已超过20点'
+        })
+        return;
+      }
+      
       let that = this;
       let captain = this.helpCaptain;
       let dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
@@ -381,6 +390,15 @@ export default {
     }
   },
   mounted(){
+    let that=this;
+    //提交时间是否超过20点
+    saleRepotService.getModelData().then(res=>{
+      if(res.submitAllow==1){
+        that.btnStatus=true;
+      }else if(res.submitAllow==2){
+        that.btnStatus=false;
+      }
+    })
     //默认缓存
     if(localStorage.getItem('saleReport')){
       this.arr = JSON.parse(localStorage.getItem('saleReport')).saleReportArr;

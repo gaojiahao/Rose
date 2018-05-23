@@ -105,7 +105,7 @@
     </div>
     <x-button 
         id="count_button" 
-        :gradients="['#B99763', '#E7D0A2']"
+        :gradients="btnStatus==true?['#B99763', '#E7D0A2']:['#ddd','#ddd']"
         @click.native="end"
         >
           进入合计
@@ -146,6 +146,7 @@ export default {
   data () {
     return {
       alertEnd:false,
+      btnStatus:true,
       list: [
         {
           name:'无',
@@ -225,6 +226,13 @@ export default {
       })
     },
     end(){
+      if(this.btnStatus==false){
+        this.$vux.alert.show({
+            title: '提交失败',
+            content: '当前时间已超过20点'
+        })
+        return;
+      }
       let that=this;
 
       if(this.areaValue.length == 0){
@@ -406,6 +414,15 @@ export default {
     }
   },
   mounted(){
+    let that=this;
+    //提交时间是否超过20点
+    saleRepotService.getModelData().then(res=>{
+      if(res.submitAllow==1){
+        that.btnStatus=true;
+      }else if(res.submitAllow==2){
+        that.btnStatus=false;
+      }
+    })
     this.getArea();
     this.getBank();
   //  this.teamLeader();

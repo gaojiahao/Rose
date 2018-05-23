@@ -19,6 +19,12 @@ let saleReportService={
             contentType:'application/x-www-form-urlencoded',
             data,
         });
+    },
+    //判断提交时间是否超过20点
+    getModelData(){
+        return $axios.ajax({
+            url: '/trans/getModelData?refresh=true&dsCode=getSubmitAllow',
+        });
     }
 };
 export default saleReportService;
