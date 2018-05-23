@@ -416,10 +416,10 @@ export default {
   mounted(){
     let that=this;
     //提交时间是否超过20点
-    saleRepotService.getModelData().then(res=>{
-      if(res.submitAllow==1){
+    saleRepotService.getModelData().then( res=>{
+      if(res.submitAllow === 1){
         that.btnStatus=true;
-      }else if(res.submitAllow==2){
+      }else if(res.submitAllow === 2){
         that.btnStatus=false;
       }
     })
