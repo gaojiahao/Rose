@@ -8,6 +8,7 @@ import count from '@/components/count'
 import reportsOp from '@/components/reports_op'
 import reports from '@/components/reports'
 import help from '@/components/help'
+import reportsSummary from '@/components/reports_summary'
 
 Vue.use(Router)
 
@@ -75,6 +76,14 @@ export default new Router({
           name: 'reports',
           meta: {
             title: '报表'
+          }
+        },
+        {
+          path: 'reportsSummary',
+          component: reportsSummary,
+          name: 'reportsSummary',
+          meta: {
+            title: '未报数人员'
           }
         }
       ],

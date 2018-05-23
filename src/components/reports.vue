@@ -33,7 +33,11 @@
     <group class="total-group">
       <cell title="合计" :value="totalText"></cell>
     </group>
-    <div class="rank-container" @click="hideDropList" ref="rankContainer">
+    <group class="total-group" v-show="objName === A_PROJ_NAME">
+      <cell title="报数汇总" :value="summaryText" @click.native="goSummary" is-link></cell>
+    </group>
+    <div class="rank-container" :class="{'has-summary': objName === A_PROJ_NAME}" @click="hideDropList"
+         ref="rankContainer">
       <div class="rank-wrapper">
         <group class="rank-item" v-for="( item,index ) in reportList" :key="index">
           <cell :value=item.sales :title=item.name is-link :border-intent="false"
@@ -77,11 +81,14 @@
   import saleReportService from '../service/saleRepotService'
   import Loading from './loading'
   import BScroll from 'better-scroll'
+  import dateMixin from './../mixins/date'
 
   const PROJ_LIST = 'ROSE_PROJ_LIST';
+  const DATE_SELECTED = 'ROSE_DATE_SELECTED';
   const PAGE_SIZE = 30;
   const A_PROJ_NAME = 'A类产品'; // A类产品名称
   export default {
+    mixins: [dateMixin],
     components: {
       Tab,
       Cell,
@@ -142,7 +149,8 @@
         showLoading: false,
         totalData: [], // 获取的合计数据
         totalText: '', // 合计栏当前展示的文案
-        rankScroll: null
+        rankScroll: null,
+        summaryText: '', // 报数汇总
       }
     },
     methods: {
@@ -257,6 +265,9 @@
         this.dateSelected = item;
         this.assembleData();
         this.getTotal();
+        if (this.objName === A_PROJ_NAME) {
+          this.getReportSummary();
+        }
       },
       // TODO 点击项目页签
       projClick() {
@@ -332,42 +343,23 @@
           this.totalText = `${total.quantity || 0}件/套（共${total.number || 0}人）`;
         }
       },
-      // TODO 获取昨日、本日、本周、本月、本年的起始和结束日期
-      getDate(type = '') {
-        let now = new Date();
-        let dayTime = 24 * 3600 * 1000; // 一天的毫秒数
-        let date1 = '';
-        let date2 = `${now.getFullYear()}-${numberPad(now.getMonth() + 1)}-${numberPad(now.getDate())}`;
-        switch (type) {
-          case 'yesterdays':
-            let yesterdays = new Date(now - dayTime);
-            let yes = `${yesterdays.getFullYear()}-${numberPad(yesterdays.getMonth() + 1)}-${numberPad(yesterdays.getDate())}`;
-            date1 = yes;
-            date2 = yes;
-            break;
-          case 'days':
-            let days = `${now.getFullYear()}-${numberPad(now.getMonth() + 1)}-${numberPad(now.getDate())}`;
-            date1 = days;
-            break;
-          case 'weeks':
-            let curDay = now.getDay() !== 0 ? now.getDay() : 7;
-            let weeks = new Date(now - (curDay - 1) * dayTime); // 获取周一的日期
-            date1 = `${weeks.getFullYear()}-${numberPad(weeks.getMonth() + 1)}-${numberPad(weeks.getDate())}`;
-            break;
-          case 'months':
-            date1 = `${now.getFullYear()}-${numberPad(now.getMonth() + 1)}-01`;
-            break;
-          case 'years':
-            date1 = `${now.getFullYear()}-01-01`;
-            break;
-          default:
-            break;
-        }
-        return {
-          date1: date1,
-          date2: date2
-        };
+      // TODO 获取报数汇总
+      getReportSummary() {
+        reportService.getReportSummary(this.getDate(this.dateSelected.value)).then(data => {
+          this.summaryText = `${data.punchCardNumber || 0}人（共${data.salesmanNumber || 0}人）`;
+        })
       },
+      //  TODO 跳转到报数汇总页面
+      goSummary() {
+        // 存储时间选择
+        sessionStorage.setItem(DATE_SELECTED, JSON.stringify(this.dateSelected));
+        this.$router.push({
+          path: '/reportsOp/reportsSummary',
+          query: {
+            dateSelected: this.dateSelected.value
+          }
+        })
+      }
     },
     filters: {
       // TODO 项目类产品名称过滤
@@ -381,6 +373,7 @@
     },
     created() {
       let query = this.$route.query;
+      let dateSelected = sessionStorage.getItem(DATE_SELECTED);
       // 设置筛选参数
       this.filterParams = {
         shengName: query.region ? decodeURI(query.region) : '', // 区域
@@ -392,9 +385,15 @@
       if (this.filterParams.objName) {
         this.objName = this.filterParams.objName;
       }
+      // 还原时间选择
+      if (dateSelected) {
+        this.dateSelected = JSON.parse(dateSelected);
+        sessionStorage.removeItem(DATE_SELECTED)
+      }
       this.getProj();
       this.assembleData();
       this.getTotal();
+      this.getReportSummary();
     },
     mounted() {
       this.$nextTick(() => {
@@ -506,6 +505,9 @@
       height: calc(100% - 134px);
       overflow: hidden;
       /*-webkit-overflow-scrolling: touch;*/
+      &.has-summary {
+        height: calc(100% - 188px);
+      }
       .weui-cell__ft {
         padding-right: 20px;
       }

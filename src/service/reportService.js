@@ -39,6 +39,26 @@ let reportService = {
         dsCode: 'getQtyByTime',
       }, data)
     });
+  },
+  // TODO 获取报数汇总
+  getReportSummary(data = {}) {
+    return $axios.ajax({
+      url: '/trans/getModelData',
+      data: Object.assign({
+        refresh: true,
+        dsCode: 'getPunchCard',
+      }, data)
+    });
+  },
+  // TODO 获取未报数列表
+  getUnreported(data = {}) {
+    return $axios.ajax({
+      url: '/trans/getModelData',
+      data: Object.assign({
+        refresh: true,
+        dsCode: 'getNotpunchCardName',
+      }, data)
+    });
   }
 }
 
