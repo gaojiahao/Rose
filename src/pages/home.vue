@@ -63,13 +63,13 @@
                     <div class="ar_title_mod">
                         <p class="btm_text">PROCESSED</p>
                         <div class="xx_title">您的已办
-                            <span class="check_all" @click='goDONE' v-if="showTaskList.length > 0">
+                            <span class="check_all" @click='goDONE'>
                                 查看全部
                                 <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
                             </span>
                         </div>
                     </div>
-                    <div class="ar_list_mod" v-if="showTaskList.length > 0">
+                    <div class="ar_list_mod" >
                             <div class="ar_list_top">
                                 <tab active-color='#3A3A3A'>
                                     <tab-item selected @on-item-click="onItemClick">实施</tab-item>
@@ -77,7 +77,8 @@
                                     <tab-item @on-item-click="onItemClick">BUG</tab-item>
                                 </tab>
                             </div>
-                            <div class="ar_list_main">
+                            <p v-if='showTaskList.length==0' class='no_task'>最近没有已处理的任务</p>
+                            <div class="ar_list_main" v-else>
                                 <div class="each_duty"
                                     v-for='(item1,index1) in showTaskList'
                                     :index='index1'
@@ -103,9 +104,9 @@
                                 </div>
                             </div>
                     </div>
-                    <div class="when_null_ar" v-else-if="listData.length === 0">
+                    <!-- <div class="when_null_ar" v-else-if="listData.length === 0">
                         您尚未完成任务
-                    </div>
+                    </div> -->
                 </div>
             </div>                        
         </div>
@@ -121,6 +122,7 @@ import tokenService from '../service/tokenService'
 import todoService from './../service/todoService'
 import getDoneService from '../service/getDoneService'
 import businessMap from './maps/business'
+import { setTimeout } from 'timers';
 let mySwiper
 let mescroll
 export default{
@@ -226,7 +228,7 @@ export default{
                         }
                        
                     });
-                    this.showNews = false;
+                    
                     this.listData = tmpList;                    
                     resolve();
                 })
@@ -234,7 +236,12 @@ export default{
         },
         //获取所有已办列表
         getDoneList(){
-            getDoneService.getDoneList().then( res=> {
+            let jsonPage={
+                page:1,
+                start:0,
+                limit:10
+            }
+            getDoneService.getDoneList(jsonPage).then( res=> {
                 res.tableContent.map( item => {
                     item.processName = this.getStatusName(item);
                     if(item.businessKey.indexOf('SSXQ') >= 0){
@@ -247,7 +254,9 @@ export default{
                     else if(item.businessKey.indexOf('CSBUG') >= 0){
                         this.bugList.push(item)
                     }
+                    
                 })
+                this.showNews = false;
             })
         },
     },
@@ -305,6 +314,7 @@ export default{
             }
             this.getTodoList();
             this.getDoneList();
+            
         })()
         
         
@@ -550,6 +560,10 @@ export default{
                     width: 100%;
                     overflow: hidden;
                     position: relative;
+                    .no_task{
+                        line-height: 0.8rem;
+                        text-align: center;
+                    }
                     .ar_list_main {
                         padding: 0.2rem;
                         .each_duty {        //任务栏

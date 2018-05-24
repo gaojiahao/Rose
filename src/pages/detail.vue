@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div id='mescroll' class="mescroll " style='padding-bottom:60px;'>
+    <div id='mescroll' class="mescroll detail">
       <div class='vux-1px-b'>
           <!-- SSXQ -->
         <ssxq 
@@ -73,7 +73,7 @@
       </group>
       </div>
       
-      <div class="btn" v-if="taskStatus">
+      <div class="btn" v-if="taskStatus&&formInfo.transCode_fgPlanInv">
         <span @click='transfer()' class='transfer'>转办</span>
         <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>
         <span @click="reject()" class='reject' v-else-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>
@@ -128,7 +128,7 @@
   import Ssxq from "./component/SSXQForm.vue"
   import Cpxq from "./component/CPXQForm.vue"
   import Mbgl from "./component/MBGLForm.vue"
-  import {Group,Cell,Confirm,XInput ,XTextarea ,Toast ,Flow, FlowState, FlowLine ,TransferDomDirective as TransferDom } from 'vux'
+  import {Group,Cell,Confirm,XInput ,XTextarea ,Toast ,Spinner,Flow, FlowState, FlowLine ,TransferDomDirective as TransferDom } from 'vux'
   export default {
     data() {
       return {
@@ -153,7 +153,7 @@
         transferUserList:[],        //转办人员列表
         transferInfo:{},            //选中转办人员信息
         choicedIndex:-1,            //转办人员选中的class
-        devType:''                  //业务类型
+        devType:''                 //业务类型
       }
     },
     directives: {
@@ -171,7 +171,8 @@
         FlowLine ,
         Group,
         Toast ,
-        Cell
+        Cell,
+        Spinner
     },
     methods: {
       //任务同意
@@ -479,8 +480,18 @@ text-align: left !important;
   padding:10px 15px;
   span{
     font-size:17px !important;
+    
   }
   
+}
+.user_list{
+  padding-left:0.5rem;
+  line-height: 0.6rem;
+
+}
+.detail{
+  z-index:100;
+  padding-bottom:1.2rem;
 }
 /** 底部按钮 */
 .btn{
@@ -491,7 +502,7 @@ text-align: left !important;
   position: fixed;
   left:0;
   bottom:0;
-  z-index:100;
+  z-index:200;
   span{
     flex:1;
     text-align: center;
