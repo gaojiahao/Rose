@@ -3,7 +3,8 @@ import tokenService from '../../service/tokenService'
 
 import axios from 'axios';
 
-import qs from 'qs';
+// import qs from 'qs';
+let qs = require('querystring');
 
 let Rxports = {
   /**
