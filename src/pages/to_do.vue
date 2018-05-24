@@ -55,8 +55,11 @@
     methods: {
       // TODO 获取状态名字
       getStatusName(item) {
-        let business = item.businessKey.split('_');
-        return businessMap[business[0]] || '未知项';
+        if(item.businessKey){
+          let business = item.businessKey.split('_');
+          return businessMap[business[0]] || '未知项';
+        }
+        
       },
       // TODO 获取状态、状态的class、是否展示红点
       filterStatusAndClass(item) {
@@ -91,6 +94,7 @@
           }).then(data => {
             let tmpList = [];
             tmpList = data.tableContent && data.tableContent.map(item => {
+              console.log(item);
               return Object.assign({}, {
                 statusName: this.getStatusName(item),
                 requireName: item.requireName || '见详情',
@@ -118,9 +122,13 @@
     },
     filters: {
       // TODO 过滤日期
+      
       filterTime(val) {
-        let date = new Date(val.replace(/-/g, '/'));
-        return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+        if(val){
+          let date = new Date(val.replace(/-/g, '/'));
+          return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+        }
+        
       }
     },
     created() {
