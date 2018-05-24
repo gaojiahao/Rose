@@ -74,9 +74,10 @@
       </div>
       
       <div class="btn" v-if="taskStatus">
-        <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>
-        <span @click="reject()" class='reject' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>
         <span @click='transfer()' class='transfer'>转办</span>
+        <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>
+        <span @click="reject()" class='reject' v-else-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>
+       
       </div>
       <div v-transfer-dom>
         <confirm 
@@ -485,11 +486,12 @@ text-align: left !important;
 .btn{
   width:100%;
   height:46px;
-  margin-top:30px;
+  background: #fff;
   display: flex;
   position: fixed;
   left:0;
   bottom:0;
+  z-index:100;
   span{
     flex:1;
     text-align: center;
