@@ -111,7 +111,7 @@
             is-link 
             @click.native="changeUser" 
             :value='user'
-            v-if='detailInfo.assignedTo_fgPlanInv'>
+            v-if='status&&detailInfo.assignedTo_fgPlanInv'>
         </cell>
         <div v-transfer-dom>
             <popup v-model="show8" position="left" width="100%">
@@ -174,7 +174,7 @@ export default {
         },
         getUser(item){
             this.show8 = false;
-            this.$emit("userId",item.userId)
+            this.$emit("userId",item)
             this.user = item.nickname;
         }
     }
