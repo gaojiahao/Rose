@@ -50,13 +50,25 @@
             :value="detailInfo.requirementLevel_fgPlanInv.values" 
             value-align="left">
         </cell>
+        <cell 
+            title="预计交付时间" 
+            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)" 
+            value-align="left"
+            v-if='!status&&detailInfo.requirementEtc_fgPlanInv.values'>
+        </cell>
+        <cell 
+            title="预计交付时间" 
+            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)" 
+            value-align="left"
+            v-if='status&&detailInfo.requirementEtc_fgPlanInv.values'>
+        </cell>
         <datetime  
             format="YYYY-MM-DD HH:mm" 
             @on-change="change" 
             title="预计交付时间" 
             placeholder="请选择" 
             value-align="left"
-            v-if='status'>
+            v-if='status&&!detailInfo.requirementEtc_fgPlanInv.values'>
         </datetime>				
         <group>
             <cell 
@@ -132,7 +144,7 @@
         is-link 
         @click.native="changeUser" 
         :value='user'
-        v-if='detailInfo.assignedTo_fgPlanInv'></cell>
+        v-if='status&&detailInfo.assignedTo_fgPlanInv'></cell>
         <div v-transfer-dom>
             <popup v-model="show8" position="left" width="100%">
                <group>
@@ -144,6 +156,7 @@
 </template>
 <script>
 import { Group, Cell , Datetime , CellBox,Popup ,TransferDomDirective as TransferDom } from 'vux'
+import {formatTime} from '../maps/date.js'
 export default {
     props:{
         'detailInfo':{
@@ -181,6 +194,7 @@ export default {
         
 	},
     methods:{
+        formatTime,
         change(value){
             //console.log(value);
             this.$emit('date',value)
@@ -192,9 +206,11 @@ export default {
         },
         getUser(item){
             this.show8 = false;
-            this.$emit("userId",item.userId)
+            this.$emit("userId",item)
             this.user = item.nickname;
         }
+    },
+    created(){
     }
     
     
