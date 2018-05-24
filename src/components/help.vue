@@ -227,10 +227,6 @@ export default {
     },
     end(){
       if(this.btnStatus==false){
-        this.$vux.alert.show({
-            title: '提交失败',
-            content: '当前时间已超过20点'
-        })
         return;
       }
       let that=this;
@@ -419,8 +415,12 @@ export default {
     saleRepotService.getModelData().then( res=>{
       if(res.submitAllow === 1){
         that.btnStatus=true;
-      }else if(res.submitAllow === 2){
+      }else if(res.submitAllow === 0){
         that.btnStatus=false;
+        that.$vux.alert.show({
+            title: '提示',
+            content: '时间已超过20点(不能提交)'
+        })
       }
     })
     this.getArea();
