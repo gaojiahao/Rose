@@ -54,21 +54,21 @@
             title="预计交付时间" 
             :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)" 
             value-align="left"
-            v-if='!status&&detailInfo.requirementEtc_fgPlanInv.values'>
+            v-if='!status'>
         </cell>
-        <cell 
+        <!-- <cell 
             title="预计交付时间" 
             :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)" 
             value-align="left"
             v-if='status&&detailInfo.requirementEtc_fgPlanInv.values'>
-        </cell>
+        </cell> -->
         <datetime  
             format="YYYY-MM-DD HH:mm" 
             @on-change="change" 
             title="预计交付时间" 
             placeholder="请选择" 
             value-align="left"
-            v-if='status&&!detailInfo.requirementEtc_fgPlanInv.values'>
+            v-if='status'>
         </datetime>				
         <group>
             <cell 
@@ -93,7 +93,11 @@
                     :arrow-direction="acceptStandard ? 'up' : 'down'"
                     @click.native="acceptStandard = !acceptStandard">
                 </cell>
-                <cell-box v-if="acceptStandard">{{detailInfo.ssAcceptStandard_fgPlanInv.values}}</cell-box>
+                <div  
+                    v-html="detailInfo.ssAcceptStandard_fgPlanInv.values"
+                    class='htmlfiel vux-1px-t' 
+                    v-if='acceptStandard'>
+                </div>  
             </div>
             <cell 
                 title="验收标准" 
@@ -117,7 +121,7 @@
                 title="需求技术分析" 
                 :value="detailInfo.ssTechnicalAnalysis_fgPlanInv.values" 
                 value-align="left"
-                v-else>
+                v-else-if='detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length>0&&detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length<=11'>
             </cell>
         </group>
         <group>
@@ -146,7 +150,7 @@
         :value='user'
         v-if='status&&detailInfo.assignedTo_fgPlanInv'></cell>
         <div v-transfer-dom>
-            <popup v-model="show8" position="left" width="100%">
+            <popup v-model="show8" position="left" width="40%">
                <group>
                     <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
                 </group>

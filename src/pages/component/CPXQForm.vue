@@ -60,7 +60,12 @@
                     :arrow-direction="acceptStandard ? 'up' : 'down'"
                     @click.native="acceptStandard = !acceptStandard">
                 </cell>
-                <cell-box v-if="acceptStandard">{{detailInfo.cpAcceptStandard_fgPlanInv.values}}</cell-box>
+                 <div  
+                    v-html="detailInfo.cpAcceptStandard_fgPlanInv.values"
+                    class='htmlfiel vux-1px-t' 
+                    v-if='acceptStandard'>
+                </div>  
+                <!-- <cell-box v-if="acceptStandard">{{detailInfo.cpAcceptStandard_fgPlanInv.values}}</cell-box> -->
             </div>
             <cell 
                 title="验收标准" 
@@ -84,7 +89,7 @@
                 title="需求技术分析" 
                 :value="detailInfo.cpTechnicalAnalysis_fgPlanInv.values" 
                 value-align="left"
-                v-else>
+                v-else-if='detailInfo.cpTechnicalAnalysis_fgPlanInv.values.length>0&&detailInfo.cpTechnicalAnalysis_fgPlanInv.values.length<=11'>
             </cell>
         </group>
         <group>
@@ -114,7 +119,7 @@
             v-if='status&&detailInfo.assignedTo_fgPlanInv'>
         </cell>
         <div v-transfer-dom>
-            <popup v-model="show8" position="left" width="100%">
+            <popup v-model="show8" position="right" width="60%">
                <group>
                     <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
                 </group>

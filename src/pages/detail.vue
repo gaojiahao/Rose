@@ -478,15 +478,18 @@ text-align: left !important;
   font-size:17px !important;
   line-height: 24px;
   padding:10px 15px;
+  overflow-x: scroll;
   span{
     font-size:17px !important;
     
   }
   
 }
+/** 分配给 */
 .user_list{
-  padding-left:0.5rem;
-  line-height: 0.6rem;
+  // padding-left:0.5rem;
+  line-height: 0.8rem;
+  text-align: center;
 
 }
 .detail{
