@@ -37,7 +37,7 @@
               <div class='agree_status'>
                 <div v-for="(tab,index) in infoList" class='allInfo' :key="index">
                   <flow orientation="vertical">
-                    <flow-state :is-done="tab.status?true:false" :state="index+1"></flow-state>
+                    <flow-state :is-done="tab.status||index<infoList.length-1?true:false" :state="index+1"></flow-state>
                     <flow-line  :is-done="tab.status?true:false" ></flow-line>
                     
                   </flow>
@@ -57,7 +57,7 @@
                   <li v-for="(tab,index) in infoList" :key="index" v-if="tab.message">
                     <p class='title'>审批意见</p>
                     <!-- <i class='iconfont icon-yonghu'></i> -->
-                    <img src='/src/common/touxiang.png' alt='' class='iconfont'/>
+                    <img src='../common/touxiang.png' alt='' class='iconfont'/>
                     <div class="choice_content">
                       <p>
                         <span>{{tab.userName}}</span>
@@ -495,6 +495,8 @@ text-align: left !important;
 .detail{
   z-index:100;
   padding-bottom:1.2rem;
+  box-sizing: border-box;
+  background: #fff;
 }
 /** 底部按钮 */
 .btn{
@@ -505,7 +507,7 @@ text-align: left !important;
   position: fixed;
   left:0;
   bottom:0;
-  z-index:200;
+  z-index:10;
   span{
     flex:1;
     text-align: center;
