@@ -333,14 +333,27 @@
             // else{
             //   //console.log('提交')
             //   this.SaveData()
-            // }   
-           if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
-              this.showPositionValue = true;
-              this.warn = '【分配给】不能为空'
+            // }  
+            if(this.agreeStatus==0) {
+              if(this.remark==''){
+                this.showPositionValue = true;
+                this.warn = '【备注】不能为空'
+              }
+              else{
+                this.SaveData()
+              }
+
             }
             else{
-              this.SaveData()
-            }             
+              if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
+                this.showPositionValue = true;
+                this.warn = '【分配给】不能为空'
+              }
+              else{
+                this.SaveData()
+              }   
+            }
+                     
 
           }
           else if(this.viewType == 'view'){
