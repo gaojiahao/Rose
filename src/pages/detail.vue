@@ -74,9 +74,9 @@
       </div>
       <!-- 操作按钮 -->
       <div class="btn" v-if="taskStatus&&formInfo.transCode_fgPlanInv">
-        <span @click='transfer()' class='transfer'>转办</span>
-        <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>
-        <span @click="reject()" class='reject' v-else-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>      
+        <span @click='transfer()' class='transfer'>转办</span>        
+        <span @click="reject()" class='reject' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>  
+        <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>    
       </div>
       <!-- 任务确认框-->
       <div v-transfer-dom>
@@ -322,20 +322,25 @@
         else{
           if(this.viewType=='marking'){
             console.log('进入marking');
-            console.log(this.assignStatus);
-            console.log(this.assigned);
-            if(this.etc==''){
-              this.showPositionValue = true;
-              this.warn = '【预计交付时间】不能为空'
-            }
-            else if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
+            // if(this.etc==''){
+            //   this.showPositionValue = true;
+            //   this.warn = '【预计交付时间】不能为空'
+            // }
+            // else if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
+            //   this.showPositionValue = true;
+            //   this.warn = '【分配给】不能为空'
+            // }
+            // else{
+            //   //console.log('提交')
+            //   this.SaveData()
+            // }   
+           if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
               this.showPositionValue = true;
               this.warn = '【分配给】不能为空'
             }
             else{
-              //console.log('提交')
               this.SaveData()
-            }           
+            }             
 
           }
           else if(this.viewType == 'view'){
@@ -387,7 +392,7 @@
           })
           //获取viewType来确定提交的接口
           await getDetailService.getViewId(formId).then( data=>{
-            console.log(data);
+            console.log(data[0].config);
             this.viewType = data[0].viewType;
             console.log(this.viewType);
 
