@@ -43,8 +43,8 @@
                   </flow>
                   <div class='info' >
                     <p>
-                      <span>{{tab.userName}}</span>
-                      <span >{{tab.nodeName}}</span>	
+                      <span class='node_name'>{{tab.nodeName}}</span>	
+                       <span class='user_name'>{{tab.userName}}</span>
                     </p>
                     <p>
                       <span v-if="tab.endTime">{{tab.endTime}}</span>
@@ -72,13 +72,13 @@
           </div>
       </group>
       </div>
-      
+      <!-- 操作按钮 -->
       <div class="btn" v-if="taskStatus&&formInfo.transCode_fgPlanInv">
         <span @click='transfer()' class='transfer'>转办</span>
         <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>
-        <span @click="reject()" class='reject' v-else-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>
-       
+        <span @click="reject()" class='reject' v-else-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>      
       </div>
+      <!-- 任务确认框-->
       <div v-transfer-dom>
         <confirm 
           v-model="confirmshow"
@@ -118,6 +118,7 @@
           </div>
         </confirm>
       </div>
+      <!-- 弹框提示 -->
       <toast v-model="showPositionValue" type="text" :text='warn' is-show-mask  position="middle"></toast>
     </div>
   </div>
@@ -414,7 +415,7 @@
             mescroll = new Mescroll("mescroll",{
                 up:{
                     use:false,
-                    isBounce: true
+                    isBounce: false
                 },
                 down:{
                     use:false
@@ -465,8 +466,9 @@ text-align: left !important;
 .weui-wepay-flow__li .weui-wepay-flow__state {
   width: 20px !important;
   height: 20px !important;
-	border-radius: 50% !important;;
-	line-height: 20px !important;;
+	border-radius: 50% !important;
+  line-height: 20px !important;
+  left: -2px !important;
     
 }
 /** 用户故事*/
@@ -480,14 +482,12 @@ text-align: left !important;
   padding:10px 15px;
   overflow-x: scroll;
   span{
-    font-size:17px !important;
-    
+    font-size:17px !important;  
   }
   
 }
 /** 分配给 */
 .user_list{
-  // padding-left:0.5rem;
   line-height: 0.8rem;
   text-align: center;
 
@@ -574,6 +574,10 @@ text-align: left !important;
             font-size:0.3rem;
             margin-bottom:0.1rem;
             margin-right: 0.4rem;
+          }
+          .node_name{
+            float:right;
+            width:3rem;
           }
         }
       }

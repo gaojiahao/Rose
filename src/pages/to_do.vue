@@ -94,7 +94,6 @@
           }).then(data => {
             let tmpList = [];
             tmpList = data.tableContent && data.tableContent.map(item => {
-              console.log(item);
               return Object.assign({}, {
                 statusName: this.getStatusName(item),
                 requireName: item.requireName || '见详情',

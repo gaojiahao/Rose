@@ -144,13 +144,13 @@
         </group>
         <cell 
         title="分配给" 
-        value-align="left" 
+        value-align='left' 
         is-link 
         @click.native="changeUser" 
         :value='user'
         v-if='status&&detailInfo.assignedTo_fgPlanInv'></cell>
         <div v-transfer-dom>
-            <popup v-model="show8" position="left" width="40%">
+            <popup v-model="show8" position='left' width='40%'>
                <group>
                     <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
                 </group>
