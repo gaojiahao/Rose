@@ -213,7 +213,7 @@ export default {
                         width: 0;
                         height: 0;
                         top: 0;
-                        left: -.08rem;
+                        left: -.05rem;
                         border-right: .08rem solid #333;
                         border-bottom: .08rem solid transparent;                    
                     }
