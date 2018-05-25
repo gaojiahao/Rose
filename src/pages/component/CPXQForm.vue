@@ -119,7 +119,7 @@
             v-if='status&&detailInfo.assignedTo_fgPlanInv'>
         </cell>
         <div v-transfer-dom>
-            <popup v-model="show8" position="right" width="60%">
+            <popup v-model="show8" position="left" width="40%">
                <group>
                     <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
                 </group>
