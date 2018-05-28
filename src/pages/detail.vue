@@ -1,8 +1,8 @@
 <template>
   <div class="pages">
-    <div id='mescroll' class="detail">
-      <div class='detail-list-container vux-1px-b' ref="detailList">
-        <div>
+    <div id='mescroll' class="detail" :class="{no_padding:!taskStatus}">
+      <div class='detail-list-container ' ref="detailList">
+        <div class='vux-1px-b'>
           <!-- SSXQ -->
           <ssxq
             :detailInfo='formInfo'
@@ -42,7 +42,7 @@
                     <flow-line  :is-done="tab.status?true:false" ></flow-line>
 
                   </flow>
-                  <div class='info' >
+                  <div class='info vux-1px-b' >
                     <p>
                       <span class='node_name'>{{tab.nodeName}}</span>
                       <span class='user_name'>{{tab.userName}}</span>
@@ -120,7 +120,7 @@
     <!-- 弹框提示 -->
     <toast v-model="showPositionValue" type="text" :text='warn' is-show-mask  position="middle"></toast>
     <!-- 操作按钮 -->
-    <div class="btn" v-if="taskIdInfo.dataCount==1">
+    <div class="btn" v-if="taskIdInfo.dataCount===1&&taskIdInfo.tableContent[0].isMyTask===1" >
       <span @click='transfer()' class='transfer'>转办</span>
       <span @click="reject()" class='reject' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("disagree")>=0'>拒绝</span>
       <span @click="agree()" class='agree' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("agreement")>=0'>同意</span>
@@ -205,7 +205,12 @@
           this.transferUserList = data.tableContent;
           this.$nextTick(() => {
             if(!this.transferListScroll) {
-              this.transferListScroll = new BScroll(this.$refs.transferList, {click: true})
+              this.transferListScroll = new BScroll(this.$refs.transferList, {
+                click: true,
+                top: false,
+                bottom: false
+
+              })
             }
           })
         })
@@ -223,7 +228,7 @@
       //viewType为marking的任务提交
       SaveData(){
         for(let key in this.oldformInfo){
-          if(key=='requirement'||key=='requirementProject'){
+          if(key === 'requirement'||key === 'requirementProject'){
             this.oldformInfo[key].etc = this.etc;
             //this.devType = this.oldformInfo[k].provideType.selection.data.text;
             if(this.oldformInfo[key].provideType){
@@ -274,7 +279,7 @@
         let data = {
           jsonData:JSON.stringify(jsonData)
         }
-        if(this.remark==''){
+        if(this.remark === ''){
           this.showPositionValue = true;
           this.warn = '【任务备注】不能为空'
         }
@@ -298,7 +303,7 @@
       onConfirm(){
         //转办
         if(this.transferUserList.length>0){
-          if(this.remark==''){
+          if(this.remark === ''){
             this.showPositionValue = true;
             this.warn = '【备注】不能为空';
              this.choicedIndex = -1;
@@ -335,54 +340,34 @@
         }
         //同意，拒绝
         else{
-          if(this.viewType=='marking'){
-            console.log('进入marking');
-            // if(this.etc==''){
-            //   this.showPositionValue = true;
-            //   this.warn = '【预计交付时间】不能为空'
-            // }
-            // else if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
-            //   this.showPositionValue = true;
-            //   this.warn = '【分配给】不能为空'
-            // }
-            // else{
-            //   //console.log('提交')
-            //   this.SaveData()
-            // }
-            if(this.agreeStatus==0) {
-              if(this.remark==''){
+          if(this.viewType === 'marking'){
+            if(this.agreeStatus === 0) {
+              if(this.remark === ''){
                 this.showPositionValue = true;
                 this.warn = '【备注】不能为空'
               }
               else{
                 this.SaveData()
               }
-
             }
             else{
-              if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
+              if(this.taskIdInfo.dataCount === 1&&this.taskIdInfo.tableContent[0].nodeName === '承接任务'&&this.etc === ''){
                 this.showPositionValue = true;
-                this.warn = '【分配给】不能为空'
+                this.warn = '【预计交付时间】不能为空';
+              }
+              else if(this.formInfo.assignedTo_fgPlanInv&&!this.assigned.userId){
+                this.showPositionValue = true;
+                this.warn = '【分配给】不能为空';
               }
               else{
                 this.SaveData()
               }
             }
-
-
           }
-          else if(this.viewType == 'view'){
-            console.log('进入view');
+          else if(this.viewType === 'view'){
             this.commitTask()
-
           }
-
         }
-
-
-
-
-
       },
       //预计交付时间
       getDate(res){
@@ -399,7 +384,7 @@
             status = this.$route.query.status,
             formId = '';
         this.code = code;
-        if(status == 'done'){
+        if(status === 'done'){
           this.taskStatus = false;
         }
         (async()=>{
@@ -421,9 +406,9 @@
           })
           //获取viewType来确定提交的接口
           await getDetailService.getViewId(formId).then( data=>{
-            console.log(data[0].config);
+            //console.log(data[0].config);
             this.viewType = data[0].viewType;
-            console.log(this.viewType);
+            //console.log(this.viewType);
 
           })
 
@@ -446,7 +431,13 @@
     mounted() {
       this.$nextTick(() => {
         if(!this.detailListScroll){
-          this.detailListScroll = new BScroll(this.$refs.detailList, {click:true})
+          this.detailListScroll = new BScroll(this.$refs.detailList, {
+            click:true,
+            bounce:{
+              top: false,
+              bottom: false
+            }
+          })
         }
       })
     }
@@ -454,75 +445,63 @@
 </script>
 
 <style lang='scss' >
-/** 重置vue */
-.vux-1px-b:after{
-  border-color:#D9D9D9;
-  color:#D9D9D9;
-}
-.vux-1px-t:before{
-  border-color:#D9D9D9;
-  color:#D9D9D9;
-}
-.vux-no-group-title,.vux-no-group-title{
-	margin-top:0 !important;
-}
-.weui-cell:before{
-	left:0 !important;
-}
-.vux-cell-primary {
-text-align: left !important;
-}
-.vux-cell-box{
-	color:#999;
-}
-.weui-cells:after{
-  border-bottom: 0px solid #D9D9D9 !important;
-}
-.vux-cell-box:not(:first-child):before{
-    left:-10px !important;
-}
-.weui-dialog__bd:first-child {
-	padding:0px !important;
-}
-.weui-wepay-flow, .weui-wepay-flow-auto{
-	padding: 0 !important;
-	position: absolute;
-	left:-20px;
-	top:15px;
-	height:100%;
-}
-.weui-wepay-flow__li .weui-wepay-flow__state {
-  width: 20px !important;
-  height: 20px !important;
-	border-radius: 50% !important;
-  line-height: 20px !important;
-  left: -2px !important;
-
-}
-/** 用户故事*/
-.htmlfiel{
-  box-sizing: border-box;
-  width:100%;
-  color:#999;
-  font-size:17px !important;
-  line-height: 24px;
-  padding:10px 15px;
-  overflow-x: scroll;
-  span{
-    font-size:17px !important;
+.pages{
+  /** 重置vux */
+  .vux-1px-b:after{
+    border-color:#D9D9D9;
+    color:#D9D9D9;
   }
+  .vux-1px-t:before{
+    border-color:#D9D9D9;
+    color:#D9D9D9;
+  }
+  .vux-no-group-title,.vux-no-group-title{
+    margin-top:0 ;
+  }
+  .weui-cell:before{
+    left:0 ;
+  }
+  .vux-cell-primary {
+  text-align: left ;
+  }
+  .vux-cell-box{
+    color:#999;
+  }
+  .weui-cells:after{
+    border-bottom: 0px solid #D9D9D9 ;
+  }
+  .vux-cell-box:not(:first-child):before{
+      left:-10px ;
+  }
+  .weui-wepay-flow, .weui-wepay-flow-auto{
+    padding: 0 ;
+    position: absolute;
+    left:-20px;
+    top:15px;
+    height:100%;
+  }
+  .weui-wepay-flow__li .weui-wepay-flow__state {
+    width: 20px ;
+    height: 20px ;
+    border-radius: 50% ;
+    line-height: 20px ;
+    left: -2px ;
 
+  }
 }
-/** 分配给 */
-.user_list{
-  line-height: 0.8rem;
-  text-align: center;
-
+ /** 重置vux */
+.v-transfer-dom{
+  .weui-dialog__bd:first-child {
+    padding:0px ;
+  }
+  .weui-cells{
+    margin-top:0;
+  }
 }
 .detail{
   position: fixed;
   z-index:100;
-  padding-bottom:1.2rem;
+  padding-bottom:46px;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -532,7 +511,124 @@ text-align: left !important;
     height: 100%;
     overflow: hidden;
   }
+  /** 用户故事*/
+  .htmlfiel{
+    box-sizing: border-box;
+    width:100%;
+    color:#999;
+    font-size:17px !important;
+    line-height: 24px;
+    padding:10px 15px;
+    overflow-x: scroll;
+    span{
+      font-size:17px !important;
+    }
+
+  }
+  /** 工作流*/
+  .process{
+    width:100%;
+    background: #F0F2F5;
+    .agree_status{
+      background: #FFF;
+      padding-bottom:0.2rem;
+      .allInfo{
+        margin-left:0.8rem;
+        position: relative;
+        .info{
+          // border-bottom:1px solid #ccc;
+          padding: 0.2rem;
+          position: relative;
+          vertical-align: middle;
+          p{
+            display: block;
+            margin-left:0.6rem;
+            span{
+              display: inline-block;
+              font-size:0.3rem;
+              margin-bottom:0.1rem;
+              margin-right: 0.4rem;
+            }
+            .node_name{
+              float:right;
+              width:3rem;
+            }
+          }
+        }
+        &:last-child {
+          margin-bottom:0.2rem;
+          .weui-wepay-flow__line{
+            display: none;
+          }
+        }
+      }
+
+    }
+    /** 审批意见*/
+    .choice{
+      width:100%;
+      padding-top:0.9rem;
+      box-sizing: border-box;
+      background: #fff;
+      ul{
+        li{
+          font-size:0.3rem;
+          border-bottom: 1px solid #d9d9d9;
+          position: relative;
+          .iconfont{
+            position: absolute;
+            left:0.4rem;
+            top:0.3rem;
+            width:0.4rem;
+            height:0.4rem;
+          }
+          .title{
+            position:absolute;
+            left:0;
+            top:-0.64rem;
+            width:100%;
+            border-bottom: 1px solid #d9d9d9;
+            padding-left: 0.4rem;
+            background:#fff;
+            display:none;
+            margin-bottom:0;
+            height:0.64rem;
+            line-height:0.64rem;
+          }
+          &:first-child .title{
+            display:block;
+          }
+          .choice_content{
+            padding-left: 1rem;
+            p{
+              width:100%;
+              line-height: 0.6rem;
+              padding-right:0.2rem;
+              em{
+                float: right;
+                font-style: normal;
+                margin-right:0.2rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+  }
+
 }
+.no_padding{
+  padding-bottom:0;
+}
+/** 分配给 */
+  .user_list{
+    line-height: 0.8rem;
+    text-align: center;
+
+  }
+
 /** 底部按钮 */
 .btn{
   width:100%;
@@ -560,6 +656,7 @@ text-align: left !important;
     background-color: #f6f6f6;
   }
 }
+
 /** 转办人员信息*/
 .transfer_info{
   width:100%;
@@ -586,96 +683,6 @@ text-align: left !important;
     }
   }
 }
-/** 工作流*/
-.process{
-  width:100%;
-	background: #F0F2F5;
-  .agree_status{
-    background: #FFF;
-    padding-bottom:0.2rem;
-    .allInfo{
-      margin-left:0.8rem;
-      position: relative;
-      .info{
-        border-bottom:1px solid #ccc;
-        padding: 0.2rem;
-        position: relative;
-        vertical-align: middle;
-        p{
-          display: block;
-          margin-left:0.6rem;
-          span{
-            display: inline-block;
-            font-size:0.3rem;
-            margin-bottom:0.1rem;
-            margin-right: 0.4rem;
-          }
-          .node_name{
-            float:right;
-            width:3rem;
-          }
-        }
-      }
-      &:last-child {
-        margin-bottom:0.2rem;
-        .weui-wepay-flow__line{
-          display: none;
-        }
-      }
-    }
 
-	}
-  /** 审批意见*/
-  .choice{
-    width:100%;
-    margin-top:0.9rem;
-    background: #fff;
-    ul{
-      li{
-        font-size:0.3rem;
-        border-bottom: 1px solid #d9d9d9;
-	      position: relative;
-        .iconfont{
-          position: absolute;
-          left:0.4rem;
-          top:0.3rem;
-          width:0.4rem;
-          height:0.4rem;
-        }
-        .title{
-          position:absolute;
-          left:0;
-          top:-0.64rem;
-          width:100%;
-          border-bottom: 1px solid #d9d9d9;
-          padding-left: 0.4rem;
-          background:#fff;
-          display:none;
-          margin-bottom:0;
-          height:0.64rem;
-          line-height:0.64rem;
-        }
-        &:first-child .title{
-          display:block;
-        }
-        .choice_content{
-          padding-left: 1rem;
-          p{
-            width:100%;
-            line-height: 0.6rem;
-            padding-right:0.2rem;
-            em{
-              float: right;
-              font-style: normal;
-              margin-right:0.2rem;
-            }
-          }
-        }
-      }
-    }
-  }
-
-
-}
 
 </style>
