@@ -119,10 +119,12 @@
             v-if='status&&detailInfo.assignedTo_fgPlanInv'>
         </cell>
         <div v-transfer-dom>
-            <popup v-model="show8" position="left" width="40%">
-               <group>
-                    <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
-                </group>
+            <popup v-model="flowShow" position='left' width='40%'>
+               <div class="distribution-container" ref="distribution">
+                 <div>
+                   <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
+                 </div>
+               </div>
             </popup>
         </div>
        
@@ -131,6 +133,7 @@
 </template>
 <script>
 import { Group, Cell , Datetime , CellBox,Popup ,XInput,TransferDomDirective as TransferDom } from 'vux'
+import BScroll from 'better-scroll'
 export default {
     props:{
         'detailInfo':{
@@ -152,8 +155,9 @@ export default {
             storyshow:true,
             technicalAnalysis:false,
             approvalOpinion:false,
-            show8:false,
-            user:''
+            flowShow:false,
+            user:'',
+            distributionScroll: null
 
         }
     },
@@ -175,14 +179,25 @@ export default {
 
         },
         changeUser(){
-            this.show8 = !this.show8;
+            this.flowShow = !this.flowShow;
         },
         getUser(item){
-            this.show8 = false;
+            this.flowShow = false;
             this.$emit("userId",item)
             this.user = item.nickname;
         }
-    }
+    },
+    watch:{
+        flowShow(val){
+            if(val){
+                this.$nextTick(() => {
+                    if(!this.distributionScroll) {
+                    this.distributionScroll = new BScroll(this.$refs.distribution, {click: true})
+                    }
+                })
+            }
+        }
+    },
     
 }
 </script>
