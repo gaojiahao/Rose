@@ -47,7 +47,7 @@ let getDetailService={
     //获取分配人列表
     getTransferUserList(){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getAllUsers?sort=%5B%7B%22property%22%3A%22crtTime%22%2C%22direction%22%3A%22DESC%22%7D%5D'
+            url:'/H_roleplay-si/ds/getAllUsers?sort%3D%5B%7B%22property%22%3A%22userCode%22%2C%22direction%22%3A%22ASC%22%7D%5D'
         })
 
     },
