@@ -1,114 +1,114 @@
 <template>
     <group label-width="6em" label-margin-right="2em" label-align="left" v-if='detailInfo.transCode_fgPlanInv'>
-        <cell 
-            title="需求编码" 
-            :value="detailInfo.transCode_fgPlanInv.values" 
-            value-align="left" >
-        </cell>	
-        <cell 
-            title="项目名称" 
-            :value="detailInfo.ssReqProjectName_fgPlanInv.values" 
-            value-align="left">
-        </cell>
-        <cell 
-            title="需求名称" 
-            :value="detailInfo.ssRequireName_fgPlanInv.values" 
-            value-align="left">
-        </cell>
-        <cell 
-            title="提交人" 
-            :value="detailInfo.creatorName_fgPlanInv.values" 
+        <cell
+            title="需求编码"
+            :value="detailInfo.transCode_fgPlanInv.values"
             value-align="left" >
         </cell>
-        <cell 
-            title="创建时间" 
-            :value="detailInfo.crtTime_fgPlanInv.values" 
+        <cell
+            title="项目名称"
+            :value="detailInfo.ssReqProjectName_fgPlanInv.values"
+            value-align="left">
+        </cell>
+        <cell
+            title="需求名称"
+            :value="detailInfo.ssRequireName_fgPlanInv.values"
+            value-align="left">
+        </cell>
+        <cell
+            title="提交人"
+            :value="detailInfo.creatorName_fgPlanInv.values"
             value-align="left" >
         </cell>
-        <cell 
-            title="应用类型" 
-            :value="detailInfo.ssAppType_fgPlanInv.values" 
+        <cell
+            title="创建时间"
+            :value="detailInfo.crtTime_fgPlanInv.values"
+            value-align="left" >
+        </cell>
+        <cell
+            title="应用类型"
+            :value="detailInfo.ssAppType_fgPlanInv.values"
             value-align="left">
         </cell>
-        <cell 
-            title="应用名称" 
-            :value="detailInfo.ssAppName_fgPlanInv.values" 
+        <cell
+            title="应用名称"
+            :value="detailInfo.ssAppName_fgPlanInv.values"
             value-align="left">
         </cell>
-        <cell 
-            title="业务类型" 
-            :value="detailInfo.ssRequireType_fgPlanInv.values" 
+        <cell
+            title="业务类型"
+            :value="detailInfo.ssRequireType_fgPlanInv.values"
             value-align="left">
         </cell>
-        <cell 
-            title="实现方式" 
-            :value="detailInfo.ssProvideType_fgPlanInv.values" 
+        <cell
+            title="实现方式"
+            :value="detailInfo.ssProvideType_fgPlanInv.values"
             value-align="left">
         </cell>
-        <cell 
-            title="优先级" 
-            :value="detailInfo.requirementLevel_fgPlanInv.values" 
+        <cell
+            title="优先级"
+            :value="detailInfo.requirementLevel_fgPlanInv.values"
             value-align="left">
         </cell>
-        <cell 
-            title="预计交付时间" 
-            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)" 
+        <cell
+            title="预计交付时间"
+            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)"
             value-align="left"
             v-if='!status'>
         </cell>
-        <!-- <cell 
-            title="预计交付时间" 
-            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)" 
+        <!-- <cell
+            title="预计交付时间"
+            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)"
             value-align="left"
             v-if='status&&detailInfo.requirementEtc_fgPlanInv.values'>
         </cell> -->
-        <datetime  
-            format="YYYY-MM-DD HH:mm" 
-            @on-change="change" 
-            title="预计交付时间" 
-            placeholder="请选择" 
+        <datetime
+            format="YYYY-MM-DD HH:mm"
+            @on-change="change"
+            title="预计交付时间"
+            placeholder="请选择"
             value-align="left"
             v-if='status'>
-        </datetime>				
+        </datetime>
         <group>
-            <cell 
+            <cell
                 title="用户故事"
                 is-link
                 :border-intent="false"
                 :arrow-direction="storyshow ? 'up' : 'down'"
                 @click.native="storyshow = !storyshow">
             </cell>
-            <div  
+            <div
                 v-html="detailInfo.ssUserStory_fgPlanInv.values"
-                class='htmlfiel vux-1px-t' 
+                class='htmlfiel vux-1px-t'
                 v-if='storyshow'>
-            </div>  
+            </div>
         </group>
          <group>
             <div v-if='detailInfo.ssAcceptStandard_fgPlanInv.values.length>11'>
-                <cell 
+                <cell
                     title="验收标准"
                     is-link
                     :border-intent="false"
                     :arrow-direction="acceptStandard ? 'up' : 'down'"
                     @click.native="acceptStandard = !acceptStandard">
                 </cell>
-                <div  
-                    v-html="detailInfo.ssAcceptStandard_fgPlanInv.values"
-                    class='htmlfiel vux-1px-t' 
+                <div
+                    class='htmlfiel vux-1px-t'
                     v-if='acceptStandard'>
-                </div>  
+                  <div v-html="detailInfo.ssAcceptStandard_fgPlanInv.values"></div>
+                </div>
             </div>
-            <cell 
-                title="验收标准" 
-                :value="detailInfo.ssAcceptStandard_fgPlanInv.values" 
+            <cell
+                title="验收标准"
+                :value="detailInfo.ssAcceptStandard_fgPlanInv.values"
                 value-align="left"
                 v-else>
             </cell>
         </group>
         <group>
             <div v-if='detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length>11'>
-                <cell 
+                <cell
                     title="需求技术分析"
                     is-link
                     :border-intent="false"
@@ -117,16 +117,16 @@
                 </cell>
                 <cell-box v-if="technicalAnalysis">{{detailInfo.ssTechnicalAnalysis_fgPlanInv.values}}</cell-box>
             </div>
-            <cell 
-                title="需求技术分析" 
-                :value="detailInfo.ssTechnicalAnalysis_fgPlanInv.values" 
+            <cell
+                title="需求技术分析"
+                :value="detailInfo.ssTechnicalAnalysis_fgPlanInv.values"
                 value-align="left"
                 v-else-if='detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length>0&&detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length<=11'>
             </cell>
         </group>
         <group>
             <div v-if='detailInfo.ssApprovalOpinion_fgPlanInv.values.length>11'>
-                 <cell 
+                 <cell
                     title="需求评审意见"
                     is-link
                     :border-intent="false"
@@ -135,25 +135,27 @@
                 </cell>
                 <cell-box v-if="approvalOpinion">{{detailInfo.ssApprovalOpinion_fgPlanInv.values}}</cell-box>
             </div>
-             <cell 
-                title="需求评审意见" 
-                :value="detailInfo.ssApprovalOpinion_fgPlanInv.values" 
+             <cell
+                title="需求评审意见"
+                :value="detailInfo.ssApprovalOpinion_fgPlanInv.values"
                 value-align="left"
                 v-else>
             </cell>
         </group>
-        <cell 
-        title="分配给" 
-        value-align='left' 
-        is-link 
-        @click.native="changeUser" 
+        <cell
+        title="分配给"
+        value-align='left'
+        is-link
+        @click.native="changeUser"
         :value='user'
         v-if='status&&detailInfo.assignedTo_fgPlanInv'></cell>
         <div v-transfer-dom>
             <popup v-model="show8" position='left' width='40%'>
-               <group>
-                    <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
-                </group>
+               <div class="distribution-container" ref="distribution">
+                 <div>
+                   <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
+                 </div>
+               </div>
             </popup>
         </div>
     </group>
@@ -161,6 +163,7 @@
 <script>
 import { Group, Cell , Datetime , CellBox,Popup ,TransferDomDirective as TransferDom } from 'vux'
 import {formatTime} from '../maps/date.js'
+import BScroll from 'better-scroll'
 export default {
     props:{
         'detailInfo':{
@@ -183,7 +186,8 @@ export default {
             technicalAnalysis : false,
             approvalOpinion : false,
             show8:false,
-            user:''
+            user:'',
+          distributionScroll: null
         }
     },
     directives: {
@@ -195,7 +199,7 @@ export default {
 		Datetime,
         CellBox,
         Popup
-        
+
 	},
     methods:{
         formatTime,
@@ -214,14 +218,32 @@ export default {
             this.user = item.nickname;
         }
     },
+  watch:{
+      show8(val){
+        if(val){
+          this.$nextTick(() => {
+            if(!this.distributionScroll) {
+              this.distributionScroll = new BScroll(this.$refs.distribution, {click: true})
+            }
+          })
+        }
+      }
+  },
     created(){
     }
-    
-    
+
+
 }
 </script>
 <style lang="scss" >
-
+  .vux-popup-dialog{
+    overflow: hidden;
+  }
+.distribution-container{
+  height: 100%;
+  background-color: #fff;
+  overflow: hidden;
+}
 </style>
 
 
