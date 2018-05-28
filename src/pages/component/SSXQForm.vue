@@ -54,7 +54,7 @@
             title="预计交付时间"
             :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)"
             value-align="left"
-            v-if='!status'>
+            v-if='!status&&detailInfo.requirementEtc_fgPlanInv.values'>
         </cell>
         <!-- <cell
             title="预计交付时间"
@@ -150,7 +150,7 @@
         :value='user'
         v-if='status&&detailInfo.assignedTo_fgPlanInv'></cell>
         <div v-transfer-dom>
-            <popup v-model="show8" position='left' width='40%'>
+            <popup v-model="flowShow" position='left' width='40%'>
                <div class="distribution-container" ref="distribution">
                  <div>
                    <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
@@ -185,9 +185,9 @@ export default {
             storyshow : true,
             technicalAnalysis : false,
             approvalOpinion : false,
-            show8:false,
+            flowShow:false,
             user:'',
-          distributionScroll: null
+            distributionScroll: null
         }
     },
     directives: {
@@ -210,27 +210,26 @@ export default {
         },
         changeUser(){
             console.log("111");
-            this.show8 = !this.show8;
+            this.flowShow = !this.flowShow;
         },
         getUser(item){
-            this.show8 = false;
+            this.flowShow = false;
             this.$emit("userId",item)
             this.user = item.nickname;
         }
     },
-  watch:{
-      show8(val){
-        if(val){
-          this.$nextTick(() => {
-            if(!this.distributionScroll) {
-              this.distributionScroll = new BScroll(this.$refs.distribution, {click: true})
+    watch:{
+        flowShow(val){
+            if(val){
+            this.$nextTick(() => {
+                if(!this.distributionScroll) {
+                this.distributionScroll = new BScroll(this.$refs.distribution, {click: true})
+                }
+            })
             }
-          })
         }
-      }
-  },
-    created(){
     }
+    
 
 
 }
