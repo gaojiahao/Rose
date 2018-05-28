@@ -78,7 +78,7 @@
                                     <tab-item @on-item-click="onItemClick">BUG</tab-item>
                                 </tab>
                             </div>
-                            <p v-if='showTaskList.length==0' class='no_task'>最近没有已处理的任务</p>
+                            <p v-if='showTaskList.length === 0' class='when_null_ar'>最近没有已处理的任务</p>
                             <div class="ar_list_main" v-else>
                                 <div class="each_duty"
                                     v-for='(item1,index1) in showTaskList'
@@ -105,9 +105,6 @@
                                 </div>
                             </div>
                     </div>
-                    <!-- <div class="when_null_ar" v-else-if="listData.length === 0">
-                        您尚未完成任务
-                    </div> -->
                 </div>
             </div>                        
         </div>
@@ -210,14 +207,14 @@ export default{
             return new Promise((resolve, reject) => {
                 todoService.getList({
                     page: this.page
-                }).then(data => {
+                }).then( data => {
                     let tmpList = [];
-                    data.tableContent.map(item => {
+                    data.tableContent.map( item => {
                         let date = new Date().getTime(),
                             oldDate = new Date(item.startTime).getTime(),
                             days = date-oldDate,
                             time  = parseInt(days / (1000 * 60 * 60 * 24));
-                        if( item.status == '进行中' && !item.endTime ){
+                        if(item.status === '进行中' && !item.endTime){
                             let obj = Object.assign({}, {
                                 statusName: this.getStatusName(item),
                                 requireName: item.requireName || '见详情',
@@ -237,8 +234,7 @@ export default{
         },
         //获取所有已办列表
         getDoneList(){
-
-            let jsonPage={
+            let jsonPage = {
                 page:1,
                 start:0,
                 limit:10,
@@ -279,7 +275,6 @@ export default{
                 observer:true, //修改swiper自己或子元素时，自动初始化swiper
                 observeParents:true,//修改swiper的父元素时，自动初始化swiper
             })
-
         //上下滑动
         let Mescroll = this.Mescroll;
             mescroll = new Mescroll("mescroll",{
@@ -303,11 +298,9 @@ export default{
         // mescroll.updated();
     },
     created(){
-        (async()=>{
+        (async() => {
             this.getDate();
-            await tokenService.getToken().then(res=>{
-                //console.log(res);
-            })
+            await tokenService.getToken();
             let info = localStorage.getItem('ROSE_LOGIN_TOKEN');
             info = JSON.parse(info);
             this.userinfo = {
@@ -319,11 +312,9 @@ export default{
             this.getDoneList();
             
         })()
-        
-        
     },
     beforeRouteEnter: (to, from, next) => {
-        if(from.path=='/'){
+        if(from.path === '/'){
             localStorage.setItem('SAVE_POSITION',0)
         }
         next()
