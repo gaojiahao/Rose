@@ -519,7 +519,6 @@ text-align: left !important;
   padding-bottom:1.2rem;
   box-sizing: border-box;
   background: #fff;
-  position: fixed;
 }
 /** 底部按钮 */
 .btn{
