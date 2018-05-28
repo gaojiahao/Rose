@@ -73,13 +73,13 @@
       </group>
       </div>
       <!-- 操作按钮 -->
-      <div class="btn" v-if="taskStatus&&formInfo.transCode_fgPlanInv">
+      <div class="btn" v-if="taskIdInfo.dataCount==1">
         <span @click='transfer()' class='transfer'>转办</span>        
-        <span @click="reject()" class='reject' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("disagree")>=0'>拒绝</span>  
-        <span @click="agree()" class='agree' v-if='taskIdInfo.actions&&taskIdInfo.actions.indexOf("agreement")>=0'>同意</span>    
+        <span @click="reject()" class='reject' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("disagree")>=0'>拒绝</span>  
+        <span @click="agree()" class='agree' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("agreement")>=0'>同意</span>    
       </div>
       <!-- 任务确认框-->
-      <div v-transfer-dom>
+      <div v-transfer-dom >
         <confirm 
           v-model="confirmshow"
           @on-cancel="onCancel"
@@ -176,6 +176,9 @@
         Spinner
     },
     methods: {
+      getEventTar(e){
+        console.log(e)
+      },
       //任务同意
       agree(){
         this.confirmshow = true;
@@ -394,7 +397,8 @@
           })
           //获取任务的taskId
           await getDetailService.getTaskInfo(this.code).then( data=> {
-            this.taskIdInfo  = data.tableContent[0];
+            // this.taskIdInfo  = data.tableContent[0];
+            this.taskIdInfo  = data;
             if(data.dataCount!=0){
               formId = data.tableContent[0].viewId;
             }
@@ -515,6 +519,7 @@ text-align: left !important;
   padding-bottom:1.2rem;
   box-sizing: border-box;
   background: #fff;
+  position: fixed;
 }
 /** 底部按钮 */
 .btn{
