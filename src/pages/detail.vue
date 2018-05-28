@@ -3,8 +3,17 @@
     <div id='mescroll' class="detail" :class="{no_padding:!taskStatus}">
       <div class='detail-list-container ' ref="detailList">
         <div class='vux-1px-b'>
+          <component 
+            :is='currentComponent'
+            :detailInfo='formInfo'
+            :status='taskStatus'
+            :task='taskIdInfo'
+            :oldDetailInfo='oldformInfo'
+            :assignedList='userList'
+            @date='getDate'
+            @userId='getuser'></component>
           <!-- SSXQ -->
-          <ssxq
+          <!-- <ssxq
             :detailInfo='formInfo'
             :status='taskStatus'
             :task='taskIdInfo'
@@ -13,9 +22,9 @@
             @date='getDate'
             @userId='getuser'
             v-if='code.indexOf("SSXQ")>=0'>
-          </ssxq>
+          </ssxq> -->
           <!-- CPXQ -->
-          <cpxq
+          <!-- <cpxq
             :detailInfo='formInfo'
             :status='taskStatus'
             :task='taskIdInfo'
@@ -24,7 +33,7 @@
             @date='getDate'
             @userId='getuser'
             v-if='code.indexOf("CPXQ")>=0'>
-          </cpxq>
+          </cpxq> -->
           <!--工作流 -->
           <group v-if='formInfo.transCode_fgPlanInv'>
             <cell
@@ -106,8 +115,7 @@
                 v-for='(item1,index1) in transferUserList'
                 :key='index1'
                 @click='getTransfer(item1,index1)'
-                :class="{ choiced: index1===choicedIndex }"
-              >
+                :class="{ choiced: index1===choicedIndex }">
                 <span>{{index1+1}}</span>
                 <span>{{item1.userCode}}</span>
                 <span>{{item1.nickname}}</span>
@@ -141,7 +149,7 @@
         formInfo : {},              //任务信息
         code : '',                  //任务编码
         taskStatus : true,          //是否代办
-        taskIdInfo : [],            //任务id信息
+        taskIdInfo : {},            //任务id信息
         oldformInfo : {},           //旧接口任务信息
         infoList:[],                //工作流列表
         viewType:'',                //任务view类型
@@ -160,8 +168,9 @@
         transferInfo:{},            //选中转办人员信息
         choicedIndex:-1,            //转办人员选中的class
         devType:'',                 //业务类型
-        detailListScroll: null,   // 最外层容器滚动对象
-        transferListScroll: null, // 转办列表滚动对象
+        detailListScroll: null,     // 最外层容器滚动对象
+        transferListScroll: null,   // 转办列表滚动对象
+        currentComponent:''
       }
     },
     directives: {
@@ -183,9 +192,6 @@
         Spinner
     },
     methods: {
-      getEventTar(e){
-        console.log(e)
-      },
       //任务同意
       agree(){
         this.confirmshow = true;
@@ -232,12 +238,13 @@
             this.oldformInfo[key].etc = this.etc;
             //this.devType = this.oldformInfo[k].provideType.selection.data.text;
             if(this.oldformInfo[key].provideType){
-              this.devType = this.oldformInfo[key].provideType.value;
+              // this.devType = this.oldformInfo[key].provideType.value;
+              this.devType = this.oldformInfo[key].provideType.selection.data.text;
             }
           }
         }
         let wfPara = {
-          'taskId' : this.taskIdInfo.taskId,
+          'taskId' : this.taskIdInfo.tableContent[0].taskId,
           'businessKey':this.code,
           'devUser':this.assigned.userId,
           'devType':this.devType,
@@ -265,6 +272,10 @@
             this.showPositionValue = true;
             this.warn = data.message;
           }
+        }).catch(error=>{
+          console.log(error);
+          this.showPositionValue = true;
+          this.warn = error.message;
         })
 
       },
@@ -284,7 +295,7 @@
           this.warn = '【任务备注】不能为空'
         }
         else{
-          getDetailService.commitTask(data,this.taskIdInfo.taskId).then( data=>{
+          getDetailService.commitTask(data,this.taskIdInfo.tableContent[0].taskId).then( data=>{
             if(data.success){
               this.showPositionValue = true;
               this.warn = '提交成功';
@@ -316,7 +327,7 @@
             let data = {
               userId : this.transferInfo.userId,
               userCode : this.transferInfo.userCode,
-              taskId : this.taskIdInfo.taskId,
+              taskId : this.taskIdInfo.tableContent[0].taskId,
               comment : this.remark,
               taskTime : this.taskTime
 
@@ -384,6 +395,10 @@
             status = this.$route.query.status,
             formId = '';
         this.code = code;
+        if(code){
+          this.currentComponent = require('./component/'+code.split('_')[0]+'Form.vue').default;
+          console.log(this.currentComponent);
+        }
         if(status === 'done'){
           this.taskStatus = false;
         }
