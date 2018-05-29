@@ -112,7 +112,7 @@
         this.$router.push({
           path : '/detail',
           query : {
-            code : code,
+            transCode : code,
             status : 'do'
           }
          
