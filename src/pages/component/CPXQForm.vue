@@ -31,6 +31,12 @@
             value-align="left"
             v-if='detailInfo.requirementLevel_fgPlanInv.values'>
         </cell>
+        <cell
+            title="预计交付时间"
+            :value="formatTime(detailInfo.requirementEtc_fgPlanInv.values)"
+            value-align="left"
+            v-if='!status&&detailInfo.requirementEtc_fgPlanInv.values'>
+        </cell>
         <datetime  
             format="YYYY-MM-DD HH:mm" 
             @on-change="change" 
@@ -115,25 +121,14 @@
             value-align="left" 
             is-link 
             @click.native="changeUser" 
-            :value='user'
+            :value='assignedName.nickname'
             v-if='status&&detailInfo.assignedTo_fgPlanInv'>
         </cell>
-        <div v-transfer-dom>
-            <popup v-model="flowShow" position='left' width='40%'>
-               <div class="distribution-container" ref="distribution">
-                 <div>
-                   <p v-for="(item,index) in assignedList" :key="index" class='user_list vux-1px-b' @click='getUser(item)'>{{item.nickname}}</p>
-                 </div>
-               </div>
-            </popup>
-        </div>
-       
-
     </group>
 </template>
 <script>
-import { Group, Cell , Datetime , CellBox,Popup ,XInput,TransferDomDirective as TransferDom } from 'vux'
-import BScroll from 'better-scroll'
+import { Group, Cell , Datetime , CellBox} from 'vux'
+import {formatTime} from '../maps/date.js'
 export default {
     props:{
         'detailInfo':{
@@ -144,8 +139,8 @@ export default {
             type : Boolean,
             required : true
         },
-        'assignedList':{
-            type : Array,
+        'assignedName':{
+            type : Object,
             required : true
         }
     },
@@ -155,49 +150,24 @@ export default {
             storyshow:true,
             technicalAnalysis:false,
             approvalOpinion:false,
-            flowShow:false,
-            user:'',
-            distributionScroll: null
-
         }
-    },
-    directives: {
-      TransferDom
     },
 	components: {
 		Group,
 		Cell,
 		Datetime,
         CellBox,
-        Popup,
-        XInput
 	},
     methods:{
+        formatTime,
         change(value){
-            //console.log(value);
             this.$emit('date',value)
-
         },
         changeUser(){
-            this.flowShow = !this.flowShow;
+            //this.flowShow = !this.flowShow;
+            this.$emit("assigned",true)
         },
-        getUser(item){
-            this.flowShow = false;
-            this.$emit("userId",item)
-            this.user = item.nickname;
-        }
-    },
-    watch:{
-        flowShow(val){
-            if(val){
-                this.$nextTick(() => {
-                    if(!this.distributionScroll) {
-                    this.distributionScroll = new BScroll(this.$refs.distribution, {click: true})
-                    }
-                })
-            }
-        }
-    },
+    }
     
 }
 </script>
