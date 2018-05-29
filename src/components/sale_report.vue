@@ -8,6 +8,7 @@
             text-align="right"
             v-model.trim="helpCaptain"
             @on-change="captainSelect"
+            @on-focus='captainFocus'
             placeholder="请输入队长"
             ref="captainChooise"
             class="helpCaptain"
@@ -195,18 +196,17 @@ export default {
     //匹配队长
     captainSelect(e){
       //当输入内容清空时
-      if(!this.helpCaptain){
-        this.captainShow = false;
+      if(this.captainShow == false || this.helpCaptain == ''){
         return;
-      }
-      else{
-        //当输入内容不为空时
-        this.captainShow = true;
       }
       //获取队长信息
       optionService.getCaptain({ value:e }).then( data => {
         this.teamLeaderList = data.tableContent;
       })
+    },
+    //用户点击时
+    captainFocus(){
+      this.captainShow = true;
     },
     //选择队长
     getNickname(e){
