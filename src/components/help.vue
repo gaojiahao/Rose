@@ -159,12 +159,7 @@ export default {
           parent:'无'
         }
       ],
-      arr:[
-        {
-          value:[],
-          qty:''
-        }
-      ],
+      arr:[{ value:[], qty:'' }],
       Aclass:'',
       Bclass:'',    
       showNumber:false,
@@ -185,21 +180,15 @@ export default {
     numberComma
   },
   methods:{
+    //添加新数据
     createNew(){
-      this.arr.push({
-        value: [],
-        qty:''
-      }); //添加新数据
+      this.arr.push({ value: [], qty:'' }); 
     },
     deleteNew(){
-      if(this.arr.length==1){
-        this.arr=[
-          {
-            value: [],
-            qty:''
-          }
-        ]
-      }else{
+      if(this.arr.length == 1){
+        this.arr = [{ value: [], qty:'' }]
+      }
+      else{
         this.arr.splice(this.arr.length-1,1); //删除新数据
       }
     },
@@ -211,8 +200,8 @@ export default {
         return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     },
     listData(){
-      saleRepotService.saleRepotList().then(data=>{
-        for(let i = 0 ; i<data.tableContent.length ; i++){
+      saleRepotService.saleRepotList().then( data => {
+        for(let i = 0; i<data.tableContent.length; i++){
           this.list.push({
             name:data.tableContent[i]['trans_detail_uncalc.transObjCode'],
             value:data.tableContent[i]['trans_detail_uncalc.transObjCode']+'_'+i+'_'+data.tableContent[i]['trans_detail_uncalc.qty'],
@@ -226,7 +215,7 @@ export default {
       })
     },
     end(){
-      if(this.btnStatus==false){
+      if(this.btnStatus == false){
         return;
       }
       let that=this;
@@ -256,14 +245,13 @@ export default {
           })
           return;
       }
-      let dept =JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
+      let dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
 
       localStorage.setItem('HELP_ZONE_INFO',JSON.stringify({
         bank:this.bankValue[0],
         areaValue:this.areaValue[0],
         captain:this.helpCaptain,
       }))  
-      // localStorage.setItem('sale_captain',this.helpCaptain)
 
       let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
@@ -361,7 +349,7 @@ export default {
     },
     //获取区域
     getArea(){
-        optionService.getRegion().then(data=>{
+        optionService.getRegion().then( data => {
             for(let i = 0 ;i<data.length; i++){
                 this.areaList.push({
                     name:data[i].name,
@@ -372,9 +360,8 @@ export default {
     },
     //获取银行
     getBank(){
-        optionService.getBank().then(data=>{
+        optionService.getBank().then( data => {
             for(let i = 0 ; i<data.length ;i++){
-                //data.tableContent[i].name=data.tableContent[i].bankName;
                 data[i].value=data[i].name;
             }
             this.bankList=data;
@@ -383,11 +370,11 @@ export default {
     //获取队长
     teamLeader(){
          optionService.getCaptain().then(data=>{
-             for(let i = 0 ; i<data.tableContent.length ;i++){
-                data.tableContent[i].name=data.tableContent[i].nickname;
-                data.tableContent[i].value=data.tableContent[i].nickname;
+             for(let i = 0; i<data.tableContent.length; i++){
+                data.tableContent[i].name = data.tableContent[i].nickname;
+                data.tableContent[i].value = data.tableContent[i].nickname;
             }
-            this.teamLeaderList=data.tableContent;
+            this.teamLeaderList = data.tableContent;
          })
     },
     //匹配队长
@@ -410,33 +397,32 @@ export default {
     }
   },
   mounted(){
-    let that=this;
     //提交时间是否超过20点
-    saleRepotService.getModelData().then( res=>{
+    saleRepotService.getModelData().then( res => {
       if(res.submitAllow === 1){
-        that.btnStatus=true;
-      }else if(res.submitAllow === 0){
-        that.btnStatus=false;
-        that.$vux.alert.show({
+        this.btnStatus=true;
+      }
+      else if(res.submitAllow === 0){
+        this.btnStatus=false;
+        this.$vux.alert.show({
             title: '提示',
-            content: '时间已超过20点(不能提交)'
+            content: '每日提交截止时间为20:00'
         })
       }
     })
     this.getArea();
     this.getBank();
-  //  this.teamLeader();
     if(localStorage.getItem('help_saleReport')){
-      this.arr=JSON.parse(localStorage.getItem('help_saleReport')).saleReportArr;
-      this.Aclass=JSON.parse(localStorage.getItem('help_saleReport')).Aclass;
-      this.Bclass=JSON.parse(localStorage.getItem('help_saleReport')).Bclass;
+      this.arr = JSON.parse(localStorage.getItem('help_saleReport')).saleReportArr;
+      this.Aclass = JSON.parse(localStorage.getItem('help_saleReport')).Aclass;
+      this.Bclass = JSON.parse(localStorage.getItem('help_saleReport')).Bclass;
     }
     if(localStorage.getItem('HELP_ZONE_INFO')){
-      this.areaValue=[ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue ] ;
+      this.areaValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue ] ;
       this.bankValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank ] ;
       this.helpCaptain = JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain ;
     }
-   this.listData();
+    this.listData();
   },
   beforeRouteLeave(to,from,next){
     let that = this;
