@@ -8,7 +8,6 @@
             text-align="right"
             v-model.trim="helpCaptain"
             @on-change="captainSelect"
-            @on-focus="captainFocus" 
             placeholder="请输入队长"
             ref="captainChooise"
             class="helpCaptain"
@@ -185,25 +184,29 @@ export default {
   methods:{
     //获取队长
     teamLeader(){
-         optionService.getCaptain().then( data => {
-             for(let i = 0; i<data.tableContent.length; i++){
-                data.tableContent[i].name = data.tableContent[i].nickname;
-                data.tableContent[i].value = data.tableContent[i].nickname;
-            }
-            this.teamLeaderList = data.tableContent;
-         })
+      optionService.getCaptain().then( data => {
+        for(let i = 0; i<data.tableContent.length; i++){
+          data.tableContent[i].name = data.tableContent[i].nickname;
+          data.tableContent[i].value = data.tableContent[i].nickname;
+        }
+          this.teamLeaderList = data.tableContent;
+        })
     },
     //匹配队长
     captainSelect(e){
-      if(this.captainShow == false || this.helpCaptain == ''){
+      //当输入内容清空时
+      if(!this.helpCaptain){
+        this.captainShow = false;
         return;
       }
-      optionService.getCaptain({value:e}).then( data => {
+      else{
+        //当输入内容不为空时
+        this.captainShow = true;
+      }
+      //获取队长信息
+      optionService.getCaptain({ value:e }).then( data => {
         this.teamLeaderList = data.tableContent;
       })
-    },
-    captainFocus(){
-      this.captainShow = true;
     },
     //选择队长
     getNickname(e){
@@ -213,8 +216,8 @@ export default {
     },
     //获取区域
     getArea(){
-        optionService.getRegion().then(data=>{
-            for(let i = 0 ;i<data.length; i++){
+        optionService.getRegion().then( data => {
+            for(let i = 0; i<data.length; i++){
                 this.areaList.push({
                     name:data[i].name,
                     value:data[i].name,
@@ -226,29 +229,21 @@ export default {
     getBank(){
         optionService.getBank().then(data=>{
             for(let i = 0 ; i<data.length ;i++){
-                //data.tableContent[i].name=data.tableContent[i].bankName;
                 data[i].value=data[i].name;
             }
             this.bankList=data;
         })
     },
+    //添加新数据
     createNew(){
-      this.arr.push({
-        value: [],
-        qty:''
-      }); //添加新数据
-      // console.log(this.arr);
+      this.arr.push({ value: [], qty:'' }); 
     },
+    //删除新数据
     deleteNew(){
-      if(this.arr.length==1){
-        this.arr=[
-          {
-            value: [],
-            qty:''
-          }
-        ]
+      if(this.arr.length === 1){
+        this.arr=[{ value: [], qty:'' }]
       }else{
-        this.arr.splice(this.arr.length-1,1); //删除新数据
+        this.arr.splice(this.arr.length-1, 1); 
       }
     },
     //随机ID
@@ -276,19 +271,18 @@ export default {
       })
     },
     end(){
-      if(this.btnStatus==false){
+      if(!this.btnStatus){
         return;
       }
-      
-      let that = this;
-      let captain = this.helpCaptain;
-      let dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
-      let region = JSON.parse(localStorage.getItem('ROSE_OPTION')).region;
-      let bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
+      let captain = this.helpCaptain,
+          dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
+          region = JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
+          bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
+
       if(!this.helpCaptain){
-         this.$vux.alert.show({
-            title: '提示',
-            content: '请填写队长信息'
+        this.$vux.alert.show({
+          title: '提示',
+          content: '请填写队长信息'
         })
         return;
       }
@@ -315,7 +309,6 @@ export default {
               return;
             }
           for(let i = 0; i<this.arr.length; i++){
-            console.log(this.arr[0]);
             if(this.arr[0].value[0] != '无' && this.arr[i].qty === ''){
                 this.$vux.alert.show({
                   title: '提示',
@@ -336,17 +329,17 @@ export default {
             }
             if(!this.Aclass){
               this.$vux.alert.show({
-                  title: '提示',
-                  content: '请输入A类产品销售金额'
-                })
-                return;
+                title: '提示',
+                content: '请输入A类产品销售金额'
+              })
+              return;
             }
             else if(!this.Bclass){
               this.$vux.alert.show({
-                  title: '提示',
-                  content: '请输入B类产品销售金额'
-                })
-                return;
+                title: '提示',
+                content: '请输入B类产品销售金额'
+              })
+              return;
             }
             else{
               jsonData.transDetailUncalc.push(
@@ -401,7 +394,7 @@ export default {
                   captain:this.helpCaptain
                 })
               )
-              that.$router.push({path:'/count'})
+              this.$router.push({path:'/count'})
           
     },
     Ainput(e){
@@ -433,20 +426,21 @@ export default {
     }
   },
   mounted(){
-    let that=this;
+
     //获取地区
-    that.getArea();
+    this.getArea();
     //获取银行
-    that.getBank();
+    this.getBank();
     //提交时间是否超过20点
-    saleRepotService.getModelData().then(res=>{
-      if(res.submitAllow==1){
-        that.btnStatus=true;
-      }else if(res.submitAllow==0){
-        that.btnStatus=false;
-        that.$vux.alert.show({
+    saleRepotService.getModelData().then( res => {
+      if(res.submitAllow === 1){
+        this.btnStatus=true;
+      }
+      else if(res.submitAllow === 0){
+        this.btnStatus=false;
+        this.$vux.alert.show({
             title: '提示',
-            content: '时间已超过20点(不能提交)'
+            content: '每日提交截止时间为20:00'
         })
       }
     })
