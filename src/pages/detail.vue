@@ -243,15 +243,31 @@
             }
           }
         }
-        let wfPara = {
-          'taskId' : this.taskIdInfo.tableContent[0].taskId,
-          'businessKey':this.code,
-          'devUser':this.assigned.userId,
-          'devType':this.devType,
-          'transCode':this.code,
-          'result':this.agreeStatus,
-          'comment':this.remark,
-          'taskTime':this.taskTime
+        let wfPara ;        
+        if(this.taskIdInfo.tableContent[0].nodeName === '分配测试任务'){
+          wfPara = {
+            'taskId' : this.taskIdInfo.tableContent[0].taskId,
+            'businessKey':this.code,
+            'testUser':this.assigned.userId,
+            'devType':this.devType,
+            'transCode':this.code,
+            'result':this.agreeStatus,
+            'comment':this.remark,
+            'taskTime':this.taskTime
+          }
+
+        }
+        else{
+          wfPara = {
+            'taskId' : this.taskIdInfo.tableContent[0].taskId,
+            'businessKey':this.code,
+            'devUser':this.assigned.userId,
+            'devType':this.devType,
+            'transCode':this.code,
+            'result':this.agreeStatus,
+            'comment':this.remark,
+            'taskTime':this.taskTime
+          }
         }
         let data = {
           conn:20000,
