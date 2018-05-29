@@ -277,7 +277,8 @@ export default {
       let captain = this.helpCaptain,
           dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
           region = JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
-          bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank;
+          bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
+          groupName = JSON.parse(localStorage.getItem('ROSE_OPTION')).groupName;
 
       if(!this.helpCaptain){
         this.$vux.alert.show({
@@ -286,7 +287,7 @@ export default {
         })
         return;
       }
-      localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:region}))
+      localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:region,groupName:groupName}))
 
       let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
@@ -297,6 +298,7 @@ export default {
             "varchar2":captain,
             "varchar3":region,
             "varchar4":bank,
+            "varchar5":groupName,
           },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"

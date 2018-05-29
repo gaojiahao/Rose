@@ -263,6 +263,7 @@ export default {
             "varchar2": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain,
             "varchar3": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue,
             "varchar4": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank,
+            "varchar5": JSON.parse(localStorage.getItem('ROSE_OPTION')).groupName,
             },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"

@@ -131,7 +131,8 @@
             region: data.homeProvince || '',  //省份地区
             bank: data.homeBank || '',        //银行
             dept: data.area || '',            //事业部
-            captain: data.bmName || ''        //队长（暂无）
+            captain: data.bmName || '',        //队长（暂无）
+            groupName: data.groupName || ''        //常委
           }))
         }).catch(err => {
           this.$vux.alert.show({
