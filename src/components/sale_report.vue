@@ -17,6 +17,27 @@
           <group class="captain-container" :class="captainShow==false?'captainHide':''">
             <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
           </group>
+  
+          <group label-align='left' title="请选择相应的地区" v-if="man==true">
+            <popup-picker 
+              class="each_part"
+              title="所在地区" 
+              placeholder="请选择省份"
+              :data='areaList'
+              v-model="areaValue"
+              :columns="1">
+            </popup-picker>
+
+            <popup-picker 
+              class="each_part"
+              title="所属银行" 
+              placeholder="请选择银行"
+              :data='bankList'
+              v-model="bankValue"
+              :columns="1">
+            </popup-picker>
+          </group>
+
           <group 
             label-align='left' 
             :title="index>0?'':'请选择对应的产品'" 
@@ -151,6 +172,11 @@ export default {
       teamLeaderList:[],
       helpCaptain:'',
       captainShow:false,
+      areaList:[],
+      areaValue:[],
+      bankList:[],
+      bankValue:[],
+      man:false
     }
   },
   filters:{
@@ -184,6 +210,27 @@ export default {
       this.helpCaptain = e;
       this.captainShow = false;
       this.teamLeaderList = [];
+    },
+    //获取区域
+    getArea(){
+        optionService.getRegion().then(data=>{
+            for(let i = 0 ;i<data.length; i++){
+                this.areaList.push({
+                    name:data[i].name,
+                    value:data[i].name,
+                })
+            }
+        })
+    },
+    //获取银行
+    getBank(){
+        optionService.getBank().then(data=>{
+            for(let i = 0 ; i<data.length ;i++){
+                //data.tableContent[i].name=data.tableContent[i].bankName;
+                data[i].value=data[i].name;
+            }
+            this.bankList=data;
+        })
     },
     createNew(){
       this.arr.push({
@@ -387,6 +434,10 @@ export default {
   },
   mounted(){
     let that=this;
+    //获取地区
+    that.getArea();
+    //获取银行
+    that.getBank();
     //提交时间是否超过20点
     saleRepotService.getModelData().then(res=>{
       if(res.submitAllow==1){
