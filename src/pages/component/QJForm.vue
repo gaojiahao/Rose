@@ -2,7 +2,7 @@
     <group label-width="6em" label-margin-right="2em" label-align="left" v-if='detailInfo.transCode_fgPlanInv'>
         <cell 
             title="需求编码" 
-            value="detailInfo.transCode_fgPlanInv.values" 
+            :value="detailInfo.transCode_fgPlanInv.values" 
             value-align="left" >
         </cell>	
         <cell 
