@@ -3,37 +3,16 @@
     <div id='mescroll' class="detail" :class="{no_padding:!taskStatus}">
       <div class='detail-list-container ' ref="detailList">
         <div class='vux-1px-b'>
+          <!-- 任务列表 -->
           <component 
             :is='currentComponent'
             :detailInfo='formInfo'
             :status='taskStatus'
             :task='taskIdInfo'
             :oldDetailInfo='oldformInfo'
-            :assignedList='userList'
+            :assignedName='assigned'
             @date='getDate'
-            @userId='getuser'></component>
-          <!-- SSXQ -->
-          <!-- <ssxq
-            :detailInfo='formInfo'
-            :status='taskStatus'
-            :task='taskIdInfo'
-            :oldDetailInfo='oldformInfo'
-            :assignedList='userList'
-            @date='getDate'
-            @userId='getuser'
-            v-if='code.indexOf("SSXQ")>=0'>
-          </ssxq> -->
-          <!-- CPXQ -->
-          <!-- <cpxq
-            :detailInfo='formInfo'
-            :status='taskStatus'
-            :task='taskIdInfo'
-            :oldDetailInfo='oldformInfo'
-            :assignedList='userList'
-            @date='getDate'
-            @userId='getuser'
-            v-if='code.indexOf("CPXQ")>=0'>
-          </cpxq> -->
+            @assigned='getAssigned'></component>
           <!--工作流 -->
           <group v-if='formInfo.transCode_fgPlanInv'>
             <cell
@@ -83,6 +62,16 @@
           </group>
         </div>
       </div>
+    </div>
+    <!-- 分配给 -->
+    <div v-transfer-dom>
+        <popup v-model="assignShow" position='left' width='40%'>
+            <div class="distribution-container" ref="distribution">
+              <div>
+                <p v-for="(item,index) in userList" :key="index" class='user_list vux-1px-b' @click='getAssignedInfo(item)'>{{item.nickname}}</p>
+              </div>
+            </div>
+        </popup>
     </div>
     <!-- 任务确认框-->
     <div v-transfer-dom >
@@ -138,11 +127,9 @@
 
 <script>
   import getDetailService from './../service/getDetailService.js'
-  import Ssxq from "./component/SSXQForm.vue"
-  import Cpxq from "./component/CPXQForm.vue"
-  import Mbgl from "./component/MBGLForm.vue"
-  import {Group,Cell,Confirm,XInput ,XTextarea ,Toast ,Spinner,Flow, FlowState, FlowLine ,TransferDomDirective as TransferDom } from 'vux'
+  import {Group,Cell,Confirm,XInput ,XTextarea ,Toast ,Popup,Flow, FlowState, FlowLine ,TransferDomDirective as TransferDom } from 'vux'
   import BScroll from 'better-scroll'
+  import {querystring} from 'vux'
   export default {
     data() {
       return {
@@ -161,8 +148,7 @@
         showPositionValue:false,    //提示框状态
         warn:'',                    //提示内容
         userList:[],                //任务分配者列表
-        assignStatus:false,         //是否有分配人
-        assigned:{},                //任务被分配者
+        assigned:{},                //任务被分配者信息
         agreeStatus:1,              //是否同意 1同意，0 拒绝
         transferUserList:[],        //转办人员列表
         transferInfo:{},            //选中转办人员信息
@@ -170,16 +156,15 @@
         devType:'',                 //业务类型
         detailListScroll: null,     // 最外层容器滚动对象
         transferListScroll: null,   // 转办列表滚动对象
-        currentComponent:''
+        distributionScroll: null,   //分配给的滚动对象
+        currentComponent:'',        //当前需要渲染的组件
+        assignShow:false              //分配给列表默认状态
       }
     },
     directives: {
       TransferDom
     },
     components: {
-        Ssxq,
-        Cpxq,
-        Mbgl,
         Confirm,
         XInput ,
         XTextarea ,
@@ -189,9 +174,14 @@
         Group,
         Toast ,
         Cell,
-        Spinner
+        Popup
     },
     methods: {
+      //选择分配人
+      getAssignedInfo(item){       
+        this.assigned  = item;
+        this.assignShow = false;
+      },
       //任务同意
       agree(){
         this.confirmshow = true;
@@ -306,25 +296,20 @@
         let data = {
           jsonData:JSON.stringify(jsonData)
         }
-        if(this.remark === ''){
-          this.showPositionValue = true;
-          this.warn = '【任务备注】不能为空'
-        }
-        else{
-          getDetailService.commitTask(data,this.taskIdInfo.tableContent[0].taskId).then( data=>{
-            if(data.success){
-              this.showPositionValue = true;
-              this.warn = '提交成功';
-              setTimeout(()=>{
-                this.$router.push("/home");
-              },500)
-            }
-            else{
-              this.showPositionValue = true;
-              this.warn = data.message;
-            }
-          })
-        }
+        getDetailService.commitTask(data,this.taskIdInfo.tableContent[0].taskId).then( data=>{
+          if(data.success){
+            this.showPositionValue = true;
+            this.warn = '提交成功';
+            setTimeout(()=>{
+              this.$router.push("/home");
+            },500)
+          }
+          else{
+            this.showPositionValue = true;
+            this.warn = data.message;
+          }
+        })
+        
       },
       //确认提交任务
       onConfirm(){
@@ -367,17 +352,24 @@
         }
         //同意，拒绝
         else{
-          if(this.viewType === 'marking'){
-            if(this.agreeStatus === 0) {
-              if(this.remark === ''){
-                this.showPositionValue = true;
-                this.warn = '【备注】不能为空'
-              }
-              else{
-                this.SaveData()
-              }
+          //拒绝
+          if(this.agreeStatus === 0){
+            if(this.remark === ''){
+              this.showPositionValue = true;
+              this.warn = '【备注】不能为空'
             }
             else{
+              if(this.viewType === 'marking'){
+                this.SaveData()
+              }
+              else if(this.viewType === 'view'){
+                this.commitTask()
+              }
+            }
+          }
+          //同意
+          else{
+            if(this.viewType === 'marking'){
               if(this.taskIdInfo.dataCount === 1&&this.taskIdInfo.tableContent[0].nodeName === '承接任务'&&this.etc === ''){
                 this.showPositionValue = true;
                 this.warn = '【预计交付时间】不能为空';
@@ -390,9 +382,9 @@
                 this.SaveData()
               }
             }
-          }
-          else if(this.viewType === 'view'){
-            this.commitTask()
+            else{
+              this.commitTask()
+            }
           }
         }
       },
@@ -401,31 +393,39 @@
         this.etc = res;
       },
       //任务被分配人
-      getuser(res){
-        this.assigned  = res;
-        this.assignStatus = true;
+      getAssigned(res){
+        this.assignShow = res;
       }
     },
     created() {
-        let code = this.$route.query.code,
-            status = this.$route.query.status,
-            formId = '';
+      let code = '',
+          formId = '',
+          status = ''
+        let query = querystring.parse(location.search.slice(1));
+        if(query){
+          code = query.code;
+          status = 'do'
+
+        }
+        else{
+          code = this.$route.query.code;
+          status = this.$route.query.status;
+        }       
         this.code = code;
-        if(code){
+        if(code !='' ){
           this.currentComponent = require('./component/'+code.split('_')[0]+'Form.vue').default;
-          console.log(this.currentComponent);
         }
         if(status === 'done'){
           this.taskStatus = false;
         }
         (async()=>{
+          let arr = []
           //获取formId
           await getDetailService.getFormId(this.code).then(data=>{
             formId = data[0].uniqueId;
           })
           //获取任务的taskId
           await getDetailService.getTaskInfo(this.code).then( data=> {
-            // this.taskIdInfo  = data.tableContent[0];
             this.taskIdInfo  = data;
             if(data.dataCount!=0){
               formId = data.tableContent[0].viewId;
@@ -433,11 +433,11 @@
           })
           //获取要渲染的任务信息
           await getDetailService.getDetailInfo(formId,this.code).then( data=> {
+            //console.log(data);
             this.formInfo = data;
           })
           //获取viewType来确定提交的接口
           await getDetailService.getViewId(formId).then( data=>{
-            //console.log(data[0].config);
             this.viewType = data[0].viewType;
             //console.log(this.viewType);
 
@@ -460,6 +460,7 @@
 
     },
     mounted() {
+      //根据转办人列表创建better-scroll
       this.$nextTick(() => {
         if(!this.detailListScroll){
           this.detailListScroll = new BScroll(this.$refs.detailList, {
@@ -471,7 +472,25 @@
           })
         }
       })
-    }
+    },
+    watch:{
+        //监听分配给的列表状态，创建better-scroll
+        assignShow(val){
+          if(val){
+            this.$nextTick(() => {
+                if(!this.distributionScroll) {
+                  this.distributionScroll = new BScroll(this.$refs.distribution, {
+                    click: true,
+                    bounce:{
+                      top: false,
+                      bottom: false
+                    }
+                  })
+                }
+            })
+          }
+        }
+    },
   }
 </script>
 
@@ -593,7 +612,6 @@
           }
         }
       }
-
     }
     /** 审批意见*/
     .choice{
@@ -659,6 +677,11 @@
     text-align: center;
 
   }
+  .distribution-container{
+    height: 100%;
+    background-color: #fff;
+    overflow: hidden;
+  }
 
 /** 底部按钮 */
 .btn{
@@ -714,6 +737,5 @@
     }
   }
 }
-
 
 </style>
