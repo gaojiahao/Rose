@@ -8,8 +8,8 @@
                     <p class="p_name">{{userinfo.name}}</p>
                     <p class="p_dep">{{userinfo.department}}</p>
                 </div>
-                <div class="p_tips" v-if="listData.length > 0 &&listData.length<=6">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                <div class="p_tips" v-else-if="listData.length > 6">您最近收到 <span class="tips_nums">6</span> 个新消息</div>
+                <div class="p_tips" v-if="listData.length > 0 &&listData.length<=6" @click='goTODO'>您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                <div class="p_tips" v-else-if="listData.length > 6" @click='goTODO'>您最近收到 <span class="tips_nums">6</span> 个新消息</div>
                 <div class="p_tips" v-else-if="listData.length === 0">
                     <i class="iconfont icon-dengguang"></i> 
                     没有待办一身轻松
