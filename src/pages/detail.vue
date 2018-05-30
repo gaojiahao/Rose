@@ -1,138 +1,145 @@
 <template>
   <div class="pages">
-    <div id='mescroll' class="detail" :class="{no_padding:!taskStatus}">
-      <div class='detail-list-container ' ref="detailList">
-        <div class='vux-1px-b'>
-          <!-- 任务列表 -->
-          <component 
-            :is='currentComponent'
-            :detailInfo='formInfo'
-            :status='taskStatus'
-            :task='taskIdInfo'
-            :oldDetailInfo='oldformInfo'
-            :assignedName='assigned'
-            @date='getDate'
-            @assigned='getAssigned'></component>
-          <!--工作流 -->
-          <group v-if='formInfo.transCode_fgPlanInv'>
-            <cell
-              title="工作流"
-              is-link
-              :border-intent="false"
-              :arrow-direction="flowShow ? 'up' : 'down'"
-              @click.native="flowShow = !flowShow">
-            </cell>
-            <div class='process vux-1px-t' v-if="flowShow">
-              <div class='agree_status'>
-                <div v-for="(tab,index) in infoList" class='allInfo' :key="index">
-                  <flow orientation="vertical">
-                    <flow-state :is-done="tab.status||index<infoList.length-1?true:false" :state="index+1"></flow-state>
-                    <flow-line  :is-done="tab.status?true:false" ></flow-line>
+    <div>
+      <div id='mescroll' class="detail" :class="{no_padding:!taskStatus}">
+        <div class='detail-list-container ' ref="detailList">
+          <div class='vux-1px-b'>
+            <!-- 任务列表 -->
+            <component 
+              :is='currentComponent'
+              :detailInfo='formInfo'
+              :status='taskStatus'
+              :task='taskIdInfo'
+              :oldDetailInfo='oldformInfo'
+              :assignedName='assigned'
+              @date='getDate'
+              @assigned='getAssigned'></component>
+            <!--工作流 -->
+            <group v-if='formInfo.transCode_fgPlanInv'>
+              <cell
+                title="工作流"
+                is-link
+                :border-intent="false"
+                :arrow-direction="flowShow ? 'up' : 'down'"
+                @click.native="flowShow = !flowShow">
+              </cell>
+              <div class='process vux-1px-t' v-if="flowShow">
+                <div class='agree_status'>
+                  <div v-for="(tab,index) in infoList" class='allInfo' :key="index">
+                    <flow orientation="vertical">
+                      <flow-state :is-done="tab.status||index<infoList.length-1?true:false" :state="index+1"></flow-state>
+                      <flow-line  :is-done="tab.status?true:false" ></flow-line>
 
-                  </flow>
-                  <div class='info vux-1px-b' >
-                    <p>
-                      <span class='node_name'>{{tab.nodeName}}</span>
-                      <span class='user_name'>{{tab.userName}}</span>
-                    </p>
-                    <p>
-                      <span v-if="tab.endTime">{{tab.endTime}}</span>
-                    </p>
+                    </flow>
+                    <div class='info vux-1px-b' >
+                      <p>
+                        <span class='node_name'>{{tab.nodeName}}</span>
+                        <span class='user_name'>{{tab.userName}}</span>
+                      </p>
+                      <p>
+                        <span v-if="tab.endTime">{{tab.endTime}}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="choice">
-                <ul>
-                  <li v-for="(tab,index) in infoList" :key="index" v-if="tab.message">
-                    <p class='title'>审批意见</p>
-                    <!-- <i class='iconfont icon-yonghu'></i> -->
-                    <img src='../common/touxiang.png' alt='' class='iconfont'/>
-                    <div class="choice_content">
-                      <p>
-                        <span>{{tab.userName}}</span>
-                        <em>{{tab.endTime}}</em>
-                      </p>
-                      <p>{{tab.message}}</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+                <div class="choice">
+                  <ul>
+                    <li v-for="(tab,index) in infoList" :key="index" v-if="tab.message">
+                      <p class='title'>审批意见</p>
+                      <!-- <i class='iconfont icon-yonghu'></i> -->
+                      <img src='../common/touxiang.png' alt='' class='iconfont'/>
+                      <div class="choice_content">
+                        <p>
+                          <span>{{tab.userName}}</span>
+                          <em>{{tab.endTime}}</em>
+                        </p>
+                        <p>{{tab.message}}</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
 
-            </div>
-          </group>
+              </div>
+            </group>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- 分配给 -->
-    <div v-transfer-dom>
-        <popup v-model="assignShow" position='left' width='40%'>
-            <div class="distribution-container" ref="distribution">
-              <div>
-                <p v-for="(item,index) in userList" :key="index" class='user_list vux-1px-b' @click='getAssignedInfo(item)'>{{item.nickname}}</p>
+      <!-- 分配给 -->
+      <div v-transfer-dom>
+          <popup v-model="assignShow" position='left' width='40%'>
+              <div class="distribution-container" ref="distribution">
+                <div>
+                  <p v-for="(item,index) in userList" :key="index" class='user_list vux-1px-b' @click='getAssignedInfo(item)'>{{item.nickname}}</p>
+                </div>
               </div>
+          </popup>
+      </div>
+      <!-- 任务确认框-->
+      <div v-transfer-dom >
+        <confirm
+          v-model="confirmshow"
+          @on-cancel="onCancel"
+          @on-confirm="onConfirm">
+          <group>
+            <x-input
+              title='实际工时:'
+              type='number'
+              v-model='taskTime'>
+            </x-input>
+            <x-textarea
+              title='任务备注:'
+              v-model='remark'
+              class='vux-1px-b'>
+            </x-textarea>
+          </group>
+          <div class='transfer_info'
+              v-if='transferUserList.length>0'>
+            <div class='transfer_title vux-1px-b'>
+              <span>序号</span>
+              <span>工号</span>
+              <span>姓名</span>
             </div>
-        </popup>
-    </div>
-    <!-- 任务确认框-->
-    <div v-transfer-dom >
-      <confirm
-        v-model="confirmshow"
-        @on-cancel="onCancel"
-        @on-confirm="onConfirm">
-        <group>
-          <x-input
-            title='实际工时:'
-            type='number'
-            v-model='taskTime'>
-          </x-input>
-          <x-textarea
-            title='任务备注:'
-            v-model='remark'
-            class='vux-1px-b'>
-          </x-textarea>
-        </group>
-        <div class='transfer_info'
-             v-if='transferUserList.length>0'>
-          <div class='transfer_title vux-1px-b'>
-            <span>序号</span>
-            <span>工号</span>
-            <span>姓名</span>
+            <div class='transfer_list' ref="transferList">
+              <ul>
+                <li
+                  v-for='(item1,index1) in transferUserList'
+                  :key='index1'
+                  @click='getTransfer(item1,index1)'
+                  :class="{ choiced: index1===choicedIndex }">
+                  <span>{{index1+1}}</span>
+                  <span>{{item1.userCode}}</span>
+                  <span>{{item1.nickname}}</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class='transfer_list' ref="transferList">
-            <ul>
-              <li
-                v-for='(item1,index1) in transferUserList'
-                :key='index1'
-                @click='getTransfer(item1,index1)'
-                :class="{ choiced: index1===choicedIndex }">
-                <span>{{index1+1}}</span>
-                <span>{{item1.userCode}}</span>
-                <span>{{item1.nickname}}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </confirm>
+        </confirm>
+      </div>
+      <!-- 弹框提示 -->
+      <toast v-model="showPositionValue" type="text" :text='warn' is-show-mask  position="middle"></toast>
+      <!-- 操作按钮 -->
+      <div class="btn" v-if="taskIdInfo.dataCount===1&&taskIdInfo.tableContent[0].isMyTask===1" >
+        <span @click='transfer()' class='transfer'>转办</span>
+        <span @click="reject()" class='reject' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("disagree")>=0'>拒绝</span>
+        <span @click="agree()" class='agree' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("agreement")>=0'>同意</span>
+      </div>
     </div>
-    <!-- 弹框提示 -->
-    <toast v-model="showPositionValue" type="text" :text='warn' is-show-mask  position="middle"></toast>
-    <!-- 操作按钮 -->
-    <div class="btn" v-if="taskIdInfo.dataCount===1&&taskIdInfo.tableContent[0].isMyTask===1" >
-      <span @click='transfer()' class='transfer'>转办</span>
-      <span @click="reject()" class='reject' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("disagree")>=0'>拒绝</span>
-      <span @click="agree()" class='agree' v-if='taskIdInfo.tableContent[0].actions&&taskIdInfo.tableContent[0].actions.indexOf("agreement")>=0'>同意</span>
+    <!-- loadding动画 -->
+    <div class='loadding' v-if='showLoadding'>
+        <spinner type='dots' size='50px'></spinner>
     </div>
   </div>
 </template>
 
 <script>
   import getDetailService from './../service/getDetailService.js'
-  import {Group,Cell,Confirm,XInput ,XTextarea ,Toast ,Popup,Flow, FlowState, FlowLine ,TransferDomDirective as TransferDom } from 'vux'
+  import {Group,Cell,Confirm,XInput ,XTextarea ,Toast ,Popup,Spinner,Flow, FlowState, FlowLine ,TransferDomDirective as TransferDom } from 'vux'
   import BScroll from 'better-scroll'
   import {querystring} from 'vux'
   export default {
     data() {
       return {
+        showLoadding:true,          //loadding状态
         formInfo : {},              //任务信息
         code : '',                  //任务编码
         taskStatus : true,          //是否代办
@@ -174,7 +181,8 @@
         Group,
         Toast ,
         Cell,
-        Popup
+        Popup,
+        Spinner
     },
     methods: {
       //选择分配人
@@ -436,6 +444,7 @@
             //console.log(this.viewType);
 
           })
+          this.showLoadding = false;
 
         })()
         //获取老接口任务信息用于提交
@@ -540,6 +549,21 @@
   }
   .weui-cells{
     margin-top:0;
+  }
+}
+/** loadding动画 */
+.loadding{
+  position: relative;
+  width:100%;
+  height:100%;
+  background: #fff;
+  z-index:500;
+  .vux-spinner{
+      position: absolute;
+      left:50%;
+      top:50%;
+      margin-top:-25px;
+      margin-left:-25px;
   }
 }
 .detail{
