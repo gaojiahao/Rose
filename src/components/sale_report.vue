@@ -299,7 +299,7 @@ export default {
             "varchar3":region,
             "varchar4":bank,
             "varchar5":groupName,
-            "varchar6": "否",
+            "varchar6": "否"
           },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
