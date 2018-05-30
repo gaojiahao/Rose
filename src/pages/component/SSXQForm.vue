@@ -28,27 +28,32 @@
         <cell
             title="应用类型"
             :value="detailInfo.ssAppType_fgPlanInv.values"
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.ssAppType_fgPlanInv.values.length>0'>
         </cell>
         <cell
             title="应用名称"
             :value="detailInfo.ssAppName_fgPlanInv.values"
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.ssAppName_fgPlanInv.values.length>0'>
         </cell>
         <cell
             title="业务类型"
             :value="detailInfo.ssRequireType_fgPlanInv.values"
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.ssRequireType_fgPlanInv.values.length>0'>
         </cell>
         <cell
             title="实现方式"
             :value="detailInfo.ssProvideType_fgPlanInv.values"
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.ssProvideType_fgPlanInv.values.length>0'>
         </cell>
         <cell
             title="优先级"
             :value="detailInfo.requirementLevel_fgPlanInv.values"
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.requirementLevel_fgPlanInv.values.length>0'>
         </cell>
         <cell
             title="预计交付时间"
@@ -70,21 +75,30 @@
             value-align="left"
             v-if='status'>
         </datetime>
-        <group>
+        <group v-if='detailInfo.ssUserStory_fgPlanInv.values.length>0'>
             <cell
                 title="用户故事"
-                is-link
-                :border-intent="false"
-                :arrow-direction="storyshow ? 'up' : 'down'"
-                @click.native="storyshow = !storyshow">
+                :value="detailInfo.ssUserStory_fgPlanInv.values"
+                value-align="left"
+                v-if='detailInfo.ssUserStory_fgPlanInv.values.length<11'>
             </cell>
-            <div
-                v-html="detailInfo.ssUserStory_fgPlanInv.values"
-                class='htmlfiel vux-1px-t'
-                v-if='storyshow'>
+            <div v-else>
+                <cell
+                    title="用户故事"
+                    is-link
+                    :border-intent="false"
+                    :arrow-direction="storyshow ? 'up' : 'down'"
+                    @click.native="storyshow = !storyshow">
+                </cell>
+                <div
+                    v-html="detailInfo.ssUserStory_fgPlanInv.values"
+                    class='htmlfiel vux-1px-t'
+                    v-if='storyshow'>
+                </div>
             </div>
+            
         </group>
-         <group>
+         <group v-if='detailInfo.ssAcceptStandard_fgPlanInv.values.length>0'>
             <div v-if='detailInfo.ssAcceptStandard_fgPlanInv.values.length>11'>
                 <cell
                     title="验收标准"
@@ -106,7 +120,7 @@
                 v-else>
             </cell>
         </group>
-        <group>
+        <group v-if='detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length>0'>
             <div v-if='detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length>11'>
                 <cell
                     title="需求技术分析"
@@ -121,10 +135,10 @@
                 title="需求技术分析"
                 :value="detailInfo.ssTechnicalAnalysis_fgPlanInv.values"
                 value-align="left"
-                v-else-if='detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length>0&&detailInfo.ssTechnicalAnalysis_fgPlanInv.values.length<=11'>
+                v-else>
             </cell>
         </group>
-        <group>
+        <group v-if='detailInfo.ssApprovalOpinion_fgPlanInv.values.length>0'>
             <div v-if='detailInfo.ssApprovalOpinion_fgPlanInv.values.length>11'>
                  <cell
                     title="需求评审意见"
