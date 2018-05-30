@@ -1,114 +1,113 @@
 <template>
     <div class="pages">
-        <div class='home_scroll' ref='bescroll'>
-            <div class='scroll_container' ref='content'>          
-                <div class="p_mod">
-                    <div class="wea_mod">{{this.week}}</div>
-                    <div class="p_info">
-                        <img class="p_head" :src="userinfo.avatar" alt="aspect">
-                        <p class="p_name">{{userinfo.name}}</p>
-                        <p class="p_dep">{{userinfo.department}}</p>
-                    </div>
-                    <div class="p_tips" v-if="listData.length > 0 &&listData.length<=6" @click='goTODO'>您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                    <div class="p_tips" v-else-if="listData.length > 6" @click='goTODO'>您最近收到 <span class="tips_nums">6</span> 个新消息</div>
-                    <div class="p_tips" v-else-if="listData.length === 0">
-                        <i class="iconfont icon-dengguang"></i> 
-                        没有待办一身轻松
-                    </div>
+        <div id='mescroll' class="mescroll" ref='mescroll' >           
+            <div class="p_mod">
+                <div class="wea_mod">{{this.week}}</div>
+                <div class="p_info">
+                    <img class="p_head" :src="userinfo.avatar" alt="aspect">
+                    <p class="p_name">{{userinfo.name}}</p>
+                    <p class="p_dep">{{userinfo.department}}</p>
                 </div>
-                <div class="msg_mod">
-                    <div class="wait_mod">
-                        <div class="wait_title_mod">
-                            <p class="btm_text">PENDING</p>
-                            <div class="xx_title">您的新待办
-                                <span class="check_all" @click='goTODO'>
-                                    查看全部
-                                    <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="wait_list_mod swiper-container">
-                                <div class="wait_list swiper-wrapper" >
-                                    <template v-if="listData.length > 0">
-                                        <div 
-                                            class="each_duty swiper-slide"
-                                            v-for='(item,index) in listData'
-                                            :key='index'
-                                            v-if='index<6'>
-                                            <div class="duty_top">
-                                                <p class="duty_name">
-                                                    <span class="duty_status">
-                                                        <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info duty_wait_c">待处理</span>
-                                                    </span>
-                                                    <span class="duty_name_text">{{item.requireName}}</span>
-                                                </p>
-                                            </div>
-                                            <div class="duty_btm">
-                                                <p class="duty_code">
-                                                    {{item.code}}
-                                                    <span class="duty_crt_man">{{item.crtName}}</span>
-                                                </p>
-                                                <p class="duty_time">{{item.time | filterTime}}</p>
-                                            </div>
-                                            <span class="red_caution"></span>
-                                        </div>
-                                    </template>
-                                    <div class="when_null" v-else-if="listData.length === 0">
-                                        <i class="iconfont icon-xiaolian"></i>
-                                        <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
-                                    </div>
-                                </div>
+                <div class="p_tips" v-if="listData.length > 0 &&listData.length<=6">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                <div class="p_tips" v-else-if="listData.length > 6">您最近收到 <span class="tips_nums">6</span> 个新消息</div>
+                <div class="p_tips" v-else-if="listData.length === 0">
+                    <i class="iconfont icon-dengguang"></i> 
+                    没有待办一身轻松
+                </div>
+            </div>
+            <div class="msg_mod">
+                <div class="wait_mod">
+                    <div class="wait_title_mod">
+                        <p class="btm_text">PENDING</p>
+                        <div class="xx_title">您的新待办
+                            <span class="check_all" @click='goTODO'>
+                                查看全部
+                                <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
+                            </span>
                         </div>
                     </div>
-                    <div class="ar_mod">
-                        <div class="ar_title_mod">
-                            <p class="btm_text">PROCESSED</p>
-                            <div class="xx_title">您的已办
-                                <span class="check_all" @click='goDONE'>
-                                    查看全部
-                                    <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="ar_list_mod" >
-                                <div class="ar_list_top">
-                                    <tab active-color='#3A3A3A'>
-                                        <tab-item selected @on-item-click="onItemClick">实施</tab-item>
-                                        <tab-item @on-item-click="onItemClick">产品</tab-item>
-                                        <tab-item @on-item-click="onItemClick">BUG</tab-item>
-                                    </tab>
-                                </div>
-                                <p v-if='showTaskList.length === 0' class='when_null_ar'>最近没有已处理的任务</p>
-                                <div class="ar_list_main" v-else>
-                                    <div class="each_duty"
-                                        v-for='(item1,index1) in showTaskList'
-                                        :index='index1'
-                                        v-if='index1<6'
-                                        @click='goDoneDetail(item1.businessKey)'>
+                    <div class="wait_list_mod swiper-container">
+                            <div class="wait_list swiper-wrapper" >
+                                <template v-if="listData.length > 0">
+                                    <div 
+                                        class="each_duty swiper-slide"
+                                        v-for='(item,index) in listData'
+                                        :key='index'
+                                        @click='goDoDetail(item.code)'
+                                        v-if='index<6'>
                                         <div class="duty_top">
                                             <p class="duty_name">
                                                 <span class="duty_status">
-                                                    <span class="duty_status_name">{{item1.processName}}</span>
+                                                    <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info duty_wait_c">待处理</span>
                                                 </span>
-                                                <span class="duty_name_text">{{item1.requireName}}</span>
+                                                <span class="duty_name_text">{{item.requireName}}</span>
                                             </p>
                                         </div>
-                                            
                                         <div class="duty_btm">
                                             <p class="duty_code">
-                                            {{item1.businessKey}}
-                                                <span class="duty_crt_man">{{item1.crtName}}</span>
+                                                {{item.code}}
+                                                <span class="duty_crt_man">{{item.crtName}}</span>
                                             </p>
-                                            <p class="duty_time">{{item1.crtTime | filterTime}}</p>
+                                            <p class="duty_time">{{item.time | filterTime}}</p>
                                         </div>
-                                        
+                                        <span class="red_caution"></span>
                                     </div>
+                                </template>
+                                <div class="when_null" v-else-if="listData.length === 0">
+                                    <i class="iconfont icon-xiaolian"></i>
+                                    <span>Perfection is achieved<br>not when there is nothing more to add<br>but when there is nothing left to take away</span>
                                 </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="ar_mod">
+                    <div class="ar_title_mod">
+                        <p class="btm_text">PROCESSED</p>
+                        <div class="xx_title">您的已办
+                            <span class="check_all" @click='goDONE'>
+                                查看全部
+                                <x-icon class="right_arrow" type="ios-arrow-forward" size="12" ></x-icon>
+                            </span>
                         </div>
                     </div>
-                </div>                        
-            </div>
-        </div>        
+                    <div class="ar_list_mod" >
+                            <div class="ar_list_top">
+                                <tab active-color='#3A3A3A'>
+                                    <tab-item selected @on-item-click="onItemClick">实施</tab-item>
+                                    <tab-item @on-item-click="onItemClick">产品</tab-item>
+                                    <tab-item @on-item-click="onItemClick">BUG</tab-item>
+                                </tab>
+                            </div>
+                            <p v-if='showTaskList.length === 0' class='when_null_ar'>最近没有已处理的任务</p>
+                            <div class="ar_list_main" v-else>
+                                <div class="each_duty"
+                                    v-for='(item1,index1) in showTaskList'
+                                    :index='index1'
+                                    v-if='index1<6'
+                                    @click='goDoneDetail(item1.businessKey)'>
+                                    <div class="duty_top">
+                                        <p class="duty_name">
+                                            <span class="duty_status">
+                                                <span class="duty_status_name">{{item1.processName}}</span>
+                                            </span>
+                                            <span class="duty_name_text">{{item1.requireName}}</span>
+                                        </p>
+                                    </div>
+                                        
+                                    <div class="duty_btm">
+                                        <p class="duty_code">
+                                        {{item1.businessKey}}
+                                            <span class="duty_crt_man">{{item1.crtName}}</span>
+                                        </p>
+                                        <p class="duty_time">{{item1.crtTime | filterTime}}</p>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>                        
+        </div>
         <div class='loadding' v-if='showNews'>
             <spinner type='dots' size='50px'></spinner>
         </div>
@@ -121,9 +120,8 @@ import tokenService from '../service/tokenService'
 import todoService from './../service/todoService'
 import getDoneService from '../service/getDoneService'
 import businessMap from './maps/business'
-import BScroll from 'better-scroll'
 let mySwiper
-let bScroll
+let mescroll
 export default{
     data(){
         return {
@@ -275,26 +273,30 @@ export default{
         // 左右滑动
         let Swiper = this.Swiper;
             mySwiper = new Swiper ('.swiper-container', {
-                preventClicks : false,
                 direction: 'horizontal',
                 slidesPerView: 'auto',
                 observer:true, //修改swiper自己或子元素时，自动初始化swiper
                 observeParents:true,//修改swiper的父元素时，自动初始化swiper
-                on:{
-                    click: ()=>{
-                        var index = mySwiper.activeIndex;
-                        this.$router.push({
-                            path : "/detail",
-                            query : {
-                                transCode : this.listData[index].code,
-                                status : 'do'
-                            }
-                        })
-                    },
+            })
+        //上下滑动
+        let Mescroll = this.Mescroll;
+            mescroll = new Mescroll("mescroll",{
+                up:{
+                    use:false,
+                    isBounce: false
                 },
-            })      
+                down:{
+                    use:false
+                }
+            })
     },
     updated(){ 
+        let position = localStorage.getItem('SAVE_POSITION');  
+        if (position) {
+            this.$nextTick(function () {
+                  mescroll.scrollTo(position,0);  
+            });
+        }
         mySwiper.update();
     },
     created(){
@@ -308,22 +310,24 @@ export default{
                 avatar : info.avatar,
                 department : info.department
             }
-            let position = localStorage.getItem('SAVE_POSITION');  
-            Promise.all([this.getTodoList(),this.getDoneList()]).then(() => {
-                this.$nextTick(() => {
-                    bScroll = new BScroll(this.$refs.bescroll,{
-                        click:true,
-                        startY:Number(position),
-                        bounce: {
-                            top: false,
-                            bottom: false
-                        }
-                    })
-                    bScroll.on('scrollEnd',res=>{
-                        this.scrollPosition = res.y;
-                    })
-                })
-            })
+            this.getTodoList();
+            this.getDoneList();
+            // let position = localStorage.getItem('SAVE_POSITION');  
+            // Promise.all([this.getTodoList(),this.getDoneList()]).then(() => {
+            //     this.$nextTick(() => {
+            //         bScroll = new BScroll(this.$refs.bescroll,{
+            //             click:true,
+            //             startY:Number(position),
+            //             bounce: {
+            //                 top: false,
+            //                 bottom: false
+            //             }
+            //         })
+            //         bScroll.on('scrollEnd',res=>{
+            //             this.scrollPosition = res.y;
+            //         })
+            //     })
+            // })
             
         })()
     },
@@ -334,19 +338,13 @@ export default{
         next()
     },
     beforeRouteLeave(to, from, next){
-        localStorage.setItem('SAVE_POSITION',this.scrollPosition);       
+        let scrollTop = this.$refs.mescroll.scrollTop ;
+        localStorage.setItem('SAVE_POSITION',scrollTop);       
         next()
     }
 }
 </script>
 <style lang='scss' scoped>
-    .home_scroll{
-        position: fixed;
-		top: 0;
-		bottom: 0;
-        width:100%;
-        overflow: hidden; 
-    }
     .when_null {
         width: 100%;
         font-size: .28rem;
@@ -398,7 +396,11 @@ export default{
             }
         }
     }
-    .scroll_container {    
+    .mescroll {
+        position: fixed;
+		top: 0;
+		bottom: 0;
+        height: auto;     
         .p_mod {
             width: 90%;
             height: 4rem;
