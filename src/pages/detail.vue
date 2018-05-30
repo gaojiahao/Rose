@@ -400,21 +400,14 @@
     created() {
       let code = '',
           formId = '',
-          status = this.$route.query.status;
-      let query = querystring.parse(location.search.slice(1));
-      code = query.transCode;
-        // if(query.code){
-        //   code = query.ode;
-        //   status = 'do'
-
-        // }
-        // else{
-        //   code = this.$route.query.code;
-        //   status = this.$route.query.status;
-        // }       
+          status = '',
+          query = querystring.parse(location.search.slice(1));
+        code = query.transCode;
+        status = query.status || 'do'
         this.code = code;
         if(code != '' ){
-          this.currentComponent = require('./component/'+code.split('_')[0]+'Form.vue').default;
+          //this.currentComponent = require('./component/'+code.split('_')[0]+'Form.vue').default;
+          this.currentComponent = require(`./component/${code.split('_')[0]}Form.vue`).default;
         }
         if(status === 'done'){
           this.taskStatus = false;
