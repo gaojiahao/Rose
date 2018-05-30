@@ -55,14 +55,15 @@
             title="预计交付时间"
             :value="formatTime(detailInfo.bugRequirementEtc_fgPlanInv.values)"
             value-align="left"
-            v-if='!status&&detailInfo.requirementEtc_fgPlanInv.values'>
+            v-if='!status&&detailInfo.bugRequirementEtc_fgPlanInv.values'>
         </cell>
         <datetime  
             format="YYYY-MM-DD HH:mm" 
             @on-change="change" 
             title="预计交付时间" 
             placeholder="请选择" 
-            value-align="left">
+            value-align="left"
+            v-if='status'>
         </datetime>	
         <cell 
             title="BUG重现步骤"
