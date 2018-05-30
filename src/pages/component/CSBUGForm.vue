@@ -23,17 +23,20 @@
         <cell 
             title="所属模块" 
             :value="detailInfo.bugRequireNature_fgPlanInv.values" 
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.bugRequireNature_fgPlanInv.values.length>0'>
         </cell>
          <cell 
             title="BUG类型" 
             :value="detailInfo.bugRequireDemension_fgPlanInv.values" 
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.bugRequireDemension_fgPlanInv.values.length>0'>
         </cell>
         <cell 
             title="操作系统" 
             :value="detailInfo.operatingSystem_fgPlanInv.values" 
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.operatingSystem_fgPlanInv.values.length>0'>
         </cell>
         <cell 
             title="浏览器" 
@@ -44,12 +47,14 @@
         <cell 
             title="迭代/项目" 
             :value="detailInfo.iterationProject_fgPlanInv.values" 
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.iterationProject_fgPlanInv.values.length>0'>
         </cell>
          <cell 
             title="严重程度" 
             :value="detailInfo.severity_fgPlanInv.values" 
-            value-align="left">
+            value-align="left"
+            v-if='detailInfo.severity_fgPlanInv.values.length>0'>
         </cell>
         <cell
             title="预计交付时间"
@@ -64,19 +69,31 @@
             placeholder="请选择" 
             value-align="left"
             v-if='status'>
-        </datetime>	
-        <cell 
-            title="BUG重现步骤"
-            is-link
-            :border-intent="false"
-            :arrow-direction="bugShow ? 'up' : 'down'"
-            @click.native="bugShow = !bugShow">
-        </cell>
-         <div  
-            v-html="detailInfo.bugReproducStep_fgPlanInv.values"
-            class='htmlfiel vux-1px-t' 
-            v-if='bugShow'>
-        </div>  
+        </datetime>
+        <group v-if='detailInfo.bugReproducStep_fgPlanInv.values.length>0'>
+            <div  v-if='detailInfo.bugReproducStep_fgPlanInv.values.length>11'>
+               <cell 
+                    title="BUG重现步骤"
+                    is-link
+                    :border-intent="false"
+                    :arrow-direction="bugShow ? 'up' : 'down'"
+                    @click.native="bugShow = !bugShow">
+                </cell>
+                <div  
+                    v-html="detailInfo.bugReproducStep_fgPlanInv.values"
+                    class='htmlfiel vux-1px-t' 
+                    v-if='bugShow'>
+                </div>   
+            </div>
+            <cell 
+                title="BUG重现步骤" 
+                :value="detailInfo.bugReproducStep_fgPlanInv.values" 
+                value-align="left"
+                v-else>
+            </cell>
+
+        </group>	
+        
         <!-- <cell-box v-if="bugShow">{{detailInfo.bugReproducStep_fgPlanInv.values}}</cell-box>			 -->
          <cell 
             title="用户故事"
@@ -183,7 +200,7 @@ export default {
         return{
             acceptStandard:false,
             storyshow:false,
-            bugShow:false,
+            bugShow:true,
             approvalOpinion:false,
             technicalAnalysis:false,
             flowShow:false,
