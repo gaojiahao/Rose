@@ -116,7 +116,7 @@
         </confirm>
       </div>
       <!-- 弹框提示 -->
-      <toast v-model="showPositionValue" type="text" :text='warn' is-show-mask  position="middle"></toast>
+      <toast v-model="showPositionValue" type="text" :text='warn' is-show-mask  position="middle"  width='auto'></toast>
       <!-- 操作按钮 -->
       <div class="btn" v-if="taskIdInfo.dataCount===1&&taskIdInfo.tableContent[0].isMyTask===1" >
         <span @click='transfer()' class='transfer'>转办</span>
@@ -195,16 +195,21 @@
         this.confirmshow = true;
         this.agreeStatus = 1;
         this.transferUserList = [];
+        this.remark = ''
       },
       //拒绝任务
       reject(){
         this.confirmshow = true;
         this.agreeStatus = 0;
         this.transferUserList = [];
+        this.remark = '';
       },
       //转办任务
       transfer(){
+        this.transferInfo = {};
+        this.choicedIndex = -1;
         this.confirmshow = true;
+        this.remark = '';
         getDetailService.getTransferUserList().then( data=>{
           this.transferUserList = data.tableContent;
           this.$nextTick(() => {
@@ -274,6 +279,8 @@
           wfPara:JSON.stringify(wfPara),
           jsonData:JSON.stringify(this.oldformInfo)
         }
+        console.log(wfPara)
+        return false;
         getDetailService.saveAndCommitTask(data).then(data=>{
           if(data.success){
             this.showPositionValue = true;
@@ -301,6 +308,8 @@
             'comment':this.remark,
             'taskTime':this.taskTime
           }
+          console.log(jsonData);
+          return false;
         let data = {
           jsonData:JSON.stringify(jsonData)
         }
@@ -544,12 +553,28 @@
 }
  /** 重置vux */
 .v-transfer-dom{
+  .weui-cell:before{
+    left:0 ;
+  }
   .weui-dialog__bd:first-child {
     padding:0px ;
   }
   .weui-cells{
     margin-top:0;
   }
+  .vux-x-textarea {
+    .weui-cell__hd{
+      label{
+        color:#db321c;
+      }
+    }
+    .weui-cell__bd{
+      textarea{
+        font-family: -apple-system-font, "Helvetica Neue", sans-serif;
+      }
+    }
+  }
+  
 }
 /** loadding动画 */
 .loadding{
@@ -634,7 +659,7 @@
     /** 审批意见*/
     .choice{
       width:100%;
-      padding-top:0.9rem;
+      margin-top:0.8rem;
       box-sizing: border-box;
       background: #fff;
       ul{
@@ -747,11 +772,19 @@
       display: flex;
       span{
         flex:1;
-        line-height: 0.6rem;
+        line-height: 0.7rem;
       }
     }
      li.choiced{
       background-color: #ccc;
+    }
+  }
+}
+/** 提示框*/
+.vux-toast{
+  .weui-toast{
+    .weui-toast__content{
+      padding: 10px 5px;
     }
   }
 }
