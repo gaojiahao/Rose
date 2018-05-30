@@ -34,7 +34,6 @@
                                             class="each_duty swiper-slide"
                                             v-for='(item,index) in listData'
                                             :key='index'
-                                            @click.stop='goDoDetail(item.code)'
                                             v-if='index<6'>
                                             <div class="duty_top">
                                                 <p class="duty_name">
@@ -276,10 +275,23 @@ export default{
         // 左右滑动
         let Swiper = this.Swiper;
             mySwiper = new Swiper ('.swiper-container', {
+                preventClicks : false,
                 direction: 'horizontal',
                 slidesPerView: 'auto',
                 observer:true, //修改swiper自己或子元素时，自动初始化swiper
                 observeParents:true,//修改swiper的父元素时，自动初始化swiper
+                on:{
+                    click: ()=>{
+                        var index = mySwiper.activeIndex;
+                        this.$router.push({
+                            path : "/detail",
+                            query : {
+                                transCode : this.listData[index].code,
+                                status : 'do'
+                            }
+                        })
+                    },
+                },
             })      
     },
     updated(){ 
