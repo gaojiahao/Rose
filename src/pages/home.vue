@@ -9,8 +9,8 @@
                         <p class="p_name">{{userinfo.name}}</p>
                         <p class="p_dep">{{userinfo.department}}</p>
                     </div>
-                    <div class="p_tips" v-if="listData.length > 0 &&listData.length<=6">您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
-                    <div class="p_tips" v-else-if="listData.length > 6">您最近收到 <span class="tips_nums">6</span> 个新消息</div>
+                    <div class="p_tips" v-if="listData.length > 0 &&listData.length<=6" @click='goTODO'>您最近收到 <span class="tips_nums">{{listData.length}}</span> 个新消息</div>
+                    <div class="p_tips" v-else-if="listData.length > 6" @click='goTODO'>您最近收到 <span class="tips_nums">6</span> 个新消息</div>
                     <div class="p_tips" v-else-if="listData.length === 0">
                         <i class="iconfont icon-dengguang"></i> 
                         没有待办一身轻松
@@ -34,7 +34,7 @@
                                             class="each_duty swiper-slide"
                                             v-for='(item,index) in listData'
                                             :key='index'
-                                            @click='goDoDetail(item.code)'
+                                            @click.stop='goDoDetail(item.code)'
                                             v-if='index<6'>
                                             <div class="duty_top">
                                                 <p class="duty_name">
@@ -308,7 +308,6 @@ export default{
                         }
                     })
                     bScroll.on('scrollEnd',res=>{
-                        console.log(res);
                         this.scrollPosition = res.y;
                     })
                 })
