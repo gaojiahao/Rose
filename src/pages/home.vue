@@ -36,14 +36,12 @@
                                         @click='goDoDetail(item.code)'
                                         v-if='index<6'>
                                         <div class="duty_top">
-                                            <p class="duty_name">
-                                                <span class="duty_status_part">
-                                                    <span class="duty_status">
-                                                        <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info">待处理</span>
-                                                    </span>
+                                            <div class="duty_name">
+                                                <span class="duty_status">
+                                                    <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info">待处理</span>
                                                 </span>
                                                 <span class="duty_name_text">{{item.requireName}}</span>
-                                            </p>
+                                            </div>
                                         </div>
                                         <div class="duty_btm">
                                             <p class="duty_code">
@@ -483,10 +481,11 @@ export default{
                                         color: #fff;
                                         font-weight: bold;
                                         display: inline-block;
+                                        vertical-align: middle;
+                                        margin-top: -.06rem;
                                         .duty_status_name,
                                         .duty_status_info {
-                                            display: inline-block;
-                                            padding: 0 .05rem;
+                                            padding: .05rem .1rem;
                                         }
                                         .duty_status_name {
                                             border-top-left-radius: .20rem;
@@ -591,22 +590,14 @@ export default{
                                 .duty_status {  //任务状态
                                     font-size:.24rem;       // 这里原字体大小为14px
                                     color: #fff;
-                                    // margin-right: .1rem;
+                                    font-weight: bold;
+                                    display: inline-block;
+                                    vertical-align: middle;
+                                    margin-top: -.06rem;
                                     .duty_status_name {
-                                        height: .3rem;
-                                        line-height: .3rem;
+                                        padding: .04rem .1rem;
                                         background: #26AB28;
-                                        display: inline-block;
-                                        padding: 0 .1rem;
                                         border-radius: .24rem;
-                                    }
-                                    .duty_status_info {  //进行中
-                                        height: .3rem;
-                                        line-height: .3rem;
-                                        padding: 0 .1rem;
-                                        display: inline-block;
-                                        border-top-right-radius: .24rem;
-                                        border-bottom-right-radius: .24rem;
                                     }
                                     .duty_process_c {
                                         background: #26AB28;
