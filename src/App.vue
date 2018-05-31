@@ -1,206 +1,35 @@
 <template>
   <div id="app">
-    <keep-alive>
-      <router-view v-wechat-title="$route.meta.title"></router-view>
-    </keep-alive>
-	  <nav class="navbar">
-	    <router-link  v-for="(tab,index) in tablist" :to="tab.path" :key="index">
-	    	<span class="iconfont" :class="tab.icon"></span>
-	      <p>{{tab.title}}</p>
-	      <span class="weui-badge" style="position: absolute;top: 0;right:40%;" v-if="num>0">{{num}}</span>
-	    </router-link>	
-	  </nav>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+require('../static/css/iconfont/iconfont.css')
 export default {
-  data(){
-    return {
-        tablist:[
-            {title:'我的待办',path:'/Rose/to_do',icon: 'icon-daiban'},
-            {title:'我的已办',path:'/Rose/finish',icon:'icon-yiban'},            
-				],
-				num:"0"
-    }
-	},
-	created(){
-		this.$event.$on("num",(res)=>{
-				this.num = res;
-		})
-	}
-  
+  name: 'app'
 }
 </script>
 
-<style>
-/*底部tab */
-.navbar{
-	width:100%;
-	height:49px;
-	position: fixed;
-	left:0;
-	bottom:0;
-	z-index:10;
-	display: flex;
-	background: #f8f8f8;
-}
-.navbar:before{
-	content:'';
-	display: block;
-	height:1px;
-	width:100%;
-	border-top:1px solid #CCCCCC;
-	position:absolute;
-	top:-1px;
-	left:0;
-	transform: scaleY(0.5);
-	
-}
-.navbar a{
-	flex:1;
-	text-align: center;
-	color: #666;
-	position: relative;
-}
-.navbar a:last-child .weui-badge{
-	display: none;
-}
-.navbar .iconfont{
-	display: block;
-	width: 100%;
-	text-align: center;
-	color: #666;
-	margin-top:4px;
-}
-.navbar a.router-link-active .iconfont{
-	color: #10AEFF;
-}
-.navbar a.router-link-active p{
-	color: #10AEFF;
-}
-/*列表 */
-.page{
-	width:100%;
-	position: absolute;
-	left:0;
-	top:0;
-	bottom:49px;
-	height: auto;
-	
-}
-.slide-fade-enter-active{
-	/*transition:all .5s ease*/
-	animation:slideIn 0.5s ;	
-}
-.slide-fade-leave-active{
-/*transition:all .5s ease	*/
-	animation:slideOut 0.5s ;
-}
-@keyframes slideIn {
-  from {
-    transform: translate3d(100%, 0, 0);
-		-webkit-transform: translate3d(100%, 0, 0);
-    visibility: visible;
-  }
+<style lang="less">
+@import '~vux/src/styles/reset.less';
+@import '~vux/src/styles/1px.less';
+@import './common/swiper-4.2.2.min.css';
+@import './common/mescroll.min.css';
 
-  to {
-    transform: translate3d(0, 0, 0);
-		-webkit-transform: translate3d(0, 0, 0);
-  }
-}
-@keyframes slideOut {
-  from {
-    transform: translate3d(0, 0, 0);
-		-webkit-transform: translate3d(0, 0, 0);
-  }
 
-  to {
-    visibility: hidden;
-    transform: translate3d(100%, 0, 0);
-		-webkit-transform: translate3d(100%, 0, 0);
-  }
+body {
+  width: 100%;
+  height: 100%;
+  font-size: .32rem;    // 16px
+  background-color: #fff;
 }
-/*.slide-fade-enter, .slide-fade-leave-to{
-  transform: translateX(100%);
-	-webkit-transform: translateX(100%);
-  opacity: 0;
-}*/
-.slideInRight{
-	animation-duration: 600ms;
+#app {
+  width: 100%;
+  height: 100%;
 }
-.slideOutRight{
-	animation-duration: 600ms;
-}
-.weui-search-bar__label{
-	top:2px !important;
-}
-.list{	
-	width:100%;
-	z-index: 100;
-}
-.list li{
-	border-bottom:1px solid #e5e5e5;
-	padding:10px 15px;
-	color:lightslategrey
-}
-li.no_task{
-	text-align:center; 
-	border:none;
-	margin-top:30px;
-}
-li>p{
-	width:100%;
-	height: 22px;
-	line-height: 22px;
-	margin-bottom:4px;
-} 
-p .task_name{
-	display:block;
-	width:200px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	font-size:16px;
-	color: #666666;	
-	margin-bottom: 3px;
-	font-weight: 700;
-	float:left;
-}
-
-p .do_user{
-	font-size:14px;
-	float:left;
-}
-p .status{
-	line-height: 22px;
-	padding: 0 2px;
-	display: inline-block;
-	text-align: center;
-	background-color:#10AEFF;
-	color:#fff;
-	float:right;
-}
-.status.near{
-	background-color:#FFBE00 ;
-	
-}
-.status.over{
-	background-color:#F76260;
-	
-}
-.code{
-	display: inline-block;
-}
-.date{
-	float: right;
-	text-align: center;
-	color:#666;
-}
-.bottom{
-	width:100%;
-	height:30px;
-	line-height: 30px;
-	text-align: center;
+.pages{
+    width: 100%;
+    height: 100%;
 }
 </style>
