@@ -37,8 +37,10 @@
                                         v-if='index<6'>
                                         <div class="duty_top">
                                             <p class="duty_name">
-                                                <span class="duty_status">
-                                                    <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info duty_wait_c">待处理</span>
+                                                <span class="duty_status_part">
+                                                    <span class="duty_status">
+                                                        <span class="duty_status_name">{{item.statusName}}</span><span class="duty_status_info">待处理</span>
+                                                    </span>
                                                 </span>
                                                 <span class="duty_name_text">{{item.requireName}}</span>
                                             </p>
@@ -469,7 +471,7 @@ export default{
                                 // max-width: 6rem;
                                 .duty_name {    //任务名称
                                     width: 100%;
-                                    font-size: .3rem;          // 1rem=100px 手机像素2：1 这里原字体大小为16px         
+                                    font-size: .3rem;          // 1rem=100px 手机像素2：1 这里原字体大小为16px        
                                     max-height: 1rem;
                                     overflow : hidden;
                                     text-overflow: ellipsis;
@@ -479,56 +481,48 @@ export default{
                                     .duty_status {  //任务状态
                                         font-size:.24rem;       // 这里原字体大小为14px
                                         color: #fff;
-                                        margin-right: .1rem;
-                                        .duty_status_name {
-                                            height: .3rem;
-                                            line-height: .3rem;
-                                            background: #000;
+                                        font-weight: bold;
+                                        display: inline-block;
+                                        .duty_status_name,
+                                        .duty_status_info {
                                             display: inline-block;
-                                            padding: 0 .1rem;
-                                            border-top-left-radius: .24rem;
-                                            border-bottom-left-radius: .24rem;
+                                            padding: 0 .05rem;
+                                        }
+                                        .duty_status_name {
+                                            border-top-left-radius: .20rem;
+                                            border-bottom-left-radius: .20rem;
+                                            background: #000;
                                         }
                                         .duty_status_info {  //进行中
-                                            height: .3rem;
-                                            line-height: .3rem;
-                                            padding: 0 .1rem;
-                                            display: inline-block;
-                                            border-top-right-radius: .24rem;
-                                            border-bottom-right-radius: .24rem;
+                                            background: #FADB51;
+                                            color: #000;
+                                            border-top-right-radius: .20rem;
+                                            border-bottom-right-radius: .20rem;
                                         }
                                         .duty_process_c {
                                             background: #26AB28;
-                                        }
-                                        .duty_wait_c {
-                                            background: #FADB51;
-                                            color: #000;
                                         }
                                         .duty_urgent_c {
                                             background: #E34E43;
                                         }
                                     }
-                                    .duty_name_text {   
-                                    }
+                                    
                                 }
                             }
                             .duty_btm {
                                 height: .48rem;
                                 line-height: .48rem;
-
                                 .duty_code {    //任务编码
                                     float: left;
                                     font-size: .3rem;
                                     color: #7D7D7D;
                                     font-weight: 200;
-
                                     .duty_crt_man { // 任务创建者
                                         position: relative;
                                         background: #333;
                                         font-size: 0.24rem;
                                         color: #FDF6A4;
                                         padding: .04rem;
-                                        
                                     }
                                     .duty_crt_man:before{   //左尖角
                                         position: absolute;
@@ -554,7 +548,7 @@ export default{
                                 background: red;
                                 border-radius: 50%;
                                 position: absolute;
-                                left: .01rem;
+                                left: .05rem;
                                 top: .4rem;
                             }
                         }
