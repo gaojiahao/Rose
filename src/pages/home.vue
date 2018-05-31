@@ -482,10 +482,10 @@ export default{
                                         font-weight: bold;
                                         display: inline-block;
                                         vertical-align: middle;
-                                        margin-top: -.06rem;
+                                        margin-top: -2px;
                                         .duty_status_name,
                                         .duty_status_info {
-                                            padding: .05rem .1rem;
+                                            padding: 1px 6px;
                                         }
                                         .duty_status_name {
                                             border-top-left-radius: .20rem;
@@ -593,9 +593,9 @@ export default{
                                     font-weight: bold;
                                     display: inline-block;
                                     vertical-align: middle;
-                                    margin-top: -.06rem;
+                                    margin-top: -2px;
                                     .duty_status_name {
-                                        padding: .04rem .1rem;
+                                        padding: 0 .1rem;
                                         background: #26AB28;
                                         border-radius: .24rem;
                                     }

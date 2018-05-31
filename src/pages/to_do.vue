@@ -230,17 +230,19 @@
           font-size: .24rem; // 这里原字体大小为14px
           color: #fff;
           margin-right: .1rem;
-          padding: .05rem 0;
+          display: inline-block;
+          vertical-align: middle;
+          margin-top: -2px;
+          .duty_status_name,
+          .duty_status_info {
+            padding: 1px 4px;
+          }
           .duty_status_name {
             background: #000;
-            display: inline-block;
-            padding: 0 .1rem;
             border-top-left-radius: .24rem;
             border-bottom-left-radius: .24rem;
           }
           .duty_status_info { //进行中
-            padding: 0 .1rem;
-            display: inline-block;
             border-top-right-radius: .24rem;
             border-bottom-right-radius: .24rem;
           }

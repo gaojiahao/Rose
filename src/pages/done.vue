@@ -164,18 +164,13 @@ export default {
                 .duty_status {  //任务状态
                     font-size:.24rem;       // 这里原字体大小为14px
                     color: #fff;
-                    // margin-right: .1rem;
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-top: -2px;
                     .duty_status_name {
+                        padding: 0 4px;
                         background: #26AB28;
-                        display: inline-block;
-                        padding: 0 .1rem;
                         border-radius: .24rem;
-                    }
-                    .duty_status_info {  //进行中
-                        padding: 0 .1rem;
-                        display: inline-block;
-                        border-top-right-radius: .24rem;
-                        border-bottom-right-radius: .24rem;
                     }
                     .duty_process_c {
                         background: #26AB28;
