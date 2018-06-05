@@ -1,6 +1,6 @@
 <template>
     <div>    
-        哈哈哈我是房屋页面
+        哈哈哈我是房屋页面a
     </div>
 </template>
 
