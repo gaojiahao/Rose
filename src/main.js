@@ -5,13 +5,8 @@ import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import App from './App'
 import router from './router'
-import adapation from './common/adapation'
-import Swiper from './common/swiper-4.2.2.min.js'
-import Mescroll from './common/mescroll.min.js'
 
 Vue.use(VueRouter)
-Vue.prototype.Swiper = Swiper;
-Vue.prototype.Mescroll = Mescroll;
 
 
 
@@ -20,10 +15,9 @@ FastClick.attach(document.body)
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta || '消息';
+  document.title = to.meta || '立项申请';
   next()
 });
-
 /* eslint-disable no-new */
 new Vue({
   router,

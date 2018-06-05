@@ -5,7 +5,6 @@
 </template>
 
 <script>
-require('../static/css/iconfont/iconfont.css')
 export default {
   name: 'app'
 }
@@ -13,23 +12,14 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
-@import '~vux/src/styles/1px.less';
-@import './common/swiper-4.2.2.min.css';
-@import './common/mescroll.min.css';
-
-
+* {
+  list-style:none;
+}
 body {
-  width: 100%;
-  height: 100%;
-  font-size: .32rem;    // 16px
+  margin: 0 auto;
+  max-width: 640px;
+  font-size: 16px;
   background-color: #fff;
-}
-#app {
-  width: 100%;
-  height: 100%;
-}
-.pages{
-    width: 100%;
-    height: 100%;
+  font-family: -apple-system-font,Helvetica,Microsoft YaHei,Arial,sans-serif;
 }
 </style>
