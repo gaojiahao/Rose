@@ -36,14 +36,13 @@
 </template>
 
 <script>
-import { Cell, Group, XInput, PopupPicker, CellFormPreview } from 'vux'
+import { Cell, Group, XInput, PopupPicker} from 'vux'
 export default {
     components:{
         Cell,
         Group,
         XInput,
-        PopupPicker,
-        CellFormPreview
+        PopupPicker
     },
     data(){
         return{

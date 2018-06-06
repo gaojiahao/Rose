@@ -93,7 +93,7 @@ export default {
     border-radius: 4px;
     z-index: 100;
     box-shadow: 0 2px 10px #e8e8e8;
-    padding-bottom:56px; 
+    // padding-bottom:56px; 
 
 }
 .f_button {
