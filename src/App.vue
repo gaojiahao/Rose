@@ -22,6 +22,7 @@ body {
   max-width: 640px;
   font-size: 16px;
   background-color: #fff;
-  font-family: -apple-system-font,Helvetica,Microsoft YaHei,Arial,sans-serif;
+  font-family: -apple-system-font, "Helvetica Neue", sans-serif,Helvetica,Microsoft YaHei,Arial,sans-serif;
+  
 }
 </style>
