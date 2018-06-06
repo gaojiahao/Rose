@@ -29,7 +29,7 @@ export default {
             sel_list:[ 
                 { name:'市场宣传', path:'/spread'},
                 { name:'会议', path:'/meeting'},
-                { name:'房屋', path:'/house'},
+                { name:'房屋租赁', path:'/house'},
                 { name:'固定资产', path:'/assets'}
             ]
         }
@@ -80,7 +80,8 @@ export default {
         box-sizing: border-box;
         color: #fff;
         font-weight: 600;
-        background: -webkit-linear-gradient(left bottom, rgba(29,101,240,1), rgba(25,211,253,1));
+        // background: -webkit-linear-gradient(left bottom, rgba(29,101,240,1), rgba(25,211,253,1));
+        background: #5077AA;
         margin-top: 20px;
         border-radius: 4px;
         position: relative;
