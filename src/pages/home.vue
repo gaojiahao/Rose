@@ -28,8 +28,8 @@ export default {
         return{
             sel_list:[ 
                 { name:'市场宣传', path:'/spread'},
-                { name:'会议', path:'/meeting'},
-                { name:'房屋租赁', path:'/house'},
+                { name:'会议费用预申请', path:'/meeting'},
+                { name:'房屋费用预申请', path:'/house'},
                 { name:'固定资产', path:'/assets'}
             ]
         }
