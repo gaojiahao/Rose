@@ -1,7 +1,7 @@
 <template>
     <div class="pages">
         <h1 class="s_title">
-            市场宣传 费用申请
+            市场宣传
             <span class="s_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16" ></x-icon></span>
         </h1>
         <div class="s_main">

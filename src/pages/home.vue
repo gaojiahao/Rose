@@ -29,7 +29,7 @@ export default {
             sel_list:[ 
                 { name:'市场宣传', path:'/spread'},
                 { name:'会务立项申请', path:'/meeting'},
-                { name:'房屋费用预申请', path:'/house'},
+                { name:'房屋立项申请', path:'/house'},
                 { name:'固定资产', path:'/assets'}
             ]
         }
