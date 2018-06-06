@@ -1,6 +1,19 @@
 <template>
     <div class="pages">
-        <tab bar-active-color="#5077AA" active-color="#5077AA">
+        <div class="m_top">
+            <img class="user_img" src="../assets/ts.png" alt="">
+            <div class="user_part">
+                <div class="user_name_part">
+                    <span class="user_name">刘治增</span>
+                    <span class="user_level">省长</span>
+                </div>
+                <div class="user_info_part">
+                    <span class="user_bank">中国银行</span>
+                    <span class="user_dp">中行华北事业部</span>
+                </div>
+            </div>
+        </div>
+        <tab bar-active-color="#5077AA" active-color="#5077AA" :line-width=1>
             <tab-item selected @on-item-click="selStatus">待审批</tab-item>
             <tab-item @on-item-click="selStatus">进行中</tab-item>
             <tab-item @on-item-click="selStatus">已完成</tab-item>
@@ -103,12 +116,48 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.m_top {
+    width: 100%;
+    height: 100px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    background: #5077AA;
+    .user_img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    .user_name {
+        color: #fff;
+        font-weight: bold;
+    }
+    .user_level {
+        font-size: 10px;
+        background: #fff;
+        color: #333;
+        border-radius: 24px;
+        padding: 0 6px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-top: -4px;
+    }
+    .user_bank,
+    .user_dp {
+        font-size: 12px;
+        background: rgba(17, 17, 17, 0.5);
+        color: #fff;
+        border-radius: 24px;
+        padding: 1px 6px;
+    }
+}
 .m_list {
     width: 90%;
     margin: 10px auto;
     .each_list {
         width: 100%;
-        padding: 4px;
+        padding: 4px 10px;
         margin-bottom: 20px;
         box-sizing: border-box;
         box-shadow: 0 2px 10px #e8e8e8;

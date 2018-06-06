@@ -8,13 +8,13 @@
             <div class="s_main_part" v-for="(item, index) in s_list_num" :key='index'>
                     <group title="请选择您申请的类型">
                         <popup-picker 
-                        title="类型"
+                        title="宣品类型"
                         :data="s_list"
                         v-model="s_type"
                         @on-change="changeType"
                         ></popup-picker>
                     </group>
-                    <group title="请填写宣品的内容" v-if="s_type[0] === '宣品'">
+                    <group title="请填写明细" v-if="s_type[0]">
                         <x-input 
                         :title='item'
                         :key="index"
@@ -22,29 +22,16 @@
                         v-for="(item, index) in xp_list"
                         ></x-input>
                     </group>
-                    <group title="请填写市场部的内容" v-else-if="s_type[0] === '市场部'">
-                        <x-input 
-                        :title='item'
-                        :key="index"
-                        text-align='right' 
-                        v-for="(item, index) in mk_list"
-                        ></x-input>
-                    </group>
-                    <group title="请填写市场活动的内容" v-else-if="s_type[0] === '市场活动'">
-                        <x-input 
-                        :title='item'
-                        :key="index"
-                        text-align='right' 
-                        v-for="(item, index) in hd_list"
-                        ></x-input>
-                    </group>
                     <group title="金额" v-if="s_type[0]">
                         <cell title='合计'></cell>
                     </group>
             </div>
-            <p class="note_tx" v-if="s_type.length > 0 && s_list_num.length < 3" @click="plusType">添加另一个 <span class="plus_tx">类型</span>?</p>
+            <p class="note_tx" v-if="s_type.length > 0" @click="plusType">添加另一个 <span class="plus_tx">类型</span> ?</p>
         </div>
-        <div class="s_button" v-if="s_type[0]">提交</div>
+        <div class="s_btm vux-1px-t" v-if="s_type[0]">
+            <span class="count_part">合计:￥1,000</span>
+            <span class="s_button" @click="goflow">确定</span>
+        </div>
     </div>
 </template>
 
@@ -60,12 +47,10 @@ export default {
     },
     data(){
         return{
-            s_list:[['宣品','市场部','市场活动']],      // 市场宣传 种类选择
-            s_list_num:['1'],                        // 种类 数量 (添加一个则多一个选择，删除则反之)
+            s_list:[['单页','三折页','X展架','易拉宝','三角牌','海报','吊旗','地贴','道具']],      // 市场宣传 种类选择
+            s_list_num:['1'],                        // 种类 数量 (添加一个则多一个选择,删除则反之)
             s_type:[],                               // 市场宣传 选中
-            xp_list:['单据','展架','赠品','其他物料'],  // 宣品 填写内容
-            mk_list:['照相','视频'],                  // 市场部 填写内容
-            hd_list:['场地','其他']                   // 市场活动 填写内容
+            xp_list:['单价','数量'],  // 宣品 填写内容
         }
     },
     methods:{
@@ -77,6 +62,9 @@ export default {
         },
         plusType(){ //添加新的选择
             this.s_list_num.push('2');
+        },
+        goflow(){
+            this.$router.push({ path:'/flow' })
         }
     }
 }
@@ -89,8 +77,8 @@ export default {
 }
 .s_title {  //标题
     width: 100%;
-    height: 150px;
-    line-height: 120px;
+    height: 120px;
+    line-height: 80px;
     font-size: 34px;
     text-align: center;
     color: #fff;
@@ -116,7 +104,7 @@ export default {
     width: 90%;
     max-width: 600px;
     position: absolute;
-    top: 120px;
+    top: 90px;
     left: 50%;
     transform: translate(-50%,0);
     border-radius: 4px;
@@ -138,7 +126,7 @@ export default {
         }
     }
 }
-.s_button {
+.s_btm {
     width: 100%;
     height: 44px;
     line-height: 44px;
@@ -146,10 +134,23 @@ export default {
     left: 0;
     bottom: 0;
     z-index: 101;
-    text-align: center;
-    color: #fff;
-    background: #5077AA;
     margin-top: 20px;
+    box-sizing: border-box;
+    display: flex;
+    .count_part {
+        flex: 2.5;
+        background: #fff;
+        color: #000;
+        display: inline-block;
+        text-align: center;
+    }
+    .s_button {
+        flex: 1;
+        color: #fff;
+        background: #5077AA;
+        display: inline-block;
+        text-align: center;
+    }
 }
 
 </style>
