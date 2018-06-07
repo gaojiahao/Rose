@@ -62,7 +62,7 @@ export default {
             h_hdtype:[['新增','搬家']],
             hd_value:[],
             xz_list:['新增原因'],
-            bj_list:['搬家原因','入驻人数','增加面积','月租','付款方式'],
+            bj_list:['搬家原因','入驻人数','房屋面积','月租','付款方式'],
             minuteListValue1:'',
             minuteListValue2:''
         }
@@ -137,6 +137,7 @@ export default {
         color: #000;
         display: inline-block;
         text-align: center;
+        font-weight: bold;
     }
     .h_button {
         flex: 1;

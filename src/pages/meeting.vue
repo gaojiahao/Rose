@@ -108,6 +108,7 @@ export default {
         color: #000;
         display: inline-block;
         text-align: center;
+        font-weight: bold;
     }
     .m_button {
         flex: 1;

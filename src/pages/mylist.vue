@@ -123,6 +123,8 @@ export default {
     display: flex;
     align-items: center;
     background: #5077AA;
+    // background: #f1b841 url('../assets/bg-header-618.png') no-repeat ;
+    background-size: contain;    
     .user_img {
         width: 60px;
         height: 60px;
