@@ -5,18 +5,20 @@
             <span class="m_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16" ></x-icon></span>
         </h1>
         <div class="m_main">
-            <group title="请填写会议安排明细">
-                <datetime v-model="minuteListValue" format="YYYY-MM-DD HH:mm" :minute-list="['00', '15', '30', '45']" title="时间段"></datetime>
-                <x-input 
-                :title='item'
-                :key="index"
-                text-align='right' 
-                v-for="(item, index) in meetList"
-                ></x-input>
-            </group>
-            <group title="费用合计">
-                <cell title="金额合计" value='￥1,000'></cell>
-            </group>
+            <div class="m_main_part">
+                <group title="请填写会议安排明细">
+                    <datetime v-model="minuteListValue" format="YYYY-MM-DD HH:mm" :minute-list="['00', '15', '30', '45']" title="时间段"></datetime>
+                    <x-input 
+                    :title='item'
+                    :key="index"
+                    text-align='right' 
+                    v-for="(item, index) in meetList"
+                    ></x-input>
+                </group>
+                <group title="费用合计">
+                    <cell title="金额合计" value='￥1,000'></cell>
+                </group>
+            </div>
         </div>
         <div class="m_btm vux-1px-t">
             <span class="count_part">合计:￥1,000</span>
@@ -80,16 +82,20 @@ export default {
 }
 .m_main {
     width: 90%;
-    background: #fff;
     max-width: 600px;
     position: absolute;
-    top: 110px;
+    top: 90px;
     left: 50%;
     transform: translate(-50%,0);
     border-radius: 4px;
     z-index: 100;
-    // padding-bottom: 50px;
-    box-shadow: 0 2px 10px #e8e8e8;
+    padding-bottom: 56px;
+    .m_main_part {
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px #e8e8e8;
+    }
 }
 .m_btm {
     width: 100%;

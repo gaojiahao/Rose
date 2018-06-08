@@ -5,28 +5,30 @@
             <span class="a_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16" ></x-icon></span>
         </h1>
         <div class="a_main">
-            <group title="请填写相应部门的信息">
-                <popup-picker 
-                title="申请部门"
-                :data="a_dplist"
-                v-model="a_dpsq"
-                @on-change="changeType"
-                ></popup-picker>
-                <popup-picker 
-                title="使用部门"
-                :data="a_dplist"
-                v-model="a_dpsy"
-                @on-change="changeType"
-                ></popup-picker>
-            </group>
-            <group title="请填写类型">
-                <x-input 
-                :title='item'
-                :key="index"
-                text-align='right' 
-                v-for="(item, index) in xp_list"
-                ></x-input>
-            </group>
+            <div class="a_main_part">
+                <group title="请填写相应部门的信息">
+                    <popup-picker 
+                    title="申请部门"
+                    :data="a_dplist"
+                    v-model="a_dpsq"
+                    @on-change="changeType"
+                    ></popup-picker>
+                    <popup-picker 
+                    title="使用部门"
+                    :data="a_dplist"
+                    v-model="a_dpsy"
+                    @on-change="changeType"
+                    ></popup-picker>
+                </group>
+                <group title="请填写类型">
+                    <x-input 
+                    :title='item'
+                    :key="index"
+                    text-align='right' 
+                    v-for="(item, index) in xp_list"
+                    ></x-input>
+                </group>
+            </div>
         </div>
         <div class="a_btm vux-1px-t">
             <span class="count_part">合计:￥1,000</span>
@@ -48,8 +50,8 @@ export default {
     data(){
         return{
             a_dplist:[['部门A','部门B','部门C','部门D','部门E',]],
-            a_dpsq:[],
-            a_dpsy:[],
+            a_dpsq:[],  //申请部门
+            a_dpsy:[],  //使用部门
             xp_list:['电脑','桌子'],  // 宣品 填写内容
         }
     },
@@ -95,16 +97,20 @@ export default {
 }
 .a_main {
     width: 90%;
-    background: #fff;
     max-width: 600px;
     position: absolute;
-    top: 110px;
+    top: 90px;
     left: 50%;
     transform: translate(-50%,0);
     border-radius: 4px;
     z-index: 100;
-    // padding-bottom: 50px;
-    box-shadow: 0 2px 10px #e8e8e8;
+    padding-bottom: 56px;
+    .a_main_part {
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px #e8e8e8;
+    }
 }
 .a_btm {
     width: 100%;

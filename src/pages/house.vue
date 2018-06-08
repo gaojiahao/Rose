@@ -5,38 +5,40 @@
             <span class="h_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16" ></x-icon></span>
         </h1>
         <div class="h_main">
-            <group title="请选择地点类型">
-                <popup-picker 
-                title="地点类型"
-                :data="h_type"
-                v-model="type_value"
-                @on-change="changeType"
-                ></popup-picker>
-                <popup-picker 
-                title="处理类型"
-                :data="h_hdtype"
-                v-model="hd_value"
-                @on-change="changeType"
-                ></popup-picker>
-            </group>
-            <group title="请填写明细" v-if="hd_value[0]">
-                <x-input 
-                :title='item'
-                :key="index"
-                text-align='right' 
-                v-if="hd_value[0] === '新增'"
-                v-for="(item, index) in xz_list"
-                ></x-input>
-                <x-input 
-                :title='item'
-                :key="index"
-                text-align='right' 
-                v-else-if="hd_value[0] === '搬家'"
-                v-for="(item, index) in bj_list"
-                ></x-input>
-                <datetime v-model="minuteListValue1" format="YYYY-MM-DD" title="租期开始时间"></datetime>
-                <datetime v-model="minuteListValue2" format="YYYY-MM-DD" title="租期结束时间"></datetime>
-            </group>
+            <div class="h_main_part">
+                <group title="请选择地点类型">
+                    <popup-picker 
+                    title="地点类型"
+                    :data="h_type"
+                    v-model="type_value"
+                    @on-change="changeType"
+                    ></popup-picker>
+                    <popup-picker 
+                    title="处理类型"
+                    :data="h_hdtype"
+                    v-model="hd_value"
+                    @on-change="changeType"
+                    ></popup-picker>
+                </group>
+                <group title="请填写明细" v-if="hd_value[0]">
+                    <x-input 
+                    :title='item'
+                    :key="index"
+                    text-align='right' 
+                    v-if="hd_value[0] === '新增'"
+                    v-for="(item, index) in xz_list"
+                    ></x-input>
+                    <x-input 
+                    :title='item'
+                    :key="index"
+                    text-align='right' 
+                    v-else-if="hd_value[0] === '搬家'"
+                    v-for="(item, index) in bj_list"
+                    ></x-input>
+                    <datetime v-model="minuteListValue1" format="YYYY-MM-DD" title="租期开始时间"></datetime>
+                    <datetime v-model="minuteListValue2" format="YYYY-MM-DD" title="租期结束时间"></datetime>
+                </group>
+            </div>
         </div>
         <div class="h_btm vux-1px-t">
             <span class="count_part">合计:￥1,000</span>
@@ -109,16 +111,20 @@ export default {
 }
 .h_main {
     width: 90%;
-    background: #fff;
     max-width: 600px;
     position: absolute;
-    top: 110px;
+    top: 90px;
     left: 50%;
     transform: translate(-50%,0);
     border-radius: 4px;
     z-index: 100;
-    // padding-bottom: 50px;
-    box-shadow: 0 2px 10px #e8e8e8;
+    padding-bottom: 56px;
+    .h_main_part {
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px #e8e8e8;
+    }
 }
 .h_btm {
     width: 100%;
