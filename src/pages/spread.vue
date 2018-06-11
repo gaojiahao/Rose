@@ -5,7 +5,52 @@
             <span class="s_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16" ></x-icon></span>
         </h1>
         <div class="s_main">
+            <div class="s_main_part">
+                <!-- 表单基本信息 -->
+                <!-- <group title="表单基本信息">
+
+                    <x-input 
+                    title='交易类型'
+                    ></x-input>
+
+                    <x-input 
+                    title='经办主体'
+                    ></x-input>
+
+                    <popup-picker 
+                    title="经办人"
+                    :data="s_list"
+                    v-model="s_type"
+                    @on-change="changeType"
+                    ></popup-picker>
+
+                    <popup-picker 
+                    title="所属区域"
+                    :data="s_list"
+                    v-model="s_type"
+                    @on-change="changeType"
+                    ></popup-picker>
+
+                    <popup-picker 
+                    title="经办部门"
+                    :data="s_list"
+                    v-model="s_type"
+                    @on-change="changeType"
+                    ></popup-picker>
+
+                    <popup-picker 
+                    title="经办角色"
+                    :data="s_list"
+                    v-model="s_type"
+                    @on-change="changeType"
+                    ></popup-picker>
+
+                </group> -->
+                <spreadBaseInfo :baseInfo="baseInfo"></spreadBaseInfo>
+            </div>
             <div class="s_main_part" v-for="(item, index) in s_list_num" :key='index'>
+                    
+
                     <group title="请选择您申请的项目名称">
                         <x-input 
                         title='项目名称'
@@ -89,6 +134,7 @@
 <script>
 import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from 'vux'
 import spread from '../service/spread.js'
+import spreadBaseInfo from './components/spreadBaseInfo'
 export default {
     components:{
         Cell,
@@ -96,13 +142,22 @@ export default {
         XInput,
         PopupPicker,
         XTextarea,
+        spreadBaseInfo
     },
     filters:{
         numberComma
     },
     data(){
         return{
-            s_list:[['单页','三折页','X展架','易拉宝','三角牌','海报','吊旗','地贴','道具']],      // 市场宣传 种类选择
+            baseInfo:{
+                type:'',
+                mainPart:'',
+                operator:[],
+                area:[],
+                department:[],
+                role:[],
+            },
+            s_list:[],      // 市场宣传 种类选择
             s_list_num:['1'],                        // 种类 数量 (添加一个则多一个选择,删除则反之)
             s_type:[],                               // 市场宣传 选中
             xp_list:[
@@ -148,9 +203,23 @@ export default {
             this.total=num;
             // this.$refs.xp_input[idx].currentValue=numberComma(this.$refs.xp_input[idx].currentValue,3);
         },
+        //表单基本信息
+        BaseInfo(){
+            let that=this,
+            data={
+                _dc:Date.parse(new Date()),
+                uniqueId:'a9238c91-36f3-4b09-9705-9d50870b3c46'
+            }
+            spread.getBaseInfo(data).then(res=>{
+                for(let i = 0 ; i<res.length; i++){
+                    console.log(JSON.parse(res[i].config))
+                }
+            })
+        },
         //费用所属事业部
         buAll(){
-            let data={
+            let that=this,
+            data={
                 _dc: Date.parse(new Date()),
                 key: 'N1',
                 parentId: '60d2cb55-8066-4c85-b8ea-60bde9be641b',
@@ -160,14 +229,19 @@ export default {
                 page: 1,
                 start: 0,
                 limit: 10000,
-            };
+            },
+            arr=[];
             spread.getAccounting(data).then(res =>{
-                
-            })
+                for(let i = 0 ; i<res.tableContent.length; i++){
+                    arr.push(res.tableContent[i].unitName)
+                };
+                that.s_list.push(arr);
+            });
         }
     },
     mounted(){
-        
+        this.BaseInfo();
+        this.buAll();
     },
     computed:{
         detail_val(e){
