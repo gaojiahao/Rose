@@ -558,6 +558,8 @@ export default {
         cancelText:"取消",
         onCancel () {
           localStorage.removeItem('help_saleReport'); 
+          localStorage.removeItem('SALE_Governor'); 
+          localStorage.removeItem('SALE_Member'); 
           next()
         },
         onConfirm () {
