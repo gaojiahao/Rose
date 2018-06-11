@@ -24,7 +24,8 @@
         </group>-->
         <group v-for="(item, index) in config" :title="item.title" :key="index"
                v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
-          <dynamic-form :config="item.items" :user-info="userInfo" @addlistener="addListener"></dynamic-form>
+          <dynamic-form :config="item.items" :user-info="userInfo" @addlistener="addListener"
+                        ref="dynamicForm"></dynamic-form>
         </group>
       </div>
     </div>
@@ -65,10 +66,37 @@
       }
     },
     methods: {
+      // TODO 生成随机串
+      guid() {
+        let S4 = () => {
+          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+
+        return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
+      },
       goMylist() { //我的提交
         this.$router.push({path: '/myList'})
       },
       goflow() {
+        let warn = '';
+        let jsonData = {
+          listId: this.listid,
+          referenceId: this.guid(),
+          transCode: '',
+        };
+        let dynamicForm = this.$refs.dynamicForm;
+        dynamicForm.every(item => {
+          item.checkData();
+        });
+        if (warn) {
+          this.showToastText(warn);
+          return
+        }
+        dynamicForm.forEach(item => {
+          let saveData = item.getSaveData();
+
+        });
+
         this.$router.push({path: '/flow'})
       },
       // TODO 显示错误提示
@@ -101,13 +129,13 @@
       },
       // TODO 添加监听
       addListener(params) {
-        let {lIndex, index, userEvent} = params;
+        let {type, lIndex, index, userEvent} = params;
         // console.log('addlistener')
         let item = this.config[lIndex].items[index];
         if (!item.listeners) {
-          item.listeners = [];
+          item.listeners = {};
         }
-        item.listeners.push(userEvent);
+        item.listeners[type] = userEvent;
       },
     },
     created() {

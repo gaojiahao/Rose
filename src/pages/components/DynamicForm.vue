@@ -93,22 +93,24 @@
           // console.log(`${item.fieldLabel}---${item.name}---${item.xtype}---${item.defaultValue}`);
         });
         this.needListeners.forEach(listner => {
+          console.log(listner.value.contrl)
           this.$parent.$parent.config.forEach((lItem, lIndex) => {
             lItem.items && lItem.items.forEach((citem, index) => {
               if (citem.id === listner.value.contrl) {
                 this.$nextTick(() => {
-                  let userEvent = new UserEvent(document, `userevent-${lIndex}-${index}`);
+                  let type = `userevent-${citem.id}`;
+                  let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
                   userEvent.on((e) => {
-                    console.log('userevent');
+                    listner.handler(e);
                   });
                   this.$emit('addlistener', {
+                    type,
                     lIndex,
                     index,
                     userEvent
                   });
                 })
               }
-              // console.log(item.id === value.value)
             });
           });
         })
@@ -130,18 +132,26 @@
             break;
           case 'remoteData':
             let params = {};
-            // console.log(item.fieldLabel)
-            // console.log(dataSource)
             Object.entries(dataSource.data.params).forEach(([key, value]) => {
               switch (value.type) {
                 case 'contrl':
-                  // console.log(item)
                   // 获取父级的数据
-                  // console.log(this.$parent.$parent.config)
                   this.needListeners.push({
                     value: value.value,
-                    handler: () => {
-
+                    handler: (e) => {
+                      createService.getRemoteData(dataSource.data.url, Object.assign(params, {
+                        [value.value.valueField]: e.data[value.value.valueField]
+                      })).then(data => {
+                        let pickerList = [];
+                        data.tableContent && data.tableContent.forEach(picker => {
+                          let name = picker.userGroupName;
+                          pickerList.push(Object.assign(picker, {
+                            name: name,
+                            value: name
+                          }));
+                        });
+                        this.setData(index, {pickerList});
+                      });
                     }
                   });
                   break;
@@ -229,10 +239,6 @@
                     name: nickname
                   };
                 }
-                /*console.log(this.configList[index])
-                item.inputValue = {
-                  name: nickname
-                };*/
               }
               break;
             default:
@@ -265,19 +271,18 @@
           item.inputValue = this.userInfo[source.data.valueField];
         }
       },
+      // TODO picker切换
       popChange(item) {
         console.log(item)
       },
+      // TODO 选择器切换
       selecterChange(sel) {
-        // console.log(sel)
-        console.log(sel.listeners)
-        sel.listeners && sel.listeners.forEach(item => {
-          item.emit(sel.inputValue)
+        sel.listeners && Object.values(sel.listeners).forEach(item => {
+          item.emit(sel.inputValue);
         })
       },
       // TODO 提交数据
       saveData() {
-        this.showLoading = true;
         let submitData = {
           listId: this.listid,
           referenceId: this.guid(),
