@@ -25,6 +25,13 @@ let saleReportService={
         return $axios.ajax({
             url: '/trans/getModelData?refresh=true&dsCode=getSubmitAllow',
         });
+    },
+    //拿到省长和常委
+    getApprovalUserByAgent(data){
+        return $axios.ajax({
+            url:'/ds/listUsers',
+            data:data,
+        })
     }
 };
 export default saleReportService;

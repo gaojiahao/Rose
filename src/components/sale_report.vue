@@ -2,7 +2,7 @@
   <div class="pages">
     <div v-if='$route.name=="saleReport"'>
       <div id='mescroll' class="mescroll">
-          <group label-align='left' title="请选择所属队长">
+          <group label-align='left' title="请填写所属信息">
             <x-input 
             title="所属队长"
             text-align="right"
@@ -13,11 +13,39 @@
             ref="captainChooise"
             class="helpCaptain"
             ></x-input>
+            <x-input 
+            title="所属省长"
+            text-align="right"
+            v-model.trim="governor"
+            @on-change="provalUserByAgent('省长',$event)"
+            @on-focus='provinceReset'
+            placeholder="请输入省长"
+            ref="provinceChooise"
+            class="helpCaptain"
+            ></x-input>
+            <x-input 
+            title="所属常委"
+            text-align="right"
+            v-model.trim="member"
+            @on-change="memberUser('常委',$event)"
+            @on-focus='memberUserReset'
+            placeholder="请输入常委"
+            ref="memberChooise"
+            class="helpCaptain"
+            ></x-input>
           </group>
           <group class="captain-container" :class="captainShow==false?'captainHide':''">
             <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
           </group>
-  
+
+          <group class="captain-container">
+            <cell :title="item.nickname" v-for="(item, index) in provalUserByList" :key="index" @click.native="getProvalUser(item.nickname)"></cell>
+          </group>
+
+           <group class="captain-container">
+            <cell :title="item.nickname" v-for="(item, index) in MemberUserList" :key="index" @click.native="getMemberUser(item.nickname)"></cell>
+          </group>
+
           <group label-align='left' title="请选择相应的地区" v-if="man==true">
             <popup-picker 
               class="each_part"
@@ -101,6 +129,14 @@
             ></x-input>
           </group>
 
+          <group>
+            <x-input 
+            title="备注"
+            text-align="right" 
+            placeholder="有什么要叮嘱的吗？"
+            v-model="comments"
+            ></x-input>
+          </group>
 
       </div>
       <x-button 
@@ -176,7 +212,14 @@ export default {
       areaValue:[],
       bankList:[],
       bankValue:[],
-      man:false
+      man:false,
+      governor:'',
+      governorStatus:true,
+      member:'',
+      memberStatus:true,
+      provalUserByList:[],
+      MemberUserList:[],
+      comments:''
     }
   },
   filters:{
@@ -197,6 +240,7 @@ export default {
     captainSelect(e){
       //当输入内容清空时
       if(this.captainShow == false || this.helpCaptain == ''){
+        this.teamLeaderList.length=0;
         return;
       }
       //获取队长信息
@@ -275,6 +319,9 @@ export default {
         return;
       }
       let captain = this.helpCaptain,
+          governor=this.governor,
+          member=this.member,
+          comments=this.comments,
           dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept,
           region = JSON.parse(localStorage.getItem('ROSE_OPTION')).region,
           bank = JSON.parse(localStorage.getItem('ROSE_OPTION')).bank,
@@ -286,9 +333,28 @@ export default {
           content: '请填写队长信息'
         })
         return;
+      }else if(!this.governor){
+         this.$vux.alert.show({
+          title: '提示',
+          content: '请填写省长信息'
+        })
+        return;
+      }else if(!this.member){
+         this.$vux.alert.show({
+          title: '提示',
+          content: '请填写常委信息'
+        })
+        return;
       }
-      localStorage.setItem('ROSE_OPTION',JSON.stringify({bank:bank,captain:captain,dept:dept,region:region,groupName:groupName}))
-
+      localStorage.setItem('ROSE_OPTION',JSON.stringify({
+        bank:bank,
+        captain:captain,
+        dept:dept,
+        region:region,
+        groupName:groupName,
+      }))
+      localStorage.setItem('SALE_Governor',JSON.stringify({governor:governor}));
+      localStorage.setItem('SALE_Member',JSON.stringify({member:member}));
       let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
@@ -300,6 +366,9 @@ export default {
             "varchar4":bank,
             "varchar5":groupName,
             "varchar6": "否",
+            "varchar7":governor,
+            "varchar8":member,
+            "varchar9":comments,
           },
           "transDetailUncalc": [],
           "transCode": "XHXSDD"
@@ -426,10 +495,56 @@ export default {
             newDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
             Days = parseInt(Math.abs(newDate1 - newDate2) / 1000 / 60 / 60 / 24); //把差的毫秒数转换为天数  
         return Days;
+    },
+    //省长
+    provalUserByAgent(type,e){
+      if(this.governorStatus==false||this.governor==''){
+        this.provalUserByList.length=0;
+        return;
+      }
+      let data={
+                "entityId":20000,
+                "filter":JSON.stringify([{"operator":"like","value":type,"property":"role"},{"operator":"like","value":e,"property":"nickname"}])
+            };
+      saleRepotService.getApprovalUserByAgent(data).then(res=>{
+          this.provalUserByList=res.tableContent;
+      });
+    },
+    provinceReset(e){
+      this.governorStatus=true;
+    },
+    //选择省长
+    getProvalUser(val){
+      this.governorStatus=false;
+      this.provalUserByList.length=0;
+      this.governor=val;
+    },
+     //常委
+    memberUser(type,e){
+      if(this.memberStatus==false||this.member==''){
+        this.MemberUserList.length=0;
+        return;
+      }
+      let data={
+                "entityId":20000,
+                "filter":JSON.stringify([{"operator":"like","value":type,"property":"role"},{"operator":"like","value":e,"property":"nickname"}])
+            };
+      saleRepotService.getApprovalUserByAgent(data).then(res=>{
+          this.MemberUserList=res.tableContent;
+      });
+    },
+    memberUserReset(e){
+      this.memberStatus=true;
+    },
+    //选择常委
+    getMemberUser(val){
+      this.memberStatus=false;
+      this.MemberUserList.length=0;
+      this.member=val;
     }
   },
   mounted(){
-
+    
     //获取地区
     this.getArea();
     //获取银行
@@ -456,6 +571,14 @@ export default {
     if(localStorage.getItem('SALE_CAP')){
       this.helpCaptain = JSON.parse(localStorage.getItem('SALE_CAP')).captain;
     }
+    if(localStorage.getItem('SALE_Governor')){
+      this.governor = JSON.parse(localStorage.getItem('SALE_Governor')).governor;
+      this.governorStatus=false;
+    }
+    if(localStorage.getItem('SALE_Member')){
+      this.member = JSON.parse(localStorage.getItem('SALE_Member')).member;
+      this.memberStatus=false;
+    }
    this.listData();
   },
   beforeRouteLeave(to,from,next){
@@ -478,13 +601,15 @@ export default {
               Bclass:that.Bclass,
               time:new Date().getTime()
             })
-          )
+          );
           localStorage.setItem(
               'SALE_CAP',
               JSON.stringify({
                 captain:that.helpCaptain
               })
-          )
+          );
+          localStorage.setItem('SALE_Governor',JSON.stringify({governor:that.governor}));
+          localStorage.setItem('SALE_Member',JSON.stringify({member:that.member}));
           next()
         }
       })
