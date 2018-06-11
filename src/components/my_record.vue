@@ -94,7 +94,6 @@ export default {
                 bmName:ROSE_OPTION.captain,
             }
             myReportService.myRepotList(jsonData).then(data=>{
-                this.spinner = true;
                 if(data){
                     this.spinner = false;
                 }
@@ -127,7 +126,8 @@ export default {
             this.list1Total=(this.list1Total).toFixed(2);
         }
     },
-    mounted(){
+    created(){
+        this.spinner = true;
         this.listData();
     }
 }
