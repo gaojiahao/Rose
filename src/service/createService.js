@@ -44,6 +44,20 @@ let createService = {
     return $axios.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     });
+  },
+  // TODO 获取当前用户的信息
+  getCurrentUser(name){
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/listUsers',
+      data: {
+        limit: 1,
+        filter: JSON.stringify([{
+          operator: 'eq',
+          value: name,
+          property: 'nickname'
+        }])
+      }
+    });
   }
 };
 

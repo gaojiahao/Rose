@@ -24,7 +24,8 @@
         </group>-->
         <group v-for="(item, index) in config" :title="item.title" :key="index"
                v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
-          <dynamic-form :config="item.items" :user-info="userInfo" @addlistener="addListener"
+          <dynamic-form :config="item.items" :user-info="userInfo" :current-user="currentUser"
+                        @addlistener="addListener"
                         ref="dynamicForm"></dynamic-form>
         </group>
       </div>
@@ -62,7 +63,8 @@
         showToast: false, // 是否展示toast
         toastText: '', // 警告提示
         config: [],
-        userInfo: {},
+        userInfo: {}, // 当前用户信息
+        currentUser: {}, // 当前用户信息
       }
     },
     methods: {
@@ -94,10 +96,43 @@
         }
         dynamicForm.forEach(item => {
           let saveData = item.getSaveData();
-
+          console.log(saveData);
+          Object.entries(saveData).forEach(([key, value]) => {
+            // 若已有该键值，则合并
+            if (jsonData[key]) {
+              Object.assign(jsonData[key], value);
+            } else {
+              jsonData[key] = value;
+            }
+          });
         });
+        console.log('-------------')
+        console.log(jsonData)
+        /*createService.saveData({
+          entityId: this.userInfo.entityId,
+          transCode: '',
+          jsonData: JSON.stringify(jsonData),
+          wfPara: JSON.stringify({
+            [this.procCode]: {
+              businessKey: this.submitTransCode,
+            }
+          })
+        }).then(data => {
+          this.showLoading = false;
+          // 从返回数据获取表单编码
+          let matchCode = data.message.match(/【(.)+】/gi);
+          this.transCode = matchCode ? matchCode[0].replace(/[【】]/g, '') : '';
+          // 提交编码为null则说明提交失败
+          if (this.transCode.indexOf('null') === -1) {
+            this.showToastText('提交成功');
+          } else {
+            this.showToastText('提交失败');
+          }
+        }).catch(e => {
+          this.showToastText(e.message);
+        })*/
 
-        this.$router.push({path: '/flow'})
+        // this.$router.push({path: '/flow'})
       },
       // TODO 显示错误提示
       showToastText(test = '') {
@@ -142,11 +177,16 @@
       let query = this.$route.query;
       this.uniqueId = query.view;
       this.listid = query.list;
-      // this.getProcess();
-      createService.getUser().then(data => {
-        this.userInfo = data;
-      });
-      this.getConfig();
+      (async () => {
+        // this.getProcess();
+        await createService.getUser().then(data => {
+          this.userInfo = data;
+        });
+        await createService.getCurrentUser(this.userInfo.nickname).then(data => {
+          this.currentUser = data.tableContent[0] || {};
+        });
+        this.getConfig();
+      })()
     }
   }
 </script>
