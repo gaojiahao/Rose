@@ -94,7 +94,11 @@
           this.showToastText(warn);
           return
         }
-        dynamicForm.forEach(item => {
+        dynamicForm.every(item => {
+          warn = item.checkData();
+          if (warn) {
+            return false
+          }
           let saveData = item.getSaveData();
           console.log(saveData);
           Object.entries(saveData).forEach(([key, value]) => {
@@ -105,7 +109,13 @@
               jsonData[key] = value;
             }
           });
+          return true;
         });
+        if (warn) {
+          this.showToastText(warn);
+          return;
+        }
+        jsonData.transCode = jsonData.baseinfo.transCode;
         console.log('-------------')
         console.log(jsonData)
         /*createService.saveData({
