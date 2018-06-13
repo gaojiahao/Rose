@@ -16,7 +16,7 @@
       <x-textarea :title="item.fieldLabel" v-model="item.inputValue" :readonly="item.readOnly"
                   v-else-if="item.xtype === 'r2HtmlEditor' || item.xtype === 'r2TextArea'"></x-textarea>
       <x-selector :title="item.fieldLabel" :data="item.selectorList" v-model="item.inputValue"
-                  @on-change="selectorChange(item)" :sel-value="item.inputValue"
+                  @on-change="selectorChange(item, index)" :sel-value="item.inputValue"
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
       <!-- 表格类型 -->
       <!--<x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
@@ -25,8 +25,6 @@
       <datetime :title="item.fieldLabel" v-model="item.inputValue" format="YYYY-MM-DD"
                 v-else-if="item.xtype === 'r2Datefield'"></datetime>
     </div>
-    <!-- 提示 -->
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
@@ -39,7 +37,6 @@
     XTextarea,
     Confirm,
     TransferDom,
-    Toast,
     Cell,
     Popup,
     Datetime,
@@ -59,12 +56,6 @@
         }
       },
       // 用户数据
-      /* userInfo: {
-         type: Object,
-         default() {
-           return {}
-         }
-       },*/
       currentUser: {
         type: Object,
         default() {
@@ -73,17 +64,11 @@
       },
     },
     directives: {TransferDom},
-    components: {Group, PopupPicker, XInput, XTextarea, Confirm, Toast, Cell, Popup, XSelector, Datetime},
+    components: {Group, PopupPicker, XInput, XTextarea, Confirm, Cell, Popup, XSelector, Datetime},
     data() {
       return {
-        uniqueId: '',
-        listid: '',
         configList: [], // 配置列表
-        showToast: false, // 是否展示toast
-        toastText: '', // 警告提示
-        transCode: '', // 表单编码
-        submitTransCode: '', // 用于提交的transCode
-        needListeners: [],
+        needListeners: [], // 监听列表
       }
     },
     methods: {
@@ -126,7 +111,6 @@
                     listner.handler(e);
                   });
                   this.$emit('addlistener', {type, lIndex, index, userEvent});
-                  // userEvent.emit(cItem.inputValue);
                 })
               }
               // 输入框计算
@@ -149,15 +133,7 @@
         item.pickerList = [];
         item.inputValue = [];
         let dataSource = JSON.parse(item.dataSource || "{}");
-        let unitNameArr = ['baseinfoExt.varchar1', 'baseinfoExt.varchar9', 'baseinfoExt.varchar3', 'baseinfoExt.varchar4', 'baseinfoExt.varchar5', 'baseinfoExt.varchar6'];
-        let userGroupNameArr = ['baseinfo.handlerAreaName', 'baseinfo.handlerUnitName', 'baseinfo.handlerRoleName'];
-        let nameKey = '';
-        // 判断展示名称的key
-        if (unitNameArr.indexOf(item.name) !== -1) {
-          nameKey = 'unitName';
-        } else if (userGroupNameArr.indexOf(item.name) !== -1) {
-          nameKey = 'userGroupName';
-        }
+        let {displayField, valueField} = item;
         switch (dataSource.type) {
           // 静态数据
           case 'staticData':
@@ -169,26 +145,32 @@
             });
             break;
           case 'remoteData':
+            let hasContrl = false; // 判断是否依赖其他组件
             let params = {};
             let requestRemote = () => {
               let pickerList = [];
               createService.getRemoteData(dataSource.data.url, params).then(data => {
+                let firstVal = [];
                 data.tableContent && data.tableContent.forEach(picker => {
-                  let name = picker[nameKey];
+                  let name = picker[displayField];
                   pickerList.push(Object.assign(picker, {
                     name: name,
                     value: name
                   }));
                 });
+                // 判断是否有数据，有数据则取第一个值作为默认值
+                firstVal = pickerList[0] && pickerList[0].name;
+
                 this.setData(index, {
                   pickerList,
-                  // inputValue: [pickerList[0] && pickerList[0].name] || []
+                  inputValue: firstVal ? [firstVal] : []
                 });
               });
             };
             Object.entries(dataSource.data.params).forEach(([key, value]) => {
               switch (value.type) {
                 case 'contrl':
+                  hasContrl = true;
                   // 增加监听操作
                   this.needListeners.push({
                     contrl: value.value.contrl,
@@ -196,8 +178,6 @@
                       Object.assign(params, {
                         [key]: e.data.value[value.value.valueField]
                       });
-                      // 清空当前值
-                      item.inputValue = [];
                       requestRemote();
                     }
                   });
@@ -207,14 +187,15 @@
                   break;
               }
             });
-            requestRemote();
+            // 判断是否依赖其他组件，如果依赖，则不请求
+            !hasContrl ? requestRemote() : '';
             break;
           default:
             break;
         }
         if (item.defaultValue) {
           let defaultValue = JSON.parse(item.defaultValue || "{}");
-          let inputValue = '';
+          let inputValue = [];
           switch (defaultValue.type) {
             // 从当前用户信息获取数据
             case 'contextData':
@@ -234,26 +215,17 @@
         item.inputValue = {};
         let params = {};
         let dataSource = JSON.parse(item.dataSource || "{}");
+        let {displayField, valueField} = item;
         switch (dataSource.type) {
           case 'remoteData':
             Object.entries(dataSource.data.params).forEach(([key, value]) => {
               params[key] = value.value;
             });
             createService.getRemoteData(dataSource.data.url, params).then(data => {
-              let nameKey = '';
-              switch (item.name) {
-                // 上级需求
-                case 'requirementProject.parentId':
-                  nameKey = 'requireName';
-                  break;
-                // 报销人  经办人
-                default:
-                  nameKey = 'nickname';
-                  break;
-              }
               data.tableContent && data.tableContent.forEach(sel => {
                 item.selectorList.push(Object.assign(sel, {
-                  name: sel[nameKey],
+                  name: sel[displayField],
+                  value: sel[valueField],
                 }))
               });
             }).catch(e => {
@@ -266,19 +238,20 @@
         // 判断是否有默认值
         if (item.defaultValue) {
           let defaultValue = JSON.parse(item.defaultValue || "{}");
+          let name = '';
           switch (defaultValue.type) {
             case 'contextData': // 从用户信息中获取
-              if (defaultValue.data === 'currentUser.name') {
-                this.setData(index, {
-                  inputValue: Object.assign({}, this.currentUser, {
-                    name: this.currentUser.nickname
-                  })
-                });
-              }
+              name = contextData.getContext(defaultValue.data);
               break;
             default:
               break;
           }
+          this.setData(index, {
+            inputValue: Object.assign({}, this.currentUser, {
+              name: name,
+              value: this.currentUser[valueField],
+            })
+          });
         }
       },
       // TODO 处理表格数据
@@ -356,7 +329,6 @@
       },
       // TODO 文本框修改值
       inputChange(input) {
-        // console.log(input)
         input.listeners && Object.values(input.listeners).forEach(item => {
           item.emit({
             reference: input.reference,
@@ -384,69 +356,15 @@
         });
       },
       // TODO 选择器切换
-      selectorChange(selector) {
+      selectorChange(selector, index) {
         selector.listeners && Object.values(selector.listeners).forEach(item => {
           item.emit({
             value: selector.inputValue
           });
-        })
-      },
-      // TODO 提交数据
-      getSaveData() {
-        let submitData = {};
-        this.configList && this.configList.forEach(item => {
-          if (item.submitValue) {
-            // 通过切割名字获取source和key
-            let [source, businesskey] = item.name.split('.');
-            if (!submitData[source]) {
-              submitData[source] = {};
-            }
-            if (businesskey === 'id') {
-              // 生成随机id
-              submitData[source][businesskey] = this.guid();
-              return
-            }
-            if (businesskey === 'fgCode' || businesskey === 'entityId') {
-              let defaultValue = JSON.parse(item.defaultValue || "{}");
-              submitData[source][businesskey] = defaultValue.data[0];
-              return
-            }
-            if (businesskey === 'transCode') {
-              this.submitTransCode = item.inputValue || '';
-            }
-            switch (item.xtype) {
-              // 下拉框类型
-              case 'r2Combo':
-                let comboData = item.inputValue[0] || '';
-                submitData[source][businesskey] = {
-                  text: comboData,
-                  selection: {
-                    data: {
-                      text: comboData,
-                      id: ''
-                    }
-                  },
-                  value: comboData
-                };
-                break;
-              case 'r2Selector':
-                let val = item.inputValue.name;
-                submitData[source][businesskey] = val ? {
-                  text: val,
-                  value: val
-                } : {};
-                break;
-              default:
-                submitData[source][businesskey] = item.inputValue || '';
-                break;
-            }
-          }
-          if (item.xtype === 'r2Grid') {
-            Object.assign(submitData, item.inputValue);
-          }
         });
-        // console.log(submitData)
-        return submitData
+        this.setData(index, {
+          inputValue: selector.inputValue
+        });
       },
       // TODO 生成随机串
       guid() {
@@ -454,6 +372,13 @@
           return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
         return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
+      },
+      // TODO 判断对象是否为空
+      isEmptyObject(obj) {
+        if (typeof obj !== 'object') {
+          return false;
+        }
+        return Object.keys(obj).length === 0;
       },
       // TODO 检查数据
       checkData() {
@@ -466,7 +391,7 @@
                 warn = !item.inputValue[0] ? `${item.fieldLabel || ''}不能为空` : '';
                 break;
               case 'r2Selector':
-                warn = !item.inputValue ? `${item.fieldLabel || ''}不能为空` : '';
+                warn = this.isEmptyObject(item.inputValue) ? `${item.fieldLabel || ''}不能为空` : '';
                 break;
               default:
                 warn = !item.inputValue ? `${item.fieldLabel || ''}不能为空` : '';
@@ -481,10 +406,76 @@
         });
         return warn;
       },
-      // TODO 显示错误提示
-      showToastText(test = '') {
-        this.showToast = true;
-        this.toastText = test;
+      // TODO 提交数据
+      getSaveData() {
+        let submitData = {};
+        let wfData = {};
+        this.configList && this.configList.forEach(item => {
+          if (item.submitValue) {
+            // 通过切割名字获取source和key
+            let [source, businesskey] = item.name.split('.');
+            let {inputValue, valueField} = item;
+            if (!submitData[source]) {
+              submitData[source] = {};
+            }
+            if (businesskey === 'id') {
+              // 生成随机id
+              submitData[source][businesskey] = this.guid();
+              return
+            }
+            if (businesskey === 'fgCode' || businesskey === 'entityId') {
+              let defaultValue = JSON.parse(item.defaultValue || "{}");
+              submitData[source][businesskey] = defaultValue.data[0];
+              return
+            }
+            switch (item.xtype) {
+              // 下拉框类型
+              case 'r2Combo':
+                let comboData = inputValue[0] || '';
+                submitData[source][businesskey] = {
+                  text: comboData,
+                  selection: {
+                    data: {
+                      [valueField]: comboData,
+                      id: ''
+                    }
+                  },
+                  value: comboData
+                };
+                break;
+              case 'r2Selector':
+                let val = inputValue.name;
+                submitData[source][businesskey] = val ? {
+                  text: val,
+                  value: val,
+                  selection: {
+                    data: inputValue
+                  }
+                } : {};
+                // 处理wfParam要传的参数
+                if (item.wfParam) {
+                  wfData[item.wfParam] = inputValue.value || '';
+                }
+                break;
+              default:
+                submitData[source][businesskey] = inputValue || '';
+                // 处理wfParam要传的参数
+                if (item.wfParam) {
+                  wfData[item.wfParam] = inputValue
+                }
+                break;
+            }
+          }
+          if (item.xtype === 'r2Grid') {
+            Object.assign(submitData, item.inputValue);
+          }
+        });
+        // console.log(submitData)
+        // console.log(wfData)
+        return {
+          submitData,
+          wfData
+        }
       },
       // TODO 设置数据，触发视图更新
       setData(index, data) {

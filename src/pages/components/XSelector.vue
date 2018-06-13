@@ -1,6 +1,7 @@
 <template>
   <div class="x-selector">
     <cell :title="title" :value="name" is-link @click.native="showSelector"></cell>
+    <!--<cell title="123" is-link></cell>-->
     <div class="selector-pop" v-transfer-dom>
       <popup v-model="showPop" position='left' width='80%'>
         <div class="x-selector-container" ref="selector">
@@ -36,7 +37,7 @@
       // 默认值
       selValue: {
         type: Object,
-        default(){
+        default() {
           return {}
         }
       }
@@ -47,13 +48,12 @@
       return {
         showPop: false,
         listScroll: null,
-        cellValue: ''
       }
     },
     computed: {
       // 显示选中的名字
-      name(){
-        return this.cellValue || this.selValue.name
+      name() {
+        return this.selValue.name
       }
     },
     watch: {
@@ -78,7 +78,6 @@
       // TODO 点击单个项
       getSelector(item) {
         this.showPop = false;
-        this.cellValue = item.name;
         this.$emit('input', item);
         this.$emit('on-change', item);
       },

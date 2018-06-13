@@ -9,23 +9,9 @@
     </h1>
     <div class="m_main">
       <div class="m_main_part">
-        <!--<group title="请填写会议安排明细">
-          <datetime v-model="minuteListValue" format="YYYY-MM-DD" :minute-list="['00', '15', '30', '45']"
-                    title="时间段"></datetime>
-          <x-input
-            :title='item'
-            :key="index"
-            text-align='right'
-            v-for="(item, index) in meetList"
-          ></x-input>
-        </group>
-        <group title="费用合计">
-          <cell title="金额合计" value='￥1,000'></cell>
-        </group>-->
         <group v-for="(item, index) in config" :title="item.title" :key="index"
                v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
-          <dynamic-form :config="item.items" :user-info="userInfo" :current-user="currentUser"
-                        @addlistener="addListener"
+          <dynamic-form :config="item.items" :current-user="currentUser" @addlistener="addListener"
                         ref="dynamicForm"></dynamic-form>
         </group>
       </div>
@@ -58,8 +44,6 @@
       return {
         uniqueId: '',
         listid: '',
-        minuteListValue: '',
-        meetList: ['省份', '城市', '酒店名称', '住宿均价', '房间数量', '总人数', '场地费用合计', '路费合计', '餐饮合计'],
         showToast: false, // 是否展示toast
         toastText: '', // 警告提示
         config: [],
@@ -86,7 +70,9 @@
           referenceId: this.guid(),
           transCode: '',
         };
+        let wfPara = {};
         let dynamicForm = this.$refs.dynamicForm;
+        let saveData = {};
         dynamicForm.every(item => {
           item.checkData();
         });
@@ -94,40 +80,64 @@
           this.showToastText(warn);
           return
         }
-        dynamicForm.every(item => {
+        dynamicForm && dynamicForm.every((item, index) => {
           warn = item.checkData();
           if (warn) {
             return false
           }
-          let saveData = item.getSaveData();
-          console.log(saveData);
-          Object.entries(saveData).forEach(([key, value]) => {
+          let groupName = this.config[index].name;
+          let noAssembleMap = ['baseinfo', 'baseinfoExt', 'baseinfo.fj'];
+          let {submitData, wfData} = item.getSaveData();
+          if (noAssembleMap.indexOf(groupName) === -1) {
+            jsonData[`$${groupName}`] = {};
+          }
+          Object.entries(submitData).forEach(([key, value]) => {
             // 若已有该键值，则合并
             if (jsonData[key]) {
               Object.assign(jsonData[key], value);
             } else {
               jsonData[key] = value;
             }
+            // 副总裁赋值操作
+            if (key === 'warehouse') {
+              Object.entries(value).forEach(([$key, $val]) => {
+                jsonData[groupName][`${key}.${$key}`] = $val;
+              });
+            }
+            // 传值的key增加$符号
+            if (noAssembleMap.indexOf(groupName) === -1) {
+              Object.entries(value).forEach(([$key, $val]) => {
+                if (key !== 'review') {
+                  jsonData[`$${groupName}`][`${key}.${$key}`] = $val;
+                } else {
+                  jsonData[`$${groupName}`][$key] = $val;
+                }
+              })
+            }
           });
+          // 合并数据wfPara数据
+          Object.assign(wfPara, wfData);
           return true;
         });
+        console.log(jsonData)
         if (warn) {
           this.showToastText(warn);
           return;
         }
-        jsonData.transCode = jsonData.baseinfo.transCode;
-        console.log('-------------')
+        let {transCode} = jsonData.baseinfo;
+        jsonData.transCode = transCode;
         console.log(jsonData)
-        /*createService.saveData({
-          entityId: this.userInfo.entityId,
-          transCode: '',
+        saveData = {
+          transCode: transCode,
           jsonData: JSON.stringify(jsonData),
-          wfPara: JSON.stringify({
-            [this.procCode]: {
-              businessKey: this.submitTransCode,
-            }
-          })
-        }).then(data => {
+        };
+        // 没有procCode时不传wfPara项
+        if (this.procCode) {
+          saveData.wfPara = JSON.stringify({
+            [this.procCode]: wfPara
+          });
+        }
+        /*createService.saveData(saveData).then(data => {
           this.showLoading = false;
           // 从返回数据获取表单编码
           let matchCode = data.message.match(/【(.)+】/gi);
@@ -188,7 +198,7 @@
       this.uniqueId = query.view;
       this.listid = query.list;
       (async () => {
-        // this.getProcess();
+        this.getProcess();
         await createService.getUser().then(data => {
           this.userInfo = data;
         });
@@ -197,7 +207,7 @@
         });
         this.getConfig();
       })()
-    }
+    },
   }
 </script>
 
