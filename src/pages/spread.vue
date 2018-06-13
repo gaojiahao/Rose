@@ -46,7 +46,7 @@
                     ></popup-picker>
 
                 </group> -->
-                <spreadBaseInfo :baseInfo="baseInfo"></spreadBaseInfo>
+                <spreadBaseInfo :info="baseinfo" :user="userinfo" :operatorlist="operatorlist"></spreadBaseInfo>
             </div>
             <div class="s_main_part" v-for="(item, index) in s_list_num" :key='index'>
                     
@@ -133,7 +133,8 @@
 
 <script>
 import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from 'vux'
-import spread from '../service/spread.js'
+import spreadService from '../service/spreadService.js'
+import createService from '../service/createService.js'
 import spreadBaseInfo from './components/spreadBaseInfo'
 export default {
     components:{
@@ -149,14 +150,15 @@ export default {
     },
     data(){
         return{
-            baseInfo:{
-                type:'',
-                mainPart:'',
-                operator:[],
-                area:[],
-                department:[],
-                role:[],
-            },
+            baseinfo:[],//表单基本信息
+            userinfo:'',//当前用户
+            operatorlist:[],//经办人列表
+            deptList:[],
+            roleList:[],
+            PublicityDetail:[],//宣传明细
+            Remarks:[],//备注
+            attachment:[],//附件
+            ReviewerInfo:[],//复核人信息
             s_list:[],      // 市场宣传 种类选择
             s_list_num:['1'],                        // 种类 数量 (添加一个则多一个选择,删除则反之)
             s_type:[],                               // 市场宣传 选中
@@ -203,16 +205,91 @@ export default {
             this.total=num;
             // this.$refs.xp_input[idx].currentValue=numberComma(this.$refs.xp_input[idx].currentValue,3);
         },
-        //表单基本信息
-        BaseInfo(){
+        //获取当前用户
+        User(){
+            let that=this;
+            createService.getUser().then(res=>{
+                that.UserRemark(res.nickname);
+            })
+        },
+        //获取当前用户信息
+        UserRemark(name){
+            let that=this,
+            url='/H_roleplay-si/ds/listUsers',
+            data={
+                page: 1,
+                start: 0,
+                limit: 25,
+            };
+            createService.getCurrentUser(name).then(res=>{
+                that.userinfo=res.tableContent;
+                //经办人列表
+                createService.getRemoteData(url,data).then(res=>{
+                    for(let i = 0 ; i< res.tableContent.length ; i++){
+                        res.tableContent[i].name=res.tableContent[i].nickname;
+                        res.tableContent[i].value=res.tableContent[i].nickname;
+                    }
+                    that.operatorlist=res.tableContent;
+                    that.formInfo();
+                })
+            });
+        },
+        //表单信息
+        formInfo(){
             let that=this,
             data={
                 _dc:Date.parse(new Date()),
                 uniqueId:'a9238c91-36f3-4b09-9705-9d50870b3c46'
             }
-            spread.getBaseInfo(data).then(res=>{
+            spreadService.getFormView(data).then(res=>{
                 for(let i = 0 ; i<res.length; i++){
-                    console.log(JSON.parse(res[i].config))
+                    let config=JSON.parse(res[i].config);
+                    for(let j = 0 ; j<config.items.length ; j++){
+                        // 表单基本信息
+                        if(config.items[j].title=='表单基本信息'){
+                            for(let k = 0 ; k<config.items[j].items.length ; k++){
+                                let defaultValue=config.items[j].items[k].defaultValue;
+                                if(defaultValue!=''){
+                                    config.items[j].items[k].defaultValue=JSON.parse(defaultValue);
+                                    if(config.items[j].items[k].fieldLabel=="经办人"){
+                                        //经办人
+                                        config.items[j].items[k].defaultValue.data=[that.userinfo[0].nickname];
+                                        config.items[j].items[k].defaultValue.PopupPicker=[that.operatorlist];
+                                    }else if(config.items[j].items[k].fieldLabel=="所属区域"){
+                                        //所属区域
+                                        config.items[j].items[k].defaultValue.data=[that.userinfo[0].area];
+                                        config.items[j].items[k].defaultValue.PopupPicker=[[{
+                                            name:that.userinfo[0].area,
+                                            value:that.userinfo[0].area
+                                        }]];
+                                    }else if(config.items[j].items[k].fieldLabel=="经办部门"){
+                                        //经办部门
+                                        config.items[j].items[k].defaultValue.data=[that.userinfo[0].dept];
+                                       config.items[j].items[k].defaultValue.PopupPicker=[[{
+                                           name:that.userinfo[0].dept,
+                                           value:that.userinfo[0].dept
+                                        }]];
+                                    }else if(config.items[j].items[k].fieldLabel=="经办角色"){
+                                        //经办角色
+                                        config.items[j].items[k].defaultValue.data=[that.userinfo[0].role];
+                                       config.items[j].items[k].defaultValue.PopupPicker=[[{
+                                           name:that.userinfo[0].role,
+                                           value:that.userinfo[0].role
+                                        }]];
+                                    }
+                                }
+                            }
+                            that.baseinfo.push(config.items[j])
+                        }else if(config.items[j].title=='宣传明细'){
+                            that.PublicityDetail.push(config.items[j])
+                        }else if(config.items[j].title=='备注'){
+                            that.Remarks.push(config.items[j])
+                        }else if(config.items[j].title=='附件'){
+                            that.attachment.push(config.items[j])
+                        }else if(config.items[j].title=='复核人信息'){
+                            that.ReviewerInfo.push(config.items[j])
+                        }
+                    }
                 }
             })
         },
@@ -231,7 +308,7 @@ export default {
                 limit: 10000,
             },
             arr=[];
-            spread.getAccounting(data).then(res =>{
+            spreadService.getAccounting(data).then(res =>{
                 for(let i = 0 ; i<res.tableContent.length; i++){
                     arr.push(res.tableContent[i].unitName)
                 };
@@ -240,7 +317,7 @@ export default {
         }
     },
     mounted(){
-        this.BaseInfo();
+        this.User();
         this.buAll();
     },
     computed:{

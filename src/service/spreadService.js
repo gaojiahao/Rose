@@ -3,8 +3,9 @@ import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 
 let spread={
-    // 表单基本信息
-    getBaseInfo(data){
+    // 表单信息
+    // @LS 2018-6-11
+    getFormView(data){
         return $axios.ajax({
             url:'/H_roleplay-si/ds/list/getFormViewById',
             data:data,
