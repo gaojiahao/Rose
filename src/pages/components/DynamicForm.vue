@@ -15,6 +15,7 @@
       <!-- 文本框 -->
       <x-textarea :title="item.fieldLabel" v-model="item.inputValue" :readonly="item.readOnly"
                   v-else-if="item.xtype === 'r2HtmlEditor' || item.xtype === 'r2TextArea'"></x-textarea>
+      <!-- 选择器 -->
       <x-selector :title="item.fieldLabel" :data="item.selectorList" v-model="item.inputValue"
                   @on-change="selectorChange(item, index)" :sel-value="item.inputValue"
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
@@ -35,10 +36,8 @@
     PopupPicker,
     XInput,
     XTextarea,
-    Confirm,
     TransferDom,
     Cell,
-    Popup,
     Datetime,
   } from 'vux'
   import XSelector from './XSelector'
@@ -49,6 +48,7 @@
   export default {
     name: "DynamicForm",
     props: {
+      // 配置数据
       config: {
         type: Array,
         default() {
@@ -62,9 +62,14 @@
           return {}
         }
       },
+      // 判断是否为最后一个表单
+      lastIndex: {
+        type: Boolean,
+        default: false
+      }
     },
     directives: {TransferDom},
-    components: {Group, PopupPicker, XInput, XTextarea, Confirm, Cell, Popup, XSelector, Datetime},
+    components: {Group, PopupPicker, XInput, XTextarea, Cell, XSelector, Datetime},
     data() {
       return {
         configList: [], // 配置列表
@@ -83,15 +88,19 @@
             case 'r2Combo':
               this.handleCombo(item, index);
               break;
+            // 选择器类型
             case 'r2Selector':
               this.handleSelector(item, index);
               break;
+            // 表格
             case 'r2Grid':
               this.handleGrid(item, index);
               break;
+            // 数字输入框
             case 'r2Numberfield':
               this.handleMumber(item, index);
               break;
+            //  默认处理文本输入框
             default:
               this.handleDefault(item, index);
               break;
@@ -105,11 +114,12 @@
               // 下拉框级联
               if (cItem.id === listner.contrl) {
                 this.$nextTick(() => {
-                  let type = `userevent-${cItem.id}`;
+                  let type = `userevent-${cItem.id}`; // 监听类型
                   let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
                   userEvent.on((e) => {
                     listner.handler(e);
                   });
+                  // 触发父级方法，添加事件监听
                   this.$emit('addlistener', {type, lIndex, index, userEvent});
                 })
               }
@@ -133,7 +143,7 @@
         item.pickerList = [];
         item.inputValue = [];
         let dataSource = JSON.parse(item.dataSource || "{}");
-        let {displayField, valueField} = item;
+        let {displayField, valueField} = item; // 展示的key和value的key
         switch (dataSource.type) {
           // 静态数据
           case 'staticData':
@@ -144,39 +154,43 @@
               });
             });
             break;
+          // 需要请求数据
           case 'remoteData':
             let hasContrl = false; // 判断是否依赖其他组件
             let params = {};
+            // 处理请求
             let requestRemote = () => {
               let pickerList = [];
               createService.getRemoteData(dataSource.data.url, params).then(data => {
                 let firstVal = [];
+                // 处理picker的展示列表
                 data.tableContent && data.tableContent.forEach(picker => {
-                  let name = picker[displayField];
                   pickerList.push(Object.assign(picker, {
-                    name: name,
-                    value: name
+                    name: picker[displayField],
+                    value: picker[valueField]
                   }));
                 });
                 // 判断是否有数据，有数据则取第一个值作为默认值
                 firstVal = pickerList[0] && pickerList[0].name;
-
                 this.setData(index, {
                   pickerList,
                   inputValue: firstVal ? [firstVal] : []
                 });
+              }).catch(e => {
               });
             };
+            // 判断传值中是否需要依赖其他组件
             Object.entries(dataSource.data.params).forEach(([key, value]) => {
               switch (value.type) {
                 case 'contrl':
-                  hasContrl = true;
+                  hasContrl = true; // 有依赖组件
+                  let {contrl, valueField} = value.value;
                   // 增加监听操作
                   this.needListeners.push({
-                    contrl: value.value.contrl,
+                    contrl: contrl,
                     handler: (e) => {
                       Object.assign(params, {
-                        [key]: e.data.value[value.value.valueField]
+                        [key]: e.data.value[valueField] // valueField与外层valueField不同
                       });
                       requestRemote();
                     }
@@ -193,7 +207,8 @@
           default:
             break;
         }
-        if (item.defaultValue) {
+        // 下拉框的默认值与选中值相同时不触发on-change事件，先注释掉，不做默认值处理
+        /*if (item.defaultValue) {
           let defaultValue = JSON.parse(item.defaultValue || "{}");
           let inputValue = [];
           switch (defaultValue.type) {
@@ -207,7 +222,7 @@
           this.setData(index, {
             inputValue: inputValue
           });
-        }
+        }*/
       },
       // TODO 处理选择器
       handleSelector(item, index) {
@@ -222,11 +237,15 @@
               params[key] = value.value;
             });
             createService.getRemoteData(dataSource.data.url, params).then(data => {
+              let selectorList = [];
               data.tableContent && data.tableContent.forEach(sel => {
-                item.selectorList.push(Object.assign(sel, {
+                selectorList.push(Object.assign(sel, {
                   name: sel[displayField],
                   value: sel[valueField],
                 }))
+              });
+              this.setData(index, {
+                selectorList,
               });
             }).catch(e => {
               // item.hiddenInRun = true;
@@ -263,10 +282,12 @@
       handleMumber(item, index) {
         if (item.r2Bind) {
           let r2Bind = JSON.parse(item.r2Bind || "{}");
-          let value = r2Bind.value.replace(/[{}]/g, '');
-          let r2Binds = r2Bind[value].match(/\('[^\)]*'\)/g); // 获取括号中的值(含括号)
+          let valueKey = r2Bind.value.replace(/[{}]/g, ''); // 获取计算规则的key，如{ZSHJValue}
+          let r2Binds = r2Bind[valueKey].match(/\('[^\)]*'\)/g); // 获取括号中的值(含括号)，如["('FJSL.value')", "('FJJJ.value')"]
           let computeParams = {}; // 存储计算数值
+          // 组装计算对象，如{FJSL: 0, FJJJ: 0}
           r2Binds && r2Binds.forEach(item => {
+            // 匹配每个计算项
             let key = item.replace(/[\('\)]/g, '').replace(/\.value/g, '');
             computeParams[key] = 0;
           });
@@ -275,21 +296,25 @@
           this.needListeners.push({
             computeParams,
             handler: (e) => {
-              let data = e.data;
-              let computeStr = r2Bind[value];
-              computeParams[data.reference] = data.value;
-              Object.entries(computeParams).forEach(([key, value]) => {
-                // 将值转换为可计算的字符串
-                computeStr = computeStr.replace(`get('${key}.value')`, value);
-              });
-              // 设置计算后的值
-              this.setData(index, {
-                inputValue: eval(computeStr)
-              })
+              try {
+                let {reference, value} = e.data;
+                let computeStr = r2Bind[valueKey];
+                computeParams[reference] = value;
+                Object.entries(computeParams).forEach(([cKey, cValue]) => {
+                  // 将值转换为可计算的字符串
+                  computeStr = computeStr.replace(`get('${cKey}.value')`, cValue);
+                });
+                // 设置计算后的值
+                this.setData(index, {
+                  inputValue: eval(computeStr)
+                })
+              } catch (e) {
+                this.setData(index, {
+                  inputValue: 0
+                })
+              }
             }
           });
-          // console.log(r2Bind[value])
-          // console.log(r2Binds)
         }
       },
       // TODO 处理默认数据
@@ -298,15 +323,15 @@
           let dataSource = JSON.parse(item.dataSource || "{}");
           switch (dataSource.type) {
             case 'formData':
-              let dataKey = dataSource.data.valueField;
+              let {valueField} = dataSource.data;
               // 增加监听操作
               this.needListeners.push({
                 contrl: dataSource.data.contrl,
                 handler: (e) => {
-                  item.inputValue = e.data.value[dataKey] || '';
+                  item.inputValue = e.data.value[valueField] || '';
                 }
               });
-              item.inputValue = this.currentUser[dataKey];
+              item.inputValue = this.currentUser[valueField];
               break;
             default:
               break;
@@ -338,13 +363,15 @@
       },
       // TODO picker切换
       popChange(picker, index) {
-        console.log('popChange')
         let pickerItem = {};
         let val = picker.inputValue[0];
-        picker.pickerList && picker.pickerList.forEach(p => {
+        // 通过选中值获取选中项
+        picker.pickerList && picker.pickerList.every(p => {
           if (p.value === val) {
             pickerItem = Object.assign({}, p);
+            return false;
           }
+          return true;
         });
         picker.listeners && Object.values(picker.listeners).forEach(item => {
           item.emit({
@@ -479,14 +506,47 @@
       },
       // TODO 设置数据，触发视图更新
       setData(index, data) {
-        this.$set(this.configList, index, Object.assign(this.configList[index], data));
+        this.$set(this.configList, index, Object.assign({}, this.configList[index], data));
       }
     },
     created() {
       // 设置用户信息
       contextData.setInfo(this.currentUser);
-      // this.getProcess();
       this.handleConfig();
+      if (this.lastIndex) {
+        let autoEmit = []; // 需要自动触发的列表
+        this.$nextTick(() => {
+          // 获取最外层配置数据进行遍历
+          this.$parent.$parent.config.forEach((lItem, lIndex) => {
+            lItem.items && lItem.items.forEach((cItem, index) => {
+              // 判断是否有监听器和默认值，有则添加到自动触发列表
+              if (cItem.listeners) {
+                switch (cItem.xtype) {
+                  case 'r2Combo':
+                    cItem.inputValue.length > 0 ? autoEmit.push(cItem) : '';
+                    break;
+                  case 'r2Selector':
+                    !this.isEmptyObject(cItem.inputValue) ? autoEmit.push(cItem) : '';
+                    break;
+                  default:
+                    !cItem.inputValue ? autoEmit.push(cItem) : '';
+                    break;
+                }
+              }
+            });
+          });
+          // 自动触发监听
+          autoEmit.forEach(lItem => {
+            this.$nextTick(() => {
+              lItem.listeners && Object.values(lItem.listeners).forEach(item => {
+                item.emit({
+                  value: lItem.inputValue
+                });
+              });
+            })
+          })
+        })
+      }
     }
   }
 </script>

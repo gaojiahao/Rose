@@ -12,6 +12,7 @@
         <group v-for="(item, index) in config" :title="item.title" :key="index"
                v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
           <dynamic-form :config="item.items" :current-user="currentUser" @addlistener="addListener"
+                        :last-index="index === config.length - 1"
                         ref="dynamicForm"></dynamic-form>
         </group>
       </div>
@@ -22,6 +23,7 @@
     </div>
     <!-- 提示 -->
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
+    <loading :show="showLoading"></loading>
   </div>
 
 </template>
@@ -30,6 +32,7 @@
   import {Cell, Group, XInput, Datetime, Toast} from 'vux'
   import createService from './../service/createService'
   import DynamicForm from './components/DynamicForm'
+  import Loading from './components/loading'
 
   export default {
     components: {
@@ -38,12 +41,14 @@
       Group,
       XInput,
       Datetime,
-      Toast
+      Toast,
+      Loading
     },
     data() {
       return {
         uniqueId: '',
         listid: '',
+        showLoading: false,
         showToast: false, // 是否展示toast
         toastText: '', // 警告提示
         config: [],
@@ -73,6 +78,7 @@
         let wfPara = {};
         let dynamicForm = this.$refs.dynamicForm;
         let saveData = {};
+        let saveMethods = 'saveData';
         dynamicForm.every(item => {
           item.checkData();
         });
@@ -119,25 +125,26 @@
           Object.assign(wfPara, wfData);
           return true;
         });
-        console.log(jsonData)
         if (warn) {
           this.showToastText(warn);
           return;
         }
         let {transCode} = jsonData.baseinfo;
         jsonData.transCode = transCode;
-        console.log(jsonData)
+        // console.log(jsonData)
         saveData = {
           transCode: transCode,
           jsonData: JSON.stringify(jsonData),
         };
-        // 没有procCode时不传wfPara项
+        // 没有procCode时不传wfPara项，并且修改提交方法
         if (this.procCode) {
           saveData.wfPara = JSON.stringify({
             [this.procCode]: wfPara
           });
+          saveMethods = 'saveAndStartWf';
         }
-        /*createService.saveData(saveData).then(data => {
+        this.showLoading = true;
+        createService[saveMethods](saveData).then(data => {
           this.showLoading = false;
           // 从返回数据获取表单编码
           let matchCode = data.message.match(/【(.)+】/gi);
@@ -150,7 +157,7 @@
           }
         }).catch(e => {
           this.showToastText(e.message);
-        })*/
+        })
 
         // this.$router.push({path: '/flow'})
       },
@@ -176,7 +183,6 @@
         }).then(data => {
           this.showLoading = false;
           let config = data[0] && JSON.parse(data[0].config || "{}") || {};
-          console.log(config);
           this.config = config.items;
         }).catch(e => {
           this.showToastText(e.message);
@@ -185,7 +191,6 @@
       // TODO 添加监听
       addListener(params) {
         let {type, lIndex, index, userEvent} = params;
-        // console.log('addlistener')
         let item = this.config[lIndex].items[index];
         if (!item.listeners) {
           item.listeners = {};
@@ -198,6 +203,7 @@
       this.uniqueId = query.view;
       this.listid = query.list;
       (async () => {
+        this.showLoading = true;
         this.getProcess();
         await createService.getUser().then(data => {
           this.userInfo = data;

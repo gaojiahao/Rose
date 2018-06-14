@@ -26,12 +26,25 @@ let createService = {
       data
     });
   },
+  // TODO 提交数据(有节点的)
+  saveAndStartWf(data = {}) {
+    return $axios.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
+      url: '/H_roleplay-si/ds/saveAndStartWf',
+      data: Object.assign({
+        conn: 20000,
+        list: 'trans_form_data',
+        transCode: ''
+      }, data)
+    });
+  },
   // TODO 提交数据
   saveData(data = {}) {
     return $axios.ajax({
       type: 'POST',
       contentType: 'application/x-www-form-urlencoded',
-      url: '/H_roleplay-si/ds/saveAndStartWf',
+      url: '/H_roleplay-si/ds/saveData',
       data: Object.assign({
         conn: 20000,
         list: 'trans_form_data',
