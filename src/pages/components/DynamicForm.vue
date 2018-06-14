@@ -20,8 +20,8 @@
                   @on-change="selectorChange(item, index)" :sel-value="item.inputValue"
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
       <!-- 表格类型 -->
-      <!--<x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
-              v-else-if="item.xtype === 'r2Grid'"></x-grid>-->
+      <x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
+              v-else-if="item.xtype === 'r2Grid'"></x-grid>
       <!-- 日期类型 -->
       <datetime :title="item.fieldLabel" v-model="item.inputValue" format="YYYY-MM-DD"
                 v-else-if="item.xtype === 'r2Datefield'"></datetime>
@@ -41,7 +41,7 @@
     Datetime,
   } from 'vux'
   import XSelector from './XSelector'
-  // import XGrid from './XGrid'
+  import XGrid from './XGrid'
   import UserEvent from './../../plugins/userEvent'
   import contextData from './../map/contextData'
 
@@ -69,7 +69,7 @@
       }
     },
     directives: {TransferDom},
-    components: {Group, PopupPicker, XInput, XTextarea, Cell, XSelector, Datetime},
+    components: {Group, PopupPicker, XInput, XTextarea, Cell, XSelector, XGrid, Datetime},
     data() {
       return {
         configList: [], // 配置列表
@@ -98,7 +98,7 @@
               break;
             // 数字输入框
             case 'r2Numberfield':
-              this.handleMumber(item, index);
+              this.handleNumber(item, index);
               break;
             //  默认处理文本输入框
             default:
@@ -276,10 +276,10 @@
       // TODO 处理表格数据
       handleGrid(item, index) {
         item.gridList = item.columns || [];
-        item.inputValue = [];
+        item.inputValue = {};
       },
       // TODO 处理数字输入框
-      handleMumber(item, index) {
+      handleNumber(item, index) {
         if (item.r2Bind) {
           let r2Bind = JSON.parse(item.r2Bind || "{}");
           let valueKey = r2Bind.value.replace(/[{}]/g, ''); // 获取计算规则的key，如{ZSHJValue}
@@ -288,7 +288,7 @@
           // 组装计算对象，如{FJSL: 0, FJJJ: 0}
           r2Binds && r2Binds.forEach(item => {
             // 匹配每个计算项
-            let key = item.replace(/[\('\)]/g, '').replace(/\.value/g, '');
+            let key = item.replace(/[\('\)\.value]/g, '');
             computeParams[key] = 0;
           });
 
@@ -411,7 +411,7 @@
       checkData() {
         let warn = '';
         this.configList && this.configList.every(item => {
-          if (item.allowBlank !== undefined && !item.allowBlank) {
+          if ((item.allowBlank !== undefined && !item.allowBlank) || item.columns) {
             switch (item.xtype) {
               // 下拉框类型
               case 'r2Combo':
@@ -420,14 +420,17 @@
               case 'r2Selector':
                 warn = this.isEmptyObject(item.inputValue) ? `${item.fieldLabel || ''}不能为空` : '';
                 break;
+              case 'r2Grid':
+                let xGrid = this.$refs.xGrid;
+                xGrid && xGrid.every(item => {
+                  warn = item.checkData();
+                  return !warn;
+                });
+                break;
               default:
                 warn = !item.inputValue ? `${item.fieldLabel || ''}不能为空` : '';
                 break;
             }
-          }
-          if (item.xtype === 'r2Grid') {
-            let gridWarn = this.$refs.xGrid[0].checkData();
-            warn = gridWarn ? gridWarn : warn;
           }
           return !warn;
         });
@@ -494,6 +497,7 @@
             }
           }
           if (item.xtype === 'r2Grid') {
+            console.log(item.inputValue)
             Object.assign(submitData, item.inputValue);
           }
         });

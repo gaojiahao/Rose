@@ -54,6 +54,7 @@
         config: [],
         userInfo: {}, // 当前用户信息
         currentUser: {}, // 当前用户信息
+        title: '', // 顶部标题
       }
     },
     methods: {
@@ -92,7 +93,7 @@
             return false
           }
           let groupName = this.config[index].name;
-          let noAssembleMap = ['baseinfo', 'baseinfoExt', 'baseinfo.fj'];
+          let noAssembleMap = ['baseinfo', 'baseinfoExt', 'baseinfo.fj', 'transDetail'];
           let {submitData, wfData} = item.getSaveData();
           if (noAssembleMap.indexOf(groupName) === -1) {
             jsonData[`$${groupName}`] = {};
@@ -198,11 +199,16 @@
         item.listeners[type] = userEvent;
       },
     },
+    beforeRouteEnter(to, from, next) {
+      document.title = decodeURI(to.query.title);
+      next();
+    },
     created() {
       let query = this.$route.query;
       this.uniqueId = query.view;
       this.listid = query.list;
       (async () => {
+        this.title = decodeURI(query.title);
         this.showLoading = true;
         this.getProcess();
         await createService.getUser().then(data => {
