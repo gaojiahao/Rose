@@ -18,7 +18,7 @@
                   v-else-if="item.xtype === 'r2HtmlEditor' || item.xtype === 'r2TextArea'"></x-textarea>
       <!-- 选择器 -->
       <x-selector :title="item.fieldLabel" :data="item.selectorList" v-model="item.inputValue"
-                  @on-change="selectorChange(item, index)" :sel-value="item.inputValue"
+                  @on-change="selectorChange(item, index)" :sel-value="item.inputValue" :options="item.options"
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
       <!-- 表格类型 -->
       <x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
@@ -237,7 +237,13 @@
             Object.entries(dataSource.data.params).forEach(([key, value]) => {
               params[key] = value.value;
             });
-            createService.getRemoteData(dataSource.data.url, params).then(data => {
+            item.options = {
+              url: dataSource.data.url,
+              params: Object.assign({}, params),
+              displayField,
+              valueField
+            };
+            /*createService.getRemoteData(dataSource.data.url, params).then(data => {
               let selectorList = [];
               data.tableContent && data.tableContent.forEach(sel => {
                 selectorList.push(Object.assign(sel, {
@@ -250,7 +256,7 @@
               });
             }).catch(e => {
               // item.hiddenInRun = true;
-            });
+            });*/
             break;
           default:
             break;
