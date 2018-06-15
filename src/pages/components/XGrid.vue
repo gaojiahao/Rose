@@ -1,7 +1,9 @@
 <template>
   <group class="x-grid" ref="xGrid">
-    <div class="x-grid-container" v-for="(lItem, lIndex) in listData" :key="lIndex">
-      <div v-for="(item, index) in lItem" v-show="!item.hidden" :key="index">
+    <div class="x-grid-container" :class="{'vux-1px-b': lIndex !== listData.length - 1}"
+         v-for="(lItem, lIndex) in listData" :key="lIndex">
+      <div :class="{'vux-1px-b': index !== lItem.length - 1}" v-for="(item, index) in lItem" v-show="!item.hidden"
+           :key="index">
         <popup-picker :title="item.text" :data="item.pickerList" :value="item.inputValue" v-model="item.inputValue"
                       :columns="1" @on-change="popChange(item, lIndex,index)"
                       v-if="item.editorType === 'r2Combo'"></popup-picker>
@@ -14,12 +16,15 @@
                  :readonly="item.readOnly" v-else-if="item.editorType === 'r2Textfield'"></x-input>
       </div>
     </div>
-    <span class="new" @click="addGrid">新增</span>
+    <div class="grid-btn-group">
+      <x-button @click.native="addGridItem" mini plain>新增</x-button>
+      <x-button type="warn" @click.native="removeGridItem" :disabled="listData.length === 1" mini plain>删除</x-button>
+    </div>
   </group>
 </template>
 
 <script>
-  import {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XTextarea} from 'vux'
+  import {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton} from 'vux'
   import createService from './../../service/createService'
   import UserEvent from './../../plugins/userEvent'
 
@@ -37,7 +42,7 @@
         }
       },
     },
-    components: {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XTextarea},
+    components: {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton},
     data() {
       return {
         template: [], // 备份
@@ -430,10 +435,18 @@
           wfData
         }
       },
-      // TODO 增加表格
-      addGrid() {
+      // TODO 增加表格项
+      addGridItem() {
         // this.listData.push(Object.assign([], this.template));
         this.copy();
+      },
+      // TODO 删除表格项
+      removeGridItem() {
+        if (this.listData.length > 1) {
+          this.listData.pop();
+          this.needListeners.pop();
+          this.lastIndex--;
+        }
       },
       // TODO 设置数据，触发视图更新
       setData(currentIndex, index, data) {
@@ -441,7 +454,7 @@
       }
     },
     created() {
-      this.addGrid();
+      this.addGridItem();
     }
   }
 </script>
@@ -457,16 +470,21 @@
     }
     .x-grid-container {
       padding: 0 5px;
-      .weui-cell {
-        padding: 5px 15px;
+      &.vux-1px-b {
+        &:after {
+          left: 0;
+        }
       }
     }
-    .new {
-      display: inline-block;
-      margin-left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
+    .grid-btn-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px 0;
       color: blue;
+      .weui-btn {
+        margin: 0 .1rem;
+      }
     }
   }
 </style>

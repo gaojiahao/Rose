@@ -1,6 +1,7 @@
 <template>
   <div class="dynamic-form-container" ref="dynamicFormContainer">
-    <div v-for="(item, index) in configList" :key="index" v-show="!item.hiddenInRun">
+    <div :class="{'vux-1px-b': index !== configList.length - 1}" v-for="(item, index) in configList" :key="index"
+         v-show="!item.hiddenInRun">
       <!-- 普通输入框 -->
       <x-input :title="item.fieldLabel" :required="!item.allowBlank" v-model="item.inputValue" text-align="right"
                @on-change="inputChange(item)" :readonly="item.readOnly" v-if="item.xtype === 'r2Textfield'"></x-input>
@@ -557,5 +558,10 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .dynamic-form-container {
+    .vux-1px-b {
+      &:after {
+        left: 15px;
+      }
+    }
   }
 </style>

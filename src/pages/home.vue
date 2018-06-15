@@ -31,7 +31,7 @@
         sel_list: [
           {
             name: '市场费用',
-            path: '/spread',
+            path: '/meeting',
             query: {
               view: 'a9238c91-36f3-4b09-9705-9d50870b3c46',
               list: 'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c',
@@ -43,19 +43,19 @@
             query: {
               view: 'd189cc14-3a77-4e81-a220-55c771a2bdff',
               list: '696c5648-88ba-4bea-b5b1-1780f3c4febf',
-              title: encodeURI('会议'),
+              title: encodeURI('会议立项'),
             },
           }, {
             name: '房屋立项申请',
-            path: '/house',
+            path: '/meeting',
             query: {
               view: 'e59dcb25-3a14-44b7-b619-433c63d2327b',
               list: '4912df2a-612e-462a-a6f4-c7c72f497bb8',
-              title: encodeURI('房屋'),
+              title: encodeURI('房屋立项'),
             },
           }, {
             name: '固定资产',
-            path: '/assets',
+            path: '/meeting',
             query: {
               view: '1ab51ee6-2836-4728-b0a5-9fa5c8902c31',
               list: 'e3937a5c-98d2-4799-a74c-759222fb4a6d',

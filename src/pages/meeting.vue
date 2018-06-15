@@ -1,7 +1,7 @@
 <template>
   <div class="pages">
     <h1 class="m_title">
-      会议立项
+      {{title}}
       <span class="m_user" @click="goMylist">
         我的提交
         <x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon>
