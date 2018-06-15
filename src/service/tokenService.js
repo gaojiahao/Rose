@@ -77,7 +77,7 @@ let tokenService = {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose_test&response_type=code&scope=SCOPE&agentid=1000033&state=1#wechat_redirect')
+        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
       }
     }
   },

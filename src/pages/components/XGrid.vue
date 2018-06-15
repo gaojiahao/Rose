@@ -41,6 +41,13 @@
           return []
         }
       },
+      // 合计监听器
+      totalListener: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     components: {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton},
     data() {
@@ -49,6 +56,7 @@
         listData: [], // 展示数据
         needListeners: [], // 监听列表
         lastIndex: 0, // 最新索引
+        totalData: [], // 合计值数组
       }
     },
     methods: {
@@ -207,12 +215,19 @@
                   // 将值转换为可计算的字符串
                   computeStr = computeStr.replace(`[${cKey}]`, cValue);
                 });
-                item.inputValue = eval(computeStr);
+                let inputVal = eval(computeStr);
+                item.inputValue = inputVal;
+                // 判断当前dataIndex是否与需要获取的合计id相同
+                if(item.dataIndex === this.totalListener.id) {
+                  this.totalData[currentIndex] = inputVal;
+                  this.totalListener.userEvent.emit(this.totalData);
+                }
                 // 设置计算后的值
                 /*this.setData(index, {
                   inputValue: eval(computeStr)
                 })*/
               } catch (e) {
+                console.log(e);
                 item.inputValue = 0;
               }
             }
@@ -439,11 +454,16 @@
       // TODO 增加表格项
       addGridItem() {
         // this.listData.push(Object.assign([], this.template));
+        this.totalData.push(0);
         this.copy();
       },
       // TODO 删除表格项
       removeGridItem() {
         if (this.listData.length > 1) {
+          // 删除最后一个合计值
+          this.totalData.pop();
+          this.totalListener.userEvent.emit(this.totalData);
+
           this.listData.pop();
           this.needListeners.pop();
           this.lastIndex--;

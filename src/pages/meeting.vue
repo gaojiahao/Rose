@@ -12,13 +12,13 @@
         <group v-for="(item, index) in config" :title="item.title" :key="index"
                v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
           <dynamic-form :config="item.items" :current-user="currentUser" @addlistener="addListener"
-                        :last-index="index === config.length - 1"
+                        :last-index="index === config.length - 1" :total-listener="totalListener"
                         ref="dynamicForm"></dynamic-form>
         </group>
       </div>
     </div>
     <div class="m_btm vux-1px-t">
-      <span class="count_part">合计:￥1,000</span>
+      <span class="count_part">合计:￥{{totalData}}</span>
       <span class="m_button" @click="goflow">确定</span>
     </div>
     <!-- 提示 -->
@@ -29,10 +29,11 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, Datetime, Toast} from 'vux'
+  import {Cell, Group, XInput, Datetime, Toast, numberComma} from 'vux'
   import createService from './../service/createService'
   import DynamicForm from './components/DynamicForm'
   import Loading from './components/loading'
+  import UserEvent from './../plugins/userEvent'
 
   export default {
     components: {
@@ -55,6 +56,8 @@
         userInfo: {}, // 当前用户信息
         currentUser: {}, // 当前用户信息
         title: '', // 顶部标题
+        totalListener: {}, // 监听合计
+        totalData: 0, // 合计值
       }
     },
     methods: {
@@ -67,7 +70,7 @@
         return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
       },
       goMylist() { //我的提交
-        this.$router.push({path: '/myList',query:{listId:this.listid}})
+        this.$router.push({path: '/myList', query: {listId: this.listid}})
       },
       goflow() {
         let warn = '';
@@ -198,6 +201,23 @@
         }
         item.listeners[type] = userEvent;
       },
+      // TODO 初始化合计监听
+      initTotalEvent() {
+        this.$nextTick(() => {
+          let userEvent = new UserEvent(document, 'calctotal');
+          userEvent.on((e) => {
+            let {data} = e;
+            let totalData = data && data.reduce((total, item) => {
+              return total + item;
+            }, 0);
+            this.totalData = numberComma(totalData);
+          });
+          this.totalListener = {
+            id: this.$route.query.totalId,
+            userEvent
+          }
+        });
+      }
     },
     beforeRouteEnter(to, from, next) {
       document.title = decodeURI(to.query.title);
@@ -210,6 +230,7 @@
       (async () => {
         this.title = decodeURI(query.title);
         this.showLoading = true;
+        this.initTotalEvent();
         this.getProcess();
         await createService.getUser().then(data => {
           this.userInfo = data;

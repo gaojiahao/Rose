@@ -22,6 +22,7 @@
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
       <!-- 表格类型 -->
       <x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
+              :total-listener="totalListener"
               v-else-if="item.xtype === 'r2Grid'"></x-grid>
       <!-- 日期类型 -->
       <datetime :title="item.fieldLabel" v-model="item.inputValue" format="YYYY-MM-DD"
@@ -67,7 +68,14 @@
       lastIndex: {
         type: Boolean,
         default: false
-      }
+      },
+      // 合计监听器
+      totalListener: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     directives: {TransferDom},
     components: {Group, PopupPicker, XInput, XTextarea, Cell, XSelector, XGrid, Datetime},
@@ -312,11 +320,17 @@
                   // 将值转换为可计算的字符串
                   computeStr = computeStr.replace(`get('${cKey}.value')`, cValue);
                 });
+                let inputValue = eval(computeStr);
                 // 设置计算后的值
                 this.setData(index, {
-                  inputValue: eval(computeStr)
-                })
+                  inputValue: inputValue
+                });
+                // 判断当前dataIndex是否与需要获取的合计id相同
+                if(item.name === this.totalListener.id) {
+                  this.totalListener.userEvent.emit([inputValue]);
+                }
               } catch (e) {
+                console.log(e);
                 this.setData(index, {
                   inputValue: 0
                 })
