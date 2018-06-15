@@ -288,6 +288,7 @@
       // TODO 处理数字输入框
       handleNumber(item, index) {
         if (item.r2Bind) {
+          item.inputValue = 0;
           let r2Bind = JSON.parse(item.r2Bind || "{}");
           let valueKey = r2Bind.value.replace(/[{}]/g, ''); // 获取计算规则的key，如{ZSHJValue}
           let r2Binds = r2Bind[valueKey].match(/\('[^\)]*'\)/g); // 获取括号中的值(含括号)，如["('FJSL.value')", "('FJJJ.value')"]
@@ -540,7 +541,7 @@
                     !this.isEmptyObject(cItem.inputValue) ? autoEmit.push(cItem) : '';
                     break;
                   default:
-                    !cItem.inputValue ? autoEmit.push(cItem) : '';
+                    cItem.inputValue ? autoEmit.push(cItem) : '';
                     break;
                 }
               }

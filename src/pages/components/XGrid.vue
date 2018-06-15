@@ -184,6 +184,7 @@
       // TODO 处理数字输入框
       handleNumber(item, currentIndex, index) {
         if (item.expression) {
+          item.inputValue = 0;
           // "[transDetail.num1]*[transDetail.num2]"
           let expressions = item.expression.match(/\[[^\[]*\]/g); // 获取括号中的值(含括号)，如["('FJSL.value')", "('FJJJ.value')"]
           let computeParams = {}; // 存储计算数值
