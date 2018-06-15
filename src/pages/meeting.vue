@@ -67,7 +67,7 @@
         return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
       },
       goMylist() { //我的提交
-        this.$router.push({path: '/myList'})
+        this.$router.push({path: '/myList',query:{listId:this.listid}})
       },
       goflow() {
         let warn = '';

@@ -9,86 +9,68 @@
                 </div>
                 <div class="user_info_part">
                     <span class="user_bank">中国银行</span>
-                    <span class="user_dp">中行华北事业部</span>
+                    <span class="user_dp">产品事业部</span>
                 </div>
             </div>
         </div>
         <tab bar-active-color="#5077AA" active-color="#5077AA" :line-width=1>
-            <tab-item selected @on-item-click="selStatus">待审批</tab-item>
-            <tab-item @on-item-click="selStatus">进行中</tab-item>
-            <tab-item @on-item-click="selStatus">已完成</tab-item>
+            <tab-item :selected="whichIndex==0" @on-item-click="selStatus">待审批</tab-item>
+            <tab-item :selected="whichIndex==1" @on-item-click="selStatus">进行中</tab-item>
+            <tab-item :selected="whichIndex==2" @on-item-click="selStatus">已完成</tab-item>
         </tab>
         <div class="m_list">
-            <div class="each_list" v-if="!whichIndex || whichIndex === 0">
-                <div class="e_top">
-                    <span class="e_status" :class="{wait_c:!whichIndex ||whichIndex===0}">待审批</span><span class="e_name">市场宣传费用申请</span>
+            <!-- 待审批 -->
+            <div v-if="whichIndex === 0">
+                <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx">
+                    <div class="e_top">
+                        <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
+                    </div>
+                    <div class="e_main">
+                        <span class="e_code">
+                            {{val.businessKey}}
+                            <span class="e_crtname">{{val.assigneeName}}</span>
+                        </span>
+                        <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
+                    </div>
                 </div>
-                <div class="e_main">
-                    <span class="e_code">
-                        SCXC_1806_0001 
-                        <span class="e_crtname">刘治增</span>
-                    </span>
-                    <span class="e_time">2018-06-06</span>
-                </div>
-            </div>
-            <div class="each_list" v-if="!whichIndex || whichIndex === 0">
-                <div class="e_top">
-                    <span class="e_status" :class="{wait_c:!whichIndex ||whichIndex===0}">待审批</span><span class="e_name">市场宣传费用申请</span>
-                </div>
-                <div class="e_main">
-                    <span class="e_code">
-                        SCXC_1806_0001 
-                        <span class="e_crtname">刘治增</span>
-                    </span>
-                    <span class="e_time">2018-06-06</span>
+                <div class="spinner_container" v-if="TobedoneList.length==0">
+                    没有待审批任务~~~
                 </div>
             </div>
-            <div class="each_list" v-if="whichIndex === 1">
-                <div class="e_top">
-                    <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span class="e_name">市场宣传费用申请</span>
+            <!-- 进行中 -->
+            <div v-if="whichIndex === 1">
+                <div class="each_list"  v-for="(val,idx) in underWayList" :key="idx">
+                    <div class="e_top">
+                        <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span class="e_name">{{val.processName}}</span>
+                    </div>
+                    <div class="e_main">
+                        <span class="e_code">
+                            {{val.transId}} 
+                            <span class="e_crtname">{{val.creatorName}}</span>
+                        </span>
+                        <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
+                    </div>
                 </div>
-                <div class="e_main">
-                    <span class="e_code">
-                        SCXC_1806_0001 
-                        <span class="e_crtname">刘治增</span>
-                    </span>
-                    <span class="e_time">2018-06-06</span>
-                </div>
-            </div>
-            <div class="each_list" v-if="whichIndex === 1">
-                <div class="e_top">
-                    <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span class="e_name">市场宣传费用申请</span>
-                </div>
-                <div class="e_main">
-                    <span class="e_code">
-                        SCXC_1806_0001 
-                        <span class="e_crtname">刘治增</span>
-                    </span>
-                    <span class="e_time">2018-06-06</span>
+                <div class="spinner_container" v-if="underWayList.length==0">
+                    没有进行中任务~~~
                 </div>
             </div>
-            <div class="each_list" v-if="whichIndex === 2">
-                <div class="e_top">
-                    <span class="e_status" :class="{done_c:whichIndex===2}">进行中</span><span class="e_name">市场宣传费用申请</span>
+            <!-- 已完成 -->
+            <div v-if="whichIndex === 2">
+                <div class="each_list"  v-for="(val,idx) in overList" :key="idx">
+                    <div class="e_top">
+                        <span class="e_status" :class="{done_c:whichIndex===2}">已完成</span><span class="e_name">{{val.processName}}</span>
+                    </div>
+                    <div class="e_main">
+                        <span class="e_code">
+                            {{val.transId}} 
+                            <span class="e_crtname">{{val.creatorName}}</span>
+                        </span>
+                        <span class="e_time">{{val.endTime.split(' ')[0]}}</span>
+                    </div>
                 </div>
-                <div class="e_main">
-                    <span class="e_code">
-                        SCXC_1806_0001 
-                        <span class="e_crtname">刘治增</span>
-                    </span>
-                    <span class="e_time">2018-06-06</span>
-                </div>
-            </div>
-            <div class="each_list" v-if="whichIndex === 2">
-                <div class="e_top">
-                    <span class="e_status" :class="{done_c:whichIndex===2}">进行中</span><span class="e_name">市场宣传费用申请</span>
-                </div>
-                <div class="e_main">
-                    <span class="e_code">
-                        SCXC_1806_0001 
-                        <span class="e_crtname">刘治增</span>
-                    </span>
-                    <span class="e_time">2018-06-06</span>
+                <div class="spinner_container" v-if="overList.length==0">
+                    没有已完成任务~~~
                 </div>
             </div>
         </div>
@@ -97,20 +79,74 @@
 
 <script>
 import { Tab, TabItem } from 'vux'
+import mylistService from '../service/mylistService.js'
 export default {
     components:{
         Tab, 
-        TabItem
+        TabItem,
     },
     data(){
         return{
-            whichIndex:''
+            whichIndex:0,
+            headerInfo:'',
+            TobedoneList:'',
+            underWayList:'',
+            overList:'',
         }
     },
     methods:{
+        //获取待办
+        Tobedone (){
+            let data={
+                entityId: 20000,
+                _dc:Date.parse(new Date()),
+                listID:this.$route.query.listId,
+                para1: '',
+                page: 1,
+                start: 0,
+                limit: 50,
+            },
+            that=this;
+            mylistService.getTasksListData(data).then(res=>{
+                that.TobedoneList=res.tableContent;
+            })
+        },
+        //获取进行中
+        underWay(){
+            let data={
+                entityId: 20000,
+                _dc:Date.parse(new Date()),
+                listID:this.$route.query.listId,
+                status:1,
+            },
+            that=this;
+            mylistService.getCompletedListDataByStatus(data).then(res=>{
+                 that.underWayList=res.tableContent;
+            })
+        },
+        //获取已完成
+        over(){
+            let data={
+                entityId: 20000,
+                _dc:Date.parse(new Date()),
+                listID:this.$route.query.listId,
+                status:2,
+            },
+            that=this;
+            mylistService.getCompletedListDataByStatus(data).then(res=>{
+                that.overList=res.tableContent;
+            })
+        },
         selStatus(val){
             this.whichIndex = val;
         }
+    },
+    mounted(){
+        //获取顶部信息
+        this.headerInfo=JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN'));
+        this.Tobedone();
+        this.underWay();
+        this.over();
     }
 }
 </script>
@@ -119,7 +155,6 @@ export default {
 .m_top {
     width: 100%;
     height: 100px;
-    padding: 0 20px;
     display: flex;
     align-items: center;
     background: #5077AA;
@@ -132,6 +167,7 @@ export default {
         height: 60px;
         border-radius: 50%;
         margin-right: 10px;
+        margin-left: 20px;
     }
     .user_name {
         color: #fff;
@@ -224,4 +260,9 @@ export default {
         }
     }
 }
+.spinner_container{
+    text-align: center;
+    margin-top: 50vw;
+}
+
 </style>
