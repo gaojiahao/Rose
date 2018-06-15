@@ -133,7 +133,7 @@
             <x-input 
             title="备注"
             text-align="right" 
-            placeholder="有什么要叮嘱的吗？"
+            placeholder="非必填 如有需要请填写"
             v-model="comments"
             ></x-input>
           </group>

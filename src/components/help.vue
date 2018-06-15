@@ -134,7 +134,7 @@
           <x-input 
           title="备注"
           text-align="right" 
-          placeholder="有什么要叮嘱的吗？"
+          placeholder="非必填 如有需要请填写"
           v-model="comments"
           ></x-input>
         </group>
@@ -266,28 +266,28 @@ export default {
 
       if(this.areaValue.length == 0){
           this.$vux.alert.show({
-              title: '失败',
+              title: '提示',
               content: '请选支援地区'
           })
           return;
       }else if(this.bankValue.length == 0){
           this.$vux.alert.show({
-              title: '失败',
+              title: '提示',
               content: '请选支援银行'
+          })
+          return;
+      }else if(this.helpCaptain == ''){
+          this.$vux.alert.show({
+              title: '提示',
+              content: '请填写支援队长'
           })
           return;
       }else if(this.arr[0].value.length == 0){
             this.$vux.alert.show({
-                title: '失败',
+                title: '提示',
                 content: '请选择项目产品'
               })
               return;
-          }else if(this.helpCaptain == ''){
-          this.$vux.alert.show({
-              title: '失败',
-              content: '请填写支援队长'
-          })
-          return;
       }else if(!this.governor){
          this.$vux.alert.show({
           title: '提示',
