@@ -353,8 +353,6 @@ export default {
         region:region,
         groupName:groupName,
       }))
-      localStorage.setItem('SALE_Governor',JSON.stringify({governor:governor}));
-      localStorage.setItem('SALE_Member',JSON.stringify({member:member}));
       let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
           "referenceId":this.guid(),
@@ -459,13 +457,12 @@ export default {
                   time:new Date().getTime()
                   })
               )
-              // 单独缓存 用户队长
-              localStorage.setItem(
-                'SALE_CAP',
-                JSON.stringify({
-                  captain:this.helpCaptain
-                })
-              )
+              //缓存队长省长常委
+              localStorage.setItem('SALE_INFO_LIST',JSON.stringify({
+                captain:this.helpCaptain,
+                governor:governor,
+                member:member
+              }));
               this.$router.push({path:'/count'})
           
     },
@@ -568,15 +565,11 @@ export default {
       this.Aclass = JSON.parse(localStorage.getItem('saleReport')).Aclass;
       this.Bclass = JSON.parse(localStorage.getItem('saleReport')).Bclass;
     }
-    if(localStorage.getItem('SALE_CAP')){
-      this.helpCaptain = JSON.parse(localStorage.getItem('SALE_CAP')).captain;
-    }
-    if(localStorage.getItem('SALE_Governor')){
-      this.governor = JSON.parse(localStorage.getItem('SALE_Governor')).governor;
+    if(localStorage.getItem('SALE_INFO_LIST')){
+      this.helpCaptain = JSON.parse(localStorage.getItem('SALE_INFO_LIST')).captain;
+      this.governor = JSON.parse(localStorage.getItem('SALE_INFO_LIST')).governor;
+      this.member = JSON.parse(localStorage.getItem('SALE_INFO_LIST')).member;
       this.governorStatus=false;
-    }
-    if(localStorage.getItem('SALE_Member')){
-      this.member = JSON.parse(localStorage.getItem('SALE_Member')).member;
       this.memberStatus=false;
     }
    this.listData();
@@ -592,6 +585,7 @@ export default {
         cancelText:"取消",
         onCancel () {
           localStorage.removeItem('saleReport');
+          localStorage.removeItem('SALE_INFO_LIST');
           next()
         },
         onConfirm () {
@@ -602,14 +596,11 @@ export default {
               time:new Date().getTime()
             })
           );
-          localStorage.setItem(
-              'SALE_CAP',
-              JSON.stringify({
-                captain:that.helpCaptain
-              })
-          );
-          localStorage.setItem('SALE_Governor',JSON.stringify({governor:that.governor}));
-          localStorage.setItem('SALE_Member',JSON.stringify({member:that.member}));
+          localStorage.setItem('SALE_INFO_LIST',JSON.stringify({
+            captain:that.helpCaptain,
+            governor:that.governor,
+            member:that.member
+          }));
           next()
         }
       })

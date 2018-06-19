@@ -314,8 +314,6 @@ export default {
           member=this.member,
           comments=this.comments;
 
-      localStorage.setItem('SALE_Governor',JSON.stringify({governor:governor}));
-      localStorage.setItem('SALE_Member',JSON.stringify({member:member}));
 
       let jsonData = {
           "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
@@ -404,7 +402,12 @@ export default {
             Bclass:this.Bclass,
             time:new Date().getTime()
           }))
-
+          
+          localStorage.setItem('HELP_INFO_LIST',JSON.stringify({
+            captain:that.helpCaptain,
+            governor:that.governor,
+            member:that.member
+          }));
           that.$router.push({path:'/count'});
     },
     Ainput(e){
@@ -535,14 +538,12 @@ export default {
     if(localStorage.getItem('HELP_ZONE_INFO')){
       this.areaValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue ] ;
       this.bankValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank ] ;
-      this.helpCaptain = JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain ;
     }
-    if(localStorage.getItem('SALE_Governor')){
-      this.governor = JSON.parse(localStorage.getItem('SALE_Governor')).governor;
+    if(localStorage.getItem('HELP_INFO_LIST')){
+      this.helpCaptain = JSON.parse(localStorage.getItem('HELP_INFO_LIST')).captain ;
+      this.governor = JSON.parse(localStorage.getItem('HELP_INFO_LIST')).governor;
       this.governorStatus=false;
-    }
-    if(localStorage.getItem('SALE_Member')){
-      this.member = JSON.parse(localStorage.getItem('SALE_Member')).member;
+      this.member = JSON.parse(localStorage.getItem('HELP_INFO_LIST')).member;
       this.memberStatus=false;
     }
     this.listData();
@@ -558,6 +559,7 @@ export default {
         cancelText:"取消",
         onCancel () {
           localStorage.removeItem('help_saleReport'); 
+          localStorage.removeItem('HELP_INFO_LIST'); 
           next()
         },
         onConfirm () {
@@ -576,8 +578,11 @@ export default {
               captain:that.helpCaptain,
             }));
             //省长常委
-            localStorage.setItem('SALE_Governor',JSON.stringify({governor:that.governor}));
-            localStorage.setItem('SALE_Member',JSON.stringify({member:that.member}));  
+            localStorage.setItem('HELP_INFO_LIST',JSON.stringify({
+              captain:that.helpCaptain,
+              governor:that.governor,
+              member:that.member
+            }));  
             next()
         }
     })
