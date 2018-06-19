@@ -33,7 +33,7 @@
           class="helpCaptain"
           ></x-input>
          <x-input 
-          title="所属省长"
+          title="支援省长"
           text-align="right"
           v-model.trim="governor"
           @on-change="provalUserByAgent('省长',$event)"
@@ -43,7 +43,7 @@
           class="helpCaptain"
           ></x-input>
           <x-input 
-          title="所属常委"
+          title="支援常委"
           text-align="right"
           v-model.trim="member"
           @on-change="memberUser('常委',$event)"
