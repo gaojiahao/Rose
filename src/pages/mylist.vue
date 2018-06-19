@@ -34,81 +34,10 @@
                             <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
                         </div>
                     </div>
-                    <div class="each_list" v-for="(val,idx) in TobedoneList" :key="'a'+idx">
-                        <div class="e_top">
-                            <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
-                        </div>
-                        <div class="e_main">
-                            <span class="e_code">
-                                {{val.businessKey}}
-                                <span class="e_crtname">{{val.assigneeName}}</span>
-                            </span>
-                            <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
-                        </div>
-                    </div>
-                    <div class="each_list" v-for="(val,idx) in TobedoneList" :key="'b'+idx">
-                        <div class="e_top">
-                            <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
-                        </div>
-                        <div class="e_main">
-                            <span class="e_code">
-                                {{val.businessKey}}
-                                <span class="e_crtname">{{val.assigneeName}}</span>
-                            </span>
-                            <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
-                        </div>
-                    </div>
-                    <div class="each_list" v-for="(val,idx) in TobedoneList" :key="'c'+idx">
-                        <div class="e_top">
-                            <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
-                        </div>
-                        <div class="e_main">
-                            <span class="e_code">
-                                {{val.businessKey}}
-                                <span class="e_crtname">{{val.assigneeName}}</span>
-                            </span>
-                            <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
-                        </div>
-                    </div>
-                    <div class="each_list" v-for="(val,idx) in TobedoneList" :key="'d'+idx">
-                        <div class="e_top">
-                            <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
-                        </div>
-                        <div class="e_main">
-                            <span class="e_code">
-                                {{val.businessKey}}
-                                <span class="e_crtname">{{val.assigneeName}}</span>
-                            </span>
-                            <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
-                        </div>
-                    </div>
-                    <div class="each_list" v-for="(val,idx) in TobedoneList" :key="'e'+idx">
-                        <div class="e_top">
-                            <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
-                        </div>
-                        <div class="e_main">
-                            <span class="e_code">
-                                {{val.businessKey}}
-                                <span class="e_crtname">{{val.assigneeName}}</span>
-                            </span>
-                            <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
-                        </div>
-                    </div>
-                    <div class="each_list" v-for="(val,idx) in TobedoneList" :key="'f'+idx">
-                        <div class="e_top">
-                            <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
-                        </div>
-                        <div class="e_main">
-                            <span class="e_code">
-                                {{val.businessKey}}
-                                <span class="e_crtname">{{val.assigneeName}}</span>
-                            </span>
-                            <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
-                        </div>
-                    </div>
                     <div class="spinner_container" v-if="TobedoneList.length==0">
                         没有待审批任务~~~
                     </div>
+                    <div class="nothing" v-if="nothing&&TobedoneList.length!=''">没有更多任务了</div>
                 </div>
                 
             </div>
@@ -165,11 +94,12 @@ export default {
         return{
             whichIndex:0,
             headerInfo:'',
-            TobedoneList:'',
+            TobedoneList:[],
             underWayList:'',
             overList:'',
             ch:0,
-            pageNo:0
+            pageNo:0,
+            nothing:false,
         }
     },
     methods:{
@@ -185,11 +115,15 @@ export default {
                 limit: 15,
             },
             that=this;
+            that.nothing=false;
             mylistService.getTasksListData(data).then(res=>{
                 if(res.tableContent.length==0){
+                    that.nothing=true;
                     return;
                 }else{
-                    that.TobedoneList=res.tableContent;
+                    for(let i = 0 ; i<res.tableContent.length ;i++){
+                         that.TobedoneList.push(res.tableContent[i])
+                    }
                 }
                 that.scroll.finishPullUp()
             })
@@ -224,6 +158,7 @@ export default {
             this.whichIndex = val;
             //滚动加载启动
             if(val==0){
+                this.TobedoneList.length=0;
                 this.pageNo=0;
                 this.scrollOn();
             }
@@ -231,11 +166,10 @@ export default {
         },
         //滚动加载启动
         scrollOn(){
-            //滚动加载启动
             let that=this;
             let tabH=document.querySelector('.tabSelect').offsetHeight;
             let topH=document.querySelector('.m_top').offsetHeight;
-            let ch=window.innerHeight-tabH-topH-20;
+            let ch=window.innerHeight-tabH-topH;
             document.querySelector('.m_list').style.height=ch+'px';
             this.$nextTick(() => {
                 this.scroll = new Bscroll(this.$refs.wrapper, {
@@ -378,5 +312,9 @@ export default {
 .wrapper{
     height: 100%;
     overflow: hidden;
+}
+.nothing{
+    text-align: center;
+    margin-bottom: 15px;
 }
 </style>
