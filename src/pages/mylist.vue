@@ -37,7 +37,7 @@
                     <div class="spinner_container" v-if="TobedoneList.length==0">
                         没有待审批任务~~~
                     </div>
-                    <div class="nothing" v-if="nothing">没有更多任务了</div>
+                    <div class="nothing" v-if="nothing&&TobedoneList.length!=''">没有更多任务了</div>
                 </div>
                 
             </div>
@@ -94,7 +94,7 @@ export default {
         return{
             whichIndex:0,
             headerInfo:'',
-            TobedoneList:'',
+            TobedoneList:[],
             underWayList:'',
             overList:'',
             ch:0,
@@ -121,7 +121,9 @@ export default {
                     that.nothing=true;
                     return;
                 }else{
-                    that.TobedoneList=res.tableContent;
+                    for(let i = 0 ; i<res.tableContent.length ;i++){
+                         that.TobedoneList.push(res.tableContent[i])
+                    }
                 }
                 that.scroll.finishPullUp()
             })
@@ -156,6 +158,7 @@ export default {
             this.whichIndex = val;
             //滚动加载启动
             if(val==0){
+                this.TobedoneList.length=0;
                 this.pageNo=0;
                 this.scrollOn();
             }
