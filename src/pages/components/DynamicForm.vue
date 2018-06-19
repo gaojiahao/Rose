@@ -17,8 +17,8 @@
       <x-textarea :title="item.fieldLabel" v-model="item.inputValue" :readonly="item.readOnly"
                   v-else-if="item.xtype === 'r2HtmlEditor' || item.xtype === 'r2TextArea'"></x-textarea>
       <!-- 选择器 -->
-      <x-selector :title="item.fieldLabel" :data="item.selectorList" v-model="item.inputValue"
-                  @on-change="selectorChange(item, index)" :sel-value="item.inputValue" :options="item.options"
+      <x-selector :title="item.fieldLabel" v-model="item.inputValue" @on-change="selectorChange(item, index)"
+                  :sel-value="item.inputValue" :options="item.options"
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
       <!-- 表格类型 -->
       <x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
@@ -251,20 +251,6 @@
               displayField,
               valueField
             };
-            /*createService.getRemoteData(dataSource.data.url, params).then(data => {
-              let selectorList = [];
-              data.tableContent && data.tableContent.forEach(sel => {
-                selectorList.push(Object.assign(sel, {
-                  name: sel[displayField],
-                  value: sel[valueField],
-                }))
-              });
-              this.setData(index, {
-                selectorList,
-              });
-            }).catch(e => {
-              // item.hiddenInRun = true;
-            });*/
             break;
           default:
             break;
@@ -326,7 +312,7 @@
                   inputValue: inputValue
                 });
                 // 判断当前dataIndex是否与需要获取的合计id相同
-                if(item.name === this.totalListener.id) {
+                if (item.name === this.totalListener.id) {
                   this.totalListener.userEvent.emit([inputValue]);
                 }
               } catch (e) {
