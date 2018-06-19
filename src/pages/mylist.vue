@@ -1,15 +1,15 @@
 <template>
     <div class="pages">
         <div class="m_top">
-            <img class="user_img" src="../assets/ts.png" alt="">
+            <img class="user_img" :src="headerInfo.avatar">
             <div class="user_part">
                 <div class="user_name_part">
-                    <span class="user_name">刘治增</span>
-                    <span class="user_level">省长</span>
+                    <span class="user_name">{{headerInfo.name}}</span>
+                    <span class="user_level">{{user.role}}</span>
                 </div>
                 <div class="user_info_part">
-                    <span class="user_bank">中国银行</span>
-                    <span class="user_dp">产品事业部</span>
+                    <span class="user_bank">{{user.HOME_BANK}}</span>
+                    <span class="user_dp">{{user.dept}}</span>
                 </div>
             </div>
         </div>
@@ -34,6 +34,7 @@
                             <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
                         </div>
                     </div>
+
                     <div class="spinner_container" v-if="TobedoneList.length==0">
                         没有待审批任务~~~
                     </div>
@@ -84,6 +85,7 @@
 <script>
 import { Tab, TabItem } from 'vux'
 import mylistService from '../service/mylistService.js'
+import createService from './../service/createService.js'
 import Bscroll  from 'better-scroll'
 export default {
     components:{
@@ -100,9 +102,19 @@ export default {
             ch:0,
             pageNo:0,
             nothing:false,
+            user:'',
         }
     },
     methods:{
+        //获取当前用户
+        getUser(){
+            let that=this
+            createService.getUser().then(res=>{
+                createService.getCurrentUser(res.nickname).then(e=>{
+                    that.user=e.tableContent[0];
+                })
+            })
+        },
         //获取待办
         Tobedone (){
             let data={
@@ -160,6 +172,7 @@ export default {
             if(val==0){
                 this.TobedoneList.length=0;
                 this.pageNo=0;
+                this.Tobedone();
                 this.scrollOn();
             }
             
@@ -188,6 +201,7 @@ export default {
     mounted(){
         //获取顶部信息
         this.headerInfo=JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN'));
+        this.getUser();
         this.Tobedone();
         this.underWay();
         this.over();
