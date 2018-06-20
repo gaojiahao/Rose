@@ -482,18 +482,18 @@ export default {
       });
     },
     provinceReset(e){
-      this.governorStatus=true;
+      this.governorStatus = true;
     },
     //选择省长
     getProvalUser(val){
-      this.governorStatus=false;
-      this.provalUserByList.length=0;
-      this.governor=val;
+      this.governorStatus = false;
+      this.provalUserByList = [];
+      this.governor = val;
     },
      //常委
     memberUser(type,e){
       if(this.memberStatus==false||this.member==''){
-        this.MemberUserList.length=0;
+        this.MemberUserList = [];
         return;
       }
       let data={
@@ -505,13 +505,13 @@ export default {
       });
     },
     memberUserReset(e){
-      this.memberStatus=true;
+      this.memberStatus = true;
     },
     //选择常委
     getMemberUser(val){
-      this.memberStatus=false;
-      this.MemberUserList.length=0;
-      this.member=val;
+      this.memberStatus = false;
+      this.MemberUserList = [];
+      this.member = val;
     }
   },
   mounted(){
