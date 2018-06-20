@@ -22,7 +22,7 @@
     </div>
     <div class="grid-btn-group">
       <x-button @click.native="addGridItem" mini plain>新增</x-button>
-      <x-button type="warn" @click.native="removeGridItem" :disabled="listData.length === 1" mini plain>删除</x-button>
+      <x-button type="warn" @click.native="removeGridItem" :disabled="listData.length <= 1" mini plain>删除</x-button>
     </div>
   </group>
 </template>
@@ -305,14 +305,17 @@
         switch (dataSource.type) {
           case 'formData':
             let {valueField} = dataSource.data;
-            let [dataIndex, valueKey] = valueField.match(/\[[^\[]*\]/g); // 匹配中括号
-            valueKey = valueKey.replace(/[\['"\]]/g, '');
-            dataIndex = dataIndex.replace(/[\['"\]]/g, '').replace('.extraData', '');
+            // dataSource指向自己
+            if (valueField === item.dataIndex) {
+              return;
+            }
+            let [dataIndex, valueKey] = valueField.match(/\[[^\[]*\]/g) || []; // 匹配中括号
+            valueKey = valueKey && valueKey.replace(/[\['"\]]/g, '');
+            dataIndex = dataIndex && dataIndex.replace(/[\['"\]]/g, '').replace('.extraData', '');
             // 增加监听操作
             this.needListeners[currentIndex].push({
               dataIndex,
               handler: (e) => {
-                console.log(e.data.value[valueKey])
                 item.inputValue = e.data.value[valueKey] || '';
               }
             });

@@ -157,7 +157,7 @@
         item.pickerList = [];
         item.inputValue = [];
         let dataSource = JSON.parse(item.dataSource || "{}");
-        let {displayField, valueField} = item; // 展示的key和value的key
+        let {displayField} = item; // 展示的key和value的key
         switch (dataSource.type) {
           // 静态数据
           case 'staticData':
@@ -181,7 +181,7 @@
                 data.tableContent && data.tableContent.forEach(picker => {
                   pickerList.push(Object.assign(picker, {
                     name: picker[displayField],
-                    value: picker[valueField]
+                    value: picker[displayField]
                   }));
                 });
                 // 判断是否有数据，有数据则取第一个值作为默认值
