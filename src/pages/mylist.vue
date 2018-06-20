@@ -166,9 +166,9 @@ export default {
                 that.overList=res.tableContent;
             })
         },
+        //tab切换
         selStatus(val){
             this.whichIndex = val;
-            //滚动加载启动
             if(val==0){
                 this.TobedoneList.length=0;
                 this.pageNo=0;
@@ -199,7 +199,7 @@ export default {
         
     },
     mounted(){
-        //获取顶部信息
+        //获取顶部头像名字
         this.headerInfo=JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN'));
         this.getUser();
         this.Tobedone();
