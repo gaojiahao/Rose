@@ -14,6 +14,10 @@
                  v-else-if="item.editorType === 'r2Numberfield'"></x-input>
         <x-input :title="item.text" text-align="right" :required="!item.allowBlank" v-model="item.inputValue"
                  :readonly="item.readOnly" v-else-if="item.editorType === 'r2Textfield'"></x-input>
+        <!-- 选择器 -->
+        <x-selector :title="item.text" v-model="item.inputValue" @on-change="selectorChange(item, lIndex, index)"
+                    :sel-value="item.inputValue" :options="item.options"
+                    v-else-if="item.editorType === 'r2Selector'"></x-selector>
       </div>
     </div>
     <div class="grid-btn-group">
@@ -25,6 +29,7 @@
 
 <script>
   import {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton} from 'vux'
+  import XSelector from './XSelector'
   import createService from './../../service/createService'
   import UserEvent from './../../plugins/userEvent'
 
@@ -49,7 +54,7 @@
         }
       },
     },
-    components: {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton},
+    components: {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton, XSelector},
     data() {
       return {
         template: [], // 备份
@@ -72,12 +77,15 @@
               this.handleCombo(item, currentIndex, index);
               break;
             case 'r2Selector':
+              this.handleSelector(item, currentIndex, index);
               break;
             case 'r2Numberfield':
               this.handleNumber(item, currentIndex, index);
               break;
+            case 'r2Textfield':
+              this.handleText(item, currentIndex, index);
+              break;
             default:
-              this.handleDefault(item, currentIndex, index);
               break;
           }
           return item;
@@ -187,10 +195,48 @@
             break;
         }
       },
-      handleSelector() {
+      // TODO 处理选择器
+      handleSelector(item, currentIndex, index) {
+        item.selectorList = [];
+        item.inputValue = {};
+        let params = {};
+        let dataSource = JSON.parse(item.dataSource || "{}");
+        let {displayField, valueField} = item;
+        switch (dataSource.type) {
+          case 'remoteData':
+            Object.entries(dataSource.data.params).forEach(([key, value]) => {
+              params[key] = value.value;
+            });
+            item.options = {
+              url: dataSource.data.url,
+              params: Object.assign({}, params),
+              displayField,
+              valueField
+            };
+            break;
+          default:
+            break;
+        }
+        // 判断是否有默认值
+        if (item.defaultValue) {
+          let defaultValue = JSON.parse(item.defaultValue || "{}");
+          let name = '';
+          switch (defaultValue.type) {
+            case 'contextData': // 从用户信息中获取
+              // name = contextData.getContext(defaultValue.data);
+              break;
+            default:
+              break;
+          }
+        }
       },
       // TODO 处理数字输入框
       handleNumber(item, currentIndex, index) {
+        // 判断是否有数据源
+        if (item.dataSource) {
+          this.handleInputDataSource(item, currentIndex, index);
+        }
+        // 判断是否有计算表达式
         if (item.expression) {
           item.inputValue = 0;
           // "[transDetail.num1]*[transDetail.num2]"
@@ -216,16 +262,14 @@
                   computeStr = computeStr.replace(`[${cKey}]`, cValue);
                 });
                 let inputVal = eval(computeStr);
+                // 设置计算后的值
                 item.inputValue = inputVal;
                 // 判断当前dataIndex是否与需要获取的合计id相同
-                if(item.dataIndex === this.totalListener.id) {
+                if (item.dataIndex === this.totalListener.id) {
                   this.totalData[currentIndex] = inputVal;
                   this.totalListener.userEvent.emit(this.totalData);
                 }
-                // 设置计算后的值
-                /*this.setData(index, {
-                  inputValue: eval(computeStr)
-                })*/
+
               } catch (e) {
                 console.log(e);
                 item.inputValue = 0;
@@ -234,25 +278,11 @@
           });
         }
       },
-      // TODO 处理默认数据
-      handleDefault(item, currentIndex, index) {
+      // TODO 处理输入框
+      handleText(item, currentIndex, index) {
+        // 判断是否有数据源
         if (item.dataSource) {
-          let dataSource = JSON.parse(item.dataSource || "{}");
-          switch (dataSource.type) {
-            case 'formData':
-              let {valueField} = dataSource.data;
-              // 增加监听操作
-              /*this.needListeners[currentIndex].push({
-                dataIndex: item.dataIndex,
-                handler: (e) => {
-                  item.inputValue = e.data.value[valueField] || '';
-                }
-              });
-              item.inputValue = this.currentUser[valueField];*/
-              break;
-            default:
-              break;
-          }
+          this.handleInputDataSource(item, currentIndex, index);
         }
         // 判断是否有默认值
         if (item.defaultValue) {
@@ -267,6 +297,29 @@
             default:
               break;
           }
+        }
+      },
+      // TODO 处理输入框含dataSource的情况
+      handleInputDataSource(item, currentIndex, index) {
+        let dataSource = JSON.parse(item.dataSource || "{}");
+        switch (dataSource.type) {
+          case 'formData':
+            let {valueField} = dataSource.data;
+            let [dataIndex, valueKey] = valueField.match(/\[[^\[]*\]/g); // 匹配中括号
+            valueKey = valueKey.replace(/[\['"\]]/g, '');
+            dataIndex = dataIndex.replace(/[\['"\]]/g, '').replace('.extraData', '');
+            // 增加监听操作
+            this.needListeners[currentIndex].push({
+              dataIndex,
+              handler: (e) => {
+                console.log(e.data.value[valueKey])
+                item.inputValue = e.data.value[valueKey] || '';
+              }
+            });
+            // item.inputValue = this.currentUser[valueField];
+            break;
+          default:
+            break;
         }
       },
       // TODO picker切换
@@ -288,6 +341,16 @@
         });
         /*this.setData(currentIndex, index, {
           inputValue: picker.inputValue
+        });*/
+      },
+      selectorChange(selector, currentIndex, index) {
+        selector.listeners && Object.values(selector.listeners).forEach(item => {
+          item.emit({
+            value: selector.inputValue
+          });
+        });
+        /*this.setData(index, {
+          inputValue: selector.inputValue
         });*/
       },
       // TODO 文本框修改值

@@ -26,8 +26,8 @@ let createService = {
       data
     });
   },
-  // TODO 提交数据(有节点的)
-  saveAndStartWf(data = {}) {
+  // TODO 提交数据(有工作流)
+  saveAndStartWfOld(data = {}) {
     return $axios.ajax({
       type: 'POST',
       contentType: 'application/x-www-form-urlencoded',
@@ -37,6 +37,15 @@ let createService = {
         list: 'trans_form_data',
         transCode: ''
       }, data)
+    });
+  },
+  // TODO 提交数据(有工作流)
+  saveAndStartWf(data = {}) {
+    return $axios.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
+      url: '/H_roleplay-si/formAPI/saveAndStartWf',
+      data: data
     });
   },
   // TODO 提交数据
