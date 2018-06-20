@@ -97,7 +97,7 @@
           }
           let groupName = this.config[index].name;
           let noAssembleMap = ['baseinfo', 'baseinfoExt', 'baseinfo.fj', 'transDetail'];
-          let {submitData, wfData} = item.getSaveData();
+          let {submitData, wfData} = item.getSaveDataOld();
           if (noAssembleMap.indexOf(groupName) === -1) {
             jsonData[`$${groupName}`] = {};
           }
@@ -145,16 +145,80 @@
           saveData.wfPara = JSON.stringify({
             [this.procCode]: wfPara
           });
-          saveMethods = 'saveAndStartWf';
+          saveMethods = 'saveAndStartWfOld';
         }
         this.showLoading = true;
         createService[saveMethods](saveData).then(data => {
+          let {message, success} = data;
           this.showLoading = false;
           // 从返回数据获取表单编码
           let matchCode = data.message.match(/【(.)+】/gi);
           this.transCode = matchCode ? matchCode[0].replace(/[【】]/g, '') : '';
           // 提交编码为null则说明提交失败
-          if (this.transCode.indexOf('null') === -1) {
+          if (this.transCode.indexOf('null') === -1 && success) {
+            this.showToastText('提交成功');
+          } else {
+            this.showToastText('提交失败');
+          }
+        }).catch(e => {
+          this.showToastText(e.message);
+        })
+
+        // this.$router.push({path: '/flow'})
+      },
+      // TODO 提交数据
+      saveData() {
+        let warn = '';
+        let formData = {};
+        let wfPara = {};
+        let dynamicForm = this.$refs.dynamicForm;
+        let saveData = {
+          listId: this.listid,
+          biComment: '备注测试',
+          formData: {},
+        };
+        let saveMethods = 'saveData';
+        dynamicForm.every(item => {
+          item.checkData();
+        });
+        if (warn) {
+          this.showToastText(warn);
+          return
+        }
+        dynamicForm && dynamicForm.every((item, index) => {
+          warn = item.checkData();
+          if (warn) {
+            return false
+          }
+          let {submitData, wfData} = item.getSaveData();
+          Object.assign(formData, submitData);
+          // 合并数据wfPara数据
+          Object.assign(wfPara, wfData);
+          return true;
+        });
+        if (warn) {
+          this.showToastText(warn);
+          return;
+        }
+        saveData.formData = JSON.stringify(formData);
+        // 有procCode时传wfPara项，并且修改提交方法
+        if (this.procCode) {
+          saveData.wfPara = JSON.stringify({
+            [this.procCode]: wfPara
+          });
+          saveMethods = 'saveAndStartWf';
+        }
+        console.log(formData)
+        console.log(saveData)
+        this.showLoading = true;
+        createService[saveMethods](saveData).then(data => {
+          let {message, success} = data;
+          this.showLoading = false;
+          // 从返回数据获取表单编码
+          let matchCode = message.match(/【(.)+】/gi);
+          this.transCode = matchCode ? matchCode[0].replace(/[【】]/g, '') : '';
+          // 提交编码为null则说明提交失败
+          if (this.transCode.indexOf('null') === -1 && success) {
             this.showToastText('提交成功');
           } else {
             this.showToastText('提交失败');

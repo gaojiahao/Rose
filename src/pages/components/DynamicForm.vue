@@ -110,8 +110,10 @@
               this.handleNumber(item, index);
               break;
             //  默认处理文本输入框
+            case 'r2Textfield':
+              this.handleText(item, index);
+              break;
             default:
-              this.handleDefault(item, index);
               break;
           }
           // console.log(`${item.fieldLabel}---${item.name}---${item.xtype}---${item.defaultValue}`);
@@ -122,29 +124,32 @@
             lItem.items && lItem.items.forEach((cItem, index) => {
               // 下拉框级联
               if (cItem.id === listner.contrl) {
-                this.$nextTick(() => {
-                  let type = `userevent-${cItem.id}`; // 监听类型
-                  let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
-                  userEvent.on((e) => {
-                    listner.handler(e);
-                  });
-                  // 触发父级方法，添加事件监听
-                  this.$emit('addlistener', {type, lIndex, index, userEvent});
+                this.addListener({
+                  key: cItem.id,
+                  listner, lIndex, index
                 })
               }
               // 输入框计算
               if (listner.computeParams && (cItem.reference in listner.computeParams)) {
-                this.$nextTick(() => {
-                  let type = `userevent-${cItem.reference}`;
-                  let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
-                  userEvent.on((e) => {
-                    listner.handler(e);
-                  });
-                  this.$emit('addlistener', {type, lIndex, index, userEvent});
+                this.addListener({
+                  key: cItem.reference,
+                  listner, lIndex, index
                 })
               }
             });
           });
+        })
+      },
+      // TODO 触发添加事件监听
+      addListener(options) {
+        let {key, listner, lIndex, index} = options;
+        this.$nextTick(() => {
+          let type = `userevent-${key}`;
+          let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
+          userEvent.on((e) => {
+            listner.handler(e);
+          });
+          this.$emit('addlistener', {type, lIndex, index, userEvent});
         })
       },
       // TODO 处理下拉框
@@ -281,6 +286,11 @@
       },
       // TODO 处理数字输入框
       handleNumber(item, index) {
+        // 判断是否有数据源
+        if (item.dataSource) {
+          this.handleInputDataSource(item);
+        }
+        // 计算绑定值
         if (item.r2Bind) {
           item.inputValue = 0;
           let r2Bind = JSON.parse(item.r2Bind || "{}");
@@ -325,25 +335,11 @@
           });
         }
       },
-      // TODO 处理默认数据
-      handleDefault(item, index) {
+      // TODO 处理输入框
+      handleText(item, index) {
+        // 判断是否有数据源
         if (item.dataSource) {
-          let dataSource = JSON.parse(item.dataSource || "{}");
-          switch (dataSource.type) {
-            case 'formData':
-              let {valueField} = dataSource.data;
-              // 增加监听操作
-              this.needListeners.push({
-                contrl: dataSource.data.contrl,
-                handler: (e) => {
-                  item.inputValue = e.data.value[valueField] || '';
-                }
-              });
-              item.inputValue = this.currentUser[valueField];
-              break;
-            default:
-              break;
-          }
+          this.handleInputDataSource(item);
         }
         // 判断是否有默认值
         if (item.defaultValue) {
@@ -358,6 +354,32 @@
             default:
               break;
           }
+        }
+      },
+      // TODO 处理输入框含dataSource的情况
+      handleInputDataSource(item) {
+        let dataSource = JSON.parse(item.dataSource || "{}");
+        switch (dataSource.type) {
+          case 'formData':
+            let {contrl, valueField} = dataSource.data;
+            let dataIndex = '';
+            // 判断是否为字符串对象
+            if (/[{}]/g.test(valueField)) {
+              valueField = JSON.parse(valueField);
+              dataIndex = valueField.property;
+            }
+            // 增加监听操作
+            this.needListeners.push({
+              contrl,
+              dataIndex,
+              handler: (e) => {
+                item.inputValue = e.data.value[valueField] || '';
+              }
+            });
+            item.inputValue = this.currentUser[valueField];
+            break;
+          default:
+            break;
         }
       },
       // TODO 文本框修改值
@@ -445,7 +467,7 @@
         return warn;
       },
       // TODO 提交数据
-      getSaveData() {
+      getSaveDataOld() {
         let submitData = {};
         let wfData = {};
         this.configList && this.configList.forEach(item => {
@@ -516,10 +538,54 @@
           wfData
         }
       },
+      // TODO 提交数据(新接口)
+      getSaveData() {
+        let submitData = {};
+        let wfData = {};
+        this.configList && this.configList.forEach(item => {
+          if (item.submitValue) {
+            // 通过切割名字获取source和key
+            let [source, businesskey] = item.name.split('.');
+            let {inputValue, valueField} = item;
+            switch (item.xtype) {
+              // 下拉框类型
+              case 'r2Combo':
+                let comboData = inputValue[0] || '';
+                submitData[businesskey] = comboData;
+                break;
+              case 'r2Selector':
+                let val = inputValue.name;
+                submitData[businesskey] = val || '';
+                // 处理wfParam要传的参数
+                if (item.wfParam) {
+                  wfData[item.wfParam] = inputValue.value || '';
+                }
+                break;
+              default:
+                submitData[businesskey] = inputValue || '';
+                // 处理wfParam要传的参数
+                if (item.wfParam) {
+                  wfData[item.wfParam] = inputValue
+                }
+                break;
+            }
+          }
+          if (item.xtype === 'r2Grid') {
+            console.log(item.inputValue)
+            Object.assign(submitData, item.inputValue);
+          }
+        });
+        // console.log(submitData)
+        // console.log(wfData)
+        return {
+          submitData,
+          wfData
+        }
+      },
       // TODO 设置数据，触发视图更新
       setData(index, data) {
         this.$set(this.configList, index, Object.assign({}, this.configList[index], data));
-      }
+      },
     },
     created() {
       // 设置用户信息
