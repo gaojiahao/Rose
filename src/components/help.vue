@@ -155,22 +155,22 @@
 </template>
 
 <script>
-import saleRepotService from '../service/saleRepotService'
-import optionService from '../service/optionService'
-import { 
+import saleRepotService from "../service/saleRepotService";
+import optionService from "../service/optionService";
+import {
   Cell,
-  Alert, 
-  Group, 
-  XInput,  
+  Alert,
+  Group,
+  XInput,
   XButton,
   Confirm,
-  Selector, 
+  Selector,
   PopupPicker,
   numberComma
-} from 'vux'
+} from "vux";
 
 export default {
-  components:{
+  components: {
     Cell,
     Group,
     Alert,
@@ -180,416 +180,486 @@ export default {
     Selector,
     PopupPicker
   },
-  data () {
+  data() {
     return {
-      alertEnd:false,
-      btnStatus:true,
+      alertEnd: false,
+      btnStatus: true,
       list: [
         {
-          name:'无',
-          value:'无',
-          parent:'0'
+          name: "无",
+          value: "无",
+          parent: "0"
         },
         {
-          name:0,
-          value:0,
-          parent:'无'
+          name: 0,
+          value: 0,
+          parent: "无"
         }
       ],
-      arr:[{ value:[], qty:'' }],
-      Aclass:'',
-      Bclass:'',    
-      showNumber:false,
-      showNewDiv:false,
+      arr: [{ value: [], qty: "" }],
+      Aclass: "",
+      Bclass: "",
+      showNumber: false,
+      showNewDiv: false,
       mescroll: null,
-      totalInfo:'',
-      areaList:[],
-      areaValue:[],
-      bankList:[],
-      bankValue:[],
-      teamLeaderList:[],
-      teamLeaderValue:[],
-      helpCaptain:'',
-      captainShow:false,
-      governor:'',
-      governorStatus:true,
-      member:'',
-      memberStatus:true,
-      provalUserByList:[],
-      MemberUserList:[],
-      comments:''
-    }
+      totalInfo: "",
+      areaList: [],
+      areaValue: [],
+      bankList: [],
+      bankValue: [],
+      teamLeaderList: [],
+      teamLeaderValue: [],
+      helpCaptain: "",
+      captainShow: false,
+      governor: "",
+      governorStatus: true,
+      member: "",
+      memberStatus: true,
+      provalUserByList: [],
+      MemberUserList: [],
+      comments: ""
+    };
   },
-  filters:{
+  filters: {
     numberComma
   },
-  methods:{
+  methods: {
     //添加新数据
-    createNew(){
-      this.arr.push({ value: [], qty:'' }); 
+    createNew() {
+      this.arr.push({ value: [], qty: "" });
     },
-    deleteNew(){
-      if(this.arr.length == 1){
-        this.arr = [{ value: [], qty:'' }]
-      }
-      else{
-        this.arr.splice(this.arr.length-1,1); //删除新数据
+    deleteNew() {
+      if (this.arr.length == 1) {
+        this.arr = [{ value: [], qty: "" }];
+      } else {
+        this.arr.splice(this.arr.length - 1, 1); //删除新数据
       }
     },
     //随机ID
     guid() {
-        function S4() {
-            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-        }
-        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+      function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      }
+      return (
+        S4() +
+        S4() +
+        "-" +
+        S4() +
+        "-" +
+        S4() +
+        "-" +
+        S4() +
+        "-" +
+        S4() +
+        S4() +
+        S4()
+      );
     },
-    listData(){
-      saleRepotService.saleRepotList().then( data => {
-        for(let i = 0; i<data.tableContent.length; i++){
-          this.list.push({
-            name:data.tableContent[i]['trans_detail_uncalc.transObjCode'],
-            value:data.tableContent[i]['trans_detail_uncalc.transObjCode']+'_'+i+'_'+data.tableContent[i]['trans_detail_uncalc.qty'],
-            parent:'0',
-          },{
-            name:data.tableContent[i]['trans_detail_uncalc.price'],
-            value:data.tableContent[i]['trans_detail_uncalc.price'],
-            parent:data.tableContent[i]['trans_detail_uncalc.transObjCode']+'_'+i+'_'+data.tableContent[i]['trans_detail_uncalc.qty'],
-          });
+    listData() {
+      saleRepotService.saleRepotList().then(data => {
+        for (let i = 0; i < data.tableContent.length; i++) {
+          this.list.push(
+            {
+              name: data.tableContent[i]["trans_detail_uncalc.transObjCode"],
+              value:
+                data.tableContent[i]["trans_detail_uncalc.transObjCode"] +
+                "_" +
+                i +
+                "_" +
+                data.tableContent[i]["trans_detail_uncalc.qty"],
+              parent: "0"
+            },
+            {
+              name: data.tableContent[i]["trans_detail_uncalc.price"],
+              value: data.tableContent[i]["trans_detail_uncalc.price"],
+              parent:
+                data.tableContent[i]["trans_detail_uncalc.transObjCode"] +
+                "_" +
+                i +
+                "_" +
+                data.tableContent[i]["trans_detail_uncalc.qty"]
+            }
+          );
         }
-      })
+      });
     },
-    end(){
-      if(this.btnStatus == false){
+    end() {
+      if (this.btnStatus == false) {
         return;
       }
-      let that=this;
+      let that = this;
 
-      if(this.areaValue.length == 0){
-          this.$vux.alert.show({
-              title: '提示',
-              content: '请选支援地区'
-          })
-          return;
-      }else if(this.bankValue.length == 0){
-          this.$vux.alert.show({
-              title: '提示',
-              content: '请选支援银行'
-          })
-          return;
-      }else if(this.helpCaptain == ''){
-          this.$vux.alert.show({
-              title: '提示',
-              content: '请填写支援队长'
-          })
-          return;
-      }else if(this.arr[0].value.length == 0){
-            this.$vux.alert.show({
-                title: '提示',
-                content: '请选择项目产品'
-              })
-              return;
-      }else if(!this.governor){
-         this.$vux.alert.show({
-          title: '提示',
-          content: '请填写省长信息'
-        })
+      if (this.areaValue.length == 0) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请选支援地区"
+        });
         return;
-      }else if(!this.member){
-         this.$vux.alert.show({
-          title: '提示',
-          content: '请填写常委信息'
-        })
+      } else if (this.bankValue.length == 0) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请选支援银行"
+        });
+        return;
+      } else if (this.helpCaptain == "") {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请填写支援队长"
+        });
+        return;
+      } else if (this.arr[0].value.length == 0) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请选择项目产品"
+        });
+        return;
+      } else if (!this.governor) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请填写省长信息"
+        });
+        return;
+      } else if (!this.member) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请填写常委信息"
+        });
         return;
       }
-      
-      let dept = JSON.parse(localStorage.getItem('ROSE_OPTION')).dept;
 
-      localStorage.setItem('HELP_ZONE_INFO',JSON.stringify({
-        bank:this.bankValue[0],
-        areaValue:this.areaValue[0],
-        captain:this.helpCaptain,
-      }));
+      let dept = JSON.parse(localStorage.getItem("ROSE_OPTION")).dept;
 
-      let governor=this.governor,
-          member=this.member,
-          comments=this.comments;
+      localStorage.setItem(
+        "HELP_ZONE_INFO",
+        JSON.stringify({
+          bank: this.bankValue[0],
+          areaValue: this.areaValue[0],
+          captain: this.helpCaptain
+        })
+      );
 
+      let governor = this.governor,
+        member = this.member,
+        comments = this.comments;
 
       let jsonData = {
-          "listId": "4bda3e47-a088-4749-a988-ebb07cfb00e4",
-          //"listId": "8bf196b3-9be4-4a7e-ade1-c50602320f68",
-          "referenceId":this.guid(),
-          "baseinfoExt": {
-            "id":this.guid(),
-            "varchar1": '',
-            "varchar2": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).captain,
-            "varchar3": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue,
-            "varchar4": JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank,
-            "varchar5": JSON.parse(localStorage.getItem('ROSE_OPTION')).groupName,
-            "varchar6": "是",
-            "varchar7":governor,
-            "varchar8":member,
-            "varchar9":comments,
-            },
-          "transDetailUncalc": [],
-          "transCode": "XHXSDD"
-          };
-         
-          for(let i = 0; i<this.arr.length; i++){
-            if(this.arr[0].value[0] != '无' && this.arr[i].qty === ''){
-                this.$vux.alert.show({
-                  title: '提示',
-                  content: '请填写项目类产品数量',
-                })
-                return;
-              }else{
-                jsonData.transDetailUncalc.push({
-                  "id":this.guid(),
-                  "transObjCode": this.arr[i].value[0] === '无'? '无' : this.arr[i].value[0].split('_')[0],//项目类产品名称
-                  "containerCode": "项目类产品",//类型
-                  "qty": this.arr[i].value[0] === '无'?'':this.arr[i].qty,
-                  "taxAmount": this.arr[i].value[0] === '无'? '' : Number(this.arr[i].value[0].split('_')[2]),
-                  "amount": this.arr[i].qty*this.arr[i].value[1],//总金额
-                  "fgCode": ""
-                })
-              } 
-            }
-            if(!this.Aclass){
-              this.$vux.alert.show({
-                  title: '提示',
-                  content: '请填A类产品'
-              })
-              return;
-            }else if(!this.Bclass){
-              this.$vux.alert.show({
-                  title: '提示',
-                  content: '请填B类产品'
-                })
-              return;
-            }else{
-              jsonData.transDetailUncalc.push({
-                "id":this.guid(),
-                "transObjCode": "A类产品",//项目类产品名称
-                "containerCode": "A",//类型
-                "qty": '',
-                "amount": Number(this.Aclass),//总金额
-                "fgCode": ""
-              },{
-                "id":this.guid(),
-                "transObjCode": "B类产品",//项目类产品名称
-                "containerCode": "B",//类型
-                "qty": '',
-                "amount": Number(this.Bclass),//总金额
-                "fgCode": ""
-              })
-          }
-         let totalInfo = {
-            'isMobile':true,
-            'conn':20000,
-            'list':'trans_form_data',
-            'transCode':'XHXSDD',
-            'jsonData':JSON.stringify(jsonData)
-          }
-          this.totalInfo = totalInfo;
+        listId: "4bda3e47-a088-4749-a988-ebb07cfb00e4",
+        //"listId": "8bf196b3-9be4-4a7e-ade1-c50602320f68",
+        referenceId: this.guid(),
+        baseinfoExt: {
+          id: this.guid(),
+          varchar1: "",
+          varchar2: JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).captain,
+          varchar3: JSON.parse(localStorage.getItem("HELP_ZONE_INFO"))
+            .areaValue,
+          varchar4: JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).bank,
+          varchar5: JSON.parse(localStorage.getItem("ROSE_OPTION")).groupName,
+          varchar6: "是",
+          varchar7: governor,
+          varchar8: member,
+          varchar9: comments
+        },
+        transDetailUncalc: [],
+        transCode: "XHXSDD"
+      };
 
-          localStorage.setItem('saleReportInfo',JSON.stringify({
-            saleReportRemark:totalInfo,
-            time:new Date().getTime()
-          }))
-          localStorage.setItem('help_saleReport',JSON.stringify({
-            saleReportArr:this.arr,
-            Aclass:this.Aclass,
-            Bclass:this.Bclass,
-            time:new Date().getTime()
-          }))
-          
-          localStorage.setItem('HELP_INFO_LIST',JSON.stringify({
-            captain:that.helpCaptain,
-            governor:that.governor,
-            member:that.member
-          }));
-          that.$router.push({path:'/count'});
+      for (let i = 0; i < this.arr.length; i++) {
+        if (this.arr[0].value[0] != "无" && this.arr[i].qty === "") {
+          this.$vux.alert.show({
+            title: "提示",
+            content: "请填写项目类产品数量"
+          });
+          return;
+        } else {
+          jsonData.transDetailUncalc.push({
+            id: this.guid(),
+            transObjCode:
+              this.arr[i].value[0] === "无"
+                ? "无"
+                : this.arr[i].value[0].split("_")[0], //项目类产品名称
+            containerCode: "项目类产品", //类型
+            qty: this.arr[i].value[0] === "无" ? "" : this.arr[i].qty,
+            taxAmount:
+              this.arr[i].value[0] === "无"
+                ? ""
+                : Number(this.arr[i].value[0].split("_")[2]),
+            amount: this.arr[i].qty * this.arr[i].value[1], //总金额
+            fgCode: ""
+          });
+        }
+      }
+      if (!this.Aclass) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请填A类产品"
+        });
+        return;
+      } else if (!this.Bclass) {
+        this.$vux.alert.show({
+          title: "提示",
+          content: "请填B类产品"
+        });
+        return;
+      } else {
+        jsonData.transDetailUncalc.push(
+          {
+            id: this.guid(),
+            transObjCode: "A类产品", //项目类产品名称
+            containerCode: "A", //类型
+            qty: "",
+            amount: Number(this.Aclass), //总金额
+            fgCode: ""
+          },
+          {
+            id: this.guid(),
+            transObjCode: "B类产品", //项目类产品名称
+            containerCode: "B", //类型
+            qty: "",
+            amount: Number(this.Bclass), //总金额
+            fgCode: ""
+          }
+        );
+      }
+      let totalInfo = {
+        isMobile: true,
+        conn: 20000,
+        list: "trans_form_data",
+        transCode: "XHXSDD",
+        jsonData: JSON.stringify(jsonData)
+      };
+      this.totalInfo = totalInfo;
+
+      localStorage.setItem(
+        "saleReportInfo",
+        JSON.stringify({
+          saleReportRemark: totalInfo,
+          time: new Date().getTime()
+        })
+      );
+      localStorage.setItem(
+        "help_saleReport",
+        JSON.stringify({
+          saleReportArr: this.arr,
+          Aclass: this.Aclass,
+          Bclass: this.Bclass,
+          time: new Date().getTime()
+        })
+      );
+
+      localStorage.setItem(
+        "HELP_INFO_LIST",
+        JSON.stringify({
+          captain: that.helpCaptain,
+          governor: that.governor,
+          member: that.member
+        })
+      );
+      that.$router.push({ path: "/count" });
     },
-    Ainput(e){
-      this.Aclass=e.split(',').join('');
+    Ainput(e) {
+      this.Aclass = e.split(",").join("");
     },
-    Binput(e){
-       this.Bclass=e.split(',').join('');
+    Binput(e) {
+      this.Bclass = e.split(",").join("");
     },
-    letMeTest(){
+    letMeTest() {
       let path = this.$router.path;
     },
     //获取区域
-    getArea(){
-        optionService.getRegion().then( data => {
-            for(let i = 0 ;i<data.length; i++){
-                this.areaList.push({
-                    name:data[i].name,
-                    value:data[i].name,
-                })
-            }
-        })
+    getArea() {
+      optionService.getRegion().then(data => {
+        for (let i = 0; i < data.length; i++) {
+          this.areaList.push({
+            name: data[i].name,
+            value: data[i].name
+          });
+        }
+      });
     },
     //获取银行
-    getBank(){
-        optionService.getBank().then( data => {
-            for(let i = 0 ; i<data.length ;i++){
-                data[i].value=data[i].name;
-            }
-            this.bankList=data;
-        })
+    getBank() {
+      optionService.getBank().then(data => {
+        for (let i = 0; i < data.length; i++) {
+          data[i].value = data[i].name;
+        }
+        this.bankList = data;
+      });
     },
     //获取队长
-    teamLeader(){
-         optionService.getCaptain().then(data=>{
-             for(let i = 0; i<data.tableContent.length; i++){
-                data.tableContent[i].name = data.tableContent[i].nickname;
-                data.tableContent[i].value = data.tableContent[i].nickname;
-            }
-            this.teamLeaderList = data.tableContent;
-         })
+    teamLeader() {
+      optionService.getCaptain().then(data => {
+        for (let i = 0; i < data.tableContent.length; i++) {
+          data.tableContent[i].name = data.tableContent[i].nickname;
+          data.tableContent[i].value = data.tableContent[i].nickname;
+        }
+        this.teamLeaderList = data.tableContent;
+      });
     },
     //匹配队长
-    captainSelect(e){
-      if(this.captainShow == false || this.helpCaptain == ''){
+    captainSelect(e) {
+      if (this.captainShow == false || this.helpCaptain == "") {
         return;
       }
-      optionService.getCaptain({value:e}).then( data=> {
+      optionService.getCaptain({ value: e }).then(data => {
         this.teamLeaderList = data.tableContent;
-      })
+      });
     },
-    captainFocus(){
+    captainFocus() {
       this.captainShow = true;
     },
     //选择队长
-    getNickname(e){
+    getNickname(e) {
       this.helpCaptain = e;
       this.captainShow = false;
-      this.teamLeaderList = []
+      this.teamLeaderList = [];
     },
-        //省长
-    provalUserByAgent(type,e){
-      if(this.governorStatus==false||this.governor==''){
-        this.provalUserByList.length=0;
+    //省长
+    provalUserByAgent(type, e) {
+      if (this.governorStatus == false || this.governor == "") {
+        this.provalUserByList = [];
         return;
       }
-      let data={
-                "entityId":20000,
-                "filter":JSON.stringify([{"operator":"like","value":type,"property":"role"},{"operator":"like","value":e,"property":"nickname"}])
-            };
-      saleRepotService.getApprovalUserByAgent(data).then(res=>{
-          this.provalUserByList=res.tableContent;
+      let data = {
+        entityId: 20000,
+        filter: JSON.stringify([
+          { operator: "like", value: type, property: "role" },
+          { operator: "like", value: e, property: "nickname" }
+        ])
+      };
+      saleRepotService.getApprovalUserByAgent(data).then(res => {
+        this.provalUserByList = res.tableContent;
       });
     },
-    provinceReset(e){
+    provinceReset(e) {
       this.governorStatus = true;
     },
     //选择省长
-    getProvalUser(val){
+    getProvalUser(val) {
       this.governorStatus = false;
       this.provalUserByList = [];
       this.governor = val;
     },
-     //常委
-    memberUser(type,e){
-      if(this.memberStatus==false||this.member==''){
+    //常委
+    memberUser(type, e) {
+      if (this.memberStatus == false || this.member == "") {
         this.MemberUserList = [];
         return;
       }
-      let data={
-                "entityId":20000,
-                "filter":JSON.stringify([{"operator":"like","value":type,"property":"role"},{"operator":"like","value":e,"property":"nickname"}])
-            };
-      saleRepotService.getApprovalUserByAgent(data).then(res=>{
-          this.MemberUserList=res.tableContent;
+      let data = {
+        entityId: 20000,
+        filter: JSON.stringify([
+          { operator: "like", value: type, property: "role" },
+          { operator: "like", value: e, property: "nickname" }
+        ])
+      };
+      saleRepotService.getApprovalUserByAgent(data).then(res => {
+        this.MemberUserList = res.tableContent;
       });
     },
-    memberUserReset(e){
+    memberUserReset(e) {
       this.memberStatus = true;
     },
     //选择常委
-    getMemberUser(val){
+    getMemberUser(val) {
       this.memberStatus = false;
       this.MemberUserList = [];
       this.member = val;
     }
   },
-  mounted(){
+  mounted() {
     //提交时间是否超过20点
-    saleRepotService.getModelData().then( res => {
-      if(res.submitAllow === 1){
-        this.btnStatus=true;
-      }
-      else if(res.submitAllow === 0){
-        this.btnStatus=false;
+    saleRepotService.getModelData().then(res => {
+      if (res.submitAllow === 1) {
+        this.btnStatus = true;
+      } else if (res.submitAllow === 0) {
+        this.btnStatus = false;
         this.$vux.alert.show({
-            title: '提示',
-            content: '每日提交截止时间为20:00'
-        })
+          title: "提示",
+          content: "每日提交截止时间为20:00"
+        });
       }
-    })
+    });
     this.getArea();
     this.getBank();
-    if(localStorage.getItem('help_saleReport')){
-      this.arr = JSON.parse(localStorage.getItem('help_saleReport')).saleReportArr;
-      this.Aclass = JSON.parse(localStorage.getItem('help_saleReport')).Aclass;
-      this.Bclass = JSON.parse(localStorage.getItem('help_saleReport')).Bclass;
+    if (localStorage.getItem("help_saleReport")) {
+      this.arr = JSON.parse(
+        localStorage.getItem("help_saleReport")
+      ).saleReportArr;
+      this.Aclass = JSON.parse(localStorage.getItem("help_saleReport")).Aclass;
+      this.Bclass = JSON.parse(localStorage.getItem("help_saleReport")).Bclass;
     }
-    if(localStorage.getItem('HELP_ZONE_INFO')){
-      this.areaValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).areaValue ] ;
-      this.bankValue = [ JSON.parse(localStorage.getItem('HELP_ZONE_INFO')).bank ] ;
+    if (localStorage.getItem("HELP_ZONE_INFO")) {
+      this.areaValue = [
+        JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).areaValue
+      ];
+      this.bankValue = [
+        JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).bank
+      ];
     }
-    if(localStorage.getItem('HELP_INFO_LIST')){
-      this.helpCaptain = JSON.parse(localStorage.getItem('HELP_INFO_LIST')).captain ;
-      this.governor = JSON.parse(localStorage.getItem('HELP_INFO_LIST')).governor;
-      this.governorStatus=false;
-      this.member = JSON.parse(localStorage.getItem('HELP_INFO_LIST')).member;
-      this.memberStatus=false;
+    if (localStorage.getItem("HELP_INFO_LIST")) {
+      this.helpCaptain = JSON.parse(
+        localStorage.getItem("HELP_INFO_LIST")
+      ).captain;
+      this.governor = JSON.parse(
+        localStorage.getItem("HELP_INFO_LIST")
+      ).governor;
+      this.governorStatus = false;
+      this.member = JSON.parse(localStorage.getItem("HELP_INFO_LIST")).member;
+      this.memberStatus = false;
     }
     this.listData();
   },
-  beforeRouteLeave(to,from,next){
+  beforeRouteLeave(to, from, next) {
     let that = this;
-    if( that.arr[0].value.length == 0 || to.name == 'Count'){ next() }
-    else{
+    if (that.arr[0].value.length == 0 || to.name == "Count") {
+      next();
+    } else {
       that.$vux.confirm.show({
-        title: '温馨提示',
-        content: '要保存数据吗？',
-        confirmText:"确认",
-        cancelText:"取消",
-        onCancel () {
-          localStorage.removeItem('help_saleReport'); 
-          localStorage.removeItem('HELP_INFO_LIST'); 
-          next()
+        title: "温馨提示",
+        content: "要保存数据吗？",
+        confirmText: "确认",
+        cancelText: "取消",
+        onCancel() {
+          localStorage.removeItem("help_saleReport");
+          localStorage.removeItem("HELP_INFO_LIST");
+          next();
         },
-        onConfirm () {
-            //缓存填写信息
-            localStorage.setItem('help_saleReport',JSON.stringify({
-              saleReportArr:that.arr,
-              Aclass:that.Aclass,
-              Bclass:that.Bclass,
-              captain:that.helpCaptain,
-              time:new Date().getTime()
-            }));
-            //缓存地区信息
-            localStorage.setItem('HELP_ZONE_INFO',JSON.stringify({
-              bank:that.bankValue[0],
-              areaValue:that.areaValue[0],
-              captain:that.helpCaptain,
-            }));
-            //省长常委
-            localStorage.setItem('HELP_INFO_LIST',JSON.stringify({
-              captain:that.helpCaptain,
-              governor:that.governor,
-              member:that.member
-            }));  
-            next()
+        onConfirm() {
+          //缓存填写信息
+          localStorage.setItem(
+            "help_saleReport",
+            JSON.stringify({
+              saleReportArr: that.arr,
+              Aclass: that.Aclass,
+              Bclass: that.Bclass,
+              captain: that.helpCaptain,
+              time: new Date().getTime()
+            })
+          );
+          //缓存地区信息
+          localStorage.setItem(
+            "HELP_ZONE_INFO",
+            JSON.stringify({
+              bank: that.bankValue[0],
+              areaValue: that.areaValue[0],
+              captain: that.helpCaptain
+            })
+          );
+          //省长常委
+          localStorage.setItem(
+            "HELP_INFO_LIST",
+            JSON.stringify({
+              captain: that.helpCaptain,
+              governor: that.governor,
+              member: that.member
+            })
+          );
+          next();
         }
-    })
+      });
     }
-      
   }
-}
+};
 </script>
 
 <style>
@@ -609,7 +679,7 @@ export default {
   color: dodgerblue;
 }
 .reduce_tx {
-  color: #FF2719;
+  color: #ff2719;
 }
 /* 删除按钮 */
 .delete_button {
@@ -624,28 +694,28 @@ export default {
   border-radius: 0;
   z-index: 99;
 }
-.plus_delect{
+.plus_delect {
   color: red;
 }
-.helpCaptain{
+.helpCaptain {
   position: relative;
 }
-.captain-container{
+.captain-container {
   width: 100%;
-  max-height: 132px;  
+  max-height: 132px;
   position: absolute;
   overflow-y: scroll;
   background: #fff;
   z-index: 8;
 }
-.captain-container>.weui-cells{
+.captain-container > .weui-cells {
   margin-top: 0;
   background: #f0f2f5;
 }
-.caution_inputs>.weui-cells{
+.caution_inputs > .weui-cells {
   overflow: inherit;
 }
-.captainHide{
+.captainHide {
   display: none;
 }
 </style>
