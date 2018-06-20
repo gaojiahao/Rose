@@ -295,20 +295,7 @@ export default {
       function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
-      return (
-        S4() +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        S4() +
-        S4()
-      );
+      return ( S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4() );
     },
     listData() {
       saleRepotService.saleRepotList().then(data => {
@@ -316,23 +303,13 @@ export default {
           this.list.push(
             {
               name: data.tableContent[i]["trans_detail_uncalc.transObjCode"],
-              value:
-                data.tableContent[i]["trans_detail_uncalc.transObjCode"] +
-                "_" +
-                i +
-                "_" +
-                data.tableContent[i]["trans_detail_uncalc.qty"],
+              value:data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"],
               parent: "0"
             },
             {
               name: data.tableContent[i]["trans_detail_uncalc.price"],
               value: data.tableContent[i]["trans_detail_uncalc.price"],
-              parent:
-                data.tableContent[i]["trans_detail_uncalc.transObjCode"] +
-                "_" +
-                i +
-                "_" +
-                data.tableContent[i]["trans_detail_uncalc.qty"]
+              parent:data.tableContent[i]["trans_detail_uncalc.transObjCode"] +  "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]
             }
           );
         }
@@ -415,16 +392,10 @@ export default {
         } else {
           jsonData.transDetailUncalc.push({
             id: this.guid(),
-            transObjCode:
-              this.arr[i].value[0] === "无"
-                ? "无"
-                : this.arr[i].value[0].split("_")[0], //项目类产品名称
+            transObjCode: this.arr[i].value[0] === "无" ? "无" : this.arr[i].value[0].split("_")[0], //项目类产品名称
             containerCode: "项目类产品", //类型
             qty: this.arr[i].value[0] === "无" ? "" : this.arr[i].qty,
-            taxAmount:
-              this.arr[i].value[0] === "无"
-                ? ""
-                : Number(this.arr[i].value[0].split("_")[2]),
+            taxAmount: this.arr[i].value[0] === "无" ? "" : Number(this.arr[i].value[0].split("_")[2]),
             amount: this.arr[i].qty * this.arr[i].value[1], //总金额
             fgCode: ""
           });

@@ -99,9 +99,7 @@ export default {
         confirmText: "我已确认",
         cancelText: "再去看看",
         onConfirm() {
-          saleRepotService
-            .subAmount(querystring.stringify(that.childInfo))
-            .then(data => {
+          saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data => {
               if (data.success) {
                 that.$vux.alert.show({
                   title: "提示",
