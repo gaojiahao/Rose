@@ -76,7 +76,6 @@
         })).then(repData => {
           this.showLoading = false;
           this.summaryList = [];
-          console.log(repData)
           // 数据组装
           repData.items && repData.items.forEach((data, index) => {
             this.summaryList.push({

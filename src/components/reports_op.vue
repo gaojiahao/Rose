@@ -220,7 +220,6 @@
           });
           return
         }*/
-        console.log(filterParams);
         sessionStorage.setItem(FILTER_OPTION, JSON.stringify(this.pickerList))
         this.$router.push({
           path: '/reportsOp/reports',

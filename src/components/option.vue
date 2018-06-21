@@ -84,7 +84,6 @@
           });
           return
         }
-        console.log(`${region}----${bank}----${dept}`)
         this.$router.replace({path: '/Home'})
         localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({region, bank, dept, captain}))
       },

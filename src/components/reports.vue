@@ -159,7 +159,6 @@
         this.reportList = this.reportData[item.value]
       },
       onChange(val) {
-        console.log(val);
         // this.showTab = false
       },
       // TODO 重置数据
@@ -259,7 +258,6 @@
       dateItemClick(item) {
         this.showDate = false;
         if (item.value === this.dateSelected.value) {
-          console.log('点击了相同的条目');
           return
         }
         this.dateSelected = item;
@@ -278,7 +276,6 @@
       projItemClick(item, index) {
         this.showProj = false;
         if (item === this.objName) {
-          console.log('点击了相同的条目');
           return
         }
         this.objName = item;

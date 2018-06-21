@@ -542,7 +542,6 @@ export default {
     },
     //选择常委
     getMemberUser(val) {
-      console.log(1);
       this.memberStatus = false;
       this.MemberUserList = [];
       this.member = val;
