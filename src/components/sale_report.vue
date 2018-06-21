@@ -78,7 +78,7 @@
               placeholder="请选择产品"
               :data="list"
               v-model="item.value"
-              :columns="2"
+              :columns="1"
               show-name
             >
             </popup-picker>
@@ -86,7 +86,7 @@
             <cell 
               class="each_part"
               title="单价"
-              :value="'￥'+item.value[1] | numberComma"
+              :value="item.value[0]=='无'?'￥'+0:'￥'+item.value[0].split('_')[3] | numberComma"
               value-align="right" 
               v-if="item.value.length>0"
             ></cell>
@@ -186,12 +186,13 @@ export default {
           name: "无",
           value: "无",
           parent: "0"
-        },
-        {
-          name: 0,
-          value: 0,
-          parent: "无"
         }
+        // ,
+        // {
+        //   name: 0,
+        //   value: 0,
+        //   parent: "无"
+        // }
       ],
       arr: [
         {
@@ -303,14 +304,14 @@ export default {
           this.list.push(
             {
               name: data.tableContent[i]["trans_detail_uncalc.transObjCode"],
-              value:data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"],
+              value:data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]+'_'+data.tableContent[i]["trans_detail_uncalc.price"],
               parent: "0"
             },
-            {
-              name: data.tableContent[i]["trans_detail_uncalc.price"],
-              value: data.tableContent[i]["trans_detail_uncalc.price"],
-              parent:data.tableContent[i]["trans_detail_uncalc.transObjCode"] +  "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]
-            }
+            // {
+            //   name: data.tableContent[i]["trans_detail_uncalc.price"],
+            //   value: data.tableContent[i]["trans_detail_uncalc.price"],
+            //   parent:data.tableContent[i]["trans_detail_uncalc.transObjCode"] +  "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]
+            // }
           );
         }
       });
@@ -383,7 +384,7 @@ export default {
         return;
       }
       for (let i = 0; i < this.arr.length; i++) {
-        if (this.arr[0].value[0] != "无" && this.arr[i].qty === "") {
+        if (this.arr[i].value[0] != "无" && this.arr[i].qty === "") {
           this.$vux.alert.show({
             title: "提示",
             content: "请填写项目类产品数量"
@@ -396,7 +397,7 @@ export default {
             containerCode: "项目类产品", //类型
             qty: this.arr[i].value[0] === "无" ? "" : this.arr[i].qty,
             taxAmount: this.arr[i].value[0] === "无" ? "" : Number(this.arr[i].value[0].split("_")[2]),
-            amount: this.arr[i].qty * this.arr[i].value[1], //总金额
+            amount: this.arr[i].qty * this.arr[i].value[0].split('_')[3], //总金额
             fgCode: ""
           });
         }

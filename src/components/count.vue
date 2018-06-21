@@ -145,7 +145,7 @@ export default {
             value: `${jsonData[i].qty}件/套`
           });
           // 最终合计 数量
-          list4_num += jsonData[i].qty;
+          list4_num += jsonData[i].qty==''?0:jsonData[i].qty;
 
           this.list4 = [
             {
