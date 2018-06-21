@@ -260,9 +260,7 @@
       addListener(params) {
         let {type, lIndex, index, userEvent} = params;
         let item = this.config[lIndex].items[index];
-        if (!item.listeners) {
-          item.listeners = {};
-        }
+        !item.listeners ? item.listeners = {} : '';
         item.listeners[type] = userEvent;
       },
       // TODO 初始化合计监听
@@ -295,10 +293,10 @@
         this.title = decodeURI(query.title);
         this.showLoading = true;
         this.initTotalEvent();
-        this.getProcess();
         await createService.getUser().then(data => {
           this.userInfo = data;
         });
+        this.getProcess();
         await createService.getCurrentUser(this.userInfo.nickname).then(data => {
           this.currentUser = data.tableContent[0] || {};
         });

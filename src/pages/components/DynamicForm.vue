@@ -22,7 +22,8 @@
                   v-else-if="item.xtype === 'r2Selector'"></x-selector>
       <!-- 表格类型 -->
       <x-grid :title="item.fieldLabel" :data="item.gridList" v-model="item.inputValue" ref="xGrid"
-              :total-listener="totalListener"
+              :total-listener="totalListener" :tmp="item.tmp" @add-item="addGridItem" @remove-item="removeGridItem"
+              :index="index"
               v-else-if="item.xtype === 'r2Grid'"></x-grid>
       <!-- 日期类型 -->
       <datetime :title="item.fieldLabel" v-model="item.inputValue" format="YYYY-MM-DD"
@@ -124,27 +125,21 @@
             lItem.items && lItem.items.forEach((cItem, index) => {
               // 下拉框级联
               if (cItem.id === listner.contrl) {
-                this.addListener({
-                  key: cItem.id,
-                  listner, lIndex, index
-                })
+                this.addListener(cItem, {listner, lIndex, index})
               }
               // 输入框计算
               if (listner.computeParams && (cItem.reference in listner.computeParams)) {
-                this.addListener({
-                  key: cItem.reference,
-                  listner, lIndex, index
-                })
+                this.addListener(cItem, {listner, lIndex, index})
               }
             });
           });
         })
       },
       // TODO 触发添加事件监听
-      addListener(options) {
-        let {key, listner, lIndex, index} = options;
+      addListener(item, options) {
+        let {listner, lIndex, index} = options;
         this.$nextTick(() => {
-          let type = `userevent-${key}`;
+          let type = `userevent-${item.id}`;
           let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
           userEvent.on((e) => {
             listner.handler(e);
@@ -281,8 +276,19 @@
       },
       // TODO 处理表格数据
       handleGrid(item, index) {
-        item.gridList = item.columns || [];
+        item.tmp = item.columns || [];
+        item.gridList = [];
         item.inputValue = {};
+      },
+      // TODO 增加表格项
+      addGridItem(obj) {
+        let {index, template} = obj;
+        this.configList[index].gridList.push(template);
+      },
+      // TODO 删除表格项
+      removeGridItem(obj) {
+        let {index} = obj;
+        this.configList[index].gridList.pop();
       },
       // TODO 处理数字输入框
       handleNumber(item, index) {

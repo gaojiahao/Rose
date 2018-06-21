@@ -53,11 +53,21 @@
           return {}
         }
       },
+      // 数据模板
+      tmp: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      index: {
+        type: Number,
+        default: 0
+      },
     },
     components: {Group, GroupTitle, Cell, XInput, PopupPicker, Datetime, XButton, XSelector},
     data() {
       return {
-        template: [], // 备份
         listData: [], // 展示数据
         needListeners: [], // 监听列表
         lastIndex: 0, // 最新索引
@@ -68,7 +78,7 @@
       // TODO 生成模板数据
       copy() {
         let currentIndex = this.lastIndex;
-        let template = JSON.parse(JSON.stringify(this.data));
+        let template = JSON.parse(JSON.stringify(this.tmp));
         this.needListeners.push([]);
         template = template.map((item, index) => {
           item.inputValue = '';
@@ -91,36 +101,37 @@
           return item;
         });
         // 设置监听事件
-        this.needListeners[currentIndex].forEach(listner => {
+        this.needListeners[currentIndex].forEach(listener => {
           template.forEach((item, index) => {
             // 下拉框级联
-            if (item.dataIndex === listner.dataIndex) {
-              this.$nextTick(() => {
-                let type = `userevent-${item.dataIndex}-${currentIndex}`; // 监听类型
-                let userEvent = new UserEvent(this.$refs.xGrid.$el, type);
-                userEvent.on((e) => {
-                  listner.handler(e);
-                });
-                !item.listeners ? item.listeners = {} : '';
-                item.listeners[type] = userEvent;
-              })
+            if (item.dataIndex === listener.dataIndex) {
+              this.addListener(item, {listener, currentIndex});
             }
             // 输入框计算
-            if (listner.computeParams && (item.dataIndex in listner.computeParams)) {
-              this.$nextTick(() => {
-                let type = `userevent-${item.dataIndex}-${currentIndex}`;
-                let userEvent = new UserEvent(this.$refs.xGrid.$el, type);
-                userEvent.on((e) => {
-                  listner.handler(e);
-                });
-                !item.listeners ? item.listeners = {} : '';
-                item.listeners[type] = userEvent;
-              })
+            if (listener.computeParams && (item.dataIndex in listener.computeParams)) {
+              this.addListener(item, {listener, currentIndex});
             }
           });
         });
         this.listData.push(template);
+        this.$emit('add-item', {
+          index: this.index,
+          template
+        });
         this.lastIndex++;
+      },
+      // TODO 添加事件监听
+      addListener(item, options) {
+        let {listener, currentIndex} = options;
+        this.$nextTick(() => {
+          let type = `userevent-${item.dataIndex}-${currentIndex}`;
+          let userEvent = new UserEvent(this.$refs.xGrid.$el, type);
+          userEvent.on((e) => {
+            listener.handler(e);
+          });
+          !item.listeners ? item.listeners = {} : '';
+          item.listeners[type] = userEvent;
+        })
       },
       // TODO 处理下拉框
       handleCombo(item, currentIndex, index) {
@@ -519,7 +530,6 @@
       },
       // TODO 增加表格项
       addGridItem() {
-        // this.listData.push(Object.assign([], this.template));
         this.totalData.push(0);
         this.copy();
       },
@@ -531,6 +541,9 @@
           this.totalListener.userEvent.emit(this.totalData);
 
           this.listData.pop();
+          this.$emit('remove-item', {
+            index: this.index,
+          });
           this.needListeners.pop();
           this.lastIndex--;
         }
