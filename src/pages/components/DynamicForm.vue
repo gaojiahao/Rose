@@ -70,6 +70,11 @@
         type: Boolean,
         default: false
       },
+      // 当前索引
+      index: {
+        type: Number,
+        default: 0
+      },
       // 合计监听器
       totalListener: {
         type: Object,
@@ -139,7 +144,7 @@
       addListener(item, options) {
         let {listner, lIndex, index} = options;
         this.$nextTick(() => {
-          let type = `userevent-${item.id}`;
+          let type = `userevent-${item.id}-${this.index}`;
           let userEvent = new UserEvent(this.$refs.dynamicFormContainer, type);
           userEvent.on((e) => {
             listner.handler(e);
@@ -172,8 +177,9 @@
               let pickerList = [];
               createService.getRemoteData(dataSource.data.url, params).then(data => {
                 let firstVal = [];
+                let pickers = data.tableContent ? data.tableContent : data;
                 // 处理picker的展示列表
-                data.tableContent && data.tableContent.forEach(picker => {
+                pickers && pickers.forEach(picker => {
                   pickerList.push(Object.assign(picker, {
                     name: picker[displayField],
                     value: picker[displayField]
@@ -382,7 +388,6 @@
                 item.inputValue = e.data.value[valueField] || '';
               }
             });
-            item.inputValue = this.currentUser[valueField];
             break;
           default:
             break;
@@ -402,16 +407,12 @@
         let pickerItem = {};
         let val = picker.inputValue[0];
         // 通过选中值获取选中项
-        picker.pickerList && picker.pickerList.every(p => {
-          if (p.value === val) {
-            pickerItem = Object.assign({}, p);
-            return false;
-          }
-          return true;
+        pickerItem = picker.pickerList && picker.pickerList.find(p => {
+          return p.value === val;
         });
         picker.listeners && Object.values(picker.listeners).forEach(item => {
           item.emit({
-            value: pickerItem
+            value: Object.assign({}, pickerItem)
           });
         });
         this.setData(index, {

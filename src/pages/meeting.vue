@@ -12,7 +12,7 @@
         <group v-for="(item, index) in config" :title="item.title" :key="index"
                v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
           <dynamic-form :config="item.items" :current-user="currentUser" @addlistener="addListener"
-                        :last-index="index === config.length - 1" :total-listener="totalListener"
+                        :last-index="index === config.length - 1" :total-listener="totalListener" :index="index"
                         ref="dynamicForm"></dynamic-form>
         </group>
       </div>

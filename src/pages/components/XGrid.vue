@@ -158,16 +158,18 @@
               let pickerList = [];
               createService.getRemoteData(dataSource.data.url, params).then(data => {
                 let firstVal = [];
+                let pickers = data.tableContent ? data.tableContent : data;
                 // 处理picker的展示列表
-                data.tableContent && data.tableContent.forEach(picker => {
+                pickers && pickers.forEach(picker => {
                   pickerList.push(Object.assign(picker, {
                     name: picker[displayField],
-                    value: picker[valueField]
+                    value: picker[displayField]
                   }));
                 });
                 // 判断是否有数据，有数据则取第一个值作为默认值
                 firstVal = pickerList[0] && pickerList[0].name;
                 item.pickerList = pickerList;
+                item.inputValue = firstVal ? [firstVal] : [];
                 // this.setData(currentIndex, index, {
                 //   pickerList,
                 //   inputValue: firstVal ? [firstVal] : []
@@ -330,7 +332,6 @@
                 item.inputValue = e.data.value[valueKey] || '';
               }
             });
-            // item.inputValue = this.currentUser[valueField];
             break;
           default:
             break;
@@ -341,16 +342,12 @@
         let pickerItem = {};
         let val = picker.inputValue[0];
         // 通过选中值获取选中项
-        picker.pickerList && picker.pickerList.every(p => {
-          if (p.value === val) {
-            pickerItem = Object.assign({}, p);
-            return false;
-          }
-          return true;
+        pickerItem = picker.pickerList && picker.pickerList.find(p => {
+          return p.value === val;
         });
         picker.listeners && Object.values(picker.listeners).forEach(item => {
           item.emit({
-            value: pickerItem
+            value: Object.assign({}, pickerItem)
           });
         });
         /*this.setData(currentIndex, index, {
@@ -399,7 +396,6 @@
         this.listData && this.listData.every(lItem => {
           let submitItem = {};
           lItem.every(item => {
-            console.log(`${item.text}---${item.allowBlank}---${item.inputValue}`);
             // 通过切割dataIndex获取source和key
             let [source, businesskey] = item.dataIndex.split('.');
             let {allowBlank, text, editorType, inputValue, valueField, submitValue} = item;
