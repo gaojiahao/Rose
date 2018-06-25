@@ -6,10 +6,11 @@ import VueRouter from 'vue-router'
 import App from './App'
 import router from './router'
 import adapation from './common/adapation'
-import  { LoadingPlugin } from 'vux'
+import  { LoadingPlugin,ToastPlugin } from 'vux'
 
 Vue.use(VueRouter)
 Vue.use(LoadingPlugin)
+Vue.use(ToastPlugin)
 
 
 FastClick.attach(document.body)

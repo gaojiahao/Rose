@@ -2,32 +2,77 @@
   <div class="pages">
     <h1 class="a_title">
       固定资产
-      <span class="a_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward"
-                                                         size="16"></x-icon></span>
+      <span class="a_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon></span>
     </h1>
     <div class="a_main">
       <div class="a_main_part">
-        <group title="请填写相应部门的信息">
+        <group title="请选择资产类型">
           <popup-picker
-            title="申请部门"
+            title="资产类型"
             :data="a_dplist"
             v-model="a_dpsq"
             @on-change="changeType"
           ></popup-picker>
+        </group>
+        <group title="请填写资产型号/规格">
+          <x-input
+            title='资产型号/规格'
+            text-align='right'
+          ></x-input>
+        </group>
+        <group title="请选择计量单位">
           <popup-picker
-            title="使用部门"
+            title="计量单位"
             :data="a_dplist"
-            v-model="a_dpsy"
+            v-model="a_dpsq"
             @on-change="changeType"
           ></popup-picker>
         </group>
-        <group title="请填写类型">
+        <group title="请填写明细">
           <x-input
-            :title='item'
-            :key="index"
+            title='数量'
             text-align='right'
-            v-for="(item, index) in xp_list"
           ></x-input>
+          <x-input
+            title='单价'
+            text-align='right'
+          ></x-input>
+          <cell title="合计" value="123"></cell>
+        </group>
+        <group title="请填写部门">
+          <x-input
+            title='申请部门'
+            text-align='right'
+          ></x-input>
+          <x-input
+            title='使用部门'
+            text-align='right'
+          ></x-input>
+        </group>
+        <group title="费用所属">
+            <popup-picker
+                title="费用所属事业部"
+                :data="a_dplist"
+                v-model="a_dpsq"
+            ></popup-picker>
+            <popup-picker
+                title="费用所属部门"
+                :data="a_dplist"
+                v-model="a_dpsq"
+            ></popup-picker>
+            <popup-picker
+                title="核算归属省份"
+                :data="a_dplist"
+                v-model="a_dpsq"
+            ></popup-picker>
+            <popup-picker
+                title="费用所属银行"
+                :data="a_dplist"
+                v-model="a_dpsq"
+            ></popup-picker>
+        </group>
+        <group title="要说点什么吗？">
+            <x-textarea title="说明" :max="100"></x-textarea>
         </group>
       </div>
     </div>
@@ -40,14 +85,18 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, PopupPicker} from 'vux'
+  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from 'vux'
 
   export default {
     components: {
       Cell,
       Group,
       XInput,
-      PopupPicker
+      PopupPicker,
+      XTextarea, 
+    },
+    filters:{
+      numberComma 
     },
     data() {
       return {
