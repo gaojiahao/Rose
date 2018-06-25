@@ -1,308 +1,64 @@
 <template>
   <div class="pages">
     <h1 class="m_title">
-      {{title}}
-      <span class="m_user" @click="goMylist">
-        我的提交
-        <x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon>
-      </span>
+      会议立项
+      <span class="m_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward"
+                                                         size="16"></x-icon></span>
     </h1>
     <div class="m_main">
       <div class="m_main_part">
-        <group v-for="(item, index) in config" :title="item.title" :key="index"
-               v-show="item.xtype !== 'r2Fileupload' && !item.hiddenInRun">
-          <dynamic-form :config="item.items" :current-user="currentUser" @addlistener="addListener"
-                        :last-index="index === config.length - 1" :total-listener="totalListener" :index="index"
-                        ref="dynamicForm"></dynamic-form>
+        <group title="请填写会议安排明细">
+          <datetime v-model="minuteListValue" format="YYYY-MM-DD HH:mm" :minute-list="['00', '15', '30', '45']"
+                    title="时间段"></datetime>
+          <x-input
+            :title='item'
+            :key="index"
+            text-align='right'
+            v-for="(item, index) in meetList"
+          ></x-input>
+        </group>
+        <group title="费用合计">
+          <cell title="金额合计" value='￥1,000'></cell>
         </group>
       </div>
     </div>
     <div class="m_btm vux-1px-t">
-      <span class="count_part">合计:￥{{totalData}}</span>
+      <span class="count_part">合计:￥1,000</span>
       <span class="m_button" @click="goflow">确定</span>
     </div>
-    <!-- 提示 -->
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
-    <loading :show="showLoading"></loading>
   </div>
 
 </template>
 
 <script>
-  import {Cell, Group, XInput, Datetime, Toast, numberComma} from 'vux'
-  import createService from './../service/createService'
-  import DynamicForm from './components/DynamicForm'
-  import Loading from './components/loading'
-  import UserEvent from './../plugins/userEvent'
+  import {Cell, Group, XInput, Datetime} from 'vux'
 
   export default {
     components: {
-      DynamicForm,
       Cell,
       Group,
       XInput,
-      Datetime,
-      Toast,
-      Loading
+      Datetime
     },
     data() {
       return {
-        uniqueId: '',
-        listid: '',
-        showLoading: false,
-        showToast: false, // 是否展示toast
-        toastText: '', // 警告提示
-        config: [],
-        userInfo: {}, // 当前用户信息
-        currentUser: {}, // 当前用户信息
-        title: '', // 顶部标题
-        totalListener: {}, // 监听合计
-        totalData: 0, // 合计值
+        minuteListValue: '',
+        meetList: ['省份', '城市', '酒店名称', '住宿均价', '房间数量', '总人数', '场地费用合计', '路费合计', '餐饮合计']
       }
     },
     methods: {
-      // TODO 生成随机串
-      guid() {
-        let S4 = () => {
-          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-        };
-
-        return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
-      },
       goMylist() { //我的提交
-        this.$router.push({path: '/myList', query: {listId: this.listid}})
+        this.$router.push({
+          path: '/myList',
+          query: {
+            listId: this.$route.query.list
+          }
+        })
       },
       goflow() {
-        let warn = '';
-        let jsonData = {
-          listId: this.listid,
-          referenceId: this.guid(),
-          transCode: '',
-        };
-        let wfPara = {};
-        let dynamicForm = this.$refs.dynamicForm;
-        let saveData = {};
-        let saveMethods = 'saveData';
-        dynamicForm.every(item => {
-          item.checkData();
-        });
-        if (warn) {
-          this.showToastText(warn);
-          return
-        }
-        dynamicForm && dynamicForm.every((item, index) => {
-          warn = item.checkData();
-          if (warn) {
-            return false
-          }
-          let groupName = this.config[index].name;
-          let noAssembleMap = ['baseinfo', 'baseinfoExt', 'baseinfo.fj', 'transDetail'];
-          let {submitData, wfData} = item.getSaveDataOld();
-          if (noAssembleMap.indexOf(groupName) === -1) {
-            jsonData[`$${groupName}`] = {};
-          }
-          Object.entries(submitData).forEach(([key, value]) => {
-            // 若已有该键值，则合并
-            if (jsonData[key]) {
-              Object.assign(jsonData[key], value);
-            } else {
-              jsonData[key] = value;
-            }
-            // 副总裁赋值操作
-            if (key === 'warehouse') {
-              Object.entries(value).forEach(([$key, $val]) => {
-                jsonData[groupName][`${key}.${$key}`] = $val;
-              });
-            }
-            // 传值的key增加$符号
-            if (noAssembleMap.indexOf(groupName) === -1) {
-              Object.entries(value).forEach(([$key, $val]) => {
-                if (key !== 'review') {
-                  jsonData[`$${groupName}`][`${key}.${$key}`] = $val;
-                } else {
-                  jsonData[`$${groupName}`][$key] = $val;
-                }
-              })
-            }
-          });
-          // 合并数据wfPara数据
-          Object.assign(wfPara, wfData);
-          return true;
-        });
-        if (warn) {
-          this.showToastText(warn);
-          return;
-        }
-        let {transCode} = jsonData.baseinfo;
-        jsonData.transCode = transCode;
-        // console.log(jsonData)
-        saveData = {
-          transCode: transCode,
-          jsonData: JSON.stringify(jsonData),
-        };
-        // 没有procCode时不传wfPara项，并且修改提交方法
-        if (this.procCode) {
-          saveData.wfPara = JSON.stringify({
-            [this.procCode]: wfPara
-          });
-          saveMethods = 'saveAndStartWfOld';
-        }
-        this.showLoading = true;
-        createService[saveMethods](saveData).then(data => {
-          let {message, success} = data;
-          this.showLoading = false;
-          // 从返回数据获取表单编码
-          let matchCode = data.message.match(/【(.)+】/gi);
-          this.transCode = matchCode ? matchCode[0].replace(/[【】]/g, '') : '';
-          // 提交编码为null则说明提交失败
-          if (this.transCode.indexOf('null') === -1 && success) {
-            this.showToastText('提交成功');
-          } else {
-            this.showToastText('提交失败');
-          }
-        }).catch(e => {
-          this.showToastText(e.message);
-        })
-
-        // this.$router.push({path: '/flow'})
-      },
-      // TODO 提交数据
-      saveData() {
-        let warn = '';
-        let formData = {};
-        let wfPara = {};
-        let dynamicForm = this.$refs.dynamicForm;
-        let saveData = {
-          listId: this.listid,
-          biComment: '备注测试',
-          formData: {},
-        };
-        let saveMethods = 'saveData';
-        dynamicForm.every(item => {
-          item.checkData();
-        });
-        if (warn) {
-          this.showToastText(warn);
-          return
-        }
-        dynamicForm && dynamicForm.every((item, index) => {
-          warn = item.checkData();
-          if (warn) {
-            return false
-          }
-          let {submitData, wfData} = item.getSaveData();
-          Object.assign(formData, submitData);
-          // 合并数据wfPara数据
-          Object.assign(wfPara, wfData);
-          return true;
-        });
-        if (warn) {
-          this.showToastText(warn);
-          return;
-        }
-        saveData.formData = JSON.stringify(formData);
-        // 有procCode时传wfPara项，并且修改提交方法
-        if (this.procCode) {
-          saveData.wfPara = JSON.stringify({
-            [this.procCode]: wfPara
-          });
-          saveMethods = 'saveAndStartWf';
-        }
-        console.log(formData)
-        console.log(saveData)
-        this.showLoading = true;
-        createService[saveMethods](saveData).then(data => {
-          let {message, success} = data;
-          this.showLoading = false;
-          // 从返回数据获取表单编码
-          let matchCode = message.match(/【(.)+】/gi);
-          this.transCode = matchCode ? matchCode[0].replace(/[【】]/g, '') : '';
-          // 提交编码为null则说明提交失败
-          if (this.transCode.indexOf('null') === -1 && success) {
-            this.showToastText('提交成功');
-          } else {
-            this.showToastText('提交失败');
-          }
-        }).catch(e => {
-          this.showToastText(e.message);
-        })
-
-        // this.$router.push({path: '/flow'})
-      },
-      // TODO 显示错误提示
-      showToastText(test = '') {
-        this.showToast = true;
-        this.toastText = test;
-      },
-      // TODO 获取节点
-      getProcess() {
-        createService.getProcess({
-          listId: this.listid
-        }).then(data => {
-          this.procCode = data[0] && data[0].procCode || '';
-        }).catch(e => {
-          this.showToastText(e.message);
-        });
-      },
-      // TODO 获取配置数据
-      getConfig() {
-        createService.getConfig({
-          uniqueId: this.uniqueId
-        }).then(data => {
-          this.showLoading = false;
-          let config = data[0] && JSON.parse(data[0].config || "{}") || {};
-          this.config = config.items;
-        }).catch(e => {
-          this.showToastText(e.message);
-        })
-      },
-      // TODO 添加监听
-      addListener(params) {
-        let {type, lIndex, index, userEvent} = params;
-        let item = this.config[lIndex].items[index];
-        !item.listeners ? item.listeners = {} : '';
-        item.listeners[type] = userEvent;
-      },
-      // TODO 初始化合计监听
-      initTotalEvent() {
-        this.$nextTick(() => {
-          let userEvent = new UserEvent(document, 'calctotal');
-          userEvent.on((e) => {
-            let {data} = e;
-            let totalData = data && data.reduce((total, item) => {
-              return total + item;
-            }, 0);
-            this.totalData = numberComma(totalData);
-          });
-          this.totalListener = {
-            id: this.$route.query.totalId,
-            userEvent
-          }
-        });
+        this.$router.push({path: '/flow'})
       }
-    },
-    beforeRouteEnter(to, from, next) {
-      document.title = decodeURI(to.query.title);
-      next();
-    },
-    created() {
-      let query = this.$route.query;
-      this.uniqueId = query.view;
-      this.listid = query.list;
-      (async () => {
-        this.title = decodeURI(query.title);
-        this.showLoading = true;
-        this.initTotalEvent();
-        await createService.getUser().then(data => {
-          this.userInfo = data;
-        });
-        this.getProcess();
-        await createService.getCurrentUser(this.userInfo.nickname).then(data => {
-          this.currentUser = data.tableContent[0] || {};
-        });
-        this.getConfig();
-      })()
-    },
+    }
   }
 </script>
 
