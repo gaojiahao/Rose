@@ -62,13 +62,13 @@ let createService = {
     });
   },
   // TODO 获取当前用户
-  getUser(){
+  getUser() {
     return $axios.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     });
   },
   // TODO 获取当前用户的信息
-  getCurrentUser(name){
+  getCurrentUser(name) {
     return $axios.ajax({
       url: '/H_roleplay-si/ds/listUsers',
       data: {
@@ -80,7 +80,47 @@ let createService = {
         }])
       }
     });
-  }
+  },
+  // TODO 获取省份、城市、费用所属事业部、费用所属部门、核算归属省份、费用所属银行
+  getAccountingUnitByid(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getAccountingUnitByid',
+      data: Object.assign({
+        key: 'N1',
+        parentId: '8263fabe-365f-404e-9036-c546c8376e23',
+        name1: '111',
+        name2: '111',
+        name3: '111',
+        page: 1,
+        start: 0,
+        limit: 10000
+      }, data)
+    });
+  },
+  // TODO 获取省长、常委
+  getChangWei(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getChangWei',
+      data: Object.assign({
+        name: '省长',
+        page: 1,
+        start: 0,
+        limit: 20,
+      }, data)
+    })
+  },
+  // TODO 获取用户基本信息
+  getBaseInfoData() {
+    return $axios.ajax({
+      url: '/H_roleplay-si/trans/getModelData?refresh=true&dsCode=getUserDetails',
+    })
+  },
+  // TODO 获取用户基本信息
+  getFormData({formKey = '', transCode = ''}) {
+    return $axios.ajax({
+      url: `/H_roleplay-si/formAPI/findData/${formKey}/${transCode}`,
+    })
+  },
 };
 
 export default createService

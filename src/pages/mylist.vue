@@ -23,7 +23,7 @@
                 <div class="content">
                      <!-- 待审批 -->
                     <div v-if="whichIndex === 0">
-                        <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx">
+                        <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
                                 <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
                             </div>
@@ -53,7 +53,7 @@
                             </div>
                             <div class="e_main">
                                 <span class="e_code">
-                                    {{val.transId}} 
+                                    {{val.transId}}
                                     <span class="e_crtname">{{val.creatorName}}</span>
                                 </span>
                                 <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
@@ -77,7 +77,7 @@
                             </div>
                             <div class="e_main">
                                 <span class="e_code">
-                                    {{val.transId}} 
+                                    {{val.transId}}
                                     <span class="e_crtname">{{val.creatorName}}</span>
                                 </span>
                                 <span class="e_time">{{val.endTime.split(' ')[0]}}</span>
@@ -270,7 +270,23 @@ export default {
           }
         });
       });
-    }
+    },
+    // TODO 查看详情
+    goDetail(item){
+      let {listId,formKey,businessKey } = item
+      let map = {
+        '696c5648-88ba-4bea-b5b1-1780f3c4febf': '/meeting',
+      };
+      console.log(item)
+      this.$router.push({
+        path: map[listId],
+        query: {
+          list: listId,
+          formKey: formKey,
+          transCode: businessKey
+        }
+      })
+    },
   },
   created() {},
   mounted() {

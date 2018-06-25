@@ -7,7 +7,7 @@ let mylist={
     //待审批
     getTasksListData(data){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getTasksListData',
+            url:'/H_roleplay-si/ds/getTasksListDataByListId',
             data:data,
         })
     },
