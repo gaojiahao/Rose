@@ -277,8 +277,8 @@ export default {
             "fgCode": "fgwmiw" //组合字段组编码，固定值为fgwmiw
         })
       }
-      localStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData))
-      this.$router.push({ path: "/flow" });
+      sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData))
+      this.$router.push({ path: "/flow" ,query:{list:this.$route.query.list} });
     },
     layer(info, type) {
       this.$vux.toast.show({
