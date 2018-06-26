@@ -4,32 +4,35 @@
       确定工作流
     </h1>
     <div class="f_main">
-      <group title="请填写对应的信息" class="info-container">
-        <x-input :title="item.name" text-align='right' @on-focus="searchFocus(item, index)" @on-change="getSearch(item)"
-                 @on-blur="searchBlur(item)"
-                 v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>
-        <cell title="财务" value='财务'></cell>
-        <cell title="总裁" value='王珏'></cell>
-      </group>
-      <group class="search-list-container" v-show="!hasSelected" :style="{top: searchListTop}">
-        <cell :title="item.name" v-for="(item, index) in searchList" :key="index"
-              @click.native="searchItemClick(item)" @touchmove.stop=""></cell>
-      </group>
-      <div class="f_flow">
-        <group title="流程图"></group>
-        <flow orientation="vertical" style="height:300px;float:left;padding:10px 20px">
-          <flow-state state="1" title="省长" is-done></flow-state>
-          <flow-line tip="进行中" tip-direction='right'></flow-line>
-          <flow-state state="2">
-            <span slot="title">常委</span>
-          </flow-state>
-          <flow-line></flow-line>
-          <flow-state state="3" title="副总"></flow-state>
-          <flow-line></flow-line>
-          <flow-state state="4" title="财务"></flow-state>
-          <flow-line :line-span="30"></flow-line>
-          <flow-state state="5" title="总裁——王珏"></flow-state>
-        </flow>
+      <div class="f_main_wrapper">
+        <group title="请填写对应的信息" class="info-container">
+          <x-input :title="item.name" text-align='right' @on-focus="searchFocus(item, index)"
+                   @on-change="getSearch(item)"
+                   @on-blur="searchBlur(item)"
+                   v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>
+          <cell title="财务" value='财务'></cell>
+          <cell title="总裁" value='王珏'></cell>
+        </group>
+        <group class="search-list-container" v-show="!hasSelected" :style="{top: searchListTop}">
+          <cell :title="item.name" v-for="(item, index) in searchList" :key="index"
+                @click.native="searchItemClick(item)" @touchmove.stop=""></cell>
+        </group>
+        <div class="f_flow">
+          <group title="流程图"></group>
+          <flow orientation="vertical" style="height:300px;float:left;padding:10px 20px">
+            <flow-state state="1" title="省长" is-done></flow-state>
+            <flow-line tip="进行中" tip-direction='right'></flow-line>
+            <flow-state state="2">
+              <span slot="title">常委</span>
+            </flow-state>
+            <flow-line></flow-line>
+            <flow-state state="3" title="副总"></flow-state>
+            <flow-line></flow-line>
+            <flow-state state="4" title="财务"></flow-state>
+            <flow-line :line-span="30"></flow-line>
+            <flow-state state="5" title="总裁——王珏"></flow-state>
+          </flow>
+        </div>
       </div>
     </div>
     <div class="f_button" @click="submitData">确定</div>
@@ -78,6 +81,7 @@
         formData: {}, // 表单数据
         procCode: '',
         searchListTop: 0,
+        sessionKey: '',
       };
     },
     mixins: [common],
@@ -166,6 +170,7 @@
         this.hasSelected = false;
         this.searchList = [];
         this.searchType = item.searchType;
+        // 设置搜索框顶部偏移
         if (key === 'committee') {
           this.searchListTop = '83px';
         } else if (key === 'president') {
@@ -174,15 +179,19 @@
       },
       // TODO 失去输入框焦点
       searchBlur(item) {
+        // 判断是否选中值
         if (this.hasSelected) {
           return
         }
+        // 获取匹配项
         let [matchObj = {}] = this.searchList.filter(sItem => {
           return sItem.name === item.value
         });
+        // 如果有匹配项则设置匹配项为选中项
         if (matchObj.userId) {
           item.userId = matchObj.userId;
           item.value = matchObj.name;
+          this.hasSelected = true;
         }
       },
       // TODO 请求搜索列表
@@ -195,9 +204,11 @@
             property: 'nickname'
           }])
         };
+        // 有选中项则不进行搜索
         if (!value || this.hasSelected) {
           return
         }
+        item.userId = '';
         // 搜索为副总
         if (this.searchType === 'president') {
           params.name = '副总裁'
@@ -233,7 +244,8 @@
           this.showToastText(warn);
           return
         }
-        /*createService.saveAndStartWf({
+        this.showLoading = true;
+        createService.saveAndStartWf({
           listId: this.listid,
           biComment: '',
           formData: JSON.stringify(this.formData),
@@ -241,33 +253,63 @@
             'PROC_1806_0005': {
               'businessKey': 'KFSCPCGRK',
               'createdBy': '',
-              '常委ID': this.level_list.committee.userId,
-              '副总裁ID': this.level_list.president.userId,
+              // '常委ID': this.level_list.committee.userId,
+              // '副总裁ID': this.level_list.president.userId,
+              '常委ID': '15125',
+              '副总裁ID': '18128',
             }
           })
         }).then(data => {
-          console.log(data)
+          this.showLoading = false;
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
             this.showToastText('提交成功');
+            // sessionStorage.removeItem(this.sessionKey);
+            setTimeout(() => {
+              this.$router.push('/')
+            }, 500)
           } else {
             this.showToastText('提交失败');
           }
         }).catch(e => {
           this.showToastText(e.message);
-        })*/
+        })
+      },
+      // TODO 初始化基本信息
+      getBaseInfo() {
+        return createService.getBaseInfoData().then(data => {
+          let {nickname, userId, area, areaID, groupName, groupNameID, position, roleID} = data;
+          area = area.split(',')[0];
+          areaID = areaID.split(',')[0];
+          groupName = groupName.split(',')[0];
+          groupNameID = groupNameID.split(',')[0];
+          position = position.split(',')[0];
+          roleID = roleID.split(',')[0];
+          this.formData.handlerName = nickname;
+          this.formData.creatorName = nickname;
+          this.formData.modifer = nickname;
+          this.formData.handerId = userId;
+          this.formData.cjz = userId;
+          this.formData.handlerAreaName = area;
+          this.formData.handlerArea = areaID;
+          this.formData.handlerUnitName = groupName;
+          this.formData.handlerUnitId = groupNameID;
+          this.formData.handlerRoleName = position;
+          this.formData.handlerRoleId = roleID;
+        })
       },
     },
     created() {
       let {query} = this.$route;
       this.listid = query.list;
+      this.sessionKey = `${this.listid}-FORMDATA`;
       let now = this.getNow();
-      let formData = JSON.parse(sessionStorage.getItem(`${this.listid}-FORMDATA`) || "{}");
+      let formData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
       this.formData = Object.assign({}, formData);
       this.formData.crtTime = now;
       this.formData.modTime = now;
-      this.getProcess();
-      (async () => {
+      // this.getProcess();
+      /*(async () => {
         this.showLoading = true;
         let requestPromises = [];
         await this.getUserInfo();
@@ -275,7 +317,11 @@
         Promise.all(requestPromises).then(data => {
           this.showLoading = false;
         })
-      })();
+      })();*/
+      this.showLoading = true;
+      this.getBaseInfo().then(data => {
+        this.showLoading = false;
+      })
     }
   };
 </script>
@@ -329,15 +375,18 @@
     width: 90%;
     max-width: 600px;
     position: absolute;
-    background: #fff;
     top: 70px;
     left: 50%;
     transform: translate(-50%, 0);
-    border-radius: 4px;
     z-index: 100;
-    box-shadow: 0 2px 10px #e8e8e8;
-    // padding-bottom:56px;
-
+    padding-bottom: 56px;
+    .f_main_wrapper {
+      height: 100%;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 2px 10px #e8e8e8;
+      overflow: hidden;
+    }
   }
 
   .f_button {

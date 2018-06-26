@@ -1,21 +1,24 @@
 <template>
   <div class="pages">
-    <h1 class="m_title">
-      会议立项
-    </h1>
-    <div class="m_main">
-      <div class="m_main_part">
-        <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
-          <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"></cell>
-        </group>
-        <group title="费用合计">
-          <cell title="金额合计" :value="totalCost"></cell>
-        </group>
+    <div v-show="showPage">
+      <h1 class="m_title">
+        会议立项
+      </h1>
+      <div class="m_main">
+        <div class="m_main_part">
+          <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
+            <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"
+                  primary="content"></cell>
+          </group>
+          <group title="费用合计">
+            <cell title="金额合计" :value="totalCost"></cell>
+          </group>
+        </div>
       </div>
-    </div>
-    <div class="m_btm vux-1px-t">
-      <span class="count_part">合计:{{totalCost}}</span>
-      <!--<span class="m_button" @click="goflow">确定</span>-->
+      <div class="m_btm vux-1px-t">
+        <span class="count_part">合计:{{totalCost}}</span>
+        <!--<span class="m_button" @click="goflow">确定</span>-->
+      </div>
     </div>
     <loading :show="showLoading"></loading>
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
@@ -120,7 +123,8 @@
               }
             ]
           }
-        ]
+        ],
+        showPage: false,
       }
     },
     computed: {
@@ -134,11 +138,14 @@
     methods: {
       // TODO 获取表单详情
       getFormData() {
+        this.showLoading = true;
         let {query} = this.$route;
         createService.getFormData({
           formKey: query.formKey,
           transCode: query.transCode,
         }).then(data => {
+          this.showLoading = false;
+          this.showPage = true;
           let {formData} = data;
           formData.begin = this.changeDate(formData.begin);
           formData.end = this.changeDate(formData.end);
@@ -151,7 +158,9 @@
               item.value = formData[item.key]
             })
           })
-        })
+        }).catch(e => {
+          this.showToastText(e.message);
+        });
       },
     },
     created() {

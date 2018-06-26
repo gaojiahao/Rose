@@ -121,6 +121,31 @@ let createService = {
       url: `/H_roleplay-si/formAPI/findData/${formKey}/${transCode}`,
     })
   },
+  // TODO 获取任务ID
+  getTaskId(transCode) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/listTaskLogByTransCode',
+      data: {
+        transCode
+      }
+    });
+  },
+  // TODO 同意/不同意
+  async examineTask(data = {}) {
+    let taskId = await this.getTaskId(data.transCode).then(data => {
+      let {tableContent} = data;
+      let last = tableContent.pop() || {};
+      return last.taskId;
+    });
+    return $axios.ajax({
+      url: `/H_roleplay-si/flow/${taskId}/commitTask`,
+      data: {
+        // jsonData: {"result": 1, "transCode": "CLFYBX_1711_1091", "comment": "审批意见"} 同意
+        // jsonData: {"result":0,"transCode":"CLFYBX_1710_0996","comment":"审批意见"} 不同意
+        jsonData: JSON.stringify(data)
+      }
+    });
+  },
 };
 
 export default createService

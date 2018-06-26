@@ -131,6 +131,7 @@
         citySelected: [],
         hasDefault: false,
         cascadeValue: {},
+        sessionKey: '',
       }
     },
     computed: {
@@ -156,86 +157,86 @@
         })
       },
       goflow() {
+        let lists = [
+          {
+            title: '开始日期',
+            key: 'begin',
+          }, {
+            title: '结束日期',
+            key: 'end',
+          }, {
+            title: '省份',
+            key: 'province',
+          }, {
+            title: '城市',
+            key: 'city',
+          }, {
+            title: '酒店名称',
+            key: 'hotelName',
+          }, {
+            title: '房间均价',
+            key: 'roomAveragePrice',
+          }, {
+            title: '房间数量',
+            key: 'roomNumber',
+          }, {
+            title: '总人数',
+            key: 'headCount',
+          }, {
+            title: '场地费用',
+            key: 'siteFees',
+          }, {
+            title: '路费合计',
+            key: 'wayFees',
+          }, {
+            title: '餐饮合计',
+            key: 'repastFees',
+          }, {
+            title: '人员范围',
+            key: 'personScope',
+            value: '',
+            isTextArea: true
+          }, {
+            title: '会议议程',
+            key: 'agenda',
+            value: '',
+            isTextArea: true
+          }, {
+            title: '费用所属事业部',
+            key: 'costBU',
+          }, {
+            title: '费用所属部门',
+            key: 'costDepartment',
+          }, {
+            title: '核算归属省份',
+            key: 'checkProvince',
+          }, {
+            title: '费用所属银行',
+            key: 'costBank',
+          }
+        ];
+        let warn = '';
         this.formData.meetingCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
         this.formData.hotelFees = this.hotelFees;
         Object.assign(this.formData, this.$refs.cascadePickers.getFormData());
-        console.log(this.formData)
-        sessionStorage.setItem(`${this.listid}-FORMDATA`, JSON.stringify(this.formData));
+        lists.every(item => {
+          if (!this.formData[item.key]) {
+            warn = `${item.title}不能为空`;
+            return false
+          }
+          return true
+        });
+        if (warn) {
+          this.showToastText(warn);
+          return
+        }
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(this.formData));
         this.$router.push({
           path: '/flow',
           query: {
             list: this.listid
           }
         })
-      },
-      // TODO 获取当前时间
-      getNow(fmt = 'Y-m-d H:i:s') {
-        let date = new Date();
-        let dateObj = {
-          Y: date.getFullYear(),
-          m: numberPad(date.getMonth() + 1),
-          d: numberPad(date.getDate()),
-          H: numberPad(date.getHours()),
-          i: numberPad(date.getMinutes()),
-          s: numberPad(date.getSeconds()),
-        };
-        let dateStr = fmt;
-        Object.entries(dateObj).forEach(([key, value]) => {
-          dateStr = dateStr.replace(key, value);
-        });
-        return dateStr
-      },
-      // TODO 获取用户信息
-      getUserInfo() {
-        return createService.getUser().then(data => {
-          this.userInfo = data;
-          return data;
-        });
-      },
-      // TODO 初始化基本信息
-      async initData() {
-        // 设置经办人信息
-        let currentUser = await createService.getCurrentUser(this.userInfo.nickname).then(data => {
-          let currentUser = data.tableContent[0] || {};
-          let {nickname = '', userId = ''} = currentUser;
-          this.formData.handlerName = nickname;
-          this.formData.creatorName = nickname;
-          this.formData.modifer = nickname;
-          this.formData.handerId = userId;
-          this.formData.cjz = userId;
-          return currentUser
-        });
-        // 设置所属区域信息
-        let area = await createService.getRemoteData('/H_roleplay-si/ds/getAreasByUserId', {
-          userId: currentUser.userId
-        }).then(data => {
-          let {tableContent = []} = data;
-          let area = tableContent[0] || {};
-          this.formData.handlerAreaName = area.userGroupName || '';
-          this.formData.handlerArea = area.userGroupId || '';
-          return area;
-        });
-        // 设置经办部门信息
-        let dept = await createService.getRemoteData('/H_roleplay-si/ds/getUnitsByUserId', {
-          userId: currentUser.userId,
-          parentId: area.userGroupId
-        }).then(data => {
-          let {tableContent = []} = data;
-          let dept = tableContent[0] || {};
-          this.formData.handlerUnitName = dept.userGroupName || '';
-          this.formData.handlerUnitId = dept.userGroupId || '';
-          return dept;
-        });
-        // 设置经办角色信息
-        let role = await createService.getRemoteData('/H_roleplay-si/ds/getRolesByUserId', {
-          userId: currentUser.userId,
-          parentId: dept.userGroupId
-        }).then(data => {
-          let {tableContent = []} = data;
-          let role = tableContent[0] || {};
-          this.formData.handlerRoleName = role.userGroupName || '';
-          this.formData.handlerRoleId = role.userGroupId || '';
-        });
       },
       // TODO 请求省份列表
       getProvinceList() {
@@ -248,7 +249,9 @@
               value: unitName,
             }
           });
-        })
+        }).catch(e => {
+          this.showToastText(e.message);
+        });
       },
       // TODO 请求城市列表
       getCityList() {
@@ -271,7 +274,9 @@
               value: unitName,
             }
           });
-        })
+        }).catch(e => {
+          this.showToastText(e.message);
+        });
       },
       // TODO 切换省份
       provinceChange(val) {
@@ -282,57 +287,56 @@
       cityChange(val) {
         this.formData.city = val[0] || '';
       },
-      // TODO 时间戳转日期
-      changeDate(d) {
-        let date = new Date(d);
-        return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`
-      },
-      // TODO 获取表单详情
-      getFormData() {
-        let {query} = this.$route;
-        this.hasDefault = true;
-        createService.getFormData({
-          formKey: query.formKey,
-          transCode: query.transCode,
-        }).then(data => {
-          console.log(data)
-          let {formData} = data;
-          formData.begin = this.changeDate(formData.begin);
-          formData.end = this.changeDate(formData.end);
-          formData.crtTime = this.changeDate(formData.crtTime);
-          formData.modTime = this.changeDate(formData.modTime);
-          this.provinceSelected = [formData.province];
-          this.citySelected = [formData.city];
-          this.cascadeValue = {
-            costBU: formData.costBU,// 费用所属事业部
-            costDepartment: formData.costDepartment,// 费用所属部门
-            checkProvince: formData.checkProvince,// 核算归属省份
-            costBank: formData.costBank// 费用所属银行
-          };
-          this.formData = formData;
-        })
-      },
+    },
+    beforeRouteLeave(to, from, next) {
+      let {name} = to;
+      if (name === 'Home') {
+        // 删除session
+        sessionStorage.removeItem(this.sessionKey)
+      }
+      next();
     },
     created() {
       let {query} = this.$route;
-      this.uniqueId = query.view;
       this.listid = query.list;
-      /*let now = this.getNow();
-      this.formData.crtTime = now;
-      this.formData.modTime = now;*/
-      (async () => {
-        this.showLoading = true;
+      this.sessionKey = `${this.listid}-FORMDATA`;
+      this.showLoading = true;
+      let formData = sessionStorage.getItem(this.sessionKey);
+      if (formData) {
+        formData = JSON.parse(formData);
+        // 先将时间赋值，在mounted中赋值会失败
+        this.formData.begin = formData.begin;
+        this.formData.end = formData.end;
+      }
+      this.$nextTick(() => {
         let requestPromises = [];
-        /*await this.getUserInfo();
-        requestPromises.push(this.initData());*/
-        if (query.transCode) {
-          this.getFormData();
-        }
         requestPromises.push(this.getProvinceList());
+        requestPromises.push(this.$refs.cascadePickers.init());
         Promise.all(requestPromises).then(data => {
           this.showLoading = false;
         })
-      })()
+      })
+    },
+    mounted() {
+      let formData = sessionStorage.getItem(this.sessionKey);
+      if (formData) {
+        this.hasDefault = true;
+        formData = JSON.parse(formData);
+        this.formData = Object.assign({}, this.formData, formData);
+        this.provinceSelected = [formData.province];
+        this.citySelected = [formData.city];
+        this.cascadeValue = {
+          costBU: formData.costBU,
+          costDepartment: formData.costDepartment,
+          checkProvince: formData.checkProvince,
+          costBank: formData.costBank
+        };
+        this.$nextTick(() => {
+          // 在渲染一次以后将该值设置为false
+          this.hasDefault = false;
+          console.log(this.formData.begin)
+        })
+      }
     }
   }
 </script>

@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="h_title">
       立项申请
-      <span class="username">欢迎,刘治增</span>
+      <span class="username">欢迎,{{currentUser.nickname}}</span>
     </div>
     <div class="h_main">
       <ul class="sel_list">
@@ -19,12 +19,19 @@
     <h2 class="tech_bottom">
       Proudly presented by <span class="cp_name">Refordom</span>
     </h2>
+    <loading :show="showLoading"></loading>
+    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
 <script>
   import tokenService from './../service/tokenService'
+  import createService from './../service/createService'
+  import {Toast} from 'vux'
+  import Loading from './components/loading'
+  import common from './mixins/common'
 
+  const USER_INFO = 'RFD_CURRENT_USER_INFO';
   export default {
     data() {
       return {
@@ -66,9 +73,12 @@
               totalId: 'transDetail.num3',
             },
           }
-        ]
+        ],
+        currentUser: {}
       }
     },
+    mixins: [common],
+    components: {Toast, Loading},
     methods: {
       goForward({path, query}) {
         this.$router.push({
@@ -77,7 +87,19 @@
       }
     },
     created() {
-      tokenService.getToken()
+      let currentUser = sessionStorage.getItem(USER_INFO);
+      if (currentUser) {
+        this.currentUser = JSON.parse(currentUser);
+        return;
+      }
+      this.showLoading = true;
+      createService.getBaseInfoData().then(data => {
+        this.currentUser = data || {};
+        this.showLoading = false;
+        sessionStorage.setItem(USER_INFO, JSON.stringify(data));
+      }).catch(e => {
+        this.showToastText(e.message);
+      });
     }
   }
 </script>

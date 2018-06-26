@@ -18,19 +18,23 @@
           <datetime v-model="formData.begin" format="YYYY-MM-DD" title="租期开始时间"></datetime>
           <datetime v-model="formData.end" format="YYYY-MM-DD" title="租期结束时间"></datetime>
         </group>
-        <cascade-pickers ref="cascadePickers"></cascade-pickers>
+        <cascade-pickers :has-default="hasDefault" :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
       </div>
     </div>
     <div class="h_btm vux-1px-t">
       <span class="count_part">合计:{{totalCost}}</span>
       <span class="h_button" @click="goflow">确定</span>
     </div>
+    <loading :show="showLoading"></loading>
+    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
 <script>
-  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma} from 'vux'
+  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma, Toast} from 'vux'
   import CascadePickers from './components/CascadePickers'
+  import Loading from './components/loading'
+  import common from './mixins/common'
 
   export default {
     components: {
@@ -40,6 +44,8 @@
       Datetime,
       PopupPicker,
       CascadePickers,
+      Toast,
+      Loading,
     },
     data() {
       return {
@@ -75,8 +81,6 @@
             type: 'number',
           }
         ],
-        minuteListValue1: '',
-        minuteListValue2: '',
         formData: {
           'handlerName': '', // 经办人
           'handlerAreaName': '', // 所属区域
@@ -109,8 +113,12 @@
           'checkProvince': '',// 核算归属省份
           'costBank': ''// 费用所属银行
         },
+        hasDefault: false,
+        cascadeValue: {},
+        sessionKey: '',
       }
     },
+    mixins: [common],
     computed: {
       totalCost() {
         let {tenancy, rental} = this.formData;
@@ -127,10 +135,80 @@
         })
       },
       goflow() {
+        let lists = [
+          {
+            title: '地点类型',
+            key: 'office',
+            value: '',
+          }, {
+            title: '处理类型',
+            key: 'moveType',
+            value: '',
+          }, {
+            title: '新增/搬家原因',
+            key: 'moveReason',
+            value: '',
+          }, {
+            title: '入驻人数',
+            key: 'checkInNumber',
+            value: '',
+          }, {
+            title: '房屋面积',
+            key: 'area',
+            value: '',
+          }, {
+            title: '月租',
+            key: 'rental',
+            value: '',
+          }, {
+            title: '付款方式',
+            key: 'paymentType',
+            value: '',
+          }, {
+            title: '租期',
+            key: 'tenancy',
+            value: '',
+          }, {
+            title: '租期开始时间',
+            key: 'begin',
+            value: '',
+          }, {
+            title: '租期结束时间',
+            key: 'end',
+            value: '',
+          }, {
+            title: '费用所属事业部',
+            key: 'costBU',
+            value: '',
+          }, {
+            title: '费用所属部门',
+            key: 'costDepartment',
+            value: '',
+          }, {
+            title: '核算归属省份',
+            key: 'checkProvince',
+            value: '',
+          }, {
+            title: '费用所属银行',
+            key: 'costBank',
+            value: '',
+          }
+        ];
+        let warn = '';
         this.formData.houseCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
         Object.assign(this.formData, this.$refs.cascadePickers.getFormData());
-        console.log(this.formData)
-        sessionStorage.setItem(`${this.listid}-FORMDATA`, JSON.stringify(this.formData));
+        lists.every(item => {
+          if (!this.formData[item.key]) {
+            warn = `${item.title}不能为空`;
+            return false
+          }
+          return true
+        });
+        if (warn) {
+          this.showToastText(warn);
+          return
+        }
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(this.formData));
         this.$router.push({
           path: '/flow',
           query: {
@@ -147,10 +225,51 @@
         this.formData.moveType = val[0] || '';
       }
     },
+    beforeRouteLeave(to, from, next) {
+      let {name} = to;
+      if (name === 'Home') {
+        // 删除session
+        sessionStorage.removeItem(this.sessionKey)
+      }
+      next();
+    },
     created() {
       let {query} = this.$route;
-      this.uniqueId = query.view;
       this.listid = query.list;
+      this.sessionKey = `${this.listid}-FORMDATA`;
+      this.showLoading = true;
+      let formData = sessionStorage.getItem(this.sessionKey);
+      if (formData) {
+        formData = JSON.parse(formData);
+        // 先将时间赋值，在mounted中赋值会失败
+        this.formData.begin = formData.begin;
+        this.formData.end = formData.end;
+      }
+      this.$nextTick(() => {
+        this.$refs.cascadePickers.init().then(data => {
+          this.showLoading = false;
+        })
+      })
+    },
+    mounted() {
+      let formData = sessionStorage.getItem(this.sessionKey);
+      if (formData) {
+        this.hasDefault = true;
+        formData = JSON.parse(formData);
+        this.formData = formData;
+        this.type_value = [formData.office];
+        this.hd_value = [formData.moveType];
+        this.cascadeValue = {
+          costBU: formData.costBU,
+          costDepartment: formData.costDepartment,
+          checkProvince: formData.checkProvince,
+          costBank: formData.costBank
+        };
+        this.$nextTick(() => {
+          // 在渲染一次以后将该值设置为false
+          this.hasDefault = false;
+        })
+      }
     }
   }
 </script>

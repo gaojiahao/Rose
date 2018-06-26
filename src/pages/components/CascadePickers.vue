@@ -50,11 +50,14 @@
       }
     },
     watch: {
-      value(val) {
-        this.buSelected = [val.costBU];
-        this.deptSelected = [val.costDepartment];
-        this.provSelected = [val.checkProvince];
-        this.bankSelected = [val.costBank];
+      value: {
+        handler(val) {
+          this.buSelected = [val.costBU];
+          this.deptSelected = [val.costDepartment];
+          this.provSelected = [val.checkProvince];
+          this.bankSelected = [val.costBank];
+          this.formData = Object.assign({}, val)
+        },
       }
     },
     methods: {
@@ -166,10 +169,13 @@
       },
       getFormData() {
         return this.formData
-      }
+      },
+      // TODO 初始化
+      init() {
+        return this.getBuDept();
+      },
     },
     created() {
-      this.getBuDept();
     }
   }
 </script>

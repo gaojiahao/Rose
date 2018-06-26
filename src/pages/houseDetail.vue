@@ -1,114 +1,118 @@
 <template>
   <div class="pages">
-    <h1 class="h_title">
-      房屋立项
-      <span class="h_user" @click="goMylist">
-        我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon>
-      </span>
-    </h1>
-    <div class="h_main">
-      <div class="h_main_part">
-        <group title="请选择地点类型">
-          <popup-picker title="地点类型" :data="h_type" v-model="type_value" @on-change="officeChange"></popup-picker>
-          <popup-picker title="处理类型" :data="h_hdtype" v-model="hd_value" @on-change="moveTypeChange"></popup-picker>
-        </group>
-        <group title="请填写明细">
-          <x-input :type="item.type" :title='item.title' :key="index" text-align='right'
-                   v-for="(item, index) in bj_list" v-model="formData[item.key]"></x-input>
-          <datetime v-model="formData.begin" format="YYYY-MM-DD" title="租期开始时间"></datetime>
-          <datetime v-model="formData.end" format="YYYY-MM-DD" title="租期结束时间"></datetime>
-        </group>
-        <cascade-pickers ref="cascadePickers"></cascade-pickers>
+    <div v-show="showPage">
+      <h1 class="h_title">
+        房屋立项
+      </h1>
+      <div class="h_main">
+        <div class="h_main_part">
+          <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
+            <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"
+                  primary="content"></cell>
+          </group>
+        </div>
+      </div>
+      <div class="h_btm vux-1px-t">
+        <span class="count_part">合计:{{totalCost}}</span>
+        <!--<span class="h_button" @click="goflow">确定</span>-->
       </div>
     </div>
-    <div class="h_btm vux-1px-t">
-      <span class="count_part">合计:{{totalCost}}</span>
-      <span class="h_button" @click="goflow">确定</span>
-    </div>
+    <loading :show="showLoading"></loading>
+    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
 <script>
-  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma} from 'vux'
-  import CascadePickers from './components/CascadePickers'
+  import {Cell, Group, XTextarea, numberComma, Toast} from 'vux'
+  import createService from './../service/createService'
+  import Loading from './components/loading'
+  import common from './mixins/common'
 
   export default {
     components: {
       Cell,
       Group,
-      XInput,
-      Datetime,
-      PopupPicker,
-      CascadePickers,
+      Toast,
+      Loading
     },
     data() {
       return {
-        listid: '',
-        h_type: [['省仓', '办事处']],
-        type_value: [],
-        h_hdtype: [['新增', '搬家']],
-        hd_value: [],
-        bj_list: [
+        formData: {},
+        listData: [
           {
-            title: '新增/搬家原因',
-            key: 'moveReason',
-            type: 'text',
+            title: '请选择地点类型',
+            items: [
+              {
+                title: '地点类型',
+                key: 'office',
+                value: '',
+              }, {
+                title: '处理类型',
+                key: 'moveType',
+                value: '',
+              }
+            ]
           }, {
-            title: '入驻人数',
-            key: 'checkInNumber',
-            type: 'number',
+            title: '请填写明细',
+            items: [
+              {
+                title: '新增/搬家原因',
+                key: 'moveReason',
+                value: '',
+              }, {
+                title: '入驻人数',
+                key: 'checkInNumber',
+                value: '',
+              }, {
+                title: '房屋面积',
+                key: 'area',
+                value: '',
+              }, {
+                title: '月租',
+                key: 'rental',
+                value: '',
+              }, {
+                title: '付款方式',
+                key: 'paymentType',
+                value: '',
+              }, {
+                title: '租期',
+                key: 'tenancy',
+                value: '',
+              }, {
+                title: '租期开始时间',
+                key: 'begin',
+                value: '',
+              }, {
+                title: '租期结束时间',
+                key: 'end',
+                value: '',
+              }
+            ]
           }, {
-            title: '房屋面积',
-            key: 'area',
-            type: 'text',
-          }, {
-            title: '月租',
-            key: 'rental',
-            type: 'number',
-          }, {
-            title: '付款方式',
-            key: 'paymentType',
-            type: 'text',
-          }, {
-            title: '租期',
-            key: 'tenancy',
-            type: 'number',
+            title: '费用归属',
+            items: [
+              {
+                title: '费用所属事业部',
+                key: 'costBU',
+                value: '',
+              }, {
+                title: '费用所属部门',
+                key: 'costDepartment',
+                value: '',
+              }, {
+                title: '核算归属省份',
+                key: 'checkProvince',
+                value: '',
+              }, {
+                title: '费用所属银行',
+                key: 'costBank',
+                value: '',
+              }
+            ]
           }
         ],
-        minuteListValue1: '',
-        minuteListValue2: '',
-        formData: {
-          'handlerName': '', // 经办人
-          'handlerAreaName': '', // 所属区域
-          'handlerUnitName': '', // 经办部门
-          'handlerRoleName': '', // 经办角色
-          'creatorName': '', // 创建者
-          'crtTime': '', // 创建时间
-          'modifer': '', // 修改者
-          'modTime': '', // 修改时间
-          'handerId': '', // 经办人id
-          'transType': '房屋立项申请', // 交易类型
-          'handlerUnitId': '', // 经办部门id
-          'handlerRoleId': '', // 经办角色id
-          'cjz': '', // 创建者id
-          'xgz': '', // 修改者id
-          'handlerArea': '', // 所属区域id
-          'office': '', // 省仓/办事处
-          'moveType': '', // 异动类型
-          'area': '', // 面积 (㎡)
-          'checkInNumber': '', // 入驻人数
-          'paymentType': '', // 付款方式 (月)
-          'rental': '', // 月租
-          'tenancy': '', // 租期 (月)
-          'houseCostTotal': '', // 费用合计（房屋立项）
-          'begin': '', // 始于
-          'end': '', // 止于
-          'moveReason': '', // 新增/搬家原因
-          'costBU': '',// 费用所属事业部
-          'costDepartment': '',// 费用所属部门
-          'checkProvince': '',// 核算归属省份
-          'costBank': ''// 费用所属银行
-        },
+        showPage: false,
       }
     },
     computed: {
@@ -117,40 +121,37 @@
         return `￥${numberComma(Number(tenancy) * Number(rental))}`;
       }
     },
+    mixins: [common],
     methods: {
-      goMylist() { //我的提交
-        this.$router.push({
-          path: '/myList',
-          query: {
-            listId: this.listid
-          }
-        })
+      // TODO 获取表单详情
+      getFormData() {
+        this.showLoading = true;
+        let {query} = this.$route;
+        createService.getFormData({
+          formKey: query.formKey,
+          transCode: query.transCode,
+        }).then(data => {
+          this.showLoading = false;
+          this.showPage = true;
+          let {formData} = data;
+          formData.begin = this.changeDate(formData.begin);
+          formData.end = this.changeDate(formData.end);
+          formData.crtTime = this.changeDate(formData.crtTime);
+          formData.modTime = this.changeDate(formData.modTime);
+
+          this.formData = formData;
+          this.listData.forEach(lItem => {
+            lItem.items.forEach(item => {
+              item.value = formData[item.key]
+            })
+          })
+        }).catch(e => {
+          this.showToastText(e.message);
+        });
       },
-      goflow() {
-        this.formData.houseCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
-        Object.assign(this.formData, this.$refs.cascadePickers.getFormData());
-        console.log(this.formData)
-        sessionStorage.setItem(`${this.listid}-FORMDATA`, JSON.stringify(this.formData));
-        this.$router.push({
-          path: '/flow',
-          query: {
-            list: this.listid
-          }
-        })
-      },
-      // TODO 地点类型切换
-      officeChange(val) {
-        this.formData.office = val[0] || '';
-      },
-      // TODO 处理类型切换
-      moveTypeChange(val) {
-        this.formData.moveType = val[0] || '';
-      }
     },
     created() {
-      let {query} = this.$route;
-      this.uniqueId = query.view;
-      this.listid = query.list;
+      this.getFormData();
     }
   }
 </script>
