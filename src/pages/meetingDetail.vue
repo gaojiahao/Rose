@@ -15,9 +15,10 @@
           </group>
         </div>
       </div>
-      <div class="m_btm vux-1px-t">
-        <span class="count_part">合计:{{totalCost}}</span>
-        <!--<span class="m_button" @click="goflow">确定</span>-->
+      <div class="m_btm vux-1px-t" v-if="canSubmit">
+        <!--<span class="count_part">合计:{{totalCost}}</span>-->
+        <span class="m_button reject" @click="submit(2)">拒绝</span>
+        <span class="m_button" @click="submit(1)">同意</span>
       </div>
     </div>
     <loading :show="showLoading"></loading>
@@ -125,6 +126,11 @@
           }
         ],
         showPage: false,
+        listid: '',
+        formKey: '',
+        transCode: '',
+        taskId: '',
+        canSubmit: false,
       }
     },
     computed: {
@@ -139,10 +145,9 @@
       // TODO 获取表单详情
       getFormData() {
         this.showLoading = true;
-        let {query} = this.$route;
         createService.getFormData({
-          formKey: query.formKey,
-          transCode: query.transCode,
+          formKey: this.formKey,
+          transCode: this.transCode,
         }).then(data => {
           this.showLoading = false;
           this.showPage = true;
@@ -162,83 +167,116 @@
           this.showToastText(e.message);
         });
       },
+      // TODO 审批
+      submit(result = 1) {
+        this.showLoading = true;
+        createService.examineTask(this.taskId, {
+          result,
+          transCode: this.transCode,
+          comment: '',
+        }).then(data => {
+          this.showLoading = false;
+          let {message, success} = data;
+          if (success && message.indexOf('null') === -1) {
+            this.showToastText('提交成功');
+            setTimeout(() => {
+              this.$router.go(-1);
+            }, 1000)
+          } else {
+            this.showToastText('提交失败');
+          }
+        }).catch(e => {
+          this.showToastText(e.message);
+        })
+      },
     },
     created() {
+      let {query} = this.$route;
+      this.listid = query.listid;
+      this.formKey = query.formKey;
+      this.transCode = query.transCode;
+      this.taskId = query.taskId;
+      this.canSubmit = query.canSubmit;
       this.getFormData();
     }
   }
 </script>
 
 <style lang="scss">
-  .m_title { //标题
-    width: 100%;
-    height: 120px;
-    line-height: 80px;
-    font-size: 34px;
-    text-align: center;
-    color: #fff;
-    font-weight: 200;
-    background: #5077AA;
-    position: relative;
-    .m_user {
-      line-height: initial;
-      font-size: 16px;
-      font-weight: normal;
-      position: absolute;
-      left: 50%;
-      bottom: 20%;
-      transform: translate(-50%);
-      display: flex;
-      align-items: center;
-      .right_arrow {
-        fill: #fff;
+  .pages {
+    .m_title { //标题
+      width: 100%;
+      height: 120px;
+      line-height: 80px;
+      font-size: 34px;
+      text-align: center;
+      color: #fff;
+      font-weight: 200;
+      background: #5077AA;
+      position: relative;
+      .m_user {
+        line-height: initial;
+        font-size: 16px;
+        font-weight: normal;
+        position: absolute;
+        left: 50%;
+        bottom: 20%;
+        transform: translate(-50%);
+        display: flex;
+        align-items: center;
+        .right_arrow {
+          fill: #fff;
+        }
       }
     }
-  }
 
-  .m_main {
-    width: 90%;
-    max-width: 600px;
-    position: absolute;
-    top: 90px;
-    left: 50%;
-    transform: translate(-50%, 0);
-    border-radius: 4px;
-    z-index: 100;
-    padding-bottom: 56px;
-    .m_main_part {
-      background: #fff;
-      margin-top: 20px;
+    .m_main {
+      width: 90%;
+      max-width: 600px;
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translate(-50%, 0);
       border-radius: 4px;
-      box-shadow: 0 2px 10px #e8e8e8;
+      z-index: 100;
+      padding-bottom: 56px;
+      .m_main_part {
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px #e8e8e8;
+      }
     }
-  }
 
-  .m_btm {
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    z-index: 101;
-    margin-top: 20px;
-    box-sizing: border-box;
-    display: flex;
-    .count_part {
-      flex: 2.5;
-      background: #fff;
-      color: #000;
-      display: inline-block;
-      text-align: center;
-      font-weight: bold;
-    }
-    .m_button {
-      flex: 1;
-      color: #fff;
-      background: #5077AA;
-      display: inline-block;
-      text-align: center;
+    .m_btm {
+      width: 100%;
+      height: 44px;
+      line-height: 44px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      z-index: 101;
+      margin-top: 20px;
+      box-sizing: border-box;
+      display: flex;
+      .count_part {
+        flex: 2.5;
+        background: #fff;
+        color: #000;
+        display: inline-block;
+        text-align: center;
+        font-weight: bold;
+      }
+      .m_button {
+        flex: 1;
+        color: #fff;
+        background: #5077AA;
+        display: inline-block;
+        text-align: center;
+        &.reject {
+          background-color: #ccc;
+        }
+      }
     }
   }
 </style>

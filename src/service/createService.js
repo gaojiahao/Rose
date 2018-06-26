@@ -131,13 +131,10 @@ let createService = {
     });
   },
   // TODO 同意/不同意
-  async examineTask(data = {}) {
-    let taskId = await this.getTaskId(data.transCode).then(data => {
-      let {tableContent} = data;
-      let last = tableContent.pop() || {};
-      return last.taskId;
-    });
+  examineTask(taskId, data = {}) {
     return $axios.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
       url: `/H_roleplay-si/flow/${taskId}/commitTask`,
       data: {
         // jsonData: {"result": 1, "transCode": "CLFYBX_1711_1091", "comment": "审批意见"} 同意
@@ -145,7 +142,7 @@ let createService = {
         jsonData: JSON.stringify(data)
       }
     });
-  },
+  }
 };
 
 export default createService

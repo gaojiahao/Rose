@@ -134,6 +134,7 @@ export default {
       userRole: '',
       userBank: '',
       userDept: '',
+      currentUser: {},
     };
   },
   methods: {
@@ -143,6 +144,7 @@ export default {
       createService.getUser().then(res => {
         createService.getCurrentUser(res.nickname).then(e => {
           let user = e.tableContent[0];
+          this.currentUser = user;
           if(user.role){
             if(user.role.indexOf(',') == -1 ){
               that.userRole = user.role;
@@ -150,7 +152,7 @@ export default {
               that.userRole = user.role.split(',')[0];
             }
           }
-          
+
           if(user.HOME_BANK){
             if(user.HOME_BANK.indexOf(',') == -1){
               that.userBank = user.HOME_BANK;
@@ -158,7 +160,7 @@ export default {
               that.userBank = user.HOME_BANK.split(',')[0];
             }
           }
-          
+
           if(user.dept){
             if(user.dept.indexOf(',') == -1 ){
               that.userDept = user.dept;
@@ -166,7 +168,7 @@ export default {
               that.userDept = user.dept.split(',')[0];
             }
           }
-          
+
         });
       });
     },
@@ -206,7 +208,7 @@ export default {
           entityId: 20000,
           _dc: Date.parse(new Date()),
           listID: this.$route.query.listId,
-          status: 1,
+          status: 2,
           start: this.underwaypageNo * 11,
           page: ++this.underwaypageNo,
           limit: 11
@@ -236,7 +238,7 @@ export default {
           entityId: 20000,
           _dc: Date.parse(new Date()),
           listID: this.$route.query.listId,
-          status: 2,
+          status: 1,
           start: this.overpageNo * 11,
           page: ++this.overpageNo,
           limit: 11
@@ -311,25 +313,35 @@ export default {
     },
     // TODO 查看详情
     goDetail(item){
-      let {listId,formKey,businessKey } = item
+      let {listId,formKey,businessKey, taskId, transId, assignee, assigneeId} = item;
+      let canSubmit = false;
       let map = {
-        'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c': '/spreadDetail',
-        '696c5648-88ba-4bea-b5b1-1780f3c4febf': '/meetingDetail',
-        '4912df2a-612e-462a-a6f4-c7c72f497bb8': '/houseDetail',
-        'e3937a5c-98d2-4799-a74c-759222fb4a6d': '/assetsDetail',
+        'a583be9b-c632-493c-b509-0f004504b8a2': '/spreadDetail',
+        'b2df7403-56c7-4a1c-bdb7-8f6b4c95c7eb': '/meetingDetail',
+        'e21f5960-7f7a-4e8b-9faf-bd10595ff768': '/houseDetail',
+        '1034f15e-3f90-4e9c-a401-0955db09e179': '/assetsDetail',
       };
       console.log(item)
+      if(assignee) {
+        canSubmit = `${assignee}` === `${this.currentUser.userId}`;
+      }
+      if(assigneeId) {
+        canSubmit = `${assigneeId}` === `${this.currentUser.userId}`;
+      }
       this.$router.push({
-        path: map[listId],
+        path: map[formKey],
         query: {
           list: listId,
           formKey: formKey,
-          transCode: businessKey
+          transCode: businessKey || transId,
+          taskId,
+          canSubmit,
         }
       })
     },
   },
-  created() {},
+  created() {
+  },
   mounted() {
     //获取顶部头像名字
     this.headerInfo = JSON.parse(localStorage.getItem("ROSE_LOGIN_TOKEN"));

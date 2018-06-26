@@ -12,9 +12,10 @@
           </group>
         </div>
       </div>
-      <div class="h_btm vux-1px-t">
-        <span class="count_part">合计:{{totalCost}}</span>
-        <!--<span class="h_button" @click="goflow">确定</span>-->
+      <div class="h_btm vux-1px-t" v-if="canSubmit">
+        <!--<span class="count_part">合计:{{totalCost}}</span>-->
+        <span class="h_button reject" @click="submit(2)">拒绝</span>
+        <span class="h_button" @click="submit(1)">同意</span>
       </div>
     </div>
     <loading :show="showLoading"></loading>
@@ -113,6 +114,11 @@
           }
         ],
         showPage: false,
+        listid: '',
+        formKey: '',
+        transCode: '',
+        taskId: '',
+        canSubmit: false,
       }
     },
     computed: {
@@ -149,8 +155,36 @@
           this.showToastText(e.message);
         });
       },
+      // TODO 审批
+      submit(result = 1) {
+        this.showLoading = true;
+        createService.examineTask(this.taskId, {
+          result,
+          transCode: this.transCode,
+          comment: '',
+        }).then(data => {
+          this.showLoading = false;
+          let {message, success} = data;
+          if (success && message.indexOf('null') === -1) {
+            this.showToastText('提交成功');
+            setTimeout(() => {
+              this.$router.go(-1);
+            }, 1000)
+          } else {
+            this.showToastText('提交失败');
+          }
+        }).catch(e => {
+          this.showToastText(e.message);
+        })
+      },
     },
     created() {
+      let {query} = this.$route;
+      this.listid = query.listid;
+      this.formKey = query.formKey;
+      this.transCode = query.transCode;
+      this.taskId = query.taskId;
+      this.canSubmit = query.canSubmit;
       this.getFormData();
     }
   }
@@ -226,6 +260,9 @@
       background: #5077AA;
       display: inline-block;
       text-align: center;
+      &.reject {
+        background-color: #ccc;
+      }
     }
   }
 </style>

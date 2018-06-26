@@ -15,7 +15,7 @@ let mylist={
     //进行中，已完成
     getCompletedListDataByStatus(data){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getCompletedListDataByStatus',
+            url:'/H_roleplay-si/ds/getCompletedByStatusAndListId',
             data:data,
         })
     }

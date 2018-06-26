@@ -264,10 +264,10 @@
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
             this.showToastText('提交成功');
-            // sessionStorage.removeItem(this.sessionKey);
+            sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
               this.$router.push('/')
-            }, 500)
+            }, 1000)
           } else {
             this.showToastText('提交失败');
           }
