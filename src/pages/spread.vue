@@ -69,14 +69,14 @@
                 :data="item.banklist"
                 v-model="item.bankOn"
                 :disabled="item.provOn.length==0?true:false"
-                @on-show="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.bankOn)"
+                @on-show="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
             ></popup-picker>
         </group>
         <group title="要说点什么吗？" v-if="item.status">
             <x-textarea title="说明" :max="100" v-model="item.explain"></x-textarea>
         </group>
       </div>
-      <p class="note_tx" v-if="xp_list.length > 0" @click="plusType">添加另一个 <span class="plus_tx">类型</span> ?</p>
+      <p class="note_tx" v-if="xp_list.length > 0">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="xp_list.length>1" @click="delateOne">删除</span></p>
     </div>
     <div class="s_btm vux-1px-t">
       <span class="count_part">合计:￥{{total | numberComma}}</span>
@@ -102,7 +102,6 @@ export default {
   },
   data() {
     return {
-      handlerInfo:'',
       baseInfo:'',
       xp_list: [
         {
@@ -207,30 +206,30 @@ export default {
         status: false
       });
     },
+    //删除一项
+    delateOne(){
+      this.xp_list.pop();
+    },
     goflow() {
       let jsonData={
-            listId:this.$route.query.list, 
-            biComment:'备注', 
-            formData:{
-                "handlerName": this.baseInfo.nickname, //经办人
-                "handlerAreaName": this.baseInfo.area,  //所属区域
-                "handlerUnitName": this.baseInfo.groupName, //经办部门
-                "handlerRoleName": this.baseInfo.position, //经办角色
-                "creatorName": this.baseInfo.nickname, //创建者
-                "crtTime": Date.parse(new Date()), //创建时间
-                "modifer": "", //修改者
-                "modTime": "", //修改时间
-                "handerId": this.baseInfo.userId, //经办人id
-                "transType": "市场宣传", //交易类型
-                "handlerUnitId": this.baseInfo.groupNameID, //经办部门id
-                "handlerRoleId": this.baseInfo.roleID, //经办角色id
-                "cjz": this.baseInfo.userId, //创建者id
-                "xgz": "", //修改者id
-                "handlerArea": this.baseInfo.areaID,//所属区域id
-                "order" :{
-                    "dataSet": []
-                }
-            },
+            "handlerName": this.baseInfo.nickname, //经办人
+            "handlerAreaName": this.baseInfo.area,  //所属区域
+            "handlerUnitName": this.baseInfo.groupName, //经办部门
+            "handlerRoleName": this.baseInfo.position, //经办角色
+            "creatorName": this.baseInfo.nickname, //创建者
+            "crtTime": Date.parse(new Date()), //创建时间
+            "modifer": "", //修改者
+            "modTime": "", //修改时间
+            "handerId": this.baseInfo.userId, //经办人id
+            "transType": "市场宣传", //交易类型
+            "handlerUnitId": this.baseInfo.groupNameID, //经办部门id
+            "handlerRoleId": this.baseInfo.roleID, //经办角色id
+            "cjz": this.baseInfo.userId, //创建者id
+            "xgz": "", //修改者id
+            "handlerArea": this.baseInfo.areaID,//所属区域id
+            "order" :{
+                "dataSet": []
+            }
       }
       for (let i = 0; i < this.xp_list.length; i++) {
         let item = this.xp_list[i];
@@ -262,7 +261,7 @@ export default {
           this.layer("请选择银行", "cancel");
           return;
         }
-        jsonData.formData.order.dataSet.push({
+        jsonData.order.dataSet.push({
             "projectName": item.name, //项目名称
             "productMarketing": item.conduct, //市场宣传
             "publicityType": item.s_type[0],//宣品类型
@@ -291,16 +290,11 @@ export default {
   },
   mounted(){
     let that = this;
-    //handler信息
-    createService.getUser().then( res=> {
-        createService.getCurrentUser(res.nickname).then( e=> {
-            that.handlerInfo = e.tableContent
-        })
-    })
     //基本信息
     spreadService.getBaseInfo().then( res=> {
         that.baseInfo = res;
-    })
+    });
+    // that.getSelect(that.xp_list[0].bulist,'N1',111,111,111);
   },
   computed: {
     //总价
@@ -375,6 +369,9 @@ export default {
     font-size: 12px;
     .plus_tx {
       color: #5077aa;
+    }
+    .plus_delate{
+      color: red;
     }
   }
 }

@@ -35,7 +35,7 @@
                                 <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
                             </div>
                         </div>
-                        <div class="spinner_container" v-if="TobedoneList.length==0">
+                        <div class="spinner_container" v-if="TobedoneLoad">
                             <spinner type="android" size="40px"></spinner>
                         </div>
                         <div class="dbnothing" v-if="dbnothing">
@@ -47,7 +47,7 @@
                     </div>
                     <!-- 进行中 -->
                     <div v-if="whichIndex === 1">
-                        <div class="each_list"  v-for="(val,idx) in underWayList" :key="idx">
+                        <div class="each_list"  v-for="(val,idx) in underWayList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
                                 <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span class="e_name">{{val.processName}}</span>
                             </div>
@@ -59,7 +59,7 @@
                                 <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
                             </div>
                         </div>
-                        <div class="spinner_container" v-if="underWayList.length==0">
+                        <div class="spinner_container" v-if="underWayLoad">
                             <spinner type="android" size="40px"></spinner>
                         </div>
                         <div class="underWaynothing" v-if="underWaynothing">
@@ -71,7 +71,7 @@
                     </div>
                     <!-- 已完成 -->
                     <div v-if="whichIndex === 2">
-                        <div class="each_list"  v-for="(val,idx) in overList" :key="idx">
+                        <div class="each_list"  v-for="(val,idx) in overList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
                                 <span class="e_status" :class="{done_c:whichIndex===2}">已完成</span><span class="e_name">{{val.processName}}</span>
                             </div>
@@ -83,7 +83,7 @@
                                 <span class="e_time">{{val.endTime.split(' ')[0]}}</span>
                             </div>
                         </div>
-                        <div class="spinner_container" v-if="overList.length==0">
+                        <div class="spinner_container" v-if="overLoad">
                             <spinner type="android" size="40px"></spinner>
                         </div>
                         <div class="overnothing" v-if="overnothing">
@@ -116,8 +116,11 @@ export default {
       whichIndex: 0,
       headerInfo: "",
       TobedoneList: [],
+      TobedoneLoad: true,
       underWayList: [],
+      underWayLoad: true,
       overList: [],
+      overLoad: true,
       ch: 0,
       dbpageNo: 0,
       underwaypageNo: 0,
@@ -158,6 +161,7 @@ export default {
           that.TobedoneList = [];
         }
         if (res.tableContent.length == 0) {
+          that.TobedoneLoad = false;
           that.dbnothingMore = true;
           that.dbnothing = false;
           return;
@@ -165,6 +169,7 @@ export default {
           for (let i = 0; i < res.tableContent.length; i++) {
             that.TobedoneList.push(res.tableContent[i]);
           }
+          that.TobedoneLoad = false;
         }
         that.scroll.finishPullUp();
       });
@@ -186,6 +191,7 @@ export default {
           that.underWayList = [];
         }
         if (res.tableContent.length == 0) {
+          that.underWayLoad = false ;
           that.underWayMore = true;
           that.underWaynothing = false;
           return;
@@ -193,6 +199,7 @@ export default {
           for (let i = 0; i < res.tableContent.length; i++) {
             that.underWayList.push(res.tableContent[i]);
           }
+          that.underWayLoad = false ;
         }
         that.scroll.finishPullUp();
       });
@@ -214,6 +221,7 @@ export default {
           that.overList = [];
         }
         if (res.tableContent.length == 0) {
+          that.overLoad = false;
           that.overMore = true;
           that.overnothing = false;
           return;
@@ -221,6 +229,7 @@ export default {
           for (let i = 0; i < res.tableContent.length; i++) {
             that.overList.push(res.tableContent[i]);
           }
+          that.overLoad = false;
         }
         that.scroll.finishPullUp();
       });
@@ -235,13 +244,16 @@ export default {
       this.underWayMore = false;
       this.overMore = false;
       if (val == 0) {
-        this.TobedoneList=[]
+        this.TobedoneList = [];
+        this.TobedoneLoad = true;
         this.Tobedone(0);
       } else if (val == 1) {
-        this.underWayList=[]
+        this.underWayList = []
+        this.underWayLoad = true;
         this.underWay(1);
       } else if (val == 2) {
         this.overList=[]
+        this.overLoad = true;
         this.over(2);
       }
     },
@@ -275,7 +287,10 @@ export default {
     goDetail(item){
       let {listId,formKey,businessKey } = item
       let map = {
+        'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c': '/spread',
         '696c5648-88ba-4bea-b5b1-1780f3c4febf': '/meeting',
+        '4912df2a-612e-462a-a6f4-c7c72f497bb8': '/house',
+        'e3937a5c-98d2-4799-a74c-759222fb4a6d': '/assets',
       };
       console.log(item)
       this.$router.push({
