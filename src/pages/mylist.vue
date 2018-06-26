@@ -4,12 +4,12 @@
             <img class="user_img" :src="headerInfo.avatar">
             <div class="user_part">
                 <div class="user_name_part">
-                    <span class="user_name">{{headerInfo.name}}</span>
-                    <span class="user_level">{{userRole}}</span>
+                    <span class="user_name" v-if="headerInfo.name!=''">{{headerInfo.name}}</span>
+                    <span class="user_level" v-if="userRole!=''">{{userRole}}</span>
                 </div>
                 <div class="user_info_part">
-                    <span class="user_bank">{{userBank}}</span>
-                    <span class="user_dp">{{userDept}}</span>
+                    <span class="user_bank" v-if="userBank!=''">{{userBank}}</span>
+                    <span class="user_dp" v-if="userDept!=''">{{userDept}}</span>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
                                     {{val.businessKey}}
                                     <span class="e_crtname">{{val.assigneeName}}</span>
                                 </span>
-                                <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
+                                <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
                             </div>
                         </div>
                         <div class="spinner_container" v-if="TobedoneLoad">
@@ -56,7 +56,7 @@
                                     {{val.transId}}
                                     <span class="e_crtname">{{val.creatorName}}</span>
                                 </span>
-                                <span class="e_time">{{val.crtTime.split(' ')[0]}}</span>
+                                <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
                             </div>
                         </div>
                         <div class="spinner_container" v-if="underWayLoad">
@@ -80,7 +80,7 @@
                                     {{val.transId}}
                                     <span class="e_crtname">{{val.creatorName}}</span>
                                 </span>
-                                <span class="e_time">{{val.endTime.split(' ')[0]}}</span>
+                                <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
                             </div>
                         </div>
                         <div class="spinner_container" v-if="overLoad">
@@ -143,21 +143,30 @@ export default {
       createService.getUser().then(res => {
         createService.getCurrentUser(res.nickname).then(e => {
           let user = e.tableContent[0];
-          if(user.role.indexOf(',') == -1){
-            that.userRole = user.role;
-          }else{
-            that.userRole = user.role.split(',')[0];
+          if(user.role){
+            if(user.role.indexOf(',') == -1 ){
+              that.userRole = user.role;
+            }else{
+              that.userRole = user.role.split(',')[0];
+            }
           }
-          if(user.HOME_BANK.indexOf(',') == -1){
-            that.userBank = user.HOME_BANK;
-          }else{
-            that.userBank = user.HOME_BANK.split(',')[0];
+          
+          if(user.HOME_BANK){
+            if(user.HOME_BANK.indexOf(',') == -1){
+              that.userBank = user.HOME_BANK;
+            }else{
+              that.userBank = user.HOME_BANK.split(',')[0];
+            }
           }
-          if(user.dept.indexOf(',') == -1){
-            that.userDept = user.dept;
-          }else{
-            that.userDept = user.dept.split(',')[0];
+          
+          if(user.dept){
+            if(user.dept.indexOf(',') == -1 ){
+              that.userDept = user.dept;
+            }else{
+              that.userDept = user.dept.split(',')[0];
+            }
           }
+          
         });
       });
     },
