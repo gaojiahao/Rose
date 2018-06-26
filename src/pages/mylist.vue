@@ -287,10 +287,10 @@ export default {
     goDetail(item){
       let {listId,formKey,businessKey } = item
       let map = {
-        'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c': '/spread',
-        '696c5648-88ba-4bea-b5b1-1780f3c4febf': '/meeting',
-        '4912df2a-612e-462a-a6f4-c7c72f497bb8': '/house',
-        'e3937a5c-98d2-4799-a74c-759222fb4a6d': '/assets',
+        'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c': '/spreadDetail',
+        '696c5648-88ba-4bea-b5b1-1780f3c4febf': '/meetingDetail',
+        '4912df2a-612e-462a-a6f4-c7c72f497bb8': '/houseDetail',
+        'e3937a5c-98d2-4799-a74c-759222fb4a6d': '/assetsDetail',
       };
       console.log(item)
       this.$router.push({

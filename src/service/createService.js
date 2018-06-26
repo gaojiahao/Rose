@@ -115,7 +115,7 @@ let createService = {
       url: '/H_roleplay-si/trans/getModelData?refresh=true&dsCode=getUserDetails',
     })
   },
-  // TODO 获取用户基本信息
+  // TODO 获取表单详情
   getFormData({formKey = '', transCode = ''}) {
     return $axios.ajax({
       url: `/H_roleplay-si/formAPI/findData/${formKey}/${transCode}`,

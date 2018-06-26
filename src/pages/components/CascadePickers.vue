@@ -24,6 +24,10 @@
         default() {
           return {}
         }
+      },
+      hasDefault: {
+        type: Boolean,
+        default: false
       }
     },
     components: {Group, PopupPicker},
@@ -43,14 +47,10 @@
           checkProvince: '',// 核算归属省份
           costBank: ''// 费用所属银行
         },
-        hasSubmit: false,
       }
     },
     watch: {
       value(val) {
-        console.log('---------------------')
-        console.log(val)
-        this.hasSubmit = true;
         this.buSelected = [val.costBU];
         this.deptSelected = [val.costDepartment];
         this.provSelected = [val.checkProvince];
@@ -82,7 +82,7 @@
       // TODO 获取费用所属部门列表
       getDept() {
         this.deptList = [];
-        if (!this.hasSubmit) {
+        if (!this.hasDefault) {
           this.deptSelected = [];
         }
         let [name1] = this.buSelected;
@@ -101,7 +101,7 @@
       // TODO 获取核算归属省份列表
       getProv() {
         this.provList = [];
-        if (!this.hasSubmit) {
+        if (!this.hasDefault) {
           this.provSelected = [];
         }
         let [name1] = this.buSelected;
@@ -122,7 +122,7 @@
       // TODO 获取费用所属银行列表
       getBank() {
         this.bankList = [];
-        if (!this.hasSubmit) {
+        if (!this.hasDefault) {
           this.bankSelected = [];
         }
         let [name1] = this.buSelected;
@@ -170,7 +170,6 @@
     },
     created() {
       this.getBuDept();
-      console.log(this.value)
     }
   }
 </script>

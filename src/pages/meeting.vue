@@ -21,7 +21,7 @@
           <x-textarea title="人员范围" v-model="formData.personScope"></x-textarea>
           <x-textarea title="会议议程" v-model="formData.agenda"></x-textarea>
         </group>
-        <cascade-pickers :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
+        <cascade-pickers :has-default="hasDefault" :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
         <group title="费用合计">
           <cell title="金额合计" :value="totalCost"></cell>
         </group>
@@ -41,6 +41,7 @@
   import {Cell, Group, XInput, Datetime, XTextarea, PopupPicker, Toast, numberPad, numberComma} from 'vux'
   import Loading from './components/loading'
   import CascadePickers from './components/CascadePickers'
+  import common from './mixins/common'
 
   export default {
     components: {
@@ -56,9 +57,6 @@
     },
     data() {
       return {
-        showLoading: false,
-        showToast: false,
-        toastText: '',
         listid: '',
         meetList: [
           {
@@ -131,7 +129,7 @@
         provinceSelected: [],
         cityList: [],
         citySelected: [],
-        hasSubmit: false,
+        hasDefault: false,
         cascadeValue: {},
       }
     },
@@ -145,8 +143,9 @@
       hotelFees() {
         let {roomNumber, roomAveragePrice} = this.formData;
         return Number(roomNumber) * roomAveragePrice;
-      }
+      },
     },
+    mixins: [common],
     methods: {
       goMylist() { //我的提交
         this.$router.push({
@@ -254,7 +253,7 @@
       // TODO 请求城市列表
       getCityList() {
         this.cityList = [];
-        if (!this.hasSubmit) {
+        if (!this.hasDefault) {
           this.citySelected = [];
         }
         if (!this.formData.province) {
@@ -288,6 +287,31 @@
         let date = new Date(d);
         return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`
       },
+      // TODO 获取表单详情
+      getFormData() {
+        let {query} = this.$route;
+        this.hasDefault = true;
+        createService.getFormData({
+          formKey: query.formKey,
+          transCode: query.transCode,
+        }).then(data => {
+          console.log(data)
+          let {formData} = data;
+          formData.begin = this.changeDate(formData.begin);
+          formData.end = this.changeDate(formData.end);
+          formData.crtTime = this.changeDate(formData.crtTime);
+          formData.modTime = this.changeDate(formData.modTime);
+          this.provinceSelected = [formData.province];
+          this.citySelected = [formData.city];
+          this.cascadeValue = {
+            costBU: formData.costBU,// 费用所属事业部
+            costDepartment: formData.costDepartment,// 费用所属部门
+            checkProvince: formData.checkProvince,// 核算归属省份
+            costBank: formData.costBank// 费用所属银行
+          };
+          this.formData = formData;
+        })
+      },
     },
     created() {
       let {query} = this.$route;
@@ -302,28 +326,7 @@
         /*await this.getUserInfo();
         requestPromises.push(this.initData());*/
         if (query.transCode) {
-          this.hasSubmit = true;
-          createService.getFormData({
-            formKey: query.formKey,
-            transCode: query.transCode,
-          }).then(data => {
-            console.log(data)
-            let {formData} = data;
-            formData.begin = this.changeDate(formData.begin);
-            formData.end = this.changeDate(formData.end);
-            formData.crtTime = this.changeDate(formData.crtTime);
-            formData.modTime = this.changeDate(formData.modTime);
-            this.provinceSelected = [formData.province];
-            this.citySelected = [formData.city];
-            console.log(this.citySelected)
-            this.cascadeValue = {
-              costBU: formData.costBU,// 费用所属事业部
-              costDepartment: formData.costDepartment,// 费用所属部门
-              checkProvince: formData.checkProvince,// 核算归属省份
-              costBank: formData.costBank// 费用所属银行
-            };
-            this.formData = formData
-          })
+          this.getFormData();
         }
         requestPromises.push(this.getProvinceList());
         Promise.all(requestPromises).then(data => {

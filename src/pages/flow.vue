@@ -4,15 +4,16 @@
       确定工作流
     </h1>
     <div class="f_main">
-      <group title="请填写对应的信息">
-        <x-input title='副总' text-align='right' @on-focus="searchFocus(item)" @on-change="getSearch(item)"
+      <group title="请填写对应的信息" class="info-container">
+        <x-input :title="item.name" text-align='right' @on-focus="searchFocus(item, index)" @on-change="getSearch(item)"
+                 @on-blur="searchBlur(item)"
                  v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>
         <cell title="财务" value='财务'></cell>
         <cell title="总裁" value='王珏'></cell>
       </group>
-      <group class="search-list-container" v-show="!hasSelected">
+      <group class="search-list-container" v-show="!hasSelected" :style="{top: searchListTop}">
         <cell :title="item.name" v-for="(item, index) in searchList" :key="index"
-              @click.native="searchItemClick(item)"></cell>
+              @click.native="searchItemClick(item)" @touchmove.stop=""></cell>
       </group>
       <div class="f_flow">
         <group title="流程图"></group>
@@ -32,12 +33,16 @@
       </div>
     </div>
     <div class="f_button" @click="submitData">确定</div>
+    <loading :show="showLoading"></loading>
+    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
 <script>
-  import {Flow, Cell, Group, XInput, FlowState, FlowLine, numberPad} from "vux";
+  import {Flow, Cell, Group, XInput, FlowState, FlowLine, numberPad, Toast} from "vux";
   import createService from './../service/createService'
+  import Loading from './components/loading'
+  import common from './mixins/common'
 
   export default {
     components: {
@@ -46,14 +51,17 @@
       Group,
       XInput,
       FlowLine,
-      FlowState
+      FlowState,
+      Loading,
+      Toast,
     },
     data() {
       return {
+        showLoading: false,
         level_list: {
-          committe: {
+          committee: {
             name: '常委',
-            searchType: 'committe',
+            searchType: 'committee',
             value: '',
             userId: '',
           },
@@ -64,18 +72,15 @@
             userId: '',
           }
         },
-        searchList: [],
-        searchType: '',
-        hasSelected: false,
-        formData: {},
+        searchList: [], // 搜索结果列表
+        searchType: '', // 当前聚焦的输入框类型
+        hasSelected: false, // 是否选中搜索项
+        formData: {}, // 表单数据
         procCode: '',
-        committee: '',
-        committeeId: '',
-        president: '',
-        presidentId: '',
-        wfPara: {'PROC_1806_0005': {'businessKey': 'KFSCPCGRK', 'createdBy': '', '常委ID': 1158, '副总裁ID': 16400}},
+        searchListTop: 0,
       };
     },
+    mixins: [common],
     methods: {
       // TODO 获取节点
       getProcess() {
@@ -156,20 +161,31 @@
         });
         return dateStr
       },
-      // TODO 点击常委输入框
-      committeFocus(val, e) {
-        this.hasSelected = false;
-        this.searchList = [];
-        this.searchType = 'committe';
-        let $parent = e.target.parentNode.parentNode;
-        console.log(val)
-      },
-      // TODO 点击副总输入框
-      searchFocus(item) {
+      // TODO 点击常委、副总输入框
+      searchFocus(item, key) {
         this.hasSelected = false;
         this.searchList = [];
         this.searchType = item.searchType;
+        if (key === 'committee') {
+          this.searchListTop = '83px';
+        } else if (key === 'president') {
+          this.searchListTop = '130px';
+        }
       },
+      // TODO 失去输入框焦点
+      searchBlur(item) {
+        if (this.hasSelected) {
+          return
+        }
+        let [matchObj = {}] = this.searchList.filter(sItem => {
+          return sItem.name === item.value
+        });
+        if (matchObj.userId) {
+          item.userId = matchObj.userId;
+          item.value = matchObj.name;
+        }
+      },
+      // TODO 请求搜索列表
       getSearch(item) {
         let {value} = item;
         let params = {
@@ -196,6 +212,7 @@
           })
         })
       },
+      // TODO 点击搜索项
       searchItemClick(item) {
         this.hasSelected = true;
         let {name, userId} = item;
@@ -204,7 +221,19 @@
       },
       // TODO 提交数据
       submitData() {
-        createService.saveAndStartWf({
+        let warn = '';
+        Object.values(this.level_list).every(item => {
+          if (!item.userId) {
+            warn = `${item.name}不能为空`;
+            return false
+          }
+          return true
+        });
+        if (warn) {
+          this.showToastText(warn);
+          return
+        }
+        /*createService.saveAndStartWf({
           listId: this.listid,
           biComment: '',
           formData: JSON.stringify(this.formData),
@@ -212,20 +241,28 @@
             'PROC_1806_0005': {
               'businessKey': 'KFSCPCGRK',
               'createdBy': '',
-              '常委ID': this.level_list.committe.userId,
+              '常委ID': this.level_list.committee.userId,
               '副总裁ID': this.level_list.president.userId,
             }
           })
         }).then(data => {
           console.log(data)
-        })
+          let {message, success} = data;
+          if (success && message.indexOf('null') === -1) {
+            this.showToastText('提交成功');
+          } else {
+            this.showToastText('提交失败');
+          }
+        }).catch(e => {
+          this.showToastText(e.message);
+        })*/
       },
     },
     created() {
       let {query} = this.$route;
       this.listid = query.list;
       let now = this.getNow();
-      let formData = JSON.parse(sessionStorage.getItem(`${this.listid}-FORMDATA`) || "{}")
+      let formData = JSON.parse(sessionStorage.getItem(`${this.listid}-FORMDATA`) || "{}");
       this.formData = Object.assign({}, formData);
       this.formData.crtTime = now;
       this.formData.modTime = now;
@@ -238,7 +275,7 @@
         Promise.all(requestPromises).then(data => {
           this.showLoading = false;
         })
-      })()
+      })();
     }
   };
 </script>
@@ -248,8 +285,11 @@
     position: absolute;
     z-index: 100;
     width: 100%;
+    max-height: 300px;
     background-color: #eee;
     color: #000;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .weui-cells {
       margin-top: 0;
     }
