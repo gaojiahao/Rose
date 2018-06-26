@@ -5,11 +5,11 @@
             <div class="user_part">
                 <div class="user_name_part">
                     <span class="user_name">{{headerInfo.name}}</span>
-                    <span class="user_level">{{user.role}}</span>
+                    <span class="user_level">{{userRole}}</span>
                 </div>
                 <div class="user_info_part">
-                    <span class="user_bank">{{user.HOME_BANK}}</span>
-                    <span class="user_dp">{{user.dept}}</span>
+                    <span class="user_bank">{{userBank}}</span>
+                    <span class="user_dp">{{userDept}}</span>
                 </div>
             </div>
         </div>
@@ -131,7 +131,9 @@ export default {
       dbnothingMore: false,
       underWayMore: false,
       overMore: false,
-      user: ""
+      userRole: '',
+      userBank: '',
+      userDept: '',
     };
   },
   methods: {
@@ -140,7 +142,22 @@ export default {
       let that = this;
       createService.getUser().then(res => {
         createService.getCurrentUser(res.nickname).then(e => {
-          that.user = e.tableContent[0];
+          let user = e.tableContent[0];
+          if(user.role.indexOf(',') == -1){
+            that.userRole = user.role;
+          }else{
+            that.userRole = user.role.split(',')[0];
+          }
+          if(user.HOME_BANK.indexOf(',') == -1){
+            that.userBank = user.HOME_BANK;
+          }else{
+            that.userBank = user.HOME_BANK.split(',')[0];
+          }
+          if(user.dept.indexOf(',') == -1){
+            that.userDept = user.dept;
+          }else{
+            that.userDept = user.dept.split(',')[0];
+          }
         });
       });
     },
@@ -312,7 +329,7 @@ export default {
     this.underWay();
     this.over();
     this.scrollOn();
-  }
+  },
 };
 </script>
 
