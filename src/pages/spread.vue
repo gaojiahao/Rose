@@ -43,7 +43,7 @@
         <group title="金额" v-if="item.status">
           <cell title='合计'>{{item.unitprice*item.num==0?'':'￥'+item.unitprice*item.num | numberComma}}</cell>
         </group>
-        <group title="费用所属" v-if="item.status">
+        <!-- <group title="费用所属" v-if="item.status">
             <popup-picker
                 title="费用所属事业部"
                 :data="item.bulist"
@@ -70,6 +70,34 @@
                 v-model="item.bankOn"
                 :disabled="item.provOn.length==0?true:false"
                 @on-show="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
+            ></popup-picker>
+        </group> -->
+        <group title="费用所属" v-if="item.status">
+            <popup-picker
+                title="费用所属事业部"
+                :data="item.bulist"
+                v-model="item.buOn"
+                @on-change="getSelect(item.deptlist,'N2',item.buOn[0],111,111)"
+            ></popup-picker>
+            <popup-picker
+                title="费用所属部门"
+                :data="item.deptlist"
+                v-model="item.deptOn"
+                :disabled="item.buOn.length==0?true:false"
+                @on-change="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111)"
+            ></popup-picker>
+            <popup-picker
+                title="核算归属省份"
+                :data="item.provlist"
+                v-model="item.provOn"
+                :disabled="item.deptOn.length==0?true:false"
+                @on-change="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
+            ></popup-picker>
+            <popup-picker
+                title="费用所属银行"
+                :data="item.banklist"
+                v-model="item.bankOn"
+                :disabled="item.provOn.length==0?true:false"
             ></popup-picker>
         </group>
         <group title="要说点什么吗？" v-if="item.status">
@@ -206,6 +234,7 @@ export default {
         explain: "", //说明
         status: false
       });
+      this.getSelect(this.xp_list[this.xp_list.length-1].bulist,'N1',111,111,111);
     },
     //删除一项
     delateOne(){
@@ -290,7 +319,7 @@ export default {
     }
   },
   created(){
-    
+
   },
   mounted(){
     let that = this;

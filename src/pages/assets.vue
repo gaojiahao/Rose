@@ -58,32 +58,31 @@
                 title="费用所属事业部"
                 :data="item.bulist"
                 v-model="item.buOn"
-                @on-show="getSelect(item.bulist,'N1',111,111,111)"
+                @on-change="getSelect(item.deptlist,'N2',item.buOn[0],111,111)"
             ></popup-picker>
             <popup-picker
                 title="费用所属部门"
                 :data="item.deptlist"
                 v-model="item.deptOn"
                 :disabled="item.buOn.length==0?true:false"
-                @on-show="getSelect(item.deptlist,'N2',item.buOn[0],111,111)"
+                @on-change="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111)"
             ></popup-picker>
             <popup-picker
                 title="核算归属省份"
                 :data="item.provlist"
                 v-model="item.provOn"
                 :disabled="item.deptOn.length==0?true:false"
-                @on-show="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111)"
+                @on-change="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
             ></popup-picker>
             <popup-picker
                 title="费用所属银行"
                 :data="item.banklist"
                 v-model="item.bankOn"
                 :disabled="item.provOn.length==0?true:false"
-                @on-show="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
             ></popup-picker>
         </group>
         <group title="要说点什么吗？" v-if="item.status">
-            <x-textarea title="说明" :max="100"></x-textarea>
+            <x-textarea title="说明" v-model="item.explain" :max="100"></x-textarea>
         </group>
       </div>
       <p class="note_tx" v-if="assetsList.length > 0">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="assetsList.length>1" @click="delateOne">删除</span></p>
@@ -186,6 +185,7 @@
           explain: "",   //说明
           status: false
       });
+      this.getSelect(this.assetsList[this.assetsList.length-1].bulist,'N1',111,111,111);
     },
     //删除一项
     delateOne(){
@@ -294,7 +294,8 @@
       //基本信息
       spreadService.getBaseInfo().then( res=> {
           that.baseInfo = res;
-      })
+      });
+      that.getSelect(that.assetsList[0].bulist,'N1',111,111,111);
     },
     computed: {
       //总价
