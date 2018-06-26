@@ -76,7 +76,7 @@
             <x-textarea title="说明" :max="100" v-model="item.explain"></x-textarea>
         </group>
       </div>
-      <p class="note_tx" v-if="xp_list.length > 0">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="xp_list.length>1" @click="delateOne">删除</span></p>
+      <p class="note_tx" v-if="xp_list.length > 0 ">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="xp_list.length>1" @click="delateOne">删除</span></p>
     </div>
     <div class="s_btm vux-1px-t">
       <span class="count_part">合计:￥{{total | numberComma}}</span>
@@ -134,7 +134,8 @@ export default {
           explain: "", //说明
           status: false
         }
-      ] // 宣品 填写内容
+      ], // 宣品 填写内容
+      searchInfo:false
     };
   },
   methods: {
@@ -288,13 +289,16 @@ export default {
       });
     }
   },
+  created(){
+    
+  },
   mounted(){
     let that = this;
     //基本信息
     spreadService.getBaseInfo().then( res=> {
         that.baseInfo = res;
     });
-    // that.getSelect(that.xp_list[0].bulist,'N1',111,111,111);
+    that.getSelect(that.xp_list[0].bulist,'N1',111,111,111);
   },
   computed: {
     //总价
