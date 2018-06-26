@@ -32,12 +32,12 @@
           <x-input
             title='单价'
             text-align='right'
-            v-model="item.unitPrice"
+            v-model.number="item.unitPrice"
           ></x-input>
           <x-input
             title='数量'
             text-align='right'
-            v-model="item.num"
+            v-model.number="item.num"
           ></x-input>
           <cell title="合计" :value="Number(item.unitPrice)*Number(item.num)==0?'':'￥'+Number(item.unitPrice)*Number(item.num) | numberComma"></cell>
         </group>
@@ -295,7 +295,48 @@
       spreadService.getBaseInfo().then( res=> {
           that.baseInfo = res;
       });
-      that.getSelect(that.assetsList[0].bulist,'N1',111,111,111);
+     //回显
+      if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
+        let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet,
+        sessionArr=[];
+        for(let i = 0 ; i<dataSet.length ; i++ ){
+          sessionArr.push({
+            model: [['电脑','桌子','椅子']],   //资产型号
+            modelOn: [dataSet[i].assetType],   //选中资产型号
+            modSpec: dataSet[i].assetModel,   //资产型号规格 
+            unit: [['台','个','张','件']],    //计量单位
+            unitOn: [dataSet[i].meteringUnit],    //选中计量单位
+            unitPrice: dataSet[i].assetPrice, //单价
+            num: dataSet[i].assetNumber,       //数量
+            applydept: dataSet[i].applyDepartment, //申请部门
+            usedept: dataSet[i].useDepartment,   //使用部门
+            bulist: [],    //费用所属事业部
+            buOn: [dataSet[i].assetCostBU],      //费用所属事业部选中
+            deptlist: [],  //费用所属部门
+            deptOn: [dataSet[i].assetCostDepartment],    //费用所属部门选中
+            provlist: [],  //核算归属省份
+            provOn: [dataSet[i].assetCheckProvince],    //核算归属省份选中
+            banklist: [],  //费用所属银行
+            bankOn: [dataSet[i].assetCostBank],    //费用所属银行选中
+            explain: dataSet[i].comment,   //说明
+            status: true,
+          })
+        }
+        that.assetsList = sessionArr;
+      }
+      for(let j = 0 ; j<that.assetsList.length ;j++){
+        let xp_item = that.assetsList[j];
+        that.getSelect(xp_item.bulist,'N1',111,111,111);
+        if(xp_item.deptOn.length != 0){
+          that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111);
+        }
+        if(xp_item.provOn.length != 0){
+          that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111);
+        }
+        if(xp_item.bankOn.length != 0){
+          that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0]);
+        }
+      }
     },
     computed: {
       //总价

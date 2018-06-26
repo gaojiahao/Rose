@@ -89,12 +89,15 @@
         </group>
       </div>
     </div>
+    <div class="spinner" v-if="Load">
+        <spinner type="android" size="40px"></spinner>
+     </div>
   </div>
 
 </template>
 
 <script>
-  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from 'vux'
+  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner } from 'vux'
   import spreadService from "../service/spreadService";
   import createService from "../service/createService";
   export default {
@@ -103,13 +106,15 @@
       Group,
       XInput,
       PopupPicker,
-      XTextarea, 
+      XTextarea,
+      Spinner 
     },
     filters:{
       numberComma 
     },
     data() {
       return {
+        Load: true,
         assetsList: [
           {
             model: [['电脑','桌子','椅子']],   //资产型号
@@ -169,6 +174,7 @@
             })
           }
           that.assetsList = newArr;
+          that.Load = false;
         })
       }
     },
@@ -263,5 +269,16 @@
       text-align: center;
     }
   }
-
+  .spinner{
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 111;
+    .vux-spinner-android{
+      stroke:#5077aa;
+    }
+  }
 </style>

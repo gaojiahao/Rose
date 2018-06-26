@@ -77,11 +77,14 @@
         </group>
       </div>
     </div>
+     <div class="spinner" v-if="Load">
+        <spinner type="android" size="40px"></spinner>
+     </div>
   </div>
 </template>
 
 <script>
-import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from "vux";
+import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner } from "vux";
 import spreadService from "../service/spreadService";
 import createService from "../service/createService";
 export default {
@@ -90,13 +93,15 @@ export default {
     Group,
     XInput,
     PopupPicker,
-    XTextarea
+    XTextarea,
+    Spinner
   },
   filters: {
     numberComma
   },
   data() {
     return {
+      Load:true,
       xp_list: [
         {
           name: "", //项目名称
@@ -133,7 +138,7 @@ export default {
   },
   methods: {
   },
-    created(){
+  created(){
     let that = this;
     let {query} = this.$route;
     if (query.transCode) {
@@ -176,6 +181,7 @@ export default {
           })
         }
         that.xp_list = newArr;
+        that.Load = false;
       })
     }
   },
@@ -188,9 +194,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-* {
-  touch-action: none;
-}
 .pages {
   overflow: auto;
   -webkit-overflow-scrolling: auto;
@@ -278,6 +281,18 @@ export default {
     background: #5077aa;
     display: inline-block;
     text-align: center;
+  }
+}
+.spinner{
+  position: fixed;
+  width: 100%;
+  text-align: center;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 111;
+  .vux-spinner-android{
+    stroke:#5077aa;
   }
 }
 </style>

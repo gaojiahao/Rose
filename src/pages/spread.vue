@@ -32,46 +32,17 @@
           <x-input
             title='单价'
             text-align='right'
-            v-model="item.unitprice"
+            v-model.number="item.unitprice"
           ></x-input>
           <x-input
             title='数量'
             text-align='right'
-            v-model="item.num"
+            v-model.number="item.num"
           ></x-input>
         </group>
         <group title="金额" v-if="item.status">
           <cell title='合计'>{{item.unitprice*item.num==0?'':'￥'+item.unitprice*item.num | numberComma}}</cell>
         </group>
-        <!-- <group title="费用所属" v-if="item.status">
-            <popup-picker
-                title="费用所属事业部"
-                :data="item.bulist"
-                v-model="item.buOn"
-                @on-show="getSelect(item.bulist,'N1',111,111,111)"
-            ></popup-picker>
-            <popup-picker
-                title="费用所属部门"
-                :data="item.deptlist"
-                v-model="item.deptOn"
-                :disabled="item.buOn.length==0?true:false"
-                @on-show="getSelect(item.deptlist,'N2',item.buOn[0],111,111)"
-            ></popup-picker>
-            <popup-picker
-                title="核算归属省份"
-                :data="item.provlist"
-                v-model="item.provOn"
-                :disabled="item.deptOn.length==0?true:false"
-                @on-show="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111)"
-            ></popup-picker>
-            <popup-picker
-                title="费用所属银行"
-                :data="item.banklist"
-                v-model="item.bankOn"
-                :disabled="item.provOn.length==0?true:false"
-                @on-show="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
-            ></popup-picker>
-        </group> -->
         <group title="费用所属" v-if="item.status">
             <popup-picker
                 title="费用所属事业部"
@@ -327,7 +298,57 @@ export default {
     spreadService.getBaseInfo().then( res=> {
         that.baseInfo = res;
     });
-    that.getSelect(that.xp_list[0].bulist,'N1',111,111,111);
+    //回显
+    if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
+      let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet,
+      sessionArr=[];
+      for(let i = 0 ; i<dataSet.length ; i++ ){
+        sessionArr.push({
+          name: dataSet[i].projectName, //项目名称
+          conduct: dataSet[i].productMarketing, //市场宣传
+          type: [
+            [
+              "单页",
+              "三折页",
+              "X展架",
+              "易拉宝",
+              "三角牌",
+              "海报",
+              "吊旗",
+              "地贴",
+              "道具"
+            ]
+          ], //宣品类型
+          s_type: [dataSet[i].publicityType], //选择类型
+          unitprice: dataSet[i].agoraPrice, //单价
+          num: dataSet[i].agoraNumber, //数量
+          bulist: [], //费用所属事业部
+          buOn: [dataSet[i].agoraCostBU], //费用所属事业部选中
+          deptlist: [], //费用所属部门
+          deptOn: [dataSet[i].agoraCostDepartment], //费用所属部门选中
+          provlist: [], //核算归属省份
+          provOn: [dataSet[i].agoraCheckProvince], //核算归属省份选中
+          banklist: [], //费用所属银行
+          bankOn: [dataSet[i].agoraCostBank], //费用所属银行选中
+          explain: dataSet[i].comment, //说明
+          status: true
+        })
+      }
+      that.xp_list = sessionArr;
+    }
+    for(let j = 0 ; j<that.xp_list.length ;j++){
+      let xp_item = that.xp_list[j];
+      that.getSelect(xp_item.bulist,'N1',111,111,111);
+      if(xp_item.deptOn.length != 0){
+        that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111);
+      }
+      if(xp_item.provOn.length != 0){
+        that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111);
+      }
+      if(xp_item.bankOn.length != 0){
+        that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0]);
+      }
+    }
   },
   computed: {
     //总价
@@ -344,9 +365,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-* {
-  touch-action: none;
-}
 .pages {
   overflow: auto;
   -webkit-overflow-scrolling: auto;
