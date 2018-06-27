@@ -1,86 +1,93 @@
 <template>
   <div class="pages">
-    <h1 class="s_title">
-      市场宣传
-    </h1>
-    <div class="s_main">
-      <div class="s_main_part" v-for="(item, index) in xp_list" :key='index'>
-        <group title="请填写项目名称">
-            <x-input
-            title='项目名称'
-            text-align='right'
-            v-model="item.name"
-            disabled
-            ></x-input>
-        </group>
-        <group title="请填写市场宣传">
-            <x-input
-            title='市场宣传'
-            text-align='right'
-            v-model="item.conduct"
-            disabled
-            ></x-input>
-        </group>
-        <group title="请选择您申请的类型">
-          <popup-picker
-            title="宣品类型"
-            :data="item.type"
-            v-model="item.s_type"
-            disabled
-          ></popup-picker>
-        </group>
-        <group title="请填写明细">
-          <x-input
-            title='单价'
-            text-align='right'
-            v-model="item.unitprice"
-            disabled
-          ></x-input>
-          <x-input
-            title='数量'
-            text-align='right'
-            v-model="item.num"
-            disabled
-          ></x-input>
-        </group>
-        <group title="金额">
-          <cell title='合计'>{{item.unitprice*item.num==0?'':'￥'+item.unitprice*item.num | numberComma}}</cell>
-        </group>
-        <group title="费用所属">
-            <popup-picker
-                title="费用所属事业部"
-                :data="item.bulist"
-                v-model="item.buOn"
-                disabled
-            ></popup-picker>
-            <popup-picker
-                title="费用所属部门"
-                :data="item.deptlist"
-                v-model="item.deptOn"
-                disabled
-            ></popup-picker>
-            <popup-picker
-                title="核算归属省份"
-                :data="item.provlist"
-                v-model="item.provOn"
-                disabled
-            ></popup-picker>
-            <popup-picker
-                title="费用所属银行"
-                :data="item.banklist"
-                v-model="item.bankOn"
-                disabled
-            ></popup-picker>
-        </group>
-        <group title="要说点什么吗？">
-            <x-textarea title="说明" readonly :max="100" v-model="item.explain"></x-textarea>
-        </group>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide form">
+          <h1 class="s_title">
+              市场宣传
+            </h1>
+            <div class="s_main">
+              <div class="s_main_part" v-for="(item, index) in xp_list" :key='index'>
+                <group title="请填写项目名称">
+                    <x-input
+                    title='项目名称'
+                    text-align='right'
+                    v-model="item.name"
+                    disabled
+                    ></x-input>
+                </group>
+                <group title="请填写市场宣传">
+                    <x-input
+                    title='市场宣传'
+                    text-align='right'
+                    v-model="item.conduct"
+                    disabled
+                    ></x-input>
+                </group>
+                <group title="请选择您申请的类型">
+                  <popup-picker
+                    title="宣品类型"
+                    :data="item.type"
+                    v-model="item.s_type"
+                    disabled
+                  ></popup-picker>
+                </group>
+                <group title="请填写明细">
+                  <x-input
+                    title='单价'
+                    text-align='right'
+                    v-model="item.unitprice"
+                    disabled
+                  ></x-input>
+                  <x-input
+                    title='数量'
+                    text-align='right'
+                    v-model="item.num"
+                    disabled
+                  ></x-input>
+                </group>
+                <group title="金额">
+                  <cell title='合计'>{{item.unitprice*item.num==0?'':'￥'+item.unitprice*item.num | numberComma}}</cell>
+                </group>
+                <group title="费用所属">
+                    <popup-picker
+                        title="费用所属事业部"
+                        :data="item.bulist"
+                        v-model="item.buOn"
+                        disabled
+                    ></popup-picker>
+                    <popup-picker
+                        title="费用所属部门"
+                        :data="item.deptlist"
+                        v-model="item.deptOn"
+                        disabled
+                    ></popup-picker>
+                    <popup-picker
+                        title="核算归属省份"
+                        :data="item.provlist"
+                        v-model="item.provOn"
+                        disabled
+                    ></popup-picker>
+                    <popup-picker
+                        title="费用所属银行"
+                        :data="item.banklist"
+                        v-model="item.bankOn"
+                        disabled
+                    ></popup-picker>
+                </group>
+                <group title="要说点什么吗？">
+                    <x-textarea title="说明" readonly :max="100" v-model="item.explain"></x-textarea>
+                </group>
+              </div>
+            </div>
+        </div>
+        <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
     </div>
-     <div class="spinner" v-if="Load">
+    <div class="spinner" v-if="Load">
         <spinner type="android" size="40px"></spinner>
-     </div>
-     <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
+    </div>
+    <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
       <span class="s_button" @click="end(0)">拒绝</span>
       <span class="s_button" @click="end(1)">同意</span>
     </div>
@@ -92,6 +99,8 @@ import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner ,Toas
 import spreadService from "../service/spreadService";
 import createService from "../service/createService";
 import { setTimeout } from 'timers';
+import Swiper from 'swiper'
+import FlowDetail from './components/FlowDetail'
 export default {
   components: {
     Cell,
@@ -100,7 +109,8 @@ export default {
     PopupPicker,
     XTextarea,
     Spinner,
-    Toast
+    Toast,
+    FlowDetail
   },
   filters: {
     numberComma
@@ -109,7 +119,9 @@ export default {
     return {
       Load:true,
       listId:'',
+      transCode: this.$route.query.transCode,
       canSubmit: this.$route.query.canSubmit,
+      pageSwiper: null,
       xp_list: [
         {
           name: "", //项目名称
@@ -193,6 +205,9 @@ export default {
     }
   },
   created(){
+    this.$nextTick(() => {
+      this.pageSwiper = new Swiper ('.swiper-container', {});
+    })
     let that = this;
     let {query} = this.$route;
     //that.canSubmit = that.$route.query.canSubmit;
@@ -255,12 +270,18 @@ export default {
 .pages {
   overflow: auto;
   -webkit-overflow-scrolling: auto;
+  .swiper-container {
+      height: 100%;
+      .form {
+        overflow: auto;
+      }
+    }
 }
 
 .s_title {
   //标题
   width: 100%;
-  height: 120px;
+  height: 80px;
   line-height: 80px;
   font-size: 34px;
   text-align: center;
@@ -288,7 +309,7 @@ export default {
   width: 90%;
   max-width: 600px;
   position: absolute;
-  top: 90px;
+  top: 50px;
   left: 50%;
   transform: translate(-50%, 0);
   border-radius: 4px;

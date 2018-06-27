@@ -1,94 +1,102 @@
 <template>
   <div class="pages">
-    <h1 class="a_title">
-      固定资产
-    </h1>
-    <div class="a_main">
-      <div class="a_main_part" v-for="(item,index) in assetsList" :key="index">
-        <group title="请选择资产类型">
-          <popup-picker
-            title="资产类型"
-            :data="item.model"
-            v-model="item.modelOn"
-            disabled
-          ></popup-picker>
-        </group>
-        <group title="请填写资产型号/规格">
-          <x-input
-            title='资产型号/规格'
-            text-align='right'
-            v-model="item.modSpec"
-            disabled
-          ></x-input>
-        </group>
-        <group title="请选择计量单位">
-          <popup-picker
-            title="计量单位"
-            :data="item.unit"
-            v-model="item.unitOn"
-            disabled
-          ></popup-picker>
-        </group>
-        <group title="请填写明细">
-          <x-input
-            title='单价'
-            text-align='right'
-            v-model="item.unitPrice"
-            disabled
-          ></x-input>
-          <x-input
-            title='数量'
-            text-align='right'
-            v-model="item.num"
-            disabled
-          ></x-input>
-          <cell title="合计" :value="Number(item.unitPrice)*Number(item.num)==0?'':'￥'+Number(item.unitPrice)*Number(item.num) | numberComma"></cell>
-        </group>
-        <group title="请填写部门">
-          <x-input
-            title='申请部门'
-            text-align='right'
-            v-model="item.applydept"
-            disabled
-          ></x-input>
-          <x-input
-            title='使用部门'
-            text-align='right'
-            v-model="item.usedept"
-            disabled
-          ></x-input>
-        </group>
-        <group title="费用所属" >
-            <popup-picker
-                title="费用所属事业部"
-                :data="item.bulist"
-                v-model="item.buOn"
-                disabled
-            ></popup-picker>
-            <popup-picker
-                title="费用所属部门"
-                :data="item.deptlist"
-                v-model="item.deptOn"
-                disabled
-            ></popup-picker>
-            <popup-picker
-                title="核算归属省份"
-                :data="item.provlist"
-                v-model="item.provOn"
-                disabled
-            ></popup-picker>
-            <popup-picker
-                title="费用所属银行"
-                :data="item.banklist"
-                v-model="item.bankOn"
-                disabled
-            ></popup-picker>
-        </group>
-        <group title="要说点什么吗？">
-            <x-textarea title="说明" readonly v-model="item.explain" :max="100"></x-textarea>
-        </group>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide form">
+          <h1 class="a_title">
+            固定资产
+          </h1>
+          <div class="a_main">
+            <div class="a_main_part" v-for="(item,index) in assetsList" :key="index">
+              <group title="请选择资产类型">
+                <popup-picker
+                  title="资产类型"
+                  :data="item.model"
+                  v-model="item.modelOn"
+                  disabled
+                ></popup-picker>
+              </group>
+              <group title="请填写资产型号/规格">
+                <x-input
+                  title='资产型号/规格'
+                  text-align='right'
+                  v-model="item.modSpec"
+                  disabled
+                ></x-input>
+              </group>
+              <group title="请选择计量单位">
+                <popup-picker
+                  title="计量单位"
+                  :data="item.unit"
+                  v-model="item.unitOn"
+                  disabled
+                ></popup-picker>
+              </group>
+              <group title="请填写明细">
+                <x-input
+                  title='单价'
+                  text-align='right'
+                  v-model="item.unitPrice"
+                  disabled
+                ></x-input>
+                <x-input
+                  title='数量'
+                  text-align='right'
+                  v-model="item.num"
+                  disabled
+                ></x-input>
+                <cell title="合计" :value="Number(item.unitPrice)*Number(item.num)==0?'':'￥'+Number(item.unitPrice)*Number(item.num) | numberComma"></cell>
+              </group>
+              <group title="请填写部门">
+                <x-input
+                  title='申请部门'
+                  text-align='right'
+                  v-model="item.applydept"
+                  disabled
+                ></x-input>
+                <x-input
+                  title='使用部门'
+                  text-align='right'
+                  v-model="item.usedept"
+                  disabled
+                ></x-input>
+              </group>
+              <group title="费用所属" >
+                  <popup-picker
+                      title="费用所属事业部"
+                      :data="item.bulist"
+                      v-model="item.buOn"
+                      disabled
+                  ></popup-picker>
+                  <popup-picker
+                      title="费用所属部门"
+                      :data="item.deptlist"
+                      v-model="item.deptOn"
+                      disabled
+                  ></popup-picker>
+                  <popup-picker
+                      title="核算归属省份"
+                      :data="item.provlist"
+                      v-model="item.provOn"
+                      disabled
+                  ></popup-picker>
+                  <popup-picker
+                      title="费用所属银行"
+                      :data="item.banklist"
+                      v-model="item.bankOn"
+                      disabled
+                  ></popup-picker>
+              </group>
+              <group title="要说点什么吗？">
+                  <x-textarea title="说明" readonly v-model="item.explain" :max="100"></x-textarea>
+              </group>
+            </div>
+          </div>
+        </div>
+        <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
     </div>
+    
     <div class="spinner" v-if="Load">
         <spinner type="android" size="40px"></spinner>
      </div>
@@ -104,6 +112,8 @@
   import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner, Toast } from 'vux'
   import spreadService from "../service/spreadService";
   import createService from "../service/createService";
+  import Swiper from 'swiper'
+  import FlowDetail from './components/FlowDetail'
   export default {
     components: {
       Cell,
@@ -112,7 +122,8 @@
       PopupPicker,
       XTextarea,
       Spinner,
-      Toast 
+      Toast,
+      FlowDetail 
     },
     filters:{
       numberComma 
@@ -120,7 +131,9 @@
     data() {
       return {
         Load: true,
+        transCode: this.$route.query.transCode,
         canSubmit: this.$route.query.canSubmit,
+        pageSwiper: null,
         assetsList: [
           {
             model: [['电脑','桌子','椅子']],   //资产型号
@@ -195,6 +208,9 @@
       }
     },
     created(){
+      this.$nextTick(() => {
+        this.pageSwiper = new Swiper ('.swiper-container', {});
+      })
       let that = this;
       let {query} = this.$route;
       if (query.transCode) {
@@ -242,9 +258,19 @@
 </script>
 
 <style lang='scss' scoped>
+  .pages {
+    overflow: auto;
+    -webkit-overflow-scrolling: auto;
+    .swiper-container {
+        height: 100%;
+        .form {
+          overflow: auto;
+        }
+      }
+  }
   .a_title { //标题
     width: 100%;
-    height: 120px;
+    height: 80px;
     line-height: 80px;
     font-size: 34px;
     text-align: center;
@@ -272,7 +298,7 @@
     width: 90%;
     max-width: 600px;
     position: absolute;
-    top: 90px;
+    top: 50px;
     left: 50%;
     transform: translate(-50%, 0);
     border-radius: 4px;
