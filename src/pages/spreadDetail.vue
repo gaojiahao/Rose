@@ -80,13 +80,18 @@
      <div class="spinner" v-if="Load">
         <spinner type="android" size="40px"></spinner>
      </div>
+     <div class="s_btm vux-1px-t">
+      <span class="s_button" @click="end(0)">取消</span>
+      <span class="s_button" @click="end(1)">同意</span>
+    </div>
   </div>
 </template>
 
 <script>
-import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner } from "vux";
+import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner ,Toast } from "vux";
 import spreadService from "../service/spreadService";
 import createService from "../service/createService";
+import { setTimeout } from 'timers';
 export default {
   components: {
     Cell,
@@ -94,7 +99,8 @@ export default {
     XInput,
     PopupPicker,
     XTextarea,
-    Spinner
+    Spinner,
+    Toast
   },
   filters: {
     numberComma
@@ -102,6 +108,7 @@ export default {
   data() {
     return {
       Load:true,
+      listId:'',
       xp_list: [
         {
           name: "", //项目名称
@@ -137,6 +144,44 @@ export default {
     };
   },
   methods: {
+    //审批
+    end(num){
+      let that = this,
+      taskId = that.$route.query.taskId,
+      transCode = that.$route.query.transCode,
+      data = {};
+      if( num == 0 ){
+        return;
+      }else if( num == 1 ){
+        data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
+        createService.examineTask(taskId,data).then( res=> {
+          if(res.success){
+            that.$vux.toast.show({
+              text: res.message,
+              position: 'middle',
+              type: 'text',
+              onShow () {
+                setTimeout(function(){
+                  that.$vux.toast.hide();
+                  that.$router.go(-1);
+                },800)
+              },
+            });
+          }else {
+            that.$vux.toast.show({
+              text: res.message,
+              position: 'middle',
+              type: 'text',
+              onShow () {
+                setTimeout(function(){
+                  that.$vux.toast.hide()
+                },800)
+              },
+            });
+          }
+        })
+      }
+    }
   },
   created(){
     let that = this;
@@ -146,6 +191,7 @@ export default {
         formKey: query.formKey,
         transCode: query.transCode,
       }).then( res => {
+        that.listId = res.listId;
         let dataSet = res.formData.order.dataSet,
         newArr = [];
         for(let i = 0 ; i< dataSet.length ; i++ ){
@@ -268,6 +314,9 @@ export default {
   box-sizing: border-box;
   background: #fff;
   display: flex;
+  span:first-child{
+    background: #ccc;
+  }
   .count_part {
     flex: 2.5;
     color: #000;

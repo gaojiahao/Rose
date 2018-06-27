@@ -92,6 +92,10 @@
     <div class="spinner" v-if="Load">
         <spinner type="android" size="40px"></spinner>
      </div>
+     <div class="s_btm vux-1px-t">
+      <span class="s_button">取消</span>
+      <span class="s_button">同意</span>
+    </div>
   </div>
 
 </template>
@@ -253,6 +257,9 @@
     margin-top: 20px;
     box-sizing: border-box;
     display: flex;
+    span:first-child{
+      background: #ccc;
+    }
     .count_part {
       flex: 2.5;
       background: #fff;
@@ -267,6 +274,30 @@
       background: #5077AA;
       display: inline-block;
       text-align: center;
+    }
+  }
+  .s_btm{
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 101;
+    margin-top: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    display: flex;
+    color: #fff;
+    span:first-child{
+      background: #ccc;
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
+    }
+    span:last-child{
+      background: #5077AA;
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
     }
   }
   .spinner{
