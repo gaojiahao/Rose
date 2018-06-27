@@ -92,9 +92,9 @@
     <div class="spinner" v-if="Load">
         <spinner type="android" size="40px"></spinner>
      </div>
-     <div class="s_btm vux-1px-t">
-      <span class="s_button">取消</span>
-      <span class="s_button">同意</span>
+     <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
+      <span class="s_button" @click="end(0)">拒绝</span>
+      <span class="s_button" @click="end(1)">同意</span>
     </div>
   </div>
 
@@ -119,6 +119,7 @@
     data() {
       return {
         Load: true,
+        canSubmit: this.$route.query.canSubmit,
         assetsList: [
           {
             model: [['电脑','桌子','椅子']],   //资产型号
@@ -142,6 +143,54 @@
             status: false
           }
         ]
+      }
+    },
+    methods: {
+      //审批弹窗
+      endToast(taskId,data){
+        let that = this;
+        createService.examineTask(taskId,data).then( res=> {
+          if(res.success){
+            that.$vux.toast.show({
+              text: res.message,
+              position: 'middle',
+              type: 'text',
+              onShow () {
+                setTimeout(function(){
+                  that.$vux.toast.hide();
+                  that.$router.go(-1);
+                },800)
+              },
+            });
+          }
+        }).catch( c =>{
+          that.$vux.toast.show({
+              text: c.message,
+              position: 'middle',
+              type: 'text',
+              onShow () {
+                setTimeout(function(){
+                  that.$vux.toast.hide()
+                },800)
+              },
+            });
+        })
+      },
+      //审批
+      end(num){
+        let that = this,
+        taskId = that.$route.query.taskId,
+        transCode = that.$route.query.transCode,
+        data = {};
+        //拒绝
+        if( num == 0 ){
+          data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
+          that.endToast(taskId,data);
+        }else if( num == 1 ){
+          //同意
+          data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
+          that.endToast(taskId,data);
+        }
       }
     },
     created(){

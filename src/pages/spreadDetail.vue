@@ -80,8 +80,8 @@
      <div class="spinner" v-if="Load">
         <spinner type="android" size="40px"></spinner>
      </div>
-     <div class="s_btm vux-1px-t">
-      <span class="s_button" @click="end(0)">取消</span>
+     <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
+      <span class="s_button" @click="end(0)">拒绝</span>
       <span class="s_button" @click="end(1)">同意</span>
     </div>
   </div>
@@ -109,6 +109,7 @@ export default {
     return {
       Load:true,
       listId:'',
+      canSubmit: this.$route.query.canSubmit,
       xp_list: [
         {
           name: "", //项目名称
@@ -138,54 +139,63 @@ export default {
           banklist: [], //费用所属银行
           bankOn: [], //费用所属银行选中
           explain: "", //说明
-          status: false
+          status: false,
         }
       ] // 宣品 填写内容
     };
   },
   methods: {
+    //审批弹窗
+    endToast(taskId,data){
+      let that = this;
+      createService.examineTask(taskId,data).then( res=> {
+        if(res.success){
+          that.$vux.toast.show({
+            text: res.message,
+            position: 'middle',
+            type: 'text',
+            onShow () {
+              setTimeout(function(){
+                that.$vux.toast.hide();
+                that.$router.go(-1);
+              },800)
+            },
+          });
+        }
+      }).catch( c =>{
+        that.$vux.toast.show({
+            text: c.message,
+            position: 'middle',
+            type: 'text',
+            onShow () {
+              setTimeout(function(){
+                that.$vux.toast.hide()
+              },800)
+            },
+          });
+      })
+    },
     //审批
     end(num){
       let that = this,
       taskId = that.$route.query.taskId,
       transCode = that.$route.query.transCode,
       data = {};
+      //拒绝
       if( num == 0 ){
-        return;
+        data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
+        that.endToast(taskId,data);
       }else if( num == 1 ){
+        //同意
         data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
-        createService.examineTask(taskId,data).then( res=> {
-          if(res.success){
-            that.$vux.toast.show({
-              text: res.message,
-              position: 'middle',
-              type: 'text',
-              onShow () {
-                setTimeout(function(){
-                  that.$vux.toast.hide();
-                  that.$router.go(-1);
-                },800)
-              },
-            });
-          }else {
-            that.$vux.toast.show({
-              text: res.message,
-              position: 'middle',
-              type: 'text',
-              onShow () {
-                setTimeout(function(){
-                  that.$vux.toast.hide()
-                },800)
-              },
-            });
-          }
-        })
+        that.endToast(taskId,data);
       }
     }
   },
   created(){
     let that = this;
     let {query} = this.$route;
+    //that.canSubmit = that.$route.query.canSubmit;
     if (query.transCode) {
       createService.getFormData({
         formKey: query.formKey,
