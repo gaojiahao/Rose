@@ -325,12 +325,20 @@ export default {
       let canSubmit = '0';
       let map = {
         'a583be9b-c632-493c-b509-0f004504b8a2': '/spreadDetail',
+        'a9238c91-36f3-4b09-9705-9d50870b3c46': '/spreadDetail',
         'b2df7403-56c7-4a1c-bdb7-8f6b4c95c7eb': '/meetingDetail',
+        'd189cc14-3a77-4e81-a220-55c771a2bdff': '/meetingDetail',
         'e21f5960-7f7a-4e8b-9faf-bd10595ff768': '/houseDetail',
+        'e59dcb25-3a14-44b7-b619-433c63d2327b': '/houseDetail',
         '1034f15e-3f90-4e9c-a401-0955db09e179': '/assetsDetail',
+        '1ab51ee6-2836-4728-b0a5-9fa5c8902c31': '/assetsDetail',
       };
       // 待审批页签才允许审批
       if (!this.whichIndex) {
+        map['a9238c91-36f3-4b09-9705-9d50870b3c46'] = 'spread';
+        map['d189cc14-3a77-4e81-a220-55c771a2bdff'] = 'meeting';
+        map['e59dcb25-3a14-44b7-b619-433c63d2327b'] = 'house';
+        map['1ab51ee6-2836-4728-b0a5-9fa5c8902c31'] = 'assets';
         if (assignee) {
           canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1' : '0';
         }

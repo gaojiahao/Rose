@@ -16,6 +16,9 @@ export default {
     },
     // TODO 时间戳转日期
     changeDate(d) {
+      if (!d) {
+        return '';
+      }
       let date = new Date(d);
       return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`
     },

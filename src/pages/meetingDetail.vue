@@ -143,12 +143,12 @@
     },
     computed: {
       totalCost() {
-        let {roomNumber, roomAveragePrice, siteFees, wayFees, repastFees} = this.formData;
+        let {roomNumber = 0, roomAveragePrice = 0, siteFees = 0, wayFees = 0, repastFees = 0} = this.formData;
         return `￥${numberComma(Number(roomNumber) * Number(roomAveragePrice) + Number(siteFees) + Number(wayFees) + Number(repastFees))}`;
       },
     },
     mixins: [common],
-    components: {Group, Cell, Loading, Toast,FlowDetail},
+    components: {Group, Cell, Loading, Toast, FlowDetail},
     methods: {
       // TODO 获取表单详情
       getFormData() {
@@ -159,7 +159,13 @@
         }).then(data => {
           this.showLoading = false;
           this.showPage = true;
-          let {formData} = data;
+          let {formData = {}, success = true, message = ''} = data;
+          // 请求失败提示
+          if (!success) {
+            this.showToastText(message);
+            return;
+          }
+
           formData.begin = this.changeDate(formData.begin);
           formData.end = this.changeDate(formData.end);
           formData.crtTime = this.changeDate(formData.crtTime);
@@ -207,7 +213,7 @@
       this.canSubmit = query.canSubmit === '1';
       this.getFormData();
       this.$nextTick(() => {
-        this.pageSwiper = new Swiper ('.swiper-container', {});
+        this.pageSwiper = new Swiper('.swiper-container', {});
       })
     }
   }
@@ -219,6 +225,7 @@
       height: 100%;
       .form {
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
     }
     .m_title { //标题

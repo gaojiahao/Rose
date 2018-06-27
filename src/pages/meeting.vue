@@ -5,31 +5,33 @@
       <span class="m_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward"
                                                          size="16"></x-icon></span>
     </h1>
-    <div class="m_main">
-      <div class="m_main_part">
-        <group title="请填写会议安排明细">
-          <datetime v-model="formData.begin" format="YYYY-MM-DD" title="开始日期"></datetime>
-          <datetime v-model="formData.end" format="YYYY-MM-DD" title="结束日期"></datetime>
-          <popup-picker title="省份" :data="provinceList" :value="provinceSelected" :columns="1"
-                        @on-change="provinceChange" v-model="provinceSelected"></popup-picker>
-          <popup-picker title="城市" :data="cityList" :value="citySelected" :columns="1"
-                        @on-change="cityChange" v-model="citySelected"></popup-picker>
-          <x-input :type="item.type" :title='item.title' :key="index" text-align='right'
-                   v-for="(item, index) in meetList" v-model="formData[item.key]"></x-input>
-        </group>
-        <group title="请填写会议相关事宜">
-          <x-textarea title="人员范围" v-model="formData.personScope"></x-textarea>
-          <x-textarea title="会议议程" v-model="formData.agenda"></x-textarea>
-        </group>
-        <cascade-pickers :has-default="hasDefault" :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
-        <group title="费用合计">
-          <cell title="金额合计" :value="totalCost"></cell>
-        </group>
+    <div v-show="showPage">
+      <div class="m_main">
+        <div class="m_main_part">
+          <group title="请填写会议安排明细">
+            <datetime v-model="formData.begin" format="YYYY-MM-DD" title="开始日期"></datetime>
+            <datetime v-model="formData.end" format="YYYY-MM-DD" title="结束日期"></datetime>
+            <popup-picker title="省份" :data="provinceList" :value="provinceSelected" :columns="1"
+                          @on-change="provinceChange" v-model="provinceSelected"></popup-picker>
+            <popup-picker title="城市" :data="cityList" :value="citySelected" :columns="1"
+                          @on-change="cityChange" v-model="citySelected"></popup-picker>
+            <x-input :type="item.type" :title='item.title' :key="index" text-align='right'
+                     v-for="(item, index) in meetList" v-model="formData[item.key]"></x-input>
+          </group>
+          <group title="请填写会议相关事宜">
+            <x-textarea title="人员范围" v-model="formData.personScope"></x-textarea>
+            <x-textarea title="会议议程" v-model="formData.agenda"></x-textarea>
+          </group>
+          <cascade-pickers :has-default="hasDefault" :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
+          <group title="费用合计">
+            <cell title="金额合计" :value="totalCost"></cell>
+          </group>
+        </div>
       </div>
-    </div>
-    <div class="m_btm vux-1px-t">
-      <span class="count_part">合计:{{totalCost}}</span>
-      <span class="m_button" @click="goflow">确定</span>
+      <div class="m_btm vux-1px-t">
+        <span class="count_part">合计:{{totalCost}}</span>
+        <span class="m_button" @click="goflow">确定</span>
+      </div>
     </div>
     <loading :show="showLoading"></loading>
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
@@ -132,17 +134,20 @@
         hasDefault: false,
         cascadeValue: {},
         sessionKey: '',
+        formKey: '',
+        transCode: '',
+        showPage: true,
       }
     },
     computed: {
       // 合计金额
       totalCost() {
-        let {roomNumber, roomAveragePrice, siteFees, wayFees, repastFees} = this.formData;
+        let {roomNumber = 0, roomAveragePrice = 0, siteFees = 0, wayFees = 0, repastFees = 0} = this.formData;
         return `￥${numberComma(Number(roomNumber) * Number(roomAveragePrice) + Number(siteFees) + Number(wayFees) + Number(repastFees))}`;
       },
       // 住宿合计
       hotelFees() {
-        let {roomNumber, roomAveragePrice} = this.formData;
+        let {roomNumber = 0, roomAveragePrice = 0} = this.formData;
         return Number(roomNumber) * roomAveragePrice;
       },
     },
@@ -287,6 +292,44 @@
       cityChange(val) {
         this.formData.city = val[0] || '';
       },
+      // TODO 获取表单详情
+      getFormData() {
+        return createService.getFormData({
+          formKey: this.formKey,
+          transCode: this.transCode,
+        }).then(data => {
+          this.hasDefault = true;
+          this.showPage = true;
+          let {formData = {}, success = true, message = ''} = data;
+          // 请求失败提示
+          if (!success) {
+            this.showToastText(message);
+            return;
+          }
+
+          formData.begin = this.changeDate(formData.begin);
+          formData.end = this.changeDate(formData.end);
+          formData.crtTime = this.changeDate(formData.crtTime);
+          formData.modTime = this.changeDate(formData.modTime);
+
+          this.provinceSelected = [formData.province];
+          this.citySelected = [formData.city];
+          this.cascadeValue = {
+            costBU: formData.costBU,
+            costDepartment: formData.costDepartment,
+            checkProvince: formData.checkProvince,
+            costBank: formData.costBank
+          };
+
+          this.formData = formData;
+          this.$nextTick(() => {
+            // 在渲染一次以后将该值设置为false
+            this.hasDefault = false;
+          })
+        }).catch(e => {
+          this.showToastText(e.message);
+        });
+      },
     },
     beforeRouteLeave(to, from, next) {
       let {name} = to;
@@ -298,7 +341,10 @@
     },
     created() {
       let {query} = this.$route;
+      let requestPromises = [];
       this.listid = query.list;
+      this.formKey = query.formKey;
+      this.transCode = query.transCode;
       this.sessionKey = `${this.listid}-FORMDATA`;
       this.showLoading = true;
       let formData = sessionStorage.getItem(this.sessionKey);
@@ -308,8 +354,14 @@
         this.formData.begin = formData.begin;
         this.formData.end = formData.end;
       }
+
+      // 从接口中获取数据
+      if (!formData && this.formKey) {
+        this.showPage = false;
+        requestPromises.push(this.getFormData());
+      }
+
       this.$nextTick(() => {
-        let requestPromises = [];
         requestPromises.push(this.getProvinceList());
         requestPromises.push(this.$refs.cascadePickers.init());
         Promise.all(requestPromises).then(data => {

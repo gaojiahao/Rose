@@ -10,7 +10,7 @@
                    @on-change="getSearch(item)"
                    @on-blur="searchBlur(item)"
                    v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>
-          <cell title="财务" value='财务'></cell>
+          <cell title="财务" value='管建明'></cell>
           <cell title="总裁" value='王珏'></cell>
         </group>
         <group class="search-list-container" v-show="!hasSelected" :style="{top: searchListTop}">

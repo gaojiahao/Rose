@@ -124,6 +124,9 @@
                 tip: '',
               };
               break;
+            case '重新提交':
+              this.sz = doing;
+              break;
             case '生效表单':
               break;
             case 'End':

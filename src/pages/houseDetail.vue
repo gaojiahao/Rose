@@ -131,7 +131,7 @@
     },
     computed: {
       totalCost() {
-        let {tenancy, rental} = this.formData;
+        let {tenancy = 0, rental = 0} = this.formData;
         return `￥${numberComma(Number(tenancy) * Number(rental))}`;
       }
     },
@@ -146,7 +146,13 @@
         }).then(data => {
           this.showLoading = false;
           this.showPage = true;
-          let {formData} = data;
+          let {formData = {}, success = true, message = ''} = data;
+          // 请求失败提示
+          if (!success) {
+            this.showToastText(message);
+            return;
+          }
+
           formData.begin = this.changeDate(formData.begin);
           formData.end = this.changeDate(formData.end);
           formData.crtTime = this.changeDate(formData.crtTime);
@@ -206,6 +212,7 @@
       height: 100%;
       .form {
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
     }
   }

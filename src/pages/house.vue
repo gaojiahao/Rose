@@ -6,24 +6,26 @@
         我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon>
       </span>
     </h1>
-    <div class="h_main">
-      <div class="h_main_part">
-        <group title="请选择地点类型">
-          <popup-picker title="地点类型" :data="h_type" v-model="type_value" @on-change="officeChange"></popup-picker>
-          <popup-picker title="处理类型" :data="h_hdtype" v-model="hd_value" @on-change="moveTypeChange"></popup-picker>
-        </group>
-        <group title="请填写明细">
-          <x-input :type="item.type" :title='item.title' :key="index" text-align='right'
-                   v-for="(item, index) in bj_list" v-model="formData[item.key]"></x-input>
-          <datetime v-model="formData.begin" format="YYYY-MM-DD" title="租期开始时间"></datetime>
-          <datetime v-model="formData.end" format="YYYY-MM-DD" title="租期结束时间"></datetime>
-        </group>
-        <cascade-pickers :has-default="hasDefault" :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
+    <div v-show="showPage">
+      <div class="h_main">
+        <div class="h_main_part">
+          <group title="请选择地点类型">
+            <popup-picker title="地点类型" :data="h_type" v-model="type_value" @on-change="officeChange"></popup-picker>
+            <popup-picker title="处理类型" :data="h_hdtype" v-model="hd_value" @on-change="moveTypeChange"></popup-picker>
+          </group>
+          <group title="请填写明细">
+            <x-input :type="item.type" :title='item.title' :key="index" text-align='right'
+                     v-for="(item, index) in bj_list" v-model="formData[item.key]"></x-input>
+            <datetime v-model="formData.begin" format="YYYY-MM-DD" title="租期开始时间"></datetime>
+            <datetime v-model="formData.end" format="YYYY-MM-DD" title="租期结束时间"></datetime>
+          </group>
+          <cascade-pickers :has-default="hasDefault" :value="cascadeValue" ref="cascadePickers"></cascade-pickers>
+        </div>
       </div>
-    </div>
-    <div class="h_btm vux-1px-t">
-      <span class="count_part">合计:{{totalCost}}</span>
-      <span class="h_button" @click="goflow">确定</span>
+      <div class="h_btm vux-1px-t">
+        <span class="count_part">合计:{{totalCost}}</span>
+        <span class="h_button" @click="goflow">确定</span>
+      </div>
     </div>
     <loading :show="showLoading"></loading>
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
@@ -116,12 +118,15 @@
         hasDefault: false,
         cascadeValue: {},
         sessionKey: '',
+        formKey: '',
+        transCode: '',
+        showPage: true,
       }
     },
     mixins: [common],
     computed: {
       totalCost() {
-        let {tenancy, rental} = this.formData;
+        let {tenancy = 0, rental = 0} = this.formData;
         return `￥${numberComma(Number(tenancy) * Number(rental))}`;
       }
     },
@@ -223,7 +228,46 @@
       // TODO 处理类型切换
       moveTypeChange(val) {
         this.formData.moveType = val[0] || '';
-      }
+      },
+      // TODO 获取表单详情
+      getFormData() {
+        return createService.getFormData({
+          formKey: this.formKey,
+          transCode: this.transCode,
+        }).then(data => {
+          this.hasDefault = true;
+          this.showPage = true;
+          let {formData = {}, success = true, message = ''} = data;
+          // 请求失败提示
+          if (!success) {
+            this.showToastText(message);
+            return;
+          }
+
+          formData.begin = this.changeDate(formData.begin);
+          formData.end = this.changeDate(formData.end);
+          formData.crtTime = this.changeDate(formData.crtTime);
+          formData.modTime = this.changeDate(formData.modTime);
+
+          this.type_value = [formData.office];
+          this.hd_value = [formData.moveType];
+
+          this.cascadeValue = {
+            costBU: formData.costBU,
+            costDepartment: formData.costDepartment,
+            checkProvince: formData.checkProvince,
+            costBank: formData.costBank
+          };
+
+          this.formData = formData;
+          this.$nextTick(() => {
+            // 在渲染一次以后将该值设置为false
+            this.hasDefault = false;
+          })
+        }).catch(e => {
+          this.showToastText(e.message);
+        });
+      },
     },
     beforeRouteLeave(to, from, next) {
       let {name} = to;
@@ -235,6 +279,7 @@
     },
     created() {
       let {query} = this.$route;
+      let requestPromises = [];
       this.listid = query.list;
       this.sessionKey = `${this.listid}-FORMDATA`;
       this.showLoading = true;
@@ -245,8 +290,16 @@
         this.formData.begin = formData.begin;
         this.formData.end = formData.end;
       }
+
+      // 从接口中获取数据
+      if (!formData && this.formKey) {
+        this.showPage = false;
+        requestPromises.push(this.getFormData());
+      }
+
       this.$nextTick(() => {
-        this.$refs.cascadePickers.init().then(data => {
+        requestPromises.push(this.$refs.cascadePickers.init());
+        Promise.all(requestPromises).then(data => {
           this.showLoading = false;
         })
       })
