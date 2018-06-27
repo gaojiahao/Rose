@@ -255,8 +255,8 @@
               'createdBy': '',
               // '常委ID': this.level_list.committee.userId,
               // '副总裁ID': this.level_list.president.userId,
-              '常委ID': '15125',
-              '副总裁ID': '18128',
+              '常委ID': '15125', // rfd120
+              '副总裁ID': '18128', // rfd9527
             }
           })
         }).then(data => {

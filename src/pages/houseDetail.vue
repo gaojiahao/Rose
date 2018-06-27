@@ -132,10 +132,9 @@
       // TODO 获取表单详情
       getFormData() {
         this.showLoading = true;
-        let {query} = this.$route;
         createService.getFormData({
-          formKey: query.formKey,
-          transCode: query.transCode,
+          formKey: this.formKey,
+          transCode: this.transCode,
         }).then(data => {
           this.showLoading = false;
           this.showPage = true;
@@ -180,11 +179,11 @@
     },
     created() {
       let {query} = this.$route;
-      this.listid = query.listid;
+      this.listid = query.list;
       this.formKey = query.formKey;
       this.transCode = query.transCode;
       this.taskId = query.taskId;
-      this.canSubmit = query.canSubmit;
+      this.canSubmit = query.canSubmit === '1';
       this.getFormData();
     }
   }

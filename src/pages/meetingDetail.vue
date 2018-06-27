@@ -192,11 +192,11 @@
     },
     created() {
       let {query} = this.$route;
-      this.listid = query.listid;
+      this.listid = query.list;
       this.formKey = query.formKey;
       this.transCode = query.transCode;
       this.taskId = query.taskId;
-      this.canSubmit = query.canSubmit;
+      this.canSubmit = query.canSubmit === '1';
       this.getFormData();
     }
   }

@@ -73,14 +73,20 @@
         });
         return tmp
       },
+      // TODO 共用请求方法
+      reqData(listKey, param = {}) {
+        return createService.getAccountingUnitByid(Object.assign({
+          parentId: PARENT_ID,
+        }, param)).then(data => {
+          let {tableContent = []} = data;
+          this[listKey] = this.assembleList(tableContent);
+        }).catch(e => {
+          this.$parent.showToastText(e.message);
+        })
+      },
       // TODO 获取费用所属事业部列表
       getBuDept() {
-        return createService.getAccountingUnitByid({
-          parentId: PARENT_ID,
-        }).then(data => {
-          let {tableContent = []} = data;
-          this.buDeptList = this.assembleList(tableContent);
-        })
+        return this.reqData('buDeptList');
       },
       // TODO 获取费用所属部门列表
       getDept() {
@@ -92,14 +98,10 @@
         if (!name1) {
           return
         }
-        createService.getAccountingUnitByid({
+        this.reqData('deptList', {
           key: 'N2',
-          parentId: PARENT_ID,
           name1,
-        }).then(data => {
-          let {tableContent = []} = data;
-          this.deptList = this.assembleList(tableContent);
-        })
+        });
       },
       // TODO 获取核算归属省份列表
       getProv() {
@@ -112,15 +114,11 @@
         if (!name1 || !name2) {
           return
         }
-        createService.getAccountingUnitByid({
+        this.reqData('provList', {
           key: 'N3',
-          parentId: PARENT_ID,
           name1,
           name2,
-        }).then(data => {
-          let {tableContent = []} = data;
-          this.provList = this.assembleList(tableContent);
-        })
+        });
       },
       // TODO 获取费用所属银行列表
       getBank() {
@@ -134,16 +132,12 @@
         if (!name1 || !name2 || !name3) {
           return
         }
-        createService.getAccountingUnitByid({
+        this.reqData('bankList', {
           key: 'N4',
-          parentId: PARENT_ID,
           name1,
           name2,
           name3,
-        }).then(data => {
-          let {tableContent = []} = data;
-          this.bankList = this.assembleList(tableContent);
-        })
+        });
       },
       // TODO 费用所属事业部切换
       buDeptChange(val) {

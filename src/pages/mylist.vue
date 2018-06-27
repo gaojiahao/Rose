@@ -314,7 +314,7 @@ export default {
     // TODO 查看详情
     goDetail(item){
       let {listId,formKey,businessKey, taskId, transId, assignee, assigneeId} = item;
-      let canSubmit = false;
+      let canSubmit = '0';
       let map = {
         'a583be9b-c632-493c-b509-0f004504b8a2': '/spreadDetail',
         'b2df7403-56c7-4a1c-bdb7-8f6b4c95c7eb': '/meetingDetail',
@@ -323,10 +323,10 @@ export default {
       };
       console.log(item)
       if(assignee) {
-        canSubmit = `${assignee}` === `${this.currentUser.userId}`;
+        canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1': '0';
       }
       if(assigneeId) {
-        canSubmit = `${assigneeId}` === `${this.currentUser.userId}`;
+        canSubmit = `${assigneeId}` === `${this.currentUser.userId}` ? '1': '0';
       }
       this.$router.push({
         path: map[formKey],
