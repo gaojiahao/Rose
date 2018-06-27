@@ -3,24 +3,21 @@
     <div v-if='$route.name=="help"'>
     <div id='mescroll' class="mescroll">
         <group label-align='left' title="请选择支援的地区">
-          <popup-picker 
-            class="each_part"
-            title="所在地区" 
-            placeholder="请选择省份"
-            :data='areaList'
-            v-model="areaValue"
-            :columns="1"
-            >
-          </popup-picker>
 
           <popup-picker 
             class="each_part"
-            title="所属银行" 
+            title="支援地区" 
+            placeholder="请选择省份"
+            :data='areaList'
+            v-model="areaValue"
+            :columns="1"></popup-picker>
+          <popup-picker 
+            class="each_part"
+            title="支援银行" 
             placeholder="请选择银行"
             :data='bankList'
             v-model="bankValue"
-            :columns="1">
-          </popup-picker>
+            :columns="1"></popup-picker>
 
           <x-input 
           title="支援队长"
@@ -30,8 +27,7 @@
           @on-focus="captainFocus" 
           placeholder="请输入队长"
           ref="captainChooise"
-          class="helpCaptain"
-          ></x-input>
+          class="helpCaptain"></x-input>
          <x-input 
           title="支援省长"
           text-align="right"
@@ -40,8 +36,7 @@
           @on-focus='provinceReset'
           placeholder="请输入省长"
           ref="provinceChooise"
-          class="helpCaptain"
-          ></x-input>
+          class="helpCaptain"></x-input>
           <x-input 
           title="支援常委"
           text-align="right"
@@ -50,27 +45,37 @@
           @on-focus='memberUserReset'
           placeholder="请输入常委"
           ref="memberChooise"
-          class="helpCaptain"
-          ></x-input>
+          class="helpCaptain"></x-input>
         </group>
         <group class="captain-container" :class="captainShow==false?'captainHide':''">
-          <cell :title="item.nickname" v-for="(item, index) in teamLeaderList" :key="index" @click.native="getNickname(item.nickname)"></cell>
+          <cell 
+          :title="item.nickname" 
+          v-for="(item, index) in teamLeaderList" 
+          :key="index" 
+          @click.native="getNickname(item.nickname)"></cell>
         </group>
 
         <group class="captain-container">
-          <cell :title="item.nickname" v-for="(item, index) in provalUserByList" :key="index" @click.native="getProvalUser(item.nickname)"></cell>
+          <cell 
+          :title="item.nickname" 
+          v-for="(item, index) in provalUserByList" 
+          :key="index" 
+          @click.native="getProvalUser(item.nickname)"></cell>
         </group>
 
-          <group class="captain-container">
-          <cell :title="item.nickname" v-for="(item, index) in MemberUserList" :key="index" @click.native="getMemberUser(item.nickname)"></cell>
+        <group class="captain-container">
+          <cell 
+          :title="item.nickname" 
+          v-for="(item, index) in MemberUserList" 
+          :key="index" 
+          @click.native="getMemberUser(item.nickname)"></cell>
         </group>
 
         <group 
           label-align='left' 
           :title="index>0?'':'请选择对应的产品'" 
           v-for="( item ,index ) in arr"
-          :key="index"
-          >
+          :key="index">
           <popup-picker 
             class="each_part"
             title="项目类产品" 
@@ -78,26 +83,20 @@
             :data="list"
             v-model="item.value"
             :columns="1"
-            show-name
-          >
-          </popup-picker>
-
+            show-name></popup-picker>
           <cell 
             class="each_part"
             title="单价"
            :value="item.value[0]=='无'?'￥'+0:'￥'+item.value[0].split('_')[3] | numberComma"
             value-align="right" 
-            v-if="item.value.length>0"
-          ></cell>
-
+            v-if="item.value.length>0"></cell>
           <x-input 
             title="数量" 
             type="number" 
             text-align="right" 
             placeholder="请输入数量"
             v-if="item.value[0]!='无'"
-            v-model.number="item.qty"
-          ></x-input>
+            v-model.number="item.qty"></x-input>
         </group>
 
         <p class="caution_part" v-if='arr[0].value.length!=0'>
@@ -109,25 +108,20 @@
         </p>
         
         <group class="caution_inputs">
-
           <x-input 
           title="A类产品"
           :value='Aclass | numberComma(3)' 
           @input="Ainput" 
           ref='input1'
           text-align="right" 
-          placeholder="请输入金额"
-          ></x-input>
-
+          placeholder="请输入金额"></x-input>
           <x-input 
           title="B类产品"
           :value='Bclass | numberComma(3)'  
           @input="Binput" 
           ref='input2'
           text-align="right" 
-          placeholder="请输入金额"
-          ></x-input>
-          
+          placeholder="请输入金额"></x-input>
         </group>
 
         <group>
@@ -135,17 +129,15 @@
           title="备注"
           text-align="right" 
           placeholder="非必填 如有需要请填写"
-          v-model="comments"
-          ></x-input>
+          v-model="comments"></x-input>
         </group>
 
     </div>
     <x-button 
         id="count_button" 
         :gradients="btnStatus==true?['#B99763', '#E7D0A2']:['#ddd','#ddd']"
-        @click.native="end"
-        >
-          进入合计
+        @click.native="end">
+        进入合计
     </x-button>
     <confirm></confirm>
       <alert></alert>
@@ -185,16 +177,8 @@ export default {
       alertEnd: false,
       btnStatus: true,
       list: [
-        {
-          name: "无",
-          value: "无",
-          parent: "0"
-        },
-        {
-          name: 0,
-          value: 0,
-          parent: "无"
-        }
+        {name: "无",value: "无",parent: "0"},
+        {name: 0,value: 0,parent: "无"}
       ],
       arr: [{ value: [], qty: "" }],
       Aclass: "",
@@ -250,12 +234,7 @@ export default {
               name: data.tableContent[i]["trans_detail_uncalc.transObjCode"],
               value: data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]+'_'+data.tableContent[i]["trans_detail_uncalc.price"],
               parent: "0"
-            },
-            // {
-            //   name: data.tableContent[i]["trans_detail_uncalc.price"],
-            //   value: data.tableContent[i]["trans_detail_uncalc.price"],
-            //   parent: data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]
-            // }
+            }
           );
         }
       });
@@ -304,8 +283,6 @@ export default {
         return;
       }
 
-      let dept = JSON.parse(localStorage.getItem("ROSE_OPTION")).dept;
-
       localStorage.setItem(
         "HELP_ZONE_INFO",
         JSON.stringify({
@@ -316,24 +293,28 @@ export default {
       );
 
       let governor = this.governor,
-        member = this.member,
-        comments = this.comments;
+          member = this.member,
+          comments = this.comments,
+          HELP_ZONE_INFO = JSON.parse(localStorage.getItem("HELP_ZONE_INFO")),
+          ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
 
+      // 表单提交信息
       let jsonData = {
         listId: "4bda3e47-a088-4749-a988-ebb07cfb00e4",
-        //"listId": "8bf196b3-9be4-4a7e-ade1-c50602320f68",
         referenceId: this.guid(),
         baseinfoExt: {
           id: this.guid(),
-          varchar1: "",
-          varchar2: JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).captain,
-          varchar3: JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).areaValue,
-          varchar4: JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).bank,
-          varchar5: JSON.parse(localStorage.getItem("ROSE_OPTION")).groupName,
-          varchar6: "是",
-          varchar7: governor,
-          varchar8: member,
-          varchar9: comments
+          varchar1: ROSE_OPTION.dept,         //区域(事业部) (业务自带信息)
+          varchar2: HELP_ZONE_INFO.captain,   //支援队长
+          varchar3: HELP_ZONE_INFO.areaValue, //支援地区(省份)
+          varchar4: HELP_ZONE_INFO.bank,      //支援银行
+          varchar5: ROSE_OPTION.groupName,    //部门(业务自带信息)
+          varchar6: "是",                     //区分是否为支援
+          varchar7: governor,                 //省长
+          varchar8: member,                   //常委
+          varchar9: comments,                 //备注
+          varchar10:  ROSE_OPTION.region,     //省份(业务自带信息)
+          varchar11: ROSE_OPTION.bank        //银行(业务自带信息)
         },
         transDetailUncalc: [],
         transCode: "XHXSDD"
