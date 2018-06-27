@@ -174,6 +174,8 @@
             arr.push(res.tableContent[i].unitName);
           }
           data.push(arr);
+        }).catch( c =>{
+          console.log(c)
         });
       },
       plusType() {
@@ -308,6 +310,8 @@
       //基本信息
       spreadService.getBaseInfo().then( res=> {
           that.baseInfo = res;
+      }).catch( c =>{
+        console.log(c)
       });
      //回显
       if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){

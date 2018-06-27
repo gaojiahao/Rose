@@ -170,6 +170,8 @@ export default {
           }
 
         });
+      }).catch(c =>{
+        console.log(c)
       });
     },
     //获取待办
@@ -200,6 +202,8 @@ export default {
           that.TobedoneLoad = false;
         }
         that.scroll.finishPullUp();
+      }).catch( c =>{
+        console.log(c)
       });
     },
     //获取进行中
@@ -230,6 +234,8 @@ export default {
           that.underWayLoad = false ;
         }
         that.scroll.finishPullUp();
+      }).catch( c =>{
+        console.log(c)
       });
     },
     //获取已完成
@@ -260,6 +266,8 @@ export default {
           that.overLoad = false;
         }
         that.scroll.finishPullUp();
+      }).catch( c =>{
+        console.log(c)
       });
     },
     //tab切换

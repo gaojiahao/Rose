@@ -238,6 +238,8 @@ export default {
         }
         that.xp_list = newArr;
         that.Load = false;
+      }).catch( c => {
+        console.log(c)
       })
     }
   },

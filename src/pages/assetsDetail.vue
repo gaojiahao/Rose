@@ -229,6 +229,8 @@
           }
           that.assetsList = newArr;
           that.Load = false;
+        }).catch( c =>{
+          console.log(c)
         })
       }
     },
