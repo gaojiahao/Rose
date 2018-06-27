@@ -128,11 +128,11 @@
 
         await tokenService.getUser().then(data => {
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
-            region: data.homeProvince || '',  //省份地区
-            bank: data.homeBank || '',        //银行
-            dept: data.area || '',            //事业部
+            bank: data.homeBank || '',         //银行
+            region: data.homeProvince || '',   //省份地区
+            dept: data.area || '',             //事业部
+            groupName: data.groupName || '',    //部门
             captain: data.bmName || '',        //队长（暂无）
-            groupName: data.groupName || ''        //常委
           }))
         }).catch(err => {
           this.$vux.alert.show({
