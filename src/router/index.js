@@ -11,6 +11,7 @@ import SpreadDetail from '@/pages/spreadDetail'
 import MeetingDetail from '@/pages/meetingDetail'
 import HouseDetail from '@/pages/houseDetail'
 import AssetsDetail from '@/pages/assetsDetail'
+import Operation from '@/pages/operation'
 
 Vue.use(Router)
 
@@ -28,5 +29,6 @@ export default new Router({
     { path: '/meetingDetail', name: 'MeetingDetail', component: MeetingDetail, meta:'会议' },
     { path: '/houseDetail', name: 'HouseDetail', component: HouseDetail, meta:'房屋' },
     { path: '/assetsDetail', name: 'AssetsDetail', component: AssetsDetail, meta:'固定资产' },
+    { path: '/operation', name: 'Operation', component: Operation, meta:'查看/新增' },
   ]
 })

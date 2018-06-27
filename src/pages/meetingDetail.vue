@@ -1,25 +1,30 @@
 <template>
   <div class="pages">
-    <div v-show="showPage">
-      <h1 class="m_title">
-        会议立项
-      </h1>
-      <div class="m_main">
-        <div class="m_main_part">
-          <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
-            <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"
-                  primary="content"></cell>
-          </group>
-          <group title="费用合计">
-            <cell title="金额合计" :value="totalCost"></cell>
-          </group>
+    <!--<div class="swiper-container"  v-show="showPage">-->
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide form">
+          <h1 class="m_title">
+            会议立项
+          </h1>
+          <div class="m_main">
+            <div class="m_main_part">
+              <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
+                <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"
+                      primary="content"></cell>
+              </group>
+              <group title="费用合计">
+                <cell title="金额合计" :value="totalCost"></cell>
+              </group>
+            </div>
+          </div>
         </div>
+        <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
-      <div class="m_btm vux-1px-t" v-if="canSubmit">
-        <!--<span class="count_part">合计:{{totalCost}}</span>-->
-        <span class="m_button reject" @click="submit(2)">拒绝</span>
-        <span class="m_button" @click="submit(1)">同意</span>
-      </div>
+    </div>
+    <div class="m_btm vux-1px-t" v-if="canSubmit">
+      <span class="m_button reject" @click="submit(2)">拒绝</span>
+      <span class="m_button" @click="submit(1)">同意</span>
     </div>
     <loading :show="showLoading"></loading>
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
@@ -31,6 +36,8 @@
   import createService from './../service/createService'
   import Loading from './components/loading'
   import common from './mixins/common'
+  import Swiper from 'swiper'
+  import FlowDetail from './components/FlowDetail'
 
   export default {
     name: "mettingDetail",
@@ -130,7 +137,8 @@
         formKey: '',
         transCode: '',
         taskId: '',
-        canSubmit: false,
+        canSubmit: false, // 是否允许操作
+        pageSwiper: null,
       }
     },
     computed: {
@@ -140,7 +148,7 @@
       },
     },
     mixins: [common],
-    components: {Group, Cell, Loading, Toast},
+    components: {Group, Cell, Loading, Toast,FlowDetail},
     methods: {
       // TODO 获取表单详情
       getFormData() {
@@ -198,12 +206,21 @@
       this.taskId = query.taskId;
       this.canSubmit = query.canSubmit === '1';
       this.getFormData();
+      this.$nextTick(() => {
+        this.pageSwiper = new Swiper ('.swiper-container', {});
+      })
     }
   }
 </script>
 
 <style lang="scss">
   .pages {
+    .swiper-container {
+      height: 100%;
+      .form {
+        overflow: auto;
+      }
+    }
     .m_title { //标题
       width: 100%;
       height: 120px;

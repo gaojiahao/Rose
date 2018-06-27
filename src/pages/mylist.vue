@@ -329,12 +329,14 @@ export default {
         'e21f5960-7f7a-4e8b-9faf-bd10595ff768': '/houseDetail',
         '1034f15e-3f90-4e9c-a401-0955db09e179': '/assetsDetail',
       };
-      console.log(item)
-      if(assignee) {
-        canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1': '0';
-      }
-      if(assigneeId) {
-        canSubmit = `${assigneeId}` === `${this.currentUser.userId}` ? '1': '0';
+      // 待审批页签才允许审批
+      if (!this.whichIndex) {
+        if (assignee) {
+          canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1' : '0';
+        }
+        if (assigneeId) {
+          canSubmit = `${assigneeId}` === `${this.currentUser.userId}` ? '1' : '0';
+        }
       }
       this.$router.push({
         path: map[formKey],

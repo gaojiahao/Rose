@@ -142,6 +142,13 @@ let createService = {
         jsonData: JSON.stringify(data)
       }
     });
+  },
+  // TODO 查找工作流
+  getWorkFlow(data = {}){
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/list/getHistoryTaskByTransCode',
+      data: data
+    });
   }
 };
 

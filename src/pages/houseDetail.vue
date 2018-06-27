@@ -1,22 +1,26 @@
 <template>
   <div class="pages">
-    <div v-show="showPage">
-      <h1 class="h_title">
-        房屋立项
-      </h1>
-      <div class="h_main">
-        <div class="h_main_part">
-          <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
-            <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"
-                  primary="content"></cell>
-          </group>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide form">
+          <h1 class="h_title">
+            房屋立项
+          </h1>
+          <div class="h_main">
+            <div class="h_main_part">
+              <group :title="lItem.title" v-for="(lItem,lIndex) in listData" :key="lIndex">
+                <cell v-for="(item, index) in lItem.items" :title="item.title" :value="item.value" :key="index"
+                      primary="content"></cell>
+              </group>
+            </div>
+          </div>
         </div>
+        <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
-      <div class="h_btm vux-1px-t" v-if="canSubmit">
-        <!--<span class="count_part">合计:{{totalCost}}</span>-->
-        <span class="h_button reject" @click="submit(2)">拒绝</span>
-        <span class="h_button" @click="submit(1)">同意</span>
-      </div>
+    </div>
+    <div class="h_btm vux-1px-t" v-if="canSubmit">
+      <span class="h_button reject" @click="submit(2)">拒绝</span>
+      <span class="h_button" @click="submit(1)">同意</span>
     </div>
     <loading :show="showLoading"></loading>
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
@@ -28,13 +32,16 @@
   import createService from './../service/createService'
   import Loading from './components/loading'
   import common from './mixins/common'
+  import Swiper from 'swiper'
+  import FlowDetail from './components/FlowDetail'
 
   export default {
     components: {
       Cell,
       Group,
       Toast,
-      Loading
+      Loading,
+      FlowDetail,
     },
     data() {
       return {
@@ -119,6 +126,7 @@
         transCode: '',
         taskId: '',
         canSubmit: false,
+        pageSwiper: null,
       }
     },
     computed: {
@@ -185,11 +193,23 @@
       this.taskId = query.taskId;
       this.canSubmit = query.canSubmit === '1';
       this.getFormData();
+      this.$nextTick(() => {
+        this.pageSwiper = new Swiper('.swiper-container', {});
+      })
     }
   }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
+  .pages {
+    .swiper-container {
+      height: 100%;
+      .form {
+        overflow: auto;
+      }
+    }
+  }
+
   .h_title { //标题
     width: 100%;
     height: 120px;
