@@ -30,7 +30,7 @@
                             <div class="e_main">
                                 <span class="e_code">
                                     {{val.businessKey}}
-                                    <span class="e_crtname">{{val.assigneeName}}</span>
+                                    <span class="e_crtname">{{val.crtName}}</span>
                                 </span>
                                 <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
                             </div>
