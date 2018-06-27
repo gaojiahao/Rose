@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner } from 'vux'
+  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner, Toast } from 'vux'
   import spreadService from "../service/spreadService";
   import createService from "../service/createService";
   export default {
@@ -111,7 +111,8 @@
       XInput,
       PopupPicker,
       XTextarea,
-      Spinner 
+      Spinner,
+      Toast 
     },
     filters:{
       numberComma 

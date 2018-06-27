@@ -58,21 +58,21 @@
                 title="费用所属事业部"
                 :data="item.bulist"
                 v-model="item.buOn"
-                @on-change="getSelect(item.deptlist,'N2',item.buOn[0],111,111)"
+                @on-hide="getSelect(item.deptlist,'N2',item.buOn[0],111,111,1,index,$event)"
             ></popup-picker>
             <popup-picker
                 title="费用所属部门"
                 :data="item.deptlist"
                 v-model="item.deptOn"
                 :disabled="item.buOn.length==0?true:false"
-                @on-change="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111)"
+                @on-hide="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111,2,index,$event)"
             ></popup-picker>
             <popup-picker
                 title="核算归属省份"
                 :data="item.provlist"
                 v-model="item.provOn"
                 :disabled="item.deptOn.length==0?true:false"
-                @on-change="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0])"
+                @on-hide="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0],3,index,$event)"
             ></popup-picker>
             <popup-picker
                 title="费用所属银行"
@@ -140,7 +140,21 @@
     },
     methods: {
       //获取所属事业部 | 部门 | 省份 | 银行
-      getSelect(data, N, name1, name2, name3) {
+      getSelect(data, N, name1, name2, name3,num ,index ,e) {
+        if(e === true){
+          if( num=='1'){
+          this.assetsList[index].deptOn = [];
+          this.assetsList[index].provOn = [];
+          this.assetsList[index].bankOn = [];
+          }else if(num=='2'){
+            this.assetsList[index].provOn = [];
+            this.assetsList[index].bankOn = [];
+          }else if(num=='3'){
+            this.assetsList[index].bankOn = [];
+          }
+        }else {
+          return;
+        }
         data.length = 0;
         let jsonData = {
             _dc: Date.parse(new Date()),
@@ -185,7 +199,7 @@
           explain: "",   //说明
           status: false
       });
-      this.getSelect(this.assetsList[this.assetsList.length-1].bulist,'N1',111,111,111);
+      this.getSelect(this.assetsList[this.assetsList.length-1].bulist,'N1',111,111,111,0,this.assetsList.length-1,true);
     },
     //删除一项
     delateOne(){
@@ -326,15 +340,15 @@
       }
       for(let j = 0 ; j<that.assetsList.length ;j++){
         let xp_item = that.assetsList[j];
-        that.getSelect(xp_item.bulist,'N1',111,111,111);
+        that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
         if(xp_item.deptOn.length != 0){
-          that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111);
+          that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
         }
         if(xp_item.provOn.length != 0){
-          that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111);
+          that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
         }
         if(xp_item.bankOn.length != 0){
-          that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0]);
+          that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
         }
       }
     },
