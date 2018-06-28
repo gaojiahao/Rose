@@ -202,6 +202,10 @@ export default {
           }
           that.TobedoneLoad = false;
         }
+        that.$nextTick(function(){
+          that.scroll.refresh();
+        })
+        that.scroll.finishPullUp();
       }).catch( c =>{
         console.log(c)
       });
@@ -233,6 +237,9 @@ export default {
           }
           that.underWayLoad = false ;
         }
+        that.$nextTick(function(){
+          that.scroll.refresh();
+        })
         that.scroll.finishPullUp();
       }).catch( c =>{
         console.log(c)
@@ -265,6 +272,9 @@ export default {
           }
           that.overLoad = false;
         }
+        that.$nextTick(function(){
+          that.scroll.refresh();
+        })
         that.scroll.finishPullUp();
       }).catch( c =>{
         console.log(c)
@@ -279,7 +289,6 @@ export default {
       this.dbnothingMore = false;
       this.underWayMore = false;
       this.overMore = false;
-      this.scroll.pullUpLoad();
       if (val == 0) {
         this.TobedoneList = [];
         this.TobedoneLoad = true;
@@ -369,7 +378,6 @@ export default {
     this.underWay();
     this.over();
     this.scrollOn();
-    this.scroll.pullUpLoad();
   },
 };
 </script>
