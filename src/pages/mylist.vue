@@ -14,18 +14,18 @@
             </div>
         </div>
         <tab bar-active-color="#5077AA" active-color="#5077AA" :line-width=1 class="tabSelect">
-            <tab-item :selected="whichIndex==0" @on-item-click="selStatus">待审批</tab-item>
+            <tab-item :selected="whichIndex==0" @on-item-click="selStatus">待处理</tab-item>
             <tab-item :selected="whichIndex==1" @on-item-click="selStatus">进行中</tab-item>
             <tab-item :selected="whichIndex==2" @on-item-click="selStatus">已完成</tab-item>
         </tab>
         <div class="m_list" style="height:auto;">
             <div  class="wrapper" ref="wrapper">
                 <div class="content">
-                     <!-- 待审批 -->
+                     <!-- 待处理 -->
                     <div v-if="whichIndex === 0">
                         <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
-                                <span class="e_status" :class="{wait_c:whichIndex===0}">待审批</span><span class="e_name">{{val.processName}}</span>
+                                <span class="e_status" :class="{wait_c:whichIndex===0}">待处理</span><span class="e_name">{{val.processName}}</span>
                             </div>
                             <div class="e_main">
                                 <span class="e_code">
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="spinner_container" v-if="TobedoneLoad">
-                            <spinner type="android" size="40px"></spinner>
+                            <loading :show="true"></loading>
                         </div>
                         <div class="dbnothing" v-if="dbnothing">
                             <load-more tip="正在加载"></load-more>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         <div class="spinner_container" v-if="underWayLoad">
-                            <spinner type="android" size="40px"></spinner>
+                            <loading :show="true"></loading>
                         </div>
                         <div class="underWaynothing" v-if="underWaynothing">
                             <load-more tip="正在加载"></load-more>
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="spinner_container" v-if="overLoad">
-                            <spinner type="android" size="40px"></spinner>
+                            <loading :show="true"></loading>
                         </div>
                         <div class="overnothing" v-if="overnothing">
                             <load-more tip="正在加载"></load-more>
@@ -100,16 +100,17 @@
 </template>
 
 <script>
-import { Tab, TabItem, Spinner, LoadMore } from "vux";
+import { Tab, TabItem, LoadMore } from "vux";
 import mylistService from "../service/mylistService.js";
 import createService from "./../service/createService.js";
 import Bscroll from "better-scroll";
+import Loading from './components/loading'
 export default {
   components: {
     Tab,
     TabItem,
-    Spinner,
-    LoadMore
+    LoadMore,
+    Loading
   },
   data() {
     return {
@@ -333,7 +334,7 @@ export default {
         '1034f15e-3f90-4e9c-a401-0955db09e179': '/assetsDetail',
         '1ab51ee6-2836-4728-b0a5-9fa5c8902c31': '/assetsDetail',
       };
-      // 待审批页签才允许审批
+      // 待处理页签才允许审批
       if (!this.whichIndex) {
         map['a9238c91-36f3-4b09-9705-9d50870b3c46'] = 'spread';
         map['d189cc14-3a77-4e81-a220-55c771a2bdff'] = 'meeting';
@@ -484,7 +485,6 @@ export default {
   }
 }
 .spinner_container {
-  text-align: center;
   margin-top: 50vw;
 }
 .wrapper {
@@ -495,8 +495,5 @@ export default {
 .underWaynothing,
 .overnothing {
   text-align: center;
-}
-.vux-spinner-android {
-  stroke: #5077aa;
 }
 </style>

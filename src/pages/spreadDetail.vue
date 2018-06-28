@@ -85,7 +85,7 @@
       </div>
     </div>
     <div class="spinner" v-if="Load">
-        <spinner type="android" size="40px"></spinner>
+        <loading :show="true"></loading>
     </div>
     <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
       <span class="s_button" @click="end(0)">拒绝</span>
@@ -95,12 +95,13 @@
 </template>
 
 <script>
-import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner ,Toast } from "vux";
+import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma ,Toast } from "vux";
 import spreadService from "../service/spreadService";
 import createService from "../service/createService";
 import { setTimeout } from 'timers';
 import Swiper from 'swiper'
 import FlowDetail from './components/FlowDetail'
+import Loading from './components/loading'
 export default {
   components: {
     Cell,
@@ -108,9 +109,9 @@ export default {
     XInput,
     PopupPicker,
     XTextarea,
-    Spinner,
     Toast,
-    FlowDetail
+    FlowDetail,
+    Loading
   },
   filters: {
     numberComma
@@ -158,7 +159,7 @@ export default {
   },
   methods: {
     //审批弹窗
-    endToast(taskId,data){
+    endToast(taskId,data,status){
       let that = this;
       createService.examineTask(taskId,data).then( res=> {
         if(res.success){
@@ -169,7 +170,17 @@ export default {
             onShow () {
               setTimeout(function(){
                 that.$vux.toast.hide();
-                that.$router.go(-1);
+                if(status==0){
+                  that.$router.replace({
+                    path:'/spread',
+                    query: {
+                      list: that.$route.query.list,
+                      formKey:that.$route.query.formKey,
+                      transCode:that.$route.query.transCode,
+                    }});
+                }else if(status==1){
+                  that.$router.go(-1);
+                }
               },800)
             },
           });
@@ -196,11 +207,11 @@ export default {
       //拒绝
       if( num == 0 ){
         data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
-        that.endToast(taskId,data);
+        that.endToast(taskId,data,0);
       }else if( num == 1 ){
         //同意
         data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
-        that.endToast(taskId,data);
+        that.endToast(taskId,data,1);
       }
     }
   },
@@ -368,13 +379,9 @@ export default {
 .spinner{
   position: fixed;
   width: 100%;
-  text-align: center;
   top: 50%;
   left: 0;
   transform: translateY(-50%);
   z-index: 111;
-  .vux-spinner-android{
-    stroke:#5077aa;
-  }
 }
 </style>

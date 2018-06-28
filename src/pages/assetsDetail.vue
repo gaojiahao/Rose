@@ -98,7 +98,7 @@
     </div>
     
     <div class="spinner" v-if="Load">
-        <spinner type="android" size="40px"></spinner>
+        <loading :show="true"></loading>
      </div>
      <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
       <span class="s_button" @click="end(0)">拒绝</span>
@@ -109,11 +109,12 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Spinner, Toast } from 'vux'
+  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Toast } from 'vux'
   import spreadService from "../service/spreadService";
   import createService from "../service/createService";
   import Swiper from 'swiper'
   import FlowDetail from './components/FlowDetail'
+  import Loading from './components/loading'
   export default {
     components: {
       Cell,
@@ -121,9 +122,9 @@
       XInput,
       PopupPicker,
       XTextarea,
-      Spinner,
       Toast,
-      FlowDetail 
+      FlowDetail,
+      Loading 
     },
     filters:{
       numberComma 
@@ -386,8 +387,5 @@
     left: 0;
     transform: translateY(-50%);
     z-index: 111;
-    .vux-spinner-android{
-      stroke:#5077aa;
-    }
   }
 </style>

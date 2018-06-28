@@ -303,22 +303,9 @@ export default {
         position: "middle",
         time: "900"
       });
-    }
-  },
-  created(){
-
-  },
-  mounted(){
-    let that = this;
-    //基本信息
-    spreadService.getBaseInfo().then( res=> {
-        that.baseInfo = res;
-    }).catch( c =>{
-      console.log(c)
-    });
-    //回显
-    if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
-      let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet,
+    },
+    cacheData(dataSet){
+      let that = this,
       sessionArr=[];
       for(let i = 0 ; i<dataSet.length ; i++ ){
         sessionArr.push({
@@ -354,19 +341,59 @@ export default {
       }
       that.xp_list = sessionArr;
     }
-    for(let j = 0 ; j<that.xp_list.length ;j++){
-      let xp_item = that.xp_list[j];
-      that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
-      if(xp_item.deptOn.length != 0){
-        that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
-      }
-      if(xp_item.provOn.length != 0){
-        that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
-      }
-      if(xp_item.bankOn.length != 0){
-        that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
-      }
+  },
+  created(){
+
+  },
+  mounted(){
+    let that = this;
+    //基本信息
+    spreadService.getBaseInfo().then( res=> {
+        that.baseInfo = res;
+    }).catch( c =>{
+      console.log(c)
+    });
+    //回显
+    if(that.$route.query.formKey&&that.$route.query.transCode){
+      createService.getFormData({
+          formKey: that.$route.query.formKey,
+          transCode: that.$route.query.transCode,
+        }).then(res =>{
+           that.cacheData(res.formData.order.dataSet);
+           for(let j = 0 ; j<that.xp_list.length ;j++){
+              let xp_item = that.xp_list[j];
+              that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
+              if(xp_item.deptOn.length != 0){
+                that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
+              }
+              if(xp_item.provOn.length != 0){
+                that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
+              }
+              if(xp_item.bankOn.length != 0){
+                that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
+              }
+            }
+        }).catch(c =>{
+          console.log(c)
+        })
+    }else if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
+      let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet;
+      that.cacheData(dataSet);
+      for(let j = 0 ; j<that.xp_list.length ;j++){
+          let xp_item = that.xp_list[j];
+          that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
+          if(xp_item.deptOn.length != 0){
+            that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
+          }
+          if(xp_item.provOn.length != 0){
+            that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
+          }
+          if(xp_item.bankOn.length != 0){
+            that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
+          }
+        }
     }
+    
   },
   computed: {
     //总价
