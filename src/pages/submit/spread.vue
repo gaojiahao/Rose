@@ -2,7 +2,6 @@
   <div class="pages">
     <h1 class="s_title">
       市场宣传
-      <span class="s_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon></span>
     </h1>
     <div class="s_main">
       <div class="s_main_part" v-for="(item, index) in xp_list" :key='index'>
@@ -75,7 +74,7 @@
             <x-textarea title="说明" :max="100" v-model="item.explain"></x-textarea>
         </group>
       </div>
-      <p class="note_tx" v-if="xp_list.length > 0 ">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="xp_list.length>1" @click="delateOne">删除</span></p>
+      <p class="note_tx" v-if="xp_list.length > 0 && formData == ''">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="xp_list.length>1" @click="delateOne">删除</span></p>
     </div>
     <div class="s_btm vux-1px-t">
       <span class="count_part">合计:￥{{total | numberComma}}</span>
@@ -139,15 +138,6 @@ export default {
     };
   },
   methods: {
-    goMylist() {
-      //我的提交
-      this.$router.push({
-        path: "/myList",
-        query: {
-          listId: this.$route.query.list
-        }
-      });
-    },
     //获取所属事业部 | 部门 | 省份 | 银行
     getSelect(data, N, name1, name2, name3,num,index,e) {
       if(e === true){
@@ -229,6 +219,7 @@ export default {
       this.xp_list.pop();
     },
     goflow() {
+      
       let jsonData={
             "handlerName": this.baseInfo.nickname, //经办人
             "handlerAreaName": this.baseInfo.area,  //所属区域
@@ -249,6 +240,14 @@ export default {
                 "dataSet": []
             }
       };
+      if (this.formData!=''){
+        jsonData.biId = this.formData.biId;
+        jsonData.biReferenceId = this.formData.biReferenceId;
+        jsonData.transType = this.formData.transType;
+        jsonData.modTime = this.formData.modTime;
+        jsonData.modifer = this.formData.modifer;
+        jsonData.xgz = this.formData.xgz;
+      }
       for (let i = 0; i < this.xp_list.length; i++) {
         let item = this.xp_list[i];
         if (item.name == "") {
@@ -291,14 +290,13 @@ export default {
             "agoraCheckProvince": item.provOn[0],//核算归属省份
             "agoraCostBank": item.bankOn[0],//费用所属银行
             "comment": item.explain, //说明
-            "fgCode": "fgwmiw" //组合字段组编码，固定值为fgwmiw
+            "fgCode": "fgwmiw", //组合字段组编码，固定值为fgwmiw
         })
+        if(this.formData !=''){
+          jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[i].uncalcID
+        }
       }
-      if (this.formData!=''){
-        sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(this.formData));
-      }else {
-        sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData));
-      }
+      sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData));
       let queryData = {};
       if (this.$route.query.taskId){
         queryData = {list: this.$route.query.list,taskId: this.$route.query.taskId}
@@ -424,7 +422,7 @@ export default {
 .s_title {
   //标题
   width: 100%;
-  height: 120px;
+  height: 80px;
   line-height: 80px;
   font-size: 34px;
   text-align: center;
@@ -452,7 +450,7 @@ export default {
   width: 90%;
   max-width: 600px;
   position: absolute;
-  top: 90px;
+  top: 50px;
   left: 50%;
   transform: translate(-50%, 0);
   border-radius: 4px;

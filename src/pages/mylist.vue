@@ -195,6 +195,7 @@ export default {
           that.TobedoneLoad = false;
           that.dbnothingMore = true;
           that.dbnothing = false;
+          that.scroll.closePullUp();
           return;
         } else {
           for (let i = 0; i < res.tableContent.length; i++) {
@@ -230,6 +231,7 @@ export default {
           that.underWayLoad = false ;
           that.underWayMore = true;
           that.underWaynothing = false;
+          that.scroll.closePullUp();
           return;
         } else {
           for (let i = 0; i < res.tableContent.length; i++) {
@@ -265,6 +267,7 @@ export default {
           that.overLoad = false;
           that.overMore = true;
           that.overnothing = false;
+          that.scroll.closePullUp();
           return;
         } else {
           for (let i = 0; i < res.tableContent.length; i++) {
@@ -289,6 +292,7 @@ export default {
       this.dbnothingMore = false;
       this.underWayMore = false;
       this.overMore = false;
+      sessionStorage.setItem('MYLIST_TAB',val);
       if (val == 0) {
         this.TobedoneList = [];
         this.TobedoneLoad = true;
@@ -378,6 +382,9 @@ export default {
     this.underWay();
     this.over();
     this.scrollOn();
+    if(sessionStorage.getItem('MYLIST_TAB')){
+      this.whichIndex = Number(sessionStorage.getItem('MYLIST_TAB'));
+    }
   },
 };
 </script>

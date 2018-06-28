@@ -78,6 +78,12 @@
       }).catch(e => {
         this.showToastText(e.message);
       })*/
+    },
+    mounted() {
+      //清除mylist的选项卡状态
+      if(sessionStorage.getItem('MYLIST_TAB')){
+          sessionStorage.removeItem('MYLIST_TAB')
+      }
     }
   }
 </script>

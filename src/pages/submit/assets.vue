@@ -2,7 +2,6 @@
   <div class="pages">
     <h1 class="a_title">
       固定资产
-      <span class="a_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon></span>
     </h1>
     <div class="a_main">
       <div class="a_main_part" v-for="(item,index) in assetsList" :key="index">
@@ -85,7 +84,7 @@
             <x-textarea title="说明" v-model="item.explain" :max="100"></x-textarea>
         </group>
       </div>
-      <p class="note_tx" v-if="assetsList.length > 0">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="assetsList.length>1" @click="delateOne">删除</span></p>
+      <p class="note_tx" v-if="assetsList.length > 0 && formData == ''">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="assetsList.length>1" @click="delateOne">删除</span></p>
     </div>
     <div class="a_btm vux-1px-t">
       <span class="count_part">合计:￥{{total | numberComma}}</span>
@@ -208,15 +207,6 @@
     delateOne(){
       this.assetsList.pop();
     },
-      goMylist() {
-        //我的提交
-        this.$router.push({
-          path: '/myList',
-          query: {
-            listId: this.$route.query.list
-          }
-        })
-      },
       goflow() {
         let jsonData={
               "handlerName": this.baseInfo.nickname, //经办人
@@ -237,6 +227,14 @@
               "order" :{
                   "dataSet": []
               }
+      }
+      if (this.formData!=''){
+        jsonData.biId = this.formData.biId;
+        jsonData.biReferenceId = this.formData.biReferenceId;
+        jsonData.transType = this.formData.transType;
+        jsonData.modTime = this.formData.modTime;
+        jsonData.modifer = this.formData.modifer;
+        jsonData.xgz = this.formData.xgz;
       }
       for (let i = 0; i < this.assetsList.length; i++) {
         let item = this.assetsList[i];
@@ -290,12 +288,11 @@
             "comment": item.explain,               //说明
             "fgCode": "fgwmiw",                    //组合字段组编码，固定值为fgwmiw
         })
+        if(this.formData !=''){
+            jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[i].uncalcID
+        }
       }
-      if (this.formData!=''){
-        sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(this.formData));
-      }else {
-        sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData));
-      }
+      sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData));
       let queryData = {};
       if (this.$route.query.taskId){
         queryData = {list: this.$route.query.list,taskId: this.$route.query.taskId}
@@ -404,7 +401,7 @@
 <style lang='scss' scoped>
   .a_title { //标题
     width: 100%;
-    height: 120px;
+    height: 80px;
     line-height: 80px;
     font-size: 34px;
     text-align: center;
@@ -432,7 +429,7 @@
     width: 90%;
     max-width: 600px;
     position: absolute;
-    top: 90px;
+    top: 50px;
     left: 50%;
     transform: translate(-50%, 0);
     border-radius: 4px;
