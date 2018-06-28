@@ -195,6 +195,7 @@ export default {
           that.TobedoneLoad = false;
           that.dbnothingMore = true;
           that.dbnothing = false;
+          that.scroll.closePullUp();
           return;
         } else {
           for (let i = 0; i < res.tableContent.length; i++) {
@@ -230,6 +231,7 @@ export default {
           that.underWayLoad = false ;
           that.underWayMore = true;
           that.underWaynothing = false;
+          that.scroll.closePullUp();
           return;
         } else {
           for (let i = 0; i < res.tableContent.length; i++) {
@@ -265,6 +267,7 @@ export default {
           that.overLoad = false;
           that.overMore = true;
           that.overnothing = false;
+          that.scroll.closePullUp();
           return;
         } else {
           for (let i = 0; i < res.tableContent.length; i++) {
