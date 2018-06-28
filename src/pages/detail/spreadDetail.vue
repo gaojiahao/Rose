@@ -123,7 +123,7 @@ export default {
   data() {
     return {
       showConfirm: false, // 是否展示原因弹窗
-      result: 1,
+      result: 0,
       Load:true,
       listId:'',
       transCode: this.$route.query.transCode,
@@ -202,21 +202,33 @@ export default {
       data = {};
       //拒绝
       if( num == 0 ){
-        //this.showConfirm = true;
-        data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
-        that.endToast(taskId,data);
+        this.result = 0;
+        this.showConfirm = true;
+        //data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
+        //that.endToast(taskId,data);
       }else if( num == 1 ){
         //同意
-        //this.showConfirm = true;
-        data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
-        that.endToast(taskId,data);
+        this.result = 1;
+        this.showConfirm = true;
+        //data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
+        //that.endToast(taskId,data);
       }
     },
     //确定
     confirm(reason) {
-      if (this.result === 2 && !reason) {
-        this.showToastText('拒绝原因不能为空');
+      let that = this,
+      taskId = that.$route.query.taskId,
+      transCode = that.$route.query.transCode,
+      data = {"result": this.result, "transCode": transCode, "comment": reason};
+      if (this.result === 0 && !reason) {
+        this.$vux.toast.show({
+          text: '拒绝理由不能为空',
+          type:'text',
+          position: 'middle'
+        });
         return
+      }else{
+        that.endToast(taskId,data);
       }
     },
   },

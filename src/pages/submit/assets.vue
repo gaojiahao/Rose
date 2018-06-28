@@ -84,7 +84,7 @@
             <x-textarea title="说明" v-model="item.explain" :max="100"></x-textarea>
         </group>
       </div>
-      <p class="note_tx" v-if="assetsList.length > 0">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="assetsList.length>1" @click="delateOne">删除</span></p>
+      <p class="note_tx" v-if="assetsList.length > 0 && formData ==''">添加另一个 <span class="plus_tx" @click="plusType">类型</span> ? <span class="plus_delate" v-if="assetsList.length>1" @click="delateOne">删除</span></p>
     </div>
     <div class="a_btm vux-1px-t">
       <span class="count_part">合计:￥{{total | numberComma}}</span>

@@ -100,6 +100,8 @@
     <div class="spinner" v-if="Load">
         <loading :show="true"></loading>
      </div>
+     <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
+     @on-confirm="confirm"></task-confirm>
      <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
       <span class="s_button" @click="end(0)">拒绝</span>
       <span class="s_button" @click="end(1)">同意</span>
@@ -115,6 +117,7 @@
   import Swiper from 'swiper'
   import FlowDetail from './../components/FlowDetail'
   import Loading from './../components/loading'
+  import TaskConfirm from './../components/TaskConfirm'
   export default {
     components: {
       Cell,
@@ -124,13 +127,16 @@
       XTextarea,
       Toast,
       FlowDetail,
-      Loading
+      Loading,
+      TaskConfirm
     },
     filters:{
       numberComma
     },
     data() {
       return {
+        showConfirm: false, // 是否展示原因弹窗
+        result: 0,
         Load: true,
         transCode: this.$route.query.transCode,
         canSubmit: this.$route.query.canSubmit,
@@ -199,14 +205,35 @@
         data = {};
         //拒绝
         if( num == 0 ){
-          data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
-          that.endToast(taskId,data);
+          this.result = 0;
+          this.showConfirm = true;
+          // data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
+          // that.endToast(taskId,data);
         }else if( num == 1 ){
           //同意
-          data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
+          this.result = 1;
+          this.showConfirm = true;
+          // data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
+          // that.endToast(taskId,data);
+        }
+      },
+      //确定
+      confirm(reason) {
+        let that = this,
+        taskId = that.$route.query.taskId,
+        transCode = that.$route.query.transCode,
+        data = {"result": this.result, "transCode": transCode, "comment": reason};
+        if (this.result === 0 && !reason) {
+          this.$vux.toast.show({
+            text: '拒绝理由不能为空',
+            type:'text',
+            position: 'middle'
+          });
+          return
+        }else{
           that.endToast(taskId,data);
         }
-      }
+      },
     },
     created(){
       this.$nextTick(() => {
