@@ -28,21 +28,13 @@
 </template>
 
 <script>
-  import {Cell, Group, XTextarea, numberComma, Toast} from 'vux'
+  import {Cell, Group, numberComma} from 'vux'
   import createService from './../service/createService'
-  import Loading from './components/loading'
   import common from './mixins/common'
   import Swiper from 'swiper'
   import FlowDetail from './components/FlowDetail'
 
   export default {
-    components: {
-      Cell,
-      Group,
-      Toast,
-      Loading,
-      FlowDetail,
-    },
     data() {
       return {
         formData: {},
@@ -136,6 +128,11 @@
       }
     },
     mixins: [common],
+    components: {
+      Cell,
+      Group,
+      FlowDetail,
+    },
     methods: {
       // TODO 获取表单详情
       getFormData() {

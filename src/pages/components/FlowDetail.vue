@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import {Flow, Cell, Group, XInput, FlowState, FlowLine} from "vux";
+  import {Flow, Cell, Group, FlowState, FlowLine} from "vux";
   import createService from './../../service/createService'
 
   export default {
@@ -73,7 +73,6 @@
       Flow,
       Cell,
       Group,
-      XInput,
       FlowLine,
       FlowState,
     },

@@ -32,9 +32,8 @@
 </template>
 
 <script>
-  import {Group, Cell, Toast, numberComma} from 'vux'
+  import {Group, Cell, numberComma} from 'vux'
   import createService from './../service/createService'
-  import Loading from './components/loading'
   import common from './mixins/common'
   import Swiper from 'swiper'
   import FlowDetail from './components/FlowDetail'
@@ -148,7 +147,11 @@
       },
     },
     mixins: [common],
-    components: {Group, Cell, Loading, Toast, FlowDetail},
+    components: {
+      Group,
+      Cell,
+      FlowDetail
+    },
     methods: {
       // TODO 获取表单详情
       getFormData() {

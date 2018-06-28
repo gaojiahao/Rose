@@ -30,9 +30,8 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma, Toast} from 'vux'
+  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma} from 'vux'
   import CascadePickers from './components/CascadePickers'
-  import Loading from './components/loading'
   import common from './mixins/common'
 
   export default {
@@ -43,8 +42,6 @@
       Datetime,
       PopupPicker,
       CascadePickers,
-      Toast,
-      Loading,
     },
     data() {
       return {

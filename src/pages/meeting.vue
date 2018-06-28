@@ -38,8 +38,7 @@
 
 <script>
   import createService from './../service/createService'
-  import {Cell, Group, XInput, Datetime, XTextarea, PopupPicker, Toast, numberPad, numberComma} from 'vux'
-  import Loading from './components/loading'
+  import {Cell, Group, XInput, Datetime, XTextarea, PopupPicker, numberComma} from 'vux'
   import CascadePickers from './components/CascadePickers'
   import common from './mixins/common'
 
@@ -49,10 +48,8 @@
       Group,
       XInput,
       Datetime,
-      Loading,
       XTextarea,
       PopupPicker,
-      Toast,
       CascadePickers
     },
     data() {

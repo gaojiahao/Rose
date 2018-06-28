@@ -42,9 +42,8 @@
 </template>
 
 <script>
-  import {Flow, Cell, Group, XInput, FlowState, FlowLine, numberPad, Toast} from "vux";
+  import {Flow, Cell, Group, XInput, FlowState, FlowLine, numberPad} from "vux";
   import createService from './../service/createService'
-  import Loading from './components/loading'
   import common from './mixins/common'
 
   export default {
@@ -55,8 +54,6 @@
       XInput,
       FlowLine,
       FlowState,
-      Loading,
-      Toast,
     },
     data() {
       return {
@@ -279,7 +276,8 @@
             this.showToastText('提交成功');
             sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
-              this.$router.push('/')
+              // this.$router.push('/');
+              this.$router.go(-2);
             }, 1000)
           } else {
             this.showToastText('提交失败');

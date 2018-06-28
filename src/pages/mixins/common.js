@@ -1,4 +1,5 @@
-import {numberPad} from 'vux'
+import {Toast, numberPad} from 'vux'
+import Loading from './../components/loading'
 
 export default {
   data() {
@@ -8,6 +9,7 @@ export default {
       showLoading: false, // 是否展示loading
     }
   },
+  components: {Toast, Loading},
   methods: {
     // TODO 显示错误提示
     showToastText(test = '') {
