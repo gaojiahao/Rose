@@ -2,7 +2,6 @@
   <div class="pages">
     <h1 class="a_title">
       固定资产
-      <span class="a_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon></span>
     </h1>
     <div class="a_main">
       <div class="a_main_part" v-for="(item,index) in assetsList" :key="index">
@@ -208,15 +207,6 @@
     delateOne(){
       this.assetsList.pop();
     },
-      goMylist() {
-        //我的提交
-        this.$router.push({
-          path: '/myList',
-          query: {
-            listId: this.$route.query.list
-          }
-        })
-      },
       goflow() {
         let jsonData={
               "handlerName": this.baseInfo.nickname, //经办人
@@ -404,7 +394,7 @@
 <style lang='scss' scoped>
   .a_title { //标题
     width: 100%;
-    height: 120px;
+    height: 80px;
     line-height: 80px;
     font-size: 34px;
     text-align: center;
@@ -432,7 +422,7 @@
     width: 90%;
     max-width: 600px;
     position: absolute;
-    top: 90px;
+    top: 50px;
     left: 50%;
     transform: translate(-50%, 0);
     border-radius: 4px;

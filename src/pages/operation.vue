@@ -75,6 +75,12 @@
         console.log(data)
         let {tableContent = []} = data;
       })*/
+    },
+    mounted() {
+      //清除mylist的选项卡状态
+      if(sessionStorage.getItem('MYLIST_TAB')){
+          sessionStorage.removeItem('MYLIST_TAB')
+      }
     }
   }
 </script>

@@ -289,6 +289,7 @@ export default {
       this.dbnothingMore = false;
       this.underWayMore = false;
       this.overMore = false;
+      sessionStorage.setItem('MYLIST_TAB',val);
       if (val == 0) {
         this.TobedoneList = [];
         this.TobedoneLoad = true;
@@ -378,6 +379,9 @@ export default {
     this.underWay();
     this.over();
     this.scrollOn();
+    if(sessionStorage.getItem('MYLIST_TAB')){
+      this.whichIndex = Number(sessionStorage.getItem('MYLIST_TAB'));
+    }
   },
 };
 </script>
