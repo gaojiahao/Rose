@@ -87,6 +87,8 @@
     <div class="spinner" v-if="Load">
         <loading :show="true"></loading>
     </div>
+    <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
+     @on-confirm="confirm"></task-confirm>
     <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
       <span class="s_button" @click="end(0)">拒绝</span>
       <span class="s_button" @click="end(1)">同意</span>
@@ -102,6 +104,7 @@ import { setTimeout } from 'timers';
 import Swiper from 'swiper'
 import FlowDetail from './../components/FlowDetail'
 import Loading from './../components/loading'
+import TaskConfirm from './../components/TaskConfirm'
 export default {
   components: {
     Cell,
@@ -111,13 +114,16 @@ export default {
     XTextarea,
     Toast,
     FlowDetail,
-    Loading
+    Loading,
+    TaskConfirm
   },
   filters: {
     numberComma
   },
   data() {
     return {
+      showConfirm: false, // 是否展示原因弹窗
+      result: 1,
       Load:true,
       listId:'',
       transCode: this.$route.query.transCode,
@@ -196,14 +202,23 @@ export default {
       data = {};
       //拒绝
       if( num == 0 ){
+        //this.showConfirm = true;
         data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
         that.endToast(taskId,data);
       }else if( num == 1 ){
         //同意
+        //this.showConfirm = true;
         data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
         that.endToast(taskId,data);
       }
-    }
+    },
+    //确定
+    confirm(reason) {
+      if (this.result === 2 && !reason) {
+        this.showToastText('拒绝原因不能为空');
+        return
+      }
+    },
   },
   created(){
     this.$nextTick(() => {
@@ -269,12 +284,11 @@ export default {
 
 <style lang='scss' scoped>
 .pages {
-  overflow: auto;
-  -webkit-overflow-scrolling: auto;
   .swiper-container {
       height: 100%;
       .form {
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
     }
 }

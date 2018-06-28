@@ -260,12 +260,11 @@
 
 <style lang='scss' scoped>
   .pages {
-    overflow: auto;
-    -webkit-overflow-scrolling: auto;
     .swiper-container {
         height: 100%;
         .form {
           overflow: auto;
+          -webkit-overflow-scrolling: touch;
         }
       }
   }
