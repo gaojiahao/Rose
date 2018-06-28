@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages house-detail-container">
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <div class="swiper-slide form">
@@ -206,8 +206,8 @@
   }
 </script>
 
-<style lang='scss'>
-  .pages {
+<style lang='scss' scoped>
+  .house-detail-container {
     .swiper-container {
       height: 100%;
       .form {
@@ -215,79 +215,78 @@
         -webkit-overflow-scrolling: touch;
       }
     }
-  }
-
-  .h_title { //标题
-    width: 100%;
-    height: 120px;
-    line-height: 80px;
-    font-size: 34px;
-    text-align: center;
-    color: #fff;
-    font-weight: 200;
-    background: #5077AA;
-    position: relative;
-    .h_user {
-      line-height: initial;
-      font-size: 16px;
-      font-weight: normal;
-      position: absolute;
-      left: 50%;
-      bottom: 20%;
-      transform: translate(-50%);
-      display: flex;
-      align-items: center;
-      .right_arrow {
-        fill: #fff;
+    .h_title { //标题
+      width: 100%;
+      height: 80px;
+      line-height: 80px;
+      font-size: 34px;
+      text-align: center;
+      color: #fff;
+      font-weight: 200;
+      background: #5077AA;
+      position: relative;
+      .h_user {
+        line-height: initial;
+        font-size: 16px;
+        font-weight: normal;
+        position: absolute;
+        left: 50%;
+        bottom: 20%;
+        transform: translate(-50%);
+        display: flex;
+        align-items: center;
+        .right_arrow {
+          fill: #fff;
+        }
       }
     }
-  }
 
-  .h_main {
-    width: 90%;
-    max-width: 600px;
-    position: absolute;
-    top: 90px;
-    left: 50%;
-    transform: translate(-50%, 0);
-    border-radius: 4px;
-    z-index: 100;
-    padding-bottom: 56px;
-    .h_main_part {
-      background: #fff;
-      margin-top: 20px;
+    .h_main {
+      width: 90%;
+      max-width: 600px;
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translate(-50%, 0);
       border-radius: 4px;
-      box-shadow: 0 2px 10px #e8e8e8;
+      z-index: 100;
+      padding-bottom: 56px;
+      .h_main_part {
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px #e8e8e8;
+      }
     }
-  }
 
-  .h_btm {
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    z-index: 101;
-    margin-top: 20px;
-    box-sizing: border-box;
-    display: flex;
-    .count_part {
-      flex: 2.5;
-      background: #fff;
-      color: #000;
-      display: inline-block;
-      text-align: center;
-      font-weight: bold;
-    }
-    .h_button {
-      flex: 1;
-      color: #fff;
-      background: #5077AA;
-      display: inline-block;
-      text-align: center;
-      &.reject {
-        background-color: #ccc;
+    .h_btm {
+      width: 100%;
+      height: 44px;
+      line-height: 44px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      z-index: 101;
+      margin-top: 20px;
+      box-sizing: border-box;
+      display: flex;
+      .count_part {
+        flex: 2.5;
+        background: #fff;
+        color: #000;
+        display: inline-block;
+        text-align: center;
+        font-weight: bold;
+      }
+      .h_button {
+        flex: 1;
+        color: #fff;
+        background: #5077AA;
+        display: inline-block;
+        text-align: center;
+        &.reject {
+          background-color: #ccc;
+        }
       }
     }
   }

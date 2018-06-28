@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages flow-container">
     <h1 class="f_title">
       确定工作流
     </h1>
@@ -82,6 +82,7 @@
         procCode: '',
         searchListTop: 0,
         sessionKey: '',
+        taskId: '',
       };
     },
     mixins: [common],
@@ -233,6 +234,9 @@
       // TODO 提交数据
       submitData() {
         let warn = '';
+        let submitData = {};
+        let wfPara = {};
+        let submitMethod = 'saveAndStartWf';
         Object.values(this.level_list).every(item => {
           if (!item.userId) {
             warn = `${item.name}不能为空`;
@@ -244,22 +248,31 @@
           this.showToastText(warn);
           return
         }
-        this.showLoading = true;
-        createService.saveAndStartWf({
+        wfPara = {
+          'PROC_1806_0005': {
+            'businessKey': 'KFSCPCGRK',
+            'createdBy': '',
+            // '常委ID': this.level_list.committee.userId,
+            // '副总裁ID': this.level_list.president.userId,
+            '常委ID': '15125', // rfd120
+            '副总裁ID': '18128', // rfd9527
+          }
+        };
+        // 判断是否为重新提交
+        if (this.taskId) {
+          wfPara.taskId = this.taskId;
+          wfPara.result = 1;
+          submitMethod = 'saveAndCommitTask';
+          submitData.biReferenceId = this.formData.biReferenceId;
+        }
+        Object.assign(submitData, {
           listId: this.listid,
           biComment: '',
           formData: JSON.stringify(this.formData),
-          wfPara: JSON.stringify({
-            'PROC_1806_0005': {
-              'businessKey': 'KFSCPCGRK',
-              'createdBy': '',
-              // '常委ID': this.level_list.committee.userId,
-              // '副总裁ID': this.level_list.president.userId,
-              '常委ID': '15125', // rfd120
-              '副总裁ID': '18128', // rfd9527
-            }
-          })
-        }).then(data => {
+          wfPara: JSON.stringify(wfPara),
+        });
+        this.showLoading = true;
+        createService[submitMethod](submitData).then(data => {
           this.showLoading = false;
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
@@ -302,6 +315,7 @@
     created() {
       let {query} = this.$route;
       this.listid = query.list;
+      this.taskId = query.taskId;
       this.sessionKey = `${this.listid}-FORMDATA`;
       let now = this.getNow();
       let formData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");

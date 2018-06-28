@@ -1,5 +1,5 @@
 <template>
-  <div class="flow-container">
+  <div class="flow-detail-container">
     <h1 class="f_title">
       工作流
     </h1>
@@ -149,7 +149,7 @@
 </script>
 
 <style lang="scss">
-  .flow-container {
+  .flow-detail-container {
     .flows {
       display: inline-block;
       margin: 0 auto 0 0;

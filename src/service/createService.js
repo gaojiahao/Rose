@@ -48,6 +48,15 @@ let createService = {
       data: data
     });
   },
+  // TODO 重新提交
+  saveAndCommitTask(data = {}) {
+    return $axios.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
+      url: '/H_roleplay-si/formAPI/saveAndCommitTask',
+      data: data
+    });
+  },
   // TODO 提交数据
   saveData(data = {}) {
     return $axios.ajax({

@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages meeting-detail-container">
     <!--<div class="swiper-container"  v-show="showPage">-->
     <div class="swiper-container">
       <div class="swiper-wrapper">
@@ -219,8 +219,8 @@
   }
 </script>
 
-<style lang="scss">
-  .pages {
+<style lang="scss" scoped>
+  .meeting-detail-container {
     .swiper-container {
       height: 100%;
       .form {
@@ -230,7 +230,7 @@
     }
     .m_title { //标题
       width: 100%;
-      height: 120px;
+      height: 80px;
       line-height: 80px;
       font-size: 34px;
       text-align: center;
@@ -258,7 +258,7 @@
       width: 90%;
       max-width: 600px;
       position: absolute;
-      top: 90px;
+      top: 50px;
       left: 50%;
       transform: translate(-50%, 0);
       border-radius: 4px;

@@ -1,8 +1,6 @@
 <template>
   <div class="pages operation-container">
-    <div class="h_title">
-      用户操作
-    </div>
+    <div class="h_title"></div>
     <div class="h_main">
       <ul class="sel_list">
         <li class="each_part"

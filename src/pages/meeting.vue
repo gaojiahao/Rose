@@ -1,9 +1,7 @@
 <template>
-  <div class="pages">
+  <div class="pages meeting-container">
     <h1 class="m_title">
       会议立项
-      <span class="m_user" @click="goMylist">我的提交<x-icon class="right_arrow" type="ios-arrow-forward"
-                                                         size="16"></x-icon></span>
     </h1>
     <div v-show="showPage">
       <div class="m_main">
@@ -137,6 +135,7 @@
         formKey: '',
         transCode: '',
         showPage: true,
+        taskId: '',
       }
     },
     computed: {
@@ -239,7 +238,8 @@
         this.$router.push({
           path: '/flow',
           query: {
-            list: this.listid
+            list: this.listid,
+            taskId: this.taskId,
           }
         })
       },
@@ -345,6 +345,7 @@
       this.listid = query.list;
       this.formKey = query.formKey;
       this.transCode = query.transCode;
+      this.taskId = query.taskId;
       this.sessionKey = `${this.listid}-FORMDATA`;
       this.showLoading = true;
       let formData = sessionStorage.getItem(this.sessionKey);
@@ -383,10 +384,10 @@
           checkProvince: formData.checkProvince,
           costBank: formData.costBank
         };
+        sessionStorage.removeItem(this.sessionKey);
         this.$nextTick(() => {
           // 在渲染一次以后将该值设置为false
           this.hasDefault = false;
-          console.log(this.formData.begin)
         })
       }
     }
@@ -394,75 +395,77 @@
 </script>
 
 <style lang='scss' scoped>
-  .m_title { //标题
-    width: 100%;
-    height: 120px;
-    line-height: 80px;
-    font-size: 34px;
-    text-align: center;
-    color: #fff;
-    font-weight: 200;
-    background: #5077AA;
-    position: relative;
-    .m_user {
-      line-height: initial;
-      font-size: 16px;
-      font-weight: normal;
-      position: absolute;
-      left: 50%;
-      bottom: 20%;
-      transform: translate(-50%);
-      display: flex;
-      align-items: center;
-      .right_arrow {
-        fill: #fff;
+  .meeting-container {
+    .m_title { //标题
+      width: 100%;
+      height: 80px;
+      line-height: 80px;
+      font-size: 34px;
+      text-align: center;
+      color: #fff;
+      font-weight: 200;
+      background: #5077AA;
+      position: relative;
+      .m_user {
+        line-height: initial;
+        font-size: 16px;
+        font-weight: normal;
+        position: absolute;
+        left: 50%;
+        bottom: 20%;
+        transform: translate(-50%);
+        display: flex;
+        align-items: center;
+        .right_arrow {
+          fill: #fff;
+        }
       }
     }
-  }
 
-  .m_main {
-    width: 90%;
-    max-width: 600px;
-    position: absolute;
-    top: 90px;
-    left: 50%;
-    transform: translate(-50%, 0);
-    border-radius: 4px;
-    z-index: 100;
-    padding-bottom: 56px;
-    .m_main_part {
-      background: #fff;
-      margin-top: 20px;
+    .m_main {
+      width: 90%;
+      max-width: 600px;
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translate(-50%, 0);
       border-radius: 4px;
-      box-shadow: 0 2px 10px #e8e8e8;
+      z-index: 100;
+      padding-bottom: 56px;
+      .m_main_part {
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px #e8e8e8;
+      }
     }
-  }
 
-  .m_btm {
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    z-index: 101;
-    margin-top: 20px;
-    box-sizing: border-box;
-    display: flex;
-    .count_part {
-      flex: 2.5;
-      background: #fff;
-      color: #000;
-      display: inline-block;
-      text-align: center;
-      font-weight: bold;
-    }
-    .m_button {
-      flex: 1;
-      color: #fff;
-      background: #5077AA;
-      display: inline-block;
-      text-align: center;
+    .m_btm {
+      width: 100%;
+      height: 44px;
+      line-height: 44px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      z-index: 101;
+      margin-top: 20px;
+      box-sizing: border-box;
+      display: flex;
+      .count_part {
+        flex: 2.5;
+        background: #fff;
+        color: #000;
+        display: inline-block;
+        text-align: center;
+        font-weight: bold;
+      }
+      .m_button {
+        flex: 1;
+        color: #fff;
+        background: #5077AA;
+        display: inline-block;
+        text-align: center;
+      }
     }
   }
 
