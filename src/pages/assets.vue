@@ -113,6 +113,7 @@
     data() {
       return {
         baseInfo:'',
+        formData:'',
         assetsList: [
           {
             model: [['电脑','桌子','椅子']],   //资产型号
@@ -290,8 +291,18 @@
             "fgCode": "fgwmiw",                    //组合字段组编码，固定值为fgwmiw
         })
       }
-      sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData))
-        this.$router.push({path: '/flow', query: {list: this.$route.query.list}})
+      if (this.formData!=''){
+        sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(this.formData));
+      }else {
+        sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData));
+      }
+      let queryData = {};
+      if (this.$route.query.taskId){
+        queryData = {list: this.$route.query.list,taskId: this.$route.query.taskId}
+      }else{
+        queryData = {list:this.$route.query.list}
+      }
+      this.$router.push({ path: "/flow" ,query:queryData});
       },
       layer(info, type) {
         this.$vux.toast.show({
@@ -303,19 +314,9 @@
       },
       changeType(idx) {
         this.assetsList[idx].status=true;
-      }
-    },
-    mounted(){
-      let that = this;
-      //基本信息
-      spreadService.getBaseInfo().then( res=> {
-          that.baseInfo = res;
-      }).catch( c =>{
-        console.log(c)
-      });
-     //回显
-      if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
-        let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet,
+      },
+      cacheData(dataSet){
+        let that = this,
         sessionArr=[];
         for(let i = 0 ; i<dataSet.length ; i++ ){
           sessionArr.push({
@@ -341,19 +342,50 @@
           })
         }
         that.assetsList = sessionArr;
+      },
+      listDefault(){
+        let that = this;
+        for(let j = 0 ; j<that.assetsList.length ;j++){
+            let xp_item = that.assetsList[j];
+            that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
+            if(xp_item.deptOn.length != 0){
+              that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
+            }
+            if(xp_item.provOn.length != 0){
+              that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
+            }
+            if(xp_item.bankOn.length != 0){
+              that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
+            }
+          }
       }
-      for(let j = 0 ; j<that.assetsList.length ;j++){
-        let xp_item = that.assetsList[j];
-        that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
-        if(xp_item.deptOn.length != 0){
-          that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
-        }
-        if(xp_item.provOn.length != 0){
-          that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
-        }
-        if(xp_item.bankOn.length != 0){
-          that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
-        }
+    },
+    mounted(){
+      let that = this;
+      //基本信息
+      spreadService.getBaseInfo().then( res=> {
+          that.baseInfo = res;
+      }).catch( c =>{
+        console.log(c)
+      });
+     //回显
+    if(that.$route.query.formKey&&that.$route.query.transCode){
+      createService.getFormData({
+          formKey: that.$route.query.formKey,
+          transCode: that.$route.query.transCode,
+        }).then(res =>{
+           that.formData = res.formData;
+           that.cacheData(res.formData.order.dataSet);
+           that.listDefault();
+        }).catch(c =>{
+          console.log(c)
+        })
+    }else if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
+        let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet;
+        that.cacheData(dataSet);
+        that.listDefault();
+      }else {
+        that.listDefault();
       }
     },
     computed: {

@@ -202,7 +202,6 @@ export default {
           }
           that.TobedoneLoad = false;
         }
-        that.scroll.finishPullUp();
       }).catch( c =>{
         console.log(c)
       });
@@ -280,6 +279,7 @@ export default {
       this.dbnothingMore = false;
       this.underWayMore = false;
       this.overMore = false;
+      this.scroll.pullUpLoad();
       if (val == 0) {
         this.TobedoneList = [];
         this.TobedoneLoad = true;
@@ -369,6 +369,7 @@ export default {
     this.underWay();
     this.over();
     this.scrollOn();
+    this.scroll.pullUpLoad();
   },
 };
 </script>

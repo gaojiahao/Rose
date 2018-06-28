@@ -159,7 +159,7 @@ export default {
   },
   methods: {
     //审批弹窗
-    endToast(taskId,data,status){
+    endToast(taskId,data){
       let that = this;
       createService.examineTask(taskId,data).then( res=> {
         if(res.success){
@@ -170,17 +170,7 @@ export default {
             onShow () {
               setTimeout(function(){
                 that.$vux.toast.hide();
-                if(status==0){
-                  that.$router.replace({
-                    path:'/spread',
-                    query: {
-                      list: that.$route.query.list,
-                      formKey:that.$route.query.formKey,
-                      transCode:that.$route.query.transCode,
-                    }});
-                }else if(status==1){
-                  that.$router.go(-1);
-                }
+                that.$router.go(-1);
               },800)
             },
           });
@@ -207,11 +197,11 @@ export default {
       //拒绝
       if( num == 0 ){
         data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
-        that.endToast(taskId,data,0);
+        that.endToast(taskId,data);
       }else if( num == 1 ){
         //同意
         data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
-        that.endToast(taskId,data,1);
+        that.endToast(taskId,data);
       }
     }
   },
