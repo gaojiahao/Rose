@@ -20,6 +20,9 @@
 </template>
 
 <script>
+  import mylistService from './../service/mylistService'
+  import common from './mixins/common'
+
   export default {
     name: "operation",
     data() {
@@ -61,6 +64,17 @@
           query,
         })
       }
+    },
+    created() {
+      /*mylistService.getTasksListData({
+        entityId: 20000,
+        _dc: Date.parse(new Date()),
+        listID: this.$route.query.list,
+        para1: "",
+      }).then(data => {
+        console.log(data)
+        let {tableContent = []} = data;
+      })*/
     }
   }
 </script>

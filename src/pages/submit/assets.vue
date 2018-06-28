@@ -97,18 +97,18 @@
 
 <script>
   import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from 'vux'
-  import spreadService from "../service/spreadService";
-  import createService from "../service/createService";
+  import spreadService from "../../service/spreadService";
+  import createService from "../../service/createService";
   export default {
     components: {
       Cell,
       Group,
       XInput,
       PopupPicker,
-      XTextarea, 
+      XTextarea,
     },
     filters:{
-      numberComma 
+      numberComma
     },
     data() {
       return {
@@ -118,7 +118,7 @@
           {
             model: [['电脑','桌子','椅子']],   //资产型号
             modelOn: [],   //选中资产型号
-            modSpec: '',   //资产型号规格 
+            modSpec: '',   //资产型号规格
             unit: [['台','个','张','件']],    //计量单位
             unitOn: [],    //选中计量单位
             num: '',       //数量
@@ -184,7 +184,7 @@
       this.assetsList.push({
           model: [['电脑','桌子','椅子']],   //资产型号
           modelOn: [],   //选中资产型号
-          modSpec: '',   //资产型号规格 
+          modSpec: '',   //资产型号规格
           unit: [['台','个','张','件']],    //计量单位
           unitOn: [],    //选中计量单位
           unitPrice: '', //单价
@@ -208,7 +208,7 @@
     delateOne(){
       this.assetsList.pop();
     },
-      goMylist() { 
+      goMylist() {
         //我的提交
         this.$router.push({
           path: '/myList',
@@ -322,7 +322,7 @@
           sessionArr.push({
             model: [['电脑','桌子','椅子']],   //资产型号
             modelOn: [dataSet[i].assetType],   //选中资产型号
-            modSpec: dataSet[i].assetModel,   //资产型号规格 
+            modSpec: dataSet[i].assetModel,   //资产型号规格
             unit: [['台','个','张','件']],    //计量单位
             unitOn: [dataSet[i].meteringUnit],    //选中计量单位
             unitPrice: dataSet[i].assetPrice, //单价

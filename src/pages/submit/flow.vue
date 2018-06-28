@@ -43,8 +43,8 @@
 
 <script>
   import {Flow, Cell, Group, XInput, FlowState, FlowLine, numberPad} from "vux";
-  import createService from './../service/createService'
-  import common from './mixins/common'
+  import createService from './../../service/createService'
+  import common from './../mixins/common'
 
   export default {
     components: {
@@ -245,6 +245,11 @@
           this.showToastText(warn);
           return
         }
+        /*Object.entries(this.formData).forEach(([key, value]) => {
+          if (value === null) {
+            delete this.formData[key];
+          }
+        });*/
         wfPara = {
           'PROC_1806_0005': {
             'businessKey': 'KFSCPCGRK',

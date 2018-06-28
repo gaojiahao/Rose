@@ -86,8 +86,8 @@
 
 <script>
 import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from "vux";
-import spreadService from "../service/spreadService";
-import createService from "../service/createService";
+import spreadService from "../../service/spreadService";
+import createService from "../../service/createService";
 export default {
   components: {
     Cell,
@@ -399,7 +399,7 @@ export default {
     }else{
       that.listDefault();
     }
-    
+
   },
   computed: {
     //总价

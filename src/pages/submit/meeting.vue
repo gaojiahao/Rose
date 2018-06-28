@@ -37,10 +37,10 @@
 </template>
 
 <script>
-  import createService from './../service/createService'
+  import createService from './../../service/createService'
   import {Cell, Group, XInput, Datetime, XTextarea, PopupPicker, numberComma} from 'vux'
-  import CascadePickers from './components/CascadePickers'
-  import common from './mixins/common'
+  import CascadePickers from './../components/CascadePickers'
+  import common from './../mixins/common'
 
   export default {
     components: {

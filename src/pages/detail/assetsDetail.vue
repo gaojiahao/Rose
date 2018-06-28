@@ -96,7 +96,7 @@
         <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
     </div>
-    
+
     <div class="spinner" v-if="Load">
         <loading :show="true"></loading>
      </div>
@@ -110,11 +110,11 @@
 
 <script>
   import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Toast } from 'vux'
-  import spreadService from "../service/spreadService";
-  import createService from "../service/createService";
+  import spreadService from "../../service/spreadService";
+  import createService from "../../service/createService";
   import Swiper from 'swiper'
-  import FlowDetail from './components/FlowDetail'
-  import Loading from './components/loading'
+  import FlowDetail from './../components/FlowDetail'
+  import Loading from './../components/loading'
   export default {
     components: {
       Cell,
@@ -124,10 +124,10 @@
       XTextarea,
       Toast,
       FlowDetail,
-      Loading 
+      Loading
     },
     filters:{
-      numberComma 
+      numberComma
     },
     data() {
       return {
@@ -139,7 +139,7 @@
           {
             model: [['电脑','桌子','椅子']],   //资产型号
             modelOn: [],   //选中资产型号
-            modSpec: '',   //资产型号规格 
+            modSpec: '',   //资产型号规格
             unit: [['台','个','张','件']],    //计量单位
             unitOn: [],    //选中计量单位
             num: '',       //数量
@@ -225,7 +225,7 @@
             newArr.push({
               model: [['电脑','桌子','椅子']],   //资产型号
               modelOn: [dataSet[i].assetType],   //选中资产型号
-              modSpec: dataSet[i].assetModel,   //资产型号规格 
+              modSpec: dataSet[i].assetModel,   //资产型号规格
               unit: [['台','个','张','件']],    //计量单位
               unitOn: [dataSet[i].meteringUnit],    //选中计量单位
               num: dataSet[i].assetNumber,       //数量

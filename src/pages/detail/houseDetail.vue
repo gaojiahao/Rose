@@ -29,10 +29,10 @@
 
 <script>
   import {Cell, Group, numberComma} from 'vux'
-  import createService from './../service/createService'
-  import common from './mixins/common'
+  import createService from './../../service/createService'
+  import common from './../mixins/common'
   import Swiper from 'swiper'
-  import FlowDetail from './components/FlowDetail'
+  import FlowDetail from './../components/FlowDetail'
 
   export default {
     data() {

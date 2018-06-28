@@ -21,6 +21,9 @@ export default {
       if (!d) {
         return '';
       }
+      if (typeof d === 'string') {
+        d = d.replace(/-/g, '/');
+      }
       let date = new Date(d);
       return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`
     },

@@ -96,12 +96,12 @@
 
 <script>
 import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma ,Toast } from "vux";
-import spreadService from "../service/spreadService";
-import createService from "../service/createService";
+import spreadService from "../../service/spreadService";
+import createService from "../../service/createService";
 import { setTimeout } from 'timers';
 import Swiper from 'swiper'
-import FlowDetail from './components/FlowDetail'
-import Loading from './components/loading'
+import FlowDetail from './../components/FlowDetail'
+import Loading from './../components/loading'
 export default {
   components: {
     Cell,

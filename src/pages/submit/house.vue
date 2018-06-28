@@ -31,8 +31,9 @@
 
 <script>
   import {Cell, Group, XInput, Datetime, PopupPicker, numberComma} from 'vux'
-  import CascadePickers from './components/CascadePickers'
-  import common from './mixins/common'
+  import createService from './../../service/createService'
+  import CascadePickers from './../components/CascadePickers'
+  import common from './../mixins/common'
 
   export default {
     components: {
