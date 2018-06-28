@@ -31,6 +31,7 @@
           {
             name: '查看我的',
             type: 'view',
+            count: 0,
           }, {
             name: '发起申请',
             type: 'create',
@@ -72,8 +73,10 @@
         listID: this.$route.query.list,
         para1: "",
       }).then(data => {
+        let {dataCount = 0} = data;
         console.log(data)
-        let {tableContent = []} = data;
+      }).catch(e => {
+        this.showToastText(e.message);
       })*/
     }
   }

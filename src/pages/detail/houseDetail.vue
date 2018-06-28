@@ -19,11 +19,13 @@
       </div>
     </div>
     <div class="h_btm vux-1px-t" v-if="canSubmit">
-      <span class="h_button reject" @click="submit(2)">拒绝</span>
-      <span class="h_button" @click="submit(1)">同意</span>
+      <span class="h_button reject" @click="showConfirmPop(2)">拒绝</span>
+      <span class="h_button" @click="showConfirmPop(1)">同意</span>
     </div>
     <loading :show="showLoading"></loading>
     <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
+    <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
+                  @on-confirm="confirm"></task-confirm>
   </div>
 </template>
 
@@ -33,6 +35,7 @@
   import common from './../mixins/common'
   import Swiper from 'swiper'
   import FlowDetail from './../components/FlowDetail'
+  import TaskConfirm from './../components/TaskConfirm'
 
   export default {
     data() {
@@ -119,6 +122,8 @@
         taskId: '',
         canSubmit: false,
         pageSwiper: null,
+        showConfirm: false, // 是否展示原因弹窗
+        result: 1,
       }
     },
     computed: {
@@ -132,6 +137,7 @@
       Cell,
       Group,
       FlowDetail,
+      TaskConfirm,
     },
     methods: {
       // TODO 获取表单详情
@@ -166,16 +172,16 @@
         });
       },
       // TODO 审批
-      submit(result = 1) {
+      submit(comment = '') {
         this.showLoading = true;
         createService.examineTask(this.taskId, {
-          result,
+          result: this.result,
           transCode: this.transCode,
-          comment: '',
+          comment,
         }).then(data => {
           this.showLoading = false;
           let {message, success} = data;
-          if (success && message.indexOf('null') === -1) {
+          if (success) {
             this.showToastText('提交成功');
             setTimeout(() => {
               this.$router.go(-1);
@@ -186,6 +192,19 @@
         }).catch(e => {
           this.showToastText(e.message);
         })
+      },
+      // 展示弹窗
+      showConfirmPop(result = 1) {
+        this.showConfirm = true;
+        this.result = result;
+      },
+      // TODO 点击确定
+      confirm(reason) {
+        if (this.result === 2 && !reason) {
+          this.showToastText('拒绝原因不能为空');
+          return
+        }
+        this.submit(reason);
       },
     },
     created() {

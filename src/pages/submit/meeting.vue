@@ -306,8 +306,8 @@
 
           formData.begin = this.changeDate(formData.begin);
           formData.end = this.changeDate(formData.end);
-          formData.crtTime = this.changeDate(formData.crtTime);
-          formData.modTime = this.changeDate(formData.modTime);
+          // formData.crtTime = this.changeDate(formData.crtTime, true);
+          // formData.modTime = this.changeDate(formData.modTime, true);
 
           this.provinceSelected = [formData.province];
           this.citySelected = [formData.city];

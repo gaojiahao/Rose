@@ -17,7 +17,7 @@ export default {
       this.toastText = test;
     },
     // TODO 时间戳转日期
-    changeDate(d) {
+    changeDate(d, hasSecond = false) {
       if (!d) {
         return '';
       }
@@ -25,7 +25,22 @@ export default {
         d = d.replace(/-/g, '/');
       }
       let date = new Date(d);
-      return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`
+      let dateObj = {
+        Y: date.getFullYear(),
+        m: numberPad(date.getMonth() + 1),
+        d: numberPad(date.getDate()),
+        H: numberPad(date.getHours()),
+        i: numberPad(date.getMinutes()),
+        s: numberPad(date.getSeconds()),
+      };
+      let fmt = 'Y-m-d';
+      if (hasSecond) {
+        fmt = 'Y-m-d H:i:s';
+      }
+      Object.entries(dateObj).forEach(([key, value]) => {
+        fmt = fmt.replace(key, value);
+      });
+      return fmt;
     },
   }
 }

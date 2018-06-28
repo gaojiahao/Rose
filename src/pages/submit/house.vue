@@ -243,8 +243,8 @@
 
           formData.begin = this.changeDate(formData.begin);
           formData.end = this.changeDate(formData.end);
-          formData.crtTime = this.changeDate(formData.crtTime);
-          formData.modTime = this.changeDate(formData.modTime);
+          // formData.crtTime = this.changeDate(formData.crtTime, true);
+          // formData.modTime = this.changeDate(formData.modTime, true);
 
           this.type_value = [formData.office];
           this.hd_value = [formData.moveType];

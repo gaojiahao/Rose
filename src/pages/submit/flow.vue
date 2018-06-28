@@ -146,23 +146,6 @@
           this.formData.handlerRoleId = role.userGroupId || '';
         });
       },
-      // TODO 获取当前时间
-      getNow(fmt = 'Y-m-d H:i:s') {
-        let date = new Date();
-        let dateObj = {
-          Y: date.getFullYear(),
-          m: numberPad(date.getMonth() + 1),
-          d: numberPad(date.getDate()),
-          H: numberPad(date.getHours()),
-          i: numberPad(date.getMinutes()),
-          s: numberPad(date.getSeconds()),
-        };
-        let dateStr = fmt;
-        Object.entries(dateObj).forEach(([key, value]) => {
-          dateStr = dateStr.replace(key, value);
-        });
-        return dateStr
-      },
       // TODO 点击常委、副总输入框
       searchFocus(item, key) {
         this.hasSelected = false;
@@ -320,10 +303,10 @@
       this.listid = query.list;
       this.taskId = query.taskId;
       this.sessionKey = `${this.listid}-FORMDATA`;
-      let now = this.getNow();
+      let now = this.changeDate(new Date(), true);
       let formData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
       this.formData = Object.assign({}, formData);
-      this.formData.crtTime = now;
+      this.formData.crtTime = formData.crtTime ? this.changeDate(formData.crtTime, true) : now;
       this.formData.modTime = now;
       // this.getProcess();
       /*(async () => {
