@@ -454,10 +454,10 @@ export default {
   }
 }
 .m_list {
-  width: 90%;
-  margin: 10px auto;
+  width: 100%;
   .each_list {
-    width: 100%;
+    width: 90%;
+    margin: 20px auto;    
     padding: 4px 10px;
     margin-bottom: 20px;
     box-sizing: border-box;
