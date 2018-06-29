@@ -7,7 +7,7 @@ let mylist={
     //待审批
     getTasksListData(data){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getTasksListDataByListId',
+            url:'/H_roleplay-si/ds/getApplyTasks',
             data:data,
         })
     },
@@ -15,7 +15,7 @@ let mylist={
     //进行中，已完成
     getCompletedListDataByStatus(data){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getCompletedByStatusAndListId',
+            url:'/H_roleplay-si/ds/getApplyTasksByStatus',
             data:data,
         })
     }

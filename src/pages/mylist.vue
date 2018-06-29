@@ -180,7 +180,6 @@ export default {
       let data = {
           entityId: 20000,
           _dc: Date.parse(new Date()),
-          listID: this.$route.query.listId,
           para1: "",
           start: this.dbpageNo * 11,
           page: ++this.dbpageNo,
@@ -216,7 +215,6 @@ export default {
       let data = {
           entityId: 20000,
           _dc: Date.parse(new Date()),
-          listID: this.$route.query.listId,
           status: 2,
           start: this.underwaypageNo * 11,
           page: ++this.underwaypageNo,
@@ -252,7 +250,6 @@ export default {
       let data = {
           entityId: 20000,
           _dc: Date.parse(new Date()),
-          listID: this.$route.query.listId,
           status: 1,
           start: this.overpageNo * 11,
           page: ++this.overpageNo,
