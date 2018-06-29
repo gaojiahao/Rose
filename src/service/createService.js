@@ -155,7 +155,8 @@ let createService = {
   // TODO 查找工作流
   getWorkFlow(data = {}){
     return $axios.ajax({
-      url: '/H_roleplay-si/ds/list/getHistoryTaskByTransCode',
+      // url: '/H_roleplay-si/ds/list/getHistoryTaskByTransCode',
+      url: '/H_roleplay-si/ds/list/getAppHistoryTaskByTransCode\n',
       data: data
     });
   }

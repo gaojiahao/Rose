@@ -37,12 +37,11 @@
     </div>
     <div class="f_button" @click="submitData">确定</div>
     <loading :show="showLoading"></loading>
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
 <script>
-  import {Flow, Cell, Group, XInput, FlowState, FlowLine, numberPad} from "vux";
+  import {Flow, Cell, Group, XInput, FlowState, FlowLine} from "vux";
   import createService from './../../service/createService'
   import common from './../mixins/common'
 
@@ -65,9 +64,9 @@
             value: '',
             userId: '',
           },
-          president: {
+          vicePresident: {
             name: '副总',
-            searchType: 'president',
+            searchType: 'vicePresident',
             value: '',
             userId: '',
           }
@@ -154,7 +153,7 @@
         // 设置搜索框顶部偏移
         if (key === 'committee') {
           this.searchListTop = '83px';
-        } else if (key === 'president') {
+        } else if (key === 'vicePresident') {
           this.searchListTop = '130px';
         }
       },
@@ -191,7 +190,7 @@
         }
         item.userId = '';
         // 搜索为副总
-        if (this.searchType === 'president') {
+        if (this.searchType === 'vicePresident') {
           params.name = '副总裁'
         }
         createService.getChangWei(params).then(data => {
@@ -228,17 +227,12 @@
           this.showToastText(warn);
           return
         }
-        /*Object.entries(this.formData).forEach(([key, value]) => {
-          if (value === null) {
-            delete this.formData[key];
-          }
-        });*/
         wfPara = {
           'PROC_1806_0005': {
             'businessKey': 'KFSCPCGRK',
             'createdBy': '',
             // '常委ID': this.level_list.committee.userId,
-            // '副总裁ID': this.level_list.president.userId,
+            // '副总裁ID': this.level_list.vicePresident.userId,
             '常委ID': '15125', // rfd120
             '副总裁ID': '18128', // rfd9527
           }

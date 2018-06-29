@@ -1,20 +1,23 @@
-import {Toast, numberPad} from 'vux'
+import {numberPad} from 'vux'
 import Loading from './../components/loading'
 
 export default {
   data() {
     return {
-      showToast: false,
-      toastText: '',
       showLoading: false, // 是否展示loading
     }
   },
-  components: {Toast, Loading},
+  components: {Loading},
   methods: {
     // TODO 显示错误提示
     showToastText(test = '') {
-      this.showToast = true;
-      this.toastText = test;
+      this.$vux.toast.show({
+        text: test,
+        type: 'text',
+        position: 'middle',
+        width: 'auto',
+        isShowMask: true
+      });
     },
     // TODO 时间戳转日期
     changeDate(d, hasSecond = false) {

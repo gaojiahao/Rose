@@ -25,7 +25,6 @@
       </div>
     </div>
     <loading :show="showLoading"></loading>
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 

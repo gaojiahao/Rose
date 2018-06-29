@@ -1,8 +1,6 @@
 <template>
   <div class="pages meeting-container">
-    <h1 class="m_title">
-      会议立项
-    </h1>
+    <h1 class="m_title">会议立项</h1>
     <div v-show="showPage">
       <div class="m_main">
         <div class="m_main_part">
@@ -32,7 +30,6 @@
       </div>
     </div>
     <loading :show="showLoading"></loading>
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 

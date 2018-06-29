@@ -1,27 +1,33 @@
 <template>
   <div class="flow-detail-container">
-    <h1 class="f_title">
-      工作流
-    </h1>
+    <h1 class="f_title">工作流</h1>
     <div class="f_main">
       <div class="f_main_wrapper">
-        <!--<group title="请填写对应的信息" class="info-container">
-          <cell title="财务" value='财务'></cell>
-          <cell title="总裁" value='王珏'></cell>
-        </group>-->
         <div class="f_flow">
           <group title="流程图"></group>
           <flow class="flows" orientation="vertical">
-            <flow-state state="1" title="省长" :is-done="sz.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="sz.tip" :is-done="sz.lineDone"></flow-line>
-            <flow-state state="2" title="常委" :is-done="cw.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="cw.tip" :is-done="cw.lineDone"></flow-line>
-            <flow-state state="3" title="副总" :is-done="fz.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="fz.tip" :is-done="fz.lineDone"></flow-line>
-            <flow-state state="4" title="财务" :is-done="cwu.stateDone"></flow-state>
-            <flow-line :line-span="30" tip-direction="right" :tip="cwu.tip" :is-done="cwu.lineDone"></flow-line>
-            <flow-state state="5" title="总裁——王珏" :is-done="zc.stateDone"></flow-state>
+            <flow-state state="1" title="省长" :is-done="governor.stateDone"></flow-state>
+            <flow-line tip-direction="right" :tip="governor.tip" :is-done="governor.lineDone"></flow-line>
+            <flow-state state="2" title="常委" :is-done="committee.stateDone"></flow-state>
+            <flow-line tip-direction="right" :tip="committee.tip" :is-done="committee.lineDone"></flow-line>
+            <flow-state state="3" title="副总" :is-done="vicePresident.stateDone"></flow-state>
+            <flow-line tip-direction="right" :tip="vicePresident.tip" :is-done="vicePresident.lineDone"></flow-line>
+            <flow-state state="4" title="财务" :is-done="finance.stateDone"></flow-state>
+            <flow-line :line-span="30" tip-direction="right" :tip="finance.tip" :is-done="finance.lineDone"></flow-line>
+            <flow-state state="5" title="总裁——王珏" :is-done="ceo.stateDone"></flow-state>
           </flow>
+          <!--<panel header="审批意见" :list="commentList" :type="'4'"></panel>-->
+          <group title="审批意见">
+            <ul class="comment-container">
+              <li class="comment-item" v-for="(item, index) in commentList" :key="index">
+                <div class="comment-left">
+                  <div class="title">{{item.title}}</div>
+                  <div class="time">{{item.time}}</div>
+                </div>
+                <div class="comment-right">{{item.desc}}</div>
+              </li>
+            </ul>
+          </group>
         </div>
       </div>
     </div>
@@ -29,7 +35,7 @@
 </template>
 
 <script>
-  import {Flow, Cell, Group, FlowState, FlowLine} from "vux";
+  import {Flow, Cell, Group, FlowState, FlowLine, Panel} from "vux";
   import createService from './../../service/createService'
 
   export default {
@@ -42,31 +48,37 @@
     name: "FlowDetail",
     data() {
       return {
-        sz: {
+        // 省长
+        governor: {
           stateDone: true,
           lineDone: false,
           tip: '',
         },
-        cw: {
+        // 常委
+        committee: {
           stateDone: false,
           lineDone: false,
           tip: '',
         },
-        fz: {
+        // 副总
+        vicePresident: {
           stateDone: false,
           lineDone: false,
           tip: '',
         },
-        cwu: {
+        // 财务
+        finance: {
           stateDone: false,
           lineDone: false,
           tip: '',
         },
-        zc: {
+        // 总裁
+        ceo: {
           stateDone: false,
           lineDone: false,
           tip: '',
-        }
+        },
+        commentList: [],
       }
     },
     components: {
@@ -75,6 +87,7 @@
       Group,
       FlowLine,
       FlowState,
+      Panel,
     },
     methods: {
       // TODO 获取工作流
@@ -93,51 +106,67 @@
             lineDone: false,
             tip: '进行中',
           };
+          let showList = ['常委审批', '副总裁审批', '财务审批', '总裁审批'];
+          data && data.forEach((item, index) => {
+            // 只取四个审批节点的数据做展示
+            if (showList.indexOf(item.actName) !== -1) {
+              this.commentList.push({
+                title: item.name,
+                desc: item.comment || '无',
+                time: item.startTime,
+                meta: {
+                  date: item.startTime
+                }
+              })
+            }
+          });
           switch (last.actName) {
             case 'Start':
-              this.sz = doing;
+              this.governor = doing;
               break;
             case '常委审批':
-              this.sz = done;
-              this.cw = doing;
+              this.governor = done;
+              this.committee = doing;
               break;
             case '副总裁审批':
-              this.sz = done;
-              this.cw = done;
-              this.fz = doing;
+              this.governor = done;
+              this.committee = done;
+              this.vicePresident = doing;
               break;
             case '财务审批':
-              this.sz = done;
-              this.cw = done;
-              this.fz = done;
-              this.cwu = doing;
+              this.governor = done;
+              this.committee = done;
+              this.vicePresident = done;
+              this.finance = doing;
               break;
             case '总裁审批':
-              this.sz = done;
-              this.cw = done;
-              this.fz = done;
-              this.cwu = done;
-              this.zc = {
+              this.governor = done;
+              this.committee = done;
+              this.vicePresident = done;
+              this.finance = done;
+              this.ceo = {
                 stateDone: false,
                 lineDone: false,
                 tip: '',
               };
               break;
             case '重新提交':
-              this.sz = doing;
+              this.governor = doing;
               break;
             case '生效表单':
               break;
             case 'End':
-              this.sz = done;
-              this.cw = done;
-              this.fz = done;
-              this.cwu = done;
-              this.zc = done;
+              this.governor = done;
+              this.committee = done;
+              this.vicePresident = done;
+              this.finance = done;
+              this.ceo = done;
               break;
             default:
               break;
           }
+        }).catch(e => {
+          this.$parent.showToastText(e.message);
         })
       }
     },
@@ -149,6 +178,8 @@
 
 <style lang="scss">
   .flow-detail-container {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .flows {
       display: inline-block;
       margin: 0 auto 0 0;
@@ -211,6 +242,31 @@
       left: 0;
       bottom: 0;
       z-index: 100;
+    }
+
+    /* 审批意见样式 */
+    .comment-container {
+      padding: 0 20px;
+      .comment-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        .comment-left {
+          flex: 3;
+          .title {
+            margin-bottom: 5px;
+          }
+          .time {
+            color: #cecece;
+            font-size: 14px;
+          }
+        }
+        .comment-right {
+          flex: 4;
+          padding-left: 10px;
+          text-align: right;
+        }
+      }
     }
   }
 </style>

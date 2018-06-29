@@ -20,14 +20,11 @@
       Proudly presented by <span class="cp_name">Refordom</span>
     </h2>
     <loading :show="showLoading"></loading>
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
   </div>
 </template>
 
 <script>
-  import tokenService from './../service/tokenService'
   import createService from './../service/createService'
-  import {Toast} from 'vux'
   import Loading from './components/loading'
   import common from './mixins/common'
 
@@ -38,43 +35,43 @@
         sel_list: [
           {
             name: '市场费用',
-            path: '/operation',
+            path: '/spread',
             query: {
               view: 'a9238c91-36f3-4b09-9705-9d50870b3c46',
               list: 'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c',
-              create: 'spread',
             },
           }, {
             name: '会务立项申请',
-            path: '/operation',
+            path: '/meeting',
             query: {
               view: 'd189cc14-3a77-4e81-a220-55c771a2bdff',
               list: '696c5648-88ba-4bea-b5b1-1780f3c4febf',
-              create: 'meeting',
             },
           }, {
             name: '房屋立项申请',
-            path: '/operation',
+            path: '/house',
             query: {
               view: 'e59dcb25-3a14-44b7-b619-433c63d2327b',
               list: '4912df2a-612e-462a-a6f4-c7c72f497bb8',
-              create: 'house',
             },
           }, {
             name: '固定资产',
-            path: '/operation',
+            path: '/assets',
             query: {
               view: '1ab51ee6-2836-4728-b0a5-9fa5c8902c31',
               list: 'e3937a5c-98d2-4799-a74c-759222fb4a6d',
-              create: 'assets',
             },
+          }, {
+            name: '查看我的',
+            path: '/mylist',
+            query: {},
           }
         ],
         currentUser: {}
       }
     },
     mixins: [common],
-    components: {Toast, Loading},
+    components: {Loading},
     methods: {
       goForward({path, query}) {
         this.$router.push({
@@ -84,6 +81,9 @@
     },
     created() {
       let currentUser = sessionStorage.getItem(USER_INFO);
+      if (sessionStorage.getItem('MYLIST_TAB')) {
+        sessionStorage.removeItem('MYLIST_TAB')
+      }
       if (currentUser) {
         this.currentUser = JSON.parse(currentUser);
         return;

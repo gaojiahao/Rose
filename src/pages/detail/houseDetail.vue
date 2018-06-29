@@ -1,6 +1,6 @@
 <template>
   <div class="pages house-detail-container">
-    <div class="swiper-container">
+    <div class="swiper-container" v-show="showPage">
       <div class="swiper-wrapper">
         <div class="swiper-slide form">
           <h1 class="h_title">
@@ -19,28 +19,21 @@
       </div>
     </div>
     <div class="h_btm vux-1px-t" v-if="canSubmit">
-      <span class="h_button reject" @click="showConfirmPop(2)">拒绝</span>
+      <span class="h_button reject" @click="showConfirmPop(0)">拒绝</span>
       <span class="h_button" @click="showConfirmPop(1)">同意</span>
     </div>
     <loading :show="showLoading"></loading>
-    <toast v-model="showToast" type="text" :text='toastText' is-show-mask position="middle" width='auto'></toast>
     <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
                   @on-confirm="confirm"></task-confirm>
   </div>
 </template>
 
 <script>
-  import {Cell, Group, numberComma} from 'vux'
-  import createService from './../../service/createService'
-  import common from './../mixins/common'
-  import Swiper from 'swiper'
-  import FlowDetail from './../components/FlowDetail'
-  import TaskConfirm from './../components/TaskConfirm'
+  import detail from './../mixins/detail'
 
   export default {
     data() {
       return {
-        formData: {},
         listData: [
           {
             title: '请选择地点类型',
@@ -115,15 +108,6 @@
             ]
           }
         ],
-        showPage: false,
-        listid: '',
-        formKey: '',
-        transCode: '',
-        taskId: '',
-        canSubmit: false,
-        pageSwiper: null,
-        showConfirm: false, // 是否展示原因弹窗
-        result: 1,
       }
     },
     computed: {
@@ -132,93 +116,7 @@
         return `￥${numberComma(Number(tenancy) * Number(rental))}`;
       }
     },
-    mixins: [common],
-    components: {
-      Cell,
-      Group,
-      FlowDetail,
-      TaskConfirm,
-    },
-    methods: {
-      // TODO 获取表单详情
-      getFormData() {
-        this.showLoading = true;
-        createService.getFormData({
-          formKey: this.formKey,
-          transCode: this.transCode,
-        }).then(data => {
-          this.showLoading = false;
-          this.showPage = true;
-          let {formData = {}, success = true, message = ''} = data;
-          // 请求失败提示
-          if (!success) {
-            this.showToastText(message);
-            return;
-          }
-
-          formData.begin = this.changeDate(formData.begin);
-          formData.end = this.changeDate(formData.end);
-          formData.crtTime = this.changeDate(formData.crtTime);
-          formData.modTime = this.changeDate(formData.modTime);
-
-          this.formData = formData;
-          this.listData.forEach(lItem => {
-            lItem.items.forEach(item => {
-              item.value = formData[item.key]
-            })
-          })
-        }).catch(e => {
-          this.showToastText(e.message);
-        });
-      },
-      // TODO 审批
-      submit(comment = '') {
-        this.showLoading = true;
-        createService.examineTask(this.taskId, {
-          result: this.result,
-          transCode: this.transCode,
-          comment,
-        }).then(data => {
-          this.showLoading = false;
-          let {message, success} = data;
-          if (success) {
-            this.showToastText('提交成功');
-            setTimeout(() => {
-              this.$router.go(-1);
-            }, 1000)
-          } else {
-            this.showToastText('提交失败');
-          }
-        }).catch(e => {
-          this.showToastText(e.message);
-        })
-      },
-      // 展示弹窗
-      showConfirmPop(result = 1) {
-        this.showConfirm = true;
-        this.result = result;
-      },
-      // TODO 点击确定
-      confirm(reason) {
-        if (this.result === 2 && !reason) {
-          this.showToastText('拒绝原因不能为空');
-          return
-        }
-        this.submit(reason);
-      },
-    },
-    created() {
-      let {query} = this.$route;
-      this.listid = query.list;
-      this.formKey = query.formKey;
-      this.transCode = query.transCode;
-      this.taskId = query.taskId;
-      this.canSubmit = query.canSubmit === '1';
-      this.getFormData();
-      this.$nextTick(() => {
-        this.pageSwiper = new Swiper('.swiper-container', {});
-      })
-    }
+    mixins: [detail],
   }
 </script>
 
