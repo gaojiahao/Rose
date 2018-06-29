@@ -196,22 +196,13 @@ export default {
     },
     //审批
     end(num){
-      let that = this,
-      taskId = that.$route.query.taskId,
-      transCode = that.$route.query.transCode,
-      data = {};
+      this.showConfirm = true;
       //拒绝
       if( num == 0 ){
         this.result = 0;
-        this.showConfirm = true;
-        //data = {"result": 0, "transCode": transCode, "comment": "审批意见"};
-        //that.endToast(taskId,data);
       }else if( num == 1 ){
         //同意
         this.result = 1;
-        this.showConfirm = true;
-        //data = {"result": 1, "transCode": transCode, "comment": "审批意见"};
-        //that.endToast(taskId,data);
       }
     },
     //确定
