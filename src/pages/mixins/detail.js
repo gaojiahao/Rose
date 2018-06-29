@@ -40,7 +40,7 @@ export default {
         let {formData = {}, success = true, message = ''} = data;
         // 请求失败提示
         if (!success) {
-          this.showToastText(message);
+          this.showToast(message);
           return;
         }
 
@@ -59,7 +59,7 @@ export default {
           this.pageSwiper.update();
         })
       }).catch(e => {
-        this.showToastText(e.message);
+        this.showToast(e.message);
       });
     },
     // TODO 审批
@@ -73,15 +73,15 @@ export default {
         this.showLoading = false;
         let {message, success} = data;
         if (success) {
-          this.showToastText('提交成功');
+          this.showToast('提交成功');
           setTimeout(() => {
             this.$router.go(-1);
           }, 1000)
         } else {
-          this.showToastText('提交失败');
+          this.showToast('提交失败');
         }
       }).catch(e => {
-        this.showToastText(e.message);
+        this.showToast(e.message);
       })
     },
     // 展示弹窗
@@ -92,7 +92,7 @@ export default {
     // TODO 点击确定
     confirm(reason) {
       if (!this.result && !reason) {
-        this.showToastText('拒绝原因不能为空');
+        this.showToast('拒绝原因不能为空');
         return
       }
       this.submit(reason);

@@ -94,7 +94,7 @@
         this.showLoading = false;
         sessionStorage.setItem(USER_INFO, JSON.stringify(data));
       }).catch(e => {
-        this.showToastText(e.message);
+        this.showToast(e.message);
       });
     }
   }

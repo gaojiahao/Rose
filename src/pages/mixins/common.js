@@ -10,13 +10,14 @@ export default {
   components: {Loading},
   methods: {
     // TODO 显示错误提示
-    showToastText(test = '') {
+    showToast(test = '') {
       this.$vux.toast.show({
         text: test,
         type: 'text',
         position: 'middle',
         width: 'auto',
-        isShowMask: true
+        isShowMask: true,
+        time: 1000
       });
     },
     // TODO 时间戳转日期

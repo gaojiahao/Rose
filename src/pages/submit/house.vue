@@ -205,7 +205,7 @@
           return true
         });
         if (warn) {
-          this.showToastText(warn);
+          this.showToast(warn);
           return
         }
         sessionStorage.setItem(this.sessionKey, JSON.stringify(this.formData));
@@ -236,7 +236,7 @@
           let {formData = {}, success = true, message = ''} = data;
           // 请求失败提示
           if (!success) {
-            this.showToastText(message);
+            this.showToast(message);
             return;
           }
 
@@ -261,7 +261,7 @@
             this.hasDefault = false;
           })
         }).catch(e => {
-          this.showToastText(e.message);
+          this.showToast(e.message);
         });
       },
     },

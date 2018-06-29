@@ -27,6 +27,7 @@
                 <div class="comment-right">{{item.desc}}</div>
               </li>
             </ul>
+            <load-more :show-loading="false" tip="暂无审批意见" v-if="!commentList.length"></load-more>
           </group>
         </div>
       </div>
@@ -35,7 +36,7 @@
 </template>
 
 <script>
-  import {Flow, Cell, Group, FlowState, FlowLine, Panel} from "vux";
+  import {Flow, Cell, Group, FlowState, FlowLine, LoadMore, Panel} from "vux";
   import createService from './../../service/createService'
 
   export default {
@@ -87,6 +88,7 @@
       Group,
       FlowLine,
       FlowState,
+      LoadMore,
       Panel,
     },
     methods: {
@@ -96,16 +98,6 @@
           transCode: this.transCode
         }).then(data => {
           let last = data.pop();
-          let done = {
-            stateDone: true,
-            lineDone: true,
-            tip: '',
-          };
-          let doing = {
-            stateDone: true,
-            lineDone: false,
-            tip: '进行中',
-          };
           let showList = ['常委审批', '副总裁审批', '财务审批', '总裁审批'];
           data && data.forEach((item, index) => {
             // 只取四个审批节点的数据做展示
@@ -120,55 +112,78 @@
               })
             }
           });
-          switch (last.actName) {
-            case 'Start':
-              this.governor = doing;
-              break;
-            case '常委审批':
-              this.governor = done;
-              this.committee = doing;
-              break;
-            case '副总裁审批':
-              this.governor = done;
-              this.committee = done;
-              this.vicePresident = doing;
-              break;
-            case '财务审批':
-              this.governor = done;
-              this.committee = done;
-              this.vicePresident = done;
-              this.finance = doing;
-              break;
-            case '总裁审批':
-              this.governor = done;
-              this.committee = done;
-              this.vicePresident = done;
-              this.finance = done;
-              this.ceo = {
-                stateDone: false,
-                lineDone: false,
-                tip: '',
-              };
-              break;
-            case '重新提交':
-              this.governor = doing;
-              break;
-            case '生效表单':
-              break;
-            case 'End':
-              this.governor = done;
-              this.committee = done;
-              this.vicePresident = done;
-              this.finance = done;
-              this.ceo = done;
-              break;
-            default:
-              break;
-          }
+          this.assembleFlow(last);
         }).catch(e => {
-          this.$parent.showToastText(e.message);
+          this.showToast(e.message);
         })
-      }
+      },
+      // TODO 组装工作流流程图
+      assembleFlow(item){
+        let done = {
+          stateDone: true,
+          lineDone: true,
+          tip: '',
+        };
+        let doing = {
+          stateDone: true,
+          lineDone: false,
+          tip: '进行中',
+        };
+        switch (item.actName) {
+          case 'Start':
+            this.governor = doing;
+            break;
+          case '常委审批':
+            this.governor = done;
+            this.committee = doing;
+            break;
+          case '副总裁审批':
+            this.governor = done;
+            this.committee = done;
+            this.vicePresident = doing;
+            break;
+          case '财务审批':
+            this.governor = done;
+            this.committee = done;
+            this.vicePresident = done;
+            this.finance = doing;
+            break;
+          case '总裁审批':
+            this.governor = done;
+            this.committee = done;
+            this.vicePresident = done;
+            this.finance = done;
+            this.ceo = {
+              stateDone: false,
+              lineDone: false,
+              tip: '',
+            };
+            break;
+          case '重新提交':
+            this.governor = doing;
+            break;
+          case '生效表单':
+            break;
+          case 'End':
+            this.governor = done;
+            this.committee = done;
+            this.vicePresident = done;
+            this.finance = done;
+            this.ceo = done;
+            break;
+          default:
+            break;
+        }
+      },
+      showToast(text = '') {
+        this.$vux.toast.show({
+          text: text,
+          type: 'text',
+          position: 'middle',
+          width: 'auto',
+          isShowMask: true,
+        });
+      },
     },
     created() {
       this.getFlows();
@@ -252,7 +267,7 @@
         justify-content: space-between;
         margin: 10px 0;
         .comment-left {
-          flex: 3;
+          flex: 1;
           .title {
             margin-bottom: 5px;
           }
@@ -262,7 +277,7 @@
           }
         }
         .comment-right {
-          flex: 4;
+          flex: 1;
           padding-left: 10px;
           text-align: right;
         }

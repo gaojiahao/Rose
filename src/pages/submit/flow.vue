@@ -90,7 +90,7 @@
         }).then(data => {
           this.procCode = data[0] && data[0].procCode || '';
         }).catch(e => {
-          // this.showToastText(e.message);
+          // this.showToast(e.message);
         });
       },
       // TODO 获取用户信息
@@ -224,7 +224,7 @@
           return true
         });
         if (warn) {
-          this.showToastText(warn);
+          this.showToast(warn);
           return
         }
         wfPara = {
@@ -255,17 +255,17 @@
           this.showLoading = false;
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
-            this.showToastText('提交成功');
+            this.showToast('提交成功');
             sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
               // this.$router.push('/');
               this.$router.go(-2);
-            }, 1000)
+            }, 1200)
           } else {
-            this.showToastText('提交失败');
+            this.showToast('提交失败');
           }
         }).catch(e => {
-          this.showToastText(e.message);
+          this.showToast(e.message);
         })
       },
       // TODO 初始化基本信息

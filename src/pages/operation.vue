@@ -76,7 +76,7 @@
         let {dataCount = 0} = data;
         console.log(data)
       }).catch(e => {
-        this.showToastText(e.message);
+        this.showToast(e.message);
       })*/
     },
     mounted() {

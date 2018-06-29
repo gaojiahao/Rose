@@ -171,8 +171,8 @@ export default {
           }
 
         });
-      }).catch(c =>{
-        console.log(c)
+      }).catch(e =>{
+        this.showToast(e.message);
       });
     },
     //获取待办
@@ -206,8 +206,8 @@ export default {
           that.scroll.refresh();
         })
         that.scroll.finishPullUp();
-      }).catch( c =>{
-        console.log(c)
+      }).catch( e =>{
+        this.showToast(e.message);
       });
     },
     //获取进行中
@@ -241,8 +241,8 @@ export default {
           that.scroll.refresh();
         })
         that.scroll.finishPullUp();
-      }).catch( c =>{
-        console.log(c)
+      }).catch( e =>{
+        this.showToast(e.message);
       });
     },
     //获取已完成
@@ -276,8 +276,8 @@ export default {
           that.scroll.refresh();
         })
         that.scroll.finishPullUp();
-      }).catch( c =>{
-        console.log(c)
+      }).catch( e =>{
+        this.showToast(e.message);
       });
     },
     //tab切换
@@ -307,16 +307,17 @@ export default {
     //滚动加载启动
     scrollOn() {
       let that = this;
-      let tabH = document.querySelector(".tabSelect").offsetHeight;
-      let topH = document.querySelector(".m_top").offsetHeight;
-      let ch = window.innerHeight - tabH - topH - 20;
-      document.querySelector(".m_list").style.height = ch + "px";
       this.$nextTick(() => {
+        let tabH = document.querySelector(".tabSelect").offsetHeight;
+        let topH = document.querySelector(".m_top").offsetHeight;
+        let ch = window.innerHeight - tabH - topH - 20;
+        document.querySelector(".m_list").style.height = ch + "px";
         this.scroll = new Bscroll(this.$refs.wrapper, {
           click: true
         });
         this.scroll.openPullUp();
         this.scroll.on("pullingUp", function(e) {
+          console.log('pullingUp')
           if (that.whichIndex == 0) {
             that.dbnothing = true;
             that.Tobedone();
@@ -346,10 +347,10 @@ export default {
       };
       // 待处理页签才允许审批
       if (!this.whichIndex) {
-        map['a9238c91-36f3-4b09-9705-9d50870b3c46'] = 'spread';
-        map['d189cc14-3a77-4e81-a220-55c771a2bdff'] = 'meeting';
-        map['e59dcb25-3a14-44b7-b619-433c63d2327b'] = 'house';
-        map['1ab51ee6-2836-4728-b0a5-9fa5c8902c31'] = 'assets';
+        map['a9238c91-36f3-4b09-9705-9d50870b3c46'] = '/spread';
+        map['d189cc14-3a77-4e81-a220-55c771a2bdff'] = '/meeting';
+        map['e59dcb25-3a14-44b7-b619-433c63d2327b'] = '/house';
+        map['1ab51ee6-2836-4728-b0a5-9fa5c8902c31'] = '/assets';
         if (assignee) {
           canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1' : '0';
         }
@@ -368,20 +369,45 @@ export default {
         }
       })
     },
+    // TODO 加载数据
+    loadData() {
+      switch (this.whichIndex) {
+        case 0:
+          this.Tobedone();
+          break;
+        case 1:
+          this.underWay();
+          break;
+        case 2:
+          this.over();
+          break;
+        default:
+          break;
+      }
+    },
+    // TODO 显示错误提示
+    showToast(test = '') {
+      this.$vux.toast.show({
+        text: test,
+        type: 'text',
+        position: 'middle',
+        width: 'auto',
+        isShowMask: true,
+        time: 1000
+      });
+    },
   },
   created() {
-  },
-  mounted() {
     //获取顶部头像名字
     this.headerInfo = JSON.parse(localStorage.getItem("ROSE_LOGIN_TOKEN"));
-    this.getUser();
-    this.Tobedone();
-    this.underWay();
-    this.over();
-    this.scrollOn();
     if(sessionStorage.getItem('MYLIST_TAB')){
       this.whichIndex = Number(sessionStorage.getItem('MYLIST_TAB'));
     }
+    this.getUser();
+    this.scrollOn();
+    this.loadData();
+  },
+  mounted() {
   },
 };
 </script>

@@ -81,7 +81,7 @@
           let {tableContent = []} = data;
           this[listKey] = this.assembleList(tableContent);
         }).catch(e => {
-          this.$parent.showToastText(e.message);
+          this.$parent.showToast(e.message);
         })
       },
       // TODO 获取费用所属事业部列表
