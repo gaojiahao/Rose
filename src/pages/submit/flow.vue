@@ -282,7 +282,7 @@
     position: absolute;
     right: 0;
     z-index: 100;
-    width: 90%;
+    width: 50%;
     max-height: 300px;
     color: #000;
     box-shadow: 0 2px 10px #e8e8e8;
