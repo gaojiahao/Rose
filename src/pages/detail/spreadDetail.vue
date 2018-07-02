@@ -76,7 +76,8 @@
                     ></popup-picker>
                 </group>
                 <group title="要说点什么吗？">
-                    <x-textarea title="说明" readonly :max="100" v-model="item.explain"></x-textarea>
+                    <!--<x-textarea title="说明" readonly :max="100" v-model="item.explain"></x-textarea>-->
+                  <cell title="说明" :value="item.explain" primary="content"></cell>
                 </group>
               </div>
             </div>

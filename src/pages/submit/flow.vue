@@ -280,18 +280,20 @@
 <style lang='scss'>
   .search-list-container {
     position: absolute;
+    right: 0;
     z-index: 100;
-    width: 100%;
+    width: 90%;
     max-height: 300px;
-    background-color: #eee;
     color: #000;
+    box-shadow: 0 2px 10px #e8e8e8;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     .weui-cells {
       margin-top: 0;
     }
     .weui-cell {
-      background-color: #ccc;
+      background-color: #fff;
+      text-align: right;
     }
   }
 
