@@ -45,6 +45,7 @@
   import createService from './../../service/createService'
   import common from './../mixins/common'
 
+  const USER_INFO = 'RFD_CURRENT_USER_INFO';
   export default {
     components: {
       Flow,
@@ -75,22 +76,22 @@
         searchType: '', // 当前聚焦的输入框类型
         hasSelected: false, // 是否选中搜索项
         formData: {}, // 表单数据
-        procCode: '',
-        searchListTop: 0,
-        sessionKey: '',
-        taskId: '',
+        procCode: '', // 表单编码
+        searchListTop: 0, // 匹配列表距离顶部的距离
+        sessionKey: '', // 存储formData的key
+        taskId: '', // 任务id，修改时会有
       };
     },
     mixins: [common],
     methods: {
       // TODO 获取节点
       getProcess() {
-        createService.getProcess({
+        return createService.getProcess({
           listId: this.listid
         }).then(data => {
           this.procCode = data[0] && data[0].procCode || '';
         }).catch(e => {
-          // this.showToast(e.message);
+          this.showToast(e.message);
         });
       },
       // TODO 获取用户信息
@@ -98,51 +99,6 @@
         return createService.getUser().then(data => {
           this.userInfo = data;
           return data;
-        });
-      },
-      // TODO 初始化基本信息
-      async initData() {
-        // 设置经办人信息
-        let currentUser = await createService.getCurrentUser(this.userInfo.nickname).then(data => {
-          let currentUser = data.tableContent[0] || {};
-          let {nickname = '', userId = ''} = currentUser;
-          this.formData.handlerName = nickname;
-          this.formData.creatorName = nickname;
-          this.formData.modifer = nickname;
-          this.formData.handerId = userId;
-          this.formData.cjz = userId;
-          return currentUser
-        });
-        // 设置所属区域信息
-        let area = await createService.getRemoteData('/H_roleplay-si/ds/getAreasByUserId', {
-          userId: currentUser.userId
-        }).then(data => {
-          let {tableContent = []} = data;
-          let area = tableContent[0] || {};
-          this.formData.handlerAreaName = area.userGroupName || '';
-          this.formData.handlerArea = area.userGroupId || '';
-          return area;
-        });
-        // 设置经办部门信息
-        let dept = await createService.getRemoteData('/H_roleplay-si/ds/getUnitsByUserId', {
-          userId: currentUser.userId,
-          parentId: area.userGroupId
-        }).then(data => {
-          let {tableContent = []} = data;
-          let dept = tableContent[0] || {};
-          this.formData.handlerUnitName = dept.userGroupName || '';
-          this.formData.handlerUnitId = dept.userGroupId || '';
-          return dept;
-        });
-        // 设置经办角色信息
-        let role = await createService.getRemoteData('/H_roleplay-si/ds/getRolesByUserId', {
-          userId: currentUser.userId,
-          parentId: dept.userGroupId
-        }).then(data => {
-          let {tableContent = []} = data;
-          let role = tableContent[0] || {};
-          this.formData.handlerRoleName = role.userGroupName || '';
-          this.formData.handlerRoleId = role.userGroupId || '';
         });
       },
       // TODO 点击常委、副总输入框
@@ -216,6 +172,7 @@
         let submitData = {};
         let wfPara = {};
         let submitMethod = 'saveAndStartWf';
+        // 校验数据
         Object.values(this.level_list).every(item => {
           if (!item.userId) {
             warn = `${item.name}不能为空`;
@@ -258,7 +215,6 @@
             this.showToast('提交成功');
             sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
-              // this.$router.push('/');
               this.$router.go(-2);
             }, 1200)
           } else {
@@ -270,7 +226,7 @@
       },
       // TODO 初始化基本信息
       getBaseInfo() {
-        return createService.getBaseInfoData().then(data => {
+        let handleBaseInfo = (data = {}) => {
           let {nickname, userId, area, areaID, groupName, groupNameID, position, roleID} = data;
           area = area.split(',')[0];
           areaID = areaID.split(',')[0];
@@ -289,7 +245,16 @@
           this.formData.handlerUnitId = groupNameID;
           this.formData.handlerRoleName = position;
           this.formData.handlerRoleId = roleID;
-        })
+        };
+
+        let currentUser = sessionStorage.getItem(USER_INFO);
+        if (currentUser) {
+          currentUser = JSON.parse(currentUser);
+          handleBaseInfo(currentUser);
+          return Promise.resolve();
+        }
+
+        return createService.getBaseInfoData().then(handleBaseInfo);
       },
     },
     created() {
@@ -300,18 +265,10 @@
       let now = this.changeDate(new Date(), true);
       let formData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
       this.formData = Object.assign({}, formData);
+      // 修改时有创建时间，使用原来的创建时间
       this.formData.crtTime = formData.crtTime ? this.changeDate(formData.crtTime, true) : now;
       this.formData.modTime = now;
       // this.getProcess();
-      /*(async () => {
-        this.showLoading = true;
-        let requestPromises = [];
-        await this.getUserInfo();
-        requestPromises.push(this.initData());
-        Promise.all(requestPromises).then(data => {
-          this.showLoading = false;
-        })
-      })();*/
       this.showLoading = true;
       this.getBaseInfo().then(data => {
         this.showLoading = false;

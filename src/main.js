@@ -6,24 +6,25 @@ import VueRouter from 'vue-router'
 import App from './App'
 import router from './router'
 import adapation from './common/adapation'
-import  { LoadingPlugin,ToastPlugin } from 'vux'
-require('swiper/dist/css/swiper.css')
+import {ToastPlugin} from 'vux'
 
-Vue.use(VueRouter)
-Vue.use(LoadingPlugin)
-Vue.use(ToastPlugin)
+require('swiper/dist/css/swiper.css');
+
+Vue.use(VueRouter);
+Vue.use(ToastPlugin);
 
 
-FastClick.attach(document.body)
+FastClick.attach(document.body);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta || '立项申请';
+  let {meta} = to;
+  document.title = meta.title || '';
   next()
 });
 /* eslint-disable no-new */
 new Vue({
   router,
   render: h => h(App)
-}).$mount('#app-box')
+}).$mount('#app-box');
