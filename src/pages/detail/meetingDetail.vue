@@ -21,7 +21,7 @@
         <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
     </div>
-    <div class="m_btm vux-1px-t" v-if="canSubmit">
+    <div class="m_btm vux-1px-t" v-if="canSubmit" v-show="showPage">
       <span class="m_button reject" @click="showConfirmPop(0)">拒绝</span>
       <span class="m_button" @click="showConfirmPop(1)">同意</span>
     </div>
