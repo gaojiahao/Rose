@@ -108,9 +108,9 @@
         this.searchType = item.searchType;
         // 设置搜索框顶部偏移
         if (key === 'committee') {
-          this.searchListTop = '83px';
+          this.searchListTop = '81px';
         } else if (key === 'vicePresident') {
-          this.searchListTop = '130px';
+          this.searchListTop = '126px';
         }
       },
       // TODO 失去输入框焦点
