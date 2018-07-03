@@ -7,8 +7,8 @@
             固定资产
           </h1>
           <div class="a_main">
-            <div class="a_main_part" v-for="(item,index) in assetsList" :key="index">
-              <group title="请选择资产类型">
+            <div class="a_main_part" v-for="(item,index) in listData" :key="index">
+              <!-- <group title="请选择资产类型">
                 <popup-picker
                   title="资产类型"
                   :data="item.model"
@@ -88,8 +88,13 @@
                   ></popup-picker>
               </group>
               <group title="要说点什么吗？">
-                  <!--<x-textarea title="说明" readonly v-model="item.explain" :max="100"></x-textarea>-->
                   <cell title="说明" :value="item.explain" primary="content"></cell>
+              </group> -->
+
+
+              <group :title="lItem.title" v-for="(lItem, lIndex) in item" :key="lIndex">
+                <cell v-for="(val, idx) in lItem.items" :title="val.title" :value="val.value" :key="idx"
+                      primary="content"></cell>
               </group>
             </div>
           </div>
@@ -98,9 +103,9 @@
       </div>
     </div>
 
-    <div class="spinner" v-if="Load">
+    <!-- <div class="spinner" v-if="Load">
         <loading :show="true"></loading>
-     </div>
+     </div> -->
      <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
      @on-confirm="confirm"></task-confirm>
      <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
@@ -119,6 +124,7 @@
   import FlowDetail from './../components/FlowDetail'
   import Loading from './../components/loading'
   import TaskConfirm from './../components/TaskConfirm'
+  import detail from './../mixins/detail'
   export default {
     components: {
       Cell,
@@ -136,12 +142,12 @@
     },
     data() {
       return {
-        showConfirm: false, // 是否展示原因弹窗
-        result: 0,
-        Load: true,
-        transCode: this.$route.query.transCode,
-        canSubmit: this.$route.query.canSubmit,
-        pageSwiper: null,
+        // showConfirm: false, // 是否展示原因弹窗
+        // result: 0,
+        // Load: true,
+        // transCode: this.$route.query.transCode,
+        // canSubmit: this.$route.query.canSubmit,
+        // pageSwiper: null,
         assetsList: [
           {
             model: [['电脑','桌子','椅子']],   //资产型号
@@ -164,7 +170,98 @@
             explain: "",   //说明
             status: false
           }
-        ]
+        ],
+        listObj:[
+          {
+            title: '请选择资产类型',
+            items: [
+              {
+                title: '资产类型',
+                key: 'assetType',
+                value: '',
+              }
+            ]
+          }, {
+            title: '请填写资产型号/规格',
+            items: [
+              {
+                title: '资产型号/规格',
+                key: 'assetModel',
+                value: '',
+              }
+            ]
+          }, {
+            title: '请选择计量单位',
+            items: [
+              {
+                title: '计量单位',
+                key: 'meteringUnit',
+                value: '',
+              },
+            ]
+          }, {
+            title: '请填写明细',
+            items: [
+              {
+                title: '单价',
+                key: 'assetPrice',
+                value: '',
+              },{
+                title: '数量',
+                key: 'assetNumber',
+                value: '',
+              },{
+                title: '合计',
+                key: 'assetCostTotal',
+                value: '',
+              },
+            ]
+          }, {
+            title: '请填写部门',
+            items: [
+              {
+                title: '申请部门',
+                key: 'applyDepartment',
+                value: '',
+              },{
+                title: '使用部门',
+                key: 'useDepartment',
+                value: '',
+              }
+            ]
+          }, {
+            title: '费用所属',
+            items: [
+              {
+                title: '费用所属事业部',
+                key: 'assetCostBU',
+                value: '',
+              },{
+                title: '费用所属部门',
+                key: 'assetCostDepartment',
+                value: '',
+              },{
+                title: '核算归属省份',
+                key: 'assetCheckProvince',
+                value: '',
+              },{
+                title: '费用所属银行',
+                key: 'assetCostBank',
+                value: '',
+              }
+            ]
+          }, {
+            title: '要说点什么吗？',
+            items: [
+              {
+                title: '说明',
+                key: 'comment',
+                value: '',
+              }
+            ]
+          }
+        ],
+         listData: [],
       }
     },
     methods: {
@@ -228,52 +325,57 @@
       },
     },
     created(){
-      this.$nextTick(() => {
-        this.pageSwiper = new Swiper ('.swiper-container', {});
-      })
-      let that = this;
-      let {query} = this.$route;
-      if (query.transCode) {
-        createService.getFormData({
-          formKey: query.formKey,
-          transCode: query.transCode,
-        }).then( res => {
-          let dataSet = res.formData.order.dataSet,
-          newArr = [];
-          for(let i = 0 ; i< dataSet.length ; i++ ){
-            newArr.push({
-              model: [['电脑','桌子','椅子']],   //资产型号
-              modelOn: [dataSet[i].assetType],   //选中资产型号
-              modSpec: dataSet[i].assetModel,   //资产型号规格
-              unit: [['台','个','张','件']],    //计量单位
-              unitOn: [dataSet[i].meteringUnit],    //选中计量单位
-              num: dataSet[i].assetNumber,       //数量
-              unitPrice: dataSet[i].assetPrice, //单价
-              applydept: dataSet[i].applyDepartment, //申请部门
-              usedept: dataSet[i].useDepartment,   //使用部门
-              bulist: [],    //费用所属事业部
-              buOn: [dataSet[i].assetCostBU],      //费用所属事业部选中
-              deptlist: [],  //费用所属部门
-              deptOn: [dataSet[i].assetCostDepartment],    //费用所属部门选中
-              provlist: [],  //核算归属省份
-              provOn: [dataSet[i].assetCheckProvince],    //核算归属省份选中
-              banklist: [],  //费用所属银行
-              bankOn: [dataSet[i].assetCostBank],    //费用所属银行选中
-              explain: dataSet[i].comment,   //说明
-              status: false,
-            })
-          }
-          that.assetsList = newArr;
-          that.Load = false;
-        }).catch( c =>{
-          console.log(c)
-        })
-      }
+      // this.$nextTick(() => {
+      //   this.pageSwiper = new Swiper ('.swiper-container', {});
+      // })
+      // let that = this;
+      // let {query} = this.$route;
+      // if (query.transCode) {
+      //   createService.getFormData({
+      //     formKey: query.formKey,
+      //     transCode: query.transCode,
+      //   }).then( res => {
+      //     let dataSet = res.formData.order.dataSet,
+      //     newArr = [];
+      //     for(let i = 0 ; i< dataSet.length ; i++ ){
+      //       newArr.push({
+      //         model: [['电脑','桌子','椅子']],   //资产型号
+      //         modelOn: [dataSet[i].assetType],   //选中资产型号
+      //         modSpec: dataSet[i].assetModel,   //资产型号规格
+      //         unit: [['台','个','张','件']],    //计量单位
+      //         unitOn: [dataSet[i].meteringUnit],    //选中计量单位
+      //         num: dataSet[i].assetNumber,       //数量
+      //         unitPrice: dataSet[i].assetPrice, //单价
+      //         applydept: dataSet[i].applyDepartment, //申请部门
+      //         usedept: dataSet[i].useDepartment,   //使用部门
+      //         bulist: [],    //费用所属事业部
+      //         buOn: [dataSet[i].assetCostBU],      //费用所属事业部选中
+      //         deptlist: [],  //费用所属部门
+      //         deptOn: [dataSet[i].assetCostDepartment],    //费用所属部门选中
+      //         provlist: [],  //核算归属省份
+      //         provOn: [dataSet[i].assetCheckProvince],    //核算归属省份选中
+      //         banklist: [],  //费用所属银行
+      //         bankOn: [dataSet[i].assetCostBank],    //费用所属银行选中
+      //         explain: dataSet[i].comment,   //说明
+      //         status: false,
+      //       })
+      //     }
+      //     that.assetsList = newArr;
+      //     that.Load = false;
+      //   }).catch( c =>{
+      //     console.log(c)
+      //   })
+      // }
     },
     mounted(){
     },
     computed: {
-    }
+      totalCost() {
+        let {assetPrice = 0, assetNumber = 0} = this.formData;
+        return `￥${numberComma(Number(assetPrice) * Number(assetNumber))}`;
+      }
+    },
+    mixins: [detail],
   }
 </script>
 
