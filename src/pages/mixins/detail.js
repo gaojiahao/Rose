@@ -50,29 +50,35 @@ export default {
         formData.modTime = this.changeDate(formData.modTime);
 
         if(formData.order){
-          this.formData = formData;
-          console.log('formData:', formData);
-          // for ( let [index, item] of Object.entries(formData.order.dataSet)){
-          //   console.log(item);
+          let dataSet =  formData.order.dataSet;
+          var curItem = [];
+
+          // var curItem = this.listObj.slice(0);
+
+         
+          dataSet.map((data)=>{
+            curItem = [];
+            this.listObj.map(lo =>{
+              curItem.push(lo);
+            });
+
+            for(var key in data){
+              
+              curItem.map((g)=>{
+                g.items.map((f)=>{
+                  if(f.key === key){
+                    f.value = data[key];
+                  }
+                });
+
+              });   
+            }
+            console.log(curItem);
+            this.listData.push(curItem);
             
-          // }
-          formData.order.dataSet.forEach( (res,i) =>{
-            this.listData.push(this.listObj)
-            this.listData[i].forEach(item => {
-              item.items.forEach(e =>{
-                e.value =  formData.order.dataSet[i][e.key];
-                console.log(e.value)
-              });
-            })
+
+
           });
-          // this.listData.forEach((lItem,j) => {
-          //   lItem.arr.forEach(item => {
-          //     item.items.forEach(e =>{
-          //       e.value =  formData.order.dataSet[j][e.key];
-          //       console.log(e.value)
-          //     });
-          //   })
-          // });
         }else{
           this.formData = formData;
           this.listData.forEach(lItem => {
