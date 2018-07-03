@@ -4,7 +4,7 @@
             <img class="user_img" :src="headerInfo.avatar">
             <div class="user_part">
                 <div class="user_name_part">
-                    <span class="user_name" v-if="headerInfo.name!=''">{{headerInfo.name}}</span>
+                    <span class="user_name" v-if="userName!=''">{{userName}}</span>
                     <span class="user_level" v-if="userRole!=''">{{userRole}}</span>
                 </div>
                 <div class="user_info_part">
@@ -32,7 +32,7 @@
                                     {{val.businessKey}}
                                     <span class="e_crtname">{{val.crtName}}</span>
                                 </span>
-                                <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
+                                <span class="e_time" v-html="val.crtTime?val.crtTime.split(' ')[0]:''"></span>
                             </div>
                         </div>
                         <div class="spinner_container" v-if="TobedoneLoad">
@@ -56,7 +56,7 @@
                                     {{val.transId}}
                                     <span class="e_crtname">{{val.creatorName}}</span>
                                 </span>
-                                <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
+                                <span class="e_time" v-html="val.crtTime?val.crtTime.split(' ')[0]:''"></span>
                             </div>
                         </div>
                         <div class="spinner_container" v-if="underWayLoad">
@@ -80,7 +80,7 @@
                                     {{val.transId}}
                                     <span class="e_crtname">{{val.creatorName}}</span>
                                 </span>
-                                <span class="e_time" v-html="val.endTime?val.endTime.split(' ')[0]:''"></span>
+                                <span class="e_time" v-html="val.crtTime?val.crtTime.split(' ')[0]:''"></span>
                             </div>
                         </div>
                         <div class="spinner_container" v-if="overLoad">
@@ -132,6 +132,7 @@ export default {
       dbnothingMore: false,
       underWayMore: false,
       overMore: false,
+      userName: '',
       userRole: '',
       userBank: '',
       userDept: '',
@@ -145,7 +146,10 @@ export default {
       createService.getUser().then(res => {
         createService.getCurrentUser(res.nickname).then(e => {
           let user = e.tableContent[0];
-          this.currentUser = user;
+          
+          //用户姓名
+          this.userName = user.nickname;
+          //用户级别
           if(user.role){
             if(user.role.indexOf(',') == -1 ){
               that.userRole = user.role;
@@ -153,7 +157,7 @@ export default {
               that.userRole = user.role.split(',')[0];
             }
           }
-
+          //用户银行
           if(user.HOME_BANK){
             if(user.HOME_BANK.indexOf(',') == -1){
               that.userBank = user.HOME_BANK;
@@ -161,7 +165,7 @@ export default {
               that.userBank = user.HOME_BANK.split(',')[0];
             }
           }
-
+          //用户部门
           if(user.dept){
             if(user.dept.indexOf(',') == -1 ){
               that.userDept = user.dept;
@@ -419,10 +423,6 @@ export default {
   display: flex;
   align-items: center;
   background: #5077aa;
-  // background: #f1b841 url('../assets/bg-header-618.png') no-repeat ;
-  // background-size: contain;
-  // background-color: #FFE172;
-  // background-image: url(data:image/png;base64,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);
   .user_img {
     width: 60px;
     height: 60px;
