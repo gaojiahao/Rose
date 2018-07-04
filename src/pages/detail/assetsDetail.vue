@@ -8,90 +8,6 @@
           </h1>
           <div class="a_main">
             <div class="a_main_part" v-for="(item,index) in listData" :key="index">
-              <!-- <group title="请选择资产类型">
-                <popup-picker
-                  title="资产类型"
-                  :data="item.model"
-                  v-model="item.modelOn"
-                  disabled
-                ></popup-picker>
-              </group>
-              <group title="请填写资产型号/规格">
-                <x-input
-                  title='资产型号/规格'
-                  text-align='right'
-                  v-model="item.modSpec"
-                  disabled
-                ></x-input>
-              </group>
-              <group title="请选择计量单位">
-                <popup-picker
-                  title="计量单位"
-                  :data="item.unit"
-                  v-model="item.unitOn"
-                  disabled
-                ></popup-picker>
-              </group>
-              <group title="请填写明细">
-                <x-input
-                  title='单价'
-                  text-align='right'
-                  v-model="item.unitPrice"
-                  disabled
-                ></x-input>
-                <x-input
-                  title='数量'
-                  text-align='right'
-                  v-model="item.num"
-                  disabled
-                ></x-input>
-                <cell title="合计" :value="Number(item.unitPrice)*Number(item.num)==0?'':'￥'+Number(item.unitPrice)*Number(item.num) | numberComma"></cell>
-              </group>
-              <group title="请填写部门">
-                <x-input
-                  title='申请部门'
-                  text-align='right'
-                  v-model="item.applydept"
-                  disabled
-                ></x-input>
-                <x-input
-                  title='使用部门'
-                  text-align='right'
-                  v-model="item.usedept"
-                  disabled
-                ></x-input>
-              </group>
-              <group title="费用所属" >
-                  <popup-picker
-                      title="费用所属事业部"
-                      :data="item.bulist"
-                      v-model="item.buOn"
-                      disabled
-                  ></popup-picker>
-                  <popup-picker
-                      title="费用所属部门"
-                      :data="item.deptlist"
-                      v-model="item.deptOn"
-                      disabled
-                  ></popup-picker>
-                  <popup-picker
-                      title="核算归属省份"
-                      :data="item.provlist"
-                      v-model="item.provOn"
-                      disabled
-                  ></popup-picker>
-                  <popup-picker
-                      title="费用所属银行"
-                      :data="item.banklist"
-                      v-model="item.bankOn"
-                      disabled
-                  ></popup-picker>
-              </group>
-              <group title="要说点什么吗？">
-                  <cell title="说明" :value="item.explain" primary="content"></cell>
-              </group> -->
-
-
               <group :title="lItem.title" v-for="(lItem, lIndex) in item" :key="lIndex">
                 <cell v-for="(val, idx) in lItem.items" :title="val.title" :value="val.value" :key="idx"
                       primary="content"></cell>
@@ -102,10 +18,6 @@
         <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
     </div>
-
-    <!-- <div class="spinner" v-if="Load">
-        <loading :show="true"></loading>
-     </div> -->
      <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
      @on-confirm="confirm"></task-confirm>
      <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
@@ -118,11 +30,9 @@
 
 <script>
   import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Toast } from 'vux'
-  import spreadService from "../../service/spreadService";
   import createService from "../../service/createService";
   import Swiper from 'swiper'
   import FlowDetail from './../components/FlowDetail'
-  import Loading from './../components/loading'
   import TaskConfirm from './../components/TaskConfirm'
   import detail from './../mixins/detail'
   export default {
@@ -134,7 +44,6 @@
       XTextarea,
       Toast,
       FlowDetail,
-      Loading,
       TaskConfirm
     },
     filters:{
@@ -142,35 +51,11 @@
     },
     data() {
       return {
-        // showConfirm: false, // 是否展示原因弹窗
-        // result: 0,
-        // Load: true,
-        // transCode: this.$route.query.transCode,
-        // canSubmit: this.$route.query.canSubmit,
-        // pageSwiper: null,
-        assetsList: [
-          {
-            model: [['电脑','桌子','椅子']],   //资产型号
-            modelOn: [],   //选中资产型号
-            modSpec: '',   //资产型号规格
-            unit: [['台','个','张','件']],    //计量单位
-            unitOn: [],    //选中计量单位
-            num: '',       //数量
-            unitPrice: '', //单价
-            applydept: '', //申请部门
-            usedept: '',   //使用部门
-            bulist: [],    //费用所属事业部
-            buOn: [],      //费用所属事业部选中
-            deptlist: [],  //费用所属部门
-            deptOn: [],    //费用所属部门选中
-            provlist: [],  //核算归属省份
-            provOn: [],    //核算归属省份选中
-            banklist: [],  //费用所属银行
-            bankOn: [],    //费用所属银行选中
-            explain: "",   //说明
-            status: false
-          }
-        ],
+        showConfirm: false, // 是否展示原因弹窗
+        result: 0,
+        transCode: this.$route.query.transCode,
+        canSubmit: this.$route.query.canSubmit,
+        pageSwiper: null,
         listObj:[
           {
             title: '请选择资产类型',
@@ -261,7 +146,7 @@
             ]
           }
         ],
-         listData: [],
+        listData: [],
       }
     },
     methods: {
@@ -325,47 +210,9 @@
       },
     },
     created(){
-      // this.$nextTick(() => {
-      //   this.pageSwiper = new Swiper ('.swiper-container', {});
-      // })
-      // let that = this;
-      // let {query} = this.$route;
-      // if (query.transCode) {
-      //   createService.getFormData({
-      //     formKey: query.formKey,
-      //     transCode: query.transCode,
-      //   }).then( res => {
-      //     let dataSet = res.formData.order.dataSet,
-      //     newArr = [];
-      //     for(let i = 0 ; i< dataSet.length ; i++ ){
-      //       newArr.push({
-      //         model: [['电脑','桌子','椅子']],   //资产型号
-      //         modelOn: [dataSet[i].assetType],   //选中资产型号
-      //         modSpec: dataSet[i].assetModel,   //资产型号规格
-      //         unit: [['台','个','张','件']],    //计量单位
-      //         unitOn: [dataSet[i].meteringUnit],    //选中计量单位
-      //         num: dataSet[i].assetNumber,       //数量
-      //         unitPrice: dataSet[i].assetPrice, //单价
-      //         applydept: dataSet[i].applyDepartment, //申请部门
-      //         usedept: dataSet[i].useDepartment,   //使用部门
-      //         bulist: [],    //费用所属事业部
-      //         buOn: [dataSet[i].assetCostBU],      //费用所属事业部选中
-      //         deptlist: [],  //费用所属部门
-      //         deptOn: [dataSet[i].assetCostDepartment],    //费用所属部门选中
-      //         provlist: [],  //核算归属省份
-      //         provOn: [dataSet[i].assetCheckProvince],    //核算归属省份选中
-      //         banklist: [],  //费用所属银行
-      //         bankOn: [dataSet[i].assetCostBank],    //费用所属银行选中
-      //         explain: dataSet[i].comment,   //说明
-      //         status: false,
-      //       })
-      //     }
-      //     that.assetsList = newArr;
-      //     that.Load = false;
-      //   }).catch( c =>{
-      //     console.log(c)
-      //   })
-      // }
+      this.$nextTick(() => {
+        this.pageSwiper = new Swiper ('.swiper-container', {});
+      })
     },
     mounted(){
     },
@@ -498,14 +345,5 @@
       flex-grow: 1;
       -webkit-flex-grow: 1;
     }
-  }
-  .spinner{
-    position: fixed;
-    width: 100%;
-    text-align: center;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    z-index: 111;
   }
 </style>

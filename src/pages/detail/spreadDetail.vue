@@ -7,86 +7,16 @@
               市场宣传
             </h1>
             <div class="s_main">
-              <div class="s_main_part" v-for="(item, index) in xp_list" :key='index'>
-                <group title="请填写项目名称">
-                    <x-input
-                    title='项目名称'
-                    text-align='right'
-                    v-model="item.name"
-                    disabled
-                    ></x-input>
-                </group>
-                <group title="请填写市场宣传">
-                    <x-input
-                    title='市场宣传'
-                    text-align='right'
-                    v-model="item.conduct"
-                    disabled
-                    ></x-input>
-                </group>
-                <group title="请选择您申请的类型">
-                  <popup-picker
-                    title="宣品类型"
-                    :data="item.type"
-                    v-model="item.s_type"
-                    disabled
-                  ></popup-picker>
-                </group>
-                <group title="请填写明细">
-                  <x-input
-                    title='单价'
-                    text-align='right'
-                    v-model="item.unitprice"
-                    disabled
-                  ></x-input>
-                  <x-input
-                    title='数量'
-                    text-align='right'
-                    v-model="item.num"
-                    disabled
-                  ></x-input>
-                </group>
-                <group title="金额">
-                  <cell title='合计'>{{item.unitprice*item.num==0?'':'￥'+item.unitprice*item.num | numberComma}}</cell>
-                </group>
-                <group title="费用所属">
-                    <popup-picker
-                        title="费用所属事业部"
-                        :data="item.bulist"
-                        v-model="item.buOn"
-                        disabled
-                    ></popup-picker>
-                    <popup-picker
-                        title="费用所属部门"
-                        :data="item.deptlist"
-                        v-model="item.deptOn"
-                        disabled
-                    ></popup-picker>
-                    <popup-picker
-                        title="核算归属省份"
-                        :data="item.provlist"
-                        v-model="item.provOn"
-                        disabled
-                    ></popup-picker>
-                    <popup-picker
-                        title="费用所属银行"
-                        :data="item.banklist"
-                        v-model="item.bankOn"
-                        disabled
-                    ></popup-picker>
-                </group>
-                <group title="要说点什么吗？">
-                    <!--<x-textarea title="说明" readonly :max="100" v-model="item.explain"></x-textarea>-->
-                  <cell title="说明" :value="item.explain" primary="content"></cell>
+              <div class="s_main_part" v-for="(item, index) in listData" :key='index'>
+                <group :title="lItem.title" v-for="(lItem, lIndex) in item" :key="lIndex">
+                  <cell v-for="(val, idx) in lItem.items" :title="val.title" :value="val.value" :key="idx"
+                        primary="content"></cell>
                 </group>
               </div>
             </div>
         </div>
         <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
-    </div>
-    <div class="spinner" v-if="Load">
-        <loading :show="true"></loading>
     </div>
     <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
      @on-confirm="confirm"></task-confirm>
@@ -104,8 +34,8 @@ import createService from "../../service/createService";
 import { setTimeout } from 'timers';
 import Swiper from 'swiper'
 import FlowDetail from './../components/FlowDetail'
-import Loading from './../components/loading'
 import TaskConfirm from './../components/TaskConfirm'
+import detail from './../mixins/detail'
 export default {
   components: {
     Cell,
@@ -115,7 +45,6 @@ export default {
     XTextarea,
     Toast,
     FlowDetail,
-    Loading,
     TaskConfirm
   },
   filters: {
@@ -125,43 +54,87 @@ export default {
     return {
       showConfirm: false, // 是否展示原因弹窗
       result: 0,
-      Load:true,
-      listId:'',
       transCode: this.$route.query.transCode,
       canSubmit: this.$route.query.canSubmit,
       pageSwiper: null,
-      xp_list: [
+      listObj:[
         {
-          name: "", //项目名称
-          conduct: "", //市场宣传
-          type: [
-            [
-              "单页",
-              "三折页",
-              "X展架",
-              "易拉宝",
-              "三角牌",
-              "海报",
-              "吊旗",
-              "地贴",
-              "道具"
-            ]
-          ], //宣品类型
-          s_type: [], //选择类型
-          unitprice: "", //单价
-          num: "", //数量
-          bulist: [], //费用所属事业部
-          buOn: [], //费用所属事业部选中
-          deptlist: [], //费用所属部门
-          deptOn: [], //费用所属部门选中
-          provlist: [], //核算归属省份
-          provOn: [], //核算归属省份选中
-          banklist: [], //费用所属银行
-          bankOn: [], //费用所属银行选中
-          explain: "", //说明
-          status: false,
+          title: '请填写项目名称',
+          items: [
+            {
+              title: '项目名称',
+              key: 'projectName',
+              value: '',
+            }
+          ]
+        }, {
+          title: '请填写市场宣传',
+          items: [
+            {
+              title: '市场宣传',
+              key: 'productMarketing',
+              value: '',
+            }
+          ]
+        }, {
+          title: '请选择您申请的类型',
+          items: [
+            {
+              title: '宣品类型',
+              key: 'publicityType',
+              value: '',
+            },
+          ]
+        }, {
+          title: '请填写明细',
+          items: [
+            {
+              title: '单价',
+              key: 'agoraPrice',
+              value: '',
+            },{
+              title: '数量',
+              key: 'agoraNumber',
+              value: '',
+            },{
+              title: '合计',
+              key: 'total',
+              value: '',
+            },
+          ]
+        },{
+          title: '费用所属',
+          items: [
+            {
+              title: '费用所属事业部',
+              key: 'agoraCostBU',
+              value: '',
+            },{
+              title: '费用所属部门',
+              key: 'agoraCostDepartment',
+              value: '',
+            },{
+              title: '核算归属省份',
+              key: 'agoraCheckProvince',
+              value: '',
+            },{
+              title: '费用所属银行',
+              key: 'agoraCostBank',
+              value: '',
+            }
+          ]
+        }, {
+          title: '要说点什么吗？',
+          items: [
+            {
+              title: '说明',
+              key: 'comment',
+              value: '',
+            }
+          ]
         }
-      ] // 宣品 填写内容
+      ],
+      listData: [],
     };
   },
   methods: {
@@ -228,61 +201,13 @@ export default {
     this.$nextTick(() => {
       this.pageSwiper = new Swiper ('.swiper-container', {});
     })
-    let that = this;
-    let {query} = this.$route;
-    //that.canSubmit = that.$route.query.canSubmit;
-    if (query.transCode) {
-      createService.getFormData({
-        formKey: query.formKey,
-        transCode: query.transCode,
-      }).then( res => {
-        that.listId = res.listId;
-        let dataSet = res.formData.order.dataSet,
-        newArr = [];
-        for(let i = 0 ; i< dataSet.length ; i++ ){
-          newArr.push({
-          name: dataSet[i].projectName, //项目名称
-          conduct:dataSet[i].productMarketing, //市场宣传
-          type: [
-            [
-              "单页",
-              "三折页",
-              "X展架",
-              "易拉宝",
-              "三角牌",
-              "海报",
-              "吊旗",
-              "地贴",
-              "道具"
-            ]
-          ], //宣品类型
-          s_type: [dataSet[i].publicityType], //选择类型
-          unitprice: Number(dataSet[i].agoraPrice), //单价
-          num: Number(dataSet[i].agoraNumber), //数量
-          bulist: [], //费用所属事业部
-          buOn: [dataSet[i].agoraCostBU], //费用所属事业部选中
-          deptlist: [], //费用所属部门
-          deptOn: [dataSet[i].agoraCostDepartment], //费用所属部门选中
-          provlist: [], //核算归属省份
-          provOn: [dataSet[i].agoraCheckProvince], //核算归属省份选中
-          banklist: [], //费用所属银行
-          bankOn: [dataSet[i].agoraCostBank], //费用所属银行选中
-          explain: dataSet[i].comment, //说明
-          status: false
-          })
-        }
-        that.xp_list = newArr;
-        that.Load = false;
-      }).catch( c => {
-        console.log(c)
-      })
-    }
   },
   mounted(){
   },
   computed: {
 
-  }
+  },
+  mixins: [detail],
 };
 </script>
 
@@ -383,13 +308,5 @@ export default {
     display: inline-block;
     text-align: center;
   }
-}
-.spinner{
-  position: fixed;
-  width: 100%;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  z-index: 111;
 }
 </style>
