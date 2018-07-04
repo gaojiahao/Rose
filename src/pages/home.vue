@@ -84,6 +84,9 @@
       if (sessionStorage.getItem('MYLIST_TAB')) {
         sessionStorage.removeItem('MYLIST_TAB')
       }
+      if (sessionStorage.getItem('MYLIST_LIST')) {
+        sessionStorage.removeItem('MYLIST_LIST')
+      }
       if (currentUser) {
         this.currentUser = JSON.parse(currentUser);
         return;

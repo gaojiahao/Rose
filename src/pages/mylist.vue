@@ -137,6 +137,9 @@ export default {
       userBank: '',
       userDept: '',
       currentUser: {},
+      startY:0,
+      scrollEndY:0,
+      maxpage:0,
     };
   },
   methods: {
@@ -191,6 +194,7 @@ export default {
         },
         that = this;
       mylistService.getTasksListData(data).then(res => {
+        that.maxpage = Math.ceil(res.dataCount/11);
         if (e == 0) {
           that.TobedoneList = [];
         }
@@ -226,6 +230,7 @@ export default {
         },
         that = this;
       mylistService.getCompletedListDataByStatus(data).then(res => {
+        that.maxpage = Math.ceil(res.dataCount/11);
         if (e == 1) {
           that.underWayList = [];
         }
@@ -261,6 +266,7 @@ export default {
         },
         that = this;
       mylistService.getCompletedListDataByStatus(data).then(res => {
+        that.maxpage = Math.ceil(res.dataCount/11);
         if (e == 2) {
           that.overList = [];
         }
@@ -293,6 +299,7 @@ export default {
       this.dbnothingMore = false;
       this.underWayMore = false;
       this.overMore = false;
+      this.scrollEndY = 0;
       sessionStorage.setItem('MYLIST_TAB',val);
       if (val == 0) {
         this.TobedoneList = [];
@@ -317,11 +324,11 @@ export default {
         let ch = window.innerHeight - tabH - topH - 20;
         document.querySelector(".m_list").style.height = ch + "px";
         this.scroll = new Bscroll(this.$refs.wrapper, {
-          click: true
+          click: true,
+          startY: this.startY,
         });
         this.scroll.openPullUp();
         this.scroll.on("pullingUp", function(e) {
-          console.log('pullingUp')
           if (that.whichIndex == 0) {
             that.dbnothing = true;
             that.Tobedone();
@@ -333,10 +340,40 @@ export default {
             that.over();
           }
         });
+        this.scroll.on('scrollEnd', function(e){
+          that.scrollEndY = e.y;
+        })
       });
     },
     // TODO 查看详情
     goDetail(item){
+      if(this.scrollEndY!==''){
+        let jsonData = {};
+        if(this.whichIndex == 0){
+            jsonData = {
+              scrollEndY:this.scrollEndY,
+              idx:this.whichIndex,
+              pageNo:this.dbpageNo>this.maxpage?this.maxpage:this.dbpageNo,
+              list:this.TobedoneList
+            };
+        }else if(this.whichIndex == 1){
+            jsonData = {
+              scrollEndY:this.scrollEndY,
+              idx:this.whichIndex,
+              pageNo:this.underwaypageNo>this.maxpage?this.maxpage:this.underwaypageNo,
+              list:this.underWayList
+            };
+        }else if(this.whichIndex == 2){
+            jsonData = {
+              scrollEndY:this.scrollEndY,
+              idx:this.whichIndex,
+              pageNo:this.overpageNo>this.maxpage?this.maxpage:this.overpageNo,
+              list:this.overList
+              };
+        }
+        sessionStorage.setItem('MYLIST_LIST',JSON.stringify(jsonData));
+      }
+      
       let {listId,formKey,businessKey, taskId, transId, assignee, assigneeId} = item;
       let canSubmit = '0';
       let map = {
@@ -406,6 +443,23 @@ export default {
     this.headerInfo = JSON.parse(localStorage.getItem("ROSE_LOGIN_TOKEN"));
     if(sessionStorage.getItem('MYLIST_TAB')){
       this.whichIndex = Number(sessionStorage.getItem('MYLIST_TAB'));
+    }
+    //缓存下拉位置
+    if(sessionStorage.getItem('MYLIST_LIST')){
+      let MYLIST_LIST = JSON.parse(sessionStorage.getItem('MYLIST_LIST'));
+      if(MYLIST_LIST.idx == 0){
+        this.dbpageNo = MYLIST_LIST.pageNo;
+        this.TobedoneList = MYLIST_LIST.list;
+      }else if(MYLIST_LIST.idx == 1){
+        this.underwaypageNo = MYLIST_LIST.pageNo;
+        this.underWayList = MYLIST_LIST.list;
+      }else if(MYLIST_LIST.idx == 2){
+        this.overpageNo = MYLIST_LIST.pageNo;
+        this.overList = MYLIST_LIST.list;
+      }
+      this.startY = MYLIST_LIST.scrollEndY;
+      this.scrollEndY = MYLIST_LIST.scrollEndY;
+      sessionStorage.removeItem('MYLIST_LIST')
     }
     this.getUser();
     this.scrollOn();

@@ -18,6 +18,7 @@
         <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
       </div>
     </div>
+    <loading :show="showLoading"></loading>
      <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
      @on-confirm="confirm"></task-confirm>
      <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
@@ -29,8 +30,9 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, PopupPicker, XTextarea, numberComma, Toast } from 'vux'
+  import {Cell, Group, numberComma, Toast } from 'vux'
   import createService from "../../service/createService";
+  import { setTimeout } from 'timers';
   import Swiper from 'swiper'
   import FlowDetail from './../components/FlowDetail'
   import TaskConfirm from './../components/TaskConfirm'
@@ -39,12 +41,9 @@
     components: {
       Cell,
       Group,
-      XInput,
-      PopupPicker,
-      XTextarea,
       Toast,
       FlowDetail,
-      TaskConfirm
+      TaskConfirm,
     },
     filters:{
       numberComma
