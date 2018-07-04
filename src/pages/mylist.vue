@@ -104,7 +104,7 @@ import { Tab, TabItem, LoadMore } from "vux";
 import mylistService from "../service/mylistService.js";
 import createService from "./../service/createService.js";
 import Bscroll from "better-scroll";
-import Loading from './components/loading'
+import Loading from "./components/loading";
 export default {
   components: {
     Tab,
@@ -132,163 +132,170 @@ export default {
       dbnothingMore: false,
       underWayMore: false,
       overMore: false,
-      userName: '',
-      userRole: '',
-      userBank: '',
-      userDept: '',
+      userName: "",
+      userRole: "",
+      userBank: "",
+      userDept: "",
       currentUser: {},
-      startY:0,
-      scrollEndY:0,
-      maxpage:0,
+      startY: 0,
+      scrollEndY: 0,
+      maxpage: 0
     };
   },
   methods: {
     //获取当前用户
     getUser() {
-      let that = this;
-      createService.getUser().then(res => {
-        createService.getCurrentUser(res.nickname).then(e => {
-          let user = e.tableContent[0];
-          
-          //用户姓名
-          this.userName = user.nickname;
-          //用户级别
-          if(user.role){
-            if(user.role.indexOf(',') == -1 ){
-              that.userRole = user.role;
-            }else{
-              that.userRole = user.role.split(',')[0];
-            }
-          }
-          //用户银行
-          if(user.HOME_BANK){
-            if(user.HOME_BANK.indexOf(',') == -1){
-              that.userBank = user.HOME_BANK;
-            }else{
-              that.userBank = user.HOME_BANK.split(',')[0];
-            }
-          }
-          //用户部门
-          if(user.dept){
-            if(user.dept.indexOf(',') == -1 ){
-              that.userDept = user.dept;
-            }else{
-              that.userDept = user.dept.split(',')[0];
-            }
-          }
+      createService
+        .getUser()
+        .then(res => {
+          createService.getCurrentUser(res.nickname).then(e => {
+            let user = e.tableContent[0];
 
+            //用户姓名
+            this.userName = user.nickname;
+            //用户级别
+            if (user.role) {
+              if (user.role.indexOf(",") == -1) {
+                this.userRole = user.role;
+              } else {
+                this.userRole = user.role.split(",")[0];
+              }
+            }
+            //用户银行
+            if (user.HOME_BANK) {
+              if (user.HOME_BANK.indexOf(",") == -1) {
+                this.userBank = user.HOME_BANK;
+              } else {
+                this.userBank = user.HOME_BANK.split(",")[0];
+              }
+            }
+            //用户部门
+            if (user.dept) {
+              if (user.dept.indexOf(",") == -1) {
+                this.userDept = user.dept;
+              } else {
+                this.userDept = user.dept.split(",")[0];
+              }
+            }
+          });
+        })
+        .catch(e => {
+          this.showToast(e.message);
         });
-      }).catch(e =>{
-        this.showToast(e.message);
-      });
     },
     //获取待办
     Tobedone(e) {
       let data = {
-          entityId: 20000,
-          _dc: Date.parse(new Date()),
-          para1: "",
-          start: this.dbpageNo * 11,
-          page: ++this.dbpageNo,
-          limit: 11
-        },
-        that = this;
-      mylistService.getTasksListData(data).then(res => {
-        that.maxpage = Math.ceil(res.dataCount/11);
-        if (e == 0) {
-          that.TobedoneList = [];
-        }
-        if (res.tableContent.length == 0) {
-          that.TobedoneLoad = false;
-          that.dbnothingMore = true;
-          that.dbnothing = false;
-          that.scroll.closePullUp();
-          return;
-        } else {
-          for (let i = 0; i < res.tableContent.length; i++) {
-            that.TobedoneList.push(res.tableContent[i]);
+        entityId: 20000,
+        _dc: Date.parse(new Date()),
+        para1: "",
+        start: this.dbpageNo * 11,
+        page: ++this.dbpageNo,
+        limit: 11
+      };
+      mylistService
+        .getTasksListData(data)
+        .then(res => {
+          this.maxpage = Math.ceil(res.dataCount / 11);
+          if (e == 0) {
+            this.TobedoneList = [];
           }
-          that.TobedoneLoad = false;
-        }
-        that.$nextTick(function(){
-          that.scroll.refresh();
+          if (res.tableContent.length == 0) {
+            this.TobedoneLoad = false;
+            this.dbnothingMore = true;
+            this.dbnothing = false;
+            this.scroll.closePullUp();
+            return;
+          } else {
+            for (let i = 0; i < res.tableContent.length; i++) {
+              this.TobedoneList.push(res.tableContent[i]);
+            }
+            this.TobedoneLoad = false;
+          }
+          this.$nextTick(() => {
+            this.scroll.refresh();
+          });
+          this.scroll.finishPullUp();
         })
-        that.scroll.finishPullUp();
-      }).catch( e =>{
-        this.showToast(e.message);
-      });
+        .catch(e => {
+          this.showToast(e.message);
+        });
     },
     //获取进行中
     underWay(e) {
       let data = {
-          entityId: 20000,
-          _dc: Date.parse(new Date()),
-          status: 2,
-          start: this.underwaypageNo * 11,
-          page: ++this.underwaypageNo,
-          limit: 11
-        },
-        that = this;
-      mylistService.getCompletedListDataByStatus(data).then(res => {
-        that.maxpage = Math.ceil(res.dataCount/11);
-        if (e == 1) {
-          that.underWayList = [];
-        }
-        if (res.tableContent.length == 0) {
-          that.underWayLoad = false ;
-          that.underWayMore = true;
-          that.underWaynothing = false;
-          that.scroll.closePullUp();
-          return;
-        } else {
-          for (let i = 0; i < res.tableContent.length; i++) {
-            that.underWayList.push(res.tableContent[i]);
+        entityId: 20000,
+        _dc: Date.parse(new Date()),
+        status: 2,
+        start: this.underwaypageNo * 11,
+        page: ++this.underwaypageNo,
+        limit: 11
+      };
+      mylistService
+        .getCompletedListDataByStatus(data)
+        .then(res => {
+          this.maxpage = Math.ceil(res.dataCount / 11);
+          if (e == 1) {
+            this.underWayList = [];
           }
-          that.underWayLoad = false ;
-        }
-        that.$nextTick(function(){
-          that.scroll.refresh();
+          if (res.tableContent.length == 0) {
+            this.underWayLoad = false;
+            this.underWayMore = true;
+            this.underWaynothing = false;
+            this.scroll.closePullUp();
+            return;
+          } else {
+            for (let i = 0; i < res.tableContent.length; i++) {
+              this.underWayList.push(res.tableContent[i]);
+            }
+            this.underWayLoad = false;
+          }
+          this.$nextTick(() => {
+            this.scroll.refresh();
+          });
+          this.scroll.finishPullUp();
         })
-        that.scroll.finishPullUp();
-      }).catch( e =>{
-        this.showToast(e.message);
-      });
+        .catch(e => {
+          this.showToast(e.message);
+        });
     },
     //获取已完成
     over(e) {
       let data = {
-          entityId: 20000,
-          _dc: Date.parse(new Date()),
-          status: 1,
-          start: this.overpageNo * 11,
-          page: ++this.overpageNo,
-          limit: 11
-        },
-        that = this;
-      mylistService.getCompletedListDataByStatus(data).then(res => {
-        that.maxpage = Math.ceil(res.dataCount/11);
-        if (e == 2) {
-          that.overList = [];
-        }
-        if (res.tableContent.length == 0) {
-          that.overLoad = false;
-          that.overMore = true;
-          that.overnothing = false;
-          that.scroll.closePullUp();
-          return;
-        } else {
-          for (let i = 0; i < res.tableContent.length; i++) {
-            that.overList.push(res.tableContent[i]);
+        entityId: 20000,
+        _dc: Date.parse(new Date()),
+        status: 1,
+        start: this.overpageNo * 11,
+        page: ++this.overpageNo,
+        limit: 11
+      };
+      mylistService
+        .getCompletedListDataByStatus(data)
+        .then(res => {
+          this.maxpage = Math.ceil(res.dataCount / 11);
+          if (e == 2) {
+            this.overList = [];
           }
-          that.overLoad = false;
-        }
-        that.$nextTick(function(){
-          that.scroll.refresh();
+          if (res.tableContent.length == 0) {
+            this.overLoad = false;
+            this.overMore = true;
+            this.overnothing = false;
+            this.scroll.closePullUp();
+            return;
+          } else {
+            for (let i = 0; i < res.tableContent.length; i++) {
+              this.overList.push(res.tableContent[i]);
+            }
+            this.overLoad = false;
+          }
+          this.$nextTick(function() {
+            this.scroll.refresh();
+          });
+          this.scroll.finishPullUp();
         })
-        that.scroll.finishPullUp();
-      }).catch( e =>{
-        this.showToast(e.message);
-      });
+        .catch(e => {
+          this.showToast(e.message);
+        });
     },
     //tab切换
     selStatus(val) {
@@ -300,24 +307,23 @@ export default {
       this.underWayMore = false;
       this.overMore = false;
       this.scrollEndY = 0;
-      sessionStorage.setItem('MYLIST_TAB',val);
+      sessionStorage.setItem("MYLIST_TAB", val);
       if (val == 0) {
         this.TobedoneList = [];
         this.TobedoneLoad = true;
         this.Tobedone(0);
       } else if (val == 1) {
-        this.underWayList = []
+        this.underWayList = [];
         this.underWayLoad = true;
         this.underWay(1);
       } else if (val == 2) {
-        this.overList=[]
+        this.overList = [];
         this.overLoad = true;
         this.over(2);
       }
     },
     //滚动加载启动
     scrollOn() {
-      let that = this;
       this.$nextTick(() => {
         let tabH = document.querySelector(".tabSelect").offsetHeight;
         let topH = document.querySelector(".m_top").offsetHeight;
@@ -325,78 +331,92 @@ export default {
         document.querySelector(".m_list").style.height = ch + "px";
         this.scroll = new Bscroll(this.$refs.wrapper, {
           click: true,
-          startY: this.startY,
+          startY: this.startY
         });
         this.scroll.openPullUp();
-        this.scroll.on("pullingUp", function(e) {
-          if (that.whichIndex == 0) {
-            that.dbnothing = true;
-            that.Tobedone();
-          } else if (that.whichIndex == 1) {
-            that.underWaynothing = true;
-            that.underWay();
-          } else if (that.whichIndex == 2) {
-            that.overnothing = true;
-            that.over();
+        this.scroll.on("pullingUp", e => {
+          if (this.whichIndex == 0) {
+            this.dbnothing = true;
+            this.Tobedone();
+          } else if (this.whichIndex == 1) {
+            this.underWaynothing = true;
+            this.underWay();
+          } else if (this.whichIndex == 2) {
+            this.overnothing = true;
+            this.over();
           }
         });
-        this.scroll.on('scrollEnd', function(e){
-          that.scrollEndY = e.y;
-        })
+        this.scroll.on("scrollEnd", e => {
+          this.scrollEndY = e.y;
+        });
       });
     },
     // TODO 查看详情
-    goDetail(item){
-      if(this.scrollEndY!==''){
+    goDetail(item) {
+      if (this.scrollEndY !== "") {
         let jsonData = {};
-        if(this.whichIndex == 0){
-            jsonData = {
-              scrollEndY:this.scrollEndY,
-              idx:this.whichIndex,
-              pageNo:this.dbpageNo>this.maxpage?this.maxpage:this.dbpageNo,
-              list:this.TobedoneList
-            };
-        }else if(this.whichIndex == 1){
-            jsonData = {
-              scrollEndY:this.scrollEndY,
-              idx:this.whichIndex,
-              pageNo:this.underwaypageNo>this.maxpage?this.maxpage:this.underwaypageNo,
-              list:this.underWayList
-            };
-        }else if(this.whichIndex == 2){
-            jsonData = {
-              scrollEndY:this.scrollEndY,
-              idx:this.whichIndex,
-              pageNo:this.overpageNo>this.maxpage?this.maxpage:this.overpageNo,
-              list:this.overList
-              };
+        if (this.whichIndex == 0) {
+          jsonData = {
+            scrollEndY: this.scrollEndY,
+            idx: this.whichIndex,
+            pageNo: this.dbpageNo > this.maxpage ? this.maxpage : this.dbpageNo,
+            list: this.TobedoneList
+          };
+        } else if (this.whichIndex == 1) {
+          jsonData = {
+            scrollEndY: this.scrollEndY,
+            idx: this.whichIndex,
+            pageNo:
+              this.underwaypageNo > this.maxpage
+                ? this.maxpage
+                : this.underwaypageNo,
+            list: this.underWayList
+          };
+        } else if (this.whichIndex == 2) {
+          jsonData = {
+            scrollEndY: this.scrollEndY,
+            idx: this.whichIndex,
+            pageNo:
+              this.overpageNo > this.maxpage ? this.maxpage : this.overpageNo,
+            list: this.overList
+          };
         }
-        sessionStorage.setItem('MYLIST_LIST',JSON.stringify(jsonData));
+        sessionStorage.setItem("MYLIST_LIST", JSON.stringify(jsonData));
       }
-      
-      let {listId,formKey,businessKey, taskId, transId, assignee, assigneeId} = item;
-      let canSubmit = '0';
+
+      let {
+        listId,
+        formKey,
+        businessKey,
+        taskId,
+        transId,
+        assignee,
+        assigneeId
+      } = item;
+      let canSubmit = "0";
       let map = {
-        'a583be9b-c632-493c-b509-0f004504b8a2': '/spreadDetail',
-        'a9238c91-36f3-4b09-9705-9d50870b3c46': '/spreadDetail',
-        'b2df7403-56c7-4a1c-bdb7-8f6b4c95c7eb': '/meetingDetail',
-        'd189cc14-3a77-4e81-a220-55c771a2bdff': '/meetingDetail',
-        'e21f5960-7f7a-4e8b-9faf-bd10595ff768': '/houseDetail',
-        'e59dcb25-3a14-44b7-b619-433c63d2327b': '/houseDetail',
-        '1034f15e-3f90-4e9c-a401-0955db09e179': '/assetsDetail',
-        '1ab51ee6-2836-4728-b0a5-9fa5c8902c31': '/assetsDetail',
+        "a583be9b-c632-493c-b509-0f004504b8a2": "/spreadDetail",
+        "a9238c91-36f3-4b09-9705-9d50870b3c46": "/spreadDetail",
+        "b2df7403-56c7-4a1c-bdb7-8f6b4c95c7eb": "/meetingDetail",
+        "d189cc14-3a77-4e81-a220-55c771a2bdff": "/meetingDetail",
+        "e21f5960-7f7a-4e8b-9faf-bd10595ff768": "/houseDetail",
+        "e59dcb25-3a14-44b7-b619-433c63d2327b": "/houseDetail",
+        "1034f15e-3f90-4e9c-a401-0955db09e179": "/assetsDetail",
+        "1ab51ee6-2836-4728-b0a5-9fa5c8902c31": "/assetsDetail"
       };
       // 待处理页签才允许审批
       if (!this.whichIndex) {
-        map['a9238c91-36f3-4b09-9705-9d50870b3c46'] = '/spread';
-        map['d189cc14-3a77-4e81-a220-55c771a2bdff'] = '/meeting';
-        map['e59dcb25-3a14-44b7-b619-433c63d2327b'] = '/house';
-        map['1ab51ee6-2836-4728-b0a5-9fa5c8902c31'] = '/assets';
+        map["a9238c91-36f3-4b09-9705-9d50870b3c46"] = "/spread";
+        map["d189cc14-3a77-4e81-a220-55c771a2bdff"] = "/meeting";
+        map["e59dcb25-3a14-44b7-b619-433c63d2327b"] = "/house";
+        map["1ab51ee6-2836-4728-b0a5-9fa5c8902c31"] = "/assets";
         if (assignee) {
-          canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1' : '0';
+          canSubmit =
+            `${assignee}` === `${this.currentUser.userId}` ? "1" : "0";
         }
         if (assigneeId) {
-          canSubmit = `${assigneeId}` === `${this.currentUser.userId}` ? '1' : '0';
+          canSubmit =
+            `${assigneeId}` === `${this.currentUser.userId}` ? "1" : "0";
         }
       }
       this.$router.push({
@@ -406,9 +426,9 @@ export default {
           formKey: formKey,
           transCode: businessKey || transId,
           taskId,
-          canSubmit,
+          canSubmit
         }
-      })
+      });
     },
     // TODO 加载数据
     loadData() {
@@ -427,46 +447,45 @@ export default {
       }
     },
     // TODO 显示错误提示
-    showToast(test = '') {
+    showToast(test = "") {
       this.$vux.toast.show({
         text: test,
-        type: 'text',
-        position: 'middle',
-        width: 'auto',
+        type: "text",
+        position: "middle",
+        width: "auto",
         isShowMask: true,
         time: 1000
       });
-    },
+    }
   },
   created() {
     //获取顶部头像名字
     this.headerInfo = JSON.parse(localStorage.getItem("ROSE_LOGIN_TOKEN"));
-    if(sessionStorage.getItem('MYLIST_TAB')){
-      this.whichIndex = Number(sessionStorage.getItem('MYLIST_TAB'));
+    if (sessionStorage.getItem("MYLIST_TAB")) {
+      this.whichIndex = Number(sessionStorage.getItem("MYLIST_TAB"));
     }
     //缓存下拉位置
-    if(sessionStorage.getItem('MYLIST_LIST')){
-      let MYLIST_LIST = JSON.parse(sessionStorage.getItem('MYLIST_LIST'));
-      if(MYLIST_LIST.idx == 0){
+    if (sessionStorage.getItem("MYLIST_LIST")) {
+      let MYLIST_LIST = JSON.parse(sessionStorage.getItem("MYLIST_LIST"));
+      if (MYLIST_LIST.idx == 0) {
         this.dbpageNo = MYLIST_LIST.pageNo;
         this.TobedoneList = MYLIST_LIST.list;
-      }else if(MYLIST_LIST.idx == 1){
+      } else if (MYLIST_LIST.idx == 1) {
         this.underwaypageNo = MYLIST_LIST.pageNo;
         this.underWayList = MYLIST_LIST.list;
-      }else if(MYLIST_LIST.idx == 2){
+      } else if (MYLIST_LIST.idx == 2) {
         this.overpageNo = MYLIST_LIST.pageNo;
         this.overList = MYLIST_LIST.list;
       }
       this.startY = MYLIST_LIST.scrollEndY;
       this.scrollEndY = MYLIST_LIST.scrollEndY;
-      sessionStorage.removeItem('MYLIST_LIST')
+      sessionStorage.removeItem("MYLIST_LIST");
     }
     this.getUser();
     this.scrollOn();
     this.loadData();
   },
-  mounted() {
-  },
+  mounted() {}
 };
 </script>
 
@@ -577,12 +596,15 @@ export default {
     }
   }
 }
-.spinner_container {
-  margin-top: 50vw;
-}
+
 .wrapper {
   height: 100%;
   overflow: hidden;
+  .spinner_container{
+    .loading-container{
+    height: 50vh;
+    }
+  }
 }
 .dbnothing,
 .underWaynothing,

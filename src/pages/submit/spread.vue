@@ -100,8 +100,8 @@ export default {
   },
   data() {
     return {
-      baseInfo:'',
-      formData:'',
+      baseInfo: "",
+      formData: "",
       xp_list: [
         {
           name: "", //项目名称
@@ -134,24 +134,24 @@ export default {
           status: false
         }
       ], // 宣品 填写内容
-      searchInfo:false
+      searchInfo: false
     };
   },
   methods: {
     //获取所属事业部 | 部门 | 省份 | 银行
-    getSelect(data, N, name1, name2, name3,num,index,e) {
-      if(e === true){
-        if( num=='1'){
-         this.xp_list[index].deptOn = [];
-         this.xp_list[index].provOn = [];
-         this.xp_list[index].bankOn = [];
-        }else if(num=='2'){
+    getSelect(data, N, name1, name2, name3, num, index, e) {
+      if (e === true) {
+        if (num == "1") {
+          this.xp_list[index].deptOn = [];
           this.xp_list[index].provOn = [];
           this.xp_list[index].bankOn = [];
-        }else if(num=='3'){
+        } else if (num == "2") {
+          this.xp_list[index].provOn = [];
+          this.xp_list[index].bankOn = [];
+        } else if (num == "3") {
           this.xp_list[index].bankOn = [];
         }
-      }else {
+      } else {
         return;
       }
       data.length = 0;
@@ -166,16 +166,18 @@ export default {
           start: 0,
           limit: 10000
         },
-        that = this,
         arr = [];
-      spreadService.getAccounting(jsonData).then(res => {
-        for (let i = 0; i < res.tableContent.length; i++) {
-          arr.push(res.tableContent[i].unitName);
-        }
-        data.push(arr);
-      }).catch( c =>{
-        console.log(c)
-      });
+      spreadService
+        .getAccounting(jsonData)
+        .then(res => {
+          for (let i = 0; i < res.tableContent.length; i++) {
+            arr.push(res.tableContent[i].unitName);
+          }
+          data.push(arr);
+        })
+        .catch(c => {
+          console.log(c);
+        });
     },
     changeType(idx) {
       this.xp_list[idx].status = true;
@@ -212,35 +214,43 @@ export default {
         explain: "", //说明
         status: false
       });
-      this.getSelect(this.xp_list[this.xp_list.length-1].bulist,'N1',111,111,111,0,this.xp_list.length-1,true);
+      this.getSelect(
+        this.xp_list[this.xp_list.length - 1].bulist,
+        "N1",
+        111,
+        111,
+        111,
+        0,
+        this.xp_list.length - 1,
+        true
+      );
     },
     //删除一项
-    delateOne(){
+    delateOne() {
       this.xp_list.pop();
     },
     goflow() {
-      
-      let jsonData={
-            "handlerName": this.baseInfo.nickname, //经办人
-            "handlerAreaName": this.baseInfo.area,  //所属区域
-            "handlerUnitName": this.baseInfo.groupName, //经办部门
-            "handlerRoleName": this.baseInfo.position, //经办角色
-            "creatorName": this.baseInfo.nickname, //创建者
-            "crtTime": Date.parse(new Date()), //创建时间
-            "modifer": "", //修改者
-            "modTime": "", //修改时间
-            "handerId": this.baseInfo.userId, //经办人id
-            "transType": "市场宣传", //交易类型
-            "handlerUnitId": this.baseInfo.groupNameID, //经办部门id
-            "handlerRoleId": this.baseInfo.roleID, //经办角色id
-            "cjz": this.baseInfo.userId, //创建者id
-            "xgz": "", //修改者id
-            "handlerArea": this.baseInfo.areaID,//所属区域id
-            "order" :{
-                "dataSet": []
-            }
+      let jsonData = {
+        handlerName: this.baseInfo.nickname, //经办人
+        handlerAreaName: this.baseInfo.area, //所属区域
+        handlerUnitName: this.baseInfo.groupName, //经办部门
+        handlerRoleName: this.baseInfo.position, //经办角色
+        creatorName: this.baseInfo.nickname, //创建者
+        crtTime: Date.parse(new Date()), //创建时间
+        modifer: "", //修改者
+        modTime: "", //修改时间
+        handerId: this.baseInfo.userId, //经办人id
+        transType: "市场宣传", //交易类型
+        handlerUnitId: this.baseInfo.groupNameID, //经办部门id
+        handlerRoleId: this.baseInfo.roleID, //经办角色id
+        cjz: this.baseInfo.userId, //创建者id
+        xgz: "", //修改者id
+        handlerArea: this.baseInfo.areaID, //所属区域id
+        order: {
+          dataSet: []
+        }
       };
-      if (this.formData!=''){
+      if (this.formData != "") {
         jsonData.biId = this.formData.biId;
         jsonData.biReferenceId = this.formData.biReferenceId;
         jsonData.transType = this.formData.transType;
@@ -279,35 +289,43 @@ export default {
           return;
         }
         jsonData.order.dataSet.push({
-            "projectName": item.name, //项目名称
-            "productMarketing": item.conduct, //市场宣传
-            "publicityType": item.s_type[0],//宣品类型
-            "agoraNumber": item.num, //数量
-            "agoraPrice": item.unitprice, //单价
-            "total": Number(item.num)*Number(item.unitprice), //总计
-            "agoraCostBU": item.buOn[0],//费用所属事业部
-            "agoraCostDepartment": item.deptOn[0],//费用所属部门
-            "agoraCheckProvince": item.provOn[0],//核算归属省份
-            "agoraCostBank": item.bankOn[0],//费用所属银行
-            "comment": item.explain, //说明
-            "fgCode": "fgwmiw", //组合字段组编码，固定值为fgwmiw
-        })
-        if(this.formData !=''){
-          if(this.formData.order.dataSet[i]){
-            jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[i].uncalcID
-          }else{
-             jsonData.order.dataSet[i].uncalcID = "";
+          projectName: item.name, //项目名称
+          productMarketing: item.conduct, //市场宣传
+          publicityType: item.s_type[0], //宣品类型
+          agoraNumber: item.num, //数量
+          agoraPrice: item.unitprice, //单价
+          total: Number(item.num) * Number(item.unitprice), //总计
+          agoraCostBU: item.buOn[0], //费用所属事业部
+          agoraCostDepartment: item.deptOn[0], //费用所属部门
+          agoraCheckProvince: item.provOn[0], //核算归属省份
+          agoraCostBank: item.bankOn[0], //费用所属银行
+          comment: item.explain, //说明
+          fgCode: "fgwmiw" //组合字段组编码，固定值为fgwmiw
+        });
+        if (this.formData != "") {
+          if (this.formData.order.dataSet[i]) {
+            jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[
+              i
+            ].uncalcID;
+          } else {
+            jsonData.order.dataSet[i].uncalcID = "";
           }
         }
       }
-      sessionStorage.setItem(this.$route.query.list+'-FORMDATA',JSON.stringify(jsonData));
+      sessionStorage.setItem(
+        this.$route.query.list + "-FORMDATA",
+        JSON.stringify(jsonData)
+      );
       let queryData = {};
-      if (this.$route.query.taskId){
-        queryData = {list: this.$route.query.list,taskId: this.$route.query.taskId}
-      }else{
-        queryData = {list:this.$route.query.list}
+      if (this.$route.query.taskId) {
+        queryData = {
+          list: this.$route.query.list,
+          taskId: this.$route.query.taskId
+        };
+      } else {
+        queryData = { list: this.$route.query.list };
       }
-      this.$router.push({ path: "/flow" ,query:queryData});
+      this.$router.push({ path: "/flow", query: queryData });
     },
     layer(info, type) {
       this.$vux.toast.show({
@@ -317,10 +335,9 @@ export default {
         time: "900"
       });
     },
-    cacheData(dataSet){
-      let that = this,
-      sessionArr=[];
-      for(let i = 0 ; i<dataSet.length ; i++ ){
+    cacheData(dataSet) {
+      let sessionArr = [];
+      for (let i = 0; i < dataSet.length; i++) {
         sessionArr.push({
           name: dataSet[i].projectName, //项目名称
           conduct: dataSet[i].productMarketing, //市场宣传
@@ -350,58 +367,88 @@ export default {
           bankOn: [dataSet[i].agoraCostBank], //费用所属银行选中
           explain: dataSet[i].comment, //说明
           status: true
-        })
+        });
       }
-      that.xp_list = sessionArr;
+      this.xp_list = sessionArr;
     },
-    listDefault(){
-      let that = this;
-      for(let j = 0 ; j<that.xp_list.length ;j++){
-          let xp_item = that.xp_list[j];
-          that.getSelect(xp_item.bulist,'N1',111,111,111,0,j,true);
-          if(xp_item.deptOn.length != 0){
-            that.getSelect(xp_item.deptlist,'N2',xp_item.buOn[0],111,111,0,j,true);
-          }
-          if(xp_item.provOn.length != 0){
-            that.getSelect(xp_item.provlist,'N3',xp_item.buOn[0],xp_item.deptOn[0],111,0,j,true);
-          }
-          if(xp_item.bankOn.length != 0){
-            that.getSelect(xp_item.banklist,'N4',xp_item.buOn[0],xp_item.deptOn[0],xp_item.provOn[0],0,j,true);
-          }
+    listDefault() {
+      for (let j = 0; j < this.xp_list.length; j++) {
+        let xp_item = this.xp_list[j];
+        this.getSelect(xp_item.bulist, "N1", 111, 111, 111, 0, j, true);
+        if (xp_item.deptOn.length != 0) {
+          this.getSelect(
+            xp_item.deptlist,
+            "N2",
+            xp_item.buOn[0],
+            111,
+            111,
+            0,
+            j,
+            true
+          );
         }
+        if (xp_item.provOn.length != 0) {
+          this.getSelect(
+            xp_item.provlist,
+            "N3",
+            xp_item.buOn[0],
+            xp_item.deptOn[0],
+            111,
+            0,
+            j,
+            true
+          );
+        }
+        if (xp_item.bankOn.length != 0) {
+          this.getSelect(
+            xp_item.banklist,
+            "N4",
+            xp_item.buOn[0],
+            xp_item.deptOn[0],
+            xp_item.provOn[0],
+            0,
+            j,
+            true
+          );
+        }
+      }
     }
   },
-  created(){
-
-  },
-  mounted(){
-    let that = this;
+  created() {},
+  mounted() {
     //基本信息
-    spreadService.getBaseInfo().then( res=> {
-        that.baseInfo = res;
-    }).catch( c =>{
-      console.log(c)
-    });
+    spreadService
+      .getBaseInfo()
+      .then(res => {
+        this.baseInfo = res;
+      })
+      .catch(c => {
+        console.log(c);
+      });
     //回显
-    if(that.$route.query.formKey&&that.$route.query.transCode){
-      createService.getFormData({
-          formKey: that.$route.query.formKey,
-          transCode: that.$route.query.transCode,
-        }).then(res =>{
-           that.formData = res.formData;
-           that.cacheData(res.formData.order.dataSet);
-           that.listDefault();
-        }).catch(c =>{
-          console.log(c)
+    if (this.$route.query.formKey && this.$route.query.transCode) {
+      createService
+        .getFormData({
+          formKey: this.$route.query.formKey,
+          transCode: this.$route.query.transCode
         })
-    }else if(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')){
-      let dataSet = JSON.parse(sessionStorage.getItem(that.$route.query.list+'-FORMDATA')).order.dataSet;
-      that.cacheData(dataSet);
-      that.listDefault();
-    }else{
-      that.listDefault();
+        .then(res => {
+          this.formData = res.formData;
+          this.cacheData(res.formData.order.dataSet);
+          this.listDefault();
+        })
+        .catch(c => {
+          console.log(c);
+        });
+    } else if (sessionStorage.getItem(this.$route.query.list + "-FORMDATA")) {
+      let dataSet = JSON.parse(
+        sessionStorage.getItem(this.$route.query.list + "-FORMDATA")
+      ).order.dataSet;
+      this.cacheData(dataSet);
+      this.listDefault();
+    } else {
+      this.listDefault();
     }
-
   },
   computed: {
     //总价
@@ -474,7 +521,7 @@ export default {
     .plus_tx {
       color: #5077aa;
     }
-    .plus_delate{
+    .plus_delate {
       color: red;
     }
   }

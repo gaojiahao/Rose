@@ -28,14 +28,22 @@
 </template>
 
 <script>
-import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma ,Toast } from "vux";
+import {
+  Cell,
+  Group,
+  XInput,
+  PopupPicker,
+  XTextarea,
+  numberComma,
+  Toast
+} from "vux";
 import spreadService from "../../service/spreadService";
 import createService from "../../service/createService";
-import { setTimeout } from 'timers';
-import Swiper from 'swiper'
-import FlowDetail from './../components/FlowDetail'
-import TaskConfirm from './../components/TaskConfirm'
-import detail from './../mixins/detail'
+import { setTimeout } from "timers";
+import Swiper from "swiper";
+import FlowDetail from "./../components/FlowDetail";
+import TaskConfirm from "./../components/TaskConfirm";
+import detail from "./../mixins/detail";
 export default {
   mixins: [detail],
   components: {
@@ -58,150 +66,161 @@ export default {
       transCode: this.$route.query.transCode,
       canSubmit: this.$route.query.canSubmit,
       pageSwiper: null,
-      listObj:[
+      listObj: [
         {
-          title: '请填写项目名称',
+          title: "请填写项目名称",
           items: [
             {
-              title: '项目名称',
-              key: 'projectName',
-              value: '',
+              title: "项目名称",
+              key: "projectName",
+              value: ""
             }
           ]
-        }, {
-          title: '请填写市场宣传',
+        },
+        {
+          title: "请填写市场宣传",
           items: [
             {
-              title: '市场宣传',
-              key: 'productMarketing',
-              value: '',
+              title: "市场宣传",
+              key: "productMarketing",
+              value: ""
             }
           ]
-        }, {
-          title: '请选择您申请的类型',
+        },
+        {
+          title: "请选择您申请的类型",
           items: [
             {
-              title: '宣品类型',
-              key: 'publicityType',
-              value: '',
+              title: "宣品类型",
+              key: "publicityType",
+              value: ""
+            }
+          ]
+        },
+        {
+          title: "请填写明细",
+          items: [
+            {
+              title: "单价",
+              key: "agoraPrice",
+              value: ""
             },
-          ]
-        }, {
-          title: '请填写明细',
-          items: [
             {
-              title: '单价',
-              key: 'agoraPrice',
-              value: '',
-            },{
-              title: '数量',
-              key: 'agoraNumber',
-              value: '',
-            },{
-              title: '合计',
-              key: 'total',
-              value: '',
+              title: "数量",
+              key: "agoraNumber",
+              value: ""
             },
-          ]
-        },{
-          title: '费用所属',
-          items: [
             {
-              title: '费用所属事业部',
-              key: 'agoraCostBU',
-              value: '',
-            },{
-              title: '费用所属部门',
-              key: 'agoraCostDepartment',
-              value: '',
-            },{
-              title: '核算归属省份',
-              key: 'agoraCheckProvince',
-              value: '',
-            },{
-              title: '费用所属银行',
-              key: 'agoraCostBank',
-              value: '',
+              title: "合计",
+              key: "total",
+              value: ""
             }
           ]
-        }, {
-          title: '要说点什么吗？',
+        },
+        {
+          title: "费用所属",
           items: [
             {
-              title: '说明',
-              key: 'comment',
-              value: '',
+              title: "费用所属事业部",
+              key: "agoraCostBU",
+              value: ""
+            },
+            {
+              title: "费用所属部门",
+              key: "agoraCostDepartment",
+              value: ""
+            },
+            {
+              title: "核算归属省份",
+              key: "agoraCheckProvince",
+              value: ""
+            },
+            {
+              title: "费用所属银行",
+              key: "agoraCostBank",
+              value: ""
+            }
+          ]
+        },
+        {
+          title: "要说点什么吗？",
+          items: [
+            {
+              title: "说明",
+              key: "comment",
+              value: ""
             }
           ]
         }
       ],
-      listData: [],
+      listData: []
     };
   },
   methods: {
     //审批弹窗
-    endToast(taskId,data){
-      let that = this;
-      createService.examineTask(taskId,data).then( res=> {
-        if(res.success){
-          that.$vux.toast.show({
-            text: res.message,
-            position: 'middle',
-            type: 'text',
-            onShow () {
-              setTimeout(function(){
-                that.$vux.toast.hide();
-                that.$router.go(-1);
-              },800)
-            },
-          });
-        }
-      }).catch( c =>{
-        that.$vux.toast.show({
+    endToast(taskId, data) {
+      createService
+        .examineTask(taskId, data)
+        .then(res => {
+          if (res.success) {
+            this.$vux.toast.show({
+              text: res.message,
+              position: "middle",
+              type: "text",
+              onShow() {
+                setTimeout(() => {
+                  this.$vux.toast.hide();
+                  this.$router.go(-1);
+                }, 800);
+              }
+            });
+          }
+        })
+        .catch(c => {
+          this.$vux.toast.show({
             text: c.message,
-            position: 'middle',
-            type: 'text',
-            onShow () {
-              setTimeout(function(){
-                that.$vux.toast.hide()
-              },800)
-            },
+            position: "middle",
+            type: "text",
+            onShow() {
+              setTimeout(() => {
+                this.$vux.toast.hide();
+              }, 800);
+            }
           });
-      })
+        });
     },
     //审批
-    end(num){
+    end(num) {
       this.showConfirm = true;
       //拒绝
-      if( num == 0 ){
+      if (num == 0) {
         this.result = 0;
-      }else if( num == 1 ){
+      } else if (num == 1) {
         //同意
         this.result = 1;
       }
     },
     //确定
     confirm(reason) {
-      let that = this,
-      taskId = that.$route.query.taskId,
-      transCode = that.$route.query.transCode,
-      data = {"result": this.result, "transCode": transCode, "comment": reason};
+      let taskId = this.$route.query.taskId,
+        transCode = this.$route.query.transCode,
+        data = { result: this.result, transCode: transCode, comment: reason };
       if (this.result === 0 && !reason) {
         this.$vux.toast.show({
-          text: '拒绝理由不能为空',
-          type:'text',
-          position: 'middle'
+          text: "拒绝理由不能为空",
+          type: "text",
+          position: "middle"
         });
-        return
-      }else{
-        that.endToast(taskId,data);
+        return;
+      } else {
+        this.endToast(taskId, data);
       }
-    },
+    }
   },
-  created(){
+  created() {
     this.$nextTick(() => {
-      this.pageSwiper = new Swiper ('.swiper-container', {});
-    })
+      this.pageSwiper = new Swiper(".swiper-container", {});
+    });
   }
 };
 </script>
@@ -209,12 +228,12 @@ export default {
 <style lang='scss' scoped>
 .pages {
   .swiper-container {
-      height: 100%;
-      .form {
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-      }
+    height: 100%;
+    .form {
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
+  }
 }
 
 .s_title {
@@ -268,7 +287,7 @@ export default {
     .plus_tx {
       color: #5077aa;
     }
-    .plus_delate{
+    .plus_delate {
       color: red;
     }
   }
@@ -286,7 +305,7 @@ export default {
   box-sizing: border-box;
   background: #fff;
   display: flex;
-  span:first-child{
+  span:first-child {
     background: #ccc;
   }
   .count_part {
