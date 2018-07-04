@@ -37,6 +37,7 @@ import FlowDetail from './../components/FlowDetail'
 import TaskConfirm from './../components/TaskConfirm'
 import detail from './../mixins/detail'
 export default {
+  mixins: [detail],
   components: {
     Cell,
     Group,
@@ -201,13 +202,7 @@ export default {
     this.$nextTick(() => {
       this.pageSwiper = new Swiper ('.swiper-container', {});
     })
-  },
-  mounted(){
-  },
-  computed: {
-
-  },
-  mixins: [detail],
+  }
 };
 </script>
 

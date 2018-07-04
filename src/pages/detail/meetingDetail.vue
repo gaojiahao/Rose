@@ -37,6 +37,7 @@
 
   export default {
     name: "mettingDetail",
+    mixins: [detail],
     data() {
       return {
         listData: [
@@ -134,8 +135,7 @@
         let {roomNumber = 0, roomAveragePrice = 0, siteFees = 0, wayFees = 0, repastFees = 0} = this.formData;
         return `￥${numberComma(Number(roomNumber) * Number(roomAveragePrice) + Number(siteFees) + Number(wayFees) + Number(repastFees))}`;
       },
-    },
-    mixins: [detail],
+    }
   }
 </script>
 

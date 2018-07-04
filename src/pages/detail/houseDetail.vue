@@ -32,6 +32,7 @@
   import detail from './../mixins/detail'
 
   export default {
+    mixins: [detail],
     data() {
       return {
         listData: [
@@ -115,8 +116,7 @@
         let {tenancy = 0, rental = 0} = this.formData;
         return `￥${numberComma(Number(tenancy) * Number(rental))}`;
       }
-    },
-    mixins: [detail],
+    }
   }
 </script>
 
