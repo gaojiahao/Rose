@@ -48,38 +48,34 @@ export default {
         formData.end = this.changeDate(formData.end);
         formData.crtTime = this.changeDate(formData.crtTime);
         formData.modTime = this.changeDate(formData.modTime);
-
-        if(formData.order){
-          let dataSet =  formData.order.dataSet;
-          var curItem = [];
-
-          // var curItem = this.listObj.slice(0);
-
-         
-          dataSet.map((data)=>{
-            curItem = [];
-            this.listObj.map(lo =>{
-              curItem.push(lo);
-            });
-
-            for(var key in data){
-              
-              curItem.map((g)=>{
-                g.items.map((f)=>{
-                  if(f.key === key){
-                    f.value = data[key];
-                  }
-                });
-
-              });   
+        
+        //如果formData.order存在则声明
+        let dataSet = formData.order.dataSet || {} ; 
+        //固定资产
+        if(formData.transType === '市场费用'){
+          for(let [key, val] of Object.entries(dataSet)){
+            let arr = JSON.parse(JSON.stringify(this.listObj));        
+            for(let item of arr){
+              for(let val of item.items){
+                val.value = dataSet[key][val.key];
+              }
             }
-            console.log(curItem);
-            this.listData.push(curItem);
-            
-
-
-          });
-        }else{
+            this.listData.push(arr);
+          }
+        }
+        //市场费用
+        else if(formData.transType === '固定资产'){
+          for(let [key, val] of Object.entries(dataSet)){
+            let arr = JSON.parse(JSON.stringify(this.listObj));        
+            for(let item of arr){
+              for(let val of item.items){
+                val.value = dataSet[key][val.key];
+              }
+            }
+            this.listData.push(arr);
+          }
+        }
+        else{
           this.formData = formData;
           this.listData.forEach(lItem => {
             lItem.items.forEach(item => {
