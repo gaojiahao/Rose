@@ -52,11 +52,12 @@ export default {
         this.formData = formData;
         if(formData.order){
           //如果formData.order存在则声明
-          let dataSet = formData.order.dataSet || {} ; 
+          let dataSet = formData.order.dataSet || {} ;
           //市场费用 固定资产 
           if(formData.transType === '市场宣传' || formData.transType === '固定资产'){
-            for(let [key, val] of Object.entries(dataSet)){
-              let arr = JSON.parse(JSON.stringify(this.listObj));        
+            for(let key in dataSet){
+              //深拷贝(解决每次引用都是同一个地址)
+              let arr = JSON.parse(JSON.stringify(this.listObj)); 
               for(let item of arr){
                 for(let val of item.items){
                   val.value = dataSet[key][val.key];
