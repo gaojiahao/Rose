@@ -470,20 +470,27 @@ export default {
       if (MYLIST_LIST.idx == 0) {
         this.dbpageNo = MYLIST_LIST.pageNo;
         this.TobedoneList = MYLIST_LIST.list;
+        this.TobedoneLoad = false;
       } else if (MYLIST_LIST.idx == 1) {
         this.underwaypageNo = MYLIST_LIST.pageNo;
         this.underWayList = MYLIST_LIST.list;
+        this.underWayLoad = false;
       } else if (MYLIST_LIST.idx == 2) {
         this.overpageNo = MYLIST_LIST.pageNo;
         this.overList = MYLIST_LIST.list;
+        this.overLoad = false;
       }
       this.startY = MYLIST_LIST.scrollEndY;
       this.scrollEndY = MYLIST_LIST.scrollEndY;
       sessionStorage.removeItem("MYLIST_LIST");
+      this.getUser();
+      this.scrollOn();
+    }else{
+      this.getUser();
+      this.scrollOn();
+      this.loadData();
     }
-    this.getUser();
-    this.scrollOn();
-    this.loadData();
+    
   },
   mounted() {}
 };
