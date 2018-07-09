@@ -188,10 +188,10 @@
           'PROC_1806_0005': {
             'businessKey': 'KFSCPCGRK',
             'createdBy': '',
-            // '常委ID': this.level_list.committee.userId,
-            // '副总裁ID': this.level_list.vicePresident.userId,
-            '常委ID': '15125', // rfd120
-            '副总裁ID': '18128', // rfd9527
+            '常委ID': this.level_list.committee.userId,
+            '副总裁ID': this.level_list.vicePresident.userId,
+            // '常委ID': '15125', // rfd120
+            // '副总裁ID': '18128', // rfd9527
           }
         };
         // 判断是否为重新提交
