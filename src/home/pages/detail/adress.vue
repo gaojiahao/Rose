@@ -1,7 +1,7 @@
 <template>
   <div class="pages">
     <div class="ads_part">
-      <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in 8" :key="index">
+      <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in 4" :key="index">
         <div class="user_info">
           <span class="user_name">刘治增</span>
           <span class="user_tel">15399909500</span>

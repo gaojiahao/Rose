@@ -38,6 +38,26 @@
         <popup v-model="showMaterielPop" height="100%" class="trade_pop_part">
           <div class="trade_pop">
             <div class="title">物料列表<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showMaterielPop = !showMaterielPop"></x-icon></div>
+            <div class="mater_list" v-for="(item, index) in 10" :key='index' @click.stop="selThis(index)">
+              <div class="each_mater box_sd">
+                <!-- 物料名称 -->
+                <div class="mater_name">2017加拿大纪念银币（鸡）五百枚特别至尊版封装评级证书</div>
+                <!-- 物料基本信息 -->
+                <div class="mater_info">
+                  <div>
+                    <span class="speci">规格: 80*110</span>
+                    <span class="code">物料编码: CMGI1H1602100</span>
+                  </div>
+                  <div>
+                    <span class="Unit">计量单位: 箱</span>
+                    <span class="assistUnit">辅助计量: 请选择</span>
+                  </div>
+                </div>
+                <!-- icon -->
+                <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
+                <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-if="whichIndex.includes(index)"></x-icon>
+              </div>
+            </div>
           </div>
         </popup>
       </div>
@@ -57,6 +77,8 @@ export default {
   },
   data(){
     return{
+      whichIndex:[],                                 // 第几个被选中了
+      isBeingSel:false,                              // 是否被选中
       isThisTrans:'现付',                             // 默认支付方式
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
@@ -69,6 +91,17 @@ export default {
     // 选择地址
     goSetAds(){
       this.$router.push({ path:'/adress'})
+    },
+    // 选择物料
+    selThis(index){
+      let arr = this.whichIndex;
+      // 若存在重复的 则清除
+      if(arr.includes(index)){
+        arr.splice(arr.findIndex(item => item === index), 1)
+        return;
+      }
+      arr.push(index);
+      console.log(this.whichIndex);
     }
   }
 }
@@ -167,6 +200,53 @@ export default {
     .vux-1px:before {
       border-radius: 40px;
     }
+    // 物料列表
+    .mater_list {
+      width: 100%;
+      padding-left: 10%;
+      box-sizing: border-box;
+      .each_mater {
+        padding: 0.08rem;
+        position: relative;
+        margin-bottom: .2rem;
+        box-sizing: border-box;
+        // 物料名称
+        .mater_name {
+          color: #111;
+          height: .46rem;          
+          font-size: .14rem;
+          font-weight: bold;
+          max-height: .46rem;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
+        }
+        // 物料信息
+        .mater_info {
+          color: #757575;
+          font-size: .12rem;
+          // 规格 计量单位
+          .speci,
+          .Unit {
+            margin-right: .2rem;
+          }
+        }
+        // 选择icon
+        .selIcon,
+        .isSelIcon {
+          position: absolute;
+          left: -10%;
+          top: 50%;
+          transform: translate(0, -50%);
+        }
+        .isSelIcon {
+          fill: #5077aa;
+        }
+      }
+    }
+
   }
   // 确定
   .cfm_btn {
