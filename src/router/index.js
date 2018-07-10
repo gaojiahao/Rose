@@ -17,6 +17,7 @@ Vue.use(Router);
 
 export default new Router({
   mode: 'history',
+  base:'/Zeus',
   routes: [
     {path: '/', name: 'Home', component: Home, meta: {title: '首页'}},
     {path: '/spread', name: 'Spread', component: Spread, meta: {title: ''}},
