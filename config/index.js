@@ -10,7 +10,7 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/Zeus',
+    assetsPublicPath: '/',
     proxyTable: proxy.proxy,
 
     // Various Dev Server settings
