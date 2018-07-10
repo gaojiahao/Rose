@@ -1,7 +1,7 @@
 import {Group, Cell, numberComma} from 'vux'
 import createService from './../../service/createService'
 import common from './../mixins/common'
-import Swiper from './../../common/js/swiper'
+import Swiper from 'swiper/dist/js/swiper'
 import FlowDetail from './../components/FlowDetail'
 import TaskConfirm from './../components/TaskConfirm'
 

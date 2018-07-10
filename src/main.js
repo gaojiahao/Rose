@@ -8,7 +8,7 @@ import router from './router'
 import adapation from './common/adapation'
 import {ToastPlugin} from 'vux'
 
-require('./common/css/swiper.css');
+require('swiper/dist/css/swiper.css');
 
 Vue.use(VueRouter);
 Vue.use(ToastPlugin);
