@@ -2,8 +2,8 @@
 // Template version: 1.2.4
 // see http://vuejs-templates.github.io/webpack for documentation.
 
-const path = require('path');
-const proxy = require('./proxyConfig');
+const path = require('path')
+let proxyConfig = require('./proxyConfig')
 
 module.exports = {
   dev: {
@@ -11,7 +11,7 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: proxy.proxy,
+    proxyTable: proxyConfig.proxy,
 
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST
@@ -56,7 +56,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/Hermes/',
 
     /**
      * Source Maps

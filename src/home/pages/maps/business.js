@@ -1,0 +1,23 @@
+/* businessKey 映射表 */
+export default {
+  零星产品需求: 'CPXQ',
+  实施需求: 'SSXQ',
+  请假: 'QJ',
+  快捷需求: 'QKXQ',
+  费用报销 : 'FYBX',
+  代码发布申请 : 'DMFBSQ',
+  测试BUG: 'CSBUG',
+  目标管理: 'MBGL',
+  知识库 : 'ZSK',
+  职能例会 : 'ZNLH',
+  用户反馈 : 'YHFK',
+  应用销售订单 : 'SO',
+  测试用例 : 'CSYL',
+  开发专案立项  : 'ZAXM',
+  产品开发计划 : 'JFJH',
+  产品开发任务 : 'RW',
+  产品规划库 : 'GHK',
+  产品需求池 : 'XQC',
+  方案库 : 'FAK',
+  开发团队任务 : 'KFTDRW',
+}
