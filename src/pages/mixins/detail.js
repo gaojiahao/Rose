@@ -1,7 +1,7 @@
 import {Group, Cell, numberComma} from 'vux'
 import createService from './../../service/createService'
 import common from './../mixins/common'
-import Swiper from 'swiper'
+import Swiper from './../../common/js/swiper'
 import FlowDetail from './../components/FlowDetail'
 import TaskConfirm from './../components/TaskConfirm'
 
@@ -53,11 +53,11 @@ export default {
         if(formData.order){
           //如果formData.order存在则声明
           let dataSet = formData.order.dataSet || {} ;
-          //市场费用 固定资产 
+          //市场费用 固定资产
           if(formData.transType === '市场宣传' || formData.transType === '固定资产'){
             for(let key in dataSet){
               //深拷贝(解决每次引用都是同一个地址)
-              let arr = JSON.parse(JSON.stringify(this.listObj)); 
+              let arr = JSON.parse(JSON.stringify(this.listObj));
               for(let item of arr){
                 for(let val of item.items){
                   val.value = dataSet[key][val.key];

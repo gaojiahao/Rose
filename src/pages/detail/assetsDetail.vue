@@ -33,7 +33,6 @@
 import { Cell, Group, numberComma, Toast } from "vux";
 import createService from "../../service/createService";
 import { setTimeout } from "timers";
-import Swiper from "swiper";
 import FlowDetail from "./../components/FlowDetail";
 import TaskConfirm from "./../components/TaskConfirm";
 import detail from "./../mixins/detail";
