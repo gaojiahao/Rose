@@ -63,7 +63,7 @@
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
-                    <swipeout-button @click.native="onButtonClick('delete')" type="warn">删除</swipeout-button>
+                    <swipeout-button @click.native="delClick(index)" type="warn">删除</swipeout-button>
                   </div>
                   <div slot="content">
                     <!-- 物料名称 -->
@@ -95,7 +95,7 @@
               <div class="userInp_mode">
                 <group>
                   <cell title="计量单位" value='箱'></cell>
-                  <popup-radio title="辅助计量" :options="options1" v-model="option1"></popup-radio>
+                  <popup-radio title="辅助计量" :options="assistUnitList" v-model="assistUnit"></popup-radio>
                   <x-input title="数量" text-align='right' placeholder='请填写'></x-input>
                   <x-input title="辅计数量" text-align='right' placeholder='请填写'></x-input>
                   <x-input title="单价" text-align='right' placeholder='请填写'></x-input>
@@ -103,6 +103,7 @@
                   <x-input title="税率" text-align='right' placeholder='请填写'></x-input>
                   <x-input title="税金" text-align='right' placeholder='请填写'></x-input>
                   <x-input title="价税小计" text-align='right' placeholder='请填写'></x-input>
+                  <datetime v-model="deliveryDate" title="预计交付日"></datetime>                  
                   <x-input title="说明" text-align='right' placeholder='请填写'></x-input>
                 </group>
               </div>
@@ -164,25 +165,26 @@
 </template>
 
 <script>
-import { Icon, Cell, Popup, Group, XInput, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton } from 'vux'
+import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton } from 'vux'
 export default {
   components:{
-    Icon, Cell, Popup, Group, XInput, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton
+    Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton
   },
   data(){
     return{
       srhInpTx:'',                                   // 搜索框内容
       materList:[],                                  // 物料列表
       whichIndex:[],                                 // 哪些被选中了
+      deliveryDate:'',                               // 预计交付日       
       isThisLog:'上门',                               // 默认物流条款
-      showLogPop:false,                              // 是否显示物流条款的popup
       isThisTrans:'现付',                             // 默认支付方式
-      showTransPop:false,                            // 是否显示结算方式的popup
-      showMaterielPop:false,                         // 是否显示物料的popup
+      assistUnit: '请选择',                           // 辅助计量显示值
+      assistUnitList: ['A', 'B', 'C'],               // 辅助计量列表
       transMode:['现付','预付','账期','票据'],          // 结算方式
       logisticsTerm:['上门','自提','离岸','到港'],      // 物流条款
-      option1: 'A',
-      options1: ['A', 'B', 'C'],
+      showLogPop:false,                              // 是否显示物流条款的popup
+      showTransPop:false,                            // 是否显示结算方式的popup
+      showMaterielPop:false,                         // 是否显示物料的popup
     }
   },
   methods:{
@@ -207,8 +209,10 @@ export default {
       // 赋值
       this.materList = [...this.whichIndex];
     },
-    onButtonClick(){
-
+    // 滑动删除
+    delClick(index){
+      let arr = this.materList;
+      arr.splice(index, 1);
     }
   }
 }
@@ -531,6 +535,9 @@ export default {
         }
         .weui-cells:after {
           border-bottom: none;
+        }
+        .vux-datetime {
+          color: #757575;
         }
       }
     }

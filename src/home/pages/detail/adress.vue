@@ -67,10 +67,9 @@ export default {
   }  
   // 用户信息
   .user_info {
-    // color: #111;
     color: #5077aa;
     font-size: .14rem;
-    font-weight: 500;
+    font-weight: bold;
     // 用户姓名
     .user_name {
       margin-right: .08rem;
@@ -85,9 +84,7 @@ export default {
     font-size: .14rem;
     .cp_name {
       color: #111;
-      // color: #4F90F9;
       font-weight: 500;
-      
     }
     .cp_ads {
       font-weight: 200;

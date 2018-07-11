@@ -6,7 +6,7 @@
       </group>
     </div>
     <div class="btn">
-      <div class="cfm_btn">确定</div>
+      <div class="cfm_btn">保存</div>
     </div>  
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   },
   data(){
     return{
-      title_arr:['客户名称','联系地址','联系人','手机','结算方式','物流条款']
+      title_arr:['客户名称','客户编码','往来关系标签','联系地址','联系人','手机','结算方式','物流条款']
     }
   }
 }
@@ -27,6 +27,8 @@ export default {
 
 <style lang='scss'>
 .edit_mode {
+  overflow: auto;
+  height: 90%;
   .no_mg {
     .weui-cells__title {
       margin-top: 0;
