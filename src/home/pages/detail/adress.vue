@@ -123,7 +123,7 @@ export default {
     background: #5077aa;
     border-radius: .4rem;
     transform: translate(-50%, -50%);
-    box-shadow: 0 2px 12px #5077aa;
+    box-shadow: 0 2px 5px #5077aa;
   }
 }
 // 上划线
