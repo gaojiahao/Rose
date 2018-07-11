@@ -29,17 +29,55 @@
       </div>
     </div>
     <!-- 物料列表 -->
-    <div class="materiel_list mg_auto box_sd" @click="showMaterielPop = !showMaterielPop">
-      <div class="title">物料列表</div>
-      <div class="tips">请选择物料</div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <div class="materiel_list mg_auto box_sd" >
+      <!-- 没有选择物料 -->
+      <template v-if="!whichIndex.length">
+        <div @click="showMaterielPop = !showMaterielPop">
+          <div class="title">物料列表</div>
+          <div class="tips">请选择物料</div>
+          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+        </div>
+      </template>
+      <!-- 已经选择了物料 -->
+      <template v-else>
+        <div class="title">物料列表</div>
+        <div class="mater_list">
+          <div class="each_mater" v-for="(item, index) in whichIndex" :key='index'>
+            <!-- 物料编码 -->
+            <div class="mater_code">
+              <span class="title">物料编码</span>
+              <span class="num box_sd">CMGI1H1602100</span>
+            </div>
+            <!-- 物料名称 -->
+            <div class="mater_name">2017加拿大纪念银币（鸡）五百枚特别至尊版封装评级证书</div>
+            <!-- 物料基本信息 -->
+            <div class="mater_info">
+              <div>
+                <span class="speci">规格: 80*110</span>
+                <span class="Unit">计量单位: 箱</span>
+                <!-- <span class="code">物料编码: CMGI1H1602100</span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <div class="add_more" v-if="whichIndex.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
       <!-- 物料popup -->
       <div v-transfer-dom >
         <popup v-model="showMaterielPop" height="100%" class="trade_pop_part">
-          <div class="trade_pop">
-            <div class="title">物料列表<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showMaterielPop = !showMaterielPop"></x-icon></div>
-            <div class="mater_list" v-for="(item, index) in 10" :key='index' @click.stop="selThis(index)">
-              <div class="each_mater box_sd">
+          <div class="trade_pop" style="height:95%; overflow:auto">
+            <div class="title">
+              <div class="search_part">
+                <input class="srh_inp" type="text" v-model="srhInpTx">
+                <div class="pop_cancel" @click="showMaterielPop = !showMaterielPop">返回</div>
+                <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
+                <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
+              </div>
+              <!-- <x-icon class="close_icon" type="ios-close-empty" size="30" ></x-icon> -->
+            </div>
+            <!-- 物料列表 -->
+            <div class="mater_list">
+              <div class="each_mater box_sd" v-for="(item, index) in 10" :key='index' @click.stop="selThis(index)">
                 <!-- 物料名称 -->
                 <div class="mater_name">2017加拿大纪念银币（鸡）五百枚特别至尊版封装评级证书</div>
                 <!-- 物料基本信息 -->
@@ -59,6 +97,11 @@
               </div>
             </div>
           </div>
+          <!-- 底部栏 -->
+          <div class="count_mode vux-1px-t">
+            <span class="count_num"> {{whichIndex.length ? `已选 ${whichIndex.length} 个` : '请选择'}} </span>
+            <span class="count_btn" @click="cfmMater">确定</span>
+          </div>
         </popup>
       </div>
     </div>
@@ -70,13 +113,14 @@
 </template>
 
 <script>
-import { Popup } from 'vux'
+import { Icon, Popup } from 'vux'
 export default {
   components:{
-    Popup
+    Icon, Popup
   },
   data(){
     return{
+      srhInpTx:'',                                   // 搜索框内容
       whichIndex:[],                                 // 第几个被选中了
       isBeingSel:false,                              // 是否被选中
       isThisTrans:'现付',                             // 默认支付方式
@@ -84,7 +128,6 @@ export default {
       showMaterielPop:false,                         // 是否显示物料的popup
       transMode:['现付','预付','账期','票据'],          // 结算方式
       logisticsTerm:['上门','自提','离岸','到港']       // 物流条款
-      
     }
   },
   methods:{
@@ -101,7 +144,12 @@ export default {
         return;
       }
       arr.push(index);
-      console.log(this.whichIndex);
+    },
+    // 确定选择物料
+    cfmMater(){
+      // 返回上层
+      this.showMaterielPop = !this.showMaterielPop;
+      
     }
   }
 }
@@ -176,18 +224,72 @@ export default {
     font-weight: 500;
   }
 }
-// 结算方式弹出层
+// 弹出层
 .trade_pop_part {
   background: #fff;
   .trade_pop {
     padding: 0 .08rem;
+    // 顶部
     .title {
       font-size: .2rem;
-      padding: 0.08rem 0;
       position: relative;
+      padding: 0.08rem 0 .14rem;
+      // 搜索
+      .search_part {
+        width: 100%;
+        display: flex;
+        height: .3rem;
+        line-height: .3rem;
+        position: relative;
+        // 搜索输入框
+        .srh_inp {
+          flex: 5;
+          outline:none;
+          border: none;
+          color: #2D2D2D;
+          font-size: .16rem;
+          padding: 0 .3rem 0 .4rem;
+          background: #F3F1F2;
+          border-top-left-radius: .3rem;
+          border-bottom-left-radius: .3rem;
+        }
+        // 取消 按钮
+        .pop_cancel {
+          flex: 1;
+          color: #fff;
+          font-size: .14rem;
+          text-align: center;
+          background: #FF0000;
+          border-top-right-radius: .3rem;
+          border-bottom-right-radius: .3rem;
+        }
+        // 搜索icon
+        .serach_icon {
+          top: 50%;
+          left: 10px;
+          fill: #2D2D2D;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+        // 清除icon
+        .clear_icon {
+          top: 50%;
+          right: 14%;
+          width: .3rem;
+          height: .3rem;
+          z-index: 100;
+          display: block;
+          font-size: .12rem;
+          line-height: .3rem;
+          text-align: center;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+      }
+      // 关闭icon
       .close_icon {
-        right: 0;
         top: 50%;
+        right: -2%;
         position: absolute;
         transform: translate(0, -50%);
       }
@@ -205,6 +307,7 @@ export default {
       width: 100%;
       padding-left: 10%;
       box-sizing: border-box;
+      // 每个物料
       .each_mater {
         padding: 0.08rem;
         position: relative;
@@ -213,11 +316,11 @@ export default {
         // 物料名称
         .mater_name {
           color: #111;
-          height: .46rem;          
+          height: .46rem;     
+          overflow: hidden;     
           font-size: .14rem;
           font-weight: bold;
           max-height: .46rem;
-          overflow: hidden;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           text-overflow: ellipsis;
@@ -236,9 +339,9 @@ export default {
         // 选择icon
         .selIcon,
         .isSelIcon {
-          position: absolute;
-          left: -10%;
           top: 50%;
+          left: -10%;
+          position: absolute;
           transform: translate(0, -50%);
         }
         .isSelIcon {
@@ -273,22 +376,84 @@ export default {
     font-weight: 200;
     font-size: .12rem;
   }
+  .tips {
+    color: #111;
+    font-weight: 500;
+  }
   // 右箭头
   .r_arrow {
     top: 50%;
     right: .04rem;
     position: absolute;
     transform: translate(0, -50%);
-  }  
+  }
+  // 物料列表
+  .mater_list {
+    width: 100%;
+    box-sizing: border-box;
+    // 每个物料
+    .each_mater {
+      padding: 0.08rem;
+      position: relative;
+      margin-bottom: .2rem;
+      box-sizing: border-box;
+      // 物料编码
+      .mater_code {
+        .title {
+          color: #fff;
+          display: inline-block;
+          padding: .02rem .04rem;
+          background:#5077aa;
+        }
+      }
+      // 物料名称
+      .mater_name {
+        color: #111;
+        height: .46rem;   
+        overflow: hidden;       
+        font-size: .14rem;
+        font-weight: bold;
+        max-height: .46rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+      }
+      // 物料信息
+      .mater_info {
+        color: #757575;
+        font-size: .12rem;
+        // 规格 计量单位
+        .speci,
+        .Unit {
+          margin-right: .2rem;
+        }
+      }
+    }
+  }
+  // 新增更多
+  .add_more {
+    width: 1rem;
+    color: #fff;
+    margin: 0 auto;
+    height: .24rem;
+    font-size: .12rem;
+    text-align: center;
+    line-height: .24rem;
+    border-radius: .4rem;
+    background: #5077aa;
+    box-shadow: 0 2px 12px #5077aa;
+  }
 }
+// 底部栏
 .count_mode {
   left: 0;
   bottom: 0;
   width: 100%;
-  height: .44rem;
-  line-height: .44rem;
   display: flex;
+  height: .44rem;
   position: fixed;
+  line-height: .44rem;
   background: #fff;
   .count_num {
     flex: 2.5;
@@ -297,10 +462,10 @@ export default {
     padding-left: .1rem;
   }
   .count_btn {
+    flex: 1.5;
+    color: #fff;
     text-align: center;
     background: #5077aa;
-    color: #fff;
-    flex: 1.5;
   }
 }
 .vux-1px-t:before {

@@ -68,7 +68,7 @@ export default {
   // 用户信息
   .user_info {
     // color: #111;
-    color: #4F90F9;
+    color: #5077aa;
     font-size: .14rem;
     font-weight: 500;
     // 用户姓名
