@@ -9,24 +9,24 @@
                 <!-- 最近使用的应用 -->
                 <div class="re_use swiper-container">
                     <div class="re_use_list swiper-wrapper">
-                        <div class="each_list swiper-slide vux-1px-t" @click="goSO">
+                        <router-link to="/soDetail" class="each_list swiper-slide vux-1px-t" >
                             <div class="app_type">业务类应用</div>
                             <div class="app_name">销售订单</div>
                             <div class="app_info">填写自己的财富</div>
                             <div class="app_show" style="background:url('/static/assets/so01.jpeg') ;background-size:cover"></div>
-                        </div>
-                        <div class="each_list swiper-slide vux-1px-t">
+                        </router-link>
+                        <router-link to="/materApp" class="each_list swiper-slide vux-1px-t">
                             <div class="app_type">业务类应用</div>
-                            <div class="app_name">实施需求</div>
+                            <div class="app_name">物料</div>
                             <div class="app_info">我们随需而变</div>
                             <div class="app_show" style="background:url('/static/assets/cg02.jpg') -4px -4px;background-size:cover"></div>
-                        </div>
-                        <div class="each_list swiper-slide vux-1px-t" @click='goNews'>
+                        </router-link>
+                        <router-link class="each_list swiper-slide vux-1px-t" @click='goNews'>
                             <div class="app_type">通知类</div>
                             <div class="app_name">消息</div>
                             <div class="app_info">Anytime Anywhere</div>
                             <div class="app_show" style="background:url('/static/assets/message.jpg');background-size:cover"></div>
-                        </div>
+                        </router-link>
                     </div>
                 </div>
                 <!-- 开发类应用 -->

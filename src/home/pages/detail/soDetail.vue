@@ -66,12 +66,9 @@
                     <swipeout-button @click.native="delClick(index)" type="warn">删除</swipeout-button>
                   </div>
                   <div slot="content">
-                    <div class="mater_img">
-                      
-                    </div>
                     <!-- 物料名称 -->
                     <div class="mater_name">
-                      <!-- <span class="whiNum">No.{{index + 1}}</span> -->
+                      <span class="whiNum">No.{{index + 1}}</span>
                       2017加拿大纪念银币（鸡）五百枚特别至尊版封装评级证书
                     </div>
                     <!-- 物料基本信息 -->
@@ -95,7 +92,7 @@
                 </swipeout-item>
               </swipeout>
               <!-- 物料输入内容 -->
-              <!-- <div class="userInp_mode">
+              <div class="userInp_mode">
                 <group>
                   <cell title="计量单位" value='箱'></cell>
                   <popup-radio title="辅助计量" :options="assistUnitList" v-model="assistUnit"></popup-radio>
@@ -109,7 +106,7 @@
                   <datetime v-model="deliveryDate" title="预计交付日"></datetime>                  
                   <x-input title="说明" text-align='right' placeholder='请填写'></x-input>
                 </group>
-              </div> -->
+              </div>
             </div>
           </div>
         </template>
