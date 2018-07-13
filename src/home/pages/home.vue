@@ -21,7 +21,7 @@
                             <div class="app_info">我们随需而变</div>
                             <div class="app_show" style="background:url('/static/assets/cg02.jpg') -4px -4px;background-size:cover"></div>
                         </router-link>
-                        <router-link class="each_list swiper-slide vux-1px-t" @click='goNews'>
+                        <router-link to='' class="each_list swiper-slide vux-1px-t" @click='goNews'>
                             <div class="app_type">通知类</div>
                             <div class="app_name">消息</div>
                             <div class="app_info">Anytime Anywhere</div>

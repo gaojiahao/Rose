@@ -5,6 +5,7 @@ import SODETAIL from '../pages/detail/soDetail'
 import ADRESS from '../pages/detail/adress'
 import EDIT_ADS from '../pages/detail/edit_ads'
 import MATERAPP from '../pages/apps/materApp'
+import ADDMATER from '../pages/apps/addMater.vue'
 
 export default [
   { path: '/home', name: 'HOME', component: HOME, meta:{ title:'首页' } },
@@ -14,6 +15,7 @@ export default [
   { path:'/adress', name:'ADRESS', component:ADRESS, meta:{ title:'选择地址' } },
   { path:'/edit_ads', name:'EDIT_ADS', component:EDIT_ADS, meta:{ title:'编辑地址' } },
   { path:'/materApp', name:'MATERAPP', component:MATERAPP, meta:{ title:'物料列表' } },
+  { path:'/addMater', name:'ADDMATER', component:ADDMATER, meta:{ title:'新增物料' } },
   { path: '/', redirect:'/home' },
   { path:'*', redirect:'/to_do' }
 ]

@@ -83,6 +83,11 @@ export default {
       srhInpTx:'',
       matNature:['原料', '半成品', '成品', '商品', '服务', '虚拟件', '客供原料']
     }
+  },
+  methods:{
+    goEditAds(){
+      this.$router.push('/addMater');
+    }
   }
 }
 </script>
