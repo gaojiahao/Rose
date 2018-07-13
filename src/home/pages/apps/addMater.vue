@@ -12,13 +12,16 @@
                         <input type='text' v-model="MatName" class='property_val' />
                     </div>
                 </div>
-                <div class='mater_pic'>
+                <div class='mater_pic vux-1px-l'>
                     <input type="file" name="file" id='file' @change="uploadFile($event)"  accept="image/*"  style="display:none;"/>
                     <label for="file" class='add_icon' v-if='!picShow'>
                         <span class='iconfont icon-icon'></span>
                         <span class='add_text'>增加图片</span>
                     </label>
-                    <img :src='MatPic' class='pic' v-else @click="picShow = !picShow"/>
+                    <label for="file" class='add_icon' v-else>
+                        <img :src='MatPic' class='pic'/>
+                    </label>
+                    
                     
                 </div>    
             </div>
@@ -110,7 +113,8 @@ export default {
     },
     methods:{
         uploadFile(e){
-            this.picShow = !this.picShow;
+            console.log('触发了')
+            this.picShow = true;
             var reader = new FileReader();
             reader.onload = (evt) =>{
                 this.MatPic = evt.target.result;
@@ -120,130 +124,121 @@ export default {
      
         },
         change(value){
-            console.log(value);
             this.popVal = value;
         },
         confirm(){
             this.MatNature = this.popVal[0];
             this.showTransPop = false;
-        }
+        },
     }
     
 }
 </script>
 <style lang="scss" scoped>
-.vux-1px-b{
-    border-color:#e8e8ee;
-}
-.content{
-    height: 90%;
-    overflow-y: auto;
-    input{
-        border:none;
+    .vux-1px-b:after, .vux-1px-l:before{
+        border-color:#FBFBFB ;
+        color: #FBFBFB ;
     }
-    .mater_baseinfo{
-        display: flex;
-        align-items: center;
-        .mater_property{
-            flex:1;   
+    .content{
+        height: 90%;
+        overflow-y: auto;
+        input{
+            border:none;
         }
-        .mater_pic{
-            width:1.3rem;
-            height:1.3rem;
-            border-left:1px solid #e8e8ee;
+        .mater_baseinfo{
             display: flex;
-            align-items: center;
-            .add_icon{
-                width:100%;
-                height:100%;
-                display: block;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                .iconfont{
-                    font-size:0.24rem;
-                    margin-top:0.24rem;
-                }
-
+            align-items:flex-end;
+            .mater_property{ 
+                flex:1;
             }
-            .pic{
+            .mater_pic{
                 width:1.2rem;
                 height:1.2rem;
-                margin:0 auto;
-                border:0;
+                .add_icon{
+                    width:100%;
+                    height:100%;
+                    display: block;
+                    overflow: hidden;
+                    span{
+                        display: block;
+                        text-align: center;
+                    }
+                    .iconfont{
+                        font-size:0.24rem;
+                        margin-top:0.24rem;
+                    }
+                }
+                .pic{
+                    width:1.2rem;
+                    height:1.2rem;
+                    border:0;
+                }
             }
         }
-
-    }
-    .each_property{
-        padding: 0.05rem 0.08rem;
-        label{
-            color:#6d6d6d;
-            font-size:0.12rem;
-            display: block;
-            line-height: 0.2rem;
-        }
-        .picker{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .mater_nature{
-                font-size:0.16rem;
+        .each_property{
+            padding: 0.05rem 0.08rem;
+            label{
+                color:#6d6d6d;
+                font-size:0.12rem;
+                display: block;
                 line-height: 0.2rem;
-                // font-weight: bold;
+            }
+            .picker{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .mater_nature{
+                    font-size:0.16rem;
+                    line-height: 0.2rem;
+                }
+            }
+            .property_val{
+                display: block;
+                font-size:0.16rem;
+                line-height: 0.24rem;
             }
         }
-        .property_val{
-            display: block;
-            font-size:0.16rem;
-            line-height: 0.24rem;
-            // font-weight: bold;
+    }
+    //确认框
+    .popup_header{
+        display: flex;
+        justify-content: space-between;
+        height: 44px;
+        line-height: 44px;
+        font-size: 16px;
+        background-color: #fbf9fe;
+        padding: 0 15px;
+        .cancel{
+            color: #828282;
         }
+        .confirm{
+            color: #FF9900;
 
+        }
     }
-
-}
-//确认框
-.popup_header{
-    display: flex;
-    justify-content: space-between;
-    height: 44px;
-    line-height: 44px;
-    font-size: 16px;
-    background-color: #fbf9fe;
-    padding: 0 15px;
-    .cancel{
-        color: #828282;
+    // 确定
+    .btn {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    background: #fff;
+    .cfm_btn {
+        top: 50%;
+        left: 50%;
+        width: 2.8rem;
+        color: #fff;
+        height: .44rem;
+        line-height: .44rem;
+        position: absolute;
+        text-align: center;
+        background: #5077aa;
+        border-radius: .4rem;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 5px #5077aa;
     }
-    .confirm{
-        color: #FF9900;
-
     }
-
-}
-// 确定
-.btn {
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 10%;
-  position: fixed;
-  background: #fff;
-  .cfm_btn {
-    top: 50%;
-    left: 50%;
-    width: 2.8rem;
-    color: #fff;
-    height: .44rem;
-    line-height: .44rem;
-    position: absolute;
-    text-align: center;
-    background: #5077aa;
-    border-radius: .4rem;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 2px 5px #5077aa;
-  }
-}
 
 </style>
 
