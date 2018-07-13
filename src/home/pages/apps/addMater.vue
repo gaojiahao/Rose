@@ -14,15 +14,17 @@
                 </div>
                 <div class='mater_pic vux-1px-l'>
                     <input type="file" name="file" id='file' @change="uploadFile($event)"  accept="image/*"  style="display:none;"/>
-                    <label for="file" class='add_icon' v-if='!picShow'>
-                        <span class='iconfont icon-icon'></span>
-                        <span class='add_text'>增加图片</span>
-                    </label>
-                    <label for="file" class='add_icon' v-else>
-                        <img :src='MatPic' class='pic'/>
-                    </label>
-                    
-                    
+                    <div class='add_icon' v-if='!picShow'>
+                        <label for="file" ></label>
+                        <div class='upload'>
+                            <span class='iconfont icon-icon'></span>
+                            <span class='add_text'>增加图片</span>
+                        </div>  
+                    </div>
+                    <div class='add_icon' v-else>
+                        <label for="file" ></label> 
+                        <img :src='MatPic' class='upload'/>
+                    </div>
                 </div>    
             </div>
             <div class='each_property vux-1px-b'  @click='showTransPop = !showTransPop'>
@@ -120,8 +122,6 @@ export default {
                 this.MatPic = evt.target.result;
             }
             reader.readAsDataURL(e.target.files[0]);
-            
-     
         },
         change(value){
             this.popVal = value;
@@ -152,22 +152,32 @@ export default {
                 flex:1;
             }
             .mater_pic{
-                width:1.2rem;
-                height:1.2rem;
                 .add_icon{
-                    width:100%;
-                    height:100%;
-                    display: block;
-                    overflow: hidden;
-                    span{
+                    position: relative;
+                    label{
                         display: block;
-                        text-align: center;
+                        width:1.2rem;
+                        height:1.2rem;
                     }
-                    .iconfont{
-                        font-size:0.24rem;
-                        margin-top:0.24rem;
+                    .upload{
+                        width:1.2rem;
+                        height:1.2rem;
+                        position: absolute;
+                        left:0;
+                        top:0;
+                        z-index:-999;                                  
+                        span{
+                            display: block;
+                            text-align: center;
+                        }
+                        .iconfont{
+                            font-size:0.24rem;
+                            margin-top:0.24rem;
+                        }
                     }
+                    
                 }
+                
                 .pic{
                     width:1.2rem;
                     height:1.2rem;
@@ -190,6 +200,9 @@ export default {
                 .mater_nature{
                     font-size:0.16rem;
                     line-height: 0.2rem;
+                }
+                .iconfont {
+                    font-size:0.24rem;
                 }
             }
             .property_val{
