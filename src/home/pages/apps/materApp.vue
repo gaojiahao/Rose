@@ -18,7 +18,7 @@
       </div>
       <!-- 主要内容区域 -->
       <div class="app_main">
-        <div class="each_mater" v-for="(item, index) in 2" :key='index'>
+        <div class="each_mater" v-for="(item, index) in 2" :key='index' @click="goDetail">
           <div class="mater_img">
             <img src="../../assets/mater01.jpg" alt="mater_img">
           </div>
@@ -87,6 +87,9 @@ export default {
   methods:{
     goEditAds(){
       this.$router.push('/addMater');
+    },
+    goDetail(){
+      this.$router.push({ path: '/materDetail'})
     }
   }
 }

@@ -136,14 +136,15 @@ export default {
 </script>
 <style lang="scss" scoped>
     .vux-1px-b:after, .vux-1px-l:before{
-        border-color:#FBFBFB ;
-        color: #FBFBFB ;
+        border-color:#e8e8e8 ;
+        color: #e8e8e8 ;
     }
     .content{
         height: 90%;
         overflow-y: auto;
         input{
             border:none;
+            outline: none;
         }
         .mater_baseinfo{
             display: flex;
