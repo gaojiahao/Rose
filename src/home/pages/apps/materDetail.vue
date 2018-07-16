@@ -283,7 +283,7 @@ export default {
         font-weight: bold;
       }
       .app_name {
-        font-size: .18rem;
+        font-size: .2rem;
         .msg_count {
           float: right;
           margin-right: .1rem;
@@ -294,7 +294,7 @@ export default {
         font-size: .3rem;
         .msg_tx {
           // color: #757575;
-          font-size: .18rem;
+          font-size: .14rem;
         }
       }
       .r_arrow {
