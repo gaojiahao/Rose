@@ -1,237 +1,343 @@
 <template>
-    <div class='pages'>
-        <div class='content'>
-            <div class='mater_baseinfo vux-1px-b'>
-                <div class='mater_property'>
-                    <div class='each_property vux-1px-b'>
-                        <label>物料编码:</label>
-                        <input type='text' v-model="MatCode" class='property_val' />
-                    </div>
-                    <div class='each_property'>
-                        <label>物料名称:</label>
-                        <input type='text' v-model="MatName" class='property_val' />
-                    </div>
-                </div>
-                <div class='mater_pic vux-1px-l'>
-                    <input type="file" name="file" id='file' @change="uploadFile($event)"  accept="image/*"  style="display:none;"/>
-                    <div class='add_icon' v-if='!picShow'>
-                        <label for="file" ></label>
-                        <div class='upload'>
-                            <span class='iconfont icon-icon'></span>
-                            <span class='add_text'>增加图片</span>
-                        </div>  
-                    </div>
-                    <div class='add_icon' v-else>
-                        <label for="file" ></label> 
-                        <img :src='MatPic' class='upload'/>
-                    </div>
-                </div>    
-            </div>
-            <div class='each_property vux-1px-b'  @click='showTransPop = !showTransPop'>
-                <label>加工属性:</label>
-                <div class='picker'>
-                    <span class='mater_nature'>{{MatNature}}</span>
-                    <span class='iconfont icon-gengduo'></span>
-                </div>
-                <div v-transfer-dom >
-                    <popup v-model="showTransPop"  id="trade_pop_part">
-                        <div>
-                            <div class='popup_header vux-1px-b'>
-                                <span class='cancel' @click="showTransPop = false">取消</span>
-                                <span class='confirm' @click="confirm">确认</span>
-                            </div>
-                            <picker :data='MatNatureList' v-model="popVal"  @on-change='change'></picker>
-                        </div>
-                        
-                    </popup>
-                </div>
-            </div>
-             <div class='each_property vux-1px-b'>
-                <label>材料大类:</label>
-                <div class='picker'>
-                    <span class='mater_nature'>{{MatBigtype}}</span>
-                    <span class='iconfont icon-gengduo'></span>
-                </div>
-            </div>
-             <div class='each_property vux-1px-b'>
-                <label>材料子类:</label>
-                <div class='picker'>
-                    <span class='mater_nature'>{{MatSmltype}}</span>
-                    <span class='iconfont icon-gengduo'></span>
-                </div>
-            </div>
-            <div class='each_property vux-1px-b'>
-                <label>型号规格:</label>
-                <input type='text' v-model="size" class='property_val' />
-            </div>
-            <div class='each_property vux-1px-b'>
-                <label>颜色:</label>
-                <input type='text' v-model="color" class='property_val' />
-            </div>
-            <div class='each_property vux-1px-b'>
-                <label>主材质:</label>
-                <input type='text' v-model="MajorComp" class='property_val' />
-            </div>
-             <div class='each_property vux-1px-b'>
-                <label>主计量单位:</label>
-                <input type='text' v-model="MajorUnit" class='property_val' />
-            </div>
+  <div class='pages'>
+    <div class='content'>
+      <div class='mater_baseinfo vux-1px-b'>
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b'>
+            <label>物料编码:</label>
+            <input type='text' v-model="inventory.inventoryCode" class='property_val'/>
+          </div>
+          <div class='each_property'>
+            <label>物料名称:</label>
+            <input type='text' v-model="inventory.inventoryName" class='property_val'/>
+          </div>
         </div>
-        <div class='btn vux-1px-t'>
-            <div class="cfm_btn">提交</div>
+        <div class='mater_pic vux-1px-l'>
+          <input type="file" name="file" id='file' @change="uploadFile($event)" accept="image/*" style="display:none;"/>
+          <div class='add_icon' v-if='!picShow'>
+            <label for="file"></label>
+            <div class='upload'>
+              <span class='iconfont icon-icon'></span>
+              <span class='add_text'>增加图片</span>
+            </div>
+          </div>
+          <div class='add_icon' v-else>
+            <label for="file"></label>
+            <img :src='MatPic' class='upload'/>
+          </div>
         </div>
-
-    </div> 
+      </div>
+      <r-picker title="加工属性:" :data="MatNatureList" value="inventory.processing" v-model="inventory.processing"
+                @on-change="natureChange"></r-picker>
+      <r-picker title="材料大类:" :data="MatBigList" value="inventory.inventoryType" v-model="inventory.inventoryType"
+                @on-change="bigChange"></r-picker>
+      <r-picker title="材料子类:" :data="MatSmlList" value="inventory.inventorySubclass"
+                v-model="inventory.inventorySubclass"></r-picker>
+      <div class='each_property vux-1px-b'>
+        <label>型号规格:</label>
+        <input type='text' v-model="inventory.specification" class='property_val'/>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>颜色:</label>
+        <input type='text' v-model="inventory.inventoryColor" class='property_val'/>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>主材质:</label>
+        <input type='text' v-model="inventory.material" class='property_val'/>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>主计量单位:</label>
+        <input type='text' v-model="inventory.measureUnit" class='property_val'/>
+      </div>
+    </div>
+    <div class='btn vux-1px-t'>
+      <div class="cfm_btn" @click="save">提交</div>
+    </div>
+  </div>
 </template>
 <script>
-import { TransferDom, Picker , Popup ,Group} from 'vux'
-export default {
-    data(){
-        return {
-            MatCode : '',
-            MatName : '',
-            MatPic : '',
-            MatNature : '',
-            MatBigtype : '',
-            MatSmltype  : '',
-            size : '',
-            color : '',
-            MajorComp : '',
-            MajorUnit : '',
-            MatNatureList:[['原料', '半成品', '成品', '商品', '服务', '虚拟件', '客供原料']],
-            picShow: false,
-            showTransPop : false,
-            popVal : ['原料']
+  import {TransferDom, Picker, Popup, Group, AlertModule} from 'vux';
+  import RPicker from './../components/RPicker';
+  import common from './../mixins/common'
+  import {
+    save,
+    update,
+    findData,
+    upload,
+    getDictByType,
+    getDictByValue,
+    getBaseInfoData
+  } from './../../service/materService';
 
-        }
+  export default {
+    data() {
+      return {
+        listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
+        biReferenceId: '',
+        MatPic: '', // 图片地址
+        MatNatureList: [], // 加工属性列表
+        MatBigList: [], // 材料大类列表
+        MatSmlList: [], // 材料子类列表
+        picShow: false, // 是否展示图片
+        baseinfo: {
+          handler: '', // 经办人ID
+          handlerName: '', // 经办人
+          handlerArea: '', // 所属区域ID
+          handlerAreaName: '', // 所属区域
+          handlerUnit: '', // 经办组织ID
+          handlerUnitName: '', // 经办部门
+          handlerRole: '', // 经办角色ID
+          handlerRoleName: '', // 经办角色
+          activeTime: '', // 业务发生时间
+          comment: '' // 注释
+        },
+        inventory: {
+          inventoryCode: '', // 物料编码
+          inventoryName: '', // 物料名称
+          processing: '', // 加工属性
+          inventoryType: '', // 物料大类
+          inventorySubclass: '', // 物料子类
+          measureUnit: '', // 主计量单位
+          specification: '', // 型号规格
+          material: '', // 主材质
+          inventoryColor: '', // 颜色
+          keepingDays: 1, // 保质期天数
+          safeStock: '', // 安全库存
+          nearKeepingDays: 1, // 临保天数
+          inventoryStatus: '1', // 物料状态
+          inventoryPic: '',
+          comment: '' // 物料说明
+        },
+      }
     },
     directives: {
-        TransferDom
+      TransferDom
     },
-    components:{
-        Picker ,
-        Popup,
-        Group
+    mixins: [common],
+    components: {
+      Picker,
+      Popup,
+      Group,
+      RPicker,
     },
-    methods:{
-        uploadFile(e){
-            console.log('触发了')
-            this.picShow = true;
-            var reader = new FileReader();
-            reader.onload = (evt) =>{
-                this.MatPic = evt.target.result;
+    methods: {
+      preloadFile(file) {
+        let reader = new FileReader();
+        reader.onload = (evt) => {
+          this.MatPic = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      },
+      // TODO 选择、预览图片
+      uploadFile(e) {
+        let file = e.target.files[0];
+        upload({file}).then(res => {
+          let {success = false, message = '上传失败', data} = res;
+          let [detail = {}] = data;
+          this.picShow = true;
+          this.preloadFile(file);
+          // this.MatPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
+          this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
+          this.biReferenceId = detail.biReferenceId
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        });
+      },
+      // TODO 加工属性切换
+      natureChange(val) {
+        let selected = JSON.parse(val);
+        this.getBig(selected.originValue);
+      },
+      // TODO 材料大类切换
+      bigChange(val) {
+        let selected = JSON.parse(val);
+        this.getSml(selected.originValue);
+      },
+      // TODO 提交/修改物料
+      save() {
+        let submitData = {
+          listId: this.listId,
+          biReferenceId: this.biReferenceId,
+          formData: {
+            baseinfo: this.baseinfo,
+            inventory: this.inventory
+          }
+        };
+        save(submitData).then(data => {
+          let {success = false, message = '提交失败'} = data;
+          AlertModule.show({
+            content: message,
+            onHide() {
+              if (success) {
+              }
             }
-            reader.readAsDataURL(e.target.files[0]);
-        },
-        change(value){
-            this.popVal = value;
-        },
-        confirm(){
-            this.MatNature = this.popVal[0];
-            this.showTransPop = false;
-        },
+          });
+        });
+      },
+      // TODO 查询物料详情
+      findData() {
+      },
+      // TODO 获取加工属性列表
+      getNature() {
+        return getDictByType({
+          type: 'processing',
+        }).then(data => {
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.value;
+            item.value = item.name;
+          });
+          let [defaultSelect = {}] = tableContent;
+          this.MatNatureList = tableContent;
+          this.inventory.processing = defaultSelect.name
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        })
+      },
+      // TODO 获取材料大类
+      getBig(value = '') {
+        return getDictByValue({
+          value
+        }).then(data => {
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.value;
+            item.value = item.name;
+          });
+          let [defaultSelect = {}] = tableContent;
+          this.MatBigList = tableContent;
+          this.inventory.inventoryType = defaultSelect.name;
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        })
+      },
+      // TODO 获取材料子类
+      getSml(value = '') {
+        return getDictByValue({
+          value
+        }).then(data => {
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.value;
+            item.value = item.name;
+          });
+          let [defaultSelect = {}] = tableContent;
+          this.MatSmlList = tableContent;
+          this.inventory.inventorySubclass = defaultSelect.name;
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        })
+      },
+    },
+    created() {
+      this.getNature();
+      getBaseInfoData().then(data => {
+        this.baseinfo = {
+          ...this.baseinfo,
+          ...data,
+          activeTime: this.changeDate(new Date(), true),
+        }
+      });
     }
-    
-}
+  }
 </script>
 <style lang="scss" scoped>
-    .vux-1px-b:after, .vux-1px-l:before{
-        border-color:#e8e8e8 ;
-        color: #e8e8e8 ;
+  .vux-1px-b:after, .vux-1px-l:before {
+    border-color: #e8e8e8;
+    color: #e8e8e8;
+  }
+
+  .content {
+    height: 90%;
+    overflow-y: auto;
+    input {
+      border: none;
+      outline: none;
     }
-    .content{
-        height: 90%;
-        overflow-y: auto;
-        input{
-            border:none;
-            outline: none;
-        }
-        .mater_baseinfo{
-            display: flex;
-            align-items:flex-end;
-            .mater_property{ 
-                flex:1;
+    .mater_baseinfo {
+      display: flex;
+      align-items: flex-end;
+      .mater_property {
+        flex: 1;
+      }
+      .mater_pic {
+        .add_icon {
+          position: relative;
+          label {
+            display: block;
+            width: 1.2rem;
+            height: 1.2rem;
+          }
+          .upload {
+            width: 1.2rem;
+            height: 1.2rem;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -999;
+            span {
+              display: block;
+              text-align: center;
             }
-            .mater_pic{
-                .add_icon{
-                    position: relative;
-                    label{
-                        display: block;
-                        width:1.2rem;
-                        height:1.2rem;
-                    }
-                    .upload{
-                        width:1.2rem;
-                        height:1.2rem;
-                        position: absolute;
-                        left:0;
-                        top:0;
-                        z-index:-999;                                  
-                        span{
-                            display: block;
-                            text-align: center;
-                        }
-                        .iconfont{
-                            font-size:0.24rem;
-                            margin-top:0.24rem;
-                        }
-                    }
-                    
-                }
-                
-                .pic{
-                    width:1.2rem;
-                    height:1.2rem;
-                    border:0;
-                }
+            .iconfont {
+              font-size: 0.24rem;
+              margin-top: 0.24rem;
             }
-        }
-        .each_property{
-            padding: 0.05rem 0.08rem;
-            label{
-                color:#6d6d6d;
-                font-size:0.12rem;
-                display: block;
-                line-height: 0.2rem;
-            }
-            .picker{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                .mater_nature{
-                    font-size:0.16rem;
-                    line-height: 0.2rem;
-                }
-                .iconfont {
-                    font-size:0.24rem;
-                }
-            }
-            .property_val{
-                display: block;
-                font-size:0.16rem;
-                line-height: 0.24rem;
-            }
-        }
-    }
-    //确认框
-    .popup_header{
-        display: flex;
-        justify-content: space-between;
-        height: 44px;
-        line-height: 44px;
-        font-size: 16px;
-        background-color: #fbf9fe;
-        padding: 0 15px;
-        .cancel{
-            color: #828282;
-        }
-        .confirm{
-            color: #FF9900;
+          }
 
         }
+
+        .pic {
+          width: 1.2rem;
+          height: 1.2rem;
+          border: 0;
+        }
+      }
     }
-    // 确定
-    .btn {
+    .each_property {
+      padding: 0.05rem 0.08rem;
+      label {
+        color: #6d6d6d;
+        font-size: 0.12rem;
+        display: block;
+        line-height: 0.2rem;
+      }
+      .property_val {
+        display: block;
+        font-size: 0.16rem;
+        line-height: 0.24rem;
+      }
+    }
+  }
+
+  //确认框
+  .popup_header {
+    display: flex;
+    justify-content: space-between;
+    height: 44px;
+    line-height: 44px;
+    font-size: 16px;
+    background-color: #fbf9fe;
+    padding: 0 15px;
+    .cancel {
+      color: #828282;
+    }
+    .confirm {
+      color: #FF9900;
+
+    }
+  }
+
+  // 确定
+  .btn {
     left: 0;
     bottom: 0;
     width: 100%;
@@ -239,20 +345,20 @@ export default {
     position: fixed;
     background: #fff;
     .cfm_btn {
-        top: 50%;
-        left: 50%;
-        width: 2.8rem;
-        color: #fff;
-        height: .44rem;
-        line-height: .44rem;
-        position: absolute;
-        text-align: center;
-        background: #5077aa;
-        border-radius: .4rem;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 2px 5px #5077aa;
+      top: 50%;
+      left: 50%;
+      width: 2.8rem;
+      color: #fff;
+      height: .44rem;
+      line-height: .44rem;
+      position: absolute;
+      text-align: center;
+      background: #5077aa;
+      border-radius: .4rem;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 5px #5077aa;
     }
-    }
+  }
 
 </style>
 

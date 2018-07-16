@@ -44,16 +44,16 @@ let Rxports = {
           params.params = opts.data || {}
         }
         axios(params).then(function (res) {
-          let data = res.data
+          let data = res.data;
           if (Number(res.status) === 200) {
             resolve(data)
           }
         }).catch(function (error) {
           console.log(error);
-          let res = error.response
-          let data = (res && res.data) || {}
-          let status = (res && res.status) || 0
-          let message = data.message || '请求异常'
+          let res = error.response;
+          let data = (res && res.data) || {};
+          let status = (res && res.status) || 0;
+          let message = data.message || '请求异常';
           if (status === 401) {
             tokenService.login()
           }
@@ -63,6 +63,57 @@ let Rxports = {
           })
         });
       })
+    })
+  },
+  // TODO post请求，使用Payload
+  post(opts = {}) {
+    return new Promise((resolve, reject) => {
+      tokenService.getToken().then(token => {
+        if (!opts.url) {
+          reject({
+            success: false,
+            message: '请填写接口地址'
+          });
+        }
+        axios.post(opts.url, opts.data, {
+          headers: Object.assign({
+            Authorization: token,
+          }, opts.headers)
+        }).then(res => {
+          let data = res.data;
+          if (Number(res.status) === 200) {
+            resolve(data);
+          }
+        }).catch(function (error) {
+          let res = error.response;
+          let data = (res && res.data) || {};
+          let status = (res && res.status) || 0;
+          let message = data.message || '请求异常';
+          if (status === 401) {
+            tokenService.login()
+          }
+          reject({
+            success: false,
+            message: message
+          })
+        });
+      })
+    })
+  },
+  // TODO 上传图片，单个文件
+  upload({file = {}, biReferenceId = ''}) {
+    let param = new FormData();  // 创建form对象
+    param.append('file', file);  // 通过append向form对象添加数据
+    if (biReferenceId) {
+      param.append('biReferenceId', biReferenceId); // 添加form表单中其他数据
+    }
+    // console.log(param.get('file')); // FormData私有类对象，访问不到，可以通过get判断值是否传进去
+    return this.post({
+      url: '/H_roleplay-si/ds/upload',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: param
     })
   }
 };
