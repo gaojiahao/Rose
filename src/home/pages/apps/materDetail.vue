@@ -1,67 +1,124 @@
 <template>
   <div class="pages">
-    <div class="d_top box_sd">
-      <div class="top_img">
-        <img src="../../assets/mater01.jpg" alt="materImg">
+    <div class="main_content">
+        <!-- 大标题 -->
+      <div class="big_title">
+        <p class="vux-1px-b">基本信息</p>
       </div>
-      <div class="mater_info">
-        <!-- 物料编码、规格 -->
-        <div class="withColor">
-          <!-- 物料编码 -->
-          <div class="ForInline" style="display:inline-block; float:left;">
-            <div class="mater_code">
-              <span class="title">编码</span>
-              <span class="num">CMGI1H1602100</span>
+      <!-- 物料图片展示区域 -->
+      <div class="d_top box_sd">
+        <div class="top_img">
+          <img src="../../assets/mater01.jpg" alt="materImg">
+        </div>
+        <div class="mater_info">
+          <!-- 物料编码、规格 -->
+          <div class="withColor">
+            <!-- 物料编码 -->
+            <div class="ForInline" style="display:inline-block; float:left;">
+              <div class="mater_code">
+                <span class="title">编码</span>
+                <span class="num">CMGI1H1602100</span>
+              </div>
+            </div>
+            <!-- 物料规格 -->
+            <div class="ForInline" style="display:inline-block; float:right;">
+              <div class="mater_spec">
+                <span class="title">规格</span>
+                <span class="num">直径38mm</span>
+              </div>
             </div>
           </div>
-          <!-- 物料规格 -->
-          <div class="ForInline" style="display:inline-block; float:right;">
-            <div class="mater_spec">
-              <span class="title">规格</span>
-              <span class="num">直径38mm</span>
-            </div>
+          <!-- 物料名称 -->
+          <div class="mater_name">
+            2017加拿大纪念银币五百枚特别至尊版
           </div>
         </div>
-        <!-- 物料名称 -->
-        <div class="mater_name">
-          2017加拿大纪念银币五百枚特别至尊版
+      </div>
+      <!-- 物料基本信息展示区域 -->
+      <div class="d_main">
+        <div class="d_classify vux-1px-b">
+          <div class="father">
+            <p class="title">物料大类:</p>
+            <p class="content">金银套装</p>
+          </div>
+          <div class="child">
+            <p class="title">物料子类:</p>
+            <p class="content">物料</p>
+          </div>
+        </div>
+        <div class="d_material vux-1px-b">
+          <div class="father">
+            <p class="title">加工属性:</p>
+            <p class="content">原料</p>
+          </div>
+          <div class="child">
+            <p class="title">材质:</p>
+            <p class="content">其他</p>
+          </div>
+        </div>
+        <div class="d_material vux-1px-b">
+          <div class="father">
+            <p class="title">颜色:</p>
+            <p class="content">银</p>
+          </div>
+          <div class="child">
+            <p class="title">单位:</p>
+            <p class="content">箱</p>
+          </div>
+        </div>
+      </div>
+        <!-- 大标题 -->
+      <div class="big_title">
+        <p class="vux-1px-b">相关实例</p>
+      </div>
+      <div class="relevant_list">
+        <div class="each_app vux-1px-b">
+          <div class="app_info">
+            <div class="title">业务应用</div>
+            <div class="app_name">
+              <span>销售出库</span>
+              <!-- <span class="msg_count">3</span> -->
+            </div>
+            <div class="msg_num">
+              1
+              <span class="msg_tx">关联</span>
+            </div>
+            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+          </div>
+          <!-- <div class="msg_count">3</div> -->
+        </div>
+        <div class="each_app vux-1px-b">
+          <div class="app_info">
+            <div class="title">业务应用</div>
+            <div class="app_name">
+              <span>销售报价</span>
+            </div>
+            <div class="msg_num">
+              44
+              <span class="msg_tx">关联</span>
+            </div>
+            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+          </div>
+        </div>
+        <div class="each_app vux-1px-b">
+          <div class="app_info">
+            <div class="title">业务应用</div>
+            <div class="app_name">
+              <span>销售订单</span>
+            </div>
+            <div class="msg_num">
+              30
+              <span class="msg_tx">关联</span>
+            </div>
+            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+          </div>
+          <!-- <div class="msg_count">3</div> -->
         </div>
       </div>
     </div>
-    <div class="d_main">
-      <div class="d_classify vux-1px-b">
-        <div class="father">
-          <p class="title">物料大类:</p>
-          <p class="content">金银套装</p>
-        </div>
-        <div class="child">
-          <p class="title">物料子类:</p>
-          <p class="content">物料</p>
-        </div>
-      </div>
-      <div class="d_material vux-1px-b">
-        <div class="father">
-          <p class="title">加工属性:</p>
-          <p class="content">原料</p>
-        </div>
-        <div class="child">
-          <p class="title">材质:</p>
-          <p class="content">其他</p>
-        </div>
-      </div>
-      <div class="d_material vux-1px-b">
-        <div class="father">
-          <p class="title">颜色:</p>
-          <p class="content">银</p>
-        </div>
-        <div class="child">
-          <p class="title">单位:</p>
-          <p class="content">箱</p>
-        </div>
-      </div>
-    </div>
+    <!-- 修改按钮 -->
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEditAds">修改</div>
+      <div class="cfm_btn">修改</div>
     </div>
   </div>
 </template>
@@ -73,6 +130,10 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.main_content {
+  height: 90%;
+  overflow: auto;
+}
 // 阴影
 .box_sd {
   box-sizing: border-box;
@@ -86,11 +147,21 @@ export default {
 .vux-1px-r:after{
   border-color: #e8e8e8;
 }
+.big_title {
+  width: 95%;
+  color: #111;
+  margin: 0 auto;
+  padding: .04rem;
+  font-size: .3rem;
+  font-weight: 300;
+  box-sizing: border-box;
+}
+
 // 顶部
 .d_top {
   width: 90%;
   margin:.1rem auto 0;
-  padding: .2rem 0 .1rem;
+  padding: .2rem 0 .04rem;
   // 物料图片
   .top_img {
     width: 1.2rem;
@@ -166,31 +237,11 @@ export default {
     }
   }
 }
-// 相关应用
-.relevant_part {
-  width: 90%;
-  margin: 0 auto;
-  box-sizing: border-box;
-  display: flex;
-  .each_app {
-    flex: 1;
-    display: flex;
-    // flex-direction: column;
-    text-align: center;
-    // transform: scale(0.9)
-  }
-  .title{
-    background: #3f72af;
-    color: #fff;
-  }
-  .num {
-    background: #dbe2ef;
-  }
-}
+
 // 中部
 .d_main {
   width: 90%;
-  margin:0 auto; 
+  margin:0 auto .1rem; 
   .d_classify {
     display: flex;
     padding: 0.1rem 0;
@@ -213,6 +264,46 @@ export default {
   }
   .d_material {
     @extend .d_classify;
+  }
+}
+// 相关应用
+.relevant_list {
+  width: 90%;
+  margin: 0 auto;
+  .each_app {
+    margin-bottom: .1rem;
+    position: relative;
+    border-radius: .08rem;
+    .app_info {
+      padding: .1rem;
+      box-sizing: border-box;
+      .title {
+        color: #4F90F9;
+        font-size: .12rem;
+        font-weight: bold;
+      }
+      .app_name {
+        font-size: .18rem;
+        .msg_count {
+          float: right;
+          margin-right: .1rem;
+        }
+      }
+      .msg_num {
+        color: #3f72af;
+        font-size: .3rem;
+        .msg_tx {
+          // color: #757575;
+          font-size: .18rem;
+        }
+      }
+      .r_arrow {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+    }
   }
 }
 // 确定
