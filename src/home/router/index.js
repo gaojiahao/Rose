@@ -22,21 +22,14 @@ export default [
     meta:{ title:'选择地址' } },
   { path:'/edit_ads', name:'EDIT_ADS', component:EDIT_ADS,
     meta:{ title:'编辑地址' } },
-<<<<<<< HEAD
   { path:'/adressDetail', name:'ADRESSDETAL', component:ADRESSDETAL, 
     meta:{ title:'地址详情' } },
-  { path:'/materApp', name:'MATERAPP', component:MATERAPP, 
-    meta:{ title:'物料列表' } },
-  { path:'/addMater', name:'ADDMATER', component:ADDMATER, 
-=======
   { path:'/materApp', name:'MATERAPP', component:MATERAPP,
     meta:{ title:'物料列表', keepAlive: true } },
   { path:'/addMater', name:'ADDMATER', component:ADDMATER,
->>>>>>> b865a0aadeba89f08e55cf96676577dd1137dcf5
     meta:{ title:'新增物料' } },
   { path:'/materDetail', name:'MATERDETAIL', component:MATERDETAIL,
     meta:{ title:'物料详情' } },
-
   { path: '/', redirect:'/home' },
   { path:'*', redirect:'/to_do' }
 ]
