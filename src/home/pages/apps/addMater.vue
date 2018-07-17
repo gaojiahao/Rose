@@ -53,10 +53,12 @@
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">提交</div>
     </div>
+    <loading :show="showLoading"></loading>
   </div>
 </template>
 <script>
   import {TransferDom, Picker, Popup, Group, AlertModule} from 'vux';
+  import Loading from './../components/Loading'
   import RPicker from './../components/RPicker';
   import common from './../mixins/common'
   import {
@@ -112,6 +114,7 @@
         hasDefault: false, // 判断是否为回写
         imgFileObj: {}, // 上传的图片对象
         imgFile: null,
+        showLoading: false,
       }
     },
     directives: {
@@ -123,6 +126,7 @@
       Popup,
       Group,
       RPicker,
+      Loading,
     },
     methods: {
       preloadFile(e) {
@@ -298,7 +302,9 @@
       }
     },
     created() {
+      this.showLoading = true;
       let {transCode = ''} = this.$route.query;
+      let requestPromise = [];
       this.transCode = transCode;
       // 有transCode即回写页面
       if (transCode) {
@@ -306,16 +312,20 @@
           await this.findData();
           await this.getNature();
           await this.getBig();
-          this.getSml();
+          await this.getSml();
           this.hasDefault = false;
+          this.showLoading = false;
         })();
         return
       }
-      this.getNature().then(data => {
+      requestPromise.push(this.getNature().then(data => {
         let [defaultSelect = {}] = data;
         this.inventory.processing = defaultSelect.name
-      });
-      this.getBaseInfoData();
+      }));
+      requestPromise.push(this.getBaseInfoData());
+      Promise.all(requestPromise).then(() => {
+        this.showLoading = false;
+      })
     }
   }
 </script>

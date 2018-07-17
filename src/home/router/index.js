@@ -9,25 +9,25 @@ import ADDMATER from '../pages/apps/addMater'
 import MATERDETAIL from '../pages/apps/materDetail'
 
 export default [
-  { path: '/home', name: 'HOME', component: HOME, 
+  { path: '/home', name: 'HOME', component: HOME,
     meta:{ title:'首页' } },
-  { path:'/allapply', name:'APPLY', component:APPLY, 
+  { path:'/allapply', name:'APPLY', component:APPLY,
     meta:{ title:'全部应用' } },
-  { path:'/list', name:'LIST', component:LIST, 
+  { path:'/list', name:'LIST', component:LIST,
     meta:{ title:'任务列表' } },
-  { path:'/soDetail', name:'SODETAIL', component:SODETAIL, 
+  { path:'/soDetail', name:'SODETAIL', component:SODETAIL,
     meta:{ title:'填写订单' } },
-  { path:'/adress', name:'ADRESS', component:ADRESS, 
+  { path:'/adress', name:'ADRESS', component:ADRESS,
     meta:{ title:'选择地址' } },
-  { path:'/edit_ads', name:'EDIT_ADS', component:EDIT_ADS, 
+  { path:'/edit_ads', name:'EDIT_ADS', component:EDIT_ADS,
     meta:{ title:'编辑地址' } },
-  { path:'/materApp', name:'MATERAPP', component:MATERAPP, 
-    meta:{ title:'物料列表' } },
-  { path:'/addMater', name:'ADDMATER', component:ADDMATER, 
+  { path:'/materApp', name:'MATERAPP', component:MATERAPP,
+    meta:{ title:'物料列表', keepAlive: true } },
+  { path:'/addMater', name:'ADDMATER', component:ADDMATER,
     meta:{ title:'新增物料' } },
-  { path:'/materDetail', name:'MATERDETAIL', component:MATERDETAIL, 
+  { path:'/materDetail', name:'MATERDETAIL', component:MATERDETAIL,
     meta:{ title:'物料详情' } },
-    
+
   { path: '/', redirect:'/home' },
   { path:'*', redirect:'/to_do' }
 ]

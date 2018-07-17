@@ -138,12 +138,6 @@
         return url
       },
       goDetail(item) {
-        /*sessionStorage.setItem(RFD_MATER_LIST, JSON.stringify({
-          activeIndex: this.activeIndex,
-          activeTab: this.activeTab,
-          materList: JSON.stringify(this.materList),
-          y: this.bScroll.y
-        }));*/
         this.$router.push({
           path: '/materDetail',
           query: {
@@ -181,6 +175,7 @@
             operator: 'eq',
             value: this.activeTab,
             property: 'processing',
+            // attendedOperation: 'and'
           }
         ];
         if (this.srhInpTx) {
@@ -225,12 +220,17 @@
         this.getMatList();
       },
     },
+    beforeRouteLeave(to, from, next) {
+      let {path} = to;
+      // 进入详情页，缓存当前页面，回到首页，不缓存当前页
+      if (path === '/materDetail') {
+        from.meta.keepAlive = true;
+      } else if (path === '/home') {
+        from.meta.keepAlive = false;
+      }
+      next();
+    },
     created() {
-      /*let matList = sessionStorage.getItem(RFD_MATER_LIST);
-      if (matList) {
-        matList = JSON.parse(matList);
-        console.log(matList)
-      }*/
       this.$nextTick(() => {
         this.bScroll = new BScroll(this.$refs.appMain, {
           click: true,
@@ -244,7 +244,6 @@
         });
         // 绑定滚动加载事件
         this.bScroll.on('pullingUp', () => {
-          console.log('pullingUp')
           this.page++;
           this.getMatList();
         });
@@ -252,6 +251,11 @@
       this.getDictByType().then(() => {
         this.getMatList();
       });
+    },
+    activated() {
+      if (this.bScroll) {
+        this.bScroll.refresh();
+      }
     }
   }
 </script>
