@@ -1,13 +1,16 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
   </div>
 </template>
 
 <script>
   require('../static/css/iconfont/iconfont.css')
   export default {
-    name: 'app'
+    name: 'app',
   }
 </script>
 
@@ -22,7 +25,7 @@
     width: 100%;
     height: 100%;
     max-width: 640px;
-    font-size: .16rem; 
+    font-size: .16rem;
     background-color: #fff;
     font-family: -apple-system-font, "Helvetica Neue", sans-serif, Microsoft YaHei, Arial, Helvetica, sans-serif;
   }
