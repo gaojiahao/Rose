@@ -30,6 +30,41 @@ const dealerService = {
             }
         })
 
+    },
+    //获取往来大类
+    getDictByValue(value){
+        return $axios.ajax({
+            url:'/H_roleplay-si/ds/getDictByValue',
+            data:{
+                value: value,
+                page: 1,
+                start: 0,
+                limit: 10000
+            }
+        })
+    },
+    //保存往来
+    save(data){
+        return $axios.post({
+            url:'/H_roleplay-si/dealer/save',
+            data
+        })
+    },
+    //修改往来
+    update(data){
+        return $axios.post({
+            url:'/H_roleplay-si/dealer/update',
+            data
+        })
+    },
+    //查询往来信息
+    getDealerInfo(code){
+        return $axios.ajax({
+            url:`/H_roleplay-si/dealer/findData?transCode=${code}`
+        })
+
     }
+
+
 }
 export default dealerService

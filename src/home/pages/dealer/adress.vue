@@ -10,7 +10,7 @@
           <p class="cp_name">{{item.dealerName}}</p>
           <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
         </div>
-        <span class="iconfont icon-bianji" @click="goEditAds"></span>
+        <span class="iconfont icon-bianji" @click="goEditAds(item)"></span>
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -30,8 +30,12 @@ export default {
   },
   methods:{
     // 编辑地址
-    goEditAds(){
-      this.$router.push({ path:'/edit_ads'})
+    goEditAds(item){
+      this.$router.push({ 
+        path:'/edit_ads',
+        query:{
+          transCode: item.transCode
+        }})
     }
   },
   created(){
