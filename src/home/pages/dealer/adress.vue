@@ -1,7 +1,7 @@
 <template>
   <div class="pages">
     <div class="ads_part">
-      <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index">
+      <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
         <div class="user_info">
           <span class="user_name">{{item.creatorName}}</span>
           <span class="user_tel">{{item.dealerMobilePhone}}</span>
@@ -10,7 +10,7 @@
           <p class="cp_name">{{item.dealerName}}</p>
           <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
         </div>
-        <span class="iconfont icon-bianji" @click="goEditAds(item)"></span>
+        <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -35,8 +35,19 @@ export default {
         path:'/edit_ads',
         query:{
           transCode: item.transCode
-        }})
+        }
+      })
+    },
+    goDetail(item){
+      this.$router.push({ 
+        path:'/adressDetail',
+        query:{
+          transCode: item.transCode
+        }
+      })
+
     }
+
   },
   created(){
     (async()=>{

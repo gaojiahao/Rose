@@ -4,6 +4,7 @@ import LIST from '../pages/list'
 import SODETAIL from '../pages/detail/soDetail'
 import ADRESS from '../pages/dealer/adress'
 import EDIT_ADS from '../pages/dealer/edit_ads'
+import ADRESSDETAL from '../pages/dealer/adressDetail'
 import MATERAPP from '../pages/apps/materApp'
 import ADDMATER from '../pages/apps/addMater'
 import MATERDETAIL from '../pages/apps/materDetail'
@@ -21,6 +22,8 @@ export default [
     meta:{ title:'选择地址' } },
   { path:'/edit_ads', name:'EDIT_ADS', component:EDIT_ADS, 
     meta:{ title:'编辑地址' } },
+  { path:'/adressDetail', name:'ADRESSDETAL', component:ADRESSDETAL, 
+    meta:{ title:'地址详情' } },
   { path:'/materApp', name:'MATERAPP', component:MATERAPP, 
     meta:{ title:'物料列表' } },
   { path:'/addMater', name:'ADDMATER', component:ADDMATER, 
