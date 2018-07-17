@@ -1,6 +1,4 @@
-import axios from 'axios';
 import $axios from '../plugins/ajax';
-import tokenService from './tokenService'
 
 // TODO 保存物料
 export let save = (data = {}) => {
@@ -12,9 +10,9 @@ export let save = (data = {}) => {
 
 // TODO 修改物料
 export let update = (data = {}) => {
-  return $axios.ajax({
+  return $axios.post({
     url: '/H_roleplay-si/inventory/update',
-    data: {...data}
+    data
   });
 };
 
@@ -31,6 +29,17 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   return $axios.upload({
     file,
     biReferenceId
+  })
+};
+
+// TODO 删除上传的图片
+export let delImg = (id = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/delete',
+    data: {
+      id,
+      list: 'attachments',
+    }
   })
 };
 
@@ -59,6 +68,7 @@ export let getDictByValue = (data = {}) => {
     }
   });
 };
+
 // TODO 获取当前用户
 export let getBaseInfoData = () => {
   return new Promise(async (resolve, reject) => {
@@ -115,6 +125,21 @@ export let getBaseInfoData = () => {
       });
     });
   });
+};
+
+// TODO 获取物料列表
+export let getMatList = (data = {}) => {
+  return $axios.ajax({
+    // url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2132',
+    url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2183',
+    data: {
+      limit: 10,
+      page: 1,
+      start: 11,
+      // filter: JSON.stringify([{"operator": "like", "value": "商品", "property": "processing"}]),
+      ...data
+    }
+  })
 };
 
 export default {

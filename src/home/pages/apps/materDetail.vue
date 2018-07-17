@@ -1,7 +1,7 @@
 <template>
   <div class="pages">
     <div class="main_content">
-        <!-- 大标题 -->
+      <!-- 大标题 -->
       <div class="big_title">
         <p class="vux-1px-b">基本信息</p>
       </div>
@@ -17,20 +17,20 @@
             <div class="ForInline" style="display:inline-block; float:left;">
               <div class="mater_code">
                 <span class="title">编码</span>
-                <span class="num">CMGI1H1602100</span>
+                <span class="num">{{inventory.inventoryCode}}</span>
               </div>
             </div>
             <!-- 物料规格 -->
             <div class="ForInline" style="display:inline-block; float:right;">
               <div class="mater_spec">
                 <span class="title">规格</span>
-                <span class="num">直径38mm</span>
+                <span class="num">{{inventory.specification}}</span>
               </div>
             </div>
           </div>
           <!-- 物料名称 -->
           <div class="mater_name">
-            2017加拿大纪念银币五百枚特别至尊版
+            {{inventory.inventoryName}}
           </div>
         </div>
       </div>
@@ -39,35 +39,35 @@
         <div class="d_classify vux-1px-b">
           <div class="father">
             <p class="title">物料大类:</p>
-            <p class="content">金银套装</p>
+            <p class="content">{{inventory.inventoryType}}</p>
           </div>
           <div class="child">
             <p class="title">物料子类:</p>
-            <p class="content">物料</p>
+            <p class="content">{{inventory.inventorySubclass}}</p>
           </div>
         </div>
         <div class="d_material vux-1px-b">
           <div class="father">
             <p class="title">加工属性:</p>
-            <p class="content">原料</p>
+            <p class="content">{{inventory.processing}}</p>
           </div>
           <div class="child">
             <p class="title">材质:</p>
-            <p class="content">其他</p>
+            <p class="content">{{inventory.material}}</p>
           </div>
         </div>
         <div class="d_material vux-1px-b">
           <div class="father">
             <p class="title">颜色:</p>
-            <p class="content">银</p>
+            <p class="content">{{inventory.inventoryColor}}</p>
           </div>
           <div class="child">
             <p class="title">单位:</p>
-            <p class="content">箱</p>
+            <p class="content">{{inventory.measureUnit}}</p>
           </div>
         </div>
       </div>
-        <!-- 大标题 -->
+      <!-- 大标题 -->
       <div class="big_title">
         <p class="vux-1px-b">相关实例</p>
       </div>
@@ -118,219 +118,256 @@
     </div>
     <!-- 修改按钮 -->
     <div class="btn vux-1px-t">
-      <div class="cfm_btn">修改</div>
+      <div class="cfm_btn" @click="goEdit">修改</div>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+  import {findData} from './../../service/materService'
 
-}
+  export default {
+    name: 'materDetail',
+    data() {
+      return {
+        transCode: '',
+        inventory: {},
+      }
+    },
+    methods: {
+      // TODO 跳转到修改页面
+      goEdit() {
+        this.$router.push({
+          path: '/addMater',
+          query: {
+            transCode: this.transCode
+          }
+        })
+      },
+      // TODO 获取物料详情
+      findData() {
+        return findData(this.transCode).then(({formData}) => {
+          this.inventory = formData.inventory;
+        })
+      }
+    },
+    created() {
+      let {transCode = ''} = this.$route.query;
+      this.transCode = transCode;
+      this.findData();
+    }
+  }
 </script>
 
 <style lang='scss' scoped>
-.main_content {
-  height: 90%;
-  overflow: auto;
-}
-// 阴影
-.box_sd {
-  box-sizing: border-box;
-  box-shadow: 0 0 8px #e8e8e8;
-}
-// 下划线
-.vux-1px-b:after{
-  border-color: #e8e8e8;
-}
-// 下划线
-.vux-1px-r:after{
-  border-color: #e8e8e8;
-}
-.big_title {
-  width: 95%;
-  color: #111;
-  margin: 0 auto;
-  padding: .04rem;
-  font-size: .3rem;
-  font-weight: 300;
-  box-sizing: border-box;
-}
-
-// 顶部
-.d_top {
-  width: 90%;
-  margin:.1rem auto 0;
-  padding: .2rem 0 .04rem;
-  // 物料图片
-  .top_img {
-    width: 1.2rem;
-    height: 1.2rem;
-    margin: 0 auto .1rem;
-    img {
-      width: 100%;
-    }
+  .main_content {
+    height: 90%;
+    overflow: auto;
   }
-  // 物料信息
-  .mater_info {
-    width: 100%;
-    // 有颜色包裹的
-    .withColor {
-      width: 2.2rem;
-      margin: 0 auto;
-      height: .24rem;
-      // 物料编码
-      .mater_code {
-        display: flex;
-        .title,
-        .num {
-          font-size: .1rem;
-          display: inline-block;
-          padding: .01rem .04rem;
-        }
-        .title {
-          color: #fff;
-          background:#3f72af;
-        }
-        .num {
-          color: #111;  
-          max-width: .9rem;
-          overflow: hidden;
-          white-space: nowrap;
-          background: #dbe2ef;
-          text-overflow: ellipsis;
-        }
-      }
-      // 规格
-      .mater_spec {
-        @extend .mater_code;
-        margin-left: .1rem;
-        .title {
-          color: #fff;
-          background:#537791;
-        }
-        .num {
-          color: #fff;
-          max-width: .6rem;
-          overflow: hidden;
-          white-space: nowrap;
-          background: #ff7f50;
-          text-overflow: ellipsis;
-        }
+
+  // 阴影
+  .box_sd {
+    box-sizing: border-box;
+    box-shadow: 0 0 8px #e8e8e8;
+  }
+
+  // 下划线
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
+
+  // 下划线
+  .vux-1px-r:after {
+    border-color: #e8e8e8;
+  }
+
+  .big_title {
+    width: 95%;
+    color: #111;
+    margin: 0 auto;
+    padding: .04rem;
+    font-size: .3rem;
+    font-weight: 300;
+    box-sizing: border-box;
+  }
+
+  // 顶部
+  .d_top {
+    width: 90%;
+    margin: .1rem auto 0;
+    padding: .2rem 0 .04rem;
+    // 物料图片
+    .top_img {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin: 0 auto .1rem;
+      img {
+        width: 100%;
       }
     }
-    // 物料名称
-    .mater_name {
+    // 物料信息
+    .mater_info {
       width: 100%;
-      color: #111; 
-      padding: 0 .4rem;
-      overflow: hidden;       
-      font-size: .14rem;
-      font-weight: bold;
-      text-align: center; 
-      max-height: .46rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      box-sizing: border-box;  
-      text-overflow: ellipsis;
-      -webkit-box-orient: vertical;
-    }
-  }
-}
-
-// 中部
-.d_main {
-  width: 90%;
-  margin:0 auto .1rem; 
-  .d_classify {
-    display: flex;
-    padding: 0.1rem 0;
-    // height: .6rem;
-    // line-height: .6rem;
-    .father,
-    .child {
-      flex: 1;
-      text-align: center;
-    }
-    .title {
-      font-size: .12rem;
-      color: #757575;
-    }
-    .content {
-      padding-left: .04rem;
-      font-weight: bold;
-      font-size: .14rem;
-    }
-  }
-  .d_material {
-    @extend .d_classify;
-  }
-}
-// 相关应用
-.relevant_list {
-  width: 90%;
-  margin: 0 auto;
-  .each_app {
-    margin-bottom: .1rem;
-    position: relative;
-    border-radius: .08rem;
-    .app_info {
-      padding: .1rem;
-      box-sizing: border-box;
-      .title {
-        color: #4F90F9;
-        font-size: .12rem;
+      // 有颜色包裹的
+      .withColor {
+        width: 2.2rem;
+        margin: 0 auto;
+        height: .24rem;
+        // 物料编码
+        .mater_code {
+          display: flex;
+          .title,
+          .num {
+            font-size: .1rem;
+            display: inline-block;
+            padding: .01rem .04rem;
+          }
+          .title {
+            color: #fff;
+            background: #3f72af;
+          }
+          .num {
+            color: #111;
+            max-width: .9rem;
+            overflow: hidden;
+            white-space: nowrap;
+            background: #dbe2ef;
+            text-overflow: ellipsis;
+          }
+        }
+        // 规格
+        .mater_spec {
+          @extend .mater_code;
+          margin-left: .1rem;
+          .title {
+            color: #fff;
+            background: #537791;
+          }
+          .num {
+            color: #fff;
+            max-width: .6rem;
+            overflow: hidden;
+            white-space: nowrap;
+            background: #ff7f50;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+      // 物料名称
+      .mater_name {
+        width: 100%;
+        color: #111;
+        padding: 0 .4rem;
+        overflow: hidden;
+        font-size: .14rem;
         font-weight: bold;
-      }
-      .app_name {
-        font-size: .2rem;
-        .msg_count {
-          float: right;
-          margin-right: .1rem;
-        }
-      }
-      .msg_num {
-        color: #3f72af;
-        font-size: .3rem;
-        .msg_tx {
-          // color: #757575;
-          font-size: .14rem;
-        }
-      }
-      .r_arrow {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translate(0, -50%);
+        text-align: center;
+        max-height: .46rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
       }
     }
   }
-}
-// 确定
-.btn {
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 10%;
-  position: fixed;
-  background: #fff;
-  .cfm_btn {
-    top: 50%;
-    left: 50%;
-    width: 2.8rem;
-    color: #fff;
-    height: .44rem;
-    line-height: .44rem;
-    position: absolute;
-    text-align: center;
-    background: #5077aa;
-    border-radius: .4rem;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 2px 5px #5077aa;
+
+  // 中部
+  .d_main {
+    width: 90%;
+    margin: 0 auto .1rem;
+    .d_classify {
+      display: flex;
+      padding: 0.1rem 0;
+      // height: .6rem;
+      // line-height: .6rem;
+      .father,
+      .child {
+        flex: 1;
+        text-align: center;
+      }
+      .title {
+        font-size: .12rem;
+        color: #757575;
+      }
+      .content {
+        padding-left: .04rem;
+        font-weight: bold;
+        font-size: .14rem;
+      }
+    }
+    .d_material {
+      @extend .d_classify;
+    }
   }
-}
-// 上划线
-.vux-1px-t:before {
-  border-color:  #e8e8e8;
-}
+
+  // 相关应用
+  .relevant_list {
+    width: 90%;
+    margin: 0 auto;
+    .each_app {
+      margin-bottom: .1rem;
+      position: relative;
+      border-radius: .08rem;
+      .app_info {
+        padding: .1rem;
+        box-sizing: border-box;
+        .title {
+          color: #4F90F9;
+          font-size: .12rem;
+          font-weight: bold;
+        }
+        .app_name {
+          font-size: .2rem;
+          .msg_count {
+            float: right;
+            margin-right: .1rem;
+          }
+        }
+        .msg_num {
+          color: #3f72af;
+          font-size: .3rem;
+          .msg_tx {
+            // color: #757575;
+            font-size: .14rem;
+          }
+        }
+        .r_arrow {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translate(0, -50%);
+        }
+      }
+    }
+  }
+
+  // 确定
+  .btn {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    background: #fff;
+    .cfm_btn {
+      top: 50%;
+      left: 50%;
+      width: 2.8rem;
+      color: #fff;
+      height: .44rem;
+      line-height: .44rem;
+      position: absolute;
+      text-align: center;
+      background: #5077aa;
+      border-radius: .4rem;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 5px #5077aa;
+    }
+  }
+
+  // 上划线
+  .vux-1px-t:before {
+    border-color: #e8e8e8;
+  }
 </style>

@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class='mater_pic vux-1px-l'>
-          <input type="file" name="file" id='file' @change="uploadFile($event)" accept="image/*" style="display:none;"/>
+          <input type="file" name="file" id='file' @change="preloadFile" accept="image/*" style="display:none;"/>
           <div class='add_icon' v-if='!picShow'>
             <label for="file"></label>
             <div class='upload'>
@@ -108,6 +108,10 @@
           inventoryPic: '',
           comment: '' // 物料说明
         },
+        transCode: '',
+        hasDefault: false, // 判断是否为回写
+        imgFileObj: {}, // 上传的图片对象
+        imgFile: null,
       }
     },
     directives: {
@@ -121,23 +125,30 @@
       RPicker,
     },
     methods: {
-      preloadFile(file) {
+      preloadFile(e) {
+        let file = e.target.files[0];
         let reader = new FileReader();
+        this.imgFile = file;
         reader.onload = (evt) => {
+          this.picShow = true;
           this.MatPic = evt.target.result;
         };
         reader.readAsDataURL(file);
+        this.uploadFile();
       },
       // TODO 选择、预览图片
       uploadFile(e) {
-        let file = e.target.files[0];
-        upload({file}).then(res => {
+        // let file = e.target.files[0];
+        return upload({
+          file: this.imgFile,
+          biReferenceId: this.biReferenceId
+        }).then(res => {
           let {success = false, message = '上传失败', data} = res;
           let [detail = {}] = data;
-          this.picShow = true;
-          this.preloadFile(file);
+          // this.picShow = true;
+          // this.preloadFile(e);
           // this.MatPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
-          this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
+          this.inventory.inventoryPic = detail.attacthment;
           this.biReferenceId = detail.biReferenceId
         }).catch(e => {
           AlertModule.show({
@@ -147,13 +158,23 @@
       },
       // TODO 加工属性切换
       natureChange(val) {
-        let selected = JSON.parse(val);
-        this.getBig(selected.originValue);
+        if (this.hasDefault) {
+          return
+        }
+        this.getBig().then(data => {
+          let [defaultSelect = {}] = data;
+          this.inventory.inventoryType = defaultSelect.name;
+        });
       },
       // TODO 材料大类切换
       bigChange(val) {
-        let selected = JSON.parse(val);
-        this.getSml(selected.originValue);
+        if (this.hasDefault) {
+          return
+        }
+        this.getSml(val).then(data => {
+          let [defaultSelect = {}] = data;
+          this.inventory.inventorySubclass = defaultSelect.name;
+        });
       },
       // TODO 提交/修改物料
       save() {
@@ -165,7 +186,12 @@
             inventory: this.inventory
           }
         };
-        save(submitData).then(data => {
+        let operaction = save;
+        if (this.transCode) {
+          operaction = update;
+          submitData.formData.effectiveTime = this.changeDate(new Date(), true);
+        }
+        operaction(submitData).then(data => {
           let {success = false, message = '提交失败'} = data;
           AlertModule.show({
             content: message,
@@ -178,6 +204,21 @@
       },
       // TODO 查询物料详情
       findData() {
+        return findData(this.transCode).then(({formData = {}, attachment = []}) => {
+          let {baseinfo = {}, inventory = {}} = formData;
+          this.hasDefault = true;
+          this.baseinfo = {...this.baseinfo, ...baseinfo,};
+          this.inventory = {...this.inventory, ...inventory,};
+          this.biReferenceId = this.inventory.referenceId;
+          if (this.inventory.inventoryPic) {
+            this.picShow = true;
+            this.MatPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}`;
+          }
+          let [imgFileObj = {}] = attachment.filter(item => {
+            return item.attacthment === this.inventory.inventoryPic
+          });
+          this.imgFileObj = imgFileObj;
+        });
       },
       // TODO 获取加工属性列表
       getNature() {
@@ -189,63 +230,92 @@
             item.originValue = item.value;
             item.value = item.name;
           });
-          let [defaultSelect = {}] = tableContent;
           this.MatNatureList = tableContent;
-          this.inventory.processing = defaultSelect.name
+          return tableContent
         }).catch(e => {
+          this.MatNatureList = [];
+          this.inventory.processing = '';
           AlertModule.show({
             content: e.message,
           })
         })
       },
       // TODO 获取材料大类
-      getBig(value = '') {
+      getBig() {
+        let [selected = {}] = this.MatNatureList.filter(item => {
+          return item.name === this.inventory.processing
+        });
         return getDictByValue({
-          value
+          value: selected.originValue
         }).then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
             item.value = item.name;
           });
-          let [defaultSelect = {}] = tableContent;
           this.MatBigList = tableContent;
-          this.inventory.inventoryType = defaultSelect.name;
+          return tableContent
         }).catch(e => {
+          this.MatBigList = [];
+          this.inventory.inventoryType = '';
           AlertModule.show({
             content: e.message,
           })
         })
       },
       // TODO 获取材料子类
-      getSml(value = '') {
+      getSml() {
+        let [selected = {}] = this.MatBigList.filter(item => {
+          return item.name === this.inventory.inventoryType
+        });
         return getDictByValue({
-          value
+          value: selected.originValue
         }).then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
             item.value = item.name;
           });
-          let [defaultSelect = {}] = tableContent;
           this.MatSmlList = tableContent;
-          this.inventory.inventorySubclass = defaultSelect.name;
+          return tableContent
         }).catch(e => {
+          this.MatSmlList = [];
+          this.inventory.inventorySubclass = '';
           AlertModule.show({
             content: e.message,
           })
         })
       },
+      // TODO 获取用户基本信息
+      getBaseInfoData() {
+        return getBaseInfoData().then(data => {
+          this.baseinfo = {
+            ...this.baseinfo,
+            ...data,
+            activeTime: this.changeDate(new Date(), true),
+          }
+        });
+      }
     },
     created() {
-      this.getNature();
-      getBaseInfoData().then(data => {
-        this.baseinfo = {
-          ...this.baseinfo,
-          ...data,
-          activeTime: this.changeDate(new Date(), true),
-        }
+      let {transCode = ''} = this.$route.query;
+      this.transCode = transCode;
+      // 有transCode即回写页面
+      if (transCode) {
+        (async () => {
+          await this.findData();
+          await this.getNature();
+          await this.getBig();
+          this.getSml();
+          this.hasDefault = false;
+        })();
+        return
+      }
+      this.getNature().then(data => {
+        let [defaultSelect = {}] = data;
+        this.inventory.processing = defaultSelect.name
       });
+      this.getBaseInfoData();
     }
   }
 </script>
@@ -312,6 +382,7 @@
       }
       .property_val {
         display: block;
+        width: 100%;
         font-size: 0.16rem;
         line-height: 0.24rem;
       }

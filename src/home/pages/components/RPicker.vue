@@ -50,11 +50,8 @@
     watch: {
       value: {
         handler(value) {
-          let [val = {}] = this.data.filter(item => {
-            return item.value === value;
-          });
-          this.showValue = val.name;
-          this.$emit('on-change', JSON.stringify(val));
+          this.showValue = value;
+          this.$emit('on-change', value);
         }
       }
     },
@@ -67,20 +64,15 @@
     },
     methods: {
       confirm() {
-        let [val = {}] = this.data.filter(item => {
-          return item.value === this.currentValue[0];
-        });
+        let [val = ''] = this.currentValue;
         // this.showValue = val.name;
         this.show = false;
-        this.$emit('input', val.value);
+        this.$emit('input', val);
       },
     },
     created() {
       this.currentValue = [this.value];
-      let [val = {}] = this.data.filter(item => {
-        return item.value === this.currentValue[0];
-      });
-      this.showValue = val.name;
+      this.showValue = this.value;
     }
   }
 </script>
