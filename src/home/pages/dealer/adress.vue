@@ -1,16 +1,16 @@
 <template>
   <div class="pages">
     <div class="ads_part">
-      <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in 4" :key="index">
+      <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index">
         <div class="user_info">
-          <span class="user_name">刘治增</span>
-          <span class="user_tel">15399909500</span>
+          <span class="user_name">{{item.creatorName}}</span>
+          <span class="user_tel">{{item.dealerMobilePhone}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">深圳市瑞福登信息技术服务有限公司</p>
-          <p class="cp_ads">广东省 深圳市 福田区 中康路120附近 卓越城2期 TOWERB 1706</p>
+          <p class="cp_name">{{item.dealerName}}</p>
+          <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
         </div>
-        <span class="iconfont icon-bianji" @click="goEditAds"></span>
+        <span class="iconfont icon-bianji" @click="goEditAds(item)"></span>
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -20,17 +20,38 @@
 </template>
 
 <script>
+import dealerService from '../../service/dealerService.js'
 export default {
   data(){
     return{
+      dealerList : []
 
     }
   },
   methods:{
     // 编辑地址
-    goEditAds(){
-      this.$router.push({ path:'/edit_ads'})
+    goEditAds(item){
+      this.$router.push({ 
+        path:'/edit_ads',
+        query:{
+          transCode: item.transCode
+        }})
     }
+  },
+  created(){
+    (async()=>{
+      let id = '';
+      await dealerService.getId().then( data=>{
+        console.log(data);
+        if(data.length > 0){
+          id = data[0].id;
+        }
+      })
+      await dealerService.getDealerList(id).then( data=>{
+        console.log(data);
+        this.dealerList = data.tableContent;
+      })
+    })()
   }
 }
 </script>
