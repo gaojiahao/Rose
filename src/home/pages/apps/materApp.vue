@@ -20,7 +20,7 @@
       </div>
       <!-- 主要内容区域 -->
       <div class="app_main" ref="appMain">
-        <div>
+        <div class="app_main_wrapper">
           <div class="each_mater" v-for="(item, index) in materList" :key='index' @click="goDetail(item)">
             <div class="mater_img">
               <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -67,8 +67,10 @@
               </div>
             </div>
           </div>
-          <load-more :show-loading="false" tip="暂无数据" v-show="!materList.length"></load-more>
+          <load-more tip="加载中" v-show="hasNext"></load-more>
+          <load-more :show-loading="false" tip="暂无数据" v-show="!materList.length && !hasNext"></load-more>
         </div>
+        <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -84,6 +86,7 @@
   import BScroll from 'better-scroll'
 
   const RFD_MATER_LIST = 'RFD_MATER_LIST';
+  const PULL_DOWN_REFRESH_HEIGHT = 30;
   export default {
     components: {
       Tab, Icon, TabItem, Spinner, LoadMore,
@@ -124,6 +127,7 @@
         page: 1,
         bScroll: null,
         hasNext: true,
+        pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
       }
     },
     methods: {
@@ -150,6 +154,8 @@
       resetCondition() {
         this.materList = [];
         this.page = 1;
+        this.hasNext = true;
+        this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
       },
       // TODO tab点击
       tabClick(item, index) {
@@ -176,10 +182,10 @@
             operator: 'eq',
             value: this.activeTab,
             property: 'processing',
-            // attendedOperation: 'and'
           }
         ];
         if (this.srhInpTx) {
+          filter[0].attendedOperation = 'and (';
           filter = [
             ...filter,
             {
@@ -192,6 +198,7 @@
               operator: 'like',
               value: this.srhInpTx,
               property: 'inventoryName',
+              attendedOperation: ')'
             },
           ];
         }
@@ -208,6 +215,8 @@
           this.materList = this.page === 1 ? tableContent : [...this.materList, ...tableContent];
           this.$nextTick(() => {
             this.bScroll.refresh();
+            this.bScroll.finishPullDown();
+            this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
             if (!this.hasNext) {
               return
             }
@@ -219,6 +228,41 @@
       searchMat() {
         this.resetCondition();
         this.getMatList();
+      },
+      // TODO 初始化better-scroll
+      initScroll() {
+        this.$nextTick(() => {
+          this.bScroll = new BScroll(this.$refs.appMain, {
+            click: true,
+            pullDownRefresh: {
+              threshold: 50,
+              stop: PULL_DOWN_REFRESH_HEIGHT
+            },
+            pullUpLoad: {
+              threshold: -20
+            },
+          });
+          // 绑定滚动加载事件
+          this.bScroll.on('pullingUp', () => {
+            this.page++;
+            this.getMatList();
+          });
+          // 绑定下拉刷新事件
+          this.bScroll.on('pullingDown', () => {
+            this.page = 1;
+            this.getMatList();
+          });
+          // 下拉的时候展示下拉刷新的图标
+          this.bScroll.on('scroll', ({x, y}) => {
+            if (y > 0) {
+              if (y > PULL_DOWN_REFRESH_HEIGHT) {
+                this.pullDownTop = 0;
+              } else {
+                this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
+              }
+            }
+          })
+        });
       },
     },
     beforeRouteLeave(to, from, next) {
@@ -232,23 +276,7 @@
       next();
     },
     created() {
-      this.$nextTick(() => {
-        this.bScroll = new BScroll(this.$refs.appMain, {
-          click: true,
-          bounce: {
-            top: false,
-            bottom: true
-          },
-          pullUpLoad: {
-            threshold: -20
-          },
-        });
-        // 绑定滚动加载事件
-        this.bScroll.on('pullingUp', () => {
-          this.page++;
-          this.getMatList();
-        });
-      });
+      this.initScroll();
       this.getDictByType().then(() => {
         this.getMatList();
       });
@@ -266,13 +294,15 @@
     height: 90%;
     overflow: auto;
   }
+
   .childPage {
     position: fixed;
     width: 100%;
     height: 100%;
-    bottom:0;
+    bottom: 0;
     background: #fff;
   }
+
   .app_top {
     width: 100%;
     padding-top: .1rem;
@@ -337,10 +367,26 @@
   }
 
   .app_main {
+    position: relative;
     margin-top: .08rem;
     height: calc(100% - .52rem - 44px);
     overflow: hidden;
     box-sizing: border-box;
+    .app_main_wrapper {
+      /*margin-top: -30px;
+      min-height: calc(100% + 30px);*/
+      overflow: hidden;
+    }
+    .pullDownRefresh {
+      display: block;
+      margin: 0 auto;
+      height: 30px;
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: top;
+    }
     // 每个物料
     .each_mater {
       padding: .08rem;
