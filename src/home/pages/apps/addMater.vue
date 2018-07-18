@@ -1,5 +1,5 @@
 <template>
-  <div class='pages'>
+  <div class='childPage'>
     <div class='content'>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>

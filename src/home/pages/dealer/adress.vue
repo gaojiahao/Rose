@@ -16,7 +16,9 @@
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEditAds">新增一个地址</div>
     </div>
+    <router-view></router-view>
   </div>
+  
 </template>
 
 <script>
@@ -32,15 +34,16 @@ export default {
     // 编辑地址
     goEditAds(item){
       this.$router.push({ 
-        path:'/edit_ads',
+        path:'/adress/edit_ads',
         query:{
           transCode: item.transCode
         }
       })
+      
     },
     goDetail(item){
       this.$router.push({ 
-        path:'/adressDetail',
+        path:'/adress/adressDetail',
         query:{
           transCode: item.transCode
         }
