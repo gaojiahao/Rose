@@ -23,7 +23,6 @@
         <div>
           <div class="each_mater" v-for="(item, index) in materList" :key='index' @click="goDetail(item)">
             <div class="mater_img">
-              <!--<img src="../../assets/mater01.jpg" alt="mater_img">-->
               <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
             </div>
             <div class="mater_main vux-1px-b">
@@ -68,6 +67,7 @@
               </div>
             </div>
           </div>
+          <load-more :show-loading="false" tip="暂无数据" v-show="!materList.length"></load-more>
         </div>
       </div>
     </div>
@@ -79,14 +79,14 @@
 </template>
 
 <script>
-  import {Tab, Icon, TabItem} from 'vux'
+  import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
   import {getDictByType, getMatList} from './../../service/materService'
   import BScroll from 'better-scroll'
 
   const RFD_MATER_LIST = 'RFD_MATER_LIST';
   export default {
     components: {
-      Tab, Icon, TabItem
+      Tab, Icon, TabItem, Spinner, LoadMore,
     },
     data() {
       return {
@@ -352,8 +352,11 @@
         flex: 1;
         // margin-right: .2rem;
         display: inline-block;
+        width: 1.2rem;
+        height: 1.2rem;
         img {
           width: 100%;
+          max-height: 100%;
         }
       }
       // 物料主体

@@ -145,7 +145,7 @@
         // let file = e.target.files[0];
         return upload({
           file: this.imgFile,
-          biReferenceId: this.biReferenceId
+          // biReferenceId: this.biReferenceId
         }).then(res => {
           let {success = false, message = '上传失败', data} = res;
           let [detail = {}] = data;
@@ -153,7 +153,7 @@
           // this.preloadFile(e);
           // this.MatPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
           this.inventory.inventoryPic = detail.attacthment;
-          this.biReferenceId = detail.biReferenceId
+          // this.biReferenceId = detail.biReferenceId
         }).catch(e => {
           AlertModule.show({
             content: e.message,
@@ -182,28 +182,56 @@
       },
       // TODO 提交/修改物料
       save() {
+        let requiredMap = {
+          inventoryCode: '物料编码',
+          inventoryName: '物料名称',
+          processing: '加工属性',
+          measureUnit: '主计量单位',
+        };
         let submitData = {
           listId: this.listId,
-          biReferenceId: this.biReferenceId,
+          // biReferenceId: this.biReferenceId,
           formData: {
             baseinfo: this.baseinfo,
             inventory: this.inventory
           }
         };
         let operaction = save;
+        let warn = '';
+        Object.entries(requiredMap).every(([key, msg]) => {
+          if (!this.inventory[key]) {
+            warn = `${msg}不能为空`;
+            return false;
+          }
+          return true;
+        });
+        if (warn) {
+          AlertModule.show({
+            content: warn,
+          });
+          return
+        }
+        // 修改
         if (this.transCode) {
           operaction = update;
           submitData.formData.effectiveTime = this.changeDate(new Date(), true);
         }
+        this.showLoading = true;
         operaction(submitData).then(data => {
+          this.showLoading = false;
           let {success = false, message = '提交失败'} = data;
           AlertModule.show({
             content: message,
-            onHide() {
+            onHide:() => {
               if (success) {
+                this.$router.go(-1);
               }
             }
           });
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
         });
       },
       // TODO 查询物料详情
@@ -213,7 +241,7 @@
           this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.inventory = {...this.inventory, ...inventory,};
-          this.biReferenceId = this.inventory.referenceId;
+          // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
             this.MatPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}`;
@@ -222,6 +250,10 @@
             return item.attacthment === this.inventory.inventoryPic
           });
           this.imgFileObj = imgFileObj;
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
         });
       },
       // TODO 获取加工属性列表
@@ -298,8 +330,12 @@
             ...data,
             activeTime: this.changeDate(new Date(), true),
           }
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
         });
-      }
+      },
     },
     created() {
       this.showLoading = true;

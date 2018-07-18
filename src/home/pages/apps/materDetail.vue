@@ -8,23 +8,26 @@
       <!-- 物料图片展示区域 -->
       <div class="d_top box_sd">
         <div class="top_img">
-          <img src="../../assets/mater01.jpg" alt="materImg">
+          <img :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
         </div>
         <div class="mater_info">
           <!-- 物料编码、规格 -->
-          <div class="withColor">
-            <!-- 物料编码 -->
-            <div class="ForInline" style="display:inline-block; float:left;">
-              <div class="mater_code">
-                <span class="title">编码</span>
-                <span class="num">{{inventory.inventoryCode}}</span>
+            <!-- 当物料编码字节超过11个时 加载新的class -->
+          <div class="withColor" :class="{'whenEleven' : inventory.inventoryCode.length >= 11  }">
+            <div class="justMid">
+              <!-- 物料规格 -->
+              <div class="ForInline">
+                <div class="mater_spec">
+                  <span class="title">规格</span>
+                  <span class="num">{{inventory.specification}}</span>
+                </div>
               </div>
-            </div>
-            <!-- 物料规格 -->
-            <div class="ForInline" style="display:inline-block; float:right;">
-              <div class="mater_spec">
-                <span class="title">规格</span>
-                <span class="num">{{inventory.specification}}</span>
+              <!-- 物料编码 -->
+              <div class="ForInline">
+                <div class="mater_code">
+                  <span class="title">编码</span>
+                  <span class="num">{{inventory.inventoryCode}}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -120,10 +123,13 @@
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEdit">修改</div>
     </div>
+    <loading :show="showLoading"></loading>
   </div>
 </template>
 
 <script>
+  import {AlertModule} from 'vux';
+  import Loading from './../components/Loading'
   import {findData} from './../../service/materService'
 
   export default {
@@ -132,8 +138,10 @@
       return {
         transCode: '',
         inventory: {},
+        showLoading: false,
       }
     },
+    components: {Loading},
     methods: {
       // TODO 跳转到修改页面
       goEdit() {
@@ -147,11 +155,28 @@
       // TODO 获取物料详情
       findData() {
         return findData(this.transCode).then(({formData}) => {
+          this.showLoading = false;
           this.inventory = formData.inventory;
-        })
-      }
+          let {inventoryPic} = this.inventory;
+          if (inventoryPic) {
+            this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}`
+          } else {
+            this.getDefaultImg();
+          }
+        }).catch(e => {
+          this.showLoading = false;
+          AlertModule.show({
+            content: e.message,
+          })
+        });
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+        this.inventory.inventoryPic = require('./../../assets/mater01.jpg');
+      },
     },
     created() {
+      this.showLoading = true;
       let {transCode = ''} = this.$route.query;
       this.transCode = transCode;
       this.findData();
@@ -200,9 +225,10 @@
     .top_img {
       width: 1.2rem;
       height: 1.2rem;
-      margin: 0 auto .1rem;
+      margin: 0 auto;
       img {
         width: 100%;
+        max-height: 100%;
       }
     }
     // 物料信息
@@ -210,9 +236,18 @@
       width: 100%;
       // 有颜色包裹的
       .withColor {
-        width: 2.2rem;
-        margin: 0 auto;
+        width: 100%;
         height: .24rem;
+        position: relative;
+        .ForInline {
+          display: inline-block;
+        }
+        // 居中
+        .justMid {
+          left: 50%;
+          position: absolute;
+          transform: translate(-50%, 0);
+        }
         // 物料编码
         .mater_code {
           display: flex;
@@ -233,23 +268,60 @@
             white-space: nowrap;
             background: #dbe2ef;
             text-overflow: ellipsis;
+            box-sizing: border-box;
           }
         }
         // 规格
         .mater_spec {
           @extend .mater_code;
-          margin-left: .1rem;
-          .title {
-            color: #fff;
-            background: #537791;
-          }
           .num {
             color: #fff;
             max-width: .6rem;
-            overflow: hidden;
-            white-space: nowrap;
             background: #ff7f50;
-            text-overflow: ellipsis;
+          }
+        }
+      }
+      // 当编码的字节超过11个时
+      .whenEleven {
+        width: 100%;
+        height: .52rem;
+        position: relative;
+        .ForInline {
+          display: block;
+        }
+        //居中
+        .justMid {
+          left: 50%;
+          display: flex;
+          position: absolute;
+          align-items: center;
+          flex-direction: column;
+          transform: translate(-50%, 0);
+        }
+        // 物料编码
+        .mater_code {
+          margin-top: .04rem;
+          .title {
+            color: #fff;
+            background: #537791;
+          }          
+          .num {
+            color: #111;
+            max-width: none;
+            overflow: inherit;
+            white-space: inherit;
+            background: #dbe2ef;
+            text-overflow: inherit;
+            box-sizing: inherit;
+          }
+        }
+        // 规格
+        .mater_spec {
+          @extend .mater_code;
+          margin-left: 0;
+          .num {
+            color: #fff;
+            background: #ff7f50;
           }
         }
       }
