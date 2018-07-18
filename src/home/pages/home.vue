@@ -534,7 +534,7 @@ export default {
                         }
                     }
                     .app_type {     //应用类型
-                        font-size: .24rem;
+                        font-size: .14rem;
                         color: #4F90F9;
                         font-weight: 500;
                     }

@@ -74,6 +74,7 @@
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEditAds">填写另一条物料</div>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -127,7 +128,7 @@
     },
     methods: {
       goEditAds() {
-        this.$router.push('/addMater');
+        this.$router.push('/materApp/addMater');
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
@@ -139,7 +140,7 @@
       },
       goDetail(item) {
         this.$router.push({
-          path: '/materDetail',
+          path: '/materApp/materDetail',
           query: {
             transCode: item.transCode
           }
@@ -265,7 +266,13 @@
     height: 90%;
     overflow: auto;
   }
-
+  .childPage {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    bottom:0;
+    background: #fff;
+  }
   .app_top {
     width: 100%;
     padding-top: .1rem;

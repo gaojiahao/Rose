@@ -1,5 +1,5 @@
 <template>
-  <div class='pages'>
+  <div class='childPage'>
     <div class='content'>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
@@ -73,8 +73,10 @@
   export default {
     data() {
       return {
-        isModify : false,
+        hasDefault : false,
+        transCode  : '',
         picShow: false,
+        imgFileObj: {}, // 上传的图片对象
         biReferenceId : '',
         MatPic: '', // 图片地址
         AccountRelType : [],
@@ -154,26 +156,54 @@
       },
       // TODO 往来关系标签
       dealerLabel(val) {
-        let selected = JSON.parse(val);
-        console.log(selected);
-        this.getBig(selected.value || '');
+        if (this.hasDefault) {
+          return
+        }
+        this.getBig().then(data => {
+          let [defaultSelect = {}] = data;
+          this.dealer.dealerType = defaultSelect.name || '';
+        });
       },
       // TODO 往来大类切换
       bigChange(val) {
-        let selected = JSON.parse(val);
-        this.getSml(selected.originValue || '');
+        if (this.hasDefault) {
+          return
+        }
+        this.getSml(val).then(data => {
+          let [defaultSelect = {}] = data;
+          this.dealer.dealerSubclass = defaultSelect.name || '';
+        });
       },
-      // TODO 获取往来大类
-      getBig(value) {
-        return dealerService.getDictByValue(value).then(data => {
+      //获取往来关系标签
+      getDealer(){
+        //获取往来关系标签
+        return dealerService.getDictByType().then(data=>{
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
             item.value = item.name;
           });
-          let [defaultSelect = {}] = tableContent;
+          this.AccountRelType = tableContent;
+          return tableContent
+        }).catch(e=>{
+          AlertModule.show({
+            content: e.message,
+          })
+        })
+      },
+      // TODO 获取往来大类
+      getBig() {
+        let [selected = {}] = this.AccountRelType.filter(item => {
+          return item.name === this.dealer.dealerLabelName
+        });
+        return dealerService.getDictByValue(selected.originValue).then(data => {
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.value;
+            item.value = item.name;
+          });
           this.AccountBigType = tableContent;
-          this.dealer.dealerType = defaultSelect.name;
+          return tableContent
         }).catch(e => {
           AlertModule.show({
             content: e.message,
@@ -181,8 +211,11 @@
         })
       },
       // TODO 获取往来子类
-      getSml(value) {
-        return dealerService.getDictByValue(value).then(data => {
+      getSml() {
+        let [selected = {}] = this.AccountBigType.filter(item => {
+          return item.name === this.dealer.dealerType
+        });
+        return dealerService.getDictByValue(selected.originValue).then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
@@ -190,12 +223,30 @@
           });
           let [defaultSelect = {}] = tableContent;
           this.AccountSmlType = tableContent;
-          this.dealer.dealerSubclass = defaultSelect.name;
+          return tableContent
         }).catch(e => {
           AlertModule.show({
             content: e.message,
           })
         })
+      },
+      //往来信息
+      findData() {
+        return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+          let {baseinfo = {}, dealer = {}} = formData;
+          this.hasDefault = true;
+          this.baseinfo = {...this.baseinfo, ...baseinfo,};
+          this.dealer = {...this.dealer, ...dealer,};
+          this.biReferenceId = this.dealer.referenceId;
+          if (this.dealer.dealerPic) {
+            this.picShow = true;
+            this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}`;
+          }
+          let [imgFileObj = {}] = attachment.filter(item => {
+            return item.attacthment === this.dealer.dealerPic
+          });
+          this.imgFileObj = imgFileObj;
+        });
       },
       //选择地址
       changeAddress(ids,names){
@@ -218,7 +269,7 @@
           }
         };
         console.log(submitData);
-        if(this.isModify){
+        if(!this.hasDefault){
           dealerService.update(submitData).then(data=>{
             console.log(data);
             let that = this;
@@ -284,65 +335,24 @@
       
     },
     created() {
-      //获取往来关系标签
-      dealerService.getDictByType().then(data=>{
-        this.AccountRelType = data.tableContent;
-      }).catch(e=>{
-        AlertModule.show({
-          content: e.message,
-        })
-      })
       let query = this.$route.query;
       if(query.transCode){
-        let code = query.transCode;
-        this.isModify = true;
-        //获取往来明细
-        dealerService.getDealerInfo(code).then(data=>{
-          this.MatPic = data.formData.dealer.dealerPic;
-          this.picShow = true;
-          this.baseinfo = {
-            id: data.formData.baseinfo.id,
-            handler: data.formData.baseinfo.handler, 
-            handlerName: data.formData.baseinfo.handlerName, 
-            handlerArea: data.formData.baseinfo.handlerArea, 
-            handlerAreaName: data.formData.baseinfo.handlerAreaName, 
-            handlerUnit: data.formData.baseinfo.handlerUnit, 
-            handlerUnitName: data.formData.baseinfo.handlerUnitName, 
-            handlerRole: data.formData.baseinfo.handlerRole, 
-            handlerRoleName: data.formData.baseinfo.handlerRoleName, 
-            activeTime: data.formData.baseinfo.activeTime,
-            comment: data.formData.baseinfo.comment
-          };
-          this.dealer = {
-            dealerCode: data.formData.dealer.dealerCode, 
-            dealerName: data.formData.dealer.dealerName, 
-            dealerLabelName : data.formData.dealer.dealerLabelName,
-            dealerType: data.formData.dealer.dealerType, 
-            dealerSubclass: data.formData.dealer.dealerSubclass,
-            province  : data.formData.dealer.province,  
-            city: data.formData.dealer.city,  
-            county: data.formData.dealer.county,  
-            address: data.formData.dealer.address,  
-            dealerPhone: data.formData.dealer.dealerPhone, 
-            dealerMobilePhone: data.formData.dealer.dealerMobilePhone,  
-            dealerMail: data.formData.dealer.dealerMail,  
-            paymentTerm: data.formData.dealer.paymentTerm,  
-            dealerLogisticsTerms: data.formData.dealer.dealerLogisticsTerms, 
-            pamentDays: data.formData.dealer.pamentDays,  
-            dealerStatus: data.formData.dealer.dealerStatus, 
-            comment: data.formData.dealer.comment,  
-            dealerPic : data.formData.dealer.dealerPic
-
-          }
-            data.formData.dealer;
-        }).catch(e=>{
-          AlertModule.show({
-            content: e.message,
-          })
-        })
+        this.transCode = query.transCode;
+         (async () => {
+          await this.findData();
+          await this.getDealer();
+          await this.getBig();
+          this.getSml();
+          this.hasDefault = false;
+        })();
 
       }
       else{
+        console.log('进入了')
+        this.getDealer().then(data => {
+        let [defaultSelect = {}] = data;
+          this.dealer.dealerLabelName = defaultSelect.name
+        });
         //获取当前用户信息
         getBaseInfoData().then(data => {
           this.baseinfo = {
@@ -354,10 +364,20 @@
       }
       
       
+      
+      
+      
     }
   }
 </script>
-<style lang="scss"> 
+<style lang="scss">
+  .childPage {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    bottom:0;
+    background: #fff;
+  }
   .vux-1px-b:after, .vux-1px-l:before {
     border-color: #e8e8e8;
     color: #e8e8e8;

@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="childPage">
     <div class="main_content">
       <!-- 大标题 -->
       <div class="big_title">
