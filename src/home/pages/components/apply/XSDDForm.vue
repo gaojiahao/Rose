@@ -185,6 +185,7 @@ export default {
       showLogPop:false,                              // 是否显示物流条款的popup
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
+      dealer:{}
     }
   },
   methods:{

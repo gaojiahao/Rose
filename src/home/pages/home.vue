@@ -9,7 +9,7 @@
                 <!-- 最近使用的应用 -->
                 <div class="re_use swiper-container">
                     <div class="re_use_list swiper-wrapper">
-                        <router-link :to="{path:'/soDetail',query:{code:'XSDD'}}" class="each_list swiper-slide vux-1px-t" >
+                        <router-link :to="{path:'/detail',query:{code:'XSDD'}}" class="each_list swiper-slide vux-1px-t" >
                             <div class="app_type">业务类应用</div>
                             <div class="app_name">销售订单</div>
                             <div class="app_info">填写自己的财富</div>

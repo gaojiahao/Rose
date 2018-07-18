@@ -19,18 +19,21 @@
         </div>
       </div>
       <!-- 主要内容区域 -->
-      <div class="app_main" ref="appMain">
-        <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
-          <div class="user_info">
-            <span class="user_name">{{item.creatorName}}</span>
-            <span class="user_tel">{{item.dealerMobilePhone}}</span>
+      <div class="app_main mescroll" id="mescroll">
+        <div>
+          <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
+            <div class="user_info">
+              <span class="user_name">{{item.creatorName}}</span>
+              <span class="user_tel">{{item.dealerMobilePhone}}</span>
+            </div>
+            <div class="cp_info">
+              <p class="cp_name">{{item.dealerName}}</p>
+              <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
+            </div>
+            <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
-          <div class="cp_info">
-            <p class="cp_name">{{item.dealerName}}</p>
-            <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
-          </div>
-          <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
         </div>
+        
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -44,6 +47,8 @@
 <script>
 import dealerService from '../../service/dealerService.js'
 import {Tab, Icon, TabItem,AlertModule} from 'vux'
+import { resolve } from 'url';
+import { rejects } from 'assert';
 let isBack = false,
     path = '',
     query = {};
@@ -57,7 +62,10 @@ export default {
       uniqueId:"7f01c808-d338-4711-8c99-319337078cc1",
       isBack : false,
       path: '',
-      query :''
+      query :'',
+      scroll : null,
+      page : 1,
+      id : ''
     }
   },
   components:{
@@ -67,7 +75,8 @@ export default {
     tabClick(item,index){
       this.activeIndex = index;
       this.uniqueId  = item.uniqueId;
-      this.getDealer()
+      this.scroll.resetUpScroll();
+      // this.getDealer()
     },
     searcDealer(){
 
@@ -98,40 +107,76 @@ export default {
         })
       }      
     },
+    //获取往来列表
     getDealer(){
-      (async()=>{
-        let id = '';
-        await dealerService.getId(this.uniqueId).then( data=>{
-          if(data.length > 0){
-            id = data[0].id;
-          }
-        }).catch(e=>{
-          AlertModule.show({
-            content: e.message,
+      return new Promise((resolve,reject)=>{
+        if(this.page === 1){
+          this.dealerList = []
+        }
+        (async()=>{
+          await dealerService.getId(this.uniqueId).then( data=>{
+            if(data.length > 0){
+              this.id = data[0].id;
+            }
+          }).catch(e=>{
+            AlertModule.show({
+              content: e.message,
+            })
           })
-        })
-        await dealerService.getDealerList(id).then( data=>{
-          console.log(data);
-          this.dealerList = data.tableContent;
-        }).catch(e=>{
-          AlertModule.show({
-            content: e.message,
+          await dealerService.getDealerList(this.id,this.page).then( data=>{
+            this.dealerList = this.page === 1? data.tableContent : this.dealerList.concat(data.tableContent);
+            resolve(data.tableContent)
+          }).catch(e=>{
+            AlertModule.show({
+              content: e.message,
+            })
           })
+        })()
+      })        
+    },
+    //往来分类
+    getClassfiy(){    
+      dealerService.getDealerClassfiy(this.page).then(data=>{
+        this.dealerClassfiy = data;
+      }).catch(e=>{
+        AlertModule.show({
+          content: e.message,
         })
-      })()
+      })
     }
-
   },
   created(){
-    dealerService.getDealerClassfiy().then(data=>{
-      this.dealerClassfiy = data;
-    }).catch(e=>{
-      AlertModule.show({
-        content: e.message,
+    this.getClassfiy();
+  },
+  mounted() {
+    let Mescroll = this.Mescroll;
+    this.$nextTick(() => {
+      this.scroll = new Mescroll("mescroll", {
+        up: {
+          use: true,
+          isBounce: false,
+          auto: true,
+          isBoth: false,
+          empty:{
+            tip: "暂无相关数据~", 
+            warpId  : 'dataList'
+          },
+          callback: (page,mescroll)=>{
+            this.page = page.num;
+            this.getDealer().then(data => {
+              let len = data.length;
+              let hasNext = len >= page.size;
+              mescroll.endSuccess(len, hasNext)
+            })
+          }
+        },
+        down: {
+          use: false,
+          isBoth: false,
+          auto: false,
+        }
       })
     })
-    this.getDealer();
-    console.log(this.$route.path);
   },
   beforeRouteEnter: (to, from, next) => {
       if (from.path !== '/home') {
@@ -140,7 +185,7 @@ export default {
         query = from.query;
       }
       next()
-    },
+  }
 }
 </script>
 
@@ -220,9 +265,14 @@ export default {
   }
   .app_main {
     margin-top: .08rem;
-    height: calc(100% - .52rem - 44px);
-    overflow: auto;
+    // height: calc(100% - .52rem - 44px);
+    // overflow: auto;
+    position:fixed;
+    left:0;
+    top:0.88rem;
+    bottom:0.67rem;
     box-sizing: border-box;
+    height:auto;
     // 地址
     .client_ads {
       position: relative;

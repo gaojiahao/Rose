@@ -8,12 +8,12 @@ const dealerService = {
         })
     },
     //获取往来列表
-    getDealerList(id){
+    getDealerList(id,page){
         return $axios.ajax({
             url:`/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
             data:{
-                limit: 50,
-                page: 1,
+                limit: 20,
+                page: page,
                 start: 0
             }
         })

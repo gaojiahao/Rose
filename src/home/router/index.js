@@ -2,7 +2,7 @@ import HOME from '../pages/home'
 import NEWHOME from '../pages/newhome'
 import APPLY from '../pages/allApply'
 import LIST from '../pages/list'
-import SODETAIL from '../pages/detail/soDetail'
+import DETAIL from '../pages/detail/detail'
 import ADRESS from '../pages/dealer/adress'
 import EDIT_ADS from '../pages/dealer/edit_ads'
 import ADRESSDETAL from '../pages/dealer/adressDetail'
@@ -19,7 +19,7 @@ export default [
     meta:{ title:'全部应用' } },
   { path:'/list', name:'LIST', component:LIST,
     meta:{ title:'任务列表' } },
-  { path:'/soDetail', name:'SODETAIL', component:SODETAIL,
+  { path:'/detail', name:'DETAIL', component:DETAIL,
     meta:{ title:'填写订单' } },
   { 
     path:'/adress',
