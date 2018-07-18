@@ -150,4 +150,5 @@ export default {
   getDictByType,
   getDictByValue,
   getBaseInfoData,
+  getMatList,
 }
