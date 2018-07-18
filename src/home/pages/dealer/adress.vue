@@ -79,7 +79,9 @@ export default {
       // this.getDealer()
     },
     searcDealer(){
-
+      this.page = 1;
+      this.scroll.resetUpScroll();
+      this.srhInpTx = '';
     },
     // 编辑地址
     goEditAds(item){
@@ -110,9 +112,34 @@ export default {
     //获取往来列表
     getDealer(){
       return new Promise((resolve,reject)=>{
+        let filter;
+        if(this.srhInpTx != ''){
+          filter = [
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'dealerCode',
+              attendedOperation: 'or'
+            },
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'dealerName'
+            }
+          ];
+        }
         if(this.page === 1){
           this.dealerList = []
         }
+        let data = {
+          limit : 20,
+          page : this.page,
+          start : (this.page-1)*20
+        }
+        if(filter){
+          data.filter = JSON.stringify(filter);
+        }
+        console.log(data);
         (async()=>{
           await dealerService.getId(this.uniqueId).then( data=>{
             if(data.length > 0){
@@ -123,7 +150,7 @@ export default {
               content: e.message,
             })
           })
-          await dealerService.getDealerList(this.id,this.page).then( data=>{
+          await dealerService.getDealerList(this.id,data).then( data=>{
             this.dealerList = this.page === 1? data.tableContent : this.dealerList.concat(data.tableContent);
             resolve(data.tableContent)
           }).catch(e=>{
