@@ -371,17 +371,6 @@
   }
 </script>
 <style lang="scss">
-  .childPage {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    bottom:0;
-    background: #fff;
-  }
-  .vux-1px-b:after, .vux-1px-l:before {
-    border-color: #e8e8e8;
-    color: #e8e8e8;
-  }
   .content {
     height: 90%;
     overflow-y: auto;

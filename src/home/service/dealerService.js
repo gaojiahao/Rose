@@ -2,9 +2,9 @@ import $axios from '../plugins/ajax';
 
 const dealerService = {
     //获取id
-    getId(){
+    getId(id){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/list/getListViewById?uniqueId=7f01c808-d338-4711-8c99-319337078cc1'
+            url:`/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
         })
     },
     //获取往来列表
@@ -16,6 +16,12 @@ const dealerService = {
                 page: 1,
                 start: 0
             }
+        })
+    },
+    //获取往来分类
+    getDealerClassfiy(){
+        return $axios.ajax({
+            url:'/H_roleplay-si/ds/list/getListViews?listId=c0375170-d537-4f23-8ed0-a79cf75f5b04'
         })
     },
     //获取往来关系标签
