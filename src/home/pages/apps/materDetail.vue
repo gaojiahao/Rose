@@ -13,7 +13,7 @@
         <div class="mater_info">
           <!-- 物料编码、规格 -->
             <!-- 当物料编码字节超过11个时 加载新的class -->
-          <div class="withColor" :class="{'whenEleven' : inventory.inventoryCode.length >= 11  }">
+          <div class="withColor" :class="{'whenEleven' : inventory.inventoryCode && inventory.inventoryCode.length >= 11  }">
             <div class="justMid">
               <!-- 物料规格 -->
               <div class="ForInline">
@@ -146,7 +146,7 @@
       // TODO 跳转到修改页面
       goEdit() {
         this.$router.push({
-          path: '/addMater',
+          path: '/materApp/addMater',
           query: {
             transCode: this.transCode
           }
@@ -304,7 +304,7 @@
           .title {
             color: #fff;
             background: #537791;
-          }          
+          }
           .num {
             color: #111;
             max-width: none;
