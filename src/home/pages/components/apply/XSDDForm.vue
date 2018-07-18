@@ -2,16 +2,25 @@
   <div class="pages">
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="goSetAds">
-        <div class="user_info">
-          <span class="user_name">刘治增</span>
-          <span class="user_tel">153****9500</span>
+      <div class="or_ads mg_auto box_sd" >
+        <div v-if='info.baseinfo'>
+          <div class="user_info">
+            <span class="user_name">{{info.baseinfo.creatorName}}</span>
+            <span class="user_tel">{{info.dealer.dealerMobilePhone}}</span>
+          </div>
+          <div class="cp_info">
+            <p class="cp_name">{{info.dealer.dealerName}}</p>
+            <p class="cp_ads">{{info.dealer.province}}{{info.dealer.city}}{{info.dealer.county}}{{info.dealer.address}}</p>
+          </div>
         </div>
-        <div class="cp_info">
-          <p class="cp_name">深圳市瑞福登信息技术服务有限公司</p>
-          <p class="cp_ads">广东省 深圳市 福田区 中康路120附近 卓越城2期 TOWERB 1706</p>
+        <div v-else>
+          <div @click="goSetAds">
+            <div class="title">往来列表</div>
+            <div class="tips">请选择往来</div>
+            
+          </div>
         </div>
-        <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
+        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
@@ -165,7 +174,8 @@
 </template>
 
 <script>
-import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton } from 'vux'
+import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,AlertModule } from 'vux'
+import dealerService from '../../../service/dealerService.js'
 export default {
   components:{
     Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton
@@ -185,7 +195,7 @@ export default {
       showLogPop:false,                              // 是否显示物流条款的popup
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
-      dealer:{}
+      info : ''
     }
   },
   methods:{
@@ -214,7 +224,27 @@ export default {
     delClick(index){
       let arr = this.materList;
       arr.splice(index, 1);
+    },
+    //获取往来信息
+    getDealerInfo(){
+      dealerService.getDealerInfo(this.transCode).then(data=>{
+        console.log(data);
+        this.info = data.formData;
+
+      }).catch(e=>{
+        AlertModule.show({
+          content:e.message
+        })
+      })
     }
+  },
+  created(){
+    let transCode = this.$route.query.transCode;
+    if(transCode){
+      this.transCode = transCode;
+      this.getDealerInfo();
+    }
+
   }
 }
 </script>
@@ -238,13 +268,21 @@ export default {
 .or_ads {
   position: relative;
   padding: .06rem .4rem .06rem .08rem;
-  // 右箭头
+  .title {
+    color: #757575;
+    font-weight: 200;
+    font-size: .12rem;
+  }
+  .mode {
+    color: #111;
+    font-weight: 500;
+  }
   .r_arrow {
-    right: 0;
     top: 50%;
+    right: .04rem;
     position: absolute;
     transform: translate(0, -50%);
-  }  
+  }
   // 用户信息
   .user_info {
     color: #111;
