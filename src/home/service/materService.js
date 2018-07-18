@@ -130,8 +130,8 @@ export let getBaseInfoData = () => {
 // TODO 获取物料列表
 export let getMatList = (data = {}) => {
   return $axios.ajax({
-    // url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2132',
-    url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2183',
+    url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2132',
+    // url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2183',
     data: {
       limit: 10,
       page: 1,

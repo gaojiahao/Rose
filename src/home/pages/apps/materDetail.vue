@@ -8,7 +8,7 @@
       <!-- 物料图片展示区域 -->
       <div class="d_top box_sd">
         <div class="top_img">
-          <img src="../../assets/mater01.jpg" alt="materImg">
+          <img :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
         </div>
         <div class="mater_info">
           <!-- 物料编码、规格 -->
@@ -120,10 +120,13 @@
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEdit">修改</div>
     </div>
+    <loading :show="showLoading"></loading>
   </div>
 </template>
 
 <script>
+  import {AlertModule} from 'vux';
+  import Loading from './../components/Loading'
   import {findData} from './../../service/materService'
 
   export default {
@@ -132,8 +135,10 @@
       return {
         transCode: '',
         inventory: {},
+        showLoading: false,
       }
     },
+    components: {Loading},
     methods: {
       // TODO 跳转到修改页面
       goEdit() {
@@ -147,11 +152,28 @@
       // TODO 获取物料详情
       findData() {
         return findData(this.transCode).then(({formData}) => {
+          this.showLoading = false;
           this.inventory = formData.inventory;
-        })
-      }
+          let {inventoryPic} = this.inventory;
+          if (inventoryPic) {
+            this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}`
+          } else {
+            this.getDefaultImg();
+          }
+        }).catch(e => {
+          this.showLoading = false;
+          AlertModule.show({
+            content: e.message,
+          })
+        });
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+        this.inventory.inventoryPic = require('./../../assets/mater01.jpg');
+      },
     },
     created() {
+      this.showLoading = true;
       let {transCode = ''} = this.$route.query;
       this.transCode = transCode;
       this.findData();
@@ -203,6 +225,7 @@
       margin: 0 auto .1rem;
       img {
         width: 100%;
+        max-height: 100%;
       }
     }
     // 物料信息
