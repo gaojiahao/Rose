@@ -245,7 +245,7 @@ export default {
       }
       let that = this;
 
-      if (this.areaValue.length == 0) {
+      if (this.areaValue.length == 0 || this.areaValue.includes('空')) {
         this.$vux.alert.show({
           title: "提示",
           content: "请选支援地区"
