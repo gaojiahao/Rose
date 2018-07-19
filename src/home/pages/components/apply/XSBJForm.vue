@@ -34,38 +34,20 @@
         <template v-else>
           <div class="title">物料列表</div>
           <div class="mater_list">
-            <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key='index'>
+            <div class="each_mater" v-for="(item, index) in matterList" :key='index'>
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
                     <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
                   </div>
                   <div class="each_mater_wrapper" slot="content">
-                    <!--<div class="mater_name">
-                      <span class="whiNum">No.{{index + 1}}</span>
-                      2017加拿大纪念银币（鸡）五百枚特别至尊版封装评级证书
-                    </div>
-                    <div class="mater_info">
-                      <div class="ForInline" style="display:inline-block">
-                        <div class="mater_code">
-                          <span class="title">物料编码</span>
-                          <span class="num">CMGI1H1602100</span>
-                        </div>
-                      </div>
-                      <div class="ForInline" style="display:inline-block">
-                        <div class="mater_spec">
-                          <span class="title">规格</span>
-                          <span class="num">80*110</span>
-                        </div>
-                      </div>
-                    </div>-->
                     <div class="mater_img">
                       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                     </div>
-                    <div class="mater_main vux-1px-b">
+                    <div class="mater_main">
                       <!-- 物料名称 -->
                       <div class="mater_name">
-                        <span class="whiNum">No.{{index + 1}}</span>
+                        <!-- <span class="whiNum">No.{{index + 1}}</span> -->
                         {{item.inventoryName}}
                       </div>
                       <!-- 物料基本信息 -->
@@ -83,7 +65,7 @@
                           <div class="ForInline" style="display:inline-block">
                             <div class="mater_spec">
                               <span class="title">规格</span>
-                              <span class="num">{{item.specification}}</span>
+                              <span class="num">{{item.specification || '无'}}</span>
                             </div>
                           </div>
                         </div>
@@ -91,14 +73,15 @@
                         <div class="withoutColor">
                           <!-- 物料分类 -->
                           <div class="mater_classify">
+                            <span class="type">属性: {{item.processing}}</span>
                             <span class="father">大类: {{item.inventoryType}}</span>
                             <span class="child">子类: {{item.inventorySubclass}}</span>
                           </div>
                           <!-- 物料材质等 -->
                           <div class="mater_material">
                             <span class="unit">单位: {{item.measureUnit}}</span>
-                            <span class="color">颜色: {{item.inventoryColor}}</span>
-                            <span class="spec">材质: {{item.material}}</span>
+                            <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                            <span class="spec">材质: {{item.material || '无'}}</span>
                           </div>
                         </div>
                       </div>
@@ -125,7 +108,7 @@
     </div>
     <!-- 底部确认栏 -->
     <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">提交订单</div>
+      <div class="cfm_btn" @click="save">提交</div>
     </div>
   </div>
 </template>
@@ -405,7 +388,7 @@
             .mater_name {
               color: #111;
               overflow: hidden;
-              font-size: .14rem;
+              font-size: .12rem;
               font-weight: bold;
               max-height: .46rem;
               display: -webkit-box;
@@ -416,12 +399,12 @@
               .whiNum {
                 color: #fff;
                 font-weight: 200;
-                padding: 0 .1rem;
+                padding: 0 .04rem;
                 font-size: .1rem;
                 display: inline-block;
                 background: #ea5455;
                 vertical-align: middle;
-                margin: -.01rem .04rem 0 0;
+                margin: -.02rem .04rem 0 0;
               }
             }
             // 物料信息
@@ -430,6 +413,7 @@
               font-size: .12rem;
               // 有颜色包裹的
               .withColor {
+                margin-top: .04rem;
                 // 物料编码
                 .mater_code {
                   display: flex;
@@ -445,10 +429,11 @@
                   }
                   .num {
                     color: #111;
-                    max-width: .9rem;
+                    max-width: .85rem;
                     overflow: hidden;
                     white-space: nowrap;
                     background: #dbe2ef;
+                    box-sizing: border-box;
                     text-overflow: ellipsis;
                   }
                 }
@@ -463,10 +448,7 @@
                   .num {
                     color: #fff;
                     max-width: .6rem;
-                    overflow: hidden;
-                    white-space: nowrap;
                     background: #ff7f50;
-                    text-overflow: ellipsis;
                   }
                 }
               }
@@ -474,18 +456,16 @@
               .withoutColor {
                 // 物料分类
                 .mater_classify {
-                  // color: #111;
-                  // font-weight: bold;
-                  font-size: .14rem;
+                  font-size: .1rem;
                   margin-top: .04rem;
+                  .type,
                   .father {
-                    margin-right: .1rem;
+                    margin-right: .04rem;
                   }
                 }
                 // 物料颜色 材质
                 .mater_material {
-                  font-size: .12rem;
-                  margin-top: .1rem;
+                  font-size: .1rem;
                   .unit,
                   .color {
                     margin-right: .06rem;
