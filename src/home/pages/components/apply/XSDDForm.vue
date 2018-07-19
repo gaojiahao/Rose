@@ -111,7 +111,7 @@
                         </div>
                         <div class='mater_num'>
                           <span class='handle sub' @click="subNum(item,index)">-</span>
-                          <input class='num' type='number' v-model.number='item.num'/>
+                          <input class='num' type='number' :value='item.num' @change='getNum(item,index,$event)'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
                           
@@ -142,6 +142,7 @@
 import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,AlertModule } from 'vux'
 import dealerService from '../../../service/dealerService.js'
 import PopMatterList from '../../components/PopMatterList'
+import tokenService from '../../../service/tokenService.js';
 export default {
   components:{
     Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList
@@ -173,7 +174,22 @@ export default {
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
-      this.count = 0;
+      console.log(this.materList);
+      if(this.materList.length>0){
+        sels.map(item=>{
+          this.materList.map(item1=>{
+            if(item.inventoryCode = item1.inventoryCode){
+              item.num = item1.num;
+              item.defaultPrice  = item.defaultPrice;
+            }
+            else{
+              item.num = 1;
+              item.defaultPrice = 90;
+            }
+          })
+        })
+      }
+      
       this.materList = JSON.parse(JSON.stringify(sels));
       this.materList.map(item=>{
         item.defaultPrice = 90;
@@ -195,16 +211,28 @@ export default {
       arr.splice(index, 1);
     },
     subNum(item,i){
+      let oldNum = item.num;
       item.num--;
       if(item.num<=0){
         item.num = 1;
       }
+      let total = item.defaultPrice*(oldNum-item.num);
+      this.count -= total;
       this.$set(this.materList, i, item);
     },
     plusNum(item,i){
+      let oldNum = item.num;
       item.num++;
+      let total = item.defaultPrice*(item.num-oldNum);
+      this.count += total;
       this.$set(this.materList, i, item);
       
+    },
+    getNum(item,i,e){
+      let oldNum = item.num;
+      item.num = Number(e.target.value);
+      let total = item.num*item.defaultPrice;
+      this.count = this.count - item.defaultPrice*oldNum + total;
     },
     //获取往来信息
     getDealerInfo(){
@@ -516,6 +544,102 @@ export default {
     box-shadow: 0 2px 5px #5077aa;
   }
 }
+#trade_pop_part {
+  background: #fff;
+  .trade_pop {
+    padding: 0 .08rem;
+    // 顶部
+    .title {
+      font-size: .2rem;
+      position: relative;
+      padding: 0.08rem 0 .14rem;
+      // 搜索
+      .search_part {
+        width: 100%;
+        display: flex;
+        height: .3rem;
+        line-height: .3rem;
+        position: relative;
+        // 搜索输入框
+        .srh_inp {
+          flex: 5;
+          outline:none;
+          border: none;
+          color: #2D2D2D;
+          font-size: .16rem;
+          padding: 0 .3rem 0 .4rem;
+          background: #F3F1F2;
+          border-top-left-radius: .3rem;
+          border-bottom-left-radius: .3rem;
+        }
+        // 取消 按钮
+        .pop_cancel {
+          flex: 1;
+          color: #fff;
+          font-size: .14rem;
+          text-align: center;
+          background: #fc3c3c;
+          border-top-right-radius: .3rem;
+          border-bottom-right-radius: .3rem;
+        }
+        // 搜索icon
+        .serach_icon {
+          top: 50%;
+          left: 10px;
+          fill: #2D2D2D;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+        // 清除icon
+        .clear_icon {
+          top: 50%;
+          right: 14%;
+          width: .3rem;
+          height: .3rem;
+          z-index: 100;
+          display: block;
+          font-size: .12rem;
+          line-height: .3rem;
+          text-align: center;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+      }
+      // 关闭icon
+      .close_icon {
+        top: 50%;
+        right: -2%;
+        position: absolute;
+        transform: translate(0, -50%);
+      }
+    }
+    .each_mode {
+      margin-right: .1rem;
+      display: inline-block;
+      padding: .04rem .2rem;
+    }
+    .vux-1px:before {
+      border-radius: 40px;
+    }
+
+  }
+  // 确定
+  .cfm_btn {
+    left: 50%;
+    bottom: 5%;
+    width: 2.8rem;
+    color: #fff;
+    height: .44rem;
+    line-height: .44rem;
+    position: absolute;
+    text-align: center;
+    background: #5077aa;
+    border-radius: .4rem;
+    transform: translate(-50%,0);
+    box-shadow: 0 2px 12px #5077aa;
+  }
+}
+
 // 底部栏
 .count_mode {
   left: 0;
