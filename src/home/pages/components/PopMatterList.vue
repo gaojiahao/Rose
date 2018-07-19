@@ -41,7 +41,7 @@
                     <div class="ForInline" style="display:inline-block">
                       <div class="mater_spec">
                         <span class="title">规格</span>
-                        <span class="num">{{item.specification ? item.specification : '无'}}</span>
+                        <span class="num">{{item.specification || '无'}}</span>
                       </div>
                     </div>
                   </div>
@@ -57,8 +57,8 @@
                     <!-- 物料材质等 -->
                     <div class="mater_material">
                         <span class="unit">单位: {{item.measureUnit}}</span>
-                        <span class="color">颜色: {{item.inventoryColor}}</span>
-                        <span class="spec">材质: {{item.material}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
                   </div>
                 </div>
