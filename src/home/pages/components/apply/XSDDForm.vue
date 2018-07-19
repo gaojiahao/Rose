@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" >
+      <div class="or_ads mg_auto box_sd" @click="goSetAds">
         <div v-if='info.baseinfo'>
           <div class="user_info">
             <span class="user_name">{{info.baseinfo.creatorName}}</span>
@@ -14,7 +14,7 @@
           </div>
         </div>
         <div v-else>
-          <div @click="goSetAds">
+          <div >
             <div class="title">往来列表</div>
             <div class="tips">请选择往来</div>
             
@@ -97,11 +97,19 @@
                         </div>
                       </div>
                     </div>
+                    <div class='mater_other'>
+                      <div class='mater_price'>￥900</div>
+                      <div class='mater_num'>
+                        <span class='handle sub'>-</span>
+                        <input class='num' type='number' value='1'/>
+                        <span class='handle plus'>+</span>
+                      </div>
+                    </div>
                   </div>
                 </swipeout-item>
               </swipeout>
               <!-- 物料输入内容 -->
-              <div class="userInp_mode">
+              <!-- <div class="userInp_mode">
                 <group>
                   <cell title="计量单位" value='箱'></cell>
                   <popup-radio title="辅助计量" :options="assistUnitList" v-model="assistUnit"></popup-radio>
@@ -115,7 +123,7 @@
                   <datetime v-model="deliveryDate" title="预计交付日"></datetime>                  
                   <x-input title="说明" text-align='right' placeholder='请填写'></x-input>
                 </group>
-              </div>
+              </div> -->
             </div>
           </div>
         </template>
@@ -563,6 +571,45 @@ export default {
           .num {
             color: #fff;
             background: #ff7f50;
+          }
+        }
+      }
+      //物料价格，数量
+      .mater_other{
+        margin-top:0.08rem;
+        display: flex;
+        align-items: center;
+        .mater_price{
+          display: inline-block;
+          font-weight: bold;
+          font-size:0.16rem;
+          line-height: 0.2rem;
+          color:#ea5455;
+          margin-right:0.9rem;
+        }
+        .mater_num{
+          display: flex;
+          justify-content: flex-start;
+          input{
+            border:none;
+            outline: none;
+          }
+          .handle{
+            display: inline-block;
+            width:0.2rem;
+            height:0.2rem;
+            text-align: center;
+            line-height: 0.2rem;
+            border:1px solid #C7C7C7;
+          }
+          .num{
+            width:0.4rem;
+            height:0.2rem;
+            text-align: center;
+            line-height: 0.2rem;
+            border-top:1px solid #C7C7C7;
+            border-bottom:1px solid #C7C7C7;
+            font-size:0.12rem;
           }
         }
       }
