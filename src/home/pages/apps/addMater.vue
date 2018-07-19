@@ -4,11 +4,11 @@
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
-            <label>物料编码:</label>
+            <label class="required">物料编码:</label>
             <input type='text' v-model="inventory.inventoryCode" class='property_val'/>
           </div>
           <div class='each_property'>
-            <label>物料名称:</label>
+            <label class="required">物料名称:</label>
             <input type='text' v-model="inventory.inventoryName" class='property_val'/>
           </div>
         </div>
@@ -28,7 +28,7 @@
         </div>
       </div>
       <r-picker title="加工属性:" :data="matNatureList" value="inventory.processing" v-model="inventory.processing"
-                @on-change="natureChange"></r-picker>
+                :required="true" @on-change="natureChange"></r-picker>
       <r-picker title="材料大类:" :data="matBigList" value="inventory.inventoryType" v-model="inventory.inventoryType"
                 @on-change="bigChange"></r-picker>
       <r-picker title="材料子类:" :data="matSmlList" value="inventory.inventorySubclass"
@@ -49,7 +49,7 @@
         <label>主计量单位:</label>
         <input type='text' v-model="inventory.measureUnit" class='property_val'/>
       </div>-->
-      <r-picker title="主计量单位:" :data="measureList" value="inventory.measureUnit"
+      <r-picker title="主计量单位:" :data="measureList" value="inventory.measureUnit" :required="true"
                 v-model="inventory.measureUnit"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
@@ -455,6 +455,10 @@
         font-size: 0.12rem;
         display: block;
         line-height: 0.2rem;
+      }
+      .required {
+        color: red;
+        font-weight: bold;
       }
       .property_val {
         display: block;

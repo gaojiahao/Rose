@@ -188,6 +188,9 @@
       save() {
         let warn = '';
         let dataSet = [];
+        if (!this.matterList.length) {
+          warn = '请选择物料';
+        }
         this.matterList.every(item => {
           if (!item.price) {
             warn = '请输入单价';
