@@ -20,7 +20,7 @@
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
-              <div class="mater_main vux-1px-b">
+              <div class="mater_main ">
                 <!-- 物料名称 -->
                 <div class="mater_name">
                   <span class="whiNum">No.{{index + 1}}</span>
