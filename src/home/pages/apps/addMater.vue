@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class='mater_pic vux-1px-l'>
-          <input type="file" name="file" id='file' @change="preloadFile" accept="image/*" style="display:none;"/>
+          <input type="file" name="file" id='file' @change="uploadFile" accept="image/*" style="display:none;"/>
           <div class='add_icon' v-if='!picShow'>
             <label for="file"></label>
             <div class='upload'>
@@ -23,15 +23,15 @@
           </div>
           <div class='add_icon' v-else>
             <label for="file"></label>
-            <img :src='MatPic' class='upload'/>
+            <img :src='matPic' class='upload'/>
           </div>
         </div>
       </div>
-      <r-picker title="加工属性:" :data="MatNatureList" value="inventory.processing" v-model="inventory.processing"
+      <r-picker title="加工属性:" :data="matNatureList" value="inventory.processing" v-model="inventory.processing"
                 @on-change="natureChange"></r-picker>
-      <r-picker title="材料大类:" :data="MatBigList" value="inventory.inventoryType" v-model="inventory.inventoryType"
+      <r-picker title="材料大类:" :data="matBigList" value="inventory.inventoryType" v-model="inventory.inventoryType"
                 @on-change="bigChange"></r-picker>
-      <r-picker title="材料子类:" :data="MatSmlList" value="inventory.inventorySubclass"
+      <r-picker title="材料子类:" :data="matSmlList" value="inventory.inventorySubclass"
                 v-model="inventory.inventorySubclass"></r-picker>
       <div class='each_property vux-1px-b'>
         <label>型号规格:</label>
@@ -45,10 +45,12 @@
         <label>主材质:</label>
         <input type='text' v-model="inventory.material" class='property_val'/>
       </div>
-      <div class='each_property vux-1px-b'>
+      <!--<div class='each_property vux-1px-b'>
         <label>主计量单位:</label>
         <input type='text' v-model="inventory.measureUnit" class='property_val'/>
-      </div>
+      </div>-->
+      <r-picker title="主计量单位:" :data="measureList" value="inventory.measureUnit"
+                v-model="inventory.measureUnit"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">提交</div>
@@ -76,10 +78,11 @@
       return {
         listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
         biReferenceId: '',
-        MatPic: '', // 图片地址
-        MatNatureList: [], // 加工属性列表
-        MatBigList: [], // 材料大类列表
-        MatSmlList: [], // 材料子类列表
+        matPic: '', // 图片地址
+        matNatureList: [], // 加工属性列表
+        matBigList: [], // 材料大类列表
+        matSmlList: [], // 材料子类列表
+        measureList: [], // 主计量单位列表
         picShow: false, // 是否展示图片
         baseinfo: {
           handler: '', // 经办人ID
@@ -135,23 +138,26 @@
         this.imgFile = file;
         reader.onload = (evt) => {
           this.picShow = true;
-          this.MatPic = evt.target.result;
+          this.matPic = evt.target.result;
         };
         reader.readAsDataURL(file);
-        this.uploadFile();
+        // this.uploadFile();
       },
       // TODO 选择、预览图片
       uploadFile(e) {
-        // let file = e.target.files[0];
+        let file = e.target.files[0];
+        if (!file) {
+          return
+        }
         return upload({
-          file: this.imgFile,
+          file: file,
           // biReferenceId: this.biReferenceId
         }).then(res => {
           let {success = false, message = '上传失败', data} = res;
           let [detail = {}] = data;
-          // this.picShow = true;
+          this.picShow = true;
           // this.preloadFile(e);
-          // this.MatPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
+          this.matPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
           this.inventory.inventoryPic = detail.attacthment;
           // this.biReferenceId = detail.biReferenceId
         }).catch(e => {
@@ -222,7 +228,7 @@
           let {success = false, message = '提交失败'} = data;
           AlertModule.show({
             content: message,
-            onHide:() => {
+            onHide: () => {
               if (success) {
                 this.$router.go(-1);
               }
@@ -244,7 +250,7 @@
           // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
-            this.MatPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}`;
+            this.matPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}`;
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.inventory.inventoryPic
@@ -266,10 +272,10 @@
             item.originValue = item.value;
             item.value = item.name;
           });
-          this.MatNatureList = tableContent;
+          this.matNatureList = tableContent;
           return tableContent
         }).catch(e => {
-          this.MatNatureList = [];
+          this.matNatureList = [];
           this.inventory.processing = '';
           AlertModule.show({
             content: e.message,
@@ -278,7 +284,7 @@
       },
       // TODO 获取材料大类
       getBig() {
-        let [selected = {}] = this.MatNatureList.filter(item => {
+        let [selected = {}] = this.matNatureList.filter(item => {
           return item.name === this.inventory.processing
         });
         return getDictByValue({
@@ -289,10 +295,10 @@
             item.originValue = item.value;
             item.value = item.name;
           });
-          this.MatBigList = tableContent;
+          this.matBigList = tableContent;
           return tableContent
         }).catch(e => {
-          this.MatBigList = [];
+          this.matBigList = [];
           this.inventory.inventoryType = '';
           AlertModule.show({
             content: e.message,
@@ -301,7 +307,7 @@
       },
       // TODO 获取材料子类
       getSml() {
-        let [selected = {}] = this.MatBigList.filter(item => {
+        let [selected = {}] = this.matBigList.filter(item => {
           return item.name === this.inventory.inventoryType
         });
         return getDictByValue({
@@ -312,11 +318,31 @@
             item.originValue = item.value;
             item.value = item.name;
           });
-          this.MatSmlList = tableContent;
+          this.matSmlList = tableContent;
           return tableContent
         }).catch(e => {
-          this.MatSmlList = [];
+          this.matSmlList = [];
           this.inventory.inventorySubclass = '';
+          AlertModule.show({
+            content: e.message,
+          })
+        })
+      },
+      // TODO 获取主计量单位列表
+      getMeasure() {
+        return getDictByType({
+          type: 'measureUnit',
+        }).then(data => {
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.value;
+            item.value = item.name;
+          });
+          this.measureList = tableContent;
+          return tableContent
+        }).catch(e => {
+          this.measureList = [];
+          this.inventory.measureUnit = '';
           AlertModule.show({
             content: e.message,
           })
@@ -348,9 +374,12 @@
           await this.findData();
           await this.getNature();
           await this.getBig();
-          await this.getSml();
+          requestPromise.push(this.getSml());
+          requestPromise.push(this.getMeasure());
           this.hasDefault = false;
-          this.showLoading = false;
+          Promise.all(requestPromise).then(() => {
+            this.showLoading = false;
+          })
         })();
         return
       }
@@ -358,6 +387,7 @@
         let [defaultSelect = {}] = data;
         this.inventory.processing = defaultSelect.name
       }));
+      requestPromise.push(this.getMeasure());
       requestPromise.push(this.getBaseInfoData());
       Promise.all(requestPromise).then(() => {
         this.showLoading = false;
