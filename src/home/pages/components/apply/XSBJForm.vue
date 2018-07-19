@@ -3,15 +3,22 @@
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd" @click="goSetAds">
-        <div class="user_info">
-          <span class="user_name">刘治增</span>
-          <span class="user_tel">153****9500</span>
+        <div class="no-selected" v-if="!customInfo">
+          <div class="title">客户列表</div>
+          <div class="tips">请选择客户</div>
+          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
-        <div class="cp_info">
-          <p class="cp_name">深圳市瑞福登信息技术服务有限公司</p>
-          <p class="cp_ads">广东省 深圳市 福田区 中康路120附近 卓越城2期 TOWERB 1706</p>
+        <div v-else>
+          <div class="user_info">
+            <span class="user_name">{{customInfo.name}}</span>
+            <span class="user_tel">{{customInfo.phone}}</span>
+          </div>
+          <div class="cp_info">
+            <p class="cp_name">{{customInfo.company}}</p>
+            <p class="cp_ads">{{customInfo.address}}</p>
+          </div>
+          <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
         </div>
-        <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
@@ -31,7 +38,7 @@
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(index)" type="warn">删除</swipeout-button>
+                    <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
                   </div>
                   <div class="each_mater_wrapper" slot="content">
                     <!--<div class="mater_name">
@@ -102,7 +109,7 @@
               <!-- 物料输入内容 -->
               <div class="userInp_mode">
                 <group>
-                  <x-input type="number" title="数量" text-align='right' placeholder='请填写' v-model="item.count"></x-input>
+                  <x-input type="number" title="单价" text-align='right' placeholder='请填写' v-model="item.count"></x-input>
                 </group>
               </div>
             </div>
@@ -123,8 +130,10 @@
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton} from 'vux'
+  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, AlertModule} from 'vux'
   import PopMatterList from './../../components/PopMatterList'
+  import dealerService from './../../../service/dealerService'
+  import {saveAndStartWf, getBaseInfoData} from './../../../service/commonService'
 
   export default {
     components: {
@@ -134,6 +143,9 @@
       return {
         matterList: [],  // 物料列表
         showMaterielPop: false, // 是否显示物料的popup
+        transCode: '',
+        customInfo: null,
+        formData: {},
       }
     },
     methods: {
@@ -142,10 +154,10 @@
         this.$router.push({path: '/adress'});
       },
       // TODO 滑动删除
-      delClick(index) {
+      delClick(item, index) {
         let arr = this.matterList;
         arr.splice(index, 1);
-        this.$refs.matter.delSelItem(index);
+        this.$refs.matter.delSelItem(item);
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -162,12 +174,94 @@
       },
       // TODO 提交
       save() {
+        let warn = '';
+        let dataSet = [];
+        this.matterList.every(item => {
+          if (!item.count) {
+            warn = '请输入单价';
+            return false
+          }
+          dataSet.push({
+            transObjCode: item.inventoryCode,
+            comment: '',
+            price: item.count
+          });
+          return true
+        });
+        if (warn) {
+          AlertModule.show({
+            content: warn,
+          });
+          return
+        }
+        let submitData = {
+          listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
+          dealerDebitContactInformation: this.customInfo.mobilePhone,
+          formData: JSON.stringify({
+            order: {
+              dataSet
+            }
+          }),
+        };
+        console.log(submitData)
+
+        saveAndStartWf(submitData).then(data => {
+          console.log(data);
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        });
       },
-    }
+      // TODO 获取客户
+      findDealerData() {
+        dealerService.getDealerInfo(this.transCode).then(({formData = {}}) => {
+          let {baseinfo = {}, dealer = {}} = formData;
+          this.customInfo = {
+            name: baseinfo.handlerName,
+            mobilePhone: dealer.dealerMobilePhone,
+            phone: dealer.dealerMobilePhone || dealer.dealerPhone,
+            company: dealer.dealerName,
+            address: dealer.province + dealer.city + dealer.county + dealer.address,
+          };
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        })
+      },
+      // TODO 获取用户基本信息
+      getBaseInfoData() {
+        getBaseInfoData().then(data => {
+          this.formData = {...this.formData, ...data};
+        })
+      },
+    },
+    created() {
+      let {transCode} = this.$route.query;
+      this.transCode = transCode;
+      this.getBaseInfoData();
+      if (transCode) {
+        this.findDealerData();
+      }
+    },
   }
 </script>
 
 <style lang='scss'>
+  // 没有选中项的标题样式
+  %title {
+    color: #757575;
+    font-weight: 200;
+    font-size: .12rem;
+  }
+
+  // 没有选中项的提示样式
+  %tips {
+    color: #111;
+    font-weight: 500;
+  }
+
   // 居中
   .mg_auto {
     width: 95%;
@@ -189,6 +283,17 @@
   .or_ads {
     position: relative;
     padding: .06rem .4rem .06rem .08rem;
+    .title {
+      @extend %title;
+    }
+    .tips {
+      @extend %tips;
+    }
+    .no-selected {
+      .r_arrow {
+        right: .04rem;
+      }
+    }
     // 右箭头
     .r_arrow {
       right: 0;
@@ -223,40 +328,15 @@
     }
   }
 
-  // 结算方式
-  .trade_mode {
-    position: relative;
-    padding: .06rem .08rem;
-    .icon-gengduo {
-      top: 50%;
-      right: .1rem;
-      font-size: .24rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
-    .title {
-      color: #757575;
-      font-weight: 200;
-      font-size: .12rem;
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-    }
-  }
-
   // 物料列表
   .materiel_list {
     position: relative;
     padding: .06rem .08rem;
     .title {
-      color: #757575;
-      font-weight: 200;
-      font-size: .12rem;
+      @extend %title;
     }
     .tips {
-      color: #111;
-      font-weight: 500;
+      @extend %tips;
     }
     // 右箭头
     .r_arrow {
@@ -422,30 +502,6 @@
       border-radius: .4rem;
       background: #5077aa;
       box-shadow: 0 2px 5px #5077aa;
-    }
-  }
-
-  // 底部栏
-  .count_mode {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    display: flex;
-    height: .44rem;
-    position: fixed;
-    line-height: .44rem;
-    background: #fff;
-    .count_num {
-      flex: 2.5;
-      color: #5077aa;
-      font-size: .24rem;
-      padding-left: .1rem;
-    }
-    .count_btn {
-      flex: 1.5;
-      color: #fff;
-      text-align: center;
-      background: #5077aa;
     }
   }
 
