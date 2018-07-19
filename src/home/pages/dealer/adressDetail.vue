@@ -79,7 +79,7 @@
           this.biReferenceId = this.dealer.referenceId;
           if (this.dealer.dealerPic) {
             this.picShow = true;
-            this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}`;
+            this.MatPic = this.dealer.dealerPic;
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.dealer.dealerPic
