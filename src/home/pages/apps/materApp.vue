@@ -46,7 +46,7 @@
                   <div class="ForInline" style="display:inline-block">
                     <div class="mater_spec">
                       <span class="title">规格</span>
-                      <span class="num">{{item.specification? item.specification : '无'}}</span>
+                      <span class="num">{{item.specification || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -54,18 +54,18 @@
                 <div class="withoutColor">
                   <!-- 物料分类 -->
                   <div class="mater_classify">
-                    <span class="father">大类: {{item.inventoryType ? item.inventoryType : '无'}}</span>
-                    <span class="child">子类: {{item.inventorySubclass ? item.inventorySubclass : '无'}}</span>
+                    <span class="father">大类: {{item.inventoryType}}</span>
+                    <span class="child">子类: {{item.inventorySubclass}}</span>
                   </div>
                   <!-- 物料材质等 -->
                   <div class="mater_material">
                     <div>
                       <span class="type">属性: {{item.processing}}</span>
-                      <span class="unit">单位: {{item.measureUnit ? item.measureUnit : '无'}}</span>
+                      <span class="unit">单位: {{item.measureUnit || '无'}}</span>
                     </div>
                     <div>
-                      <span class="color">颜色: {{item.inventoryColor ? item.inventoryColor : '无'}}</span>
-                      <span class="spec">材质: {{item.material ? item.material : '无'}}</span>
+                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -513,7 +513,7 @@
             // 物料颜色 材质
             .mater_material {
               font-size: .12rem;
-              margin-top: .1rem;
+              margin-top: .04rem;
               .type,
               .color {
                 margin-right: .2rem;
