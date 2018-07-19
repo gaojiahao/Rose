@@ -46,7 +46,7 @@
                   <div class="ForInline" style="display:inline-block">
                     <div class="mater_spec">
                       <span class="title">规格</span>
-                      <span class="num">{{item.specification}}</span>
+                      <span class="num">{{item.specification? item.specification : '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -54,18 +54,19 @@
                 <div class="withoutColor">
                   <!-- 物料分类 -->
                   <div class="mater_classify">
-                    <span class="father">大类: {{item.inventoryType}}</span>
-                    <span class="child">子类: {{item.inventorySubclass}}</span>
-                  </div>
-                  <!-- 加工属性 -->
-                  <div class="mater_classify">
-                    <span>加工属性: {{item.processing}}</span>
+                    <span class="father">大类: {{item.inventoryType ? item.inventoryType : '无'}}</span>
+                    <span class="child">子类: {{item.inventorySubclass ? item.inventorySubclass : '无'}}</span>
                   </div>
                   <!-- 物料材质等 -->
                   <div class="mater_material">
-                    <span class="unit">单位: {{item.measureUnit}}</span>
-                    <span class="color">颜色: {{item.inventoryColor}}</span>
-                    <span class="spec">材质: {{item.material}}</span>
+                    <div>
+                      <span class="type">属性: {{item.processing}}</span>
+                      <span class="unit">单位: {{item.measureUnit ? item.measureUnit : '无'}}</span>
+                    </div>
+                    <div>
+                      <span class="color">颜色: {{item.inventoryColor ? item.inventoryColor : '无'}}</span>
+                      <span class="spec">材质: {{item.material ? item.material : '无'}}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -78,7 +79,7 @@
       </div>
     </div>
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEditAds">填写另一条物料</div>
+      <div class="cfm_btn" @click="goEditAds">新建另一条物料</div>
     </div>
     <router-view></router-view>
   </div>
@@ -448,7 +449,7 @@
             display: inline-block;
             background: #ea5455;
             vertical-align: middle;
-            margin: -.01rem .04rem 0 0;
+            margin: -.02rem .04rem 0 0;
           }
         }
         // 物料信息
@@ -456,7 +457,7 @@
           color: #757575;
           font-size: .12rem;
           margin-top: .04rem;
-          padding-bottom: .2rem;
+          padding-bottom: .04rem;
           // 有颜色包裹的
           .withColor {
             // 物料编码
@@ -503,8 +504,6 @@
           .withoutColor {
             // 物料分类
             .mater_classify {
-              // color: #111;
-              // font-weight: bold;
               font-size: .14rem;
               margin-top: .04rem;
               .father {
@@ -515,9 +514,9 @@
             .mater_material {
               font-size: .12rem;
               margin-top: .1rem;
-              .unit,
+              .type,
               .color {
-                margin-right: .06rem;
+                margin-right: .2rem;
               }
             }
           }
