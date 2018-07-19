@@ -21,7 +21,7 @@
       <!-- 主要内容区域 -->
       <div class="app_main" ref="appMain">
         <div class="app_main_wrapper">
-          <div class="each_mater" v-for="(item, index) in materList" :key='index' @click="goDetail(item)">
+          <div class="each_mater" v-for="(item, index) in matterList" :key='index' @click="goDetail(item)">
             <div class="mater_img">
               <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
             </div>
@@ -68,7 +68,7 @@
             </div>
           </div>
           <load-more tip="加载中" v-show="hasNext"></load-more>
-          <load-more :show-loading="false" tip="暂无数据" v-show="!materList.length && !hasNext"></load-more>
+          <load-more :show-loading="false" tip="暂无数据" v-show="!matterList.length && !hasNext"></load-more>
         </div>
         <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
       </div>
@@ -125,7 +125,7 @@
         ],
         activeTab: '',
         activeIndex: 0,
-        materList: [],
+        matterList: [],
         limit: 10,
         page: 1,
         bScroll: null,
@@ -155,7 +155,7 @@
       },
       // TODO 重置列表条件
       resetCondition() {
-        this.materList = [];
+        this.matterList = [];
         this.page = 1;
         this.hasNext = true;
         this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
@@ -225,7 +225,7 @@
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.materList = this.page === 1 ? tableContent : [...this.materList, ...tableContent];
+          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
           this.$nextTick(() => {
             this.bScroll.refresh();
             this.bScroll.finishPullDown();
@@ -237,6 +237,7 @@
           })
         }).catch(e => {
           this.bScroll.finishPullDown();
+          this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
           AlertModule.show({
             content: e.message,
           })
@@ -264,6 +265,9 @@
           });
           // 绑定滚动加载事件
           this.bScroll.on('pullingUp', () => {
+            if (!this.hasNext) {
+              return
+            }
             this.page++;
             this.getMatList();
           });

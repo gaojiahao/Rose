@@ -9,9 +9,12 @@ import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import Mescroll from './common/mescroll.min.js'
 import { TransferDom } from 'vux'
+import  { AlertPlugin } from 'vux'
 
 Vue.directive('transfer-dom', TransferDom)
 Vue.use(VueRouter)
+Vue.use(AlertPlugin)
+
 Vue.prototype.Swiper = Swiper;
 Vue.prototype.Mescroll = Mescroll;
 

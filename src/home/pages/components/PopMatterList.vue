@@ -6,7 +6,7 @@
         <div class="title">
           <!-- 搜索栏 -->
           <div class="search_part">
-            <input class="srh_inp" type="text" v-model="srhInpTx">
+            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchMat">
             <div class="pop_cancel" @click="showPop = !showPop">返回</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
             <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
@@ -14,7 +14,7 @@
         </div>
         <!-- 物料列表 -->
         <div class="mater_list" ref="matter">
-          <div>
+          <div class="mater_list_wrapper">
             <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                  @click.stop="selThis(item,index)">
               <div class="mater_img">
@@ -63,14 +63,16 @@
               </div>
               <!-- icon -->
               <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
-              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="tmpIndexs.includes(index)"></x-icon>
+              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
+            <load-more tip="加载中" v-show="hasNext"></load-more>
+            <load-more :show-loading="false" tip="暂无数据" v-show="!matterList.length && !hasNext"></load-more>
           </div>
         </div>
       </div>
       <!-- 底部栏 -->
       <div class="count_mode vux-1px-t">
-        <span class="count_num"> {{tmpIndexs.length ? `已选 ${tmpIndexs.length} 个` : '请选择'}} </span>
+        <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
         <span class="count_btn" @click="cfmMater">确定</span>
       </div>
     </popup>
@@ -78,7 +80,7 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore} from 'vux'
+  import {Icon, Popup, LoadMore, AlertModule} from 'vux'
   import {getMatList} from './../../service/materService'
   import BScroll from 'better-scroll'
 
@@ -97,12 +99,14 @@
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
-        selIndexs: [], // 哪些被选中了
-        tmpIndexs: [],
+        selItems: [], // 哪些被选中了
+        tmpItems: [],
         matterList: [],
         bScroll: null,
         limit: 10,
         page: 1.,
+        hasNext: true,
+        selParams: null,
       }
     },
     watch: {
@@ -113,6 +117,7 @@
       },
     },
     methods: {
+      // TODO 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.bScroll) {
@@ -120,31 +125,42 @@
           }
         })
       },
+      // TODO 弹窗隐藏时调用
       onHide() {
-        this.tmpIndexs = [...this.selIndexs];
+        this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
-      // 选择物料
-      selThis(item, index) {
-        let arr = this.tmpIndexs;
+      // TODO 判断是否展示选中图标
+      showSelIcon(sItem) {
+        let flag = false;
+        this.tmpItems.every(item => {
+          if (sItem.transCode === item.transCode) {
+            flag = true;
+            return false;
+          }
+          return true;
+        });
+        return flag;
+      },
+      // TODO 选择物料
+      selThis(sItem, sIndex) {
+        let arr = this.tmpItems;
         // 若存在重复的 则清除
-        if (arr.includes(index)) {
-          arr.splice(arr.findIndex(item => item === index), 1);
+        if (arr.includes(sItem)) {
+          arr.splice(arr.findIndex(item => item === sItem), 1);
           return;
         }
-        arr.push(index);
+        arr.push(sItem);
       },
-      // 确定选择物料
+      // TODO 确定选择物料
       cfmMater() {
         let sels = [];
         // 返回上层
         this.showPop = false;
-        this.tmpIndexs.sort((a, b) => a - b);
-        this.selIndexs = [...this.tmpIndexs];
-        this.selIndexs.forEach(item => {
-          sels.push(this.matterList[item]);
-        });
-        this.$emit('sel-matter', JSON.stringify(sels));
+        this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
+        this.selItems = [...this.tmpItems];
+        this.selParams = {};
+        this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
@@ -156,33 +172,86 @@
       },
       // TODO 获取物料列表
       getMatList() {
-        getMatList({
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'inventoryCode',
+              attendedOperation: 'or'
+            },
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'inventoryName',
+            },
+          ];
+        }
+        return getMatList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-        }).then(({tableContent = []}) => {
+          filter: JSON.stringify(filter),
+        }).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg();
           });
-          this.matterList = tableContent;
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
           this.$nextTick(() => {
             this.bScroll.refresh();
+            if (!this.hasNext) {
+              return
+            }
+            this.bScroll.finishPullUp();
           })
-        })
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
+        });
+      },
+      // TODO 搜索物料
+      searchMat() {
+        this.matterList = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.getMatList();
       },
       // TODO 删除选中项
-      delSelItem(index) {
-        this.selIndexs.splice(index, 1);
-        this.tmpIndexs = [...this.selIndexs];
+      delSelItem(dItem) {
+        let dIndex = 0;
+        this.selItems.every((item, index) => {
+          if (dItem.transCode === item.transCode) {
+            dIndex = index;
+            return false;
+          }
+          return true
+        });
+        this.selItems.splice(dIndex, 1);
+        this.tmpItems = [...this.selItems];
       },
       // TODO 初始化滚动
       initScroll() {
         this.$nextTick(() => {
           this.bScroll = new BScroll(this.$refs.matter, {
             click: true,
-          })
+            pullUpLoad: {
+              threshold: -20
+            },
+          });
+          // 绑定滚动加载事件
+          this.bScroll.on('pullingUp', () => {
+            if (!this.hasNext) {
+              return
+            }
+            this.page++;
+            this.getMatList();
+          });
         })
-      }
+      },
     },
     created() {
       this.initScroll();
@@ -278,6 +347,8 @@
         height: calc(100% - .52rem);
         overflow: hidden;
         box-sizing: border-box;
+        .mater_list_wrapper {
+        }
         // 每个物料
         .each_mater {
           position: relative;
@@ -418,20 +489,28 @@
       }
 
     }
-    // 确定
-    .cfm_btn {
-      left: 50%;
-      bottom: 5%;
-      width: 2.8rem;
-      color: #fff;
+    // 底部栏
+    .count_mode {
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      display: flex;
       height: .44rem;
+      position: fixed;
       line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, 0);
-      box-shadow: 0 2px 12px #5077aa;
+      background: #fff;
+      .count_num {
+        flex: 2.5;
+        color: #5077aa;
+        font-size: .24rem;
+        padding-left: .1rem;
+      }
+      .count_btn {
+        flex: 1.5;
+        color: #fff;
+        text-align: center;
+        background: #5077aa;
+      }
     }
   }
 </style>

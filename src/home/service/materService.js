@@ -78,20 +78,6 @@ export let getBaseInfoData = () => {
     }).then(data => {
       return data
     });
-    /*let listUser = await $axios.ajax({
-      url: '/H_roleplay-si/ds/listUsers',
-      data: {
-        limit: 1,
-        filter: JSON.stringify([{
-          operator: 'eq',
-          value: nickname,
-          property: 'nickname'
-        }])
-      }
-    }).then(({tableContent = []}) => {
-      let [user = {}] = tableContent;
-      return user
-    });*/
     let {userGroupId, userGroupName} = await $axios.ajax({
       url: '/H_roleplay-si/ds/getUnitsByUserId',
       data: {
