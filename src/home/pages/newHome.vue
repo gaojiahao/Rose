@@ -38,6 +38,7 @@
         </div>
         <!-- 应用列表 -->
         <div class="app_list swiper-wrapper">
+          <!-- 单个app -->
           <div class="each_app swiper-slide"
               @click='goXS(item.text)'
               v-for="(item, index) of XSarray"
@@ -118,24 +119,20 @@ export default {
       })
     })()
   },
-  mounted(){
+  updated(){
     let Swiper = this.Swiper;
     // 左右滑动
     new Swiper('.basic_part', {
-        direction: 'horizontal',
-        initialSlide: 0,
         slidesPerView: 'auto',
         observer: true,       //修改swiper自己或子元素时，自动初始化swiper
         observeParents: true  //修改swiper的父元素时，自动初始化swiper
     })
     new Swiper('.sale_part', {
-        direction: 'horizontal',
         slidesPerView: 'auto',
         initialSlide: 0,
         observer: true,       //修改swiper自己或子元素时，自动初始化swiper
         observeParents: true //修改swiper的父元素时，自动初始化swiper
     })
-    
   }
 }
 </script>
