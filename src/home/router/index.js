@@ -61,7 +61,7 @@ export default [
       }
     ]
   },
-  { path: '/', redirect:'/home' },
-  { path:'*', redirect:'/to_do' }
+  { path: '/', redirect:'/newhome' },
+  { path:'*', redirect:'/newhome' }
 ]
 
