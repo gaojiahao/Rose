@@ -8,29 +8,69 @@
           <div class="tips">欢迎,瑞福登</div>
         </div>
       </div>
+      <!-- 基础应用部分 -->
+      <div class="basic_part swiper-container">
+        <!-- 应用标题 -->
+        <div class="list_title">
+          <span class="bg_title">基础</span>
+          <!-- <span class="more">更多</span> -->
+        </div>
+        <div class="swiper-wrapper" style="height:1rem; padding-left:.04rem;">
+          <!-- 单个app -->
+          <div class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #2F80ED,  #56CCF2);">
+            <div class="app_type">业务对象</div>
+            <div class="app_name">物料</div>
+          </div>
+          <div class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #00b09b,  #96c93d);">
+            <div class="app_type">业务对象</div>
+            <div class="app_name">往来</div>
+          </div>        
+        </div>
+      </div>
       <!-- 销售应用部分 -->
-      <div class="sale_part swiper-container">
+      <div class="sale_part vux-1px-t swiper-container">
         <!-- 应用标题 -->
         <div class="list_title">
           <span class="bg_title">销售</span>
           <span class="more">更多</span>
         </div>
-        <div class="swiper-wrapper" style="height:1.3rem;">
-          <!-- 单个app -->
-          <div class="indval_app swiper-slide">
-            <div class="app_type">业务应用</div>
+        <!-- 应用列表 -->
+        <div class="app_list swiper-wrapper">
+          <div class="each_app swiper-slide">
+            <div class="app_img">
+              <img src="../assets/sales-contract.png" alt="">
+            </div>
             <div class="app_name">销售订单</div>
-            <div class="app_intro">可细分直销订单，经销订单，代销订销，来料加工订单等可细分直销订单，经销订单，代销订销，来料加工订单等</div>
           </div>
-          <div class="indval_app swiper-slide">
-            <div class="app_type">业务应用</div>
+          <div class="each_app swiper-slide">
+            <div class="app_img">
+              <img src="../assets/sales-stock.png" alt="">
+            </div>
             <div class="app_name">销售订单</div>
-            <div class="app_intro">可细分直销订单，经销订单，代销订销，来料加工订单等可细分直销订单，经销订单，代销订销，来料加工订单等</div>
           </div>
-          <div class="indval_app swiper-slide">
-            <div class="app_type">业务应用</div>
+          <div class="each_app swiper-slide">
+            <div class="app_img">
+              <img src="../assets/sales-stock.png" alt="">
+            </div>
             <div class="app_name">销售订单</div>
-            <div class="app_intro">可细分直销订单，经销订单，代销订销，来料加工订单等可细分直销订单，经销订单，代销订销，来料加工订单等</div>
+          </div>
+          <div class="each_app swiper-slide">
+            <div class="app_img">
+              <img src="../assets/sales-stock.png" alt="">
+            </div>
+            <div class="app_name">销售订单</div>
+          </div>
+          <div class="each_app swiper-slide">
+            <div class="app_img">
+              <img src="../assets/sales-stock.png" alt="">
+            </div>
+            <div class="app_name">销售订单</div>
+          </div>
+          <div class="each_app swiper-slide">
+            <div class="app_img">
+              <img src="../assets/sales-stock.png" alt="">
+            </div>
+            <div class="app_name">销售订单</div>
           </div>
         </div>
       </div>
@@ -43,9 +83,14 @@ export default {
   mounted(){
     let Swiper = this.Swiper;
     // 左右滑动
+    new Swiper('.basic_part', {
+        direction: 'horizontal',
+        slidesPerView: 'auto',
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true,//修改swiper的父元素时，自动初始化swiper
+    })
     new Swiper('.sale_part', {
         direction: 'horizontal',
-        // centeredSlides: true,
         slidesPerView: 'auto',
         observer: true, //修改swiper自己或子元素时，自动初始化swiper
         observeParents: true,//修改swiper的父元素时，自动初始化swiper
@@ -83,38 +128,37 @@ export default {
     }
   }
 }
-// 销售部分
-.sale_part {
-  padding-top: .04rem;
-  box-sizing: border-box;
-  // 应用标题
-  .list_title{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .bg_title,
-    .more{
-      color: #000;
-      font-size: .26rem;
-    }
-    .more {
-      font-size: .2rem;
-      color: #4F90F9;
-    }
+// 应用标题
+.list_title{
+  display: flex;
+  padding: .04rem 0 0;
+  align-items: center;
+  justify-content: space-between;
+  .bg_title,
+  .more{
+    color: #000;
+    font-size: .26rem;
   }
+  .more {
+    font-size: .2rem;
+    color: #4F90F9;
+  }
+}
+// 基础应用部分
+.basic_part {
+  box-sizing: border-box;
   // 单个APP
   .indval_app {
     width: 70%;
     color: #fff;
-    height: 1.2rem;
+    height: .7rem;
     margin: .04rem .1rem 0 0;
     border-radius: .06rem;
     padding: .08rem .04rem;
     box-sizing: border-box;
     box-shadow: 0 2px 5px #5077aa;
     // background: #5077aa; 
-    background: -webkit-linear-gradient(0, #2F80ED,  #56CCF2);
-    // 业务类型
+  // 业务类型
     .app_type {
       font-size: .12rem;
     }
@@ -130,6 +174,34 @@ export default {
       -webkit-line-clamp: 2;
       text-overflow: ellipsis;
       -webkit-box-orient: vertical;    
+    }
+  }
+}
+// 销售部分
+.sale_part {
+  .app_list {
+    padding-left: .04rem;
+    .each_app {
+      width: 80%;
+      background:#D0D86D; 
+      box-sizing: border-box;
+      margin: .04rem .2rem 0 0;   
+    // app 图片
+      .app_img {
+        width: 1rem;
+        // height: .75rem;
+        img {
+          width: 100%;
+          border-radius: .12rem;
+          // box-shadow: 0 2px 4px #3a3a3a;
+        }
+      }
+      // app 名称
+      .app_name {
+        text-align: center;
+        font-size: .18rem;
+        font-weight: bold;
+      }
     }
   }
 }
