@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>    
+                    </div>
                 </div>
                 <!-- 业务类应用 -->
                 <div class="obj_app swiper-container">
@@ -57,7 +57,7 @@
                                     <img :src='`/dist/${tab.icon}`'/>
                                     <badge :text="tab.taskTotal" class="red_caution" v-if='tab.taskTotal'></badge>
                                 </div>
-                                
+
                                 <div class="app_info" :class="{'vux-1px-b':i<2}">
                                     <div class="app_name">{{tab.text}}</div>
                                     <div class="app_tx">{{tab.instruction}}</div>
@@ -117,7 +117,7 @@
         <div class='loadding' v-if='loadStatus'>
             <spinner type='dots' size='50px'></spinner>
         </div>
-        
+
     </div>
 
 </template>
@@ -132,7 +132,7 @@ export default {
             csList:[],             //测试运营任务
             zhList:[],             //综合任务
             avatar:'/static/assets/avatar.png',             //头像
-            loadStatus:true,       
+            loadStatus:true,
             dmBadge:'',            //代码发布申请任务数量
             qjBadge:'',            //请假任务数量
             bxBadge:'',             //报销任务数量
@@ -188,8 +188,8 @@ export default {
             //获取应用菜单列表
             await homeService.getMeau().then( data=>{
                 data.map( item=>{
-                    if(item.text === '业务应用'){ 
-                        let arr = [] ;                 
+                    if(item.text === '业务应用'){
+                        let arr = [] ;
                         item.children && item.children.map( item1=>{
                             item1.children.map( res=>{
                                 let index = res.url.indexOf('/')+1,
@@ -205,10 +205,10 @@ export default {
                                 while(item1.children.length > 0){
                                     let list = item1.children.splice(0,3);
                                     this.kfList.push(list);
-                                }   
+                                }
                             }
                             else if(item1.text === '运营' || item1.text === '测试'){
-                                arr = arr.concat(item1.children);                            
+                                arr = arr.concat(item1.children);
                             }
                             else if(item1.text === '综合'){
                                 this.zhList = item1.children;
@@ -217,20 +217,20 @@ export default {
                                         if(res.taskTotal){
                                             this.dmBadge = res.taskTotal;
                                         }
-                                        
+
 
                                     }
                                     else if (res.text === '请假'){
                                         if(res.taskTotal){
                                             this.qjBadge = res.taskTotal;
                                         }
-                                        
+
                                     }
                                     else if(res.text === '费用报销'){
                                          if(res.taskTotal){
                                             this.bxBadge = res.taskTotal;
                                         }
-                                        
+
                                     }
                                 })
                             }
@@ -240,8 +240,8 @@ export default {
                             this.csList.push(list);
 
                         }
-                        
-                    }   
+
+                    }
                 })
                 this.loadStatus = false;
             }).catch(e => {
@@ -249,7 +249,7 @@ export default {
                     content: e.message,
                 })
             });
-            
+
             let info = localStorage.getItem('ROSE_LOGIN_TOKEN');
             info = JSON.parse(info);
             this.avatar  =  info.avatar;
@@ -295,7 +295,7 @@ export default {
                 auto: false
             }
         })
-        
+
     },
     updated(){
         // Swiper.updated();
@@ -320,7 +320,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 .loadding { //加载动画
     position: absolute;
     left:0;
@@ -455,7 +455,7 @@ export default {
                         }
                     }
                 }
-               
+
             }
         }
     }
