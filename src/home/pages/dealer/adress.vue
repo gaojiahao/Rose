@@ -21,7 +21,7 @@
       <!-- 主要内容区域 -->
       <div class="app_main mescroll" id="mescroll">
         <div>
-          <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
+          <div class="client_ads vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.creatorName}}</span>
               <span class="user_tel">{{item.dealerMobilePhone}}</span>
@@ -33,7 +33,6 @@
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
         </div>
-        
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -95,9 +94,10 @@ export default {
     goDetail(item){
       if(isBack){
         query.transCode = item.transCode;
+        console.log(path,query);
         this.$router.push({
-          path,
-          query
+          path : path,
+          query : query
         })
       }
       else{
@@ -139,7 +139,6 @@ export default {
         if(filter){
           data.filter = JSON.stringify(filter);
         }
-        console.log(data);
         (async()=>{
           await dealerService.getId(this.uniqueId).then( data=>{
             if(data.length > 0){
@@ -164,6 +163,11 @@ export default {
     //往来分类
     getClassfiy(){    
       dealerService.getDealerClassfiy(this.page).then(data=>{
+        data.map(item=>{
+          if(item.title ==='往来对象'){
+            item.title = '全部';
+          }
+        })
         this.dealerClassfiy = data;
       }).catch(e=>{
         AlertModule.show({
@@ -173,7 +177,7 @@ export default {
     }
   },
   created(){
-    this.getClassfiy();
+    this.getClassfiy()
   },
   mounted() {
     let Mescroll = this.Mescroll;
@@ -184,10 +188,6 @@ export default {
           isBounce: false,
           auto: true,
           isBoth: false,
-          empty:{
-            tip: "暂无相关数据~", 
-            warpId  : 'dataList'
-          },
           callback: (page,mescroll)=>{
             this.page = page.num;
             this.getDealer().then(data => {
@@ -206,7 +206,7 @@ export default {
     })
   },
   beforeRouteEnter: (to, from, next) => {
-      if (from.path !== '/home') {
+      if (from.path !== '/newhome') {
         isBack = true;
         path = from.path;
         query = from.query;
@@ -216,7 +216,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
   .childPage {
     position: fixed;
     width: 100%;

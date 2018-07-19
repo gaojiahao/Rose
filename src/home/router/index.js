@@ -14,7 +14,7 @@ export default [
   { path: '/home', name: 'HOME', component: HOME,
     meta:{ title:'首页' } },
   { path: '/newhome', name: 'NEWHOME', component: NEWHOME,
-  meta:{ title:'新首页' } },
+  meta:{ title:'新首页' , keepAlive: true} },
   { path:'/allapply', name:'APPLY', component:APPLY,
     meta:{ title:'全部应用' } },
   { path:'/list', name:'LIST', component:LIST,

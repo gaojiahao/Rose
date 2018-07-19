@@ -1,6 +1,6 @@
 <template>
   <div class='r-picker vux-1px-b' @click='show = !show'>
-    <label>{{title}}</label>
+    <label :class='{ required : required}'>{{title}}</label>
     <div class='picker'>
       <span class='mater_nature'>{{showValue}}</span>
       <span class='iconfont icon-gengduo'></span>
@@ -38,6 +38,9 @@
         default() {
           return []
         }
+      },
+      required:{
+        type:Boolean
       }
     },
     data() {
@@ -86,6 +89,10 @@
       font-size: 0.12rem;
       display: block;
       line-height: 0.2rem;
+    }
+    .required{
+      color:red;
+      font-weight: bold;
     }
     .picker {
       display: flex;
