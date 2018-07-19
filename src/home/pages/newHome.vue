@@ -24,7 +24,7 @@
           <router-link to="/adress" class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #00b09b,  #96c93d);">
             <div class="app_type">业务对象</div>
             <div class="app_name">往来</div>
-          </router-link>        
+          </router-link>
         </div>
       </div>
       <!-- 销售应用部分 -->
@@ -41,7 +41,7 @@
             <div class="app_name">销售订单</div>
             <div class="app_info">可细分直销订单，经销订单，代销订销，来料加工订单等</div>
           </router-link>
-          <router-link to="/adress" class="each_app swiper-slide">
+          <router-link :to="{path:'/detail',query:{code:'XSBJ'}}" class="each_app swiper-slide">
             <div class="app_type">业务对象</div>
             <div class="app_name">销售报价</div>
             <div class="app_info">制定与物料相关的价格体系</div>
@@ -131,7 +131,7 @@ export default {
     padding: .08rem .04rem;
     box-sizing: border-box;
     box-shadow: 0 2px 5px #5077aa;
-    // background: #5077aa; 
+    // background: #5077aa;
   // 业务类型
     .app_type {
       font-size: .12rem;
@@ -147,7 +147,7 @@ export default {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       text-overflow: ellipsis;
-      -webkit-box-orient: vertical;    
+      -webkit-box-orient: vertical;
     }
   }
 }
@@ -164,7 +164,7 @@ export default {
       padding: .08rem .04rem;
       border-radius: .04rem;
       box-sizing: border-box;
-      margin: .04rem .1rem 0 0;   
+      margin: .04rem .1rem 0 0;
       box-shadow: 0 2px 5px #5077aa;
       // app 类型
       .app_type {
@@ -185,7 +185,7 @@ export default {
         -webkit-line-clamp: 2;
         box-sizing: border-box;
         text-overflow: ellipsis;
-        -webkit-box-orient: vertical;    
+        -webkit-box-orient: vertical;
       }
     }
   }
