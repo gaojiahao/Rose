@@ -1,6 +1,6 @@
 <template>
   <div class='childPage'>
-    <div class='content'>
+    <div class='detail_content'>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
@@ -25,11 +25,11 @@
       </div>
       <div class='each_property vux-1px-b'>
         <label>往来大类:</label>
-        <div class='property_val'>{{dealer.dealerType}}</div>
+        <div class='property_val'>{{dealer.dealerType || '无'}} </div>
       </div>
       <div class='each_property vux-1px-b'>
         <label>往来子类:</label>
-        <div class='property_val'>{{dealer.dealerSubclass}}</div>
+        <div class='property_val'>{{dealer.dealerSubclass || '无'}} </div>
       </div>
       <div class='each_property vux-1px-b'>
         <label>省市区:</label>
@@ -76,6 +76,11 @@
           this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.dealer = {...this.dealer, ...dealer,};
+          for(let key in this.dealer){
+            if(this.dealer[key] == ''){
+              this.dealer[key] = '无'
+            }
+          }
           this.biReferenceId = this.dealer.referenceId;
           if (this.dealer.dealerPic) {
             this.picShow = true;
@@ -98,8 +103,8 @@
   }
 </script>
 <style lang="scss"> 
-  .content {
-    height: 90%;
+  .detail_content {
+    height: 100%;
     overflow-y: auto;
     div {
       border: none;
