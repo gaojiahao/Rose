@@ -12,7 +12,7 @@
             <span class='cancel' @click="show = false">取消</span>
             <span class='confirm' @click="confirm">确认</span>
           </div>
-          <picker :data="data" :columns="1" v-model="currentValue"></picker>
+          <picker :data="data" :columns="1" :value="currentValue" v-model="currentValue"></picker>
         </div>
       </popup>
     </div>
@@ -54,6 +54,7 @@
       value: {
         handler(value) {
           this.showValue = value;
+          this.currentValue = [value];
           this.$emit('on-change', value);
         }
       }

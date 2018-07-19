@@ -25,14 +25,14 @@
             <div class="mater_img">
               <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
             </div>
-            <div class="mater_main vux-1px-b">
+            <div class="mater_main">
               <!-- 物料名称 -->
               <div class="mater_name">
                 <span class="whiNum">No.{{index + 1}}</span>
                 {{item.inventoryName}}
               </div>
               <!-- 物料基本信息 -->
-              <div class="mater_info">
+              <div class="mater_info vux-1px-b">
                 <!-- 物料编码、规格 -->
                 <div class="withColor">
                   <!-- 物料编码 -->
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-  import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
+  import {Tab, Icon, TabItem, Spinner, LoadMore, AlertModule} from 'vux'
   import {getDictByType, getMatList} from './../../service/materService'
   import BScroll from 'better-scroll'
 
@@ -95,6 +95,9 @@
       return {
         srhInpTx: '',
         matNature: [
+          {
+            name: '全部'
+          },
           {
             name: '成品'
           },
@@ -159,7 +162,8 @@
       },
       // TODO tab点击
       tabClick(item, index) {
-        this.activeTab = item.name;
+        // 全部传空
+        this.activeTab = index ? item.name : '';
         this.activeIndex = index;
         this.resetCondition();
         this.bScroll.scrollTo(0, 0);
@@ -171,8 +175,13 @@
           type: 'processing',
         }).then(({tableContent}) => {
           let [active = {}] = tableContent;
-          this.activeTab = active.name;
-          this.matNature = tableContent;
+          this.activeTab = '';
+          tableContent.unshift({name: '全部'});
+          this.matNature = [...tableContent];
+        }).catch(e => {
+          AlertModule.show({
+            content: e.message,
+          })
         });
       },
       // TODO 获取物料列表
@@ -184,6 +193,10 @@
             property: 'processing',
           }
         ];
+        // 选择全部时修改operator
+        if (!this.activeIndex) {
+          filter[0].operator = 'like';
+        }
         if (this.srhInpTx) {
           filter[0].attendedOperation = 'and (';
           filter = [
@@ -222,10 +235,17 @@
             }
             this.bScroll.finishPullUp();
           })
-        })
+        }).catch(e => {
+          this.bScroll.finishPullDown();
+          AlertModule.show({
+            content: e.message,
+          })
+        });
       },
       // TODO 搜索物料
       searchMat() {
+        this.activeTab = '';
+        this.activeIndex = 0;
         this.resetCondition();
         this.getMatList();
       },
@@ -265,16 +285,6 @@
         });
       },
     },
-    beforeRouteLeave(to, from, next) {
-      let {path} = to;
-      // 进入详情页，缓存当前页面，回到首页，不缓存当前页
-      if (path === '/materDetail') {
-        from.meta.keepAlive = true;
-      } else if (path === '/home') {
-        from.meta.keepAlive = false;
-      }
-      next();
-    },
     created() {
       this.initScroll();
       this.getDictByType().then(() => {
@@ -289,7 +299,7 @@
   }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
   .content {
     height: 90%;
     overflow: auto;
@@ -373,8 +383,7 @@
     overflow: hidden;
     box-sizing: border-box;
     .app_main_wrapper {
-      /*margin-top: -30px;
-      min-height: calc(100% + 30px);*/
+      min-height: calc(100% + 1px);
       overflow: hidden;
     }
     .pullDownRefresh {
@@ -438,6 +447,8 @@
         .mater_info {
           color: #757575;
           font-size: .12rem;
+          margin-top: .04rem;
+          padding-bottom: .2rem;
           // 有颜色包裹的
           .withColor {
             // 物料编码

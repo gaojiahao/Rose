@@ -17,14 +17,14 @@
         </div>
         <div class="swiper-wrapper" style="height:1rem; padding-left:.04rem;">
           <!-- 单个app -->
-          <div class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #2F80ED,  #56CCF2);">
+          <router-link to="/materApp" class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #2F80ED,  #56CCF2);">
             <div class="app_type">业务对象</div>
             <div class="app_name">物料</div>
-          </div>
-          <div class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #00b09b,  #96c93d);">
+          </router-link>
+          <router-link to="/adress" class="indval_app swiper-slide" style="background: -webkit-linear-gradient(0, #00b09b,  #96c93d);">
             <div class="app_type">业务对象</div>
             <div class="app_name">往来</div>
-          </div>        
+          </router-link>
         </div>
       </div>
       <!-- 销售应用部分 -->
@@ -36,42 +36,16 @@
         </div>
         <!-- 应用列表 -->
         <div class="app_list swiper-wrapper">
-          <div class="each_app swiper-slide">
-            <div class="app_img">
-              <img src="../assets/sales-contract.png" alt="">
-            </div>
+          <router-link :to="{path:'/detail',query:{code:'XSDD'}}" class="each_app swiper-slide">
+            <div class="app_type">业务对象</div>
             <div class="app_name">销售订单</div>
-          </div>
-          <div class="each_app swiper-slide">
-            <div class="app_img">
-              <img src="../assets/sales-stock.png" alt="">
-            </div>
-            <div class="app_name">销售订单</div>
-          </div>
-          <div class="each_app swiper-slide">
-            <div class="app_img">
-              <img src="../assets/sales-stock.png" alt="">
-            </div>
-            <div class="app_name">销售订单</div>
-          </div>
-          <div class="each_app swiper-slide">
-            <div class="app_img">
-              <img src="../assets/sales-stock.png" alt="">
-            </div>
-            <div class="app_name">销售订单</div>
-          </div>
-          <div class="each_app swiper-slide">
-            <div class="app_img">
-              <img src="../assets/sales-stock.png" alt="">
-            </div>
-            <div class="app_name">销售订单</div>
-          </div>
-          <div class="each_app swiper-slide">
-            <div class="app_img">
-              <img src="../assets/sales-stock.png" alt="">
-            </div>
-            <div class="app_name">销售订单</div>
-          </div>
+            <div class="app_info">可细分直销订单，经销订单，代销订销，来料加工订单等</div>
+          </router-link>
+          <router-link :to="{path:'/detail',query:{code:'XSBJ'}}" class="each_app swiper-slide">
+            <div class="app_type">业务对象</div>
+            <div class="app_name">销售报价</div>
+            <div class="app_info">制定与物料相关的价格体系</div>
+          </router-link>
         </div>
       </div>
     </div>
@@ -157,7 +131,7 @@ export default {
     padding: .08rem .04rem;
     box-sizing: border-box;
     box-shadow: 0 2px 5px #5077aa;
-    // background: #5077aa; 
+    // background: #5077aa;
   // 业务类型
     .app_type {
       font-size: .12rem;
@@ -173,34 +147,45 @@ export default {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       text-overflow: ellipsis;
-      -webkit-box-orient: vertical;    
+      -webkit-box-orient: vertical;
     }
   }
 }
 // 销售部分
 .sale_part {
   .app_list {
+    height: 1.6rem;
     padding-left: .04rem;
     .each_app {
-      width: 80%;
-      background:#D0D86D; 
+      width: 75%;
+      height: 1.4rem;
+      color: #fff;
+      background: #2e89ba;
+      padding: .08rem .04rem;
+      border-radius: .04rem;
       box-sizing: border-box;
-      margin: .04rem .2rem 0 0;   
-    // app 图片
-      .app_img {
-        width: 1rem;
-        // height: .75rem;
-        img {
-          width: 100%;
-          border-radius: .12rem;
-          // box-shadow: 0 2px 4px #3a3a3a;
-        }
+      margin: .04rem .1rem 0 0;
+      box-shadow: 0 2px 5px #5077aa;
+      // app 类型
+      .app_type {
+        font-size: .12rem;
       }
       // app 名称
       .app_name {
-        text-align: center;
-        font-size: .18rem;
-        font-weight: bold;
+        font-size: .3rem;
+        font-weight: 200;
+      }
+      // app 介绍
+      .app_info {
+        margin-top: .1rem;
+        overflow: hidden;
+        font-size: .14rem;
+        max-height: .46rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
       }
     }
   }
