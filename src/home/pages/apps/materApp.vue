@@ -25,14 +25,14 @@
             <div class="mater_img">
               <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
             </div>
-            <div class="mater_main vux-1px-b">
+            <div class="mater_main">
               <!-- 物料名称 -->
               <div class="mater_name">
                 <span class="whiNum">No.{{index + 1}}</span>
                 {{item.inventoryName}}
               </div>
               <!-- 物料基本信息 -->
-              <div class="mater_info">
+              <div class="mater_info vux-1px-b">
                 <!-- 物料编码、规格 -->
                 <div class="withColor">
                   <!-- 物料编码 -->
@@ -289,7 +289,7 @@
   }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
   .content {
     height: 90%;
     overflow: auto;
@@ -438,6 +438,8 @@
         .mater_info {
           color: #757575;
           font-size: .12rem;
+          margin-top: .04rem;
+          padding-bottom: .2rem;
           // 有颜色包裹的
           .withColor {
             // 物料编码
