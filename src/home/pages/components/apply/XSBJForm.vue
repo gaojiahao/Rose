@@ -109,14 +109,15 @@
               <!-- 物料输入内容 -->
               <div class="userInp_mode">
                 <group>
-                  <x-input type="number" title="单价" text-align='right' placeholder='请填写' v-model="item.count"></x-input>
+                  <x-input type="number" title="单价" text-align='right' placeholder='请填写'
+                           v-model.number="item.price"></x-input>
                 </group>
               </div>
             </div>
           </div>
         </template>
         <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="matterList.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
+        <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          ref="matter"></pop-matter-list>
@@ -146,6 +147,7 @@
         transCode: '',
         customInfo: null,
         formData: {},
+        priceMap: {},
       }
     },
     methods: {
@@ -159,9 +161,19 @@
         arr.splice(index, 1);
         this.$refs.matter.delSelItem(item);
       },
+      // TODO 点击增加更多物料
+      addMatter() {
+        this.matterList.forEach(item => {
+          this.priceMap[item.transCode] = item.price;
+        });
+        this.showMaterielPop = !this.showMaterielPop
+      },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
+        sels.forEach(item => {
+          item.price = this.priceMap[item.transCode] || 0
+        });
         this.matterList = [...sels];
       },
       // TODO 获取默认图片
@@ -177,14 +189,14 @@
         let warn = '';
         let dataSet = [];
         this.matterList.every(item => {
-          if (!item.count) {
+          if (!item.price) {
             warn = '请输入单价';
             return false
           }
           dataSet.push({
             transObjCode: item.inventoryCode,
             comment: '',
-            price: item.count
+            price: item.price
           });
           return true
         });
@@ -196,16 +208,25 @@
         }
         let submitData = {
           listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
-          dealerDebitContactInformation: this.customInfo.mobilePhone,
+          biComment: '',
           formData: JSON.stringify({
+            ...this.formData,
+            dealerDebitContactInformation: this.customInfo ? this.customInfo.mobilePhone : '',
             order: {
               dataSet
             }
           }),
         };
-        console.log(submitData)
 
         saveAndStartWf(submitData).then(data => {
+          let {success = false, message = '提交失败'} = data;
+          AlertModule.show({
+            content: message,
+            onHide: () => {
+              if (success) {
+              }
+            }
+          });
           console.log(data);
         }).catch(e => {
           AlertModule.show({

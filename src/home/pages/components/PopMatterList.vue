@@ -1,6 +1,6 @@
 <template>
   <!-- 物料popup -->
-  <div>
+  <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore, AlertModule} from 'vux'
+  import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
   import {getMatList} from './../../service/materService'
   import BScroll from 'better-scroll'
 
@@ -92,6 +92,7 @@
         default: false
       }
     },
+    directives: [TransferDom],
     components: {
       Icon, Popup, LoadMore,
     },
