@@ -3,12 +3,12 @@
     <div class='content'>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label>往来编码:</label>
+          <div class='each_property vux-1px-b '>
+            <label class='required'>往来编码:</label>
             <input type='text' v-model="dealer.dealerCode" class='property_val'/>
           </div>
-          <div class='each_property'>
-            <label>往来名称:</label>
+          <div class='each_property required'>
+            <label class='required'>往来名称:</label>
             <input type='text' v-model="dealer.dealerName" class='property_val'/>
           </div>
         </div>
@@ -27,7 +27,7 @@
           </div>
         </div>
       </div>
-      <r-picker title="往来关系标签:" :data="AccountRelType" value="dealer.dealerLabelName"  v-model="dealer.dealerLabelName"
+      <r-picker title="往来关系标签:" :data="AccountRelType" value="dealer.dealerLabelName"  v-model="dealer.dealerLabelName" :required='true'
                 @on-change="dealerLabel"></r-picker>
       <r-picker title="往来大类:" :data="AccountBigType" value="dealer.dealerType"  v-model="dealer.dealerType"
                 @on-change="bigChange"></r-picker>
@@ -48,19 +48,19 @@
       </div>
       <div class='each_property vux-1px-b'>
         <label>固定电话:</label>
-        <input type='text' v-model="dealer.dealerPhone" class='property_val'/>
+        <input type='text' v-model="dealer.dealerPhone" class='property_val' @blur='checkPhone'/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>手机:</label>
-        <input type='text' v-model="dealer.dealerMobilePhone" class='property_val'/>
+        <input type='text' v-model="dealer.dealerMobilePhone" class='property_val' @blur='checkMobile'/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>电子邮件:</label>
-        <input type='text' v-model="dealer.dealerMail" class='property_val'/>
+        <input type='text' v-model="dealer.dealerMail" class='property_val' @blur='checkEmail'/>
       </div>
     </div>
-    <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">提交</div>
+    <div class='vux-1px-t btn '>
+      <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}'>提交</div>
     </div>
   </div>
 </template>
@@ -74,6 +74,7 @@
     data() {
       return {
         hasDefault : false,
+        btnStatus : false, //按钮不可点击
         transCode  : '',
         picShow: false,
         imgFileObj: {}, // 上传的图片对象
@@ -230,17 +231,61 @@
           })
         })
       },
+      //校验固定电话号
+      checkPhone(){
+        let reg = /^0\d{2,3}-?\d{7,8}$/;
+        if(!reg.test(this.dealer.dealerPhone)){
+          this.btnStatus = true;
+          AlertModule.show({
+            content:'固定电话格式不正确'
+          })
+        }
+        else{
+          this.btnStatus = false;
+        }
+        
+        
+      },
+      //校验手机号
+      checkMobile(){
+        let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if(!reg.test(this.dealer.dealerMobilePhone)){
+          this.btnStatus = true;
+          AlertModule.show({
+            content:'手机号格式不正确'
+          })
+        }
+        else{
+          this.btnStatus = false;
+        }
+        
+
+      },
+      //校验邮箱
+      checkEmail(){
+        let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+        if(!reg.test(this.dealer.dealerMail)){
+          this.btnStatus = true;
+          AlertModule.show({
+            content:'邮箱格式不正确'
+          })
+        }
+        else{
+          this.btnStatus = false;
+        }
+        
+      },
       //往来信息
       findData() {
         return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
           let {baseinfo = {}, dealer = {}} = formData;
-          this.hasDefault = true;
+          // this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.dealer = {...this.dealer, ...dealer,};
           this.biReferenceId = this.dealer.referenceId;
           if (this.dealer.dealerPic) {
             this.picShow = true;
-            this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}`;
+            this.MatPic = this.dealer.dealerPic;
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.dealer.dealerPic
@@ -259,6 +304,7 @@
           this.dealer.county = this.AccountAddress[2]
         }
       },
+      //提交
       submit(){
         let submitData = {
           listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
@@ -268,19 +314,17 @@
             dealer: this.dealer
           }
         };
-        console.log(submitData);
-        if(!this.hasDefault){
+        if(this.hasDefault){
           dealerService.update(submitData).then(data=>{
             console.log(data);
             let that = this;
-            if(data.success){
-              AlertModule.show({
-                content: data.message,
-                onHide(){
-                  that.$router.back();
-                }
-              })
-            }          
+            AlertModule.show({
+              content: data.message,
+              onHide(){
+                that.$router.push('/adress');
+              }
+            })
+                     
           }).catch(e=>{
             AlertModule.show({
               content: e.message,
@@ -290,15 +334,14 @@
         else{
           dealerService.save(submitData).then(data=>{
             console.log(data);
-            let that = this;
-            if(data.success){
-              AlertModule.show({
-                content: `${data.message}【${data.transCode}】`,
-                onHide(){
-                  that.$router.back();
-                }
-              })
-            }          
+            let that = this;           
+            AlertModule.show({
+              content:data.message,
+              onHide(){
+                that.$router.push('/adress');
+              }
+            })
+                    
           }).catch(e=>{
             AlertModule.show({
               content: e.message,
@@ -308,30 +351,30 @@
         
 
       },
-      modify(){
-
-      },
       save(){
-        if(this.dealer.dealerCode === ''){
-          AlertModule.show({
-            content: '【往来编码】不能为空',
-          })
-        }
-        else if(this.dealer.dealerName === ''){
-          AlertModule.show({
-            content: '【往来名称】不能为空',
-          })
-        }
-        else if(this.dealer.dealerLabelName === ''){
-          AlertModule.show({
-            content: '【往来关系标签】不能为空',
-          })
-        }
-        else{
-          this.submit()
-        }
+        if(!this.btnStatus){
+          if(this.dealer.dealerCode === ''){
+              AlertModule.show({
+                content: '【往来编码】不能为空',
+              })
+            }
+            else if(this.dealer.dealerName === ''){
+              AlertModule.show({
+                content: '【往来名称】不能为空',
+              })
+            }
+            else if(this.dealer.dealerLabelName === ''){
+              AlertModule.show({
+                content: '【往来关系标签】不能为空',
+              })
+            }
+            else{
+              this.submit()
+            }
 
-      }
+          }
+        }
+        
       
     },
     created() {
@@ -343,7 +386,7 @@
           await this.getDealer();
           await this.getBig();
           this.getSml();
-          this.hasDefault = false;
+          this.hasDefault = true;
         })();
 
       }
@@ -418,6 +461,7 @@
         }
       }
     }
+    
     .each_property {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
@@ -429,10 +473,15 @@
         height:0.2rem;
         line-height: 0.2rem;
       }
+      .required{
+        color:red;
+        font-weight: bold;
+      }
       .property_val {
         display: block;
         font-size: 0.16rem;
         line-height: 0.24rem;
+        width:100%;
       }
       .picker {
         display: flex;
@@ -507,6 +556,10 @@
       border-radius: .4rem;
       transform: translate(-50%, -50%);
       box-shadow: 0 2px 5px #5077aa;
+    }
+    .disabled{
+      background:#c7c7c7;
+      box-shadow: 0 2px 5px #c7c7c7;
     }
   }
 
