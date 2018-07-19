@@ -206,7 +206,7 @@ export default {
     })
   },
   beforeRouteEnter: (to, from, next) => {
-      if (from.path !== '/home') {
+      if (from.path !== '/newhome') {
         isBack = true;
         path = from.path;
         query = from.query;
