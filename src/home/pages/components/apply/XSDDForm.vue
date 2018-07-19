@@ -32,9 +32,13 @@
           <popup v-model="showTransPop" height="70%" id="trade_pop_part">
             <div class="trade_pop">
               <div class="title">结算方式<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showTransPop = !showTransPop"></x-icon></div>
-              <span class="each_mode vux-1px" v-for="(item, index) in transMode" :key="index">{{item}}</span>
+              <span class="each_mode "
+              :class='{choiced : index===paymentIndex}' 
+              v-for="(item, index) in transMode" 
+              :key="index" 
+              @click='getPayment(item,index)'>{{item}}</span>
             </div>
-            <div class="cfm_btn">确定</div>
+            <div class="cfm_btn" @click="submitPayment">确定</div>
           </popup>
         </div>
       </div>
@@ -48,9 +52,14 @@
           <popup v-model="showLogPop" height="60%" id="trade_pop_part">
             <div class="trade_pop">
               <div class="title">物流条款<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon></div>
-              <span class="each_mode vux-1px" v-for="(item, index) in logisticsTerm" :key="index">{{item}}</span>
+              <span class="each_mode vux-1px"
+              :class='{choiced : index===logisticsIndex}' 
+               v-for="(item, index) in logisticsTerm" 
+               :key="index" 
+               @click='getLogistics(item,index)'>
+               {{item}}</span>
             </div>
-            <div class="cfm_btn">确定</div>
+            <div class="cfm_btn" @click="submitLogistics">确定</div>
           </popup>
         </div>
       </div>
@@ -139,11 +148,15 @@
 </template>
 
 <script>
-import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,AlertModule } from 'vux'
+import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,AlertModule,TransferDom } from 'vux'
 import dealerService from '../../../service/dealerService.js'
 import PopMatterList from '../../components/PopMatterList'
-import tokenService from '../../../service/tokenService.js';
+import {saveAndStartWf, getBaseInfoData} from './../../../service/commonService' 
+
 export default {
+  directives: {
+    TransferDom
+  },
   components:{
     Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList
   },
@@ -163,7 +176,11 @@ export default {
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
       info : '',
-      count : 0    // 总价
+      count : 0 ,   // 总价
+      formData : {},
+      dealer : {},
+      paymentIndex : 0,
+      logisticsIndex : 0
     }
   },
   methods:{
@@ -171,30 +188,51 @@ export default {
     goSetAds(){
       this.$router.push({ path:'/adress'});
     },
+    //选择结算方式
+    getPayment(item,i){
+      this.dealer.drDealerPaymentTerm = item;
+      this.paymentIndex = i;
+
+    },
+    submitPayment(){
+      
+      this.isThisTrans = this.dealer.drDealerPaymentTerm;
+      this.showTransPop = false;
+    },
+    getLogistics(item,i){
+      this.dealer.drDealerLogisticsTerms = item;
+      this.logisticsIndex = i;
+    },
+    submitLogistics(){
+      this.isThisLog = this.dealer.drDealerLogisticsTerms;
+      this.showLogPop = false;
+    },
     // TODO 选中物料项
     selMatter(val) {
+      this.count = 0;
       let sels = JSON.parse(val);
-      console.log(this.materList);
-      if(this.materList.length>0){
         sels.map(item=>{
-          this.materList.map(item1=>{
-            if(item.inventoryCode = item1.inventoryCode){
-              item.num = item1.num;
-              item.defaultPrice  = item.defaultPrice;
-            }
-            else{
-              item.num = 1;
-              item.defaultPrice = 90;
-            }
-          })
+          if(this.materList.length>0){
+            this.materList.map(item1=>{
+               console.log(item1.inventoryCode);
+              if(item.inventoryCode ===  item1.inventoryCode){
+                item.num = item1.num;
+                item.defaultPrice  = item1.defaultPrice;
+              }
+              else{
+                item.num = 1;
+                item.defaultPrice = 90;
+              }              
+            })
+          }
+          else{
+            item.num = 1;
+            item.defaultPrice = 90;  
+          }   
         })
-      }
-      
-      this.materList = JSON.parse(JSON.stringify(sels));
+      this.materList = sels;
       this.materList.map(item=>{
-        item.defaultPrice = 90;
-        item.num = 1;
-        this.count += item.defaultPrice;
+        this.count += item.defaultPrice * item.num;
       })
     },
     //选择默认图片
@@ -239,13 +277,24 @@ export default {
       dealerService.getDealerInfo(this.transCode).then(data=>{
         console.log(data);
         this.info = data.formData;
+        this.dealer = {
+          dealerDebitContactPersonName :  data.formData.baseinfo.creatorName,
+          dealerDebitContactInformation : data.formData.dealerMobilePhone
+        }
 
       }).catch(e=>{
         AlertModule.show({
           content:e.message
         })
       })
-    }
+    },
+    // TODO 获取用户基本信息
+    getBaseInfoData() {
+      getBaseInfoData().then(data => {
+        console.log(data);
+        this.formData = {...data};
+      })
+    },
   },
   created(){
     let transCode = this.$route.query.transCode;
@@ -253,7 +302,7 @@ export default {
       this.transCode = transCode;
       this.getDealerInfo();
     }
-
+    this.getBaseInfoData();
   }
 }
 </script>
@@ -617,6 +666,12 @@ export default {
       margin-right: .1rem;
       display: inline-block;
       padding: .04rem .2rem;
+      border:1px solid #C7C7C7;
+      border-radius: 40px;
+    }
+    .choiced{
+      background: #5077aa;
+      color:#fff;
     }
     .vux-1px:before {
       border-radius: 40px;
