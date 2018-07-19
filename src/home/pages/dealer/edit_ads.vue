@@ -417,6 +417,7 @@
   .content {
     height: 90%;
     overflow-y: auto;
+    overflow-x: hidden;
     input {
       border: none;
       outline: none;

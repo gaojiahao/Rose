@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div class="content">
+    <div class="address_content">
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->

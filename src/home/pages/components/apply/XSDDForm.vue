@@ -110,9 +110,9 @@
                           ￥{{item.defaultPrice}}
                         </div>
                         <div class='mater_num'>
-                          <span class='handle sub'>-</span>
-                          <input class='num' type='number' v-model='item.num'/>
-                          <span class='handle plus'>+</span>
+                          <span class='handle sub' @click="subNum(item,index)">-</span>
+                          <input class='num' type='number' v-model.number='item.num'/>
+                          <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
                           
                       </div>
@@ -173,9 +173,9 @@ export default {
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
-      console.log(sels);
-      this.materList = [...sels];
-      sels.map(item=>{
+      this.count = 0;
+      this.materList = JSON.parse(JSON.stringify(sels));
+      this.materList.map(item=>{
         item.defaultPrice = 90;
         item.num = 1;
         this.count += item.defaultPrice;
@@ -193,6 +193,18 @@ export default {
     delClick(index){
       let arr = this.materList;
       arr.splice(index, 1);
+    },
+    subNum(item,i){
+      item.num--;
+      if(item.num<=0){
+        item.num = 1;
+      }
+      this.$set(this.materList, i, item);
+    },
+    plusNum(item,i){
+      item.num++;
+      this.$set(this.materList, i, item);
+      
     },
     //获取往来信息
     getDealerInfo(){
