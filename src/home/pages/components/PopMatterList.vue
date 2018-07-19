@@ -52,6 +52,10 @@
                       <span class="father">大类: {{item.inventoryType}}</span>
                       <span class="child">子类: {{item.inventorySubclass}}</span>
                     </div>
+                    <!-- 加工属性 -->
+                    <div class="mater_classify">
+                      <span>加工属性: {{item.processing}}</span>
+                    </div>
                     <!-- 物料材质等 -->
                     <div class="mater_material">
                       <span class="unit">单位: {{item.measureUnit}}</span>
