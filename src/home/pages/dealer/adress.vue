@@ -21,7 +21,7 @@
       <!-- 主要内容区域 -->
       <div class="app_main mescroll" id="mescroll">
         <div>
-          <div class="client_ads mg_auto vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
+          <div class="client_ads vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.creatorName}}</span>
               <span class="user_tel">{{item.dealerMobilePhone}}</span>
