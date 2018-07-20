@@ -49,14 +49,17 @@
       <div class='each_property vux-1px-b'>
         <label>固定电话:</label>
         <input type='text' v-model="dealer.dealerPhone" class='property_val' @blur="checkPhone"/>
+        <icon type="warn" class='warn' v-if='PhoneWarn'></icon>
       </div>
       <div class='each_property vux-1px-b'>
         <label>手机:</label>
         <input type='text' v-model="dealer.dealerMobilePhone" class='property_val' @blur="checkMobile"/>
+        <icon type="warn" class='warn' v-if='MobileWarn'></icon>
       </div>
       <div class='each_property vux-1px-b'>
         <label>电子邮件:</label>
         <input type='text' v-model="dealer.dealerMail" class='property_val' @blur='checkEmail'/>
+        <icon type="warn" class='warn' v-if='EmailWarn'></icon>
       </div>
     </div>
     <div class='vux-1px-t btn '>
@@ -65,7 +68,7 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Picker, Popup, Group, AlertModule,XAddress, ChinaAddressV4Data} from 'vux';
+  import {TransferDom, Picker, Popup, Group, AlertModule,XAddress, ChinaAddressV4Data,Icon } from 'vux';
   import RPicker from './../components/RPicker';
   import common from '../mixins/common.js'
   import dealerService from '../../service/dealerService.js'
@@ -86,6 +89,9 @@
         AccountSmlType : [],
         AccountAddress : [],
         addressData : ChinaAddressV4Data,
+        PhoneWarn : false, //固定电话校验提示
+        MobileWarn : false, //手机检验提示
+        EmailWarn :false, //邮箱校验提示
         baseinfo: {
           handler: '', // 经办人ID
           handlerName: '', // 经办人
@@ -131,7 +137,8 @@
       Popup,
       Group,
       RPicker,
-      XAddress
+      XAddress,
+      Icon 
     },
     methods: {
       preloadFile(file) {
@@ -236,28 +243,24 @@
       //校验固定电话号
       checkPhone(){
         let reg = /^0\d{2,3}-?\d{7,8}$/;
-        if(!reg.test(this.dealer.dealerPhone)){
+        if(this.dealer.dealerPhone.length>0 && !reg.test(this.dealer.dealerPhone)){
+          this.PhoneWarn = true;
           this.btnStatus = true;
-          AlertModule.show({
-            content:'固定电话格式不正确'
-          })
         }
         else{
+          this.PhoneWarn = false;
           this.btnStatus = false;
-        }
-        
-        
+        }               
       },
       //校验手机号
       checkMobile(){
         let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-        if(!reg.test(this.dealer.dealerMobilePhone)){
+        if(this.dealer.dealerMobilePhone.length>0 && !reg.test(this.dealer.dealerMobilePhone)){
+          this.MobileWarn = true;
           this.btnStatus = true;
-          AlertModule.show({
-            content:'手机号格式不正确'
-          })
         }
         else{
+          this.MobileWarn = false;
           this.btnStatus = false;
         }
         
@@ -266,13 +269,12 @@
       //校验邮箱
       checkEmail(){
         let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
-        if(!reg.test(this.dealer.dealerMail)){
+        if(this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
+          this.EmailWarn = true;
           this.btnStatus = true;
-          AlertModule.show({
-            content:'邮箱格式不正确'
-          })
         }
         else{
+          this.EmailWarn = false;
           this.btnStatus = false;
         }
         
@@ -285,15 +287,23 @@
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.dealer = {...this.dealer, ...dealer,};
           this.biReferenceId = this.dealer.referenceId;
-          if (this.dealer.dealerPic) {
+          if (this.dealer.dealerPic.length>0) {
             this.picShow = true;
             this.MatPic = this.dealer.dealerPic;
+          }
+          else{
+            this.picShow = true;
+            this.getDefaultImg()
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.dealer.dealerPic
           });
           this.imgFileObj = imgFileObj;
         });
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+         this.MatPic = require('./../../assets/dealer.png');
       },
       //选择地址
       changeAddress(ids,names){
@@ -493,6 +503,15 @@
       .required{
         color:red;
         font-weight: bold;
+      }
+      //校验错误提示按钮
+      .warn{
+        position: absolute;
+        right: 0.08rem;
+        top: 0.27rem;
+      }
+      .weui-icon-warn{
+        font-size:0.18rem;
       }
       .property_val {
         display: block;
