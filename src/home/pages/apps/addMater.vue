@@ -5,7 +5,7 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">物料编码:</label>
-            <input type='text' v-model.trim="inventory.inventoryCode" class='property_val'/>
+            <input type='text' :readonly="codeReadOnly" v-model.trim="inventory.inventoryCode" class='property_val'/>
           </div>
           <div class='each_property'>
             <label class="required">物料名称:</label>
@@ -118,6 +118,7 @@
         imgFileObj: {}, // 上传的图片对象
         imgFile: null,
         showLoading: false,
+        codeReadOnly: false,
       }
     },
     directives: {
@@ -362,6 +363,7 @@
           requestPromise.push(this.getSml());
           requestPromise.push(this.getMeasure());
           this.hasDefault = false;
+          this.codeReadOnly = true;
           Promise.all(requestPromise).then(() => {
             this.showLoading = false;
           })

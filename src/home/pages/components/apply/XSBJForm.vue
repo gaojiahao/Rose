@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="goSetAds">
+      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
         <div class="no-selected" v-if="!customInfo">
           <div class="title">客户列表</div>
           <div class="tips">请选择客户</div>
@@ -101,6 +101,9 @@
         </template>
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
+        <!-- 往来popup -->
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer"
+                         ref="dealer"></pop-dealer-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          ref="matter"></pop-matter-list>
@@ -117,13 +120,14 @@
 <script>
   import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton} from 'vux'
   import PopMatterList from './../../components/PopMatterList'
+  import PopDealerList from './../../components/PopDealerList'
   import dealerService from './../../../service/dealerService'
   import {saveAndStartWf, getBaseInfoData} from './../../../service/commonService'
   import Loading from './../../components/Loading'
 
   export default {
     components: {
-      Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList, Loading,
+      Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList, Loading, PopDealerList,
     },
     data() {
       return {
@@ -134,6 +138,7 @@
         formData: {},
         priceMap: {},
         showLoading: false,
+        showDealerPop: false,
       }
     },
     methods: {
@@ -153,6 +158,17 @@
           this.priceMap[item.transCode] = item.price;
         });
         this.showMaterielPop = !this.showMaterielPop
+      },
+      // TODO 选中往来项
+      selDealer(val) {
+        let [sels] = JSON.parse(val);
+        this.customInfo = {
+          name: sels.creatorName,
+          mobilePhone: sels.dealerMobilePhone,
+          phone: sels.dealerMobilePhone || sels.dealerPhone,
+          company: sels.dealerName,
+          address: sels.province + sels.city + sels.county + sels.address,
+        };
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -222,6 +238,7 @@
                 content: message,
                 onHide: () => {
                   if (success) {
+                    this.$router.go(-1);
                   }
                 }
               });
