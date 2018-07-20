@@ -178,12 +178,13 @@ export default {
       showLogPop:false,                              // 是否显示物流条款的popup
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
-      info : '',
+      info : {},
       count : 0 ,   // 总价
       formData : {},
       dealer : {
-        drDealerPaymentTerm : '现付',
-        drDealerLogisticsTerms :'上门'
+        drDealerPaymentTerm : '现付',  //结算方式
+        drDealerLogisticsTerms :'上门', //物流条件
+        biComment : '' //备注
       },
       paymentIndex : 0,
       logisticsIndex : 0
@@ -293,37 +294,77 @@ export default {
     },
     //提价订单
     submitOrder(){
-      let dataSet = [];
-      this.materList.map(item=>{
-        dataSet.push({
-          inventoryName_transObjCode : item.inventoryName, //物料名称
-          transObjCode : item.inventoryCode, //物料编码
-          assMeasureUnit : '个',    //辅助计量
-          assMeasureScale : '',  //与主计量单位倍数
-          tdQty : item.num,     //数量
-          assistQty : 0,        //辅计数量
-          price : item.defaultPrice, //单价
-          taxRate : 1,              //税率
-          taxAmount : 90,           //税金
-          tdAmount : 90,           //价税小计
-          promDeliTime : '2018-12-12', //预期交货日
-          comment : ''                //说明
+      if(!this.info.dealerName){
+        this.$vux.alert.show({
+          content : '请选择往来信息'
         })
-      })
-      let submitData = {
-        listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
-        biComment : '',
-        formData: JSON.stringify({
-          ...this.formData,
-          ...this.dealer,
-          order: {
-            dealerDebit: this.info.dealerCode,
-            drDealerLabel : this.info.dealerLabelName,
-            dataSet
-          }
-        }),
       }
-      console.log(submitData);
+      else if(this.materList.length === 0){
+        this.$vux.alert.show({
+          content : '请选择物料'
+        })
+      }
+      else{
+         this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            let dataSet = [];
+            this.materList.map(item=>{
+              dataSet.push({
+                inventoryName_transObjCode : item.inventoryName, //物料名称
+                transObjCode : item.inventoryCode, //物料编码
+                assMeasureUnit : '个',    //辅助计量
+                assMeasureScale : '',  //与主计量单位倍数
+                tdQty : item.num,     //数量
+                assistQty : 0,        //辅计数量
+                price : item.defaultPrice, //单价
+                taxRate : 1,              //税率
+                taxAmount : 90,           //税金
+                tdAmount : 90,           //价税小计
+                promDeliTime : '2018-12-12', //预期交货日
+                comment : ''                //说明
+              })
+            })
+            let submitData = {
+              listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+              biComment : '',
+              formData: JSON.stringify({
+                ...this.formData,
+                ...this.dealer,
+                order: {
+                  dealerDebit: this.info.dealerCode,
+                  drDealerLabel : this.info.dealerLabelName,
+                  drAccountSub : this.info.dealerSubclass,
+                  dataSet
+                }
+              })
+            }
+            console.log(submitData);
+            saveAndStartWf(submitData).then(data => {
+              //this.showLoading = false;
+              let {success = false, message = '提交失败'} = data;
+              if (success) {
+                message = '订单提交成功'
+              }
+              this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                  if (success) {
+                    this.$router.go(-1);
+                  }
+                }
+              });
+            }).catch(e => {
+              this.$vux.alert.show({
+                content : e.message
+              })
+            });
+          }
+         })
+        
+      }
+      
     },
     // TODO 获取用户基本信息
     getBaseInfoData() {
