@@ -338,6 +338,8 @@
         background: #F3F1F2;
         border-top-left-radius: .3rem;
         border-bottom-left-radius: .3rem;
+        -webkit-appearance: none;
+        appearance: none;
         &::-webkit-search-cancel-button {
           display: none;
         }
