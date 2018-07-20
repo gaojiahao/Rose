@@ -48,11 +48,11 @@
       </div>
       <div class='each_property vux-1px-b'>
         <label>固定电话:</label>
-        <input type='text' v-model="dealer.dealerPhone" class='property_val' @blur='checkPhone'/>
+        <input type='text' v-model="dealer.dealerPhone" class='property_val' @blur="checkPhone"/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>手机:</label>
-        <input type='text' v-model="dealer.dealerMobilePhone" class='property_val' @blur='checkMobile'/>
+        <input type='text' v-model="dealer.dealerMobilePhone" class='property_val' @blur="checkMobile"/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>电子邮件:</label>
@@ -69,7 +69,8 @@
   import RPicker from './../components/RPicker';
   import common from '../mixins/common.js'
   import dealerService from '../../service/dealerService.js'
-  import { getBaseInfoData,upload} from '../../service/materService';
+  import {upload} from '../../service/materService.js';
+  import {getBaseInfoData} from '../../service/commonService.js';
   export default {
     data() {
       return {
@@ -158,7 +159,8 @@
       // TODO 往来关系标签
       dealerLabel(val) {
         if (this.hasDefault) {
-          return
+          console.log('进入');
+          return 
         }
         this.getBig().then(data => {
           let [defaultSelect = {}] = data;
@@ -168,7 +170,7 @@
       // TODO 往来大类切换
       bigChange(val) {
         if (this.hasDefault) {
-          return
+          return 
         }
         this.getSml(val).then(data => {
           let [defaultSelect = {}] = data;
@@ -279,7 +281,7 @@
       findData() {
         return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
           let {baseinfo = {}, dealer = {}} = formData;
-          // this.hasDefault = true;
+          this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.dealer = {...this.dealer, ...dealer,};
           this.biReferenceId = this.dealer.referenceId;
@@ -306,6 +308,13 @@
       },
       //提交
       submit(){
+        console.log(this.dealer);
+        for(let key in this.dealer){
+          console.log(typeof(this.dealer[key]));
+          if(typeof(this.dealer[key]) === 'string' && this.dealer[key].indexOf(' ')>=0){
+            this.dealer[key] = this.dealer[key].replace(/\s/g,'');
+          }
+        }
         let submitData = {
           listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
           formData: {
@@ -313,7 +322,8 @@
             dealer: this.dealer
           }
         };
-        if(this.hasDefault){
+        console.log(this.hasDefault);
+        if(this.transCode.length>0){
           dealerService.update(submitData).then(data=>{
             let that = this;
             if(data.success){
@@ -396,14 +406,12 @@
           await this.getDealer();
           await this.getBig();
           this.getSml();
-          this.hasDefault = true;
+          this.hasDefault = false;
         })();
-
       }
       else{
-        console.log('进入了')
         this.getDealer().then(data => {
-        let [defaultSelect = {}] = data;
+          let [defaultSelect = {}] = data;
           this.dealer.dealerLabelName = defaultSelect.name
         });
         //获取当前用户信息
@@ -415,11 +423,6 @@
           }
         });
       }
-      
-      
-      
-      
-      
     }
   }
 </script>
