@@ -28,7 +28,11 @@
             </div>
             <div class="cp_info">
               <p class="cp_name">{{item.dealerName}}</p>
+              <p class='cp_label'>
+                <span>{{item.dealerLabelName}}</span>
+              </p>
               <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
+              
             </div>
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
@@ -373,6 +377,13 @@ export default {
         .cp_name {
           color: #111;
           font-weight: 500;
+        }
+        .cp_label{
+          span{
+            padding :0.02rem;
+            background: #3f72af;
+            color:#fff;
+          }
         }
         .cp_ads {
           font-weight: 200;

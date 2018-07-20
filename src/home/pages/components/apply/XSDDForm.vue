@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" >
+      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
         <div v-if='info.dealerName'>
           <div class="user_info">
             <span class="user_name">{{info.creatorName}}</span>
@@ -14,7 +14,7 @@
           </div>
         </div>
         <div v-else>
-          <div @click="showDealerPop = !showDealerPop">
+          <div >
             <div class="title">往来列表</div>
             <div class="tips">请选择往来</div>           
           </div>
@@ -293,16 +293,21 @@ export default {
     },
     //提价订单
     submitOrder(){
-      console.log(this.formData);
-      console.log(this.dealer);
-      console.log(this.materList);
       let dataSet = [];
       this.materList.map(item=>{
         dataSet.push({
-          inventoryName_transObjCode : item.inventoryName,
-          transObjCode : item.inventoryCode,
-          tdQty : item.num,
-          price : item.defaultPrice
+          inventoryName_transObjCode : item.inventoryName, //物料名称
+          transObjCode : item.inventoryCode, //物料编码
+          assMeasureUnit : '个',    //辅助计量
+          assMeasureScale : '',  //与主计量单位倍数
+          tdQty : item.num,     //数量
+          assistQty : 0,        //辅计数量
+          price : item.defaultPrice, //单价
+          taxRate : 1,              //税率
+          taxAmount : 90,           //税金
+          tdAmount : 90,           //价税小计
+          promDeliTime : '2018-12-12', //预期交货日
+          comment : ''                //说明
         })
       })
       let submitData = {
@@ -311,14 +316,14 @@ export default {
         formData: JSON.stringify({
           ...this.formData,
           ...this.dealer,
-          dealerDebit: this.info.dealerCode,
-          drDealerLabel : this.info.dealerLogisticsTerms,
           order: {
+            dealerDebit: this.info.dealerCode,
+            drDealerLabel : this.info.dealerLabelName,
             dataSet
           }
         }),
       }
-
+      console.log(submitData);
     },
     // TODO 获取用户基本信息
     getBaseInfoData() {

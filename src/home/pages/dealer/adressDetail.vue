@@ -15,7 +15,7 @@
         <div class='mater_pic vux-1px-l'>
           <div class='add_icon'>
             <label for="file"></label>
-            <img :src='MatPic' class='upload'/>
+            <img :src='MatPic' class='upload' alt="materImg" @error="getDefaultImg"/>
           </div>
         </div>
       </div>
@@ -83,15 +83,25 @@
           }
           this.biReferenceId = this.dealer.referenceId;
           if (this.dealer.dealerPic) {
-            this.picShow = true;
             this.MatPic = this.dealer.dealerPic;
+          }
+          else{
+            this.getDefaultImg()
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.dealer.dealerPic
           });
           this.imgFileObj = imgFileObj;
+        }).catch(e=>{
+          this.$vux.alert.show({
+            content:e.message
+          })
         });
-      }
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+         this.MatPic = require('./../../assets/dealer.png');
+      },
     },
     created() {
       let query = this.$route.query;
