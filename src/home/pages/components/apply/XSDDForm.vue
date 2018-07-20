@@ -2,22 +2,21 @@
   <div class="pages">
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="goSetAds">
-        <div v-if='info.baseinfo'>
+      <div class="or_ads mg_auto box_sd" >
+        <div v-if='info.dealerName'>
           <div class="user_info">
-            <span class="user_name">{{info.baseinfo.creatorName}}</span>
-            <span class="user_tel">{{info.dealer.dealerMobilePhone}}</span>
+            <span class="user_name">{{info.creatorName}}</span>
+            <span class="user_tel">{{info.dealerMobilePhone}}</span>
           </div>
           <div class="cp_info">
-            <p class="cp_name">{{info.dealer.dealerName}}</p>
-            <p class="cp_ads">{{info.dealer.province}}{{info.dealer.city}}{{info.dealer.county}}{{info.dealer.address}}</p>
+            <p class="cp_name">{{info.dealerName}}</p>
+            <p class="cp_ads">{{info.province}}{{info.city}}{{info.county}}{{info.address}}</p>
           </div>
         </div>
         <div v-else>
-          <div >
+          <div @click="showDealerPop = !showDealerPop">
             <div class="title">往来列表</div>
-            <div class="tips">请选择往来</div>
-            
+            <div class="tips">请选择往来</div>           
           </div>
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
@@ -25,7 +24,7 @@
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
         <p class="title">结算方式</p>
-        <p class="mode">{{isThisTrans}}</p>
+        <p class="mode">{{this.dealer.drDealerPaymentTerm}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom >
@@ -45,7 +44,7 @@
       <!-- 物流条款 -->
       <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
         <p class="title">物流条款</p>
-        <p class="mode">{{isThisLog}}</p>
+        <p class="mode">{{this.dealer.drDealerLogisticsTerms}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom >
@@ -81,7 +80,7 @@
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(index)" type="warn">删除</swipeout-button>
+                    <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
                   </div>
                   <div class="each_mater_wrapper" slot="content">
                     <div class="mater_img">
@@ -134,6 +133,9 @@
         </template>
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="materList.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
+        <!-- 往来popup -->
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer">
+        </pop-dealer-list  ref="matter">
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          ref="matter"></pop-matter-list>
@@ -142,7 +144,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">￥{{count}}</span>
-      <span class="count_btn">提交订单</span>
+      <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
 </template>
@@ -151,6 +153,7 @@
 import { Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,AlertModule,TransferDom } from 'vux'
 import dealerService from '../../../service/dealerService.js'
 import PopMatterList from '../../components/PopMatterList'
+import PopDealerList from '../../components/PopDealerList'
 import {saveAndStartWf, getBaseInfoData} from './../../../service/commonService' 
 
 export default {
@@ -158,27 +161,30 @@ export default {
     TransferDom
   },
   components:{
-    Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList
+    Icon, Cell, Popup, Group, XInput, Datetime, PopupRadio, Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList,PopDealerList
   },
   data(){
     return{
       srhInpTx:'',                                   // 搜索框内容
       materList:[],                                  // 物料列表
-      whichIndex:[],                                 // 哪些被选中了
+      DealerPaymentTerm : '现付',                        //结算方式
+      DealerLogisticsTerms : '上门',                      //物流方式
       deliveryDate:'',                               // 预计交付日       
-      isThisLog:'上门',                               // 默认物流条款
-      isThisTrans:'现付',                             // 默认支付方式
       assistUnit: '请选择',                           // 辅助计量显示值
       assistUnitList: ['A', 'B', 'C'],               // 辅助计量列表
       transMode:['现付','预付','账期','票据'],          // 结算方式
       logisticsTerm:['上门','自提','离岸','到港'],      // 物流条款
+      showDealerPop : false,                          // 是否显示往来的popup
       showLogPop:false,                              // 是否显示物流条款的popup
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
       info : '',
       count : 0 ,   // 总价
       formData : {},
-      dealer : {},
+      dealer : {
+        drDealerPaymentTerm : '现付',
+        drDealerLogisticsTerms :'上门'
+      },
       paymentIndex : 0,
       logisticsIndex : 0
     }
@@ -190,22 +196,30 @@ export default {
     },
     //选择结算方式
     getPayment(item,i){
-      this.dealer.drDealerPaymentTerm = item;
+      this.DealerPaymentTerm = item;
       this.paymentIndex = i;
 
     },
     submitPayment(){
-      
-      this.isThisTrans = this.dealer.drDealerPaymentTerm;
+      this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
       this.showTransPop = false;
     },
+    //选择物流方式
     getLogistics(item,i){
-      this.dealer.drDealerLogisticsTerms = item;
+      this.DealerLogisticsTerms = item;
       this.logisticsIndex = i;
     },
     submitLogistics(){
-      this.isThisLog = this.dealer.drDealerLogisticsTerms;
+      this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
       this.showLogPop = false;
+    },
+    //选中的往来
+    selDealer(val){
+      console.log(val);
+      this.info = JSON.parse(val)[0];
+      this.dealer.dealerDebitContactPersonName = this.info.creatorName;
+      this.dealer.dealerDebitContactInformation = this.info.dealerMobilePhone;
+
     },
     // TODO 选中物料项
     selMatter(val) {
@@ -244,10 +258,13 @@ export default {
       return url
     },
     // 滑动删除
-    delClick(index){
+    delClick(index,item){
       let arr = this.materList;
+      let total = item.num*item.defaultPrice;
+      this.count -= total;
       arr.splice(index, 1);
     },
+    //数量--
     subNum(item,i){
       let oldNum = item.num;
       item.num--;
@@ -258,6 +275,7 @@ export default {
       this.count -= total;
       this.$set(this.materList, i, item);
     },
+    //数量++
     plusNum(item,i){
       let oldNum = item.num;
       item.num++;
@@ -266,42 +284,50 @@ export default {
       this.$set(this.materList, i, item);
       
     },
+    //修改数量
     getNum(item,i,e){
       let oldNum = item.num;
       item.num = Number(e.target.value);
       let total = item.num*item.defaultPrice;
       this.count = this.count - item.defaultPrice*oldNum + total;
     },
-    //获取往来信息
-    getDealerInfo(){
-      dealerService.getDealerInfo(this.transCode).then(data=>{
-        console.log(data);
-        this.info = data.formData;
-        this.dealer = {
-          dealerDebitContactPersonName :  data.formData.baseinfo.creatorName,
-          dealerDebitContactInformation : data.formData.dealerMobilePhone
-        }
-
-      }).catch(e=>{
-        AlertModule.show({
-          content:e.message
+    //提价订单
+    submitOrder(){
+      console.log(this.formData);
+      console.log(this.dealer);
+      console.log(this.materList);
+      let dataSet = [];
+      this.materList.map(item=>{
+        dataSet.push({
+          inventoryName_transObjCode : item.inventoryName,
+          transObjCode : item.inventoryCode,
+          tdQty : item.num,
+          price : item.defaultPrice
         })
       })
+      let submitData = {
+        listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+        biComment : '',
+        formData: JSON.stringify({
+          ...this.formData,
+          ...this.dealer,
+          dealerDebit: this.info.dealerCode,
+          drDealerLabel : this.info.dealerLogisticsTerms,
+          order: {
+            dataSet
+          }
+        }),
+      }
+
     },
     // TODO 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(data => {
-        console.log(data);
         this.formData = {...data};
       })
     },
   },
   created(){
-    let transCode = this.$route.query.transCode;
-    if(transCode){
-      this.transCode = transCode;
-      this.getDealerInfo();
-    }
     this.getBaseInfoData();
   }
 }
