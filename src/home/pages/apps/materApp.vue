@@ -86,7 +86,7 @@
 </template>
 
 <script>
-  import {Tab, Icon, TabItem, Spinner, LoadMore, AlertModule} from 'vux'
+  import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
   import {getDictByType, getMatList} from './../../service/materService'
   import BScroll from 'better-scroll'
 
@@ -183,10 +183,6 @@
           this.activeTab = '';
           tableContent.unshift({name: '全部'});
           this.matNature = [...tableContent];
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
         });
       },
       // TODO 获取物料列表
@@ -243,9 +239,6 @@
         }).catch(e => {
           this.bScroll.finishPullDown();
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-          AlertModule.show({
-            content: e.message,
-          })
         });
       },
       // TODO 搜索物料

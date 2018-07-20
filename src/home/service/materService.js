@@ -1,11 +1,22 @@
 import $axios from '../plugins/ajax';
+import {AlertModule} from 'vux'
+
+// TODO 错误处理回调
+let errorHandler = (e) => {
+  AlertModule.show({
+    content: e.message,
+  });
+  return Promise.reject(e)
+};
 
 // TODO 保存物料
 export let save = (data = {}) => {
   return $axios.post({
     url: '/H_roleplay-si/inventory/save',
     data
-  })
+  }).catch(e => {
+    return errorHandler(e);
+  });
 };
 
 // TODO 修改物料
@@ -13,6 +24,8 @@ export let update = (data = {}) => {
   return $axios.post({
     url: '/H_roleplay-si/inventory/update',
     data
+  }).catch(e => {
+    return errorHandler(e);
   });
 };
 
@@ -21,6 +34,8 @@ export let findData = (transCode = '') => {
   return $axios.ajax({
     url: '/H_roleplay-si/inventory/findData',
     data: {transCode}
+  }).catch(e => {
+    return errorHandler(e);
   });
 };
 
@@ -29,7 +44,9 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   return $axios.upload({
     file,
     biReferenceId
-  })
+  }).catch(e => {
+    return errorHandler(e);
+  });
 };
 
 // TODO 删除上传的图片
@@ -40,7 +57,9 @@ export let delImg = (id = '') => {
       id,
       list: 'attachments',
     }
-  })
+  }).catch(e => {
+    return errorHandler(e);
+  });
 };
 
 // TODO 获取加工属性
@@ -53,6 +72,8 @@ export let getDictByType = (data = {}) => {
       limit: 10000,
       ...data
     }
+  }).catch(e => {
+    return errorHandler(e);
   });
 };
 
@@ -66,50 +87,8 @@ export let getDictByValue = (data = {}) => {
       limit: 10000,
       ...data
     }
-  });
-};
-
-// TODO 获取当前用户
-export let getBaseInfoData = () => {
-  return new Promise(async (resolve, reject) => {
-    let user = {};
-    let {nickname, userId} = await $axios.ajax({
-      url: '/H_roleplay-si/userInfo/currentUser',
-    }).then(data => {
-      return data
-    });
-    let {userGroupId, userGroupName} = await $axios.ajax({
-      url: '/H_roleplay-si/ds/getUnitsByUserId',
-      data: {
-        userId: userId,
-        page: 1,
-        start: 0,
-        limit: 10000
-      }
-    }).then(({tableContent = []}) => {
-      let [unit = {}] = tableContent;
-      return unit
-    });
-    $axios.ajax({
-      url: '/H_roleplay-si/ds/getRolesByUserId',
-      data: {
-        userId: userId,
-        parentId: userGroupId,
-        page: 1,
-        start: 0,
-        limit: 10000
-      }
-    }).then(({tableContent = []}) => {
-      let [role = {}] = tableContent;
-      resolve({
-        handler: userId,
-        handlerName: nickname,
-        handlerUnit: userGroupId,
-        handlerUnitName: userGroupName,
-        handlerRole: role.userGroupId,
-        handlerRoleName: role.userGroupName,
-      });
-    });
+  }).catch(e => {
+    return errorHandler(e);
   });
 };
 
@@ -117,15 +96,15 @@ export let getBaseInfoData = () => {
 export let getMatList = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2132',
-    // url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2183',
     data: {
       limit: 10,
       page: 1,
       start: 11,
-      // filter: JSON.stringify([{"operator": "like", "value": "商品", "property": "processing"}]),
       ...data
     }
-  })
+  }).catch(e => {
+    return errorHandler(e);
+  });
 };
 
 export default {
@@ -133,8 +112,8 @@ export default {
   update,
   findData,
   upload,
+  delImg,
   getDictByType,
   getDictByValue,
-  getBaseInfoData,
   getMatList,
 }

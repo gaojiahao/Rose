@@ -5,11 +5,11 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">物料编码:</label>
-            <input type='text' v-model="inventory.inventoryCode" class='property_val'/>
+            <input type='text' v-model.trim="inventory.inventoryCode" class='property_val'/>
           </div>
           <div class='each_property'>
             <label class="required">物料名称:</label>
-            <input type='text' v-model="inventory.inventoryName" class='property_val'/>
+            <input type='text' v-model.trim="inventory.inventoryName" class='property_val'/>
           </div>
         </div>
         <div class='mater_pic vux-1px-l'>
@@ -35,15 +35,15 @@
                 v-model="inventory.inventorySubclass"></r-picker>
       <div class='each_property vux-1px-b'>
         <label>型号规格:</label>
-        <input type='text' v-model="inventory.specification" class='property_val'/>
+        <input type='text' v-model.trim="inventory.specification" class='property_val'/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>颜色:</label>
-        <input type='text' v-model="inventory.inventoryColor" class='property_val'/>
+        <input type='text' v-model.trim="inventory.inventoryColor" class='property_val'/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>主材质:</label>
-        <input type='text' v-model="inventory.material" class='property_val'/>
+        <input type='text' v-model.trim="inventory.material" class='property_val'/>
       </div>
       <!--<div class='each_property vux-1px-b'>
         <label>主计量单位:</label>
@@ -59,7 +59,7 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Picker, Popup, Group, AlertModule} from 'vux';
+  import {TransferDom, Picker, Popup, Group} from 'vux';
   import Loading from './../components/Loading'
   import RPicker from './../components/RPicker';
   import common from './../mixins/common'
@@ -70,8 +70,8 @@
     upload,
     getDictByType,
     getDictByValue,
-    getBaseInfoData
   } from './../../service/materService';
+  import {getBaseInfoData} from './../../service/commonService';
 
   export default {
     data() {
@@ -160,10 +160,6 @@
           this.matPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
           this.inventory.inventoryPic = detail.attacthment;
           // this.biReferenceId = detail.biReferenceId
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
         });
       },
       // TODO 加工属性切换
@@ -212,32 +208,41 @@
           return true;
         });
         if (warn) {
-          AlertModule.show({
+          this.$vux.alert.show({
             content: warn,
           });
           return
         }
+
         // 修改
         if (this.transCode) {
           operaction = update;
           submitData.formData.effectiveTime = this.changeDate(new Date(), true);
         }
-        this.showLoading = true;
-        operaction(submitData).then(data => {
-          this.showLoading = false;
-          let {success = false, message = '提交失败'} = data;
-          AlertModule.show({
-            content: message,
-            onHide: () => {
+
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            this.showLoading = true;
+            operaction(submitData).then(data => {
+              this.showLoading = false;
+              let {success = false, message = '提交失败'} = data;
               if (success) {
-                this.$router.go(-1);
+                message = '物料提交成功';
               }
-            }
-          });
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
+              this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                  if (success) {
+                    this.$router.go(-1);
+                  }
+                }
+              });
+            }).catch(e => {
+              this.showLoading = false;
+            });
+          }
         });
       },
       // TODO 查询物料详情
@@ -256,10 +261,6 @@
             return item.attacthment === this.inventory.inventoryPic
           });
           this.imgFileObj = imgFileObj;
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
         });
       },
       // TODO 获取加工属性列表
@@ -277,9 +278,6 @@
         }).catch(e => {
           this.matNatureList = [];
           this.inventory.processing = '';
-          AlertModule.show({
-            content: e.message,
-          })
         })
       },
       // TODO 获取材料大类
@@ -300,9 +298,6 @@
         }).catch(e => {
           this.matBigList = [];
           this.inventory.inventoryType = '';
-          AlertModule.show({
-            content: e.message,
-          })
         })
       },
       // TODO 获取材料子类
@@ -323,9 +318,6 @@
         }).catch(e => {
           this.matSmlList = [];
           this.inventory.inventorySubclass = '';
-          AlertModule.show({
-            content: e.message,
-          })
         })
       },
       // TODO 获取主计量单位列表
@@ -343,9 +335,6 @@
         }).catch(e => {
           this.measureList = [];
           this.inventory.measureUnit = '';
-          AlertModule.show({
-            content: e.message,
-          })
         })
       },
       // TODO 获取用户基本信息
@@ -356,10 +345,6 @@
             ...data,
             activeTime: this.changeDate(new Date(), true),
           }
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
         });
       },
     },
