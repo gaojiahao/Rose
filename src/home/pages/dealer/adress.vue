@@ -36,6 +36,8 @@
             </div>
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
+          <load-more tip="加载中" v-show="hasNext"></load-more>
+          <load-more :show-loading="false" tip="暂无数据" v-show="!dealerList.length && !hasNext"></load-more>
         </div>
         <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
       </div>
@@ -51,7 +53,7 @@
 
 <script>
 import dealerService from '../../service/dealerService.js'
-import {Tab, Icon, TabItem,Spinner,AlertModule} from 'vux'
+import {Tab, Icon, TabItem,Spinner,AlertModule,LoadMore} from 'vux'
 import BScroll from 'better-scroll'
 import LoadIcon from '../components/Loading.vue'
 const PULL_DOWN_REFRESH_HEIGHT = 30;
@@ -76,7 +78,7 @@ export default {
     }
   },
   components:{
-    Tab, Icon, TabItem,Spinner,LoadIcon
+    Tab, Icon, TabItem,Spinner,LoadIcon,LoadMore
   },
   methods:{
     // TODO 重置列表条件
