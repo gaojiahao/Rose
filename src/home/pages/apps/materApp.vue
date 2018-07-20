@@ -4,12 +4,12 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-        <div class="search_part">
-          <input class="srh_inp" type="text" v-model="srhInpTx">
+        <form class="search_part" action="" @submit.prevent="searchMat">
+          <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
           <div class="pop_cancel" @click="searchMat">搜索</div>
           <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
           <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
-        </div>
+        </form>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in matNature" :key="index" :selected="index === activeIndex"
@@ -338,6 +338,9 @@
         background: #F3F1F2;
         border-top-left-radius: .3rem;
         border-bottom-left-radius: .3rem;
+        &::-webkit-search-cancel-button {
+          display: none;
+        }
       }
       // 取消 按钮
       .pop_cancel {

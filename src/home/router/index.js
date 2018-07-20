@@ -21,9 +21,9 @@ export default [
     meta:{ title:'任务列表' } },
   { path:'/detail', name:'DETAIL', component:DETAIL,
     meta:{ title:'填写订单' } },
-  { 
+  {
     path:'/adress',
-    name:'ADRESS', 
+    name:'ADRESS',
     component:ADRESS,
     meta:{ title:'选择地址' },
     children:[
@@ -34,28 +34,28 @@ export default [
         meta:{ title:'编辑地址' }
       },
       {
-        path:'adressDetail', 
-        name:'ADRESSDETAL', 
-        component:ADRESSDETAL, 
+        path:'adressDetail',
+        name:'ADRESSDETAL',
+        component:ADRESSDETAL,
         meta:{ title:'地址详情' }
       }
     ]
   },
-  { 
-    path:'/materApp', 
-    name:'MATERAPP', 
+  {
+    path:'/materApp',
+    name:'MATERAPP',
     component:MATERAPP,
-    meta:{ title:'物料列表', keepAlive: true },
+    meta:{ title:'物料列表' },
     children:[
       {
-        path:'addMater', 
-        name:'ADDMATER', 
+        path:'addMater',
+        name:'ADDMATER',
         component:ADDMATER,
         meta:{ title:'新增物料' }
       },
       {
         path:'materDetail',
-        name:'MATERDETAIL', 
+        name:'MATERDETAIL',
         component:MATERDETAIL,
         meta:{ title:'物料详情' }
       }
