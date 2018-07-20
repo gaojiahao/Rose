@@ -5,11 +5,11 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">物料编码:</label>
-            <input type='text' v-model="inventory.inventoryCode" class='property_val'/>
+            <input type='text' v-model.trim="inventory.inventoryCode" class='property_val'/>
           </div>
           <div class='each_property'>
             <label class="required">物料名称:</label>
-            <input type='text' v-model="inventory.inventoryName" class='property_val'/>
+            <input type='text' v-model.trim="inventory.inventoryName" class='property_val'/>
           </div>
         </div>
         <div class='mater_pic vux-1px-l'>
@@ -35,15 +35,15 @@
                 v-model="inventory.inventorySubclass"></r-picker>
       <div class='each_property vux-1px-b'>
         <label>型号规格:</label>
-        <input type='text' v-model="inventory.specification" class='property_val'/>
+        <input type='text' v-model.trim="inventory.specification" class='property_val'/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>颜色:</label>
-        <input type='text' v-model="inventory.inventoryColor" class='property_val'/>
+        <input type='text' v-model.trim="inventory.inventoryColor" class='property_val'/>
       </div>
       <div class='each_property vux-1px-b'>
         <label>主材质:</label>
-        <input type='text' v-model="inventory.material" class='property_val'/>
+        <input type='text' v-model.trim="inventory.material" class='property_val'/>
       </div>
       <!--<div class='each_property vux-1px-b'>
         <label>主计量单位:</label>
@@ -70,8 +70,8 @@
     upload,
     getDictByType,
     getDictByValue,
-    getBaseInfoData
   } from './../../service/materService';
+  import {getBaseInfoData} from './../../service/commonService';
 
   export default {
     data() {

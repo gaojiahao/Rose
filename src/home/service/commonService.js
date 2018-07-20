@@ -28,7 +28,7 @@ export let getBaseInfoData = () => {
     }).then(data => {
       return data
     });
-    let {userGroupId, userGroupName} = await $axios.ajax({
+    let {userGroupId = '', userGroupName = ''} = await $axios.ajax({
       url: '/H_roleplay-si/ds/getUnitsByUserId',
       data: {
         userId: userId,
@@ -56,8 +56,8 @@ export let getBaseInfoData = () => {
         handlerName: nickname,
         handlerUnit: userGroupId,
         handlerUnitName: userGroupName,
-        handlerRole: role.userGroupId,
-        handlerRoleName: role.userGroupName,
+        handlerRole: role.userGroupId || '',
+        handlerRoleName: role.userGroupName || '',
       });
     });
   });
