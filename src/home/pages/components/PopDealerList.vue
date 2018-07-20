@@ -73,7 +73,7 @@
         default: false
       }
     },
-    directives: [TransferDom],
+    directives: {TransferDom},
     components: {
       Icon, Popup, LoadMore,
     },
@@ -134,13 +134,14 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        let arr = this.tmpItems;
+        this.tmpItems = []
+        // let arr = this.tmpItems;
         // 若存在重复的 则清除
-        if (arr.includes(sItem)) {
-          arr.splice(arr.findIndex(item => item === sItem), 1);
-          return;
-        }
-        arr.push(sItem);
+        // if (arr.includes(sItem)) {
+        //   arr.splice(arr.findIndex(item => item === sItem), 1);
+        //   return;
+        // }
+        this.tmpItems.push(sItem);
       },
       // TODO 确定选择物料
       cfmMater() {
@@ -472,7 +473,7 @@
           .selIcon,
           .isSelIcon {
             top: 50%;
-            left: -10%;
+            left: -.3rem;
             position: absolute;
             transform: translate(0, -50%);
           }
