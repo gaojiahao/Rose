@@ -54,7 +54,7 @@
       value: {
         handler(value) {
           this.showValue = value;
-          this.currentValue = [value];
+          this.currentValue = value ? [value] : [];
           this.$emit('on-change', value);
         }
       }
