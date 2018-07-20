@@ -310,66 +310,69 @@
       submit(){
         console.log(this.dealer);
         for(let key in this.dealer){
-          console.log(typeof(this.dealer[key]));
           if(typeof(this.dealer[key]) === 'string' && this.dealer[key].indexOf(' ')>=0){
             this.dealer[key] = this.dealer[key].replace(/\s/g,'');
           }
         }
-        let submitData = {
-          listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
-          formData: {
-            baseinfo: this.baseinfo,
-            dealer: this.dealer
-          }
-        };
-        console.log(this.hasDefault);
-        if(this.transCode.length>0){
-          dealerService.update(submitData).then(data=>{
-            let that = this;
-            if(data.success){
-              AlertModule.show({
-                content: data.message,
-                onHide(){
-                  that.$router.push('/adress');
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            let submitData = {
+              listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
+              formData: {
+                baseinfo: this.baseinfo,
+                dealer: this.dealer
+              }
+            };
+            if(this.transCode.length>0){
+              dealerService.update(submitData).then(data=>{
+                let that = this;
+                if(data.success){
+                  AlertModule.show({
+                    content: data.message,
+                    onHide(){
+                      that.$router.push('/adress');
+                    }
+                  })  
                 }
-              })  
+                else{
+                  AlertModule.show({
+                    content: data.message
+                  })  
+                }
+                                  
+              }).catch(e=>{
+                AlertModule.show({
+                  content: e.message,
+                })
+              })
             }
             else{
-              AlertModule.show({
-                content: data.message
-              })  
+              dealerService.save(submitData).then(data=>{
+                let that = this;  
+                if(data.success){
+                  AlertModule.show({
+                    content:data.message,
+                    onHide(){
+                      that.$router.push('/adress');
+                    }
+                  })
+                }   
+                else{
+                  AlertModule.show({
+                    content:data.message
+                  })
+                }                                  
+              }).catch(e=>{
+                AlertModule.show({
+                  content: e.message,
+                })
+              })
             }
-                               
-          }).catch(e=>{
-            AlertModule.show({
-              content: e.message,
-            })
-          })
-        }
-        else{
-          dealerService.save(submitData).then(data=>{
-            let that = this;  
-            if(data.success){
-              AlertModule.show({
-                content:data.message,
-                onHide(){
-                  that.$router.push('/adress');
-                }
-              })
-            }   
-            else{
-              AlertModule.show({
-                content:data.message
-              })
-            }                                  
-          }).catch(e=>{
-            AlertModule.show({
-              content: e.message,
-            })
-          })
-        }
-        
 
+          }
+        })
       },
       save(){
         if(!this.btnStatus){
