@@ -53,7 +53,7 @@
       </div>
       <div class='each_property vux-1px-b'>
         <label>手机:</label>
-        <input type='text' v-model="dealer.dealerMobilePhone" class='property_val' @blur="checkMobile"/>
+        <input type='number' v-model="dealer.dealerMobilePhone" class='property_val' @blur="checkMobile"/>
         <icon type="warn" class='warn' v-if='MobileWarn'></icon>
       </div>
       <div class='each_property vux-1px-b'>
@@ -122,7 +122,8 @@
           pamentDays: '',  //账期天数
           dealerStatus: '1', //往来状态
           comment: '',  //往来说明
-          dealerPic : ''
+          dealerPic : '',
+          submitSuccess: false, // 是否提交成功
         },
 
         
@@ -339,6 +340,7 @@
               dealerService.update(submitData).then(data=>{
                 let that = this;
                 if(data.success){
+                  that.submitSuccess  = true;
                   AlertModule.show({
                     content: data.message,
                     onHide(){
@@ -362,6 +364,7 @@
               dealerService.save(submitData).then(data=>{
                 let that = this;  
                 if(data.success){
+                  that.submitSuccess  = true;
                   AlertModule.show({
                     content:data.message,
                     onHide(){
@@ -409,6 +412,15 @@
         }
         
       
+    },
+    beforeRouteLeave(to, from, next) {
+      let {path} = to;
+      // 新建物料，修改列表页的meta值
+      console.log(this.submitSuccess);
+      if (this.submitSuccess && path === '/adress') {
+        to.meta.reload = true;
+      }
+      next();
     },
     created() {
       let query = this.$route.query;

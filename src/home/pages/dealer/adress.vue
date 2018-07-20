@@ -234,6 +234,22 @@ export default {
       });
     },
   },
+  watch: {
+    $route: {
+      handler(to, from) {
+        // 判断是否重新请求页面
+        console.log(to);
+        if (to.meta.reload && to.path === '/adress') {
+          to.meta.reload = false;
+          this.uniqueId = "7f01c808-d338-4711-8c99-319337078cc1";
+          this.srhInpTx = '';
+          this.activeIndex = 0;
+          this.resetCondition();
+          this.getDealer();
+        }
+      },
+    }
+  },
   created(){
     this.initScroll();
     this.getClassfiy();
