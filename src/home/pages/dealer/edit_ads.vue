@@ -308,7 +308,6 @@
       submit(){
         let submitData = {
           listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
-          // biReferenceId: this.biReferenceId,
           formData: {
             baseinfo: this.baseinfo,
             dealer: this.dealer
@@ -316,15 +315,21 @@
         };
         if(this.hasDefault){
           dealerService.update(submitData).then(data=>{
-            console.log(data);
             let that = this;
-            AlertModule.show({
-              content: data.message,
-              onHide(){
-                that.$router.push('/adress');
-              }
-            })
-                     
+            if(data.success){
+              AlertModule.show({
+                content: data.message,
+                onHide(){
+                  that.$router.push('/adress');
+                }
+              })  
+            }
+            else{
+              AlertModule.show({
+                content: data.message
+              })  
+            }
+                               
           }).catch(e=>{
             AlertModule.show({
               content: e.message,
@@ -333,15 +338,20 @@
         }
         else{
           dealerService.save(submitData).then(data=>{
-            console.log(data);
-            let that = this;           
-            AlertModule.show({
-              content:data.message,
-              onHide(){
-                that.$router.push('/adress');
-              }
-            })
-                    
+            let that = this;  
+            if(data.success){
+              AlertModule.show({
+                content:data.message,
+                onHide(){
+                  that.$router.push('/adress');
+                }
+              })
+            }   
+            else{
+              AlertModule.show({
+                content:data.message
+              })
+            }                                  
           }).catch(e=>{
             AlertModule.show({
               content: e.message,
