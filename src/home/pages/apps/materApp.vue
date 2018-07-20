@@ -400,7 +400,7 @@
 
   .app_main {
     position: relative;
-    height: calc(100% - .52rem - 44px);
+    height: calc(100% - .52rem - 36px);
     overflow: hidden;
     box-sizing: border-box;
     .app_main_wrapper {
