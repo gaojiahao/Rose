@@ -82,7 +82,7 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
+  import {Icon, Popup, LoadMore} from 'vux'
   import {getMatList} from './../../service/materService'
   import BScroll from 'better-scroll'
 
@@ -94,7 +94,6 @@
         default: false
       }
     },
-    directives: [TransferDom],
     components: {
       Icon, Popup, LoadMore,
     },
@@ -209,10 +208,6 @@
               return
             }
             this.bScroll.finishPullUp();
-          })
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
           })
         });
       },
@@ -479,7 +474,7 @@
           .selIcon,
           .isSelIcon {
             top: 50%;
-            left: -10%;
+            left: -.3rem;
             position: absolute;
             transform: translate(0, -50%);
           }

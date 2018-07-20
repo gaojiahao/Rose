@@ -9,11 +9,12 @@ import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import Mescroll from './common/mescroll.min.js'
 import { TransferDom } from 'vux'
-import  { AlertPlugin } from 'vux'
+import  { AlertPlugin, ConfirmPlugin } from 'vux'
 
 Vue.directive('transfer-dom', TransferDom)
 Vue.use(VueRouter)
 Vue.use(AlertPlugin)
+Vue.use(ConfirmPlugin)
 
 Vue.prototype.Swiper = Swiper;
 Vue.prototype.Mescroll = Mescroll;
@@ -32,7 +33,7 @@ Vue.config.productionTip = false
 //   // document.title = meta.title || '';
 //   next()
 // });
-router.afterEach( route =>{ 
+router.afterEach( route =>{
   document.title = route.meta.title || '';
 })
 

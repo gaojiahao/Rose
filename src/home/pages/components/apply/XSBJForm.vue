@@ -110,18 +110,20 @@
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">提交</div>
     </div>
+    <loading :show="showLoading"></loading>
   </div>
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, AlertModule} from 'vux'
+  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton} from 'vux'
   import PopMatterList from './../../components/PopMatterList'
   import dealerService from './../../../service/dealerService'
   import {saveAndStartWf, getBaseInfoData} from './../../../service/commonService'
+  import Loading from './../../components/Loading'
 
   export default {
     components: {
-      Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList
+      Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList, Loading,
     },
     data() {
       return {
@@ -131,6 +133,7 @@
         customInfo: null,
         formData: {},
         priceMap: {},
+        showLoading: false,
       }
     },
     methods: {
@@ -155,7 +158,7 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
-          item.price = this.priceMap[item.transCode] || 0
+          item.price = this.priceMap[item.transCode] || ''
         });
         this.matterList = [...sels];
       },
@@ -187,37 +190,45 @@
           return true
         });
         if (warn) {
-          AlertModule.show({
+          this.$vux.alert.show({
             content: warn,
           });
           return
         }
-        let submitData = {
-          listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
-          biComment: '',
-          formData: JSON.stringify({
-            ...this.formData,
-            dealerDebitContactInformation: this.customInfo ? this.customInfo.mobilePhone : '',
-            order: {
-              dataSet
-            }
-          }),
-        };
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            this.showLoading = true;
+            let submitData = {
+              listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
+              biComment: '',
+              formData: JSON.stringify({
+                ...this.formData,
+                dealerDebitContactInformation: this.customInfo ? this.customInfo.mobilePhone : '',
+                order: {
+                  dataSet
+                }
+              }),
+            };
 
-        saveAndStartWf(submitData).then(data => {
-          let {success = false, message = '提交失败'} = data;
-          AlertModule.show({
-            content: message,
-            onHide: () => {
+            saveAndStartWf(submitData).then(data => {
+              this.showLoading = false;
+              let {success = false, message = '提交失败'} = data;
               if (success) {
+                message = '报价提交成功'
               }
-            }
-          });
-          console.log(data);
-        }).catch(e => {
-          AlertModule.show({
-            content: e.message,
-          })
+              this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                  if (success) {
+                  }
+                }
+              });
+            }).catch(e => {
+              this.showLoading = false;
+            });
+          }
         });
       },
       // TODO 获取客户
@@ -232,7 +243,7 @@
             address: dealer.province + dealer.city + dealer.county + dealer.address,
           };
         }).catch(e => {
-          AlertModule.show({
+          this.$vux.alert.show({
             content: e.message,
           })
         })
@@ -241,7 +252,7 @@
       getBaseInfoData() {
         getBaseInfoData().then(data => {
           this.formData = {...this.formData, ...data};
-        })
+        });
       },
     },
     created() {
