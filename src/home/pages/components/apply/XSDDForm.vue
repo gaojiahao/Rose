@@ -14,10 +14,8 @@
           </div>
         </div>
         <div v-else>
-          <div >
             <div class="title">往来列表</div>
-            <div class="tips">请选择往来</div>           
-          </div>
+            <div class="mode">请选择往来</div>           
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
@@ -51,7 +49,7 @@
           <popup v-model="showLogPop" height="60%" id="trade_pop_part">
             <div class="trade_pop">
               <div class="title">物流条款<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon></div>
-              <span class="each_mode vux-1px"
+              <span class="each_mode"
               :class='{choiced : index===logisticsIndex}' 
                v-for="(item, index) in logisticsTerm" 
                :key="index" 
@@ -607,7 +605,6 @@ export default {
           //物料价格，数量
           .mater_other{
             margin-top:0.08rem;
-            display: flex;
             align-items: center;
             .mater_price{
               display: inline-block;
@@ -619,7 +616,8 @@ export default {
             }
             .mater_num{
               display: flex;
-              justify-content: flex-start;
+              // justify-content: flex-start;
+              float: right;
               input{
                 border:none;
                 outline: none;
@@ -630,16 +628,23 @@ export default {
                 height:0.2rem;
                 text-align: center;
                 line-height: 0.2rem;
-                border:1px solid #C7C7C7;
+                font-size: .18rem;
+              }
+              .sub {
+                color: #eee;
+              }
+              .plus {
+                vertical-align: middle;
+                margin-top: -.01rem;
               }
               .num{
                 width:0.4rem;
                 height:0.2rem;
+                background: #e8e8e8;
                 text-align: center;
                 line-height: 0.2rem;
-                border-top:1px solid #C7C7C7;
-                border-bottom:1px solid #C7C7C7;
                 font-size:0.12rem;
+                border-radius: 0 !important;
               }
             }
           }
