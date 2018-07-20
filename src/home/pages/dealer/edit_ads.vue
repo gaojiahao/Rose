@@ -250,9 +250,7 @@
         else{
           this.PhoneWarn = false;
           this.btnStatus = false;
-        }
-        
-        
+        }               
       },
       //校验手机号
       checkMobile(){
@@ -289,15 +287,23 @@
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.dealer = {...this.dealer, ...dealer,};
           this.biReferenceId = this.dealer.referenceId;
-          if (this.dealer.dealerPic) {
+          if (this.dealer.dealerPic.length>0) {
             this.picShow = true;
             this.MatPic = this.dealer.dealerPic;
+          }
+          else{
+            this.picShow = true;
+            this.getDefaultImg()
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.dealer.dealerPic
           });
           this.imgFileObj = imgFileObj;
         });
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+         this.MatPic = require('./../../assets/dealer.png');
       },
       //选择地址
       changeAddress(ids,names){
