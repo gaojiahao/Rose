@@ -116,7 +116,7 @@
                           ￥{{item.defaultPrice}}
                         </div>
                         <div class='mater_num'>
-                          <span class='handle sub' @click="subNum(item,index)">-</span>
+                          <span class='handle' @click="subNum(item,index)" :class='{sub : item.num<=1}'>-</span>
                           <input class='num' type='number' :value='item.num' @change='getNum(item,index,$event)'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
@@ -332,8 +332,8 @@ export default {
                 ...this.dealer,
                 order: {
                   dealerDebit: this.info.dealerCode,
-                  drDealerLabel : this.info.dealerLabelName,
-                  drAccountSub : this.info.dealerSubclass,
+                  drDealerLabel : this.info.dealerLabelName || '渠道商',
+                  drAccountSub : this.info.dealerSubclass || '直营店',
                   dataSet
                 }
               })
