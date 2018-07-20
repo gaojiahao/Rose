@@ -33,7 +33,7 @@
                   </div>
                   <div class="withColor">
                     <div class="ForInline " style="display:inline-block">                     
-                        <span>{{item.dealerName}}</span>
+                        <span class='dealer'>{{item.dealerName}}</span>
                     </div>
                   </div>
                   <!-- 地址 -->
@@ -403,6 +403,10 @@
                 .name{
                   color:#5077aa;
                   font-size: .14rem;
+                  font-weight: bold;
+                }
+                .dealer{
+                  color:#111;
                   font-weight: bold;
                 }
                 // 物料编码
