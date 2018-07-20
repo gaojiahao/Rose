@@ -28,9 +28,9 @@
             </div>
             <div class="cp_info">
               <p class="cp_name">{{item.dealerName}}</p>
-              <p class='cp_label'>
+              <!-- <p class='cp_label'>
                 <span>{{item.dealerLabelName}}</span>
-              </p>
+              </p> -->
               <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
               
             </div>
@@ -44,6 +44,7 @@
       <div class="cfm_btn" @click="goEditAds">新增一个地址</div>
     </div>
     <router-view></router-view>
+    <load-icon :show='Loadding'></load-icon>
   </div>
   
 </template>
@@ -52,6 +53,7 @@
 import dealerService from '../../service/dealerService.js'
 import {Tab, Icon, TabItem,Spinner,AlertModule} from 'vux'
 import BScroll from 'better-scroll'
+import LoadIcon from '../components/Loading.vue'
 const PULL_DOWN_REFRESH_HEIGHT = 30;
 let isBack = false,
     path = '',
@@ -70,10 +72,11 @@ export default {
       id : '',
       hasNext: true,
       pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
+      Loadding : true
     }
   },
   components:{
-    Tab, Icon, TabItem,Spinner
+    Tab, Icon, TabItem,Spinner,LoadIcon
   },
   methods:{
     // TODO 重置列表条件
@@ -155,6 +158,7 @@ export default {
             })
           })
           await dealerService.getDealerList(this.id,data).then( data=>{
+            this.Loadding = false;
             this.dealerList = this.page === 1? data.tableContent : this.dealerList.concat(data.tableContent);
             this.hasNext = data.dataCount > (this.page-1)*this.limit + data.tableContent.length;
             this.$nextTick(() => {
@@ -201,7 +205,7 @@ export default {
             stop: PULL_DOWN_REFRESH_HEIGHT
           },
           pullUpLoad: {
-            threshold: -20
+            threshold: 20
           },
         });
         // 绑定滚动加载事件
@@ -376,7 +380,7 @@ export default {
         font-size: .14rem;
         .cp_name {
           color: #111;
-          font-weight: 500;
+          font-weight: bold;
         }
         .cp_label{
           span{
