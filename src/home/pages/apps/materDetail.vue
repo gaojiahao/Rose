@@ -19,7 +19,7 @@
               <div class="ForInline">
                 <div class="mater_spec">
                   <span class="title">规格</span>
-                  <span class="num">{{inventory.specification}}</span>
+                  <span class="num">{{inventory.specification || '无'}}</span>
                 </div>
               </div>
               <!-- 物料编码 -->
@@ -56,13 +56,13 @@
           </div>
           <div class="child">
             <p class="title">材质:</p>
-            <p class="content">{{inventory.material}}</p>
+            <p class="content">{{inventory.material || '无'}}</p>
           </div>
         </div>
         <div class="d_material vux-1px-b">
           <div class="father">
             <p class="title">颜色:</p>
-            <p class="content">{{inventory.inventoryColor}}</p>
+            <p class="content">{{inventory.inventoryColor || '无'}}</p>
           </div>
           <div class="child">
             <p class="title">单位:</p>
@@ -80,7 +80,6 @@
             <div class="title">业务应用</div>
             <div class="app_name">
               <span>销售出库</span>
-              <!-- <span class="msg_count">3</span> -->
             </div>
             <div class="msg_num">
               1
@@ -88,7 +87,6 @@
             </div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
           </div>
-          <!-- <div class="msg_count">3</div> -->
         </div>
         <div class="each_app vux-1px-b">
           <div class="app_info">
@@ -115,7 +113,6 @@
             </div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
           </div>
-          <!-- <div class="msg_count">3</div> -->
         </div>
       </div>
     </div>
@@ -390,7 +387,7 @@
           font-weight: bold;
         }
         .app_name {
-          font-size: .2rem;
+          font-size: .18rem;
           .msg_count {
             float: right;
             margin-right: .1rem;
@@ -398,10 +395,10 @@
         }
         .msg_num {
           color: #3f72af;
-          font-size: .3rem;
+          font-size: .2rem;
           .msg_tx {
             // color: #757575;
-            font-size: .14rem;
+            font-size: .12rem;
           }
         }
         .r_arrow {

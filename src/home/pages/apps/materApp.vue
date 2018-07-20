@@ -380,7 +380,6 @@
 
   .app_main {
     position: relative;
-    margin-top: .08rem;
     height: calc(100% - .52rem - 44px);
     overflow: hidden;
     box-sizing: border-box;
