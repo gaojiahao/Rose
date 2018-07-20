@@ -291,7 +291,7 @@
       $route: {
         handler(to, from) {
           // 判断是否重新请求页面
-          if (to.meta.reload) {
+          if (to.meta.reload && to.path === '/materApp') {
             to.meta.reload = false;
             this.srhInpTx = '';
             this.activeTab = '';
