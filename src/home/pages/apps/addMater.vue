@@ -118,7 +118,8 @@
         imgFileObj: {}, // 上传的图片对象
         imgFile: null,
         showLoading: false,
-        codeReadOnly: false,
+        codeReadOnly: false, // 物料编码是否只读
+        submitSuccess: false, // 是否提交成功
       }
     },
     directives: {
@@ -133,6 +134,7 @@
       Loading,
     },
     methods: {
+      // TODO 预览图片
       preloadFile(e) {
         let file = e.target.files[0];
         let reader = new FileReader();
@@ -231,6 +233,7 @@
               let {success = false, message = '提交失败'} = data;
               if (success) {
                 message = '物料提交成功';
+                this.submitSuccess = true;
               }
               this.$vux.alert.show({
                 content: message,
@@ -348,6 +351,14 @@
           }
         });
       },
+    },
+    beforeRouteLeave(to, from, next) {
+      let {path} = to;
+      // 新建物料，修改列表页的meta值
+      if (this.submitSuccess && path === '/materApp') {
+        to.meta.reload = true;
+      }
+      next();
     },
     created() {
       this.showLoading = true;
