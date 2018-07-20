@@ -223,7 +223,7 @@ export default {
     padding-left: .04rem;
     .each_app {
       width: 75%;
-      height: 1.4rem;
+      height: 1.2rem;
       color: #fff;
       background: #2e89ba;
       padding: .08rem .04rem;

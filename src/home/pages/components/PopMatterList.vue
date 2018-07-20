@@ -41,7 +41,7 @@
                     <div class="ForInline" style="display:inline-block">
                       <div class="mater_spec">
                         <span class="title">规格</span>
-                        <span class="num">{{item.specification}}</span>
+                        <span class="num">{{item.specification || '无'}}</span>
                       </div>
                     </div>
                   </div>
@@ -49,18 +49,16 @@
                   <div class="withoutColor">
                     <!-- 物料分类 -->
                     <div class="mater_classify">
+                      <span class="type">属性: {{item.processing}}</span>
                       <span class="father">大类: {{item.inventoryType}}</span>
                       <span class="child">子类: {{item.inventorySubclass}}</span>
                     </div>
-                    <!-- 加工属性 -->
-                    <div class="mater_classify">
-                      <span>加工属性: {{item.processing}}</span>
-                    </div>
+
                     <!-- 物料材质等 -->
                     <div class="mater_material">
-                      <span class="unit">单位: {{item.measureUnit}}</span>
-                      <span class="color">颜色: {{item.inventoryColor}}</span>
-                      <span class="spec">材质: {{item.material}}</span>
+                        <span class="unit">单位: {{item.measureUnit}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
                   </div>
                 </div>
@@ -276,7 +274,7 @@
       .title {
         font-size: .2rem;
         position: relative;
-        padding: 0.08rem 0 .14rem;
+        padding-top: 0.08rem;
         // 搜索
         .search_part {
           width: 100%;
@@ -347,12 +345,13 @@
       }
       // 物料列表
       .mater_list {
-        padding-left: 10%;
         width: 100%;
-        height: calc(100% - .52rem);
         overflow: hidden;
         box-sizing: border-box;
+        height: calc(100% - .52rem);
+        padding: 0 .04rem 0 .3rem;
         .mater_list_wrapper {
+          padding-top: .14rem;
         }
         // 每个物料
         .each_mater {
@@ -386,7 +385,7 @@
             .mater_name {
               color: #111;
               overflow: hidden;
-              font-size: .14rem;
+              font-size: .12rem;
               font-weight: bold;
               max-height: .46rem;
               display: -webkit-box;
@@ -397,12 +396,12 @@
               .whiNum {
                 color: #fff;
                 font-weight: 200;
-                padding: 0 .1rem;
+                padding: 0 .04rem;
                 font-size: .1rem;
                 display: inline-block;
                 background: #ea5455;
                 vertical-align: middle;
-                margin: -.01rem .04rem 0 0;
+                margin: -.02rem .04rem 0 0;
               }
             }
             // 物料信息
@@ -411,6 +410,7 @@
               font-size: .12rem;
               // 有颜色包裹的
               .withColor {
+                margin-top: .04rem;
                 // 物料编码
                 .mater_code {
                   display: flex;
@@ -426,10 +426,11 @@
                   }
                   .num {
                     color: #111;
-                    max-width: .9rem;
+                    max-width: .85rem;
                     overflow: hidden;
                     white-space: nowrap;
                     background: #dbe2ef;
+                    box-sizing: border-box;
                     text-overflow: ellipsis;
                   }
                 }
@@ -444,10 +445,7 @@
                   .num {
                     color: #fff;
                     max-width: .6rem;
-                    overflow: hidden;
-                    white-space: nowrap;
                     background: #ff7f50;
-                    text-overflow: ellipsis;
                   }
                 }
               }
@@ -455,18 +453,16 @@
               .withoutColor {
                 // 物料分类
                 .mater_classify {
-                  // color: #111;
-                  // font-weight: bold;
-                  font-size: .14rem;
-                  margin-top: .04rem;
+                  font-size: .1rem;
+                  margin-top: .02rem;
+                  .type,
                   .father {
-                    margin-right: .1rem;
+                    margin-right: .04rem;
                   }
                 }
                 // 物料颜色 材质
                 .mater_material {
-                  font-size: .12rem;
-                  margin-top: .1rem;
+                  font-size: .1rem;
                   .unit,
                   .color {
                     margin-right: .06rem;

@@ -291,15 +291,12 @@ export default {
     }
   }
   .app_main {
-    margin-top: .08rem;
-    // height: calc(100% - .52rem - 44px);
-    // overflow: auto;
-    position:fixed;
     left:0;
     top:0.88rem;
     bottom:0.67rem;
-    box-sizing: border-box;
     height:auto;
+    position:fixed;
+    box-sizing: border-box;
     // 地址
     .client_ads {
       position: relative;
