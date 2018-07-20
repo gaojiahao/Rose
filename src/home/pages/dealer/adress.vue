@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div class="address_content">
+    <div class="content">
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
@@ -19,8 +19,8 @@
         </div>
       </div>
       <!-- 主要内容区域 -->
-      <div class="app_main mescroll" id="mescroll">
-        <div>
+      <div class="app_main" ref='addressMain'>
+        <div class='address_wrapper'>
           <div class="client_ads vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.creatorName}}</span>
@@ -33,6 +33,7 @@
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
         </div>
+        <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
       </div>
     </div>
     <div class="btn vux-1px-t">
@@ -45,9 +46,9 @@
 
 <script>
 import dealerService from '../../service/dealerService.js'
-import {Tab, Icon, TabItem,AlertModule} from 'vux'
-import { resolve } from 'url';
-import { rejects } from 'assert';
+import {Tab, Icon, TabItem,Spinner,AlertModule} from 'vux'
+import BScroll from 'better-scroll'
+const PULL_DOWN_REFRESH_HEIGHT = 30;
 let isBack = false,
     path = '',
     query = {};
@@ -59,27 +60,35 @@ export default {
       activeIndex :0,
       dealerClassfiy :[],
       uniqueId:"7f01c808-d338-4711-8c99-319337078cc1",
-      isBack : false,
-      path: '',
-      query :'',
-      scroll : null,
+      bScroll : null,
       page : 1,
-      id : ''
+      limit :20,
+      id : '',
+      hasNext: true,
+      pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
     }
   },
   components:{
-    Tab, Icon, TabItem
+    Tab, Icon, TabItem,Spinner
   },
   methods:{
+    // TODO 重置列表条件
+    resetCondition() {
+      this.dealerList = [];
+      this.page = 1;
+      this.hasNext = true;
+      this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+    },
     tabClick(item,index){
       this.activeIndex = index;
       this.uniqueId  = item.uniqueId;
-      this.scroll.resetUpScroll();
-      // this.getDealer()
+      this.resetCondition();
+      this.bScroll.scrollTo(0, 0);
+      this.getDealer()
     },
     searcDealer(){
-      this.page = 1;
-      this.scroll.resetUpScroll();
+      this.resetCondition();
+      this.getDealer()
       this.srhInpTx = '';
     },
     // 编辑地址
@@ -92,26 +101,16 @@ export default {
       })      
     },
     goDetail(item){
-      if(isBack){
-        query.transCode = item.transCode;
-        console.log(path,query);
-        this.$router.push({
-          path : path,
-          query : query
-        })
-      }
-      else{
-        this.$router.push({ 
-          path:'/adress/adressDetail',
-          query:{
-            transCode: item.transCode
-          }
-        })
-      }      
+      this.$router.push({ 
+        path:'/adress/adressDetail',
+        query:{
+          transCode: item.transCode
+        }
+      })
+          
     },
     //获取往来列表
-    getDealer(){
-      return new Promise((resolve,reject)=>{
+    getDealer(){     
         let filter;
         if(this.srhInpTx != ''){
           filter = [
@@ -128,13 +127,10 @@ export default {
             }
           ];
         }
-        if(this.page === 1){
-          this.dealerList = []
-        }
         let data = {
-          limit : 20,
+          limit : this.limit,
           page : this.page,
-          start : (this.page-1)*20
+          start : (this.page-1)*this.limit
         }
         if(filter){
           data.filter = JSON.stringify(filter);
@@ -151,14 +147,25 @@ export default {
           })
           await dealerService.getDealerList(this.id,data).then( data=>{
             this.dealerList = this.page === 1? data.tableContent : this.dealerList.concat(data.tableContent);
-            resolve(data.tableContent)
+            this.hasNext = data.dataCount > (this.page-1)*this.limit + data.tableContent.length;
+            this.$nextTick(() => {
+              this.bScroll.refresh();
+              this.bScroll.finishPullDown();
+              this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+              if (!this.hasNext) {
+                return
+              }
+              this.bScroll.finishPullUp();
+            })
           }).catch(e=>{
+            this.bScroll.finishPullDown();
+            this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
             AlertModule.show({
               content: e.message,
             })
           })
         })()
-      })        
+             
     },
     //往来分类
     getClassfiy(){    
@@ -174,45 +181,57 @@ export default {
           content: e.message,
         })
       })
-    }
+    },
+    // TODO 初始化better-scroll
+    initScroll() {
+      this.$nextTick(() => {
+        this.bScroll = new BScroll(this.$refs.addressMain, {
+          click: true,
+          pullDownRefresh: {
+            threshold: 50,
+            stop: PULL_DOWN_REFRESH_HEIGHT
+          },
+          pullUpLoad: {
+            threshold: -20
+          },
+        });
+        // 绑定滚动加载事件
+        this.bScroll.on('pullingUp', () => {
+          if (!this.hasNext) {
+            return
+          }
+          this.page++;
+          this.getDealer();
+        });
+        // 绑定下拉刷新事件
+        this.bScroll.on('pullingDown', () => {
+          this.page = 1;
+          this.getDealer();
+        });
+        // 下拉的时候展示下拉刷新的图标
+        this.bScroll.on('scroll', ({x, y}) => {
+          if (y > 0) {
+            if (y > PULL_DOWN_REFRESH_HEIGHT) {
+              this.pullDownTop = 0;
+            } else {
+              this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
+            }
+          }
+        })
+      });
+    },
   },
   created(){
-    this.getClassfiy()
+    this.initScroll();
+    this.getClassfiy();
+    this.getDealer();
   },
-  mounted() {
-    let Mescroll = this.Mescroll;
-    this.$nextTick(() => {
-      this.scroll = new Mescroll("mescroll", {
-        up: {
-          use: true,
-          isBounce: false,
-          auto: true,
-          isBoth: false,
-          callback: (page,mescroll)=>{
-            this.page = page.num;
-            this.getDealer().then(data => {
-              let len = data.length;
-              let hasNext = len >= page.size;
-              mescroll.endSuccess(len, hasNext)
-            })
-          }
-        },
-        down: {
-          use: false,
-          isBoth: false,
-          auto: false,
-        }
-      })
-    })
-  },
-  beforeRouteEnter: (to, from, next) => {
-      if (from.path !== '/newhome') {
-        isBack = true;
-        path = from.path;
-        query = from.query;
-      }
-      next()
-  }
+  // activated() {
+  //   if (this.bScroll) {
+  //     this.bScroll.refresh();
+  //   }
+  // },
+  
 }
 </script>
 
@@ -227,6 +246,10 @@ export default {
   .vux-1px-b:after, .vux-1px-l:before {
     border-color: #e8e8e8;
     color: #e8e8e8;
+  }
+  .content{
+    height:90%;
+    overflow: auto;
   }
   .app_top {
     width: 100%;
@@ -291,12 +314,25 @@ export default {
     }
   }
   .app_main {
-    left:0;
-    top:0.88rem;
-    bottom:0.67rem;
-    height:auto;
-    position:fixed;
+    position: relative;
+    margin-top: .08rem;
+    height: calc(100% - .52rem - 44px);
+    overflow: hidden;
     box-sizing: border-box;
+    .address_wrapper {
+      min-height: calc(100% + 1px);
+      overflow: hidden;
+    }
+    .pullDownRefresh {
+      display: block;
+      margin: 0 auto;
+      height: 30px;
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: top;
+    }
     // 地址
     .client_ads {
       position: relative;
