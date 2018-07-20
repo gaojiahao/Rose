@@ -8,7 +8,7 @@
           <input class="srh_inp" type="text" v-model="srhInpTx">
           <div class="pop_cancel" @click="searcDealer">搜索</div>
           <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-          <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
+          <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
         </div>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
@@ -89,7 +89,12 @@ export default {
     searcDealer(){
       this.resetCondition();
       this.getDealer()
+    },
+    clear(){
       this.srhInpTx = '';
+      this.resetCondition();
+      this.getDealer();
+
     },
     // 编辑地址
     goEditAds(item){
