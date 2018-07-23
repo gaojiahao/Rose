@@ -9,7 +9,7 @@
               </div>
               <div class="cp_info">
                 <p class="cp_name">{{orderInfo.formData.order.dealerName_dealerDebit}}</p>
-                <p class="cp_ads">{{orderInfo.formData.order.address_dealerDebit}}</p>
+                <p class="cp_ads">{{orderInfo.formData.order.province_dealerDebit}}{{orderInfo.formData.order.city_dealerDebit}}{{orderInfo.formData.order.county_dealerDebit}}{{orderInfo.formData.order.address_dealerDebit}}</p>
               </div>
             </div>
             <div class="trade_mode mg_auto box_sd">
