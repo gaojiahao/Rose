@@ -1,7 +1,7 @@
 import HOME from '../pages/home'
 import NEWHOME from '../pages/newhome'
 import APPLY from '../pages/allApply'
-import LIST from '../pages/list'
+import LISTFORM from '../pages/listForm/listForm.vue'
 import FILLFORM from '../pages/fillForm/fillForm'
 import ADRESS from '../pages/dealer/adress'
 import EDIT_ADS from '../pages/dealer/edit_ads'
@@ -17,8 +17,8 @@ export default [
   meta:{ title:'新首页' , keepAlive: true} },
   { path:'/allapply', name:'APPLY', component:APPLY,
     meta:{ title:'全部应用' } },
-  { path:'/list', name:'LIST', component:LIST,
-    meta:{ title:'任务列表' } },
+  { path:'/listform', name:'LISTFORM', component:LISTFORM,
+    meta:{ title:'列表' } },
   { path:'/fillform', name:'FILLFORM', component:FILLFORM,
     meta:{ title:'填写新内容' } },
   {
