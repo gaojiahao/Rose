@@ -72,6 +72,9 @@ export default {
       else if(item === '往来'){
         this.$router.push({ path : '/adress'})
       }
+      else if(item === '仓库'){
+        this.$router.push({ path : '/warehouse'})
+      }
     },
     //销售应用
     goXS(item){
@@ -92,7 +95,7 @@ export default {
           if(val.text === '业务对象'){
             for(let item of val.children ){
               // 由于应用没有开发完全 临时处理方法
-              if(item.text === '物料' || item.text === '往来'){
+              if(item.text === '物料' || item.text === '往来' || item.text === '仓库'){
                 this.YWarray.push(item);
               }
             }

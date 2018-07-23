@@ -9,6 +9,9 @@ import ADRESSDETAL from '../pages/dealer/adressDetail'
 import MATERAPP from '../pages/apps/materApp'
 import ADDMATER from '../pages/apps/addMater'
 import MATERDETAIL from '../pages/apps/materDetail'
+import WAREHOUSE from '../pages/warehouse/warehouse'
+import EDIT_WAREHOUSE from '../pages/warehouse/edit_warehouse'
+import WAREHOUSEDETAIL from '../pages/warehouse/warehouseDetail'
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
@@ -61,7 +64,27 @@ export default [
       }
     ]
   },
+  {
+    path: '/warehouse',
+    name: 'WAREHOUSE',
+    component: WAREHOUSE,
+    meta: {title:'仓库'},
+    children:[
+      {
+        path:'edit_warehouse',
+        name:'EDIT_WAREHOUSE',
+        component:EDIT_WAREHOUSE,
+        meta:{ title:'编辑地址' }
+      },
+      {
+        path:'warehouseDetail',
+        name:'WAREHOUSEDETAIL',
+        component:WAREHOUSEDETAIL,
+        meta:{ title:'地址详情' }
+      }
+    ]
+  },
   { path: '/', redirect:'/newhome' },
-  { path:'*', redirect:'/newhome' }
+  { path:'*', redirect:'/newhome' },
 ]
 
