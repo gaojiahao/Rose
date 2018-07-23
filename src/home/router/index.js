@@ -3,6 +3,7 @@ import NEWHOME from '../pages/newhome'
 import APPLY from '../pages/allApply'
 import LISTFORM from '../pages/listForm/listForm.vue'
 import FILLFORM from '../pages/fillForm/fillForm'
+import DETAILFORM from '../pages/detailForm/detailForm.vue'
 import ADRESS from '../pages/dealer/adress'
 import EDIT_ADS from '../pages/dealer/edit_ads'
 import ADRESSDETAL from '../pages/dealer/adressDetail'
@@ -21,6 +22,8 @@ export default [
     meta:{ title:'列表' } },
   { path:'/fillform', name:'FILLFORM', component:FILLFORM,
     meta:{ title:'填写新内容' } },
+  { path:'/detail', name:'DETAILFORM', component:DETAILFORM,
+    meta:{ title:'订单详情' } },
   {
     path:'/adress',
     name:'ADRESS',
