@@ -3,76 +3,83 @@
         <div class="basicPart" v-if='orderInfo.formData'>
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
-                <div class="user_info">
-                    <span class="user_name">{{orderInfo.formData.dealerDebitContactPersonName}}</span>
-                    <span class="user_tel">{{orderInfo.formData.dealerDebitContactInformation}}</span>
-                </div>
-                <div class="cp_info">
-                    <p class="cp_name">{{orderInfo.formData.order.dealerName_dealerDebit}}</p>
-                    <!-- <p class="cp_ads">{{orderInfo.formDataprovince}}{{orderInfo.formDatacity}}{{orderInfo.formDatacounty}}{{orderInfo.formDataaddress}}</p> -->
-                </div>
+              <div class="user_info">
+                <span class="user_name">{{orderInfo.formData.dealerDebitContactPersonName}}</span>
+                <span class="user_tel">{{orderInfo.formData.dealerDebitContactInformation}}</span>
+              </div>
+              <div class="cp_info">
+                <p class="cp_name">{{orderInfo.formData.order.dealerName_dealerDebit}}</p>
+                <p class="cp_ads">{{orderInfo.formData.order.address_dealerDebit}}</p>
+              </div>
+            </div>
+            <div class="trade_mode mg_auto box_sd">
+              <p class="title">订单总价</p>
+              <p class="mode">
+                <span>合计</span>
+                <span class='amount'>￥{{count}}</span>
+              </p>
             </div>
             <!-- 结算方式 -->
             <div class="trade_mode mg_auto box_sd">
-                <p class="title">结算方式</p>
-                <p class="mode">{{orderInfo.formData.drDealerPaymentTerm}}</p>
-                <!-- <span class="iconfont icon-gengduo"></span> -->
+              <p class="title">结算方式</p>
+              <p class="mode">{{orderInfo.formData.drDealerPaymentTerm}}</p>
             </div>
             <!-- 物流条款 -->
             <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-                <p class="title">物流条款</p>
-                <p class="mode">{{orderInfo.formData.drDealerLogisticsTerms}}</p>
-                <!-- <span class="iconfont icon-gengduo"></span> -->
+              <p class="title">物流条款</p>
+              <p class="mode">{{orderInfo.formData.drDealerLogisticsTerms}}</p>
             </div>
             <!-- 物料列表 -->
             <div class="materiel_list mg_auto box_sd">
-                <div class="title">物料列表</div>
-                    <div class="mater_list">
-                        <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.formData.order.dataSet" :key='index'>             
-                            <div class="each_mater_wrapper">
-                                <div class="mater_img">
-                                    <img :src="getDefaultImg()" alt="mater_img" @error="getDefaultImg(item)">
-                                </div>
-                                <div class="mater_main">
-                                    <!-- 物料名称 -->
-                                    <div class="mater_name">
-                                        <span class="whiNum">No.{{index + 1}}</span>
-                                        {{item.inventoryName_transObjCode}}
-                                    </div>
-                                    <!-- 物料基本信息 -->
-                                    <div class="mater_info">
-                                    <!-- 物料编码、规格 -->
-                                        <div class="withColor">
-                                            <!-- 物料编码 -->
-                                            <div class="ForInline" style="display:inline-block">
-                                                <div class="mater_code">
-                                                    <span class="title">编码</span>
-                                                    <span class="num">{{item.transObjCode}}</span>
-                                                </div>
-                                            </div>
-                                            <!-- 物料规格 -->
-                                            <div class="ForInline" style="display:inline-block">
-                                                <div class="mater_spec">
-                                                    <span class="title">规格</span>
-                                                    <span class="num">{{item.specification_transObjCode}}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- 物料数量和价格 -->
-                                    <div class='mater_other'>
-                                        <div class='mater_price'>
-                                            ￥{{item.price}}
-                                        </div>
-                                        <div class='mater_num'>
-                                            {{item.tdQty}}
-                                        </div>                           
-                                    </div>
-                                </div>
-                            </div>
+              <div class="title">物料列表</div>
+                <div class="mater_list">
+                  <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.formData.order.dataSet" :key='index'>             
+                    <div class="each_mater_wrapper">
+                      <div class="mater_img">
+                        <img :src="getDefaultImg()" alt="mater_img" @error="getDefaultImg(item)">
+                      </div>
+                      <div class="mater_main">
+                        <!-- 物料名称 -->
+                        <div class="mater_name">
+                          <span class="whiNum">No.{{index + 1}}</span>
+                          {{item.inventoryName_transObjCode}}
                         </div>
+                        <!-- 物料基本信息 -->
+                        <div class="mater_info">
+                            <!-- 物料编码、规格 -->
+                          <div class="withColor">
+                            <!-- 物料编码 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_code">
+                                <span class="title">编码</span>
+                                <span class="num">{{item.transObjCode}}</span>
+                              </div>
+                            </div>
+                            <!-- 物料规格 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_spec">
+                                <span class="title">规格</span>
+                                <span class="num">{{item.specification_transObjCode}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- 物料数量和价格 -->
+                        <div class='mater_other'>
+                          <div class='mater_num'>
+                            <span class='num'>数量:&nbsp;{{item.tdQty}}</span>
+                            <span>税率:&nbsp;{{item.taxRate}}</span>
+                          </div>      
+                          <div class='mater_price'>
+                            ￥{{item.price}}
+                          </div>
+                                               
+                        </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
         </div>
     </div>
@@ -85,7 +92,8 @@ export default {
     return{
       orderInfo:{},
       formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79',
-      transCode : ''
+      transCode : '',
+      count : 0
     }
   },
   methods:{
@@ -105,6 +113,9 @@ export default {
             console.log(data);
             this.orderInfo = data;
             console.log(this.orderInfo);
+            data.formData.order.dataSet && data.formData.order.dataSet.map(item=>{
+              this.count += item.tdAmount;
+            })
 
         })
 
@@ -139,21 +150,6 @@ export default {
 .or_ads {
   position: relative;
   padding: .06rem .4rem .06rem .08rem;
-  .title {
-    color: #757575;
-    font-weight: 200;
-    font-size: .12rem;
-  }
-  .mode {
-    color: #111;
-    font-weight: 500;
-  }
-  .r_arrow {
-    top: 50%;
-    right: .04rem;
-    position: absolute;
-    transform: translate(0, -50%);
-  }
   // 用户信息
   .user_info {
     color: #111;
@@ -184,13 +180,6 @@ export default {
 .trade_mode {
   position: relative;
   padding: .06rem .08rem;
-  .icon-gengduo {
-    top: 50%;
-    right: .1rem;
-    font-size: .24rem;
-    position: absolute;
-    transform: translate(0, -50%);
-  }
   .title {
     color: #757575;
     font-weight: 200;
@@ -199,6 +188,8 @@ export default {
   .mode {
     color: #111;
     font-weight: 500;
+    display: flex;
+    justify-content: space-between;
   }
 }
 // 物料列表
@@ -347,7 +338,7 @@ export default {
           }
           //物料价格，数量
           .mater_other{
-            margin-top:0.08rem;
+            margin-top:0.06rem;
             align-items: center;
             .mater_price{
               display: inline-block;
@@ -358,37 +349,15 @@ export default {
               margin-right:0.9rem;
             }
             .mater_num{
-              display: flex;
-              // justify-content: flex-start;
-              float: right;
-              input{
-                border:none;
-                outline: none;
-              }
-              .handle{
+              color:#757575;
+              font-size:0.1rem;
+              span{
                 display: inline-block;
-                width:0.2rem;
-                height:0.2rem;
-                text-align: center;
-                line-height: 0.2rem;
-                font-size: .18rem;
-              }
-              .sub {
-                color: #eee;
-              }
-              .plus {
-                vertical-align: middle;
-                margin-top: -.01rem;
               }
               .num{
-                width:0.4rem;
-                height:0.2rem;
-                background: #e8e8e8;
-                text-align: center;
-                line-height: 0.2rem;
-                font-size:0.12rem;
-                border-radius: 0 !important;
+                margin-right:0.04rem;                  
               }
+              
             }
           }
         }
@@ -411,131 +380,6 @@ export default {
     border-radius: .4rem;
     background: #5077aa;
     box-shadow: 0 2px 5px #5077aa;
-  }
-}
-#trade_pop_part {
-  background: #fff;
-  .trade_pop {
-    padding: 0 .08rem;
-    // 顶部
-    .title {
-      font-size: .2rem;
-      position: relative;
-      padding: 0.08rem 0 .14rem;
-      // 搜索
-      .search_part {
-        width: 100%;
-        display: flex;
-        height: .3rem;
-        line-height: .3rem;
-        position: relative;
-        // 搜索输入框
-        .srh_inp {
-          flex: 5;
-          outline:none;
-          border: none;
-          color: #2D2D2D;
-          font-size: .16rem;
-          padding: 0 .3rem 0 .4rem;
-          background: #F3F1F2;
-          border-top-left-radius: .3rem;
-          border-bottom-left-radius: .3rem;
-        }
-        // 取消 按钮
-        .pop_cancel {
-          flex: 1;
-          color: #fff;
-          font-size: .14rem;
-          text-align: center;
-          background: #fc3c3c;
-          border-top-right-radius: .3rem;
-          border-bottom-right-radius: .3rem;
-        }
-        // 搜索icon
-        .serach_icon {
-          top: 50%;
-          left: 10px;
-          fill: #2D2D2D;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
-        // 清除icon
-        .clear_icon {
-          top: 50%;
-          right: 14%;
-          width: .3rem;
-          height: .3rem;
-          z-index: 100;
-          display: block;
-          font-size: .12rem;
-          line-height: .3rem;
-          text-align: center;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
-      }
-      // 关闭icon
-      .close_icon {
-        top: 50%;
-        right: -2%;
-        position: absolute;
-        transform: translate(0, -50%);
-      }
-    }
-    .each_mode {
-      margin-right: .1rem;
-      display: inline-block;
-      padding: .04rem .2rem;
-      border:1px solid #C7C7C7;
-      border-radius: 40px;
-    }
-    .choiced{
-      background: #5077aa;
-      color:#fff;
-    }
-    .vux-1px:before {
-      border-radius: 40px;
-    }
-
-  }
-  // 确定
-  .cfm_btn {
-    left: 50%;
-    bottom: 5%;
-    width: 2.8rem;
-    color: #fff;
-    height: .44rem;
-    line-height: .44rem;
-    position: absolute;
-    text-align: center;
-    background: #5077aa;
-    border-radius: .4rem;
-    transform: translate(-50%,0);
-    box-shadow: 0 2px 12px #5077aa;
-  }
-}
-
-// 底部栏
-.count_mode {
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  height: .44rem;
-  position: fixed;
-  line-height: .44rem;
-  background: #fff;
-  .count_num {
-    flex: 2.5;
-    color: #5077aa;
-    font-size: .24rem;
-    padding-left: .1rem;
-  }
-  .count_btn {
-    flex: 1.5;
-    color: #fff;
-    text-align: center;
-    background: #5077aa;
   }
 }
 .vux-1px-t:before {

@@ -91,8 +91,6 @@ export default {
         searchList(val){
             console.log(val);
             this.serachVal  = val;
-            this.activeTab = '';
-            this.activeIndex = 0;
             this.resetCondition();
             this.getOrderList();
         },
@@ -230,6 +228,8 @@ export default {
     overflow: hidden;
     box-sizing: border-box;
     .list_content{
+        overflow: hidden;
+        min-height: calc(100% + 1px);
         .each_duty{
             margin: .2rem auto;
             padding: .1rem ;
@@ -259,8 +259,6 @@ export default {
                 }
                 .duty_status_name {
                     background: #000;
-                    border-top-left-radius: .12rem;
-                    border-bottom-left-radius: .12rem;
                 }
                 .duty_status_info { //进行中
                     border-top-right-radius: .12rem;
@@ -272,9 +270,6 @@ export default {
                 .duty_wait_c {
                     background: #FADB51;
                     color: #000;
-                }
-                .duty_urgent_c {
-                    background: #E34E43;
                 }
                 }
             }
