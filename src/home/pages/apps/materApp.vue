@@ -19,64 +19,60 @@
         </div>
       </div>
       <!-- 主要内容区域 -->
-      <div class="app_main" ref="appMain">
-        <div class="app_main_wrapper">
-          <div class="each_mater" v-for="(item, index) in matterList" :key='index' @click="goDetail(item)">
-            <div class="mater_img">
-              <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+      <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !matterList.length"
+                @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
+        <div class="each_mater" v-for="(item, index) in matterList" :key='index' @click="goDetail(item)">
+          <div class="mater_img">
+            <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+          </div>
+          <div class="mater_main">
+            <!-- 物料名称 -->
+            <div class="mater_name">
+              <span class="whiNum">No.{{index + 1}}</span>
+              {{item.inventoryName}}
             </div>
-            <div class="mater_main">
-              <!-- 物料名称 -->
-              <div class="mater_name">
-                <span class="whiNum">No.{{index + 1}}</span>
-                {{item.inventoryName}}
-              </div>
-              <!-- 物料基本信息 -->
-              <div class="mater_info vux-1px-b">
-                <!-- 物料编码、规格 -->
-                <div class="withColor">
-                  <!-- 物料编码 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_code">
-                      <span class="title">编码</span>
-                      <span class="num">{{item.inventoryCode}}</span>
-                    </div>
-                  </div>
-                  <!-- 物料规格 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_spec">
-                      <span class="title">规格</span>
-                      <span class="num">{{item.specification || '无'}}</span>
-                    </div>
+            <!-- 物料基本信息 -->
+            <div class="mater_info vux-1px-b">
+              <!-- 物料编码、规格 -->
+              <div class="withColor">
+                <!-- 物料编码 -->
+                <div class="ForInline" style="display:inline-block">
+                  <div class="mater_code">
+                    <span class="title">编码</span>
+                    <span class="num">{{item.inventoryCode}}</span>
                   </div>
                 </div>
-                <!-- 物料分类、材质 -->
-                <div class="withoutColor">
-                  <!-- 物料分类 -->
-                  <div class="mater_classify">
-                    <span class="father">大类: {{item.inventoryType}}</span>
-                    <span class="child">子类: {{item.inventorySubclass}}</span>
+                <!-- 物料规格 -->
+                <div class="ForInline" style="display:inline-block">
+                  <div class="mater_spec">
+                    <span class="title">规格</span>
+                    <span class="num">{{item.specification || '无'}}</span>
                   </div>
-                  <!-- 物料材质等 -->
-                  <div class="mater_material">
-                    <div>
-                      <span class="type">属性: {{item.processing}}</span>
-                      <span class="unit">单位: {{item.measureUnit || '无'}}</span>
-                    </div>
-                    <div>
-                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                      <span class="spec">材质: {{item.material || '无'}}</span>
-                    </div>
+                </div>
+              </div>
+              <!-- 物料分类、材质 -->
+              <div class="withoutColor">
+                <!-- 物料分类 -->
+                <div class="mater_classify">
+                  <span class="father">大类: {{item.inventoryType}}</span>
+                  <span class="child">子类: {{item.inventorySubclass}}</span>
+                </div>
+                <!-- 物料材质等 -->
+                <div class="mater_material">
+                  <div>
+                    <span class="type">属性: {{item.processing}}</span>
+                    <span class="unit">单位: {{item.measureUnit || '无'}}</span>
+                  </div>
+                  <div>
+                    <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                    <span class="spec">材质: {{item.material || '无'}}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <load-more tip="加载中" v-show="hasNext"></load-more>
-          <load-more :show-loading="false" tip="暂无数据" v-show="!matterList.length && !hasNext"></load-more>
         </div>
-        <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
-      </div>
+      </r-scroll>
     </div>
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEditAds">新建另一条物料</div>
@@ -87,14 +83,14 @@
 
 <script>
   import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
-  import {getDictByType, getMatList} from './../../service/materService'
-  import BScroll from 'better-scroll'
+  import {getDictByType} from './../../service/materService'
+  import {getList} from './../../service/commonService'
+  import RScroll from './../components/RScroll'
 
   const RFD_MATER_LIST = 'RFD_MATER_LIST';
-  const PULL_DOWN_REFRESH_HEIGHT = 30;
   export default {
     components: {
-      Tab, Icon, TabItem, Spinner, LoadMore,
+      Tab, Icon, TabItem, Spinner, LoadMore, RScroll,
     },
     data() {
       return {
@@ -133,9 +129,12 @@
         matterList: [],
         limit: 10,
         page: 1,
-        bScroll: null,
         hasNext: true,
-        pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
+        scrollOptions: {
+          click: true,
+          pullDownRefresh: true,
+          pullUpLoad: true,
+        }
       }
     },
     methods: {
@@ -163,7 +162,7 @@
         this.matterList = [];
         this.page = 1;
         this.hasNext = true;
-        this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+        this.$refs.bScroll.resetPullDown();
       },
       // TODO tab点击
       tabClick(item, index) {
@@ -171,7 +170,7 @@
         this.activeTab = index ? item.name : '';
         this.activeIndex = index;
         this.resetCondition();
-        this.bScroll.scrollTo(0, 0);
+        this.$refs.bScroll.scrollTo(0, 0);
         this.getMatList();
       },
       // TODO 获取tab
@@ -186,7 +185,7 @@
         });
       },
       // TODO 获取物料列表
-      getMatList() {
+      getMatList(noReset = false) {
         let filter = [
           {
             operator: 'eq',
@@ -216,7 +215,7 @@
             },
           ];
         }
-        return getMatList({
+        return getList(2132, {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -227,19 +226,19 @@
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
-          this.$nextTick(() => {
-            this.bScroll.refresh();
-            this.bScroll.finishPullDown();
-            this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-            if (!this.hasNext) {
-              return
-            }
-            this.bScroll.finishPullUp();
-          })
+          if (!noReset) {
+            this.$nextTick(() => {
+              this.resetScroll();
+            })
+          }
         }).catch(e => {
-          this.bScroll.finishPullDown();
-          this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+          this.resetScroll();
         });
+      },
+      // TODO 重置下拉刷新、上拉加载的状态
+      resetScroll() {
+        this.$refs.bScroll.finishPullDown();
+        this.$refs.bScroll.finishPullUp();
       },
       // TODO 搜索物料
       searchMat() {
@@ -248,41 +247,19 @@
         this.resetCondition();
         this.getMatList();
       },
-      // TODO 初始化better-scroll
-      initScroll() {
-        this.$nextTick(() => {
-          this.bScroll = new BScroll(this.$refs.appMain, {
-            click: true,
-            pullDownRefresh: {
-              threshold: 50,
-              stop: PULL_DOWN_REFRESH_HEIGHT
-            },
-            pullUpLoad: {
-              threshold: 20
-            },
-          });
-          // 绑定滚动加载事件
-          this.bScroll.on('pullingUp', () => {
-            if (!this.hasNext) {
-              return
-            }
-            this.page++;
-            this.getMatList();
-          });
-          // 绑定下拉刷新事件
-          this.bScroll.on('pullingDown', () => {
-            this.page = 1;
-            this.getMatList();
-          });
-          // 下拉的时候展示下拉刷新的图标
-          this.bScroll.on('scroll', ({x, y}) => {
-            if (y > 0) {
-              if (y > PULL_DOWN_REFRESH_HEIGHT) {
-                this.pullDownTop = 0;
-              } else {
-                this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
-              }
-            }
+      // TODO 上拉加载
+      onPullingUp() {
+        this.page++;
+        this.getMatList();
+      },
+      // TODO 下拉刷新
+      onPullingDown() {
+        this.page = 1;
+        this.getMatList(true).then(() => {
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullDown().then(() => {
+              this.$refs.bScroll.finishPullUp();
+            });
           })
         });
       },
@@ -303,16 +280,10 @@
       }
     },
     created() {
-      this.initScroll();
       this.getDictByType().then(() => {
         this.getMatList();
       });
     },
-    activated() {
-      if (this.bScroll) {
-        this.bScroll.refresh();
-      }
-    }
   }
 </script>
 
@@ -403,20 +374,6 @@
     height: calc(100% - .52rem - 36px);
     overflow: hidden;
     box-sizing: border-box;
-    .app_main_wrapper {
-      min-height: calc(100% + 1px);
-      overflow: hidden;
-    }
-    .pullDownRefresh {
-      display: block;
-      margin: 0 auto;
-      height: 30px;
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: top;
-    }
     // 每个物料
     .each_mater {
       padding: .08rem;

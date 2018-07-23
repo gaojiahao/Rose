@@ -68,7 +68,7 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Picker, Popup, Group, AlertModule,XAddress, ChinaAddressV4Data,Icon } from 'vux';
+  import {TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data,Icon } from 'vux';
   import RPicker from './../components/RPicker';
   import common from '../mixins/common.js'
   import dealerService from '../../service/dealerService.js'
@@ -159,7 +159,7 @@
           this.dealer.dealerPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
           // this.biReferenceId = detail.biReferenceId
         }).catch(e => {
-          AlertModule.show({
+          this.$vux.alert.show({
             content: e.message,
           })
         });
@@ -197,7 +197,7 @@
           this.AccountRelType = tableContent;
           return tableContent
         }).catch(e=>{
-          AlertModule.show({
+          this.$vux.alert.show({
             content: e.message,
           })
         })
@@ -216,7 +216,7 @@
           this.AccountBigType = tableContent;
           return tableContent
         }).catch(e => {
-          AlertModule.show({
+          this.$vux.alert.show({
             content: e.message,
           })
         })
@@ -236,7 +236,7 @@
           this.AccountSmlType = tableContent;
           return tableContent
         }).catch(e => {
-          AlertModule.show({
+          this.$vux.alert.show({
             content: e.message,
           })
         })
@@ -341,7 +341,7 @@
                 let that = this;
                 if(data.success){
                   that.submitSuccess  = true;
-                  AlertModule.show({
+                  this.$vux.alert.show({
                     content: data.message,
                     onHide(){
                       that.$router.push('/adress');
@@ -349,13 +349,13 @@
                   })  
                 }
                 else{
-                  AlertModule.show({
+                  this.$vux.alert.show({
                     content: data.message
                   })  
                 }
                                   
               }).catch(e=>{
-                AlertModule.show({
+                this.$vux.alert.show({
                   content: e.message,
                 })
               })
@@ -365,7 +365,7 @@
                 let that = this;  
                 if(data.success){
                   that.submitSuccess  = true;
-                  AlertModule.show({
+                  this.$vux.alert.show({
                     content:data.message,
                     onHide(){
                       that.$router.push('/adress');
@@ -373,12 +373,12 @@
                   })
                 }   
                 else{
-                  AlertModule.show({
+                  this.$vux.alert.show({
                     content:data.message
                   })
                 }                                  
               }).catch(e=>{
-                AlertModule.show({
+                this.$vux.alert.show({
                   content: e.message,
                 })
               })
@@ -390,17 +390,17 @@
       save(){
         if(!this.btnStatus){
           if(this.dealer.dealerCode === ''){
-              AlertModule.show({
+              this.$vux.alert.show({
                 content: '【往来编码】不能为空',
               })
             }
             else if(this.dealer.dealerName === ''){
-              AlertModule.show({
+              this.$vux.alert.show({
                 content: '【往来名称】不能为空',
               })
             }
             else if(this.dealer.dealerLabelName === ''){
-              AlertModule.show({
+              this.$vux.alert.show({
                 content: '【往来关系标签】不能为空',
               })
             }

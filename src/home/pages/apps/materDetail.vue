@@ -360,7 +360,6 @@
         color: #757575;
       }
       .content {
-        padding-left: .04rem;
         font-weight: bold;
         font-size: .14rem;
       }

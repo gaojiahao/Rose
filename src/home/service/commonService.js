@@ -86,8 +86,24 @@ export let getBaseInfoData = () => {
   });
 };
 
+// TODO 获取列表
+export let getList = (viewId = 0, data = {}) => {
+  return $axios.ajax({
+    url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
+    data: {
+      limit: 10,
+      page: 1,
+      start: 11,
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {
   saveAndStartWf,
   saveAndCommitTask,
   getBaseInfoData,
+  getList,
 }

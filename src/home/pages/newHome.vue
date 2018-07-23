@@ -9,26 +9,25 @@
         </div>
       </div>
       <!-- 基础应用部分 -->
-
-        <div class="basic_part swiper-container" >
-            <!-- 应用标题 -->
-            <div class="list_title">
-              <span class="bg_title">基础</span>
-              <!-- <span class="more">更多</span> -->
+      <div class="basic_part swiper-container" >
+          <!-- 应用标题 -->
+          <div class="list_title">
+            <span class="bg_title">基础</span>
+            <!-- <span class="more">更多</span> -->
+          </div>
+          <div class="swiper-wrapper" style="height:1rem; padding-left:.04rem;">
+            <!-- 单个app -->
+            <div class="indval_app swiper-slide"
+                @click="goBasic(item.text)"
+                v-for='(item, index) of YWarray'
+                :key='index'
+                :style="{background:(index % 2 ? SecBg : '')}">
+              <div class="app_type">业务对象</div>
+              <div class="app_name">{{item.text}}</div>
             </div>
-            <div class="swiper-wrapper" style="height:1rem; padding-left:.04rem;">
-              <!-- 单个app -->
-              <div class="indval_app swiper-slide"
-                  @click="goBasic(item.text)"
-                  v-for='(item, index) of YWarray'
-                  :key='index'
-                  :style="{background:(index % 2 ? SecBg : '')}">
-                <div class="app_type">业务对象</div>
-                <div class="app_name">{{item.text}}</div>
-              </div>
-            </div>
-          
-        </div>
+          </div>
+        
+      </div>
       <!-- 销售应用部分 -->
       <div class="sale_part vux-1px-t swiper-container">
         <!-- 应用标题 -->
@@ -79,10 +78,10 @@ export default {
     //销售应用
     goXS(item){
       if(item === '销售报价'){
-        this.$router.push({ path:'/fillform', query:{code:'XSBJ'} })
+        this.$router.push({ path:'/list', query:{code:'XSBJ'} })
       }
       else if(item === '销售订单'){
-        this.$router.push({ path:'/fillform', query:{code:'XSDD'}})
+        this.$router.push({ path:'/list', query:{code:'XSDD'}})
       }
     }
   },
