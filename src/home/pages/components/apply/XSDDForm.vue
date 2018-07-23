@@ -22,7 +22,7 @@
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
         <p class="title">结算方式</p>
-        <p class="mode">{{this.dealer.drDealerPaymentTerm}}</p>
+        <p class="mode">{{dealer.drDealerPaymentTerm}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom >
@@ -42,7 +42,7 @@
       <!-- 物流条款 -->
       <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
         <p class="title">物流条款</p>
-        <p class="mode">{{this.dealer.drDealerLogisticsTerms}}</p>
+        <p class="mode">{{dealer.drDealerLogisticsTerms}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom >
