@@ -150,11 +150,14 @@
       delClick(item, index) {
         let arr = this.matterList;
         arr.splice(index, 1);
+        // 删除输入过的价格
+        delete this.priceMap[item.transCode];
         this.$refs.matter.delSelItem(item);
       },
       // TODO 点击增加更多物料
       addMatter() {
         this.matterList.forEach(item => {
+          // 存储已输入的价格
           this.priceMap[item.transCode] = item.price;
         });
         this.showMaterielPop = !this.showMaterielPop
@@ -176,6 +179,7 @@
         sels.forEach(item => {
           item.price = this.priceMap[item.transCode] || ''
         });
+        this.priceMap = {};
         this.matterList = [...sels];
       },
       // TODO 获取默认图片
