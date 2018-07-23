@@ -4,7 +4,7 @@
       <!-- 用户头像部分 -->
       <div class="user_part">
         <div class="user_avatar vux-1px-b">
-          <img src="assets/avatar.png" alt="avatar">
+          <img src="../../assets/avatar.png" alt="avatar">
           <div class="tips">欢迎,瑞福登</div>
         </div>
       </div>
