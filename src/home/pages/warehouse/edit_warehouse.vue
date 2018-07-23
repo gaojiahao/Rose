@@ -5,7 +5,7 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b '>
             <label class='required'>仓库编码:</label>
-            <input type='text' v-model="warehouse.warehouseCode" class='property_val'/>
+            <input type='text' v-model="warehouse.warehouseCode" class='property_val' :disabled ='transCode!=""?true:false'/>
           </div>
           <div class='each_property required'>
             <label class='required'>仓库名称:</label>
@@ -543,6 +543,9 @@
         font-size: 0.16rem;
         line-height: 0.24rem;
         width:100%;
+      }
+      .property_val:disabled{
+          background:#fff;
       }
       .picker {
         display: flex;
