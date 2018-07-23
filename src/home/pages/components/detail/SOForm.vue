@@ -1,39 +1,32 @@
 <template>
     <div class="pages">
-        <div class="basicPart" v-if='orderInfo.formData'>
+        <div class="basicPart" v-if='orderInfo'>
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
               <div class="user_info">
-                <span class="user_name">{{orderInfo.formData.dealerDebitContactPersonName}}</span>
-                <span class="user_tel">{{orderInfo.formData.dealerDebitContactInformation}}</span>
+                <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
+                <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
               </div>
               <div class="cp_info">
-                <p class="cp_name">{{orderInfo.formData.order.dealerName_dealerDebit}}</p>
-                <p class="cp_ads">{{orderInfo.formData.order.province_dealerDebit}}{{orderInfo.formData.order.city_dealerDebit}}{{orderInfo.formData.order.county_dealerDebit}}{{orderInfo.formData.order.address_dealerDebit}}</p>
+                <p class="cp_name">{{orderInfo.order.dealerName_dealerDebit}}</p>
+                <p class="cp_ads">{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit}}</p>
               </div>
-            </div>
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">订单总价</p>
-              <p class="mode">
-                <span>合计</span>
-                <span class='amount'>￥{{count}}</span>
-              </p>
             </div>
             <!-- 结算方式 -->
             <div class="trade_mode mg_auto box_sd">
               <p class="title">结算方式</p>
-              <p class="mode">{{orderInfo.formData.drDealerPaymentTerm}}</p>
+              <p class="mode">{{orderInfo.drDealerPaymentTerm}}</p>
             </div>
             <!-- 物流条款 -->
             <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
               <p class="title">物流条款</p>
-              <p class="mode">{{orderInfo.formData.drDealerLogisticsTerms}}</p>
+              <p class="mode">{{orderInfo.drDealerLogisticsTerms}}</p>
             </div>
             <!-- 物料列表 -->
             <div class="materiel_list mg_auto box_sd">
               <div class="title">物料列表</div>
                 <div class="mater_list">
-                  <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.formData.order.dataSet" :key='index'>             
+                  <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>             
                     <div class="each_mater_wrapper">
                       <div class="mater_img">
                         <img :src="getDefaultImg()" alt="mater_img" @error="getDefaultImg(item)">
@@ -41,7 +34,6 @@
                       <div class="mater_main">
                         <!-- 物料名称 -->
                         <div class="mater_name">
-                          <span class="whiNum">No.{{index + 1}}</span>
                           {{item.inventoryName_transObjCode}}
                         </div>
                         <!-- 物料基本信息 -->
@@ -67,20 +59,24 @@
                         <!-- 物料数量和价格 -->
                         <div class='mater_other'>
                           <div class='mater_num'>
-                            <span class='num'>数量:&nbsp;{{item.tdQty}}</span>
-                            <span>税率:&nbsp;{{item.taxRate}}</span>
+                            <span class="num">单价: ￥{{item.price}}</span>
+                            <span class='num'>数量: {{item.tdQty}}</span>
+                            <span>税率: {{item.taxRate}}</span>
                           </div>      
                           <div class='mater_price'>
-                            ￥{{item.price}}
-                          </div>
-                                               
+                            ￥{{item.tdAmount}}
+                            <span class="num">[金额: ￥{{item.noTaxAmount}} + 税金: ￥{{item.taxAmount}}]</span>
+                          </div>        
                         </div>
                       </div>
                     </div>
                   </div>
+                  <div class="price_list">
+                    <div></div>
+                  </div>
                 </div>
-              </div>
             </div>
+          </div>
         </div>
     </div>
 </template>
@@ -90,33 +86,43 @@ import { getSOList } from '../../../service/detailService.js'
 export default {
   data(){
     return{
+      count : 0,
       orderInfo:{},
-      formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79',
       transCode : '',
-      count : 0
+      formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79'
     }
   },
   methods:{
     //选择默认图片
     getDefaultImg(item) {
-      let url = require('./../../../assets/mater01.jpg');
+      let url = require('./../../../assets/wl.png');
       if (item) {
         item.inventoryPic = url;
       }
       return url
     },
+    //获取详情
     getOrderList(){
         getSOList({
-            formViewUniqueId : this.formViewUniqueId,
-            transCode : this.transCode
-        }).then( data=>{
-            console.log(data);
-            this.orderInfo = data;
-            console.log(this.orderInfo);
-            data.formData.order.dataSet && data.formData.order.dataSet.map(item=>{
+          formViewUniqueId : this.formViewUniqueId,
+          transCode : this.transCode
+        }).then( data => {
+          console.log(data);
+          let detalInfo = data.formData;
+          if(data){
+            this.orderInfo = detalInfo;       
+            detalInfo.order.dataSet.map( item => {
               this.count += item.tdAmount;
             })
-
+          }
+          else {
+            // http返回200 仍为错误信息的处理
+            if(!data.success){
+              this.$vux.alert.show({
+                content: '抱歉，目前已不支持查看此类数据'
+              })
+            }            
+          }
         })
 
     }
@@ -157,10 +163,12 @@ export default {
     font-weight: 500;
     // 用户姓名
     .user_name {
-      margin-right: .08rem;
+      color: #5077aa;
     }
     // 用户电话
     .user_tel {
+      font-size: .14rem;
+      font-weight: bold;
       font-family: sans-serif, -apple-system-font;
     }
   }
@@ -346,7 +354,10 @@ export default {
               font-size:0.16rem;
               line-height: 0.2rem;
               color:#ea5455;
-              margin-right:0.9rem;
+              .num {
+                font-size: .1rem;
+                color: #757575;
+              }
             }
             .mater_num{
               color:#757575;

@@ -19,7 +19,7 @@ export default [
   { path:'/allapply', name:'APPLY', component:APPLY,
     meta:{ title:'全部应用' } },
   { path:'/list', name:'LIST', component:LIST,
-    meta:{ title:'列表' } },
+    meta:{ title:'列表', keepAlive: true} },
   { path:'/fillform', name:'FILLFORM', component:FILLFORM,
     meta:{ title:'填写新内容' } },
   { path:'/detail', name:'DETAIL', component:DETAIL,
