@@ -76,10 +76,10 @@ export default {
     //销售应用
     goXS(item){
       if(item === '销售报价'){
-        this.$router.push({ path:'/detail', query:{code:'XSBJ'} })
+        this.$router.push({ path:'/fillform', query:{code:'XSBJ'} })
       }
       else if(item === '销售订单'){
-        this.$router.push({ path:'/detail', query:{code:'XSDD'}})
+        this.$router.push({ path:'/fillform', query:{code:'XSDD'}})
       }
     }
   },
