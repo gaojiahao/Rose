@@ -35,7 +35,10 @@
                 </div>
                 <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
             </div>
-        </div>        
+        </div>   
+        <div class="btn vux-1px-t">
+            <div class="cfm_btn" @click="goEdit">新增一个订单</div>
+        </div>     
     </div>
 </template>
 
@@ -72,6 +75,15 @@ export default {
                     transCode : code
                 }
             })
+        },
+        goEdit(){
+            this.$router.push({
+                path:'fillform',
+                query:{
+                    code:'XSDD'
+                }
+            })
+
         },
         // TODO 重置列表条件
         resetCondition() {
@@ -142,8 +154,12 @@ export default {
                     this.listBscrol.finishPullUp();
                 })
             }).catch(e=>{
+                console.log('进入');
                 this.listBscrol.finishPullDown();
                 this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+                 this.$vux.alert.show({
+                     content : e.message
+                 })
             })
         },
         initScroll(){
@@ -210,7 +226,7 @@ export default {
 <style lang='scss' scoped>
 .content{
     width:100%;
-    height:100%;
+    height:90%;
     overflow: auto;
 }
 .list_top {
@@ -223,8 +239,8 @@ export default {
   }
 .list_wrapper{
     position: relative;
-    width:100%;
-    height: calc(100% - .52rem - 36px);
+    margin-top: .08rem;
+    height: calc(100% - .52rem - 44px);
     overflow: hidden;
     box-sizing: border-box;
     .list_content{
@@ -324,6 +340,29 @@ export default {
             transition: top;
         }
     
+}
+// 确定
+.btn {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 10%;
+  position: fixed;
+  background: #fff;
+  .cfm_btn {
+    top: 50%;
+    left: 50%;
+    width: 2.8rem;
+    color: #fff;
+    height: .44rem;
+    line-height: .44rem;
+    position: absolute;
+    text-align: center;
+    background: #5077aa;
+    border-radius: .4rem;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 5px #5077aa;
+  }
 }
 
 </style>

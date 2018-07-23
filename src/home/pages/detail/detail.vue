@@ -25,7 +25,13 @@ export default {
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
-      this.currentComponent = require(`../components/detail/${this.transCode.split('_')[0]}Form.vue`).default;
+      if(this.transCode.indexOf('XSDD')>=0){
+        this.currentComponent = require('../components/detail/SOForm.vue').default;
+      }
+      else{
+        this.currentComponent = require(`../components/detail/${this.transCode.split('_')[0]}Form.vue`).default;
+      }
+      
     }
     setTimeout(()=>{
       this.showLoadding = false

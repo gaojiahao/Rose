@@ -53,7 +53,7 @@
 
 <script>
 import dealerService from '../../service/dealerService.js'
-import {Tab, Icon, TabItem,Spinner,AlertModule,LoadMore} from 'vux'
+import {Tab, Icon, TabItem,Spinner,LoadMore} from 'vux'
 import BScroll from 'better-scroll'
 import LoadIcon from '../components/Loading.vue'
 const PULL_DOWN_REFRESH_HEIGHT = 30;
@@ -155,7 +155,7 @@ export default {
               this.id = data[0].id;
             }
           }).catch(e=>{
-            AlertModule.show({
+            this.$vux.alert.show({
               content: e.message,
             })
           })
@@ -175,7 +175,7 @@ export default {
           }).catch(e=>{
             this.bScroll.finishPullDown();
             this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-            AlertModule.show({
+            this.$vux.alert.show({
               content: e.message,
             })
           })
@@ -192,7 +192,7 @@ export default {
         })
         this.dealerClassfiy = data;
       }).catch(e=>{
-        AlertModule.show({
+        this.$vux.alert.show({
           content: e.message,
         })
       })
