@@ -26,11 +26,9 @@ FastClick.attach(document.body)
 Vue.config.productionTip = false
 
 // router.beforeEach((to, from, next) => {
-//   // let { meta } = to;
 //   if(to.meta.title){
 //     document.title = to.meta.title;
 //   }
-//   // document.title = meta.title || '';
 //   next()
 // });
 router.afterEach( route =>{

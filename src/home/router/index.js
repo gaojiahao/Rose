@@ -1,28 +1,26 @@
 import HOME from '../pages/home'
-import NEWHOME from '../pages/newhome'
-import APPLY from '../pages/allApply'
-import LIST from '../pages/list/list'
-import FILLFORM from '../pages/fillForm/fillForm'
-import DETAIL from '../pages/detail/detail'
-import ADRESS from '../pages/dealer/adress'
-import EDIT_ADS from '../pages/dealer/edit_ads'
-import ADRESSDETAL from '../pages/dealer/adressDetail'
-import MATERAPP from '../pages/apps/materApp'
-import ADDMATER from '../pages/apps/addMater'
-import MATERDETAIL from '../pages/apps/materDetail'
-import WAREHOUSE from '../pages/warehouse/warehouse'
-import EDIT_WAREHOUSE from '../pages/warehouse/edit_warehouse'
-import WAREHOUSEDETAIL from '../pages/warehouse/warehouseDetail'
+
+// ------> 基础应用 <-------
+import ADRESS from '../pages/apps/basicApp/dealer/adress'
+import EDIT_ADS from '../pages/apps/basicApp/dealer/edit_ads'
+import ADRESSDETAL from '../pages/apps/basicApp/dealer/adressDetail'
+import MATERLIST from '../pages/apps/basicApp/Mater/materList'
+import ADDMATER from '../pages/apps/basicApp/Mater/addMater'
+import MATERDETAIL from '../pages/apps/basicApp/Mater/materDetail'
+import WAREHOUSE from '../pages/apps/basicApp/warehouse/warehouse'
+import EDIT_WAREHOUSE from '../pages/apps/basicApp/warehouse/edit_warehouse'
+import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
+// ------- >业务应用 <-------
+import LIST from '../pages/apps/bizApp/list/list'
+import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
+import DETAIL from '../pages/apps/bizApp/detail/detail'
+
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
-    meta:{ title:'首页' } },
-  { path: '/newhome', name: 'NEWHOME', component: NEWHOME,
-  meta:{ title:'新首页' , keepAlive: true} },
-  { path:'/allapply', name:'APPLY', component:APPLY,
-    meta:{ title:'全部应用' } },
+  meta:{ title:'首页' , keepAlive: true} },
   { path:'/list', name:'LIST', component:LIST,
-    meta:{ title:'列表', keepAlive: true} },
+    meta:{ title:'列表'} },
   { path:'/fillform', name:'FILLFORM', component:FILLFORM,
     meta:{ title:'填写新内容' } },
   { path:'/detail', name:'DETAIL', component:DETAIL,
@@ -48,9 +46,9 @@ export default [
     ]
   },
   {
-    path:'/materApp',
-    name:'MATERAPP',
-    component:MATERAPP,
+    path:'/materlist',
+    name:'MATERLIST',
+    component:MATERLIST,
     meta:{ title:'物料列表' },
     children:[
       {

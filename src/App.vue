@@ -7,12 +7,12 @@
     <router-view v-if="!$route.meta.keepAlive"></router-view>
 
     <!-- 底部导航栏 -->
-    <nav class="tabs vux-1px-t">
+    <!-- <nav class="tabs vux-1px-t">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <em class="title">{{tab.title}}</em>
       </router-link>
-    </nav>   
+    </nav>    -->
   </div>
 </template>
 
@@ -23,7 +23,7 @@
     data(){
       return{
         tablist: [
-					{title: '首页', path: '/newhome', icon: 'icon-shouye1'},
+					{title: '首页', path: '/home', icon: 'icon-shouye1'},
 					{title: '消息', path: '/message', icon: 'icon-xiaoxi'},
         ]
       }
