@@ -1,9 +1,9 @@
 import HOME from '../pages/home'
 import NEWHOME from '../pages/newhome'
 import APPLY from '../pages/allApply'
-import LISTFORM from '../pages/listForm/listForm.vue'
+import LIST from '../pages/list/list'
 import FILLFORM from '../pages/fillForm/fillForm'
-import DETAILFORM from '../pages/detailForm/detailForm.vue'
+import DETAIL from '../pages/detail/detail'
 import ADRESS from '../pages/dealer/adress'
 import EDIT_ADS from '../pages/dealer/edit_ads'
 import ADRESSDETAL from '../pages/dealer/adressDetail'
@@ -18,11 +18,11 @@ export default [
   meta:{ title:'新首页' , keepAlive: true} },
   { path:'/allapply', name:'APPLY', component:APPLY,
     meta:{ title:'全部应用' } },
-  { path:'/listform', name:'LISTFORM', component:LISTFORM,
+  { path:'/list', name:'LIST', component:LIST,
     meta:{ title:'列表' } },
   { path:'/fillform', name:'FILLFORM', component:FILLFORM,
     meta:{ title:'填写新内容' } },
-  { path:'/detail', name:'DETAILFORM', component:DETAILFORM,
+  { path:'/detail', name:'DETAIL', component:DETAIL,
     meta:{ title:'订单详情' } },
   {
     path:'/adress',
