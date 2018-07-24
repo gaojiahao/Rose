@@ -1,8 +1,10 @@
 <template>
   <div class="pages">
     <component
-      :is='currentComponent'>
+      :is='currentComponent'
+      ref='list'>
     </component>
+    <router-view></router-view>
     <loading-form :show='showLoadding'></loading-form>
   </div>
 
@@ -18,16 +20,6 @@ export default {
       code :''
     }
   },
-  watch: {
-    $route: {
-      handler(to, from ){
-        let {name} = to;
-        if(name === 'HOME') {
-          from.meta.keepAlive = false;
-        }
-      }
-    }
-  },
   components:{
     'loading-form' : Loadding
   },
@@ -40,7 +32,18 @@ export default {
     setTimeout(()=>{
       this.showLoadding = false
     },1000)
-  }
+  },
+  watch: {
+    $route: {
+      handler(to, from) {
+        // 判断是否重新请求页面
+        if (to.meta.reload && to.path === '/list') {
+          to.meta.reload = false;
+          this.$refs.list.reloadData()
+        }
+      },
+    }
+  },
 }
 </script>
 

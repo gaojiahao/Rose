@@ -1,5 +1,5 @@
 <template>
-    <div class="pages">
+    <div class="pages" ref='list'>
         <div class='content'>
             <div class="list_top">
                 <!-- 搜索栏 -->
@@ -70,7 +70,7 @@ export default {
     methods:{
         goDetail(code){
             this.$router.push({
-                path:'/detail',
+                path:'/list/detail',
                 query:{
                     transCode : code
                 }
@@ -78,12 +78,11 @@ export default {
         },
         goEdit(){
             this.$router.push({
-                path:'fillform',
+                path:'/list/fillform',
                 query:{
                     code:'XSDD'
                 }
             })
-
         },
         // TODO 重置列表条件
         resetCondition() {
@@ -101,7 +100,6 @@ export default {
             this.getOrderList();
         },
         searchList(val){
-            console.log(val);
             this.serachVal  = val;
             this.resetCondition();
             this.getOrderList();
@@ -154,7 +152,6 @@ export default {
                     this.listBscrol.finishPullUp();
                 })
             }).catch(e=>{
-                console.log('进入');
                 this.listBscrol.finishPullDown();
                 this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
                  this.$vux.alert.show({
@@ -201,32 +198,29 @@ export default {
                     }
                 })
             })
+        },
+        reloadData(){
+            this.serachVal = '';
+            this.activeTab = '';
+            this.activeIndex = 0;
+            this.resetCondition();
+            this.getOrderList();
         }
     },
     filters: {
       // TODO 过滤日期
+        filterTime(val) {
+            if(val){
+            let date = new Date(val);
+            return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+            }
 
-      filterTime(val) {
-        if(val){
-          let date = new Date(val);
-          return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
         }
-
-      }
     },
     created(){
         this.initScroll();
         this.getOrderList();
-
-    },
-    beforeRouteEnter(to, from, next){
-      next( r => {
-        console.log(r);
-      })
-    },
-  activated(){
-      this.listBscrol && this.listBscrol.refresh()
-  }
+    }
 
 }
 </script>
@@ -285,8 +279,6 @@ export default {
                     background: #000;
                 }
                 .duty_status_info { //进行中
-                    border-top-right-radius: .12rem;
-                    border-bottom-right-radius: .12rem;
                 }
                 .duty_process_c {
                     background: #26AB28;

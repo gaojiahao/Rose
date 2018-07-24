@@ -237,12 +237,9 @@
           }
           .duty_status_name {
             background: #000;
-            border-top-left-radius: .12rem;
-            border-bottom-left-radius: .12rem;
           }
           .duty_status_info { //进行中
-            border-top-right-radius: .12rem;
-            border-bottom-right-radius: .12rem;
+            
           }
           .duty_process_c {
             background: #26AB28;

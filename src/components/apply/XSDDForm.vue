@@ -188,7 +188,8 @@ export default {
         biComment : '' //备注
       },
       paymentIndex : 0,
-      logisticsIndex : 0
+      logisticsIndex : 0,
+      submitSuccess: false, // 是否提交成功
     }
   },
   methods:{
@@ -344,7 +345,8 @@ export default {
               //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
               if (success) {
-                message = '订单提交成功'
+                message = '订单提交成功';
+                this.$emit('change',true);
               }
               this.$vux.alert.show({
                 content: message,

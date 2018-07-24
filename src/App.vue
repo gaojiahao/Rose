@@ -63,6 +63,7 @@
     bottom: .49rem;
     overflow: hidden;
     position: absolute;
+    background: #fff;
   }
   // 导航标签
   .tabs {

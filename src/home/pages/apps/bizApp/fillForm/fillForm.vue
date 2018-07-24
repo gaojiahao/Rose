@@ -1,7 +1,8 @@
 <template>
   <div class="pages">
     <component
-      :is='currentComponent'>
+      :is='currentComponent'
+      @change='modifyRoute'>
     </component>
     <loading-form :show='showLoadding'></loading-form>
   </div>
@@ -15,11 +16,17 @@ export default {
     return {
       currentComponent : '',
       showLoadding : true,
-      code :''
+      code :'',
+      submitSuccess :false
     }
   },
   components:{
     'loading-form' : Loadding
+  },
+  methods:{
+    modifyRoute(val){
+      this.submitSuccess = val;
+    }
   },
   created(){
     let query = this.$route.query;
@@ -30,8 +37,15 @@ export default {
     setTimeout(()=>{
       this.showLoadding = false
     },1000)
-  }
-  
+  },
+  beforeRouteLeave(to, from, next) {
+    let {path} = to;
+    // 新建物料，修改列表页的meta值
+    if (this.submitSuccess && path === '/list') {
+      to.meta.reload = true;
+    }
+    next();
+  },
 }
 </script>
 

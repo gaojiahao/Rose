@@ -51,7 +51,7 @@
                             <div class="ForInline" style="display:inline-block">
                               <div class="mater_spec">
                                 <span class="title">规格</span>
-                                <span class="num">{{item.specification_transObjCode}}</span>
+                                <span class="num">{{item.specification_transObjCode || '无'}}</span>
                               </div>
                             </div>
                           </div>
@@ -59,15 +59,15 @@
                         <!-- 物料数量和价格 -->
                         <div class='mater_other'>
                           <div class='mater_num'>
-                            <span class="num">单价: ￥{{item.price}}</span>
+                            <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
                             <span class='num'>数量: {{item.tdQty}}</span>
                             <span>税率: {{item.taxRate}}</span>
                           </div>      
                           <div class='mater_price'>
-                            ￥{{item.tdAmount}} 
+                            ￥{{item.tdAmount | numberComma(3)}} 
                             <span class="num" 
                                   :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
-                              [金额: ￥{{item.noTaxAmount}} + 税金: ￥{{item.taxAmount}}]
+                              [金额: ￥{{item.noTaxAmount | numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
                             </span>
                           </div>        
                         </div>
@@ -76,7 +76,7 @@
                   </div>
                   <div class="price_list">
                     <div class='title' >合计<span style="fontSize:.12rem;">(含税)</span></div>
-                    <div class="num"><span style="fontSize:.12rem;">￥</span>{{count}}</div>
+                    <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
                   </div>
                 </div>
             </div>
@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { numberComma} from 'vux'
 import { getSOList } from 'service/detailService.js'
 export default {
   data(){
@@ -94,6 +95,9 @@ export default {
       orderInfo:{},
       formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79'
     }
+  },
+  filters:{
+    numberComma
   },
   methods:{
     //选择默认图片
@@ -146,7 +150,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 // 居中
 .mg_auto {
   width: 95%;
