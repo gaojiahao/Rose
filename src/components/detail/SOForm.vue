@@ -1,6 +1,6 @@
 <template>
     <div class="pages">
-        <div class="basicPart" v-if='orderInfo'>
+        <div class="basicPart" v-if='orderInfo && orderInfo.order'>
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
               <div class="user_info">
@@ -64,15 +64,19 @@
                             <span>税率: {{item.taxRate}}</span>
                           </div>      
                           <div class='mater_price'>
-                            ￥{{item.tdAmount}}
-                            <span class="num">[金额: ￥{{item.noTaxAmount}} + 税金: ￥{{item.taxAmount}}]</span>
+                            ￥{{item.tdAmount}} 
+                            <span class="num" 
+                                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
+                              [金额: ￥{{item.noTaxAmount}} + 税金: ￥{{item.taxAmount}}]
+                            </span>
                           </div>        
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="price_list">
-                    <div></div>
+                    <div class='title' >合计<span style="fontSize:.12rem;">(含税)</span></div>
+                    <div class="num"><span style="fontSize:.16rem;">￥</span>{{count}}</div>
                   </div>
                 </div>
             </div>
@@ -88,7 +92,6 @@ export default {
     return{
       count : 0,
       orderInfo:{},
-      transCode : '',
       formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79'
     }
   },
@@ -102,37 +105,43 @@ export default {
       return url
     },
     //获取详情
-    getOrderList(){
+    getOrderList(transCode = ''){
         getSOList({
           formViewUniqueId : this.formViewUniqueId,
-          transCode : this.transCode
+          transCode : transCode
         }).then( data => {
-          console.log(data);
-          let detalInfo = data.formData;
-          if(data){
-            this.orderInfo = detalInfo;       
-            detalInfo.order.dataSet.map( item => {
-              this.count += item.tdAmount;
+          // http200时提示报错信息
+          if(data.success === false){
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
             })
+            return;
           }
-          else {
-            // http返回200 仍为错误信息的处理
-            if(!data.success){
-              this.$vux.alert.show({
-                content: '抱歉，目前已不支持查看此类数据'
-              })
-            }            
+          let { formData : detalInfo } = data,
+              { dataSet } = detalInfo.order;
+          // 获取合计
+          for(let val of dataSet){
+            this.count += val.tdAmount;
           }
+          // 赋值表单内容
+          this.orderInfo = detalInfo;
+        }).catch( err => {
+          this.$vux.alert.show({
+            content: err.message
+          })
         })
 
     }
   },
   created(){
-    let code = this.$route.query.transCode;
-    if(code){
-        this.transCode = code;
-        this.getOrderList();
+    let { transCode } = this.$route.query;
+    if(!transCode){
+      this.$vux.alert.show({
+        content: '抱歉，交易号有误，请尝试刷新之后再次进入'
+      })
+      return;
     }
+    this.getOrderList(transCode);
   }
 }
 </script>
@@ -231,7 +240,6 @@ export default {
     .each_mater {
       padding: 0.08rem;
       position: relative;
-      margin-bottom: .2rem;
       box-sizing: border-box;
       .each_mater_wrapper {
         position: relative;
@@ -346,14 +354,16 @@ export default {
           }
           //物料价格，数量
           .mater_other{
-            margin-top:0.06rem;
+            margin-top: .02rem;
             align-items: center;
             .mater_price{
-              display: inline-block;
+              color:#ea5455;
               font-weight: bold;
               font-size:0.16rem;
               line-height: 0.2rem;
-              color:#ea5455;
+              margin-top: .04rem;
+              display: inline-block;
+              
               .num {
                 font-size: .1rem;
                 color: #757575;
@@ -376,6 +386,20 @@ export default {
         .vux-1px-b:after {
           border-bottom: 1px solid #e8e8e8;
         }
+      }
+    }
+    // 合计
+    .price_list {
+      width: 100%;
+      display: flex;
+      margin-top: .1rem;
+      color: #5077aa;
+      font-size: .24rem;
+      text-align: center;
+      justify-content: space-between;
+      .title {
+        font-size: .2rem;
+        font-weight: 200;
       }
     }
   }
