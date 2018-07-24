@@ -3,13 +3,18 @@
     <div class='content'>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
-          <div class='each_property vux-1px-b '>
+          <div class='each_property vux-1px-b' v-if="transCode == ''">
             <label class='required'>仓库编码:</label>
             <input type='text' v-model="warehouse.warehouseCode" class='property_val' :disabled ='transCode!=""?true:false'/>
           </div>
-          <div class='each_property required'>
+          <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
             <label class='required'>仓库名称:</label>
             <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
+          </div>
+          
+          <div class="edit_r_picker" v-if="transCode != ''">
+            <r-picker title="仓库关系标签:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
+                @on-change="warehouseLabel"></r-picker>
           </div>
         </div>
         <div class='mater_pic vux-1px-l'>
@@ -27,7 +32,7 @@
           </div>
         </div>
       </div>
-      <r-picker title="仓库关系标签:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
+      <r-picker  v-if="transCode == ''" title="仓库关系标签:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
                 @on-change="warehouseLabel"></r-picker>
       <!-- <r-picker title="仓库大类:" :data="AccountBigType" value="warehouse.warehouseType"  v-model="warehouse.warehouseType"
                 @on-change="bigChange"></r-picker>
@@ -469,6 +474,9 @@ export default {
     height: 90%;
     overflow-y: auto;
     overflow-x: hidden;
+    .vux-1px-b:after{
+      transform: scaleY(1);
+    }
     input {
       border: none;
       outline: none;
@@ -580,6 +588,15 @@ export default {
     
       }
     }
+  }
+  .edit_r_picker{
+    padding: 0 ;
+    .vux-1px-b{
+      padding: 0 0.08rem!important;
+      &:after{
+        border-bottom: none;
+      }
+    }
   }  
   //确认框
   .popup_header {
@@ -598,7 +615,6 @@ export default {
 
     }
   }
-
   // 确定
   .btn {
     left: 0;
@@ -626,7 +642,17 @@ export default {
       box-shadow: 0 2px 5px #c7c7c7;
     }
   }
-
+  .edit_bor_btm:after{
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    border-top: 1px solid #C7C7C7;
+    transform-origin: 0 100%;
+    transform: scaleY(0.5);
+  }
 </style>
 
 

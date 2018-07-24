@@ -242,7 +242,7 @@ export default {
         if (to.meta.reload && to.path === '/warehouse') {
           to.meta.reload = false;
           this.srhInpTx = '';
-          this.activeIndex = 0;
+          //this.activeIndex = 0;
           this.resetCondition();
           this.getwarehouse();
         }
