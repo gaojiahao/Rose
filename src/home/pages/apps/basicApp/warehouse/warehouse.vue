@@ -43,7 +43,7 @@
       </div>
     </div>
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEditAds">新增一个地址</div>
+      <div class="cfm_btn" @click="goEditAds">新增一个仓库</div>
     </div>
     <router-view></router-view>
     <load-icon :show='Loadding'></load-icon>
