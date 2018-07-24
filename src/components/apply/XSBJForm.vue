@@ -236,7 +236,8 @@
               this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
               if (success) {
-                message = '报价提交成功'
+                message = '报价提交成功';
+                this.$emit('change',true);
               }
               this.$vux.alert.show({
                 content: message,

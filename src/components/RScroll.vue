@@ -63,26 +63,24 @@
     methods: {
       // TODO 初始化滚动
       _initScroll() {
-        let defaultOption = {
+        let options = {
           probeType: 1,
+          ...this.options,
         };
         if (this.options.pullDownRefresh) {
           this.hasRefresh = true;
-          defaultOption.pullDownRefresh = {
+          options.pullDownRefresh = {
             threshold: 30,
             stop: PULL_DOWN_REFRESH_HEIGHT
           }
         }
         if (this.options.pullUpLoad) {
-          defaultOption.pullUpLoad = {
+          options.pullUpLoad = {
             threshold: 20
           }
         }
         this.$nextTick(() => {
-          this.bScroll = new BScroll(this.$refs.bScroll, {
-            ...defaultOption,
-            ...this.options,
-          });
+          this.bScroll = new BScroll(this.$refs.bScroll, options);
           // 绑定滚动加载事件
           this.bScroll.on('pullingUp', () => {
             if (!this.hasNext) {

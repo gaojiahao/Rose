@@ -33,6 +33,9 @@
         </div>
       </r-scroll>
     </div>
+    <div class="btn vux-1px-t">
+      <div class="cfm_btn" @click="goEdit">新增一个报价</div>
+    </div>
   </div>
 </template>
 
@@ -67,9 +70,17 @@
     methods: {
       goDetail(code) {
         this.$router.push({
-          path: '/detail',
+          path: '/list/detail',
           query: {
             transCode: code
+          }
+        })
+      },
+      goEdit() {
+        this.$router.push({
+          path: '/list/fillform',
+          query: {
+            code: 'XSBJ'
           }
         })
       },
@@ -90,7 +101,6 @@
       },
       // TODO 搜索
       searchList(val) {
-        console.log(val);
         this.serachVal = val;
         this.activeTab = '';
         this.activeIndex = 0;
@@ -165,6 +175,14 @@
           })
         });
       },
+      // TODO 重新请求全部页签的列表数据
+      reloadData(){
+        this.serachVal = '';
+        this.activeTab = '';
+        this.activeIndex = 0;
+        this.resetCondition();
+        this.getList();
+      }
     },
     filters: {
       // TODO 过滤日期
@@ -178,8 +196,8 @@
     created() {
       this.getList();
     },
-    beforeRouteEnter(to, from, next){
-      next( r => {
+    beforeRouteEnter(to, from, next) {
+      next(r => {
         console.log(r);
       })
     }
@@ -189,7 +207,7 @@
 <style lang='scss' scoped>
   .content {
     width: 100%;
-    height: 100%;
+    height: 90%;
     overflow: auto;
   }
 
@@ -204,8 +222,9 @@
 
   .list_wrapper {
     position: relative;
+    margin-top: .08rem;
     width: 100%;
-    height: calc(100% - .52rem - 36px);
+    height: calc(100% - .52rem - 44px);
     overflow: hidden;
     box-sizing: border-box;
     .each_duty {
@@ -239,7 +258,7 @@
             background: #000;
           }
           .duty_status_info { //进行中
-            
+
           }
           .duty_process_c {
             background: #26AB28;
@@ -289,6 +308,30 @@
           font-weight: 200;
         }
       }
+    }
+  }
+
+  // 确定
+  .btn {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    background: #fff;
+    .cfm_btn {
+      top: 50%;
+      left: 50%;
+      width: 2.8rem;
+      color: #fff;
+      height: .44rem;
+      line-height: .44rem;
+      position: absolute;
+      text-align: center;
+      background: #5077aa;
+      border-radius: .4rem;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 5px #5077aa;
     }
   }
 
