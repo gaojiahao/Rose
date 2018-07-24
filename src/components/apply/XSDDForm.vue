@@ -141,7 +141,9 @@
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
-      <span class="count_num">￥{{count}}</span>
+      <span class="count_num">￥{{count}}
+        <span class='taxAmount'>税金: ￥{{count*0.16}}</span>
+      </span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
@@ -317,9 +319,9 @@ export default {
                 tdQty : item.num,     //数量
                 assistQty : 0,        //辅计数量
                 price : item.defaultPrice, //单价
-                taxRate : 1,              //税率
-                taxAmount : 90,           //税金
-                tdAmount : 90,           //价税小计
+                taxRate : 0.16,              //税率
+                taxAmount : item.defaultPrice*item.num*0.16,           //税金
+                tdAmount : item.defaultPrice*item.num*(100+16)/100,           //价税小计
                 promDeliTime : '2018-12-12', //预期交货日
                 comment : ''                //说明
               })
@@ -339,6 +341,7 @@ export default {
               })
             }
             console.log(submitData);
+            return false;
             saveAndStartWf(submitData).then(data => {
               //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
@@ -787,6 +790,12 @@ export default {
     color: #5077aa;
     font-size: .24rem;
     padding-left: .1rem;
+    .taxAmount{
+      display: inline-block;
+      margin-left:0.1rem;
+      font-size:0.14rem;
+      color:#757575;
+    }
   }
   .count_btn {
     flex: 1.5;
