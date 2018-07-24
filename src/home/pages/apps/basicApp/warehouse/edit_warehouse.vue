@@ -13,7 +13,7 @@
           </div>
           
           <div class="edit_r_picker" v-if="transCode != ''">
-            <r-picker title="仓库关系标签:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
+            <r-picker title="仓库关系类型:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
                 @on-change="warehouseLabel"></r-picker>
           </div>
         </div>
@@ -32,7 +32,7 @@
           </div>
         </div>
       </div>
-      <r-picker  v-if="transCode == ''" title="仓库关系标签:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
+      <r-picker  v-if="transCode == ''" title="仓库关系类型:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
                 @on-change="warehouseLabel"></r-picker>
       <!-- <r-picker title="仓库大类:" :data="AccountBigType" value="warehouse.warehouseType"  v-model="warehouse.warehouseType"
                 @on-change="bigChange"></r-picker>

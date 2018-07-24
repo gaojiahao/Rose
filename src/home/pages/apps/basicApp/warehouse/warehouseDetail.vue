@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class='each_property vux-1px-b'>
-        <label>仓库关系标签:</label>
+        <label>仓库关系类型:</label>
         <div class='property_val'>{{warehouse.warehouseRelType}}</div>
       </div>
     </div>
