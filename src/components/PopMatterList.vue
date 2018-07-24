@@ -81,7 +81,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
-  import {getMatList} from 'service/materService'
+  import {getList} from 'service/commonService'
   import RScroll from 'components/RScroll'
 
   export default {
@@ -190,7 +190,7 @@
             },
           ];
         }
-        return getMatList({
+        return getList(2132, {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

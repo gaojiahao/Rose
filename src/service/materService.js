@@ -62,58 +62,10 @@ export let delImg = (id = '') => {
   });
 };
 
-// TODO 获取加工属性
-export let getDictByType = (data = {}) => {
-  return $axios.ajax({
-    url: '/H_roleplay-si/ds/getDictByType',
-    data: {
-      page: 1,
-      start: 0,
-      limit: 10000,
-      ...data
-    }
-  }).catch(e => {
-    return errorHandler(e);
-  });
-};
-
-// TODO 获取材料大类、材料子类
-export let getDictByValue = (data = {}) => {
-  return $axios.ajax({
-    url: '/H_roleplay-si/ds/getDictByValue',
-    data: {
-      page: 1,
-      start: 0,
-      limit: 10000,
-      ...data
-    }
-  }).catch(e => {
-    return errorHandler(e);
-  });
-};
-
-// TODO 获取物料列表
-export let getMatList = (data = {}) => {
-  return $axios.ajax({
-    url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2132',
-    data: {
-      limit: 10,
-      page: 1,
-      start: 11,
-      ...data
-    }
-  }).catch(e => {
-    return errorHandler(e);
-  });
-};
-
 export default {
   save,
   update,
   findData,
   upload,
   delImg,
-  getDictByType,
-  getDictByValue,
-  getMatList,
 }

@@ -143,7 +143,7 @@
       // TODO 跳转到修改页面
       goEdit() {
         this.$router.push({
-          path: '/materApp/addMater',
+          path: '/materlist/addMater',
           query: {
             transCode: this.transCode
           }

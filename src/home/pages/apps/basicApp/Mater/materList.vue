@@ -83,8 +83,7 @@
 
 <script>
   import { Tab, Icon, TabItem, Spinner, LoadMore } from 'vux'
-  import { getDictByType } from 'service/materService'
-  import { getList } from 'service/commonService'
+  import { getList, getDictByType } from 'service/commonService'
   import RScroll from 'components/RScroll'
 
   const RFD_MATER_LIST = 'RFD_MATER_LIST';
@@ -121,7 +120,7 @@
     },
     methods: {
       goEditAds() {
-        this.$router.push('/materApp/addMater');
+        this.$router.push('/materlist/addMater');
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
@@ -133,7 +132,7 @@
       },
       goDetail(item) {
         this.$router.push({
-          path: '/materApp/materDetail',
+          path: '/materlist/materDetail',
           query: {
             transCode: item.transCode
           }
@@ -157,9 +156,7 @@
       },
       // TODO 获取tab
       getDictByType() {
-        return getDictByType({
-          type: 'processing',
-        }).then(({tableContent}) => {
+        return getDictByType('processing').then(({tableContent}) => {
           let [active = {}] = tableContent;
           this.activeTab = '';
           tableContent.unshift({name: '全部'});
@@ -204,8 +201,8 @@
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
-            item.inventoryPic = item.inventoryPic 
-            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` 
+            item.inventoryPic = item.inventoryPic
+            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}`
             : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
@@ -252,7 +249,7 @@
       $route: {
         handler(to, from) {
           // 判断是否重新请求页面
-          if (to.meta.reload && to.path === '/materApp') {
+          if (to.meta.reload && to.path === '/materlist') {
             to.meta.reload = false;
             this.srhInpTx = '';
             this.activeTab = '';

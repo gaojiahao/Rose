@@ -9,6 +9,7 @@ let errorHandler = (e) => {
   return Promise.reject(e)
 };
 
+// TODO 保存
 export let saveAndStartWf = (data = {}) => {
   return $axios.ajax({
     type: 'POST',
@@ -19,6 +20,8 @@ export let saveAndStartWf = (data = {}) => {
     return errorHandler(e);
   });
 };
+
+// TODO 修改
 export let saveAndCommitTask = (data = {}) => {
   return $axios.ajax({
     type: 'POST',
@@ -86,7 +89,7 @@ export let getBaseInfoData = () => {
   });
 };
 
-// TODO 获取列表
+// TODO 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
   return $axios.ajax({
     url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
@@ -101,9 +104,54 @@ export let getList = (viewId = 0, data = {}) => {
   });
 };
 
+// TODO 上传图片
+export let upload = ({file = {}, biReferenceId = ''}) => {
+  return $axios.upload({
+    file,
+    biReferenceId
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 获取加工属性
+export let getDictByType = (type = '', data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getDictByType',
+    data: {
+      page: 1,
+      start: 0,
+      limit: 10000,
+      type,
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 获取材料大类、材料子类
+export let getDictByValue = (value = '', data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getDictByValue',
+    data: {
+      page: 1,
+      start: 0,
+      limit: 10000,
+      value,
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {
   saveAndStartWf,
   saveAndCommitTask,
   getBaseInfoData,
   getList,
+  upload,
+  getDictByType,
+  getDictByValue,
 }

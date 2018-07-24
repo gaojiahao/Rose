@@ -68,10 +68,8 @@
     update,
     findData,
     upload,
-    getDictByType,
-    getDictByValue,
   } from 'service/materService';
-  import {getBaseInfoData} from 'service/commonService';
+  import {getBaseInfoData, getDictByType, getDictByValue,} from 'service/commonService';
 
   export default {
     data() {
@@ -269,9 +267,7 @@
       },
       // TODO 获取加工属性列表
       getNature() {
-        return getDictByType({
-          type: 'processing',
-        }).then(data => {
+        return getDictByType('processing').then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
@@ -289,9 +285,7 @@
         let [selected = {}] = this.matNatureList.filter(item => {
           return item.name === this.inventory.processing
         });
-        return getDictByValue({
-          value: selected.originValue
-        }).then(data => {
+        return getDictByValue(selected.originValue).then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
@@ -309,9 +303,7 @@
         let [selected = {}] = this.matBigList.filter(item => {
           return item.name === this.inventory.inventoryType
         });
-        return getDictByValue({
-          value: selected.originValue
-        }).then(data => {
+        return getDictByValue(selected.originValue).then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
@@ -326,9 +318,7 @@
       },
       // TODO 获取主计量单位列表
       getMeasure() {
-        return getDictByType({
-          type: 'measureUnit',
-        }).then(data => {
+        return getDictByType('measureUnit').then(data => {
           let {tableContent} = data;
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
@@ -355,7 +345,7 @@
     beforeRouteLeave(to, from, next) {
       let {path} = to;
       // 新建物料，修改列表页的meta值
-      if (this.submitSuccess && path === '/materApp') {
+      if (this.submitSuccess && path === '/materlist') {
         to.meta.reload = true;
       }
       next();
