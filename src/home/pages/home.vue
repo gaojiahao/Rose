@@ -26,7 +26,7 @@
               <div class="app_name">{{item.text}}</div>
             </div>
           </div>
-        
+
       </div>
       <!-- 销售应用部分 -->
       <div class="sale_part vux-1px-t swiper-container">
@@ -60,6 +60,16 @@ export default {
       YWarray : [],        // 基础对象 数组
       XSarray : [],        // 销售 数组
       SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)'
+    }
+  },
+  watch: {
+    $route: {
+      handler(to, from ){
+        let {name} = to;
+        if(name === 'LIST') {
+          to.meta.keepAlive = true;
+        }
+      }
     }
   },
   methods:{

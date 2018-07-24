@@ -1,6 +1,10 @@
 <template>
     <div class="pages">
+<<<<<<< HEAD
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+=======
+        <div class="basicPart" v-if='orderInfo.order'>
+>>>>>>> 1707867dc3fdb171c74888b3bab6b422f1971622
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
               <div class="user_info">
