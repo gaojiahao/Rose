@@ -19,7 +19,7 @@
                             <p class="duty_name">
                                 <span class="duty_status">
                                     <span class="duty_status_info" :class="item.biStatus === '已生效' ? 'duty_process_c' : 'duty_wait_c'">{{item.biStatus}}</span>
-                                </span>                                
+                                </span>
                             </p>
                         </div>
                         <div class="duty_btm">
@@ -35,10 +35,10 @@
                 </div>
                 <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
             </div>
-        </div>   
+        </div>
         <div class="btn vux-1px-t">
             <div class="cfm_btn" @click="goEdit">新增一个订单</div>
-        </div>     
+        </div>
     </div>
 </template>
 
@@ -173,7 +173,7 @@ export default {
                     pullUpLoad: {
                         threshold: 20
                     },
-                    
+
                 })
                 //上拉加载
                 this.listBscrol.on('pullingUp', () => {
@@ -205,13 +205,13 @@ export default {
     },
     filters: {
       // TODO 过滤日期
-      
+
       filterTime(val) {
         if(val){
           let date = new Date(val);
           return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
         }
-        
+
       }
     },
     created(){
@@ -223,7 +223,10 @@ export default {
       next( r => {
         console.log(r);
       })
-    }
+    },
+  activated(){
+      this.listBscrol && this.listBscrol.refresh()
+  }
 
 }
 </script>
@@ -331,7 +334,7 @@ export default {
                 }
             }
         }
-        
+
 
     }
     .pullDownRefresh {
@@ -344,7 +347,7 @@ export default {
             transform: translateX(-50%);
             transition: top;
         }
-    
+
 }
 // 确定
 .btn {

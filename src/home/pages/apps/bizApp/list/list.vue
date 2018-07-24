@@ -5,7 +5,7 @@
     </component>
     <loading-form :show='showLoadding'></loading-form>
   </div>
-  
+
 </template>
 
 <script>
@@ -16,6 +16,16 @@ export default {
       currentComponent : '',
       showLoadding : true,
       code :''
+    }
+  },
+  watch: {
+    $route: {
+      handler(to, from ){
+        let {name} = to;
+        if(name === 'HOME') {
+          from.meta.keepAlive = false;
+        }
+      }
     }
   },
   components:{

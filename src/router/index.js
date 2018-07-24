@@ -12,19 +12,4 @@ let router = new Router({
     ...HomeRouter,
   ]
 })
-router.afterEach((to,from)=>{
-  if(from.path === '/home' && to.path === '/list'){
-    let refresh = sessionStorage.getItem('isRefresh');
-    if(refresh === '0'){
-      sessionStorage.setItem('isRefresh' ,null);
-      location.reload();
-    }
-    else {
-      sessionStorage.setItem('isRefresh','0');
-    }
-  }
-  else if (from.path === '/list' && to.path === '/home'){
-    sessionStorage.setItem('isRefresh' ,0);
-  }
-})
 export default router
