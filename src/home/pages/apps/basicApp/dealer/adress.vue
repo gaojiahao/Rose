@@ -19,8 +19,8 @@
         </div>
       </div>
       <!-- 主要内容区域 -->
-      <div class="app_main" ref='addressMain'>
-        <div class='address_wrapper'>
+      <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !dealerList.length"
+                @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
           <div class="client_ads vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.creatorName}}</span>
@@ -28,25 +28,20 @@
             </div>
             <div class="cp_info">
               <p class="cp_name">{{item.dealerName}}</p>
-              <!-- <p class='cp_label'>
-                <span>{{item.dealerLabelName}}</span>
-              </p> -->
-              <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
-              
+              <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>              
             </div>
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
-          <load-more tip="加载中" v-show="hasNext"></load-more>
-          <load-more :show-loading="false" tip="暂无数据" v-show="!dealerList.length && !hasNext"></load-more>
-        </div>
-        <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
-      </div>
+          <!-- <load-more tip="加载中" v-show="hasNext"></load-more>
+          <load-more :show-loading="false" tip="暂无数据" v-show="!dealerList.length && !hasNext"></load-more> -->
+        
+        <!-- <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner> -->
+      </r-scroll>
     </div>
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEditAds">新增一个地址</div>
     </div>
     <router-view></router-view>
-    <load-icon :show='Loadding'></load-icon>
   </div>
   
 </template>
@@ -54,12 +49,7 @@
 <script>
 import { Tab, Icon, TabItem,Spinner,LoadMore } from 'vux'
 import dealerService from 'service/dealerService.js'
-import LoadIcon from 'components/Loading.vue'
-import BScroll from 'better-scroll'
-const PULL_DOWN_REFRESH_HEIGHT = 30;
-let isBack = false,
-    path = '',
-    query = {};
+import RScroll from 'components/RScroll'
 export default {
   data(){
     return{
@@ -68,17 +58,19 @@ export default {
       activeIndex :0,
       dealerClassfiy :[],
       uniqueId:"7f01c808-d338-4711-8c99-319337078cc1",
-      bScroll : null,
       page : 1,
       limit :20,
       id : '',
       hasNext: true,
-      pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
-      Loadding : true
+      scrollOptions: {
+        click: true,
+        pullDownRefresh: true,
+        pullUpLoad: true,
+      }
     }
   },
   components:{
-    Tab, Icon, TabItem,Spinner,LoadIcon,LoadMore
+    Tab, Icon, TabItem,Spinner,LoadMore,RScroll
   },
   methods:{
     // TODO 重置列表条件
@@ -86,13 +78,13 @@ export default {
       this.dealerList = [];
       this.page = 1;
       this.hasNext = true;
-      this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+      this.$refs.bScroll.resetPullDown();
     },
     tabClick(item,index){
       this.activeIndex = index;
       this.uniqueId  = item.uniqueId;
       this.resetCondition();
-      this.bScroll.scrollTo(0, 0);
+      this.$refs.bScroll.scrollTo(0, 0);
       this.getDealer()
     },
     searcDealer(){
@@ -124,14 +116,14 @@ export default {
           
     },
     //获取往来列表
-    getDealer(){     
+    getDealer(noReset = false){     
         let filter;
         if(this.srhInpTx != ''){
           filter = [
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'dealerCode',
+              property: 'creatorName',
               attendedOperation: 'or'
             },
             {
@@ -160,27 +152,17 @@ export default {
             })
           })
           await dealerService.getDealerList(this.id,data).then( data=>{
-            this.Loadding = false;
             this.dealerList = this.page === 1? data.tableContent : this.dealerList.concat(data.tableContent);
             this.hasNext = data.dataCount > (this.page-1)*this.limit + data.tableContent.length;
-            this.$nextTick(() => {
-              this.bScroll.refresh();
-              this.bScroll.finishPullDown();
-              this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-              if (!this.hasNext) {
-                return
-              }
-              this.bScroll.finishPullUp();
-            })
+            if (!noReset) {
+              this.$nextTick(() => {
+                this.resetScroll();
+              })
+            }
           }).catch(e=>{
-            this.bScroll.finishPullDown();
-            this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-            this.$vux.alert.show({
-              content: e.message,
-            })
+            this.resetScroll();
           })
-        })()
-             
+        })()             
     },
     //往来分类
     getClassfiy(){    
@@ -197,41 +179,24 @@ export default {
         })
       })
     },
-    // TODO 初始化better-scroll
-    initScroll() {
-      this.$nextTick(() => {
-        this.bScroll = new BScroll(this.$refs.addressMain, {
-          click: true,
-          pullDownRefresh: {
-            threshold: 50,
-            stop: PULL_DOWN_REFRESH_HEIGHT
-          },
-          pullUpLoad: {
-            threshold: 20
-          },
-        });
-        // 绑定滚动加载事件
-        this.bScroll.on('pullingUp', () => {
-          if (!this.hasNext) {
-            return
-          }
-          this.page++;
-          this.getDealer();
-        });
-        // 绑定下拉刷新事件
-        this.bScroll.on('pullingDown', () => {
-          this.page = 1;
-          this.getDealer();
-        });
-        // 下拉的时候展示下拉刷新的图标
-        this.bScroll.on('scroll', ({x, y}) => {
-          if (y > 0) {
-            if (y > PULL_DOWN_REFRESH_HEIGHT) {
-              this.pullDownTop = 0;
-            } else {
-              this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
-            }
-          }
+    // TODO 重置下拉刷新、上拉加载的状态
+    resetScroll() {
+      this.$refs.bScroll.finishPullDown();
+      this.$refs.bScroll.finishPullUp();
+    },
+    // TODO 上拉加载
+    onPullingUp() {
+      this.page++;
+      this.getDealer();
+    },
+    // TODO 下拉刷新
+    onPullingDown() {
+      this.page = 1;
+      this.getDealer(true).then(() => {
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullDown().then(() => {
+            this.$refs.bScroll.finishPullUp();
+          });
         })
       });
     },
@@ -240,7 +205,6 @@ export default {
     $route: {
       handler(to, from) {
         // 判断是否重新请求页面
-        console.log(to);
         if (to.meta.reload && to.path === '/adress') {
           to.meta.reload = false;
           this.uniqueId = "7f01c808-d338-4711-8c99-319337078cc1";
@@ -253,15 +217,9 @@ export default {
     }
   },
   created(){
-    this.initScroll();
     this.getClassfiy();
     this.getDealer();
   },
-  // activated() {
-  //   if (this.bScroll) {
-  //     this.bScroll.refresh();
-  //   }
-  // },
   
 }
 </script>
@@ -350,10 +308,6 @@ export default {
     height: calc(100% - .52rem - 44px);
     overflow: hidden;
     box-sizing: border-box;
-    .address_wrapper {
-      min-height: calc(100% + 1px);
-      overflow: hidden;
-    }
     .pullDownRefresh {
       display: block;
       margin: 0 auto;
