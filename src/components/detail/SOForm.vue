@@ -1,10 +1,6 @@
 <template>
     <div class="pages">
-<<<<<<< HEAD
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-=======
-        <div class="basicPart" v-if='orderInfo.order'>
->>>>>>> 1707867dc3fdb171c74888b3bab6b422f1971622
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
               <div class="user_info">
@@ -80,7 +76,7 @@
                   </div>
                   <div class="price_list">
                     <div class='title' >合计<span style="fontSize:.12rem;">(含税)</span></div>
-                    <div class="num"><span style="fontSize:.16rem;">￥</span>{{count}}</div>
+                    <div class="num"><span style="fontSize:.12rem;">￥</span>{{count}}</div>
                   </div>
                 </div>
             </div>
@@ -398,7 +394,7 @@ export default {
       display: flex;
       margin-top: .1rem;
       color: #5077aa;
-      font-size: .24rem;
+      font-size: .2rem;
       text-align: center;
       justify-content: space-between;
       .title {
