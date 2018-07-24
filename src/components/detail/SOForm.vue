@@ -1,6 +1,35 @@
 <template>
     <div class="pages">
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+            <!-- 工作流 -->
+            <div class="work_flow mg_auto box_sd">
+              <div class="work_info">
+                <span class="work_status">进行中</span>
+                <span class="work_code">{{orderInfo.transCode.replace(/_/g,'')}}</span>
+              </div>
+              <div class="flow_list">
+                <div class="each_msg vux-1px-b">
+                  <div class="user_avatar">
+                    <img src="../../assets/avatar.png" alt="avatar">
+                  </div>
+                  <div class="handle_info">
+                    <div class="user_name">瑞福登</div>
+                    <div class="handle_name">提交表单</div>
+                    <div class="remark">备注: 无</div>
+                  </div>
+                </div>
+                <div class="each_msg vux-1px-b">
+                  <div class="user_avatar">
+                    <img src="../../assets/avatar.png" alt="avatar">
+                  </div>
+                  <div class="handle_info">
+                    <div class="user_name">瑞福登</div>
+                    <div class="handle_name">提交表单</div>
+                    <div class="remark">备注: 无</div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
               <div class="user_info">
@@ -165,6 +194,64 @@ export default {
   overflow: auto;
   height: 93%;
 }
+// 工作流
+.work_flow {
+  position: relative;
+  padding: .06rem .4rem .06rem .08rem;
+  // 表单基本信息
+  .work_info {
+    display: flex;
+    .work_status,
+    .work_code {
+      font-size: .14rem;
+      padding: 0 .06rem;
+      display: inline-block;    
+    }
+    // 表单状态
+    .work_status {
+      font-weight: bold;
+      background: #53d397;
+      // background: #c93d1b;
+      // background:#FADB51;
+      color: #fff;
+      // color: #53d397;
+      border-top-left-radius: .12rem;
+    }
+    // 表单编码
+    .work_code {
+      display: inline-block;
+      background: #455d7a;
+      color: #fff;
+    }
+  }
+  // 工作流信息
+  .flow_list {
+    margin-top: .1rem;
+    // 每一个明细
+    .each_msg {
+      display: flex;
+      padding-bottom: .1rem;
+      margin-bottom: .1rem;
+      // 用户头像
+      .user_avatar {
+        width: .65rem;
+        height: .65rem;
+        img {
+          width: 100%;
+        }
+      }
+      // 操作信息
+      .handle_info {
+        font-size: .12rem;
+        margin-left: .1rem;
+        .user_name {
+          font-weight: bold;
+          font-size: .18rem;
+        }
+      }
+    }
+  }
+}
 // 地址栏
 .or_ads {
   position: relative;
@@ -174,10 +261,6 @@ export default {
     color: #111;
     font-size: .2rem;
     font-weight: 500;
-    // 用户姓名
-    .user_name {
-      color: #5077aa;
-    }
     // 用户电话
     .user_tel {
       font-size: .14rem;
