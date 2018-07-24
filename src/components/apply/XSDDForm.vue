@@ -216,7 +216,6 @@ export default {
     },
     //选中的往来
     selDealer(val){
-      console.log(val);
       this.info = JSON.parse(val)[0];
       this.dealer.dealerDebitContactPersonName = this.info.creatorName;
       this.dealer.dealerDebitContactInformation = this.info.dealerMobilePhone;
@@ -340,8 +339,6 @@ export default {
                 }
               })
             }
-            console.log(submitData);
-            return false;
             saveAndStartWf(submitData).then(data => {
               //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
