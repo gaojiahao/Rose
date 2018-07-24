@@ -105,7 +105,7 @@
                           <div class="ForInline" style="display:inline-block">
                             <div class="mater_spec">
                               <span class="title">规格</span>
-                              <span class="num">{{item.specification}}</span>
+                              <span class="num">{{item.specification || '无'}}</span>
                             </div>
                           </div>
                         </div>
@@ -141,8 +141,9 @@
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
-      <span class="count_num">￥{{count}}
-        <span class='taxAmount'>税金: ￥{{count*0.16}}</span>
+      <span class="count_num">
+        <span style="fontSize:.14rem">￥</span>{{count}}
+        <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
       </span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
@@ -377,7 +378,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 // 居中
 .mg_auto {
   width: 95%;
@@ -788,10 +789,9 @@ export default {
     font-size: .24rem;
     padding-left: .1rem;
     .taxAmount{
-      display: inline-block;
-      margin-left:0.1rem;
-      font-size:0.14rem;
       color:#757575;
+      font-size:.1rem;
+      display: inline-block;
     }
   }
   .count_btn {
