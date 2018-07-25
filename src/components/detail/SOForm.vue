@@ -3,29 +3,57 @@
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
             <!-- 工作流 -->
             <div class="work_flow mg_auto box_sd">
+              <!-- 右箭头 -->
+              <x-icon class="r_arrow" type="ios-arrow-down" size="30"></x-icon>
+              <!-- 表单状态 及 编码 -->
               <div class="work_info">
-                <span class="work_status">进行中</span>
-                <span class="work_code">{{orderInfo.transCode.replace(/_/g,'')}}</span>
+                <!-- 状态 -->
+                <span class="work_status" 
+                      :class="orderInfo.biStatus === '进行中'? 'doing_work' : ''"
+                      :style="{background: (orderInfo.biStatus === '已失效'? '#c93d1b':'')}">
+                  {{orderInfo.biStatus}}
+                </span>
+                <!-- 编码 -->
+                <span class="work_code"
+                      :class="orderInfo.biStatus === '进行中'? 'doing_code' : ''">
+                  {{orderInfo.transCode.replace(/_/g,'')}}
+                </span>
               </div>
+              <!-- 简化版工作流 -->
               <div class="flow_list">
-                <div class="each_msg vux-1px-b">
+                <div class="each_msg vux-1px-b"
+                    v-for="(item, index) in simpleWL" 
+                    :key=index>
+                    <!-- 头像 -->
                   <div class="user_avatar">
-                    <img src="../../assets/avatar.png" alt="avatar">
+                    <img :src='index % 2 ? defaulImg2: defaulImg' alt="avatar">
                   </div>
+                  <!-- 操作信息 -->
                   <div class="handle_info">
-                    <div class="user_name">瑞福登</div>
-                    <div class="handle_name">提交表单</div>
-                    <div class="remark">备注: 无</div>
-                  </div>
-                </div>
-                <div class="each_msg vux-1px-b">
-                  <div class="user_avatar">
-                    <img src="../../assets/avatar.png" alt="avatar">
-                  </div>
-                  <div class="handle_info">
-                    <div class="user_name">瑞福登</div>
-                    <div class="handle_name">提交表单</div>
-                    <div class="remark">备注: 无</div>
+                    <div class="handle_name">
+                      <!-- 操作动作 -->
+                      <span>{{item.nodeName}}</span>
+                      <!-- 操作状态 A(没有返回状态) -->
+                      <span class="status" 
+                            v-if="!item.status && index % 2">
+                        {{orderInfo.biStatus}}
+                      </span>
+                      <!-- 操作状态 B(有返回状态) -->
+                      <span class="status" 
+                            v-else-if="item.status && index % 2"
+                            :style="{background:(
+                              item.status === '终止' ? '#c93d1b' : ''
+                                || item.status === '同意' ? '#53d397' : ''
+                            )}">
+                        {{item.status}}
+                      </span>
+                    </div>
+                    <!-- 流程节点 用户名 -->
+                    <div class="user_name">
+                      {{item.userName}}
+                    </div>
+                    <!-- 备注 -->
+                    <div class="remark">备注: {{item.message || '无'}}</div>
                   </div>
                 </div>
               </div>
@@ -44,12 +72,12 @@
             <!-- 结算方式 -->
             <div class="trade_mode mg_auto box_sd">
               <p class="title">结算方式</p>
-              <p class="mode">{{orderInfo.drDealerPaymentTerm}}</p>
+              <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
             </div>
             <!-- 物流条款 -->
             <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
               <p class="title">物流条款</p>
-              <p class="mode">{{orderInfo.drDealerLogisticsTerms}}</p>
+              <p class="mode">{{orderInfo.drDealerLogisticsTerms || '无'}}</p>
             </div>
             <!-- 物料列表 -->
             <div class="materiel_list mg_auto box_sd">
@@ -103,11 +131,17 @@
                       </div>
                     </div>
                   </div>
+                  <!-- 金额合计栏 -->
                   <div class="price_list">
                     <div class='title' >合计<span style="fontSize:.12rem;">(含税)</span></div>
                     <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
                   </div>
                 </div>
+            </div>
+            <!-- 审批操作 -->
+            <div class="handle_btn" v-if="isMyTask">
+              <span class="reject">拒绝</span>
+              <span class="agree">{{nodeName}}</span>
             </div>
           </div>
         </div>
@@ -115,14 +149,20 @@
 </template>
 
 <script>
-import { numberComma} from 'vux'
-import { getSOList } from 'service/detailService.js'
+import { numberComma } from 'vux'
+import { isMyflow, getSOList, getWorkFlow } from 'service/detailService.js'
 export default {
   data(){
     return{
-      count : 0,
-      orderInfo:{},
-      formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79'
+      count : 0,          // 金额合计  
+      fullWL: [],         // 完整版工作流
+      simpleWL: [],       // 简化版工作流(只包含最后两个)
+      orderInfo: {},      // 表单内容
+      nodeName:'',        // 操作名称
+      isMyTask:'',        // 是否与我有关
+      formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79',
+      defaulImg: require('assets/avatar.png'),   // 默认图片1
+      defaulImg2: require('assets/io.jpg')       // 默认图片2
     }
   },
   filters:{
@@ -137,11 +177,18 @@ export default {
       }
       return url
     },
-    //获取详情
+    //随机ID
+    randomID() {
+      function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      }
+      return ( S4() + S4() + S4() );
+    },    
+    // 获取详情
     getOrderList(transCode = ''){
         getSOList({
           formViewUniqueId : this.formViewUniqueId,
-          transCode : transCode
+          transCode
         }).then( data => {
           // http200时提示报错信息
           if(data.success === false){
@@ -158,12 +205,33 @@ export default {
           }
           // 赋值表单内容
           this.orderInfo = detalInfo;
-        }).catch( err => {
-          this.$vux.alert.show({
-            content: err.message
-          })
         })
 
+    },
+    // 获取工作流
+    getWorkFlow(transCode = ''){
+      getWorkFlow({
+        _dc: this.randomID(),
+        transCode
+      }).then( data => {
+        // 赋值 完整版工作流
+        this.fullWL = data.tableContent;
+        // 赋值 简化版工作流 只取数据的最后两条
+        this.simpleWL = data.tableContent.slice(-2);
+      })
+    },
+    // 流程节点是否与<我>有关
+    isMyflow(transCode = ''){
+      isMyflow({
+        _dc: this.randomID(),
+        transCode
+      }).then(data => {
+        if(data.tableContent.length > 0){
+          let { isMyTask = 0, nodeName } = data.tableContent[0];
+          this.isMyTask = isMyTask;
+          this.nodeName = nodeName;
+        }
+      })
     }
   },
   created(){
@@ -174,12 +242,21 @@ export default {
       })
       return;
     }
+    // 获取表单表单详情
     this.getOrderList(transCode);
+    // 获取工作流
+    this.getWorkFlow(transCode);
+    // 查询节点是否与<我>有关
+    this.isMyflow(transCode);
   }
 }
 </script>
 
 <style lang='scss' scoped>
+.vux-1px-t:before, 
+.vux-1px-b:after {
+  border-bottom: 1px solid #e8e8e8;
+}
 // 居中
 .mg_auto {
   width: 95%;
@@ -192,30 +269,46 @@ export default {
 }
 .basicPart {
   overflow: auto;
-  height: 93%;
+  height: 100%;
 }
 // 工作流
 .work_flow {
   position: relative;
-  padding: .06rem .4rem .06rem .08rem;
+  padding: .06rem .08rem .2rem;
+  // 右箭头
+  .r_arrow {
+    bottom: 0;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, 0);
+  }
+  // 提示文字
+  .tip_tx {
+    width: 100%;
+    font-size: .1rem;
+    color: #757575;
+    padding: .04rem 0;
+  }
   // 表单基本信息
   .work_info {
     display: flex;
     .work_status,
     .work_code {
+      font-weight: bold;
       font-size: .14rem;
       padding: 0 .06rem;
       display: inline-block;    
     }
     // 表单状态
     .work_status {
-      font-weight: bold;
-      background: #53d397;
-      // background: #c93d1b;
-      // background:#FADB51;
       color: #fff;
-      // color: #53d397;
+      background: #53d397;
       border-top-left-radius: .12rem;
+    }
+    // 进行中
+    .doing_work {
+      color: #fff;
+      background: #5077aa;
     }
     // 表单编码
     .work_code {
@@ -223,10 +316,16 @@ export default {
       background: #455d7a;
       color: #fff;
     }
+    // 进行中 编码 {
+    .doing_code {
+      color: #111;
+      background: #dbe2ef;
+    }  
   }
   // 工作流信息
   .flow_list {
     margin-top: .1rem;
+    position: relative;
     // 每一个明细
     .each_msg {
       display: flex;
@@ -242,11 +341,36 @@ export default {
       }
       // 操作信息
       .handle_info {
+        color: #111;
+        display: flex;
         font-size: .12rem;
         margin-left: .1rem;
+        flex-direction: column;
+        justify-content: center;
+        // 用户名称
         .user_name {
-          font-weight: bold;
+          font-size: .14rem;
+        }
+        // 操作名称
+        .handle_name {
           font-size: .18rem;
+          font-weight: bold;
+          span{
+            display: inline-block;
+          }
+          .status {
+            color: #fff;            
+            font-size: .1rem;
+            padding: 0 .04rem;
+            margin-top: -.02rem;
+            background: #5077aa;
+            vertical-align: middle;
+          }
+        }
+        // 备注
+        .remark {
+          font-size: .1rem;
+          color: #757575;
         }
       }
     }
@@ -320,9 +444,6 @@ export default {
   .mater_list {
     width: 100%;
     box-sizing: border-box;
-    .vux-1px-b:after {
-      border-bottom: 1px solid #e8e8e8;
-    }
     // 每个物料
     .each_mater {
       padding: 0.08rem;
@@ -504,8 +625,33 @@ export default {
     box-shadow: 0 2px 5px #5077aa;
   }
 }
-.vux-1px-t:before {
-  border-top: 1px solid #e8e8e8;
+// 审批操作
+.handle_btn {
+  width: 100%;
+  height: .4rem;
+  margin: .2rem 0;  
+  position: relative;
+  line-height: .4rem;
+  text-align: center;
+  span {
+    width: 1.4rem;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    border-radius: .24rem;
+  }
+  // 拒绝
+  .reject {
+    margin-right: .2rem;
+    background: #ea5455;
+    box-shadow: 0 2px 5px #ea5455;
+  }
+  // 同意
+  .agree {
+    background: #5077aa;
+    box-shadow: 0 2px 5px #5077aa;
+  }
+
 }
 
 </style>
