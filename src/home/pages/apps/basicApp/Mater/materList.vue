@@ -143,6 +143,7 @@
         this.matterList = [];
         this.page = 1;
         this.hasNext = true;
+        this.$refs.bScroll.scrollTo(0, 0);
         this.$refs.bScroll.resetPullDown();
       },
       // TODO tab点击
@@ -151,7 +152,6 @@
         this.activeTab = index ? item.name : '';
         this.activeIndex = index;
         this.resetCondition();
-        this.$refs.bScroll.scrollTo(0, 0);
         this.getMatList();
       },
       // TODO 获取tab

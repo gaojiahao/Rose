@@ -211,6 +211,7 @@
         this.matterList = [];
         this.page = 1;
         this.hasNext = true;
+        this.$refs.bScroll.scrollTo(0, 0);
         this.getMatList();
       },
       // TODO 删除选中项

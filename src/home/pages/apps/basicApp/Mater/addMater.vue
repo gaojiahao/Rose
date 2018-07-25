@@ -105,9 +105,9 @@
           material: '', // 主材质
           inventoryColor: '', // 颜色
           keepingDays: 1, // 保质期天数
-          safeStock: '', // 安全库存
+          safeStock: 1, // 安全库存
           nearKeepingDays: 1, // 临保天数
-          inventoryStatus: '1', // 物料状态
+          inventoryStatus: 1, // 物料状态
           inventoryPic: '',
           comment: '' // 物料说明
         },
@@ -218,7 +218,6 @@
         // 修改
         if (this.transCode) {
           operaction = update;
-          submitData.formData.effectiveTime = this.changeDate(new Date(), true);
         }
 
         this.$vux.confirm.show({
