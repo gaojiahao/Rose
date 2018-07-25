@@ -9,13 +9,12 @@
               <div class="work_info">
                 <!-- 状态 -->
                 <span class="work_status" 
-                      :class="orderInfo.biStatus === '进行中'? 'doing_work' : ''"
-                      :style="{background: (orderInfo.biStatus === '已失效'? '#c93d1b':'')}">
+                      :class="orderInfo.dyClass">
                   {{orderInfo.biStatus}}
                 </span>
                 <!-- 编码 -->
                 <span class="work_code"
-                      :class="orderInfo.biStatus === '进行中'? 'doing_code' : ''">
+                      :class="orderInfo.coClass">
                   {{orderInfo.transCode.replace(/_/g,'')}}
                 </span>
               </div>
@@ -39,12 +38,9 @@
                         {{orderInfo.biStatus}}
                       </span>
                       <!-- 操作状态 B(有返回状态) -->
-                      <span class="status" 
-                            v-else-if="item.status && index % 2"
-                            :style="{background:(
-                              item.status === '终止' ? '#c93d1b' : ''
-                                || item.status === '同意' ? '#53d397' : ''
-                            )}">
+                      <span class="status"
+                            :class=item.dyClass
+                            v-else-if="item.status && index % 2">
                         {{item.status}}
                       </span>
                     </div>
@@ -183,27 +179,40 @@ export default {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
       return ( S4() + S4() + S4() );
-    },    
+    },
     // 获取详情
     getOrderList(transCode = ''){
         getSOList({
           formViewUniqueId : this.formViewUniqueId,
           transCode
-        }).then( data => {
+        }).then(({ formData : detalInfo , success = true }) => {
           // http200时提示报错信息
-          if(data.success === false){
+          if(success === false){
             this.$vux.alert.show({
               content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
             })
             return;
           }
-          let { formData : detalInfo } = data,
-              { dataSet } = detalInfo.order;
           // 获取合计
+          let { dataSet } = detalInfo.order;
           for(let val of dataSet){
             this.count += val.tdAmount;
           }
-          // 赋值表单内容
+          // 动态添加class
+          for(let key in detalInfo){
+            switch (detalInfo[key]){
+              case '进行中':
+                let newkey = 'dyClass',
+                    cokey = 'coClass';
+                detalInfo[newkey] = 'doing_work';
+                detalInfo[cokey] = 'doing_code';
+                break;
+              case '已失效':
+                newkey = 'dyClass';
+                detalInfo[newkey] = 'invalid_work';
+                break;
+            }
+          }
           this.orderInfo = detalInfo;
         })
 
@@ -213,11 +222,21 @@ export default {
       getWorkFlow({
         _dc: this.randomID(),
         transCode
-      }).then( data => {
+      }).then(({ tableContent }) => {
         // 赋值 完整版工作流
-        this.fullWL = data.tableContent;
+        this.fullWL = tableContent;
         // 赋值 简化版工作流 只取数据的最后两条
-        this.simpleWL = data.tableContent.slice(-2);
+        for(let item of tableContent){
+          switch(item.status){
+            case '同意':
+              item.dyClass = 'agree_c';
+              break;
+            case '终止':
+              item.dyClass = 'reject_c'
+              break;
+          }           
+        }
+        this.simpleWL = tableContent.slice(-2);
       })
     },
     // 流程节点是否与<我>有关
@@ -225,9 +244,9 @@ export default {
       isMyflow({
         _dc: this.randomID(),
         transCode
-      }).then(data => {
-        if(data.tableContent.length > 0){
-          let { isMyTask = 0, nodeName } = data.tableContent[0];
+      }).then(({ tableContent }) => {
+        if(tableContent.length > 0){
+          let { isMyTask = 0, nodeName } = tableContent[0];
           this.isMyTask = isMyTask;
           this.nodeName = nodeName;
         }
@@ -257,6 +276,7 @@ export default {
 .vux-1px-b:after {
   border-bottom: 1px solid #e8e8e8;
 }
+
 // 居中
 .mg_auto {
   width: 95%;
@@ -307,8 +327,11 @@ export default {
     }
     // 进行中
     .doing_work {
-      color: #fff;
       background: #5077aa;
+    }
+    // 已失效
+    .invalid_work {
+      background: #c93d1b;
     }
     // 表单编码
     .work_code {
@@ -321,6 +344,7 @@ export default {
       color: #111;
       background: #dbe2ef;
     }  
+  
   }
   // 工作流信息
   .flow_list {
@@ -358,6 +382,7 @@ export default {
           span{
             display: inline-block;
           }
+          // 默认样式
           .status {
             color: #fff;            
             font-size: .1rem;
@@ -366,6 +391,14 @@ export default {
             background: #5077aa;
             vertical-align: middle;
           }
+          // 同意样式
+          .agree_c {
+            background: #53d397;
+          }
+          // 拒绝样式
+          .reject_c {
+            background: #c93d1b;
+          }          
         }
         // 备注
         .remark {
