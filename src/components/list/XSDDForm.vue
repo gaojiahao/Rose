@@ -357,13 +357,15 @@
     }
     /* 物料 */
     .duty_matter {
-      display: flex;
+      // display: flex;
+      display: block;
       padding: .1rem;
       margin: .02rem 0;
       box-sizing: border-box;
       background: #FAFAFA;
       .duty_matter_item {
-        display: flex;
+        // display: flex;
+        display: inline-block;        
       }
       .show_one{
         width:100%;
@@ -373,9 +375,12 @@
         height: .5rem;
         margin-right: .06rem;
         border-radius: .04rem;
+        vertical-align: middle;
       }
       .matter_name {
-        display: flex;
+        display: inline-block;
+        height:.5rem;
+        line-height: .5rem;
         color: #757575;
         font-size: .12rem;
         flex-direction: column;
