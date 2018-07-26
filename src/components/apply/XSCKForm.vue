@@ -52,11 +52,11 @@
                 <x-icon class="close_icon" type="ios-close-empty" size="30"
                         @click="showTransPop = !showTransPop"></x-icon>
               </div>
-              <span class="each_mode "
-                    :class='{choiced : index===paymentIndex}'
+              <span class="each_mode"
+                    :class="{choiced : index===paymentIndex}"
                     v-for="(item, index) in transMode"
                     :key="index"
-                    @click='getPayment(item,index)'>{{item}}</span>
+                    @click="getPayment(item,index)">{{item}}</span>
             </div>
             <div class="cfm_btn" @click="submitPayment">确定</div>
           </popup>
@@ -75,10 +75,10 @@
                 <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon>
               </div>
               <span class="each_mode"
-                    :class='{choiced : index===logisticsIndex}'
+                    :class="{choiced : index===logisticsIndex}"
                     v-for="(item, index) in logisticsTerm"
                     :key="index"
-                    @click='getLogistics(item,index)'>
+                    @click="getLogistics(item,index)">
                {{item}}</span>
             </div>
             <div class="cfm_btn" @click="submitLogistics">确定</div>
@@ -99,7 +99,7 @@
         <template v-else>
           <div class="title">物料列表</div>
           <div class="mater_list">
-            <div class="each_mater vux-1px-b" v-for="(item, index) in orderList" :key='index'>
+            <div class="each_mater vux-1px-b" v-for="(item, index) in orderList" :key="index">
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
@@ -135,17 +135,19 @@
                                 <span class="num">{{item.specification || '无'}}</span>
                               </div>
                             </div>
+                            <div class="matter-remain">库存: {{item.qtyStockBal - item.num}}</div>
                           </div>
                         </div>
                         <!-- 物料数量和价格 -->
-                        <div class='mater_other'>
-                          <div class='mater_price'>
+                        <div class="mater_other">
+                          <div class="mater_price">
                             ￥{{item.defaultPrice}}
                           </div>
-                          <div class='mater_num'>
-                            <span class='handle' @click="subNum(item,index)" :class='{sub : item.num<=1}'>-</span>
-                            <input class='num' type='number' :value='item.num' @change='getNum(item,index,$event)'/>
-                            <span class='handle plus' @click='plusNum(item,index)'>+</span>
+                          <div class="mater_num">
+                            <span class="handle" @click="subNum(item,index)" :class="{disabled : item.num<=1}">-</span>
+                            <input class="num" type="number" :value="item.num" @change="getNum(item,index,$event)"/>
+                            <span class="handle plus" @click="plusNum(item,index)"
+                                  :class="{disabled:item.num >= item.qtyStockBal}">+</span>
                           </div>
                         </div>
                       </div>
@@ -164,7 +166,7 @@
         <pop-warehouse-list :show="showWarehousePop" v-model="showWarehousePop"
                             @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 订单popup -->
-        <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selMatter"
+        <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                         ref="order"></pop-order-list>
       </div>
     </div>
@@ -172,7 +174,7 @@
     <div class="count_mode vux-1px-t">
       <span class="count_num">
         <span style="fontSize:.14rem">￥</span>{{totalAmount}}
-        <span class='taxAmount'>[含税: ￥{{totalAmount*0.16}}]</span>
+        <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
       </span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
@@ -186,8 +188,6 @@
     Popup,
     Group,
     XInput,
-    Datetime,
-    PopupRadio,
     Swipeout,
     SwipeoutItem,
     SwipeoutButton,
@@ -200,6 +200,7 @@
   import PopOrderList from 'components/PopOrderList'
 
   export default {
+    name: 'ApplyXSCKForm',
     directives: {
       TransferDom
     },
@@ -209,8 +210,6 @@
       Popup,
       Group,
       XInput,
-      Datetime,
-      PopupRadio,
       Swipeout,
       SwipeoutItem,
       SwipeoutButton,
@@ -261,7 +260,7 @@
       },
       // 税金
       taxAmount() {
-        return this.totalAmount * this.taxRate
+        return (this.totalAmount * this.taxRate).toFixed(2)
       },
     },
     methods: {
@@ -269,7 +268,6 @@
       getPayment(item, i) {
         this.DealerPaymentTerm = item;
         this.paymentIndex = i;
-
       },
       // TODO 确定结算方式
       submitPayment() {
@@ -295,15 +293,12 @@
           dealerDebitContactPersonName: sel.creatorName,
           dealerDebitContactInformation: sel.dealerMobilePhone,
         };
-        // this.dealer.dealerDebitContactPersonName = sel.creatorName;
-        // this.dealer.dealerDebitContactInformation = sel.dealerMobilePhone;
         this.orderParams = {
           ...this.orderParams,
           dealerCode: sel.dealerCode
         };
-        // this.$nextTick(() => {
-        //   this.$refs.order.getList();
-        // })
+        this.orderList = [];
+        this.$refs.order.clearSel();
       },
       // TODO 选中仓库
       selWarehouse(val) {
@@ -312,10 +307,11 @@
           ...this.orderParams,
           whCode: this.warehouse.warehouseCode
         };
-        // this.$refs.order.getList();
+        this.orderList = [];
+        this.$refs.order.clearSel();
       },
       // TODO 选中物料项
-      selMatter(val) {
+      selOrder(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
           if (this.numMap[item.inventoryCode]) {
@@ -353,12 +349,20 @@
       },
       //数量++
       plusNum(item, i) {
+        if (item.num === item.qtyStockBal) {
+          return
+        }
         item.num++;
         this.$set(this.orderList, i, item);
       },
       //修改数量
       getNum(item, i, e) {
-        item.num = Number(e.target.value);
+        let val = e.target.value;
+        if (val > item.qtyStockBal) {
+          val = item.qtyStockBal;
+        }
+        item.num = Number(val);
+        this.$set(this.orderList, i, item);
       },
       // TODO 新增更多订单
       addOrder() {
@@ -748,7 +752,7 @@
                   line-height: 0.2rem;
                   font-size: .18rem;
                 }
-                .sub {
+                .disabled {
                   color: #eee;
                 }
                 .plus {
