@@ -1,7 +1,10 @@
 <template>
-  <div v-transfer-dom class='background:#fff;'>
+  <div v-transfer-dom>
     <popup v-model="popupShow" position="bottom" height="100%">
-      <x-icon type="ios-close-outline" size="30" @click="closePop"></x-icon>
+      <div class='close_icon'>
+        <icon type="cancel" @click.native="closePop"></icon>
+      </div>
+      <!-- <x-icon type="ios-close-outline" size="30" ></x-icon> -->
       <div class="flow_list">
         <div class="each_msg vux-1px-b"
             v-for="(item, index) in fullWL" 
@@ -31,11 +34,14 @@
           </div>
         </div>
       </div>
+      <div class="btn">
+        <div class="cfm_btn" @click="closePop">close</div>
+      </div>
     </popup>
   </div>
 </template> 
 <script>
-  import { TransferDom, Popup, Group} from 'vux'
+  import { TransferDom, Popup, Group,Icon,XButton } from 'vux'
   import { getWorkFlow } from 'service/detailService.js'
   export default {
     props:{
@@ -56,7 +62,9 @@
     },
     components: {
       Popup,
-      Group
+      Group,
+      Icon,
+      XButton
     },
     methods:{
       closePop(){
@@ -96,13 +104,14 @@
 <style lang='scss' scoped>
 .vux-popup-dialog{
   background: #fff;
-  .vux-x-icon {
-    width:100%;
-    text-align: center;
-    padding: 0.05rem 0;
+  .close_icon{
+    height:22px;
+    padding: 0.05rem;
+    .weui-icon{
+      float:right;     
+    }
   }
-}
-// 工作流信息
+  // 工作流信息
   .flow_list {
     position: relative;
     padding: .06rem .08rem .2rem;
@@ -164,6 +173,32 @@
       }
     }
   }
+  // 确定
+  .btn {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    background: #fff;
+    .cfm_btn {
+      top: 50%;
+      left: 50%;
+      width: 2.8rem;
+      color: #fff;
+      height: .44rem;
+      line-height: .44rem;
+      position: absolute;
+      text-align: center;
+      background: #F43530;
+      border-radius: .4rem;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 5px #F43530;
+    }
+  }
+  
+}
+
 
 
 </style>
