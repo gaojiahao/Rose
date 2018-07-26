@@ -159,12 +159,16 @@
       setStatus(item) {
         switch (item.biStatus) {
           case '进行中':
-            item.statusClass = 'duty_wait_c';
+            item.statusClass = 'duty_doing_c';
             item.statusName = '进行中';
             break;
           case '已生效':
-            item.statusClass = 'duty_process_c';
+            item.statusClass = 'duty_done_c';
             item.statusName = '已生效';
+            break;
+          case '已失效':
+            item.statusClass = 'duty_fall_c';
+            item.statusName = '已失效';
             break;
         }
       },
@@ -266,14 +270,14 @@
           .duty_status_name {
             background: #000;
           }
-          .duty_status_info { //进行中
+          .duty_done_c {
+            background: #53d397;
           }
-          .duty_process_c {
-            background: #26AB28;
+          .duty_doing_c {
+            background: #5077aa;
           }
-          .duty_wait_c {
-            background: #FADB51;
-            color: #000;
+          .duty_fall_c {
+            background: #c93d1b;
           }
         }
       }
