@@ -32,7 +32,16 @@ export let saveAndCommitTask = (data = {}) => {
     return errorHandler(e);
   });
 };
-
+export let commitTask  = ( data={} )=>{
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url:'/H_roleplay-si/flow/commitTask',
+    data
+  }).catch(e=>{
+    return errorHandler(e);
+  })
+}
 // TODO 获取当前用户信息
 export let getBaseInfoData = () => {
   return new Promise(async (resolve, reject) => {

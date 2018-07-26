@@ -136,8 +136,9 @@
             </div>
             <!-- 审批操作 -->
             <div class="handle_btn" v-if="isMyTask">
-              <span class="reject">拒绝</span>
-              <span class="agree">{{nodeName}}</span>
+              <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
+              <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
+              <span class="reject" v-if='nodeName.indexOf("stop")>=0'>终止</span>
             </div>
             <work-flow  :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
         </div>
@@ -147,6 +148,7 @@
 <script>
 import { numberComma } from 'vux'
 import { isMyflow, getSOList, getWorkFlow } from 'service/detailService.js'
+import {saveAndCommitTask,commitTask} from 'service/commonService.js'
 import workFlow from 'components/workFlow.vue'
 export default {
   data(){
@@ -160,7 +162,10 @@ export default {
       formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79',
       defaulImg: require('assets/avatar.png'),   // 默认图片1
       defaulImg2: require('assets/io.jpg'),       // 默认图片2
-      workFlowPop : false
+      workFlowPop : false,
+      comment : '' ,//审批备注
+      submitInfo : {},
+      taskId : ''
     }
   },
   components:{
@@ -178,6 +183,75 @@ export default {
       }
       return url
     },
+    reject(){
+      this.$vux.confirm.prompt('', {
+        title:'审批意见',
+        onConfirm :(value)=>{
+          if(value){
+            this.comment = value;
+          }
+          let submitData = {
+            taskId : this.taskId,
+            taskData: JSON.stringify({result:0,transCode:this.submitInfo.formData.transCode,comment:this.comment})
+          };
+          commitTask(submitData).then(data => {
+            let {success = false, message = '提交失败'} = data;
+            if (success) {
+              message = '拒绝成功';
+            }
+            this.$vux.alert.show({
+              content: message,
+              onHide: () => {
+                if (success) {
+                  this.$router.go(-1);
+                }
+              }
+            });
+          })
+          
+        }
+      })
+    },
+    agree(){
+      this.$vux.confirm.prompt('', {
+        title:'审批意见',
+        onConfirm :(value)=>{
+          if(value){
+            console.log(value);
+            this.comment = value;
+          }
+          let submitData  = {
+            listId : this.submitInfo.listId,
+            biComment: this.submitInfo.biComment,
+            biReferenceId: this.submitInfo.biReferenceId,
+            formData : JSON.stringify(this.submitInfo.formData),
+            wfPara: JSON.stringify({
+              businessKey:this.submitInfo.formData.transCode,
+              createdBy:this.submitInfo.formData.creator,
+              transCode:this.submitInfo.formData.transCode,
+              result:1,
+              taskId:this.taskId,
+              comment:this.comment
+            })
+          }
+          console.log(submitData);
+          saveAndCommitTask(submitData).then(data => {
+            let {success = false, message = '提交失败'} = data;
+            if (success) {
+              message = '提交成功';
+            }
+            this.$vux.alert.show({
+              content: message,
+              onHide: () => {
+                if (success) {
+                  this.$router.go(-1);
+                }
+              }
+            });
+          })
+        }
+      })
+    },
     //随机ID
     randomID() {
       function S4() {
@@ -190,36 +264,37 @@ export default {
         getSOList({
           formViewUniqueId : this.formViewUniqueId,
           transCode
-        }).then(({ formData : detalInfo , success = true }) => {
+        }).then(data => {
+          this.submitInfo  = JSON.parse(JSON.stringify(data));
           // http200时提示报错信息
-          if(success === false){
+          if(data.success === false){
             this.$vux.alert.show({
               content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
             })
             return;
           }
           // 获取合计
-          let { dataSet } = detalInfo.order;
+          let { dataSet } = data.formData.order;
           for(let val of dataSet){
             this.count += val.tdAmount;
             val.inventoryPic_transObjCode = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
           // 动态添加class
-          for(let key in detalInfo){
-            switch (detalInfo[key]){
+          for(let key in data.formData){
+            switch (data.formData[key]){
               case '进行中':
                 let newkey = 'dyClass',
                     cokey = 'coClass';
-                detalInfo[newkey] = 'doing_work';
-                detalInfo[cokey] = 'doing_code';
+                data.formData[newkey] = 'doing_work';
+                data.formData[cokey] = 'doing_code';
                 break;
               case '已失效':
                 newkey = 'dyClass';
-                detalInfo[newkey] = 'invalid_work';
+                data.formData[newkey] = 'invalid_work';
                 break;
             }
           }
-          this.orderInfo = detalInfo;
+          this.orderInfo = data.formData;
         })
 
     },
@@ -252,9 +327,10 @@ export default {
         transCode
       }).then(({ tableContent }) => {
         if(tableContent.length > 0){
-          let { isMyTask = 0, nodeName } = tableContent[0];
+          let { isMyTask = 0, actions,taskId} = tableContent[0];
           this.isMyTask = isMyTask;
-          this.nodeName = nodeName;
+          this.nodeName = actions;
+          this.taskId = taskId;
         }
       })
     }
@@ -672,7 +748,6 @@ export default {
   width: 100%;
   height: .4rem;
   margin: .2rem 0;  
-  position: relative;
   line-height: .4rem;
   text-align: center;
   span {
