@@ -222,8 +222,8 @@
       // TODO 过滤日期
       filterTime(val) {
         if (val) {
-          let date = new Date(val);
-          return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
+          let date = val.split(' ')[0];
+          return date
         }
 
       },

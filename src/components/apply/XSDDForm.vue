@@ -316,14 +316,14 @@ export default {
                 inventoryName_transObjCode : item.inventoryName, //物料名称
                 transObjCode : item.inventoryCode, //物料编码
                 assMeasureUnit : '个',    //辅助计量
-                assMeasureScale : '',  //与主计量单位倍数
+                assMeasureScale : null,  //与主计量单位倍数
                 tdQty : item.num,     //数量
                 assistQty : 0,        //辅计数量
                 price : item.defaultPrice, //单价
                 taxRate : 0.16,              //税率
                 taxAmount : item.defaultPrice*item.num*0.16,           //税金
                 tdAmount : item.defaultPrice*item.num*(100+16)/100,           //价税小计
-                promDeliTime : '2018-12-12', //预期交货日
+                promDeliTime : null, //预期交货日
                 comment : ''                //说明
               })
             })
@@ -340,7 +340,7 @@ export default {
                   dataSet
                 }
               }),
-              wfPara: JSON.stringify({"PROC_1712_0009":{businessKey:"SO",createdBy:""}})
+              wfPara: JSON.stringify({"PROC_1801_0002":{businessKey:"SO",createdBy:this.formData.handler}})
             }
             saveAndStartWf(submitData).then(data => {
               let {success = false, message = '提交失败'} = data;
