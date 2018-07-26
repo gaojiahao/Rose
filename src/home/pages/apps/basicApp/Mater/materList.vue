@@ -4,12 +4,13 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-        <form class="search_part" action="" @submit.prevent="searchMat">
+        <!--<form class="search_part" action="" @submit.prevent="searchMat">
           <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
           <div class="pop_cancel" @click="searchMat">搜索</div>
           <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
           <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
-        </form>
+        </form>-->
+        <r-search @search="searchMat"></r-search>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in matNature" :key="index" :selected="index === activeIndex"
@@ -85,11 +86,12 @@
   import { Tab, Icon, TabItem, Spinner, LoadMore } from 'vux'
   import { getList, getDictByType } from 'service/commonService'
   import RScroll from 'components/RScroll'
+  import RSearch from 'components/search'
 
   const RFD_MATER_LIST = 'RFD_MATER_LIST';
   export default {
     components: {
-      Tab, Icon, TabItem, Spinner, LoadMore, RScroll,
+      Tab, Icon, TabItem, Spinner, LoadMore, RScroll, RSearch,
     },
     data() {
       return {
@@ -222,7 +224,8 @@
         this.$refs.bScroll.finishPullUp();
       },
       // TODO 搜索物料
-      searchMat() {
+      searchMat(val) {
+        this.srhInpTx = val;
         this.activeTab = '';
         this.activeIndex = 0;
         this.resetCondition();
