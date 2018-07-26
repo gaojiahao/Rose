@@ -16,13 +16,13 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
+          <!-- 订单 时期 -->
           <div class="duty_top">
-            <p class="duty_name">
-              <span class="duty_status">
-                <span class="duty_status_info"
-                      :class="item.statusClass">{{item.statusName}}</span>
-              </span>
+            <p class="duty_code">
+              {{item.transCode}}
+              <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
             </p>
+            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
           <!-- 物料图片和名称 -->
           <ul class="duty_matter">
@@ -30,22 +30,25 @@
               <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
                 <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
               </li>
-              <div class=" order_count">￥{{item.count | numberComma(3)}}</div>
             </template>
             <template v-else>
               <li class="duty_matter_item show_one" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
                 <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
                 <div class="matter_name">{{mItem.inventoryName}}</div>
-                <div class=" order_count">￥{{item.count | numberComma(3)}}</div>
               </li>
             </template>
           </ul>
-          <div class="duty_btm">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man">{{item.handlerName}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
+          <!-- 金额合计 -->
+          <div class="order_count">
+            <div class="handle_man">
+              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
+            </div>
+            <div class="money_part">
+              <span class="num">共{{item.itmes.length}}件物料：</span>
+              <span class="money">
+                <span style="fontSize:.1rem;">[含税]￥</span>{{item.count | numberComma(3)}}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -258,7 +261,7 @@
       width: 95%;
       margin: .2rem auto;
       position: relative;
-      padding-bottom: .04rem;
+      padding: .02rem 0 .04rem;
       box-shadow: 0 2px 10px #e8e8e8;
       .duty_name { //任务名称
         width: 100%;
@@ -296,7 +299,7 @@
           }
         }
       }
-      .duty_btm {
+      .duty_top {
         height: .24rem;
         padding: 0 .1rem;
         line-height: .24rem;
@@ -306,11 +309,12 @@
           color: #7D7D7D;
           font-weight: 200;
           .duty_crt_man { // 任务创建者
+            color: #fff;
+            padding: .02rem;
             position: relative;
             background: #333;
             font-size: 0.12rem;
-            color: #FDF6A4;
-            padding: .02rem;
+            font-weight: bold;
           }
           .duty_crt_man:before { //左尖角
             position: absolute;
@@ -322,7 +326,27 @@
             border-right: .04rem solid #333;
             border-bottom: .04rem solid transparent;
           }
+          .duty_done_c {
+            background: #53d397;
+          }
+          .duty_done_c:before {
+            border-right: .04rem solid #53d397;
+          }
+          .duty_doing_c {
+            background: #5077aa;
+          }
+          .duty_doing_c:before {
+            border-right: .04rem solid #5077aa;
+          }
+          .duty_fall_c {
+            background: #c93d1b;
+          }
+          .duty_fall_c:before {
+            border-right: .04rem solid #c93d1b;
+          }
+          
         }
+        
         .duty_time { //任务创建时间
           float: right;
           font-size: .15rem;
@@ -357,17 +381,28 @@
         flex-direction: column;
         justify-content: center;
       }
-      .order_count{
-        flex: 1;
-        display: flex;
-        color:#ea5455;
-        font-weight: bold;
-        flex-direction: column;
-        justify-content: flex-end;
-        
-        text-align: right;
-      }
     }
+    .order_count{
+      font-size: .14rem;
+      padding: .04rem .1rem;
+      // text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .handle_man {
+        color: #7D7D7D;
+        font-size: .16rem;
+        // background: #5077aa;
+      }
+      .num {
+        color: #7D7D7D;
+      }
+      .money {
+        font-size: .16rem;
+        color: #c93d1b;
+        font-weight: bold;
+      }
+    }    
     .pullDownRefresh {
       display: block;
       margin: 0 auto;
