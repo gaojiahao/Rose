@@ -9,7 +9,7 @@
             <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
             <div class="pop_cancel" @click="showPop = !showPop">返回</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
+            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
           </div>
         </div>
         <!-- 仓库列表 -->
@@ -110,13 +110,12 @@
         this.tmpItems = {...this.selItems};
         this.$emit('input', false);
       },
-      clear() {
+      clearList() {
         this.srhInpTx = '';
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
         this.getList();
-
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -126,7 +125,7 @@
       selThis(sItem, sIndex) {
         this.tmpItems = sItem;
       },
-      // TODO 确定选择物料
+      // TODO 确定选择仓库
       selConfirm() {
         let sels = [];
         // 返回上层
@@ -142,7 +141,7 @@
         }
         return url
       },
-      // TODO 获取物料列表
+      // TODO 获取仓库列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {

@@ -6,17 +6,17 @@
         <div class="title">
           <!-- 搜索栏 -->
           <div class="search_part">
-            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchMat">
+            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
             <div class="pop_cancel" @click="showPop = !showPop">返回</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
+            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
           </div>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp"
+                  :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
                   @on-pulling-down="onPullingDown" ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
+          <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item,index)">
             <div class="order-code">{{item.transMatchedCode}}</div>
             <div class="order-matter">
@@ -56,12 +56,14 @@
                       <span class="father">大类: {{item.inventoryType}}</span>
                       <span class="child">子类: {{item.inventorySubclass}}</span>
                     </div>
-
                     <!-- 物料材质等 -->
                     <div class="mater_material">
                       <span class="unit">单位: {{item.measureUnit}}</span>
                       <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
                       <span class="spec">材质: {{item.material || '无'}}</span>
+                    </div>
+                    <div>
+                      <span>库存: {{item.qtyStockBal}}</span>
                     </div>
                   </div>
                 </div>
@@ -76,20 +78,19 @@
       <!-- 底部栏 -->
       <div class="count_mode vux-1px-t">
         <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
-        <span class="count_btn" @click="cfmMater">确定</span>
+        <span class="count_btn" @click="selConfirm">确定</span>
       </div>
     </popup>
   </div>
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore} from 'vux'
+  import {Icon, Popup} from 'vux'
   import RScroll from 'components/RScroll'
-  import {getList} from 'service/commonService'
   import {getTransMatchedCode} from 'service/listService'
 
   export default {
-    name: "MatterList",
+    name: "PopOrderList",
     props: {
       show: {
         type: Boolean,
@@ -107,7 +108,7 @@
       }
     },
     components: {
-      Icon, Popup, LoadMore, RScroll,
+      Icon, Popup, RScroll,
     },
     data() {
       return {
@@ -115,7 +116,7 @@
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
         tmpItems: [],
-        matterList: [],
+        listData: [],
         limit: 10,
         page: 1.,
         hasNext: true,
@@ -133,6 +134,7 @@
       },
       params: {
         handler() {
+          this.resetCondition();
           this.getList();
         }
       },
@@ -165,6 +167,12 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
+        if(!sItem.qtyStockBal){
+          this.$vux.alert.show({
+            content: '当前订单库存为0，请选择其他订单'
+          });
+          return
+        }
         let arr = this.tmpItems;
         // 若存在重复的 则清除
         if (arr.includes(sItem)) {
@@ -173,8 +181,8 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择物料
-      cfmMater() {
+      // TODO 确定选择订单
+      selConfirm() {
         let sels = [];
         // 返回上层
         this.showPop = false;
@@ -190,24 +198,16 @@
         }
         return url
       },
-      // TODO 获取物料列表
+      // TODO 获取订单列表
       getList() {
         let filter = [];
         if (this.srhInpTx) {
           filter = [
-            ...filter,
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryCode',
-              attendedOperation: 'or'
-            },
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'inventoryName',
-            },
-          ];
+              property: 'transMatchedCode',
+            }];
         }
         return getTransMatchedCode({
           ...this.params,
@@ -221,18 +221,28 @@
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
+          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
         });
       },
-      // TODO 搜索物料
-      searchMat() {
-        this.matterList = [];
+      // TODO 重置列表条件
+      resetCondition() {
+        this.listData = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
+      },
+      // TODO 搜索订单
+      searchList() {
+        this.resetCondition();
+        this.getList();
+      },
+      // TODO 清空搜索条件
+      clearList() {
+        this.srhInpTx = '';
+        this.resetCondition();
         this.getList();
       },
       // TODO 删除选中项
@@ -247,6 +257,11 @@
         });
         this.selItems.splice(dIndex, 1);
         this.tmpItems = [...this.selItems];
+      },
+      // TODO 清空选择项
+      clearSel(){
+        this.selItems = [];
+        this.tmpItems = [];
       },
       // TODO 上拉加载
       onPullingUp() {
@@ -267,7 +282,6 @@
     },
     created() {
       this.showPop = this.show;
-      // this.hasNext = false;
       this.getList();
     }
   }
