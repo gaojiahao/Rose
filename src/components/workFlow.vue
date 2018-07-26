@@ -21,8 +21,8 @@
               <!-- 操作状态 B(有返回状态) -->
               <span class="status"
                     :class=item.dyClass
-                    v-if='index !== 0'>
-                {{item.status}}
+                    v-if='index > 0'>
+                {{item.status || noStatus}}
               </span>
             </div>
             <!-- 流程节点 用户名 -->
@@ -47,7 +47,11 @@
     props:{
       popupShow :  {
         type : Boolean,
-        require :true
+        require : true
+      },
+      noStatus : {
+        type : String,
+        require : true
       }
     },
     data(){

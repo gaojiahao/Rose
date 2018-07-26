@@ -139,7 +139,7 @@
               <span class="reject">拒绝</span>
               <span class="agree">{{nodeName}}</span>
             </div>
-            <work-flow  :popupShow='workFlowPop' v-model="workFlowPop"></work-flow>
+            <work-flow  :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
         </div>
     </div>
 </template>
