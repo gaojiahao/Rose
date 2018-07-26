@@ -30,12 +30,13 @@
               <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
                 <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
               </li>
+              <div class=" order_count">￥{{item.count | numberComma(3)}}</div>
             </template>
             <template v-else>
               <li class="duty_matter_item show_one" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
                 <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
                 <div class="matter_name">{{mItem.inventoryName}}</div>
-                <div class=" order_count">￥{{item.count}}</div>
+                <div class=" order_count">￥{{item.count | numberComma(3)}}</div>
               </li>
             </template>
           </ul>
@@ -57,11 +58,10 @@
 </template>
 
 <script>
-  import {Tab, Icon, TabItem, LoadMore, numberPad, Spinner} from 'vux'
+  import {Tab, Icon, TabItem,numberPad,numberComma} from 'vux'
   import {getSellOrderList} from 'service/listService'
   import searchIcon from 'components/search.vue'
   import RScroll from 'components/RScroll'
-
   export default {
     data() {
       return {
@@ -223,7 +223,8 @@
           return `${date.getFullYear()}-${numberPad(date.getMonth() + 1)}-${numberPad(date.getDate())}`;
         }
 
-      }
+      },
+      numberComma
     },
     created() {
       this.getOrderList();
