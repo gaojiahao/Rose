@@ -32,7 +32,7 @@
               </li>
             </template>
             <template v-else>
-              <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
+              <li class="duty_matter_item show_one" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
                 <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
                 <div class="matter_name">{{mItem.inventoryName}}</div>
                 <div class=" order_count">￥{{item.count}}</div>
@@ -339,6 +339,8 @@
       background: #FAFAFA;
       .duty_matter_item {
         display: flex;
+      }
+      .show_one{
         width:100%;
       }
       .matter_img {
