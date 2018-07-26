@@ -2,9 +2,9 @@
     <div class="pages">
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
             <!-- 工作流 -->
-            <div class="work_flow mg_auto box_sd">
+            <div class="work_flow mg_auto box_sd" @click="workFlowPop = true" :class="{hidden : simpleWL.length<=0}">
               <!-- 右箭头 -->
-              <x-icon class="r_arrow" type="ios-arrow-down" size="30" @click="workFlowPop = true" :class="{hidden : simpleWL.length<=0}"></x-icon>
+              <x-icon class="r_arrow" type="ios-arrow-down" size="30"></x-icon>
               <!-- 表单状态 及 编码 -->
               <div class="work_info">
                 <!-- 状态 -->
