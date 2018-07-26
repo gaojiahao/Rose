@@ -4,12 +4,14 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-        <div class="search_part">
-          <input class="srh_inp" type="text" v-model="srhInpTx">
-          <div class="pop_cancel" @click="searcwarehouse">搜索</div>
-          <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-          <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
-        </div>
+          <form action=""  @submit.prevent="searcwarehouse">
+            <div class="search_part">
+                <input class="srh_inp" type="text" v-model="srhInpTx">
+                <div class="pop_cancel" @click="searcwarehouse">搜索</div>
+                <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
+                <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
+            </div>
+          </form>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in warehouseClassfiy" :key="index" :selected="index === activeIndex"
@@ -24,10 +26,10 @@
           <div class="client_ads vux-1px-b" v-for="(item, index) in warehouseList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.warehouseCode}}</span>
-              <span class="user_tel">{{item.warehouseName}}</span>
+              <span class="user_tel">{{item.warehouseRelType}}</span>
             </div>
             <div class="cp_info">
-              <p class="cp_name">{{item.warehouseRelType}}</p>
+              <p class="cp_name">{{item.warehouseName}}</p>
               <!-- <p class='cp_label'>
                 <span>{{item.warehouseLabelName}}</span>
               </p> -->
@@ -92,7 +94,7 @@ export default {
       this.activeIndex = index;
       this.resetCondition();
       this.tabSelect='';
-      this.srhInpTx= '';
+      //this.srhInpTx= '';
       this.tabSelect=item;
       this.bScroll.scrollTo(0, 0);
       this.getwarehouse()
@@ -134,22 +136,39 @@ export default {
                 value: this.tabSelect,
                 property: 'warehouseRelType',
             }];
-        }   
-        if(this.srhInpTx != ''){
+            if(this.srhInpTx){
+              filter[0].attendedOperation = 'and (';
+              filter = [
+                  ...filter,
+                  {
+                  operator: 'like',
+                  value: this.srhInpTx,
+                  property: 'warehouseName',
+                  attendedOperation: 'or'
+                  },
+                  {
+                  operator: 'like',
+                  value: this.srhInpTx,
+                  property: 'warehouseCode',
+                  attendedOperation: ')'
+                  }
+              ];
+            }
+        } else {
             filter = [
-                ...filter,
-                {
-                operator: 'like',
-                value: this.srhInpTx,
-                property: 'warehouseName',
-                attendedOperation: 'or'
-                },
-                {
-                operator: 'like',
-                value: this.srhInpTx,
-                property: 'warehouseType'
-                }
-            ];
+                  ...filter,
+                  {
+                  operator: 'like',
+                  value: this.srhInpTx,
+                  property: 'warehouseName',
+                  attendedOperation: 'or'
+                  },
+                  {
+                  operator: 'like',
+                  value: this.srhInpTx,
+                  property: 'warehouseCode',
+                  }
+              ];
         }
         let data = {
           limit : this.limit,
