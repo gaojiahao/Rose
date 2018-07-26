@@ -4,7 +4,7 @@
             <!-- 工作流 -->
             <div class="work_flow mg_auto box_sd">
               <!-- 右箭头 -->
-              <x-icon class="r_arrow" type="ios-arrow-down" size="30"></x-icon>
+              <x-icon class="r_arrow" type="ios-arrow-down" size="30" @click="workFlowPop = true" :class="{hidden : simpleWL.length<=0}"></x-icon>
               <!-- 表单状态 及 编码 -->
               <div class="work_info">
                 <!-- 状态 -->
@@ -136,10 +136,10 @@
             </div>
             <!-- 审批操作 -->
             <div class="handle_btn" v-if="isMyTask">
-              <span class="reject">拒绝</span>
+              <span class="reject">拒绝</span>
               <span class="agree">{{nodeName}}</span>
             </div>
-          </div>
+            <work-flow  :popupShow='workFlowPop' v-model="workFlowPop"></work-flow>
         </div>
     </div>
 </template>
@@ -147,6 +147,7 @@
 <script>
 import { numberComma } from 'vux'
 import { isMyflow, getSOList, getWorkFlow } from 'service/detailService.js'
+import workFlow from 'components/workFlow.vue'
 export default {
   data(){
     return{
@@ -158,8 +159,12 @@ export default {
       isMyTask:'',        // 是否与我有关
       formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79',
       defaulImg: require('assets/avatar.png'),   // 默认图片1
-      defaulImg2: require('assets/io.jpg')       // 默认图片2
+      defaulImg2: require('assets/io.jpg'),       // 默认图片2
+      workFlowPop : false
     }
+  },
+  components:{
+    workFlow
   },
   filters:{
     numberComma
@@ -301,6 +306,9 @@ export default {
     left: 50%;
     position: absolute;
     transform: translate(-50%, 0);
+  }
+  .hidden{
+    display: none;
   }
   // 提示文字
   .tip_tx {

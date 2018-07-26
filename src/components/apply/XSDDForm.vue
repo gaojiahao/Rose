@@ -339,10 +339,10 @@ export default {
                   drAccountSub : this.info.dealerSubclass || '直营店',
                   dataSet
                 }
-              })
+              }),
+              wfPara: JSON.stringify({"PROC_1712_0009":{businessKey:"SO",createdBy:""}})
             }
             saveAndStartWf(submitData).then(data => {
-              //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
               if (success) {
                 message = '订单提交成功';
