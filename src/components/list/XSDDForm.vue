@@ -26,10 +26,17 @@
           </div>
           <!-- 物料图片和名称 -->
           <ul class="duty_matter">
-            <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
-              <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
-              <div class="matter_name">{{mItem.inventoryName}}</div>
-            </li>
+            <template v-if="item.itmes.length > 1">
+              <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
+                <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
+              </li>
+            </template>
+            <template v-else>
+              <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
+                <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
+                <div class="matter_name">{{mItem.inventoryName}}</div>
+              </li>
+            </template>
           </ul>
           <div class="duty_btm">
             <p class="duty_code">
@@ -236,19 +243,19 @@
 
   .list_wrapper {
     position: relative;
-    margin-top: .08rem;
-    height: calc(100% - .52rem - 44px);
+    height: calc(100% - .52rem - 36px);
     overflow: hidden;
     box-sizing: border-box;
     .each_duty {
+      width: 95%;
       margin: .2rem auto;
-      padding: .1rem;
       position: relative;
-      width: 85%;
-      box-shadow: 0 0.02rem 0.2rem #e8e8e8;
+      padding-bottom: .04rem;
+      box-shadow: 0 2px 10px #e8e8e8;
       .duty_name { //任务名称
         width: 100%;
         font-size: .16rem; // 1rem=100px 手机像素2：1 这里原字体大小为16px
+        padding: 0 .1rem;
         font-weight: bold;
         max-height: 1rem;
         overflow: hidden;
@@ -283,21 +290,19 @@
       }
       .duty_btm {
         height: .24rem;
+        padding: 0 .1rem;
         line-height: .24rem;
-
         .duty_code { //任务编码
           float: left;
           font-size: .15rem;
           color: #7D7D7D;
           font-weight: 200;
-
           .duty_crt_man { // 任务创建者
             position: relative;
             background: #333;
             font-size: 0.12rem;
             color: #FDF6A4;
             padding: .02rem;
-
           }
           .duty_crt_man:before { //左尖角
             position: absolute;
@@ -321,24 +326,25 @@
     /* 物料 */
     .duty_matter {
       display: flex;
+      padding: .1rem;
+      margin: .02rem 0;
+      box-sizing: border-box;
+      background: #FAFAFA;
       .duty_matter_item {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-right: .1rem;
-        max-width: 1rem;
       }
       .matter_img {
-        width: .75rem;
-        height: .75rem;
+        width: .5rem;
+        height: .5rem;
+        margin-right: .06rem;
+        border-radius: .04rem;
       }
       .matter_name {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        text-align: center;
+        display: flex;
+        color: #757575;
+        font-size: .12rem;
+        flex-direction: column;
+        justify-content: center;
       }
     }
     .pullDownRefresh {
