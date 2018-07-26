@@ -35,6 +35,7 @@
               <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
                 <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
                 <div class="matter_name">{{mItem.inventoryName}}</div>
+                <div class=" order_count">￥{{item.count}}</div>
               </li>
             </template>
           </ul>
@@ -58,7 +59,7 @@
 <script>
   import {Tab, Icon, TabItem, LoadMore, numberPad, Spinner} from 'vux'
   import {getSellOrderList} from 'service/listService'
-  import searchIcon from '../search.vue'
+  import searchIcon from 'components/search.vue'
   import RScroll from 'components/RScroll'
 
   export default {
@@ -76,7 +77,8 @@
         activeIndex: 0,
         serachVal: '',
         listData: [],
-        activeTab: ''
+        activeTab: '',
+        count : 0
 
       }
     },
@@ -139,6 +141,10 @@
           this.hasNext = total > (this.page - 1) * this.limit + orders.length;
           orders.forEach(item => {
             this.setStatus(item);
+            item.count = 0;
+            item.itmes.forEach(mitem=>{
+              item.count += mitem.tdAmount;
+            })
             item.itmes = item.itmes.slice(0, 3);
             item.itmes.forEach(mItem => {
               mItem.inventoryPic = mItem.inventoryPic ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}` : this.getDefaultImg();
@@ -332,6 +338,7 @@
       background: #FAFAFA;
       .duty_matter_item {
         display: flex;
+        width:100%;
       }
       .matter_img {
         width: .5rem;
@@ -345,6 +352,16 @@
         font-size: .12rem;
         flex-direction: column;
         justify-content: center;
+      }
+      .order_count{
+        flex: 1;
+        display: flex;
+        color:#ea5455;
+        font-weight: bold;
+        flex-direction: column;
+        justify-content: flex-end;
+        
+        text-align: right;
       }
     }
     .pullDownRefresh {

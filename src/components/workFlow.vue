@@ -74,9 +74,7 @@
         getWorkFlow({
           transCode
         }).then(({tableContent})=>{
-          // 赋值 完整版工作流
           this.fullWL = tableContent;
-          // 赋值 简化版工作流 只取数据的最后两条
           for(let item of tableContent){
             switch(item.status){
               case '同意':

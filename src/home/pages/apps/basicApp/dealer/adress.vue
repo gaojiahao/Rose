@@ -3,13 +3,7 @@
     <div class="content">
       <!-- 顶部区域 -->
       <div class="app_top">
-        <!-- 搜索栏 -->
-        <div class="search_part">
-          <input class="srh_inp" type="text" v-model="srhInpTx">
-          <div class="pop_cancel" @click="searcDealer">搜索</div>
-          <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-          <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
-        </div>
+        <searchIcon @search='searchList'></searchIcon>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in dealerClassfiy" :key="index" :selected="index === activeIndex"
@@ -32,10 +26,6 @@
             </div>
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
-          <!-- <load-more tip="加载中" v-show="hasNext"></load-more>
-          <load-more :show-loading="false" tip="暂无数据" v-show="!dealerList.length && !hasNext"></load-more> -->
-        
-        <!-- <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner> -->
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
@@ -49,6 +39,7 @@
 <script>
 import { Tab, Icon, TabItem,Spinner,LoadMore } from 'vux'
 import dealerService from 'service/dealerService.js'
+import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 export default {
   data(){
@@ -70,7 +61,7 @@ export default {
     }
   },
   components:{
-    Tab, Icon, TabItem,Spinner,LoadMore,RScroll
+    Tab, Icon, TabItem,Spinner,LoadMore,RScroll,searchIcon
   },
   methods:{
     // TODO 重置列表条件
@@ -87,14 +78,10 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.getDealer()
     },
-    searcDealer(){
+    searchList(value){ 
+      this.srhInpTx = value;
       this.resetCondition();
       this.getDealer()
-    },
-    clear(){
-      this.srhInpTx = '';
-      this.resetCondition();
-      this.getDealer();
 
     },
     // 编辑地址
