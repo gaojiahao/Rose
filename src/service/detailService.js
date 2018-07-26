@@ -37,5 +37,7 @@ export let getSOList = (data = {}) => {
 }
 
 export default{
-    getSOList 
+    getSOList,
+    getWorkFlow,
+    isMyflow
 }
