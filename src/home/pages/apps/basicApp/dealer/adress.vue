@@ -78,11 +78,11 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.getDealer()
     },
+    //搜索
     searchList(value){ 
       this.srhInpTx = value;
       this.resetCondition();
       this.getDealer()
-
     },
     // 编辑地址
     goEditAds(item){

@@ -70,6 +70,7 @@
       closePop(){
         this.$emit('input',false)
       },
+      //获取工作流
       getFlow(transCode=''){
         getWorkFlow({
           transCode
@@ -91,9 +92,7 @@
     },
     created(){
       let { transCode } = this.$route.query;
-      // 获取工作流
       this.getFlow(transCode);
-
     }
 
   }
