@@ -39,7 +39,7 @@
         <div class="app_list swiper-wrapper">
           <!-- 单个app -->
           <div class="each_app swiper-slide"
-              @click='goXS(item.text)'
+              @click='goXS(item.code)'
               v-for="(item, index) of XSarray"
               :key='index'>
             <div class="app_type">业务对象</div>
@@ -54,6 +54,7 @@
 
 <script>
 import homeService from 'service/homeservice'
+import businessMap from './maps/business'
 export default {
   data(){
     return{
@@ -111,6 +112,7 @@ export default {
               if(item.text === '销售'){
                 for(let ite of item.children){
                     this.XSarray.push(ite);
+                    ite.code = businessMap[ite.text]
                 }
               }
             }
