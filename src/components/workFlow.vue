@@ -1,20 +1,24 @@
 <template>
   <div v-transfer-dom>
     <popup v-model="popupShow" position="bottom" height="100%">
-      <div class='close_icon'>
-        <icon type="cancel" @click.native="closePop"></icon>
+      <div class='flow_top'>
+        <span class="title">查看工作流</span>
+        <span class="close" @click="closePop" v-if="fullWL.length >= 6">关闭</span>
+        <!-- <icon type="cancel" @click.native="closePop"></icon> -->
       </div>
-      <!-- <x-icon type="ios-close-outline" size="30" ></x-icon> -->
       <div class="flow_list">
-        <div class="each_msg vux-1px-b"
+        <div class="each_msg"
+            :class="isMyTask && index === fullWL.length - 1 || userName === item.userName ? 'whenisMine' : ''"
             v-for="(item, index) in fullWL" 
             :key=index>
             <!-- 头像 -->
           <div class="user_avatar">
-            <img :src='index % 2 ? defaulImg2: defaulImg' alt="avatar">
+            <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
+            <div class="name">{{item.userName}}</div>
           </div>
           <!-- 操作信息 -->
           <div class="handle_info">
+            <div class="triangle"></div>
             <div class="handle_name">
               <!-- 操作动作 -->
               <span>{{item.nodeName}}</span>
@@ -34,15 +38,15 @@
           </div>
         </div>
       </div>
-      <div class="btn">
-        <div class="cfm_btn" @click="closePop">close</div>
+      <div class="btn" :class="fullWL.length < 6? 'when_less': ''">
+        <span class="cfm_btn" @click="closePop">关闭工作流</span>
       </div>
     </popup>
   </div>
 </template> 
 <script>
   import { TransferDom, Popup, Group,Icon,XButton } from 'vux'
-  import { getWorkFlow } from 'service/detailService.js'
+  import { isMyflow, getWorkFlow, currentUser } from 'service/detailService.js'
   export default {
     props:{
       popupShow :  {
@@ -57,6 +61,8 @@
     data(){
       return{
         fullWL : [],
+        userName:'',    // 用户名称
+        isMyTask: '',   // 是否与我有关
         defaulImg: require('assets/avatar.png'),   // 默认图片1
         defaulImg2: require('assets/io.jpg'),       // 默认图片2
       }
@@ -74,13 +80,21 @@
       closePop(){
         this.$emit('input',false)
       },
+      //随机ID
+      randomID() {
+        function S4() {
+          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        }
+        return ( S4() + S4() + S4() );
+      },      
       //获取工作流
       getFlow(transCode=''){
         getWorkFlow({
           transCode
         }).then(({tableContent})=>{
-          this.fullWL = tableContent;
           for(let item of tableContent){
+            // 去除名字中的空格
+            item.userName = item.userName.replace(/\s*/g,"");
             switch(item.status){
               case '同意':
                 item.dyClass = 'agree_c';
@@ -90,13 +104,36 @@
                 break;
             }           
           }
+          this.fullWL = tableContent;
+        })
+      },
+      // 判断节点是否与<我>有关
+      isMyflow(transCode = ''){
+        isMyflow({
+          _dc: this.randomID(),
+          transCode
+        }).then(({ tableContent }) => {
+          if(tableContent.length > 0 && tableContent[0].isMyTask === 1){
+            let { isMyTask = 0 } = tableContent[0];
+            this.isMyTask = isMyTask;
+          }
+        })      
+      },
+      // 获取当前用户
+      currentUser(){
+        currentUser({
+          _dc: this.randomID()
+        }).then(({ nickname, userCode}) => {
+          this.userName = `${nickname}-${userCode}`;
+          console.log(this.userName);
         })
       }
-
     },
     created(){
       let { transCode } = this.$route.query;
       this.getFlow(transCode);
+      this.isMyflow(transCode);
+      this.currentUser();
     }
 
   }
@@ -105,38 +142,69 @@
 <style lang='scss' scoped>
 .vux-popup-dialog{
   background: #fff;
-  .close_icon{
-    height:22px;
-    padding: 0.05rem;
-    .weui-icon{
-      float:right;     
+  .flow_top{
+    display: flex;
+    align-items: center;
+    padding: .05rem .1rem;
+    justify-content: space-between;
+    // 标题
+    .title {
+      color: #111;
+      font-weight: bold;
+      font-size: .24rem;
+    }
+    // 关闭按钮 
+    .close {
+      display: block;
+      color: #fff;
+      padding: 0 .1rem;
+      font-size: .18rem;
+      background: #dd0a35;
+      border-radius: .24rem;
     }
   }
   // 工作流信息
   .flow_list {
     position: relative;
-    padding: .06rem .08rem .2rem;
+    padding: .06rem .08rem 0;
     // 每一个明细
     .each_msg {
       display: flex;
       padding-bottom: .1rem;
       margin-bottom: .1rem;
+      sw{
+
+      }
       // 用户头像
       .user_avatar {
-        width: .65rem;
-        height: .65rem;
+        width: .5rem;
+        // height: .5rem;
+        display: flex;
+        font-size: .1rem;         
+        flex-direction: column;
+        // 图片
         img {
           width: 100%;
+          border-radius: .24rem;
+        }
+        // 名字
+        .name {
+          text-align: center;
         }
       }
       // 操作信息
       .handle_info {
         color: #111;
-        display: flex;
+        // display: flex;
         font-size: .12rem;
-        margin-left: .1rem;
-        flex-direction: column;
-        justify-content: center;
+        margin-left: .2rem;
+        // flex-direction: column;
+        // justify-content: center;
+        position: relative;
+        background: #eee;
+        padding: .04rem .1rem .1rem;
+        box-sizing: border-box;
+        border-radius: .04rem;
         // 用户名称
         .user_name {
           font-size: .14rem;
@@ -168,34 +236,68 @@
         }
         // 备注
         .remark {
-          font-size: .1rem;
+          font-size: .12rem;
           color: #757575;
+        }
+        // 三角
+        .triangle {
+          content: ""; 
+          width: 0;
+          height: 0;
+          top: .1rem;
+          left: -.1rem;          
+          position: absolute;
+          border-top: .1rem solid transparent;
+          border-right: .1rem solid #eee;
+          border-bottom: .1rem solid transparent;
+        }
+      }
+    }
+    // 当工作流为最后一个 并且节点与我有关时
+    .whenisMine{
+      flex-direction: row-reverse;
+      .handle_info {
+        margin-left: 0;
+        margin-right: .2rem;
+        .triangle {
+          content: ""; 
+          width: 0;
+          height: 0;
+          top: .1rem;
+          left: inherit;
+          right: -.1rem;          
+          position: absolute;
+          border-top: .1rem solid transparent;
+          border-left: .1rem solid #eee;
+          border-right: none;
+          border-bottom: .1rem solid transparent;
         }
       }
     }
   }
   // 确定
   .btn {
-    left: 0;
-    bottom: 0;
     width: 100%;
-    height: 10%;
-    position: fixed;
     background: #fff;
+    text-align: center;
+    margin-bottom: .1rem;
     .cfm_btn {
-      top: 50%;
-      left: 50%;
       width: 2.8rem;
       color: #fff;
       height: .44rem;
       line-height: .44rem;
-      position: absolute;
       text-align: center;
-      background: #F43530;
+      background: #5077aa;
+      display: inline-block;
       border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #F43530;
+      box-shadow: 0 2px 5px #5077aa;
     }
+  }
+  // 工作流数据少的时候 按钮固定在底部
+  .when_less {
+    left: 0;
+    bottom: 0;
+    position: fixed;
   }
   
 }
