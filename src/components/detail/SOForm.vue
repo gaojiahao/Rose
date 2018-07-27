@@ -147,7 +147,7 @@
 
 <script>
 import { numberComma } from 'vux'
-import { isMyflow, getSOList, getWorkFlow } from 'service/detailService.js'
+import { isMyflow, getSOList, getWorkFlow,getListId } from 'service/detailService.js'
 import {saveAndCommitTask,commitTask} from 'service/commonService.js'
 import workFlow from 'components/workFlow.vue'
 export default {
@@ -159,7 +159,7 @@ export default {
       orderInfo: {},      // 表单内容
       nodeName:'',        // 操作名称
       isMyTask:'',        // 是否与我有关
-      formViewUniqueId : 'db28ed90-9e88-4198-8d42-37985e2d980b',
+      formViewUniqueId : '',
       defaulImg: require('assets/avatar.png'),   // 默认图片1
       defaulImg2: require('assets/io.jpg'),       // 默认图片2
       workFlowPop : false,
@@ -277,8 +277,25 @@ export default {
       return ( S4() + S4() + S4() );
     },
     // 获取详情
-    getOrderList(transCode = ''){
-        getSOList({
+    async getOrderList(transCode = ''){
+        await getListId(transCode).then( data=>{
+          this.formViewUniqueId = data[0].uniqueId;
+        })
+        // 流程节点是否与<我>有关
+        await isMyflow({
+            _dc: this.randomID(),
+            transCode
+          }).then(({ tableContent }) => {
+            if(tableContent.length > 0 && tableContent.isMyTask === 1){
+              let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
+              this.isMyTask = isMyTask;
+              this.nodeName = actions;
+              this.taskId = taskId;
+              this.formViewUniqueId = viewId;
+            }
+          })
+        
+        await getSOList({
           formViewUniqueId : this.formViewUniqueId,
           transCode
         }).then(data => {
@@ -293,9 +310,10 @@ export default {
           // 获取合计
           let { dataSet } = data.formData.order;
           for(let val of dataSet){
-            this.count += val.tdAmount;
+            this.count += val.tdAmount*100;
             val.inventoryPic_transObjCode = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
+          this.count = this.count/100;
           // 动态添加class
           for(let key in data.formData){
             switch (data.formData[key]){
@@ -337,20 +355,7 @@ export default {
         this.simpleWL = tableContent.slice(-2);
       })
     },
-    // 流程节点是否与<我>有关
-    isMyflow(transCode = ''){
-      isMyflow({
-        _dc: this.randomID(),
-        transCode
-      }).then(({ tableContent }) => {
-        if(tableContent.length > 0){
-          let { isMyTask = 0, actions,taskId} = tableContent[0];
-          this.isMyTask = isMyTask;
-          this.nodeName = actions;
-          this.taskId = taskId;
-        }
-      })
-    }
+    
   },
   created(){
     let { transCode } = this.$route.query;
@@ -365,7 +370,7 @@ export default {
     // 获取工作流
     this.getWorkFlow(transCode);
     // 查询节点是否与<我>有关
-    this.isMyflow(transCode);
+    // this.isMyflow(transCode);
   }
 }
 </script>
