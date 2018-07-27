@@ -8,39 +8,37 @@
       </div>
       <div class="flow_list">
         <div class="each_msg"
-            :class="isMyTask && index === fullWL.length - 1 || userName === item.userName ? 'whenisMine' : ''"
             v-for="(item, index) in fullWL" 
             :key=index>
             <!-- 接收时间 -->
           <div class="recive_time" v-if="item.startTime">
             <span class="num">{{item.startTime}}</span>
           </div>
+          <div class="info_part"
+              :class="isMyTask && index === fullWL.length - 1 || userName === item.userName ? 'whenisMine' : ''">
             <!-- 头像 -->
-          <div class="user_avatar">
-            <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
-            <div class="name">{{item.userName}}</div>
-          </div>
-          <!-- 操作信息 -->
-          <div class="info_part">
+            <div class="user_avatar">
+              <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
+              <div class="name">{{item.userName}}</div>
+            </div>
+            <!-- 操作信息 -->          
             <div class="handle_info">
               <div class="triangle"></div>
-              <div class="handle_name">
-                <!-- 操作动作 -->
-                <span>{{item.nodeName}}</span>
-                <!-- 操作状态 B(有返回状态) -->
-                <span class="status"
-                      :class=item.dyClass
-                      v-if='index > 0'>
-                  {{item.status || noStatus}}
-                </span>
+              <div class="content">
+                <div class="handle_name">
+                  <!-- 操作动作 -->
+                  <span>{{item.nodeName}}</span>
+                  <!-- 操作状态 B(有返回状态) -->
+                  <span class="status"
+                        :class=item.dyClass
+                        v-if='index > 0'>
+                    {{item.status || noStatus}}
+                  </span>
+                </div>
+                <!-- 备注 -->
+                <div class="remark">备注: {{item.message || '无'}}</div>
+                <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
               </div>
-              <!-- 流程节点 用户名 -->
-              <!-- <div class="user_name">
-                {{item.userName}}
-              </div> -->
-              <!-- 备注 -->
-              <div class="remark">备注: {{item.message || '无'}}</div>
-              <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
             </div>
           </div>
         </div>
@@ -176,14 +174,11 @@
     padding: .06rem .08rem 0;
     // 每一个明细
     .each_msg {
-      display: flex;
-      padding: .02rem 0 .1rem;
-      margin-bottom: .4rem;
+      margin-bottom: .2rem;
       position: relative;
       // 用户头像
       .user_avatar {
         width: .5rem;
-        // height: .5rem;
         display: flex;
         font-size: .1rem;         
         flex-direction: column;
@@ -200,63 +195,62 @@
       // 接收时间
       .recive_time {
         width: 100%;
-        top: -.2rem;
         font-size: .12rem;
         color: #757575;
-        position: absolute;
         text-align: center;
         box-sizing: border-box;
+        margin-bottom: .02rem;
       }
       // 内容部分
       .info_part {
-        position: relative;
+        display: flex;
       }
       // 操作信息
       .handle_info {
         color: #111;
-        // display: flex;
         font-size: .12rem;
         margin-left: .2rem;
-        // flex-direction: column;
-        // justify-content: center;
         position: relative;
-        background: #eee;
-        padding: .04rem .1rem .1rem;
         box-sizing: border-box;
         border-radius: .04rem;
-        // 用户名称
-        .user_name {
-          font-size: .14rem;
-        }
-        // 操作名称
-        .handle_name {
-          font-size: .18rem;
-          font-weight: bold;
-          span{
-            display: inline-block;
+        // 内容区域
+        .content {
+          background: #eee;
+          padding: .04rem .1rem .02rem;
+          // 用户名称
+          .user_name {
+            font-size: .14rem;
           }
-          // 默认样式
-          .status {
-            color: #fff;            
-            font-size: .1rem;
-            padding: 0 .04rem;
-            margin-top: -.02rem;
-            background: #5077aa;
-            vertical-align: middle;
+          // 操作名称
+          .handle_name {
+            font-size: .18rem;
+            font-weight: bold;
+            span{
+              display: inline-block;
+            }
+            // 默认样式
+            .status {
+              color: #fff;            
+              font-size: .1rem;
+              padding: 0 .04rem;
+              margin-top: -.02rem;
+              background: #5077aa;
+              vertical-align: middle;
+            }
+            // 同意样式
+            .agree_c {
+              background: #53d397;
+            }
+            // 拒绝样式
+            .reject_c {
+              background: #c93d1b;
+            }          
           }
-          // 同意样式
-          .agree_c {
-            background: #53d397;
+          // 备注
+          .remark {
+            font-size: .14rem;
+            color: #757575;
           }
-          // 拒绝样式
-          .reject_c {
-            background: #c93d1b;
-          }          
-        }
-        // 备注
-        .remark {
-          font-size: .14rem;
-          color: #757575;
         }
         // 三角
         .triangle {
