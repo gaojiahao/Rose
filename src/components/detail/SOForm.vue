@@ -159,7 +159,7 @@ export default {
       orderInfo: {},      // 表单内容
       nodeName:'',        // 操作名称
       isMyTask:'',        // 是否与我有关
-      formViewUniqueId : 'f1902d94-5368-4abb-9ebb-67613f550e79',
+      formViewUniqueId : 'db28ed90-9e88-4198-8d42-37985e2d980b',
       defaulImg: require('assets/avatar.png'),   // 默认图片1
       defaulImg2: require('assets/io.jpg'),       // 默认图片2
       workFlowPop : false,
@@ -224,7 +224,23 @@ export default {
             listId : this.submitInfo.listId,
             biComment: this.submitInfo.biComment,
             biReferenceId: this.submitInfo.biReferenceId,
-            formData : JSON.stringify(this.submitInfo.formData),
+            formData : JSON.stringify({
+              handlerName : this.orderInfo.handlerName,
+              handlerUnitName : this.orderInfo.handlerUnitName,
+              handlerRoleName : this.orderInfo.handlerRoleName,
+              handler : this.orderInfo.handler,
+              handlerUnit : this.orderInfo.handlerUnit,
+              handlerRole : this.orderInfo.handlerRole,
+              creator : this.orderInfo.creator,
+              modifer :this.orderInfo.modifer,
+              biId : this.orderInfo.biId,
+              order : this.orderInfo.order,
+              dealerDebitContactPersonName : this.orderInfo.dealerDebitContactPersonName,
+              dealerDebitContactInformation : this.orderInfo.dealerDebitContactInformation,
+              drDealerPaymentTerm : this.orderInfo.drDealerPaymentTerm,
+              drDealerLogisticsTerms : this.orderInfo.drDealerLogisticsTerms,
+              biComment : this.orderInfo.biComment
+            }),
             wfPara: JSON.stringify({
               businessKey:this.submitInfo.formData.transCode,
               createdBy:this.submitInfo.formData.creator,
@@ -239,6 +255,7 @@ export default {
             let {success = false, message = '提交失败'} = data;
             if (success) {
               message = '提交成功';
+              this.$emit('change',true)
             }
             this.$vux.alert.show({
               content: message,
@@ -442,8 +459,8 @@ export default {
       margin-bottom: .1rem;
       // 用户头像
       .user_avatar {
-        width: .65rem;
-        height: .65rem;
+        width: .55rem;
+        height: .55rem;
         img {
           width: 100%;
         }
@@ -458,11 +475,11 @@ export default {
         justify-content: center;
         // 用户名称
         .user_name {
-          font-size: .14rem;
+          font-size: .12rem;
         }
         // 操作名称
         .handle_name {
-          font-size: .18rem;
+          font-size: .14rem;
           font-weight: bold;
           span{
             display: inline-block;
