@@ -199,7 +199,7 @@
             inventory: this.inventory
           }
         };
-        let operaction = save;
+        let operation = save;
         let warn = '';
         Object.entries(requiredMap).every(([key, msg]) => {
           if (!this.inventory[key]) {
@@ -217,7 +217,7 @@
 
         // 修改
         if (this.transCode) {
-          operaction = update;
+          operation = update;
         }
 
         this.$vux.confirm.show({
@@ -225,7 +225,7 @@
           // 确定回调
           onConfirm: () => {
             this.showLoading = true;
-            operaction(submitData).then(data => {
+            operation(submitData).then(data => {
               this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
               if (success) {
