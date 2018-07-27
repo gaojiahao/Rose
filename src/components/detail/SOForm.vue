@@ -286,7 +286,7 @@ export default {
             _dc: this.randomID(),
             transCode
           }).then(({ tableContent }) => {
-            if(tableContent.length > 0 && tableContent.isMyTask === 1){
+            if(tableContent.length > 0 && tableContent[0].isMyTask === 1){
               let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
               this.isMyTask = isMyTask;
               this.nodeName = actions;
