@@ -30,10 +30,11 @@ export default {
   },
   created(){
     let query = this.$route.query;
-    if(query.code){
-      this.code = query.code;
-      this.currentComponent = require(`components/apply/${this.code}Form.vue`).default;
+    this.code = query.code;
+    if(query.code.indexOf('_')>0){
+      this.code = query.code.split('_')[0] === 'SO' ? 'XSDD' : '';      
     }
+    this.currentComponent = require(`components/apply/${this.code}Form.vue`).default;
     setTimeout(()=>{
       this.showLoadding = false
     },1000)

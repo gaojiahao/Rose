@@ -63,6 +63,7 @@
 <script>
   import {Tab, Icon, TabItem,numberPad,numberComma} from 'vux'
   import {getSellOrderList} from 'service/listService'
+  import { isMyflow} from 'service/detailService.js'
   import searchIcon from 'components/search.vue'
   import RScroll from 'components/RScroll'
   export default {
@@ -90,10 +91,34 @@
     },
     methods: {
       goDetail(code) {
-        this.$router.push({
-          path: '/list/detail',
-          query: {
-            transCode: code
+        //判断是否是重新提交，如果是，跳转到创建订单页面   
+        isMyflow({ transCode : code}).then(({ tableContent }) => {
+          if(tableContent.length > 0){
+            let { isMyTask, nodeName} = tableContent[0];
+            if(isMyTask ===1 && nodeName === '重新提交'){
+              this.$router.push({
+                path: '/list/fillform',
+                query: {
+                  code
+                }
+              })
+            }
+            else{
+              this.$router.push({
+                path: '/list/detail',
+                query: {
+                  transCode: code
+                }
+              })
+            }
+          }
+          else{
+            this.$router.push({
+              path: '/list/detail',
+              query: {
+                transCode: code
+              }
+            })
           }
         })
       },
@@ -131,24 +156,25 @@
           biStatus: this.activeTab,
           transCode: this.serachVal,
           handlerName: this.serachVal,
+          inventoryName : this.serachVal
         };
-
         return getSellOrderList({
           limit: this.limit,
           page: this.page,
           // start: (this.page - 1) * this.limit,
           listViewID: 2190,
           // filter: JSON.stringify(filter),
-          filer: JSON.stringify(filter),
+          filter: JSON.stringify(filter),
         }).then(({total = 0, orders = []}) => {
           this.hasNext = total > (this.page - 1) * this.limit + orders.length;
           orders.forEach(item => {
             this.setStatus(item);
             item.count = 0;
             item.itmes.forEach(mitem=>{
-              item.count += mitem.tdAmount;
+              item.count += mitem.tdAmount*100;
             })
-            item.itmes = item.itmes.slice(0, 3);
+            item.count = item.count/100;
+            item.itmes = item.itmes.slice(0, 5);
             item.itmes.forEach(mItem => {
               mItem.inventoryPic = mItem.inventoryPic ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}` : this.getDefaultImg();
             })
