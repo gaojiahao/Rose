@@ -198,6 +198,7 @@ export default {
             let {success = false, message = '提交失败'} = data;
             if (success) {
               message = '拒绝成功';
+              this.$emit('change',true);
             }
             this.$vux.alert.show({
               content: message,
@@ -207,8 +208,7 @@ export default {
                 }
               }
             });
-          })
-          
+          })          
         }
       })
     },
