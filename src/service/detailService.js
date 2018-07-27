@@ -51,9 +51,19 @@ export let getSOList = (data = {}) => {
         return errorHandler(e);
     });
 }
+// 获取当前用户
+export let currentUser = (_dc = '') => {
+    return $axios.ajax({
+        url: '/H_roleplay-si/userInfo/currentUser',
+        _dc
+    }).catch( err => {
+        return errorHandler(err);
+    })
+}
 
 export default{
+    isMyflow,
     getSOList,
-    getWorkFlow,
-    isMyflow
+    currentUser,
+    getWorkFlow
 }
