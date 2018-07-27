@@ -87,14 +87,7 @@ export default {
     },
     //销售应用
     goXS(item){
-      console.log(item);
       this.$router.push({ path:'/list', query:{code:item}})
-      // if(item === '销售报价'){
-      //   this.$router.push({ path:'/list', query:{code:'XSBJ'} })
-      // }
-      // else if(item === '销售订单'){
-      //   this.$router.push({ path:'/list', query:{code:'XSDD'}})
-      // }
     }
   },
   created(){
@@ -117,10 +110,7 @@ export default {
               // 获取 业务应用-销售 应用
               if(item.text === '销售'){
                 for(let ite of item.children){
-                  // 由于应用没有开发完全 临时处理方法
-                  if(ite.text.includes('报价') || ite.text.includes('订单') ){
                     this.XSarray.push(ite);
-                  }
                 }
               }
             }
