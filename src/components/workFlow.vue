@@ -3,7 +3,7 @@
     <popup v-model="popupShow" position="bottom" height="100%">
       <div class='flow_top'>
         <span class="title">查看工作流</span>
-        <span class="close" @click="closePop" v-if="fullWL.length >= 6">关闭</span>
+        <span class="close" @click="closePop" v-if="fullWL.length >= 5">关闭</span>
         <!-- <icon type="cancel" @click.native="closePop"></icon> -->
       </div>
       <div class="flow_list">
@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-      <div class="btn" :class="fullWL.length < 6? 'when_less': ''">
+      <div class="btn" :class="fullWL.length < 5? 'when_less': ''">
         <span class="cfm_btn" @click="closePop">关闭工作流</span>
       </div>
     </popup>
@@ -178,7 +178,7 @@
     .each_msg {
       display: flex;
       padding: .02rem 0 .1rem;
-      margin-bottom: .2rem;
+      margin-bottom: .4rem;
       position: relative;
       // 用户头像
       .user_avatar {
