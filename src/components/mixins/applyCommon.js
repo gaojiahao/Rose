@@ -12,6 +12,7 @@ export default{
       taskId :'',
       btnInfo : {}, //操作按钮信息
       comment : '',//审批意见
+      submitSucess : false
     }
   },
   methods:{
@@ -28,7 +29,10 @@ export default{
     getUniqueId(transCode){
       return new Promise(resolve=>{
         getUniqueId(transCode).then( ({dataCount,tableContent})=>{
-          if(dataCount>0 && tableContent[0].isMyTask ===1){
+          if(dataCount>0 && tableContent[0].isMyTask === 0){
+            this.taskId = tableContent[0].taskId;
+          }
+          else if(dataCount>0 && tableContent[0].isMyTask ===1){
             this.uniqueId = tableContent[0].viewId;
             this.taskId = tableContent[0].taskId;
             this.btnInfo = tableContent[0];
@@ -38,18 +42,28 @@ export default{
       })
     },    
     //提交订单
-    saveData(submitData){     
+    saveData(submitData){    
+      // let op = saveAndStartWf;
+      // if(submitData.biReferenceId) {
+      //   op = saveAndCommitTask
+      // }
       saveAndStartWf(submitData).then(data => {
         let {success = false, message = '提交失败'} = data;
         if (success) {
           message = '订单提交成功';
           this.$emit('change',true);
+          
+          this.btnInfo = {};
+          this.transCode = data.transCode;
+          console.log(this.submitSucess,this.transCode);
         }
         this.$vux.alert.show({
           content: message,
           onHide: () => {
             if (success) {
-              this.$router.go(-1);
+              // this.$router.go(-1);
+              this.getUniqueId(this.transCode);
+              this.submitSucess = true;
             }
           }
         });
@@ -107,6 +121,44 @@ export default{
         }
       })    
     },
+    //撤回
+    cancelOrder(){
+      this.$vux.confirm.prompt('', {
+        title:'审批意见',
+        onConfirm :(value)=>{
+          if(value){
+            this.comment = value;
+          }
+          let submitData = {
+            taskId : this.taskId,
+            taskData : JSON.stringify({
+              result : 2,
+              transCode : this.transCode,
+              comment : this.comment
+            })
+          }
+          commitTask(submitData).then(data=>{
+            let {success = false, message = '提交失败'} = data;
+            if (success) {
+              message = '撤回成功';
+              this.$emit('change',true);
+            }
+            this.$vux.alert.show({
+              content: message,
+              onHide: () => {
+                if (success) {
+                  // this.$router.go(-1);
+                  this.submitSucess = false;
+                  this.getOrderInfo(this.transCode);
+                  
+                }
+              }
+            });
+          })
+        }
+      })  
+
+    }
   },
   created() {
     

@@ -138,7 +138,6 @@
             <div class="handle_btn" v-if="isMyTask">
               <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
-              <span class="reject" v-if='nodeName.indexOf("stop")>=0'>终止</span>
             </div>
             <work-flow  :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
         </div>
@@ -220,38 +219,11 @@ export default {
             console.log(value);
             this.comment = value;
           }
-          let submitData  = {
-            listId : this.submitInfo.listId,
-            biComment: this.submitInfo.biComment,
-            biReferenceId: this.submitInfo.biReferenceId,
-            formData : JSON.stringify({
-              handlerName : this.orderInfo.handlerName,
-              handlerUnitName : this.orderInfo.handlerUnitName,
-              handlerRoleName : this.orderInfo.handlerRoleName,
-              handler : this.orderInfo.handler,
-              handlerUnit : this.orderInfo.handlerUnit,
-              handlerRole : this.orderInfo.handlerRole,
-              creator : this.orderInfo.creator,
-              modifer :this.orderInfo.modifer,
-              biId : this.orderInfo.biId,
-              order : this.orderInfo.order,
-              dealerDebitContactPersonName : this.orderInfo.dealerDebitContactPersonName,
-              dealerDebitContactInformation : this.orderInfo.dealerDebitContactInformation,
-              drDealerPaymentTerm : this.orderInfo.drDealerPaymentTerm,
-              drDealerLogisticsTerms : this.orderInfo.drDealerLogisticsTerms,
-              biComment : this.orderInfo.biComment
-            }),
-            wfPara: JSON.stringify({
-              businessKey:this.submitInfo.formData.transCode,
-              createdBy:this.submitInfo.formData.creator,
-              transCode:this.submitInfo.formData.transCode,
-              result:1,
-              taskId:this.taskId,
-              comment:this.comment
-            })
+          let submitData = {
+            taskId : this.taskId,
+            taskData: JSON.stringify({result:1,transCode:this.submitInfo.formData.transCode,comment:this.comment})
           }
-          console.log(submitData);
-          saveAndCommitTask(submitData).then(data => {
+          commitTask(submitData).then(data => {
             let {success = false, message = '提交失败'} = data;
             if (success) {
               message = '提交成功';

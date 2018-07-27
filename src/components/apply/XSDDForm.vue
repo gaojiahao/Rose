@@ -117,7 +117,7 @@
                         </div>
                         <div class='mater_num'>
                           <span class='handle' @click="subNum(item,index)" :class='{sub : item.tdQty<=1}'>-</span>
-                          <input class='num' type='number' :value='item.tdQty' @change='getNum(item,index,$event)'/>
+                          <input class='num' type='number' :value='item.tdQty' @input='getNum(item,index,$event)'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
                           
@@ -146,6 +146,7 @@
         <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <span class="count_btn stop" @click="cancelOrder" v-if='submitSucess'>撤回</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
@@ -358,7 +359,7 @@ export default {
               this.resubmit(submitData);
               return
             }
-            this.saveData(submitData);
+            this.saveData('sds',submitData);
           }
          })        
       }      
