@@ -4,8 +4,8 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
         <div v-if='info.dealerName'>
-          <div class="user_info">
-            <span class="user_name">{{info.creatorName}}</span>
+          <div class="user_info" v-if="info.creatorName">
+            <span class="user_name">{{info.creatorName || ''}}</span>
             <span class="user_tel">{{info.dealerMobilePhone}}</span>
           </div>
           <div class="cp_info">
