@@ -28,8 +28,8 @@
             <span class="user_tel"></span>
           </div>
           <div class="cp_info">
-            <p class="cp_name">{{warehouse.creatorName}}</p>
-            <span>{{warehouse.warehouseRelType}}</span>
+            <p class="cp_name"></p>
+            <!--<span>{{warehouse.warehouseRelType}}</span>-->
             <!--<span>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}</span>-->
           </div>
         </div>
@@ -42,7 +42,7 @@
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
         <p class="title">结算方式</p>
-        <p class="mode">{{dealer.drDealerPaymentTerm}}</p>
+        <p class="mode">{{formData.drDealerPaymentTerm}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom>
@@ -53,7 +53,7 @@
                         @click="showTransPop = !showTransPop"></x-icon>
               </div>
               <span class="each_mode"
-                    :class="{choiced : index===paymentIndex}"
+                    :class="{choiced : item===DealerPaymentTerm}"
                     v-for="(item, index) in transMode"
                     :key="index"
                     @click="getPayment(item,index)">{{item}}</span>
@@ -65,7 +65,7 @@
       <!-- 物流条款 -->
       <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
         <p class="title">物流条款</p>
-        <p class="mode">{{dealer.drDealerLogisticsTerms}}</p>
+        <p class="mode">{{formData.drDealerLogisticsTerms}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom>
@@ -75,7 +75,7 @@
                 <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon>
               </div>
               <span class="each_mode"
-                    :class="{choiced : index===logisticsIndex}"
+                    :class="{choiced : item===DealerLogisticsTerms}"
                     v-for="(item, index) in logisticsTerm"
                     :key="index"
                     @click="getLogistics(item,index)">
@@ -135,19 +135,20 @@
                                 <span class="num">{{item.specification || '无'}}</span>
                               </div>
                             </div>
-                            <div class="matter-remain">库存: {{item.qtyStockBal - item.num}}</div>
+                            <div class="matter-remain">库存: {{item.qtyStockBal - item.tdQty}}</div>
                           </div>
                         </div>
                         <!-- 物料数量和价格 -->
                         <div class="mater_other">
                           <div class="mater_price">
-                            ￥{{item.defaultPrice}}
+                            ￥{{item.price}}
                           </div>
                           <div class="mater_num">
-                            <span class="handle" @click="subNum(item,index)" :class="{disabled : item.num<=1}">-</span>
-                            <input class="num" type="number" :value="item.num" @change="getNum(item,index,$event)"/>
+                            <span class="handle" @click="subNum(item,index)"
+                                  :class="{disabled : item.tdQty<=1}">-</span>
+                            <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
                             <span class="handle plus" @click="plusNum(item,index)"
-                                  :class="{disabled:item.num >= item.qtyStockBal}">+</span>
+                                  :class="{disabled:item.tdQty >= item.qtyStockBal}">+</span>
                           </div>
                         </div>
                       </div>
@@ -169,6 +170,7 @@
         <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                         ref="order"></pop-order-list>
       </div>
+      <r-action :code="transCode" @on-resubmit="submitOrder" @on-stop="stop"></r-action>
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
@@ -193,11 +195,13 @@
     SwipeoutButton,
     TransferDom
   } from 'vux'
-  import dealerService from 'service/dealerService'
   import PopDealerList from 'components/PopDealerList'
-  import {saveAndStartWf, getBaseInfoData} from 'service/commonService'
+  import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 'service/commonService'
+  import {getSOList, getWorkFlow} from 'service/detailService'
   import PopWarehouseList from 'components/PopWarehouseList'
   import PopOrderList from 'components/PopOrderList'
+  import RAction from 'components/RAction'
+  // import applyCommon from 'components/mixins/applyCommon'
 
   export default {
     name: 'ApplyXSCKForm',
@@ -216,6 +220,7 @@
       PopDealerList,
       PopWarehouseList,
       PopOrderList,
+      RAction,
     },
     data() {
       return {
@@ -230,14 +235,11 @@
         showTransPop: false,                            // 是否显示结算方式的popup
         showOrderPop: false,                         // 是否显示物料的popup
         dealerInfo: null, // 往来客户信息
-        formData: {},
-        dealer: {
+        formData: {
           drDealerPaymentTerm: '现付',  //结算方式
           drDealerLogisticsTerms: '上门', //物流条件
           biComment: '' //备注
         },
-        paymentIndex: 0,
-        logisticsIndex: 0,
         submitSuccess: false, // 是否提交成功
         showWarehousePop: false,
         warehouse: null, // 选中仓库属性
@@ -246,7 +248,10 @@
         orderParams: {
           dealerCode: '',
           whCode: '',
-        }
+        },
+        transCode: '',
+        formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
+        biReferenceId: '',
       }
     },
     computed: {
@@ -254,7 +259,7 @@
       totalAmount() {
         let total = 0;
         this.orderList.forEach(item => {
-          total += item.num * item.defaultPrice;
+          total += item.tdQty * item.price;
         });
         return total;
       },
@@ -263,36 +268,30 @@
         return (this.totalAmount * this.taxRate).toFixed(2)
       },
     },
+    // mixins: [applyCommon],
     methods: {
       // TODO 选择结算方式
       getPayment(item, i) {
         this.DealerPaymentTerm = item;
-        this.paymentIndex = i;
       },
       // TODO 确定结算方式
       submitPayment() {
-        this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
+        this.formData.drDealerPaymentTerm = this.DealerPaymentTerm;
         this.showTransPop = false;
       },
       // TODO 选择物流方式
       getLogistics(item, i) {
         this.DealerLogisticsTerms = item;
-        this.logisticsIndex = i;
       },
       // TODO 确定物流方式
       submitLogistics() {
-        this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
+        this.formData.drDealerLogisticsTerms = this.DealerLogisticsTerms;
         this.showLogPop = false;
       },
       // TODO 选中的往来
       selDealer(val) {
         let [sel] = JSON.parse(val);
         this.dealerInfo = sel;
-        this.dealer = {
-          ...this.dealer,
-          dealerDebitContactPersonName: sel.creatorName,
-          dealerDebitContactInformation: sel.dealerMobilePhone,
-        };
         this.orderParams = {
           ...this.orderParams,
           dealerCode: sel.dealerCode
@@ -315,17 +314,17 @@
         let sels = JSON.parse(val);
         sels.forEach(item => {
           if (this.numMap[item.inventoryCode]) {
-            item.num = this.numMap[item.inventoryCode].num;
-            item.defaultPrice = this.numMap[item.inventoryCode].defaultPrice;
+            item.tdQty = this.numMap[item.inventoryCode].tdQty;
+            item.price = this.numMap[item.inventoryCode].price;
           } else {
-            item.num = 1;
-            item.defaultPrice = 90;
+            item.tdQty = 1;
+            item.price = 90;
           }
         });
         this.numMap = {};
         this.orderList = sels;
       },
-      //选择默认图片
+      // TODO 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl.png');
         if (item) {
@@ -333,35 +332,35 @@
         }
         return url
       },
-      // 滑动删除
+      // TODO 滑动删除
       delClick(index, item) {
         let arr = this.orderList;
         arr.splice(index, 1);
         this.$refs.order.delSelItem(item);
       },
-      //数量--
+      // TODO 数量--
       subNum(item, i) {
-        if (item.num === 1) {
+        if (item.tdQty === 1) {
           return
         }
-        item.num--;
+        item.tdQty--;
         this.$set(this.orderList, i, item);
       },
-      //数量++
+      // TODO 数量++
       plusNum(item, i) {
-        if (item.num === item.qtyStockBal) {
+        if (item.tdQty === item.qtyStockBal) {
           return
         }
-        item.num++;
+        item.tdQty++;
         this.$set(this.orderList, i, item);
       },
-      //修改数量
+      // TODO 修改数量
       getNum(item, i, e) {
         let val = e.target.value;
         if (val > item.qtyStockBal) {
           val = item.qtyStockBal;
         }
-        item.num = Number(val);
+        item.tdQty = Number(val);
         this.$set(this.orderList, i, item);
       },
       // TODO 新增更多订单
@@ -369,14 +368,14 @@
         this.orderList.forEach(item => {
           // 存储已输入的价格
           this.numMap[item.inventoryCode] = {
-            num: item.num,
-            defaultPrice: item.defaultPrice
+            tdQty: item.tdQty,
+            price: item.price
           };
         });
         this.showOrderPop = !this.showOrderPop;
       },
-      //提价订单
-      submitOrder() {
+      // TODO 提价订单
+      submitOrder(taskId) {
         let warn = '';
         let validateMap = [
           {
@@ -409,49 +408,76 @@
           // 确定回调
           onConfirm: () => {
             let dataSet = [];
-            this.orderList.map(item => {
-              dataSet.push({
+            let operation = saveAndStartWf;
+            let formData = {};
+            let wfPara = {
+              PROC_1710_0460: {
+                businessKey: 'SODL',
+                createdBy: ''
+              }
+            };
+            // 组装dataSet
+            this.orderList.forEach(item => {
+              let oItem = {
                 transMatchedCode: item.transMatchedCode, // 明细被核销交易号
                 orderCode: item.transMatchedCode, // 销售订单号（明细）
                 outPutMatCode: item.inventoryCode, // 输出物料
                 orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
-                assMeasureUnit: null, // 辅助计量（明细）
-                assMeasureScale: null,  //与主计量单位倍数
-                tdQty: item.num, // 明细发生数
-                assistQty: 0, // 辅计数量（明细）
+                assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
+                assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
+                tdQty: item.tdQty, // 明细发生数
+                assistQty: item.assistQty || 0, // 辅计数量（明细）
                 thenQtyStock: item.qtyStockBal, // 当时可用库存
                 thenQtyBal: item.qtyBal, // 待交付数量
-                price: item.defaultPrice, // 明细单价
-                // noTaxAmount: '', // 不含税金额
+                price: item.price, // 明细单价
                 taxRate: this.taxRate, // 税率
                 taxAmount: this.taxAmount, // 税金
-                tdAmount: item.defaultPrice * item.num * (100 + 16) / 100, // 明细发生金额
-                promDeliTime: '', // 承诺交付时间
+                tdAmount: item.price * item.tdQty * (100 + 16) / 100, // 明细发生金额
+                promDeliTime: item.promDeliTime || '', // 承诺交付时间
                 comment: "", // 说明
-              })
+              };
+              if (this.transCode) {
+                oItem.tdId = item.tdId;
+              }
+              dataSet.push(oItem);
             });
+            formData = {
+              ...this.formData,
+              modifer: this.transCode ? this.formData.handler : '',
+              dealerDebitContactPersonName: this.dealerInfo.creatorName, // 联系人姓名
+              dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone, // 联系人手机
+              containerOutWarehouseManager: null,
+              outPut: {
+                dealerDebit: this.dealerInfo.dealerCode, // 往来编码
+                drAccountSub: this.dealerInfo.dealerLabelName || '客户', // 往来页签
+                containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
+                dataSet
+              }
+            };
+            // 重新提交
+            if (this.transCode) {
+              operation = saveAndCommitTask;
+              wfPara = {
+                businessKey: this.transCode,
+                createdBy: this.formData.handler,
+                transCode: this.transCode,
+                result: 3,
+                taskId: taskId,
+                comment: ''
+              };
+            }
             let submitData = {
               listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
               biComment: '',
-              formData: JSON.stringify({
-                ...this.formData,
-                ...this.dealer,
-                outPut: {
-                  dealerDebit: this.dealerInfo.dealerCode,
-                  drAccountSub: this.dealerInfo.dealerLabelName || '客户',
-                  containerCodeOut: this.warehouse.warehouseCode,
-                  dataSet
-                }
-              }),
-              wfPara: JSON.stringify({
-                PROC_1710_0460: {
-                  businessKey: 'SODL',
-                  createdBy: ''
-                }
-              })
+              biReferenceId: this.biReferenceId,
+              formData: JSON.stringify(formData),
+              wfPara: JSON.stringify(wfPara)
             };
+            if (!this.transCode) {
+              delete submitData.biReferenceId
+            }
             console.log(submitData)
-            saveAndStartWf(submitData).then(data => {
+            operation(submitData).then(data => {
               //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
               if (success) {
@@ -470,6 +496,33 @@
           }
         })
       },
+      // TODO 终止订单
+      stop(val) {
+        let {taskId, comment} = JSON.parse(val);
+        let submitData = {
+          taskId: taskId,
+          taskData: JSON.stringify({
+            result: -1,
+            transCode: this.transCode,
+            comment: comment
+          })
+        };
+        commitTask(submitData).then(data => {
+          let {success = false, message = '提交失败'} = data;
+          if (success) {
+            message = '终止成功';
+            this.$emit('change', true);
+          }
+          this.$vux.alert.show({
+            content: message,
+            onHide: () => {
+              if (success) {
+                this.$router.go(-1);
+              }
+            }
+          });
+        })
+      },
       // TODO 获取用户基本信息
       getBaseInfoData() {
         getBaseInfoData().then(data => {
@@ -479,9 +532,67 @@
           };
         })
       },
+      // 获取详情
+      getOrderList() {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode: this.transCode
+        }).then(data => {
+          let {success = true, formData = {}} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          // 获取合计
+          let {outPut, dealerDebit} = formData;
+          let {dataSet = []} = outPut;
+          dataSet = dataSet.map(item => {
+            return {
+              ...item,
+              qtyBal: item.thenQtyBal,
+              qtyStockBal: item.thenQtyStock,
+              inventoryPic: item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_outPutMatCode,
+              inventoryCode: item.outPutMatCode,
+              specification: item.specification_outPutMatCode,
+            };
+          });
+          this.dealerInfo = {
+            creatorName: formData.dealerDebitContactPersonName,
+            dealerName: outPut.dealerName_dealerDebit,
+            dealerMobilePhone: formData.dealerDebitContactInformation,
+            dealerCode: outPut.dealerDebit,
+          };
+          this.orderParams = {
+            dealerCode: outPut.dealerDebit,
+            whCode: outPut.warehouseCode_containerCodeOut,
+          };
+          this.warehouse = {
+            warehouseName: outPut.warehouseName_containerCodeOut,
+            warehouseCode: outPut.warehouseCode_containerCodeOut,
+          };
+          this.formData = {
+            ...this.formData,
+            drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
+            drDealerPaymentTerm: formData.drDealerPaymentTerm,
+          };
+          this.DealerPaymentTerm = formData.drDealerPaymentTerm;
+          this.DealerLogisticsTerms = formData.drDealerLogisticsTerms;
+          this.biReferenceId = formData.biReferenceId;
+          this.orderList = dataSet;
+        })
+      },
     },
     created() {
+      let {code} = this.$route.query;
       this.getBaseInfoData();
+      if (code.indexOf('SODL') !== -1) {
+        this.transCode = code;
+        this.getOrderList();
+      }
     }
   }
 </script>

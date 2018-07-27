@@ -6,7 +6,7 @@
     </component>
     <loading-form :show='showLoadding'></loading-form>
   </div>
-  
+
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
     let query = this.$route.query;
     this.code = query.code;
     if(query.code.indexOf('_')>0){
-      this.code = query.code.split('_')[0] === 'SO' ? 'XSDD' : '';      
+      this.code = query.code.split('_')[0] === 'SO' ? 'XSDD' : 'XSCK';
     }
     this.currentComponent = require(`components/apply/${this.code}Form.vue`).default;
     setTimeout(()=>{
