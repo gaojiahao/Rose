@@ -87,12 +87,14 @@ export default {
     },
     //销售应用
     goXS(item){
-      if(item === '销售报价'){
-        this.$router.push({ path:'/list', query:{code:'XSBJ'} })
-      }
-      else if(item === '销售订单'){
-        this.$router.push({ path:'/list', query:{code:'XSDD'}})
-      }
+      console.log(item);
+      this.$router.push({ path:'/list', query:{code:item}})
+      // if(item === '销售报价'){
+      //   this.$router.push({ path:'/list', query:{code:'XSBJ'} })
+      // }
+      // else if(item === '销售订单'){
+      //   this.$router.push({ path:'/list', query:{code:'XSDD'}})
+      // }
     }
   },
   created(){

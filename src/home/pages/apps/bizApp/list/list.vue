@@ -12,6 +12,7 @@
 
 <script>
 import Loadding from 'components/Loading'
+import businessMap from '../../../maps/business'
 export default {
   data(){
     return {
@@ -26,8 +27,8 @@ export default {
   created(){
     let query = this.$route.query;
     if(query.code){
-      this.code = query.code;
-      this.currentComponent = require(`components/list/${this.code}Form.vue`).default;
+      let code = businessMap[query.code];
+      this.currentComponent = require(`components/list/${code}Form.vue`).default;
     }
     setTimeout(()=>{
       this.showLoadding = false
