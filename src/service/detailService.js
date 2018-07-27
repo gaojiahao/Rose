@@ -29,16 +29,15 @@ export let isMyflow = (data = {}) => {
 //获取listId
 export let getListId = (transCode = '')=>{
     return $axios.ajax({
-        url:'/H_roleplay-si/ds/list/getFormByTransCode',
-        transCode
+        url:`/H_roleplay-si/ds/list/getFormByTransCode?transCode=${transCode}`,
+        
     }).catch( err => {
         return errorHandler(err);
     })
 }
 export let getUniqueId = (transCode = '')=>{
     return $axios.ajax({
-        url:'/H_roleplay-si/ds/getWorkFlowInfoByTransCode',
-        transCode
+        url:`/H_roleplay-si/ds/getWorkFlowInfoByTransCode?transCode=${transCode}`,
     }).catch( err => {
         return errorHandler(err);
     })
