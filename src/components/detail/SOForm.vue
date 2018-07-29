@@ -139,7 +139,12 @@
               <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
             </div>
-            <work-flow  :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
+            <!-- 完整工作流 -->
+            <work-flow  
+              :popupShow="workFlowPop" 
+              v-model="workFlowPop"
+              :crtTime="orderInfo.crtTime"
+              :noStatus="orderInfo.biStatus"></work-flow>
         </div>
     </div>
 </template>

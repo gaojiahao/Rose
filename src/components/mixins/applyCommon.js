@@ -43,10 +43,6 @@ export default{
     },    
     //提交订单
     saveData(submitData){    
-      // let op = saveAndStartWf;
-      // if(submitData.biReferenceId) {
-      //   op = saveAndCommitTask
-      // }
       saveAndStartWf(submitData).then(data => {
         let {success = false, message = '提交失败'} = data;
         if (success) {
@@ -159,8 +155,5 @@ export default{
       })  
 
     }
-  },
-  created() {
-    
-  },
+  }
 }

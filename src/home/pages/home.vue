@@ -63,16 +63,6 @@ export default {
       SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)'
     }
   },
-  // watch: {
-  //   $route: {
-  //     handler(to, from ){
-  //       let {name} = to;
-  //       if(name === 'LIST') {
-  //         to.meta.keepAlive = true;
-  //       }
-  //     }
-  //   }
-  // },
   methods:{
     // 基础应用
     goBasic(item){

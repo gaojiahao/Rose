@@ -11,8 +11,8 @@
             v-for="(item, index) in fullWL" 
             :key=index>
             <!-- 接收时间 -->
-          <div class="recive_time" v-if="item.startTime">
-            <span class="num">{{item.startTime}}</span>
+          <div class="recive_time">
+            <span class="num">{{item.startTime || crtTime}}</span>
           </div>
           <div class="info_part"
               :class="isMyTask && index === fullWL.length - 1 || userName === item.userName ? 'whenisMine' : ''">
@@ -59,6 +59,10 @@
         require : true
       },
       noStatus : {
+        type : String,
+        require : true
+      },
+      crtTime : {
         type : String,
         require : true
       }
@@ -189,6 +193,7 @@
         }
         // 名字
         .name {
+          margin-top: .02rem;
           text-align: center;
         }
       }
@@ -212,10 +217,10 @@
         margin-left: .2rem;
         position: relative;
         box-sizing: border-box;
-        border-radius: .04rem;
         // 内容区域
         .content {
-          background: #eee;
+          background: #F4F4F4;
+          border-radius: .04rem;
           padding: .04rem .1rem .02rem;
           // 用户名称
           .user_name {
@@ -257,11 +262,11 @@
           content: ""; 
           width: 0;
           height: 0;
-          top: .1rem;
+          top: .14rem;
           left: -.1rem;          
           position: absolute;
           border-top: .1rem solid transparent;
-          border-right: .1rem solid #eee;
+          border-right: .1rem solid #F4F4F4;
           border-bottom: .1rem solid transparent;
         }
       }
@@ -276,13 +281,13 @@
           content: ""; 
           width: 0;
           height: 0;
-          top: .1rem;
+          top: .14rem;
           left: inherit;
           right: -.1rem;          
           position: absolute;
+          border-right: inherit;
           border-top: .1rem solid transparent;
-          border-left: .1rem solid #eee;
-          border-right: none;
+          border-left: .1rem solid #F4F4F4;
           border-bottom: .1rem solid transparent;
         }
       }
