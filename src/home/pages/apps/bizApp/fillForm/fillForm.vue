@@ -31,8 +31,10 @@ export default {
   created(){
     let query = this.$route.query;
     this.code = query.code;
-    if(query.code.indexOf('_')>0){
-      this.code = query.code.split('_')[0] === 'SO' ? 'XSDD' : 'XSCK';
+    if(query.code.includes('_')){
+      this.code = query.code.split('_')[0] === 'SO' 
+        ? 'XSDD' 
+        : 'XSCK';
     }
     this.currentComponent = require(`components/apply/${this.code}Form.vue`).default;
     setTimeout(()=>{

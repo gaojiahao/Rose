@@ -77,7 +77,10 @@
           pullDownRefresh: true,
           pullUpLoad: true,
         },
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
+        listStatus: [
+          {name: '全部', status: ''}, 
+          {name: '已生效', status: '已生效'}, 
+          {name: '进行中', status: '进行中'}],
         activeIndex: 0,
         serachVal: '',
         listData: [],
@@ -92,32 +95,25 @@
     methods: {
       goDetail(code) {
         //判断是否是重新提交，如果是，跳转到创建订单页面   
-        isMyflow({ transCode : code}).then(({ tableContent }) => {
+        isMyflow({ transCode : code }).then(({ tableContent }) => {
           if(tableContent.length > 0){
             let { isMyTask, nodeName} = tableContent[0];
-            if(isMyTask ===1 && nodeName === '重新提交'){
-              this.$router.push({
-                path: '/list/fillform',
-                query: {
-                  code
-                }
+            if(isMyTask && nodeName === '重新提交'){
+              this.$router.push({ 
+                path: '/list/fillform', query: { code } 
               })
             }
             else{
               this.$router.push({
                 path: '/list/detail',
-                query: {
-                  transCode: code
-                }
+                query: { transCode: code }
               })
             }
           }
           else{
             this.$router.push({
               path: '/list/detail',
-              query: {
-                transCode: code
-              }
+              query: { transCode: code }
             })
           }
         })
