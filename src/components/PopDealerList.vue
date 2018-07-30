@@ -71,6 +71,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      dealerLabelName : {
+        type: String,
+        default: false
       }
     },
     directives: {TransferDom},
@@ -178,7 +182,7 @@
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          dealerLabelName: "客户",
+          dealerLabelName: this.dealerLabelName,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           // tableContent.forEach(item => {
