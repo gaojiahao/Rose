@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="inPage">
     <div class="content mg_auto">
       <!-- 用户头像部分 -->
       <div class="user_part">
@@ -86,7 +86,6 @@ export default {
               // 获取 采购应用
               if(item.text === '采购'){
                 for(let val of item.children){
-                  console.log(val.text);
                   val.code = businessMap[val.text]
                   this.PURarray.push(val);
                 }

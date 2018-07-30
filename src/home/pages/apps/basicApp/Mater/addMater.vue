@@ -383,6 +383,10 @@
   }
 </script>
 <style lang="scss" scoped>
+  .pages {
+    background: #fff;
+    z-index: 10;
+  }
   .vux-1px-b:after, .vux-1px-l:before {
     border-color: #e8e8e8;
     color: #e8e8e8;

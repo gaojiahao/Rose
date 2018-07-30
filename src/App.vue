@@ -7,12 +7,12 @@
     <router-view v-if="!$route.meta.keepAlive"></router-view>
 
     <!-- 底部导航栏 -->
-    <!-- <nav class="tabs vux-1px-t">
+    <nav class="tabs vux-1px-t">
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
-        <em class="title">{{tab.title}}</em>
+        <span class="title">{{tab.title}}</span>
       </router-link>
-    </nav>    -->
+    </nav>   
   </div>
 </template>
 
@@ -24,8 +24,13 @@
       return{
         tablist: [
 					{title: '首页', path: '/home', icon: 'icon-shouye1'},
-					{title: '消息', path: '/message', icon: 'icon-xiaoxi'},
+					{title: '消息', path: '/notice', icon: 'icon-xiaoxi'},
         ]
+      }
+    },
+    methods:{
+      testClick(){
+        console.log('我触发了点击');
       }
     }
   }
@@ -53,26 +58,29 @@
     width: 100%;
     height: 100%;
   }
-
+  .inPage {
+    width: 100%;
+    height: 100%;
+  } 
   .pages {
     top: 0;
     left: 0;
-    z-index: 10;
     width: 100%;
     height: 100%;
     bottom: .49rem;
     overflow: hidden;
     position: absolute;
     background: #fff;
+    z-index: 10;
   }
   // 导航标签
   .tabs {
-    width: 100%;
-    height: .49rem;
-    position: absolute!important;
-    bottom: 0;
     left: 0;
+    bottom: 0;
+    width: 100%;
     display: flex;
+    height: .49rem;
+    position: absolute!important;    
     .tab {
       flex: 1;
       // icon图标

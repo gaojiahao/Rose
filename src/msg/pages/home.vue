@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="inPage">
     <div class="msg_list">
       <div class="each_msg vux-1px-b">
         <div class="app_img">

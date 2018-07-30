@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="inPage">
     <component
       :is='currentComponent'
       ref='list'>
@@ -46,6 +46,4 @@ export default {
 }
 </script>
 
-<style lang='scss'>
-
-</style>
+<style lang='scss'></style>
