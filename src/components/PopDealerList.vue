@@ -74,7 +74,7 @@
       },
       dealerLabelName : {
         type: String,
-        default: false
+        default: "客户"
       }
     },
     directives: {TransferDom},
@@ -178,6 +178,7 @@
             },
           ];
         }
+        console.log(this.dealerLabelName);
         dealerService.getOrderDealerList({
           limit: this.limit,
           page: this.page,
@@ -245,6 +246,7 @@
       },
     },
     created() {
+      console.log(this.dealerLabelName);
       this.initScroll();
       this.getDealer();
     }
