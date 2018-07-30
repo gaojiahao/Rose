@@ -150,9 +150,11 @@
       <!--<div class="handle_btn" v-if="isMyTask">
         <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
         <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
-        <span class="reject" v-if='nodeName.indexOf("stop")>=0'>终止</span>
+      </div>
+      <div class="handle_btn" v-if="cancelStatus">
+        <span class='reject' @click="cancel()">撤回</span>
       </div>-->
-      <r-action :code="transCode" @on-reject="reject" @on-agree="agree"></r-action>
+      <r-action :code="transCode" :has-revoke="cancelStatus" @on-submit-success="successCallback"></r-action>
       <work-flow :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
     </div>
   </div>
@@ -160,7 +162,7 @@
 
 <script>
   import {numberComma} from 'vux'
-  import {isMyflow, getSOList, getWorkFlow} from 'service/detailService'
+  import {isMyflow, getSOList, getWorkFlow, currentUser,} from 'service/detailService'
   import {saveAndCommitTask, commitTask} from 'service/commonService'
   import workFlow from 'components/workFlow'
   import RAction from 'components/RAction'
@@ -180,7 +182,9 @@
         workFlowPop: false,
         comment: '',//审批备注
         submitInfo: {},
-        taskId: ''
+        taskId: '',
+        userId: '',
+        cancelStatus: false,
       }
     },
     components: {
@@ -213,7 +217,7 @@
           let {success = false, message = '提交失败'} = data;
           if (success) {
             message = '拒绝成功';
-            this.$emit('change',true);
+            this.$emit('change', true);
           }
           this.$vux.alert.show({
             content: message,
@@ -240,7 +244,7 @@
           let {success = false, message = '提交失败'} = data;
           if (success) {
             message = '同意成功';
-            this.$emit('change',true);
+            this.$emit('change', true);
           }
           this.$vux.alert.show({
             content: message,
@@ -251,6 +255,10 @@
             }
           });
         })
+      },
+      // TODO 同意/拒绝成功回调
+      successCallback() {
+        this.$emit('change', true);
       },
       //随机ID
       randomID() {
@@ -306,6 +314,14 @@
         }).then(({tableContent}) => {
           // 赋值 完整版工作流
           this.fullWL = tableContent;
+          let lastItem = tableContent[tableContent.length - 1] || {};
+          let [firstItem = {}] = tableContent;
+          console.log(tableContent)
+          console.log(lastItem)
+          console.log(firstItem)
+          if (lastItem.status !== '撤回' && firstItem.startUserId === this.userId) {
+            this.cancelStatus = true;
+          }
           // 赋值 简化版工作流 只取数据的最后两条
           for (let item of tableContent) {
             switch (item.status) {
@@ -333,6 +349,12 @@
             this.taskId = taskId;
           }
         })
+      },
+      getCurrentUser() {
+        currentUser().then(data => {
+          this.userId = JSON.stringify(data.userId);
+          console.log(this.userId)
+        })
       }
     },
     created() {
@@ -344,6 +366,8 @@
         })
         return;
       }
+      //查询当前用户的userId
+      this.getCurrentUser();
       // 获取表单表单详情
       this.getOrderList(transCode);
       // 获取工作流

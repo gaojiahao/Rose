@@ -99,7 +99,7 @@
               this.$router.push({
                 path: '/list/fillform',
                 query: {
-                  code
+                  transCode: code
                 }
               })
             } else {
@@ -124,7 +124,7 @@
         this.$router.push({
           path: '/list/fillform',
           query: {
-            code: 'XSCK'
+            transCode: 'XSCK'
           }
         })
       },

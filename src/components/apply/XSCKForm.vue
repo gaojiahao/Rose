@@ -170,7 +170,7 @@
         <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                         ref="order"></pop-order-list>
       </div>
-      <r-action :code="transCode" @on-resubmit="submitOrder" @on-stop="stop"></r-action>
+      <!--<r-action :code="transCode" @on-resubmit="submitOrder" @on-stop="stop"></r-action>-->
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
@@ -178,6 +178,7 @@
         <span style="fontSize:.14rem">￥</span>{{totalAmount}}
         <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
       </span>
+      <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
@@ -197,14 +198,15 @@
   } from 'vux'
   import PopDealerList from 'components/PopDealerList'
   import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 'service/commonService'
-  import {getSOList, getWorkFlow} from 'service/detailService'
+  import {getSOList, getWorkFlow, isMyflow} from 'service/detailService'
   import PopWarehouseList from 'components/PopWarehouseList'
   import PopOrderList from 'components/PopOrderList'
   import RAction from 'components/RAction'
-  // import applyCommon from 'components/mixins/applyCommon'
+  import applyCommon from 'components/mixins/applyCommon'
 
   export default {
     name: 'ApplyXSCKForm',
+    mixins: [applyCommon],
     directives: {
       TransferDom
     },
@@ -252,6 +254,8 @@
         transCode: '',
         formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
         biReferenceId: '',
+        actions: [],
+        taskId: '',
       }
     },
     computed: {
@@ -268,7 +272,6 @@
         return (this.totalAmount * this.taxRate).toFixed(2)
       },
     },
-    // mixins: [applyCommon],
     methods: {
       // TODO 选择结算方式
       getPayment(item, i) {
@@ -375,7 +378,7 @@
         this.showOrderPop = !this.showOrderPop;
       },
       // TODO 提价订单
-      submitOrder(taskId) {
+      submitOrder() {
         let warn = '';
         let validateMap = [
           {
@@ -444,8 +447,8 @@
             formData = {
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
-              dealerDebitContactPersonName: this.dealerInfo.creatorName, // 联系人姓名
-              dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone, // 联系人手机
+              dealerDebitContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
+              dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
               containerOutWarehouseManager: null,
               outPut: {
                 dealerDebit: this.dealerInfo.dealerCode, // 往来编码
@@ -462,7 +465,7 @@
                 createdBy: this.formData.handler,
                 transCode: this.transCode,
                 result: 3,
-                taskId: taskId,
+                taskId: this.taskId,
                 comment: ''
               };
             }
@@ -497,31 +500,38 @@
         })
       },
       // TODO 终止订单
-      stop(val) {
-        let {taskId, comment} = JSON.parse(val);
-        let submitData = {
-          taskId: taskId,
-          taskData: JSON.stringify({
-            result: -1,
-            transCode: this.transCode,
-            comment: comment
-          })
-        };
-        commitTask(submitData).then(data => {
-          let {success = false, message = '提交失败'} = data;
-          if (success) {
-            message = '终止成功';
-            this.$emit('change', true);
-          }
-          this.$vux.alert.show({
-            content: message,
-            onHide: () => {
-              if (success) {
-                this.$router.go(-1);
-              }
+      stop() {
+        this.$vux.confirm.prompt('', {
+          title: '终止原因',
+          onConfirm: (value) => {
+            if (value) {
+              this.comment = value;
             }
-          });
-        })
+            let submitData = {
+              taskId: this.taskId,
+              taskData: JSON.stringify({
+                result: -1,
+                transCode: this.transCode,
+                comment: value
+              })
+            };
+            commitTask(submitData).then(data => {
+              let {success = false, message = '提交失败'} = data;
+              if (success) {
+                message = '终止成功';
+                this.$emit('change', true);
+              }
+              this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                  if (success) {
+                    this.$router.go(-1);
+                  }
+                }
+              });
+            })
+          }
+        });
       },
       // TODO 获取用户基本信息
       getBaseInfoData() {
@@ -576,6 +586,12 @@
           };
           this.formData = {
             ...this.formData,
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
             drDealerPaymentTerm: formData.drDealerPaymentTerm,
           };
@@ -585,13 +601,28 @@
           this.orderList = dataSet;
         })
       },
+      // 流程节点是否与<我>有关
+      isMyflow() {
+        return isMyflow({
+          _dc: Date.now(),
+          transCode: this.transCode,
+        }).then(({tableContent = []}) => {
+          let [action = {}] = tableContent;
+          let {actions = '', isMyTask = 0, taskId} = action;
+          this.actions = actions.split(',');
+          this.taskId = taskId;
+          console.log(this.taskId)
+        })
+      },
     },
     created() {
-      let {code} = this.$route.query;
-      this.getBaseInfoData();
-      if (code.indexOf('SODL') !== -1) {
-        this.transCode = code;
+      let {transCode} = this.$route.query;
+      if (transCode.indexOf('SODL') !== -1) {
+        this.transCode = transCode;
+        this.isMyflow();
         this.getOrderList();
+      } else {
+        this.getBaseInfoData();
       }
     }
   }
@@ -1032,6 +1063,9 @@
       color: #fff;
       text-align: center;
       background: #5077aa;
+      &.stop {
+        background: #ea5455;
+      }
     }
   }
 
