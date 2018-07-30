@@ -74,6 +74,7 @@ export default {
     },
     //撤回
     taskCancel(){
+      let {code} = this.$route.params;
       this.$vux.confirm.prompt('', {
         title:'撤回原因',
         onConfirm :(value)=>{
@@ -99,7 +100,7 @@ export default {
               onHide: () => {
                 if (success) {
                   this.$router.replace({
-                    path: '/list/fillform',
+                    path: `/list/${code}/fillform`,
                     query:{
                       transCode : this.transCode
                     }
