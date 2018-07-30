@@ -7,10 +7,17 @@ const dealerService = {
             url:`/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
         })
     },
-    //获取往来列表
+    //获取所有往来列表
     getDealerList(id,data){
         return $axios.ajax({
             url:`/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
+            data
+        })
+    },
+    //获取订单往来客户列表
+    getOrderDealerList(data){
+        return $axios.ajax({
+            url:'/H_roleplay-si/ds/getObjDealerByLabelName',
             data
         })
     },

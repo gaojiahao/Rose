@@ -100,7 +100,7 @@
             let { isMyTask, nodeName} = tableContent[0];
             if(isMyTask && nodeName === '重新提交'){
               this.$router.push({ 
-                path: '/list/fillform', query: { code } 
+                path: '/list/fillform', query: { transCode : code } 
               })
             }
             else{
@@ -122,7 +122,7 @@
         this.$router.push({
           path: '/list/fillform',
           query: {
-            code: 'XSDD'
+            transCode: 'XSDD'
           }
         })
       },

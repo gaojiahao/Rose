@@ -11,12 +11,13 @@
 
 <script>
 import Loadding from 'components/Loading'
+import detailMap from './../../../maps/detail'
 export default {
   data(){
     return {
       currentComponent : '',
       showLoadding : true,
-      code :'',
+      transCode :'',
       submitSuccess :false
     }
   },
@@ -30,13 +31,12 @@ export default {
   },
   created(){
     let query = this.$route.query;
-    this.code = query.code;
-    if(query.code.includes('_')){
-      this.code = query.code.split('_')[0] === 'SO' 
-        ? 'XSDD' 
-        : 'XSCK';
+    this.transCode = query.transCode;
+    if(query.transCode.includes('_')){
+      let [prefix] = this.transCode.split('_');
+      this.transCode = detailMap[prefix] || prefix;
     }
-    this.currentComponent = require(`components/apply/${this.code}Form.vue`).default;
+    this.currentComponent = require(`components/apply/${this.transCode}Form.vue`).default;
     setTimeout(()=>{
       this.showLoadding = false
     },1000)

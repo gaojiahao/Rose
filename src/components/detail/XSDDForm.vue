@@ -139,6 +139,9 @@
               <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
             </div>
+            <div class="handle_btn" v-if="cancelStatus">
+              <span class='reject' @click="cancel()">撤回</span>
+            </div>
             <!-- 完整工作流 -->
             <work-flow  
               :popupShow="workFlowPop" 
@@ -153,6 +156,7 @@
 import { numberComma } from 'vux'
 import { isMyflow, getSOList, getWorkFlow,getListId } from 'service/detailService.js'
 import {saveAndCommitTask,commitTask} from 'service/commonService.js'
+import common from 'components/mixins/detailCommon.js'
 import workFlow from 'components/workFlow.vue'
 export default {
   data(){
@@ -167,9 +171,8 @@ export default {
       defaulImg: require('assets/avatar.png'),   // 默认图片1
       defaulImg2: require('assets/io.jpg'),       // 默认图片2
       workFlowPop : false,
-      comment : '' ,//审批备注
       submitInfo : {},
-      taskId : ''
+      transCode :'',
     }
   },
   components:{
@@ -178,6 +181,7 @@ export default {
   filters:{
     numberComma
   },
+  mixins: [common],
   methods:{
     //选择默认图片
     getDefaultImg(item) {
@@ -188,63 +192,14 @@ export default {
       return url
     },
     reject(){
-      this.$vux.confirm.prompt('', {
-        title:'审批意见',
-        onConfirm :(value)=>{
-          if(value){
-            this.comment = value;
-          }
-          let submitData = {
-            taskId : this.taskId,
-            taskData: JSON.stringify({result:0,transCode:this.submitInfo.formData.transCode,comment:this.comment})
-          };
-          commitTask(submitData).then(data => {
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '拒绝成功';
-              this.$emit('change',true);
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  this.$router.go(-1);
-                }
-              }
-            });
-          })          
-        }
-      })
+      this.taskReject();
+    
     },
     agree(){
-      this.$vux.confirm.prompt('', {
-        title:'审批意见',
-        onConfirm :(value)=>{
-          if(value){
-            console.log(value);
-            this.comment = value;
-          }
-          let submitData = {
-            taskId : this.taskId,
-            taskData: JSON.stringify({result:1,transCode:this.submitInfo.formData.transCode,comment:this.comment})
-          }
-          commitTask(submitData).then(data => {
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '提交成功';
-              this.$emit('change',true)
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  this.$router.go(-1);
-                }
-              }
-            });
-          })
-        }
-      })
+      this.taskAgree();
+    },
+    cancel(){
+      this.taskCancel();
     },
     //随机ID
     randomID() {
@@ -263,6 +218,7 @@ export default {
             _dc: this.randomID(),
             transCode
           }).then(({ tableContent }) => {
+            this.taskId = tableContent[0].taskId;
             if(tableContent.length > 0 && tableContent[0].isMyTask === 1){
               let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
               this.isMyTask = isMyTask;
@@ -309,45 +265,9 @@ export default {
           this.orderInfo = data.formData;
         })
 
-    },
-    // 获取工作流
-    getWorkFlow(transCode = ''){
-      getWorkFlow({
-        _dc: this.randomID(),
-        transCode
-      }).then(({ tableContent }) => {
-        // 赋值 完整版工作流
-        this.fullWL = tableContent;
-        // 赋值 简化版工作流 只取数据的最后两条
-        for(let item of tableContent){
-          switch(item.status){
-            case '同意':
-              item.dyClass = 'agree_c';
-              break;
-            case '终止':
-              item.dyClass = 'reject_c'
-              break;
-          }           
-        }
-        this.simpleWL = tableContent.slice(-2);
-      })
-    },
-    
+    },   
   },
   created(){
-    let { transCode } = this.$route.query;
-    if(!transCode){
-      this.$vux.alert.show({
-        content: '抱歉，交易号有误，请尝试刷新之后再次进入'
-      })
-      return;
-    }
-    // 获取表单表单详情
-    this.getOrderList(transCode);
-    // 获取工作流
-    this.getWorkFlow(transCode);
-    // 查询节点是否与<我>有关
-    // this.isMyflow(transCode);
   }
 }
 </script>

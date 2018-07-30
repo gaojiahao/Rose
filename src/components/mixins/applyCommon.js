@@ -12,7 +12,6 @@ export default{
       taskId :'',
       btnInfo : {}, //操作按钮信息
       comment : '',//审批意见
-      submitSucess : false
     }
   },
   methods:{
@@ -48,18 +47,12 @@ export default{
         if (success) {
           message = '订单提交成功';
           this.$emit('change',true);
-          
-          this.btnInfo = {};
-          this.transCode = data.transCode;
-          console.log(this.submitSucess,this.transCode);
         }
         this.$vux.alert.show({
           content: message,
           onHide: () => {
             if (success) {
-              // this.$router.go(-1);
-              this.getUniqueId(this.transCode);
-              this.submitSucess = true;
+              this.$router.go(-1);
             }
           }
         });
@@ -116,44 +109,6 @@ export default{
           })
         }
       })    
-    },
-    //撤回
-    cancelOrder(){
-      this.$vux.confirm.prompt('', {
-        title:'审批意见',
-        onConfirm :(value)=>{
-          if(value){
-            this.comment = value;
-          }
-          let submitData = {
-            taskId : this.taskId,
-            taskData : JSON.stringify({
-              result : 2,
-              transCode : this.transCode,
-              comment : this.comment
-            })
-          }
-          commitTask(submitData).then(data=>{
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '撤回成功';
-              this.$emit('change',true);
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  // this.$router.go(-1);
-                  this.submitSucess = false;
-                  this.getOrderInfo(this.transCode);
-                  
-                }
-              }
-            });
-          })
-        }
-      })  
-
     }
   }
 }

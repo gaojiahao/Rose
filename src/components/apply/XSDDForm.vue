@@ -146,7 +146,6 @@
         <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
-      <span class="count_btn stop" @click="cancelOrder" v-if='submitSucess'>撤回</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
@@ -221,7 +220,7 @@ export default {
     //选中的往来
     selDealer(val){
       this.info = JSON.parse(val)[0];
-      this.dealer.dealerDebitContactPersonName = this.info.creatorName;
+      this.dealer.dealerDebitContactPersonName = this.info.creatorName || '';
       this.dealer.dealerDebitContactInformation = this.info.dealerMobilePhone;
 
     },
@@ -359,7 +358,7 @@ export default {
               this.resubmit(submitData);
               return
             }
-            this.saveData('sds',submitData);
+            this.saveData(submitData);
           }
          })        
       }      
@@ -424,11 +423,11 @@ export default {
     }
   },
   created(){
-    let code = this.$route.query.code;
-    if(code.indexOf("_")>0){
+    let transCode = this.$route.query.transCode;
+    if(transCode.indexOf("_")>0){
       this.isResubmit  = true;
-      this.transCode = code;
-      this.getOrderInfo(code);
+      this.transCode = transCode;
+      this.getOrderInfo(transCode);
     }
     else{
       this.getBaseInfoData();

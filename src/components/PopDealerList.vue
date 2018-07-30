@@ -124,7 +124,7 @@
       showSelIcon(sItem) {
         let flag = false;
         this.tmpItems.every(item => {
-          if (sItem.transCode === item.transCode) {
+          if (sItem.dealerCode === item.dealerCode) {
             flag = true;
             return false;
           }
@@ -135,12 +135,6 @@
       // TODO 选择物料
       selThis(sItem, sIndex) {
         this.tmpItems = []
-        // let arr = this.tmpItems;
-        // 若存在重复的 则清除
-        // if (arr.includes(sItem)) {
-        //   arr.splice(arr.findIndex(item => item === sItem), 1);
-        //   return;
-        // }
         this.tmpItems.push(sItem);
       },
       // TODO 确定选择物料
@@ -180,10 +174,11 @@
             },
           ];
         }
-        dealerService.getDealerList('2130',{
+        dealerService.getOrderDealerList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
+          dealerLabelName: "客户",
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           // tableContent.forEach(item => {
