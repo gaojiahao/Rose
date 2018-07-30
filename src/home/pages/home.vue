@@ -9,45 +9,11 @@
         </div>
       </div>
       <!-- 基础应用部分 -->
-      <div class="basic_part swiper-container" >
-          <!-- 应用标题 -->
-          <div class="list_title">
-            <span class="bg_title">基础</span>
-            <!-- <span class="more">更多</span> -->
-          </div>
-          <div class="swiper-wrapper" style="height:1rem; padding-left:.04rem;">
-            <!-- 单个app -->
-            <div class="indval_app swiper-slide"
-                @click="goBasic(item.text)"
-                v-for='(item, index) of YWarray'
-                :key='index'
-                :style="{background:(index % 2 ? SecBg : '')}">
-              <div class="app_type">业务对象</div>
-              <div class="app_name">{{item.text}}</div>
-            </div>
-          </div>
-
-      </div>
+      <basic-app :BSarray='BSarray' :SecBg='SecBg' :goBasic='goBasic'></basic-app>
       <!-- 销售应用部分 -->
-      <div class="sale_part vux-1px-t swiper-container">
-        <!-- 应用标题 -->
-        <div class="list_title">
-          <span class="bg_title">销售</span>
-          <span class="more">更多</span>
-        </div>
-        <!-- 应用列表 -->
-        <div class="app_list swiper-wrapper">
-          <!-- 单个app -->
-          <div class="each_app swiper-slide"
-              @click='goXS(item.code)'
-              v-for="(item, index) of XSarray"
-              :key='index'>
-            <div class="app_type">业务对象</div>
-            <div class="app_name">{{item.text}}</div>
-            <div class="app_info">{{item.transName}}</div>
-          </div>
-        </div>
-      </div>
+      <sale-app :XSarray='XSarray' :goList='goList'></sale-app>
+      <!-- 采购应用部分 -->
+      <buy-app :PURarray='PURarray' :goList='goList'></buy-app>
     </div>
   </div>
 </template>
@@ -55,13 +21,24 @@
 <script>
 import homeService from 'service/homeservice'
 import businessMap from './maps/business'
+import basicApp from 'components/home/basicApp'   // 基础应用
+import saleApp from 'components/home/saleApp'     // 销售应用
+import buyApp from 'components/home/buyApp'       // 采购应用
+
+// import {buyApp, saleApp, basicApp} from 'components/home'
 export default {
   data(){
     return{
-      YWarray : [],        // 基础对象 数组
+      BSarray : [],        // 基础对象 数组
       XSarray : [],        // 销售 数组
+      PURarray: [],        // 采购 数组
       SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)'
     }
+  },
+  components:{
+    buyApp,
+    saleApp,
+    basicApp
   },
   methods:{
     // 基础应用
@@ -76,9 +53,9 @@ export default {
         this.$router.push({ path : '/warehouse'})
       }
     },
-    //销售应用
-    goXS(item){
-      this.$router.push({ path:'/list', query:{code:item}})
+    // 前往列表
+    goList(item){
+      this.$router.push({ path:'/list', query:{code : item}})
     }
   },
   created(){
@@ -91,7 +68,7 @@ export default {
             for(let item of val.children ){
               // 由于应用没有开发完全 临时处理方法
               if(item.text === '物料' || item.text === '往来' || item.text === '仓库'){
-                this.YWarray.push(item);
+                this.BSarray.push(item);
               }
             }
           }
@@ -101,8 +78,17 @@ export default {
               // 获取 业务应用-销售 应用
               if(item.text === '销售'){
                 for(let ite of item.children){
-                    this.XSarray.push(ite);
-                    ite.code = businessMap[ite.text]
+                  //映射表 赋值
+                  ite.code = businessMap[ite.text]
+                  this.XSarray.push(ite);
+                }
+              }
+              // 获取 采购应用
+              if(item.text === '采购'){
+                for(let val of item.children){
+                  console.log(val.text);
+                  val.code = businessMap[val.text]
+                  this.PURarray.push(val);
                 }
               }
             }
@@ -114,21 +100,6 @@ export default {
         })
       })
     })()
-  },
-  updated(){
-    let Swiper = this.Swiper;
-    // 左右滑动
-    new Swiper('.basic_part', {
-        slidesPerView: 'auto',
-        observer: true,       //修改swiper自己或子元素时，自动初始化swiper
-        observeParents: true  //修改swiper的父元素时，自动初始化swiper
-    })
-    new Swiper('.sale_part', {
-        slidesPerView: 'auto',
-        initialSlide: 0,
-        observer: true,       //修改swiper自己或子元素时，自动初始化swiper
-        observeParents: true //修改swiper的父元素时，自动初始化swiper
-    })
   }
 }
 </script>
