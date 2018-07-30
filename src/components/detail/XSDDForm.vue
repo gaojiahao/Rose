@@ -135,12 +135,10 @@
                 </div>
             </div>
             <!-- 审批操作 -->
-            <div class="handle_btn" v-if="isMyTask">
-              <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
+            <div class="handle_btn" v-if="isMyTask || (cancelStatus && cancelStatus1)">
+              <span class='reject' @click="cancel()" v-if='cancelStatus && cancelStatus1'>撤回</span>
+              <span class="reject" v-if='nodeName.indexOf("disagree")>=0 && (!cancelStatus ||!cancelStatus1)' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
-            </div>
-            <div class="handle_btn" v-if="cancelStatus && cancelStatus1">
-              <span class='reject' @click="cancel()">撤回</span>
             </div>
             <!-- 完整工作流 -->
             <work-flow  
@@ -218,13 +216,14 @@ export default {
             _dc: this.randomID(),
             transCode
           }).then(({ tableContent }) => {
-            this.taskId = tableContent[0].taskId;
-            if(tableContent.length > 0 && tableContent[0].isMyTask === 1){
-              let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
-              this.isMyTask = isMyTask;
-              this.nodeName = actions;
-              this.taskId = taskId;
-              this.formViewUniqueId = viewId;
+            if(tableContent.length>0){
+              this.taskId = tableContent[0].taskId;
+              if(tableContent[0].isMyTask === 1){
+                let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
+                this.isMyTask = isMyTask;
+                this.nodeName = actions;
+                this.formViewUniqueId = viewId;
+              }
             }
           })
         
