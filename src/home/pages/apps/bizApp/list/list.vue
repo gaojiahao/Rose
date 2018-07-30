@@ -36,7 +36,7 @@ export default {
     $route: {
       handler(to, from) {
         // 判断是否重新请求页面
-        if (to.meta.reload && to.path === '/list') {
+        if (to.meta.reload && to.path.indexOf('/list') !== -1) {
           to.meta.reload = false;
           this.$refs.list.reloadData()
         }
