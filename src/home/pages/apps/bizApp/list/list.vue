@@ -24,7 +24,7 @@ export default {
     'loading-form' : Loadding
   },
   created(){
-    let code = this.$route.query.code;
+    let code = this.$route.params.code;
     if(code){
       this.currentComponent = require(`components/list/${code}Form.vue`).default;
     }

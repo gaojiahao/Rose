@@ -114,12 +114,13 @@
               successMsg: '撤回成功',
               value,
               callback: () => {
+                let {code} = this.$route.params;
                 this.$router.replace({
-                  path: '/list/fillform',
+                  path: `/list/${code}/fillform`,
                   query: {
                     transCode: this.code
                   }
-                })
+                });
               }
             });
           }

@@ -19,27 +19,27 @@ import DETAIL from '../pages/apps/bizApp/detail/detail'
 export default [
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
-  { 
-    path:'/list', 
-    name:'LIST', 
+  {
+    path:'/list/:code',
+    name:'LIST',
     component:LIST,
     meta:{ title:'列表'},
     children:[
-      { 
-        path:'fillform', 
-        name:'FILLFORM', 
+      {
+        path:'fillform',
+        name:'FILLFORM',
         component:FILLFORM,
-        meta:{ title:'填写新内容' } 
+        meta:{ title:'填写新内容' }
       },
-      { 
-        path:'detail', 
-        name:'DETAIL', 
+      {
+        path:'detail',
+        name:'DETAIL',
         component:DETAIL,
-        meta:{ title:'订单详情' } 
+        meta:{ title:'订单详情' }
       }
 
     ]
-  },  
+  },
   {
     path:'/adress',
     name:'ADRESS',

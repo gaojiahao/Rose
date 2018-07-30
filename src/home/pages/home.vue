@@ -55,7 +55,7 @@ export default {
     },
     // 前往列表
     goList(item){
-      this.$router.push({ path:'/list', query:{code : item}})
+      this.$router.push({ path:`/list/${item}`})
     }
   },
   created(){

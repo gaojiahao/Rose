@@ -507,7 +507,7 @@
     created() {
       let {transCode} = this.$route.query;
       this.getBaseInfoData();
-      if (transCode.indexOf('POPI') !== -1) {
+      if (transCode) {
         this.transCode = transCode;
         this.isMyflow();
         this.getList();

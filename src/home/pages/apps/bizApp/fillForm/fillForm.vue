@@ -30,13 +30,8 @@ export default {
     }
   },
   created(){
-    let query = this.$route.query;
-    this.transCode = query.transCode;
-    if(query.transCode.includes('_')){
-      let [prefix] = this.transCode.split('_');
-      this.transCode = detailMap[prefix] || prefix;
-    }
-    this.currentComponent = require(`components/apply/${this.transCode}Form.vue`).default;
+    let {code} = this.$route.params;
+    this.currentComponent = require(`components/apply/${code}Form.vue`).default;
     setTimeout(()=>{
       this.showLoadding = false
     },1000)

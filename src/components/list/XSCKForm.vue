@@ -90,42 +90,41 @@
       Tab, Icon, TabItem, searchIcon, RScroll
     },
     methods: {
-      goDetail(code) {
+      goDetail(transCode) {
+        let {code} = this.$route.params;
         //判断是否是重新提交，如果是，跳转到创建订单页面
         isMyflow({transCode: code}).then(({tableContent}) => {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
               this.$router.push({
-                path: '/list/fillform',
+                path: `/list/${code}/fillform`,
                 query: {
-                  transCode: code
+                  transCode: transCode
                 }
               })
             } else {
               this.$router.push({
-                path: '/list/detail',
+                path: `/list/${code}/detail`,
                 query: {
-                  transCode: code
+                  transCode: transCode
                 }
               })
             }
           } else {
             this.$router.push({
-              path: '/list/detail',
+              path: `/list/${code}/detail`,
               query: {
-                transCode: code
+                transCode: transCode
               }
             })
           }
         })
       },
       goEdit() {
+        let {code} = this.$route.params;
         this.$router.push({
-          path: '/list/fillform',
-          query: {
-            transCode: 'XSCK'
-          }
+          path: `/list/${code}/fillform`,
         })
       },
       // TODO 重置列表条件
