@@ -178,7 +178,6 @@
             },
           ];
         }
-        console.log(this.dealerLabelName);
         dealerService.getOrderDealerList({
           limit: this.limit,
           page: this.page,
@@ -186,9 +185,6 @@
           dealerLabelName: this.dealerLabelName,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          // tableContent.forEach(item => {
-          //   item.inventoryPic = item.inventoryPic ? item.inventoryPic : this.getDefaultImg();
-          // });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           this.$nextTick(() => {
@@ -246,7 +242,6 @@
       },
     },
     created() {
-      console.log(this.dealerLabelName);
       this.initScroll();
       this.getDealer();
     }

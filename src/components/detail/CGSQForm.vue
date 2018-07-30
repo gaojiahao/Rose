@@ -55,7 +55,7 @@
               </div>
             </div>
             <!-- 用户地址和基本信息-->
-            <div class="or_ads mg_auto box_sd">
+            <!-- <div class="or_ads mg_auto box_sd">
               <div class="user_info">
                 <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
                 <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
@@ -64,17 +64,12 @@
                 <p class="cp_name">{{orderInfo.order.dealerName_dealerDebit}}</p>
                 <p class="cp_ads">{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit}}</p>
               </div>
-            </div>
+            </div> -->
             <!-- 结算方式 -->
-            <div class="trade_mode mg_auto box_sd">
+            <!-- <div class="trade_mode mg_auto box_sd">
               <p class="title">结算方式</p>
               <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
-            </div>
-            <!-- 物流条款 -->
-            <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-              <p class="title">物流条款</p>
-              <p class="mode">{{orderInfo.drDealerLogisticsTerms || '无'}}</p>
-            </div>
+            </div> -->
             <!-- 物料列表 -->
             <div class="materiel_list mg_auto box_sd">
               <div class="title">物料列表</div>
@@ -114,14 +109,14 @@
                           <div class='mater_num'>
                             <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
                             <span class='num'>数量: {{item.tdQty}}</span>
-                            <span>税率: {{item.taxRate}}</span>
+                            <!-- <span>税率: {{item.taxRate}}</span> -->
                           </div>      
                           <div class='mater_price'>
-                            ￥{{item.tdAmount | numberComma(3)}} 
-                            <span class="num" 
+                            ￥{{item.price*item.tdQty | numberComma(3)}} 
+                            <!-- <span class="num" 
                                   :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
                               [金额: ￥{{item.noTaxAmount | numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
-                            </span>
+                            </span> -->
                           </div>        
                         </div>
                       </div>
@@ -129,7 +124,7 @@
                   </div>
                   <!-- 金额合计栏 -->
                   <div class="price_list">
-                    <div class='title' >合计<span style="fontSize:.12rem;">(含税)</span></div>
+                    <div class='title' >合计<span style="fontSize:.12rem;"></span></div>
                     <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
                   </div>
                 </div>
@@ -218,16 +213,17 @@ export default {
             _dc: this.randomID(),
             transCode
           }).then(({ tableContent }) => {
-            this.taskId = tableContent[0].taskId;
-            if(tableContent.length > 0 && tableContent[0].isMyTask === 1){
-              let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
-              this.isMyTask = isMyTask;
-              this.nodeName = actions;
-              this.taskId = taskId;
-              this.formViewUniqueId = viewId;
+            if(tableContent.length>0){
+              this.taskId = tableContent[0].taskId;
+              if(tableContent[0].isMyTask === 1){
+                let { isMyTask = 0, actions,viewId} = tableContent[0];
+                this.isMyTask = isMyTask;
+                this.nodeName = actions;
+                this.formViewUniqueId = viewId;
+              }
             }
           })
-        
+        await this.getWorkFlow(transCode);
         await getSOList({
           formViewUniqueId : this.formViewUniqueId,
           transCode
@@ -243,7 +239,7 @@ export default {
           // 获取合计
           let { dataSet } = data.formData.order;
           for(let val of dataSet){
-            this.count += val.tdAmount*100;
+            this.count += val.tdQty*val.price*100;
             val.inventoryPic_transObjCode = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
           this.count = this.count/100;

@@ -40,12 +40,12 @@
         </div>
       </div>
       <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
+      <!-- <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
         <p class="title">物流条款</p>
         <p class="mode">{{dealer.drDealerLogisticsTerms}}</p>
-        <span class="iconfont icon-gengduo"></span>
+        <span class="iconfont icon-gengduo"></span> -->
         <!-- 结算popup -->
-        <div v-transfer-dom >
+        <!-- <div v-transfer-dom >
           <popup v-model="showLogPop" height="60%" id="trade_pop_part">
             <div class="trade_pop">
               <div class="title">物流条款<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon></div>
@@ -59,7 +59,7 @@
             <div class="cfm_btn" @click="submitLogistics">确定</div>
           </popup>
         </div>
-      </div>
+      </div> -->
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -132,7 +132,7 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="materList.length && !isResubmit" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer" :dealerLabelName="'客户'">
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer" :dealerLabelName="'供应商'">
         </pop-dealer-list  ref="matter">
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
@@ -145,7 +145,7 @@
         <span style="fontSize:.14rem">￥</span>{{count}}
         <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
       </span>
-      <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
@@ -168,7 +168,7 @@ export default {
   },
   data(){
     return{
-      listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+      listId : 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
       materList:[],                                  // 物料列表
       paymentIndex : 0,
       logisticsIndex : 0,
@@ -208,15 +208,6 @@ export default {
     submitPayment(){
       this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
       this.showTransPop = false;
-    },
-    //选择物流方式
-    getLogistics(item,i){
-      this.DealerLogisticsTerms = item;
-      this.logisticsIndex = i;
-    },
-    submitLogistics(){
-      this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
-      this.showLogPop = false;
     },
     //选中的往来
     selDealer(val){
@@ -316,7 +307,7 @@ export default {
             this.materList.map(item=>{
               dataSet.push({
                 tdId : item.tdId || '',
-                inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
+                // inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
                 transObjCode : item.inventoryCode || item.transObjCode, //物料编码
                 assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
                 assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
@@ -331,7 +322,7 @@ export default {
               })
             })
             let wfPara = {
-              "PROC_1801_0002":{businessKey:"SO",createdBy:""}
+              "PROC_1802_0005":{businessKey:"PO",createdBy:""}
             }
             if(this.isResubmit){
               wfPara = {
@@ -346,7 +337,7 @@ export default {
                 ...this.dealer,
                 order: {
                   dealerDebit: this.info.dealerCode,
-                  drDealerLabel : this.info.dealerLabelName || '渠道商',
+                  // drDealerLabel : this.info.dealerLabelName || '客户',
                   drAccountSub : this.info.dealerSubclass || '直营店',
                   dataSet
                 }
@@ -354,7 +345,7 @@ export default {
               wfPara: JSON.stringify(wfPara)
             }
             console.log(submitData);
-             if(this.isResubmit){
+            if(this.isResubmit){
               submitData.biReferenceId = this.biReferenceId;
               this.saveData(saveAndCommitTask,submitData);
               return
@@ -374,6 +365,7 @@ export default {
     async getOrderInfo(transCode){
       await this.getListId(transCode);
       await this.getUniqueId(transCode);
+      console.log(this.uniqueId);
       await getSOList({
         formViewUniqueId : this.uniqueId,
         transCode
@@ -424,8 +416,8 @@ export default {
     }
   },
   created(){
-    let transCode = this.$route.query.transCode;
-    if(transCode.indexOf("_")>0){
+    let {transCode} = this.$route.query;
+    if(transCode.includes('_')){
       this.isResubmit  = true;
       this.transCode = transCode;
       this.getOrderInfo(transCode);

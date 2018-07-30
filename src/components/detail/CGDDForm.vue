@@ -70,11 +70,6 @@
               <p class="title">结算方式</p>
               <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
             </div>
-            <!-- 物流条款 -->
-            <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-              <p class="title">物流条款</p>
-              <p class="mode">{{orderInfo.drDealerLogisticsTerms || '无'}}</p>
-            </div>
             <!-- 物料列表 -->
             <div class="materiel_list mg_auto box_sd">
               <div class="title">物料列表</div>
@@ -139,7 +134,7 @@
               <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
             </div>
-            <div class="handle_btn" v-if="cancelStatus && cancelStatus1">
+            <div class="handle_btn" v-if=" cancelStatus && cancelStatus1">
               <span class='reject' @click="cancel()">撤回</span>
             </div>
             <!-- 完整工作流 -->
@@ -218,13 +213,15 @@ export default {
             _dc: this.randomID(),
             transCode
           }).then(({ tableContent }) => {
-            this.taskId = tableContent[0].taskId;
-            if(tableContent.length > 0 && tableContent[0].isMyTask === 1){
-              let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
-              this.isMyTask = isMyTask;
-              this.nodeName = actions;
-              this.taskId = taskId;
-              this.formViewUniqueId = viewId;
+            
+            if(tableContent.length>0){
+              this.taskId = tableContent[0].taskId;
+              if(tableContent[0].isMyTask === 1){
+                let { isMyTask = 0, actions,viewId} = tableContent[0];
+                this.isMyTask = isMyTask;
+                this.nodeName = actions;
+                this.formViewUniqueId = viewId;
+              }
             }
           })
         

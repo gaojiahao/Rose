@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart">
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
+      <!-- <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
         <div v-if='info.dealerName'>
           <div class="user_info" v-if="info.creatorName">
             <span class="user_name">{{info.creatorName || ''}}</span>
@@ -18,48 +18,7 @@
             <div class="mode">请选择往来</div>           
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-      </div>
-      <!-- 结算方式 -->
-      <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
-        <p class="title">结算方式</p>
-        <p class="mode">{{dealer.drDealerPaymentTerm}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom >
-          <popup v-model="showTransPop" height="70%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">结算方式<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showTransPop = !showTransPop"></x-icon></div>
-              <span class="each_mode "
-              :class='{choiced : index===paymentIndex}' 
-              v-for="(item, index) in transMode" 
-              :key="index" 
-              @click='getPayment(item,index)'>{{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitPayment">确定</div>
-          </popup>
-        </div>
-      </div>
-      <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-        <p class="title">物流条款</p>
-        <p class="mode">{{dealer.drDealerLogisticsTerms}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom >
-          <popup v-model="showLogPop" height="60%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">物流条款<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon></div>
-              <span class="each_mode"
-              :class='{choiced : index===logisticsIndex}' 
-               v-for="(item, index) in logisticsTerm" 
-               :key="index" 
-               @click='getLogistics(item,index)'>
-               {{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitLogistics">确定</div>
-          </popup>
-        </div>
-      </div>
+      </div> -->
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -131,9 +90,6 @@
         </template>
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="materList.length && !isResubmit" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
-        <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer" :dealerLabelName="'客户'">
-        </pop-dealer-list  ref="matter">
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          ref="matter"></pop-matter-list>
@@ -143,7 +99,7 @@
     <div class="count_mode vux-1px-t">
       <span class="count_num">
         <span style="fontSize:.14rem">￥</span>{{count}}
-        <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
+        <!-- <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span> -->
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
@@ -168,63 +124,20 @@ export default {
   },
   data(){
     return{
-      listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+      listId : '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
       materList:[],                                  // 物料列表
-      paymentIndex : 0,
-      logisticsIndex : 0,
-      DealerPaymentTerm : '现付',                        //结算方式
-      DealerLogisticsTerms : '上门',                      //物流方式
-      deliveryDate:'',                               // 预计交付日       
-      assistUnit: '请选择',                           // 辅助计量显示值
-      assistUnitList: ['A', 'B', 'C'],               // 辅助计量列表
-      transMode:['现付','预付','账期','票据'],          // 结算方式
-      logisticsTerm:['上门','自提','离岸','到港'],      // 物流条款
-      showDealerPop : false,                          // 是否显示往来的popup
-      showLogPop:false,                              // 是否显示物流条款的popup
-      showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
-      info : {},
       count : 0 ,   // 总价
-      formData : {},
-      dealer : {
-        drDealerPaymentTerm : '现付',  //结算方式
-        drDealerLogisticsTerms :'上门', //物流条件
-        biComment : '' //备注
-      }     
+      formData : {
+        creator : '',
+        modifer : '',
+        biId: '',
+        biComment : ''
+      }, 
     }
   },
   mixins: [common],
   methods:{
-    // 选择地址
-    goSetAds(){
-      this.$router.push({ path:'/adress'});
-    },
-    //选择结算方式
-    getPayment(item,i){
-      this.DealerPaymentTerm = item;
-      this.paymentIndex = i;
-
-    },
-    submitPayment(){
-      this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
-      this.showTransPop = false;
-    },
-    //选择物流方式
-    getLogistics(item,i){
-      this.DealerLogisticsTerms = item;
-      this.logisticsIndex = i;
-    },
-    submitLogistics(){
-      this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
-      this.showLogPop = false;
-    },
-    //选中的往来
-    selDealer(val){
-      this.info = JSON.parse(val)[0];
-      this.dealer.dealerDebitContactPersonName = this.info.creatorName || '';
-      this.dealer.dealerDebitContactInformation = this.info.dealerMobilePhone;
-
-    },
     // TODO 选中物料项
     selMatter(val) {
       this.count = 0;
@@ -297,12 +210,7 @@ export default {
     },
     //提价订单
     submitOrder(){
-      if(!this.info.dealerName){
-        this.$vux.alert.show({
-          content : '请选择往来信息'
-        })
-      }
-      else if(this.materList.length === 0){
+      if(this.materList.length === 0){
         this.$vux.alert.show({
           content : '请选择物料'
         })
@@ -316,22 +224,19 @@ export default {
             this.materList.map(item=>{
               dataSet.push({
                 tdId : item.tdId || '',
-                inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
+                // inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
                 transObjCode : item.inventoryCode || item.transObjCode, //物料编码
                 assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
                 assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
                 tdQty : item.tdQty,     //数量
                 assistQty : item.assistQty || 0,        //辅计数量
                 price : item.price, //单价
-                taxRate : item.taxRate || 0.16,              //税率
-                taxAmount : item.price*item.tdQty*0.16,           //税金
-                tdAmount : item.price*item.tdQty*(100+16)/100,           //价税小计
                 promDeliTime : null, //预期交货日
                 comment : ''                //说明
               })
             })
             let wfPara = {
-              "PROC_1801_0002":{businessKey:"SO",createdBy:""}
+              "PROC_1802_0004":{businessKey:"PAPP",createdBy:""}
             }
             if(this.isResubmit){
               wfPara = {
@@ -343,18 +248,15 @@ export default {
               biComment : this.biComment,
               formData: JSON.stringify({
                 ...this.formData,
-                ...this.dealer,
+                biComment : '',
                 order: {
-                  dealerDebit: this.info.dealerCode,
-                  drDealerLabel : this.info.dealerLabelName || '渠道商',
-                  drAccountSub : this.info.dealerSubclass || '直营店',
                   dataSet
                 }
               }),
               wfPara: JSON.stringify(wfPara)
             }
             console.log(submitData);
-             if(this.isResubmit){
+            if(this.isResubmit){
               submitData.biReferenceId = this.biReferenceId;
               this.saveData(saveAndCommitTask,submitData);
               return
@@ -367,13 +269,15 @@ export default {
     // TODO 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(data => {
-        this.formData = {...data};
+        this.formData = {...data,...this.formData};
+        console.log(this.formData);
       })
     },
     //获取订单信息用于重新提交
     async getOrderInfo(transCode){
       await this.getListId(transCode);
       await this.getUniqueId(transCode);
+      console.log(this.uniqueId);
       await getSOList({
         formViewUniqueId : this.uniqueId,
         transCode
@@ -384,7 +288,7 @@ export default {
         let {formData} = data;
         formData.order.dataSet.map(item=>{
           item.inventoryPic_transObjCode = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}` : this.getDefaultImg();
-          this.count += item.noTaxAmount*100
+          this.count += item.price*item.tdQty*100
         })
         this.count = this.count/100;
         //基本信息
@@ -399,33 +303,13 @@ export default {
           modifer : formData.modifer,
 
         }
-        //往来信息展示
-        this.info = {
-          dealerCode : formData.order.dealerDebit,
-          dealerSubclass : formData.order.drAccountSub,
-          dealerName :  formData.order.dealerName_dealerDebit,
-          province : formData.order.province_dealerDebit,
-          city : formData.order.city_dealerDebit, 
-          county :  formData.order.county_dealerDebit,
-          address : formData.order.address_dealerDebit    
-        }
-        //订单信息
-        this.dealer = {
-          dealerDebitContactPersonName:  formData.dealerDebitContactPersonName, //联系人
-          dealerDebitContactInformation : formData.dealerDebitContactInformation,//电话
-          drDealerPaymentTerm : formData.drDealerPaymentTerm || '现付', //付款 
-          drDealerLogisticsTerms :formData.drDealerLogisticsTerms || '上门', //物流条件
-          biComment : formData.biComment //备注
-        },
         this.materList = data.formData.order.dataSet;
-      })
-
-      
+      })     
     }
   },
   created(){
-    let transCode = this.$route.query.transCode;
-    if(transCode.indexOf("_")>0){
+    let {transCode} = this.$route.query;
+    if(transCode.includes('_')){
       this.isResubmit  = true;
       this.transCode = transCode;
       this.getOrderInfo(transCode);

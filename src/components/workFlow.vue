@@ -32,7 +32,7 @@
                   <span class="status"
                         :class=item.dyClass
                         v-if='index > 0'>
-                    {{item.status || noStatus}}
+                    {{item.status === '撤回'? '提交者主动撤回' : item.status || noStatus}}
                   </span>
                 </div>
                 <!-- 备注 -->

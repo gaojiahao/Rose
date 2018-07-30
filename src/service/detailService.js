@@ -35,13 +35,6 @@ export let getListId = (transCode = '')=>{
         return errorHandler(err);
     })
 }
-export let getUniqueId = (transCode = '')=>{
-    return $axios.ajax({
-        url:`/H_roleplay-si/ds/getWorkFlowInfoByTransCode?transCode=${transCode}`,
-    }).catch( err => {
-        return errorHandler(err);
-    })
-}
 // 获取表单详情
 export let getSOList = (data = {}) => {
     return $axios.ajax({
