@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
+    <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
       <!-- 工作流 -->
       <div class="work_flow mg_auto box_sd" @click="workFlowPop = true" :class="{hidden : simpleWL.length<=0}">
         <!-- 右箭头 -->
@@ -57,44 +57,38 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
-          <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
+          <span class="user_name">{{orderInfo.dealerCreditContactPersonName}}</span>
+          <span class="user_tel">{{orderInfo.dealerCreditContactInformation}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{orderInfo.outPut.dealerName_dealerDebit}}</p>
-          <p class="cp_ads">
-            {{orderInfo.outPut.province_dealerDebit}}{{orderInfo.outPut.city_dealerDebit}}{{orderInfo.outPut.county_dealerDebit}}{{orderInfo.outPut.address_dealerDebit}}</p>
+          <p class="cp_name">{{orderInfo.inPut.dealerName_dealerCodeCredit}}</p>
+          <p class="cp_ads"></p>
         </div>
       </div>
       <div class="or_ads mg_auto box_sd">
         <div class="title">仓库</div>
         <div class="user_info">
-          <span class="user_name">{{orderInfo.outPut.warehouseName_containerCodeOut}}</span>
+          <span class="user_name">{{orderInfo.inPut.warehouseName_containerCode}}</span>
           <span class="user_tel"></span>
         </div>
         <div class="cp_info">
-          <p class="cp_name"></p>
+          <p class="cp_name">{{orderInfo.inPut.warehouseType_containerCode}}</p>
           <p class="cp_ads"></p>
         </div>
       </div>
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">结算方式</p>
-        <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
-      </div>
-      <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-        <p class="title">物流条款</p>
-        <p class="mode">{{orderInfo.drDealerLogisticsTerms || '无'}}</p>
+        <p class="mode">{{orderInfo.crDealerPaymentTerm || '无'}}</p>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <div class="title">物料列表</div>
         <div class="mater_list">
-          <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.outPut.dataSet" :key='index'>
+          <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
             <div class="each_mater_wrapper">
               <div class="mater_img">
-                <img :src="item.inventoryPic_outPutMatCode" alt="mater_img" @error="getDefaultImg(item)">
+                <img :src="item.inventoryPic_transObjCode" alt="mater_img" @error="getDefaultImg(item)">
               </div>
               <div class="mater_main">
                 <!-- 物料名称 -->
@@ -147,13 +141,6 @@
         </div>
       </div>
       <!-- 审批操作 -->
-      <!--<div class="handle_btn" v-if="isMyTask">
-        <span class="reject" v-if='nodeName.indexOf("disagree")>=0' @click="reject">拒绝</span>
-        <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
-      </div>
-      <div class="handle_btn" v-if="cancelStatus">
-        <span class='reject' @click="cancel()">撤回</span>
-      </div>-->
       <r-action :code="transCode" :has-revoke="cancelStatus" @on-submit-success="successCallback"></r-action>
       <work-flow :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
     </div>
@@ -176,7 +163,7 @@
         orderInfo: {},      // 表单内容
         nodeName: '',        // 操作名称
         isMyTask: '',        // 是否与我有关
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
+        formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856',
         defaulImg: require('assets/avatar.png'),   // 默认图片1
         defaulImg2: require('assets/io.jpg'),       // 默认图片2
         workFlowPop: false,
@@ -283,10 +270,10 @@
             return;
           }
           // 获取合计
-          let {dataSet} = data.formData.outPut;
+          let {dataSet} = data.formData.inPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
-            val.inventoryPic_outPutMatCode = val.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}` : this.getDefaultImg();
+            val.inventoryPic_transObjCode = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
           // 动态添加class
           for (let key in data.formData) {
@@ -314,14 +301,13 @@
         }).then(({tableContent}) => {
           // 赋值 完整版工作流
           this.fullWL = tableContent;
+          let lastItem = tableContent[tableContent.length - 1] || {};
+          let [firstItem = {}] = tableContent;
+          if (lastItem.status !== '撤回' && lastItem.status !== '同意' && firstItem.startUserId === this.userId) {
+            this.cancelStatus = true;
+          }
           // 赋值 简化版工作流 只取数据的最后两条
           for (let item of tableContent) {
-            if(item.isFirstNode === 0 && item.startUserId === this.userId){
-              this.cancelStatus = true;
-            }
-            if(item.isFirstNode === 1 && !item.status){
-              this.cancelStatus = true
-            }
             switch (item.status) {
               case '同意':
                 item.dyClass = 'agree_c';
@@ -351,26 +337,29 @@
       getCurrentUser() {
         currentUser().then(data => {
           this.userId = JSON.stringify(data.userId);
+          console.log(this.userId)
         })
       }
     },
     created() {
-      let {transCode} = this.$route.query;
-      this.transCode = transCode;
-      if (!transCode) {
-        this.$vux.alert.show({
-          content: '抱歉，交易号有误，请尝试刷新之后再次进入'
-        })
-        return;
-      }
-      //查询当前用户的userId
-      this.getCurrentUser();
-      // 获取表单表单详情
-      this.getOrderList(transCode);
-      // 获取工作流
-      this.getWorkFlow(transCode);
-      // 查询节点是否与<我>有关
-      this.isMyflow(transCode);
+      (async () => {
+        let {transCode} = this.$route.query;
+        this.transCode = transCode;
+        if (!transCode) {
+          this.$vux.alert.show({
+            content: '抱歉，交易号有误，请尝试刷新之后再次进入'
+          });
+          return;
+        }
+        //查询当前用户的userId
+        await this.getCurrentUser();
+        // 获取表单表单详情
+        this.getOrderList(transCode);
+        // 获取工作流
+        this.getWorkFlow(transCode);
+        // 查询节点是否与<我>有关
+        this.isMyflow(transCode);
+      })()
     }
   }
 </script>

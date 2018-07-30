@@ -28,7 +28,7 @@
             <span class="user_tel"></span>
           </div>
           <div class="cp_info">
-            <p class="cp_name"></p>
+            <p class="cp_name">{{warehouse.warehouseType}}</p>
             <!--<span>{{warehouse.warehouseRelType}}</span>-->
             <!--<span>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}</span>-->
           </div>
@@ -42,7 +42,7 @@
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
         <p class="title">结算方式</p>
-        <p class="mode">{{formData.drDealerPaymentTerm}}</p>
+        <p class="mode">{{formData.crDealerPaymentTerm}}</p>
         <span class="iconfont icon-gengduo"></span>
         <!-- 结算popup -->
         <div v-transfer-dom>
@@ -62,36 +62,13 @@
           </popup>
         </div>
       </div>
-      <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-        <p class="title">物流条款</p>
-        <p class="mode">{{formData.drDealerLogisticsTerms}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom>
-          <popup v-model="showLogPop" height="60%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">物流条款
-                <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon>
-              </div>
-              <span class="each_mode"
-                    :class="{choiced : item===DealerLogisticsTerms}"
-                    v-for="(item, index) in logisticsTerm"
-                    :key="index"
-                    @click="getLogistics(item,index)">
-               {{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitLogistics">确定</div>
-          </popup>
-        </div>
-      </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
-        <template v-if="!orderList.length">
-          <div @click="showOrderPop = !showOrderPop">
-            <div class="title">订单列表</div>
-            <div class="tips">请选择订单</div>
+        <template v-if="!listData.length">
+          <div @click="showMaterielPop = !showMaterielPop">
+            <div class="title">物料列表</div>
+            <div class="tips">请选择物料</div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
           </div>
         </template>
@@ -99,17 +76,16 @@
         <template v-else>
           <div class="title">物料列表</div>
           <div class="mater_list">
-            <div class="each_mater vux-1px-b" v-for="(item, index) in orderList" :key="index">
+            <div class="each_mater vux-1px-b" v-for="(item, index) in listData" :key="index">
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
                     <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
                   </div>
                   <div class="each_mater_wrapper" slot="content">
-                    <div class="order-code">{{item.transMatchedCode}}</div>
                     <div class="order-matter">
                       <div class="mater_img">
-                        <img :src="item.inventoryPic_outPutMatCode" alt="mater_img" @error="getDefaultImg(item)">
+                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                       </div>
                       <div class="mater_main">
                         <!-- 物料名称 -->
@@ -135,7 +111,6 @@
                                 <span class="num">{{item.specification || '无'}}</span>
                               </div>
                             </div>
-                            <div class="matter-remain">库存: {{item.qtyStockBal - item.tdQty}}</div>
                           </div>
                         </div>
                         <!-- 物料数量和价格 -->
@@ -147,8 +122,7 @@
                             <span class="handle" @click="subNum(item,index)"
                                   :class="{disabled : item.tdQty<=1}">-</span>
                             <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
-                            <span class="handle plus" @click="plusNum(item,index)"
-                                  :class="{disabled:item.tdQty >= item.qtyStockBal}">+</span>
+                            <span class="handle plus" @click="plusNum(item,index)">+</span>
                           </div>
                         </div>
                       </div>
@@ -160,17 +134,17 @@
           </div>
         </template>
         <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="orderList.length" @click="addOrder">新增更多订单</div>
+        <div class="add_more" v-if="listData.length" @click="addOrder">新增更多订单</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer"></pop-dealer-list>
+        <pop-dealer-list :show="showDealerPop" dealer-label-name="供应商" v-model="showDealerPop"
+                         @sel-dealer="selDealer"></pop-dealer-list>
         <!-- 仓库popup -->
         <pop-warehouse-list :show="showWarehousePop" v-model="showWarehousePop"
                             @sel-item="selWarehouse"></pop-warehouse-list>
-        <!-- 订单popup -->
-        <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
-                        ref="order"></pop-order-list>
+        <!-- 物料popup -->
+        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+                         ref="matter"></pop-matter-list>
       </div>
-      <!--<r-action :code="transCode" @on-resubmit="submitOrder" @on-stop="stop"></r-action>-->
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
@@ -200,8 +174,7 @@
   import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 'service/commonService'
   import {getSOList, getWorkFlow, isMyflow} from 'service/detailService'
   import PopWarehouseList from 'components/PopWarehouseList'
-  import PopOrderList from 'components/PopOrderList'
-  import RAction from 'components/RAction'
+  import PopMatterList from 'components/PopMatterList'
   import applyCommon from 'components/mixins/applyCommon'
 
   export default {
@@ -221,25 +194,20 @@
       SwipeoutButton,
       PopDealerList,
       PopWarehouseList,
-      PopOrderList,
-      RAction,
+      PopMatterList,
     },
     data() {
       return {
         srhInpTx: '',                                   // 搜索框内容
-        orderList: [],                                  // 订单列表
+        listData: [],                                  // 订单列表
         DealerPaymentTerm: '现付',                        //结算方式
-        DealerLogisticsTerms: '上门',                      //物流方式
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
         showDealerPop: false,                          // 是否显示往来的popup
-        showLogPop: false,                              // 是否显示物流条款的popup
         showTransPop: false,                            // 是否显示结算方式的popup
-        showOrderPop: false,                         // 是否显示物料的popup
         dealerInfo: null, // 往来客户信息
         formData: {
-          drDealerPaymentTerm: '现付',  //结算方式
-          drDealerLogisticsTerms: '上门', //物流条件
+          biId: '',
+          crDealerPaymentTerm: '现付',  //结算方式
           biComment: '' //备注
         },
         submitSuccess: false, // 是否提交成功
@@ -247,22 +215,19 @@
         warehouse: null, // 选中仓库属性
         taxRate: 0.16, // 税率
         numMap: {}, // 用于记录订单物料的数量
-        orderParams: {
-          dealerCode: '',
-          whCode: '',
-        },
         transCode: '',
-        formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
+        formViewUniqueId: 'fed81800-4c34-44a9-b517-c3fd9f2ab57d', // 修改时的UniqueId
         biReferenceId: '',
         actions: [],
         taskId: '',
+        showMaterielPop: false,
       }
     },
     computed: {
       // 合计金额
       totalAmount() {
         let total = 0;
-        this.orderList.forEach(item => {
+        this.listData.forEach(item => {
           total += item.tdQty * item.price;
         });
         return total;
@@ -279,41 +244,20 @@
       },
       // TODO 确定结算方式
       submitPayment() {
-        this.formData.drDealerPaymentTerm = this.DealerPaymentTerm;
+        this.formData.crDealerPaymentTerm = this.DealerPaymentTerm;
         this.showTransPop = false;
-      },
-      // TODO 选择物流方式
-      getLogistics(item, i) {
-        this.DealerLogisticsTerms = item;
-      },
-      // TODO 确定物流方式
-      submitLogistics() {
-        this.formData.drDealerLogisticsTerms = this.DealerLogisticsTerms;
-        this.showLogPop = false;
       },
       // TODO 选中的往来
       selDealer(val) {
         let [sel] = JSON.parse(val);
         this.dealerInfo = sel;
-        this.orderParams = {
-          ...this.orderParams,
-          dealerCode: sel.dealerCode
-        };
-        this.orderList = [];
-        this.$refs.order.clearSel();
       },
       // TODO 选中仓库
       selWarehouse(val) {
         this.warehouse = JSON.parse(val);
-        this.orderParams = {
-          ...this.orderParams,
-          whCode: this.warehouse.warehouseCode
-        };
-        this.orderList = [];
-        this.$refs.order.clearSel();
       },
       // TODO 选中物料项
-      selOrder(val) {
+      selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
           if (this.numMap[item.inventoryCode]) {
@@ -325,19 +269,19 @@
           }
         });
         this.numMap = {};
-        this.orderList = sels;
+        this.listData = sels;
       },
       // TODO 选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl.png');
         if (item) {
-          item.inventoryPic_outPutMatCode = url;
+          item.inventoryPic = url;
         }
         return url
       },
       // TODO 滑动删除
       delClick(index, item) {
-        let arr = this.orderList;
+        let arr = this.listData;
         arr.splice(index, 1);
         this.$refs.order.delSelItem(item);
       },
@@ -347,35 +291,29 @@
           return
         }
         item.tdQty--;
-        this.$set(this.orderList, i, item);
+        this.$set(this.listData, i, item);
       },
       // TODO 数量++
       plusNum(item, i) {
-        if (item.tdQty === item.qtyStockBal) {
-          return
-        }
         item.tdQty++;
-        this.$set(this.orderList, i, item);
+        this.$set(this.listData, i, item);
       },
       // TODO 修改数量
       getNum(item, i, e) {
         let val = e.target.value;
-        if (val > item.qtyStockBal) {
-          val = item.qtyStockBal;
-        }
         item.tdQty = Number(val);
-        this.$set(this.orderList, i, item);
+        this.$set(this.listData, i, item);
       },
       // TODO 新增更多订单
       addOrder() {
-        this.orderList.forEach(item => {
+        this.listData.forEach(item => {
           // 存储已输入的价格
           this.numMap[item.inventoryCode] = {
             tdQty: item.tdQty,
             price: item.price
           };
         });
-        this.showOrderPop = !this.showOrderPop;
+        this.showMaterielPop = !this.showMaterielPop;
       },
       // TODO 提价订单
       submitOrder() {
@@ -397,7 +335,7 @@
           }
           return true
         });
-        if (!warn && !this.orderList.length) {
+        if (!warn && !this.listData.length) {
           warn = '请选择物料'
         }
         if (warn) {
@@ -414,24 +352,19 @@
             let operation = saveAndStartWf;
             let formData = {};
             let wfPara = {
-              PROC_1710_0460: {
-                businessKey: 'SODL',
+              PROC_1710_0444: {
+                businessKey: 'POPI',
                 createdBy: ''
               }
             };
             // 组装dataSet
-            this.orderList.forEach(item => {
+            this.listData.forEach(item => {
               let oItem = {
-                transMatchedCode: item.transMatchedCode, // 明细被核销交易号
-                orderCode: item.transMatchedCode, // 销售订单号（明细）
-                outPutMatCode: item.inventoryCode, // 输出物料
-                orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
+                transObjCode: item.inventoryCode, // 物料编码
                 assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
                 assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
                 tdQty: item.tdQty, // 明细发生数
                 assistQty: item.assistQty || 0, // 辅计数量（明细）
-                thenQtyStock: item.qtyStockBal, // 当时可用库存
-                thenQtyBal: item.qtyBal, // 待交付数量
                 price: item.price, // 明细单价
                 taxRate: this.taxRate, // 税率
                 taxAmount: this.taxAmount, // 税金
@@ -446,14 +379,15 @@
             });
             formData = {
               ...this.formData,
+              creator: this.transCode ? this.formData.handler : '',
               modifer: this.transCode ? this.formData.handler : '',
-              dealerDebitContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
-              dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
-              containerOutWarehouseManager: null,
-              outPut: {
-                dealerDebit: this.dealerInfo.dealerCode, // 往来编码
-                drAccountSub: this.dealerInfo.dealerLabelName || '客户', // 往来页签
-                containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
+              dealerCreditContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
+              dealerCreditContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
+              containerInWarehouseManager: null,
+              inPut: {
+                dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
+                crAccountSub: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
+                containerCode: this.warehouse.warehouseCode, // 仓库编码
                 dataSet
               }
             };
@@ -470,7 +404,7 @@
               };
             }
             let submitData = {
-              listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
+              listId: '1c5896d8-1500-4569-b0c5-6b596d03fb9b',
               biComment: '',
               biReferenceId: this.biReferenceId,
               formData: JSON.stringify(formData),
@@ -499,40 +433,6 @@
           }
         })
       },
-      // TODO 终止订单
-      stop() {
-        this.$vux.confirm.prompt('', {
-          title: '终止原因',
-          onConfirm: (value) => {
-            if (value) {
-              this.comment = value;
-            }
-            let submitData = {
-              taskId: this.taskId,
-              taskData: JSON.stringify({
-                result: -1,
-                transCode: this.transCode,
-                comment: value
-              })
-            };
-            commitTask(submitData).then(data => {
-              let {success = false, message = '提交失败'} = data;
-              if (success) {
-                message = '终止成功';
-                this.$emit('change', true);
-              }
-              this.$vux.alert.show({
-                content: message,
-                onHide: () => {
-                  if (success) {
-                    this.$router.go(-1);
-                  }
-                }
-              });
-            })
-          }
-        });
-      },
       // TODO 获取用户基本信息
       getBaseInfoData() {
         getBaseInfoData().then(data => {
@@ -543,7 +443,7 @@
         })
       },
       // 获取详情
-      getOrderList() {
+      getList() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -557,42 +457,37 @@
             return;
           }
           // 获取合计
-          let {outPut, dealerDebit} = formData;
-          let {dataSet = []} = outPut;
+          let {inPut, dealerDebit} = formData;
+          let {dataSet = []} = inPut;
           dataSet = dataSet.map(item => {
             return {
               ...item,
-              qtyBal: item.thenQtyBal,
-              qtyStockBal: item.thenQtyStock,
-              inventoryPic_outPutMatCode: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_outPutMatCode,
-              inventoryCode: item.outPutMatCode,
-              specification: item.specification_outPutMatCode,
+              inventoryPic: item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.transObjCode,
+              specification: item.specification_transObjCode,
             };
           });
           this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName,
-            dealerName: outPut.dealerName_dealerDebit,
-            dealerMobilePhone: formData.dealerDebitContactInformation,
-            dealerCode: outPut.dealerDebit,
-          };
-          this.orderParams = {
-            dealerCode: outPut.dealerDebit,
-            whCode: outPut.warehouseCode_containerCodeOut,
+            creatorName: formData.dealerCreditContactPersonName,
+            dealerName: inPut.dealerName_dealerCodeCredit,
+            dealerMobilePhone: formData.dealerCreditContactInformation,
+            dealerCode: inPut.dealerCodeCredit,
+            dealerLabelName: inPut.crAccountSub,
           };
           this.warehouse = {
-            warehouseName: outPut.warehouseName_containerCodeOut,
-            warehouseCode: outPut.warehouseCode_containerCodeOut,
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseCode: inPut.warehouseCode_containerCode,
+            warehouseType: inPut.warehouseType_containerCode,
           };
           this.formData = {
             ...this.formData,
-            drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
-            drDealerPaymentTerm: formData.drDealerPaymentTerm,
+            biId: formData.biId,
+            crDealerPaymentTerm: formData.crDealerPaymentTerm,
           };
-          this.DealerPaymentTerm = formData.drDealerPaymentTerm;
-          this.DealerLogisticsTerms = formData.drDealerLogisticsTerms;
+          this.DealerPaymentTerm = formData.crDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
-          this.orderList = dataSet;
+          this.listData = dataSet;
         })
       },
       // 流程节点是否与<我>有关
@@ -605,16 +500,17 @@
           let {actions = '', isMyTask = 0, taskId} = action;
           this.actions = actions.split(',');
           this.taskId = taskId;
+          console.log(this.taskId)
         })
       },
     },
     created() {
       let {transCode} = this.$route.query;
       this.getBaseInfoData();
-      if (transCode.indexOf('SODL') !== -1) {
+      if (transCode.indexOf('POPI') !== -1) {
         this.transCode = transCode;
         this.isMyflow();
-        this.getOrderList();
+        this.getList();
       }
     }
   }
