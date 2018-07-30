@@ -6,11 +6,13 @@
     </component>
     <loading-form :show='showLoadding'></loading-form>
   </div>
-  
+
 </template>
 
 <script>
 import Loadding from 'components/Loading'
+import detailMap from './../../../maps/detail'
+
 export default {
   data(){
     return {
@@ -32,13 +34,18 @@ export default {
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
-      if(this.transCode.indexOf('XSDD')>=0){
-        this.currentComponent = require('components/detail/SOForm.vue').default;
+      let [prefix] = this.transCode.split('_');
+      let code = detailMap[prefix] || prefix;
+      try {
+        this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+      } catch (e) {
+        this.$vux.alert.show({
+          content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确',
+          onHide: ()=>{
+            this.$router.go(-1);
+          }
+        });
       }
-      else{
-        this.currentComponent = require(`components/detail/${this.transCode.split('_')[0]}Form.vue`).default;
-      }
-      
     }
     setTimeout(()=>{
       this.showLoadding = false
@@ -52,7 +59,7 @@ export default {
     }
     next();
   }
-  
+
 }
 </script>
 
