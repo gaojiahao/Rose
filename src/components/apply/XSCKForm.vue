@@ -158,7 +158,7 @@
   } from 'vux'
   import PopDealerList from 'components/PopDealerList'
   import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 'service/commonService'
-  import {getSOList, getWorkFlow, isMyflow} from 'service/detailService'
+  import {getSOList} from 'service/detailService'
   import PopWarehouseList from 'components/PopWarehouseList'
   import PopOrderList from 'components/PopOrderList'
   import RAction from 'components/RAction'
@@ -491,18 +491,6 @@
           this.DealerLogisticsTerms = formData.drDealerLogisticsTerms;
           this.biReferenceId = formData.biReferenceId;
           this.orderList = dataSet;
-        })
-      },
-      // 流程节点是否与<我>有关
-      isMyflow() {
-        return isMyflow({
-          _dc: Date.now(),
-          transCode: this.transCode,
-        }).then(({tableContent = []}) => {
-          let [action = {}] = tableContent;
-          let {actions = '', isMyTask = 0, taskId} = action;
-          this.actions = actions.split(',');
-          this.taskId = taskId;
         })
       },
     },

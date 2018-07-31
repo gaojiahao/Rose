@@ -40,28 +40,8 @@
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
       <!-- 结算方式 -->
-      <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
-        <p class="title">结算方式</p>
-        <p class="mode">{{formData.crDealerPaymentTerm}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom>
-          <popup v-model="showTransPop" height="70%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">结算方式
-                <x-icon class="close_icon" type="ios-close-empty" size="30"
-                        @click="showTransPop = !showTransPop"></x-icon>
-              </div>
-              <span class="each_mode"
-                    :class="{choiced : item===DealerPaymentTerm}"
-                    v-for="(item, index) in transMode"
-                    :key="index"
-                    @click="getPayment(item,index)">{{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitPayment">确定</div>
-          </popup>
-        </div>
-      </div>
+      <pop-single-select title="结算方式" :data="transMode" :value="formData.crDealerPaymentTerm"
+                         v-model="formData.crDealerPaymentTerm"></pop-single-select>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -136,7 +116,7 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="listData.length" @click="addOrder">新增更多订单</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" dealer-label-name="供应商" v-model="showDealerPop"
+        <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
                          @sel-dealer="selDealer"></pop-dealer-list>
         <!-- 仓库popup -->
         <pop-warehouse-list :show="showWarehousePop" v-model="showWarehousePop"
@@ -172,10 +152,11 @@
   } from 'vux'
   import PopDealerList from 'components/PopDealerList'
   import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 'service/commonService'
-  import {getSOList, getWorkFlow, isMyflow} from 'service/detailService'
+  import {getSOList,} from 'service/detailService'
   import PopWarehouseList from 'components/PopWarehouseList'
   import PopMatterList from 'components/PopMatterList'
   import applyCommon from 'components/mixins/applyCommon'
+  import PopSingleSelect from 'components/PopSingleSelect'
 
   export default {
     name: 'ApplyXSCKForm',
@@ -195,6 +176,7 @@
       PopDealerList,
       PopWarehouseList,
       PopMatterList,
+      PopSingleSelect,
     },
     data() {
       return {
@@ -203,7 +185,6 @@
         DealerPaymentTerm: '现付',                        //结算方式
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
         showDealerPop: false,                          // 是否显示往来的popup
-        showTransPop: false,                            // 是否显示结算方式的popup
         dealerInfo: null, // 往来客户信息
         formData: {
           biId: '',
@@ -238,15 +219,6 @@
       },
     },
     methods: {
-      // TODO 选择结算方式
-      getPayment(item, i) {
-        this.DealerPaymentTerm = item;
-      },
-      // TODO 确定结算方式
-      submitPayment() {
-        this.formData.crDealerPaymentTerm = this.DealerPaymentTerm;
-        this.showTransPop = false;
-      },
       // TODO 选中的往来
       selDealer(val) {
         let [sel] = JSON.parse(val);
@@ -464,19 +436,6 @@
           this.DealerPaymentTerm = formData.crDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
           this.listData = dataSet;
-        })
-      },
-      // 流程节点是否与<我>有关
-      isMyflow() {
-        return isMyflow({
-          _dc: Date.now(),
-          transCode: this.transCode,
-        }).then(({tableContent = []}) => {
-          let [action = {}] = tableContent;
-          let {actions = '', isMyTask = 0, taskId} = action;
-          this.actions = actions.split(',');
-          this.taskId = taskId;
-          console.log(this.taskId)
         })
       },
     },
