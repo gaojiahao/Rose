@@ -74,7 +74,7 @@
       },
       dealerLabelName : {
         type: String,
-        default: "客户"
+        default: "2167"
       }
     },
     directives: {TransferDom},

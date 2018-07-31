@@ -47,4 +47,6 @@ export default {
 }
 </script>
 
-<style lang='scss'></style>
+<style lang='scss'>
+@import '~components/scss/bizApply.scss';
+</style>
