@@ -93,7 +93,7 @@
       goDetail(transCode) {
         let {code} = this.$route.params;
         //判断是否是重新提交，如果是，跳转到创建订单页面
-        isMyflow({transCode: code}).then(({tableContent}) => {
+        isMyflow({transCode}).then(({tableContent}) => {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {

@@ -141,7 +141,12 @@
         </div>
       </div>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :has-revoke="cancelStatus" @on-submit-success="successCallback"></r-action>
+      <div class="handle_btn" v-if="isMyTask || (cancelStatus && cancelStatus1)">
+        <span class='reject' @click="taskCancel" v-if='cancelStatus && cancelStatus1'>撤回</span>
+        <span class="reject" v-if='nodeName.indexOf("disagree")>=0 && (!cancelStatus ||!cancelStatus1)'
+              @click="taskReject">拒绝</span>
+        <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="taskAgree">同意</span>
+      </div>
       <work-flow :popupShow="workFlowPop" v-model="workFlowPop" :noStatus="orderInfo.biStatus"></work-flow>
     </div>
   </div>
@@ -149,10 +154,10 @@
 
 <script>
   import {numberComma} from 'vux'
-  import {isMyflow, getSOList, getWorkFlow, currentUser,} from 'service/detailService'
+  import {isMyflow, getSOList,} from 'service/detailService'
   import {saveAndCommitTask, commitTask} from 'service/commonService'
   import workFlow from 'components/workFlow'
-  import RAction from 'components/RAction'
+  import detailCommon from 'components/mixins/detailCommon'
 
   export default {
     data() {
@@ -174,8 +179,9 @@
         cancelStatus: false,
       }
     },
+    mixins: [detailCommon],
     components: {
-      workFlow, RAction
+      workFlow,
     },
     filters: {
       numberComma
@@ -189,64 +195,6 @@
         }
         return url
       },
-      // TODO 拒绝
-      reject(val) {
-        let {taskId, comment} = JSON.parse(val);
-        let submitData = {
-          taskId: taskId,
-          taskData: JSON.stringify({
-            result: 0,
-            transCode: this.transCode,
-            comment: comment
-          })
-        };
-        commitTask(submitData).then(data => {
-          let {success = false, message = '提交失败'} = data;
-          if (success) {
-            message = '拒绝成功';
-            this.$emit('change', true);
-          }
-          this.$vux.alert.show({
-            content: message,
-            onHide: () => {
-              if (success) {
-                this.$router.go(-1);
-              }
-            }
-          });
-        })
-      },
-      // TODO 同意
-      agree(val) {
-        let {taskId, comment} = JSON.parse(val);
-        let submitData = {
-          taskId: taskId,
-          taskData: JSON.stringify({
-            result: 1,
-            transCode: this.transCode,
-            comment: comment
-          })
-        };
-        commitTask(submitData).then(data => {
-          let {success = false, message = '提交失败'} = data;
-          if (success) {
-            message = '同意成功';
-            this.$emit('change', true);
-          }
-          this.$vux.alert.show({
-            content: message,
-            onHide: () => {
-              if (success) {
-                this.$router.go(-1);
-              }
-            }
-          });
-        })
-      },
-      // TODO 同意/拒绝成功回调
-      successCallback() {
-        this.$emit('change', true);
-      },
       //随机ID
       randomID() {
         function S4() {
@@ -257,6 +205,8 @@
       },
       // 获取详情
       getOrderList(transCode = '') {
+        // 查询节点是否与<我>有关
+        this.isMyflow(transCode);
         getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
@@ -293,33 +243,6 @@
           this.orderInfo = data.formData;
         })
       },
-      // 获取工作流
-      getWorkFlow(transCode = '') {
-        getWorkFlow({
-          _dc: this.randomID(),
-          transCode
-        }).then(({tableContent}) => {
-          // 赋值 完整版工作流
-          this.fullWL = tableContent;
-          let lastItem = tableContent[tableContent.length - 1] || {};
-          let [firstItem = {}] = tableContent;
-          if (lastItem.status !== '撤回' && lastItem.status !== '同意' && firstItem.startUserId === this.userId) {
-            this.cancelStatus = true;
-          }
-          // 赋值 简化版工作流 只取数据的最后两条
-          for (let item of tableContent) {
-            switch (item.status) {
-              case '同意':
-                item.dyClass = 'agree_c';
-                break;
-              case '终止':
-                item.dyClass = 'reject_c'
-                break;
-            }
-          }
-          this.simpleWL = tableContent.slice(-2);
-        })
-      },
       // 流程节点是否与<我>有关
       isMyflow(transCode = '') {
         isMyflow({
@@ -334,32 +257,8 @@
           }
         })
       },
-      getCurrentUser() {
-        currentUser().then(data => {
-          this.userId = JSON.stringify(data.userId);
-          console.log(this.userId)
-        })
-      }
     },
     created() {
-      (async () => {
-        let {transCode} = this.$route.query;
-        this.transCode = transCode;
-        if (!transCode) {
-          this.$vux.alert.show({
-            content: '抱歉，交易号有误，请尝试刷新之后再次进入'
-          });
-          return;
-        }
-        //查询当前用户的userId
-        await this.getCurrentUser();
-        // 获取表单表单详情
-        this.getOrderList(transCode);
-        // 获取工作流
-        this.getWorkFlow(transCode);
-        // 查询节点是否与<我>有关
-        this.isMyflow(transCode);
-      })()
     }
   }
 </script>
