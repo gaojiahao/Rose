@@ -93,47 +93,50 @@
         <div class="mater_list">
           <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.outPut.dataSet" :key='index'>
             <div class="each_mater_wrapper">
-              <div class="mater_img">
-                <img :src="item.inventoryPic_outPutMatCode" alt="mater_img" @error="getDefaultImg(item)">
-              </div>
-              <div class="mater_main">
-                <!-- 物料名称 -->
-                <div class="mater_name">
-                  {{item.inventoryName_transObjCode}}
+              <div class="order-code">{{item.transMatchedCode}}</div>
+              <div class="order-matter">
+                <div class="mater_img">
+                  <img :src="item.inventoryPic_outPutMatCode" alt="mater_img" @error="getDefaultImg(item)">
                 </div>
-                <!-- 物料基本信息 -->
-                <div class="mater_info">
-                  <!-- 物料编码、规格 -->
-                  <div class="withColor">
-                    <!-- 物料编码 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_code">
-                        <span class="title">编码</span>
-                        <span class="num">{{item.transObjCode}}</span>
+                <div class="mater_main">
+                  <!-- 物料名称 -->
+                  <div class="mater_name">
+                    {{item.inventoryName_transObjCode}}
+                  </div>
+                  <!-- 物料基本信息 -->
+                  <div class="mater_info">
+                    <!-- 物料编码、规格 -->
+                    <div class="withColor">
+                      <!-- 物料编码 -->
+                      <div class="ForInline" style="display:inline-block">
+                        <div class="mater_code">
+                          <span class="title">编码</span>
+                          <span class="num">{{item.inventoryCode_outPutMatCode}}</span>
+                        </div>
                       </div>
-                    </div>
-                    <!-- 物料规格 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_spec">
-                        <span class="title">规格</span>
-                        <span class="num">{{item.specification_transObjCode || '无'}}</span>
+                      <!-- 物料规格 -->
+                      <div class="ForInline" style="display:inline-block">
+                        <div class="mater_spec">
+                          <span class="title">规格</span>
+                          <span class="num">{{item.specification_transObjCode || '无'}}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <!-- 物料数量和价格 -->
-                <div class='mater_other'>
-                  <div class='mater_num'>
-                    <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
-                    <span class='num'>数量: {{item.tdQty}}</span>
-                    <span>税率: {{item.taxRate}}</span>
-                  </div>
-                  <div class='mater_price'>
-                    ￥{{item.tdAmount | numberComma(3)}}
-                    <span class="num"
-                          :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
+                  <!-- 物料数量和价格 -->
+                  <div class='mater_other'>
+                    <div class='mater_num'>
+                      <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
+                      <span class='num'>数量: {{item.tdQty}}</span>
+                      <span>税率: {{item.taxRate}}</span>
+                    </div>
+                    <div class='mater_price'>
+                      ￥{{item.tdAmount | numberComma(3)}}
+                      <span class="num"
+                            :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
                               [金额: ￥{{item.noTaxAmount | numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
                             </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -255,4 +258,8 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+
+  .materiel_list .mater_list .each_mater_wrapper {
+    flex-direction: column;
+  }
 </style>

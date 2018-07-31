@@ -225,6 +225,13 @@
       .each_mater_wrapper {
         position: relative;
         display: flex;
+        .order-code {
+          font-size: .14rem;
+        }
+        .order-matter {
+          display: flex;
+          margin-top: .1rem;
+        }
         // 物料图片
         .mater_img {
           display: inline-block;
