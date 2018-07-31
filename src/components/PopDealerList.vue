@@ -178,11 +178,10 @@
             },
           ];
         }
-        dealerService.getOrderDealerList({
+        dealerService.getDealerList(this.dealerLabelName,{
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          dealerLabelName: this.dealerLabelName,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
