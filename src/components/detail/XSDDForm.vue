@@ -208,24 +208,7 @@ export default {
     },
     // 获取详情
     async getOrderList(transCode = ''){
-        await getListId(transCode).then( data=>{
-          this.formViewUniqueId = data[0].uniqueId;
-        })
-        // 流程节点是否与<我>有关
-        await isMyflow({
-            _dc: this.randomID(),
-            transCode
-          }).then(({ tableContent }) => {
-            if(tableContent.length>0){
-              this.taskId = tableContent[0].taskId;
-              if(tableContent[0].isMyTask === 1){
-                let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
-                this.isMyTask = isMyTask;
-                this.nodeName = actions;
-                this.formViewUniqueId = viewId;
-              }
-            }
-          })
+        
         
         await getSOList({
           formViewUniqueId : this.formViewUniqueId,
