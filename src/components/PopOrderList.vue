@@ -105,7 +105,13 @@
             whCode: '',
           }
         }
-      }
+      },
+      defaultValue: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
     },
     components: {
       Icon, Popup, RScroll,
@@ -136,6 +142,12 @@
         handler() {
           this.resetCondition();
           this.getList();
+        }
+      },
+      defaultValue: {
+        handler(val){
+          this.tmpItems = [...val];
+          this.selItems = [...val];
         }
       },
     },
@@ -270,6 +282,8 @@
     },
     created() {
       this.showPop = this.show;
+      this.tmpItems = [...this.defaultValue];
+      this.selItems = [...this.defaultValue];
       this.getList();
     }
   }

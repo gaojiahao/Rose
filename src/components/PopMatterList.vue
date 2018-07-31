@@ -90,7 +90,13 @@
       show: {
         type: Boolean,
         default: false
-      }
+      },
+      defaultValue: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
     },
     components: {
       Icon, Popup, LoadMore, RScroll,
@@ -115,6 +121,12 @@
       show: {
         handler(val) {
           this.showPop = val;
+        }
+      },
+      defaultValue: {
+        handler(val){
+          this.tmpItems = [...val];
+          this.selItems = [...val];
         }
       },
     },
@@ -252,6 +264,8 @@
       },
     },
     created() {
+      this.tmpItems = [...this.defaultValue];
+      this.selItems = [...this.defaultValue];
       this.getMatList();
     }
   }

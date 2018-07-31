@@ -122,7 +122,7 @@
                             @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                         ref="matter"></pop-matter-list>
+                         :default-value="listData" ref="matter"></pop-matter-list>
       </div>
     </div>
     <!-- 底部确认栏 -->

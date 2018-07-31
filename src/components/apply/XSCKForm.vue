@@ -127,7 +127,7 @@
                             @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 订单popup -->
         <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
-                        ref="order"></pop-order-list>
+                        :default-value="orderList" ref="order"></pop-order-list>
       </div>
       <!--<r-action :code="transCode" @on-resubmit="submitOrder" @on-stop="stop"></r-action>-->
     </div>
