@@ -116,176 +116,175 @@
       position: relative;
       margin-bottom: .2rem;
       box-sizing: border-box;
-      .each_mater_wrapper {
-        position: relative;
+    }
+    .each_mater_wrapper {
+      position: relative;
+      display: flex;
+      .order-code {
+        font-size: .14rem;
+      }
+      .order-matter {
         display: flex;
-        flex-direction: column;
-        .order-code {
+        margin-top: .1rem;
+      }
+      // 物料图片
+      .mater_img {
+        display: inline-block;
+        width: .75rem;
+        height: .75rem;
+        img {
+          width: 100%;
+          max-height: 100%;
+        }
+      }
+      // 物料主体
+      .mater_main {
+        flex: 1;
+        padding-left: .1rem;
+        box-sizing: border-box;
+        display: inline-block;
+        // 物料名称
+        .mater_name {
+          color: #111;
+          overflow: hidden;
           font-size: .14rem;
-        }
-        .order-matter {
-          display: flex;
-          margin-top: .1rem;
-        }
-        // 物料图片
-        .mater_img {
-          display: inline-block;
-          width: .75rem;
-          height: .75rem;
-          img {
-            width: 100%;
-            max-height: 100%;
+          font-weight: bold;
+          max-height: .46rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
+          // 每个物料的索引
+          .whiNum {
+            color: #fff;
+            font-weight: 200;
+            padding: 0 .1rem;
+            font-size: .1rem;
+            display: inline-block;
+            background: #ea5455;
+            vertical-align: middle;
+            margin: -.01rem .04rem 0 0;
           }
         }
-        // 物料主体
-        .mater_main {
-          flex: 1;
-          padding-left: .1rem;
-          box-sizing: border-box;
-          display: inline-block;
-          // 物料名称
-          .mater_name {
-            color: #111;
-            overflow: hidden;
-            font-size: .14rem;
-            font-weight: bold;
-            max-height: .46rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            text-overflow: ellipsis;
-            -webkit-box-orient: vertical;
-            // 每个物料的索引
-            .whiNum {
-              color: #fff;
-              font-weight: 200;
-              padding: 0 .1rem;
-              font-size: .1rem;
-              display: inline-block;
-              background: #ea5455;
-              vertical-align: middle;
-              margin: -.01rem .04rem 0 0;
-            }
-          }
-          // 物料信息
-          .mater_info {
-            color: #757575;
-            font-size: .12rem;
-            // 有颜色包裹的
-            .withColor {
-              // 物料编码
-              .mater_code {
-                display: flex;
-                .title,
-                .num {
-                  font-size: .1rem;
-                  display: inline-block;
-                  padding: .01rem .04rem;
-                }
-                .title {
-                  color: #fff;
-                  background: #3f72af;
-                }
-                .num {
-                  color: #111;
-                  max-width: .9rem;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  background: #dbe2ef;
-                  text-overflow: ellipsis;
-                }
-              }
-              // 规格
-              .mater_spec {
-                @extend .mater_code;
-                margin-left: .1rem;
-                .title {
-                  color: #fff;
-                  background: #537791;
-                }
-                .num {
-                  color: #fff;
-                  max-width: .6rem;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  background: #ff7f50;
-                  text-overflow: ellipsis;
-                }
-              }
-            }
-            // 没颜色包裹的
-            .withoutColor {
-              // 物料分类
-              .mater_classify {
-                // color: #111;
-                // font-weight: bold;
-                font-size: .14rem;
-                margin-top: .04rem;
-                .father {
-                  margin-right: .1rem;
-                }
-              }
-              // 物料颜色 材质
-              .mater_material {
-                font-size: .12rem;
-                margin-top: .1rem;
-                .unit,
-                .color {
-                  margin-right: .06rem;
-                }
-              }
-            }
-          }
-          //物料价格，数量
-          .mater_other {
-            margin-top: 0.08rem;
-            align-items: center;
-            .mater_price {
-              display: inline-block;
-              font-weight: bold;
-              font-size: 0.16rem;
-              line-height: 0.2rem;
-              color: #ea5455;
-              margin-right: 0.9rem;
-            }
-            .mater_num {
+        // 物料信息
+        .mater_info {
+          color: #757575;
+          font-size: .12rem;
+          // 有颜色包裹的
+          .withColor {
+            // 物料编码
+            .mater_code {
               display: flex;
-              // justify-content: flex-start;
-              float: right;
-              input {
-                border: none;
-                outline: none;
-              }
-              .handle {
+              .title,
+              .num {
+                font-size: .1rem;
                 display: inline-block;
-                width: 0.2rem;
-                height: 0.2rem;
-                text-align: center;
-                line-height: 0.2rem;
-                font-size: .18rem;
+                padding: .01rem .04rem;
               }
-              .disabled {
-                color: #eee;
-              }
-              .plus {
-                vertical-align: middle;
-                margin-top: -.01rem;
+              .title {
+                color: #fff;
+                background: #3f72af;
               }
               .num {
-                width: 0.4rem;
-                height: 0.2rem;
-                background: #e8e8e8;
-                text-align: center;
-                line-height: 0.2rem;
-                font-size: 0.12rem;
-                border-radius: 0 !important;
+                color: #111;
+                max-width: .9rem;
+                overflow: hidden;
+                white-space: nowrap;
+                background: #dbe2ef;
+                text-overflow: ellipsis;
+              }
+            }
+            // 规格
+            .mater_spec {
+              @extend .mater_code;
+              margin-left: .1rem;
+              .title {
+                color: #fff;
+                background: #537791;
+              }
+              .num {
+                color: #fff;
+                max-width: .6rem;
+                overflow: hidden;
+                white-space: nowrap;
+                background: #ff7f50;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+          // 没颜色包裹的
+          .withoutColor {
+            // 物料分类
+            .mater_classify {
+              // color: #111;
+              // font-weight: bold;
+              font-size: .14rem;
+              margin-top: .04rem;
+              .father {
+                margin-right: .1rem;
+              }
+            }
+            // 物料颜色 材质
+            .mater_material {
+              font-size: .12rem;
+              margin-top: .1rem;
+              .unit,
+              .color {
+                margin-right: .06rem;
               }
             }
           }
         }
-        // 下划线
-        .vux-1px-b:after {
-          border-bottom: 1px solid #e8e8e8;
+        //物料价格，数量
+        .mater_other {
+          margin-top: 0.08rem;
+          align-items: center;
+          .mater_price {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 0.16rem;
+            line-height: 0.2rem;
+            color: #ea5455;
+            margin-right: 0.9rem;
+          }
+          .mater_num {
+            display: flex;
+            // justify-content: flex-start;
+            float: right;
+            input {
+              border: none;
+              outline: none;
+            }
+            .handle {
+              display: inline-block;
+              width: 0.2rem;
+              height: 0.2rem;
+              text-align: center;
+              line-height: 0.2rem;
+              font-size: .18rem;
+            }
+            .disabled {
+              color: #eee;
+            }
+            .plus {
+              vertical-align: middle;
+              margin-top: -.01rem;
+            }
+            .num {
+              width: 0.4rem;
+              height: 0.2rem;
+              background: #e8e8e8;
+              text-align: center;
+              line-height: 0.2rem;
+              font-size: 0.12rem;
+              border-radius: 0 !important;
+            }
+          }
         }
+      }
+      // 下划线
+      .vux-1px-b:after {
+        border-bottom: 1px solid #e8e8e8;
       }
     }
   }

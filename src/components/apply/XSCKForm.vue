@@ -573,4 +573,7 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
+  .materiel_list .mater_list .each_mater_wrapper {
+    flex-direction: column;
+  }
 </style>
