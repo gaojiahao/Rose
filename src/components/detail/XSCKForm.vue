@@ -159,7 +159,7 @@
 
 <script>
   import {numberComma} from 'vux'
-  import {isMyflow, getSOList,} from 'service/detailService'
+  import {getSOList,} from 'service/detailService'
   import {saveAndCommitTask, commitTask} from 'service/commonService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
@@ -210,8 +210,6 @@
       },
       // 获取详情
       getOrderList(transCode = '') {
-        // 查询节点是否与<我>有关
-        this.isMyflow(transCode);
         getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
@@ -246,20 +244,6 @@
             }
           }
           this.orderInfo = data.formData;
-        })
-      },
-      // 流程节点是否与<我>有关
-      isMyflow(transCode = '') {
-        isMyflow({
-          _dc: this.randomID(),
-          transCode
-        }).then(({tableContent}) => {
-          if (tableContent.length > 0) {
-            let {isMyTask = 0, actions, taskId} = tableContent[0];
-            this.isMyTask = isMyTask;
-            this.nodeName = actions;
-            this.taskId = taskId;
-          }
         })
       },
     },

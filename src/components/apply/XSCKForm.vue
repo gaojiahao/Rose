@@ -109,7 +109,7 @@
                     <div class="order-code">{{item.transMatchedCode}}</div>
                     <div class="order-matter">
                       <div class="mater_img">
-                        <img :src="item.inventoryPic_outPutMatCode" alt="mater_img" @error="getDefaultImg(item)">
+                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                       </div>
                       <div class="mater_main">
                         <!-- 物料名称 -->
@@ -331,7 +331,7 @@
       getDefaultImg(item) {
         let url = require('assets/wl.png');
         if (item) {
-          item.inventoryPic_outPutMatCode = url;
+          item.inventoryPic = url;
         }
         return url
       },
@@ -480,6 +480,7 @@
               delete submitData.biReferenceId
             }
             console.log(submitData)
+            // this.saveData(operation,submitData);
             operation(submitData).then(data => {
               //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
@@ -499,51 +500,8 @@
           }
         })
       },
-      // TODO 终止订单
-      stop() {
-        this.$vux.confirm.prompt('', {
-          title: '终止原因',
-          onConfirm: (value) => {
-            if (value) {
-              this.comment = value;
-            }
-            let submitData = {
-              taskId: this.taskId,
-              taskData: JSON.stringify({
-                result: -1,
-                transCode: this.transCode,
-                comment: value
-              })
-            };
-            commitTask(submitData).then(data => {
-              let {success = false, message = '提交失败'} = data;
-              if (success) {
-                message = '终止成功';
-                this.$emit('change', true);
-              }
-              this.$vux.alert.show({
-                content: message,
-                onHide: () => {
-                  if (success) {
-                    this.$router.go(-1);
-                  }
-                }
-              });
-            })
-          }
-        });
-      },
-      // TODO 获取用户基本信息
-      getBaseInfoData() {
-        getBaseInfoData().then(data => {
-          this.formData = {
-            ...this.formData,
-            ...data,
-          };
-        })
-      },
       // 获取详情
-      getOrderList() {
+      getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -564,7 +522,7 @@
               ...item,
               qtyBal: item.thenQtyBal,
               qtyStockBal: item.thenQtyStock,
-              inventoryPic_outPutMatCode: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}` : this.getDefaultImg(),
+              inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}` : this.getDefaultImg(),
               inventoryName: item.inventoryName_outPutMatCode,
               inventoryCode: item.outPutMatCode,
               specification: item.specification_outPutMatCode,
@@ -609,13 +567,13 @@
       },
     },
     created() {
-      let {transCode} = this.$route.query;
-      this.getBaseInfoData();
-      if (transCode) {
-        this.transCode = transCode;
-        this.isMyflow();
-        this.getOrderList();
-      }
+      // let {transCode} = this.$route.query;
+      // this.getBaseInfoData();
+      // if (transCode) {
+      //   this.transCode = transCode;
+      //   this.isMyflow();
+      //   this.getOrderList();
+      // }
     }
   }
 </script>

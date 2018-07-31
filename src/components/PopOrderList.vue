@@ -155,28 +155,21 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        let flag = false;
-        this.tmpItems.every(item => {
-          if (sItem.inventoryCode === item.inventoryCode) {
-            flag = true;
-            return false;
-          }
-          return true;
-        });
-        return flag;
+        return this.tmpItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if(!sItem.qtyStockBal){
+        if (!sItem.qtyStockBal) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
           return
         }
         let arr = this.tmpItems;
+        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode);
         // 若存在重复的 则清除
-        if (arr.includes(sItem)) {
-          arr.splice(arr.findIndex(item => item === sItem), 1);
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
           return;
         }
         arr.push(sItem);
@@ -247,19 +240,14 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let dIndex = 0;
-        this.selItems.every((item, index) => {
-          if (dItem.inventoryCode === item.inventoryCode) {
-            dIndex = index;
-            return false;
-          }
-          return true
-        });
-        this.selItems.splice(dIndex, 1);
+        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode);
+        if (delIndex !== -1) {
+          this.selItems.splice(delIndex, 1);
+        }
         this.tmpItems = [...this.selItems];
       },
       // TODO 清空选择项
-      clearSel(){
+      clearSel() {
         this.selItems = [];
         this.tmpItems = [];
       },

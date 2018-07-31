@@ -134,22 +134,15 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        let flag = false;
-        this.tmpItems.every(item => {
-          if (sItem.transCode === item.transCode) {
-            flag = true;
-            return false;
-          }
-          return true;
-        });
-        return flag;
+        return this.tmpItems.findIndex(item => item.transCode === sItem.transCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
         let arr = this.tmpItems;
+        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode);
         // 若存在重复的 则清除
-        if (arr.includes(sItem)) {
-          arr.splice(arr.findIndex(item => item === sItem), 1);
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
           return;
         }
         arr.push(sItem);
@@ -216,15 +209,10 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let dIndex = 0;
-        this.selItems.every((item, index) => {
-          if (dItem.transCode === item.transCode) {
-            dIndex = index;
-            return false;
-          }
-          return true
-        });
-        this.selItems.splice(dIndex, 1);
+        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode);
+        if (delIndex !== -1) {
+          this.selItems.splice(delIndex, 1);
+        }
         this.tmpItems = [...this.selItems];
       },
       // TODO 上拉加载

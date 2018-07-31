@@ -283,7 +283,7 @@
       delClick(index, item) {
         let arr = this.listData;
         arr.splice(index, 1);
-        this.$refs.order.delSelItem(item);
+        this.$refs.matter.delSelItem(item);
       },
       // TODO 数量--
       subNum(item, i) {
@@ -414,36 +414,12 @@
               delete submitData.biReferenceId
             }
             console.log(submitData)
-            operation(submitData).then(data => {
-              //this.showLoading = false;
-              let {success = false, message = '提交失败'} = data;
-              if (success) {
-                message = '订单提交成功';
-                this.$emit('change', true);
-              }
-              this.$vux.alert.show({
-                content: message,
-                onHide: () => {
-                  if (success) {
-                    this.$router.go(-1);
-                  }
-                }
-              });
-            })
+            this.saveData(operation, submitData);
           }
         })
       },
-      // TODO 获取用户基本信息
-      getBaseInfoData() {
-        getBaseInfoData().then(data => {
-          this.formData = {
-            ...this.formData,
-            ...data,
-          };
-        })
-      },
-      // 获取详情
-      getList() {
+      // TODO 获取详情
+      getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -505,13 +481,13 @@
       },
     },
     created() {
-      let {transCode} = this.$route.query;
-      this.getBaseInfoData();
-      if (transCode) {
-        this.transCode = transCode;
-        this.isMyflow();
-        this.getList();
-      }
+      // let {transCode} = this.$route.query;
+      // this.getBaseInfoData();
+      // if (transCode) {
+      //   this.transCode = transCode;
+      //   this.isMyflow();
+      //   this.getList();
+      // }
     }
   }
 </script>

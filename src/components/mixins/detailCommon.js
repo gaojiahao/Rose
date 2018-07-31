@@ -1,4 +1,4 @@
-import {getWorkFlow, currentUser,getListId,isMyflow} from 'service/detailService.js'
+import {getWorkFlow, currentUser, getListId, isMyflow} from 'service/detailService.js'
 import {commitTask} from 'service/commonService.js'
 
 export default {
@@ -8,7 +8,10 @@ export default {
       taskId: '',
       userId: '',
       cancelStatus: false,
-      cancelStatus1: false
+      cancelStatus1: false,
+      isMyTask: 0,
+      nodeName: '',
+      formViewUniqueId: '',
     }
   },
   methods: {
@@ -135,7 +138,7 @@ export default {
             this.cancelStatus1 = true
           }
           // 去除名字中的空格
-          item.userName = item.userName.replace(/\s*/g,"");
+          item.userName = item.userName.replace(/\s*/g, "");
           switch (item.status) {
             case '同意':
               item.dyClass = 'agree_c';
@@ -166,24 +169,24 @@ export default {
       this.transCode = transCode;
       //查询当前用户的userId
       await this.getCurrentUser();
-      await getListId(transCode).then( data=>{
+      await getListId(transCode).then(data => {
         this.formViewUniqueId = data[0].uniqueId;
       })
       // 流程节点是否与<我>有关
       await isMyflow({
-          _dc: this.randomID(),
-          transCode
-        }).then(({ tableContent }) => {
-          if(tableContent.length>0){
-            this.taskId = tableContent[0].taskId;
-            if(tableContent[0].isMyTask === 1){
-              let { isMyTask = 0, actions,taskId,viewId} = tableContent[0];
-              this.isMyTask = isMyTask;
-              this.nodeName = actions;
-              this.formViewUniqueId = viewId;
-            }
+        _dc: this.randomID(),
+        transCode
+      }).then(({tableContent}) => {
+        if (tableContent.length > 0) {
+          this.taskId = tableContent[0].taskId;
+          if (tableContent[0].isMyTask === 1) {
+            let {isMyTask = 0, actions, taskId, viewId} = tableContent[0];
+            this.isMyTask = isMyTask;
+            this.nodeName = actions;
+            this.formViewUniqueId = viewId;
           }
-        })
+        }
+      })
       // 获取表单表单详情
       this.getOrderList(transCode);
       this.getWorkFlow(transCode);
