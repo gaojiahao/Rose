@@ -54,22 +54,6 @@
                 </div>
               </div>
             </div>
-            <!-- 用户地址和基本信息-->
-            <!-- <div class="or_ads mg_auto box_sd">
-              <div class="user_info">
-                <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
-                <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
-              </div>
-              <div class="cp_info">
-                <p class="cp_name">{{orderInfo.order.dealerName_dealerDebit}}</p>
-                <p class="cp_ads">{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit}}</p>
-              </div>
-            </div> -->
-            <!-- 结算方式 -->
-            <!-- <div class="trade_mode mg_auto box_sd">
-              <p class="title">结算方式</p>
-              <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
-            </div> -->
             <!-- 物料列表 -->
             <div class="materiel_list mg_auto box_sd">
               <div class="title">物料列表</div>
@@ -109,14 +93,9 @@
                           <div class='mater_num'>
                             <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
                             <span class='num'>数量: {{item.tdQty}}</span>
-                            <!-- <span>税率: {{item.taxRate}}</span> -->
                           </div>      
                           <div class='mater_price'>
                             ￥{{item.price*item.tdQty | numberComma(3)}} 
-                            <!-- <span class="num" 
-                                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
-                              [金额: ￥{{item.noTaxAmount | numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
-                            </span> -->
                           </div>        
                         </div>
                       </div>
@@ -124,7 +103,7 @@
                   </div>
                   <!-- 金额合计栏 -->
                   <div class="price_list">
-                    <div class='title' >合计<span style="fontSize:.12rem;"></span></div>
+                    <div class='title' >合计</div>
                     <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
                   </div>
                 </div>
@@ -135,9 +114,6 @@
               <span class="reject" v-if='nodeName.indexOf("disagree")>=0 && (!cancelStatus ||!cancelStatus1)' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
             </div>
-            <!-- <div class="handle_btn" v-if="cancelStatus && cancelStatus1">
-              <span class='reject' @click="cancel()">撤回</span>
-            </div> -->
             <!-- 完整工作流 -->
             <work-flow  
               :popupShow="workFlowPop" 
@@ -270,4 +246,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+@import './../scss/bizDetail';
 </style>

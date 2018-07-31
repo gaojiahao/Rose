@@ -46,7 +46,7 @@
             <div class="money_part">
               <span class="num">共{{item.itmes.length}}件物料：</span>
               <span class="money">
-                <span style="fontSize:.1rem;">[含税]￥</span>{{item.count | numberComma(3)}}
+                <span style="fontSize:.1rem;">￥</span>{{item.count | numberComma(3)}}
               </span>
             </div>
           </div>
@@ -95,7 +95,7 @@
             this.setStatus(item);
             item.count = 0;
             item.itmes.forEach(mitem=>{
-              item.count += mitem.tdAmount*100;
+              item.count += mitem.price*mitem.tdQty*100;
             })
             item.count = item.count/100;
             item.itmes = item.itmes.slice(0, 5);

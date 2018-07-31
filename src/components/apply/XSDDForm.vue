@@ -19,47 +19,12 @@
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
-      <!-- 结算方式 -->
-      <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
-        <p class="title">结算方式</p>
-        <p class="mode">{{dealer.drDealerPaymentTerm}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom >
-          <popup v-model="showTransPop" height="70%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">结算方式<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showTransPop = !showTransPop"></x-icon></div>
-              <span class="each_mode "
-              :class='{choiced : index===paymentIndex}' 
-              v-for="(item, index) in transMode" 
-              :key="index" 
-              @click='getPayment(item,index)'>{{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitPayment">确定</div>
-          </popup>
-        </div>
-      </div>
+       <!-- 结算方式 -->
+      <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
+                         v-model="dealer.drDealerPaymentTerm"></pop-single-select>
       <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-        <p class="title">物流条款</p>
-        <p class="mode">{{dealer.drDealerLogisticsTerms}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom >
-          <popup v-model="showLogPop" height="60%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">物流条款<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon></div>
-              <span class="each_mode"
-              :class='{choiced : index===logisticsIndex}' 
-               v-for="(item, index) in logisticsTerm" 
-               :key="index" 
-               @click='getLogistics(item,index)'>
-               {{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitLogistics">确定</div>
-          </popup>
-        </div>
-      </div>
+      <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
+                         v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -156,6 +121,7 @@ import { Popup,Swipeout, SwipeoutItem, SwipeoutButton,TransferDom } from 'vux'
 import dealerService from 'service/dealerService.js'
 import PopMatterList from 'components/PopMatterList'
 import PopDealerList from 'components/PopDealerList'
+import PopSingleSelect from 'components/PopSingleSelect'
 import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService' 
 import { getSOList} from 'service/detailService.js'
 import common from 'components/mixins/applyCommon.js'
@@ -164,7 +130,7 @@ export default {
     TransferDom
   },
   components:{
-   Popup, Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList,PopDealerList
+   Popup, Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList,PopDealerList,PopSingleSelect
   },
   data(){
     return{
@@ -421,5 +387,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-
+ @import './../scss/bizApply';
+// @import '~components/scss/bizDetail.scss';
 </style>
