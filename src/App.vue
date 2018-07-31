@@ -27,11 +27,6 @@
 					{title: '消息', path: '/notice', icon: 'icon-xiaoxi'},
         ]
       }
-    },
-    methods:{
-      testClick(){
-        console.log('我触发了点击');
-      }
     }
   }
 </script>
