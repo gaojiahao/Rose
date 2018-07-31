@@ -69,10 +69,10 @@
         <div class="title">仓库</div>
         <div class="user_info">
           <span class="user_name">{{orderInfo.inPut.warehouseName_containerCode}}</span>
-          <span class="user_tel"></span>
+          <span class="user_tel">{{orderInfo.inPut.warehouseType_containerCode}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{orderInfo.inPut.warehouseType_containerCode}}</p>
+          <p class="cp_name"></p>
           <p class="cp_ads"></p>
         </div>
       </div>
@@ -88,7 +88,7 @@
           <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
             <div class="each_mater_wrapper">
               <div class="mater_img">
-                <img :src="item.inventoryPic_transObjCode" alt="mater_img" @error="getDefaultImg(item)">
+                <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
               <div class="mater_main">
                 <!-- 物料名称 -->
@@ -218,7 +218,7 @@
           let {dataSet} = data.formData.inPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
-            val.inventoryPic_transObjCode = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
           // 动态添加class
           for (let key in data.formData) {

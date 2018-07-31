@@ -184,7 +184,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/mater01.jpg');
+        let url = require('assets/wl.png');
         if (item) {
           item.inventoryPic = url;
         }

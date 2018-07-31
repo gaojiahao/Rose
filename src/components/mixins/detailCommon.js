@@ -7,6 +7,7 @@ export default {
       comment: '',//审批意见
       taskId: '',
       userId: '',
+      userName: '',
       cancelStatus: false,
       cancelStatus1: false,
       isMyTask: 0,
@@ -144,7 +145,7 @@ export default {
               item.dyClass = 'agree_c';
               break;
             case '终止':
-              item.dyClass = 'reject_c'
+              item.dyClass = 'reject_c';
               break;
           }
         }
@@ -152,8 +153,9 @@ export default {
       })
     },
     getCurrentUser() {
-      return currentUser().then(data => {
-        this.userId = JSON.stringify(data.userId);
+      return currentUser().then(({userId, nickname, userCode}) => {
+        this.userId = `${userId}`;
+        this.userName = `${nickname}-${userCode}`;
       })
     }
   },
@@ -163,7 +165,7 @@ export default {
       if (!transCode) {
         this.$vux.alert.show({
           content: '抱歉，交易号有误，请尝试刷新之后再次进入'
-        })
+        });
         return;
       }
       this.transCode = transCode;
@@ -171,7 +173,7 @@ export default {
       await this.getCurrentUser();
       await getListId(transCode).then(data => {
         this.formViewUniqueId = data[0].uniqueId;
-      })
+      });
       // 流程节点是否与<我>有关
       await isMyflow({
         _dc: this.randomID(),
@@ -181,12 +183,12 @@ export default {
           this.taskId = tableContent[0].taskId;
           if (tableContent[0].isMyTask === 1) {
             let {isMyTask = 0, actions, taskId, viewId} = tableContent[0];
-            this.isMyTask = isMyTask;
+            this.isMyTask = isMyTask === 1;
             this.nodeName = actions;
             this.formViewUniqueId = viewId;
           }
         }
-      })
+      });
       // 获取表单表单详情
       this.getOrderList(transCode);
       this.getWorkFlow(transCode);

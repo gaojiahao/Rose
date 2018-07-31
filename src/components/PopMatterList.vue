@@ -134,12 +134,12 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.transCode === sItem.transCode) !== -1;
+        return this.tmpItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode);
+        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -158,7 +158,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/mater01.jpg');
+        let url = require('assets/wl.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -166,7 +166,26 @@
       },
       // TODO 获取物料列表
       getMatList() {
-        let filter = [];
+        let filter = [
+          /*{
+            operator: 'eq',
+            value: '成品',
+            property: 'processing',
+            attendedOperation: 'or'
+          },*/
+          /*{
+            operator: 'eq',
+            value: '商品',
+            property: 'processing',
+            attendedOperation: 'or'
+          },
+          {
+            operator: 'eq',
+            value: '服务',
+            property: 'processing',
+          },*/
+        ];
+        //成品,商品,服务
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -209,7 +228,7 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode);
+        let delIndex = this.selItems.findIndex(item => item.inventoryCode === dItem.inventoryCode);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }
@@ -323,7 +342,7 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .52rem);
+        height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;

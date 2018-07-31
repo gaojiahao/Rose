@@ -8,7 +8,7 @@
               <!-- 表单状态 及 编码 -->
               <div class="work_info">
                 <!-- 状态 -->
-                <span class="work_status" 
+                <span class="work_status"
                       :class="orderInfo.dyClass">
                   {{orderInfo.biStatus}}
                 </span>
@@ -21,7 +21,7 @@
               <!-- 简化版工作流 -->
               <div class="flow_list">
                 <div class="each_msg vux-1px-b"
-                    v-for="(item, index) in simpleWL" 
+                    v-for="(item, index) in simpleWL"
                     :key=index>
                     <!-- 头像 -->
                   <div class="user_avatar">
@@ -33,7 +33,7 @@
                       <!-- 操作动作 -->
                       <span>{{item.nodeName}}</span>
                       <!-- 操作状态 A(没有返回状态) -->
-                      <span class="status" 
+                      <span class="status"
                             v-if="!item.status && index % 2">
                         {{orderInfo.biStatus}}
                       </span>
@@ -79,10 +79,10 @@
             <div class="materiel_list mg_auto box_sd">
               <div class="title">物料列表</div>
                 <div class="mater_list">
-                  <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>             
+                  <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
                     <div class="each_mater_wrapper">
                       <div class="mater_img">
-                        <img :src="item.inventoryPic_transObjCode" alt="mater_img" @error="getDefaultImg(item)">
+                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                       </div>
                       <div class="mater_main">
                         <!-- 物料名称 -->
@@ -115,14 +115,14 @@
                             <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
                             <span class='num'>数量: {{item.tdQty}}</span>
                             <span>税率: {{item.taxRate}}</span>
-                          </div>      
+                          </div>
                           <div class='mater_price'>
-                            ￥{{item.tdAmount | numberComma(3)}} 
-                            <span class="num" 
+                            ￥{{item.tdAmount | numberComma(3)}}
+                            <span class="num"
                                   :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
                               [金额: ￥{{item.price* item.tdQty| numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
                             </span>
-                          </div>        
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -141,8 +141,8 @@
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
             </div>
             <!-- 完整工作流 -->
-            <work-flow  
-              :popupShow="workFlowPop" 
+            <work-flow
+              :popupShow="workFlowPop"
               v-model="workFlowPop"
               :crtTime="orderInfo.crtTime"
               :noStatus="orderInfo.biStatus"></work-flow>
@@ -159,7 +159,7 @@ import workFlow from 'components/workFlow.vue'
 export default {
   data(){
     return{
-      count : 0,          // 金额合计  
+      count : 0,          // 金额合计
       fullWL: [],         // 完整版工作流
       simpleWL: [],       // 简化版工作流(只包含最后两个)
       orderInfo: {},      // 表单内容
@@ -191,7 +191,7 @@ export default {
     },
     reject(){
       this.taskReject();
-    
+
     },
     agree(){
       this.taskAgree();
@@ -207,7 +207,7 @@ export default {
       return ( S4() + S4() + S4() );
     },
     // 获取详情
-    async getOrderList(transCode = ''){       
+    async getOrderList(transCode = ''){
         await getSOList({
           formViewUniqueId : this.formViewUniqueId,
           transCode
@@ -224,7 +224,7 @@ export default {
           let { dataSet } = data.formData.order;
           for(let val of dataSet){
             this.count += val.tdAmount*100;
-            val.inventoryPic_transObjCode = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
           this.count = this.count/100;
           // 动态添加class
@@ -245,7 +245,7 @@ export default {
           this.orderInfo = data.formData;
         })
 
-    },   
+    },
   },
   created(){
   }

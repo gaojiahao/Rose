@@ -15,7 +15,7 @@
         </div>
         <div v-else>
             <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>           
+            <div class="mode">请选择往来</div>
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
@@ -47,7 +47,7 @@
                   </div>
                   <div class="each_mater_wrapper" slot="content">
                     <div class="mater_img">
-                      <img :src="item.inventoryPic || item.inventoryPic_transObjCode" alt="mater_img" @error="getDefaultImg(item)">
+                      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                     </div>
                     <div class="mater_main">
                       <!-- 物料名称 -->
@@ -85,7 +85,7 @@
                           <input class='num' type='number' :value='item.tdQty' @input='getNum(item,index,$event)'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
-                          
+
                       </div>
                     </div>
                   </div>
@@ -122,7 +122,7 @@ import dealerService from 'service/dealerService.js'
 import PopMatterList from 'components/PopMatterList'
 import PopDealerList from 'components/PopDealerList'
 import PopSingleSelect from 'components/PopSingleSelect'
-import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService' 
+import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService'
 import { getSOList} from 'service/detailService.js'
 import common from 'components/mixins/applyCommon.js'
 export default {
@@ -140,7 +140,7 @@ export default {
       logisticsIndex : 0,
       DealerPaymentTerm : '现付',                        //结算方式
       DealerLogisticsTerms : '上门',                      //物流方式
-      deliveryDate:'',                               // 预计交付日       
+      deliveryDate:'',                               // 预计交付日
       assistUnit: '请选择',                           // 辅助计量显示值
       assistUnitList: ['A', 'B', 'C'],               // 辅助计量列表
       transMode:['现付','预付','账期','票据'],          // 结算方式
@@ -156,7 +156,7 @@ export default {
         drDealerPaymentTerm : '现付',  //结算方式
         drDealerLogisticsTerms :'上门', //物流条件
         biComment : '' //备注
-      }     
+      }
     }
   },
   mixins: [common],
@@ -206,13 +206,13 @@ export default {
               else{
                 item.tdQty = 1;
                 item.price = 90;
-              }              
+              }
             })
           }
           else{
             item.tdQty = 1;
-            item.price = 90;  
-          }   
+            item.price = 90;
+          }
         })
       this.materList = sels;
       this.materList.map(item=>{
@@ -221,7 +221,7 @@ export default {
     },
     //选择默认图片
     getDefaultImg(item) {
-      let url = require('assets/mater01.jpg');
+      let url = require('assets/wl.png');
       if (item) {
         item.inventoryPic = url;
       }
@@ -252,7 +252,7 @@ export default {
       let total = item.price*(item.tdQty-oldNum);
       this.count += total;
       this.$set(this.materList, i, item);
-      
+
     },
     //修改数量
     getNum(item,i,e){
@@ -327,8 +327,8 @@ export default {
             }
             this.saveData(saveAndStartWf,submitData);
           }
-         })        
-      }      
+         })
+      }
     },
     //获取订单信息用于重新提交
     async getFormData(){
@@ -341,7 +341,7 @@ export default {
         this.biReferenceId = data.biReferenceId;
         let {formData} = data;
         formData.order.dataSet.map(item=>{
-          item.inventoryPic_transObjCode = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}` : this.getDefaultImg();
+          item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}` : this.getDefaultImg();
           this.count += item.noTaxAmount*100
         })
         this.count = this.count/100;
@@ -363,22 +363,22 @@ export default {
           dealerSubclass : formData.order.drAccountSub,
           dealerName :  formData.order.dealerName_dealerDebit,
           province : formData.order.province_dealerDebit,
-          city : formData.order.city_dealerDebit, 
+          city : formData.order.city_dealerDebit,
           county :  formData.order.county_dealerDebit,
-          address : formData.order.address_dealerDebit    
+          address : formData.order.address_dealerDebit
         }
         //订单信息
         this.dealer = {
           dealerDebitContactPersonName:  formData.dealerDebitContactPersonName, //联系人
           dealerDebitContactInformation : formData.dealerDebitContactInformation,//电话
-          drDealerPaymentTerm : formData.drDealerPaymentTerm || '现付', //付款 
+          drDealerPaymentTerm : formData.drDealerPaymentTerm || '现付', //付款
           drDealerLogisticsTerms :formData.drDealerLogisticsTerms || '上门', //物流条件
           biComment : formData.biComment //备注
         },
         this.materList = data.formData.order.dataSet;
       })
 
-      
+
     }
   },
   created(){

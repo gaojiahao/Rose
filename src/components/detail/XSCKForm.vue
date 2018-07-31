@@ -73,7 +73,7 @@
           <span class="user_tel"></span>
         </div>
         <div class="cp_info">
-          <p class="cp_name"></p>
+          <p class="cp_name">{{orderInfo.outPut.warehouseType_containerCodeOut}}</p>
           <p class="cp_ads"></p>
         </div>
       </div>
@@ -96,7 +96,7 @@
               <div class="order-code">{{item.transMatchedCode}}</div>
               <div class="order-matter">
                 <div class="mater_img">
-                  <img :src="item.inventoryPic_outPutMatCode" alt="mater_img" @error="getDefaultImg(item)">
+                  <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                 </div>
                 <div class="mater_main">
                   <!-- 物料名称 -->
@@ -223,14 +223,14 @@
           if (data.success === false) {
             this.$vux.alert.show({
               content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
-            })
+            });
             return;
           }
           // 获取合计
           let {dataSet} = data.formData.outPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
-            val.inventoryPic_outPutMatCode = val.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}` : this.getDefaultImg();
           }
           // 动态添加class
           for (let key in data.formData) {

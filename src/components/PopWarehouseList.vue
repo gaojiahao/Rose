@@ -31,13 +31,12 @@
                 </div>
                 <div class="withColor">
                   <div class="ForInline " style="display:inline-block">
-                    <span class='creator'>{{item.creatorName}}</span>
+                    <span class='creator'>{{item.warehouseRelType}}</span>
                   </div>
                 </div>
                 <!-- 地址 -->
                 <div class="withoutColor">
-                  <!--<span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>-->
-                  <span>{{item.warehouseRelType}}</span>
+                  <span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>
                 </div>
               </div>
             </div>

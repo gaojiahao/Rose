@@ -25,12 +25,11 @@
           <div class="title">仓库列表</div>
           <div class="user_info">
             <span class="user_name">{{warehouse.warehouseName}}</span>
-            <span class="user_tel"></span>
+            <span class="user_tel">{{warehouse.warehouseRelType}}</span>
           </div>
           <div class="cp_info">
-            <p class="cp_name">{{warehouse.warehouseType}}</p>
-            <!--<span>{{warehouse.warehouseRelType}}</span>-->
-            <!--<span>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}</span>-->
+            <p class="cp_name"></p>
+            <span>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}</span>
           </div>
         </div>
         <div v-else>

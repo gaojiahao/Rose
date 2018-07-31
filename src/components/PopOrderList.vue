@@ -166,7 +166,7 @@
           return
         }
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode);
+        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -240,7 +240,7 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode);
+        let delIndex = this.selItems.findIndex(item => item.inventoryCode === dItem.inventoryCode);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }
@@ -360,7 +360,7 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .52rem);
+        height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;
