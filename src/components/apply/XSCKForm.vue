@@ -40,51 +40,11 @@
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
       <!-- 结算方式 -->
-      <div class="trade_mode mg_auto box_sd" @click="showTransPop = !showTransPop">
-        <p class="title">结算方式</p>
-        <p class="mode">{{formData.drDealerPaymentTerm}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom>
-          <popup v-model="showTransPop" height="70%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">结算方式
-                <x-icon class="close_icon" type="ios-close-empty" size="30"
-                        @click="showTransPop = !showTransPop"></x-icon>
-              </div>
-              <span class="each_mode"
-                    :class="{choiced : item===DealerPaymentTerm}"
-                    v-for="(item, index) in transMode"
-                    :key="index"
-                    @click="getPayment(item,index)">{{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitPayment">确定</div>
-          </popup>
-        </div>
-      </div>
+      <pop-single-select title="结算方式" :data="transMode" :value="formData.drDealerPaymentTerm"
+                         v-model="formData.drDealerPaymentTerm"></pop-single-select>
       <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
-        <p class="title">物流条款</p>
-        <p class="mode">{{formData.drDealerLogisticsTerms}}</p>
-        <span class="iconfont icon-gengduo"></span>
-        <!-- 结算popup -->
-        <div v-transfer-dom>
-          <popup v-model="showLogPop" height="60%" id="trade_pop_part">
-            <div class="trade_pop">
-              <div class="title">物流条款
-                <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showLogPop = !showLogPop"></x-icon>
-              </div>
-              <span class="each_mode"
-                    :class="{choiced : item===DealerLogisticsTerms}"
-                    v-for="(item, index) in logisticsTerm"
-                    :key="index"
-                    @click="getLogistics(item,index)">
-               {{item}}</span>
-            </div>
-            <div class="cfm_btn" @click="submitLogistics">确定</div>
-          </popup>
-        </div>
-      </div>
+      <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
+                         v-model="formData.drDealerLogisticsTerms"></pop-single-select>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -203,6 +163,7 @@
   import PopOrderList from 'components/PopOrderList'
   import RAction from 'components/RAction'
   import applyCommon from 'components/mixins/applyCommon'
+  import PopSingleSelect from 'components/PopSingleSelect'
 
   export default {
     name: 'ApplyXSCKForm',
@@ -223,18 +184,15 @@
       PopWarehouseList,
       PopOrderList,
       RAction,
+      PopSingleSelect,
     },
     data() {
       return {
         srhInpTx: '',                                   // 搜索框内容
         orderList: [],                                  // 订单列表
-        DealerPaymentTerm: '现付',                        //结算方式
-        DealerLogisticsTerms: '上门',                      //物流方式
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
         logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
         showDealerPop: false,                          // 是否显示往来的popup
-        showLogPop: false,                              // 是否显示物流条款的popup
-        showTransPop: false,                            // 是否显示结算方式的popup
         showOrderPop: false,                         // 是否显示物料的popup
         dealerInfo: null, // 往来客户信息
         formData: {
@@ -273,24 +231,6 @@
       },
     },
     methods: {
-      // TODO 选择结算方式
-      getPayment(item, i) {
-        this.DealerPaymentTerm = item;
-      },
-      // TODO 确定结算方式
-      submitPayment() {
-        this.formData.drDealerPaymentTerm = this.DealerPaymentTerm;
-        this.showTransPop = false;
-      },
-      // TODO 选择物流方式
-      getLogistics(item, i) {
-        this.DealerLogisticsTerms = item;
-      },
-      // TODO 确定物流方式
-      submitLogistics() {
-        this.formData.drDealerLogisticsTerms = this.DealerLogisticsTerms;
-        this.showLogPop = false;
-      },
       // TODO 选中的往来
       selDealer(val) {
         let [sel] = JSON.parse(val);
@@ -573,6 +513,7 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
+
   .materiel_list .mater_list .each_mater_wrapper {
     flex-direction: column;
   }
