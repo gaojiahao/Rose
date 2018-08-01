@@ -88,7 +88,7 @@ import search from 'components/search'
 import {getAllMsgList} from 'service/msgService.js'
 import {getWorkFlow} from 'service/detailService.js'
 import {isMyflow} from 'service/detailService'
-import businessMap from '@/home/pages/maps/business.js'
+import businessMap from '@/home/pages/maps/detail.js'
 import RScroll from 'components/RScroll'
 import LoadingForm from 'components/Loading'
 export default {
@@ -112,7 +112,7 @@ export default {
   },
   methods:{
     goDetail(item){
-      let code = businessMap[item.processName] ;
+      let code = businessMap[item.businessKey.split('_')[0]] ;
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
         if (tableContent.length > 0) {
