@@ -63,19 +63,17 @@ export default {
   },
   filters:{
     handleCrt(val){
-      let date1 = new Date().getTime(),
-      date2 = new Date(val.crtTime.replace('-','/')).getTime(),
-      date3 = (date1-date2),
+      let date = val.duration,
       //计算出小时数
-      hours=Math.floor(date3/(3600*1000)),
+      hours=parseInt(date/(3600)),
       //计算相差分钟数
-      leave2=hours%(3600*1000) ,       //计算小时数后剩余的毫秒数
-      minutes=Math.floor(leave2/(60*1000)),
+      leave2= date-(hours*3600) ,       //计算小时数后剩余的毫秒数
+      minutes=Math.floor(leave2/(60)),
       //计算相差秒数
-      leave3=leave2%(60*1000) ,     //计算分钟数后剩余的毫秒数
-      seconds=Math.round(leave3/1000);
-      return hours<24 ? `${hours}时${minutes}分${seconds}秒` : val.crtTime
-
+      leave3=leave2 - (minutes*60) ,     //计算分钟数后剩余的毫秒数
+      seconds=Math.round(leave3);
+      return hours<24 ? `${hours}时${minutes}分${seconds}秒` : `${val.crtTime.split(' ')[0]} ${hours}小时前`;
+      
     }
   },
   created(){
@@ -102,7 +100,7 @@ export default {
 }
 .msg_list{
   position: relative;
-  .vux-badge-single{
+  .vux-badge{
     position: absolute;
     right:8px;
     top:0;
