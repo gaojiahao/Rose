@@ -4,8 +4,11 @@
     <search @search='searchList'></search>
     <div class='wrapper' ref="bScroll">
       <div class='content'>
-        <div class="msg_list" v-for='(value,i) in listData' :key='i'>
-          <div class="each_msg">
+        <div class="msg_list" >
+          <div class="each_msg"
+              @click="goMsglist" 
+              v-for='(value,i) in listData' 
+              :key='i'>
             <div class="msg_info">
               <!-- 图片 和 应用名称 -->
               <div class="app_info">
@@ -24,7 +27,8 @@
           </div>
         </div>
       </div>     
-    </div>   
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -48,7 +52,7 @@ export default {
       this.serachVal = val;
       this.getList();
     },
-    //获取销售订单数据
+    //获取应用消息数据
     getList() {
       getMsgList().then(({tableContent}) => {     
         tableContent.forEach(item => {
@@ -60,6 +64,10 @@ export default {
         })
       })
     },
+    // 前往应用消息列表
+    goMsglist(){
+      this.$router.push({ path : '/notice/msglist'})
+    }
   },
   filters:{
     handleCrt(val){
