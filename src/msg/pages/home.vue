@@ -124,14 +124,14 @@ export default {
   .vux-badge{
     position: absolute;
     right:0;
-    top:0;
+    top:-.1rem;
   }
 }
 .each_msg {
   width: 95%;
   padding: .1rem;
   background: #fff;
-  margin: 0 auto .1rem;
+  margin: .1rem auto;
   box-sizing: border-box;
   border-radius: .08rem;
   box-shadow: 0 2px 10px #e8e8e8;
