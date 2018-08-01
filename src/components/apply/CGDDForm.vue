@@ -293,8 +293,8 @@ export default {
                 ...this.dealer,
                 order: {
                   dealerDebit: this.info.dealerCode,
-                  // drDealerLabel : this.info.dealerLabelName || '客户',
-                  drAccountSub : this.info.dealerSubclass || '直营店',
+                  drDealerLabel : this.info.dealerLabelName || '渠道商',
+                  // drAccountSub : this.info.dealerSubclass || '直营店',
                   dataSet
                 }
               }),

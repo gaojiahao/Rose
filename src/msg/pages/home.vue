@@ -79,8 +79,20 @@ export default {
       minutes=Math.floor(leave2/(60)),
       //计算相差秒数
       leave3=leave2 - (minutes*60) ,     //计算分钟数后剩余的毫秒数
-      seconds=Math.round(leave3);
-      return hours<24 ? `${hours}时${minutes}分${seconds}秒` : `${val.crtTime.split(' ')[0]} ${hours}小时前`;
+      seconds=Math.round(leave3),
+      backTime;
+      if(hours>0){
+        backTime = `${hours}小时前`;
+      }
+      else{
+        if(minutes>0){
+          backTime = `${minutes}分钟前`;
+        }
+        else{
+          backTime = `${seconds}秒前`;
+        }
+      }
+      return hours<24 ? backTime : `${val.crtTime.split(' ')[0]} ${hours}小时前`;
       
     }
   },
@@ -106,11 +118,11 @@ export default {
   width:100%;
   height: calc(100% - .5rem - .49rem);
 }
-.msg_list{
+.each_msg{
   position: relative;
   .vux-badge{
     position: absolute;
-    right:8px;
+    right:0;
     top:0;
   }
 }
