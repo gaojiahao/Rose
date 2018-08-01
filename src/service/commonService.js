@@ -32,6 +32,19 @@ export let saveAndCommitTask = (data = {}) => {
     return errorHandler(e);
   });
 };
+
+// TODO 保存(没有工作流)
+export let submitAndCalc = (data = {}) => {
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/formAPI/submitAndCalc',
+    data: data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export let commitTask  = ( data={} )=>{
   return $axios.ajax({
     type: 'POST',
@@ -158,6 +171,7 @@ export let getDictByValue = (value = '', data = {}) => {
 export default {
   saveAndStartWf,
   saveAndCommitTask,
+  submitAndCalc,
   getBaseInfoData,
   getList,
   upload,

@@ -10,15 +10,27 @@
         </div>
         <div v-else>
           <div class="user_info">
-            <span class="user_name">{{customInfo.name}}</span>
-            <span class="user_tel">{{customInfo.phone}}</span>
+            <span class="user_name">{{customInfo.creatorName}}</span>
+            <span class="user_tel">{{customInfo.dealerMobilePhone}}</span>
           </div>
           <div class="cp_info">
-            <p class="cp_name">{{customInfo.company}}</p>
-            <p class="cp_ads">{{customInfo.address}}</p>
+            <p class="cp_name">{{customInfo.dealerName}}</p>
+            <p class="cp_ads">{{customInfo.province + customInfo.city + customInfo.county + customInfo.address}}</p>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
         </div>
+      </div>
+      <!-- 结算方式 -->
+      <pop-single-select title="结算方式" :data="transMode" :value="formData.drDealerPaymentTerm"
+                         v-model="formData.drDealerPaymentTerm"></pop-single-select>
+      <!-- 物流条款 -->
+      <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
+                         v-model="formData.drDealerLogisticsTerms"></pop-single-select>
+      <!-- 有效期至 -->
+      <div class="or_ads mg_auto box_sd" @click="clickDateSelect">
+        <p class="title">有效期至</p>
+        <p class="mode">{{this.formData.validUntil || '请选择有效期'}}</p>
+        <span class="iconfont icon-gengduo"></span>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
@@ -113,22 +125,30 @@
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">提交</div>
     </div>
-    <loading :show="showLoading"></loading>
   </div>
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton} from 'vux'
+  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
   import PopMatterList from 'components/PopMatterList'
   import PopDealerList from 'components/PopDealerList'
-  import {saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
-  import Loading from 'components/Loading'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
+  import PopSingleSelect from 'components/PopSingleSelect'
 
   export default {
     mixins: [ApplyCommon],
     components: {
-      Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList, Loading, PopDealerList,
+      Icon,
+      Cell,
+      Group,
+      XInput,
+      Swipeout,
+      SwipeoutItem,
+      SwipeoutButton,
+      PopMatterList,
+      PopDealerList,
+      PopSingleSelect,
     },
     data() {
       return {
@@ -136,9 +156,15 @@
         showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
         customInfo: null,
-        formData: {},
+        transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
+        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
+        formData: {
+          biComment: '',
+          drDealerPaymentTerm: '现付', // 结算方式
+          drDealerLogisticsTerms: '上门', // 物流条款
+          validUntil: '', // 有效期
+        },
         priceMap: {},
-        showLoading: false,
         showDealerPop: false,
       }
     },
@@ -162,13 +188,7 @@
       // TODO 选中往来项
       selDealer(val) {
         let [sels] = JSON.parse(val);
-        this.customInfo = {
-          name: sels.creatorName,
-          mobilePhone: sels.dealerMobilePhone,
-          phone: sels.dealerMobilePhone || sels.dealerPhone,
-          company: sels.dealerName,
-          address: sels.province + sels.city + sels.county + sels.address,
-        };
+        this.customInfo = sels;
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -191,7 +211,20 @@
       save() {
         let warn = '';
         let dataSet = [];
-        if (!this.matterList.length) {
+        let validateMap = [
+          {
+            key: 'customInfo',
+            message: '往来信息'
+          },
+        ];
+        validateMap.every(item => {
+          if (!this[item.key]) {
+            warn = `请选择${item.message}`;
+            return false
+          }
+          return true
+        });
+        if (!warn && !this.matterList.length) {
           warn = '请选择物料';
         }
         this.matterList.every(item => {
@@ -200,8 +233,10 @@
             return false
           }
           dataSet.push({
+            inventoryName_transObjCode: item.inventoryName,
             transObjCode: item.inventoryCode,
-            comment: '',
+            comment: item.comment || null,
+            priceType: item.priceType || null,
             price: item.price
           });
           return true
@@ -216,15 +251,19 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            // this.showLoading = true;
-            let operation = saveAndStartWf;
+            let operation = submitAndCalc;
             let submitData = {
               listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
               biComment: '',
               formData: JSON.stringify({
                 ...this.formData,
-                dealerDebitContactInformation: this.customInfo ? this.customInfo.mobilePhone : '',
+                creator: this.transCode ? this.formData.handler : '',
+                modifer: this.transCode ? this.formData.handler : '',
+                dealerDebitContactPersonName: this.customInfo.creatorName || '',
+                dealerDebitContactInformation: this.customInfo.mobilePhone || '',
                 order: {
+                  dealerDebit: this.customInfo.dealerCode || '',
+                  drDealerLabel: this.customInfo.dealerLabelName || '客户',
                   dataSet
                 }
               }),
@@ -233,12 +272,23 @@
             if (this.transCode) {
               operation = saveAndCommitTask
             }
+            console.log(submitData)
             this.saveData(operation, submitData);
           }
         });
       },
       // TODO 获取详情
       getFormData() {
+      },
+      clickDateSelect() {
+        this.$vux.datetime.show({
+          confirmText: '确定',
+          cancelText: '取消',
+          value: this.formData.validUntil,
+          onConfirm: (value) => {
+            this.formData.validUntil = value;
+          }
+        })
       },
     },
     created() {
