@@ -2,7 +2,7 @@
   <div id="app">
     <keep-alive>
       <!-- 页面 -->
-      <router-view v-if="$route.meta.keepAlive"></router-view> 
+      <router-view v-if="$route.meta.keepAlive"></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
 
@@ -12,7 +12,7 @@
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
       </router-link>
-    </nav>   
+    </nav>
   </div>
 </template>
 
@@ -56,7 +56,7 @@
   .inPage {
     width: 100%;
     height: 100%;
-  } 
+  }
   .pages {
     top: 0;
     left: 0;
@@ -75,7 +75,8 @@
     width: 100%;
     display: flex;
     height: .49rem;
-    position: absolute!important;    
+    position: absolute!important;
+    overflow: hidden;
     .tab {
       flex: 1;
       // icon图标
