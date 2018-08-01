@@ -31,6 +31,10 @@
         <p class="title">结算方式</p>
         <p class="mode">{{orderInfo.crDealerPaymentTerm || '无'}}</p>
       </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">创建时间</p>
+        <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
+      </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <div class="title">物料列表</div>

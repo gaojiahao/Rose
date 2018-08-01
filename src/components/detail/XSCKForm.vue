@@ -33,9 +33,13 @@
         <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
       </div>
       <!-- 物流条款 -->
-      <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">
+      <div class="trade_mode mg_auto box_sd">
         <p class="title">物流条款</p>
         <p class="mode">{{orderInfo.drDealerLogisticsTerms || '无'}}</p>
+      </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">创建时间</p>
+        <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
