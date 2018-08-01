@@ -68,20 +68,19 @@
       Tab, Icon, TabItem, LoadMore, searchIcon, Spinner, RScroll,
     },
     methods: {
-      goDetail(code) {
+      goDetail(transCode) {
+        let {code} = this.$route.params;
         this.$router.push({
-          path: '/list/detail',
+          path: `/list/${code}/detail`,
           query: {
-            transCode: code
+            transCode
           }
         })
       },
       goEdit() {
+        let {code} = this.$route.params;
         this.$router.push({
-          path: '/list/fillform',
-          query: {
-            code: 'XSBJ'
-          }
+          path: `/list/${code}/fillform`,
         })
       },
       // TODO 重置列表条件
