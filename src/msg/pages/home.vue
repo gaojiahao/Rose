@@ -84,13 +84,8 @@ export default {
       if(hours>0){
         backTime = `${hours}小时前`;
       }
-      else{
-        if(minutes>0){
-          backTime = `${minutes}分钟前`;
-        }
-        else{
-          backTime = `${seconds}秒前`;
-        }
+      else{       
+        backTime = `${minutes}分钟前`;        
       }
       return hours<24 ? backTime : `${val.crtTime.split(' ')[0]} ${hours}小时前`;
       

@@ -8,10 +8,19 @@ let errorHandler = (e) => {
   return Promise.reject(e)
 };
 
-// TODO 消息列表
+// TODO 消息代办列表
 export let getMsgList = (data = {}) => {
     return $axios.ajax({
         url: '/H_roleplay-si/ds/getMyAgenda',
+        data
+    }).catch(e => {
+        return errorHandler(e);
+    });
+}
+// TODO 所有消息列表
+export let getAllMsgList = (data = {}) => {
+    return $axios.ajax({
+        url: '/H_roleplay-si/ds/getMyTasks',
         data
     }).catch(e => {
         return errorHandler(e);
