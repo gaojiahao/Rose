@@ -128,7 +128,7 @@ export default {
         if(filter){
           data.filter = JSON.stringify(filter);
         }
-        (async()=>{
+        return (async()=>{
           await dealerService.getId(this.uniqueId).then( data=>{
             if(data.length > 0){
               this.id = data[0].id;

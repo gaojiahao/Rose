@@ -117,6 +117,7 @@ export default {
 .wrapper{
   width:100%;
   height: calc(100% - .5rem - .49rem);
+  overflow: hidden;
 }
 .each_msg{
   position: relative;
