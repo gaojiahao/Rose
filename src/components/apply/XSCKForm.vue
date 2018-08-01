@@ -379,7 +379,7 @@
                 comment: "", // 说明
               };
               if (this.transCode) {
-                oItem.tdId = item.tdId;
+                oItem.tdId = item.tdId || '';
               }
               dataSet.push(oItem);
             });
@@ -391,7 +391,7 @@
               containerOutWarehouseManager: null,
               outPut: {
                 dealerDebit: this.dealerInfo.dealerCode, // 往来编码
-                drAccountSub: this.dealerInfo.dealerLabelName || '客户', // 往来页签
+                drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 往来页签
                 containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
                 dataSet
               }

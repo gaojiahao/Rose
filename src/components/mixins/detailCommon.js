@@ -4,18 +4,29 @@ import {commitTask} from 'service/commonService.js'
 export default {
   data() {
     return {
+      transCode: '',
       comment: '',//审批意见
       taskId: '',
       userId: '',
       userName: '',
       cancelStatus: false,
       cancelStatus1: false,
-      isMyTask: 0,
+      isMyTask: false,
       nodeName: '',
       formViewUniqueId: '',
+      fullWL: [], // 完整工作流
+      workFlowInfo: {},
     }
   },
   methods: {
+    // TODO 生成随机ID
+    randomID() {
+      function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      }
+
+      return (S4() + S4() + S4());
+    },
     //同意
     taskAgree() {
       this.$vux.confirm.prompt('', {
@@ -28,7 +39,7 @@ export default {
           let submitData = {
             taskId: this.taskId,
             taskData: JSON.stringify({result: 1, transCode: this.transCode, comment: this.comment})
-          }
+          };
           commitTask(submitData).then(data => {
             let {success = false, message = '提交失败'} = data;
             if (success) {
@@ -129,7 +140,6 @@ export default {
         // if(tableContent[0].isFirstNode === 0 && tableContent[0].startUserId === this.userId && !tableContent[1].status){
         //   this.cancelStatus = true;
         // }
-        // 赋值 简化版工作流 只取数据的最后两条
 
         for (let item of tableContent) {
           if (item.isFirstNode === 0 && item.startUserId === this.userId) {
@@ -138,26 +148,58 @@ export default {
           if (item.isFirstNode === 1 && !item.status) {
             this.cancelStatus1 = true
           }
-          // 去除名字中的空格
-          item.userName = item.userName.replace(/\s*/g, "");
-          switch (item.status) {
-            case '同意':
-              item.dyClass = 'agree_c';
-              break;
-            case '终止':
-              item.dyClass = 'reject_c';
-              break;
-          }
         }
-        this.simpleWL = tableContent.slice(-2);
       })
     },
+    // TODO 获取当前用户
     getCurrentUser() {
       return currentUser().then(({userId, nickname, userCode}) => {
         this.userId = `${userId}`;
         this.userName = `${nickname}-${userCode}`;
       })
-    }
+    },
+    // TODO 获取listid
+    getListId() {
+      return getListId(this.transCode).then(data => {
+        this.formViewUniqueId = data[0].uniqueId;
+      });
+    },
+    // TODO 判断是否为我的任务
+    isMyflow() {
+      return isMyflow({
+        _dc: this.randomID(),
+        transCode: this.transCode
+      }).then(({tableContent = []}) => {
+        let [data = {}] = tableContent;
+        let {isMyTask = 0, actions, taskId, viewId} = data;
+        this.taskId = taskId;
+        this.isMyTask = isMyTask === 1;
+        if (!this.isMyTask) {
+          return
+        }
+        this.nodeName = actions;
+        this.formViewUniqueId = viewId;
+      });
+    },
+    workFlowInfoHandler() {
+      let orderInfo = {...this.orderInfo};
+      this.workFlowInfo = {
+        biStatus: orderInfo.biStatus,
+        transCode: orderInfo.transCode,
+      };
+      switch (orderInfo.biStatus) {
+        case '进行中':
+          let newkey = 'dyClass',
+            cokey = 'coClass';
+          this.workFlowInfo[newkey] = 'doing_work';
+          this.workFlowInfo[cokey] = 'doing_code';
+          break;
+        case '已失效':
+          newkey = 'dyClass';
+          this.workFlowInfo[newkey] = 'invalid_work';
+          break;
+      }
+    },
   },
   created() {
     (async () => {
@@ -171,24 +213,9 @@ export default {
       this.transCode = transCode;
       //查询当前用户的userId
       await this.getCurrentUser();
-      await getListId(transCode).then(data => {
-        this.formViewUniqueId = data[0].uniqueId;
-      });
+      await this.getListId();
       // 流程节点是否与<我>有关
-      await isMyflow({
-        _dc: this.randomID(),
-        transCode
-      }).then(({tableContent}) => {
-        if (tableContent.length > 0) {
-          this.taskId = tableContent[0].taskId;
-          if (tableContent[0].isMyTask === 1) {
-            let {isMyTask = 0, actions, taskId, viewId} = tableContent[0];
-            this.isMyTask = isMyTask === 1;
-            this.nodeName = actions;
-            this.formViewUniqueId = viewId;
-          }
-        }
-      });
+      await this.isMyflow();
       // 获取表单表单详情
       this.getOrderList(transCode);
       this.getWorkFlow(transCode);

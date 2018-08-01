@@ -344,7 +344,7 @@
                 comment: "", // 说明
               };
               if (this.transCode) {
-                oItem.tdId = item.tdId;
+                oItem.tdId = item.tdId || '';
               }
               dataSet.push(oItem);
             });

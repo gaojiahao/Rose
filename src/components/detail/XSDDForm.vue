@@ -2,58 +2,8 @@
     <div class="pages">
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
             <!-- 工作流 -->
-            <div class="work_flow mg_auto box_sd" @click="workFlowPop = true" :class="{hidden : simpleWL.length<=0}">
-              <!-- 右箭头 -->
-              <x-icon class="r_arrow" type="ios-arrow-down" size="30"></x-icon>
-              <!-- 表单状态 及 编码 -->
-              <div class="work_info">
-                <!-- 状态 -->
-                <span class="work_status"
-                      :class="orderInfo.dyClass">
-                  {{orderInfo.biStatus}}
-                </span>
-                <!-- 编码 -->
-                <span class="work_code"
-                      :class="orderInfo.coClass">
-                  {{orderInfo.transCode.replace(/_/g,'')}}
-                </span>
-              </div>
-              <!-- 简化版工作流 -->
-              <div class="flow_list">
-                <div class="each_msg vux-1px-b"
-                    v-for="(item, index) in simpleWL"
-                    :key=index>
-                    <!-- 头像 -->
-                  <div class="user_avatar">
-                    <img :src='index % 2 ? defaulImg2: defaulImg' alt="avatar">
-                  </div>
-                  <!-- 操作信息 -->
-                  <div class="handle_info">
-                    <div class="handle_name">
-                      <!-- 操作动作 -->
-                      <span>{{item.nodeName}}</span>
-                      <!-- 操作状态 A(没有返回状态) -->
-                      <span class="status"
-                            v-if="!item.status && index % 2">
-                        {{orderInfo.biStatus}}
-                      </span>
-                      <!-- 操作状态 B(有返回状态) -->
-                      <span class="status"
-                            :class=item.dyClass
-                            v-else-if="item.status && index % 2">
-                        {{item.status}}
-                      </span>
-                    </div>
-                    <!-- 流程节点 用户名 -->
-                    <div class="user_name">
-                      {{item.userName}}
-                    </div>
-                    <!-- 备注 -->
-                    <div class="remark">备注: {{item.message || '无'}}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                     :no-status="orderInfo.biStatus"></work-flow>
             <!-- 用户地址和基本信息-->
             <div class="or_ads mg_auto box_sd">
               <div class="user_info">
@@ -140,37 +90,23 @@
               <span class="reject" v-if='nodeName.indexOf("disagree")>=0 && (!cancelStatus ||!cancelStatus1)' @click="reject">拒绝</span>
               <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
             </div>
-            <!-- 完整工作流 -->
-            <work-flow
-              :popupShow="workFlowPop"
-              v-model="workFlowPop"
-              :crtTime="orderInfo.crtTime"
-              :noStatus="orderInfo.biStatus"></work-flow>
         </div>
     </div>
 </template>
 
 <script>
 import { numberComma } from 'vux'
-import { isMyflow, getSOList, getWorkFlow,getListId } from 'service/detailService.js'
-import {saveAndCommitTask,commitTask} from 'service/commonService.js'
+import { getSOList, } from 'service/detailService.js'
 import common from 'components/mixins/detailCommon.js'
 import workFlow from 'components/workFlow.vue'
 export default {
   data(){
     return{
       count : 0,          // 金额合计
-      fullWL: [],         // 完整版工作流
-      simpleWL: [],       // 简化版工作流(只包含最后两个)
       orderInfo: {},      // 表单内容
-      nodeName:'',        // 操作名称
-      isMyTask:'',        // 是否与我有关
       formViewUniqueId : '',
       defaulImg: require('assets/avatar.png'),   // 默认图片1
       defaulImg2: require('assets/io.jpg'),       // 默认图片2
-      workFlowPop : false,
-      submitInfo : {},
-      transCode :'',
     }
   },
   components:{
@@ -199,13 +135,6 @@ export default {
     cancel(){
       this.taskCancel();
     },
-    //随机ID
-    randomID() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return ( S4() + S4() + S4() );
-    },
     // 获取详情
     async getOrderList(transCode = ''){
         await getSOList({
@@ -227,22 +156,8 @@ export default {
             val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
           }
           this.count = this.count/100;
-          // 动态添加class
-          for(let key in data.formData){
-            switch (data.formData[key]){
-              case '进行中':
-                let newkey = 'dyClass',
-                    cokey = 'coClass';
-                data.formData[newkey] = 'doing_work';
-                data.formData[cokey] = 'doing_code';
-                break;
-              case '已失效':
-                newkey = 'dyClass';
-                data.formData[newkey] = 'invalid_work';
-                break;
-            }
-          }
           this.orderInfo = data.formData;
+          this.workFlowInfoHandler();
         })
 
     },
