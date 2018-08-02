@@ -23,7 +23,7 @@
         <!-- 上个节点审批信息 -->
         <div class="handle_info vux-1px-b">
           <div class="handle_avatar">
-            <img src="../../assets/avatar.png" alt="avatar">
+            <img src="../../assets/ava03.png" alt="avatar">
           </div>
           <div class="info">
             <div class="handle_part">
@@ -42,42 +42,6 @@
           <div class="info">{{item.nodeName}}</div>
         </div>
       </div>
-      <!-- <div class="todo_msg">
-        <div class="msg_top"> -->
-          <!-- 表单状态 及 编码 -->
-          <!-- <div class="work_info"> -->
-            <!-- 状态 -->
-            <!-- <span class="work_status doing_work">待处理</span> -->
-            <!-- 编码 -->
-            <!-- <span class="work_code doing_code">SO18080005</span> -->
-          <!-- </div> -->
-          <!-- 时间 -->
-          <!-- <div class="time">
-            两个小时前
-          </div>
-        </div> -->
-        <!-- 上个节点审批信息 -->
-        <!-- <div class="handle_info vux-1px-b">
-          <div class="handle_avatar">
-            <img src="../../assets/io.jpg" alt="avatar">
-          </div>
-          <div class="info">
-            <div class="handle_part">
-              <span class="name">瑞福登-002</span>
-              <span class="handle">进行了审批</span>
-              <span class="tips">[上个节点]</span>
-            </div>
-            <div class="handle_result">
-              审批结果：<span class="result" style="background:#c93d1b">不同意</span>
-            </div>
-          </div>
-        </div> -->
-        <!-- 用户需要进行的操作 -->
-        <!-- <div class="user_handle">
-          <div class="tips">此单你需要进行:</div>
-          <div class="info">重新提交</div>
-        </div> -->
-      <!-- </div> -->
     </r-scroll>
     <loading-form :show='showLoadding'></loading-form>
   </div>

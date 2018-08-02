@@ -1,33 +1,35 @@
 <template>
   <div class="inPage">
-    <!-- 搜索框 -->
-    <search @search='searchList'></search>
-    <div class='wrapper' ref="bScroll">
-      <div class='content'>
-        <div class="msg_list" >
-          <div class="each_msg"
-              @click="goMsglist(value[0])" 
-              v-for='(value,i) in listData' 
-              :key='i'>
-            <div class="msg_info">
-              <!-- 图片 和 应用名称 -->
-              <div class="app_info">
-                <span class="app_img">
-                  <img :src='`/dist/${value[0].icon}`' alt="appImg">
-                </span>
-                <span class="app_name">{{i}}</span>
+    <template v-if="listData">
+      <!-- 搜索框 -->
+      <search @search='searchList'></search>
+      <div class='wrapper' ref="bScroll">
+        <div class='content'>
+          <div class="msg_list" >
+            <div class="each_msg"
+                @click="goMsglist(value[0])" 
+                v-for='(value,i) in listData' 
+                :key='i'>
+              <div class="msg_info">
+                <!-- 图片 和 应用名称 -->
+                <div class="app_info">
+                  <span class="app_img">
+                    <img :src='`/dist/${value[0].icon}`' alt="appImg">
+                  </span>
+                  <span class="app_name">{{i}}</span>
+                </div>
+                <!-- 时间 -->
+                <div class="msg_time">{{value[0] | handleCrt }}</div>
+                <badge :text="value.length"></badge>
               </div>
-              <!-- 时间 -->
-              <div class="msg_time">{{value[0] | handleCrt }}</div>
-              <badge :text="value.length"></badge>
-            </div>
-            <div class="recv_msg">
-              您收到{{value.length>1 ? '多' : '一'}}条新的消息
+              <div class="recv_msg">
+                您收到{{value.length>1 ? '多' : '一'}}条新的消息
+              </div>
             </div>
           </div>
-        </div>
-      </div>     
-    </div>
+        </div>     
+      </div>
+    </template>
     <router-view></router-view>
   </div>
 </template>
@@ -126,7 +128,7 @@ export default {
   width: 95%;
   padding: .1rem;
   background: #fff;
-  margin: .1rem auto;
+  margin: .1rem auto .2rem;
   box-sizing: border-box;
   border-radius: .08rem;
   box-shadow: 0 2px 10px #e8e8e8;
