@@ -132,4 +132,5 @@
 </script>
 
 <style lang='scss' scoped>
+  @import "./../scss/bizList";
 </style>
