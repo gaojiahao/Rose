@@ -85,27 +85,34 @@ export default {
               if(item.text === '销售'){
                 for(let ite of item.children){
                   //映射表 赋值
-                  ite.code = businessMap[ite.text]
-                  this.XSarray.push(ite);
+                  if(businessMap[ite.text]){
+                    ite.code = businessMap[ite.text]
+                    this.XSarray.push(ite);
+                  }
                 }
               }
               // 获取 采购应用
               if(item.text === '采购'){
                 for(let val of item.children){
-                  val.code = businessMap[val.text]
-                  this.PURarray.push(val);
+                  if(businessMap[val.text]){
+                    val.code = businessMap[val.text]
+                    this.PURarray.push(val);
+                  }
                 }
               }
               // 获取 调拨应用
               if(item.text === '调拨'){
                 for(let val of item.children){
-                  val.code = businessMap[val.text]
-                  this.ACAarray.push(val);
+                  if(businessMap[val.text]){
+                    val.code = businessMap[val.text]
+                    this.ACAarray.push(val);
+                  }
                 }
               }
+              // 获取 财务应用
               if(item.text === '财务'){
                 for(let val of item.children){
-                  if(val.text === '费用报销'){
+                  if(businessMap[val.text]){
                     val.code = businessMap[val.text]
                     this.ACAarray.push(val);
                   }
