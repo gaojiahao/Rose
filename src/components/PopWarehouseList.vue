@@ -34,6 +34,7 @@
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
+                    :newAdd="newAdd"
                     @on-pulling-down="onPullingDown" ref="bScroll">
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
@@ -108,6 +109,7 @@
           click: true,
           pullUpLoad: true,
         },
+        newAdd:false
       }
     },
     watch: {
@@ -181,6 +183,9 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          if(tableContent.length == 0){
+            this.newAdd = true;
+          }
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })

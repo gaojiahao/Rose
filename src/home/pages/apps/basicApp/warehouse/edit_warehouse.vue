@@ -386,7 +386,12 @@ export default {
                 AlertModule.show({
                   content:data.message,
                   onHide(){
-                    that.$router.push('/warehouse');
+                    if(that.$route.query.add == 1){
+                      that.$router.go(-1);
+                      sessionStorage.setItem('EDIT_WAREHOUSE_TRANSCODE',JSON.stringify({transCode:data.transCode}));
+                    }else{
+                      that.$router.push('/warehouse');
+                    }
                   }
                 })
               }   

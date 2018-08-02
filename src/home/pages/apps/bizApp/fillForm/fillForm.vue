@@ -18,7 +18,7 @@ export default {
       currentComponent : '',
       showLoadding : true,
       transCode :'',
-      submitSuccess :false
+      submitSuccess :false,
     }
   },
   components:{
