@@ -23,7 +23,7 @@
                   </div>
                   <div class="each_mater_wrapper" slot="content">
                     <div class="mater_img">
-                      <img :src="item.inventoryPic || item.inventoryPic_transObjCode" alt="mater_img" @error="getDefaultImg(item)">
+                      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                     </div>
                     <div class="mater_main">
                       <!-- 物料名称 -->
@@ -268,7 +268,7 @@ export default {
         this.biReferenceId = data.biReferenceId;
         let {formData} = data;
         formData.order.dataSet.map(item=>{
-          item.inventoryPic_transObjCode = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}` : this.getDefaultImg();
+          item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}` : this.getDefaultImg();
           this.count += item.price*item.tdQty*100
         })
         this.count = this.count/100;
