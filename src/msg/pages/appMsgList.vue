@@ -264,7 +264,7 @@ export default {
       else{        
         backTime = `${minutes}分钟前`;
       }
-      return hours<24 ? backTime : `${val.crtTime.split(' ')[0]} ${hours}小时前`;
+      return hours<24 ? backTime : `${val.crtTime.split(' ')[0]}`;
       
     }
   },
