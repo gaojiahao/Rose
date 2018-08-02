@@ -1,15 +1,14 @@
 <template>
   <!-- 审批操作 -->
-  <div class="handle_btn" v-if="show || hasRevoke">
-    <span class="reject" @click="reject" v-if="show && actions.includes('disagree')">拒绝</span>
-    <span class="agree" @click="agree" v-if="show && actions.includes('agreement')">同意</span>
-    <span class="reject" @click="revoke" v-if="hasRevoke">撤回</span>
+  <div class="handle_btn" v-if="!!actions.length">
+    <span class="reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
+    <span class="reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
+    <span class="agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
   </div>
 </template>
 
 <script>
-  import {isMyflow} from 'service/detailService'
-  import {saveAndCommitTask, commitTask} from 'service/commonService'
+  import {commitTask} from 'service/commonService'
 
   export default {
     name: "RAction",
@@ -18,32 +17,23 @@
         type: String,
         default: ''
       },
-      hasRevoke: {
-        type: Boolean,
-        default: false
-      }
+      taskId: {
+        type: String,
+        default: ''
+      },
+      actions: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
     },
     data() {
       return {
         show: true,
-        actions: [],
-        taskId: ''
       }
     },
     methods: {
-      // 流程节点是否与<我>有关
-      isMyflow() {
-        return isMyflow({
-          _dc: Date.now(),
-          transCode: this.code,
-        }).then(({tableContent = []}) => {
-          let [action = {}] = tableContent;
-          let {actions = '', isMyTask = 0, taskId} = action;
-          this.show = isMyTask === 1;
-          this.actions = actions.split(',');
-          this.taskId = taskId;
-        })
-      },
       // TODO 拒绝
       reject() {
         this.$vux.confirm.prompt('', {
@@ -58,10 +48,6 @@
               successMsg: '拒绝成功',
               value
             });
-            // this.$emit('on-reject', JSON.stringify({
-            //   taskId: this.taskId,
-            //   comment: value,
-            // }));
             this.$vux.confirm.hide();
           }
         });
@@ -76,33 +62,8 @@
               successMsg: '同意成功',
               value
             });
-            // this.$emit('on-agree', JSON.stringify({
-            //   taskId: this.taskId,
-            //   comment: value,
-            // }));
           }
         });
-      },
-      // TODO 终止
-      stop() {
-        this.$vux.confirm.prompt('', {
-          title: '终止原因',
-          closeOnConfirm: false,
-          onConfirm: (value) => {
-            if (!value) {
-              return false;
-            }
-            this.$emit('on-stop', JSON.stringify({
-              taskId: this.taskId,
-              comment: value,
-            }));
-            this.$vux.confirm.hide();
-          }
-        });
-      },
-      // TODO 重新提交
-      resubmit() {
-        this.$emit('on-resubmit', this.taskId);
       },
       // TODO 撤回
       revoke() {
@@ -160,7 +121,6 @@
       },
     },
     created() {
-      this.isMyflow();
     }
   }
 </script>

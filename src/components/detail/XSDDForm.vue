@@ -89,11 +89,7 @@
                 </div>
             </div>
             <!-- 审批操作 -->
-            <div class="handle_btn" v-if="isMyTask || (cancelStatus && cancelStatus1)">
-              <span class='reject' @click="cancel()" v-if='cancelStatus && cancelStatus1'>撤回</span>
-              <span class="reject" v-if='nodeName.indexOf("disagree")>=0 && (!cancelStatus ||!cancelStatus1)' @click="reject">拒绝</span>
-              <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="agree">同意</span>
-            </div>
+          <r-action :code="transCode" :task-id="taskId" :actions="actions"></r-action>
         </div>
     </div>
 </template>
@@ -103,6 +99,8 @@ import { numberComma } from 'vux'
 import { getSOList, } from 'service/detailService.js'
 import common from 'components/mixins/detailCommon.js'
 import workFlow from 'components/workFlow.vue'
+import RAction from 'components/RAction'
+
 export default {
   data(){
     return{
@@ -114,7 +112,7 @@ export default {
     }
   },
   components:{
-    workFlow
+    workFlow, RAction,
   },
   filters:{
     numberComma
@@ -128,16 +126,6 @@ export default {
         item.inventoryPic = url;
       }
       return url
-    },
-    reject(){
-      this.taskReject();
-
-    },
-    agree(){
-      this.taskAgree();
-    },
-    cancel(){
-      this.taskCancel();
     },
     // 获取详情
     async getOrderList(transCode = ''){

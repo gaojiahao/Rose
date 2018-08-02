@@ -12,10 +12,12 @@ export default {
       cancelStatus: false,
       cancelStatus1: false,
       isMyTask: false,
-      nodeName: '',
       formViewUniqueId: '',
       fullWL: [], // 完整工作流
       workFlowInfo: {},
+      actions: [],
+      isMine: false, // 是否为我创建
+      noOperation: true, // 是否审批过
     }
   },
   methods: {
@@ -24,132 +26,7 @@ export default {
       function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
-
       return (S4() + S4() + S4());
-    },
-    //同意
-    taskAgree() {
-      this.$vux.confirm.prompt('', {
-        title: '审批意见',
-        onConfirm: (value) => {
-          if (value) {
-            console.log(value);
-            this.comment = value;
-          }
-          let submitData = {
-            taskId: this.taskId,
-            taskData: JSON.stringify({result: 1, transCode: this.transCode, comment: this.comment})
-          };
-          commitTask(submitData).then(data => {
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '提交成功';
-              this.$emit('change', true)
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  this.$router.go(-1);
-                }
-              }
-            });
-          })
-        }
-      })
-    },
-    //拒绝
-    taskReject() {
-      this.$vux.confirm.prompt('', {
-        title: '审批意见',
-        onConfirm: (value) => {
-          if (value) {
-            this.comment = value;
-          }
-          let submitData = {
-            taskId: this.taskId,
-            taskData: JSON.stringify({result: 0, transCode: this.transCode, comment: this.comment})
-          };
-          commitTask(submitData).then(data => {
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '拒绝成功';
-              this.$emit('change', true);
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  this.$router.go(-1);
-                }
-              }
-            });
-          })
-        }
-      })
-    },
-    //撤回
-    taskCancel() {
-      let {code} = this.$route.params;
-      this.$vux.confirm.prompt('', {
-        title: '撤回原因',
-        onConfirm: (value) => {
-          if (value) {
-            this.comment = value;
-          }
-          let submitData = {
-            taskId: this.taskId,
-            taskData: JSON.stringify({
-              result: 2,
-              transCode: this.transCode,
-              comment: this.comment
-            })
-          }
-          commitTask(submitData).then(data => {
-            let {success = false, message = '提交失败'} = data;
-            if (success) {
-              message = '撤回成功';
-              this.$emit('change', true);
-            }
-            this.$vux.alert.show({
-              content: message,
-              onHide: () => {
-                if (success) {
-                  this.$router.replace({
-                    path: `/list/${code}/fillform`,
-                    query: {
-                      transCode: this.transCode
-                    }
-                  })
-                }
-              }
-            });
-          })
-        }
-      })
-    },
-    // 获取工作流
-    getWorkFlow(transCode = '') {
-      getWorkFlow({
-        _dc: this.randomID(),
-        transCode
-      }).then(({tableContent}) => {
-        // 赋值 完整版工作流
-        this.fullWL = tableContent;
-        // console.log(this.orderInfo.biStatus);
-        // if(tableContent[0].isFirstNode === 0 && tableContent[0].startUserId === this.userId && !tableContent[1].status){
-        //   this.cancelStatus = true;
-        // }
-
-        for (let item of tableContent) {
-          if (item.isFirstNode === 0 && item.startUserId === this.userId) {
-            this.cancelStatus = true;
-          }
-          if (item.isFirstNode === 1 && !item.status) {
-            this.cancelStatus1 = true
-          }
-        }
-      })
     },
     // TODO 获取当前用户
     getCurrentUser() {
@@ -169,18 +46,16 @@ export default {
       return isMyflow({
         _dc: this.randomID(),
         transCode: this.transCode
-      }).then(({tableContent = []}) => {
-        let [data = {}] = tableContent;
-        let {isMyTask = 0, actions, taskId, viewId} = data;
-        this.taskId = taskId;
-        this.isMyTask = isMyTask === 1;
-        if (!this.isMyTask) {
-          return
-        }
-        this.nodeName = actions;
-        this.formViewUniqueId = viewId;
       });
     },
+    // 获取工作流
+    getWorkFlow() {
+      return getWorkFlow({
+        _dc: this.randomID(),
+        transCode: this.transCode,
+      })
+    },
+    // TODO 处理简易版工作流数据
     workFlowInfoHandler() {
       let orderInfo = {...this.orderInfo};
       this.workFlowInfo = {
@@ -200,6 +75,48 @@ export default {
           break;
       }
     },
+    // TODO 处理工作流，判断审批按钮
+    getFlowAndActions() {
+      return Promise.all([this.isMyflow(), this.getWorkFlow()]).then(([data = {}, data2 = {}]) => {
+        let myFlow = data.tableContent || [];
+        let workFlow = data2.tableContent || [];
+        let [flow = {}] = myFlow;
+        let {isMyTask = 0, actions = '', taskId, viewId} = flow;
+
+        let [createFlow = {}] = workFlow;
+        let operationList = ['同意', '不同意']; // 操作列表的status
+
+        // 赋值 完整版工作流
+        this.fullWL = workFlow;
+
+        this.actions = actions.split(',');
+        // 判断是否为我创建的任务
+        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
+          this.isMine = true;
+          // 删除拒绝，加入撤回
+          this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
+        }
+
+        // 判断是否有审批操作
+        workFlow.filter(item => item.isFirstNode === 1).every(item => {
+          // 经过审批则不能撤回
+          if (operationList.includes(item.status)) {
+            this.noOperation = false;
+            return false
+          }
+          return true
+        });
+
+        this.taskId = taskId;
+        this.isMyTask = isMyTask === 1;
+        // 不为我审批
+        if (!this.isMyTask) {
+          this.actions = this.isMine && this.noOperation ? ['revoke'] : [];
+          return
+        }
+        this.formViewUniqueId = viewId;
+      })
+    }
   },
   created() {
     (async () => {
@@ -214,11 +131,9 @@ export default {
       //查询当前用户的userId
       await this.getCurrentUser();
       await this.getListId();
-      // 流程节点是否与<我>有关
-      await this.isMyflow();
+      await this.getFlowAndActions();
       // 获取表单表单详情
       this.getOrderList(transCode);
-      this.getWorkFlow(transCode);
     })()
   }
 }

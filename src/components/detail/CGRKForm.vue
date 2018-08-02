@@ -95,12 +95,7 @@
         </div>
       </div>
       <!-- 审批操作 -->
-      <div class="handle_btn" v-if="isMyTask || (cancelStatus && cancelStatus1)">
-        <span class='reject' @click="taskCancel" v-if='cancelStatus && cancelStatus1'>撤回</span>
-        <span class="reject" v-if='nodeName.indexOf("disagree")>=0 && (!cancelStatus ||!cancelStatus1)'
-              @click="taskReject">拒绝</span>
-        <span class="agree" v-if='nodeName.indexOf("agree")>=0' @click="taskAgree">同意</span>
-      </div>
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"></r-action>
     </div>
   </div>
 </template>
@@ -110,6 +105,7 @@
   import {getSOList,} from 'service/detailService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
+  import RAction from 'components/RAction'
 
   export default {
     data() {
@@ -124,7 +120,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow,
+      workFlow, RAction,
     },
     filters: {
       numberComma
@@ -140,7 +136,7 @@
       },
       // 获取详情
       getOrderList(transCode = '') {
-        getSOList({
+        return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
         }).then(data => {
