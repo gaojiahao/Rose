@@ -25,19 +25,19 @@
           <div class="handle_avatar">
             <img src="../../assets/avatar.png" alt="avatar">
           </div>
-          <div class="info" v-if='item.workFlow'>
+          <div class="info">
             <div class="handle_part">
-              <span class="name">{{item.workFlow.userName}}</span>
+              <span class="name">{{item.lastNode.userName}}</span>
               <span class="handle">进行了审批</span>
               <span class="tips">[上个节点]</span>
             </div>
             <div class="handle_result">
-              审批结果：<span class="result" :class='{reject_c : item.workFlow.status === "同意"  }'>{{item.workFlow.status}}</span>
+              审批结果：<span class="result" :class='{reject_c : item.lastNode.status === "同意" || item.lastNode.status === "提交"  }'>{{item.lastNode.status}}</span>
             </div>
           </div>
         </div>
         <!-- 用户需要进行的操作 -->
-        <div class="user_handle" v-if='item.workFlow'>
+        <div class="user_handle">
           <div class="tips">此单你需要进行:</div>
           <div class="info">{{item.nodeName}}</div>
         </div>
@@ -104,7 +104,8 @@ export default {
       },
       serachVal: '',
       listData: [],
-      showLoadding : true
+      showLoadding : true,
+      processName : '',
     }
   },
   components: {
@@ -174,30 +175,25 @@ export default {
       //   ]
       // }
         let filter = {
+          processName : this.processName,
           businessKey: this.serachVal,
           crtName: this.serachVal
         };
         return getAllMsgList({
-          entityId: "20000" ,
           limit: this.limit,
           page: this.page,
-          start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {         
-          tableContent.forEach(item => {
+        }).then(({total = 0, agenda = []}) => {         
+          agenda.forEach(item => {
             if(!item.endTime){
               item.status = "待处理"
             }else{
               item.status = '已处理'
             }
-            getWorkFlow({transCode : item.businessKey}).then(({tableContent})=>{
-              item.workFlow = tableContent[tableContent.length-2];
-            })
             item.transCode = item.businessKey.replace(/_/g,'');
-
           });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          this.hasNext = total > (this.page - 1) * this.limit + agenda.length;
+          this.listData = this.page === 1 ? agenda : [...this.listData, ...agenda];
           if (!noReset) {
             this.$nextTick(() => {
               this.resetScroll();
@@ -209,9 +205,9 @@ export default {
       },
       //获取工作流
       async getWorkFlow(transCode){
-        await getWorkFlow({transCode}).then(({tableContent})=>{
+        await getWorkFlow({transCode}).then(({agenda})=>{
           let lastNode;
-          lastNode = tableContent[tableContent.length-2];
+          lastNode = agenda[agenda.length-2];
           console.log(lastNode);
           return  lastNode
 
@@ -273,6 +269,7 @@ export default {
     }
   },
   created(){
+    this.processName = this.$route.params.name;
     this.getList();
     setTimeout(()=>{
       this.showLoadding = false;

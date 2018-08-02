@@ -6,7 +6,7 @@
       <div class='content'>
         <div class="msg_list" >
           <div class="each_msg"
-              @click="goMsglist" 
+              @click="goMsglist(value[0])" 
               v-for='(value,i) in listData' 
               :key='i'>
             <div class="msg_info">
@@ -65,8 +65,8 @@ export default {
       })
     },
     // 前往应用消息列表
-    goMsglist(){
-      this.$router.push({ path : '/notice/msglist'})
+    goMsglist(item){
+      this.$router.push({ path : `/notice/msglist/${item.processName}`})
     }
   },
   filters:{
