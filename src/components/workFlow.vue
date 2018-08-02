@@ -42,48 +42,54 @@
     <!-- 工作流详情 -->
     <div v-transfer-dom>
       <popup v-model="popupShow" position="bottom" height="100%">
-        <div class='flow_top'>
-          <span class="title">查看工作流</span>
-          <span class="close" @click="closePop" v-if="fullWorkFlow.length >= 5">关闭</span>
-          <!-- <icon type="cancel" @click.native="closePop"></icon> -->
-        </div>
-        <div class="flow_list">
-          <div class="each_msg"
-               v-for="(item, index) in fullWorkFlow"
-               :key=index>
-            <!-- 接收时间 -->
-            <div class="recive_time">
-              <span class="num">{{item.startTime || crtTime}}</span>
-            </div>
-            <div class="info_part"
-                 :class="isMyTask && index === fullWorkFlow.length - 1 || userName === item.userName ? 'whenisMine' : ''">
-              <!-- 头像 -->
-              <div class="user_avatar">
-                <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
-                <div class="name">{{item.userName}}</div>
-              </div>
-              <!-- 操作信息 -->
-              <div class="handle_info">
-                <div class="triangle"></div>
-                <div class="content">
-                  <div class="handle_name">
-                    <!-- 操作动作 -->
-                    <span>{{item.nodeName}}</span>
-                    <!-- 操作状态 B(有返回状态) -->
-                    <span class="status"
-                          :class=item.dyClass
-                          v-if='index > 0'>
-                    {{item.status === '撤回'? '提交者主动撤回' : item.status || noStatus}}
-                  </span>
-                  </div>
-                  <!-- 备注 -->
-                  <div class="remark">备注: {{item.message || '无'}}</div>
-                  <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
-                </div>
-              </div>
-            </div>
+        <div class="flow">
+          <div class='flow_top'>
+            <span class="title">查看工作流</span>
+            <span class="close" @click="closePop" v-if="fullWorkFlow.length >= 5">关闭</span>
+            <!-- <icon type="cancel" @click.native="closePop"></icon> -->
           </div>
+          <div class="flow_list">
+            <div class="each_msg"
+                :class="isMyTask && index === fullWorkFlow.length - 1 || userName === item.userName ? 'whenisMine' : ''"                v-for="(item, index) in fullWorkFlow"
+                :key=index>
+              <!-- 接收时间 -->
+              <div class="recive_time">
+                <span class="num">{{item.startTime || crtTime}}</span>
+              </div>
+              <div class="info_part">
+                <!-- 头像 -->
+                <div class="user_info">
+                  <div class="user_avatar">
+                    <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
+                    <div class="name">{{item.userName}}</div>
+                  </div>              
+                </div>
+                <!-- 操作信息 -->
+                <div class="handle_info">
+                  <div class="triangle"></div>
+                  <div class="content">
+                    <div class="handle_name">
+                      <!-- 操作动作 -->
+                      <span>{{item.nodeName}}</span>
+                      <!-- 操作状态 B(有返回状态) -->
+                      <span class="status"
+                            :class=item.dyClass
+                            v-if='index > 0'>
+                      {{item.status === '撤回'? '提交者主动撤回' : item.status || noStatus}}
+                    </span>
+                    </div>
+                    <!-- 备注 -->
+                    <div class="remark">备注: {{item.message || '无'}}</div>
+                    <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
+                  </div>
+                </div>
+                <!-- 此处为空白div 解决因为浮动而没有高度的问题 -->
+                <div class="del_f"></div>              
+              </div>
+            </div>
+          </div>        
         </div>
+
         <div class="btn" :class="fullWorkFlow.length < 5? 'when_less': ''">
           <span class="cfm_btn" @click="closePop">关闭工作流</span>
         </div>
@@ -179,19 +185,20 @@
 </script>
 
 <style lang='scss' scoped>
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
   // 居中
   .mg_auto {
     width: 95%;
     margin: 10px auto;
   }
-
   // 阴影
   .box_sd {
     box-sizing: border-box;
     box-shadow: 0 0 8px #e8e8e8;
   }
-
-  // 工作流
+  // 简易版工作流
   .work_flow {
     position: relative;
     padding: .06rem .08rem .2rem;
@@ -312,150 +319,168 @@
       }
     }
   }
-
+  // 完整版工作流
   .vux-popup-dialog {
     background: #fff;
-    .flow_top {
-      display: flex;
-      align-items: center;
-      padding: .05rem .1rem;
-      justify-content: space-between;
-      // 标题
-      .title {
-        color: #111;
-        font-weight: bold;
-        font-size: .24rem;
-      }
-      // 关闭按钮
-      .close {
-        display: block;
-        color: #fff;
-        padding: 0 .1rem;
-        font-size: .18rem;
-        background: #dd0a35;
-        border-radius: .24rem;
-      }
-    }
-    // 工作流信息
-    .flow_list {
-      position: relative;
-      padding: .06rem .08rem 0;
-      height: calc(100% - 1.32rem);
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      // 每一个明细
-      .each_msg {
-        margin-bottom: .2rem;
-        position: relative;
-        // 用户头像
-        .user_avatar {
-          width: .5rem;
-          display: flex;
-          font-size: .1rem;
-          flex-direction: column;
-          // 图片
-          img {
-            width: 100%;
-            border-radius: .24rem;
-          }
-          // 名字
-          .name {
-            margin-top: .02rem;
-            text-align: center;
-          }
-        }
-        // 接收时间
-        .recive_time {
-          width: 100%;
-          font-size: .12rem;
-          color: #757575;
-          text-align: center;
-          box-sizing: border-box;
-          margin-bottom: .02rem;
-        }
-        // 内容部分
-        .info_part {
-          display: flex;
-        }
-        // 操作信息
-        .handle_info {
+    height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    .flow {
+      .flow_top {
+        display: flex;
+        align-items: center;
+        padding: .05rem .1rem;
+        justify-content: space-between;
+        // 标题
+        .title {
           color: #111;
-          font-size: .12rem;
-          margin-left: .2rem;
-          position: relative;
-          box-sizing: border-box;
-          // 内容区域
-          .content {
-            background: #F4F4F4;
-            border-radius: .04rem;
-            padding: .04rem .1rem .02rem;
-            // 用户名称
-            .user_name {
-              font-size: .14rem;
-            }
-            // 操作名称
-            .handle_name {
-              font-size: .18rem;
-              font-weight: bold;
-              span {
-                display: inline-block;
-              }
-              // 默认样式
-              .status {
-                color: #fff;
-                font-size: .1rem;
-                padding: 0 .04rem;
-                margin-top: -.02rem;
-                background: #5077aa;
-                vertical-align: middle;
-              }
-              // 同意样式
-              .agree_c {
-                background: #53d397;
-              }
-              // 拒绝样式
-              .reject_c {
-                background: #c93d1b;
-              }
-            }
-            // 备注
-            .remark {
-              font-size: .14rem;
-              color: #757575;
-            }
-          }
-          // 三角
-          .triangle {
-            content: "";
-            width: 0;
-            height: 0;
-            top: .14rem;
-            left: -.1rem;
-            position: absolute;
-            border-top: .1rem solid transparent;
-            border-right: .1rem solid #F4F4F4;
-            border-bottom: .1rem solid transparent;
-          }
+          font-weight: bold;
+          font-size: .24rem;
+        }
+        // 关闭按钮
+        .close {
+          display: block;
+          color: #fff;
+          padding: 0 .1rem;
+          font-size: .18rem;
+          background: #dd0a35;
+          border-radius: .24rem;
         }
       }
-      // 当工作流为最后一个 并且节点与我有关时
-      .whenisMine {
-        flex-direction: row-reverse;
-        .handle_info {
-          margin-left: 0;
-          margin-right: .2rem;
-          .triangle {
-            content: "";
-            width: 0;
-            height: 0;
-            top: .14rem;
-            left: inherit;
-            right: -.1rem;
-            position: absolute;
-            border-right: inherit;
-            border-top: .1rem solid transparent;
-            border-left: .1rem solid #F4F4F4;
-            border-bottom: .1rem solid transparent;
+      // 工作流信息
+      .flow_list {
+        position: relative;
+        padding: .06rem .08rem 0;
+        // 每一个明细
+        .each_msg {
+          margin-bottom: .2rem;
+          position: relative;
+          // 接收时间
+          .recive_time {
+            width: 100%;
+            font-size: .12rem;
+            color: #757575;
+            text-align: center;
+            box-sizing: border-box;
+            margin-bottom: .02rem;
+          }
+          // 内容部分
+          .info_part {
+            position: relative;
+            padding-left: .44rem;
+            .user_info {
+              position: absolute;
+              left: 0;
+              top: 0;
+              // 用户头像
+              .user_avatar {
+                width: .5rem;
+                display: flex;
+                font-size: .1rem;
+                flex-direction: column;
+                // 图片
+                img {
+                  width: 100%;
+                  border-radius: .24rem;
+                }
+                // 名字
+                .name {
+                  margin-top: .02rem;
+                  text-align: center;
+                }
+              }
+            }
+            // 操作信息
+            .handle_info {
+              color: #111;
+              font-size: .12rem;
+              margin-left: .2rem;
+              position: relative;   
+              display: inline-block;
+              // 内容区域
+              .content {
+                background: #F4F4F4;
+                border-radius: .08rem;
+                padding: .04rem .1rem .02rem;
+                box-sizing: border-box;
+                // 用户名称
+                .user_name {
+                  font-size: .14rem;
+                }
+                // 操作名称
+                .handle_name {
+                  font-size: .18rem;
+                  font-weight: bold;
+                  span {
+                    display: inline-block;
+                  }
+                  // 默认样式
+                  .status {
+                    color: #fff;
+                    font-size: .1rem;
+                    padding: 0 .04rem;
+                    margin-top: -.02rem;
+                    background: #5077aa;
+                    vertical-align: middle;
+                  }
+                  // 同意样式
+                  .agree_c {
+                    background: #53d397;
+                  }
+                  // 拒绝样式
+                  .reject_c {
+                    background: #c93d1b;
+                  }
+                }
+                // 备注
+                .remark {
+                  font-size: .14rem;
+                  color: #757575;
+                }
+              }
+              // 三角
+              .triangle {
+                content: "";
+                width: 0;
+                height: 0;
+                top: .14rem;
+                left: -.1rem;
+                position: absolute;
+                border-top: .1rem solid transparent;
+                border-right: .1rem solid #F4F4F4;
+                border-bottom: .1rem solid transparent;
+              }
+            }
+          }
+        }
+        // 当工作流为最后一个 并且节点与我有关时
+        .whenisMine {
+          .info_part {
+            .user_info {
+              right: 0;
+              left: inherit;
+            }
+            .handle_info {
+              float: right;
+              margin-left: inherit;
+              margin-right: .64rem;
+              .triangle {
+                content: "";
+                width: 0;
+                height: 0;
+                top: .14rem;
+                left: inherit;
+                right: -.1rem;
+                position: absolute;
+                border-right: inherit;
+                border-top: .1rem solid transparent;
+                border-left: .1rem solid #F4F4F4;
+                border-bottom: .1rem solid transparent;
+              }
+            }
+            .del_f {
+              clear: both;
+            }          
           }
         }
       }

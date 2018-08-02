@@ -46,6 +46,4 @@ export default {
 }
 </script>
 
-<style lang='scss'>
-@import '~components/scss/bizList.scss';
-</style>
+<style lang='scss'></style>
