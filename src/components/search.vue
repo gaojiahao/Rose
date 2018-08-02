@@ -1,7 +1,7 @@
 <template>
     <div class='search'>
         <form class="search_part" action="" @submit.prevent="searchMat">
-            <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx" @input='LiveSearchMat'>
+            <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
             <div class="pop_cancel" @click="searchMat">搜索</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
             <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
@@ -22,14 +22,9 @@ export default {
     Icon
   },
   methods: {
-    LiveSearchMat(){
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-            this.$emit('search',this.srhInpTx);
-        }, 1000);        
-    },
     searchMat() {      
       this.$emit('search',this.srhInpTx);
+      document.activeElement.blur();
     },
     clear() {
         this.srhInpTx = "";     
