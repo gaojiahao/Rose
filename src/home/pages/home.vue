@@ -14,6 +14,8 @@
       <sale-app :XSarray='XSarray' :goList='goList'></sale-app>
       <!-- 采购应用部分 -->
       <buy-app :PURarray='PURarray' :goList='goList'></buy-app>
+      <!-- 调拨应用部分 -->
+      <alloca-app :ACAarray='ACAarray' :goList='goList'></alloca-app>
     </div>
   </div>
 </template>
@@ -21,9 +23,10 @@
 <script>
 import homeService from 'service/homeservice'
 import businessMap from './maps/business'
-import basicApp from 'components/home/basicApp'   // 基础应用
-import saleApp from 'components/home/saleApp'     // 销售应用
-import buyApp from 'components/home/buyApp'       // 采购应用
+import basicApp from 'components/home/basicApp'     // 基础应用
+import saleApp from 'components/home/saleApp'       // 销售应用
+import buyApp from 'components/home/buyApp'         // 采购应用
+import allocaApp from 'components/home/allocationApp'  // 调拨应用
 
 // import {buyApp, saleApp, basicApp} from 'components/home'
 export default {
@@ -32,13 +35,16 @@ export default {
       BSarray : [],        // 基础对象 数组
       XSarray : [],        // 销售 数组
       PURarray: [],        // 采购 数组
+      ACAarray: [],        // 调拨 数组
+      FINarray: [],        // 财务 数组
       SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)'
     }
   },
   components:{
     buyApp,
     saleApp,
-    basicApp
+    basicApp,
+    allocaApp
   },
   methods:{
     // 基础应用
@@ -79,15 +85,28 @@ export default {
               if(item.text === '销售'){
                 for(let ite of item.children){
                   //映射表 赋值
-                  ite.code = businessMap[ite.text]
-                  this.XSarray.push(ite);
+                  if(businessMap[ite.text]){
+                    ite.code = businessMap[ite.text]
+                    this.XSarray.push(ite);
+                  }
                 }
               }
               // 获取 采购应用
               if(item.text === '采购'){
                 for(let val of item.children){
-                  val.code = businessMap[val.text]
-                  this.PURarray.push(val);
+                  if(businessMap[val.text]){
+                    val.code = businessMap[val.text]
+                    this.PURarray.push(val);
+                  }
+                }
+              }
+              // 获取 调拨应用
+              if(item.text === '库存' || item.text === '财务'){
+                for(let val of item.children){
+                  if(businessMap[val.text]){
+                    val.code = businessMap[val.text]
+                    this.ACAarray.push(val);
+                  }
                 }
               }
             }
@@ -112,7 +131,9 @@ export default {
 <style lang='scss' scoped>
 .content {
   width: 100%;
-  height: 100%;
+  height: calc(100% - .49rem);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .mg_auto {
   width: 95%;

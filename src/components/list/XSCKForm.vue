@@ -98,7 +98,7 @@
             item.count = item.count / 100;
             item.itmes = item.itmes.slice(0, 5);
             item.itmes.forEach(mItem => {
-              mItem.inventoryPic = mItem.inventoryPic ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}` : this.getDefaultImg();
+              mItem.inventoryPic = mItem.inventoryPic ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400` : this.getDefaultImg();
             })
           });
           this.listData = this.page === 1 ? orders : this.listData.concat(orders);

@@ -6,7 +6,7 @@ export default [
     meta: { title: '消息列表'},
     children:[
       {
-        path:'msglist',
+        path:'msglist/:name',
         name:'MSGLIST',
         component:MSGLIST,
         meta:{ title:'应用消息列表' }

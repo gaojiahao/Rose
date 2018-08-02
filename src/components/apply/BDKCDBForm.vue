@@ -1,37 +1,13 @@
 <template>
-  <div class="pages xsbj-apply-container">
+  <div class="pages bdkcdb-apply-container">
     <div class="basicPart">
-      <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-        <div class="no-selected" v-if="!dealerInfo">
-          <div class="title">客户列表</div>
-          <div class="mode">请选择客户</div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-        </div>
-        <div v-else>
-          <div class="user_info">
-            <span class="user_name">{{dealerInfo.creatorName}}</span>
-            <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
-          </div>
-          <div class="cp_info">
-            <p class="cp_name">{{dealerInfo.dealerName}}</p>
-            <p class="cp_ads">{{dealerInfo.province + dealerInfo.city + dealerInfo.county + dealerInfo.address}}</p>
-          </div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
-        </div>
-      </div>
-      <!-- 结算方式 -->
-      <pop-single-select title="结算方式" :data="transMode" :value="formData.drDealerPaymentTerm"
-                         v-model="formData.drDealerPaymentTerm"></pop-single-select>
-      <!-- 物流条款 -->
-      <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
-                         v-model="formData.drDealerLogisticsTerms"></pop-single-select>
-      <!-- 有效期至 -->
-      <div class="or_ads mg_auto box_sd" @click="clickDateSelect">
-        <p class="title">有效期至</p>
-        <p class="mode">{{this.formData.validUntil || '请选择有效期'}}</p>
-        <span class="iconfont icon-gengduo"></span>
-      </div>
+
+      <!-- 出库仓库-->
+      <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
+
+      <!-- 入库仓库-->
+      <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
+
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -46,11 +22,11 @@
         <template v-else>
           <div class="title">物料列表</div>
           <div class="mater_list">
-            <div class="each_mater" v-for="(item, index) in matterList" :key='index'>
+            <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key="index">
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
+                    <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
                   </div>
                   <div class="each_mater_wrapper" slot="content">
                     <div class="mater_img">
@@ -59,7 +35,7 @@
                     <div class="mater_main">
                       <!-- 物料名称 -->
                       <div class="mater_name">
-                        <!-- <span class="whiNum">No.{{index + 1}}</span> -->
+                        <span class="whiNum">No.{{index + 1}}</span>
                         {{item.inventoryName}}
                       </div>
                       <!-- 物料基本信息 -->
@@ -81,44 +57,31 @@
                             </div>
                           </div>
                         </div>
-                        <!-- 物料分类、材质 -->
-                        <div class="withoutColor">
-                          <!-- 物料分类 -->
-                          <div class="mater_classify">
-                            <span class="type">属性: {{item.processing}}</span>
-                            <span class="father">大类: {{item.inventoryType}}</span>
-                            <span class="child">子类: {{item.inventorySubclass}}</span>
-                          </div>
-                          <!-- 物料材质等 -->
-                          <div class="mater_material">
-                            <span class="unit">单位: {{item.measureUnit}}</span>
-                            <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                            <span class="spec">材质: {{item.material || '无'}}</span>
-                          </div>
+                      </div>
+                      <!-- 物料数量和价格 -->
+                      <div class="mater_other">
+                        <span class="matter-remain">库存: {{item.qtyBal - item.tdQty}}</span>
+                        <div class="mater_num">
+                            <span class="handle" @click="subNum(item,index)"
+                                  :class="{disabled : item.tdQty<=1}">-</span>
+                          <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
+                          <span class="handle plus" @click="plusNum(item,index)"
+                                :class="{disabled:item.tdQty >= item.qtyBal}">+</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </swipeout-item>
               </swipeout>
-              <!-- 物料输入内容 -->
-              <div class="userInp_mode">
-                <group>
-                  <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                           v-model.number="item.price"></x-input>
-                </group>
-              </div>
             </div>
           </div>
         </template>
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
-        <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer"
-                         ref="dealer"></pop-dealer-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                         :default-value="matterList" ref="matter"></pop-matter-list>
+                         :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
+                         ref="matter"></pop-matter-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -131,10 +94,9 @@
 <script>
   import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
   import PopMatterList from 'components/PopMatterList'
-  import PopDealerList from 'components/PopDealerList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
-  import PopSingleSelect from 'components/PopSingleSelect'
+  import PopWarehouseList from 'components/PopWarehouseList'
 
   export default {
     mixins: [ApplyCommon],
@@ -147,25 +109,22 @@
       SwipeoutItem,
       SwipeoutButton,
       PopMatterList,
-      PopDealerList,
-      PopSingleSelect,
+      PopWarehouseList,
     },
     data() {
       return {
         matterList: [],  // 物料列表
         showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
-        dealerInfo: null,
-        transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
         formData: {
           biComment: '',
-          drDealerPaymentTerm: '现付', // 结算方式
-          drDealerLogisticsTerms: '上门', // 物流条款
-          validUntil: '', // 有效期
         },
-        priceMap: {},
-        showDealerPop: false,
+        numMap: {},
+        warehouseOut: null,
+        warehouseIn: null,
+        warehouseParams: {
+          whCode: '',
+        }
       }
     },
     methods: {
@@ -174,29 +133,61 @@
         let arr = this.matterList;
         arr.splice(index, 1);
         // 删除输入过的价格
-        delete this.priceMap[item.inventoryCode];
+        delete this.numMap[item.inventoryCode];
         this.$refs.matter.delSelItem(item);
+      },
+      // TODO 数量--
+      subNum(item, i) {
+        if (item.tdQty === 1) {
+          return
+        }
+        item.tdQty--;
+        this.$set(this.matterList, i, item);
+      },
+      // TODO 数量++
+      plusNum(item, i) {
+        if (item.tdQty === item.qtyBal) {
+          return
+        }
+        item.tdQty++;
+        this.$set(this.matterList, i, item);
+      },
+      // TODO 修改数量
+      getNum(item, i, e) {
+        let val = e.target.value;
+        if (val > item.qtyBal) {
+          val = item.qtyBal;
+        }
+        item.tdQty = Number(val);
+        this.$set(this.matterList, i, item);
       },
       // TODO 点击增加更多物料
       addMatter() {
         this.matterList.forEach(item => {
           // 存储已输入的价格
-          this.priceMap[item.inventoryCode] = item.price;
+          this.numMap[item.inventoryCode] = item.tdQty;
         });
         this.showMaterielPop = !this.showMaterielPop
       },
-      // TODO 选中往来项
-      selDealer(val) {
-        let [sels] = JSON.parse(val);
-        this.dealerInfo = sels;
+      // TODO 选中出库仓库
+      selWarehouseOut(val) {
+        this.warehouseOut = JSON.parse(val);
+        this.warehouseParams = {
+          ...this.warehouseParams,
+          whCode: this.warehouseOut.warehouseCode,
+        };
+      },
+      // TODO 选中出库仓库
+      selWarehouseIn(val) {
+        this.warehouseIn = JSON.parse(val);
       },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
-          item.price = this.priceMap[item.inventoryCode] || ''
+          item.tdQty = this.numMap[item.inventoryCode] || 1
         });
-        this.priceMap = {};
+        this.numMap = {};
         this.matterList = [...sels];
       },
       // TODO 获取默认图片
@@ -213,8 +204,12 @@
         let dataSet = [];
         let validateMap = [
           {
-            key: 'dealerInfo',
-            message: '往来信息'
+            key: 'warehouseOut',
+            message: '出库仓库'
+          },
+          {
+            key: 'warehouseIn',
+            message: '入库仓库'
           },
         ];
         validateMap.every(item => {
@@ -228,16 +223,15 @@
           warn = '请选择物料';
         }
         this.matterList.every(item => {
-          if (!item.price) {
-            warn = '请输入单价';
-            return false
-          }
           dataSet.push({
             inventoryName_transObjCode: item.inventoryName,
             transObjCode: item.inventoryCode,
+            thenQtyStock: item.qtyBal,
+            tdQty: item.tdQty,
+            assistQty: item.assistQty || 0,
+            assMeasureScale: item.assMeasureScale || null,
+            assMeasureUnit: item.assMeasureUnit || null,
             comment: item.comment || null,
-            priceType: item.priceType || null,
-            price: item.price
           });
           return true
         });
@@ -253,17 +247,17 @@
           onConfirm: () => {
             let operation = submitAndCalc;
             let submitData = {
-              listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
+              listId: '4d9a7f8f-9a88-47b6-a1f4-3faed6423615',
               biComment: '',
               formData: JSON.stringify({
                 ...this.formData,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
-                dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
-                dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
-                order: {
-                  dealerDebit: this.dealerInfo.dealerCode || '',
-                  drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
+                containerOutWarehouseManager: null, // 出库管理员
+                containerInWarehouseManager: null, // 入库管理员
+                inPut: {
+                  containerCodeOut: this.warehouseOut.warehouseCode,
+                  containerCode: this.warehouseIn.warehouseCode,
                   dataSet
                 }
               }),
@@ -277,19 +271,6 @@
           }
         });
       },
-      // TODO 获取详情
-      getFormData() {
-      },
-      clickDateSelect() {
-        this.$vux.datetime.show({
-          confirmText: '确定',
-          cancelText: '取消',
-          value: this.formData.validUntil,
-          onConfirm: (value) => {
-            this.formData.validUntil = value;
-          }
-        })
-      },
     },
     created() {
     },
@@ -299,12 +280,10 @@
 <style lang="scss" scoped>
   @import './../scss/bizApply';
 
-  .xsbj-apply-container {
-    /deep/ .weui-cells {
-      font-size: .14rem;
-      &:before {
-        border-top: none;
-      }
+  .bdkcdb-apply-container {
+    .matter-remain {
+      color: #757575;
+      font-size: 0.12rem;
     }
   }
 </style>

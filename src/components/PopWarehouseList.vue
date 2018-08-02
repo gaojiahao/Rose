@@ -2,7 +2,7 @@
   <div class="or_ads mg_auto box_sd" @click="showPop = !showPop">
     <!-- 仓库信息 -->
     <div v-if='selItems'>
-      <div class="title">仓库列表</div>
+      <div class="title">{{title}}</div>
       <div class="user_info">
         <span class="user_name">{{selItems.warehouseName}}</span>
         <span class="user_tel">{{selItems.warehouseRelType}}</span>
@@ -13,7 +13,7 @@
       </div>
     </div>
     <div v-else>
-      <div class="title">仓库列表</div>
+      <div class="title">{{title}}</div>
       <div class="mode">请选择仓库</div>
     </div>
     <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
@@ -84,6 +84,10 @@
   export default {
     name: "PopWarehouseList",
     props: {
+      title: {
+        type: String,
+        default: '仓库列表'
+      },
       defaultValue: {
         type: Object,
         default() {
@@ -114,7 +118,7 @@
     },
     watch: {
       defaultValue(val) {
-        this.selItems = this.defaultValue ? {...this.defaultValue} : null;
+        this.setDefaultValue();
       }
     },
     methods: {
@@ -140,7 +144,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.transCode === sItem.transCode;
+        return this.tmpItems.warehouseCode === sItem.warehouseCode;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
@@ -214,9 +218,14 @@
           })
         });
       },
+      // TODO 设置默认值
+      setDefaultValue() {
+        this.selItems = this.defaultValue ? {...this.defaultValue} : null;
+        this.tmpItems = this.defaultValue ? {...this.defaultValue} : {};
+      }
     },
     created() {
-      this.selItems = this.defaultValue ? {...this.defaultValue} : null;
+      this.setDefaultValue();
       this.getList();
     }
   }

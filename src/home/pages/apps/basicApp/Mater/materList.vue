@@ -204,7 +204,7 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic
-            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}`
+            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`
             : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;

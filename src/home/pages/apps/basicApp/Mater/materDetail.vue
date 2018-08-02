@@ -156,7 +156,7 @@
           this.inventory = formData.inventory;
           let {inventoryPic} = this.inventory;
           if (inventoryPic) {
-            this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}`
+            this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}&width=400&height=400`
           } else {
             this.getDefaultImg();
           }

@@ -441,7 +441,7 @@
               ...item,
               qtyBal: item.thenQtyBal,
               qtyStockBal: item.thenQtyStock,
-              inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}` : this.getDefaultImg(),
+              inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_outPutMatCode,
               inventoryCode: item.outPutMatCode,
               specification: item.specification_outPutMatCode,
