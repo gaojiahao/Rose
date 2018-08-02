@@ -202,11 +202,12 @@ export default {
     },
     //选择默认图片
     getDefaultImg(item) {
-      let url = require('assets/mater01.jpg');
-      if (item) {
-        item.inventoryPic = url;
-      }
-      return url
+      let url = require('assets/wl.png');
+        if (item) {
+          item.inventoryPic = url;
+          item.inventoryPic_transObjCode = url;
+        }
+        return url
     },
     // 滑动删除
     delClick(index,item){
