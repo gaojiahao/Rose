@@ -106,7 +106,8 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="orderList.length" @click="addOrder">新增更多订单</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer"></pop-dealer-list>
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" 
+                        @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
         <!-- 订单popup -->
         <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                         :default-value="orderList" ref="order"></pop-order-list>

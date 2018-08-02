@@ -35,13 +35,12 @@
 </template>
 <script>
 import { Badge } from 'vux'
-import search from 'components/search'
 import {getMsgList} from 'service/msgService.js'
+import search from 'components/search'
 import BScroll from 'better-scroll' 
 export default {
   data(){
     return{
-      defaultImg: require('assets/sales-stock.png'),
       serachVal: '',
       listData: {},     
     }
@@ -56,11 +55,13 @@ export default {
     },
     //获取应用消息数据
     getList() {
-      getMsgList().then(({tableContent}) => {     
+      getMsgList().then(({ tableContent }) => {     
         tableContent.forEach(item => {
           if (!this.listData[item.processName]) {
-            this.$set(this.listData,item.processName,[item])
-          }else{
+             // 以 <应用名称> 进行分类
+            this.$set(this.listData, item.processName, [item])
+          }
+          else{
             this.listData[item.processName].push(item);
           }
         })
@@ -75,13 +76,13 @@ export default {
     handleCrt(val){
       let date = val.duration,
       //计算出小时数
-      hours=parseInt(date/(3600)),
+      hours = parseInt( date / (3600) ),
       //计算相差分钟数
-      leave2= date-(hours*3600) ,       //计算小时数后剩余的毫秒数
-      minutes=Math.floor(leave2/(60)),
+      leave2 = date - ( hours * 3600 ) ,       //计算小时数后剩余的毫秒数
+      minutes = Math.floor( leave2 / (60) ),
       //计算相差秒数
-      leave3=leave2 - (minutes*60) ,     //计算分钟数后剩余的毫秒数
-      seconds=Math.round(leave3),
+      leave3 = leave2 - ( minutes * 60 ) ,     //计算分钟数后剩余的毫秒数
+      seconds = Math.round(leave3),
       backTime;
       if(hours>0){
         backTime = `${hours}小时前`;
@@ -100,7 +101,6 @@ export default {
     this.$nextTick(()=>{
       this.scroll = new BScroll(this.$refs.bScroll, {
         click:true
-
       })
     })
   }

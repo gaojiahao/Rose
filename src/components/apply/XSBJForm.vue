@@ -114,7 +114,8 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer"
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" 
+                        @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
                          ref="dealer"></pop-dealer-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"

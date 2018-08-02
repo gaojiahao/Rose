@@ -1,8 +1,10 @@
 <template>
     <div class='search'>
-        <form class="search_part" action="" @submit.prevent="searchMat">
+        <form class="search_part" action="" @submit.prevent="searchMat(srhInpTx)">
             <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
-            <div class="pop_cancel" @click="searchMat">搜索</div>
+            <div class="pop_cfm" 
+                :class=" { pop_cancel : !srhInpTx}"
+                @click="searchMat(srhInpTx)">{{srhInpTx? '搜索' : '返回'}}</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
             <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
         </form>
@@ -22,13 +24,19 @@ export default {
     Icon
   },
   methods: {
-    searchMat() {      
-      this.$emit('search',this.srhInpTx);
+    searchMat(val) {  
+      // 如果 输入框没有值 则点击关闭popup
+      if(!val){
+        this.$emit('turnOff', false)
+        return;
+      }
+      this.$emit('search',val);
+      // 点击'搜索' 关闭输入框
       document.activeElement.blur();
     },
     clear() {
-        this.srhInpTx = "";     
-        this.$emit("search", this.srhInpTx);
+      this.srhInpTx = "";     
+      this.$emit("search", this.srhInpTx);
     }
   }
 };
@@ -60,8 +68,8 @@ export default {
       display: none;
     }
   }
-  // 取消 按钮
-  .pop_cancel {
+  // 搜索 按钮
+  .pop_cfm {
     flex: 1;
     color: #fff;
     font-size: 0.14rem;
@@ -69,6 +77,10 @@ export default {
     background: #3f72af;
     border-top-right-radius: 0.3rem;
     border-bottom-right-radius: 0.3rem;
+  }
+  // 返回 按钮
+  .pop_cancel {
+    background: #fc3c3c;
   }
   // 搜索icon
   .serach_icon {

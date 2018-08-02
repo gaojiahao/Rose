@@ -99,7 +99,7 @@
         <div class="add_more" v-if="listData.length" @click="addOrder">新增更多订单</div>
         <!-- 往来popup -->
         <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
-                         @sel-dealer="selDealer"></pop-dealer-list>
+                         @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          :default-value="listData" ref="matter"></pop-matter-list>

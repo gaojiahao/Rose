@@ -1,25 +1,17 @@
 <template>
-  <!-- 物料popup -->
+  <!-- 往来popup -->
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <div class="search_part">
-            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchMat">
-            <div class="pop_cancel" @click="showPop = !showPop">返回</div>
-            <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
-          </div>
+          <d-search @search='searchMat' @turnOff='closePop'></d-search>
         </div>
-        <!-- 物料列表 -->
+        <!-- 往来列表 -->
         <div class="mater_list" ref="dealer">
           <div class="mater_list_wrapper">
             <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key='index'
                  @click.stop="selThis(item,index)">
-              <!-- <div class="mater_img">
-                <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-              </div> -->
               <div class="mater_main ">
                 <div class="mater_info">
                   <!--联系人电话 -->
@@ -62,7 +54,8 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
+  import { Icon, Popup, LoadMore, AlertModule, TransferDom } from 'vux'
+  import DSearch from 'components/search'
   import dealerService from 'service/dealerService.js'
   import BScroll from 'better-scroll'
 
@@ -80,7 +73,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, LoadMore
+      Icon, Popup, DSearch, LoadMore
     },
     data() {
       return {
@@ -118,13 +111,10 @@
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
-      clear(){
-        this.srhInpTx = '';
-        this.dealerList = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.getDealer();
-
+      // 关闭popup
+      closePop(val){
+        // 点击搜索框的返回 则退出 Popup
+        this.$emit('closePop', val);
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -138,12 +128,12 @@
         });
         return flag;
       },
-      // TODO 选择物料
+      // TODO 选择往来
       selThis(sItem, sIndex) {
         this.tmpItems = []
         this.tmpItems.push(sItem);
       },
-      // TODO 确定选择物料
+      // TODO 确定选择往来
       cfmMater() {
         let sels = [];
         // 返回上层
@@ -161,12 +151,13 @@
         }
         return url
       },
-      // TODO 获取物料列表
+      // TODO 获取往来列表
       getDealer() {
         let filter = [];
         if (this.srhInpTx) {
           filter = [
             ...filter,
+            // 搜索 往来名称 或  编码
             {
               operator: 'like',
               value: this.srhInpTx,
@@ -214,25 +205,13 @@
         })
        
       },
-      // TODO 搜索物料
-      searchMat() {
+      // TODO 搜索往来
+      searchMat(val) {
+        this.srhInpTx = val;
         this.dealerList = [];
         this.page = 1;
         this.hasNext = true;
         this.getDealer();
-      },
-      // TODO 删除选中项
-      delSelItem(dItem) {
-        let dIndex = 0;
-        this.selItems.every((item, index) => {
-          if (dItem.transCode === item.transCode) {
-            dIndex = index;
-            return false;
-          }
-          return true
-        });
-        this.selItems.splice(dIndex, 1);
-        this.tmpItems = [...this.selItems];
       },
       // TODO 初始化滚动
       initScroll() {
@@ -255,20 +234,13 @@
       },
       //新增往来
       add(){
-        this.$router.push({
-          path:'/adress/edit_ads',
-          query:{
-            add:1
-          }})
+        this.$router.push({ path:'/adress/edit_ads', query:{ add:1} })
       }
     },
     created() {
       this.initScroll();
       this.getDealer();
-    },
-    mounted(){
-      
-    },
+    }
   }
 </script>
 
@@ -321,20 +293,6 @@
             position: absolute;
             transform: translate(0, -50%);
           }
-          // 清除icon
-          .clear_icon {
-            top: 50%;
-            right: 14%;
-            width: .3rem;
-            height: .3rem;
-            z-index: 100;
-            display: block;
-            font-size: .12rem;
-            line-height: .3rem;
-            text-align: center;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
         }
         // 关闭icon
         .close_icon {
@@ -352,7 +310,7 @@
       .vux-1px:before {
         border-radius: 40px;
       }
-      // 物料列表
+      // 往来列表
       .mater_list {
         width: 100%;
         overflow: hidden;
@@ -362,7 +320,7 @@
         .mater_list_wrapper {
           padding-top: .14rem;
         }
-        // 每个物料
+        // 每个往来
         .each_mater {
           position: relative;
           display: flex;
@@ -374,7 +332,7 @@
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
-          // 物料图片
+          // 往来图片
           .mater_img {
             display: inline-block;
             width: .75rem;
@@ -384,13 +342,13 @@
               max-height: 100%;
             }
           }
-          // 物料主体
+          // 往来主体
           .mater_main {
             flex: 1;
             padding-left: .1rem;
             box-sizing: border-box;
             display: inline-block;
-            // 物料名称
+            // 往来名称
             .mater_name {
               color: #111;
               overflow: hidden;
@@ -401,7 +359,7 @@
               -webkit-line-clamp: 2;
               text-overflow: ellipsis;
               -webkit-box-orient: vertical;
-              // 每个物料的索引
+              // 每个往来的索引
               .whiNum {
                 color: #fff;
                 font-weight: 200;
@@ -413,7 +371,7 @@
                 margin: -.02rem .04rem 0 0;
               }
             }
-            // 物料信息
+            // 往来信息
             .mater_info {
               color: #757575;
               font-size: .14rem;
@@ -429,7 +387,7 @@
                   color:#111;
                   font-weight: bold;
                 }
-                // 物料编码
+                // 往来编码
                 .mater_code {
                   display: flex;
                   .title,
@@ -469,7 +427,7 @@
               }
               // 没颜色包裹的
               .withoutColor {
-                // 物料分类
+                // 往来分类
                 .mater_classify {
                   font-size: .1rem;
                   margin-top: .02rem;
@@ -478,7 +436,7 @@
                     margin-right: .04rem;
                   }
                 }
-                // 物料颜色 材质
+                // 往来颜色 材质
                 .mater_material {
                   font-size: .1rem;
                   .unit,
