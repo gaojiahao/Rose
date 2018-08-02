@@ -83,6 +83,17 @@
       getList(noReset = false) {
         let filter = [];
 
+        if (this.serachVal) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.serachVal,
+              property: 'transCode',
+            },
+          ]
+        }
+
         return getList(2227, {
           limit: this.limit,
           page: this.page,
