@@ -4,6 +4,7 @@
       <slot></slot>
       <slot name="loadmore">
         <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext || noData"></load-more>
+        <div class="PopDealerList_newGo" v-if="newAdd" @click="add">新增仓库</div>
       </slot>
     </div>
     <slot name="refresh">
@@ -33,6 +34,10 @@
         default: false
       },
       noData: {
+        type: Boolean,
+        default: false
+      },
+      newAdd: {
         type: Boolean,
         default: false
       },
@@ -152,6 +157,14 @@
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
         }
       },
+      //新增仓库
+      add(){
+        this.$router.push({
+          path:'/warehouse/edit_warehouse',
+          query:{
+            add:1
+          }})
+      }
     },
     created() {
       this._initScroll();
@@ -178,5 +191,13 @@
       /*transition: top .4s linear 0s;*/
       text-align: center;
     }
+  }
+  .PopDealerList_newGo{
+    text-align: center;
+    width: 100px;
+    margin: 0 auto;
+    border: 1px solid #999999;
+    color: #999999;
+    border-radius: 3px;
   }
 </style>

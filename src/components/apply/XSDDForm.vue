@@ -156,7 +156,7 @@ export default {
         drDealerPaymentTerm : '现付',  //结算方式
         drDealerLogisticsTerms :'上门', //物流条件
         biComment : '' //备注
-      }
+      },
     }
   },
   mixins: [common],
@@ -193,6 +193,7 @@ export default {
     },
     // TODO 选中物料项
     selMatter(val) {
+      
       this.count = 0;
       let sels = JSON.parse(val);
         sels.map(item=>{
@@ -328,6 +329,10 @@ export default {
             this.saveData(saveAndStartWf,submitData);
           }
          })
+         //清除缓存
+          if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
+            sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
+          }
       }
     },
     //获取订单信息用于重新提交

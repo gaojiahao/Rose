@@ -62,6 +62,16 @@ export let delImg = (id = '') => {
   });
 };
 
+// TODO 获取仓库出库物料
+export let getSumInvBalance = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSumInvBalance',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {
   save,
   update,

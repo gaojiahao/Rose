@@ -101,16 +101,7 @@ export default {
                 }
               }
               // 获取 调拨应用
-              if(item.text === '调拨'){
-                for(let val of item.children){
-                  if(businessMap[val.text]){
-                    val.code = businessMap[val.text]
-                    this.ACAarray.push(val);
-                  }
-                }
-              }
-              // 获取 财务应用
-              if(item.text === '财务'){
+              if(item.text === '库存' || item.text === '财务'){
                 for(let val of item.children){
                   if(businessMap[val.text]){
                     val.code = businessMap[val.text]
@@ -127,7 +118,13 @@ export default {
         })
       })
     })()
-  }
+  },
+  mounted(){
+    //清除缓存
+    if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
+      sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
+    }
+  },
 }
 </script>
 

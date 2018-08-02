@@ -63,7 +63,7 @@
       </div>
     </div>
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}'>提交</div>
+      <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
   </div>
 </template>
@@ -368,7 +368,12 @@ export default {
                 this.$vux.alert.show({
                   content:data.message,
                   onHide(){
-                    that.$router.push('/adress');
+                    if(that.$route.query.add == 1){
+                      that.$router.go(-1);
+                      sessionStorage.setItem('EDIT_ADS_TRANSCODE',JSON.stringify({transCode:data.transCode}));
+                    }else{
+                      that.$router.push('/adress');
+                    }
                   }
                 })
               }   

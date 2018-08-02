@@ -48,6 +48,7 @@
             </div>
             <load-more tip="加载中" v-show="hasNext"></load-more>
             <load-more :show-loading="false" tip="暂无数据" v-show="!dealerList.length && !hasNext"></load-more>
+            <div class="PopDealerList_newGo" v-if="newAdd" @click="add">新增往来</div>
           </div>
         </div>
       </div>
@@ -79,7 +80,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, LoadMore,
+      Icon, Popup, LoadMore
     },
     data() {
       return {
@@ -93,6 +94,7 @@
         page: 1.,
         hasNext: true,
         selParams: null,
+        newAdd:false,
       }
     },
     watch: {
@@ -186,6 +188,18 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
+          this.newAdd = tableContent.length == 0 ? true : false;
+          //获取缓存
+          if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
+            let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
+            for(let i = 0 ; i<this.dealerList.length ; i++ ){
+              if(this.dealerList[i].transCode == EDIT_ADS_TRANSCODE){
+                this.tmpItems.push(this.dealerList[i]);
+                this.selItems.push(this.dealerList[i]);
+                this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
+              }
+            }
+          }
           this.$nextTick(() => {
             this.bScroll.refresh();
             if (!this.hasNext) {
@@ -239,11 +253,22 @@
           });
         })
       },
+      //新增往来
+      add(){
+        this.$router.push({
+          path:'/adress/edit_ads',
+          query:{
+            add:1
+          }})
+      }
     },
     created() {
       this.initScroll();
       this.getDealer();
-    }
+    },
+    mounted(){
+      
+    },
   }
 </script>
 
@@ -506,5 +531,18 @@
         background: #5077aa;
       }
     }
+  }
+  .PopDealerList_newGo{
+    text-align: center;
+    width: 100px;
+    margin: 0 auto;
+    border: 1px solid #999999;
+    color: #999999;
+    border-radius: 3px;
+  }
+  .editAds{
+    width: 100%;
+    height: 100%;
+    background: #fff;
   }
 </style>
