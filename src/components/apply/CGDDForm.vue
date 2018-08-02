@@ -328,7 +328,7 @@ export default {
         this.biReferenceId = data.biReferenceId;
         let {formData} = data;
         formData.order.dataSet.map(item=>{
-          item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}` : this.getDefaultImg();
+          item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
           this.count += item.noTaxAmount*100
         })
         this.count = this.count/100;

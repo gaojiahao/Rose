@@ -5,12 +5,13 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <div class="search_part">
+          <!-- <div class="search_part">
             <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchMat">
             <div class="pop_cancel" @click="showPop = !showPop">返回</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
             <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
-          </div>
+          </div> -->
+          <m-search @search='searchMat'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -83,7 +84,7 @@
   import {Icon, Popup, LoadMore} from 'vux'
   import {getList} from 'service/commonService'
   import RScroll from 'components/RScroll'
-
+  import MSearch from 'components/search'
   export default {
     name: "MatterList",
     props: {
@@ -99,7 +100,7 @@
       },
     },
     components: {
-      Icon, Popup, LoadMore, RScroll,
+      Icon, Popup, LoadMore, RScroll,MSearch
     },
     data() {
       return {
@@ -221,7 +222,7 @@
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
-            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg();
+            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
@@ -231,7 +232,8 @@
         });
       },
       // TODO 搜索物料
-      searchMat() {
+      searchMat(val) {
+        this.srhInpTx = val;
         this.matterList = [];
         this.page = 1;
         this.hasNext = true;

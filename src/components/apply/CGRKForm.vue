@@ -409,7 +409,7 @@
           dataSet = dataSet.map(item => {
             return {
               ...item,
-              inventoryPic: item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}` : this.getDefaultImg(),
+              inventoryPic: item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_transObjCode,
               inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,

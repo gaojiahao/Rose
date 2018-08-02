@@ -152,7 +152,7 @@
           let {dataSet} = data.formData.inPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
-            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
           }
           this.orderInfo = data.formData;
           this.workFlowInfoHandler();

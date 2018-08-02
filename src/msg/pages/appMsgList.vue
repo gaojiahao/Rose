@@ -32,14 +32,14 @@
               <span class="tips">[上个节点]</span>
             </div>
             <div class="handle_result">
-              审批结果：<span class="result" :class='{reject_c : item.workFlow.status === "撤回" || item.workFlow.status === "拒绝" }'>{{item.workFlow.status}}</span>
+              审批结果：<span class="result" :class='{reject_c : item.workFlow.status === "同意"  }'>{{item.workFlow.status}}</span>
             </div>
           </div>
         </div>
         <!-- 用户需要进行的操作 -->
         <div class="user_handle" v-if='item.workFlow'>
           <div class="tips">此单你需要进行:</div>
-          <div class="info">{{item.workFlow.nodeName}}</div>
+          <div class="info">{{item.nodeName}}</div>
         </div>
       </div>
       <!-- <div class="todo_msg">
@@ -394,12 +394,13 @@ export default {
         font-size: .12rem;
         .result {
           color: #fff;
-          background: #53d397;
+          background: #c93d1b;
+         
           padding: 0 .04rem;
           display: inline-block;
         }
         .reject_c{
-          background: #c93d1b;
+          background: #53d397;
         }
       }
     }

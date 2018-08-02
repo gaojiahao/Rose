@@ -145,7 +145,7 @@ export default {
           let { dataSet } = data.formData.order;
           for(let val of dataSet){
             this.count += val.tdAmount*100;
-            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
           }
           this.count = this.count/100;
           this.orderInfo = data.formData;
