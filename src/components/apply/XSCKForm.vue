@@ -19,25 +19,10 @@
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
+
       <!-- 仓库-->
-      <div class="or_ads mg_auto box_sd" @click="showWarehousePop = !showWarehousePop">
-        <div v-if='warehouse'>
-          <div class="title">仓库列表</div>
-          <div class="user_info">
-            <span class="user_name">{{warehouse.warehouseName}}</span>
-            <span class="user_tel">{{warehouse.warehouseRelType}}</span>
-          </div>
-          <div class="cp_info">
-            <p class="cp_name"></p>
-            <span>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}</span>
-          </div>
-        </div>
-        <div v-else>
-          <div class="title">仓库列表</div>
-          <div class="mode">请选择仓库</div>
-        </div>
-        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-      </div>
+      <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
+
       <!-- 结算方式 -->
       <pop-single-select title="结算方式" :data="transMode" :value="formData.drDealerPaymentTerm"
                          v-model="formData.drDealerPaymentTerm"></pop-single-select>
@@ -122,14 +107,10 @@
         <div class="add_more" v-if="orderList.length" @click="addOrder">新增更多订单</div>
         <!-- 往来popup -->
         <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @sel-dealer="selDealer"></pop-dealer-list>
-        <!-- 仓库popup -->
-        <pop-warehouse-list :show="showWarehousePop" v-model="showWarehousePop"
-                            @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 订单popup -->
         <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                         :default-value="orderList" ref="order"></pop-order-list>
       </div>
-      <!--<r-action :code="transCode" @on-resubmit="submitOrder" @on-stop="stop"></r-action>-->
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
@@ -200,7 +181,6 @@
           biComment: '' //备注
         },
         submitSuccess: false, // 是否提交成功
-        showWarehousePop: false,
         warehouse: null, // 选中仓库属性
         taxRate: 0.16, // 税率
         numMap: {}, // 用于记录订单物料的数量
@@ -472,6 +452,7 @@
             dealerName: outPut.dealerName_dealerDebit,
             dealerMobilePhone: formData.dealerDebitContactInformation,
             dealerCode: outPut.dealerDebit,
+            dealerLabelName: outPut.drDealerLabel,
           };
           this.orderParams = {
             dealerCode: outPut.dealerDebit,
@@ -480,6 +461,7 @@
           this.warehouse = {
             warehouseName: outPut.warehouseName_containerCodeOut,
             warehouseCode: outPut.warehouseCode_containerCodeOut,
+            warehouseRelType: outPut.warehouseType_containerCodeOut,
           };
           this.formData = {
             ...this.formData,
