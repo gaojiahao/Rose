@@ -1,57 +1,77 @@
 <template>
-  <!-- 物料popup -->
-  <div v-transfer-dom>
-    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-      <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <div class="search_part">
-            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
-            <div class="pop_cancel" @click="showPop = !showPop">返回</div>
-            <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
+  <div class="or_ads mg_auto box_sd" @click="showPop = !showPop">
+    <!-- 仓库信息 -->
+    <div v-if='selItems'>
+      <div class="title">仓库列表</div>
+      <div class="user_info">
+        <span class="user_name">{{selItems.warehouseName}}</span>
+        <span class="user_tel">{{selItems.warehouseRelType}}</span>
+      </div>
+      <div class="cp_info">
+        <p class="cp_name"></p>
+        <span>{{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</span>
+      </div>
+    </div>
+    <div v-else>
+      <div class="title">仓库列表</div>
+      <div class="mode">请选择仓库</div>
+    </div>
+    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+
+    <!-- 仓库popup -->
+    <div v-transfer-dom>
+      <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+        <div class="trade_pop">
+          <div class="title">
+            <!-- 搜索栏 -->
+            <div class="search_part">
+              <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
+              <div class="pop_cancel" @click="showPop = !showPop">返回</div>
+              <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
+              <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
+            </div>
           </div>
-        </div>
-        <!-- 仓库列表 -->
-        <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
-                  @on-pulling-down="onPullingDown" ref="bScroll">
-          <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
-               @click.stop="selThis(item,index)">
-            <div class="pop-list-main ">
-              <div class="pop-list-info">
-                <!--联系人电话 -->
-                <div class="withColor">
-                  <div class="ForInline name" style="display:inline-block">
-                    <span>{{item.warehouseName}}</span>
+          <!-- 仓库列表 -->
+          <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
+                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
+                    @on-pulling-down="onPullingDown" ref="bScroll">
+            <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
+                 @click.stop="selThis(item,index)">
+              <div class="pop-list-main ">
+                <div class="pop-list-info">
+                  <!--联系人电话 -->
+                  <div class="withColor">
+                    <div class="ForInline name" style="display:inline-block">
+                      <span>{{item.warehouseName}}</span>
+                    </div>
+                    <div class="ForInline name" style="display:inline-block">
+                      <span></span>
+                    </div>
                   </div>
-                  <div class="ForInline name" style="display:inline-block">
-                    <span></span>
+                  <div class="withColor">
+                    <div class="ForInline " style="display:inline-block">
+                      <span class='creator'>{{item.warehouseRelType}}</span>
+                    </div>
                   </div>
-                </div>
-                <div class="withColor">
-                  <div class="ForInline " style="display:inline-block">
-                    <span class='creator'>{{item.warehouseRelType}}</span>
+                  <!-- 地址 -->
+                  <div class="withoutColor">
+                    <span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>
                   </div>
-                </div>
-                <!-- 地址 -->
-                <div class="withoutColor">
-                  <span>{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</span>
                 </div>
               </div>
+              <!-- icon -->
+              <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
+              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
-            <!-- icon -->
-            <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
-          </div>
-        </r-scroll>
-      </div>
-      <!-- 底部栏 -->
-      <div class="count_mode vux-1px-t">
-        <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
-        <span class="count_btn" @click="selConfirm">确定</span>
-      </div>
-    </popup>
+          </r-scroll>
+        </div>
+        <!-- 底部栏 -->
+        <div class="count_mode vux-1px-t">
+          <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
+          <span class="count_btn" @click="selConfirm">确定</span>
+        </div>
+      </popup>
+    </div>
   </div>
 </template>
 
@@ -63,9 +83,11 @@
   export default {
     name: "PopWarehouseList",
     props: {
-      show: {
-        type: Boolean,
-        default: false
+      defaultValue: {
+        type: Object,
+        default() {
+          return {}
+        }
       }
     },
     directives: {TransferDom},
@@ -76,8 +98,8 @@
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
-        selItems: [], // 哪些被选中了
-        tmpItems: [],
+        selItems: null, // 哪些被选中了
+        tmpItems: {},
         listData: [],
         limit: 10,
         page: 1.,
@@ -85,15 +107,13 @@
         scrollOptions: {
           click: true,
           pullUpLoad: true,
-        }
+        },
       }
     },
     watch: {
-      show: {
-        handler(val) {
-          this.showPop = val;
-        }
-      },
+      defaultValue(val) {
+        this.selItems = this.defaultValue ? {...this.defaultValue} : null;
+      }
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -191,13 +211,78 @@
       },
     },
     created() {
-      this.showPop = this.show;
+      this.selItems = this.defaultValue ? {...this.defaultValue} : null;
       this.getList();
     }
   }
 </script>
 
 <style scoped lang="scss">
+  // 居中
+  .mg_auto {
+    width: 95%;
+    margin: 10px auto;
+  }
+
+  // 阴影
+  .box_sd {
+    box-sizing: border-box;
+    box-shadow: 0 0 8px #e8e8e8;
+  }
+
+  // 地址栏
+  .or_ads {
+    position: relative;
+    padding: .06rem .4rem .06rem .08rem;
+    .icon-gengduo {
+      top: 50%;
+      right: .1rem;
+      font-size: .24rem;
+      position: absolute;
+      transform: translate(0, -50%);
+    }
+    .title {
+      color: #757575;
+      font-weight: 200;
+      font-size: .12rem;
+    }
+    .mode {
+      color: #111;
+      font-weight: 500;
+    }
+    .r_arrow {
+      top: 50%;
+      right: .04rem;
+      position: absolute;
+      transform: translate(0, -50%);
+    }
+    // 用户信息
+    .user_info {
+      color: #111;
+      font-size: .2rem;
+      font-weight: 500;
+      // 用户姓名
+      .user_name {
+        margin-right: .08rem;
+      }
+      // 用户电话
+      .user_tel {
+        font-family: sans-serif, -apple-system-font;
+      }
+    }
+    // 公司信息
+    .cp_info {
+      .cp_name {
+        color: #111;
+        font-weight: 500;
+      }
+      .cp_ads {
+        font-weight: 200;
+        color: #757575;
+      }
+    }
+  }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;

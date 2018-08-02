@@ -20,24 +20,7 @@
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
       <!-- 仓库-->
-      <div class="or_ads mg_auto box_sd" @click="showWarehousePop = !showWarehousePop">
-        <div v-if='warehouse'>
-          <div class="title">仓库列表</div>
-          <div class="user_info">
-            <span class="user_name">{{warehouse.warehouseName}}</span>
-            <span class="user_tel">{{warehouse.warehouseRelType}}</span>
-          </div>
-          <div class="cp_info">
-            <p class="cp_name"></p>
-            <span>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}</span>
-          </div>
-        </div>
-        <div v-else>
-          <div class="title">仓库列表</div>
-          <div class="mode">请选择仓库</div>
-        </div>
-        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-      </div>
+      <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
       <!-- 结算方式 -->
       <pop-single-select title="结算方式" :data="transMode" :value="formData.crDealerPaymentTerm"
                          v-model="formData.crDealerPaymentTerm"></pop-single-select>
@@ -117,9 +100,6 @@
         <!-- 往来popup -->
         <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
                          @sel-dealer="selDealer"></pop-dealer-list>
-        <!-- 仓库popup -->
-        <pop-warehouse-list :show="showWarehousePop" v-model="showWarehousePop"
-                            @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          :default-value="listData" ref="matter"></pop-matter-list>
@@ -357,7 +337,7 @@
               containerInWarehouseManager: null,
               inPut: {
                 dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
-                crAccountSub: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
+                crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
                 containerCode: this.warehouse.warehouseCode, // 仓库编码
                 dataSet
               }
@@ -420,7 +400,7 @@
             dealerName: inPut.dealerName_dealerCodeCredit,
             dealerMobilePhone: formData.dealerCreditContactInformation,
             dealerCode: inPut.dealerCodeCredit,
-            dealerLabelName: inPut.crAccountSub,
+            dealerLabelName: inPut.crDealerLabel,
           };
           this.warehouse = {
             warehouseName: inPut.warehouseName_containerCode,
