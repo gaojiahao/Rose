@@ -4,19 +4,12 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
-          <!-- 搜索栏 -->
-          <!-- <div class="search_part">
-            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchMat">
-            <div class="pop_cancel" @click="showPop = !showPop">返回</div>
-            <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
-          </div> -->
           <m-search @search='searchMat'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp"
-                  @on-pulling-down="onPullingDown" ref="bScroll">
+                  ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item,index)">
             <div class="mater_img">
@@ -88,7 +81,6 @@
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
   import {getList} from 'service/commonService'
-  import {getSumInvBalance} from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
 
@@ -106,18 +98,6 @@
           return []
         }
       },
-      // 用于请求的key名
-      getListMethod: {
-        type: String,
-        default: 'getMatList'
-      },
-      // 请求的传参
-      params: {
-        type: Object,
-        default() {
-          return {}
-        }
-      }
     },
     components: {
       Icon, Popup, LoadMore, RScroll, MSearch
@@ -142,16 +122,6 @@
       show: {
         handler(val) {
           this.showPop = val;
-        }
-      },
-      defaultValue: {
-        handler(val) {
-          this.setDefaultValue();
-        }
-      },
-      params: {
-        handler() {
-          this[this.getListMethod]();
         }
       }
     },
@@ -228,10 +198,18 @@
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
-            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
+            item.inventoryPic = item.inventoryPic 
+              // 获取图片
+              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` 
+              // 若没有则取默认图片
+              : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
+          this.matterList = this.page === 1 
+            // 第一页数据
+            ? tableContent 
+            // 请求的新数据
+            : [...this.matterList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
@@ -244,73 +222,22 @@
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
-        this[this.getListMethod]();
-      },
-      // TODO 删除选中项
-      delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.inventoryCode === dItem.inventoryCode);
-        if (delIndex !== -1) {
-          this.selItems.splice(delIndex, 1);
-        }
-        this.tmpItems = [...this.selItems];
+        this.getMatList();
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this[this.getListMethod]();
-      },
-      // TODO 下拉刷新
-      onPullingDown() {
-        this.page = 1;
-        this[this.getListMethod](true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
+        this.getMatList();
       },
       // TODO 设置默认值
       setDefaultValue() {
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
-      },
-      // TODO 物料出库入库请求
-      getSumInvBalance() {
-        let filter = [];
-        //成品,商品,服务
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'inventoryName',
-            },
-          ];
-        }
-        return getSumInvBalance({
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          calcRelCode: 1406,
-          ...this.params,
-          filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          tableContent.forEach(item => {
-            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
-          });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
-        });
       }
     },
     created() {
       this.setDefaultValue();
-      this[this.getListMethod]();
+      this.getMatList();
     }
   }
 </script>
