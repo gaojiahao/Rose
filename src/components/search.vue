@@ -2,9 +2,10 @@
     <div class='search'>
         <form class="search_part" action="" @submit.prevent="searchMat(srhInpTx)">
             <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
-            <div class="pop_cfm pop_cancel" 
+            <div class="pop_cfm " 
+            :class='{pop_cancel : srhInpTx.length===0}'
                   v-if='!btnInfo'
-                @click="searchMat(srhInpTx)">返回</div>
+                @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}</div>
             <div class="pop_cfm" 
                 @click="searchMat(srhInpTx)"
                 v-else>搜索</div>
