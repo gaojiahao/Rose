@@ -187,8 +187,18 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          if(tableContent.length == 0){
-            this.newAdd = true;
+          this.newAdd = tableContent.length == 0 ? true : false;
+          //获取缓存
+          if(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')){
+            let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
+            for(let i = 0 ; i<this.listData.length ; i++ ){
+              if(this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE){
+                this.tmpItems = this.listData[i];
+                this.selItems = this.listData[i];
+                this.$emit('sel-item', JSON.stringify(this.listData[i]));
+                 sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
+              }
+            }
           }
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();

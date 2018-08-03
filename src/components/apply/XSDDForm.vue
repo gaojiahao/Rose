@@ -330,10 +330,6 @@ export default {
             this.saveData(saveAndStartWf,submitData);
           }
          })
-         //清除缓存
-          if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
-            sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
-          }
       }
     },
     //获取订单信息用于重新提交

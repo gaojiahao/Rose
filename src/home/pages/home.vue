@@ -118,13 +118,7 @@ export default {
         })
       })
     })()
-  },
-  mounted(){
-    //清除缓存
-    if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
-      sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
-    }
-  },
+  }
 }
 </script>
 

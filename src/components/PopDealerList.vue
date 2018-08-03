@@ -188,6 +188,7 @@
                 this.tmpItems.push(this.dealerList[i]);
                 this.selItems.push(this.dealerList[i]);
                 this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
+                sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
               }
             }
           }
