@@ -4,7 +4,7 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
-          <m-search @search='searchMat'></m-search>
+          <m-search @search='searchMat' @turnOff="onHide"></m-search>
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"

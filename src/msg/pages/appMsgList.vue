@@ -6,42 +6,70 @@
     <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-      <div class="todo_msg" v-for='(item,index) in listData' :key='index' @click='goDetail(item)'>
-        <div class="msg_top">
-          <!-- 表单状态 及 编码 -->
-          <div class="work_info">
-            <!-- 状态 -->
-            <span class="work_status doing_work" :class='{invalid_work : item.status==="已处理"}'>{{item.status}}</span>
-            <!-- 编码 -->
-            <span class="work_code doing_code">{{item.transCode}}</span>
-          </div>
-          <!-- 时间 -->
-          <div class="time">
-            {{item | handleCrt}}
-          </div>
-        </div>
-        <!-- 上个节点审批信息 -->
-        <div class="handle_info vux-1px-b">
-          <div class="handle_avatar">
-            <img src="../../assets/ava03.png" alt="avatar">
-          </div>
-          <div class="info">
-            <div class="handle_part">
-              <span class="name">{{item.lastNode.userName}}</span>
-              <span class="handle">进行了审批</span>
-              <span class="tips">[上个节点]</span>
+        <div class='each_task' v-for='(item,index) in listData' :key='index' @click='goDetail(item)'>
+          <div class="todo_msg" v-if='item.status === "待处理"'>
+            <div class="msg_top">
+              <!-- 表单状态 及 编码 -->
+              <div class="work_info">
+                <!-- 状态 -->
+                <span class="work_status doing_work" >{{item.status}}</span>
+                <!-- 编码 -->
+                <span class="work_code doing_code">{{item.transCode}}</span>
+              </div>
+              <!-- 时间 -->
+              <div class="time">
+                {{item | handleCrt}}
+              </div>
             </div>
-            <div class="handle_result">
-              审批结果：<span class="result" :class='{reject_c : item.lastNode.status === "同意" || item.lastNode.status === "提交"  }'>{{item.lastNode.status}}</span>
+            <!-- 上个节点审批信息 -->
+            <div class="handle_info vux-1px-b">
+              <div class="handle_avatar">
+                <img src="../../assets/ava03.png" alt="avatar">
+              </div>
+              <div class="info">
+                <div class="handle_part">
+                  <span class="name">{{item.lastNode.userName}}</span>
+                  <span class="handle">进行了审批</span>
+                  <span class="tips">[上个节点]</span>
+                </div>
+                <div class="handle_result">
+                  审批结果：<span class="result" :class='{reject_c : item.lastNode.status === "同意" || item.lastNode.status === "提交"  }'>{{item.lastNode.status}}</span>
+                </div>
+              </div>
+            </div>
+            <!-- 用户需要进行的操作 -->
+            <div class="user_handle">
+              <div class="tips">此单你需要进行:</div>
+              <div class="info">{{item.nodeName}}</div>
             </div>
           </div>
+          <div class="todo_msg" v-else>
+            <div class="msg_top">
+              <!-- 表单状态 及 编码 -->
+              <div class="work_info">
+                <!-- 状态 -->
+                <span class="work_status " >{{item.status}}</span>
+                <!-- 编码 -->
+                <span class="work_code doing_code">{{item.transCode}}</span>
+              </div>
+              <!-- 时间 -->
+              <div class="time">
+                {{item | handleCrt}}
+              </div>
+            </div>
+            <!-- 上个节点审批信息 -->
+            <div class="handle_info vux-1px-b">
+              <div class="info">
+                <div class="handle_part">
+                  <span class="handle">已进行了</span>
+                  <span class="result" :class='{reject_c : item.nodeName === "拒绝" || item.nodeName === "撤回" || item.nodeName === "重新提交" }'>{{item.nodeName}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
-        <!-- 用户需要进行的操作 -->
-        <div class="user_handle">
-          <div class="tips">此单你需要进行:</div>
-          <div class="info">{{item.nodeName}}</div>
-        </div>
-      </div>
+      
     </r-scroll>
     <loading-form :show='showLoadding'></loading-form>
    <router-view></router-view>
@@ -240,7 +268,7 @@ export default {
     },1000)
   },
   beforeRouteEnter (to, from, next) {
-    to.meta.title = to.params.name ;
+    to.meta.title = to.query.name ;
     next();
   }
 }
@@ -350,6 +378,18 @@ export default {
         .tips {
           color: #757575;
           font-size: .1rem;
+        }
+        .result {
+          color: #757575;
+          font-size: .12rem;
+          color: #fff;
+          background: #53d397;
+               
+          padding: 0 .04rem;
+          display: inline-block;
+        }
+        .reject_c{
+           background: #c93d1b;   
         }
       }
       // 审批结果
