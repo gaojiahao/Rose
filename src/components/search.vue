@@ -16,6 +16,7 @@
 
 <script>
 import { Icon } from "vux";
+import { setTimeout } from 'timers';
 export default {
   data() {
     return {
@@ -29,10 +30,13 @@ export default {
   },
   methods: {
     getValue(e){
-      this.srhInpTx = e.target.value;
-      if(this.srhInpTx.length === 0){
-        this.$emit("search", this.srhInpTx);
-      }
+      // 解决iOS原生输入法在input框输入文字之后一瞬间为空的坑
+      setTimeout(()=>{
+        this.srhInpTx = e.target.value;
+        if(!this.srhInpTx){
+          this.$emit("search", this.srhInpTx);
+        }
+      },0)      
     },
     searchMat(val) {  
       // 如果 输入框没有值 则点击关闭popup
