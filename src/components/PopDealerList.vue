@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <d-search @search='searchMat' @turnOff='closePop'></d-search>
+          <d-search @search='searchMat' @turnOff="onHide"></d-search>
         </div>
         <!-- 往来列表 -->
         <div class="mater_list" ref="dealer">
