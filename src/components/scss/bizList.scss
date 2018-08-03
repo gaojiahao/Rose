@@ -149,11 +149,12 @@
     }
   }
   .order_count {
-    font-size: .14rem;
-    padding: .04rem .1rem;
-    // text-align: right;
+    width: 100%;
     display: flex;
+    font-size: .14rem;
     align-items: center;
+    padding: .04rem .1rem;
+    box-sizing: border-box;
     justify-content: space-between;
     .handle_man {
       color: #7D7D7D;
