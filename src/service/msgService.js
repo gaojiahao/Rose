@@ -20,7 +20,7 @@ export let getMsgList = (data = {}) => {
 // TODO 所有消息列表
 export let getAllMsgList = (data = {}) => {
     return $axios.ajax({
-        url: '/H_roleplay-si/ds/getMyAgendaAndLastNode',
+        url: '/H_roleplay-si/ds/getMyTasksAndLastNode',
         data
     }).catch(e => {
         return errorHandler(e);
