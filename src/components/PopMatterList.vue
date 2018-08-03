@@ -9,8 +9,7 @@
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp"
-                  @on-pulling-down="onPullingDown" ref="bScroll">
+                  :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item,index)">
             <div class="mater_img">
@@ -100,12 +99,12 @@
           return []
         }
       },
-      // 用于请求的key名
+      // 用于请求的key名，用于区分不同的接口
       getListMethod: {
         type: String,
         default: 'getMatList'
       },
-      // 请求的传参
+      // 请求的传参，本地库存调拨请求数据时会传入
       params: {
         type: Object,
         default() {
@@ -121,12 +120,12 @@
         showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
-        tmpItems: [],
-        matterList: [],
-        limit: 10,
-        page: 1.,
-        hasNext: true,
-        scrollOptions: {
+        tmpItems: [], // 临时存储
+        matterList: [], // 物料列表
+        limit: 10, // 每页条数
+        page: 1., // 当前页码
+        hasNext: true, // 是否有下一页
+        scrollOptions: { // 滚动配置
           click: true,
           pullUpLoad: true,
         }
@@ -140,11 +139,13 @@
       },
       defaultValue: {
         handler(val) {
+          // 默认值改变，重新赋值
           this.setDefaultValue();
         }
       },
       params: {
         handler() {
+          // 参数改变，重新请求接口
           this[this.getListMethod]();
         }
       }
@@ -154,6 +155,7 @@
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
+            // 弹窗展示时刷新滚动，防止无法拖动问题
             this.$refs.bScroll.refresh();
           }
         })
@@ -181,10 +183,10 @@
       // TODO 确定选择物料
       cfmMater() {
         let sels = [];
-        // 返回上层
         this.showPop = false;
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
         this.selItems = [...this.tmpItems];
+        // 触发父组件选中事件
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -253,26 +255,14 @@
         this.page++;
         this[this.getListMethod]();
       },
-      // TODO 下拉刷新
-      onPullingDown() {
-        this.page = 1;
-        this[this.getListMethod](true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
-      },
       // TODO 设置默认值
       setDefaultValue() {
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
       },
-      // TODO 物料出库入库请求
+      // TODO 出库仓库现有物料请求
       getSumInvBalance() {
         let filter = [];
-        //成品,商品,服务
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -304,6 +294,7 @@
     },
     created() {
       this.setDefaultValue();
+      // 请求物料
       this[this.getListMethod]();
     }
   }
