@@ -66,12 +66,6 @@
         type: Boolean,
         default: false
       },
-      defaultValue: {
-        type: Array,
-        default() {
-          return []
-        }
-      },
     },
     components: {
       Icon, Popup, LoadMore, RScroll,MSearch
@@ -89,19 +83,13 @@
         scrollOptions: {
           click: true,
           pullUpLoad: true,
-        }
+        },
       }
     },
     watch: {
       show: {
         handler(val) {
           this.showPop = val;
-        }
-      },
-      defaultValue: {
-        handler(val){
-          this.tmpItems = [...val];
-          this.selItems = [...val];
         }
       },
     },
@@ -121,14 +109,22 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.COST_CODE === sItem.COST_CODE) !== -1;
+        let flag = false;
+        this.tmpItems.every(item => {
+          if (sItem.COST_CODE === item.COST_CODE) {
+            flag = true;
+            return false;
+          }
+          return true;
+        });
+        return flag;
       },
-      // TODO 选择物料
+      // TODO 选择往来
       selThis(sItem, sIndex) {
         this.tmpItems = []
         this.tmpItems.push(sItem);
       },
-      // TODO 确定选择物料
+      // TODO 确定选择往来
       cfmMater() {
         let sels = [];
         // 返回上层
@@ -137,6 +133,7 @@
         this.selItems = [...this.tmpItems];
         this.selItems.map(item=>{
           item.COST_SUB = item.COST_SUB_SUBJECTS.split(',');
+          item.expSubject= item.COST_SUB[0];
         })
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
@@ -200,14 +197,6 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getCostList();
       },
-      // TODO 删除选中项
-      delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.inventoryCode === dItem.inventoryCode);
-        if (delIndex !== -1) {
-          this.selItems.splice(delIndex, 1);
-        }
-        this.tmpItems = [...this.selItems];
-      },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
@@ -226,8 +215,6 @@
       },
     },
     created() {
-      this.tmpItems = [...this.defaultValue];
-      this.selItems = [...this.defaultValue];
       this.getCostList();
     }
   }

@@ -4,7 +4,7 @@
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
-        <template v-if="!matterList.length">
+        <template v-if="!CostList.length">
           <div @click="showMaterielPop = !showMaterielPop">
             <div class="title">费用列表</div>
             <div class="tips">请选择费用</div>
@@ -15,7 +15,7 @@
         <template v-else>
           <div class="title">费用列表</div>
           <div class="mater_list">
-            <div class="each_mater" v-for="(item, index) in matterList" :key='index'>
+            <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
@@ -25,7 +25,7 @@
                     <div class="mater_main">
                       <!-- 物料名称 -->
                       <div class="mater_name">
-                        <!-- <span class="whiNum">No.{{index + 1}}</span> -->
+                        <span class="whiNum">No.{{index + 1}}</span>
                         {{item.COST_NAME}}
                       </div>
                       <!-- 物料基本信息 -->
@@ -48,11 +48,15 @@
                           </div>
                         </div>
                       </div>
-                      <div class="pop-single-container" @click="showPop = !showPop">
-                        <p class="title">费用科目</p>
-                        <p class="mode">{{item.COST_SUB[0]}}</p>
-                        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-                        <!-- 结算popup -->
+                      <div class="userInp_mode">
+                        <group>
+                          <cell title="费用科目" text-align='right' v-model="item.expSubject" @click.native="showPop = true" is-link></cell>
+                          <x-input  title="金额" text-align='right' placeholder='请填写'
+                                  :value='item.price?item.price : "0" | numberComma(3)'
+                                  @on-blur="getValue(item,$event)"></x-input>
+                          <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'
+                          v-model="item.reson"></x-input>
+                        </group>
                         <div v-transfer-dom>
                           <popup v-model="showPop" height="70%" class="trade_pop_part">
                             <div class="trade_pop">
@@ -60,22 +64,14 @@
                                 <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
                               </div>
                               <span class="each_mode"
-                                    :class="{choiced : item1 === item.COST_SUB[0]}"
+                                    :class="{choiced : item1 === item.expSubject}"
                                     v-for="(item1, index1) in item.COST_SUB"
                                     :key="index1"
-                                    @click="selItem(item1,index1)">{{item1}}</span>
+                                    @click="selItem(item1,item)">{{item1}}</span>
                             </div>
                             <div class="cfm_btn" @click="confirm">确定</div>
                           </popup>
                         </div>
-                      </div>
-                      <div class="userInp_mode">
-                        <group>
-                          <x-input type="number" title="金额" text-align='right' placeholder='请填写'
-                                  v-model.number="item.price"></x-input>
-                          <x-input type="number" title="报销事由" text-align='right' placeholder='请填写'
-                          v-model.number="item.reson"></x-input>
-                        </group>
                       </div>
                     </div>
                   </div>
@@ -87,33 +83,33 @@
           </div>
         </template>
         <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
+        <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多物料</div>
         <!-- 费用popup -->
         <pop-cost-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                         :default-value="matterList" ref="matter"></pop-cost-list>
+                        ref="matter"></pop-cost-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{count}}
-        <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
+        <span style="fontSize:.14rem">￥</span>{{count | numberComma(3)}}
       </span>
-      <!-- <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
+      <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
 </template>
 
 <script>
-  import { Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup} from 'vux'
+  import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup,numberComma} from 'vux'
   import PopCostList from 'components/PopCostList'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
 
   export default {
     mixins: [ApplyCommon],
     components: { 
+      Cell ,
       Group,   
       Popup,
       XInput,
@@ -125,96 +121,70 @@
     data() {
       return {
         showMaterielPop :false,
-        matterList: [],  // 物料列表
+        CostList: [],  // 物料列表
         transCode: '',
         formData: {
-          biComment: '',
-          drDealerPaymentTerm: '现付', // 结算方式
-          drDealerLogisticsTerms: '上门', // 物流条款
-          validUntil: '', // 有效期
+          biComment: ''
         },
-        priceMap: {},
         showPop: false,
         count : 0,
         tmp: '',
       }
     },
+    filters:{
+      numberComma
+    },
     methods: {
-      selItem(){
-
+      selItem(item1,item){
+        item.expSubject = item1;
       },
       confirm(){
-
+        this.showPop = false;
       },
       // TODO 滑动删除
       delClick(item, index) {
-        let arr = this.matterList;
+        let arr = this.CostList;
         arr.splice(index, 1);
-        // 删除输入过的价格
-        delete this.priceMap[item.inventoryCode];
-        this.$refs.matter.delSelItem(item);
       },
       // TODO 点击增加更多物料
       addMatter() {
-        this.matterList.forEach(item => {
-          // 存储已输入的价格
-          this.priceMap[item.inventoryCode] = item.price;
-        });
         this.showMaterielPop = !this.showMaterielPop
-      },
-      // TODO 选中往来项
-      selDealer(val) {
-        let [sels] = JSON.parse(val);
-        this.customInfo = sels;
       },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
-        sels.forEach(item => {
-          item.price = this.priceMap[item.inventoryCode] || ''
-        });
-        this.priceMap = {};
-        this.matterList = [...sels];
+        this.CostList.push(sels[0]);
       },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
+      getValue(item,e){
+        item.price = '';
+        item.price = Number(e.split(',').join(''));
+        this.count += item.price;
+
       },
       // TODO 提交
-      save() {
+      submitOrder() {
         let warn = '';
         let dataSet = [];
-        let validateMap = [
-          {
-            key: 'customInfo',
-            message: '往来信息'
-          },
-        ];
-        validateMap.every(item => {
-          if (!this[item.key]) {
-            warn = `请选择${item.message}`;
+        if (!warn && !this.CostList.length) {
+          warn = '请选择费用';
+        }
+        this.CostList.every(item => {
+          if (!item.price) {
+            warn = '请输入报销金额';
             return false
           }
-          return true
-        });
-        if (!warn && !this.matterList.length) {
-          warn = '请选择物料';
-        }
-        this.matterList.every(item => {
-          if (!item.price) {
-            warn = '请输入单价';
+          if(!item.reson){
+            warn = '请输入报销事由'
             return false
           }
           dataSet.push({
-            inventoryName_transObjCode: item.inventoryName,
-            transObjCode: item.inventoryCode,
-            comment: item.comment || null,
-            priceType: item.priceType || null,
-            price: item.price
+            costName_expCode: item.COST_NAME,
+            expCode: item.COST_CODE,
+            expSubject: item.expSubject || null,
+            costType_expCode: item.COST_TYPE || null,
+            tdAmount: item.price,
+            expCause : item.reson,
+            comment : null
           });
           return true
         });
@@ -230,26 +200,21 @@
           onConfirm: () => {
             let operation = submitAndCalc;
             let submitData = {
-              listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
+              listId: 'b61ef324-f261-48d6-9c79-d1b475c24943',
               biComment: '',
               formData: JSON.stringify({
                 ...this.formData,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
-                dealerDebitContactPersonName: this.customInfo.creatorName || '',
-                dealerDebitContactInformation: this.customInfo.mobilePhone || '',
                 order: {
-                  dealerDebit: this.customInfo.dealerCode || '',
-                  drDealerLabel: this.customInfo.dealerLabelName || '客户',
+                  dealerDebit: this.formData.handler,
                   dataSet
                 }
               }),
             };
-
             if (this.transCode) {
               operation = saveAndCommitTask
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         });
@@ -257,19 +222,6 @@
       // TODO 获取详情
       getFormData() {
       },
-      clickDateSelect() {
-        this.$vux.datetime.show({
-          confirmText: '确定',
-          cancelText: '取消',
-          value: this.formData.validUntil,
-          onConfirm: (value) => {
-            this.formData.validUntil = value;
-          }
-        })
-      },
-      submitOrder(){
-        
-      }
     },
     created() {
     },
@@ -278,6 +230,12 @@
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
+  .weui-cell{
+    padding: 10px 0;
+    &:before{
+      left:0;
+    }
+  }
   .pop-single-container {
     position: relative;
     margin: 10px auto;
@@ -323,6 +281,7 @@
       }
       .each_mode {
         margin-right: .1rem;
+        margin-bottom : .1rem;
         display: inline-block;
         padding: .04rem .2rem;
         border: 1px solid #C7C7C7;
