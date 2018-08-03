@@ -39,8 +39,18 @@
               <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
             <load-more tip="加载中" v-show="hasNext"></load-more>
-            <load-more :show-loading="false" tip="暂无数据" v-show="!dealerList.length && !hasNext"></load-more>
-            <div class="PopDealerList_newGo" v-if="newAdd" @click="add">新增往来</div>
+            <!-- 当没有数据的时候 显示提醒文字 -->
+            <div class="when_null" v-show="!dealerList.length && !hasNext">
+              <div class="title">抱歉，没有找到您搜索的内容</div>
+              <ul class="tips">
+                <li>
+                  不用担心，您马上可以进行 <span class="addNew" @click="add">新增往来</span>
+                </li>
+                <li>
+                  或者检查“输入内容”是否正确
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -87,7 +97,6 @@
         page: 1.,
         hasNext: true,
         selParams: null,
-        newAdd:false,
       }
     },
     watch: {
@@ -179,7 +188,6 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
-          this.newAdd = tableContent.length == 0 ? true : false;
           //获取缓存
           if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
             let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
@@ -319,7 +327,36 @@
         height: calc(100% - .52rem);
         padding: 0 .04rem 0 .3rem;
         .mater_list_wrapper {
+          width: 100%;
           padding-top: .14rem;
+          position: relative;
+          // 当没有数据时
+          .when_null {
+            left: 50%;
+            width: 3rem;
+            position: absolute;
+            color: #757575;
+            font-weight: bold;
+            transform: translate(-50%, 0);
+            // 提醒文字
+            .title {
+              font-size: .2rem;
+            }
+            // 新增往来
+            .tips {
+              li { list-style : square; margin-top: .1rem;}
+              font-weight: 200;
+              font-size: .14rem;
+              .addNew {
+                color: #fff;
+                background: #5077aa;
+                display: inline-block;
+                padding: 0 .04rem;
+                border-radius: .04rem;
+              }
+            }
+            
+          }
         }
         // 每个往来
         .each_mater {
