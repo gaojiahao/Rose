@@ -421,7 +421,7 @@
               delete submitData.biReferenceId
             }
             console.log(submitData)
-            this.saveData(operation,submitData);
+            this.saveData(operation, submitData);
             /*operation(submitData).then(data => {
               //this.showLoading = false;
               let {success = false, message = '提交失败'} = data;
@@ -474,6 +474,7 @@
             }
             orderList[item.transMatchedCode].push(item);
           }
+          // 客户信息
           this.dealerInfo = {
             creatorName: formData.dealerDebitContactPersonName, // 客户名
             dealerName: outPut.dealerName_dealerDebit, // 公司名
@@ -485,10 +486,7 @@
             county: outPut.county_dealerDebit, // 地区
             address: outPut.address_dealerDebit, // 详细地址
           };
-          this.orderParams = {
-            dealerCode: outPut.dealerDebit,
-            whCode: outPut.containerCodeOut,
-          };
+          // 仓库信息
           this.warehouse = {
             warehouseCode: outPut.containerCodeOut,
             warehouseName: outPut.warehouseName_containerCodeOut,
@@ -498,13 +496,16 @@
             warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: outPut.warehouseAddress_containerCodeOut,
           };
+          // 订单请求参数
+          this.orderParams = {
+            dealerCode: this.dealerInfo.dealerCode,
+            whCode: this.warehouse.warehouseCode,
+          };
           this.formData = {
             ...this.formData,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
             drDealerPaymentTerm: formData.drDealerPaymentTerm,
           };
-          this.DealerPaymentTerm = formData.drDealerPaymentTerm;
-          this.DealerLogisticsTerms = formData.drDealerLogisticsTerms;
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
         })

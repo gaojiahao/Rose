@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
@@ -67,9 +67,12 @@
                 </div>
                 <!-- 物料数量和价格 -->
                 <div class='mater_other'>
+                  <div class="price_type">
+                    <span>价格类型: </span>
+                    <span>{{item.priceType || '无'}}</span>
+                  </div>
                   <div class='mater_price'>
                     <span style="fontSize:.12rem;">￥</span>{{item.price | numberComma(3)}}
-                    <span class="num" v-if="item.priceType">[{{item.priceType}}]</span>
                   </div>
                 </div>
               </div>
@@ -129,7 +132,7 @@
           if (data.success === false) {
             this.$vux.alert.show({
               content: '抱歉，数据有误，暂无法查看',
-               onHide:()=>{
+              onHide: () => {
                 this.$router.back();
               }
             });
@@ -155,4 +158,12 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+
+  .xsbj-detail-container {
+    .price_type {
+      margin-top: .04rem;
+      color: #757575;
+      font-size: .12rem;
+    }
+  }
 </style>

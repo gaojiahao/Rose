@@ -404,7 +404,7 @@
           };
           this.warehouse = {
             warehouseName: inPut.warehouseName_containerCode,
-            warehouseCode: inPut.warehouseCode_containerCode,
+            warehouseCode: inPut.containerCode,
             warehouseType: inPut.warehouseType_containerCode,
             containerInWarehouseManager: inPut.containerInWarehouseManager,
           };

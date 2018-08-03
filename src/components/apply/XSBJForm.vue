@@ -107,6 +107,7 @@
                   <x-input type="number" title="单价" text-align='right' placeholder='请填写'
                            v-model.number="item.price"></x-input>
                 </group>
+                <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
               </div>
             </div>
           </div>
@@ -114,8 +115,8 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" 
-                        @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
+                         @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
                          ref="dealer"></pop-dealer-list>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
@@ -136,6 +137,7 @@
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
   import PopSingleSelect from 'components/PopSingleSelect'
+  import RPicker from 'components/RPicker'
 
   export default {
     mixins: [ApplyCommon],
@@ -150,6 +152,7 @@
       PopMatterList,
       PopDealerList,
       PopSingleSelect,
+      RPicker,
     },
     data() {
       return {
@@ -167,6 +170,7 @@
         },
         priceMap: {},
         showDealerPop: false,
+        priceTypeList: ['渠道价', '零售价'],
       }
     },
     methods: {
@@ -182,7 +186,10 @@
       addMatter() {
         this.matterList.forEach(item => {
           // 存储已输入的价格
-          this.priceMap[item.inventoryCode] = item.price;
+          this.priceMap[item.inventoryCode] = {
+            price: item.price,
+            priceType: item.priceType,
+          };
         });
         this.showMaterielPop = !this.showMaterielPop
       },
@@ -195,7 +202,9 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
-          item.price = this.priceMap[item.inventoryCode] || ''
+          let defaultValue = this.priceMap[item.inventoryCode] || {};
+          item.price = defaultValue.price || '';
+          item.priceType = defaultValue.priceType || '渠道价';
         });
         this.priceMap = {};
         this.matterList = [...sels];
@@ -306,6 +315,10 @@
       &:before {
         border-top: none;
       }
+    }
+    /deep/ .picker {
+      padding-left: .07rem;
+      font-size: .14rem;
     }
   }
 </style>
