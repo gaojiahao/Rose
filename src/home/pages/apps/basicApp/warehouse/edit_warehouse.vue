@@ -11,7 +11,7 @@
             <label class='required'>仓库名称:</label>
             <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
           </div>
-          
+
           <div class="edit_r_picker" v-if="transCode != ''">
             <r-picker title="仓库关系类型:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
                 @on-change="warehouseLabel"></r-picker>
@@ -36,7 +36,7 @@
                 @on-change="warehouseLabel"></r-picker>
       <!-- <r-picker title="仓库大类:" :data="AccountBigType" value="warehouse.warehouseType"  v-model="warehouse.warehouseType"
                 @on-change="bigChange"></r-picker>
-      <r-picker title="仓库子类:" :data="AccountSmlType" value="warehouse.warehouseSubclass" 
+      <r-picker title="仓库子类:" :data="AccountSmlType" value="warehouse.warehouseSubclass"
                 v-model="warehouse.warehouseSubclass"></r-picker>
       <div class='each_property vux-1px-b'>
         <label></label>
@@ -144,7 +144,7 @@ export default {
           // warehouseType:"设备仓库"
       },
 
-      
+
     }
   },
   directives: {
@@ -157,7 +157,7 @@ export default {
     Group,
     RPicker,
     XAddress,
-    Icon 
+    Icon
   },
   methods: {
     preloadFile(file) {
@@ -186,7 +186,7 @@ export default {
     warehouseLabel(val) {
       if (this.hasDefault) {
         console.log('进入');
-        return 
+        return
       }
       // this.getBig().then(data => {
       //   let [defaultSelect = {}] = data;
@@ -196,7 +196,7 @@ export default {
     // TODO 仓库大类切换
     bigChange(val) {
       if (this.hasDefault) {
-        return 
+        return
       }
       this.getSml(val).then(data => {
         let [defaultSelect = {}] = data;
@@ -269,7 +269,7 @@ export default {
       else{
         this.PhoneWarn = false;
         this.btnStatus = false;
-      }               
+      }
     },
     //校验手机号
     checkMobile(){
@@ -282,12 +282,12 @@ export default {
         this.MobileWarn = false;
         this.btnStatus = false;
       }
-      
+
 
     },
     //校验邮箱
     checkEmail(){
-      let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+      let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
       if(this.warehouse.warehouseMail.length>0 && !reg.test(this.warehouse.warehouseMail)){
         this.EmailWarn = true;
         this.btnStatus = true;
@@ -296,7 +296,7 @@ export default {
         this.EmailWarn = false;
         this.btnStatus = false;
       }
-      
+
     },
     //仓库信息
     findData() {
@@ -362,16 +362,16 @@ export default {
                 AlertModule.show({
                   content: data.message,
                   onHide(){
-                    that.$router.push('/warehouse');
+                    that.$router.go(-1);
                   }
-                })  
+                })
               }
               else{
                 AlertModule.show({
                   content: data.message
-                })  
+                })
               }
-                                
+
             }).catch(e=>{
               AlertModule.show({
                 content: e.message,
@@ -380,26 +380,24 @@ export default {
           }
           else{
             warehouseService.save(submitData).then(data=>{
-              let that = this;  
+              let that = this;
               if(data.success){
                 that.submitSuccess  = true;
                 AlertModule.show({
                   content:data.message,
                   onHide(){
                     if(that.$route.query.add == 1){
-                      that.$router.go(-1);
                       sessionStorage.setItem('EDIT_WAREHOUSE_TRANSCODE',JSON.stringify({transCode:data.transCode}));
-                    }else{
-                      that.$router.push('/warehouse');
                     }
+                    that.$router.go(-1);
                   }
                 })
-              }   
+              }
               else{
                 AlertModule.show({
                   content:data.message
                 })
-              }                                  
+              }
             }).catch(e=>{
               AlertModule.show({
                 content: e.message,
@@ -433,8 +431,8 @@ export default {
 
         }
       }
-      
-    
+
+
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
@@ -526,7 +524,7 @@ export default {
         }
       }
     }
-    
+
     .each_property {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
@@ -590,7 +588,7 @@ export default {
         &:not(:first-child):before{
           border:none;
         }
-    
+
       }
     }
   }
@@ -602,7 +600,7 @@ export default {
         border-bottom: none;
       }
     }
-  }  
+  }
   //确认框
   .popup_header {
     display: flex;

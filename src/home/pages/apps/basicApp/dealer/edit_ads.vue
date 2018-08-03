@@ -31,7 +31,7 @@
                 @on-change="dealerLabel"></r-picker>
       <r-picker title="往来大类:" :data="AccountBigType" value="dealer.dealerType"  v-model="dealer.dealerType"
                 @on-change="bigChange"></r-picker>
-      <r-picker title="往来子类:" :data="AccountSmlType" value="dealer.dealerSubclass" 
+      <r-picker title="往来子类:" :data="AccountSmlType" value="dealer.dealerSubclass"
                 v-model="dealer.dealerSubclass"></r-picker>
       <!-- <x-address title="省市区" v-model="AccountAddress" :list="addressData"></x-address> -->
       <div class='each_property vux-1px-b'>
@@ -126,7 +126,7 @@ export default {
         submitSuccess: false, // 是否提交成功
       },
 
-      
+
     }
   },
   directives: {
@@ -139,7 +139,7 @@ export default {
     Group,
     RPicker,
     XAddress,
-    Icon 
+    Icon
   },
   methods: {
     preloadFile(file) {
@@ -168,7 +168,7 @@ export default {
     dealerLabel(val) {
       if (this.hasDefault) {
         console.log('进入');
-        return 
+        return
       }
       this.getBig().then(data => {
         let [defaultSelect = {}] = data;
@@ -178,7 +178,7 @@ export default {
     // TODO 往来大类切换
     bigChange(val) {
       if (this.hasDefault) {
-        return 
+        return
       }
       this.getSml(val).then(data => {
         let [defaultSelect = {}] = data;
@@ -251,7 +251,7 @@ export default {
       else{
         this.PhoneWarn = false;
         this.btnStatus = false;
-      }               
+      }
     },
     //校验手机号
     checkMobile(){
@@ -264,12 +264,12 @@ export default {
         this.MobileWarn = false;
         this.btnStatus = false;
       }
-      
+
 
     },
     //校验邮箱
     checkEmail(){
-      let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+      let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
       if(this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
         this.EmailWarn = true;
         this.btnStatus = true;
@@ -278,7 +278,7 @@ export default {
         this.EmailWarn = false;
         this.btnStatus = false;
       }
-      
+
     },
     //往来信息
     findData() {
@@ -344,16 +344,16 @@ export default {
                 this.$vux.alert.show({
                   content: data.message,
                   onHide(){
-                    that.$router.push('/adress');
+                    that.$router.go(-1);
                   }
-                })  
+                })
               }
               else{
                 this.$vux.alert.show({
                   content: data.message
-                })  
+                })
               }
-                                
+
             }).catch(e=>{
               this.$vux.alert.show({
                 content: e.message,
@@ -362,26 +362,24 @@ export default {
           }
           else{
             dealerService.save(submitData).then(data=>{
-              let that = this;  
+              let that = this;
               if(data.success){
                 that.submitSuccess  = true;
                 this.$vux.alert.show({
                   content:data.message,
                   onHide(){
                     if(that.$route.query.add == 1){
-                      that.$router.go(-1);
                       sessionStorage.setItem('EDIT_ADS_TRANSCODE',JSON.stringify({transCode:data.transCode}));
-                    }else{
-                      that.$router.push('/adress');
                     }
+                    that.$router.go(-1);
                   }
                 })
-              }   
+              }
               else{
                 this.$vux.alert.show({
                   content:data.message
                 })
-              }                                  
+              }
             }).catch(e=>{
               this.$vux.alert.show({
                 content: e.message,
@@ -415,8 +413,8 @@ export default {
 
         }
       }
-      
-    
+
+
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
@@ -505,7 +503,7 @@ export default {
         }
       }
     }
-    
+
     .each_property {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
@@ -566,10 +564,10 @@ export default {
         &:not(:first-child):before{
           border:none;
         }
-    
+
       }
     }
-  }  
+  }
   //确认框
   .popup_header {
     display: flex;

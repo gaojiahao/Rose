@@ -158,7 +158,7 @@
           let [detail = {}] = data;
           this.picShow = true;
           // this.preloadFile(e);
-          this.matPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
+          this.matPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}&width=400&height=400`;
           this.inventory.inventoryPic = detail.attacthment;
           // this.biReferenceId = detail.biReferenceId
         });
@@ -256,7 +256,7 @@
           // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
-            this.matPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}`;
+            this.matPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}&width=400&height=400`;
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.inventory.inventoryPic
