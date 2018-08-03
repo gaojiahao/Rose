@@ -253,8 +253,8 @@
                 ...this.formData,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
-                containerOutWarehouseManager: null, // 出库管理员
-                containerInWarehouseManager: null, // 入库管理员
+                containerOutWarehouseManager: this.warehouseOut.containerOutWarehouseManager || null, // 出库管理员
+                containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
                 inPut: {
                   containerCodeOut: this.warehouseOut.warehouseCode,
                   containerCode: this.warehouseIn.warehouseCode,

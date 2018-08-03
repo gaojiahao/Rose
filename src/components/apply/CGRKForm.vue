@@ -334,7 +334,7 @@
               modifer: this.transCode ? this.formData.handler : '',
               dealerCreditContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
               dealerCreditContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
-              containerInWarehouseManager: null,
+              containerInWarehouseManager: this.warehouse.containerInWarehouseManager || null,
               inPut: {
                 dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
                 crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
@@ -389,7 +389,7 @@
           dataSet = dataSet.map(item => {
             return {
               ...item,
-              inventoryPic: item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg(),
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_transObjCode,
               inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
@@ -406,6 +406,7 @@
             warehouseName: inPut.warehouseName_containerCode,
             warehouseCode: inPut.warehouseCode_containerCode,
             warehouseType: inPut.warehouseType_containerCode,
+            containerInWarehouseManager: inPut.containerInWarehouseManager,
           };
           this.formData = {
             ...this.formData,

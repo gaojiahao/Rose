@@ -91,7 +91,6 @@
   export default {
     data() {
       return {
-        count: 0,          // 金额合计
         orderInfo: {},      // 表单内容
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         defaulImg: require('assets/avatar.png'),   // 默认图片1
@@ -130,10 +129,8 @@
           // 获取合计
           let {dataSet} = data.formData.inPut;
           for (let val of dataSet) {
-            this.count += val.price * 100;
-            val.inventoryPic = val.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
           }
-          this.count = this.count / 100;
           data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
           this.orderInfo = data.formData;
           this.workFlowInfoHandler();
