@@ -9,7 +9,7 @@
       </div>
       <div class="cp_info">
         <p class="cp_name"></p>
-        <span>{{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</span>
+        <p class="cp_ads">{{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</p>
       </div>
     </div>
     <div v-else>
@@ -25,12 +25,6 @@
           <div class="title">
             <!-- 搜索栏 -->
             <d-search @search='searchList' @turnOff="onHide"></d-search>
-            <!-- <div class="search_part">
-              <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
-              <div class="pop_cancel" @click="showPop = !showPop">返回</div>
-              <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-              <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
-            </div> -->
           </div>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"

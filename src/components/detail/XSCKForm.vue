@@ -47,14 +47,14 @@
       <div class="materiel_list mg_auto box_sd">
         <div class="title">物料列表</div>
         <div class="mater_list">
-          <div class="each_mater vux-1px-b" v-for="(mItem, index) in orderList" :key='index'>
+          <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key='key'>
             <div class="each_mater_wrapper">
               <div class="order_code">
                 <span class="order_title">所属订单</span>
-                <span class="order_num">{{index.replace(/_/g,'')}}</span>
+                <span class="order_num">{{key.replace(/_/g,'')}}</span>
               </div>
               <!-- 物料信息 -->
-              <div class="order_matter" v-for="(item, index) in mItem" :key="index">
+              <div class="order_matter" v-for="(item, index) in oItem" :key="index">
                 <div class="mater_img">
                   <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                 </div>

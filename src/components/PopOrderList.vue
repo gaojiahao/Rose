@@ -5,17 +5,11 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <div class="search_part">
-            <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
-            <div class="pop_cancel" @click="showPop = !showPop">返回</div>
-            <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-            <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
-          </div>
+          <r-search @search='searchList' @turnOff="onHide"></r-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
-                  @on-pulling-down="onPullingDown" ref="bScroll">
+                  :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item,index)">
             <div class="order-code">{{item.transMatchedCode}}</div>
@@ -88,6 +82,7 @@
   import {Icon, Popup} from 'vux'
   import RScroll from 'components/RScroll'
   import {getTransMatchedCode} from 'service/listService'
+  import RSearch from 'components/search'
 
   export default {
     name: "PopOrderList",
@@ -107,14 +102,14 @@
         }
       },
       defaultValue: {
-        type: Array,
+        type: Object,
         default() {
-          return []
+          return {}
         }
       },
     },
     components: {
-      Icon, Popup, RScroll,
+      Icon, Popup, RScroll, RSearch,
     },
     data() {
       return {
@@ -145,9 +140,8 @@
         }
       },
       defaultValue: {
-        handler(val){
-          this.tmpItems = [...val];
-          this.selItems = [...val];
+        handler(val) {
+          this.setDefaultValue();
         }
       },
     },
@@ -191,6 +185,7 @@
         let sels = [];
         // 返回上层
         this.showPop = false;
+        // 设置选中项的顺序和列表顺序一致
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
         this.selItems = [...this.tmpItems];
         this.$emit('sel-matter', JSON.stringify(this.selItems));
@@ -268,22 +263,19 @@
         this.page++;
         this.getList();
       },
-      // TODO 下拉刷新
-      onPullingDown() {
-        this.page = 1;
-        this.getList(true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
+      // TODO 设置默认值
+      setDefaultValue() {
+        let tmp = [];
+        for (let items of Object.values(this.defaultValue)) {
+          tmp = [...tmp, ...items];
+        }
+        this.tmpItems = [...tmp];
+        this.selItems = [...tmp];
       },
     },
     created() {
       this.showPop = this.show;
-      this.tmpItems = [...this.defaultValue];
-      this.selItems = [...this.defaultValue];
+      this.setDefaultValue();
       this.getList();
     }
   }
