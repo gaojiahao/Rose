@@ -71,6 +71,16 @@ export let getSumInvBalance = (data = {}) => {
     return errorHandler(e);
   });
 };
+//获取费用 
+export let  getCost = (data={})=>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getCostAll',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+
+}
 
 export default {
   save,

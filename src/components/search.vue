@@ -2,9 +2,12 @@
     <div class='search'>
         <form class="search_part" action="" @submit.prevent="searchMat(srhInpTx)">
             <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
+            <div class="pop_cfm pop_cancel" 
+                  v-if='!btnInfo'
+                @click="searchMat(srhInpTx)">返回</div>
             <div class="pop_cfm" 
-                :class=" { pop_cancel : !srhInpTx}"
-                @click="searchMat(srhInpTx)">{{srhInpTx? '搜索' : '返回'}}</div>
+                @click="searchMat(srhInpTx)"
+                v-else>搜索</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
             <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
         </form>
@@ -14,6 +17,12 @@
 <script>
 import { Icon } from "vux";
 export default {
+  props:{
+    btnInfo : {
+      type : Boolean,
+      dafault:false
+    }
+  },
   data() {
     return {
       srhInpTx: "",
