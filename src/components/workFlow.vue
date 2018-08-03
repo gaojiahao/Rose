@@ -312,8 +312,12 @@
           }
           // 备注
           .remark {
+            max-width: 1.4rem;
+            overflow:hidden;
+            white-space:nowrap;
             font-size: .1rem;
             color: #757575;
+            text-overflow:ellipsis;
           }
         }
       }
