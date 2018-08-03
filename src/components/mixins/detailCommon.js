@@ -115,7 +115,7 @@ export default {
           this.actions = this.isMine && this.noOperation ? ['revoke'] : [];
           return
         }
-        this.formViewUniqueId = viewId;
+        // this.formViewUniqueId = viewId;
       })
     },
     // TODO 同意、拒绝、撤回成功时的回调
