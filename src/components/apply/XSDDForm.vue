@@ -97,12 +97,12 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more" v-if="materList.length && !isResubmit" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
         <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @closePop='showDealerPop = !showDealerPop'
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                         @sel-dealer="selDealer" :dealerLabelName="'2167'">
         </pop-dealer-list  ref="matter">
         <!-- 物料popup -->
-        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                         ref="matter"></pop-matter-list>
+        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" 
+                        @sel-matter="selMatter" ref="matter"></pop-matter-list>
       </div>
     </div>
     <!-- 底部确认栏 -->

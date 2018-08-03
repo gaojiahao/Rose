@@ -2,13 +2,12 @@
     <div class='search'>
         <form class="search_part" action="" @submit.prevent="searchMat(srhInpTx)">
             <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
-            <div class="pop_cfm " 
-            :class='{pop_cancel : srhInpTx.length===0}'
-                  v-if='!btnInfo'
+            <div class="pop_cfm" v-if='isFill'
+                :class='{ pop_cancel : !srhInpTx.length }'
+                
                 @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}</div>
-            <div class="pop_cfm" 
-                @click="searchMat(srhInpTx)"
-                v-else>搜索</div>
+            <div class="pop_cfm" v-else
+                @click="searchMat(srhInpTx)">搜索</div>
             <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
             <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
         </form>
@@ -18,16 +17,11 @@
 <script>
 import { Icon } from "vux";
 export default {
-  props:{
-    btnInfo : {
-      type : Boolean,
-      dafault:false
-    }
-  },
   data() {
     return {
       srhInpTx: "",
       timer: null,
+      isFill: true    //是否为提交页面
     };
   },
   components: {
@@ -47,6 +41,12 @@ export default {
     clear() {
       this.srhInpTx = "";     
       this.$emit("search", this.srhInpTx);
+    }
+  },
+  created(){
+    // 判断是否为 填报页面
+    if(!this.$route.path.includes('fill')){
+      this.isFill = false;
     }
   }
 };
