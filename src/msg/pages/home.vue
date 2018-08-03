@@ -69,7 +69,13 @@ export default {
     },
     // 前往应用消息列表
     goMsglist(item){
-      this.$router.push({ path : `/notice/msglist/${item.processName}`})
+      // this.$router.push({ path : `/notice/msglist/${item.processName}`})
+       this.$router.push({
+          path :`/notice/msglist/${item.taskId}`,
+          query : {
+            name : item.processName
+          }
+        })
     }
   },
   filters:{

@@ -1,7 +1,7 @@
 <template>
     <div class='search'>
         <form class="search_part" action="" @submit.prevent="searchMat(srhInpTx)">
-            <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
+            <input class="srh_inp" type="search" autocomplete="off"  @input='getValue($event)' :value='srhInpTx'>
             <div class="pop_cfm" v-if='isFill'
                 :class='{ pop_cancel : !srhInpTx.length }'
                 
@@ -28,6 +28,12 @@ export default {
     Icon
   },
   methods: {
+    getValue(e){
+      this.srhInpTx = e.target.value;
+      if(this.srhInpTx.length === 0){
+        this.$emit("search", this.srhInpTx);
+      }
+    },
     searchMat(val) {  
       // 如果 输入框没有值 则点击关闭popup
       if(!val){

@@ -44,6 +44,7 @@
       </div>
     </r-scroll>
     <loading-form :show='showLoadding'></loading-form>
+   <router-view></router-view>
   </div>
 </template>
 
@@ -84,14 +85,15 @@ export default {
           let {isMyTask, nodeName} = tableContent[0];
           if (isMyTask === 1 && nodeName === '重新提交') {
             this.$router.push({
-              path: `/list/${code}/fillform`,
+              // path: `/list/${code}/fillform`,
+               path: `/notice/msglist/${code}/fillform`,
               query: {
                 transCode: item.businessKey
               }
             })
           } else {
             this.$router.push({
-              path: `/list/${code}/detail`,
+              path: `/notice/msglist/${code}/detail`,
               query: {
                 transCode: item.businessKey
               }
@@ -99,7 +101,7 @@ export default {
           }
         } else {
           this.$router.push({
-            path: `/list/${code}/detail`,
+            path: `/notice/msglist/${code}/detail`,
             query: {
               transCode: item.businessKey
             }
@@ -220,7 +222,8 @@ export default {
     $route: {
       handler(to, from) {
         // 判断是否重新请求页面
-        if (to.meta.reload && to.path.indexOf('/msglist') !== -1) {
+        if (to.meta.reload && to.path.indexOf('/notice/msglist') !== -1) {
+          console.log("进入")
           to.meta.reload = false;
           this.reloadData();
         }
@@ -228,7 +231,8 @@ export default {
     }
   },
   created(){
-    this.processName = this.$route.params.name;
+    // this.processName = this.$route.params.name;
+    this.processName = this.$route.query.name;
     this.getList();
     setTimeout(()=>{
       this.showLoadding = false;
