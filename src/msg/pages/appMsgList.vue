@@ -122,22 +122,6 @@ export default {
     },
     //获取销售订单数据
     getList(noReset = false) {
-      // let filter  = [];
-      // if(this.serachVal){
-      //   filter = [
-      //     {
-      //       operator: 'like',
-      //       value: this.serachVal,
-      //       property: 'businessKey',
-      //       attendedOperation: 'or'
-      //     },
-      //     {
-      //       operator: 'like',
-      //       value: this.serachVal,
-      //       property: 'crtName',
-      //     }
-      //   ]
-      // }
         let filter = {
           processName : this.processName,
           businessKey: this.serachVal,
@@ -147,8 +131,8 @@ export default {
           limit: this.limit,
           page: this.page,
           filter: JSON.stringify(filter),
-        }).then(({total = 0, agenda = []}) => {         
-          agenda.forEach(item => {
+        }).then(({total = 0, tasks = []}) => {         
+          tasks.forEach(item => {
             if(!item.endTime){
               item.status = "待处理"
             }else{
@@ -156,8 +140,8 @@ export default {
             }
             item.transCode = item.businessKey.replace(/_/g,'');
           });
-          this.hasNext = total > (this.page - 1) * this.limit + agenda.length;
-          this.listData = this.page === 1 ? agenda : [...this.listData, ...agenda];
+          this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
+          this.listData = this.page === 1 ? tasks : [...this.listData, ...tasks];
           if (!noReset) {
             this.$nextTick(() => {
               this.resetScroll();
@@ -167,16 +151,16 @@ export default {
           this.resetScroll();
         })
       },
-      //获取工作流
-      async getWorkFlow(transCode){
-        await getWorkFlow({transCode}).then(({agenda})=>{
-          let lastNode;
-          lastNode = agenda[agenda.length-2];
-          console.log(lastNode);
-          return  lastNode
+      // //获取工作流
+      // async getWorkFlow(transCode){
+      //   await getWorkFlow({transCode}).then(({agenda})=>{
+      //     let lastNode;
+      //     lastNode = agenda[agenda.length-2];
+      //     console.log(lastNode);
+      //     return  lastNode
 
-        })
-      },
+      //   })
+      // },
       // TODO 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/avatar.png');
@@ -232,6 +216,17 @@ export default {
       
     }
   },
+  watch: {
+    $route: {
+      handler(to, from) {
+        // 判断是否重新请求页面
+        if (to.meta.reload && to.path.indexOf('/msglist') !== -1) {
+          to.meta.reload = false;
+          this.reloadData();
+        }
+      },
+    }
+  },
   created(){
     this.processName = this.$route.params.name;
     this.getList();
@@ -239,6 +234,10 @@ export default {
       this.showLoadding = false;
 
     },1000)
+  },
+  beforeRouteEnter (to, from, next) {
+    to.meta.title = to.params.name ;
+    next();
   }
 }
 </script>
