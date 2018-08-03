@@ -40,7 +40,7 @@ export default {
         this.currentComponent = require(`components/detail/${code}Form.vue`).default;
       } catch (e) {
         this.$vux.alert.show({
-          content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确',
+          content: '抱歉，无法支持该应用的查看',
           onHide: ()=>{
             this.$router.go(-1);
           }

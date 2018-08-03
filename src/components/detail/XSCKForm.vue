@@ -160,7 +160,10 @@
           // http200时提示报错信息
           if (success === false) {
             this.$vux.alert.show({
-              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+              content: '抱歉，数据有误，暂无法查看',
+               onHide:()=>{
+                this.$router.back();
+              }
             });
             return;
           }
