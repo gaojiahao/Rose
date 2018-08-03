@@ -99,10 +99,11 @@
         };
         return commitTask(submitData).then(data => {
           let {success = false, message = '提交失败'} = data;
+          let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
           if (success) {
             message = successMsg;
             this.$emit('on-submit-success', JSON.stringify({
-              type: result === 0 ? 'reject' : 'agree'
+              type: actionMap[result]
             }));
           }
           this.$vux.alert.show({
