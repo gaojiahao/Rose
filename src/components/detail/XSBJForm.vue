@@ -67,18 +67,19 @@
                 </div>
                 <!-- 物料数量和价格 -->
                 <div class='mater_other'>
-                  <div class='mater_num'>
-                    <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
+                  <div class='mater_price'>
+                    <span style="fontSize:.12rem;">￥</span>{{item.price | numberComma(3)}}
+                    <span class="num" v-if="item.priceType">[{{item.priceType}}]</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <!-- 金额合计栏 -->
-          <div class="price_list">
+          <!-- <div class="price_list">
             <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
             <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- 审批操作 -->
