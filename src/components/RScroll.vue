@@ -10,7 +10,7 @@
                 <div class="title">抱歉，没有找到您搜索的内容</div>
                 <ul class="tips">
                   <li>
-                    不用担心，您马上可以进行 <span class="addNew" @click="add">新增往来</span>
+                    不用担心，您马上可以进行 <span class="addNew" @click="add">新增仓库</span>
                   </li>
                   <li>
                     或者检查“输入内容”是否正确
