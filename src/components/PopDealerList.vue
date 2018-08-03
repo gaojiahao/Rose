@@ -149,6 +149,7 @@
         this.showPop = false;
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
         this.selItems = [...this.tmpItems];
+        sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.selItems));
         this.selParams = {};
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
       },
@@ -199,6 +200,13 @@
                 sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
               }
             }
+          }
+          if(sessionStorage.getItem('DEALERLIST_SELITEMS')){
+            let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS'));
+            this.selItems = [...DEALERLIST_SELITEMS];
+            this.tmpItems = [...DEALERLIST_SELITEMS];
+            this.$emit('sel-dealer', JSON.stringify(DEALERLIST_SELITEMS));
+            sessionStorage.removeItem('DEALERLIST_SELITEMS');
           }
           this.$nextTick(() => {
             this.bScroll.refresh();
@@ -255,6 +263,9 @@
     created() {
       this.initScroll();
       this.getDealer();
+    },
+    mounted(){
+      
     }
   }
 </script>
