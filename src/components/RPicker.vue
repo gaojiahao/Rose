@@ -3,7 +3,7 @@
     <label :class='{ required : required}'>{{title}}</label>
     <div class='picker'>
       <span class='mater_nature'>{{showValue}}</span>
-      <span class='iconfont icon-gengduo'></span>
+      <span class='iconfont icon-gengduo' :class="!pickerStatus?'iconfont_fff':''"></span>
     </div>
     <div v-transfer-dom>
       <popup id="trade_pop_part" v-model="show">
@@ -136,4 +136,8 @@
 
     }
   }
+  
+      .iconfont_fff{
+        color: #fff;
+      }
 </style>
