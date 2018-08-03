@@ -24,12 +24,13 @@
         <div class="trade_pop">
           <div class="title">
             <!-- 搜索栏 -->
-            <div class="search_part">
+            <d-search @search='searchList' @turnOff="onHide"></d-search>
+            <!-- <div class="search_part">
               <input class="srh_inp" type="text" v-model="srhInpTx" @input="searchList">
               <div class="pop_cancel" @click="showPop = !showPop">返回</div>
               <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
               <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clearList"></icon>
-            </div>
+            </div> -->
           </div>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
@@ -81,6 +82,7 @@
   import {Icon, Popup, TransferDom} from 'vux'
   import {getList} from 'service/commonService'
   import RScroll from 'components/RScroll'
+  import DSearch from 'components/search'
 
   export default {
     name: "PopWarehouseList",
@@ -98,7 +100,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll,
+      Icon, Popup, RScroll,DSearch
     },
     data() {
       return {
@@ -135,7 +137,8 @@
       // TODO 弹窗隐藏时调用
       onHide() {
         this.tmpItems = {...this.selItems};
-        this.$emit('input', false);
+        this.showPop = false;
+        //this.$emit('input', false);
       },
       clearList() {
         this.srhInpTx = '';
@@ -208,7 +211,8 @@
         });
       },
       // TODO 搜索仓库
-      searchList() {
+      searchList(val) {
+        this.srhInpTx = val;
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
