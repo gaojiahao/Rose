@@ -47,15 +47,19 @@
         <div class="mater_list">
           <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.outPut.dataSet" :key='index'>
             <div class="each_mater_wrapper">
-              <div class="order-code">{{item.transMatchedCode}}</div>
-              <div class="order-matter">
+              <div class="order_code">
+                <span class="order_title">所属订单</span>
+                <span class="order_num">{{item.transMatchedCode.replace(/_/g,'')}}</span>
+              </div>
+              <!-- 物料信息 -->
+              <div class="order_matter">
                 <div class="mater_img">
                   <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                 </div>
                 <div class="mater_main">
                   <!-- 物料名称 -->
                   <div class="mater_name">
-                    {{item.inventoryName_transObjCode}}
+                    {{item.inventoryName_outPutMatCode}}
                   </div>
                   <!-- 物料基本信息 -->
                   <div class="mater_info">
@@ -173,8 +177,4 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-
-  .materiel_list .mater_list .each_mater_wrapper {
-    flex-direction: column;
-  }
 </style>

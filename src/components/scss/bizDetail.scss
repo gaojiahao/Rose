@@ -224,11 +224,24 @@
       box-sizing: border-box;
       .each_mater_wrapper {
         position: relative;
-        display: flex;
-        .order-code {
-          font-size: .14rem;
+        // 所属订单
+        .order_code {
+          display: flex;
+          color: #fff;
+          font-size: .12rem;
+          span {
+            display: inline-block;
+            padding: 0 .04rem;
+          }
+          .order_title {
+            background: #455d7a;
+          }
+          .order_num {
+            background: #c93d1b;
+          }
         }
-        .order-matter {
+        // 订单底下的物料
+        .order_matter {
           display: flex;
           margin-top: .1rem;
         }
