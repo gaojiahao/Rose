@@ -487,7 +487,7 @@
           };
           this.orderParams = {
             dealerCode: outPut.dealerDebit,
-            whCode: outPut.warehouseCode_containerCodeOut,
+            whCode: outPut.containerCodeOut,
           };
           this.warehouse = {
             warehouseCode: outPut.containerCodeOut,

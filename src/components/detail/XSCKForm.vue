@@ -189,7 +189,7 @@
             address: outPut.address_dealerDebit, // 详细地址
           };
           this.warehouse = {
-            warehouseCode: outPut.warehouseCode_containerCodeOut,
+            warehouseCode: outPut.containerCodeOut,
             warehouseName: outPut.warehouseName_containerCodeOut,
             warehouseRelType: outPut.warehouseType_containerCodeOut,
             warehouseProvince: outPut.warehouseProvince_containerCodeOut,
