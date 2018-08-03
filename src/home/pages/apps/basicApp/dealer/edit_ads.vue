@@ -27,7 +27,7 @@
           </div>
         </div>
       </div>
-      <r-picker title="往来关系标签:" :data="AccountRelType" value="dealer.dealerLabelName"  v-model="dealer.dealerLabelName" :required='true'
+      <r-picker title="往来关系标签:" :data="AccountRelType" :pickerStatus="pickerStatus" value="dealer.dealerLabelName"  v-model="dealer.dealerLabelName" :required='true'
                 @on-change="dealerLabel"></r-picker>
       <r-picker title="往来大类:" :data="AccountBigType" value="dealer.dealerType"  v-model="dealer.dealerType"
                 @on-change="bigChange"></r-picker>
@@ -125,8 +125,7 @@ export default {
         dealerPic : '',
         submitSuccess: false, // 是否提交成功
       },
-
-
+    pickerStatus:true
     }
   },
   directives: {
@@ -440,7 +439,12 @@ export default {
     else{
       this.getDealer().then(data => {
         let [defaultSelect = {}] = data;
-        this.dealer.dealerLabelName = defaultSelect.name
+        if(this.$route.query.pickVal){
+          this.dealer.dealerLabelName = this.$route.query.pickVal;
+          this.pickerStatus = false;
+        }else{
+          this.dealer.dealerLabelName = defaultSelect.name;
+        }
       });
       //获取当前用户信息
       getBaseInfoData().then(data => {

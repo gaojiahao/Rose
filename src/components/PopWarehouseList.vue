@@ -35,6 +35,7 @@
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
                     :newAdd="newAdd"
+                    :addUrl="addUrl"
                     @on-pulling-down="onPullingDown" ref="bScroll">
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
@@ -113,7 +114,8 @@
           click: true,
           pullUpLoad: true,
         },
-        newAdd:false
+        newAdd:false,
+        addUrl:'/warehouse/edit_warehouse'
       }
     },
     watch: {

@@ -243,7 +243,13 @@
       },
       //新增往来
       add(){
-        this.$router.push({ path:'/adress/edit_ads', query:{ add:1} })
+        let pickVal = '';
+        if(this.dealerLabelName == 2167){
+          pickVal = '客户';
+        }else if(this.dealerLabelName == 2168){
+          pickVal = '供应商';
+        }
+        this.$router.push({ path:'/adress/edit_ads', query:{ add:1,pickVal:pickVal} })
       }
     },
     created() {

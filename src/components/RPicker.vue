@@ -1,5 +1,5 @@
 <template>
-  <div class='r-picker vux-1px-b' @click='show = !show'>
+  <div class='r-picker vux-1px-b' @click='showStatus'>
     <label :class='{ required : required}'>{{title}}</label>
     <div class='picker'>
       <span class='mater_nature'>{{showValue}}</span>
@@ -41,6 +41,10 @@
       },
       required:{
         type:Boolean
+      },
+      pickerStatus:{
+        type:Boolean,
+        default:true
       }
     },
     data() {
@@ -73,6 +77,13 @@
         this.show = false;
         this.$emit('input', val);
       },
+      //picker显示
+      showStatus(){
+        if(!this.pickerStatus){
+          return;
+        }
+         this.show = !this.show;
+      }
     },
     created() {
       this.currentValue = [this.value];
