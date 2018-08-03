@@ -7,24 +7,26 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
-          <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
+          <span class="user_name">{{dealerInfo.creatorName}}</span>
+          <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{orderInfo.outPut.dealerName_dealerDebit}}</p>
+          <p class="cp_name">{{dealerInfo.dealerName}}</p>
           <p class="cp_ads">
-            {{orderInfo.outPut.province_dealerDebit}}{{orderInfo.outPut.city_dealerDebit}}{{orderInfo.outPut.county_dealerDebit}}{{orderInfo.outPut.address_dealerDebit}}</p>
+            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
         </div>
       </div>
       <div class="or_ads mg_auto box_sd">
         <div class="title">仓库</div>
         <div class="user_info">
-          <span class="user_name">{{orderInfo.outPut.warehouseName_containerCodeOut}}</span>
-          <span class="user_tel"></span>
+          <span class="user_name">{{warehouse.warehouseName}}</span>
+          <span class="user_tel">{{warehouse.warehouseType}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{orderInfo.outPut.warehouseType_containerCodeOut}}</p>
-          <p class="cp_ads"></p>
+          <p class="cp_name"></p>
+          <p class="cp_ads">
+            {{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}
+          </p>
         </div>
       </div>
       <!-- 结算方式 -->
@@ -45,14 +47,14 @@
       <div class="materiel_list mg_auto box_sd">
         <div class="title">物料列表</div>
         <div class="mater_list">
-          <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.outPut.dataSet" :key='index'>
+          <div class="each_mater vux-1px-b" v-for="(mItem, index) in orderList" :key='index'>
             <div class="each_mater_wrapper">
               <div class="order_code">
                 <span class="order_title">所属订单</span>
-                <span class="order_num">{{item.transMatchedCode.replace(/_/g,'')}}</span>
+                <span class="order_num">{{index.replace(/_/g,'')}}</span>
               </div>
               <!-- 物料信息 -->
-              <div class="order_matter">
+              <div class="order_matter" v-for="(item, index) in mItem" :key="index">
                 <div class="mater_img">
                   <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                 </div>
@@ -108,7 +110,8 @@
         </div>
       </div>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -128,6 +131,8 @@
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         defaulImg: require('assets/avatar.png'),   // 默认图片1
         defaulImg2: require('assets/io.jpg'),       // 默认图片2
+        orderList: {}, // 物料列表
+        warehouse: {},
       }
     },
     mixins: [detailCommon],
@@ -151,21 +156,48 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(data => {
+        }).then(({success = true, formData = {}}) => {
           // http200时提示报错信息
-          if (data.success === false) {
+          if (success === false) {
             this.$vux.alert.show({
               content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
             });
             return;
           }
+          let orderList = {};
+          let {outPut = {}} = formData;
           // 获取合计
-          let {dataSet} = data.formData.outPut;
-          for (let val of dataSet) {
-            this.count += val.tdAmount;
-            val.inventoryPic = val.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg();
+          let {dataSet} = formData.outPut;
+          for (let item of dataSet) {
+            this.count += item.tdAmount;
+            item.inventoryPic = item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg();
+            if (!orderList[item.transMatchedCode]) {
+              orderList[item.transMatchedCode] = [];
+            }
+            orderList[item.transMatchedCode].push(item);
           }
-          this.orderInfo = data.formData;
+          this.orderList = orderList;
+          this.dealerInfo = {
+            creatorName: formData.dealerDebitContactPersonName, // 客户名
+            dealerName: outPut.dealerName_dealerDebit, // 公司名
+            dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
+            dealerCode: outPut.dealerDebit, // 客户编码
+            dealerLabelName: outPut.drDealerLabel, // 关系标签
+            province: outPut.province_dealerDebit, // 省份
+            city: outPut.city_dealerDebit, // 城市
+            county: outPut.county_dealerDebit, // 地区
+            address: outPut.address_dealerDebit, // 详细地址
+          };
+          this.warehouse = {
+            warehouseCode: outPut.warehouseCode_containerCodeOut,
+            warehouseName: outPut.warehouseName_containerCodeOut,
+            warehouseRelType: outPut.warehouseType_containerCodeOut,
+            warehouseProvince: outPut.warehouseProvince_containerCodeOut,
+            warehouseCity: outPut.warehouseCity_containerCodeOut,
+            warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
+            warehouseAddress: outPut.warehouseAddress_containerCodeOut,
+          };
+          this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
       },
