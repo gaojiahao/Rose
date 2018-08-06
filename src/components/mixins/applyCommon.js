@@ -111,16 +111,16 @@ export default {
     getMatPrice() {
       this.matterList.forEach((item, index) => {
         // 如果已有价格，则不发起请求
-        if (item.price) {
-          return
-        }
+        // if (item.price) {
+        //   return
+        // }
         getSaleQuotePrice({
           drDealerCode: this.dealerInfo.dealerCode,
           matCode: item.inventoryCode,
           noCount: 1,
         }).then(({tableContent = []}) => {
           let [lastest = {}] = tableContent; // 取第一个价格
-          item.price = lastest.price || 0;
+          item.price = lastest.price || 90;
         })
       });
     },
