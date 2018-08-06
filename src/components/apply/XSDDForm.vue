@@ -82,7 +82,7 @@
                         </div>
                         <div class='mater_num'>
                           <span class='handle' @click="subNum(item,index)" :class='{sub : item.tdQty<=1}'>-</span>
-                          <input class='num' type='number' :value='item.tdQty' @input='getNum(item,index,$event)'/>
+                          <input class='num' type='number' v-model.number='item.tdQty'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
 
@@ -108,8 +108,8 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{count}}
-        <span class='taxAmount'>[含税: ￥{{count*0.16}}]</span>
+        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
+        <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder"
             v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
@@ -163,6 +163,20 @@
         numMap: {}, // 用于记录订单物料的数量和价格
       }
     },
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item=>{
+          total += item.tdQty * item.price;
+        })
+        return total;
+      },
+      // 税金
+      taxAmount() {
+        return (this.totalAmount * 0.16).toFixed(2)
+      },
+    },
     mixins: [common],
     methods: {
       // 选择地址
@@ -197,7 +211,6 @@
       },
       // TODO 选中物料项
       selMatter(val) {
-
         this.count = 0;
         let sels = JSON.parse(val);
         sels.map(item => {
@@ -206,14 +219,11 @@
             item.price = this.numMap[item.inventoryCode].price;
           } else {
             item.tdQty = 1;
-            item.price = 0;
+            item.price = 90;
           }
         })
         this.numMap = {};
         this.matterList = sels;
-        this.matterList.map(item => {
-          this.count += item.price * item.tdQty;
-        });
         this.getMatPrice();
       },
       //选择默认图片
@@ -238,26 +248,26 @@
         if (item.tdQty <= 0) {
           item.tdQty = 1;
         }
-        let total = item.price * (oldNum - item.tdQty);
-        this.count -= total;
+        // let total = item.price * (oldNum - item.tdQty);
+        // this.count -= total;
         this.$set(this.matterList, i, item);
       },
       //数量++
       plusNum(item, i) {
         let oldNum = item.tdQty;
         item.tdQty++;
-        let total = item.price * (item.tdQty - oldNum);
-        this.count += total;
+        // let total = item.price * (item.tdQty - oldNum);
+        // this.count += total;
         this.$set(this.matterList, i, item);
 
       },
       //修改数量
-      getNum(item, i, e) {
-        let oldNum = item.tdQty;
-        item.tdQty = Number(e.target.value);
-        let total = item.tdQty * item.price;
-        this.count = this.count - item.price * oldNum + total;
-      },
+      // getNum(item, i, e) {
+      //   let oldNum = item.tdQty;
+      //   item.tdQty = Number(e.target.value);
+      //   let total = item.tdQty * item.price;
+      //   this.count = this.count - item.price * oldNum + total;
+      // },
       // TODO 新增更多物料
       addMatter() {
         for (let item of this.matterList) {

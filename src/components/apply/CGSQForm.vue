@@ -4,7 +4,7 @@
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
-        <template v-if="!materList.length">
+        <template v-if="!matterList.length">
           <div @click="showMaterielPop = !showMaterielPop">
             <div class="title">物料列表</div>
             <div class="tips">请选择物料</div>
@@ -15,7 +15,7 @@
         <template v-else>
           <div class="title">物料列表</div>
           <div class="mater_list">
-            <div class="each_mater vux-1px-b" v-for="(item, index) in materList" :key='index'>
+            <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key='index'>
               <swipeout>
                 <swipeout-item>
                   <div slot="right-menu">
@@ -59,7 +59,7 @@
                         </div>
                         <div class='mater_num'>
                           <span class='handle' @click="subNum(item,index)" :class='{sub : item.tdQty<=1}'>-</span>
-                          <input class='num' type='number' :value='item.tdQty' @input='getNum(item,index,$event)'/>
+                          <input class='num' type='number' v-model.number='item.tdQty'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
                           
@@ -72,7 +72,7 @@
           </div>
         </template>
         <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="materList.length && !isResubmit" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
+        <div class="add_more" v-if="matterList.length && !isResubmit" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          ref="matter"></pop-matter-list>
@@ -86,7 +86,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{count}}
+        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
@@ -110,7 +110,7 @@ export default {
   data(){
     return{
       listId : '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
-      materList:[],                                  // 物料列表
+      matterList:[],                                  // 物料列表
       showMaterielPop:false,                         // 是否显示物料的popup
       count : 0 ,   // 总价
       formData : {
@@ -119,38 +119,38 @@ export default {
         biId: '',
         biComment : ''
       }, 
-      applyComment : ''
+      applyComment : '',
+      numMap: {},
     }
   },
+  computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item=>{
+          total += item.tdQty * item.price;
+        })
+        return total;
+      },
+    },
   mixins: [common],
   methods:{
     // TODO 选中物料项
     selMatter(val) {
-      this.count = 0;
       let sels = JSON.parse(val);
-        sels.map(item=>{
-          if(this.materList.length>0){
-            this.materList.map(item1=>{
-               console.log(item1.inventoryCode);
-              if(item.inventoryCode ===  item1.inventoryCode){
-                item.tdQty = item1.tdQty;
-                item.price  = item1.price;
-              }
-              else{
-                item.tdQty = 1;
-                item.price = 90;
-              }              
-            })
-          }
-          else{
-            item.tdQty = 1;
-            item.price = 90;  
-          }   
-        })
-      this.materList = sels;
-      this.materList.map(item=>{
-        this.count += item.price * item.tdQty;
+      console.log(sels)
+      sels.map(item => {
+        if (this.numMap[item.inventoryCode]) {
+          item.tdQty = this.numMap[item.inventoryCode].tdQty;
+          item.price = this.numMap[item.inventoryCode].price;
+        } else {
+          item.tdQty = 1;
+          item.price = 90;
+        }
       })
+      this.numMap = {};
+      this.matterList = sels;
+      // this.getMatPrice();
     },
     //选择默认图片
     getDefaultImg(item) {
@@ -162,7 +162,7 @@ export default {
     },
     // 滑动删除
     delClick(index,item){
-      let arr = this.materList;
+      let arr = this.matterList;
       let total = item.tdQty*item.price;
       this.count -= total;
       arr.splice(index, 1);
@@ -174,29 +174,18 @@ export default {
       if(item.tdQty<=0){
         item.tdQty = 1;
       }
-      let total = item.price*(oldNum-item.tdQty);
-      this.count -= total;
-      this.$set(this.materList, i, item);
+      this.$set(this.matterList, i, item);
     },
     //数量++
     plusNum(item,i){
       let oldNum = item.tdQty;
       item.tdQty++;
-      let total = item.price*(item.tdQty-oldNum);
-      this.count += total;
-      this.$set(this.materList, i, item);
+      this.$set(this.matterList, i, item);
       
-    },
-    //修改数量
-    getNum(item,i,e){
-      let oldNum = item.tdQty;
-      item.tdQty = Number(e.target.value);
-      let total = item.tdQty*item.price;
-      this.count = this.count - item.price*oldNum + total;
     },
     //提价订单
     submitOrder(){
-      if(this.materList.length === 0){
+      if(this.matterList.length === 0){
         this.$vux.alert.show({
           content : '请选择物料'
         })
@@ -207,7 +196,7 @@ export default {
           // 确定回调
           onConfirm: () => {
             let dataSet = [];
-            this.materList.map(item=>{
+            this.matterList.map(item=>{
               dataSet.push({
                 tdId : item.tdId || '',
                 transObjCode : item.inventoryCode || item.transObjCode, //物料编码
@@ -284,7 +273,7 @@ export default {
           modifer : formData.modifer,
 
         }
-        this.materList = data.formData.order.dataSet;
+        this.matterList = data.formData.order.dataSet;
       })     
     }
   },
