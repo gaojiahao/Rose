@@ -219,7 +219,7 @@
     box-sizing: border-box;
     // 每个物料
     .each_mater {
-      padding: 0.08rem;
+      padding: .08rem 0;
       position: relative;
       box-sizing: border-box;
       // 所属订单
@@ -242,12 +242,10 @@
         }
       }
       .each_mater_wrapper {
-        // display: flex;
-        // align-items: center;
+        display: flex;
         position: relative;
         // 订单底下的物料
         .order_matter {
-          // display: flex;
           margin-top: .04rem;
         }
         // 物料图片
@@ -262,7 +260,7 @@
         }
         // 物料主体
         .mater_main {
-          max-width: 2.4rem;
+          max-width: 3rem;
           padding-left: .04rem;
           display: inline-block;
           box-sizing: border-box;
@@ -281,12 +279,12 @@
             .whiNum {
               color: #fff;
               font-weight: 200;
-              padding: 0 .1rem;
+              padding: 0 .02rem;
               font-size: .1rem;
               display: inline-block;
               background: #ea5455;
               vertical-align: middle;
-              margin: -.01rem .04rem 0 0;
+              margin: -.02rem .04rem 0 0;
             }
           }
           // 物料信息
@@ -294,11 +292,14 @@
             color: #757575;
             font-size: .12rem;
             margin-top: .04rem;
+            display: inline-block;
             // 有颜色包裹的
             .withColor {
               // 物料编码
               .mater_code {
                 display: flex;
+                margin-right: .1rem;
+                font-weight: 200;
                 .title,
                 .num {
                   font-size: .1rem;
@@ -321,18 +322,23 @@
               // 规格
               .mater_spec {
                 @extend .mater_code;
-                margin-left: .1rem;
                 .title {
-                  color: #fff;
                   background: #537791;
                 }
                 .num {
                   color: #fff;
                   max-width: .6rem;
-                  overflow: hidden;
-                  white-space: nowrap;
                   background: #ff7f50;
-                  text-overflow: ellipsis;
+                }
+              }
+              // 科目
+              .mater_sub {
+                @extend .mater_code;
+                .title {
+                  background: #0881a3;
+                }
+                .num {
+                  background: #ffd6a4;
                 }
               }
             }
@@ -340,8 +346,6 @@
             .withoutColor {
               // 物料分类
               .mater_classify {
-                // color: #111;
-                // font-weight: bold;
                 font-size: .14rem;
                 margin-top: .04rem;
                 .father {
@@ -362,7 +366,7 @@
           //物料价格，数量
           .mater_other {
             margin-top: .02rem;
-            align-items: center;
+            // 一般金额
             .mater_price {
               color: #ea5455;
               font-weight: bold;
@@ -370,12 +374,12 @@
               line-height: 0.2rem;
               margin-top: .04rem;
               display: inline-block;
-
               .num {
                 font-size: .1rem;
                 color: #757575;
               }
             }
+            // 单价 数量 税率 等
             .mater_num {
               color: #757575;
               font-size: 0.1rem;
@@ -386,6 +390,30 @@
                 margin-right: 0.04rem;
               }
 
+            }
+            // 费用报销
+            .mater_reimb {
+              // 金额
+              .price {
+                .title {
+                  font-size: .14rem;
+                }
+                .content {
+                  right: 0;
+                  font-size: .18rem;
+                  color: #5077aa;
+                  position: absolute;
+                  
+                }
+              }
+              // 报销事由
+              .reason {
+                @extend .price;
+                .content {
+                  color: #111;
+                  font-size: .14rem;
+                }
+              }
             }
           }
         }
