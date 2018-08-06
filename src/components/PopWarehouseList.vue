@@ -1,7 +1,7 @@
 <template>
-  <div class="or_ads mg_auto box_sd" @click="showPop = !showPop">
+  <div class="or_ads mg_auto box_sd" @click="warehouseClick">
     <!-- 仓库信息 -->
-    <div v-if='selItems'>
+    <div v-if="selItems.warehouseName">
       <div class="title">{{title}}</div>
       <div class="user_info">
         <span class="user_name">{{selItems.warehouseName}}</span>
@@ -9,14 +9,15 @@
       </div>
       <div class="cp_info">
         <p class="cp_name"></p>
-        <p class="cp_ads">{{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</p>
+        <p class="cp_ads">
+          {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</p>
       </div>
     </div>
     <div v-else>
       <div class="title">{{title}}</div>
       <div class="mode">请选择仓库</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
 
     <!-- 仓库popup -->
     <div v-transfer-dom>
@@ -28,10 +29,7 @@
           </div>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
-                    :newAdd="newAdd"
-                    :addUrl="addUrl"
-                    @on-pulling-down="onPullingDown" ref="bScroll">
+                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
               <div class="pop-list-main ">
@@ -60,12 +58,23 @@
               <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
               <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
+            <!-- 加载中、没有更多的提示 -->
+            <load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)" slot="loadmore"></load-more>
+            <!-- 当没有数据的时候 显示提醒文字 -->
+            <div class="when_null_conteiner" slot="loadmore" v-show="showAddWarehouse">
+              <div class="when_null" >
+                <div class="title">抱歉，没有找到您搜索的内容</div>
+                <ul class="tips">
+                  <li>
+                    不用担心，您马上可以进行 <span class="addNew" @click="addWarehouse">新增仓库</span>
+                  </li>
+                  <li>
+                    或者检查“输入内容”是否正确
+                  </li>
+                </ul>
+              </div>
+            </div>
           </r-scroll>
-        </div>
-        <!-- 底部栏 -->
-        <div class="count_mode vux-1px-t">
-          <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
-          <span class="count_btn" @click="selConfirm">确定</span>
         </div>
       </popup>
     </div>
@@ -73,7 +82,7 @@
 </template>
 
 <script>
-  import {Icon, Popup, TransferDom} from 'vux'
+  import {Icon, Popup, TransferDom, LoadMore} from 'vux'
   import {getList} from 'service/commonService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
@@ -81,27 +90,33 @@
   export default {
     name: "PopWarehouseList",
     props: {
+      // 标题
       title: {
         type: String,
         default: '仓库列表'
       },
+      // 默认值
       defaultValue: {
         type: Object,
         default() {
           return {}
         }
+      },
+      // 是否禁用选择
+      disabled: {
+        type: Boolean,
+        default: false
       }
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll,DSearch
+      Icon, Popup, RScroll, DSearch,LoadMore,
     },
     data() {
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
-        selItems: null, // 哪些被选中了
-        tmpItems: {},
+        selItems: {}, // 哪些被选中了
         listData: [],
         limit: 10,
         page: 1.,
@@ -110,8 +125,16 @@
           click: true,
           pullUpLoad: true,
         },
-        newAdd:false,
-        addUrl:'/warehouse/edit_warehouse'
+        showAddWarehouse: false, // 展示新增仓库按钮
+      }
+    },
+    computed: {
+      tip() {
+        let tip = '加载中';
+        if (!this.hasNext) {
+          tip = '暂无数据'
+        }
+        return tip;
       }
     },
     watch: {
@@ -130,9 +153,7 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.tmpItems = {...this.selItems};
         this.showPop = false;
-        //this.$emit('input', false);
       },
       clearList() {
         this.srhInpTx = '';
@@ -143,18 +164,12 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.warehouseCode === sItem.warehouseCode;
+        return this.selItems.warehouseCode === sItem.warehouseCode;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        this.tmpItems = sItem;
-      },
-      // TODO 确定选择仓库
-      selConfirm() {
-        let sels = [];
-        // 返回上层
         this.showPop = false;
-        this.selItems = {...this.tmpItems};
+        this.selItems = sItem;
         this.$emit('sel-item', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -184,18 +199,17 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.newAdd = tableContent.length == 0 ? true : false;
           //获取缓存
-          if(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')){
+          if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
             let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
-            for(let i = 0 ; i<this.listData.length ; i++ ){
-              if(this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE){
-                this.tmpItems = this.listData[i];
+            for (let i = 0; i < this.listData.length; i++) {
+              if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
                 this.selItems = this.listData[i];
                 this.$emit('sel-item', JSON.stringify(this.listData[i]));
-                 sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
+                sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
               }
             }
           }
@@ -217,25 +231,32 @@
         this.page++;
         this.getList();
       },
-      // TODO 下拉刷新
-      onPullingDown() {
-        this.page = 1;
-        this.getList(true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
-      },
       // TODO 设置默认值
       setDefaultValue() {
-        this.selItems = this.defaultValue ? {...this.defaultValue} : null;
-        this.tmpItems = this.defaultValue ? {...this.defaultValue} : {};
+        this.selItems = this.defaultValue ? {...this.defaultValue} : {};
+      },
+      // TODO 点击仓库
+      warehouseClick() {
+        if (this.disabled) {
+          return
+        }
+        this.showPop = !this.showPop;
+      },
+      //新增仓库
+      addWarehouse() {
+        this.$router.push({
+          path: '/warehouse/edit_warehouse',
+          query: {
+            add: 1
+          }
+        })
       }
     },
     created() {
       this.setDefaultValue();
+      if (this.disabled) {
+        return
+      }
       this.getList();
     }
   }
@@ -312,12 +333,12 @@
     background: #fff;
     .trade_pop {
       padding: 0 .08rem;
-      height: calc(100% - .44rem);
+      height: 100%;
       // 顶部
       .title {
-        font-size: .2rem;
         position: relative;
-        padding-top: 0.08rem;
+        margin: .08rem 0;
+        font-size: .2rem;
         // 搜索
         .search_part {
           width: 100%;
@@ -391,9 +412,9 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .52rem);
+        height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
-          padding: .14rem .04rem 0 .3rem;
+          padding: .04rem .04rem 0 .3rem;
         }
         // 列表项
         .pop-list-item {
@@ -447,28 +468,37 @@
       }
 
     }
-    // 底部栏
-    .count_mode {
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      height: .44rem;
-      position: fixed;
-      line-height: .44rem;
-      background: #fff;
-      .count_num {
-        flex: 2.5;
-        color: #5077aa;
-        font-size: .24rem;
-        padding-left: .1rem;
+  }
+
+  // 当没有数据时
+  .when_null_conteiner {
+    margin-top: 10px;
+    .when_null {
+      width: 3rem;
+      margin: 0 auto;
+      color: #757575;
+      font-weight: bold;
+      // 提醒文字
+      .title {
+        font-size: .2rem;
       }
-      .count_btn {
-        flex: 1.5;
-        color: #fff;
-        text-align: center;
-        background: #5077aa;
+      // 新增往来
+      .tips {
+        li {
+          list-style: square;
+          margin-top: .1rem;
+        }
+        font-weight: 200;
+        font-size: .14rem;
+        .addNew {
+          color: #fff;
+          background: #5077aa;
+          display: inline-block;
+          padding: 0 .04rem;
+          border-radius: .04rem;
+        }
       }
+
     }
   }
 </style>

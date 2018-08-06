@@ -3,21 +3,7 @@
     <div class="scroll-wrapper" :class="{hasRefresh: hasRefresh}">
       <slot></slot>
       <slot name="loadmore">
-        <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext&&!newAdd || noData&&!newAdd"></load-more>
-        <!-- 当没有数据的时候 显示提醒文字 -->
-            <div class="when_null_conteiner" v-show="newAdd">
-              <div class="when_null" >
-                <div class="title">抱歉，没有找到您搜索的内容</div>
-                <ul class="tips">
-                  <li>
-                    不用担心，您马上可以进行 <span class="addNew" @click="add">新增仓库</span>
-                  </li>
-                  <li>
-                    或者检查“输入内容”是否正确
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext || noData"></load-more>
       </slot>
     </div>
     <slot name="refresh">
@@ -50,20 +36,12 @@
         type: Boolean,
         default: false
       },
-      newAdd: {
-        type: Boolean,
-        default: false
-      },
       options: {
         type: Object,
         default() {
           return {}
         }
       },
-      addUrl:{
-        type: String,
-        default:''
-      }
     },
     data() {
       return {
@@ -174,14 +152,6 @@
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
         }
       },
-      //新增仓库
-      add(){
-        this.$router.push({
-          path:this.addUrl,
-          query:{
-            add:1
-        }})
-      }
     },
     created() {
       this._initScroll();
@@ -207,42 +177,6 @@
       background-color: #fff;
       /*transition: top .4s linear 0s;*/
       text-align: center;
-    }
-  }
-  .PopDealerList_newGo{
-    text-align: center;
-    width: 100px;
-    margin: 0 auto;
-    border: 1px solid #999999;
-    color: #999999;
-    border-radius: 3px;
-  }
-  // 当没有数据时
-  .when_null_conteiner{
-    margin-top: 10px;
-    .when_null {
-      width: 3rem;
-      margin: 0 auto;
-      color: #757575;
-      font-weight: bold;
-      // 提醒文字
-      .title {
-        font-size: .2rem;
-      }
-      // 新增往来
-      .tips {
-        li { list-style : square; margin-top: .1rem;}
-        font-weight: 200;
-        font-size: .14rem;
-        .addNew {
-          color: #fff;
-          background: #5077aa;
-          display: inline-block;
-          padding: 0 .04rem;
-          border-radius: .04rem;
-        }
-      }
-      
     }
   }
 </style>

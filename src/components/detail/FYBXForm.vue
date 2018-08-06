@@ -27,7 +27,7 @@
               <div class="mater_main">
                 <!-- 物料名称 -->
                 <div class="mater_name">
-                  <span class="whiNum">No.{{index + 1}}</span>
+                  <span class="whiNum">#{{index + 1}}</span>
                   {{item.costName_expCode}}
                 </div>
                 <!-- 物料基本信息 -->
@@ -49,24 +49,32 @@
                       </div>
                     </div>
                     <div class="ForInline" style="display:inline-block">
-                      <div class="mater_spec">
+                      <div class="mater_sub">
                         <span class="title">科目</span>
                         <span class="num">{{item.expSubject || '无'}}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <!-- 报销金额 -->
+                
                 <div class='mater_other'>
-                  <div class='mater_num'>
-                    <span class="num">报销金额: ￥{{item.tdAmount | numberComma(3)}}</span>
+                  <div class='mater_reimb'>
+                    <!-- 报销金额 -->
+                    <div class="price">
+                      <span class="title">报销金额: </span>
+                      <span class="content">
+                        <span style="fontSize:.12rem;">￥</span>{{item.tdAmount | numberComma(3)}}
+                      </span>
+                    </div>
+                    <!-- 报销事由 -->
+                    <div class="reason">
+                      <span class="title">报销事由: </span>
+                      <span class="content">{{item.expCause}}</span>
+                    </div>
                   </div>
                 </div>
-                <!-- 报销事由 -->
+                
                 <div class='mater_other'>
-                  <div class='mater_num'>
-                    <span class="num">报销事由: {{item.expCause}}</span>
-                  </div>
                 </div>
               </div>
             </div>

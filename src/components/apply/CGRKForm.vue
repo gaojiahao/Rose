@@ -252,7 +252,10 @@
       // TODO 修改数量
       getNum(item, i, e) {
         let val = e.target.value;
-        item.tdQty = Number(val);
+        if (val <= 0) {
+          val = 1;
+        }
+        item.tdQty = Math.floor(val);
         this.$set(this.listData, i, item);
       },
       // TODO 新增更多订单

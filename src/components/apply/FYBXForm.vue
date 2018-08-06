@@ -50,26 +50,26 @@
                       </div>
                       <div class="userInp_mode">
                         <group>
-                          <cell title="费用科目" text-align='right' v-model="item.expSubject" @click.native="showPop = true" is-link></cell>
+                          <cell title="费用科目" text-align='right' :value="item.expSubject" @click.native="item.showPop = true" is-link></cell>
                           <x-input  title="金额" text-align='right' placeholder='请填写'
-                                  :value='item.price?item.price : "0" | numberComma(3)'
-                                  @on-blur="getValue(item,$event)"></x-input>
+                                    type='number'
+                                    v-model='item.price'></x-input>
                           <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'
                           v-model="item.reson"></x-input>
                         </group>
                         <div v-transfer-dom>
-                          <popup v-model="showPop" height="70%" class="trade_pop_part">
+                          <popup v-model="item.showPop" height="70%" class="trade_pop_part">
                             <div class="trade_pop">
                               <div class="title">费用科目
-                                <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
+                                <x-icon class="close_icon" type="ios-close-empty" size="30" @click="item.showPop = false"></x-icon>
                               </div>
                               <span class="each_mode"
-                                    :class="{choiced : item1 === item.expSubject}"
-                                    v-for="(item1, index1) in item.COST_SUB"
-                                    :key="index1"
-                                    @click="selItem(item1,item)">{{item1}}</span>
+                                    :class="{choiced : val === item.expSubject}"
+                                    v-for="(val, i) in item.COST_SUB"
+                                    :key="i"
+                                    @click="selItem(val,index,i)">{{val}}</span>
                             </div>
-                            <div class="cfm_btn" @click="confirm">确定</div>
+                            <div class="cfm_btn" @click="confirm(item)">确定</div>
                           </popup>
                         </div>
                       </div>
@@ -86,13 +86,13 @@
         <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多物料</div>
         <!-- 费用popup -->
         <pop-cost-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                        ref="matter"></pop-cost-list>
+                        :default-value="CostList" ref="matter"></pop-cost-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{count | numberComma(3)}}
+        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
@@ -127,19 +127,38 @@
           biComment: ''
         },
         showPop: false,
-        count : 0,
         tmp: '',
       }
     },
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.CostList.forEach(item=>{
+          if(item.price){
+            total += Number(item.price);
+          }         
+        })
+        return total;
+      }
+    },
     filters:{
-      numberComma
+      numberComma,
+      checkPrice(val){
+        if(val){
+          return numberComma(val)
+        }
+      }
     },
     methods: {
-      selItem(item1,item){
-        item.expSubject = item1;
+      showcCostPop(item){
+        item.showPop = true
+      },     
+      selItem(item1,index,i){
+        this.CostList[index].expSubject = item1;
       },
-      confirm(){
-        this.showPop = false;
+      confirm(item){
+        item.showPop = false;
       },
       // TODO 滑动删除
       delClick(item, index) {
@@ -153,13 +172,12 @@
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
-        this.CostList.push(sels[0]);
-      },
-      getValue(item,e){
-        item.price = '';
-        item.price = Number(e.split(',').join(''));
-        this.count += item.price;
-
+       
+        sels.map(item=>{
+          item.showPop = false;
+        })
+         this.CostList = sels;
+        console.log(this.CostList);
       },
       // TODO 提交
       submitOrder() {

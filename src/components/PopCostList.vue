@@ -66,6 +66,13 @@
         type: Boolean,
         default: false
       },
+      // 默认值
+      defaultValue: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
     },
     components: {
       Icon, Popup, LoadMore, RScroll,MSearch
@@ -92,6 +99,13 @@
           this.showPop = val;
         }
       },
+       defaultValue: {
+        handler(val) {
+          // 默认值改变，重新赋值
+          this.setDefaultValue();
+        }
+      },
+       
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -109,20 +123,18 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        let flag = false;
-        this.tmpItems.every(item => {
-          if (sItem.COST_CODE === item.COST_CODE) {
-            flag = true;
-            return false;
-          }
-          return true;
-        });
-        return flag;
+        return this.tmpItems.findIndex(item => item.COST_CODE === sItem.COST_CODE) !== -1;
       },
-      // TODO 选择往来
+      // TODO 选择物料
       selThis(sItem, sIndex) {
-        this.tmpItems = []
-        this.tmpItems.push(sItem);
+        let arr = this.tmpItems;
+        let delIndex = arr.findIndex(item => item.COST_CODE === sItem.COST_CODE);
+        // 若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
+        }
+        arr.push(sItem);
       },
       // TODO 确定选择往来
       cfmMater() {
@@ -130,6 +142,7 @@
         // 返回上层
         this.showPop = false;
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
+        console.log(this.tmpItems)
         this.selItems = [...this.tmpItems];
         this.selItems.map(item=>{
           item.COST_SUB = item.COST_SUB_SUBJECTS.split(',');
@@ -196,6 +209,11 @@
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
         this.getCostList();
+      },
+      // TODO 设置默认值
+      setDefaultValue() {
+        this.tmpItems = [...this.defaultValue];
+        this.selItems = [...this.defaultValue];
       },
       // TODO 上拉加载
       onPullingUp() {

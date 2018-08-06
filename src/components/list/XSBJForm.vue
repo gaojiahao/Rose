@@ -65,6 +65,7 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
+        listViewID: 2230,
       }
     },
     mixins: [listCommon],
@@ -77,47 +78,6 @@
             transCode: transCode
           }
         })
-      },
-      //获取销售订单数据
-      getList(noReset = false) {
-        let filter = {
-          biStatus: this.activeTab,
-          transCode: this.serachVal,
-          handlerName: this.serachVal,
-          inventoryName: this.serachVal,
-        };
-
-        return getSellOrderList({
-          limit: this.limit,
-          page: this.page,
-          listViewID: 2230,
-          filter: JSON.stringify(filter),
-        }).then(({total = 0, orders = []}) => {
-          this.hasNext = total > (this.page - 1) * this.limit + orders.length;
-          orders.forEach(item => {
-            this.setStatus(item);
-            item.itmes = item.itmes.slice(0, 5);
-            item.itmes.forEach(mItem => {
-              mItem.inventoryPic = mItem.inventoryPic ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400` : this.getDefaultImg();
-            })
-          });
-          this.listData = this.page === 1 ? orders : this.listData.concat(orders);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
       },
     },
     created() {

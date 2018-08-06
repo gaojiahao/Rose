@@ -30,7 +30,7 @@ export let isMyflow = (data = {}) => {
 export let getListId = (transCode = '')=>{
     return $axios.ajax({
         url:`/H_roleplay-si/ds/list/getFormByTransCode?transCode=${transCode}`,
-        
+
     }).catch( err => {
         return errorHandler(err);
     })
@@ -53,6 +53,18 @@ export let currentUser = (_dc = '') => {
         return errorHandler(err);
     })
 }
+
+// TODO 获取物料价格
+export let getSaleQuotePrice = (data = {}) => {
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/ds/getSaleQuotePrice',
+    data: data
+  }).catch( err => {
+    return errorHandler(err);
+  })
+};
 
 export default{
     isMyflow,

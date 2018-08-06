@@ -1,5 +1,5 @@
 import {saveAndStartWf, saveAndCommitTask, commitTask, getBaseInfoData,} from 'service/commonService'
-import {getListId, isMyflow} from 'service/detailService'
+import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 
 export default {
   data() {
@@ -29,7 +29,6 @@ export default {
     getUniqueId(transCode) {
       return new Promise(resolve => {
         isMyflow({transCode}).then(({dataCount, tableContent}) => {
-          console.log(tableContent)
           if (dataCount > 0) {
             this.taskId = tableContent[0].taskId;
             if (tableContent[0].isMyTask === 1) {
@@ -107,6 +106,23 @@ export default {
           ...data,
         };
       })
+    },
+    // TODO 获取物料价格
+    getMatPrice() {
+      this.matterList.forEach((item, index) => {
+        // 如果已有价格，则不发起请求
+        // if (item.price) {
+        //   return
+        // }
+        getSaleQuotePrice({
+          drDealerCode: this.dealerInfo.dealerCode,
+          matCode: item.inventoryCode,
+          noCount: 1,
+        }).then(({tableContent = []}) => {
+          let [lastest = {}] = tableContent; // 取第一个价格
+          item.price = lastest.price || 90;
+        })
+      });
     },
   },
   created() {
