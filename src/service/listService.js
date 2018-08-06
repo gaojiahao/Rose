@@ -37,7 +37,18 @@ export let getTransMatchedCode = (data = {}) => {
   });
 };
 
+// TODO 获取商机订单列表
+export let getBusinessList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getFilterBusiness',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {
   getList,
   getSellOrderList,
+  getBusinessList
 }
