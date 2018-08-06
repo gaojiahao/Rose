@@ -188,7 +188,7 @@
         submitSuccess: false, // 是否提交成功
         warehouse: null, // 选中仓库属性
         taxRate: 0.16, // 税率
-        numMap: {}, // 用于记录订单物料的数量
+        numMap: {}, // 用于记录订单物料的数量和价格
         orderParams: {
           dealerCode: '',
           whCode: '',
@@ -198,6 +198,7 @@
         biReferenceId: '',
         actions: [],
         taskId: '',
+        matterList: [],
       }
     },
     computed: {
@@ -230,6 +231,7 @@
         };
         this.orderList = {};
         this.$refs.order.clearSel();
+        this.getMatPrice();
       },
       // TODO 选中仓库
       selWarehouse(val) {
@@ -251,7 +253,7 @@
             item.price = this.numMap[item.inventoryCode].price;
           } else {
             item.tdQty = 1;
-            item.price = 90;
+            item.price = 0;
           }
           if (!orderList[item.transMatchedCode]) {
             orderList[item.transMatchedCode] = [];
@@ -259,7 +261,9 @@
           orderList[item.transMatchedCode].push(item);
         });
         this.numMap = {};
+        this.matterList = sels;
         this.orderList = orderList;
+        this.getMatPrice();
       },
       // TODO 选择默认图片
       getDefaultImg(item) {
@@ -422,22 +426,6 @@
             }
             console.log(submitData)
             this.saveData(operation, submitData);
-            /*operation(submitData).then(data => {
-              //this.showLoading = false;
-              let {success = false, message = '提交失败'} = data;
-              if (success) {
-                message = '订单提交成功';
-                this.$emit('change', true);
-              }
-              this.$vux.alert.show({
-                content: message,
-                onHide: () => {
-                  if (success) {
-                    this.$router.go(-1);
-                  }
-                }
-              });
-            })*/
           }
         })
       },
