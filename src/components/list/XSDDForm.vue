@@ -100,9 +100,14 @@
               item.count += mitem.tdAmount*100;
             })
             item.count = item.count/100;
+            // 列表当中每个订单最多展现5个物料
             item.itmes = item.itmes.slice(0, 5);
             item.itmes.forEach(mItem => {
-              mItem.inventoryPic = mItem.inventoryPic ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400` : this.getDefaultImg();
+              mItem.inventoryPic = mItem.inventoryPic 
+                // 请求图片
+                ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400`
+                // 默认图片
+                : this.getDefaultImg();
             })
           });
           this.listData = this.page === 1 ? orders : this.listData.concat(orders);
@@ -123,11 +128,7 @@
         }
         return url
       },
-    },
-    created() {
-      
     }
-
   }
 </script>
 
