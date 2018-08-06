@@ -1,28 +1,11 @@
 <template>
   <div class="pages">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <div class="or_ads mg_auto box_sd">
-        <div class="title">出库仓库</div>
-        <div class="user_info">
-          <span class="user_name">{{orderInfo.inPut.warehouseName_containerCodeOut}}</span>
-          <span class="user_tel"></span>
-        </div>
-        <div class="cp_info">
-          <p class="cp_name">{{orderInfo.inPut.warehouseAddress_containerCodeOut}}</p>
-          <p class="cp_ads"></p>
-        </div>
-      </div>
-      <div class="or_ads mg_auto box_sd">
-        <div class="title">入库仓库</div>
-        <div class="user_info">
-          <span class="user_name">{{orderInfo.inPut.warehouseName_containerCode}}</span>
-          <span class="user_tel"></span>
-        </div>
-        <div class="cp_info">
-          <p class="cp_name">{{orderInfo.inPut.warehouseAddress_containerCode}}</p>
-          <p class="cp_ads"></p>
-        </div>
-      </div>
+      <!-- 出库仓库 -->
+      <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" disabled></pop-warehouse-list>
+      <!-- 入库仓库 -->
+      <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" disabled></pop-warehouse-list>
+      <!-- 创建时间 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
         <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
@@ -70,11 +53,6 @@
               </div>
             </div>
           </div>
-          <!-- 金额合计栏 -->
-          <!--<div class="price_list">
-            <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-            <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
-          </div>-->
         </div>
       </div>
       <!-- 审批操作 -->
@@ -87,6 +65,7 @@
   import {getSOList,} from 'service/detailService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
+  import PopWarehouseList from 'components/PopWarehouseList'
 
   export default {
     data() {
@@ -95,11 +74,14 @@
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         defaulImg: require('assets/avatar.png'),   // 默认图片1
         defaulImg2: require('assets/io.jpg'),       // 默认图片2
+        warehouseIn: {}, // 入库仓库详情
+        warehouseOut: {}, // 出库仓库详情
       }
     },
     mixins: [detailCommon],
     components: {
       workFlow,
+      PopWarehouseList,
     },
     filters: {
       numberComma
@@ -129,14 +111,34 @@
             });
             return;
           }
-          // 获取合计
-          let {dataSet} = data.formData.inPut;
+          let {inPut = {}} = data.formData;
+          let {dataSet} = inPut;
           for (let val of dataSet) {
             val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
           }
+          // 入库
+          this.warehouseIn = {
+            warehouseCode: inPut.containerCode,
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseRelType: inPut.warehouseType_containerCode,
+            warehouseProvince: inPut.warehouseProvince_containerCode,
+            warehouseCity: inPut.warehouseCity_containerCode,
+            warehouseDistrict: inPut.warehouseDistrict_containerCode,
+            warehouseAddress: inPut.warehouseAddress_containerCode,
+          };
+          // 出库
+          this.warehouseOut = {
+            warehouseCode: inPut.containerCodeOut,
+            warehouseName: inPut.warehouseName_containerCodeOut,
+            warehouseRelType: inPut.warehouseType_containerCodeOut,
+            warehouseProvince: inPut.warehouseProvince_containerCodeOut,
+            warehouseCity: inPut.warehouseCity_containerCodeOut,
+            warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
+            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
+          };
           data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
           this.orderInfo = data.formData;
-          this.workFlowInfoHandler();
+          // this.workFlowInfoHandler();
         })
       },
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="or_ads mg_auto box_sd" @click="showPop = !showPop">
+  <div class="or_ads mg_auto box_sd" @click="warehouseClick">
     <!-- 仓库信息 -->
     <div v-if='selItems'>
       <div class="title">{{title}}</div>
@@ -9,14 +9,15 @@
       </div>
       <div class="cp_info">
         <p class="cp_name"></p>
-        <p class="cp_ads">{{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</p>
+        <p class="cp_ads">
+          {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</p>
       </div>
     </div>
     <div v-else>
       <div class="title">{{title}}</div>
       <div class="mode">请选择仓库</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
 
     <!-- 仓库popup -->
     <div v-transfer-dom>
@@ -31,7 +32,7 @@
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
                     :newAdd="newAdd"
                     :addUrl="addUrl"
-                    @on-pulling-down="onPullingDown" ref="bScroll">
+                    ref="bScroll">
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
               <div class="pop-list-main ">
@@ -81,20 +82,27 @@
   export default {
     name: "PopWarehouseList",
     props: {
+      // 标题
       title: {
         type: String,
         default: '仓库列表'
       },
+      // 默认值
       defaultValue: {
         type: Object,
         default() {
           return {}
         }
+      },
+      // 是否禁用选择
+      disabled: {
+        type: Boolean,
+        default: false
       }
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll,DSearch
+      Icon, Popup, RScroll, DSearch
     },
     data() {
       return {
@@ -110,8 +118,8 @@
           click: true,
           pullUpLoad: true,
         },
-        newAdd:false,
-        addUrl:'/warehouse/edit_warehouse'
+        newAdd: false,
+        addUrl: '/warehouse/edit_warehouse'
       }
     },
     watch: {
@@ -188,14 +196,14 @@
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           this.newAdd = tableContent.length == 0 ? true : false;
           //获取缓存
-          if(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')){
+          if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
             let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
-            for(let i = 0 ; i<this.listData.length ; i++ ){
-              if(this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE){
+            for (let i = 0; i < this.listData.length; i++) {
+              if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
                 this.tmpItems = this.listData[i];
                 this.selItems = this.listData[i];
                 this.$emit('sel-item', JSON.stringify(this.listData[i]));
-                 sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
+                sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
               }
             }
           }
@@ -217,25 +225,24 @@
         this.page++;
         this.getList();
       },
-      // TODO 下拉刷新
-      onPullingDown() {
-        this.page = 1;
-        this.getList(true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
-      },
       // TODO 设置默认值
       setDefaultValue() {
         this.selItems = this.defaultValue ? {...this.defaultValue} : null;
         this.tmpItems = this.defaultValue ? {...this.defaultValue} : {};
+      },
+      // TODO 点击仓库
+      warehouseClick() {
+        if (this.disabled) {
+          return
+        }
+        this.showPop = !this.showPop;
       }
     },
     created() {
       this.setDefaultValue();
+      if (this.disabled) {
+        return
+      }
       this.getList();
     }
   }

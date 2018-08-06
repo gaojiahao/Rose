@@ -16,19 +16,8 @@
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
         </div>
       </div>
-      <div class="or_ads mg_auto box_sd">
-        <div class="title">仓库</div>
-        <div class="user_info">
-          <span class="user_name">{{warehouse.warehouseName}}</span>
-          <span class="user_tel">{{warehouse.warehouseType}}</span>
-        </div>
-        <div class="cp_info">
-          <p class="cp_name"></p>
-          <p class="cp_ads">
-            {{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}
-          </p>
-        </div>
-      </div>
+      <!-- 出库仓库 -->
+      <pop-warehouse-list title="仓库" :default-value="warehouse" disabled></pop-warehouse-list>
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">结算方式</p>
@@ -122,6 +111,7 @@
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
   import RAction from 'components/RAction'
+  import PopWarehouseList from 'components/PopWarehouseList'
 
   export default {
     data() {
@@ -137,7 +127,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction,
+      workFlow, RAction, PopWarehouseList,
     },
     filters: {
       numberComma
@@ -161,7 +151,7 @@
           if (success === false) {
             this.$vux.alert.show({
               content: '抱歉，数据有误，暂无法查看',
-               onHide:()=>{
+              onHide: () => {
                 this.$router.back();
               }
             });

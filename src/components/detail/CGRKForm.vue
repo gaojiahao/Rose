@@ -15,17 +15,8 @@
           <p class="cp_ads"></p>
         </div>
       </div>
-      <div class="or_ads mg_auto box_sd">
-        <div class="title">仓库</div>
-        <div class="user_info">
-          <span class="user_name">{{orderInfo.inPut.warehouseName_containerCode}}</span>
-          <span class="user_tel">{{orderInfo.inPut.warehouseType_containerCode}}</span>
-        </div>
-        <div class="cp_info">
-          <p class="cp_name"></p>
-          <p class="cp_ads"></p>
-        </div>
-      </div>
+      <!-- 入库仓库 -->
+      <pop-warehouse-list title="仓库" :default-value="warehouse" disabled></pop-warehouse-list>
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">结算方式</p>
@@ -95,7 +86,8 @@
         </div>
       </div>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -106,6 +98,7 @@
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
   import RAction from 'components/RAction'
+  import PopWarehouseList from 'components/PopWarehouseList'
 
   export default {
     data() {
@@ -116,11 +109,12 @@
         defaulImg: require('assets/avatar.png'),   // 默认图片1
         defaulImg2: require('assets/io.jpg'),       // 默认图片2
         comment: '',//审批备注
+        warehouse: {}, // 入库仓库
       }
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction,
+      workFlow, RAction, PopWarehouseList,
     },
     filters: {
       numberComma
@@ -145,18 +139,28 @@
           if (data.success === false) {
             this.$vux.alert.show({
               content: '抱歉，数据有误，暂无法查看',
-               onHide:()=>{
+              onHide: () => {
                 this.$router.back();
               }
             });
             return;
           }
-          // 获取合计
-          let {dataSet} = data.formData.inPut;
+          let {inPut} = data.formData;
+          let {dataSet} = inPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
             val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
           }
+          // 入库
+          this.warehouse = {
+            warehouseCode: inPut.containerCode,
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseRelType: inPut.warehouseType_containerCode,
+            warehouseProvince: inPut.warehouseProvince_containerCode,
+            warehouseCity: inPut.warehouseCity_containerCode,
+            warehouseDistrict: inPut.warehouseDistrict_containerCode,
+            warehouseAddress: inPut.warehouseAddress_containerCode,
+          };
           this.orderInfo = data.formData;
           this.workFlowInfoHandler();
         })
