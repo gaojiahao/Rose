@@ -210,9 +210,6 @@
             total += item.tdQty * item.price;
           }
         }
-        /*this.orderList.forEach(item => {
-          total += item.tdQty * item.price;
-        });*/
         return total;
       },
       // 税金
@@ -304,7 +301,10 @@
         if (val > item.qtyStockBal) {
           val = item.qtyStockBal;
         }
-        item.tdQty = Number(val);
+        if (val <= 0) {
+          val = 1;
+        }
+        item.tdQty = Math.floor(val);
         this.$set(this.orderList[key], i, item);
       },
       // TODO 新增更多订单

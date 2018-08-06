@@ -158,7 +158,10 @@
         if (val > item.qtyBal) {
           val = item.qtyBal;
         }
-        item.tdQty = Number(val);
+        if (val <= 0) {
+          val = 1;
+        }
+        item.tdQty = Math.floor(val);
         this.$set(this.matterList, i, item);
       },
       // TODO 点击增加更多物料

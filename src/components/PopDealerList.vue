@@ -16,15 +16,15 @@
                 <div class="mater_info">
                   <!--联系人电话 -->
                   <div class="withColor ">
-                    <div class="ForInline name" style="display:inline-block">                     
+                    <div class="ForInline name" style="display:inline-block">
                         <span>{{item.creatorName}}</span>
                     </div>
-                    <div class="ForInline name" style="display:inline-block">                      
+                    <div class="ForInline name" style="display:inline-block">
                         <span>{{item.dealerMobilePhone}}</span>
                     </div>
                   </div>
                   <div class="withColor">
-                    <div class="ForInline " style="display:inline-block">                     
+                    <div class="ForInline " style="display:inline-block">
                         <span class='dealer'>{{item.dealerName}}</span>
                     </div>
                   </div>
@@ -53,11 +53,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <!-- 底部栏 -->
-      <div class="count_mode vux-1px-t">
-        <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
-        <span class="count_btn" @click="cfmMater">确定</span>
       </div>
     </popup>
   </div>
@@ -90,13 +85,11 @@
         showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
-        tmpItems: [],
         dealerList: [],
         bScroll: null,
         limit: 10,
         page: 1.,
         hasNext: true,
-        selParams: null,
       }
     },
     watch: {
@@ -117,7 +110,6 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
       // 关闭popup
@@ -128,7 +120,7 @@
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
-        this.tmpItems.every(item => {
+        this.selItems && this.selItems.every(item => {
           if (sItem.dealerCode === item.dealerCode) {
             flag = true;
             return false;
@@ -139,18 +131,9 @@
       },
       // TODO 选择往来
       selThis(sItem, sIndex) {
-        this.tmpItems = []
-        this.tmpItems.push(sItem);
-      },
-      // TODO 确定选择往来
-      cfmMater() {
-        let sels = [];
-        // 返回上层
         this.showPop = false;
-        this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
-        this.selItems = [...this.tmpItems];
+        this.selItems = [sItem];
         sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.selItems));
-        this.selParams = {};
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -194,7 +177,6 @@
             let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
             for(let i = 0 ; i<this.dealerList.length ; i++ ){
               if(this.dealerList[i].transCode == EDIT_ADS_TRANSCODE){
-                this.tmpItems.push(this.dealerList[i]);
                 this.selItems.push(this.dealerList[i]);
                 this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
                 sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
@@ -204,7 +186,6 @@
           if(sessionStorage.getItem('DEALERLIST_SELITEMS')){
             let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS'));
             this.selItems = [...DEALERLIST_SELITEMS];
-            this.tmpItems = [...DEALERLIST_SELITEMS];
             this.$emit('sel-dealer', JSON.stringify(DEALERLIST_SELITEMS));
             sessionStorage.removeItem('DEALERLIST_SELITEMS');
           }
@@ -220,7 +201,7 @@
             content: e.message,
           })
         })
-       
+
       },
       // TODO 搜索往来
       searchMat(val) {
@@ -236,7 +217,7 @@
           this.bScroll = new BScroll(this.$refs.dealer, {
             click: true,
             pullUpLoad: {
-              threshold: -20
+              threshold: 20
             },
           });
           // 绑定滚动加载事件
@@ -265,7 +246,7 @@
       this.getDealer();
     },
     mounted(){
-      
+
     }
   }
 </script>
@@ -279,9 +260,9 @@
       height: calc(100% - .44rem);
       // 顶部
       .title {
-        font-size: .2rem;
         position: relative;
-        padding-top: 0.08rem;
+        margin: 0.08rem 0;
+        font-size: .2rem;
         // 搜索
         .search_part {
           width: 100%;
@@ -341,11 +322,11 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .52rem);
+        height: 100%;
         padding: 0 .04rem 0 .3rem;
         .mater_list_wrapper {
           width: 100%;
-          padding-top: .14rem;
+          padding-top: .04rem;
           position: relative;
           // 当没有数据时
           .when_null {
@@ -372,7 +353,7 @@
                 border-radius: .04rem;
               }
             }
-            
+
           }
         }
         // 每个往来
@@ -521,37 +502,6 @@
       }
 
     }
-    // 底部栏
-    .count_mode {
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      height: .44rem;
-      position: fixed;
-      line-height: .44rem;
-      background: #fff;
-      .count_num {
-        flex: 2.5;
-        color: #5077aa;
-        font-size: .24rem;
-        padding-left: .1rem;
-      }
-      .count_btn {
-        flex: 1.5;
-        color: #fff;
-        text-align: center;
-        background: #5077aa;
-      }
-    }
-  }
-  .PopDealerList_newGo{
-    text-align: center;
-    width: 100px;
-    margin: 0 auto;
-    border: 1px solid #999999;
-    color: #999999;
-    border-radius: 3px;
   }
   .editAds{
     width: 100%;
