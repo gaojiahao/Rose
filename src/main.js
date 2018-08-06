@@ -7,7 +7,6 @@ import App from './App'
 import router from './router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
-import Mescroll from './common/mescroll.min.js'
 import { TransferDom } from 'vux'
 import  { AlertPlugin, ConfirmPlugin, DatetimePlugin } from 'vux'
 
@@ -18,20 +17,14 @@ Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
 
 Vue.prototype.Swiper = Swiper;
-Vue.prototype.Mescroll = Mescroll;
-
-
-
 FastClick.attach(document.body)
 
-Vue.config.productionTip = false
+const isDebug_mode = process.env.NODE_ENV !== 'production'
+Vue.config.debug = isDebug_mode
+Vue.config.devtools = isDebug_mode
+Vue.config.productionTip = isDebug_mode
 
-// router.beforeEach((to, from, next) => {
-//   if(to.meta.title){
-//     document.title = to.meta.title;
-//   }
-//   next()
-// });
+
 router.afterEach( route =>{
   document.title = route.meta.title || '';
 })

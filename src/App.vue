@@ -35,7 +35,6 @@
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
-  @import './common/mescroll.min.css';
 
   body {
     margin: 0 auto;
