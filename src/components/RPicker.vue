@@ -51,7 +51,7 @@
       // 界面模式，1为默认，2为水平展示
       mode: {
         type: String,
-        default: 1
+        default: '1'
       },
       // 是否展示箭头
       showArrow: {

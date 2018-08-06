@@ -29,10 +29,7 @@
           </div>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
-                    :newAdd="newAdd"
-                    :addUrl="addUrl"
-                    ref="bScroll">
+                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
               <div class="pop-list-main ">
@@ -61,6 +58,22 @@
               <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
               <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
+            <!-- 加载中、没有更多的提示 -->
+            <load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)" slot="loadmore"></load-more>
+            <!-- 当没有数据的时候 显示提醒文字 -->
+            <div class="when_null_conteiner" slot="loadmore" v-show="showAddWarehouse">
+              <div class="when_null" >
+                <div class="title">抱歉，没有找到您搜索的内容</div>
+                <ul class="tips">
+                  <li>
+                    不用担心，您马上可以进行 <span class="addNew" @click="addWarehouse">新增仓库</span>
+                  </li>
+                  <li>
+                    或者检查“输入内容”是否正确
+                  </li>
+                </ul>
+              </div>
+            </div>
           </r-scroll>
         </div>
         <!-- 底部栏 -->
@@ -74,7 +87,7 @@
 </template>
 
 <script>
-  import {Icon, Popup, TransferDom} from 'vux'
+  import {Icon, Popup, TransferDom, LoadMore} from 'vux'
   import {getList} from 'service/commonService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
@@ -102,7 +115,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch
+      Icon, Popup, RScroll, DSearch,LoadMore,
     },
     data() {
       return {
@@ -118,8 +131,16 @@
           click: true,
           pullUpLoad: true,
         },
-        newAdd: false,
-        addUrl: '/warehouse/edit_warehouse'
+        showAddWarehouse: false, // 展示新增仓库按钮
+      }
+    },
+    computed: {
+      tip() {
+        let tip = '加载中';
+        if (!this.hasNext) {
+          tip = '暂无数据'
+        }
+        return tip;
       }
     },
     watch: {
@@ -192,9 +213,9 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.newAdd = tableContent.length == 0 ? true : false;
           //获取缓存
           if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
             let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
@@ -236,6 +257,15 @@
           return
         }
         this.showPop = !this.showPop;
+      },
+      //新增仓库
+      addWarehouse() {
+        this.$router.push({
+          path: '/warehouse/edit_warehouse',
+          query: {
+            add: 1
+          }
+        })
       }
     },
     created() {
@@ -476,6 +506,38 @@
         text-align: center;
         background: #5077aa;
       }
+    }
+  }
+
+  // 当没有数据时
+  .when_null_conteiner {
+    margin-top: 10px;
+    .when_null {
+      width: 3rem;
+      margin: 0 auto;
+      color: #757575;
+      font-weight: bold;
+      // 提醒文字
+      .title {
+        font-size: .2rem;
+      }
+      // 新增往来
+      .tips {
+        li {
+          list-style: square;
+          margin-top: .1rem;
+        }
+        font-weight: 200;
+        font-size: .14rem;
+        .addNew {
+          color: #fff;
+          background: #5077aa;
+          display: inline-block;
+          padding: 0 .04rem;
+          border-radius: .04rem;
+        }
+      }
+
     }
   }
 </style>
