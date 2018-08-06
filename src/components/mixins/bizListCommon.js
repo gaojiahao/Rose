@@ -101,6 +101,56 @@ export default {
           break;
       }
     },
+     //获取销售订单数据
+    getList(noReset = false) {
+      let filter = {
+        biStatus: this.activeTab,
+        transCode: this.serachVal,
+        handlerName: this.serachVal,
+        inventoryName : this.serachVal
+      };
+      return getSellOrderList({
+        limit: this.limit,
+        page: this.page,
+        listViewID: this.listViewID,
+        filter: JSON.stringify(filter),
+      }).then(({total = 0, orders = []}) => {
+        this.hasNext = total > (this.page - 1) * this.limit + orders.length;
+        orders.forEach(item => {
+          this.setStatus(item);
+          item.count = 0;
+          item.itmes.forEach(mitem=>{
+            item.count += mitem.tdAmount*100;
+          })
+          item.count = item.count/100;
+          // 列表当中每个订单最多展现5个物料
+          item.itmes = item.itmes.slice(0, 5);
+          item.itmes.forEach(mItem => {
+            mItem.inventoryPic = mItem.inventoryPic 
+              // 请求图片
+              ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400`
+              // 默认图片
+              : this.getDefaultImg();
+          })
+        });
+        this.listData = this.page === 1 ? orders : this.listData.concat(orders);
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
+        }
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    // TODO 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
     // TODO 重置下拉刷新、上拉加载的状态
     resetScroll() {
       this.$refs.bScroll.finishPullDown();

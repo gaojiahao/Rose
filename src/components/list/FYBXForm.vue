@@ -71,55 +71,13 @@
           {name: '已生效', status: '已生效'}, 
           {name: '进行中', status: '进行中'}
         ],
+        listViewID: 2236,
 
       }
     },
     mixins: [listCommon],
     methods: {     
-      //获取销售订单数据
-      getList(noReset = false) {
-        let filter = {
-          biStatus: this.activeTab,
-          transCode: this.serachVal,
-          handlerName: this.serachVal,
-          inventoryName : this.serachVal
-        };
-        return getSellOrderList({
-          limit: this.limit,
-          page: this.page,
-          // start: (this.page - 1) * this.limit,
-          listViewID: 2236,
-          // filter: JSON.stringify(filter),
-          filter: JSON.stringify(filter),
-        }).then(({total = 0, orders = []}) => {
-          this.hasNext = total > (this.page - 1) * this.limit + orders.length;
-          orders.forEach(item => {
-            this.setStatus(item);
-            item.count = 0;
-            item.itmes.forEach(mitem=>{
-              item.count += mitem.tdAmount*100;
-            })
-            item.count = item.count/100;
-            item.itmes = item.itmes.slice(0, 5);
-          });
-          this.listData = this.page === 1 ? orders : this.listData.concat(orders);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
+     
     },
     created() {
       

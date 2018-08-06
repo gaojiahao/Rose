@@ -39,7 +39,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     let {path} = to;
     // 新建物料，修改列表页的meta值
-    if (this.submitSuccess && (path.indexOf('/list') !== -1 ||path.indexOf('msglist') !== -1)) {
+    if (this.submitSuccess && (path.indexOf('/list') !== -1 ||path.indexOf('/msglist') !== -1)) {
       to.meta.reload = true;
     }
     next();
