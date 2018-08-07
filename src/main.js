@@ -22,7 +22,7 @@ FastClick.attach(document.body)
 const isDebug_mode = process.env.NODE_ENV !== 'production'
 Vue.config.debug = isDebug_mode
 Vue.config.devtools = isDebug_mode
-Vue.config.productionTip = isDebug_mode
+Vue.config.productionTip = false
 
 
 router.afterEach( route =>{
