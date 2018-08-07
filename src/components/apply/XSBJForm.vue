@@ -21,8 +21,8 @@
         </div>
       </div>
       <!-- 结算方式 -->
-      <pop-single-select title="结算方式" :data="transMode" :value="formData.drDealerPaymentTerm"
-                         v-model="formData.drDealerPaymentTerm"></pop-single-select>
+      <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
+                         v-model="drDealerPaymentTerm"></pop-single-select>
       <!-- 物流条款 -->
       <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
                          v-model="formData.drDealerLogisticsTerms"></pop-single-select>
@@ -162,9 +162,9 @@
         dealerInfo: null,
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
         logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
+        drDealerPaymentTerm: '现付',  //结算方式
         formData: {
           biComment: '',
-          drDealerPaymentTerm: '现付', // 结算方式
           drDealerLogisticsTerms: '上门', // 物流条款
           validUntil: '', // 有效期
         },
@@ -274,6 +274,7 @@
                 order: {
                   dealerDebit: this.dealerInfo.dealerCode || '',
                   drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
+                  drDealerPaymentTerm: this.drDealerPaymentTerm,
                   dataSet
                 }
               }),

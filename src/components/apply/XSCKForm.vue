@@ -24,8 +24,8 @@
       <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
 
       <!-- 结算方式 -->
-      <pop-single-select title="结算方式" :data="transMode" :value="formData.drDealerPaymentTerm"
-                         v-model="formData.drDealerPaymentTerm"></pop-single-select>
+      <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
+                         v-model="drDealerPaymentTerm"></pop-single-select>
       <!-- 物流条款 -->
       <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
                          v-model="formData.drDealerLogisticsTerms"></pop-single-select>
@@ -90,14 +90,7 @@
                           <div class="mater_price">
                             ￥{{item.price}}
                           </div>
-                          <div class="mater_num">
-                            <span class="handle" @click="subNum(item,index, key)"
-                                  :class="{disabled : item.tdQty<=1}">-</span>
-                            <input class="num" type="number" :value="item.tdQty"
-                                   @change="getNum(item,index,$event, key)"/>
-                            <span class="handle plus" @click="plusNum(item,index, key)"
-                                  :class="{disabled:item.tdQty >= item.qtyStockBal}">+</span>
-                          </div>
+                          <r-number :num="item.tdQty" :max="item.qtyStockBal" v-model="item.tdQty"></r-number>
                         </div>
                       </div>
                     </div>
@@ -149,6 +142,7 @@
   import RAction from 'components/RAction'
   import applyCommon from 'components/mixins/applyCommon'
   import PopSingleSelect from 'components/PopSingleSelect'
+  import RNumber from 'components/RNumber'
 
   export default {
     name: 'ApplyXSCKForm',
@@ -170,6 +164,7 @@
       PopOrderList,
       RAction,
       PopSingleSelect,
+      RNumber,
     },
     data() {
       return {
@@ -180,8 +175,8 @@
         showDealerPop: false,                          // 是否显示往来的popup
         showOrderPop: false,                         // 是否显示物料的popup
         dealerInfo: null, // 往来客户信息
+        drDealerPaymentTerm: '现付',  //结算方式
         formData: {
-          drDealerPaymentTerm: '现付',  //结算方式
           drDealerLogisticsTerms: '上门', //物流条件
           biComment: '' //备注
         },
@@ -279,34 +274,6 @@
         }
         this.$refs.order.delSelItem(item);
       },
-      // TODO 数量--
-      subNum(item, i, key) {
-        if (item.tdQty === 1) {
-          return
-        }
-        item.tdQty--;
-        this.$set(this.orderList[key], i, item);
-      },
-      // TODO 数量++
-      plusNum(item, i, key) {
-        if (item.tdQty === item.qtyStockBal) {
-          return
-        }
-        item.tdQty++;
-        this.$set(this.orderList[key], i, item);
-      },
-      // TODO 修改数量
-      getNum(item, i, e, key) {
-        let val = e.target.value;
-        if (val > item.qtyStockBal) {
-          val = item.qtyStockBal;
-        }
-        if (val <= 0) {
-          val = 1;
-        }
-        item.tdQty = Math.floor(val);
-        this.$set(this.orderList[key], i, item);
-      },
       // TODO 新增更多订单
       addOrder() {
         for (let items of Object.values(this.orderList)) {
@@ -399,6 +366,7 @@
                 dealerDebit: this.dealerInfo.dealerCode, // 往来编码
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 往来页签
                 containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
+                drDealerPaymentTerm: this.drDealerPaymentTerm,
                 dataSet
               }
             };
@@ -492,8 +460,8 @@
           this.formData = {
             ...this.formData,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
-            drDealerPaymentTerm: formData.drDealerPaymentTerm,
           };
+          this.drDealerPaymentTerm = formData.drDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
         })

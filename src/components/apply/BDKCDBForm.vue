@@ -61,13 +61,7 @@
                       <!-- 物料数量和价格 -->
                       <div class="mater_other">
                         <span class="matter-remain">库存: {{item.qtyBal}}</span>
-                        <div class="mater_num">
-                            <span class="handle" @click="subNum(item,index)"
-                                  :class="{disabled : item.tdQty<=1}">-</span>
-                          <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
-                          <span class="handle plus" @click="plusNum(item,index)"
-                                :class="{disabled:item.tdQty >= item.qtyBal}">+</span>
-                        </div>
+                        <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
                       </div>
                     </div>
                   </div>
@@ -97,6 +91,7 @@
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
   import PopWarehouseList from 'components/PopWarehouseList'
+  import RNumber from 'components/RNumber'
 
   export default {
     mixins: [ApplyCommon],
@@ -110,6 +105,7 @@
       SwipeoutButton,
       PopMatterList,
       PopWarehouseList,
+      RNumber,
     },
     data() {
       return {
@@ -136,34 +132,6 @@
         delete this.numMap[item.inventoryCode];
         this.$refs.matter.delSelItem(item);
       },
-      // TODO 数量--
-      subNum(item, i) {
-        if (item.tdQty === 1) {
-          return
-        }
-        item.tdQty--;
-        this.$set(this.matterList, i, item);
-      },
-      // TODO 数量++
-      plusNum(item, i) {
-        if (item.tdQty === item.qtyBal) {
-          return
-        }
-        item.tdQty++;
-        this.$set(this.matterList, i, item);
-      },
-      // TODO 修改数量
-      getNum(item, i, e) {
-        let val = e.target.value;
-        if (val > item.qtyBal) {
-          val = item.qtyBal;
-        }
-        if (val <= 0) {
-          val = 1;
-        }
-        item.tdQty = Math.floor(val);
-        this.$set(this.matterList, i, item);
-      },
       // TODO 点击增加更多物料
       addMatter() {
         this.matterList.forEach(item => {
@@ -179,6 +147,7 @@
           ...this.warehouseParams,
           whCode: this.warehouseOut.warehouseCode,
         };
+        this.matterList = [];
       },
       // TODO 选中入库仓库
       selWarehouseIn(val) {
