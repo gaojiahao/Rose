@@ -51,6 +51,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   ]
 })
 
+new webpack.DllReferencePlugin({
+  context: __dirname,
+  manifest: require('./vendor-manifest.json')
+})
+
 module.exports = new Promise((resolve, reject) => {
   portfinder.basePort = process.env.PORT || config.dev.port
   portfinder.getPort((err, port) => {

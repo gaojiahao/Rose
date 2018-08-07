@@ -1,4 +1,4 @@
-import {Tab, Icon, TabItem, numberPad, numberComma} from 'vux'
+import {Tab, Icon, TabItem, numberPad, numberComma } from 'vux'
 import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
@@ -195,7 +195,7 @@ export default {
       }
 
     },
-    numberComma
+    numberComma,
   },
   created() {
     this.getList();
