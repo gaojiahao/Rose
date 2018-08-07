@@ -4,6 +4,8 @@ module.exports = {
   "plugins": {
     // to edit target browsers: use "browserslist" field in package.json
     "postcss-import": {},
-    "autoprefixer": {}
+    "autoprefixer": {
+      browsers : ['last 3 versions']
+    }
   }
 }

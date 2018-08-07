@@ -150,4 +150,12 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .materiel_list 
+    .mater_list 
+      .each_mater 
+        .each_mater_wrapper 
+          .mater_main {
+            width: 100%;
+            max-width: inherit;
+          }
 </style>

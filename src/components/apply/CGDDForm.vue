@@ -237,7 +237,7 @@ export default {
     },
     //提价订单
     submitOrder(){
-      if(!this.info.dealerName){
+      if(!this.dealerInfo.dealerName){
         this.$vux.alert.show({
           content : '请选择往来信息'
         })
@@ -285,8 +285,8 @@ export default {
                 ...this.formData,
                 ...this.dealer,
                 order: {
-                  dealerDebit: this.info.dealerCode,
-                  drDealerLabel : this.info.dealerLabelName || '渠道商',
+                  dealerDebit: this.dealerInfo.dealerCode,
+                  drDealerLabel : this.dealerInfo.dealerLabelName || '渠道商',
                   // drAccountSub : this.info.dealerSubclass || '直营店',
                   dataSet
                 }
