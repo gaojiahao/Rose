@@ -31,7 +31,7 @@
                     <div class="title">商机明细</div>
                     <group class="SJ_group" @group-title-margin-top="0">
                       <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                      <x-input  title="预期销售额" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
+                      <x-input  title="预期销售额" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
                       <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
                       <datetime
                         v-model="formData.validUntil"
@@ -81,7 +81,7 @@
         <span style="fontSize:.14rem">￥</span>{{formData.tdAmount == ''?0:formData.tdAmount | numberComma(3)}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
-      <span class="count_btn" @click="submitOrder">确定</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
   </div>
 </template>
@@ -156,6 +156,11 @@
     },
     mixins: [common],
     methods: {
+      //清除金额
+      clearSaleVal(e){
+        this.formData.tdAmount = '';
+      },
+      //格式化金额
       saleVal(e){
         let str = '';
         if(e.toString().indexOf(",") != -1 ){
