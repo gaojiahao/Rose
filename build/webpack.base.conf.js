@@ -6,8 +6,16 @@ const vueLoaderConfig = require('./vue-loader.conf')
 const vuxLoader = require('vux-loader')
 const HappyPack = require('happypack')
 const os = require('os')
-const happyThreadPool = HappyPack.ThreadPool({ size : os.cpus().length }) // 这里进程设置为默认
-
+const createHappyPlugin = (id = '', loaders = []) => {
+  return new HappyPack({
+    id,
+    loaders,
+    debug: true,
+    cache: true,
+    verbose: true,
+    threadPool: HappyPack.ThreadPool({ size : os.cpus().length }),
+  })
+}
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -27,7 +35,6 @@ let webpackConfig = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       'service': resolve('src/service'),
       'mixins': resolve('src/mixins'),
@@ -36,27 +43,13 @@ let webpackConfig = {
     }
   },
   plugins: [
-    new HappyPack({
-      // id标识 happypack处理 哪一类文件
-      id: 'happy-js',
-      // 如何处理 与loader配置一样
-      loaders: ['babel-loader?cacheDirectory=true'],
-      // 共享进程池
-      threadPool: happyThreadPool,
-      // 是否输出日志 (默认为 true)
-      verbose : true
-    }),
-    new HappyPack({
-      id: 'happy-scss',
-      loaders: [
-        'vue-style-loader',
-        'css-loader',
-        'postcss-loader',
-        'sass-loader'
-      ],
-      threadPool: happyThreadPool,
-    })
-    
+    createHappyPlugin('js', ['babel-loader?cacheDirectory']),
+    createHappyPlugin('scss', [        
+      'vue-style-loader',
+      'css-loader',
+      'postcss-loader',
+      'sass-loader'
+    ])
   ],
   module: {
     rules: [
@@ -67,13 +60,13 @@ let webpackConfig = {
       },
       {
         test: /\.js$/,
-        loader: 'happypack/loader?id=happy-js',
+        loader: 'happypack/loader?id=js',
         include: [resolve('src')],
         exclude: /node_modules/
       },
       {
         test: /\.scss$/,
-        loader: 'happypack/loader?id=happy-scss',
+        loader: 'happypack/loader?id=scss',
         exclude: /node_modules/
       },
       {
@@ -101,7 +94,8 @@ let webpackConfig = {
         }
       }
     ]
-  }
+  },
+  cache: true
 }
 
 

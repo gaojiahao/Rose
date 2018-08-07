@@ -2,13 +2,16 @@
 const path = require('path')
 const utils = require('./utils')
 const webpack = require('webpack')
-const pkg = require('../package.json')
+const pkg = require('../package')
+const vuxLoader = require('vux-loader')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vendorPackages = Object.keys(pkg.dependencies);
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-module.exports = {
+let DllWebpack = {
   entry: {
-    vendor: vendorPackages 
+    vendor: vendorPackages.filter((item) => {
+      return !item.includes('babel-runtime') && !item.includes('vux') 
+    })
   },
   output: {
     path: path.join(__dirname, '../static/js'),
@@ -25,19 +28,6 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.less$/,
-        loader: 'less-loader',
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
-        }
       }
     ]
   },
@@ -55,7 +45,12 @@ module.exports = {
       compress: {
         warnings: false
       }
-    }),
-    new OptimizeCSSAssetsPlugin({})
+    })
   ]  
 }
+
+module.exports = vuxLoader.merge(DllWebpack, {
+  plugins: [
+    'progress-bar'
+  ]
+})
