@@ -28,120 +28,71 @@
               <div class="each_mater_wrapper">
                 <div class="mater_main">
                   <div class="userInp_mode">
-                    <group>
-                      <x-input  title="商机标题" text-align='right' placeholder='请填写'></x-input>
-                      <x-input  title="预期销售额" text-align='right' placeholder='请填写'></x-input>
-                      <popup-radio title="当前所在阶段" :options="options1" v-model="option1"></popup-radio>
+                    <div class="title">商机明细</div>
+                    <group class="SJ_group" @group-title-margin-top="0">
+                      <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
+                      <x-input  title="预期销售额" v-model.number="formData.tdAmount" text-align='right' placeholder='请填写'></x-input>
+                      <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
                       <datetime
-                        v-model="minuteListValue"
+                        v-model="formData.validUntil"
                         title="有效期至"
                         format="YYYY-MM-DD HH:mm"
                         :minute-list="minuteList"
                         ></datetime>
-                        <popup-radio title="销售人员" :options="options2" v-model="option2"></popup-radio>
-                        <popup-radio title="销售渠道" :options="options3" v-model="option3"></popup-radio>
-                      <x-textarea title="商机内容" :max="200"></x-textarea>
+                        <div class="SJForm_cell" @click="showSalesmanPop = !showSalesmanPop">
+                          <div>销售人员</div>
+                          <div>
+                            <span>{{salesmanInfo.dealerName}}</span>
+                          </div>
+                        </div>
+                        <div class="SJForm_cell" @click="showSalechannelPop = !showSalechannelPop">
+                          <div>销售渠道</div>
+                          <div>
+                            <span>{{salechannelInfo.dealerName}}</span>
+                          </div>
+                        </div>
+                      <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                     </group>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- 没有选择商机 -->
-          <!-- <div v-if="!CostList.length">
-            <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">商机列表</div>
-              <div class="tips">请选择商机</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-            </div>
-          </div> -->
-          <!-- 已经选择了商机 -->
-          <!-- <div v-else>
-            <div class="title">商机列表</div>
-            <div class="mater_list">
-              <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
-                <swipeout>
-                  <swipeout-item>
-                    <div slot="right-menu">
-                      <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
-                    </div>
-                    <div class="each_mater_wrapper" slot="content">
-                      <div class="mater_main">
-                        <div class="mater_name">
-                          <span class="whiNum">标题</span>
-                          {{item.opportunityTitle}}
-                        </div>
-                        <div class="mater_info">
-                          <div class="withColor">
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.dealerCode}}</span>
-                              </div>
-                            </div>
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">类型</span>
-                                <span class="num">{{item.categoryLabels || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="userInp_mode">
-                          <group>
-                            <x-input  title="金额" text-align='right' placeholder='请填写'
-                                    :value='item.tdAmount?item.tdAmount : "0" | numberComma(3)'
-                                    @on-blur="getValue(item,$event)"></x-input>
-                          </group>
-                        </div>
-                      </div>
-                    </div>
-                  </swipeout-item>
-                </swipeout>
-              </div>
-            </div>
-          </div> -->
-          <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多商机</div> -->
-          <!-- 商机popup -->
-          <pop-business-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          ref="matter"></pop-business-list>
         </div>
       </div>
-      <!-- 物料列表 -->
+      <!-- popup列表 -->
       <div class=" mg_auto box_sd">
         <!-- 往来popup -->
         <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                          @sel-dealer="selDealer" :dealerLabelName="'2167'">
-        </pop-dealer-list  ref="matter">
+        </pop-dealer-list>
+        <!-- 销售人员popup -->
+        <pop-salesman-list :show="showSalesmanPop" v-model="showSalesmanPop"
+                         @sel-dealer="selSalesman">
+        </pop-salesman-list>
+        <!-- 销售渠道popup -->
+        <pop-salechannel-list :show="showSalechannelPop" v-model="showSalechannelPop"
+                         @sel-dealer="selSalechannel">
+        </pop-salechannel-list>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <!-- <div class="count_mode vux-1px-t">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
-        <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
-      </span>
-      <span class="count_btn stop" @click="stopOrder"
-            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
-      <span class="count_btn">提交订单</span>
-    </div> -->
-    <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{count | numberComma(3)}}
+        <span style="fontSize:.14rem">￥</span>{{formData.tdAmount == ''?0:formData.tdAmount | numberComma(3)}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
-      <span class="count_btn" @click="submitOrder">提交订单</span>
+      <span class="count_btn" @click="submitOrder">确定</span>
     </div>
   </div>
 </template>
 
 <script>
-  import {Popup,TransferDom,Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,numberComma,XTextarea,PopupRadio,Datetime } from 'vux'
-  import PopDealerList from 'components/PopDealerList'
+  import {Popup,TransferDom,Cell ,CellBox ,Group,XInput,numberComma,XTextarea,PopupRadio,Datetime,AlertModule } from 'vux'
   import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from 'service/commonService'
   import common from 'components/mixins/applyCommon.js'
+  import PopDealerList from 'components/PopDealerList'
+  import PopSalesmanList from 'components/PopSalesmanList'
+  import PopSalechannelList from 'components/PopSalechannelList'
   import PopBusinessList from 'components/PopBusinessList'
 
   export default {
@@ -154,12 +105,11 @@
     components: {
       Popup,
       PopDealerList,
+      PopSalesmanList,
+      PopSalechannelList,
       Cell ,
       Group, 
       XInput,
-      Swipeout,
-      SwipeoutItem,
-      SwipeoutButton,
       PopBusinessList,
       XTextarea,
       PopupRadio,
@@ -167,141 +117,124 @@
     },
     data() {
       return {
-        listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
         showDealerPop: false,                          // 是否显示往来的popup
+        showSalesmanPop: false,                          // 是否显示销售人员的popup
+        showSalechannelPop: false,                          // 是否显示销售渠道的popup
         dealerInfo: {},
-        count: 0,   // 总价
-        dealer: {
-          drDealerPaymentTerm: '现付',  //结算方式
-          drDealerLogisticsTerms: '上门', //物流条件
-          biComment: '' //备注
-        },
-        numMap: {}, // 用于记录订单物料的数量和价格
-
-        showMaterielPop :false,
-        CostList: [],  // 物料列表
-        transCode: '',
+        salesmanInfo:{},
+        salechannelInfo:{},
+        dealer: {},
         formData: {
-          biComment: ''
+          "handlerName": "",
+          "handlerUnitName": "",
+          "handlerRoleName": "",
+          "handler": "",
+          "handlerUnit": "",
+          "handlerRole": "",
+          "creator": "",
+          "modifer": "",
+          "biId": "",//为空
+          "dealerDebit": "",
+          "drDealerLabel": "",
+          "dealerDebitContactPersonName": "",
+          "dealerDebitContactInformation": "",
+          "opportunityTitle": "",
+          "comment": "",
+          "tdAmount": '',
+          "currentStage": "",//与PC端一致
+          "validUntil": "",
+          "salesPerson": "",
+          "salesChannels": "",
+          "categoryLabels": "",
+          "biComment": ""
         },
-        showPop: false,
-        count : 0,
-        tmp: '',
-        option1: '初步交流(10%)',
-        options1: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)','签约交款(100%)','签约失败(0%)'],
-        option2:'有意义的名称',
-        options2:['有意义的名称'],
-        option3:'新奇士',
-        options3:['新奇士','海星撞地星'],
-        minuteListValue: '2017-06-12 09:00',
+        options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)','签约交款(100%)','签约失败(0%)'],
         minuteList:[]
       }
     },
     computed: {
-      // 合计金额
-      totalAmount() {
-        let total = 0;
-        return total;
-      },
-      // 税金
-      taxAmount() {
-        return (this.totalAmount * 0.16).toFixed(2)
-      },
     },
     mixins: [common],
     methods: {
       //选中的往来
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
-        this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+        this.formData.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
+        this.formData.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+        this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
+        this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
-            confirm(){
-        this.showPop = false;
+      //选中销售人员
+      selSalesman(val){
+        this.salesmanInfo = JSON.parse(val)[0];
       },
-      // TODO 滑动删除
-      delClick(item, index) {
-        let arr = this.CostList;
-        arr.splice(index, 1);
-      },
-      // TODO 选中物料项
-      selMatter(val) {
-        this.CostList.length = 0;
-        let sels = JSON.parse(val);
-        this.CostList.push(sels[0]);
-      },
-      getValue(item,e){
-        item.tdAmount = '';
-        item.tdAmount = Number(e.split(',').join(''));
-        this.count += item.tdAmount;
-
+      //选中销售渠道
+      selSalechannel(val){
+        this.salechannelInfo = JSON.parse(val)[0];
       },
       // TODO 提交
       submitOrder() {
-        let warn = '';
-        let dataSet = [];
-        if (!warn && !this.CostList.length) {
-          warn = '请选择费用';
-        }
-        this.CostList.every(item => {
-          if (!item.tdAmount) {
-            warn = '请输入报销金额';
-            return false
-          }
-          // dataSet.push({
-          //   costName_expCode: item.COST_NAME,
-          //   expCode: item.COST_CODE,
-          //   costType_expCode: item.COST_TYPE || null,
-          //   tdAmount: item.tdAmount,
-          //   comment : null
-          // });
-          return true
-        });
-        if (warn) {
-          this.$vux.alert.show({
-            content: warn,
-          });
-          return
-        }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
             let operation = submitAndCalc;
+            if(JSON.stringify(this.dealerInfo)=='{}'){
+               AlertModule.show({
+                  content: '请选择往来',
+                });
+              return;
+            }else if(this.formData.opportunityTitle == ''){
+              AlertModule.show({
+                  content: '请填写商机标题',
+                });
+              return;
+            }else if(this.formData.tdAmount == ''){
+              AlertModule.show({
+                  content: '请填写预期销售额',
+                });
+              return;
+            }else if(this.formData.currentStage == ''){
+              AlertModule.show({
+                  content: '请选择所在阶段',
+                });
+              return;
+            }else if(this.formData.validUntil == ''){
+              AlertModule.show({
+                  content: '请选择有效期时间',
+                });
+              return;
+            }else if(JSON.stringify(this.salesmanInfo)=='{}'){
+              AlertModule.show({
+                  content: '请选择销售人员',
+                });
+              return;
+            }else if(JSON.stringify(this.salechannelInfo)=='{}'){
+              AlertModule.show({
+                  content: '请选择销售渠道',
+                });
+              return;
+            }else if(this.formData.comment == ''){
+              AlertModule.show({
+                  content: '请填写商机内容',
+                });
+              return;
+            }
             let submitData = {
               listId: '32a2c333-02a3-416f-a133-95c7a32da678',
               biComment: '',
-              formData:''
-              // formData: JSON.stringify({
-              //   ...this.formData,
-              //   creator: this.transCode ? this.formData.handler : '',
-              //   modifer: this.transCode ? this.formData.handler : '',
-              //   order: {
-              //     dealerDebit: this.formData.handler,
-              //     dataSet
-              //   }
-              // }),
+              formData: JSON.stringify({
+                ...this.formData,
+                creator:this.formData.handler,
+                modifer:this.formData.handler,
+                salesPerson: this.salesmanInfo.dealerName ? this.formData.handler : '',
+                salesChannels: this.salechannelInfo.dealerName ? this.formData.handler : '',
+              }),
             };
-            for(let i = 0 ; i<this.CostList.length ; i++){
-              this.CostList[i].creator = this.transCode ? this.formData.handler : '',
-              this.CostList[i].modifer = this.transCode ? this.formData.handler : '',
-              this.CostList[i].dealerDebit = this.CostList[i].dealerCode,
-              submitData.formData = JSON.stringify(Object.assign(this.formData, this.CostList[i]))
-            }
-            if (this.transCode) {
-              operation = saveAndCommitTask
-            }
             this.saveData(operation, submitData);
           }
         });
       },
-      //修改数量
-      // getNum(item, i, e) {
-      //   let oldNum = item.tdQty;
-      //   item.tdQty = Number(e.target.value);
-      //   let total = item.tdQty * item.price;
-      //   this.count = this.count - item.price * oldNum + total;
-      // },
     },
     created() {
       for(let i = 0 ; i<60 ; i++){
@@ -398,5 +331,40 @@
       transform: translate(-50%, 0);
       box-shadow: 0 2px 12px #5077aa;
     }
+  }
+  .SJForm_cell{
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    border-top: 0.5px solid #D9D9D9;
+  }
+  .SJForm_cell>div:last-child{
+    padding-right: 13px;
+    color: #999;
+    position: relative;
+  }
+  .SJForm_cell>div:last-child:after{
+    content: " ";
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 2px 2px 0 0;
+    border-color: #C8C8CD;
+    border-style: solid;
+    transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+    position: relative;
+    top: -2px;
+    position: absolute;
+    top: 50%;
+    margin-top: -4px;
+    right: 2px;
+  }
+  .materiel_list{
+    padding: 0;
+  }
+</style>
+<style>
+  .SJ_group>.vux-no-group-title{
+    margin-top: 0.08rem;
   }
 </style>
