@@ -120,7 +120,12 @@ export default {
           this.setStatus(item);
           item.count = 0;
           item.itmes.forEach(mitem=>{
-            item.count += mitem.tdAmount*100;
+            if(mitem.tdAmount>0){
+              item.count += mitem.tdAmount*100;
+              return
+            }
+            item.count += mitem.price*mitem.tdQty*100
+            
           })
           item.count = item.count/100;
           // 列表当中每个订单最多展现5个物料
