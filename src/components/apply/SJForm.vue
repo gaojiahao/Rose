@@ -1,76 +1,113 @@
 <template>
-  <div class="pages xsbj-apply-container">
+  <div class="pages">
     <div class="basicPart">
-      <!-- 物料列表 -->
-      <div class="materiel_list mg_auto box_sd">
-        <!-- 没有选择物料 -->
-        <template v-if="!CostList.length">
-          <div @click="showMaterielPop = !showMaterielPop">
-            <div class="title">商机列表</div>
-            <div class="tips">请选择商机</div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+      <!-- 用户地址和基本信息-->
+      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
+        <div v-if='dealerInfo.dealerName'>
+          <div class="user_info" v-if="dealerInfo.creatorName">
+            <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
+            <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
           </div>
-        </template>
-        <!-- 已经选择了物料 -->
-        <template v-else>
-          <div class="title">商机列表</div>
-          <div class="mater_list">
-            <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
-              <swipeout>
-                <swipeout-item>
-                  <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
-                  </div>
-                  <div class="each_mater_wrapper" slot="content">
-                    <div class="mater_main">
-                      <!-- 物料名称 -->
-                      <div class="mater_name">
-                        <span class="whiNum">No.{{index + 1}}</span>
-                        {{item.opportunityTitle}}
-                      </div>
-                      <!-- 物料基本信息 -->
-                      <div class="mater_info">
-                        <!-- 物料编码、规格 -->
-                        <div class="withColor">
-                          <!-- 物料编码 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_code">
-                              <span class="title">编码</span>
-                              <span class="num">{{item.transCode}}</span>
+          <div class="cp_info">
+            <p class="cp_name">{{dealerInfo.dealerName}}</p>
+            <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+          </div>
+        </div>
+        <div v-else>
+          <div class="title">往来列表</div>
+          <div class="mode">请选择往来</div>
+        </div>    
+        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+      </div>
+      <div class="basicPart">
+        <!-- 商机列表 -->
+        <div class="materiel_list mg_auto box_sd">
+          <!-- 没有选择商机 -->
+          <div v-if="!CostList.length">
+            <div @click="showMaterielPop = !showMaterielPop">
+              <div class="title">商机列表</div>
+              <div class="tips">请选择商机</div>
+              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+            </div>
+          </div>
+          <!-- 已经选择了商机 -->
+          <div v-else>
+            <div class="title">商机列表</div>
+            <div class="mater_list">
+              <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
+                <swipeout>
+                  <swipeout-item>
+                    <div slot="right-menu">
+                      <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
+                    </div>
+                    <div class="each_mater_wrapper" slot="content">
+                      <div class="mater_main">
+                        <!-- 物料名称 -->
+                        <div class="mater_name">
+                          <span class="whiNum">标题</span>
+                          {{item.opportunityTitle}}
+                        </div>
+                        <!-- 物料基本信息 -->
+                        <div class="mater_info">
+                          <!-- 物料编码、规格 -->
+                          <div class="withColor">
+                            <!-- 物料编码 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_code">
+                                <span class="title">编码</span>
+                                <span class="num">{{item.dealerCode}}</span>
+                              </div>
                             </div>
-                          </div>
-                          <!-- 物料规格 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_spec">
-                              <span class="title">类型</span>
-                              <span class="num">{{item.categoryLabels || '无'}}</span>
+                            <!-- 物料规格 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_spec">
+                                <span class="title">类型</span>
+                                <span class="num">{{item.categoryLabels || '无'}}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="userInp_mode">
-                        <group>
-                          <x-input  title="金额" text-align='right' placeholder='请填写'
-                                  :value='item.tdAmount?item.tdAmount : "0" | numberComma(3)'
-                                  @on-blur="getValue(item,$event)"></x-input>
-                        </group>
+                        <div class="userInp_mode">
+                          <group>
+                            <x-input  title="金额" text-align='right' placeholder='请填写'
+                                    :value='item.tdAmount?item.tdAmount : "0" | numberComma(3)'
+                                    @on-blur="getValue(item,$event)"></x-input>
+                          </group>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </swipeout-item>
-              </swipeout>
-              <!-- 物料输入内容 -->
-              
+                  </swipeout-item>
+                </swipeout>
+                <!-- 物料输入内容 -->
+                
+              </div>
             </div>
           </div>
-        </template>
-        <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多商机</div>
-        <!-- 费用popup -->
-        <pop-business-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                        ref="matter"></pop-business-list>
+          <!-- 新增更多 按钮 -->
+          <!-- <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多商机</div> -->
+          <!-- 商机popup -->
+          <pop-business-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+                          ref="matter"></pop-business-list>
+        </div>
+      </div>
+      <!-- 物料列表 -->
+      <div class=" mg_auto box_sd">
+        <!-- 往来popup -->
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
+                         @sel-dealer="selDealer" :dealerLabelName="'2167'">
+        </pop-dealer-list  ref="matter">
       </div>
     </div>
+    <!-- 底部确认栏 -->
+    <!-- <div class="count_mode vux-1px-t">
+      <span class="count_num">
+        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
+        <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
+      </span>
+      <span class="count_btn stop" @click="stopOrder"
+            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <span class="count_btn">提交订单</span>
+    </div> -->
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
@@ -83,17 +120,24 @@
 </template>
 
 <script>
-  import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup,numberComma} from 'vux'
+  import {Popup,TransferDom,Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,numberComma} from 'vux'
+  import PopDealerList from 'components/PopDealerList'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from 'service/commonService'
+  import common from 'components/mixins/applyCommon.js'
   import PopBusinessList from 'components/PopBusinessList'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
-  import ApplyCommon from './../mixins/applyCommon'
 
   export default {
-    mixins: [ApplyCommon],
-    components: { 
-      Cell ,
-      Group,   
+    directives: {
+      TransferDom
+    },
+    filters:{
+      numberComma
+    },
+    components: {
       Popup,
+      PopDealerList,
+      Cell ,
+      Group, 
       XInput,
       Swipeout,
       SwipeoutItem,
@@ -102,6 +146,17 @@
     },
     data() {
       return {
+        listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+        showDealerPop: false,                          // 是否显示往来的popup
+        dealerInfo: {},
+        count: 0,   // 总价
+        dealer: {
+          drDealerPaymentTerm: '现付',  //结算方式
+          drDealerLogisticsTerms: '上门', //物流条件
+          biComment: '' //备注
+        },
+        numMap: {}, // 用于记录订单物料的数量和价格
+
         showMaterielPop :false,
         CostList: [],  // 物料列表
         transCode: '',
@@ -113,21 +168,32 @@
         tmp: '',
       }
     },
-    filters:{
-      numberComma
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        return total;
+      },
+      // 税金
+      taxAmount() {
+        return (this.totalAmount * 0.16).toFixed(2)
+      },
     },
+    mixins: [common],
     methods: {
-      confirm(){
+      //选中的往来
+      selDealer(val) {
+        this.dealerInfo = JSON.parse(val)[0];
+        this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
+        this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+      },
+            confirm(){
         this.showPop = false;
       },
       // TODO 滑动删除
       delClick(item, index) {
         let arr = this.CostList;
         arr.splice(index, 1);
-      },
-      // TODO 点击增加更多物料
-      addMatter() {
-        this.showMaterielPop = !this.showMaterielPop
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -200,17 +266,22 @@
           }
         });
       },
-      // TODO 获取详情
-      getFormData() {
-      },
+      //修改数量
+      // getNum(item, i, e) {
+      //   let oldNum = item.tdQty;
+      //   item.tdQty = Number(e.target.value);
+      //   let total = item.tdQty * item.price;
+      //   this.count = this.count - item.price * oldNum + total;
+      // },
     },
     created() {
-    },
+    }
   }
 </script>
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
+  // @import '~components/scss/bizDetail.scss';
   .weui-cell{
     padding: 10px 0;
     &:before{

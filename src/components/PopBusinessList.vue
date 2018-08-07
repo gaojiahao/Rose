@@ -26,7 +26,7 @@
                   <div class="ForInline" style="display:inline-block">
                     <div class="mater_code">
                       <span class="title">编码</span>
-                      <span class="num">{{item.transCode}}</span>
+                      <span class="num">{{item.dealerCode}}</span>
                     </div>
                   </div>
                   <!-- 物料规格 -->
