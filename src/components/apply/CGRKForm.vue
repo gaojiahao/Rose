@@ -45,47 +45,45 @@
                     <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
                   </div>
                   <div class="each_mater_wrapper" slot="content">
-                    <div class="order-matter">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                    <div class="mater_img">
+                      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                    </div>
+                    <div class="mater_main">
+                      <!-- 物料名称 -->
+                      <div class="mater_name">
+                        <span class="whiNum">No.{{index + 1}}</span>
+                        {{item.inventoryName}}
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          <span class="whiNum">No.{{index + 1}}</span>
-                          {{item.inventoryName}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
+                      <!-- 物料基本信息 -->
+                      <div class="mater_info">
+                        <!-- 物料编码、规格 -->
+                        <div class="withColor">
+                          <!-- 物料编码 -->
+                          <div class="ForInline" style="display:inline-block">
+                            <div class="mater_code">
+                              <span class="title">编码</span>
+                              <span class="num">{{item.inventoryCode}}</span>
                             </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
+                          </div>
+                          <!-- 物料规格 -->
+                          <div class="ForInline" style="display:inline-block">
+                            <div class="mater_spec">
+                              <span class="title">规格</span>
+                              <span class="num">{{item.specification || '无'}}</span>
                             </div>
                           </div>
                         </div>
-                        <!-- 物料数量和价格 -->
-                        <div class="mater_other">
-                          <div class="mater_price">
-                            ￥{{item.price}}
-                          </div>
-                          <div class="mater_num">
+                      </div>
+                      <!-- 物料数量和价格 -->
+                      <div class="mater_other">
+                        <div class="mater_price">
+                          ￥{{item.price}}
+                        </div>
+                        <div class="mater_num">
                             <span class="handle" @click="subNum(item,index)"
                                   :class="{disabled : item.tdQty<=1}">-</span>
-                            <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
-                            <span class="handle plus" @click="plusNum(item,index)">+</span>
-                          </div>
+                          <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
+                          <span class="handle plus" @click="plusNum(item,index)">+</span>
                         </div>
                       </div>
                     </div>

@@ -1,4 +1,4 @@
-import {Tab, Icon, TabItem, numberPad, numberComma } from 'vux'
+import {Tab, Icon, TabItem, numberPad, numberComma, dateFormat, } from 'vux'
 import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
@@ -101,13 +101,13 @@ export default {
           break;
       }
     },
-     //获取销售订单数据
+    //获取销售订单数据
     getList(noReset = false) {
       let filter = {
         biStatus: this.activeTab,
         transCode: this.serachVal,
         handlerName: this.serachVal,
-        inventoryName : this.serachVal
+        inventoryName: this.serachVal
       };
       return getSellOrderList({
         limit: this.limit,
@@ -119,19 +119,19 @@ export default {
         orders.forEach(item => {
           this.setStatus(item);
           item.count = 0;
-          item.itmes.forEach(mitem=>{
-            if(mitem.tdAmount>0){
-              item.count += mitem.tdAmount*100;
+          item.itmes.forEach(mitem => {
+            if (mitem.tdAmount > 0) {
+              item.count += mitem.tdAmount * 100;
               return
             }
-            item.count += mitem.price*mitem.tdQty*100
-            
+            item.count += mitem.price * mitem.tdQty * 100
+
           })
-          item.count = item.count/100;
+          item.count = item.count / 100;
           // 列表当中每个订单最多展现5个物料
           item.itmes = item.itmes.slice(0, 5);
           item.itmes.forEach(mItem => {
-            mItem.inventoryPic = mItem.inventoryPic 
+            mItem.inventoryPic = mItem.inventoryPic
               // 请求图片
               ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400`
               // 默认图片
@@ -196,6 +196,7 @@ export default {
 
     },
     numberComma,
+    dateFormat,
   },
   created() {
     this.getList();

@@ -223,6 +223,8 @@
         }
         //物料价格，数量
         .mater_other {
+          display: flex;
+          justify-content: space-between;
           margin-top: 0.08rem;
           align-items: center;
           .mater_price {
@@ -236,7 +238,6 @@
           .mater_num {
             display: flex;
             // justify-content: flex-start;
-            float: right;
             input {
               border: none;
               outline: none;

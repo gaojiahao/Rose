@@ -82,7 +82,7 @@
                                 <span class="num">{{item.specification || '无'}}</span>
                               </div>
                             </div>
-                            <div class="matter-remain">库存: {{item.qtyStockBal - item.tdQty}}</div>
+                            <div class="matter-remain">库存: {{item.qtyStockBal}}</div>
                           </div>
                         </div>
                         <!-- 物料数量和价格 -->

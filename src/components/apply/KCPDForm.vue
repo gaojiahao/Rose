@@ -1,10 +1,6 @@
 <template>
-  <div class="pages bdkcdb-apply-container">
+  <div class="pages kcpd-apply-container">
     <div class="basicPart">
-
-      <!-- 出库仓库-->
-      <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
-
       <!-- 入库仓库-->
       <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
 
@@ -58,16 +54,13 @@
                           </div>
                         </div>
                       </div>
+                      <div class="matter-remain">
+                        <span>库存: {{item.qtyBal}}</span>
+                        <span>差异数量: {{Math.floor(item.tdQty - item.qtyBal)}}</span>
+                      </div>
                       <!-- 物料数量和价格 -->
                       <div class="mater_other">
-                        <span class="matter-remain">库存: {{item.qtyBal}}</span>
-                        <div class="mater_num">
-                            <span class="handle" @click="subNum(item,index)"
-                                  :class="{disabled : item.tdQty<=1}">-</span>
-                          <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
-                          <span class="handle plus" @click="plusNum(item,index)"
-                                :class="{disabled:item.tdQty >= item.qtyBal}">+</span>
-                        </div>
+                        <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
                       </div>
                     </div>
                   </div>
@@ -97,6 +90,7 @@
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
   import PopWarehouseList from 'components/PopWarehouseList'
+  import RNumber from 'components/RNumber'
 
   export default {
     mixins: [ApplyCommon],
@@ -110,6 +104,7 @@
       SwipeoutButton,
       PopMatterList,
       PopWarehouseList,
+      RNumber,
     },
     data() {
       return {
@@ -120,7 +115,6 @@
           biComment: '',
         },
         numMap: {},
-        warehouseOut: null,
         warehouseIn: null,
         warehouseParams: {
           whCode: '',
@@ -136,34 +130,6 @@
         delete this.numMap[item.inventoryCode];
         this.$refs.matter.delSelItem(item);
       },
-      // TODO 数量--
-      subNum(item, i) {
-        if (item.tdQty === 1) {
-          return
-        }
-        item.tdQty--;
-        this.$set(this.matterList, i, item);
-      },
-      // TODO 数量++
-      plusNum(item, i) {
-        if (item.tdQty === item.qtyBal) {
-          return
-        }
-        item.tdQty++;
-        this.$set(this.matterList, i, item);
-      },
-      // TODO 修改数量
-      getNum(item, i, e) {
-        let val = e.target.value;
-        if (val > item.qtyBal) {
-          val = item.qtyBal;
-        }
-        if (val <= 0) {
-          val = 1;
-        }
-        item.tdQty = Math.floor(val);
-        this.$set(this.matterList, i, item);
-      },
       // TODO 点击增加更多物料
       addMatter() {
         this.matterList.forEach(item => {
@@ -172,17 +138,14 @@
         });
         this.showMaterielPop = !this.showMaterielPop
       },
-      // TODO 选中出库仓库
-      selWarehouseOut(val) {
-        this.warehouseOut = JSON.parse(val);
-        this.warehouseParams = {
-          ...this.warehouseParams,
-          whCode: this.warehouseOut.warehouseCode,
-        };
-      },
       // TODO 选中入库仓库
       selWarehouseIn(val) {
         this.warehouseIn = JSON.parse(val);
+        this.warehouseParams = {
+          ...this.warehouseParams,
+          whCode: this.warehouseIn.warehouseCode,
+        };
+        this.matterList = [];
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -207,10 +170,6 @@
         let dataSet = [];
         let validateMap = [
           {
-            key: 'warehouseOut',
-            message: '出库仓库'
-          },
-          {
             key: 'warehouseIn',
             message: '入库仓库'
           },
@@ -227,14 +186,14 @@
         }
         this.matterList.every(item => {
           dataSet.push({
-            inventoryName_transObjCode: item.inventoryName,
-            transObjCode: item.inventoryCode,
-            thenQtyStock: item.qtyBal,
-            tdQty: item.tdQty,
-            assistQty: item.assistQty || 0,
-            assMeasureScale: item.assMeasureScale || null,
-            assMeasureUnit: item.assMeasureUnit || null,
-            comment: item.comment || null,
+            transObjCode: item.inventoryCode, // 物料编码
+            thenQtyStock: item.qtyBal, // 可用库存
+            tdQty: item.tdQty, // 盘点数量
+            differenceNum: Math.floor(item.tdQty - item.qtyBal) || 0,
+            assistQty: item.assistQty || 0, // 辅计数量（明细）
+            assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
+            assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
+            // comment: item.comment || null,
           });
           return true
         });
@@ -250,16 +209,14 @@
           onConfirm: () => {
             let operation = submitAndCalc;
             let submitData = {
-              listId: '4d9a7f8f-9a88-47b6-a1f4-3faed6423615',
+              listId: 'edf7b34b-8916-410f-801f-2db7e97efbde',
               biComment: '',
               formData: JSON.stringify({
                 ...this.formData,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
-                containerOutWarehouseManager: this.warehouseOut.containerOutWarehouseManager || null, // 出库管理员
                 containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
                 inPut: {
-                  containerCodeOut: this.warehouseOut.warehouseCode,
                   containerCode: this.warehouseIn.warehouseCode,
                   dataSet
                 }
@@ -269,7 +226,6 @@
             if (this.transCode) {
               operation = saveAndCommitTask
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         });
@@ -283,10 +239,22 @@
 <style lang="scss" scoped>
   @import './../scss/bizApply';
 
-  .bdkcdb-apply-container {
+  .kcpd-apply-container {
     .matter-remain {
+      margin-top: .02rem;
       color: #757575;
       font-size: 0.12rem;
+    }
+    .materiel_list {
+      .mater_list {
+        .each_mater_wrapper {
+          .mater_main {
+            .mater_other {
+              justify-content: flex-end;
+            }
+          }
+        }
+      }
     }
   }
 </style>
