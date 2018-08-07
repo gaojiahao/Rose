@@ -6,7 +6,7 @@ const pkg = require('../package')
 const vuxLoader = require('vux-loader')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vendorPackages = Object.keys(pkg.dependencies);
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+
 let DllWebpack = {
   entry: {
     vendor: vendorPackages.filter((item) => {
