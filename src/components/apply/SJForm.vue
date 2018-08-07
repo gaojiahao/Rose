@@ -19,19 +19,44 @@
         </div>    
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
+      
       <div class="basicPart">
         <!-- 商机列表 -->
         <div class="materiel_list mg_auto box_sd">
+          <div class="mater_list">
+            <div class="each_mater">
+              <div class="each_mater_wrapper">
+                <div class="mater_main">
+                  <div class="userInp_mode">
+                    <group>
+                      <x-input  title="商机标题" text-align='right' placeholder='请填写'></x-input>
+                      <x-input  title="预期销售额" text-align='right' placeholder='请填写'></x-input>
+                      <popup-radio title="当前所在阶段" :options="options1" v-model="option1"></popup-radio>
+                      <datetime
+                        v-model="minuteListValue"
+                        title="有效期至"
+                        format="YYYY-MM-DD HH:mm"
+                        :minute-list="minuteList"
+                        ></datetime>
+                        <popup-radio title="销售人员" :options="options2" v-model="option2"></popup-radio>
+                        <popup-radio title="销售渠道" :options="options3" v-model="option3"></popup-radio>
+                      <x-textarea title="商机内容" :max="200"></x-textarea>
+                    </group>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- 没有选择商机 -->
-          <div v-if="!CostList.length">
+          <!-- <div v-if="!CostList.length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">商机列表</div>
               <div class="tips">请选择商机</div>
               <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
             </div>
-          </div>
+          </div> -->
           <!-- 已经选择了商机 -->
-          <div v-else>
+          <!-- <div v-else>
             <div class="title">商机列表</div>
             <div class="mater_list">
               <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
@@ -42,23 +67,18 @@
                     </div>
                     <div class="each_mater_wrapper" slot="content">
                       <div class="mater_main">
-                        <!-- 物料名称 -->
                         <div class="mater_name">
                           <span class="whiNum">标题</span>
                           {{item.opportunityTitle}}
                         </div>
-                        <!-- 物料基本信息 -->
                         <div class="mater_info">
-                          <!-- 物料编码、规格 -->
                           <div class="withColor">
-                            <!-- 物料编码 -->
                             <div class="ForInline" style="display:inline-block">
                               <div class="mater_code">
                                 <span class="title">编码</span>
                                 <span class="num">{{item.dealerCode}}</span>
                               </div>
                             </div>
-                            <!-- 物料规格 -->
                             <div class="ForInline" style="display:inline-block">
                               <div class="mater_spec">
                                 <span class="title">类型</span>
@@ -78,11 +98,9 @@
                     </div>
                   </swipeout-item>
                 </swipeout>
-                <!-- 物料输入内容 -->
-                
               </div>
             </div>
-          </div>
+          </div> -->
           <!-- 新增更多 按钮 -->
           <!-- <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多商机</div> -->
           <!-- 商机popup -->
@@ -120,7 +138,7 @@
 </template>
 
 <script>
-  import {Popup,TransferDom,Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,numberComma} from 'vux'
+  import {Popup,TransferDom,Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,numberComma,XTextarea,PopupRadio,Datetime } from 'vux'
   import PopDealerList from 'components/PopDealerList'
   import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from 'service/commonService'
   import common from 'components/mixins/applyCommon.js'
@@ -143,6 +161,9 @@
       SwipeoutItem,
       SwipeoutButton,
       PopBusinessList,
+      XTextarea,
+      PopupRadio,
+      Datetime   
     },
     data() {
       return {
@@ -166,6 +187,14 @@
         showPop: false,
         count : 0,
         tmp: '',
+        option1: '初步交流(10%)',
+        options1: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)','签约交款(100%)','签约失败(0%)'],
+        option2:'有意义的名称',
+        options2:['有意义的名称'],
+        option3:'新奇士',
+        options3:['新奇士','海星撞地星'],
+        minuteListValue: '2017-06-12 09:00',
+        minuteList:[]
       }
     },
     computed: {
@@ -275,6 +304,13 @@
       // },
     },
     created() {
+      for(let i = 0 ; i<60 ; i++){
+        if(i.toString().length == 1){
+          this.minuteList.push('0'+i);
+        }else{
+          this.minuteList.push(i);
+        }
+      }
     }
   }
 </script>
