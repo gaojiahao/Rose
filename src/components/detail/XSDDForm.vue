@@ -18,7 +18,7 @@
             <!-- 结算方式 -->
             <div class="trade_mode mg_auto box_sd">
               <p class="title">结算方式</p>
-              <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
+              <p class="mode">{{orderInfo.order.drDealerPaymentTerm || '无'}}</p>
             </div>
             <!-- 物流条款 -->
             <div class="trade_mode mg_auto box_sd" @click="showLogPop = !showLogPop">

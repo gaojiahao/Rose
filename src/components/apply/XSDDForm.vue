@@ -337,6 +337,7 @@
                     dealerDebit: this.dealerInfo.dealerCode,
                     drDealerLabel: this.dealerInfo.dealerLabelName || '渠道商',
                     // drAccountSub : this.dealerInfo.dealerSubclass || '直营店',
+                    drDealerPaymentTerm : this.dealer.drDealerPaymentTerm,
                     dataSet
                   }
                 }),
