@@ -31,7 +31,7 @@
                     <div class="title">商机明细</div>
                     <group class="SJ_group" @group-title-margin-top="0">
                       <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                      <x-input  title="预期销售额" v-model.number="formData.tdAmount" text-align='right' placeholder='请填写'></x-input>
+                      <x-input  title="预期销售额" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
                       <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
                       <datetime
                         v-model="formData.validUntil"
@@ -156,6 +156,17 @@
     },
     mixins: [common],
     methods: {
+      saleVal(e){
+        let str = '';
+        if(e.toString().indexOf(",") != -1 ){
+          for(let i = 0 ;i<e.toString().split(',').length ; i++){
+            str += e.toString().split(',')[i];
+          }
+          this.formData.tdAmount = str;
+        }else{
+          this.formData.tdAmount = e;
+        }
+      },
       //选中的往来
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
