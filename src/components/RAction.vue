@@ -38,17 +38,17 @@
       reject() {
         this.$vux.confirm.prompt('', {
           title: '审批意见',
-          closeOnConfirm: false,
+          // closeOnConfirm: false,
           onConfirm: (value) => {
-            if (!value) {
-              return false;
-            }
+            // if (!value) {
+            //   return false;
+            // }
             this.commitTask({
               result: 0,
               successMsg: '拒绝成功',
               value
             });
-            this.$vux.confirm.hide();
+            // this.$vux.confirm.hide();
           }
         });
       },
