@@ -72,8 +72,8 @@ export let getBaseInfoData = () => {
     }).catch(e => {
       baseErrorHandler(e);
     });
-    let {userGroupId = '', userGroupName = ''} = await $axios.ajax({
-      url: '/H_roleplay-si/ds/getUnitsByUserId',
+    let {groupId = '', groupName = ''} = await $axios.ajax({
+      url: '/H_roleplay-si/ds/getGroupByUserId',
       data: {
         userId: userId,
         page: 1,
@@ -87,10 +87,10 @@ export let getBaseInfoData = () => {
       baseErrorHandler(e);
     });
     $axios.ajax({
-      url: '/H_roleplay-si/ds/getRolesByUserId',
+      url: '/H_roleplay-si/ds/getRoleByUserId',
       data: {
         userId: userId,
-        parentId: userGroupId,
+        // parentId: userGroupId,
         page: 1,
         start: 0,
         limit: 10000
@@ -100,10 +100,10 @@ export let getBaseInfoData = () => {
       resolve({
         handler: userId,
         handlerName: nickname,
-        handlerUnit: userGroupId,
-        handlerUnitName: userGroupName,
-        handlerRole: role.userGroupId || '',
-        handlerRoleName: role.userGroupName || '',
+        handlerUnit: groupId,
+        handlerUnitName: groupName,
+        handlerRole: role.roleId || '',
+        handlerRoleName: role.roleName || '',
       });
     }).catch(e => {
       baseErrorHandler(e);
