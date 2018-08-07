@@ -51,7 +51,7 @@
       },
       // TODO 修改数量
       getNum(e) {
-        let val = e.target.value;
+        let val = Number(e.target.value);
         if (this.max && val > this.max) {
           val = this.max;
         }
@@ -59,6 +59,7 @@
           val = 1;
         }
         this.currentNum = Math.floor(val);
+        e.target.value = this.currentNum;
         this.$emit('input', this.currentNum);
       },
     },

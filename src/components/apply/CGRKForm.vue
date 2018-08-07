@@ -22,8 +22,8 @@
       <!-- 仓库-->
       <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
       <!-- 结算方式 -->
-      <pop-single-select title="结算方式" :data="transMode" :value="formData.crDealerPaymentTerm"
-                         v-model="formData.crDealerPaymentTerm"></pop-single-select>
+      <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
+                         v-model="crDealerPaymentTerm"></pop-single-select>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
         <!-- 没有选择物料 -->
@@ -79,12 +79,7 @@
                         <div class="mater_price">
                           ￥{{item.price}}
                         </div>
-                        <div class="mater_num">
-                            <span class="handle" @click="subNum(item,index)"
-                                  :class="{disabled : item.tdQty<=1}">-</span>
-                          <input class="num" type="number" :value="item.tdQty" @change="getNum(item,index,$event)"/>
-                          <span class="handle plus" @click="plusNum(item,index)">+</span>
-                        </div>
+                        <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
                       </div>
                     </div>
                   </div>
@@ -134,6 +129,7 @@
   import PopMatterList from 'components/PopMatterList'
   import applyCommon from 'components/mixins/applyCommon'
   import PopSingleSelect from 'components/PopSingleSelect'
+  import RNumber from 'components/RNumber'
 
   export default {
     name: 'ApplyXSCKForm',
@@ -154,6 +150,7 @@
       PopWarehouseList,
       PopMatterList,
       PopSingleSelect,
+      RNumber,
     },
     data() {
       return {
@@ -163,9 +160,9 @@
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
         showDealerPop: false,                          // 是否显示往来的popup
         dealerInfo: null, // 往来客户信息
+        crDealerPaymentTerm: '现付',  //结算方式
         formData: {
           biId: '',
-          crDealerPaymentTerm: '现付',  //结算方式
           biComment: '' //备注
         },
         submitSuccess: false, // 是否提交成功
@@ -233,28 +230,6 @@
         let arr = this.listData;
         arr.splice(index, 1);
         this.$refs.matter.delSelItem(item);
-      },
-      // TODO 数量--
-      subNum(item, i) {
-        if (item.tdQty === 1) {
-          return
-        }
-        item.tdQty--;
-        this.$set(this.listData, i, item);
-      },
-      // TODO 数量++
-      plusNum(item, i) {
-        item.tdQty++;
-        this.$set(this.listData, i, item);
-      },
-      // TODO 修改数量
-      getNum(item, i, e) {
-        let val = e.target.value;
-        if (val <= 0) {
-          val = 1;
-        }
-        item.tdQty = Math.floor(val);
-        this.$set(this.listData, i, item);
       },
       // TODO 新增更多订单
       addOrder() {
@@ -340,6 +315,7 @@
                 dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
                 crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
                 containerCode: this.warehouse.warehouseCode, // 仓库编码
+                crDealerPaymentTerm: this.crDealerPaymentTerm,
                 dataSet
               }
             };
@@ -412,8 +388,8 @@
           this.formData = {
             ...this.formData,
             biId: formData.biId,
-            crDealerPaymentTerm: formData.crDealerPaymentTerm,
           };
+          this.crDealerPaymentTerm = formData.crDealerPaymentTerm;
           this.DealerPaymentTerm = formData.crDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
           this.listData = dataSet;

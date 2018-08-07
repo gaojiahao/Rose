@@ -16,7 +16,7 @@
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">结算方式</p>
-        <p class="mode">{{orderInfo.drDealerPaymentTerm || '无'}}</p>
+        <p class="mode">{{orderInfo.order.drDealerPaymentTerm || '无'}}</p>
       </div>
       <!-- 物流条款 -->
       <div class="trade_mode mg_auto box_sd">
@@ -78,11 +78,6 @@
               </div>
             </div>
           </div>
-          <!-- 金额合计栏 -->
-          <!-- <div class="price_list">
-            <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-            <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
-          </div> -->
         </div>
       </div>
       <!-- 审批操作 -->
