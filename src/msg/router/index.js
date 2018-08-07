@@ -3,21 +3,9 @@ import MSGLIST from '@/msg/pages/appMsgList'
 import DETAIL from '@/home/pages/apps/bizApp/detail/detail'
 import FILLFORM from '@/home/pages/apps/bizApp/fillForm/fillForm'
 export default [
-  { path: '/notice', name: 'HOME', component: HOME,
+  { path: '/notice', name: 'MSGHOME', component: HOME,
     meta: { title: '消息列表'},
     children:[
-      // {
-      //   path:'msglist/:name',
-      //   name:'MSGLIST',
-      //   component:MSGLIST,
-      //   meta:{ title:'应用消息列表'}
-      // },
-      // {
-      //   path:'detail',
-      //   name:'DETAIL',
-      //   component:DETAIL,
-      //   meta:{ title:'订单详情' }
-      // }
       {
         path:'msglist/:code',
         name:'MSGLIST',
@@ -26,13 +14,13 @@ export default [
         children:[
           {
             path:'detail',
-            name:'DETAIL',
+            name:'MSGDETAIL',
             component:DETAIL,
             meta:{ title:'订单详情' }
           },
           {
             path:'fillform',
-            name:'FILLFORM',
+            name:'MSGFILLFORM',
             component:FILLFORM,
             meta:{ title:'填写新内容' }
           }
