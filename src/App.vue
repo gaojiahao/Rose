@@ -36,6 +36,9 @@
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
 
+  html {
+    height: 100%;
+  }
   body {
     margin: 0 auto;
     width: 100%;
