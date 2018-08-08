@@ -77,8 +77,9 @@
     width: 100%;
     display: flex;
     height: .49rem;
-    position: absolute!important;
     overflow: hidden;
+    background: #fff;
+    position: absolute!important;
     .tab {
       flex: 1;
       // icon图标

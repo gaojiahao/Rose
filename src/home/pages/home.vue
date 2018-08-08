@@ -1,10 +1,10 @@
 <template>
   <div class="inPage">
-    <div class="content mg_auto">
+    <div class="content">
       <!-- 用户头像部分 -->
       <div class="user_part">
         <div class="user_avatar vux-1px-b">
-          <img src="../../assets/avatar.png" alt="avatar">
+          <img src="../../assets/ava03.png" alt="avatar">
           <div class="tips">欢迎,瑞福登</div>
         </div>
       </div>
@@ -74,6 +74,25 @@ export default {
             for(let item of val.children ){
               // 由于应用没有开发完全 临时处理方法
               if(item.text === '物料' || item.text === '往来' || item.text === '仓库'){
+                // 动态添加对应的背景图
+                switch(item.text){
+                  case '仓库':
+                    item.bgColor = '#D85656';
+                    item.boxShadow = '#D85656';
+                    break;
+                  case '物料':
+                    item.bgColor = '#F29C35';
+                    item.boxShadow = '#F29C35';
+                    break;
+                  case '往来':
+                    item.bgColor = '#338183';
+                    item.boxShadow = '#338183';
+                    break;
+                }
+                // 图片处理
+                item.icon = item.icon
+                  ? `/dist/${item.icon}`
+                  : ''
                 this.BSarray.push(item);
               }
             }
@@ -87,6 +106,9 @@ export default {
                   //映射表 赋值
                   if(businessMap[ite.text]){
                     ite.code = businessMap[ite.text]
+                    ite.icon = ite.icon
+                      ? `/dist/${ite.icon}`
+                      : ''                    
                     this.XSarray.push(ite);
                   }
                 }
@@ -96,6 +118,9 @@ export default {
                 for(let val of item.children){
                   if(businessMap[val.text]){
                     val.code = businessMap[val.text]
+                    val.icon = val.icon
+                      ? `/dist/${val.icon}`
+                      : ''                    
                     this.PURarray.push(val);
                   }
                 }
@@ -105,6 +130,9 @@ export default {
                 for(let val of item.children){
                   if(businessMap[val.text]){
                     val.code = businessMap[val.text]
+                    val.icon = val.icon
+                      ? `/dist/${val.icon}`
+                      : ''                    
                     this.ACAarray.push(val);
                   }
                 }
@@ -123,6 +151,12 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.inPage {
+  background: #F3F3F3;
+}
+.vux-1px-b:after {
+  border-color: #e8e8e8;
+}
 .content {
   width: 100%;
   height: calc(100% - .49rem);
@@ -136,6 +170,8 @@ export default {
 // 顶部 用户头像部分
 .user_part {
   display: flex;
+  padding: 0 .1rem;
+  background: #fff;
   box-sizing: border-box;
   .user_avatar {
     width: 100%;
@@ -153,93 +189,5 @@ export default {
     }
   }
 }
-// 应用标题
-.list_title{
-  display: flex;
-  padding: .04rem 0 0;
-  align-items: center;
-  justify-content: space-between;
-  .bg_title,
-  .more{
-    color: #000;
-    font-size: .26rem;
-  }
-  .more {
-    font-size: .2rem;
-    color: #4F90F9;
-  }
-}
-// 基础应用部分
-.basic_part {
-  box-sizing: border-box;
-  // 单个APP
-  .indval_app {
-    width: 70%;
-    color: #fff;
-    height: .7rem;
-    margin: .04rem .1rem 0 0;
-    border-radius: .06rem;
-    padding: .08rem .04rem;
-    box-sizing: border-box;
-    box-shadow: 0 2px 5px #5077aa;
-    background: -webkit-linear-gradient(0, #2F80ED,  #56CCF2);
-    // background: #5077aa;
-  // 业务类型
-    .app_type {
-      font-size: .12rem;
-    }
-    // 应用名称
-    .app_name {
-      font-size: .24rem;
-    }
-    .app_intro {
-      overflow: hidden;
-      font-size: .14rem;
-      max-height: .46rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      text-overflow: ellipsis;
-      -webkit-box-orient: vertical;
-    }
-  }
-}
-// 销售部分
-.sale_part {
-  .app_list {
-    height: 1.6rem;
-    padding-left: .04rem;
-    .each_app {
-      width: 75%;
-      height: 1.2rem;
-      color: #fff;
-      background: #2e89ba;
-      padding: .08rem .04rem;
-      border-radius: .04rem;
-      box-sizing: border-box;
-      margin: .04rem .1rem 0 0;
-      box-shadow: 0 2px 5px #5077aa;
-      // app 类型
-      .app_type {
-        font-size: .12rem;
-      }
-      // app 名称
-      .app_name {
-        font-size: .3rem;
-        font-weight: 200;
-      }
-      // app 介绍
-      .app_info {
-        margin-top: .1rem;
-        overflow: hidden;
-        font-size: .14rem;
-        max-height: .46rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        box-sizing: border-box;
-        text-overflow: ellipsis;
-        -webkit-box-orient: vertical;
-      }
-    }
-  }
-}
+
 </style>

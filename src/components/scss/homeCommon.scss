@@ -1,0 +1,108 @@
+//默认背景色
+.defalut_bg {
+  background: #fff;
+}
+.mg_auto {
+  width: 95%;
+  margin: 0 auto;
+  border-radius: .06rem;
+  box-sizing: border-box;
+}
+// 应用标题
+.list_title{
+  height: .4rem;
+  display: flex;
+  padding: .04rem 0;
+  position: relative;
+  margin-bottom: .02rem;
+  .btm_text {
+    left: 58%;
+    z-index: 0;
+    top: .18rem;
+    font-size: .2rem;
+    color: #dbe2ef;
+    position: absolute;
+    transform: translate(-50%, 0);
+  }
+  .bg_title {
+    z-index: 99;
+    width: 100%;
+    color: #3f72af;
+    text-align: center;
+    font-size: .24rem;
+    font-weight: 400;
+    position: relative;
+    .title {
+      left: 49%;
+      position: absolute;
+      transform: translate(-50%, 0);
+    }
+    .more {
+      top: 50%;
+      right: 1%;
+      display: flex;
+      color: #A3A3A3;
+      font-size: .12rem;
+      position: absolute;
+      align-items: center;
+      transform: translate(0, -50%);
+    }
+    .right_arrow {
+      fill: #111;
+      margin-top: -.02rem;
+      display: inline-block;
+    }
+  }
+
+}
+
+// 应用部分
+.app_part {
+  .app_list {
+    display: flex;
+    flex-wrap: wrap;
+    background: #f3f3f3;
+    .each_app {
+      width: 49%;
+      color: #111;
+      padding: .1rem;
+      background: #fff;
+      display: -webkit-box;
+      box-sizing: border-box;
+      margin: 0 0 .02rem .02rem;
+      // 图片
+      .app_img {
+        width: .54rem;
+        height: .54rem;
+        img {
+          width: 100%;
+          border-radius: .02rem;
+        }
+      }
+      .app_info {
+        margin-left: .04rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        // app 名称
+        .app_name {
+          font-size: .14rem;
+          font-weight: blod;
+        }
+        // app 介绍
+        .app_intro {
+          max-width: 1rem;
+          color: #757575;
+          overflow: hidden;
+          font-size: .1rem;
+          max-height: .46rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          box-sizing: border-box;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
+        }
+      }
+    }
+  }
+}

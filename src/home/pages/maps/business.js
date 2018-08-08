@@ -7,5 +7,7 @@ export default {
   采购订单: 'CGDD',
   采购入库: 'CGRK',
   本地库存调拨: 'BDKCDB',
-  费用报销: 'FYBX'
+  费用报销: 'FYBX',
+  商机: 'SJ',
+  库存盘点: 'KCPD'
 }
