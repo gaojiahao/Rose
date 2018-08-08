@@ -160,13 +160,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'COST_NAME',
-              attendedOperation: 'or'
-            },
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'COST_TYPE',
+              property: 'COST_NAME'
             },
           ];
         }

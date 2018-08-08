@@ -47,7 +47,7 @@
             <div class="money_part">
               <!-- <span class="num">当前所在阶段{{item.currentStage}}</span> -->
               <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount}}
+                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | numberComma}}
               </span>
             </div>
           </div>
