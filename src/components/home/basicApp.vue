@@ -24,10 +24,6 @@ export default {
       type : Array,
       require : true
     },
-    SecBg: {
-      type : String,
-      require : true
-    },
     goBasic: {
       type: Function,
       require : true

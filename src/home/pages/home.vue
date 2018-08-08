@@ -10,7 +10,7 @@
           </div>
         </div>
         <!-- 基础应用部分 -->
-        <basic-app :BSarray='BSarray' :SecBg='SecBg' :goBasic='goBasic'></basic-app>
+        <basic-app :BSarray='BSarray' :goBasic='goBasic'></basic-app>
         <!-- 销售应用部分 -->
         <sale-app :XSarray='XSarray' :goList='goList'></sale-app>
         <!-- 采购应用部分 -->
@@ -41,7 +41,6 @@ export default {
       PURarray: [],        // 采购 数组
       ACAarray: [],        // 调拨 数组
       FINarray: [],        // 财务 数组
-      SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)',
       homeScroll : null,
       showLoadding : true,
     }
@@ -173,8 +172,7 @@ export default {
 .content {
   width: 100%;
   height: calc(100% - .49rem);
-  // overflow: auto;
-  // -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 .mg_auto {
   width: 95%;
@@ -198,7 +196,7 @@ export default {
       border-radius: 50%;
     }
     .tips {
-      font-size: .28rem;
+      font-size: .18rem;
     }
   }
 }

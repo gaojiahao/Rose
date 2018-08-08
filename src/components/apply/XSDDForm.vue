@@ -175,7 +175,7 @@
       // 税金
       taxAmount() {
         return (this.totalAmount * 0.16).toFixed(2)
-      },
+      }
     },
     mixins: [common],
     methods: {
@@ -241,33 +241,17 @@
         this.count -= total;
         arr.splice(index, 1);
       },
-      //数量--
+      // 数量减少
       subNum(item, i) {
-        let oldNum = item.tdQty;
+        if(item.tdQty === 1) return;
         item.tdQty--;
-        if (item.tdQty <= 0) {
-          item.tdQty = 1;
-        }
-        // let total = item.price * (oldNum - item.tdQty);
-        // this.count -= total;
         this.$set(this.matterList, i, item);
       },
-      //数量++
+      // 数量增加
       plusNum(item, i) {
-        let oldNum = item.tdQty;
         item.tdQty++;
-        // let total = item.price * (item.tdQty - oldNum);
-        // this.count += total;
         this.$set(this.matterList, i, item);
-
       },
-      //修改数量
-      // getNum(item, i, e) {
-      //   let oldNum = item.tdQty;
-      //   item.tdQty = Number(e.target.value);
-      //   let total = item.tdQty * item.price;
-      //   this.count = this.count - item.price * oldNum + total;
-      // },
       // TODO 新增更多物料
       addMatter() {
         for (let item of this.matterList) {
@@ -336,14 +320,12 @@
                   order: {
                     dealerDebit: this.dealerInfo.dealerCode,
                     drDealerLabel: this.dealerInfo.dealerLabelName || '渠道商',
-                    // drAccountSub : this.dealerInfo.dealerSubclass || '直营店',
                     drDealerPaymentTerm : this.dealer.drDealerPaymentTerm,
                     dataSet
                   }
                 }),
                 wfPara: JSON.stringify(wfPara)
               }
-              console.log(submitData);
               if (this.isResubmit) {
                 submitData.biReferenceId = this.biReferenceId;
                 this.saveData(saveAndCommitTask, submitData);
@@ -365,7 +347,9 @@
           this.biReferenceId = data.biReferenceId;
           let {formData} = data;
           formData.order.dataSet.map(item => {
-            item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
+            item.inventoryPic = item.inventoryPic_transObjCode 
+              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` 
+              : this.getDefaultImg();
             this.count += item.noTaxAmount * 100
           })
           this.count = this.count / 100;
@@ -401,16 +385,11 @@
           },
             this.matterList = data.formData.order.dataSet;
         })
-
-
       }
-    },
-    created() {
     }
   }
 </script>
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
-  // @import '~components/scss/bizDetail.scss';
 </style>
