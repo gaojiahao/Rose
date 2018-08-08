@@ -14,7 +14,7 @@
                 <!-- 图片 和 应用名称 -->
                 <div class="app_info">
                   <span class="app_img">
-                    <img :src='`/dist/${value[0].icon}`' alt="appImg">
+                    <img :src='value[0].pic' alt="appImg" @error='getDefaultImg(value[0])'>
                   </span>
                   <span class="app_name">{{i}}</span>
                 </div>
@@ -49,6 +49,13 @@ export default {
     search,Badge
   },
   methods:{
+    getDefaultImg(item) {
+      let url = require('assets/rk.png');
+      if (item) {
+        item.pic = url;
+      }
+      return url
+    },
     searchList(val) {
       this.serachVal = val;
       this.getList();
@@ -57,6 +64,7 @@ export default {
     getList() {
       getMsgList().then(({ tableContent }) => {     
         tableContent.forEach(item => {
+          item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultImg();
           if (!this.listData[item.processName]) {
              // 以 <应用名称> 进行分类
             this.$set(this.listData, item.processName, [item])
