@@ -3,7 +3,10 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
+        <div class="trade_pop_title">
+          <div class="title">销售人员
+              <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
+          </div>
         </div>
         <!-- 往来列表 -->
         <div class="mater_list" ref="dealer">
@@ -177,7 +180,6 @@
       // 顶部
       .title {
         position: relative;
-        margin: 0.08rem 0;
         font-size: .2rem;
         // 搜索
         .search_part {
@@ -424,4 +426,20 @@
     height: 100%;
     background: #fff;
   }
+  .trade_pop_title {
+      padding: 0 .08rem;
+      // 顶部
+      .title {
+        font-size: .2rem;
+        position: relative;
+        padding: 0.08rem 0 .14rem;
+        // 关闭icon
+        .close_icon {
+          top: 50%;
+          right: -2%;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+      }
+    }
 </style>

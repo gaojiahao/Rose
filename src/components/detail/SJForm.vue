@@ -32,20 +32,20 @@
         <p class="mode">{{orderInfo.currentStage || '无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
-        <p class="title">有效期至</p>
-        <p class="mode">{{orderInfo.validUntil || '暂无'}}</p>
-      </div>
-      <!-- <div class="trade_mode mg_auto box_sd">
-        <p class="title">创建时间</p>
-        <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
-      </div> -->
-      <div class="trade_mode mg_auto box_sd">
         <p class="title">销售人员</p>
         <p class="mode">{{orderInfo.salesPerson || '暂无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">销售渠道</p>
         <p class="mode">{{orderInfo.salesChannels || '暂无'}}</p>
+      </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">有效期至</p>
+        <p class="mode">{{orderInfo.validUntil || '暂无'}}</p>
+      </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">创建时间</p>
+        <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
       </div>
       <!-- 审批操作 -->
       <!-- 物料列表 -->
@@ -84,12 +84,12 @@
                 <div class='mater_other'>
                   <div class='mater_reimb'>
                     <!-- 报销金额 -->
-                    <div class="price">
+                    <!-- <div class="price">
                       <span class="title">预期销售额: </span>
                       <span class="content">
                         <span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount || 0}}
                       </span>
-                    </div>
+                    </div> -->
                     <!-- 报销事由 -->
                     <div class="reason">
                       <span class="title">商机内容: </span>
@@ -102,6 +102,11 @@
                 </div>
               </div>
             </div>
+          </div>
+          <!-- 金额合计栏 -->
+          <div class="price_list">
+            <div class='title'>预期销售额:</div>
+            <div class="num"><span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount || 0}}</div>
           </div>
         </div>
       </div>

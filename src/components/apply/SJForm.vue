@@ -36,8 +36,6 @@
                       <datetime
                         v-model="formData.validUntil"
                         title="有效期至"
-                        format="YYYY-MM-DD HH:mm"
-                        :minute-list="minuteList"
                         ></datetime>
                         <div class="SJForm_cell" @click="showSalesmanPop = !showSalesmanPop">
                           <div>销售人员</div>
@@ -149,7 +147,6 @@
           "biComment": ""
         },
         options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)','签约交款(100%)','签约失败(0%)'],
-        minuteList:[]
       }
     },
     computed: {
@@ -269,13 +266,6 @@
       },
     },
     created() {
-      for(let i = 0 ; i<60 ; i++){
-        if(i.toString().length == 1){
-          this.minuteList.push('0'+i);
-        }else{
-          this.minuteList.push(i);
-        }
-      }
     }
   }
 </script>
@@ -393,6 +383,12 @@
   }
   .materiel_list{
     padding: 0;
+  }
+  .basicPart{
+    height: auto;
+  }
+  .materiel_list .mater_list .each_mater_wrapper .mater_main{
+    padding-left: 0;
   }
 </style>
 <style>
