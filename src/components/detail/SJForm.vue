@@ -14,22 +14,9 @@
         </div>
       </div>
       <!-- 结算方式 -->
-      <!-- <div class="trade_mode mg_auto box_sd">
-        <p class="title">商机标题</p>
-        <p class="mode">{{orderInfo.opportunityTitle || '无'}}</p>
-      </div> -->
-      <!-- 物流条款 -->
-      <!-- <div class="trade_mode mg_auto box_sd">
-        <p class="title">商机内容</p>
-        <p class="mode">{{orderInfo.comment || '无'}}</p>
-      </div>
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">预期销售额</p>
-        <p class="mode">{{orderInfo.tdAmount || '无'}}</p>
-      </div> -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">当前所在阶段</p>
-        <p class="mode">{{orderInfo.currentStage || '无'}}</p>
+        <p class="mode">{{orderInfo.currentStage || '暂无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">销售人员</p>
@@ -83,22 +70,12 @@
 
                 <div class='mater_other'>
                   <div class='mater_reimb'>
-                    <!-- 报销金额 -->
-                    <!-- <div class="price">
-                      <span class="title">预期销售额: </span>
-                      <span class="content">
-                        <span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount || 0}}
-                      </span>
-                    </div> -->
                     <!-- 报销事由 -->
                     <div class="reason">
                       <span class="title">商机内容: </span>
                       <span class="content">{{orderInfo.comment || '无'}}</span>
                     </div>
                   </div>
-                </div>
-
-                <div class='mater_other'>
                 </div>
               </div>
             </div>

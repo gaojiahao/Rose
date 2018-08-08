@@ -228,27 +228,6 @@
           // 确定回调
           onConfirm: () => {
             let operation = submitAndCalc;
-            // else if(this.formData.validUntil == ''){
-            //   AlertModule.show({
-            //       content: '请选择有效期时间',
-            //     });
-            //   return;
-            // }else if(JSON.stringify(this.salesmanInfo)=='{}'){
-            //   AlertModule.show({
-            //       content: '请选择销售人员',
-            //     });
-            //   return;
-            // }else if(JSON.stringify(this.salechannelInfo)=='{}'){
-            //   AlertModule.show({
-            //       content: '请选择销售渠道',
-            //     });
-            //   return;
-            // }else if(this.formData.comment == ''){
-            //   AlertModule.show({
-            //       content: '请填写商机内容',
-            //     });
-            //   return;
-            // }
             let submitData = {
               listId: '32a2c333-02a3-416f-a133-95c7a32da678',
               biComment: '',
