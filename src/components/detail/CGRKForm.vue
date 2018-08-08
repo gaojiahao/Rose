@@ -102,13 +102,11 @@
   export default {
     data() {
       return {
-        count: 0,          // 金额合计
+        count: 0,           // 金额合计
+        comment: '',        // 审批备注
         orderInfo: {},      // 表单内容
-        formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856',
-        defaulImg: require('assets/avatar.png'),   // 默认图片1
-        defaulImg2: require('assets/io.jpg'),       // 默认图片2
-        comment: '',//审批备注
-        warehouse: {}, // 入库仓库
+        warehouse: {},      // 入库仓库
+        formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856'
       }
     },
     mixins: [detailCommon],
@@ -145,7 +143,9 @@
           let {dataSet} = inPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
-            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode 
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+              : this.getDefaultImg();
           }
           // 入库
           this.warehouse = {
@@ -161,8 +161,6 @@
           this.workFlowInfoHandler();
         })
       },
-    },
-    created() {
     }
   }
 </script>

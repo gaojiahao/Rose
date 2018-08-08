@@ -102,9 +102,7 @@
       return {
         count: 0,          // 金额合计
         orderInfo: {},      // 表单内容
-        formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5',
-        defaulImg: require('assets/avatar.png'),   // 默认图片1
-        defaulImg2: require('assets/io.jpg'),       // 默认图片2
+        formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5'
       }
     },
     mixins: [detailCommon],
@@ -136,8 +134,6 @@
           this.workFlowInfoHandler();
         })
       },
-    },
-    created() {
     }
   }
 </script>

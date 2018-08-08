@@ -105,9 +105,7 @@ export default {
     return{
       count : 0,          // 金额合计
       orderInfo: {},      // 表单内容
-      formViewUniqueId : '',
-      defaulImg: require('assets/avatar.png'),   // 默认图片1
-      defaulImg2: require('assets/io.jpg'),       // 默认图片2
+      formViewUniqueId : ''
     }
   },
   components:{
@@ -125,35 +123,34 @@ export default {
     },
     // 获取详情
     async getOrderList(transCode = ''){
-        await getSOList({
-          formViewUniqueId : this.formViewUniqueId,
-          transCode
-        }).then(data => {
-          this.submitInfo  = JSON.parse(JSON.stringify(data));
-          // http200时提示报错信息
-          if(data.success === false){
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-               onHide:()=>{
-                this.$router.back();
-              }
-            })
-            return;
-          }
-          // 获取合计
-          let { dataSet } = data.formData.order;
-          for(let val of dataSet){
-            this.count += val.tdAmount*100;
-            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
-          }
-          this.count = this.count/100;
-          this.orderInfo = data.formData;
-          this.workFlowInfoHandler();
-        })
-
-    },
-  },
-  created(){
+      await getSOList({
+        formViewUniqueId : this.formViewUniqueId,
+        transCode
+      }).then(data => {
+        this.submitInfo  = JSON.parse(JSON.stringify(data));
+        // http200时提示报错信息
+        if(data.success === false){
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+              onHide:()=>{
+              this.$router.back();
+            }
+          })
+          return;
+        }
+        // 获取合计
+        let { dataSet } = data.formData.order;
+        for(let val of dataSet){
+          this.count += val.tdAmount*100;
+          val.inventoryPic = val.inventoryPic_transObjCode 
+            ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            : this.getDefaultImg();
+        }
+        this.count = this.count/100;
+        this.orderInfo = data.formData;
+        this.workFlowInfoHandler();
+      })
+    }
   }
 }
 </script>

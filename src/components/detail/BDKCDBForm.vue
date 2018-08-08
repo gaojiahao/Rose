@@ -70,11 +70,9 @@
     data() {
       return {
         orderInfo: {},      // 表单内容
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-        defaulImg: require('assets/avatar.png'),   // 默认图片1
-        defaulImg2: require('assets/io.jpg'),       // 默认图片2
         warehouseIn: {}, // 入库仓库详情
         warehouseOut: {}, // 出库仓库详情
+        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'
       }
     },
     mixins: [detailCommon],
@@ -110,7 +108,9 @@
           let {inPut = {}} = data.formData;
           let {dataSet} = inPut;
           for (let val of dataSet) {
-            val.inventoryPic = val.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
+            val.inventoryPic = val.inventoryPic_transObjCode 
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+              : this.getDefaultImg();
           }
           // 入库
           this.warehouseIn = {
