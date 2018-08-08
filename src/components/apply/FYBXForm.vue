@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup,numberComma} from 'vux'
+  import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup} from 'vux'
   import PopCostList from 'components/PopCostList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
@@ -142,14 +142,6 @@
         return total;
       }
     },
-    filters:{
-      numberComma,
-      checkPrice(val){
-        if(val){
-          return numberComma(val)
-        }
-      }
-    },
     methods: {
       showcCostPop(item){
         item.showPop = true
@@ -177,7 +169,6 @@
           item.showPop = false;
         })
          this.CostList = sels;
-        console.log(this.CostList);
       },
       // TODO 提交
       submitOrder() {

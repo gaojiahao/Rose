@@ -106,8 +106,8 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
-        <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
+        <span style="fontSize:.14rem">￥</span>{{totalAmount |numberComma(3)}}
+        <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom } from 'vux'
+import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom} from 'vux'
 import PopMatterList from 'components/PopMatterList'
 import PopDealerList from 'components/PopDealerList'
 import PopSingleSelect from 'components/PopSingleSelect'

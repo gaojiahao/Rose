@@ -25,7 +25,7 @@
         <div class="trade_pop">
           <div class="title">
             <!-- 搜索栏 -->
-            <d-search @search='searchList' @turnOff="onHide"></d-search>
+            <d-search @search='searchList' @turnOff="onHide" :isFill='true'></d-search>
           </div>
           <!-- 仓库列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"

@@ -18,11 +18,16 @@
 import { Icon } from "vux";
 import { setTimeout } from 'timers';
 export default {
+  props:{
+    isFill:{//是否为提交页面
+      type : Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       srhInpTx: "",
-      timer: null,
-      isFill: true    //是否为提交页面
+      timer: null 
     };
   },
   components: {
@@ -53,11 +58,19 @@ export default {
       this.$emit("search", this.srhInpTx);
     }
   },
+  watch:{
+      // $route(val){
+      //   if(val.name === 'LIST'){
+      //     this.isFill = false;
+      //   }
+      // }
+
+  },
   created(){
     // 判断是否为 填报页面
-    if(!this.$route.path.includes('fill')){
-      this.isFill = false;
-    }
+    // if(!this.$route.path.includes('fill')){
+    //   this.isFill = false;
+    // }
   }
 };
 </script>

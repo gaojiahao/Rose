@@ -4,7 +4,7 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
-          <m-search @search='searchMat' @turnOff="onHide"></m-search>
+          <m-search @search='searchMat' @turnOff="onHide" :isFill='true'></m-search>
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -152,47 +152,29 @@
       },
       // TODO 获取物料列表
       getCostList() {
-        let filter = [
-          /*{
-            operator: 'eq',
-            value: '成品',
-            property: 'processing',
-            attendedOperation: 'or'
-          },*/
-          /*{
-            operator: 'eq',
-            value: '商品',
-            property: 'processing',
-            attendedOperation: 'or'
-          },
-          {
-            operator: 'eq',
-            value: '服务',
-            property: 'processing',
-          },*/
-        ];
-        //成品,商品,服务
-        // if (this.srhInpTx) {
-        //   filter = [
-        //     ...filter,
-        //     {
-        //       operator: 'like',
-        //       value: this.srhInpTx,
-        //       property: 'inventoryCode',
-        //       attendedOperation: 'or'
-        //     },
-        //     {
-        //       operator: 'like',
-        //       value: this.srhInpTx,
-        //       property: 'inventoryName',
-        //     },
-        //   ];
-        // }
+        let filter = [];
+        
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'COST_NAME',
+              attendedOperation: 'or'
+            },
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'COST_TYPE',
+            },
+          ];
+        }
         return getCost({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          // filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];

@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <m-search @search='searchMat' @turnOff="onHide"></m-search>
+          <m-search @search='searchMat' @turnOff="onHide" :isFill='true'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"

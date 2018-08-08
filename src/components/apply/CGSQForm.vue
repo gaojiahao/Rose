@@ -86,7 +86,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
+        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
