@@ -18,6 +18,7 @@
 .basicPart {
   overflow: auto;
   height: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 // 工作流
@@ -403,7 +404,7 @@
                   font-size: .18rem;
                   color: #5077aa;
                   // position: absolute;
-                  
+
                 }
               }
               // 报销事由

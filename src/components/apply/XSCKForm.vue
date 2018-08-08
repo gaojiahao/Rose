@@ -461,7 +461,7 @@
             ...this.formData,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
           };
-          this.drDealerPaymentTerm = formData.drDealerPaymentTerm;
+          this.drDealerPaymentTerm = outPut.drDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
         })

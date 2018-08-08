@@ -15,7 +15,7 @@
         </div>
         <div v-else>
             <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>           
+            <div class="mode">请选择往来</div>
         </div>
         <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
       </div>
@@ -83,7 +83,7 @@
                           <input class='num' type='number' v-model.number='item.tdQty'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
                         </div>
-                          
+
                       </div>
                     </div>
                   </div>
@@ -120,7 +120,7 @@ import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom} from 'vux'
 import PopMatterList from 'components/PopMatterList'
 import PopDealerList from 'components/PopDealerList'
 import PopSingleSelect from 'components/PopSingleSelect'
-import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService' 
+import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService'
 import { getSOList} from 'service/detailService.js'
 import common from 'components/mixins/applyCommon.js'
 export default {
@@ -135,7 +135,7 @@ export default {
       listId : 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
       matterList:[],                                  // 物料列表
       paymentIndex : 0,
-      DealerPaymentTerm : '现付',                        //结算方式      
+      DealerPaymentTerm : '现付',                        //结算方式
       transMode:['现付','预付','账期','票据'],          // 结算方式
       showDealerPop : false,                          // 是否显示往来的popup
       showTransPop:false,                            // 是否显示结算方式的popup
@@ -148,7 +148,7 @@ export default {
         drDealerLogisticsTerms :'上门', //物流条件
         biComment : '' //备注
       },
-      numMap: {},    
+      numMap: {},
     }
   },
   computed: {
@@ -233,7 +233,7 @@ export default {
     plusNum(item,i){
       let oldNum = item.tdQty;
       item.tdQty++;
-      this.$set(this.matterList, i, item);      
+      this.$set(this.matterList, i, item);
     },
     //提价订单
     submitOrder(){
@@ -302,8 +302,8 @@ export default {
             }
             this.saveData(saveAndStartWf,submitData);
           }
-         })        
-      }      
+         })
+      }
     },
     // TODO 获取用户基本信息
     getBaseInfoData() {
@@ -353,18 +353,18 @@ export default {
           this.dealer = {
             dealerDebitContactPersonName: formData.dealerDebitContactPersonName, //联系人
             dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话
-            drDealerPaymentTerm: formData.drDealerPaymentTerm || '现付', //付款
+            drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
             biComment: formData.biComment //备注
           },
             this.matterList = data.formData.order.dataSet;
       })
 
-      
+
     }
   },
   created(){
-    
+
   }
 }
 </script>

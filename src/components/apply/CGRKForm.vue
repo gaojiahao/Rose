@@ -389,7 +389,7 @@
             ...this.formData,
             biId: formData.biId,
           };
-          this.crDealerPaymentTerm = formData.crDealerPaymentTerm;
+          this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
           this.DealerPaymentTerm = formData.crDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
           this.listData = dataSet;

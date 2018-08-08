@@ -395,7 +395,7 @@
           this.dealer = {
             dealerDebitContactPersonName: formData.dealerDebitContactPersonName, //联系人
             dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话
-            drDealerPaymentTerm: formData.drDealerPaymentTerm || '现付', //付款
+            drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
             biComment: formData.biComment //备注
           },
