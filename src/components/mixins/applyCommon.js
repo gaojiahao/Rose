@@ -1,5 +1,6 @@
 import {saveAndStartWf, saveAndCommitTask, commitTask, getBaseInfoData,} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
+import {numberComma,} from 'vux'
 
 export default {
   data() {
@@ -14,6 +15,9 @@ export default {
       comment: '',//审批意见
       formViewUniqueId: '',
     }
+  },
+  filters: {
+    numberComma,
   },
   methods: {
     //获取listId

@@ -77,7 +77,7 @@
                       <!-- 物料数量和价格 -->
                       <div class="mater_other">
                         <div class="mater_price">
-                          ￥{{item.price}}
+                          ￥{{item.price | numberComma}}
                         </div>
                         <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
                       </div>
@@ -101,8 +101,8 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount}}
-        <span class="taxAmount">[含税: ￥{{taxAmount}}]</span>
+        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma}}
+        <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
@@ -120,7 +120,7 @@
     Swipeout,
     SwipeoutItem,
     SwipeoutButton,
-    TransferDom
+    TransferDom,
   } from 'vux'
   import PopDealerList from 'components/PopDealerList'
   import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 'service/commonService'
