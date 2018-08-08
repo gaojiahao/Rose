@@ -31,7 +31,7 @@
                     <div class="title">商机明细</div>
                     <group class="SJ_group" @group-title-margin-top="0">
                       <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                      <x-input  title="预期销售额" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
+                      <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
                       <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
                       <datetime
                         v-model="formData.validUntil"
@@ -78,7 +78,7 @@
     </div>
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{formData.tdAmount == ''?0:formData.tdAmount | numberComma(3)}}
+        <span style="fontSize:.14rem">￥</span>{{total}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交</span>
@@ -153,6 +153,10 @@
       }
     },
     computed: {
+      //总金额
+      total(){
+        return this.formData.tdAmount == ''?0:numberComma(this.formData.tdAmount);
+      }
     },
     mixins: [common],
     methods: {
@@ -190,52 +194,64 @@
       },
       // TODO 提交
       submitOrder() {
+        let that = this;
+        let salePriceVal = this.$refs.salePrice.currentValue;
+        if(JSON.stringify(this.dealerInfo)=='{}'){
+              AlertModule.show({
+                content: '请选择往来',
+              });
+            return;
+          }else if(this.formData.opportunityTitle == ''){
+            AlertModule.show({
+                content: '请填写商机标题',
+              });
+            return;
+          }else if(this.formData.tdAmount == ''){
+            AlertModule.show({
+                content: '请填写预期销售额',
+              });
+            return;
+          }else if(salePriceVal!=''&&!/^[0-9]+.?[0-9]*$/.test(salePriceVal)){
+          AlertModule.show({
+              content: '请输入正确的金额格式',
+              onHide (){
+                salePriceVal = '';
+                that.formData.tdAmount = '';
+              }
+          });
+          return;
+        }else if(this.formData.currentStage == ''){
+            AlertModule.show({
+                content: '请选择所在阶段',
+              });
+            return;
+          }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
             let operation = submitAndCalc;
-            if(JSON.stringify(this.dealerInfo)=='{}'){
-               AlertModule.show({
-                  content: '请选择往来',
-                });
-              return;
-            }else if(this.formData.opportunityTitle == ''){
-              AlertModule.show({
-                  content: '请填写商机标题',
-                });
-              return;
-            }else if(this.formData.tdAmount == ''){
-              AlertModule.show({
-                  content: '请填写预期销售额',
-                });
-              return;
-            }else if(this.formData.currentStage == ''){
-              AlertModule.show({
-                  content: '请选择所在阶段',
-                });
-              return;
-            }else if(this.formData.validUntil == ''){
-              AlertModule.show({
-                  content: '请选择有效期时间',
-                });
-              return;
-            }else if(JSON.stringify(this.salesmanInfo)=='{}'){
-              AlertModule.show({
-                  content: '请选择销售人员',
-                });
-              return;
-            }else if(JSON.stringify(this.salechannelInfo)=='{}'){
-              AlertModule.show({
-                  content: '请选择销售渠道',
-                });
-              return;
-            }else if(this.formData.comment == ''){
-              AlertModule.show({
-                  content: '请填写商机内容',
-                });
-              return;
-            }
+            // else if(this.formData.validUntil == ''){
+            //   AlertModule.show({
+            //       content: '请选择有效期时间',
+            //     });
+            //   return;
+            // }else if(JSON.stringify(this.salesmanInfo)=='{}'){
+            //   AlertModule.show({
+            //       content: '请选择销售人员',
+            //     });
+            //   return;
+            // }else if(JSON.stringify(this.salechannelInfo)=='{}'){
+            //   AlertModule.show({
+            //       content: '请选择销售渠道',
+            //     });
+            //   return;
+            // }else if(this.formData.comment == ''){
+            //   AlertModule.show({
+            //       content: '请填写商机内容',
+            //     });
+            //   return;
+            // }
             let submitData = {
               listId: '32a2c333-02a3-416f-a133-95c7a32da678',
               biComment: '',
