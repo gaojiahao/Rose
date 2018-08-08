@@ -1,22 +1,25 @@
 <template>
   <div class="inPage">
-    <div class="content">
-      <!-- 用户头像部分 -->
-      <div class="user_part">
-        <div class="user_avatar vux-1px-b">
-          <img src="../../assets/ava03.png" alt="avatar">
-          <div class="tips">欢迎,瑞福登</div>
+    <div class="content" ref='home'>
+      <div>
+        <!-- 用户头像部分 -->
+        <div class="user_part">
+          <div class="user_avatar vux-1px-b">
+            <img src="../../assets/ava03.png" alt="avatar">
+            <div class="tips">欢迎,瑞福登</div>
+          </div>
         </div>
-      </div>
-      <!-- 基础应用部分 -->
-      <basic-app :BSarray='BSarray' :SecBg='SecBg' :goBasic='goBasic'></basic-app>
-      <!-- 销售应用部分 -->
-      <sale-app :XSarray='XSarray' :goList='goList'></sale-app>
-      <!-- 采购应用部分 -->
-      <buy-app :PURarray='PURarray' :goList='goList'></buy-app>
-      <!-- 调拨应用部分 -->
-      <alloca-app :ACAarray='ACAarray' :goList='goList'></alloca-app>
+        <!-- 基础应用部分 -->
+        <basic-app :BSarray='BSarray' :SecBg='SecBg' :goBasic='goBasic'></basic-app>
+        <!-- 销售应用部分 -->
+        <sale-app :XSarray='XSarray' :goList='goList'></sale-app>
+        <!-- 采购应用部分 -->
+        <buy-app :PURarray='PURarray' :goList='goList'></buy-app>
+        <!-- 调拨应用部分 -->
+        <alloca-app :ACAarray='ACAarray' :goList='goList'></alloca-app>
+      </div>   
     </div>
+    <loadding :show='showLoadding'></loadding>
   </div>
 </template>
 
@@ -27,7 +30,8 @@ import basicApp from 'components/home/basicApp'     // 基础应用
 import saleApp from 'components/home/saleApp'       // 销售应用
 import buyApp from 'components/home/buyApp'         // 采购应用
 import allocaApp from 'components/home/allocationApp'  // 调拨应用
-
+import Bscroll from 'better-scroll'
+import Loadding from 'components/Loading'
 // import {buyApp, saleApp, basicApp} from 'components/home'
 export default {
   data(){
@@ -37,14 +41,17 @@ export default {
       PURarray: [],        // 采购 数组
       ACAarray: [],        // 调拨 数组
       FINarray: [],        // 财务 数组
-      SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)'
+      SecBg:'-webkit-linear-gradient(0, #00b09b,  #96c93d)',
+      homeScroll : null,
+      showLoadding : true,
     }
   },
   components:{
     buyApp,
     saleApp,
     basicApp,
-    allocaApp
+    allocaApp,
+    Loadding
   },
   methods:{
     // 基础应用
@@ -140,12 +147,18 @@ export default {
             }
           }
         }
+        this.showLoadding = false;
       }).catch( err => {
         this.$vux.alert.show({
           content: err.message
         })
       })
     })()
+  },
+  mounted(){
+    this.homeScroll = new Bscroll(this.$refs.home,{
+      click:true
+    })
   }
 }
 </script>
@@ -160,8 +173,8 @@ export default {
 .content {
   width: 100%;
   height: calc(100% - .49rem);
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  // overflow: auto;
+  // -webkit-overflow-scrolling: touch;
 }
 .mg_auto {
   width: 95%;
