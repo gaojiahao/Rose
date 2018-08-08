@@ -69,7 +69,6 @@
 </template>
 
 <script>
-  import {numberComma} from 'vux'
   import {isMyflow, getSOList, getWorkFlow, getListId} from 'service/detailService.js'
   import {saveAndCommitTask, commitTask} from 'service/commonService.js'
   import common from 'components/mixins/detailCommon.js'
@@ -88,9 +87,6 @@
     },
     components: {
       workFlow, RAction,
-    },
-    filters: {
-      numberComma
     },
     mixins: [common],
     methods: {

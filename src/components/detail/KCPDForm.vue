@@ -61,7 +61,6 @@
 </template>
 
 <script>
-  import {numberComma, dateFormat} from 'vux'
   import {getSOList,} from 'service/detailService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
@@ -71,7 +70,7 @@
     data() {
       return {
         orderInfo: {},      // 表单内容
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
+        formViewUniqueId: '064e455d-4277-473a-9e54-d9ae4b1f23be',
         defaulImg: require('assets/avatar.png'),   // 默认图片1
         defaulImg2: require('assets/io.jpg'),       // 默认图片2
         warehouseIn: {}, // 入库仓库详情
@@ -81,9 +80,6 @@
     components: {
       workFlow,
       PopWarehouseList,
-    },
-    filters: {
-      numberComma
     },
     methods: {
       //选择默认图片
@@ -125,7 +121,6 @@
             warehouseDistrict: inPut.warehouseDistrict_containerCode,
             warehouseAddress: inPut.warehouseAddress_containerCode,
           };
-          data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
           this.orderInfo = data.formData;
           // this.workFlowInfoHandler();
         })

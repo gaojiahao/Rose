@@ -1,5 +1,6 @@
 import {getWorkFlow, currentUser, getListId, isMyflow} from 'service/detailService.js'
 import {commitTask} from 'service/commonService.js'
+import {numberComma,} from 'vux'
 
 export default {
   data() {
@@ -19,6 +20,9 @@ export default {
       isMine: false, // 是否为我创建
       noOperation: true, // 是否审批过
     }
+  },
+  filters: {
+    numberComma,
   },
   methods: {
     // TODO 生成随机ID

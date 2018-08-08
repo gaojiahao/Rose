@@ -86,7 +86,7 @@
 </template>
 
 <script>
-  import {numberComma, dateFormat} from 'vux'
+  import {dateFormat} from 'vux'
   import {getSOList,} from 'service/detailService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
@@ -104,9 +104,6 @@
     mixins: [detailCommon],
     components: {
       workFlow,
-    },
-    filters: {
-      numberComma
     },
     methods: {
       //选择默认图片

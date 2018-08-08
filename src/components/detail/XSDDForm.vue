@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import { numberComma } from 'vux'
 import { getSOList, } from 'service/detailService.js'
 import common from 'components/mixins/detailCommon.js'
 import workFlow from 'components/workFlow.vue'
@@ -113,9 +112,6 @@ export default {
   },
   components:{
     workFlow, RAction,
-  },
-  filters:{
-    numberComma
   },
   mixins: [common],
   methods:{

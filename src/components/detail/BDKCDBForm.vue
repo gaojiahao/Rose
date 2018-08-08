@@ -61,7 +61,6 @@
 </template>
 
 <script>
-  import {numberComma, dateFormat} from 'vux'
   import {getSOList,} from 'service/detailService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
@@ -82,9 +81,6 @@
     components: {
       workFlow,
       PopWarehouseList,
-    },
-    filters: {
-      numberComma
     },
     methods: {
       //选择默认图片
@@ -136,7 +132,6 @@
             warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: inPut.warehouseAddress_containerCodeOut,
           };
-          data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
           this.orderInfo = data.formData;
           // this.workFlowInfoHandler();
         })

@@ -80,7 +80,7 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <div class='mater_other'>
                   <div class='mater_reimb'>
                     <!-- 报销金额 -->
@@ -97,7 +97,7 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <div class='mater_other'>
                 </div>
               </div>
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-  import {numberComma, dateFormat} from 'vux'
+  import {dateFormat} from 'vux'
   import {getSOList} from 'service/detailService'
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
@@ -128,9 +128,6 @@
     mixins: [detailCommon],
     components: {
       workFlow,
-    },
-    filters: {
-      numberComma
     },
     methods: {
       // 获取详情
@@ -173,10 +170,10 @@
       font-size: .12rem;
     }
   }
-  .materiel_list 
-    .mater_list 
-      .each_mater 
-        .each_mater_wrapper 
+  .materiel_list
+    .mater_list
+      .each_mater
+        .each_mater_wrapper
           .mater_main {
             width: 100%;
             max-width: inherit;
