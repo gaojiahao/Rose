@@ -50,7 +50,7 @@ export default {
   },
   methods:{
     getDefaultImg(item) {
-      let url = require('assets/rk.png');
+      let url = require('assets/defaultApp.png');
       if (item) {
         item.pic = url;
       }
