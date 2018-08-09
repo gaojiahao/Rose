@@ -99,7 +99,7 @@
                         @sel-dealer="selDealer" :dealerLabelName="'2168'">
         </pop-dealer-list  ref="matter">
         <!-- 物料popup -->
-        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
                          ref="matter"></pop-matter-list>
       </div>
     </div>

@@ -50,6 +50,7 @@ export default {
     getUniqueId(transCode) {
       return new Promise(resolve => {
         isMyflow({transCode}).then(({dataCount, tableContent}) => {
+         
           if (dataCount > 0) {
             this.taskId = tableContent[0].taskId;
             if (tableContent[0].isMyTask === 1) {
@@ -122,6 +123,9 @@ export default {
     // TODO 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(data => {
+        if(!this.isResubmit){
+          this.$emit('input',false)
+        }
         this.formData = {
           ...this.formData,
           ...data,
@@ -156,6 +160,7 @@ export default {
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
         this.getFormData && this.getFormData();
+        this.$emit('input',false);
       })()
     }
   }

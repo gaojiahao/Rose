@@ -75,6 +75,7 @@
         <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+                         :default-value="matterList"
                          ref="matter"></pop-matter-list>
       </div>
       <!-- 申请说明 -->

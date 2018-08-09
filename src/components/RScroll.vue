@@ -20,7 +20,7 @@
   import BScroll from 'better-scroll'
   import {Spinner, LoadMore} from 'vux'
 
-  const PULL_DOWN_REFRESH_HEIGHT = 30;
+  const PULL_DOWN_REFRESH_HEIGHT = 40;
   export default {
     name: "RScroll",
     components: {
@@ -170,10 +170,11 @@
     }
     .refresh-container {
       position: absolute;
-      top: -30px;
+      top: -40px;
       left: 0;
       width: 100%;
       height: 30px;
+      margin:0.1rem 0;
       background-color: #fff;
       /*transition: top .4s linear 0s;*/
       text-align: center;

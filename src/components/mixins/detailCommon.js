@@ -143,6 +143,7 @@ export default {
       await this.getFlowAndActions();
       // 获取表单表单详情
       this.getOrderList(transCode);
+      this.$emit('input',false)
     })()
   }
 }

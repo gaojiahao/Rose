@@ -21,6 +21,8 @@ export default {
       listData: [],
       activeTab: '',
       count: 0,
+      total:null, //列表数据总量
+      applyCode : '' 
     }
   },
   components: {
@@ -115,6 +117,17 @@ export default {
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
+        this.$emit('input',false)
+        if(this.total && total-this.total>0){ // 判断最近有无新增订单
+          this.$vux.toast.show({
+            text: `最近新增${total-this.total}条数据`,
+            position:'top',
+            width:'70%',
+            type:"text"
+           })
+          console.log(`最近新增${total-this.total}条数据`)
+        }
+        sessionStorage.setItem(this.applyCode,total);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
         orders.forEach(item => {
           this.setStatus(item);
@@ -183,7 +196,19 @@ export default {
       this.activeTab = '';
       this.activeIndex = 0;
       this.resetCondition();
-      this.getList();
+      (async()=>{
+        await this.getSession();
+        await this.getList();
+      })()
+      // this.getList();
+
+    },
+    //获取上次存储的列表总数量
+    getSession(){
+      return new Promise(resolve=>{
+        this.total = sessionStorage.getItem(this.applyCode);
+        resolve()
+      })
     }
   },
   filters: {
@@ -199,7 +224,12 @@ export default {
     dateFormat,
   },
   created() {
-    this.getList();
+    this.applyCode = this.$route.params.code;
+    (async()=>{
+      await this.getSession();
+      await this.getList();
+    })()
+    // this.getList();
   }
 
 }

@@ -86,7 +86,7 @@
         <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多费用</div>
         <!-- 费用popup -->
         <pop-cost-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                        :default-value="CostList" ref="matter"></pop-cost-list>
+                        :default-value="CostList" :defaultValue="CostList" ref="matter"></pop-cost-list>
       </div>
     </div>
     <!-- 底部确认栏 -->

@@ -2,6 +2,7 @@
   <div class="pages">
     <component
       :is='currentComponent'
+      v-model='showLoadding'
       @change='modifyRoute'>
     </component>
     <loading-form :show='showLoadding'></loading-form>
@@ -33,9 +34,9 @@ export default {
   created(){
     let {code} = this.$route.params;
     this.currentComponent = require(`components/apply/${code}Form.vue`).default;
-    setTimeout(()=>{
-      this.showLoadding = false
-    },1000)
+    // setTimeout(()=>{
+    //   this.showLoadding = false
+    // },1000)
   },
   mounted(){
     this.$nextTick(()=>{

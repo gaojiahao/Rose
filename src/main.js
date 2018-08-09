@@ -8,14 +8,14 @@ import router from './router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import { TransferDom } from 'vux'
-import  { AlertPlugin, ConfirmPlugin, DatetimePlugin } from 'vux'
+import  { AlertPlugin, ConfirmPlugin, DatetimePlugin ,ToastPlugin } from 'vux'
 
 Vue.directive('transfer-dom', TransferDom)
 Vue.use(VueRouter)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
-
+Vue.use(ToastPlugin)
 Vue.prototype.Swiper = Swiper;
 FastClick.attach(document.body)
 

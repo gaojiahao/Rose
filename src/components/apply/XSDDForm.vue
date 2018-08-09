@@ -102,7 +102,7 @@
         </pop-dealer-list  ref="matter">
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop"
-                         @sel-matter="selMatter" ref="matter"></pop-matter-list>
+                         @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
       </div>
     </div>
     <!-- 底部确认栏 -->

@@ -2,6 +2,7 @@
   <div class="inPage">
     <component
       :is='currentComponent'
+      v-model='showLoadding'
       ref='list'>
     </component>
     <router-view></router-view>
@@ -28,9 +29,9 @@ export default {
     if(code){
       this.currentComponent = require(`components/list/${code}Form.vue`).default;
     }
-    setTimeout(()=>{
-      this.showLoadding = false
-    },1000)
+    // setTimeout(()=>{
+    //   this.showLoadding = false
+    // },1000)
   },
   watch: {
     $route: {
