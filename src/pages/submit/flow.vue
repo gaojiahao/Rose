@@ -204,6 +204,8 @@
           [this.procCode]: {
             'businessKey': transCode,
             'createdBy': '',
+            '所属区域': '总部',
+            '部门主管ID': 700,
             '常委ID': committee.userId,
             '副总裁ID': vicePresident.userId,
             // '常委ID': '15125', // rfd120
