@@ -120,7 +120,7 @@ export default {
         this.$emit('input',false)
         if(this.total && total-this.total>0){ // 判断最近有无新增订单
           this.$vux.toast.show({
-            text: `最近新增${total-this.total}条数据`,
+            text: `最近新增${total-this.total}个订单`,
             position:'top',
             width:'70%',
             type:"text"
@@ -196,11 +196,7 @@ export default {
       this.activeTab = '';
       this.activeIndex = 0;
       this.resetCondition();
-      (async()=>{
-        await this.getSession();
-        await this.getList();
-      })()
-      // this.getList();
+      this.getList();
 
     },
     //获取上次存储的列表总数量

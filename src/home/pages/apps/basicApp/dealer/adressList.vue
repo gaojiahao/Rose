@@ -57,7 +57,8 @@ export default {
         click: true,
         pullDownRefresh: true,
         pullUpLoad: true,
-      }
+      },
+      total : null
     }
   },
   components:{
@@ -138,9 +139,19 @@ export default {
               content: e.message,
             })
           })
-          await dealerService.getDealerList(this.id,data).then( data=>{
-            this.dealerList = this.page === 1? data.tableContent : this.dealerList.concat(data.tableContent);
-            this.hasNext = data.dataCount > (this.page-1)*this.limit + data.tableContent.length;
+          await dealerService.getDealerList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
+            console.log(this.total);
+            if(this.total && dataCount - this.total>0){ // 判断最近有无新增订单
+              this.$vux.toast.show({
+                  text: `最近新增${dataCount-this.total}个往来`,
+                  position:'top',
+                  width:'50%',
+                  type:"text"
+              })
+            }
+            sessionStorage.setItem("DL",dataCount);
+            this.dealerList = this.page === 1? tableContent : this.dealerList.concat(tableContent);
+            this.hasNext = dataCount > (this.page-1)*this.limit + tableContent.length;
             if (!noReset) {
               this.$nextTick(() => {
                 this.resetScroll();
@@ -187,6 +198,13 @@ export default {
         })
       });
     },
+    //获取上次存储的列表总数量
+    getSession(){
+      return new Promise(resolve=>{
+        this.total = sessionStorage.getItem("DL");
+        resolve()
+      })
+    }
   },
   watch: {
     $route: {
@@ -205,7 +223,11 @@ export default {
   },
   created(){
     this.getClassfiy();
-    this.getDealer();
+    (async()=>{
+      await this.getSession();
+      await this.getDealer();
+    })()
+    // this.getDealer();
   },
   
 }

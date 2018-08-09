@@ -1,13 +1,13 @@
 import HOME from '../pages/home'
 
 // ------> 基础应用 <-------
-import ADRESS from '../pages/apps/basicApp/dealer/adress'
+import ADRESS from '../pages/apps/basicApp/dealer/adressList'
 import EDIT_ADS from '../pages/apps/basicApp/dealer/edit_ads'
 import ADRESSDETAL from '../pages/apps/basicApp/dealer/adressDetail'
 import MATERLIST from '../pages/apps/basicApp/Mater/materList'
 import ADDMATER from '../pages/apps/basicApp/Mater/addMater'
 import MATERDETAIL from '../pages/apps/basicApp/Mater/materDetail'
-import WAREHOUSE from '../pages/apps/basicApp/warehouse/warehouse'
+import WAREHOUSE from '../pages/apps/basicApp/warehouse/warehouseList'
 import EDIT_WAREHOUSE from '../pages/apps/basicApp/warehouse/edit_warehouse'
 import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
 // ------- >业务应用 <-------

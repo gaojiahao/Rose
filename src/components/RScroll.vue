@@ -180,4 +180,10 @@
       text-align: center;
     }
   }
+  .weui-toast.vux-toast-top {
+    top: 18px;
+  }
+  .weui-toast {   
+    background: rgba(17, 17, 17, 0.5);
+  }
 </style>

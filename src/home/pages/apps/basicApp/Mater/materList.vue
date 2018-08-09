@@ -4,12 +4,6 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-        <!--<form class="search_part" action="" @submit.prevent="searchMat">
-          <input class="srh_inp" type="search" autocomplete="off" v-model="srhInpTx">
-          <div class="pop_cancel" @click="searchMat">搜索</div>
-          <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-          <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="srhInpTx = ''"></icon>
-        </form>-->
         <r-search @search="searchMat"></r-search>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
@@ -117,7 +111,8 @@
           click: true,
           pullDownRefresh: true,
           pullUpLoad: true,
-        }
+        },
+        total : null
       }
     },
     methods: {
@@ -202,6 +197,15 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          if(this.total && dataCount-this.total>0){ // 判断最近有无新增订单
+            this.$vux.toast.show({
+                text: `最近新增${dataCount-this.total}个物料`,
+                position:'top',
+                width:'50%',
+                type:"text"
+            })
+          }
+          sessionStorage.setItem("WL",dataCount);
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`
@@ -247,6 +251,13 @@
           })
         });
       },
+      //获取上次存储的列表总数量
+      getSession(){
+        return new Promise(resolve=>{
+          this.total = sessionStorage.getItem("WL");
+          resolve()
+        })
+      }
     },
     watch: {
       $route: {
@@ -264,9 +275,14 @@
       }
     },
     created() {
-      this.getDictByType().then(() => {
-        this.getMatList();
-      });
+      (async()=>{
+        await this.getSession();
+        await this.getDictByType().then(() => {
+                this.getMatList();
+              });
+
+      })()
+      
     },
   }
 </script>

@@ -76,7 +76,8 @@ export default {
       id : 2129,
       hasNext: true,
       pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
-      Loadding : true
+      Loadding : true,
+      total : null
     }
   },
   components:{
@@ -178,7 +179,16 @@ export default {
         if(filter){
           data.filter = JSON.stringify(filter);
         }
-        warehouseService.getwarehouseList(this.id,data).then( data=>{
+        return warehouseService.getwarehouseList(this.id,data).then( data=>{
+            if(this.total && data.dataCount - this.total>0){
+              this.$vux.toast.show({
+                text: `最近新增${dataCount-this.total}个仓库`,
+                position:'top',
+                width:'50%',
+                type:"text"
+              })
+            }
+            sessionStorage.setItem("CK",data.dataCount);
             this.Loadding = false;
             this.warehouseList = this.page === 1? data.tableContent : this.warehouseList.concat(data.tableContent);
             this.hasNext = data.dataCount > (this.page-1)*this.limit + data.tableContent.length;
@@ -252,6 +262,13 @@ export default {
         })
       });
     },
+    //获取上次存储的列表总数量
+    getSession(){
+      return new Promise(resolve=>{
+        this.total = sessionStorage.getItem("CK");
+        resolve()
+      })
+    }
   },
   watch: {
     $route: {
@@ -271,13 +288,12 @@ export default {
   created(){
     this.initScroll();
     //this.getClassfiy();
-    this.getwarehouse();
+    (async()=>{
+      await this.getSession();
+      await this.getwarehouse();
+
+    })()
   },
-  // activated() {
-  //   if (this.bScroll) {
-  //     this.bScroll.refresh();
-  //   }
-  // },
   
 }
 </script>
