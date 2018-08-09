@@ -31,13 +31,13 @@ export default {
     // TODO 获取表单详情
     getFormData() {
       this.showLoading = true;
-      createService.getFormData({
-        formKey: this.formKey,
-        transCode: this.transCode,
-      }).then(data => {
+      createService.getJsonData(this.transCode).then(({tableContent = []}) => {
         this.showLoading = false;
         this.showPage = true;
-        let {formData = {}, success = true, message = ''} = data;
+        let [data = {}] = tableContent;
+        let jsonData = JSON.parse(data.json_data || '{}');
+        this.restoreJsonData && this.restoreJsonData(jsonData);
+        /*let {formData = {}, success = true, message = ''} = data;
         // 请求失败提示
         if (!success) {
           this.showToast(message);
@@ -73,7 +73,7 @@ export default {
               item.value = formData[item.key]
             })
           });
-        }
+        }*/
         this.$nextTick(() => {
           this.pageSwiper.update();
         })

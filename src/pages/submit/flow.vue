@@ -83,6 +83,7 @@
         sessionKey: '', // 存储formData的key
         taskId: '', // 任务id，修改时会有
         jsonData: {},
+        currentUser: {}, // 当前用户信息
       };
     },
     mixins: [common],
@@ -203,18 +204,29 @@
           [this.procCode]: {
             'businessKey': transCode,
             'createdBy': '',
-            '常委ID': this.level_list.committee.userId,
-            '副总裁ID': this.level_list.vicePresident.userId,
+            '常委ID': committee.userId,
+            '副总裁ID': vicePresident.userId,
             // '常委ID': '15125', // rfd120
             // '副总裁ID': '18128', // rfd9527
           }
         };
         // 判断是否为重新提交
         if (this.taskId) {
-          wfPara.taskId = this.taskId;
-          wfPara.result = 1;
-          submitMethod = 'saveAndCommitTask';
-          submitData.biReferenceId = this.formData.biReferenceId;
+          wfPara = {
+            taskId: this.taskId,
+            businessKey: transCode,
+            createdBy: this.currentUser.user,
+            '所属区域': "总部",
+            '常委ID': committee.userId,
+            '副总裁ID': vicePresident.userId,
+            transCode,
+            result: 3,
+            comment: ''
+          }
+          submitMethod = 'saveAndCommitTaskOld';
+          // wfPara.taskId = this.taskId;
+          // wfPara.result = 1;
+          // submitData.biReferenceId = this.formData.biReferenceId;
         }
         Object.assign(submitData, {
           jsonData: JSON.stringify(this.jsonData),
@@ -266,9 +278,9 @@
       getBaseInfo() {
         let handleBaseInfo = (data = {}) => {
           let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
+          this.currentUser = data;
           createService.getCurrentUser(nickname).then(({tableContent = []}) => {
             let [handlerData = {}] = tableContent;
-            console.log(data)
             area = area.split(',')[0];
             areaID = areaID.split(',')[0];
             groupName = groupName.split(',')[0];
@@ -311,6 +323,26 @@
 
         return createService.getBaseInfoData().then(handleBaseInfo);
       },
+      // TODO 还原常委、副总裁
+      restoreLevelList() {
+        let review = {...this.jsonData.$review};
+        this.level_list = {
+          committee: {
+            name: '常委',
+            searchType: 'committee',
+            value: review.cw.text || '',
+            userId: review.cw.value || '',
+            data: review.cw.selection.data || {},
+          },
+          vicePresident: {
+            name: '副总',
+            searchType: 'vicePresident',
+            value: review['warehouse.fzc'].text || '',
+            userId: review['warehouse.fzc'].value || '',
+            data: review['warehouse.fzc'].selection.data || {},
+          }
+        }
+      },
     },
     created() {
       let {query} = this.$route;
@@ -324,6 +356,9 @@
       // 修改时有创建时间，使用原来的创建时间
       this.jsonData.baseinfo.crtTime = jsonData.baseinfo.crtTime ? this.changeDate(jsonData.baseinfo.crtTime, true) : now;
       this.jsonData.baseinfo.modTime = now;
+      if (this.taskId) {
+        this.restoreLevelList();
+      }
       this.getProcess();
       this.showLoading = true;
       this.getBaseInfo().then(data => {

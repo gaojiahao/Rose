@@ -39,6 +39,19 @@ let createService = {
       }, data)
     });
   },
+  // TODO 重新提交(有工作流)
+  saveAndCommitTaskOld(data = {}) {
+    return $axios.ajax({
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded',
+      url: '/H_roleplay-si/ds/saveAndCommitTask',
+      data: Object.assign({
+        conn: 20000,
+        list: 'trans_form_data',
+        transCode: ''
+      }, data)
+    });
+  },
   // TODO 提交数据(有工作流)
   saveAndStartWf(data = {}) {
     return $axios.ajax({

@@ -116,14 +116,6 @@
                 title: '费用所属部门',
                 key: 'costDepartment',
                 value: '',
-              }, {
-                title: '核算归属省份',
-                key: 'checkProvince',
-                value: '',
-              }, {
-                title: '费用所属银行',
-                key: 'costBank',
-                value: '',
               }
             ]
           }
@@ -135,7 +127,48 @@
         let {roomNumber = 0, roomAveragePrice = 0, siteFees = 0, wayFees = 0, repastFees = 0} = this.formData;
         return `￥${numberComma(Number(roomNumber) * Number(roomAveragePrice) + Number(siteFees) + Number(wayFees) + Number(repastFees))}`;
       },
-    }
+    },
+    methods: {
+      // TODO 展示数据
+      restoreJsonData(jsonData) {
+        console.log(jsonData)
+        let {baseinfoExt} = jsonData;
+        let formData = {
+          province: baseinfoExt.varchar1.value, // 省
+          city: baseinfoExt.varchar2.value, // 市
+          hotelName: baseinfoExt.varchar3, // 酒店名称
+          headCount: baseinfoExt.integer1, // 总人数
+          roomNumber: baseinfoExt.integer2, // 房间数量
+          dayCount: baseinfoExt.integer3, // 天数
+          roomAveragePrice: baseinfoExt.double1, // 房间均价
+          siteFees: baseinfoExt.double2, // 会议场地费用
+          wayFees: baseinfoExt.double4, // 路费合计
+          repastFees: baseinfoExt.double5, // 餐饮合计
+          personScope: baseinfoExt.varchar5, // 人员范围
+          agenda: baseinfoExt.varchar4, // 会议议程
+          begin: jsonData['baseinfoExt#sj'].datetime1, // 始于
+          end: jsonData['baseinfoExt#sj'].datetime2, // 止于
+          costBU: jsonData['baseinfoExt#gs'].varchar6.value,// 费用所属事业部
+          costDepartment: jsonData['baseinfoExt#gs'].varchar7.value,// 费用所属部门
+          comment: jsonData.baseinfo.comment, // 备注
+          transCode: jsonData.baseinfo.transCode,
+          transType: jsonData.baseinfo.transType,
+        };
+
+        this.provinceSelected = [formData.province];
+        this.citySelected = [formData.city];
+        this.cascadeValue = {
+          costBU: formData.costBU,
+          costDepartment: formData.costDepartment,
+        };
+        this.formData = formData;
+        this.listData.forEach(lItem => {
+          lItem.items.forEach(item => {
+            item.value = formData[item.key]
+          })
+        });
+      },
+    },
   }
 </script>
 

@@ -105,9 +105,6 @@
           end: '', // 止于
           costBU: '',// 费用所属事业部
           costDepartment: '',// 费用所属部门
-          comment: '',
-          transCode: 'KFSCPCGRK',
-          transType: 'tspcchin',
         },
         provinceList: [],
         provinceSelected: [],
@@ -120,6 +117,7 @@
         transCode: '',
         showPage: true,
         taskId: '',
+        baseinfo: {},
       }
     },
     computed: {
@@ -216,17 +214,23 @@
           return
         }
         let formData = this.formData;
+        // 重新提交
+        if (this.taskId) {
+          jsonData.referenceId = this.formData.referenceId;
+          jsonData.$review = this.formData.review;
+        }
         jsonData.baseinfo = {
           id: this.guid(),
           transType2: '会务立项申请',
           zhuti: '国富黄金',
           effectiveTime: '',
-          transCode: formData.transCode,
+          transCode: 'KFSCPCGRK',
           statusText: '',
-          transType: formData.transType,
+          transType: 'tspcchin',
           status: '',
-          comment: formData.comment,
+          comment: '',
           fj: [],
+          ...this.baseinfo,
         };
         // 日期
         jsonData['baseinfoExt#sj'] = {
@@ -239,15 +243,15 @@
           varchar1: this.assembleDropDownData(formData.province),
           varchar2: this.assembleDropDownData(formData.city),
           varchar3: formData.hotelName,
-          integer1: formData.headCount,
-          integer2: formData.roomNumber,
-          integer3: formData.dayCount,
-          double1: formData.roomAveragePrice,
+          integer1: Number(formData.headCount),
+          integer2: Number(formData.roomNumber),
+          integer3: Number(formData.dayCount),
+          double1: Number(formData.roomAveragePrice),
           double3: this.hotelFees, // 住宿合计
-          double2: formData.siteFees,
-          double4: formData.wayFees,
-          double5: formData.repastFees,
-          double6: this.totalCost.replace(/￥/g, '').replace(/,/g, ''),
+          double2: Number(formData.siteFees),
+          double4: Number(formData.wayFees),
+          double5: Number(formData.repastFees),
+          double6: Number(this.totalCost.replace(/￥/g, '').replace(/,/g, '')),
           varchar4: formData.agenda,
           varchar5: formData.personScope
         };
@@ -259,7 +263,7 @@
           $varchar9: this.assembleDropDownData(),
         };
         jsonData['$comment'] = {
-          'baseinfo.comment': formData.comment
+          'baseinfo.comment': jsonData.baseinfo.comment
         };
         jsonData['baseinfo.fj'] = [];
         jsonData.transCode = jsonData.baseinfo.transCode;
@@ -337,8 +341,9 @@
       // TODO 还原数据
       restoreJsonData(jsonData) {
         console.log(jsonData)
-        let {baseinfoExt} = jsonData;
+        let {baseinfo, baseinfoExt} = jsonData;
         let formData = {
+          referenceId: jsonData.referenceId,
           province: baseinfoExt.varchar1.value, // 省
           city: baseinfoExt.varchar2.value, // 市
           hotelName: baseinfoExt.varchar3, // 酒店名称
@@ -355,10 +360,9 @@
           end: jsonData['baseinfoExt#sj'].datetime2, // 止于
           costBU: jsonData['baseinfoExt#gs'].varchar6.value,// 费用所属事业部
           costDepartment: jsonData['baseinfoExt#gs'].varchar7.value,// 费用所属部门
-          comment: jsonData.baseinfo.comment, // 备注
-          transCode: jsonData.baseinfo.transCode,
-          transType: jsonData.baseinfo.transType,
+          review: jsonData.review,
         };
+        this.baseinfo = baseinfo;
 
         this.provinceSelected = [formData.province];
         this.citySelected = [formData.city];

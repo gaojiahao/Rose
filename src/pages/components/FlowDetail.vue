@@ -133,22 +133,22 @@
           case 'Start':
             this.governor = doing;
             break;
-          case '常委审批':
+          case '常委':
             this.governor = done;
             this.committee = doing;
             break;
-          case '副总裁审批':
+          case '副总裁':
             this.governor = done;
             this.committee = done;
             this.vicePresident = doing;
             break;
-          case '财务审批':
+          case '财务':
             this.governor = done;
             this.committee = done;
             this.vicePresident = done;
             this.finance = doing;
             break;
-          case '总裁审批':
+          case '总裁':
             this.governor = done;
             this.committee = done;
             this.vicePresident = done;
