@@ -51,23 +51,27 @@
     },
     data() {
       return {
-        listid: '',
+        listId: '',
         meetList: [
           {
             title: '酒店名称',
             key: 'hotelName',
             type: 'text',
           }, {
-            title: '房间均价',
-            key: 'roomAveragePrice',
+            title: '总人数',
+            key: 'headCount',
             type: 'number',
           }, {
             title: '房间数量',
             key: 'roomNumber',
             type: 'number',
           }, {
-            title: '总人数',
-            key: 'headCount',
+            title: '天数',
+            key: 'dayCount',
+            type: 'number',
+          }, {
+            title: '房间均价',
+            key: 'roomAveragePrice',
             type: 'number',
           }, {
             title: '场地费用',
@@ -84,40 +88,26 @@
           }
         ],
         formData: {
-          'handlerName': '', // 经办人
-          'handlerAreaName': '', // 所属区域
-          'handlerUnitName': '', // 经办部门
-          'handlerRoleName': '', // 经办角色
-          'creatorName': '', // 创建者
-          'crtTime': '', // 创建时间
-          'modifer': '', // 修改者
-          'modTime': '', // 修改时间
-          'handerId': '', // 经办人id
-          'transType': '会务立项申请', // 交易类型
-          'handlerUnitId': '', // 经办部门id
-          'handlerRoleId': '', // 经办角色id
-          'cjz': '', // 创建者id
-          'xgz': '', // 修改者id
-          'handlerArea': '', // 所属区域id
-          'province': '', // 省
-          'city': '', // 市
-          'hotelName': '', // 酒店名称
-          'headCount': '', // 总人数
-          'roomNumber': '', // 房间数量
-          'roomAveragePrice': '', // 房间均价
-          'siteFees': '', // 会议场地费用
-          'hotelFees': '', // 住宿合计
-          'wayFees': '', // 路费合计
-          'repastFees': '', // 餐饮合计
-          'meetingCostTotal': '', // 费用合计（会务立项）
-          'personScope': '', // 人员范围
-          'agenda': '', // 会议议程
-          'begin': '', // 始于
-          'end': '', // 止于
-          'costBU': '',// 费用所属事业部
-          'costDepartment': '',// 费用所属部门
-          'checkProvince': '',// 核算归属省份
-          'costBank': ''// 费用所属银行
+          province: '', // 省
+          city: '', // 市
+          hotelName: '', // 酒店名称
+          headCount: '', // 总人数
+          roomNumber: '', // 房间数量
+          dayCount: '', // 天数
+          roomAveragePrice: '', // 房间均价
+          siteFees: '', // 会议场地费用
+          hotelFees: '', // 住宿合计
+          wayFees: '', // 路费合计
+          repastFees: '', // 餐饮合计
+          personScope: '', // 人员范围
+          agenda: '', // 会议议程
+          begin: '', // 始于
+          end: '', // 止于
+          costBU: '',// 费用所属事业部
+          costDepartment: '',// 费用所属部门
+          comment: '',
+          transCode: 'KFSCPCGRK',
+          transType: 'tspcchin',
         },
         provinceList: [],
         provinceSelected: [],
@@ -135,13 +125,13 @@
     computed: {
       // 合计金额
       totalCost() {
-        let {roomNumber = 0, roomAveragePrice = 0, siteFees = 0, wayFees = 0, repastFees = 0} = this.formData;
-        return `￥${numberComma(Number(roomNumber) * Number(roomAveragePrice) + Number(siteFees) + Number(wayFees) + Number(repastFees))}`;
+        let {roomNumber = 0, roomAveragePrice = 0, siteFees = 0, wayFees = 0, repastFees = 0, dayCount = 0} = this.formData;
+        return `￥${numberComma(Number(roomNumber) * Number(roomAveragePrice) * Number(dayCount) + Number(siteFees) + Number(wayFees) + Number(repastFees))}`;
       },
       // 住宿合计
       hotelFees() {
-        let {roomNumber = 0, roomAveragePrice = 0} = this.formData;
-        return Number(roomNumber) * roomAveragePrice;
+        let {roomNumber = 0, roomAveragePrice = 0, dayCount = 0} = this.formData;
+        return Number(roomNumber) * roomAveragePrice * Number(dayCount);
       },
     },
     mixins: [common],
@@ -150,7 +140,7 @@
         this.$router.push({
           path: '/myList',
           query: {
-            listId: this.listid
+            listId: this.listId
           }
         })
       },
@@ -172,14 +162,17 @@
             title: '酒店名称',
             key: 'hotelName',
           }, {
-            title: '房间均价',
-            key: 'roomAveragePrice',
+            title: '总人数',
+            key: 'headCount',
           }, {
             title: '房间数量',
             key: 'roomNumber',
           }, {
-            title: '总人数',
-            key: 'headCount',
+            title: '天数',
+            key: 'dayCount',
+          }, {
+            title: '房间均价',
+            key: 'roomAveragePrice',
           }, {
             title: '场地费用',
             key: 'siteFees',
@@ -193,29 +186,23 @@
             title: '人员范围',
             key: 'personScope',
             value: '',
-            isTextArea: true
           }, {
             title: '会议议程',
             key: 'agenda',
             value: '',
-            isTextArea: true
           }, {
             title: '费用所属事业部',
             key: 'costBU',
           }, {
             title: '费用所属部门',
             key: 'costDepartment',
-          }, {
-            title: '核算归属省份',
-            key: 'checkProvince',
-          }, {
-            title: '费用所属银行',
-            key: 'costBank',
           }
         ];
+        let jsonData = {
+          listId: this.listId,
+          referenceId: this.guid(),
+        };
         let warn = '';
-        this.formData.meetingCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
-        this.formData.hotelFees = this.hotelFees;
         Object.assign(this.formData, this.$refs.cascadePickers.getFormData());
         lists.every(item => {
           if (!this.formData[item.key]) {
@@ -228,14 +215,75 @@
           this.showToast(warn);
           return
         }
-        sessionStorage.setItem(this.sessionKey, JSON.stringify(this.formData));
+        let formData = this.formData;
+        jsonData.baseinfo = {
+          id: this.guid(),
+          transType2: '会务立项申请',
+          zhuti: '国富黄金',
+          effectiveTime: '',
+          transCode: formData.transCode,
+          statusText: '',
+          transType: formData.transType,
+          status: '',
+          comment: formData.comment,
+          fj: [],
+        };
+        // 日期
+        jsonData['baseinfoExt#sj'] = {
+          id: this.guid(),
+          datetime1: formData.begin,
+          datetime2: formData.end,
+        };
+        jsonData.baseinfoExt = {
+          id: this.guid(),
+          varchar1: this.assembleDropDownData(formData.province),
+          varchar2: this.assembleDropDownData(formData.city),
+          varchar3: formData.hotelName,
+          integer1: formData.headCount,
+          integer2: formData.roomNumber,
+          integer3: formData.dayCount,
+          double1: formData.roomAveragePrice,
+          double3: this.hotelFees, // 住宿合计
+          double2: formData.siteFees,
+          double4: formData.wayFees,
+          double5: formData.repastFees,
+          double6: this.totalCost.replace(/￥/g, '').replace(/,/g, ''),
+          varchar4: formData.agenda,
+          varchar5: formData.personScope
+        };
+        jsonData['baseinfoExt#gs'] = {
+          id: this.guid(),
+          varchar6: this.assembleDropDownData(formData.costBU),
+          varchar7: this.assembleDropDownData(formData.costDepartment),
+          $varchar8: this.assembleDropDownData(),
+          $varchar9: this.assembleDropDownData(),
+        };
+        jsonData['$comment'] = {
+          'baseinfo.comment': formData.comment
+        };
+        jsonData['baseinfo.fj'] = [];
+        jsonData.transCode = jsonData.baseinfo.transCode;
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(jsonData));
         this.$router.push({
           path: '/flow',
           query: {
-            list: this.listid,
+            list: this.listId,
             taskId: this.taskId,
           }
         })
+      },
+      // TODO 组装下拉框的提交数据
+      assembleDropDownData(value = '') {
+        return {
+          text: value,
+          selection: {
+            data: {
+              unitName: value,
+              id: ''
+            }
+          },
+          value,
+        }
       },
       // TODO 请求省份列表
       getProvinceList() {
@@ -286,36 +334,48 @@
       cityChange(val) {
         this.formData.city = val[0] || '';
       },
+      // TODO 还原数据
+      restoreJsonData(jsonData) {
+        console.log(jsonData)
+        let {baseinfoExt} = jsonData;
+        let formData = {
+          province: baseinfoExt.varchar1.value, // 省
+          city: baseinfoExt.varchar2.value, // 市
+          hotelName: baseinfoExt.varchar3, // 酒店名称
+          headCount: baseinfoExt.integer1, // 总人数
+          roomNumber: baseinfoExt.integer2, // 房间数量
+          dayCount: baseinfoExt.integer3, // 天数
+          roomAveragePrice: baseinfoExt.double1, // 房间均价
+          siteFees: baseinfoExt.double2, // 会议场地费用
+          wayFees: baseinfoExt.double4, // 路费合计
+          repastFees: baseinfoExt.double5, // 餐饮合计
+          personScope: baseinfoExt.varchar5, // 人员范围
+          agenda: baseinfoExt.varchar4, // 会议议程
+          begin: jsonData['baseinfoExt#sj'].datetime1, // 始于
+          end: jsonData['baseinfoExt#sj'].datetime2, // 止于
+          costBU: jsonData['baseinfoExt#gs'].varchar6.value,// 费用所属事业部
+          costDepartment: jsonData['baseinfoExt#gs'].varchar7.value,// 费用所属部门
+          comment: jsonData.baseinfo.comment, // 备注
+          transCode: jsonData.baseinfo.transCode,
+          transType: jsonData.baseinfo.transType,
+        };
+
+        this.provinceSelected = [formData.province];
+        this.citySelected = [formData.city];
+        this.cascadeValue = {
+          costBU: formData.costBU,
+          costDepartment: formData.costDepartment,
+        };
+        this.formData = formData;
+      },
       // TODO 获取表单详情
-      getFormData() {
-        return createService.getFormData({
-          formKey: this.formKey,
-          transCode: this.transCode,
-        }).then(data => {
+      getJsonData() {
+        return createService.getJsonData(this.transCode).then(({tableContent = []}) => {
+          let [data = {}] = tableContent;
+          let jsonData = JSON.parse(data.json_data || '{}');
           this.hasDefault = true;
           this.showPage = true;
-          let {formData = {}, success = true, message = ''} = data;
-          // 请求失败提示
-          if (!success) {
-            this.showToast(message);
-            return;
-          }
-
-          formData.begin = this.changeDate(formData.begin);
-          formData.end = this.changeDate(formData.end);
-          // formData.crtTime = this.changeDate(formData.crtTime, true);
-          // formData.modTime = this.changeDate(formData.modTime, true);
-
-          this.provinceSelected = [formData.province];
-          this.citySelected = [formData.city];
-          this.cascadeValue = {
-            costBU: formData.costBU,
-            costDepartment: formData.costDepartment,
-            checkProvince: formData.checkProvince,
-            costBank: formData.costBank
-          };
-
-          this.formData = formData;
+          this.restoreJsonData(jsonData);
           this.$nextTick(() => {
             // 在渲染一次以后将该值设置为false
             this.hasDefault = false;
@@ -336,24 +396,23 @@
     created() {
       let {query} = this.$route;
       let requestPromises = [];
-      this.listid = query.list;
+      this.listId = query.list;
       this.formKey = query.formKey;
       this.transCode = query.transCode;
       this.taskId = query.taskId;
-      this.sessionKey = `${this.listid}-FORMDATA`;
+      this.sessionKey = `${this.listId}-FORMDATA`;
       this.showLoading = true;
       let formData = sessionStorage.getItem(this.sessionKey);
       if (formData) {
         formData = JSON.parse(formData);
         // 先将时间赋值，在mounted中赋值会失败
-        this.formData.begin = formData.begin;
-        this.formData.end = formData.end;
+        this.restoreJsonData(formData);
       }
 
       // 从接口中获取数据
-      if (!formData && this.formKey) {
+      if (!formData && this.transCode) {
         this.showPage = false;
-        requestPromises.push(this.getFormData());
+        requestPromises.push(this.getJsonData());
       }
 
       this.$nextTick(() => {
@@ -369,16 +428,8 @@
       if (formData) {
         this.hasDefault = true;
         formData = JSON.parse(formData);
-        this.formData = Object.assign({}, this.formData, formData);
-        this.provinceSelected = [formData.province];
-        this.citySelected = [formData.city];
-        this.cascadeValue = {
-          costBU: formData.costBU,
-          costDepartment: formData.costDepartment,
-          checkProvince: formData.checkProvince,
-          costBank: formData.costBank
-        };
-        sessionStorage.removeItem(this.sessionKey);
+        this.restoreJsonData(formData);
+        // sessionStorage.removeItem(this.sessionKey);
         this.$nextTick(() => {
           // 在渲染一次以后将该值设置为false
           this.hasDefault = false;

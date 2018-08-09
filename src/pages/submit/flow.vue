@@ -64,12 +64,14 @@
             searchType: 'committee',
             value: '',
             userId: '',
+            data: {},
           },
           vicePresident: {
             name: '副总',
             searchType: 'vicePresident',
             value: '',
             userId: '',
+            data: {},
           }
         },
         searchList: [], // 搜索结果列表
@@ -80,6 +82,7 @@
         searchListTop: 0, // 匹配列表距离顶部的距离
         sessionKey: '', // 存储formData的key
         taskId: '', // 任务id，修改时会有
+        jsonData: {},
       };
     },
     mixins: [common],
@@ -127,6 +130,7 @@
         if (matchObj.userId) {
           item.userId = matchObj.userId;
           item.value = matchObj.name;
+          item.data = {...matchObj};
           this.hasSelected = true;
         }
       },
@@ -153,8 +157,10 @@
           let {tableContent = []} = data;
           this.searchList = tableContent && tableContent.map(item => {
             return {
+              id: '',
               userId: item.userId,
               name: item.nickname,
+              ...item,
             }
           })
         })
@@ -165,13 +171,17 @@
         let {name, userId} = item;
         this.level_list[this.searchType].value = name;
         this.level_list[this.searchType].userId = userId;
+        this.level_list[this.searchType].data = {...item};
       },
       // TODO 提交数据
       submitData() {
+        let transCode = this.jsonData.baseinfo.transCode;
         let warn = '';
-        let submitData = {};
+        let submitData = {
+          transCode,
+        };
         let wfPara = {};
-        let submitMethod = 'saveAndStartWf';
+        let submitMethod = 'saveAndStartWfOld';
         // 校验数据
         Object.values(this.level_list).every(item => {
           if (!item.userId) {
@@ -184,9 +194,14 @@
           this.showToast(warn);
           return
         }
+        let {committee, vicePresident} = this.level_list;
+        this.jsonData['$review'] = {
+          cw: this.assembleOpData(committee),
+          'warehouse.fzc': this.assembleOpData(vicePresident)
+        };
         wfPara = {
-          'PROC_1806_0005': {
-            'businessKey': 'KFSCPCGRK',
+          [this.procCode]: {
+            'businessKey': transCode,
             'createdBy': '',
             '常委ID': this.level_list.committee.userId,
             '副总裁ID': this.level_list.vicePresident.userId,
@@ -202,21 +217,20 @@
           submitData.biReferenceId = this.formData.biReferenceId;
         }
         Object.assign(submitData, {
-          listId: this.listid,
-          biComment: '',
-          formData: JSON.stringify(this.formData),
+          jsonData: JSON.stringify(this.jsonData),
           wfPara: JSON.stringify(wfPara),
         });
-        this.showLoading = true;
+        console.log(submitData)
+        // this.showLoading = true;
         createService[submitMethod](submitData).then(data => {
           this.showLoading = false;
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
             this.showToast('提交成功');
-            sessionStorage.removeItem(this.sessionKey);
+            /*sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
               this.$router.go(-2);
-            }, 1200)
+            }, 1200)*/
           } else {
             this.showToast('提交失败');
           }
@@ -224,35 +238,76 @@
           this.showToast(e.message);
         })
       },
+      // TODO 组装下拉框数据
+      assembleData(id, value = '') {
+        return {
+          text: value,
+          selection: {
+            data: {
+              id: '',
+              userGroupId: Number(id),
+              userGroupName: value,
+            }
+          },
+          value
+        }
+      },
+      // TODO 组装审批者数据
+      assembleOpData(op) {
+        return {
+          text: op.name,
+          value: op.userId,
+          selection: {
+            data: op.data
+          }
+        }
+      },
       // TODO 初始化基本信息
       getBaseInfo() {
         let handleBaseInfo = (data = {}) => {
-          let {nickname, userId, area, areaID, groupName, groupNameID, position, roleID} = data;
-          area = area.split(',')[0];
-          areaID = areaID.split(',')[0];
-          groupName = groupName.split(',')[0];
-          groupNameID = groupNameID.split(',')[0];
-          position = position.split(',')[0];
-          roleID = roleID.split(',')[0];
-          this.formData.handlerName = nickname;
-          this.formData.creatorName = nickname;
-          this.formData.modifer = nickname;
-          this.formData.handerId = userId;
-          this.formData.cjz = userId;
-          this.formData.handlerAreaName = area;
-          this.formData.handlerArea = areaID;
-          this.formData.handlerUnitName = groupName;
-          this.formData.handlerUnitId = groupNameID;
-          this.formData.handlerRoleName = position;
-          this.formData.handlerRoleId = roleID;
+          let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
+          createService.getCurrentUser(nickname).then(({tableContent = []}) => {
+            let [handlerData = {}] = tableContent;
+            console.log(data)
+            area = area.split(',')[0];
+            areaID = areaID.split(',')[0];
+            groupName = groupName.split(',')[0];
+            groupNameID = groupNameID.split(',')[0];
+            position = position.split(',')[0];
+            roleID = roleID.split(',')[0];
+
+            this.jsonData.baseinfo = {
+              ...this.jsonData.baseinfo,
+              creatorName: nickname,
+              creator: '',
+              modifer: '',
+              handler: userId,
+              handlerArea: areaID,
+              handlerUnit: groupNameID,
+              handlerRole: roleID,
+              handlerName: {
+                text: nickname,
+                value: nickname,
+                selection: {
+                  data: {
+                    id: '',
+                    ...handlerData
+                  }
+                }
+              },
+              handlerAreaName: this.assembleData(areaID, area),
+              handlerUnitName: this.assembleData(groupNameID, groupName),
+              handlerRoleName: this.assembleData(roleID, position),
+            };
+          });
         };
 
-        let currentUser = sessionStorage.getItem(USER_INFO);
+        /*let currentUser = sessionStorage.getItem(USER_INFO);
         if (currentUser) {
           currentUser = JSON.parse(currentUser);
           handleBaseInfo(currentUser);
           return Promise.resolve();
-        }
+        }*/
 
         return createService.getBaseInfoData().then(handleBaseInfo);
       },
@@ -263,12 +318,13 @@
       this.taskId = query.taskId;
       this.sessionKey = `${this.listid}-FORMDATA`;
       let now = this.changeDate(new Date(), true);
-      let formData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
-      this.formData = Object.assign({}, formData);
+      let jsonData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
+      this.jsonData = jsonData;
+      this.formData = Object.assign({}, jsonData);
       // 修改时有创建时间，使用原来的创建时间
-      this.formData.crtTime = formData.crtTime ? this.changeDate(formData.crtTime, true) : now;
-      this.formData.modTime = now;
-      // this.getProcess();
+      this.jsonData.baseinfo.crtTime = jsonData.baseinfo.crtTime ? this.changeDate(jsonData.baseinfo.crtTime, true) : now;
+      this.jsonData.baseinfo.modTime = now;
+      this.getProcess();
       this.showLoading = true;
       this.getBaseInfo().then(data => {
         this.showLoading = false;

@@ -111,7 +111,7 @@ let createService = {
     return $axios.ajax({
       url: '/H_roleplay-si/ds/getChangWei',
       data: Object.assign({
-        name: '省长',
+        name: '常委',
         page: 1,
         start: 0,
         limit: 20,
@@ -153,13 +153,23 @@ let createService = {
     });
   },
   // TODO 查找工作流
-  getWorkFlow(data = {}){
+  getWorkFlow(data = {}) {
     return $axios.ajax({
       // url: '/H_roleplay-si/ds/list/getHistoryTaskByTransCode',
-      url: '/H_roleplay-si/ds/list/getAppHistoryTaskByTransCode\n',
+      url: '/H_roleplay-si/ds/list/getAppHistoryTaskByTransCode',
       data: data
     });
-  }
+  },
+  // TODO 查询提交的数据
+  getJsonData(referenceId = '') {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getJsonDataByReferenceId',
+      data: {
+        _dc: Date.now(),
+        referenceId,
+      }
+    });
+  },
 };
 
 export default createService

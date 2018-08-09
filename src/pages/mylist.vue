@@ -150,7 +150,7 @@ export default {
         .then(res => {
           createService.getCurrentUser(res.nickname).then(e => {
             let user = e.tableContent[0];
-
+            this.currentUser = user
             //用户姓名
             this.userName = user.nickname;
             //用户级别
@@ -490,7 +490,7 @@ export default {
       this.scrollOn();
       this.loadData();
     }
-    
+
   },
   mounted() {}
 };

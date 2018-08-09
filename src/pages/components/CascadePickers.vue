@@ -4,10 +4,10 @@
                   @on-change="buDeptChange" v-model="buSelected"></popup-picker>
     <popup-picker title="费用所属部门" :data="deptList" :value="deptSelected" :columns="1"
                   @on-change="deptChange" v-model="deptSelected"></popup-picker>
-    <popup-picker title="核算归属省份" :data="provList" :value="provSelected" :columns="1"
+    <!--<popup-picker title="核算归属省份" :data="provList" :value="provSelected" :columns="1"
                   @on-change="provChange" v-model="provSelected"></popup-picker>
     <popup-picker title="费用所属银行" :data="bankList" :value="bankSelected" :columns="1"
-                  @on-change="bankChange" v-model="bankSelected"></popup-picker>
+                  @on-change="bankChange" v-model="bankSelected"></popup-picker>-->
   </group>
 </template>
 
@@ -44,8 +44,8 @@
         formData: {
           costBU: '',// 费用所属事业部
           costDepartment: '',// 费用所属部门
-          checkProvince: '',// 核算归属省份
-          costBank: ''// 费用所属银行
+          // checkProvince: '',// 核算归属省份
+          // costBank: ''// 费用所属银行
         },
       }
     },
@@ -54,8 +54,8 @@
         handler(val) {
           this.buSelected = [val.costBU];
           this.deptSelected = [val.costDepartment];
-          this.provSelected = [val.checkProvince];
-          this.bankSelected = [val.costBank];
+          // this.provSelected = [val.checkProvince];
+          // this.bankSelected = [val.costBank];
           this.formData = Object.assign({}, val)
         },
       }

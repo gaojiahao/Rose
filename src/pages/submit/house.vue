@@ -62,7 +62,7 @@
           }, {
             title: '房屋面积',
             key: 'area',
-            type: 'text',
+            type: 'number',
           }, {
             title: '月租',
             key: 'rental',
