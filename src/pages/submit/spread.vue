@@ -24,7 +24,7 @@
             title="市场宣传"
             :data="item.conduct"
             v-model="item.s_conduct"
-            @on-change="changeConduct(index,$event)"
+            @on-hide="changeConduct(index,item.s_conduct)"
           ></popup-picker>
         </group>
         <group title="请填写明细" v-if="item.status">
@@ -32,7 +32,6 @@
             title="宣品类型"
             :data="item.type"
             v-model="item.s_type"
-            @on-change="changeType(index,$event)"
           ></popup-picker>
           <x-input
             title='单价'
@@ -60,7 +59,6 @@
                 :data="item.deptlist"
                 v-model="item.deptOn"
                 :disabled="item.buOn.length==0?true:false"
-                @on-hide="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111,2,index,$event)"
             ></popup-picker>
             <!-- <popup-picker
                 title="核算归属省份"
@@ -108,6 +106,93 @@ export default {
     return {
       baseInfo: "",
       formData: "",
+      formDataNew:{
+          "listId": "cefa61bb-8a2c-48f5-819b-011e0cf4fb6c",
+          "referenceId": "32516627-4ef5-4c41-bdba-47853666eecb",
+          "baseinfo": {
+            "transType2": "市场宣传费用预申请",
+            "zhuti": "国富黄金",
+            "effectiveTime": "",
+            "transCode": "KFSCPCGRK",
+            "statusText": "",
+            "creatorName": "赖胜",
+            "crtTime": "2018-08-01 00:00:00",
+            "modifer": "",
+            "modTime": "2018-08-01 00:00:00",
+            "handler": "18184",
+            "transType": "tspcchin",
+            "handlerUnit": "990320",
+            "handlerRole": "990321",
+            "id": "d066c4ab-7706-4d7d-8dec-490c2773e41f",
+            "creator": "",
+            "handlerArea": "8",
+            "status": "",
+            "comment": "2",
+            "fj": [
+              
+            ]
+          },
+          "transDetailUncalc": [
+            {
+              "id": "e74445f5-a3e5-4fc7-b41c-5f94be0566b3",
+              "var1": "3598",
+              "var2": {
+                "text": "宣品",
+                "selection": {
+                  "data": {
+                    "marketInformation": "宣品",
+                    "id": "extModel190-2"
+                  }
+                },
+                "value": "宣品"
+              },
+              "var3": {
+                "text": "其他资料",
+                "selection": {
+                  "data": {
+                    "marketInformation": "其他资料",
+                    "id": "extModel200-2"
+                  }
+                },
+                "value": "其他资料"
+              },
+              "fgCode": "fgwmiw",
+              "transType": "tsgdpsod",
+              "entityId": "20000",
+              "num1": 0,
+              "num2": 10,
+              "num3": 0,
+              "var4": {
+                "text": "中行华东银行事业部",
+                "selection": {
+                  "data": {
+                    "unitName": "中行华东银行事业部",
+                    "id": "extModel213-2"
+                  }
+                },
+                "value": "中行华东银行事业部"
+              },
+              "var5": {
+                "text": "中行华东一区",
+                "selection": {
+                  "data": {
+                    "unitName": "中行华东一区",
+                    "id": "extModel226-2"
+                  }
+                },
+                "value": "中行华东一区"
+              },
+              "comment": "2"
+            }
+          ],
+          "$comment": {
+            "baseinfo.comment": "2"
+          },
+          "baseinfo.fj": [
+            
+          ],
+          "transCode": "KFSCPCGRK"
+        },
       xp_list: [
         {
           name: "", //项目名称
@@ -133,10 +218,36 @@ export default {
     };
   },
   methods: {
+    //获取当前时间
+    getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " + date.getHours() + seperator2 + date.getMinutes()
+                + seperator2 + date.getSeconds();
+        return currentdate;
+    },
+    // TODO 生成随机串
+    guid() {
+      let S4 = () => {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      };
+
+      return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
+    },
     //获取所属事业部 | 部门 | 省份 | 银行
     getSelect(data, N, name1, name2, name3, num, index, e) {
       if (e === true) {
-        if(num === "1"){
+        if(num == 1){
           this.xp_list[index].deptOn = [];
         }
         // if (num == "1") {
@@ -174,7 +285,6 @@ export default {
     },
     //选择市场宣传类型
     changeConduct(index,val){
-      console.log(val);
       this.xp_list[index].status = true;
       spreadService.getMarketInfo(2,val[0]).then(data=>{
         let arr = [];
@@ -184,31 +294,19 @@ export default {
 
           }
         })
+        this.xp_list[index].s_type.length = 0;
+        this.xp_list[index].type.length = 0;
         this.xp_list[index].type.push(arr);
       })
 
-    },
-    changeType(idx) {
-      // this.xp_list[idx].status = true;
     },
     plusType() {
       //添加新的选择
       this.xp_list.push({
         name: "", //项目名称
-        conduct: "", //市场宣传
-        type: [
-          [
-            "单页",
-            "三折页",
-            "X展架",
-            "易拉宝",
-            "三角牌",
-            "海报",
-            "吊旗",
-            "地贴",
-            "道具"
-          ]
-        ], //宣品类型
+        conduct:this.xp_list[0].conduct, //市场宣传
+        s_conduct:[],
+        type: [], //宣品类型
         s_type: [], //选择类型
         unitprice: "", //单价
         num: "", //数量
@@ -216,10 +314,10 @@ export default {
         buOn: [], //费用所属事业部选中
         deptlist: [], //费用所属部门
         deptOn: [], //费用所属部门选中
-        provlist: [], //核算归属省份
-        provOn: [], //核算归属省份选中
-        banklist: [], //费用所属银行
-        bankOn: [], //费用所属银行选中
+        // provlist: [], //核算归属省份
+        // provOn: [], //核算归属省份选中
+        // banklist: [], //费用所属银行
+        // bankOn: [], //费用所属银行选中
         explain: "", //说明
         status: false
       });
@@ -239,40 +337,71 @@ export default {
       this.xp_list.pop();
     },
     goflow() {
-      let jsonData = {
-        handlerName: this.baseInfo.nickname, //经办人
-        handlerAreaName: this.baseInfo.area, //所属区域
-        handlerUnitName: this.baseInfo.groupName, //经办部门
-        handlerRoleName: this.baseInfo.position, //经办角色
-        creatorName: this.baseInfo.nickname, //创建者
-        crtTime: Date.parse(new Date()), //创建时间
-        modifer: "", //修改者
-        modTime: "", //修改时间
-        handerId: this.baseInfo.userId, //经办人id
-        transType: "市场宣传", //交易类型
-        handlerUnitId: this.baseInfo.groupNameID, //经办部门id
-        handlerRoleId: this.baseInfo.roleID, //经办角色id
-        cjz: this.baseInfo.userId, //创建者id
-        xgz: "", //修改者id
-        handlerArea: this.baseInfo.areaID, //所属区域id
-        order: {
-          dataSet: []
-        }
-      };
-      if (this.formData != "") {
-        jsonData.biId = this.formData.biId;
-        jsonData.biReferenceId = this.formData.biReferenceId;
-        jsonData.transType = this.formData.transType;
-        jsonData.modTime = this.formData.modTime;
-        jsonData.modifer = this.formData.modifer;
-        jsonData.xgz = this.formData.xgz;
-      }
+      // let jsonData = {
+      //   handlerName: this.baseInfo.nickname, //经办人
+      //   handlerAreaName: this.baseInfo.area, //所属区域
+      //   handlerUnitName: this.baseInfo.groupName, //经办部门
+      //   handlerRoleName: this.baseInfo.position, //经办角色
+      //   creatorName: this.baseInfo.nickname, //创建者
+      //   crtTime: Date.parse(new Date()), //创建时间
+      //   modifer: "", //修改者
+      //   modTime: "", //修改时间
+      //   handerId: this.baseInfo.userId, //经办人id
+      //   transType: "市场宣传", //交易类型
+      //   handlerUnitId: this.baseInfo.groupNameID, //经办部门id
+      //   handlerRoleId: this.baseInfo.roleID, //经办角色id
+      //   cjz: this.baseInfo.userId, //创建者id
+      //   xgz: "", //修改者id
+      //   handlerArea: this.baseInfo.areaID, //所属区域id
+      //   order: {
+      //     dataSet: []
+      //   }
+      // };
+      let formDataNew = {
+          "listId": "cefa61bb-8a2c-48f5-819b-011e0cf4fb6c",
+          "referenceId": this.guid(),
+          "baseinfo": {
+            "transType2": "市场宣传费用预申请",
+            "zhuti": "国富黄金",
+            "effectiveTime": "",
+            "transCode": "KFSCPCGRK",
+            "statusText": "",
+            "creatorName": this.baseInfo.nickname,
+            "crtTime": this.getNowFormatDate(),
+            "modifer": "",
+            "modTime": this.getNowFormatDate(),
+            "handler": this.baseInfo.userId,
+            "transType": "tspcchin",
+            "handlerUnit":this.baseInfo.groupNameID,
+            "handlerRole": this.baseInfo.roleID,
+            "id":this.guid(),
+            "creator": "",
+            "handlerArea":this.baseInfo.areaID,
+            "status": "",
+            "comment": "", //备注
+            "fj": []
+          },
+          "transDetailUncalc": [],
+          "$comment": {
+            "baseinfo.comment": "" //备注
+          },
+          "baseinfo.fj": [],
+          "transCode": "KFSCPCGRK"
+        };
+      // if (this.formData != "") {
+      //   jsonData.biId = this.formData.biId;
+      //   jsonData.biReferenceId = this.formData.biReferenceId;
+      //   jsonData.transType = this.formData.transType;
+      //   jsonData.modTime = this.formData.modTime;
+      //   jsonData.modifer = this.formData.modifer;
+      //   jsonData.xgz = this.formData.xgz;
+      // }
       for (let i = 0; i < this.xp_list.length; i++) {
         let item = this.xp_list[i];
         if (item.name == "") {
           this.layer("请填写项目名称", "cancel");
           return;
-        } else if (item.conduct == "") {
+        } else if (item.s_conduct.length == 0) {
           this.layer("请填写市场宣传", "cancel");
           return;
         } else if (item.s_type.length == 0) {
@@ -290,40 +419,86 @@ export default {
         } else if (item.deptOn.length == 0) {
           this.layer("请选择部门", "cancel");
           return;
-        } else if (item.provOn.length == 0) {
-          this.layer("请选择省份", "cancel");
-          return;
-        } else if (item.bankOn.length == 0) {
-          this.layer("请选择银行", "cancel");
-          return;
-        }
-        jsonData.order.dataSet.push({
-          projectName: item.name, //项目名称
-          productMarketing: item.conduct, //市场宣传
-          publicityType: item.s_type[0], //宣品类型
-          agoraNumber: item.num, //数量
-          agoraPrice: item.unitprice, //单价
-          total: Number(item.num) * Number(item.unitprice), //总计
-          agoraCostBU: item.buOn[0], //费用所属事业部
-          agoraCostDepartment: item.deptOn[0], //费用所属部门
-          agoraCheckProvince: item.provOn[0], //核算归属省份
-          agoraCostBank: item.bankOn[0], //费用所属银行
-          comment: item.explain, //说明
-          fgCode: "fgwmiw" //组合字段组编码，固定值为fgwmiw
-        });
-        if (this.formData != "") {
-          if (this.formData.order.dataSet[i]) {
-            jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[
-              i
-            ].uncalcID;
-          } else {
-            jsonData.order.dataSet[i].uncalcID = "";
-          }
-        }
+        } 
+        // jsonData.order.dataSet.push({
+        //   projectName: item.name, //项目名称
+        //   productMarketing: item.conduct, //市场宣传
+        //   publicityType: item.s_type[0], //宣品类型
+        //   agoraNumber: item.num, //数量
+        //   agoraPrice: item.unitprice, //单价
+        //   total: Number(item.num) * Number(item.unitprice), //总计
+        //   agoraCostBU: item.buOn[0], //费用所属事业部
+        //   agoraCostDepartment: item.deptOn[0], //费用所属部门
+        //   // agoraCheckProvince: item.provOn[0], //核算归属省份
+        //   // agoraCostBank: item.bankOn[0], //费用所属银行
+        //   comment: item.explain, //说明
+        //   fgCode: "fgwmiw" //组合字段组编码，固定值为fgwmiw
+        // });
+        formDataNew.transDetailUncalc.push({
+          "id": this.guid(),
+          "var1": item.name,
+          "var2": {
+            "text": item.s_conduct[0],
+            "selection": {
+              "data": {
+                "marketInformation": item.s_conduct[0],
+                "id": "extModel190-2"
+              }
+            },
+            "value": item.s_conduct[0]
+          },
+          "var3": {
+            "text":item.s_type[0],
+            "selection": {
+              "data": {
+                "marketInformation":item.s_type[0],
+                "id": "extModel200-2"
+              }
+            },
+            "value":item.s_type[0]
+          },
+          "fgCode": "fgwmiw",
+          "transType": "tsgdpsod",
+          "entityId": "20000",
+          "num1": item.num,
+          "num2": item.unitprice,
+          "num3": Number(item.num) * Number(item.unitprice),
+          "var4": {
+            "text":item.buOn[0],
+            "selection": {
+              "data": {
+                "unitName":item.buOn[0],
+                "id": "extModel213-2"
+              }
+            },
+            "value":item.buOn[0]
+          },
+          "var5": {
+            "text": item.deptOn[0],
+            "selection": {
+              "data": {
+                "unitName": item.deptOn[0],
+                "id": "extModel226-2"
+              }
+            },
+            "value": item.deptOn[0]
+          },
+          "comment": item.explain
+        })
+        // if (this.formData != "") {
+        //   if (this.formData.order.dataSet[i]) {
+        //     jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[
+        //       i
+        //     ].uncalcID;
+        //   } else {
+        //     jsonData.order.dataSet[i].uncalcID = "";
+        //   }
+        // }
       }
       sessionStorage.setItem(
         this.$route.query.list + "-FORMDATA",
-        JSON.stringify(jsonData)
+        //JSON.stringify(jsonData)
+        JSON.stringify(formDataNew)
       );
       let queryData = {};
       if (this.$route.query.taskId) {
@@ -334,6 +509,7 @@ export default {
       } else {
         queryData = { list: this.$route.query.list };
       }
+      console.log(formDataNew)
       this.$router.push({ path: "/flow", query: queryData });
     },
     layer(info, type) {
@@ -348,34 +524,23 @@ export default {
       let sessionArr = [];
       for (let i = 0; i < dataSet.length; i++) {
         sessionArr.push({
-          name: dataSet[i].projectName, //项目名称
-          conduct: dataSet[i].productMarketing, //市场宣传
-          type: [
-            [
-              "单页",
-              "三折页",
-              "X展架",
-              "易拉宝",
-              "三角牌",
-              "海报",
-              "吊旗",
-              "地贴",
-              "道具"
-            ]
-          ], //宣品类型
-          s_type: [dataSet[i].publicityType], //选择类型
-          unitprice: dataSet[i].agoraPrice, //单价
-          num: dataSet[i].agoraNumber, //数量
+          name: dataSet[i].var1, //项目名称
+          conduct: [], //市场宣传
+          s_conduct: [dataSet[i].var2.value], //市场宣传
+          type: [], //宣品类型
+          s_type: [dataSet[i].var3.value], //选择类型
+          unitprice: dataSet[i].num1, //单价
+          num: dataSet[i].num2, //数量
           bulist: [], //费用所属事业部
-          buOn: [dataSet[i].agoraCostBU], //费用所属事业部选中
+          buOn: [dataSet[i].var4.value], //费用所属事业部选中
           deptlist: [], //费用所属部门
-          deptOn: [dataSet[i].agoraCostDepartment], //费用所属部门选中
-          provlist: [], //核算归属省份
-          provOn: [dataSet[i].agoraCheckProvince], //核算归属省份选中
-          banklist: [], //费用所属银行
-          bankOn: [dataSet[i].agoraCostBank], //费用所属银行选中
+          deptOn: [dataSet[i].var5.value], //费用所属部门选中
+          // provlist: [], //核算归属省份
+          // provOn: [dataSet[i].agoraCheckProvince], //核算归属省份选中
+          // banklist: [], //费用所属银行
+          // bankOn: [dataSet[i].agoraCostBank], //费用所属银行选中
           explain: dataSet[i].comment, //说明
-          status: true
+          status:true
         });
       }
       this.xp_list = sessionArr;
@@ -396,30 +561,30 @@ export default {
             true
           );
         }
-        if (xp_item.provOn.length != 0) {
-          this.getSelect(
-            xp_item.provlist,
-            "N3",
-            xp_item.buOn[0],
-            xp_item.deptOn[0],
-            111,
-            0,
-            j,
-            true
-          );
-        }
-        if (xp_item.bankOn.length != 0) {
-          this.getSelect(
-            xp_item.banklist,
-            "N4",
-            xp_item.buOn[0],
-            xp_item.deptOn[0],
-            xp_item.provOn[0],
-            0,
-            j,
-            true
-          );
-        }
+        // if (xp_item.provOn.length != 0) {
+        //   this.getSelect(
+        //     xp_item.provlist,
+        //     "N3",
+        //     xp_item.buOn[0],
+        //     xp_item.deptOn[0],
+        //     111,
+        //     0,
+        //     j,
+        //     true
+        //   );
+        // }
+        // if (xp_item.bankOn.length != 0) {
+        //   this.getSelect(
+        //     xp_item.banklist,
+        //     "N4",
+        //     xp_item.buOn[0],
+        //     xp_item.deptOn[0],
+        //     xp_item.provOn[0],
+        //     0,
+        //     j,
+        //     true
+        //   );
+        // }
       }
     }
   },
@@ -432,9 +597,7 @@ export default {
         }
         
       })
-      console.log(this.xp_list);
       this.xp_list[0].conduct.push(arr);
-      console.log(this.xp_list[0].conduct);
     })
     
   },
@@ -449,24 +612,25 @@ export default {
         console.log(c);
       });
     //回显
-    if (this.$route.query.formKey && this.$route.query.transCode) {
-      createService
-        .getFormData({
-          formKey: this.$route.query.formKey,
-          transCode: this.$route.query.transCode
-        })
-        .then(res => {
-          this.formData = res.formData;
-          this.cacheData(res.formData.order.dataSet);
-          this.listDefault();
-        })
-        .catch(c => {
-          console.log(c);
-        });
-    } else if (sessionStorage.getItem(this.$route.query.list + "-FORMDATA")) {
+    // if (this.$route.query.formKey && this.$route.query.transCode) {
+    //   createService
+    //     .getFormData({
+    //       formKey: this.$route.query.formKey,
+    //       transCode: this.$route.query.transCode
+    //     })
+    //     .then(res => {
+    //       this.formData = res.formData;
+    //       this.cacheData(res.formData.transDetailUncalc);
+    //       this.listDefault();
+    //     })
+    //     .catch(c => {
+    //       console.log(c);
+    //     });
+    // } else 
+    if (sessionStorage.getItem(this.$route.query.list + "-FORMDATA")) {
       let dataSet = JSON.parse(
         sessionStorage.getItem(this.$route.query.list + "-FORMDATA")
-      ).order.dataSet;
+      ).transDetailUncalc;
       this.cacheData(dataSet);
       this.listDefault();
     } else {
