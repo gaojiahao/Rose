@@ -244,8 +244,8 @@ export default {
         return;
       }
       let that = this;
-
-      if (this.areaValue.length == 0 || this.areaValue.includes('空')) {
+      console.log(this.areaValue.indexOf('空'));
+      if (this.areaValue.length == 0 || this.areaValue.indexOf('空') === 0) {
         this.$vux.alert.show({
           title: "提示",
           content: "请选支援地区"
@@ -521,17 +521,17 @@ export default {
   },
   mounted() {
     //提交时间是否超过20点
-    saleRepotService.getModelData().then(res => {
-      if (res.submitAllow === 1) {
-        this.btnStatus = true;
-      } else if (res.submitAllow === 0) {
-        this.btnStatus = false;
-        this.$vux.alert.show({
-          title: "提示",
-          content: "每日提交截止时间为20:00"
-        });
-      }
-    });
+    // saleRepotService.getModelData().then(res => {
+    //   if (res.submitAllow === 1) {
+    //     this.btnStatus = true;
+    //   } else if (res.submitAllow === 0) {
+    //     this.btnStatus = false;
+    //     this.$vux.alert.show({
+    //       title: "提示",
+    //       content: "每日提交截止时间为20:00"
+    //     });
+    //   }
+    // });
     this.getArea();
     this.getBank();
     if (localStorage.getItem("help_saleReport")) {
