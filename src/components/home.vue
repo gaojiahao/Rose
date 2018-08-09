@@ -133,6 +133,7 @@
             dept: data.area || '',             //事业部
             groupName: data.groupName || '',    //部门
             captain: data.bmName || '',        //队长（暂无）
+            userCode:data.userCode || '',      //工号
           }))
         }).catch(err => {
           this.$vux.alert.show({

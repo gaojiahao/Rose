@@ -313,8 +313,10 @@ export default {
           varchar7: governor,                 //省长
           varchar8: member,                   //常委
           varchar9: comments,                 //备注
-          varchar10:  ROSE_OPTION.region,     //省份(业务自带信息)
-          varchar11: ROSE_OPTION.bank        //银行(业务自带信息)
+          varchar10: ROSE_OPTION.region,     //省份(业务自带信息)
+          varchar11: ROSE_OPTION.bank,        //银行(业务自带信息)
+          varchar12: ROSE_OPTION.userCode     //工号
+
         },
         transDetailUncalc: [],
         transCode: "XHXSDD"

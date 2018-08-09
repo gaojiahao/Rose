@@ -327,7 +327,8 @@ export default {
         dept = JSON.parse(localStorage.getItem("ROSE_OPTION")).dept,
         region = JSON.parse(localStorage.getItem("ROSE_OPTION")).region,
         bank = JSON.parse(localStorage.getItem("ROSE_OPTION")).bank,
-        groupName = JSON.parse(localStorage.getItem("ROSE_OPTION")).groupName;
+        groupName = JSON.parse(localStorage.getItem("ROSE_OPTION")).groupName,
+        userCode = JSON.parse(localStorage.getItem("ROSE_OPTION")).userCode;
 
       if (!this.helpCaptain) {
         this.$vux.alert.show({
@@ -355,7 +356,8 @@ export default {
           captain: captain,
           dept: dept,
           region: region,
-          groupName: groupName
+          groupName: groupName,
+          userCode: userCode
         })
       );
       let jsonData = {
@@ -371,7 +373,8 @@ export default {
           varchar6: "否",
           varchar7: governor,
           varchar8: member,
-          varchar9: comments
+          varchar9: comments,
+          varchar12:userCode, //工号
         },
         transDetailUncalc: [],
         transCode: "XHXSDD"
