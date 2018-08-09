@@ -2,24 +2,22 @@
   <div class="pages">
     <div v-if='$route.name=="help"'>
     <div id='mescroll' class="mescroll">
-        <group label-align='left' title="请选择支援的地区">
-
-          <popup-picker 
-            class="each_part"
-            title="支援地区" 
-            placeholder="请选择省份"
-            :data='areaList'
-            v-model="areaValue"
-            :columns="1"></popup-picker>
-          <popup-picker 
-            class="each_part"
-            title="支援银行" 
-            placeholder="请选择银行"
-            :data='bankList'
-            v-model="bankValue"
-            :columns="1"></popup-picker>
-
-          <x-input 
+      <group label-align='left' title="请选择支援的地区">
+        <popup-picker 
+          class="each_part"
+          title="支援地区" 
+          placeholder="请选择省份"
+          :data='areaList'
+          v-model="areaValue"
+          :columns="1"></popup-picker>
+        <popup-picker 
+          class="each_part"
+          title="支援银行" 
+          placeholder="请选择银行"
+          :data='bankList'
+          v-model="bankValue"
+          :columns="1"></popup-picker>
+        <x-input 
           title="支援队长"
           text-align="right"
           v-model.trim="helpCaptain"
@@ -28,7 +26,7 @@
           placeholder="请输入队长"
           ref="captainChooise"
           class="helpCaptain"></x-input>
-         <x-input 
+        <x-input 
           title="支援省长"
           text-align="right"
           v-model.trim="governor"
@@ -90,13 +88,20 @@
            :value="item.value[0]=='无'?'￥'+0:'￥'+item.value[0].split('_')[3] | numberComma"
             value-align="right" 
             v-if="item.value.length>0"></cell>
-          <x-input 
-            title="数量" 
-            type="number" 
-            text-align="right" 
-            placeholder="请输入数量"
-            v-if="item.value[0]!='无'"
-            v-model.number="item.qty"></x-input>
+            <!-- 数量输入 -->
+            <div class="weui-cell each_part">
+              <div class="weui-cell__hd">数量</div>
+              <div class="weui-cell__bd weui-cell__primary" >
+                <input 
+                  class="weui-input"
+                  title="数量" 
+                  type="number" 
+                  style="text-align: right;"
+                  placeholder="请输入数量"
+                  v-if="item.value[0]!=='无'"
+                  v-model.number="item.qty"></input>
+              </div>
+            </div>
         </group>
 
         <p class="caution_part" v-if='arr[0].value.length!=0'>
@@ -178,7 +183,7 @@ export default {
       btnStatus: true,
       list: [
         {name: "无",value: "无",parent: "0"},
-        {name: 0,value: 0,parent: "无"}
+        {name: 0,value: "无",parent: "无"}
       ],
       arr: [{ value: [], qty: "" }],
       Aclass: "",
@@ -240,11 +245,9 @@ export default {
       });
     },
     end() {
-      if (this.btnStatus == false) {
-        return;
-      }
-      let that = this;
-      console.log(this.areaValue.indexOf('空'));
+      if (this.btnStatus == false)return;
+
+      // let that = this;
       if (this.areaValue.length == 0 || this.areaValue.indexOf('空') === 0) {
         this.$vux.alert.show({
           title: "提示",
@@ -321,7 +324,7 @@ export default {
         transDetailUncalc: [],
         transCode: "XHXSDD"
       };
-
+      // 项目类产品
       for (let i = 0; i < this.arr.length; i++) {
         if (this.arr[i].value[0] != "无" && this.arr[i].qty === "") {
           this.$vux.alert.show({
@@ -402,12 +405,12 @@ export default {
       localStorage.setItem(
         "HELP_INFO_LIST",
         JSON.stringify({
-          captain: that.helpCaptain,
-          governor: that.governor,
-          member: that.member
+          captain: this.helpCaptain,
+          governor: this.governor,
+          member: this.member
         })
       );
-      that.$router.push({ path: "/count" });
+      this.$router.push({ path: "/count" });
     },
     Ainput(e) {
       this.Aclass = e.split(",").join("");
