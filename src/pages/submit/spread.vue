@@ -12,22 +12,28 @@
             v-model="item.name"
             ></x-input>
         </group>
-        <group title="请填写市场宣传">
+        <!-- <group title="请填写市场宣传">
             <x-input
             title='市场宣传'
             text-align='right'
             v-model="item.conduct"
             ></x-input>
-        </group>
+        </group> -->
         <group title="请选择您申请的类型">
+          <popup-picker
+            title="市场宣传"
+            :data="item.conduct"
+            v-model="item.s_conduct"
+            @on-change="changeConduct(index,$event)"
+          ></popup-picker>
+        </group>
+        <group title="请填写明细" v-if="item.status">
           <popup-picker
             title="宣品类型"
             :data="item.type"
             v-model="item.s_type"
-            @on-change="changeType(index)"
+            @on-change="changeType(index,$event)"
           ></popup-picker>
-        </group>
-        <group title="请填写明细" v-if="item.status">
           <x-input
             title='单价'
             text-align='right'
@@ -56,7 +62,7 @@
                 :disabled="item.buOn.length==0?true:false"
                 @on-hide="getSelect(item.provlist,'N3',item.buOn[0],item.deptOn[0],111,2,index,$event)"
             ></popup-picker>
-            <popup-picker
+            <!-- <popup-picker
                 title="核算归属省份"
                 :data="item.provlist"
                 v-model="item.provOn"
@@ -68,7 +74,7 @@
                 :data="item.banklist"
                 v-model="item.bankOn"
                 :disabled="item.provOn.length==0?true:false"
-            ></popup-picker>
+            ></popup-picker> -->
         </group>
         <group title="要说点什么吗？" v-if="item.status">
             <x-textarea title="说明" :max="100" v-model="item.explain"></x-textarea>
@@ -105,20 +111,9 @@ export default {
       xp_list: [
         {
           name: "", //项目名称
-          conduct: "", //市场宣传
-          type: [
-            [
-              "单页",
-              "三折页",
-              "X展架",
-              "易拉宝",
-              "三角牌",
-              "海报",
-              "吊旗",
-              "地贴",
-              "道具"
-            ]
-          ], //宣品类型
+          conduct: [], //市场宣传
+          s_conduct:[], //选择产品
+          type: [], //宣品类型
           s_type: [], //选择类型
           unitprice: "", //单价
           num: "", //数量
@@ -126,10 +121,10 @@ export default {
           buOn: [], //费用所属事业部选中
           deptlist: [], //费用所属部门
           deptOn: [], //费用所属部门选中
-          provlist: [], //核算归属省份
-          provOn: [], //核算归属省份选中
-          banklist: [], //费用所属银行
-          bankOn: [], //费用所属银行选中
+          // provlist: [], //核算归属省份
+          // provOn: [], //核算归属省份选中
+          // banklist: [], //费用所属银行
+          // bankOn: [], //费用所属银行选中
           explain: "", //说明
           status: false
         }
@@ -141,16 +136,19 @@ export default {
     //获取所属事业部 | 部门 | 省份 | 银行
     getSelect(data, N, name1, name2, name3, num, index, e) {
       if (e === true) {
-        if (num == "1") {
+        if(num === "1"){
           this.xp_list[index].deptOn = [];
-          this.xp_list[index].provOn = [];
-          this.xp_list[index].bankOn = [];
-        } else if (num == "2") {
-          this.xp_list[index].provOn = [];
-          this.xp_list[index].bankOn = [];
-        } else if (num == "3") {
-          this.xp_list[index].bankOn = [];
         }
+        // if (num == "1") {
+        //   this.xp_list[index].deptOn = [];
+        //   this.xp_list[index].provOn = [];
+        //   this.xp_list[index].bankOn = [];
+        // } else if (num == "2") {
+        //   this.xp_list[index].provOn = [];
+        //   this.xp_list[index].bankOn = [];
+        // } else if (num == "3") {
+        //   this.xp_list[index].bankOn = [];
+        // }
       } else {
         return;
       }
@@ -167,20 +165,31 @@ export default {
           limit: 10000
         },
         arr = [];
-      spreadService
-        .getAccounting(jsonData)
-        .then(res => {
-          for (let i = 0; i < res.tableContent.length; i++) {
-            arr.push(res.tableContent[i].unitName);
+      spreadService.getAccounting(jsonData).then(res => {
+        for (let i = 0; i < res.tableContent.length; i++) {
+          arr.push(res.tableContent[i].unitName);
+        }
+        data.push(arr);
+      })
+    },
+    //选择市场宣传类型
+    changeConduct(index,val){
+      console.log(val);
+      this.xp_list[index].status = true;
+      spreadService.getMarketInfo(2,val[0]).then(data=>{
+        let arr = [];
+        data.tableContent && data.tableContent.forEach(item=>{
+          if(item.marketInformation){
+            arr.push(item.marketInformation)
+
           }
-          data.push(arr);
         })
-        .catch(c => {
-          console.log(c);
-        });
+        this.xp_list[index].type.push(arr);
+      })
+
     },
     changeType(idx) {
-      this.xp_list[idx].status = true;
+      // this.xp_list[idx].status = true;
     },
     plusType() {
       //添加新的选择
@@ -414,7 +423,21 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    spreadService.getMarketInfo(1,1).then(data=>{
+      let arr = [];
+      data.tableContent && data.tableContent.forEach(item=>{
+        if(item.marketInformation){
+          arr.push(item.marketInformation)
+        }
+        
+      })
+      console.log(this.xp_list);
+      this.xp_list[0].conduct.push(arr);
+      console.log(this.xp_list[0].conduct);
+    })
+    
+  },
   mounted() {
     //基本信息
     spreadService
