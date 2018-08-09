@@ -101,7 +101,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma}}
+        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
@@ -185,12 +185,15 @@
         this.listData.forEach(item => {
           total += item.tdQty * item.price;
         });
-        return total;
+        return Number(total);
       },
       // 税金
       taxAmount() {
         return (this.totalAmount * this.taxRate).toFixed(2)
       },
+      tdAmount(){
+        return(this.totalAmount + Number(this.taxAmount)).toFixed(2)
+      }
     },
     methods: {
       // TODO 选中的往来

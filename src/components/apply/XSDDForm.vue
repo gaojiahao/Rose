@@ -108,7 +108,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
+        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
       </span>
       <span class="count_btn stop" @click="stopOrder"
@@ -153,7 +153,6 @@
         showTransPop: false,                            // 是否显示结算方式的popup
         showMaterielPop: false,                         // 是否显示物料的popup
         dealerInfo: {},
-        count: 0,   // 总价
         formData: {},
         dealer: {
           drDealerPaymentTerm: '现付',  //结算方式
@@ -161,20 +160,7 @@
           biComment: '' //备注
         },
         numMap: {}, // 用于记录订单物料的数量和价格
-      }
-    },
-    computed: {
-      // 合计金额
-      totalAmount() {
-        let total = 0;
-        this.matterList.forEach(item=>{
-          total += item.tdQty * item.price;
-        })
-        return total;
-      },
-      // 税金
-      taxAmount() {
-        return (this.totalAmount * 0.16).toFixed(2)
+        taxRate: 0.16, // 税率
       }
     },
     mixins: [common],
@@ -211,7 +197,6 @@
       },
       // TODO 选中物料项
       selMatter(val) {
-        this.count = 0;
         let sels = JSON.parse(val);
         sels.map(item => {
           if (this.numMap[item.inventoryCode]) {
@@ -238,7 +223,6 @@
       delClick(index, item) {
         let arr = this.matterList;
         let total = item.tdQty * item.price;
-        this.count -= total;
         arr.splice(index, 1);
       },
       // 数量减少
@@ -350,9 +334,7 @@
             item.inventoryPic = item.inventoryPic_transObjCode 
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` 
               : this.getDefaultImg();
-            this.count += item.noTaxAmount * 100
           })
-          this.count = this.count / 100;
           //基本信息
           this.formData = {
             handler: formData.handler,

@@ -72,7 +72,7 @@
           </div>
         </template>
         <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="matterList.length && !isResubmit" @click="showMaterielPop = !showMaterielPop">新增更多物料</div>
+        <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div>
         <!-- 物料popup -->
         <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                          ref="matter"></pop-matter-list>
@@ -86,7 +86,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
+        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
       <span class="count_btn" @click="submitOrder">提交订单</span>
@@ -121,24 +121,14 @@ export default {
       }, 
       applyComment : '',
       numMap: {},
+      taxRate: 0, // 税率
     }
   },
-  computed: {
-      // 合计金额
-      totalAmount() {
-        let total = 0;
-        this.matterList.forEach(item=>{
-          total += item.tdQty * item.price;
-        })
-        return total;
-      },
-    },
   mixins: [common],
   methods:{
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
-      console.log(sels)
       sels.map(item => {
         if (this.numMap[item.inventoryCode]) {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
@@ -169,11 +159,8 @@ export default {
     },
     //数量--
     subNum(item,i){
-      let oldNum = item.tdQty;
+      if(item.tdQty === 1) return
       item.tdQty--;
-      if(item.tdQty<=0){
-        item.tdQty = 1;
-      }
       this.$set(this.matterList, i, item);
     },
     //数量++
@@ -182,6 +169,17 @@ export default {
       item.tdQty++;
       this.$set(this.matterList, i, item);
       
+    },
+    // TODO 新增更多物料
+    addMatter() {
+      for (let item of this.matterList) {
+        // 存储已输入的价格
+        this.numMap[item.inventoryCode] = {
+          tdQty: item.tdQty,
+          price: item.price
+        };
+      }
+      this.showMaterielPop = !this.showMaterielPop;
     },
     //提价订单
     submitOrder(){

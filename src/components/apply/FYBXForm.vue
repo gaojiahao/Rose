@@ -128,6 +128,7 @@
         },
         showPop: false,
         tmp: '',
+        taxRate: 0, // 税率
       }
     },
     computed: {

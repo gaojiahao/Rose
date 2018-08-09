@@ -16,6 +16,23 @@ export default {
       formViewUniqueId: '',
     }
   },
+  computed: {
+    // 合计金额
+    totalAmount() {
+      let total = 0;
+      this.matterList.forEach(item=>{
+        total += item.tdQty * item.price;
+      })
+      return Number(total);
+    },
+    // 税金
+    taxAmount() {
+      return (this.totalAmount * this.taxRate).toFixed(2)
+    },
+    tdAmount(){
+      return (this.totalAmount + Number(this.taxAmount)).toFixed(2)
+    }
+  },
   filters: {
     numberComma,
   },
