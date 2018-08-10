@@ -8,8 +8,7 @@
     </div>
     <slot name="refresh">
       <div class="refresh-container" :style="{top: pullDownTop + 'px'}" v-show="hasRefresh">
-        <!--<spinner class="icon" type="android"></spinner>-->
-        <spinner class="icon" type="android" v-show="!refreshDone"></spinner>
+        <spinner class="icon" type="crescent" v-show="!refreshDone"></spinner>
         <div v-show="refreshDone">刷新成功</div>
       </div>
     </slot>
@@ -20,7 +19,7 @@
   import BScroll from 'better-scroll'
   import {Spinner, LoadMore} from 'vux'
 
-  const PULL_DOWN_REFRESH_HEIGHT = 40;
+  const PULL_DOWN_REFRESH_HEIGHT = 60;
   export default {
     name: "RScroll",
     components: {
@@ -46,9 +45,9 @@
     data() {
       return {
         bScroll: null,
-        pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
         hasRefresh: false,
         refreshDone: false, // 是否刷新完成
+        pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
       }
     },
     computed: {
@@ -70,7 +69,7 @@
         if (this.options.pullDownRefresh) {
           this.hasRefresh = true;
           options.pullDownRefresh = {
-            threshold: 30,
+            threshold: 35,
             stop: PULL_DOWN_REFRESH_HEIGHT
           }
         }
@@ -80,12 +79,11 @@
           }
         }
         this.$nextTick(() => {
+          console.log(options);
           this.bScroll = new BScroll(this.$refs.bScroll, options);
           // 绑定滚动加载事件
           this.bScroll.on('pullingUp', () => {
-            if (!this.hasNext) {
-              return
-            }
+            if (!this.hasNext) return;
             this.$emit('on-pulling-up');
           });
           // 绑定下拉刷新事件
@@ -124,13 +122,13 @@
       finishPullDown() {
         return new Promise(resolve => {
           this.resetPullDown();
-          this.bScroll.finishPullDown();
-          this.refresh();
-          // this.refreshDone = true;
-          this.enable();
           // setTimeout(() => {
-          //   this.refreshDone = false;
+          //   this.bScroll.finishPullDown();
+          //   // this.refreshDone = false;
           // }, 500);
+          this.bScroll.finishPullDown();
+          this.enable();
+          this.refresh();
           resolve();
         })
       },
@@ -169,15 +167,14 @@
       }
     }
     .refresh-container {
-      position: absolute;
-      top: -40px;
-      left: 0;
       width: 100%;
-      height: 30px;
-      margin:0.1rem 0;
-      background-color: #fff;
-      /*transition: top .4s linear 0s;*/
+      margin: .2rem 0;
+      position: absolute;
       text-align: center;
+      .vux-spinner {
+        fill: #366CAC;
+        stroke: #366CAC;
+      }
     }
   }
   .weui-toast.vux-toast-top {

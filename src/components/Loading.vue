@@ -1,6 +1,6 @@
 <template>
   <div class="loadding" v-show="show">
-    <spinner type='dots' size='50px'></spinner>
+    <spinner type='ripple' size='50px'></spinner>
   </div>
 </template>
 
@@ -30,11 +30,12 @@
     background: #fff;
     z-index: 100;
     .vux-spinner {
-      position: absolute;
-      left: 50%;
       top: 50%;
-      margin-top: -25px;
-      margin-left: -25px;
+      left: 50%;
+      position: absolute;
+      fill: #366CAC;
+      stroke: #366CAC;
+      transform: translate(-50%, -50%);
     }
   }
 </style>
