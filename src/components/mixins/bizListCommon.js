@@ -153,16 +153,17 @@ export default {
         if(this.page ===1 && this.serachVal === '' && this.activeIndex ===0){
           if(this.total){
             if(total-this.total === 0){
-              text = '最近无新增订单'
+              text = '暂无新数据'
             }
             else{
-              text = `最近新增${total-this.total}个订单`
+              text = `新增${total-this.total}条数据`
             }
             this.$vux.toast.show({
               text: text,
               position:'top',
               width:'50%',
-              type:"text"
+              type:"text",
+              time : 700
             })
           }
           sessionStorage.setItem(this.applyCode,total);
