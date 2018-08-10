@@ -22,11 +22,9 @@
         <div class="f_flow">
           <group title="流程图"></group>
           <flow orientation="vertical" style="height:300px;float:left;padding:10px 20px">
-            <flow-state state="1" title="省长" is-done></flow-state>
+            <flow-state state="1" :title="handlerData.nickname" is-done></flow-state>
             <flow-line tip="进行中" tip-direction='right'></flow-line>
-            <flow-state state="2">
-              <span slot="title">常委</span>
-            </flow-state>
+            <flow-state state="2" :title="handlerData.area === '总部' ?  '部门主管' : '常委'"></flow-state>
             <flow-line></flow-line>
             <flow-state state="3" title="副总"></flow-state>
             <flow-line></flow-line>
@@ -88,6 +86,7 @@
         jsonData: {},
         currentUser: {}, // 当前用户信息
         opList: [], // 审批人列表
+        handlerData: {},
       };
     },
     mixins: [common],
@@ -102,82 +101,6 @@
           this.showToast(e.message);
         });
       },
-      // TODO 获取用户信息
-      getUserInfo() {
-        return createService.getUser().then(data => {
-          this.userInfo = data;
-          return data;
-        });
-      },
-      // TODO 点击常委、副总输入框
-      searchFocus(item, key) {
-        this.hasSelected = false;
-        this.searchList = [];
-        this.searchType = item.searchType;
-        // 设置搜索框顶部偏移
-        if (key === 'committee') {
-          this.searchListTop = '81px';
-        } else if (key === 'vicePresident') {
-          this.searchListTop = '126px';
-        }
-      },
-      // TODO 失去输入框焦点
-      searchBlur(item) {
-        // 判断是否选中值
-        if (this.hasSelected) {
-          return
-        }
-        // 获取匹配项
-        let [matchObj = {}] = this.searchList.filter(sItem => {
-          return sItem.name === item.value
-        });
-        // 如果有匹配项则设置匹配项为选中项
-        if (matchObj.userId) {
-          item.userId = matchObj.userId;
-          item.value = matchObj.name;
-          item.data = {...matchObj};
-          this.hasSelected = true;
-        }
-      },
-      // TODO 请求搜索列表
-      getSearch(item) {
-        let {value} = item;
-        let params = {
-          filter: JSON.stringify([{
-            operator: 'like',
-            value: value,
-            property: 'nickname'
-          }])
-        };
-        // 有选中项则不进行搜索
-        if (!value || this.hasSelected) {
-          return
-        }
-        item.userId = '';
-        // 搜索为副总
-        if (item.searchType === 'vicePresident') {
-          params.name = '副总裁'
-        }
-        createService.getChangWei(params).then(data => {
-          let {tableContent = []} = data;
-          this.searchList = tableContent && tableContent.map(item => {
-            return {
-              id: '',
-              userId: item.userId,
-              name: item.nickname,
-              ...item,
-            }
-          })
-        })
-      },
-      // TODO 点击搜索项
-      searchItemClick(item) {
-        this.hasSelected = true;
-        let {name, userId} = item;
-        this.level_list[this.searchType].value = name;
-        this.level_list[this.searchType].userId = userId;
-        this.level_list[this.searchType].data = {...item};
-      },
       // TODO 提交数据
       submitData() {
         let transCode = this.jsonData.baseinfo.transCode;
@@ -187,19 +110,19 @@
         };
         let wfPara = {};
         let submitMethod = 'saveAndStartWfOld';
-        let area = this.jsonData.baseinfo.handlerAreaName.value;
+        let area = this.handlerData.area;
         // 校验数据
-        /* Object.values(this.level_list).every(item => {
-           if (!item.userId) {
-             warn = `${item.name}不能为空`;
-             return false
-           }
-           return true
-         });
-         if (warn) {
-           this.showToast(warn);
-           return
-         }*/
+        this.opList.every(item => {
+          if (!item.value) {
+            warn = `${item.name}不能为空`;
+            return false
+          }
+          return true
+        });
+        if (warn) {
+          this.showToast(warn);
+          return
+        }
         let opParams = this.getOpParams(area);
         let {committee, vicePresident} = this.level_list;
         this.jsonData = {
@@ -226,10 +149,7 @@
             businessKey: transCode,
             createdBy: this.jsonData.baseinfo.creator,
             '所属区域': "总部",
-            // '常委ID': committee.userId,
-            // '副总裁ID': vicePresident.userId,
-            '常委ID': '15125', // rfd120
-            '副总裁ID': '18128', // rfd9527
+            ...opParams.wfPara,
             transCode,
             result: 3,
             comment: ''
@@ -240,18 +160,17 @@
           jsonData: JSON.stringify(this.jsonData),
           wfPara: JSON.stringify(wfPara),
         });
-        console.log(this.jsonData)
         console.log(submitData)
-        // this.showLoading = true;
+        this.showLoading = true;
         createService[submitMethod](submitData).then(data => {
           this.showLoading = false;
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
             this.showToast('提交成功');
-            /*sessionStorage.removeItem(this.sessionKey);
+            sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
               this.$router.go(-2);
-            }, 1200)*/
+            }, 1200)
           } else {
             this.showToast('提交失败');
           }
@@ -322,7 +241,7 @@
               handlerUnitName: this.assembleData(groupNameID, groupName),
               handlerRoleName: this.assembleData(roleID, position),
             };
-            return handlerData;
+            this.handlerData = handlerData;
           });
         };
 
@@ -336,41 +255,37 @@
         return createService.getBaseInfoData().then(handleBaseInfo);
       },
       // TODO 还原常委、副总裁
-      restoreLevelList() {
+      restoreOpList() {
         let review = {...this.jsonData.$review};
-        this.level_list = {
-          committee: {
-            name: '常委',
-            searchType: 'committee',
-            value: review.cw.text || '',
-            userId: review.cw.value || '',
-            data: review.cw.selection.data || {},
-          },
-          vicePresident: {
-            name: '副总',
-            searchType: 'vicePresident',
-            value: review['warehouse.fzc'].text || '',
-            userId: review['warehouse.fzc'].value || '',
-            data: review['warehouse.fzc'].selection.data || {},
-          }
+        let review2 = {...this.jsonData.$review2};
+        let val = '';
+        let val2 = '';
+        switch (this.handlerData.area) {
+          case '总部':
+            val = review.reviewer.text; // 部门主管
+            val2 = review.deputy.text; // 副总
+            break;
+          default:
+            break;
         }
+        this.opHandler(val, val2);
       },
       // TODO 处理部门主管、常委、副总的展示
-      opHandler(handlerData) {
-        let {area} = handlerData;
+      opHandler(val, val2) {
+        let {area} = this.handlerData;
         switch (area) {
           // 总部展示部门主管和分管总裁
           case '总部':
-            this.headquartersHandler(handlerData);
+            this.headquartersHandler(val, val2);
             break;
           default:
-            this.handlerBusiness(handlerData);
+            this.handlerBusiness(val, val2);
             break;
         }
       },
       // TODO 处理总部展示数据
-      headquartersHandler(handlerData = {}) {
-        let {userId, area, role} = handlerData;
+      headquartersHandler(val = '', val2 = '') {
+        let {userId, area, role} = this.handlerData;
         let promises = [];
         this.opList = [
           {
@@ -407,17 +322,17 @@
             vicePresident.push(item.comName);
           });
           this.opList[0].options = dept;
-          this.opList[0].value = dept[0];
+          this.opList[0].value = val || dept[0];
           this.opList[0].datas = data.tableContent;
+
           this.opList[1].options = vicePresident;
-          this.opList[1].value = vicePresident[0];
-          this.opList[1].value = vicePresident[0];
+          this.opList[1].value = val2 || vicePresident[0];
           this.opList[1].datas = data2.tableContent;
         })
       },
       // TODO 处理事业部展示数据
-      async handlerBusiness(handlerData = {}) {
-        let {userId, area, role} = handlerData;
+      handlerBusiness(val = '', val2 = '') {
+        let {userId, area, role} = this.handlerData;
         let promises = [];
         this.opList = [
           {
@@ -432,13 +347,7 @@
             value: '',
           },
         ];
-        let groupId = await
-          createService.getAreas({
-            userId: userId
-          }).then(({tableContent = []}) => {
-            let [data = {}] = tableContent;
-            return data.userGroupId
-          });
+        let groupId = this.jsonData.baseinfo.handlerAreaName.selection.data.userGroupId;
         // 获取常委
         promises.push(createService.getApprovalUserByAgent({
           userId: userId,
@@ -459,10 +368,11 @@
             vicePresident.push(item.NICKNAME);
           });
           this.opList[0].options = committee;
-          this.opList[0].value = committee[0];
+          this.opList[0].value = val || committee[0];
           this.opList[0].datas = data.tableContent;
+
           this.opList[1].options = vicePresident;
-          this.opList[1].value = vicePresident[0];
+          this.opList[1].value = val2 || vicePresident[0];
           this.opList[1].datas = data2.tableContent;
         })
       },
@@ -488,8 +398,6 @@
                 vicePresident = {...item};
               }
             });
-            console.log(dept)
-            console.log(vicePresident)
             idObj = {
               reviewer: {
                 $review: {
@@ -500,6 +408,7 @@
                   reviewer: this.assembleOpData({}),
                   deputy: this.assembleOpData({}),
                   fzc: this.assembleOpData({}),
+                  '$r2Textfield-1206-inputEl': ''
                 }
               },
               wfPara: {
@@ -509,9 +418,43 @@
                 '常委ID': null,
                 '副总裁ID': null
               }
-            }
+            };
             break;
+          // 事业部提交参数
           default:
+            let committee = {};
+            let vicePresident2 = {};
+            first.datas.forEach(item => {
+              if (item.CName === first.value) {
+                committee = {...item};
+              }
+            });
+            second.datas.forEach(item => {
+              if (item.NICKNAME === second.value) {
+                vicePresident2 = {...item};
+              }
+            });
+            idObj = {
+              reviewer: {
+                $review: {
+                  reviewer: this.assembleOpData({}),
+                  deputy: this.assembleOpData({}),
+                },
+                $review2: {
+                  reviewer: this.assembleOpData({}),
+                  deputy: this.assembleOpData(committee, committee.CName, committee.CId),
+                  fzc: this.assembleOpData(vicePresident2, vicePresident2.NICKNAME, vicePresident2.PRINCIPAL),
+                  '$r2Textfield-1206-inputEl': this.jsonData.baseinfo.handlerAreaName.selection.data.userGroupId
+                }
+              },
+              wfPara: {
+                '部门主管ID': null,
+                '分管副总ID': null,
+                '省长ID': null,
+                '常委ID': committee.CId,
+                '副总裁ID': vicePresident2.PRINCIPAL
+              }
+            };
             break;
         }
         return idObj;
@@ -532,14 +475,15 @@
       this.jsonData.baseinfo.modTime = now;
       if (this.taskId) {
         this.hasSelected = true;
-        this.restoreLevelList();
-        // return
+        this.handlerData = {...this.jsonData.baseinfo.handlerName.selection.data};
+        this.restoreOpList();
+        return
       }
       this.showLoading = true;
       this.getProcess();
       this.getBaseInfo().then(data => {
         this.showLoading = false;
-        this.opHandler(data);
+        this.opHandler();
       });
     }
   }

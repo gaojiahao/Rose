@@ -17,7 +17,8 @@ export default {
       canSubmit: false, // 是否允许操作
       pageSwiper: null, // swiper容器
       showConfirm: false, // 是否展示原因弹窗
-      result: 1, // 审批类型，1为同意、2为拒绝
+      result: 1, // 审批类型，1为同意、0为拒绝
+      currentUser: {},
     }
   },
   mixins: [common],
@@ -116,6 +117,12 @@ export default {
       }
       this.submit(reason);
     },
+    // TODO 获取当前用户信息
+    getBaseInfo() {
+      createService.getBaseInfoData().then(data => {
+        this.currentUser = data || {};
+      })
+    },
   },
   created() {
     let {query} = this.$route;
@@ -124,6 +131,7 @@ export default {
     this.transCode = query.transCode;
     this.taskId = query.taskId;
     this.canSubmit = query.canSubmit === '1';
+    this.getBaseInfo();
     this.getFormData();
     this.$nextTick(() => {
       this.pageSwiper = new Swiper('.swiper-container', {});

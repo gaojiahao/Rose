@@ -18,7 +18,7 @@
             </div>
           </div>
         </div>
-        <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
+        <flow-detail class="swiper-slide" :trans-code="transCode" :current-user="currentUser"></flow-detail>
       </div>
     </div>
     <div class="m_btm vux-1px-t" v-if="canSubmit" v-show="showPage">

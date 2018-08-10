@@ -5,16 +5,25 @@
       <div class="f_main_wrapper">
         <div class="f_flow">
           <group title="流程图"></group>
-          <flow class="flows" orientation="vertical">
+          <!--<flow class="flows" orientation="vertical">
             <flow-state state="1" title="省长" :is-done="governor.stateDone"></flow-state>
             <flow-line tip-direction="right" :tip="governor.tip" :is-done="governor.lineDone"></flow-line>
-            <flow-state state="2" title="常委" :is-done="committee.stateDone"></flow-state>
+            <flow-state state="2" title="部门主管" :is-done="dept.stateDone"></flow-state>
+            <flow-line tip-direction="right" :tip="dept.tip" :is-done="dept.lineDone"></flow-line>
+            <flow-state state="3" title="常委" :is-done="committee.stateDone"></flow-state>
             <flow-line tip-direction="right" :tip="committee.tip" :is-done="committee.lineDone"></flow-line>
-            <flow-state state="3" title="副总" :is-done="vicePresident.stateDone"></flow-state>
+            <flow-state state="4" title="副总" :is-done="vicePresident.stateDone"></flow-state>
             <flow-line tip-direction="right" :tip="vicePresident.tip" :is-done="vicePresident.lineDone"></flow-line>
-            <flow-state state="4" title="财务" :is-done="finance.stateDone"></flow-state>
+            <flow-state state="5" title="财务" :is-done="finance.stateDone"></flow-state>
             <flow-line :line-span="30" tip-direction="right" :tip="finance.tip" :is-done="finance.lineDone"></flow-line>
-            <flow-state state="5" title="总裁——王珏" :is-done="ceo.stateDone"></flow-state>
+            <flow-state state="6" title="总裁——王珏" :is-done="ceo.stateDone"></flow-state>
+          </flow>-->
+          <flow class="flows" orientation="vertical">
+            <template v-for="(item, index) in flowList">
+              <flow-state :state="index + 1" :title="item.title" :is-done="item.stateDone"></flow-state>
+              <flow-line tip-direction="right" :tip="item.tip" :is-done="item.lineDone"
+                         v-if="index !== flowList.length - 1"></flow-line>
+            </template>
           </flow>
           <!--<panel header="审批意见" :list="commentList" :type="'4'"></panel>-->
           <group title="审批意见">
@@ -55,6 +64,12 @@
           lineDone: false,
           tip: '',
         },
+        // 部门主管
+        dept: {
+          stateDone: false,
+          lineDone: false,
+          tip: '',
+        },
         // 常委
         committee: {
           stateDone: false,
@@ -80,6 +95,34 @@
           tip: '',
         },
         commentList: [],
+        flowList: [
+          {
+            stateDone: true,
+            lineDone: false,
+            tip: '进行中',
+            title: '省长'
+          }, {
+            stateDone: false,
+            lineDone: false,
+            tip: '',
+            title: '部门'
+          }, {
+            stateDone: false,
+            lineDone: false,
+            tip: '',
+            title: '副总'
+          }, {
+            stateDone: false,
+            lineDone: false,
+            tip: '',
+            title: '财务'
+          }, {
+            stateDone: false,
+            lineDone: false,
+            tip: '',
+            title: '总裁——王珏'
+          },
+        ],
       }
     },
     components: {
@@ -96,10 +139,10 @@
       getFlows() {
         return createService.getWorkFlow({
           transCode: this.transCode
-        }).then(data => {
-          let last = data.pop();
-          let showList = ['常委审批', '副总裁审批', '财务审批', '总裁审批'];
-          data && data.forEach((item, index) => {
+        }).then(({tableContent = []}) => {
+          let last = tableContent[tableContent.length - 1];
+          let showList = ['常委', '部门主管', '副总裁', '财务', '总裁'];
+          tableContent && tableContent.forEach((item, index) => {
             // 只取四个审批节点的数据做展示
             if (showList.indexOf(item.actName) !== -1) {
               this.commentList.push({
@@ -118,7 +161,7 @@
         })
       },
       // TODO 组装工作流流程图
-      assembleFlow(item){
+      assembleFlow(item) {
         let done = {
           stateDone: true,
           lineDone: true,
@@ -133,23 +176,31 @@
           case 'Start':
             this.governor = doing;
             break;
+          case '部门主管':
+            this.governor = done;
+            this.dept = doing;
+            break;
           case '常委':
             this.governor = done;
+            this.dept = doing;
             this.committee = doing;
             break;
           case '副总裁':
             this.governor = done;
+            this.dept = doing;
             this.committee = done;
             this.vicePresident = doing;
             break;
           case '财务':
             this.governor = done;
+            this.dept = doing;
             this.committee = done;
             this.vicePresident = done;
             this.finance = doing;
             break;
           case '总裁':
             this.governor = done;
+            this.dept = doing;
             this.committee = done;
             this.vicePresident = done;
             this.finance = done;
@@ -166,6 +217,7 @@
             break;
           case 'End':
             this.governor = done;
+            this.dept = doing;
             this.committee = done;
             this.vicePresident = done;
             this.finance = done;

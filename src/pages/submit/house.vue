@@ -50,30 +50,32 @@
         type_value: [],
         h_hdtype: [['新增', '搬家']],
         hd_value: [],
+        zj_list: [['否','是']], // 是否有中介
+        zj_value: [],
         bj_list: [
           {
             title: '新增/搬家原因',
             key: 'moveReason',
             type: 'text',
           }, {
-            title: '入驻人数',
-            key: 'checkInNumber',
-            type: 'number',
-          }, {
             title: '房屋面积',
             key: 'area',
             type: 'number',
           }, {
-            title: '月租',
-            key: 'rental',
+            title: '入住人数',
+            key: 'checkInNumber',
             type: 'number',
           }, {
             title: '付款方式',
             key: 'paymentType',
             type: 'text',
           }, {
-            title: '租期',
-            key: 'tenancy',
+            title: '月租',
+            key: 'rental',
+            type: 'number',
+          }, {
+            title: '押金',
+            key: 'deposit',
             type: 'number',
           }
         ],
@@ -96,10 +98,10 @@
           'office': '', // 省仓/办事处
           'moveType': '', // 异动类型
           'area': '', // 面积 (㎡)
-          'checkInNumber': '', // 入驻人数
+          'checkInNumber': '', // 入住人数
           'paymentType': '', // 付款方式 (月)
           'rental': '', // 月租
-          'tenancy': '', // 租期 (月)
+          'deposit': '', // 租期 (月)
           'houseCostTotal': '', // 费用合计（房屋立项）
           'begin': '', // 始于
           'end': '', // 止于
@@ -121,8 +123,8 @@
     mixins: [common],
     computed: {
       totalCost() {
-        let {tenancy = 0, rental = 0} = this.formData;
-        return `￥${numberComma(Number(tenancy) * Number(rental))}`;
+        let {deposit = 0, rental = 0} = this.formData;
+        return `￥${numberComma(Number(deposit) * Number(rental))}`;
       }
     },
     methods: {
@@ -149,7 +151,7 @@
             key: 'moveReason',
             value: '',
           }, {
-            title: '入驻人数',
+            title: '入住人数',
             key: 'checkInNumber',
             value: '',
           }, {
@@ -165,8 +167,8 @@
             key: 'paymentType',
             value: '',
           }, {
-            title: '租期',
-            key: 'tenancy',
+            title: '押金',
+            key: 'deposit',
             value: '',
           }, {
             title: '租期开始时间',

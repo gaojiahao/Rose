@@ -218,6 +218,7 @@
         if (this.taskId) {
           jsonData.referenceId = this.formData.referenceId;
           jsonData.$review = this.formData.review;
+          jsonData.$review2 = this.formData.review2;
         }
         jsonData.baseinfo = {
           id: this.guid(),
@@ -361,6 +362,7 @@
           costBU: jsonData['baseinfoExt#gs'].varchar6.value,// 费用所属事业部
           costDepartment: jsonData['baseinfoExt#gs'].varchar7.value,// 费用所属部门
           review: jsonData.review,
+          review2: jsonData.review2,
         };
         this.baseinfo = baseinfo;
 
