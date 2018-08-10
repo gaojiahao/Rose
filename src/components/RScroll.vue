@@ -9,7 +9,7 @@
     <slot name="refresh">
       <div class="refresh-container" :style="{top: pullDownTop + 'px'}" v-show="hasRefresh">
         <spinner class="icon" type="crescent" v-show="!refreshDone"></spinner>
-        <div v-show="refreshDone">刷新成功</div>
+        <div class="tips">{{-pullDownTop > 30 ? '下拉刷新' : '释放刷新'}}</div>
       </div>
     </slot>
   </div>
@@ -19,7 +19,7 @@
   import BScroll from 'better-scroll'
   import {Spinner, LoadMore} from 'vux'
 
-  const PULL_DOWN_REFRESH_HEIGHT = 60;
+  const PULL_DOWN_REFRESH_HEIGHT = 70;
   export default {
     name: "RScroll",
     components: {
@@ -69,7 +69,7 @@
         if (this.options.pullDownRefresh) {
           this.hasRefresh = true;
           options.pullDownRefresh = {
-            threshold: 35,
+            threshold: 40,
             stop: PULL_DOWN_REFRESH_HEIGHT
           }
         }
@@ -99,6 +99,7 @@
                 this.pullDownTop = 0;
               } else {
                 this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
+                console.log('pullDownTop:', this.pullDownTop);
               }
             } else {
               this.resetPullDown();
@@ -122,10 +123,6 @@
       finishPullDown() {
         return new Promise(resolve => {
           this.resetPullDown();
-          // setTimeout(() => {
-          //   this.bScroll.finishPullDown();
-          //   // this.refreshDone = false;
-          // }, 500);
           this.bScroll.finishPullDown();
           this.enable();
           this.refresh();
@@ -171,9 +168,14 @@
       margin: .2rem 0;
       position: absolute;
       text-align: center;
+      font-size: .1rem;
+      color: #757575;
       .vux-spinner {
         fill: #366CAC;
         stroke: #366CAC;
+      }
+      .tips {
+        margin-top: .04rem;
       }
     }
   }
