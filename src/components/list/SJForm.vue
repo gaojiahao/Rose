@@ -47,12 +47,11 @@
             <div class="money_part">
               <!-- <span class="num">当前所在阶段{{item.currentStage}}</span> -->
               <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | numberComma}}
+                <span style="fontSize:.1rem;">￥</span>{{item.count | numberComma}}
               </span>
             </div>
           </div>
         </div>
-
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn ">
@@ -73,76 +72,77 @@
           {name: '已生效', status: '已生效'}, 
           {name: '进行中', status: '进行中'}
         ],
+        listViewID :2244 
 
       }
     },
     mixins: [listCommon],
     methods: {     
       //获取销售订单数据
-      getList(noReset = false) {
-        return getBusinessList({
-          limit: this.limit,
-          page: this.page,
-          listViewId: 2244,
-          biStatus: this.activeTab,
-          transCode: this.serachVal,
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            this.setStatus(item);
-            item.effectiveTime = dateFormat(item.effectiveTime).split(' ')[0];
-            // item.count = 0;
-            // item.itmes.forEach(mitem=>{
-            //   item.count += mitem.tdAmount*100;
-            // })
-            // item.count = item.count/100;
-            // item.itmes = item.itmes.slice(0, 5);
-          });
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-        }).catch(e => {
-          this.resetScroll();
-        })
-        // return getSellOrderList({
-        //   limit: this.limit,
-        //   page: this.page,
-        //   // start: (this.page - 1) * this.limit,
-        //   listViewID: 2236,
-        //   // filter: JSON.stringify(filter),
-        //   filter: JSON.stringify(filter),
-        // }).then(({total = 0, orders = []}) => {
-        //   this.hasNext = total > (this.page - 1) * this.limit + orders.length;
-        //   orders.forEach(item => {
-        //     this.setStatus(item);
-        //     item.count = 0;
-        //     item.itmes.forEach(mitem=>{
-        //       item.count += mitem.tdAmount*100;
-        //     })
-        //     item.count = item.count/100;
-        //     item.itmes = item.itmes.slice(0, 5);
-        //   });
-        //   this.listData = this.page === 1 ? orders : this.listData.concat(orders);
-        //   if (!noReset) {
-        //     this.$nextTick(() => {
-        //       this.resetScroll();
-        //     })
-        //   }
-        // }).catch(e => {
-        //   this.resetScroll();
-        // })
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
+      // getList(noReset = false) {
+      //   return getBusinessList({
+      //     limit: this.limit,
+      //     page: this.page,
+      //     listViewId: 2244,
+      //     biStatus: this.activeTab,
+      //     transCode: this.serachVal,
+      //   }).then(({dataCount = 0, tableContent = []}) => {
+      //     this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+      //     tableContent.forEach(item => {
+      //       this.setStatus(item);
+      //       item.effectiveTime = dateFormat(item.effectiveTime).split(' ')[0];
+      //       // item.count = 0;
+      //       // item.itmes.forEach(mitem=>{
+      //       //   item.count += mitem.tdAmount*100;
+      //       // })
+      //       // item.count = item.count/100;
+      //       // item.itmes = item.itmes.slice(0, 5);
+      //     });
+      //     this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+      //     if (!noReset) {
+      //       this.$nextTick(() => {
+      //         this.resetScroll();
+      //       })
+      //     }
+      //   }).catch(e => {
+      //     this.resetScroll();
+      //   })
+      //   // return getSellOrderList({
+      //   //   limit: this.limit,
+      //   //   page: this.page,
+      //   //   // start: (this.page - 1) * this.limit,
+      //   //   listViewID: 2236,
+      //   //   // filter: JSON.stringify(filter),
+      //   //   filter: JSON.stringify(filter),
+      //   // }).then(({total = 0, orders = []}) => {
+      //   //   this.hasNext = total > (this.page - 1) * this.limit + orders.length;
+      //   //   orders.forEach(item => {
+      //   //     this.setStatus(item);
+      //   //     item.count = 0;
+      //   //     item.itmes.forEach(mitem=>{
+      //   //       item.count += mitem.tdAmount*100;
+      //   //     })
+      //   //     item.count = item.count/100;
+      //   //     item.itmes = item.itmes.slice(0, 5);
+      //   //   });
+      //   //   this.listData = this.page === 1 ? orders : this.listData.concat(orders);
+      //   //   if (!noReset) {
+      //   //     this.$nextTick(() => {
+      //   //       this.resetScroll();
+      //   //     })
+      //   //   }
+      //   // }).catch(e => {
+      //   //   this.resetScroll();
+      //   // })
+      // },
+      // // TODO 获取默认图片
+      // getDefaultImg(item) {
+      //   let url = require('assets/wl.png');
+      //   if (item) {
+      //     item.inventoryPic = url;
+      //   }
+      //   return url
+      // },
     },
     filters:{
       dateFormat

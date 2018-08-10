@@ -4,14 +4,7 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-          <form action=""  @submit.prevent="searcwarehouse">
-            <div class="search_part">
-                <input class="srh_inp" type="text" v-model="srhInpTx">
-                <div class="pop_cancel" @click="searcwarehouse">搜索</div>
-                <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-                <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
-            </div>
-          </form>
+        <search-icon @search='searchList'></search-icon>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in warehouseClassfiy" :key="index" :selected="index === activeIndex"
@@ -21,8 +14,8 @@
         </div>
       </div>
       <!-- 主要内容区域 -->
-      <div class="app_main" ref='addressMain'>
-        <div class='address_wrapper'>
+       <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !warehouseList.length"
+                @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
           <div class="client_ads vux-1px-b" v-for="(item, index) in warehouseList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.warehouseCode}}</span>
@@ -30,19 +23,10 @@
             </div>
             <div class="cp_info">
               <p class="cp_name">{{item.warehouseName}}</p>
-              <!-- <p class='cp_label'>
-                <span>{{item.warehouseLabelName}}</span>
-              </p> -->
-              <!-- <p class="cp_ads">{{item.warehouseProvince}}{{item.warehouseCity}}{{item.warehouseDistrict}}{{item.warehouseAddress}}</p> -->
-              
             </div>
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
           </div>
-          <load-more tip="加载中" v-show="hasNext"></load-more>
-          <load-more :show-loading="false" tip="暂无数据" v-show="!warehouseList.length && !hasNext"></load-more>
-        </div>
-        <spinner class="pullDownRefresh" type="android" :style="{top: pullDownTop + 'px'}"></spinner>
-      </div>
+       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEditAds">新增一个仓库</div>
@@ -54,14 +38,11 @@
 </template>
 
 <script>
-import { Tab, Icon, TabItem,Spinner,AlertModule,LoadMore } from 'vux'
+import { Tab,TabItem} from 'vux'
 import warehouseService from 'service/warehouseService.js'
 import LoadIcon from 'components/Loading.vue'
-import BScroll from 'better-scroll'
-const PULL_DOWN_REFRESH_HEIGHT = 30;
-let isBack = false,
-    path = '',
-    query = {};
+import searchIcon from 'components/search'
+import RScroll from 'components/RScroll'
 export default {
   data(){
     return{
@@ -70,18 +51,21 @@ export default {
       tabSelect:'全部',
       activeIndex :0,
       warehouseClassfiy :['全部','个人仓','客户仓','部门仓','加工商仓','渠道商仓'],
-      bScroll : null,
       page : 1,
       limit :20,
       id : 2129,
       hasNext: true,
-      pullDownTop: -PULL_DOWN_REFRESH_HEIGHT,
+      scrollOptions: {
+        click: true,
+        pullDownRefresh: true,
+        pullUpLoad: true,
+      },
       Loadding : true,
       total : null
     }
   },
   components:{
-    Tab, Icon, TabItem,Spinner,LoadIcon,LoadMore
+    Tab,TabItem,LoadIcon,searchIcon,RScroll
   },
   methods:{
     // TODO 重置列表条件
@@ -89,26 +73,23 @@ export default {
       this.warehouseList = [];
       this.page = 1;
       this.hasNext = true;
-      this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
+      this.$refs.bScroll.resetPullDown();
     },
+    //tab切换
     tabClick(item,index){
       this.activeIndex = index;
       this.resetCondition();
       this.tabSelect='';
       //this.srhInpTx= '';
       this.tabSelect=item;
-      this.bScroll.scrollTo(0, 0);
+      this.$refs.bScroll.scrollTo(0, 0);
       this.getwarehouse()
     },
-    searcwarehouse(){
+    //搜索
+    searchList(value){ 
+      this.srhInpTx = value;
       this.resetCondition();
       this.getwarehouse()
-    },
-    clear(){
-      this.srhInpTx = '';
-      this.resetCondition();
-      this.getwarehouse();
-
     },
     // 编辑地址
     goEditAds(item){
@@ -129,7 +110,7 @@ export default {
           
     },
     //获取仓库列表
-    getwarehouse(){
+    getwarehouse(noReset = false){
         let filter=[];
         if(this.tabSelect != '全部'){
             filter=[{
@@ -179,86 +160,56 @@ export default {
         if(filter){
           data.filter = JSON.stringify(filter);
         }
-        return warehouseService.getwarehouseList(this.id,data).then( data=>{
-            if(this.total && data.dataCount - this.total>0){
-              this.$vux.toast.show({
-                text: `最近新增${dataCount-this.total}个仓库`,
-                position:'top',
-                width:'50%',
-                type:"text"
-              })
+        return warehouseService.getwarehouseList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
+          // console.log(this.total);
+          let text = '';
+          if(this.total){
+            if(dataCount - this.total === 0){
+              text = '最近无新增仓库'
             }
-            sessionStorage.setItem("CK",data.dataCount);
-            this.Loadding = false;
-            this.warehouseList = this.page === 1? data.tableContent : this.warehouseList.concat(data.tableContent);
-            this.hasNext = data.dataCount > (this.page-1)*this.limit + data.tableContent.length;
+            else{
+              text = `最近新增${dataCount-this.total}个仓库`
+            }   
+            this.$vux.toast.show({
+              text: text,
+              position:'top',
+              width:'50%',
+              type:"text"
+            })          
+          }          
+                 
+          sessionStorage.setItem("CK",dataCount);
+          this.warehouseList = this.page === 1? tableContent : this.warehouseList.concat(tableContent);
+          this.Loadding = false;
+          this.hasNext = dataCount > (this.page-1)*this.limit + tableContent.length;
+          if (!noReset) {
             this.$nextTick(() => {
-              this.bScroll.refresh();
-              this.bScroll.finishPullDown();
-              this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-              if (!this.hasNext) {
-                return
-              }
-              this.bScroll.finishPullUp();
+              this.resetScroll();
             })
-          }).catch(e=>{
-            this.bScroll.finishPullDown();
-            this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
-            AlertModule.show({
-              content: e.message,
-            })
-          })  
+          }
+        }).catch(e=>{
+          this.resetScroll();
+        })
+                     
     },
-    //仓库分类
-    // getClassfiy(){    
-    //   warehouseService.getwarehouseClassfiy(this.page).then(data=>{
-    //     data.map(item=>{
-    //       if(item.title ==='仓库对象'){
-    //         item.title = '全部';
-    //       }
-    //     })
-    //     this.warehouseClassfiy = data;
-    //   }).catch(e=>{
-    //     AlertModule.show({
-    //       content: e.message,
-    //     })
-    //   })
-    // },
-    // TODO 初始化better-scroll
-    initScroll() {
-      this.$nextTick(() => {
-        this.bScroll = new BScroll(this.$refs.addressMain, {
-          click: true,
-          pullDownRefresh: {
-            threshold: 50,
-            stop: PULL_DOWN_REFRESH_HEIGHT
-          },
-          pullUpLoad: {
-            threshold: 20
-          },
-        });
-        // 绑定滚动加载事件
-        this.bScroll.on('pullingUp', () => {
-          if (!this.hasNext) {
-            return
-          }
-          this.page++;
-          this.getwarehouse();
-        });
-        // 绑定下拉刷新事件
-        this.bScroll.on('pullingDown', () => {
-          this.page = 1;
-          this.getwarehouse();
-        });
-        // 下拉的时候展示下拉刷新的图标
-        this.bScroll.on('scroll', ({x, y}) => {
-          if (y > 0) {
-            if (y > PULL_DOWN_REFRESH_HEIGHT) {
-              this.pullDownTop = 0;
-            } else {
-              this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
-            }
-          }
+     // TODO 重置下拉刷新、上拉加载的状态
+    resetScroll() {
+      this.$refs.bScroll.finishPullDown();
+      this.$refs.bScroll.finishPullUp();
+    },
+    // TODO 上拉加载
+    onPullingUp() {
+      this.page++;
+      this.getwarehouse();
+    },
+    // TODO 下拉刷新
+    onPullingDown() {
+      this.page = 1;
+      this.getwarehouse(true).then(() => {
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullDown().then(() => {
+            this.$refs.bScroll.finishPullUp();
+          });
         })
       });
     },
@@ -274,7 +225,6 @@ export default {
     $route: {
       handler(to, from) {
         // 判断是否重新请求页面
-        console.log(to);
         if (to.meta.reload && to.path === '/warehouse') {
           to.meta.reload = false;
           this.srhInpTx = '';
@@ -286,8 +236,6 @@ export default {
     }
   },
   created(){
-    this.initScroll();
-    //this.getClassfiy();
     (async()=>{
       await this.getSession();
       await this.getwarehouse();

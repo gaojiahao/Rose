@@ -141,14 +141,22 @@ export default {
           })
           await dealerService.getDealerList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
             console.log(this.total);
-            if(this.total && dataCount - this.total>0){ // 判断最近有无新增订单
+            let text = '';
+            if(this.total){
+              if(dataCount - this.total === 0){
+                text = '最近无新增往来'
+              }
+              else{
+                text = `最近新增${dataCount-this.total}个往来`
+              }
               this.$vux.toast.show({
-                  text: `最近新增${dataCount-this.total}个往来`,
+                  text: text,
                   position:'top',
                   width:'50%',
                   type:"text"
-              })
-            }
+              })            
+            }          
+            
             sessionStorage.setItem("DL",dataCount);
             this.dealerList = this.page === 1? tableContent : this.dealerList.concat(tableContent);
             this.hasNext = dataCount > (this.page-1)*this.limit + tableContent.length;

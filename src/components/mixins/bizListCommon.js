@@ -117,15 +117,22 @@ export default {
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
-        this.$emit('input',false)
-        if(this.total && total-this.total>0){ // 判断最近有无新增订单
+        this.$emit('input',false);
+        //判断最近有误新增数据
+        let text = '';
+        if(this.total){
+          if(total-this.total === 0){
+            text = '最近无新增订单'
+          }
+          else{
+            text = `最近新增${total-this.total}个订单`
+          }
           this.$vux.toast.show({
-            text: `最近新增${total-this.total}个订单`,
+            text: text,
             position:'top',
-            width:'70%',
+            width:'50%',
             type:"text"
            })
-          console.log(`最近新增${total-this.total}条数据`)
         }
         sessionStorage.setItem(this.applyCode,total);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;

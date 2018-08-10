@@ -197,14 +197,22 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          if(this.total && dataCount-this.total>0){ // 判断最近有无新增订单
+          let text = '';
+          if(this.total){
+            if(dataCount - this.total === 0){
+              text = '最近无新增物料'
+            }
+            else{
+              text = `最近新增${dataCount-this.total}个物料`
+            }  
             this.$vux.toast.show({
-                text: `最近新增${dataCount-this.total}个物料`,
-                position:'top',
-                width:'50%',
-                type:"text"
-            })
-          }
+              text: text,
+              position:'top',
+              width:'50%',
+              type:"text"
+            })          
+          }          
+          
           sessionStorage.setItem("WL",dataCount);
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic
