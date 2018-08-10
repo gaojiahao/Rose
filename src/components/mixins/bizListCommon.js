@@ -118,24 +118,6 @@ export default {
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
         this.$emit('input',false);
-        //判断最近有无新增数据
-        console.log(this.total);
-        let text = '';
-        if(this.total && this.page ===1){
-          if(total-this.total === 0){
-            text = '最近无新增订单'
-          }
-          else{
-            text = `最近新增${total-this.total}个订单`
-          }
-          this.$vux.toast.show({
-            text: text,
-            position:'top',
-            width:'50%',
-            type:"text"
-           })
-        }
-        sessionStorage.setItem(this.applyCode,total);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
         orders.forEach(item => {
           this.setStatus(item);
@@ -164,6 +146,26 @@ export default {
           this.$nextTick(() => {
             this.resetScroll();
           })
+        }
+        //判断最近有无新增数据
+        console.log(this.total);
+        let text = '';
+        if(this.page ===1 && this.serachVal === '' && this.activeIndex ===0){
+          if(this.total){
+            if(total-this.total === 0){
+              text = '最近无新增订单'
+            }
+            else{
+              text = `最近新增${total-this.total}个订单`
+            }
+            this.$vux.toast.show({
+              text: text,
+              position:'top',
+              width:'50%',
+              type:"text"
+            })
+          }
+          sessionStorage.setItem(this.applyCode,total);
         }
       }).catch(e => {
         this.resetScroll();
