@@ -197,8 +197,9 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          console.log(this.total);
           let text = '';
-          if(this.total){
+          if(this.total && this.page ===1){
             if(dataCount - this.total === 0){
               text = '最近无新增物料'
             }
@@ -249,16 +250,9 @@
         this.getMatList();
       },
       // TODO 下拉刷新
-      async onPullingDown() {
+     onPullingDown() {
         this.page = 1;
-        await this.getSession()
-        await this.getMatList(true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
+        this.getData(true)
       },
       //获取上次存储的列表总数量
       getSession(){
@@ -266,6 +260,21 @@
           this.total = sessionStorage.getItem("WL");
           resolve()
         })
+      },
+      async getData(noReset){
+        await this.getSession();
+        if(noReset){
+          await this.getMatList(true).then(() => {
+              this.$nextTick(() => {
+                this.$refs.bScroll.finishPullDown().then(() => {
+                  this.$refs.bScroll.finishPullUp();
+                });
+              })
+          });
+          return
+        }
+        await this.getMatList();
+
       }
     },
     watch: {
@@ -278,7 +287,7 @@
             this.activeTab = '';
             this.activeIndex = 0;
             this.resetCondition();
-            this.getMatList();
+            this.getData(false)
           }
         },
       }

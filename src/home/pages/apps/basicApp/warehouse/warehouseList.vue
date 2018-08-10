@@ -163,7 +163,7 @@ export default {
         return warehouseService.getwarehouseList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
           // console.log(this.total);
           let text = '';
-          if(this.total){
+          if(this.total && this.page ===1){
             if(dataCount - this.total === 0){
               text = '最近无新增仓库'
             }
@@ -203,16 +203,9 @@ export default {
       this.getwarehouse();
     },
     // TODO 下拉刷新
-    async onPullingDown() {
+   onPullingDown() {
       this.page = 1;
-      await this.getSession()
-      await this.getwarehouse(true).then(() => {
-        this.$nextTick(() => {
-          this.$refs.bScroll.finishPullDown().then(() => {
-            this.$refs.bScroll.finishPullUp();
-          });
-        })
-      });
+      this.getData(true)
     },
     //获取上次存储的列表总数量
     getSession(){
@@ -220,6 +213,20 @@ export default {
         this.total = sessionStorage.getItem("CK");
         resolve()
       })
+    },
+    async getData(noReset){
+      await this.getSession();
+      if(noReset){
+        await this.getwarehouse(true).then(() => {
+            this.$nextTick(() => {
+              this.$refs.bScroll.finishPullDown().then(() => {
+                this.$refs.bScroll.finishPullUp();
+              });
+            })
+        });
+        return
+      }
+      await this.getwarehouse();
     }
   },
   watch: {
@@ -231,17 +238,13 @@ export default {
           this.srhInpTx = '';
           //this.activeIndex = 0;
           this.resetCondition();
-          this.getwarehouse();
+          this.onPullingDown();
         }
       },
     }
   },
   created(){
-    (async()=>{
-      await this.getSession();
-      await this.getwarehouse();
-
-    })()
+    this.getData(false)
   },
   
 }

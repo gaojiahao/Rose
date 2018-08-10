@@ -142,7 +142,7 @@ export default {
           await dealerService.getDealerList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
             console.log(this.total);
             let text = '';
-            if(this.total){
+            if(this.total && this.page ===1){
               if(dataCount - this.total === 0){
                 text = '最近无新增往来'
               }
@@ -196,16 +196,9 @@ export default {
       this.getDealer();
     },
     // TODO 下拉刷新
-    async onPullingDown() {
+    onPullingDown() {
       this.page = 1;
-      await this.getSession();
-      await this.getDealer(true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
+      this.getData(true);
     },
     //获取上次存储的列表总数量
     getSession(){
@@ -213,6 +206,20 @@ export default {
         this.total = sessionStorage.getItem("DL");
         resolve()
       })
+    },
+    async getData(noReset){
+      await this.getSession();
+      if(noReset){
+        await this.getDealer(true).then(() => {
+            this.$nextTick(() => {
+              this.$refs.bScroll.finishPullDown().then(() => {
+                this.$refs.bScroll.finishPullUp();
+              });
+            })
+        });
+        return
+      }
+      await this.getDealer();
     }
   },
   watch: {
@@ -225,17 +232,19 @@ export default {
           this.srhInpTx = '';
           this.activeIndex = 0;
           this.resetCondition();
-          this.getDealer();
+          this.onPullingDown()
+          // this.getDealer();
         }
       },
     }
   },
   created(){
     this.getClassfiy();
-    (async()=>{
-      await this.getSession();
-      await this.getDealer();
-    })()
+    this.getData(false);
+    // (async()=>{
+    //   await this.getSession();
+    //   await this.getDealer();
+    // })()
     // this.getDealer();
   },
   

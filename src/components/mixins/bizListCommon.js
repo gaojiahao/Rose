@@ -121,7 +121,7 @@ export default {
         //判断最近有无新增数据
         console.log(this.total);
         let text = '';
-        if(this.total){
+        if(this.total && this.page ===1){
           if(total-this.total === 0){
             text = '最近无新增订单'
           }
@@ -198,14 +198,13 @@ export default {
       this.activeTab = '';
       this.activeIndex = 0;
       this.resetCondition();
-      this.getList();
+      this.getData(false);
 
     },
     //获取上次存储的列表总数量
     getSession(){
       return new Promise(resolve=>{
         this.total = sessionStorage.getItem(this.applyCode);
-        console.log(this.total);
         resolve()
       })
     },
