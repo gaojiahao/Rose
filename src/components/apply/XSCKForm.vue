@@ -366,7 +366,7 @@
                 dealerDebit: this.dealerInfo.dealerCode, // 往来编码
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 往来页签
                 containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
-                drDealerPaymentTerm: this.drDealerPaymentTerm,
+                drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
                 dataSet
               }
             };

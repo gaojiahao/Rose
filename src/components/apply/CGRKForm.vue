@@ -318,7 +318,7 @@
                 dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
                 crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
                 containerCode: this.warehouse.warehouseCode, // 仓库编码
-                crDealerPaymentTerm: this.crDealerPaymentTerm,
+                crDealerPaymentTerm: this.crDealerPaymentTerm ,
                 dataSet
               }
             };
@@ -393,7 +393,7 @@
             biId: formData.biId,
           };
           this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
-          this.DealerPaymentTerm = formData.crDealerPaymentTerm;
+          this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
           this.biReferenceId = formData.biReferenceId;
           this.listData = dataSet;
         })

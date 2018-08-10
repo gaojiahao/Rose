@@ -13,6 +13,7 @@
 
 <script>
 import Loadding from 'components/Loading'
+import businessMap from '../../../maps/businessText.js'
 export default {
   data(){
     return {
@@ -44,6 +45,11 @@ export default {
       },
     }
   },
+  beforeRouteEnter (to, from, next) {
+    let code  = businessMap[to.params.code];
+    to.meta.title = code.slice(-4) + '列表';
+    next();
+  }
 }
 </script>
 

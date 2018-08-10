@@ -240,7 +240,7 @@ export default {
         backTime = `${hours}小时前`;
       }
       else{        
-        backTime = `${minutes}分钟前`;
+         backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;  
       }
       return hours<24 ? backTime : `${val.crtTime.split(' ')[0]}`;
       

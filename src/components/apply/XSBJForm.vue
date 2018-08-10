@@ -102,11 +102,13 @@
                 </swipeout-item>
               </swipeout>
               <!-- 物料输入内容 -->
+              
               <div class="userInp_mode">
-                <group>
+                <input-box :options="inputOptions"  v-model='item.price' class='matter_price'></input-box>
+                <!-- <group>
                   <x-input type="number" title="单价" text-align='right' placeholder='请填写'
                            v-model.number="item.price"></x-input>
-                </group>
+                </group> -->
                 <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
               </div>
             </div>
@@ -138,7 +140,7 @@
   import ApplyCommon from './../mixins/applyCommon'
   import PopSingleSelect from 'components/PopSingleSelect'
   import RPicker from 'components/RPicker'
-
+  import InputBox from 'components/Xinput'
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -153,6 +155,7 @@
       PopDealerList,
       PopSingleSelect,
       RPicker,
+      InputBox
     },
     data() {
       return {
@@ -171,6 +174,11 @@
         priceMap: {},
         showDealerPop: false,
         priceTypeList: ['渠道价', '零售价'],
+        inputOptions:{
+          title:'单价',
+          type : 'number',
+          placeholder : '请填写'
+        }
       }
     },
     methods: {
@@ -274,7 +282,7 @@
                 order: {
                   dealerDebit: this.dealerInfo.dealerCode || '',
                   drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
-                  drDealerPaymentTerm: this.drDealerPaymentTerm,
+                  drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
                   dataSet
                 }
               }),
@@ -309,7 +317,9 @@
 
 <style lang="scss" scoped>
   @import './../scss/bizApply';
-
+  .matter_price{
+    font-size: .14rem !important;
+  }
   .xsbj-apply-container {
     /deep/ .weui-cells {
       font-size: .14rem;
