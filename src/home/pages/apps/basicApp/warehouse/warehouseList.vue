@@ -203,9 +203,10 @@ export default {
       this.getwarehouse();
     },
     // TODO 下拉刷新
-    onPullingDown() {
+    async onPullingDown() {
       this.page = 1;
-      this.getwarehouse(true).then(() => {
+      await this.getSession()
+      await this.getwarehouse(true).then(() => {
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullDown().then(() => {
             this.$refs.bScroll.finishPullUp();

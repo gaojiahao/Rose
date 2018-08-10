@@ -196,15 +196,16 @@ export default {
       this.getDealer();
     },
     // TODO 下拉刷新
-    onPullingDown() {
+    async onPullingDown() {
       this.page = 1;
-      this.getDealer(true).then(() => {
-        this.$nextTick(() => {
-          this.$refs.bScroll.finishPullDown().then(() => {
-            this.$refs.bScroll.finishPullUp();
-          });
-        })
-      });
+      await this.getSession();
+      await this.getDealer(true).then(() => {
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullDown().then(() => {
+              this.$refs.bScroll.finishPullUp();
+            });
+          })
+        });
     },
     //获取上次存储的列表总数量
     getSession(){

@@ -249,9 +249,10 @@
         this.getMatList();
       },
       // TODO 下拉刷新
-      onPullingDown() {
+      async onPullingDown() {
         this.page = 1;
-        this.getMatList(true).then(() => {
+        await this.getSession()
+        await this.getMatList(true).then(() => {
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullDown().then(() => {
               this.$refs.bScroll.finishPullUp();
