@@ -64,7 +64,6 @@ export default {
       result: 0,
       transCode: this.$route.query.transCode,
       canSubmit: this.$route.query.canSubmit,
-      pageSwiper: null,
       listObj: [
         {
           title: "请填写项目名称",
@@ -129,16 +128,16 @@ export default {
               key: "agoraCostDepartment",
               value: ""
             },
-            {
-              title: "核算归属省份",
-              key: "agoraCheckProvince",
-              value: ""
-            },
-            {
-              title: "费用所属银行",
-              key: "agoraCostBank",
-              value: ""
-            }
+            // {
+            //   title: "核算归属省份",
+            //   key: "agoraCheckProvince",
+            //   value: ""
+            // },
+            // {
+            //   title: "费用所属银行",
+            //   key: "agoraCostBank",
+            //   value: ""
+            // }
           ]
         },
         {
@@ -156,6 +155,30 @@ export default {
     };
   },
   methods: {
+    //获取数据
+    restoreJsonData(jsonData){
+      let arrData = jsonData.transDetailUncalc;
+      arrData.forEach((val,idx) => {
+        let formData = {
+          projectName:val.var1,      //项目名称
+          productMarketing:val.var2.value, //市场宣传
+          publicityType:val.var3.value,    //宣品类型
+          agoraPrice: val.num1,      //单价
+          agoraNumber:val.num2,      //数量
+          total:val.num3,            //总价
+          agoraCostBU:val.var4.value,      //费用所属事业部
+          agoraCostDepartment:val.var5.value,   //费用所属部门
+          comment: val.comment          //说明
+        }
+        this.listData.push(JSON.stringify(this.listObj));
+        this.listData[idx] = JSON.parse(this.listData[idx]);
+        this.listData[idx].forEach(lItem => {
+            lItem.items.forEach(item => {
+              item.value = formData[item.key];
+            })
+        });
+      });
+    },
     //审批弹窗
     endToast(taskId, data) {
       createService
@@ -217,9 +240,7 @@ export default {
     }
   },
   created() {
-    this.$nextTick(() => {
-      this.pageSwiper = new Swiper(".swiper-container", {});
-    });
+
   }
 };
 </script>
