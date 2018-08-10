@@ -296,12 +296,6 @@ export default {
          })
       }
     },
-    // TODO 获取用户基本信息
-    getBaseInfoData() {
-      getBaseInfoData().then(data => {
-        this.formData = {...data};
-      })
-    },
     //获取订单信息用于重新提交
     async getFormData(){
       await getSOList({

@@ -118,7 +118,8 @@ export default {
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
         this.$emit('input',false);
-        //判断最近有误新增数据
+        //判断最近有无新增数据
+        console.log(this.total);
         let text = '';
         if(this.total){
           if(total-this.total === 0){
@@ -189,13 +190,7 @@ export default {
     // TODO 下拉刷新
     onPullingDown() {
       this.page = 1;
-      this.getList(true).then(() => {
-        this.$nextTick(() => {
-          this.$refs.bScroll.finishPullDown().then(() => {
-            this.$refs.bScroll.finishPullUp();
-          });
-        })
-      });
+      this.getData(true);
     },
     //重置数据
     reloadData() {
@@ -210,8 +205,24 @@ export default {
     getSession(){
       return new Promise(resolve=>{
         this.total = sessionStorage.getItem(this.applyCode);
+        console.log(this.total);
         resolve()
       })
+    },
+    async getData(noReset){
+      await this.getSession();
+      if(noReset){
+        await this.getList(true).then(() => {
+            this.$nextTick(() => {
+              this.$refs.bScroll.finishPullDown().then(() => {
+                this.$refs.bScroll.finishPullUp();
+              });
+            })
+        });
+        return
+      }
+      await this.getList();
+
     }
   },
   filters: {
@@ -228,11 +239,7 @@ export default {
   },
   created() {
     this.applyCode = this.$route.params.code;
-    (async()=>{
-      await this.getSession();
-      await this.getList();
-    })()
-    // this.getList();
+    this.getData(false);
   }
 
 }

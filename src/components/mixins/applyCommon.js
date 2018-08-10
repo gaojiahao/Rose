@@ -123,7 +123,7 @@ export default {
     // TODO 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(data => {
-        if(!this.isResubmit){
+        if(!this.transCode){
           this.$emit('input',false)
         }
         this.formData = {
