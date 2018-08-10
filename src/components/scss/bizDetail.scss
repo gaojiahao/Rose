@@ -16,8 +16,10 @@
 }
 
 .basicPart {
-  overflow: auto;
+  z-index: 1; 
   height: 100%;
+  overflow: auto;
+  position:relative;
   -webkit-overflow-scrolling: touch;
 }
 

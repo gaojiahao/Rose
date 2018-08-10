@@ -107,12 +107,19 @@
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
+      <span class="count_num"
+          :class="{nine_up : tdAmount.length  > 8 , 
+          ten_up : tdAmount.length  > 9,
+          ele_up : tdAmount.length  > 10}"
+          >
+        <span class="total_price">
+          <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
+        </span>
+        
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
       </span>
-      <span class="count_btn stop" @click="stopOrder"
-            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <!-- <span class="count_btn stop" @click="stopOrder"
+            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
