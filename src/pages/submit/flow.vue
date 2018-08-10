@@ -269,7 +269,7 @@
       // TODO 组装审批者数据
       assembleOpData(op) {
         return {
-          text: op.name,
+          text: op.value,
           value: op.userId,
           selection: {
             data: op.data
