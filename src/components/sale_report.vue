@@ -90,15 +90,20 @@
               value-align="right" 
               v-if="item.value.length>0"
             ></cell>
-
-            <x-input 
-              title="数量" 
-              type="number" 
-              text-align="right" 
-              placeholder="请输入数量"
-              v-if="item.value[0]!='无'"
-              v-model.number="item.qty"
-            ></x-input>
+            <!-- 数量输入 -->
+            <div class="weui-cell each_part">
+              <div class="weui-cell__hd">数量</div>
+              <div class="weui-cell__bd weui-cell__primary" >
+                <input 
+                  class="weui-input"
+                  title="数量" 
+                  type="number" 
+                  style="text-align: right;"
+                  placeholder="请输入数量"
+                  v-if="item.value[0]!=='无'"
+                  v-model.number="item.qty"></input>
+              </div>
+            </div>
           </group>
 
           <p class="caution_part" v-if='arr[0].value.length!=0'>
@@ -306,12 +311,7 @@ export default {
               name: data.tableContent[i]["trans_detail_uncalc.transObjCode"],
               value:data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]+'_'+data.tableContent[i]["trans_detail_uncalc.price"],
               parent: "0"
-            },
-            // {
-            //   name: data.tableContent[i]["trans_detail_uncalc.price"],
-            //   value: data.tableContent[i]["trans_detail_uncalc.price"],
-            //   parent:data.tableContent[i]["trans_detail_uncalc.transObjCode"] +  "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]
-            // }
+            }
           );
         }
       });
@@ -386,6 +386,8 @@ export default {
         });
         return;
       }
+      // 项目类产品
+      
       for (let i = 0; i < this.arr.length; i++) {
         if (this.arr[i].value[0] != "无" && this.arr[i].qty === "") {
           this.$vux.alert.show({
