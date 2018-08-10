@@ -25,7 +25,7 @@
                     <div v-if="whichIndex === 0">
                         <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
-                                <span class="e_status" :class="{wait_c:whichIndex===0}">待处理</span><span class="e_name">{{val.transType}}</span>
+                                <span class="e_status" :class="{wait_c:whichIndex===0}">待处理</span><span class="e_name">{{val.title}}</span>
                             </div>
                             <div class="e_main">
                                 <span class="e_code">
@@ -49,7 +49,7 @@
                     <div v-if="whichIndex === 1">
                         <div class="each_list"  v-for="(val,idx) in underWayList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
-                                <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span class="e_name">{{val.transType}}</span>
+                                <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span class="e_name">{{val.title}}</span>
                             </div>
                             <div class="e_main">
                                 <span class="e_code">
@@ -73,7 +73,7 @@
                     <div v-if="whichIndex === 2">
                         <div class="each_list"  v-for="(val,idx) in overList" :key="idx" @click="goDetail(val)">
                             <div class="e_top">
-                                <span class="e_status" :class="{done_c:whichIndex===2}">已完成</span><span class="e_name">{{val.transType}}</span>
+                                <span class="e_status" :class="{done_c:whichIndex===2}">已完成</span><span class="e_name">{{val.title}}</span>
                             </div>
                             <div class="e_main">
                                 <span class="e_code">

@@ -183,6 +183,45 @@ let createService = {
       }
     });
   },
+  // TODO 获取常委、部门主管和副总裁
+  getApprovalUserByAgent(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getApprovalUserByAgent',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+        ...data,
+      }
+    });
+  },
+  // TODO 事业部获取副总裁
+  getGroupPrinicalInfo(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getGroupPrinicalInfo',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+        ...data,
+      }
+    });
+  },
+  // TODO 获取经办人所属区域
+  getAreas(data = {}){
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getAreasByUserId',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+        ...data,
+      }
+    });
+  },
 };
 
 export default createService

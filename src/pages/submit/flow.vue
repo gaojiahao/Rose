@@ -6,12 +6,14 @@
     <div class="f_main">
       <div class="f_main_wrapper">
         <group title="请填写对应的信息" class="info-container">
-          <x-input :title="item.name" text-align='right' @on-focus="searchFocus(item, index)"
+          <!--<x-input :title="item.name" text-align='right' @on-focus="searchFocus(item, index)"
                    @on-change="getSearch(item)"
                    @on-blur="searchBlur(item)"
-                   v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>
-          <cell title="财务" value='管建明'></cell>
-          <cell title="总裁" value='王珏'></cell>
+                   v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>-->
+          <popup-radio :title="item.title" :options="item.options" v-for="(item, index) in opList" v-model="item.value"
+                       :key="index"></popup-radio>
+          <cell title="财务" value="管建明"></cell>
+          <cell title="总裁" value="王珏"></cell>
         </group>
         <group class="search-list-container" v-show="!hasSelected" :style="{top: searchListTop}">
           <cell :title="item.name" v-for="(item, index) in searchList" :key="index"
@@ -41,7 +43,7 @@
 </template>
 
 <script>
-  import {Flow, Cell, Group, XInput, FlowState, FlowLine} from "vux";
+  import {Flow, Cell, Group, XInput, FlowState, FlowLine, PopupRadio,} from "vux";
   import createService from './../../service/createService'
   import common from './../mixins/common'
 
@@ -54,6 +56,7 @@
       XInput,
       FlowLine,
       FlowState,
+      PopupRadio,
     },
     data() {
       return {
@@ -84,6 +87,7 @@
         taskId: '', // 任务id，修改时会有
         jsonData: {},
         currentUser: {}, // 当前用户信息
+        opList: [], // 审批人列表
       };
     },
     mixins: [common],
@@ -151,7 +155,7 @@
         }
         item.userId = '';
         // 搜索为副总
-        if (this.searchType === 'vicePresident') {
+        if (item.searchType === 'vicePresident') {
           params.name = '副总裁'
         }
         createService.getChangWei(params).then(data => {
@@ -183,33 +187,36 @@
         };
         let wfPara = {};
         let submitMethod = 'saveAndStartWfOld';
+        let area = this.jsonData.baseinfo.handlerAreaName.value;
         // 校验数据
-        Object.values(this.level_list).every(item => {
-          if (!item.userId) {
-            warn = `${item.name}不能为空`;
-            return false
-          }
-          return true
-        });
-        if (warn) {
-          this.showToast(warn);
-          return
-        }
+        /* Object.values(this.level_list).every(item => {
+           if (!item.userId) {
+             warn = `${item.name}不能为空`;
+             return false
+           }
+           return true
+         });
+         if (warn) {
+           this.showToast(warn);
+           return
+         }*/
+        let opParams = this.getOpParams(area);
         let {committee, vicePresident} = this.level_list;
-        this.jsonData['$review'] = {
+        this.jsonData = {
+          ...this.jsonData,
+          ...opParams.reviewer,
+        };
+        /*this.jsonData['$review'] = {
           cw: this.assembleOpData(committee),
           'warehouse.fzc': this.assembleOpData(vicePresident)
-        };
+        };*/
+
         wfPara = {
           [this.procCode]: {
             'businessKey': transCode,
             'createdBy': '',
-            '所属区域': '总部',
-            '部门主管ID': 700,
-            '常委ID': committee.userId,
-            '副总裁ID': vicePresident.userId,
-            // '常委ID': '15125', // rfd120
-            // '副总裁ID': '18128', // rfd9527
+            '所属区域': area,
+            ...opParams.wfPara,
           }
         };
         // 判断是否为重新提交
@@ -217,23 +224,23 @@
           wfPara = {
             taskId: this.taskId,
             businessKey: transCode,
-            createdBy: this.currentUser.user,
+            createdBy: this.jsonData.baseinfo.creator,
             '所属区域': "总部",
-            '常委ID': committee.userId,
-            '副总裁ID': vicePresident.userId,
+            // '常委ID': committee.userId,
+            // '副总裁ID': vicePresident.userId,
+            '常委ID': '15125', // rfd120
+            '副总裁ID': '18128', // rfd9527
             transCode,
             result: 3,
             comment: ''
-          }
+          };
           submitMethod = 'saveAndCommitTaskOld';
-          // wfPara.taskId = this.taskId;
-          // wfPara.result = 1;
-          // submitData.biReferenceId = this.formData.biReferenceId;
         }
         Object.assign(submitData, {
           jsonData: JSON.stringify(this.jsonData),
           wfPara: JSON.stringify(wfPara),
         });
+        console.log(this.jsonData)
         console.log(submitData)
         // this.showLoading = true;
         createService[submitMethod](submitData).then(data => {
@@ -267,28 +274,30 @@
         }
       },
       // TODO 组装审批者数据
-      assembleOpData(op) {
+      assembleOpData(data = {}, text = '', value = '') {
         return {
-          text: op.value,
-          value: op.userId,
+          text,
+          value,
           selection: {
-            data: op.data
+            data
           }
         }
       },
       // TODO 初始化基本信息
       getBaseInfo() {
-        let handleBaseInfo = (data = {}) => {
+        let handleBaseInfo = async (data = {}) => {
           let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
+          // nickname = '耿延聪'; // 测试
+          // nickname = '徐子庆'; // 测试
+          area = area.split(',')[0];
+          areaID = areaID.split(',')[0];
+          groupName = groupName.split(',')[0];
+          groupNameID = groupNameID.split(',')[0];
+          position = position.split(',')[0];
+          roleID = roleID.split(',')[0];
           this.currentUser = data;
-          createService.getCurrentUser(nickname).then(({tableContent = []}) => {
+          return createService.getCurrentUser(nickname).then(({tableContent = []}) => {
             let [handlerData = {}] = tableContent;
-            area = area.split(',')[0];
-            areaID = areaID.split(',')[0];
-            groupName = groupName.split(',')[0];
-            groupNameID = groupNameID.split(',')[0];
-            position = position.split(',')[0];
-            roleID = roleID.split(',')[0];
 
             this.jsonData.baseinfo = {
               ...this.jsonData.baseinfo,
@@ -313,6 +322,7 @@
               handlerUnitName: this.assembleData(groupNameID, groupName),
               handlerRoleName: this.assembleData(roleID, position),
             };
+            return handlerData;
           });
         };
 
@@ -345,12 +355,174 @@
           }
         }
       },
+      // TODO 处理部门主管、常委、副总的展示
+      opHandler(handlerData) {
+        let {area} = handlerData;
+        switch (area) {
+          // 总部展示部门主管和分管总裁
+          case '总部':
+            this.headquartersHandler(handlerData);
+            break;
+          default:
+            this.handlerBusiness(handlerData);
+            break;
+        }
+      },
+      // TODO 处理总部展示数据
+      headquartersHandler(handlerData = {}) {
+        let {userId, area, role} = handlerData;
+        let promises = [];
+        this.opList = [
+          {
+            title: '部门主管',
+            options: [],
+            key: '0',
+            value: '',
+          }, {
+            title: '副总裁',
+            options: [],
+            key: '1',
+            value: '',
+          },
+        ];
+        // 获取部门主管
+        promises.push(createService.getApprovalUserByAgent({
+          userId: userId,
+          group: area,
+          grouRole: role,
+        }));
+        // 获取副总裁
+        promises.push(createService.getApprovalUserByAgent({
+          userId: userId,
+          group: area,
+          grouRole: '副总裁',
+        }));
+        Promise.all(promises).then(([data, data2]) => {
+          let dept = [];
+          let vicePresident = [];
+          data.tableContent && data.tableContent.forEach(item => {
+            dept.push(item.CName);
+          });
+          data2.tableContent && data2.tableContent.forEach(item => {
+            vicePresident.push(item.comName);
+          });
+          this.opList[0].options = dept;
+          this.opList[0].value = dept[0];
+          this.opList[0].datas = data.tableContent;
+          this.opList[1].options = vicePresident;
+          this.opList[1].value = vicePresident[0];
+          this.opList[1].value = vicePresident[0];
+          this.opList[1].datas = data2.tableContent;
+        })
+      },
+      // TODO 处理事业部展示数据
+      async handlerBusiness(handlerData = {}) {
+        let {userId, area, role} = handlerData;
+        let promises = [];
+        this.opList = [
+          {
+            title: '常委',
+            options: [],
+            key: '0',
+            value: '',
+          }, {
+            title: '副总裁',
+            options: [],
+            key: '1',
+            value: '',
+          },
+        ];
+        let groupId = await
+          createService.getAreas({
+            userId: userId
+          }).then(({tableContent = []}) => {
+            let [data = {}] = tableContent;
+            return data.userGroupId
+          });
+        // 获取常委
+        promises.push(createService.getApprovalUserByAgent({
+          userId: userId,
+          group: area,
+          grouRole: '常委',
+        }));
+        // 获取副总裁
+        promises.push(createService.getGroupPrinicalInfo({
+          groupId
+        }));
+        Promise.all(promises).then(([data, data2]) => {
+          let committee = [];
+          let vicePresident = [];
+          data.tableContent && data.tableContent.forEach(item => {
+            committee.push(item.CName);
+          });
+          data2.tableContent && data2.tableContent.forEach(item => {
+            vicePresident.push(item.NICKNAME);
+          });
+          this.opList[0].options = committee;
+          this.opList[0].value = committee[0];
+          this.opList[0].datas = data.tableContent;
+          this.opList[1].options = vicePresident;
+          this.opList[1].value = vicePresident[0];
+          this.opList[1].datas = data2.tableContent;
+        })
+      },
+      // TODO 获取审批者参数
+      getOpParams(area) {
+        let idObj = {
+          reviewer: {},
+          wfPara: {}
+        };
+        let [first = {}, second = {}] = [...this.opList];
+
+        switch (area) {
+          case '总部':
+            let dept = {};
+            let vicePresident = {};
+            first.datas.forEach(item => {
+              if (item.CName === first.value) {
+                dept = {...item};
+              }
+            });
+            second.datas.forEach(item => {
+              if (item.comName === second.value) {
+                vicePresident = {...item};
+              }
+            });
+            console.log(dept)
+            console.log(vicePresident)
+            idObj = {
+              reviewer: {
+                $review: {
+                  reviewer: this.assembleOpData(dept, dept.CName, dept.CId),
+                  deputy: this.assembleOpData(vicePresident, vicePresident.comName, vicePresident.comId),
+                },
+                $review2: {
+                  reviewer: this.assembleOpData({}),
+                  deputy: this.assembleOpData({}),
+                  fzc: this.assembleOpData({}),
+                }
+              },
+              wfPara: {
+                '部门主管ID': dept.CId,
+                '分管副总ID': vicePresident.comId,
+                '省长ID': null,
+                '常委ID': null,
+                '副总裁ID': null
+              }
+            }
+            break;
+          default:
+            break;
+        }
+        return idObj;
+      }
     },
     created() {
       let {query} = this.$route;
       this.listid = query.list;
       this.taskId = query.taskId;
       this.sessionKey = `${this.listid}-FORMDATA`;
+      // let promises = [];
       let now = this.changeDate(new Date(), true);
       let jsonData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
       this.jsonData = jsonData;
@@ -359,15 +531,19 @@
       this.jsonData.baseinfo.crtTime = jsonData.baseinfo.crtTime ? this.changeDate(jsonData.baseinfo.crtTime, true) : now;
       this.jsonData.baseinfo.modTime = now;
       if (this.taskId) {
+        this.hasSelected = true;
         this.restoreLevelList();
+        // return
       }
-      this.getProcess();
       this.showLoading = true;
+      this.getProcess();
       this.getBaseInfo().then(data => {
         this.showLoading = false;
-      })
+        this.opHandler(data);
+      });
     }
-  };
+  }
+  ;
 </script>
 
 <style lang='scss'>
