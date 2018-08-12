@@ -5,15 +5,21 @@
 </template>
 
 <script>
+import platfrom from '@/plugins/platform'
 export default {
-  name: 'app'
-  // watch:{
-  //   $route(to,from){
-  //     console.log(to);
-  //     console.log(from);
-
-  //   }
-  // }
+  name: 'app',
+  updated(){
+    // 安卓的输入框会挡住input输入的解决办法
+    if(platfrom.isAndroid){
+      window.addEventListener("resize", function() {
+        if(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+          setTimeout(() => {
+            document.activeElement.scrollIntoViewIfNeeded();
+          }, 0);
+        }
+      })
+    }
+  }
 }
 </script>
 
