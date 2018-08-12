@@ -121,188 +121,17 @@
       <confirm></confirm>
       <alert></alert>
     </div>
-      <router-view></router-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-// 请求 引入
-import optionService from "../service/optionService";
-import saleRepotService from "../service/saleRepotService";
-// 插件引入
-import { Cell, Alert, Group, XInput, XButton,
-  Confirm, Selector, PopupPicker, numberComma} from "vux";
+// mixin引入
+import saleCommon from '../mixins/saleCommon'
 export default {
-  components: { 
-    Cell, Alert, Group, XInput,
-    Confirm, XButton, Selector, PopupPicker },
-  data() {
-    return {
-      mescroll: null,
-      btnStatus: true,                  // 时间超过20:00不允许提交
-      captainShow: false,               // 是否弹出 队长选择框 
-      governorShow: false,              // 是否弹出 省长选择框 
-      committeeShow: false,             // 是否弹出 常委选择框 
-      arr: [{ value: [], qty: "" }],    // 选中的 项目类产品
-      list: [{ name: "无", value: "无", parent: "0" }],     // 项目类产品
-      Aclass: "",                       // A类产品 输入金额
-      Bclass: "",                       // B类产品 输入金额
-      member: "",                       // 常委
-      governor: "",                     // 省长
-      comments: "",                     // 备注
-      totalInfo: "",
-      helpCaptain: "",                  // 所属队长
-      peopleList: []                    // 人员选择栏
-    };
-  },
-  filters: { numberComma },
+  name: 'sale-Report',
+  mixins: [saleCommon],
   methods: {
-    // 点击队长输入框 其他选项消失
-    captainFocus() {
-      this.captainShow = true;
-      this.governorShow = false;
-      this.committeeShow = false;
-    },
-    // 点击省长输入框
-    provinceReset(e) {
-      this.governorShow = true;
-      this.captainShow = false;
-      this.committeeShow = false;
-    },
-    // 点击常委输入框
-    memberUserReset(e) {
-      this.committeeShow = true;
-      this.governorShow = false;
-      this.captainShow = false;
-    },
-    // 当用户一次性输入完名字 隐藏选择栏
-    completeInput(name, reqArr, Type){
-      if(reqArr.length && name === reqArr[0].nickname){
-        if(Type === 'cp'){
-          this.captainShow = false;
-        }
-        else if(Type === 'go'){
-          this.governorShow = false;
-        }
-        else {
-          this.committeeShow = false;
-        }
-        this.peopleList = [];
-      }
-    },
-    // 实时请求 队长数据
-    captainSelect(e) {
-      //当输入内容清空时
-      if (!this.helpCaptain) { this.peopleList = []; return; }
-      //获取队长信息
-      optionService.getCaptain({ value: e }).then(({ tableContent }) => {
-        // 下拉选择栏 默认开启
-        this.captainShow = true;
-        this.peopleList = tableContent;
-        // 用户自己输入了完整的姓名 如果请求匹配到数据 不用再显示
-        this.completeInput(e, tableContent, 'cp')
-      });
-    },
-    // 实时请求 省长数据
-    provalUserByAgent(type, e) {
-      if (!this.governor) { this.peopleList = []; return; }
-      // 筛选条件
-      let data = {
-        entityId: 20000,
-        filter: JSON.stringify([
-          { operator: "like", value: type, property: "role" },
-          { operator: "like", value: e, property: "nickname" }
-        ])
-      };
-      saleRepotService.getApprovalUserByAgent(data).then(({ tableContent })  => {
-        // 下拉选择栏 默认开启
-        this.governorShow = true;
-        this.peopleList = tableContent;
-        // 用户自己输入了完整的姓名 如果请求匹配到数据 不用再显示
-        this.completeInput(e, tableContent, 'go')
-      });    
-    },
-    // 实时请求 常委数据
-    memberUser(type, e) {
-      if (!this.member) { this.peopleList = []; return; }
-      let data = {
-        entityId: 20000,
-        filter: JSON.stringify([
-          { operator: "like", value: type, property: "role" },
-          { operator: "like", value: e, property: "nickname" }
-        ])
-      };
-      saleRepotService.getApprovalUserByAgent(data).then(({ tableContent }) => {
-        // 下拉选择栏 默认开启
-        this.committeeShow = true;
-        this.peopleList = tableContent;
-        // 用户自己输入了完整的姓名 如果请求匹配到数据 不用再显示
-        this.completeInput(e, tableContent, 'committee')
-      });
-    },
-    // 选择队长
-    getNickname(val) {
-      this.captainShow = false;
-      this.peopleList = [];
-      this.helpCaptain = val;
-    },
-    // 选择省长
-    getProvalUser(val) {
-      this.governorShow = false;
-      this.peopleList = [];
-      this.governor = val;
-    },
-    // 选择常委
-    getMemberUser(val) {
-      this.member = val;
-      this.peopleList = [];
-      this.committeeShow = false;
-    },    
-    // 添加新数据
-    createNew() {
-      this.arr.push({ value: [], qty: "" });
-    },
-    // 删除新数据
-    deleteNew() {
-      if (this.arr.length === 1) {
-        this.arr = [{ value: [], qty: "" }];
-      } else {
-        this.arr.splice(this.arr.length - 1, 1);
-      }
-    },
-    // 随机ID
-    guid() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return ( S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4() );
-    },
-    // 判断时间是否有超过20:00
-    isTwoZero(){
-      saleRepotService.getModelData().then(res => {
-        if (res.submitAllow === 1) {
-          this.btnStatus = true;
-        } else if (res.submitAllow === 0) {
-          this.btnStatus = false;
-          this.$vux.alert.show({
-            title: "提示",
-            content: "每日提交截止时间为20:00"
-          });
-        }
-      });
-    },
-    // 获取 项目类产品
-    listData() {
-      saleRepotService.saleRepotList().then(({ tableContent }) => {
-        for(let [key, val] of Object.entries(tableContent)){
-          this.list.push({
-            name: val["trans_detail_uncalc.transObjCode"],
-            value: `${val["trans_detail_uncalc.transObjCode"]}_${key}_${val["trans_detail_uncalc.qty"]}_${val["trans_detail_uncalc.price"]}`,
-            parent: '0'
-          })
-        }
-      });
-    },
     // 前往合计
     goCount() {
       // 缓存
@@ -335,7 +164,6 @@ export default {
                 tips = `请选择${item.msg}`;
               }
               else if(this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty){
-                console.log(this[item.key][inx].value);
                 tips = '请填写产品数量';
               }
             }
@@ -460,11 +288,7 @@ export default {
       this.governor = SALE_FORM_INFO.governor;
       this.arr = SALE_FORM_INFO.saleReportArr;
       this.helpCaptain = SALE_FORM_INFO.captain;
-    }  
-    // 获取项目类产品
-    this.listData();
-    // //提交时间是否超过20点
-    // this.isTwoZero();
+    }
   },
   beforeRouteLeave(to, from, next) {
     if (!this.arr[0].value.length || to.name === "Count") {
@@ -502,72 +326,5 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.mescroll {
-  width: 100%;
-  padding-bottom: 50px;
-}
-.vux-popup-header {
-  width: 100%;
-}
-/* 底部提示文字 */
-.caution_part {
-  width: 100%;
-  text-align: center;
-  color: #ccc;
-  font-size: 12px;
-  margin-top: 4px;
-}
-.plus_tx {
-  color: dodgerblue;
-}
-.reduce_tx {
-  color: #ff2719;
-}
-/* 删除按钮 */
-.delete_button {
-  position: absolute;
-  top: 0;
-}
-/* 合计按钮  */
-#count_button {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  border-radius: 0;
-  z-index: 99;
-}
-.plus_delect {
-  color: red;
-}
-.weui-cells {
-  margin-top: 0;
-  background: #f0f2f5;
-}
-.captain-container {
-  top: 80px;
-  z-index: 8;
-  width: 100%;
-  list-style: none;
-  max-height: 140px;
-  position: absolute;
-  overflow-y: scroll;
-  padding-left: 15px;
-  background: #f0f2f5;
-  box-sizing: border-box;
-  li {
-    color: #3a3a3a;
-    font-size: 18px;
-    padding: 10px 15px;  
-    box-sizing: border-box;
-  }
-
-}
-.governor-container {
-  @extend .captain-container;
-  top: 125px;
-}
-.commit-container {
-  @extend .captain-container;
-  top: 165px;
-}
+  @import './scss/common.scss';
 </style>
