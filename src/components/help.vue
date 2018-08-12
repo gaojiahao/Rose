@@ -45,29 +45,21 @@
           ref="memberChooise"
           class="helpCaptain"></x-input>
         </group>
-        <group class="captain-container" :class="captainShow==false?'captainHide':''">
-          <cell 
-          :title="item.nickname" 
-          v-for="(item, index) in teamLeaderList" 
-          :key="index" 
-          @click.native="getNickname(item.nickname)"></cell>
-        </group>
-
-        <group class="captain-container">
-          <cell 
-          :title="item.nickname" 
-          v-for="(item, index) in provalUserByList" 
-          :key="index" 
-          @click.native="getProvalUser(item.nickname)"></cell>
-        </group>
-
-        <group class="captain-container">
-          <cell 
-          :title="item.nickname" 
-          v-for="(item, index) in MemberUserList" 
-          :key="index" 
-          @click.native="getMemberUser(item.nickname)"></cell>
-        </group>
+          <!-- 队长选择框 -->
+        <ul class="captain-container" v-if="captainShow">
+          <li class='vux-1px-b' v-for="(item, index) in peopleList" :key="index" 
+            @click="getNickname(item.nickname)">{{item.nickname}}</li>
+        </ul>
+        <!-- 省长选择框 -->
+        <ul class="governor-container" v-if="governorShow">
+          <li class='vux-1px-b' v-for="(item, index) in peopleList" :key="index" 
+            @click="getProvalUser(item.nickname)">{{item.nickname}}</li>
+        </ul>
+        <!-- 常委选择框 -->
+        <ul class="commit-container" v-if="committeeShow">
+          <li class='vux-1px-b' v-for="(item, index) in peopleList" :key="index" 
+            @click="getMemberUser(item.nickname)">{{item.nickname}}</li>
+        </ul>
 
         <group 
           label-align='left' 
@@ -115,15 +107,13 @@
         <group class="caution_inputs">
           <x-input 
           title="A类产品"
-          :value='Aclass | numberComma(3)' 
-          @input="Ainput" 
+          v-model.number="Aclass"
           ref='input1'
           text-align="right" 
           placeholder="请输入金额"></x-input>
           <x-input 
           title="B类产品"
-          :value='Bclass | numberComma(3)'  
-          @input="Binput" 
+          v-model.number="Bclass"
           ref='input2'
           text-align="right" 
           placeholder="请输入金额"></x-input>
@@ -152,102 +142,22 @@
 </template>
 
 <script>
-import saleRepotService from "../service/saleRepotService";
-import optionService from "../service/optionService";
-import {
-  Cell,
-  Alert,
-  Group,
-  XInput,
-  XButton,
-  Confirm,
-  Selector,
-  PopupPicker,
-  numberComma
-} from "vux";
-
+// mixin引入
+import saleCommon from '../mixins/saleCommon'
 export default {
-  components: {
-    Cell,
-    Group,
-    Alert,
-    XInput,
-    Confirm,
-    XButton,
-    Selector,
-    PopupPicker
-  },
+  name: 'help-Report',
+  mixins : [saleCommon],
   data() {
     return {
-      alertEnd: false,
-      btnStatus: true,
-      list: [
-        {name: "无",value: "无",parent: "0"},
-        {name: 0,value: "无",parent: "无"}
-      ],
-      arr: [{ value: [], qty: "" }],
-      Aclass: "",
-      Bclass: "",
-      showNumber: false,
-      showNewDiv: false,
-      mescroll: null,
-      totalInfo: "",
       areaList: [],
       areaValue: [],
       bankList: [],
-      bankValue: [],
-      teamLeaderList: [],
-      teamLeaderValue: [],
-      helpCaptain: "",
-      captainShow: false,
-      governor: "",
-      governorStatus: true,
-      member: "",
-      memberStatus: true,
-      provalUserByList: [],
-      MemberUserList: [],
-      comments: ""
+      bankValue: []
     };
   },
-  filters: {
-    numberComma
-  },
   methods: {
-    //添加新数据
-    createNew() {
-      this.arr.push({ value: [], qty: "" });
-    },
-    deleteNew() {
-      if (this.arr.length == 1) {
-        this.arr = [{ value: [], qty: "" }];
-      } else {
-        this.arr.splice(this.arr.length - 1, 1); //删除新数据
-      }
-    },
-    //随机ID
-    guid() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return ( S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4() );
-    },
-    listData() {
-      saleRepotService.saleRepotList().then(data => {
-        for (let i = 0; i < data.tableContent.length; i++) {
-          this.list.push(
-            {
-              name: data.tableContent[i]["trans_detail_uncalc.transObjCode"],
-              value: data.tableContent[i]["trans_detail_uncalc.transObjCode"] + "_" + i + "_" + data.tableContent[i]["trans_detail_uncalc.qty"]+'_'+data.tableContent[i]["trans_detail_uncalc.price"],
-              parent: "0"
-            }
-          );
-        }
-      });
-    },
     end() {
-      if (this.btnStatus == false)return;
-
-      // let that = this;
+      if (!this.btnStatus) return;
       if (this.areaValue.length == 0 || this.areaValue.indexOf('空') === 0) {
         this.$vux.alert.show({
           title: "提示",
@@ -411,132 +321,22 @@ export default {
         })
       );
       this.$router.push({ path: "/count" });
-    },
-    Ainput(e) {
-      this.Aclass = e.split(",").join("");
-    },
-    Binput(e) {
-      this.Bclass = e.split(",").join("");
-    },
-    letMeTest() {
-      let path = this.$router.path;
-    },
-    //获取区域
-    getArea() {
-      optionService.getRegion().then(data => {
-        for (let i = 0; i < data.length; i++) {
-          this.areaList.push({
-            name: data[i].name,
-            value: data[i].name
-          });
-        }
-      });
-    },
-    //获取银行
-    getBank() {
-      optionService.getBank().then(data => {
-        for (let i = 0; i < data.length; i++) {
-          data[i].value = data[i].name;
-        }
-        this.bankList = data;
-      });
-    },
-    //获取队长
-    teamLeader() {
-      optionService.getCaptain().then(data => {
-        for (let i = 0; i < data.tableContent.length; i++) {
-          data.tableContent[i].name = data.tableContent[i].nickname;
-          data.tableContent[i].value = data.tableContent[i].nickname;
-        }
-        this.teamLeaderList = data.tableContent;
-      });
-    },
-    //匹配队长
-    captainSelect(e) {
-      if (this.captainShow == false || this.helpCaptain == "") {
-        return;
-      }
-      optionService.getCaptain({ value: e }).then(data => {
-        this.teamLeaderList = data.tableContent;
-      });
-    },
-    captainFocus() {
-      this.captainShow = true;
-    },
-    //选择队长
-    getNickname(e) {
-      this.helpCaptain = e;
-      this.captainShow = false;
-      this.teamLeaderList = [];
-    },
-    //省长
-    provalUserByAgent(type, e) {
-      if (this.governorStatus == false || this.governor == "") {
-        this.provalUserByList = [];
-        return;
-      }
-      let data = {
-        entityId: 20000,
-        filter: JSON.stringify([
-          { operator: "like", value: type, property: "role" },
-          { operator: "like", value: e, property: "nickname" }
-        ])
-      };
-      saleRepotService.getApprovalUserByAgent(data).then(res => {
-        this.provalUserByList = res.tableContent;
-      });
-    },
-    provinceReset(e) {
-      this.governorStatus = true;
-    },
-    //选择省长
-    getProvalUser(val) {
-      this.governorStatus = false;
-      this.provalUserByList = [];
-      this.governor = val;
-    },
-    //常委
-    memberUser(type, e) {
-      if (this.memberStatus == false || this.member == "") {
-        this.MemberUserList = [];
-        return;
-      }
-      let data = {
-        entityId: 20000,
-        filter: JSON.stringify([
-          { operator: "like", value: type, property: "role" },
-          { operator: "like", value: e, property: "nickname" }
-        ])
-      };
-      saleRepotService.getApprovalUserByAgent(data).then(res => {
-        this.MemberUserList = res.tableContent;
-      });
-    },
-    memberUserReset(e) {
-      this.memberStatus = true;
-    },
-    //选择常委
-    getMemberUser(val) {
-      this.memberStatus = false;
-      this.MemberUserList = [];
-      this.member = val;
     }
   },
-  mounted() {
-    //提交时间是否超过20点
-    saleRepotService.getModelData().then(res => {
-      if (res.submitAllow === 1) {
-        this.btnStatus = true;
-      } else if (res.submitAllow === 0) {
-        this.btnStatus = false;
-        this.$vux.alert.show({
-          title: "提示",
-          content: "每日提交截止时间为20:00"
-        });
-      }
-    });
+  created(){
     this.getArea();
     this.getBank();
+    if (localStorage.getItem("HELP_INFO_LIST")) {
+      this.helpCaptain = JSON.parse(
+        localStorage.getItem("HELP_INFO_LIST")
+      ).captain;
+      this.governor = JSON.parse(
+        localStorage.getItem("HELP_INFO_LIST")
+      ).governor;
+      this.member = JSON.parse(localStorage.getItem("HELP_INFO_LIST")).member;
+    }  
+  },
+  mounted() {
     if (localStorage.getItem("help_saleReport")) {
       this.arr = JSON.parse(
         localStorage.getItem("help_saleReport")
@@ -552,18 +352,7 @@ export default {
         JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).bank
       ];
     }
-    if (localStorage.getItem("HELP_INFO_LIST")) {
-      this.helpCaptain = JSON.parse(
-        localStorage.getItem("HELP_INFO_LIST")
-      ).captain;
-      this.governor = JSON.parse(
-        localStorage.getItem("HELP_INFO_LIST")
-      ).governor;
-      this.governorStatus = false;
-      this.member = JSON.parse(localStorage.getItem("HELP_INFO_LIST")).member;
-      this.memberStatus = false;
-    }
-    this.listData();
+
   },
   beforeRouteLeave(to, from, next) {
     let that = this;
@@ -618,60 +407,15 @@ export default {
 };
 </script>
 
-<style>
-.mescroll {
-  padding-bottom: 50px;
-  position: relative;
-}
-/* 底部提示文字 */
-.caution_part {
-  width: 100%;
-  text-align: center;
-  color: #ccc;
-  font-size: 12px;
-  margin-top: 4px;
-}
-.plus_tx {
-  color: dodgerblue;
-}
-.reduce_tx {
-  color: #ff2719;
-}
-/* 删除按钮 */
-.delete_button {
-  position: absolute;
-  top: 0;
-}
-/* 合计按钮  */
-#count_button {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  border-radius: 0;
-  z-index: 99;
-}
-.plus_delect {
-  color: red;
-}
-.helpCaptain {
-  position: relative;
-}
-.captain-container {
-  width: 100%;
-  max-height: 132px;
-  position: absolute;
-  overflow-y: scroll;
-  background: #fff;
-  z-index: 8;
-}
-.captain-container > .weui-cells {
-  margin-top: 0;
-  background: #f0f2f5;
-}
-.caution_inputs > .weui-cells {
-  overflow: inherit;
-}
-.captainHide {
-  display: none;
-}
+<style lang='scss' scoped>
+  @import './scss/common.scss';
+  .captain-container {
+    top: 170px;
+  }
+  .governor-container {
+    top: 213px;
+  }
+  .commit-container {
+    top: 257px;
+  }
 </style>

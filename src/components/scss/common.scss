@@ -1,0 +1,63 @@
+    .mescroll {
+        width: 100%;
+        padding-bottom: 50px;
+    }
+    .vux-popup-header {
+        width: 100%;
+    }
+    /* 底部提示文字 */
+    .caution_part {
+        width: 100%;
+        text-align: center;
+        color: #ccc;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+    .plus_tx {
+        color: dodgerblue;
+    }
+    .reduce_tx {
+        color: #ff2719;
+    }
+    /* 删除按钮 */
+    .delete_button {
+        position: absolute;
+        top: 0;
+    }
+    /* 合计按钮  */
+    #count_button {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        border-radius: 0;
+        z-index: 99;
+    }
+    .plus_delect {
+        color: red;
+    }
+    .captain-container {
+        top: 80px;
+        z-index: 8;
+        width: 100%;
+        list-style: none;
+        max-height: 140px;
+        position: absolute;
+        overflow-y: scroll;
+        padding-left: 15px;
+        background: #f0f2f5;
+        box-sizing: border-box;
+        li {
+            color: #3a3a3a;
+            font-size: 18px;
+            padding: 10px 15px;  
+            box-sizing: border-box;
+        }
+    }
+    .governor-container {
+        @extend .captain-container;
+        top: 125px;
+    }
+    .commit-container {
+        @extend .captain-container;
+        top: 165px;
+    }
