@@ -1,6 +1,6 @@
 <template>
   <div class="pages bdkcdb-apply-container">
-    <div class="basicPart">
+    <div class="basicPart no_count">
 
       <!-- 出库仓库-->
       <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>

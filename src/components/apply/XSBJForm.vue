@@ -1,6 +1,6 @@
 <template>
   <div class="pages xsbj-apply-container">
-    <div class="basicPart">
+    <div class="basicPart no_count">
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
         <div class="no-selected" v-if="!dealerInfo">

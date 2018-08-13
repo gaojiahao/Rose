@@ -9,13 +9,17 @@
   box-sizing: border-box;
   box-shadow: 0 0 8px #e8e8e8;
 }
-
+//底部为合计时
 .basicPart {
   z-index: 1;
   overflow: auto;
   position: relative;
   height: calc(100% - .44rem);
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch; 
+}
+//底部为提交时
+.no_count{    
+  height: 90%;
 }
 
 // 地址栏

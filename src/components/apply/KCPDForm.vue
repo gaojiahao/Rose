@@ -1,6 +1,6 @@
 <template>
   <div class="pages kcpd-apply-container">
-    <div class="basicPart">
+    <div class="basicPart no_count">
       <!-- 入库仓库-->
       <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
 
