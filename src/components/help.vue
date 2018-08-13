@@ -81,7 +81,7 @@
             value-align="right" 
             v-if="item.value.length>0"></cell>
             <!-- 数量输入 -->
-            <div class="weui-cell each_part">
+            <div class="weui-cell each_part" v-if="item.value[0]!=='无'">
               <div class="weui-cell__hd">数量</div>
               <div class="weui-cell__bd weui-cell__primary" >
                 <input 
@@ -90,7 +90,6 @@
                   type="number" 
                   style="text-align: right;"
                   placeholder="请输入数量"
-                  v-if="item.value[0]!=='无'"
                   v-model.number="item.qty"></input>
               </div>
             </div>
@@ -131,7 +130,7 @@
     <x-button 
         id="count_button" 
         :gradients="btnStatus==true?['#B99763', '#E7D0A2']:['#ddd','#ddd']"
-        @click.native="end">
+        @click.native="goCount">
         进入合计
     </x-button>
     <confirm></confirm>
@@ -149,16 +148,19 @@ export default {
   mixins : [saleCommon],
   data() {
     return {
-      areaList: [],
-      areaValue: [],
-      bankList: [],
-      bankValue: []
+      areaList:[],
+      bankList:[],
+      areaValue:[],
+      bankValue:[]
     };
   },
   methods: {
     //提交
-    end() {
+    goCount() {
       if (!this.btnStatus) return;
+      //获取缓存信息
+      let governor = this.governor, member = this.member, comments = this.comments,
+          ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
       // 声明提示文字
       let tips = '';
       let tipArr = [
@@ -172,7 +174,7 @@ export default {
         { key:'arr', msg:'项目产品' },
       ];
       tipArr.every( item => {
-          if(!this[item.key]){
+          if(!this[item.key] && this[item.key] !== 0){
             tips = `请填写${item.msg}`
             return;
           }else if(item.key === 'areaValue' && this[item.key].length === 0 || item.key === 'areaValue' && this[item.key].indexOf('空') === 0 || item.key === 'bankValue' && this[item.key].length === 0){
@@ -183,7 +185,7 @@ export default {
               if(!this[item.key][inx].value.length){
                 tips = `请选择${item.msg}`;
               }
-              else if(this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty){
+              else if(this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty && this[item.key][inx].qty !== 0){
                 tips = '请填写产品数量';
               }
             }
@@ -197,21 +199,7 @@ export default {
         })
         return;
       }
-      //缓存支援地区模块
-      localStorage.setItem(
-        "HELP_ZONE_INFO",
-        JSON.stringify({
-          bank: this.bankValue[0],
-          areaValue: this.areaValue[0],
-          captain: this.helpCaptain
-        })
-      );
-      //获取缓存信息
-      let governor = this.governor,
-          member = this.member,
-          comments = this.comments,
-          HELP_ZONE_INFO = JSON.parse(localStorage.getItem("HELP_ZONE_INFO")),
-          ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
+
 
       // 表单提交信息
       let jsonData = {
@@ -220,9 +208,9 @@ export default {
         baseinfoExt: {
           id: this.guid(),
           varchar1: ROSE_OPTION.dept,         //区域(事业部) (业务自带信息)
-          varchar2: HELP_ZONE_INFO.captain,   //支援队长
-          varchar3: HELP_ZONE_INFO.areaValue, //支援地区(省份)
-          varchar4: HELP_ZONE_INFO.bank,      //支援银行
+          varchar2: this.captain,   //支援队长
+          varchar3: this.areaValue[0], //支援地区(省份)
+          varchar4: this.bankValue[0],      //支援银行
           varchar5: ROSE_OPTION.groupName,    //部门(业务自带信息)
           varchar6: "是",                     //区分是否为支援
           varchar7: governor,                 //省长
@@ -253,24 +241,16 @@ export default {
         transCode: "XHXSDD"
       };
       // 项目类产品
-      for (let i = 0; i < this.arr.length; i++) {
-        if (this.arr[i].value[0] != "无" && this.arr[i].qty === "") {
-          this.$vux.alert.show({
-            title: "提示",
-            content: "请填写项目类产品数量"
-          });
-          return;
-        } else {
-          jsonData.transDetailUncalc.push({
-            id: this.guid(),
-            transObjCode:this.arr[i].value[0] === "无" ? "无" : this.arr[i].value[0].split("_")[0], //项目类产品名称
-            containerCode: "项目类产品", //类型
-            qty: this.arr[i].value[0] === "无" ? "" : this.arr[i].qty,
-            taxAmount: this.arr[i].value[0] === "无" ? "" : Number(this.arr[i].value[0].split("_")[2]),
-            amount: this.arr[i].qty * this.arr[i].value[0].split('_')[3], //总金额
-            fgCode: ""
-          });
-        }
+      for(let i = 0; i < this.arr.length; i++){
+        jsonData.transDetailUncalc.push({
+          id: this.guid(),
+          transObjCode:this.arr[i].value[0] === "无" ? "无" : this.arr[i].value[0].split("_")[0], //项目类产品名称
+          containerCode: "项目类产品", //类型
+          qty: this.arr[i].value[0] === "无" ? "" : this.arr[i].qty,
+          taxAmount: this.arr[i].value[0] === "无" ? "" : Number(this.arr[i].value[0].split("_")[2]),
+          amount: this.arr[i].qty * this.arr[i].value[0].split('_')[3], //总金额
+          fgCode: ""
+        });
       }
       let totalInfo = {
         isMobile: true,
@@ -280,7 +260,7 @@ export default {
         jsonData: JSON.stringify(jsonData)
       };
       this.totalInfo = totalInfo;
-      // 提交表单内容缓存
+      // 提交表单内容 缓存
       localStorage.setItem(
         "saleReportInfo",
         JSON.stringify({
@@ -288,95 +268,93 @@ export default {
           time: new Date().getTime()
         })
       );
-      // 表单缓存
+      // 缓存 表单用户填写信息 
       localStorage.setItem(
-        "help_saleReport",
+        "HELP_FORM_INFO",
         JSON.stringify({
-          saleReportArr: this.arr,
           Aclass: this.Aclass,
           Bclass: this.Bclass,
+          saleReportArr: this.arr,
+          comments : this.comments,
           time: new Date().getTime()
         })
       );
-      // 用户所属信息缓存
+      // 缓存 支援地区模块
       localStorage.setItem(
-        "HELP_INFO_LIST",
+        "HELP_ZONE_INFO",
         JSON.stringify({
-          captain: this.helpCaptain,
+          member: this.member,
           governor: this.governor,
-          member: this.member
+          captain: this.helpCaptain,
+          bank: this.bankValue[0],
+          areaValue: this.areaValue[0],
         })
-      );
+      );          
+
       this.$router.push({ path: "/count" });
     }
   },
   created(){
-    this.getArea();
-    this.getBank();
-    let HELP_INFO_LIST = localStorage.getItem("HELP_INFO_LIST") || '';
-    let help_saleReport = localStorage.getItem("help_saleReport") || '';
-    let HELP_ZONE_INFO = localStorage.getItem("HELP_ZONE_INFO") || '';
-    // 默认信息缓存
-    if (HELP_INFO_LIST) {
-      this.helpCaptain = JSON.parse(HELP_INFO_LIST).captain;
-      this.governor = JSON.parse( HELP_INFO_LIST).governor;
-      this.member = JSON.parse(HELP_INFO_LIST).member;
-    }
-    if (help_saleReport) {
-      this.arr = JSON.parse(help_saleReport).saleReportArr;
-      this.Aclass = JSON.parse(help_saleReport).Aclass;
-      this.Bclass = JSON.parse(help_saleReport).Bclass;
-    }
+    // 缓存
+    const HELP_ZONE_INFO = JSON.parse(localStorage.getItem("HELP_ZONE_INFO")) || '';
+    const HELP_FORM_INFO = JSON.parse(localStorage.getItem("HELP_FORM_INFO")) || '';
+    // 队长、省长等信息
+    let { member, governor, captain } = HELP_ZONE_INFO;
+    let { Aclass, Bclass, comments, saleReportArr } = HELP_FORM_INFO;
+    // 用户支援地区信息
     if (HELP_ZONE_INFO) {
-      this.areaValue = [JSON.parse(HELP_ZONE_INFO).areaValue];
-      this.bankValue = [JSON.parse(HELP_ZONE_INFO).bank];
+      this.member = member;
+      this.governor = governor;
+      this.helpCaptain = captain;
+      this.areaValue = [HELP_ZONE_INFO.areaValue];
+      this.bankValue = [HELP_ZONE_INFO.bank];
     }
-  
+    // 用户填写表单内容
+    if (HELP_FORM_INFO) {
+      this.Aclass = Aclass;
+      this.Bclass = Bclass;
+      this.arr = saleReportArr;
+      this.comments = comments;
+    }
+    // 支援地区
+    this.getArea();
+    // 支援银行
+    this.getBank();
   },
   beforeRouteLeave(to, from, next) {
-    if (this.arr[0].value.length == 0 || to.name == "Count") {
-      next();
-    } else {
+    if (this.arr[0].value.length == 0 || to.name == "Count") next();
+    else {
       this.$vux.confirm.show({
         title: "温馨提示",
         content: "要保存数据吗？",
         confirmText: "确认",
         cancelText: "取消",
         onCancel:() => {
-          localStorage.removeItem("help_saleReport");
-          localStorage.removeItem("HELP_INFO_LIST");
+          localStorage.removeItem("HELP_FORM_INFO");
           next();
         },
         onConfirm:() => {
-          //缓存填写信息
           localStorage.setItem(
-            "help_saleReport",
+            "HELP_FORM_INFO",
             JSON.stringify({
-              saleReportArr: this.arr,
               Aclass: this.Aclass,
               Bclass: this.Bclass,
-              captain: this.helpCaptain,
+              saleReportArr: this.arr,
+              comments : this.comments,
               time: new Date().getTime()
             })
           );
-          //缓存地区信息
+          //缓存支援地区模块
           localStorage.setItem(
             "HELP_ZONE_INFO",
             JSON.stringify({
+              member: this.member,
+              governor: this.governor,
+              captain: this.helpCaptain,
               bank: this.bankValue[0],
               areaValue: this.areaValue[0],
-              captain: this.helpCaptain
             })
-          );
-          //省长常委
-          localStorage.setItem(
-            "HELP_INFO_LIST",
-            JSON.stringify({
-              captain: this.helpCaptain,
-              governor: this.governor,
-              member: this.member
-            })
-          );
+          );          
           next();
         }
       });

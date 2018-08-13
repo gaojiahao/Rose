@@ -175,7 +175,7 @@ export default {
         }
       });
     },
-    //获取区域
+    // 获取区域
     getArea() {
       optionService.getRegion().then(data => {
         for (let i = 0; i < data.length; i++) {
@@ -186,7 +186,7 @@ export default {
         }
       });
     },
-    //获取银行
+    // 获取银行
     getBank() {
       optionService.getBank().then(data => {
         for (let i = 0; i < data.length; i++) {
