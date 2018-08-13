@@ -32,8 +32,8 @@ export default {
     SubmitLoad
   },
   methods:{
+    //关闭等待动画
     closeLoad(val){
-      console.log(val);
       this.submitLoadding = val;
     },
     modifyRoute(val){

@@ -5,13 +5,14 @@
       v-model='showLoadding'
       @change='modifyRoute'>
     </component>
-    <loading-form :show='showLoadding'></loading-form>
+    <!-- 页面进入加载动画-->
+    <loadding-form :show='showLoadding'></loadding-form>
   </div>
 
 </template>
 
 <script>
-import Loadding from 'components/Loading'
+import LoaddingForm from 'components/Loading'
 import detailMap from './../../../maps/detail'
 
 export default {
@@ -24,7 +25,7 @@ export default {
     }
   },
   components:{
-    'loading-form' : Loadding
+    LoaddingForm
   },
   methods:{
     modifyRoute(val){
