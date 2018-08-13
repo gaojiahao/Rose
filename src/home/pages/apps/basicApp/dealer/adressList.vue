@@ -144,12 +144,7 @@ export default {
             let text = '';
             if(noReset && this.activeIndex ===0){
               if(this.total){
-                if(dataCount - this.total === 0){
-                  text = '最近无新增往来'
-                }
-                else{
-                  text = `最近新增${dataCount-this.total}个往来`
-                }
+                text = dataCount - this.total === 0 ? '暂无新数据' : `新增${dataCount-this.total}条数据`
                 this.$vux.toast.show({
                   text: text,
                   position:'top',

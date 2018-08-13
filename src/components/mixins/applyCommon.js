@@ -95,6 +95,7 @@ export default {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
         onConfirm: (value) => {
+          this.$emit('close',true);
           if (value) {
             this.comment = value;
           }
@@ -107,6 +108,7 @@ export default {
             })
           }
           commitTask(submitData).then(data => {
+            this.$emit('close',false);
             let {success = false, message = '提交失败'} = data;
             if (success) {
               message = '终止成功';
@@ -120,6 +122,8 @@ export default {
                 }
               }
             });
+          }).catch(e=>{
+            this.$emit('close',false);
           })
         }
       })

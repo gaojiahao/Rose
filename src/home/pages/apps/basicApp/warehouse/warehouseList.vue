@@ -163,22 +163,18 @@ export default {
         return warehouseService.getwarehouseList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
           // console.log(this.total);
           let text = '';
-          if(this.total && this.page ===1){
-            if(dataCount - this.total === 0){
-              text = '最近无新增仓库'
+          if(noReset && this.activeIndex ===0){
+            if(this.total){
+              text = dataCount - this.total === 0 ? '暂无新数据' : `新增${dataCount-this.total}条数据`;
+              this.$vux.toast.show({
+                text: text,
+                position:'top',
+                width:'50%',
+                type:"text"
+              })  
             }
-            else{
-              text = `最近新增${dataCount-this.total}个仓库`
-            }   
-            this.$vux.toast.show({
-              text: text,
-              position:'top',
-              width:'50%',
-              type:"text"
-            })          
-          }          
-                 
-          sessionStorage.setItem("CK",dataCount);
+            sessionStorage.setItem("CK",dataCount);
+          }
           this.warehouseList = this.page === 1? tableContent : this.warehouseList.concat(tableContent);
           this.Loadding = false;
           this.hasNext = dataCount > (this.page-1)*this.limit + tableContent.length;

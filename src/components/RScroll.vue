@@ -79,7 +79,7 @@
           }
         }
         this.$nextTick(() => {
-          console.log(options);
+          // console.log(options);
           this.bScroll = new BScroll(this.$refs.bScroll, options);
           // 绑定滚动加载事件
           this.bScroll.on('pullingUp', () => {
@@ -99,7 +99,7 @@
                 this.pullDownTop = 0;
               } else {
                 this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
-                console.log('pullDownTop:', this.pullDownTop);
+                //console.log('pullDownTop:', this.pullDownTop);
               }
             } else {
               this.resetPullDown();
