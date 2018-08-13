@@ -236,6 +236,13 @@
             line-height: 0.2rem;
             color: #ea5455;
             margin-right: 0.9rem;
+            .symbol,
+            .unit {
+              font-size: .1rem;
+            }
+            .unit {
+              color: #757575;
+            }
           }
           .mater_num {
             display: flex;

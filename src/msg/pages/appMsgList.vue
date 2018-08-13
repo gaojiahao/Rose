@@ -29,11 +29,11 @@
               <div class="info">
                 <div class="handle_part">
                   <span class="name">{{item.lastNode.userName}}</span>
-                  <span class="handle">进行了审批</span>
+                  <span class="handle">进行了操作</span>
                   <span class="tips">[上个节点]</span>
                 </div>
                 <div class="handle_result">
-                  审批结果：<span class="result" :class='{reject_c : item.lastNode.status === "同意" || item.lastNode.status === "提交"  }'>{{item.lastNode.status}}</span>
+                  操作动作：<span class="result" :class='{reject_c : item.lastNode.status === "同意" || item.lastNode.status === "提交"  }'>{{item.lastNode.status}}</span>
                 </div>
               </div>
             </div>
@@ -69,7 +69,6 @@
           </div>
           
         </div>
-      
     </r-scroll>
     <loading-form :show='showLoadding'></loading-form>
    <router-view></router-view>

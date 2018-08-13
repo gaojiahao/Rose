@@ -26,9 +26,9 @@
             <!-- 操作动作 -->
             <span>{{item.nodeName}}</span>
             <!-- 操作状态 A(没有返回状态) -->
-            <span class="status" v-if="!item.status && index % 2">{{workFlowInfo.biStatus}}</span>
+            <span class="status" v-if="!item.status">{{workFlowInfo.biStatus}}</span>
             <!-- 操作状态 B(有返回状态) -->
-            <span class="status" :class=item.dyClass v-else-if="item.status && index % 2">{{item.status}}</span>
+            <span class="status" :class=item.dyClass v-else-if="item.status">{{item.status}}</span>
           </div>
           <!-- 流程节点 用户名 -->
           <div class="user_name">
@@ -44,7 +44,7 @@
       <popup v-model="popupShow" position="bottom" height="100%">
         <div class="flow">
           <div class='flow_top'>
-            <span class="title">查看工作流</span>
+            <span class="title">工作流详情</span>
             <span class="close" @click="closePop" v-if="fullWorkFlow.length >= 5">关闭</span>
             <!-- <icon type="cancel" @click.native="closePop"></icon> -->
           </div>
@@ -169,6 +169,9 @@
           switch (item.status) {
             case '同意':
               item.dyClass = 'agree_c';
+              break;
+            case '不同意':
+              item.dyClass = 'reject_c';
               break;
             case '终止':
               item.dyClass = 'reject_c';
@@ -312,7 +315,7 @@
           }
           // 备注
           .remark {
-            max-width: 1.4rem;
+            max-width: 2.6rem;
             overflow:hidden;
             white-space:nowrap;
             font-size: .1rem;
@@ -468,6 +471,11 @@
               float: right;
               margin-left: inherit;
               margin-right: .64rem;
+              //#cde3eb
+              $bgcolor : #d6e4f0;
+              .content {
+                background: $bgcolor;
+              }
               .triangle {
                 content: "";
                 width: 0;
@@ -478,7 +486,7 @@
                 position: absolute;
                 border-right: inherit;
                 border-top: .1rem solid transparent;
-                border-left: .1rem solid #F4F4F4;
+                border-left: .1rem solid $bgcolor;
                 border-bottom: .1rem solid transparent;
               }
             }
