@@ -15,15 +15,13 @@
               </div>
             </div>
         </div>
-        <flow-detail class="swiper-slide" :trans-code="transCode"></flow-detail>
+        <flow-detail class="swiper-slide" :work-flow="workFlow"></flow-detail>
       </div>
     </div>
     <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
      @on-confirm="confirm"></task-confirm>
-    <div class="s_btm vux-1px-t" v-if="canSubmit == '1'">
-      <span class="s_button" @click="end(0)">拒绝</span>
-      <span class="s_button" @click="end(1)">同意</span>
-    </div>
+    <!-- 审批按钮 -->
+    <r-action :actions="actions" @on-action="showConfirmPop"></r-action>
   </div>
 </template>
 

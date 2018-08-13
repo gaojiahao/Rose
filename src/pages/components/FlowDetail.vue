@@ -5,19 +5,6 @@
       <div class="f_main_wrapper">
         <div class="f_flow">
           <group title="流程图"></group>
-          <!--<flow class="flows" orientation="vertical">
-            <flow-state state="1" title="省长" :is-done="governor.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="governor.tip" :is-done="governor.lineDone"></flow-line>
-            <flow-state state="2" title="部门主管" :is-done="dept.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="dept.tip" :is-done="dept.lineDone"></flow-line>
-            <flow-state state="3" title="常委" :is-done="committee.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="committee.tip" :is-done="committee.lineDone"></flow-line>
-            <flow-state state="4" title="副总" :is-done="vicePresident.stateDone"></flow-state>
-            <flow-line tip-direction="right" :tip="vicePresident.tip" :is-done="vicePresident.lineDone"></flow-line>
-            <flow-state state="5" title="财务" :is-done="finance.stateDone"></flow-state>
-            <flow-line :line-span="30" tip-direction="right" :tip="finance.tip" :is-done="finance.lineDone"></flow-line>
-            <flow-state state="6" title="总裁——王珏" :is-done="ceo.stateDone"></flow-state>
-          </flow>-->
           <flow class="flows" orientation="vertical">
             <template v-for="(item, index) in flowList">
               <flow-state :state="index + 1" :title="item.title" :is-done="item.stateDone"></flow-state>
@@ -50,50 +37,16 @@
 
   export default {
     props: {
-      transCode: {
-        type: String,
-        default: ''
+      workFlow: {
+        type: Array,
+        default() {
+          return {}
+        }
       }
     },
     name: "FlowDetail",
     data() {
       return {
-        // 省长
-        governor: {
-          stateDone: true,
-          lineDone: false,
-          tip: '',
-        },
-        // 部门主管
-        dept: {
-          stateDone: false,
-          lineDone: false,
-          tip: '',
-        },
-        // 常委
-        committee: {
-          stateDone: false,
-          lineDone: false,
-          tip: '',
-        },
-        // 副总
-        vicePresident: {
-          stateDone: false,
-          lineDone: false,
-          tip: '',
-        },
-        // 财务
-        finance: {
-          stateDone: false,
-          lineDone: false,
-          tip: '',
-        },
-        // 总裁
-        ceo: {
-          stateDone: false,
-          lineDone: false,
-          tip: '',
-        },
         commentList: [],
         flowList: [
           {
@@ -125,6 +78,13 @@
         ],
       }
     },
+    watch: {
+      workFlow: {
+        handler() {
+          this.assembleWorkFlow();
+        }
+      }
+    },
     components: {
       Flow,
       Cell,
@@ -135,33 +95,42 @@
       Panel,
     },
     methods: {
-      // TODO 获取工作流
-      getFlows() {
-        return createService.getWorkFlow({
-          transCode: this.transCode
-        }).then(({tableContent = []}) => {
-          let last = tableContent[tableContent.length - 1];
-          let showList = ['常委', '部门主管', '副总裁', '财务', '总裁'];
-          tableContent && tableContent.forEach((item, index) => {
-            // 只取四个审批节点的数据做展示
-            if (showList.indexOf(item.actName) !== -1) {
-              this.commentList.push({
-                title: item.name,
-                desc: item.comment || '无',
-                time: item.startTime,
-                meta: {
-                  date: item.startTime
-                }
-              })
-            }
-          });
-          this.assembleFlow(last);
-        }).catch(e => {
-          this.showToast(e.message);
-        })
+      // TODO 组装工作流数据
+      assembleWorkFlow() {
+        let showList = ['常委', '部门主管', '副总裁', '分管副总', '财务', '总裁'];
+        let workFlow = [...this.workFlow];
+        let [firstNode = {}] = workFlow;
+        let secondNode = {};
+        let lastNode = workFlow[workFlow.length - 1] || {};
+        workFlow && workFlow.forEach((item, index) => {
+          item.userName = item.userName && item.userName.split('-')[0];
+          // 只取审批节点的数据做展示，获取已审批的备注
+          if (item.endTime && showList.indexOf(item.nodeName) !== -1) {
+            this.commentList.push({
+              title: item.userName,
+              desc: item.message || '无',
+              time: item.startTime,
+              meta: {
+                date: item.startTime
+              }
+            })
+          }
+          if (item.nodeName === '常委' || item.nodeName === '部门主管') {
+            this.flowList[1].title = item.userName;
+          }
+          if (item.nodeName === '副总裁' || item.nodeName === '分管副总') {
+            this.flowList[2].title = item.userName;
+          }
+          if (item.nodeName === '财务') {
+            this.flowList[3].title = item.userName;
+          }
+        });
+        this.flowList[0].title = firstNode.userName;
+        this.assembleFlow(lastNode);
       },
       // TODO 组装工作流流程图
       assembleFlow(item) {
+        let tmp = [];
         let done = {
           stateDone: true,
           lineDone: true,
@@ -172,56 +141,38 @@
           lineDone: false,
           tip: '进行中',
         };
-        switch (item.actName) {
+        switch (item.nodeName) {
           case 'Start':
             this.governor = doing;
             break;
           case '部门主管':
-            this.governor = done;
-            this.dept = doing;
-            break;
           case '常委':
-            this.governor = done;
-            this.dept = doing;
-            this.committee = doing;
+            this.flowList[0] = {...this.flowList[0], ...done};
+            this.flowList[1] = {...this.flowList[1], ...doing};
             break;
+          case '分管副总':
           case '副总裁':
-            this.governor = done;
-            this.dept = doing;
-            this.committee = done;
-            this.vicePresident = doing;
+            this.flowList[0] = {...this.flowList[0], ...done};
+            this.flowList[1] = {...this.flowList[1], ...done};
+            this.flowList[2] = {...this.flowList[2], ...doing};
             break;
           case '财务':
-            this.governor = done;
-            this.dept = doing;
-            this.committee = done;
-            this.vicePresident = done;
-            this.finance = doing;
-            break;
-          case '总裁':
-            this.governor = done;
-            this.dept = doing;
-            this.committee = done;
-            this.vicePresident = done;
-            this.finance = done;
-            this.ceo = {
-              stateDone: false,
-              lineDone: false,
-              tip: '',
-            };
-            break;
-          case '重新提交':
-            this.governor = doing;
+            this.flowList[0] = {...this.flowList[0], ...done};
+            this.flowList[1] = {...this.flowList[1], ...done};
+            this.flowList[2] = {...this.flowList[2], ...done};
+            this.flowList[3] = {...this.flowList[3], ...doing};
             break;
           case '生效表单':
             break;
+          case '总裁':
           case 'End':
-            this.governor = done;
-            this.dept = doing;
-            this.committee = done;
-            this.vicePresident = done;
-            this.finance = done;
-            this.ceo = done;
+            this.flowList.forEach(item => {
+              tmp.push({
+                ...item,
+                ...done,
+              });
+            });
+            this.flowList = tmp;
             break;
           default:
             break;
@@ -238,7 +189,8 @@
       },
     },
     created() {
-      this.getFlows();
+      // this.getFlows();
+      this.assembleWorkFlow();
     }
   }
 </script>

@@ -6,13 +6,9 @@
     <div class="f_main">
       <div class="f_main_wrapper">
         <group title="请填写对应的信息" class="info-container">
-          <!--<x-input :title="item.name" text-align='right' @on-focus="searchFocus(item, index)"
-                   @on-change="getSearch(item)"
-                   @on-blur="searchBlur(item)"
-                   v-for="(item, index) in level_list" :key="index" v-model="item.value"></x-input>-->
           <popup-radio :title="item.title" :options="item.options" v-for="(item, index) in opList" v-model="item.value"
                        :key="index"></popup-radio>
-          <cell title="财务" value="管建明"></cell>
+          <cell title="财务" value="辛艳"></cell>
           <cell title="总裁" value="王珏"></cell>
         </group>
         <group class="search-list-container" v-show="!hasSelected" :style="{top: searchListTop}">
@@ -59,22 +55,6 @@
     data() {
       return {
         showLoading: false,
-        level_list: {
-          committee: {
-            name: '常委',
-            searchType: 'committee',
-            value: '',
-            userId: '',
-            data: {},
-          },
-          vicePresident: {
-            name: '副总',
-            searchType: 'vicePresident',
-            value: '',
-            userId: '',
-            data: {},
-          }
-        },
         searchList: [], // 搜索结果列表
         searchType: '', // 当前聚焦的输入框类型
         hasSelected: false, // 是否选中搜索项
@@ -87,6 +67,7 @@
         currentUser: {}, // 当前用户信息
         opList: [], // 审批人列表
         handlerData: {},
+        submitSuccess: false,
       };
     },
     mixins: [common],
@@ -124,15 +105,10 @@
           return
         }
         let opParams = this.getOpParams(area);
-        let {committee, vicePresident} = this.level_list;
         this.jsonData = {
           ...this.jsonData,
           ...opParams.reviewer,
         };
-        /*this.jsonData['$review'] = {
-          cw: this.assembleOpData(committee),
-          'warehouse.fzc': this.assembleOpData(vicePresident)
-        };*/
 
         wfPara = {
           [this.procCode]: {
@@ -148,7 +124,7 @@
             taskId: this.taskId,
             businessKey: transCode,
             createdBy: this.jsonData.baseinfo.creator,
-            '所属区域': "总部",
+            '所属区域': area,
             ...opParams.wfPara,
             transCode,
             result: 3,
@@ -166,6 +142,7 @@
           this.showLoading = false;
           let {message, success} = data;
           if (success && message.indexOf('null') === -1) {
+            this.submitSuccess = true;
             this.showToast('提交成功');
             sessionStorage.removeItem(this.sessionKey);
             setTimeout(() => {
@@ -260,12 +237,15 @@
         let review2 = {...this.jsonData.$review2};
         let val = '';
         let val2 = '';
+        console.log(review)
         switch (this.handlerData.area) {
           case '总部':
             val = review.reviewer.text; // 部门主管
             val2 = review.deputy.text; // 副总
             break;
           default:
+            val = review2.deputy.text; // 常委
+            val2 = review2.fzc.text; // 副总
             break;
         }
         this.opHandler(val, val2);
@@ -437,7 +417,7 @@
             idObj = {
               reviewer: {
                 $review: {
-                  reviewer: this.assembleOpData({}),
+                  reviewer: this.assembleOpData(committee, committee.CName, committee.CId),
                   deputy: this.assembleOpData({}),
                 },
                 $review2: {
@@ -459,6 +439,12 @@
         }
         return idObj;
       }
+    },
+    beforeRouteLeave(to, from, next) {
+      if (this.submitSuccess && to.name === 'Mylist') {
+        to.meta.reload = true;
+      }
+      next();
     },
     created() {
       let {query} = this.$route;

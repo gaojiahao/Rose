@@ -18,14 +18,14 @@
             </div>
           </div>
         </div>
-        <flow-detail class="swiper-slide" :trans-code="transCode" :current-user="currentUser"></flow-detail>
+        <flow-detail class="swiper-slide" :work-flow="workFlow"></flow-detail>
       </div>
     </div>
-    <div class="m_btm vux-1px-t" v-if="canSubmit" v-show="showPage">
-      <span class="m_button reject" @click="showConfirmPop(0)">拒绝</span>
-      <span class="m_button" @click="showConfirmPop(1)">同意</span>
-    </div>
+    <!-- 审批按钮 -->
+    <r-action :actions="actions" @on-action="showConfirmPop"></r-action>
+    <!-- 加载图标 -->
     <loading :show="showLoading"></loading>
+    <!-- 确定弹窗 -->
     <task-confirm :show="showConfirm" v-model="showConfirm" :can-empty="result === 1"
                   @on-confirm="confirm"></task-confirm>
   </div>
@@ -133,6 +133,7 @@
       restoreJsonData(jsonData) {
         console.log(jsonData)
         let {baseinfoExt} = jsonData;
+        let sygs = {...jsonData['baseinfoExt#fygs']};
         let formData = {
           province: baseinfoExt.varchar1.value, // 省
           city: baseinfoExt.varchar2.value, // 市
@@ -148,8 +149,8 @@
           agenda: baseinfoExt.varchar4, // 会议议程
           begin: jsonData['baseinfoExt#sj'].datetime1, // 始于
           end: jsonData['baseinfoExt#sj'].datetime2, // 止于
-          costBU: jsonData['baseinfoExt#gs'].varchar6.value,// 费用所属事业部
-          costDepartment: jsonData['baseinfoExt#gs'].varchar7.value,// 费用所属部门
+          costBU: sygs.varchar6 && sygs.varchar6.value,// 费用所属事业部
+          costDepartment: sygs.varchar7 && sygs.varchar7.value,// 费用所属部门
           comment: jsonData.baseinfo.comment, // 备注
           transCode: jsonData.baseinfo.transCode,
           transType: jsonData.baseinfo.transType,
@@ -222,37 +223,6 @@
         margin-top: 20px;
         border-radius: 4px;
         box-shadow: 0 2px 10px #e8e8e8;
-      }
-    }
-
-    .m_btm {
-      width: 100%;
-      height: 44px;
-      line-height: 44px;
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      z-index: 101;
-      margin-top: 20px;
-      box-sizing: border-box;
-      display: flex;
-      .count_part {
-        flex: 2.5;
-        background: #fff;
-        color: #000;
-        display: inline-block;
-        text-align: center;
-        font-weight: bold;
-      }
-      .m_button {
-        flex: 1;
-        color: #fff;
-        background: #5077AA;
-        display: inline-block;
-        text-align: center;
-        &.reject {
-          background-color: #ccc;
-        }
       }
     }
   }

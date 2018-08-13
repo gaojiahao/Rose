@@ -4,6 +4,7 @@ import common from './../mixins/common'
 import Swiper from 'swiper/dist/js/swiper'
 import FlowDetail from './../components/FlowDetail'
 import TaskConfirm from './../components/TaskConfirm'
+import RAction from './../components/RAction'
 
 export default {
   data() {
@@ -19,6 +20,10 @@ export default {
       showConfirm: false, // 是否展示原因弹窗
       result: 1, // 审批类型，1为同意、0为拒绝
       currentUser: {},
+      workFlow: [],
+      opSuccess: false,
+      actions: [], // 可操作的按钮数组
+      isMyTask: false, // 是否为我提交的
     }
   },
   mixins: [common],
@@ -27,6 +32,7 @@ export default {
     Cell,
     FlowDetail,
     TaskConfirm,
+    RAction,
   },
   methods: {
     // TODO 获取表单详情
@@ -38,43 +44,6 @@ export default {
         let [data = {}] = tableContent;
         let jsonData = JSON.parse(data.json_data || '{}');
         this.restoreJsonData && this.restoreJsonData(jsonData);
-        /*let {formData = {}, success = true, message = ''} = data;
-        // 请求失败提示
-        if (!success) {
-          this.showToast(message);
-          return;
-        }
-
-        formData.begin = this.changeDate(formData.begin);
-        formData.end = this.changeDate(formData.end);
-        formData.crtTime = this.changeDate(formData.crtTime);
-        formData.modTime = this.changeDate(formData.modTime);
-
-        this.formData = formData;
-        if(formData.order){
-          //如果formData.order存在则声明
-          let dataSet = formData.order.dataSet || {} ;
-          //市场费用 固定资产
-          if(formData.transType === '市场宣传' || formData.transType === '固定资产'){
-            for(let key in dataSet){
-              //深拷贝(解决每次引用都是同一个地址)
-              let arr = JSON.parse(JSON.stringify(this.listObj));
-              for(let item of arr){
-                for(let val of item.items){
-                  val.value = dataSet[key][val.key];
-                }
-              }
-              this.listData.push(arr);
-            }
-          }
-        }
-        else{
-          this.listData.forEach(lItem => {
-            lItem.items.forEach(item => {
-              item.value = formData[item.key]
-            })
-          });
-        }*/
         this.$nextTick(() => {
           this.pageSwiper.update();
         })
@@ -94,6 +63,7 @@ export default {
         let {message, success} = data;
         if (success) {
           this.showToast('提交成功');
+          this.opSuccess = true;
           setTimeout(() => {
             this.$router.go(-1);
           }, 1000)
@@ -123,6 +93,35 @@ export default {
         this.currentUser = data || {};
       })
     },
+    // TODO 获取工作流
+    getFlows() {
+      return createService.getWorkFlow({
+        transCode: this.transCode
+      }).then(({tableContent = []}) => {
+        let lastNode = tableContent[tableContent.length - 1] || {};
+        this.workFlow = tableContent;
+        if (this.canSubmit) {
+          // 自己提交自己审批
+          if (this.isMyTask) {
+            this.actions = ['agreement', 'revoke'];
+          } else {
+            this.actions = ['agreement', 'disagree'];
+          }
+        }
+        if (!this.canSubmit && this.isMyTask && (lastNode.nodeName === '常委' || lastNode.nodeName === '部门主管')) {
+          this.actions = ['revoke'];
+        }
+
+      }).catch(e => {
+        this.showToast(e.message);
+      })
+    },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.opSuccess && to.name === 'Mylist') {
+      to.meta.reload = true;
+    }
+    next();
   },
   created() {
     let {query} = this.$route;
@@ -131,7 +130,10 @@ export default {
     this.transCode = query.transCode;
     this.taskId = query.taskId;
     this.canSubmit = query.canSubmit === '1';
+    this.isMyTask = query.isMyTask === '1';
+
     this.getBaseInfo();
+    this.getFlows();
     this.getFormData();
     this.$nextTick(() => {
       this.pageSwiper = new Swiper('.swiper-container', {});

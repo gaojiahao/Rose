@@ -256,12 +256,12 @@
           varchar4: formData.agenda,
           varchar5: formData.personScope
         };
-        jsonData['baseinfoExt#gs'] = {
+        jsonData['baseinfoExt#fygs'] = {
           id: this.guid(),
           varchar6: this.assembleDropDownData(formData.costBU),
           varchar7: this.assembleDropDownData(formData.costDepartment),
-          $varchar8: this.assembleDropDownData(),
-          $varchar9: this.assembleDropDownData(),
+          // $varchar8: this.assembleDropDownData(),
+          // $varchar9: this.assembleDropDownData(),
         };
         jsonData['$comment'] = {
           'baseinfo.comment': jsonData.baseinfo.comment
@@ -343,6 +343,7 @@
       restoreJsonData(jsonData) {
         console.log(jsonData)
         let {baseinfo, baseinfoExt} = jsonData;
+        let sygs = {...jsonData['baseinfoExt#fygs']};
         let formData = {
           referenceId: jsonData.referenceId,
           province: baseinfoExt.varchar1.value, // 省
@@ -359,8 +360,8 @@
           agenda: baseinfoExt.varchar4, // 会议议程
           begin: jsonData['baseinfoExt#sj'].datetime1, // 始于
           end: jsonData['baseinfoExt#sj'].datetime2, // 止于
-          costBU: jsonData['baseinfoExt#gs'].varchar6.value,// 费用所属事业部
-          costDepartment: jsonData['baseinfoExt#gs'].varchar7.value,// 费用所属部门
+          costBU: sygs.varchar6 && sygs.varchar6.value,// 费用所属事业部
+          costDepartment: sygs.varchar7 && sygs.varchar7.value,// 费用所属部门
           review: jsonData.review,
           review2: jsonData.review2,
         };
@@ -435,7 +436,7 @@
         this.hasDefault = true;
         formData = JSON.parse(formData);
         this.restoreJsonData(formData);
-        // sessionStorage.removeItem(this.sessionKey);
+        sessionStorage.removeItem(this.sessionKey);
         this.$nextTick(() => {
           // 在渲染一次以后将该值设置为false
           this.hasDefault = false;

@@ -119,6 +119,19 @@ let createService = {
       }, data)
     });
   },
+  // TODO 获取省份、城市、费用所属事业部、费用所属部门、核算归属省份、费用所属银行
+  getProjectAccountingUnitByid(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getProjectAccountingUnitByid',
+      data: Object.assign({
+        key: '1',
+        name: '1',
+        page: 1,
+        start: 0,
+        limit: 10000
+      }, data)
+    });
+  },
   // TODO 获取省长、常委
   getChangWei(data = {}) {
     return $axios.ajax({

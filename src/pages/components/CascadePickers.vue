@@ -15,7 +15,6 @@
   import createService from './../../service/createService'
   import {Group, PopupPicker} from 'vux'
 
-  const PARENT_ID = '60d2cb55-8066-4c85-b8ea-60bde9be641b';
   export default {
     name: "CascadePickers",
     props: {
@@ -65,19 +64,17 @@
       assembleList(list) {
         let tmp = [];
         tmp = list && list.map(item => {
-          let {unitName} = item;
+          let {dep} = item;
           return {
-            name: unitName,
-            value: unitName,
+            name: dep,
+            value: dep,
           }
         });
         return tmp
       },
       // TODO 共用请求方法
       reqData(listKey, param = {}) {
-        return createService.getAccountingUnitByid(Object.assign({
-          parentId: PARENT_ID,
-        }, param)).then(data => {
+        return createService.getProjectAccountingUnitByid(Object.assign({}, param)).then(data => {
           let {tableContent = []} = data;
           this[listKey] = this.assembleList(tableContent);
         }).catch(e => {
@@ -94,13 +91,13 @@
         if (!this.hasDefault) {
           this.deptSelected = [];
         }
-        let [name1] = this.buSelected;
-        if (!name1) {
+        let [name] = this.buSelected;
+        if (!name) {
           return
         }
         this.reqData('deptList', {
-          key: 'N2',
-          name1,
+          key: '2',
+          name,
         });
       },
       // TODO 获取核算归属省份列表
@@ -149,8 +146,8 @@
       // TODO 费用所属部门切换
       deptChange(val) {
         this.formData.costDepartment = val[0] || '';
-        this.getProv();
-        this.getBank();
+        // this.getProv();
+        // this.getBank();
       },
       // TODO 核算归属省份切换
       provChange(val) {
