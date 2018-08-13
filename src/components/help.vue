@@ -162,23 +162,20 @@ export default {
       // 声明提示文字
       let tips = '';
       let tipArr = [
-        { key:'areaValue', msg:'请选支援地区' },
-        { key:'bankValue', msg:'请选支援银行' },
-        { key:'helpCaptain', msg:'请填写支援队长' },
-        { key:'governor', msg:'请填写省长信息' },
-        { key:'member', msg:'请填写常委信息' },
-        { key:'Aclass', msg:'请填A类产品销售金额' },
-        { key:'Bclass', msg:'请填B类产品销售金额' },
-        { key:'arr', msg:'请选择项目产品' },
+        { key:'areaValue', msg:'支援地区' },
+        { key:'bankValue', msg:'支援银行' },
+        { key:'helpCaptain', msg:'支援队长' },
+        { key:'governor', msg:'省长信息' },
+        { key:'member', msg:'常委信息' },
+        { key:'Aclass', msg:'A类产品销售金额' },
+        { key:'Bclass', msg:'B类产品销售金额' },
+        { key:'arr', msg:'项目产品' },
       ];
       tipArr.every( item => {
           if(!this[item.key]){
             tips = `请填写${item.msg}`
             return;
-          }else if(item.key === 'areaValue' && this[item.key].length === 0 || item.key === 'areaValue' && this[item.key].indexOf('空') === 0 ){
-            tips = `请选择${item.msg}`;
-            return;
-          }else if(item.key === 'bankValue' && this[item.key].length === 0){
+          }else if(item.key === 'areaValue' && this[item.key].length === 0 || item.key === 'areaValue' && this[item.key].indexOf('空') === 0 || item.key === 'bankValue' && this[item.key].length === 0){
             tips = `请选择${item.msg}`;
             return;
           }else if(item.key === 'arr' && this[item.key].length){
@@ -337,29 +334,28 @@ export default {
   
   },
   beforeRouteLeave(to, from, next) {
-    let that = this;
-    if (that.arr[0].value.length == 0 || to.name == "Count") {
+    if (this.arr[0].value.length == 0 || to.name == "Count") {
       next();
     } else {
-      that.$vux.confirm.show({
+      this.$vux.confirm.show({
         title: "温馨提示",
         content: "要保存数据吗？",
         confirmText: "确认",
         cancelText: "取消",
-        onCancel() {
+        onCancel:() => {
           localStorage.removeItem("help_saleReport");
           localStorage.removeItem("HELP_INFO_LIST");
           next();
         },
-        onConfirm() {
+        onConfirm:() => {
           //缓存填写信息
           localStorage.setItem(
             "help_saleReport",
             JSON.stringify({
-              saleReportArr: that.arr,
-              Aclass: that.Aclass,
-              Bclass: that.Bclass,
-              captain: that.helpCaptain,
+              saleReportArr: this.arr,
+              Aclass: this.Aclass,
+              Bclass: this.Bclass,
+              captain: this.helpCaptain,
               time: new Date().getTime()
             })
           );
@@ -367,18 +363,18 @@ export default {
           localStorage.setItem(
             "HELP_ZONE_INFO",
             JSON.stringify({
-              bank: that.bankValue[0],
-              areaValue: that.areaValue[0],
-              captain: that.helpCaptain
+              bank: this.bankValue[0],
+              areaValue: this.areaValue[0],
+              captain: this.helpCaptain
             })
           );
           //省长常委
           localStorage.setItem(
             "HELP_INFO_LIST",
             JSON.stringify({
-              captain: that.helpCaptain,
-              governor: that.governor,
-              member: that.member
+              captain: this.helpCaptain,
+              governor: this.governor,
+              member: this.member
             })
           );
           next();
