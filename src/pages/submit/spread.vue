@@ -322,6 +322,13 @@ export default {
           "comment": item.explain
         })
       }
+      if(this.formDataNew && this.formDataNew!=''){
+        this.formDataNew.$review = this.formDataNew.review;
+        this.formDataNew.$review2 = this.formDataNew.review2;
+        delete(this.formDataNew.review);
+        delete(this.formDataNew.review2);
+        formDataNew = this.formDataNew;
+      }
       sessionStorage.setItem(
         this.$route.query.list + "-FORMDATA",
         JSON.stringify(formDataNew)
@@ -414,7 +421,8 @@ export default {
     //回显
     if (this.$route.query.formKey && this.$route.query.transCode) {
       createService.getJsonData(this.$route.query.transCode).then(res => {
-          this.formDataNew = JSON.parse(res.tableContent[0].json_data);
+          let json_data = JSON.parse(res.tableContent[0].json_data);
+          this.formDataNew = json_data;
           this.cacheData(this.formDataNew.transDetailUncalc);
           this.listDefault();
           this.formData = false;

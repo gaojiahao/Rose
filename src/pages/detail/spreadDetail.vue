@@ -187,7 +187,7 @@ export default {
               text: res.message,
               position: "middle",
               type: "text",
-              onShow() {
+              onShow:()=> {
                 setTimeout(() => {
                   this.$vux.toast.hide();
                   this.$router.go(-1);
@@ -201,7 +201,7 @@ export default {
             text: c.message,
             position: "middle",
             type: "text",
-            onShow() {
+            onShow:() => {
               setTimeout(() => {
                 this.$vux.toast.hide();
               }, 800);
