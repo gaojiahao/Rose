@@ -1,77 +1,79 @@
 <template>
   <div class="pages">
-    <div class="basicPart">
-      <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-        <div v-if='dealerInfo.dealerName'>
-          <div class="user_info" v-if="dealerInfo.creatorName">
-            <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
-            <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+    <div class="basicPart" ref='fill'>
+      <div class='fill_wrapper'>
+        <!-- 用户地址和基本信息-->
+        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
+          <div v-if='dealerInfo.dealerName'>
+            <div class="user_info" v-if="dealerInfo.creatorName">
+              <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
+              <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+            </div>
+            <div class="cp_info">
+              <p class="cp_name">{{dealerInfo.dealerName}}</p>
+              <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+            </div>
           </div>
-          <div class="cp_info">
-            <p class="cp_name">{{dealerInfo.dealerName}}</p>
-            <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-          </div>
+          <div v-else>
+            <div class="title">往来列表</div>
+            <div class="mode">请选择往来</div>
+          </div>    
+          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
-        <div v-else>
-          <div class="title">往来列表</div>
-          <div class="mode">请选择往来</div>
-        </div>    
-        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-      </div>
-      
-      <div class="basicPart">
-        <!-- 商机列表 -->
-        <div class="materiel_list mg_auto box_sd">
-          <div class="mater_list">
-            <div class="each_mater">
-              <div class="each_mater_wrapper">
-                <div class="mater_main">
-                  <div class="userInp_mode">
-                    <div class="title">商机明细</div>
-                    <group class="SJ_group" @group-title-margin-top="0">
-                      <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                      <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
-                      <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
-                      <datetime
-                        v-model="formData.validUntil"
-                        title="有效期至"
-                        ></datetime>
-                        <div class="SJForm_cell" @click="showSalesmanPop = !showSalesmanPop">
-                          <div>销售人员</div>
-                          <div>
-                            <span>{{salesmanInfo.dealerName}}</span>
+        
+        <div class="basicPart">
+          <!-- 商机列表 -->
+          <div class="materiel_list mg_auto box_sd">
+            <div class="mater_list">
+              <div class="each_mater">
+                <div class="each_mater_wrapper">
+                  <div class="mater_main">
+                    <div class="userInp_mode">
+                      <div class="title">商机明细</div>
+                      <group class="SJ_group" @group-title-margin-top="0">
+                        <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
+                        <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
+                        <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
+                        <datetime
+                          v-model="formData.validUntil"
+                          title="有效期至"
+                          ></datetime>
+                          <div class="SJForm_cell" @click="showSalesmanPop = !showSalesmanPop">
+                            <div>销售人员</div>
+                            <div>
+                              <span>{{salesmanInfo.dealerName}}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div class="SJForm_cell" @click="showSalechannelPop = !showSalechannelPop">
-                          <div>销售渠道</div>
-                          <div>
-                            <span>{{salechannelInfo.dealerName}}</span>
+                          <div class="SJForm_cell" @click="showSalechannelPop = !showSalechannelPop">
+                            <div>销售渠道</div>
+                            <div>
+                              <span>{{salechannelInfo.dealerName}}</span>
+                            </div>
                           </div>
-                        </div>
-                      <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
-                    </group>
+                        <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
+                      </group>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- popup列表 -->
-      <div class=" mg_auto box_sd">
-        <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                         @sel-dealer="selDealer" :dealerLabelName="'2167'">
-        </pop-dealer-list>
-        <!-- 销售人员popup -->
-        <pop-salesman-list :show="showSalesmanPop" v-model="showSalesmanPop"
-                         @sel-dealer="selSalesman">
-        </pop-salesman-list>
-        <!-- 销售渠道popup -->
-        <pop-salechannel-list :show="showSalechannelPop" v-model="showSalechannelPop"
-                         @sel-dealer="selSalechannel">
-        </pop-salechannel-list>
+        <!-- popup列表 -->
+        <div class=" mg_auto box_sd">
+          <!-- 往来popup -->
+          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
+                          @sel-dealer="selDealer" :dealerLabelName="'2167'">
+          </pop-dealer-list>
+          <!-- 销售人员popup -->
+          <pop-salesman-list :show="showSalesmanPop" v-model="showSalesmanPop"
+                          @sel-dealer="selSalesman">
+          </pop-salesman-list>
+          <!-- 销售渠道popup -->
+          <pop-salechannel-list :show="showSalechannelPop" v-model="showSalechannelPop"
+                          @sel-dealer="selSalechannel">
+          </pop-salechannel-list>
+        </div>
       </div>
     </div>
     <div class="count_mode vux-1px-t">
@@ -92,7 +94,6 @@
   import PopSalesmanList from 'components/PopSalesmanList'
   import PopSalechannelList from 'components/PopSalechannelList'
   import PopBusinessList from 'components/PopBusinessList'
-
   export default {
     directives: {
       TransferDom
@@ -245,7 +246,7 @@
       },
     },
     created() {
-    }
+    },
   }
 </script>
 

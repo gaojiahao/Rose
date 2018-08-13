@@ -1,108 +1,110 @@
 <template>
   <div class="pages">
-    <div class="basicPart">
-      <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-        <div v-if='dealerInfo.dealerName'>
-          <div class="user_info" v-if="dealerInfo.creatorName">
-            <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
-            <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
-          </div>
-          <div class="cp_info">
-            <p class="cp_name">{{dealerInfo.dealerName}}</p>
-            <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-          </div>
-        </div>
-        <div v-else>
-          <div class="title">往来列表</div>
-          <div class="mode">请选择往来</div>
-        </div>
-        <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-      </div>
-      <!-- 结算方式 -->
-      <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
-                         v-model="dealer.drDealerPaymentTerm"></pop-single-select>
-      <!-- 物流条款 -->
-      <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
-                         v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
-      <!-- 物料列表 -->
-      <div class="materiel_list mg_auto box_sd">
-        <!-- 没有选择物料 -->
-        <template v-if="!matterList.length">
-          <div @click="showMaterielPop = !showMaterielPop">
-            <div class="title">物料列表</div>
-            <div class="tips">请选择物料</div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-        </template>
-        <!-- 已经选择了物料 -->
-        <template v-else>
-          <div class="title">物料列表</div>
-          <div class="mater_list">
-            <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key='index'>
-              <swipeout>
-                <swipeout-item>
-                  <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
-                  </div>
-                  <div class="each_mater_wrapper" slot="content">
-                    <div class="mater_img">
-                      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                    </div>
-                    <div class="mater_main">
-                      <!-- 物料名称 -->
-                      <div class="mater_name">
-                        <span class="whiNum">No.{{index + 1}}</span>
-                        {{item.inventoryName || item.inventoryName_transObjCode}}
-                      </div>
-                      <!-- 物料基本信息 -->
-                      <div class="mater_info">
-                        <!-- 物料编码、规格 -->
-                        <div class="withColor">
-                          <!-- 物料编码 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_code">
-                              <span class="title">编码</span>
-                              <span class="num">{{item.inventoryCode || item.transObjCode}}</span>
-                            </div>
-                          </div>
-                          <!-- 物料规格 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_spec">
-                              <span class="title">规格</span>
-                              <span class="num">{{item.specification || item.specification_transObjCode || '无'}}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- 物料数量和价格 -->
-                      <div class='mater_other'>
-                        <div class='mater_price'>
-                          ￥{{item.price}}
-                        </div>
-                        <div class='mater_num'>
-                          <span class='handle' @click="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
-                          <input class='num' type='number' v-model.number='item.tdQty'/>
-                          <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                        </div>
-
-                      </div>
-                    </div>
-                  </div>
-                </swipeout-item>
-              </swipeout>
+    <div class="basicPart" ref='fill'>
+      <div class='fill_wrapper'>
+        <!-- 用户地址和基本信息-->
+        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
+          <div v-if='dealerInfo.dealerName'>
+            <div class="user_info" v-if="dealerInfo.creatorName">
+              <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
+              <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+            </div>
+            <div class="cp_info">
+              <p class="cp_name">{{dealerInfo.dealerName}}</p>
+              <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
             </div>
           </div>
-        </template>
-        <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="matterList.length " @click="addMatter">新增更多物料</div>
-        <!-- 往来popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                         @sel-dealer="selDealer" :dealerLabelName="'2167'">
-        </pop-dealer-list  ref="matter">
-        <!-- 物料popup -->
-        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop"
-                         @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
+          <div v-else>
+            <div class="title">往来列表</div>
+            <div class="mode">请选择往来</div>
+          </div>
+          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+        </div>
+        <!-- 结算方式 -->
+        <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
+                          v-model="dealer.drDealerPaymentTerm"></pop-single-select>
+        <!-- 物流条款 -->
+        <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
+                          v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
+        <!-- 物料列表 -->
+        <div class="materiel_list mg_auto box_sd">
+          <!-- 没有选择物料 -->
+          <template v-if="!matterList.length">
+            <div @click="showMaterielPop = !showMaterielPop">
+              <div class="title">物料列表</div>
+              <div class="tips">请选择物料</div>
+              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+            </div>
+          </template>
+          <!-- 已经选择了物料 -->
+          <template v-else>
+            <div class="title">物料列表</div>
+            <div class="mater_list">
+              <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key='index'>
+                <swipeout>
+                  <swipeout-item>
+                    <div slot="right-menu">
+                      <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
+                    </div>
+                    <div class="each_mater_wrapper" slot="content">
+                      <div class="mater_img">
+                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                      </div>
+                      <div class="mater_main">
+                        <!-- 物料名称 -->
+                        <div class="mater_name">
+                          <span class="whiNum">No.{{index + 1}}</span>
+                          {{item.inventoryName || item.inventoryName_transObjCode}}
+                        </div>
+                        <!-- 物料基本信息 -->
+                        <div class="mater_info">
+                          <!-- 物料编码、规格 -->
+                          <div class="withColor">
+                            <!-- 物料编码 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_code">
+                                <span class="title">编码</span>
+                                <span class="num">{{item.inventoryCode || item.transObjCode}}</span>
+                              </div>
+                            </div>
+                            <!-- 物料规格 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_spec">
+                                <span class="title">规格</span>
+                                <span class="num">{{item.specification || item.specification_transObjCode || '无'}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- 物料数量和价格 -->
+                        <div class='mater_other'>
+                          <div class='mater_price'>
+                            ￥{{item.price}}
+                          </div>
+                          <div class='mater_num'>
+                            <span class='handle' @click="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
+                            <input class='num' type='number' v-model.number='item.tdQty'/>
+                            <span class='handle plus' @click='plusNum(item,index)'>+</span>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </swipeout-item>
+                </swipeout>
+              </div>
+            </div>
+          </template>
+          <!-- 新增更多 按钮 -->
+          <div class="add_more" v-if="matterList.length " @click="addMatter">新增更多物料</div>
+          <!-- 往来popup -->
+          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
+                          @sel-dealer="selDealer" :dealerLabelName="'2167'">
+          </pop-dealer-list  ref="matter">
+          <!-- 物料popup -->
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop"
+                          @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
+        </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -134,7 +136,6 @@
   import {getBaseInfoData, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import {getSOList} from 'service/detailService.js'
   import common from 'components/mixins/applyCommon.js'
-
   export default {
     directives: {
       TransferDom
@@ -375,7 +376,7 @@
             this.matterList = data.formData.order.dataSet;
         })
       }
-    }
+    },
   }
 </script>
 

@@ -1,92 +1,94 @@
 <template>
   <div class="pages xsbj-apply-container">
-    <div class="basicPart">
-      <!-- 物料列表 -->
-      <div class="materiel_list mg_auto box_sd">
-        <!-- 没有选择物料 -->
-        <template v-if="!CostList.length">
-          <div @click="showMaterielPop = !showMaterielPop">
+    <div class="basicPart" ref='fill'>
+      <div class='fill_wrapper'>
+        <!-- 物料列表 -->
+        <div class="materiel_list mg_auto box_sd">
+          <!-- 没有选择物料 -->
+          <template v-if="!CostList.length">
+            <div @click="showMaterielPop = !showMaterielPop">
+              <div class="title">费用列表</div>
+              <div class="tips">请选择费用</div>
+              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+            </div>
+          </template>
+          <!-- 已经选择了物料 -->
+          <template v-else>
             <div class="title">费用列表</div>
-            <div class="tips">请选择费用</div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-        </template>
-        <!-- 已经选择了物料 -->
-        <template v-else>
-          <div class="title">费用列表</div>
-          <div class="mater_list">
-            <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
-              <swipeout>
-                <swipeout-item>
-                  <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
-                  </div>
-                  <div class="each_mater_wrapper" slot="content">
-                    <div class="mater_main">
-                      <!-- 物料名称 -->
-                      <div class="mater_name">
-                        <span class="whiNum">No.{{index + 1}}</span>
-                        {{item.COST_NAME}}
-                      </div>
-                      <!-- 物料基本信息 -->
-                      <div class="mater_info">
-                        <!-- 物料编码、规格 -->
-                        <div class="withColor">
-                          <!-- 物料编码 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_code">
-                              <span class="title">编码</span>
-                              <span class="num">{{item.COST_CODE}}</span>
+            <div class="mater_list">
+              <div class="each_mater" v-for="(item, index) in CostList" :key='index'>
+                <swipeout>
+                  <swipeout-item>
+                    <div slot="right-menu">
+                      <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
+                    </div>
+                    <div class="each_mater_wrapper" slot="content">
+                      <div class="mater_main">
+                        <!-- 物料名称 -->
+                        <div class="mater_name">
+                          <span class="whiNum">No.{{index + 1}}</span>
+                          {{item.COST_NAME}}
+                        </div>
+                        <!-- 物料基本信息 -->
+                        <div class="mater_info">
+                          <!-- 物料编码、规格 -->
+                          <div class="withColor">
+                            <!-- 物料编码 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_code">
+                                <span class="title">编码</span>
+                                <span class="num">{{item.COST_CODE}}</span>
+                              </div>
                             </div>
-                          </div>
-                          <!-- 物料规格 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_spec">
-                              <span class="title">类型</span>
-                              <span class="num">{{item.COST_TYPE || '无'}}</span>
+                            <!-- 物料规格 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_spec">
+                                <span class="title">类型</span>
+                                <span class="num">{{item.COST_TYPE || '无'}}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="userInp_mode">
-                        <group>
-                          <cell title="费用科目" text-align='right' :value="item.expSubject" @click.native="item.showPop = true" is-link></cell>
-                          <x-input  title="金额" text-align='right' placeholder='请填写'
-                                    type='number'
-                                    v-model='item.price'></x-input>
-                          <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'
-                          v-model="item.reson"></x-input>
-                        </group>
-                        <div v-transfer-dom>
-                          <popup v-model="item.showPop" height="70%" class="trade_pop_part">
-                            <div class="trade_pop">
-                              <div class="title">费用科目
-                                <x-icon class="close_icon" type="ios-close-empty" size="30" @click="item.showPop = false"></x-icon>
+                        <div class="userInp_mode">
+                          <group>
+                            <cell title="费用科目" text-align='right' :value="item.expSubject" @click.native="item.showPop = true" is-link></cell>
+                            <x-input  title="金额" text-align='right' placeholder='请填写'
+                                      type='number'
+                                      v-model='item.price'></x-input>
+                            <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'
+                            v-model="item.reson"></x-input>
+                          </group>
+                          <div v-transfer-dom>
+                            <popup v-model="item.showPop" height="70%" class="trade_pop_part">
+                              <div class="trade_pop">
+                                <div class="title">费用科目
+                                  <x-icon class="close_icon" type="ios-close-empty" size="30" @click="item.showPop = false"></x-icon>
+                                </div>
+                                <span class="each_mode"
+                                      :class="{choiced : val === item.expSubject}"
+                                      v-for="(val, i) in item.COST_SUB"
+                                      :key="i"
+                                      @click="selItem(val,index,i)">{{val}}</span>
                               </div>
-                              <span class="each_mode"
-                                    :class="{choiced : val === item.expSubject}"
-                                    v-for="(val, i) in item.COST_SUB"
-                                    :key="i"
-                                    @click="selItem(val,index,i)">{{val}}</span>
-                            </div>
-                            <div class="cfm_btn" @click="confirm(item)">确定</div>
-                          </popup>
+                              <div class="cfm_btn" @click="confirm(item)">确定</div>
+                            </popup>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </swipeout-item>
-              </swipeout>
-              <!-- 物料输入内容 -->
-              
+                  </swipeout-item>
+                </swipeout>
+                <!-- 物料输入内容 -->
+                
+              </div>
             </div>
-          </div>
-        </template>
-        <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多费用</div>
-        <!-- 费用popup -->
-        <pop-cost-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                        :default-value="CostList" :defaultValue="CostList" ref="matter"></pop-cost-list>
+          </template>
+          <!-- 新增更多 按钮 -->
+          <div class="add_more" v-if="CostList.length" @click="addMatter">新增更多费用</div>
+          <!-- 费用popup -->
+          <pop-cost-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+                          :default-value="CostList" :defaultValue="CostList" ref="matter"></pop-cost-list>
+        </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -105,7 +107,6 @@
   import PopCostList from 'components/PopCostList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
-
   export default {
     mixins: [ApplyCommon],
     components: { 

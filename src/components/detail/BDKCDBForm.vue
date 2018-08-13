@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
       <!-- 出库仓库 -->
       <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" disabled></pop-warehouse-list>

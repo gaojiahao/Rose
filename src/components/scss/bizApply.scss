@@ -12,10 +12,13 @@
 //底部为合计时
 .basicPart {
   z-index: 1;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
   height: calc(100% - .44rem);
   -webkit-overflow-scrolling: touch; 
+  .fill_wrapper{
+    overflow: hidden;
+  }
 }
 //底部为提交时
 .no_count{    

@@ -1,5 +1,5 @@
 <template>
-  <div class="pages xsbj-detail-container">
+  <div class="detail_wrapper xsbj-detail-container"  >
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">

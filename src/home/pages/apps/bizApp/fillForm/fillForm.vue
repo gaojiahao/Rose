@@ -48,17 +48,17 @@ export default {
     // },1000)
   },
   mounted(){
-    this.$nextTick(()=>{
-      if(platfrom.isAndroid){
-        window.addEventListener("resize", function() {
-          if(document.activeElement.tagName=="INPUT" || document.activeElement.tagName=="TEXTAREA") {
-            setTimeout(() => {
-              document.activeElement.scrollIntoViewIfNeeded();
-            }, 0);
-          }
-        })
-      }
-    })
+    // this.$nextTick(()=>{
+    //   if(platfrom.isAndroid){
+    //     window.addEventListener("resize", function() {
+    //       if(document.activeElement.tagName=="INPUT" || document.activeElement.tagName=="TEXTAREA") {
+    //         setTimeout(() => {
+    //           document.activeElement.scrollIntoViewIfNeeded();
+    //         }, 0);
+    //       }
+    //     })
+    //   }
+    // })
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
