@@ -199,22 +199,23 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           console.log(this.total);
           let text = '';
-          if(this.total && this.page ===1){
-            if(dataCount - this.total === 0){
-              text = '最近无新增物料'
+          if(noReset && this.activeIndex ===0){
+            if(this.total){
+              if(dataCount - this.total === 0){
+                text = '最近无新增往来'
+              }
+              else{
+                text = `最近新增${dataCount-this.total}个往来`
+              }
+              this.$vux.toast.show({
+                text: text,
+                position:'top',
+                width:'50%',
+                type:"text"
+              })  
             }
-            else{
-              text = `最近新增${dataCount-this.total}个物料`
-            }  
-            this.$vux.toast.show({
-              text: text,
-              position:'top',
-              width:'50%',
-              type:"text"
-            })          
-          }          
-          
-          sessionStorage.setItem("WL",dataCount);
+            sessionStorage.setItem("WL",dataCount);
+          }
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`

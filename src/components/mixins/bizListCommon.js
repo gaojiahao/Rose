@@ -150,10 +150,11 @@ export default {
         //判断最近有无新增数据
         console.log(this.total);
         let text = '';
-        if(this.page ===1 && this.serachVal === '' && this.activeIndex ===0){
+        if(noReset && this.activeIndex ===0){
+        // if(this.page ===1 && this.serachVal === '' && this.activeIndex ===0){
           if(this.total){
             if(total-this.total === 0){
-              text = '暂无新数据'
+              text = '暂无新订单数据'
             }
             else{
               text = `新增${total-this.total}条数据`
@@ -242,6 +243,6 @@ export default {
   created() {
     this.applyCode = this.$route.params.code;
     this.getData(false);
-  }
+  },
 
 }

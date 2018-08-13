@@ -3,15 +3,18 @@
     <component
       :is='currentComponent'
       v-model='showLoadding'
+      @close='closeLoad'
       @change='modifyRoute'>
     </component>
     <loading-form :show='showLoadding'></loading-form>
+    <submit-load :submit='submitLoadding'></submit-load>
   </div>
 
 </template>
 
 <script>
 import Loadding from 'components/Loading'
+import SubmitLoad from 'components/submitLoading'
 import detailMap from './../../../maps/detail'
 import platfrom from '@/plugins/platform'
 export default {
@@ -21,12 +24,18 @@ export default {
       showLoadding : true,
       transCode :'',
       submitSuccess :false,
+      submitLoadding : false
     }
   },
   components:{
-    'loading-form' : Loadding
+    'loading-form' : Loadding,
+    SubmitLoad
   },
   methods:{
+    closeLoad(val){
+      console.log(val);
+      this.submitLoadding = val;
+    },
     modifyRoute(val){
       this.submitSuccess = val;
     }

@@ -70,7 +70,9 @@ export default {
     },
     //提交订单
     saveData(request, submitData) {
+      this.$emit('close',true)
       request(submitData).then(data => {
+        this.$emit('close',false)
         let {success = false, message = '提交失败'} = data;
         if (success) {
           message = '订单提交成功';
@@ -84,6 +86,8 @@ export default {
             }
           }
         });
+      }).catch(e=>{
+        this.$emit('close',false)
       })
     },
     //终止订单
