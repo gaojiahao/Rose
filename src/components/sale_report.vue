@@ -154,7 +154,7 @@ export default {
           { key: 'arr', msg: '项目类产品'}
         ];
       tipArr.every( item => {
-          if(!this[item.key]){
+          if(!this[item.key] && this[item.key] !== 0){
             tips = `请填写${item.msg}`
             return;
           }  
@@ -163,7 +163,7 @@ export default {
               if(!this[item.key][inx].value.length){
                 tips = `请选择${item.msg}`;
               }
-              else if(this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty){
+              else if(this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty && this[item.key][inx].qty !== 0){
                 tips = '请填写产品数量';
               }
             }
@@ -246,9 +246,9 @@ export default {
       localStorage.setItem(
         "SALE_BASIC_INFO",
         JSON.stringify({
-          member: member,
-          governor: governor,
-          captain: this.helpCaptain,
+          member: member,             // 常委
+          governor: governor,         // 省长
+          captain: this.helpCaptain,  // 队长
           time: new Date().getTime()
         })
       );
@@ -256,45 +256,37 @@ export default {
       localStorage.setItem(
         "SALE_FORM_INFO",
         JSON.stringify({
-          member: member,
-          governor: governor,
-          Aclass: this.Aclass,
-          Bclass: this.Bclass,
-          saleReportArr: this.arr,
-          captain: this.helpCaptain,
+          Aclass: this.Aclass,        // A类产品金额
+          Bclass: this.Bclass,        // B类产品金额
+          saleReportArr: this.arr,    // 已选择的项目类产品
+          comments: this.comments,    // 备注
           time: new Date().getTime()
         })
       );
-
       this.$router.push({ path: "/count" });
     }
   },
   created(){
     // 所属信息 缓存
-    const SALE_BASIC_INFO = JSON.parse(localStorage.getItem("SALE_BASIC_INFO")) || '';
+    const SALE_FORM_INFO = JSON.parse(localStorage.getItem("SALE_FORM_INFO"));       
+    const SALE_BASIC_INFO = JSON.parse(localStorage.getItem("SALE_BASIC_INFO"));
+    // 用户所属信息 (队长、省长、常委)
     if(SALE_BASIC_INFO){
-      this.member = SALE_BASIC_INFO.member;
-      this.governor = SALE_BASIC_INFO.governor;
-      this.helpCaptain = SALE_BASIC_INFO.captain;
+      this.member = SALE_BASIC_INFO.member || '';
+      this.governor = SALE_BASIC_INFO.governor || '';
+      this.helpCaptain = SALE_BASIC_INFO.captain || '';
     }
-  },
-  mounted() {
-    // 表单内容缓存
-    const SALE_FORM_INFO = JSON.parse(localStorage.getItem("SALE_FORM_INFO")) || '';       
-    //默认缓存
-    if (SALE_FORM_INFO) {
+    // 用户填写内容 (A、B类产品金额，项目类产品，备注)
+    if(SALE_FORM_INFO){
       this.Aclass = SALE_FORM_INFO.Aclass;
       this.Bclass = SALE_FORM_INFO.Bclass;
-      this.member = SALE_FORM_INFO.member;
-      this.governor = SALE_FORM_INFO.governor;
       this.arr = SALE_FORM_INFO.saleReportArr;
-      this.helpCaptain = SALE_FORM_INFO.captain;
+      this.comments = SALE_FORM_INFO.comments || '';
     }
+
   },
   beforeRouteLeave(to, from, next) {
-    if (!this.arr[0].value.length || to.name === "Count") {
-      next();
-    }
+    if (!this.arr[0].value.length || to.name === "Count") next();
     else {
       this.$vux.confirm.show({
         title: "温馨提示",
@@ -302,7 +294,8 @@ export default {
         confirmText: "确认",
         cancelText: "取消",
         onCancel: () => {
-          localStorage.removeItem("SALE_BASIC_INFO");
+          // 仅删除 用户填写的表单内容
+          localStorage.removeItem("SALE_FORM_INFO");
           next();
         },
         onConfirm: () => {
