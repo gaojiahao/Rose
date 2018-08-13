@@ -194,7 +194,22 @@ export default {
           varchar9: comments,
           varchar12:userCode, //工号
         },
-        transDetailUncalc: [],
+        transDetailUncalc: [
+          { id: this.guid(),
+            transObjCode: "A类产品", //项目类产品名称
+            containerCode: "A", //类型
+            qty: "",
+            amount: Number(this.Aclass), //总金额
+            fgCode: ""
+          },
+          { id: this.guid(),
+            transObjCode: "B类产品", //项目类产品名称
+            containerCode: "B", //类型
+            qty: "",
+            amount: Number(this.Bclass), //总金额
+            fgCode: ""
+          }
+        ],
         transCode: "XHXSDD"
       };
 
@@ -207,20 +222,6 @@ export default {
           qty: this.arr[i].value[0] === "无" ? "" : this.arr[i].qty,
           taxAmount: this.arr[i].value[0] === "无" ? "" : Number(this.arr[i].value[0].split("_")[2]),
           amount: this.arr[i].qty * this.arr[i].value[0].split('_')[3], //总金额
-          fgCode: ""
-        },
-        { id: this.guid(),
-          transObjCode: "A类产品", //项目类产品名称
-          containerCode: "A", //类型
-          qty: "",
-          amount: Number(this.Aclass), //总金额
-          fgCode: ""
-        },
-        { id: this.guid(),
-          transObjCode: "B类产品", //项目类产品名称
-          containerCode: "B", //类型
-          qty: "",
-          amount: Number(this.Bclass), //总金额
           fgCode: ""
         });        
       }

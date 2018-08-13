@@ -156,46 +156,51 @@ export default {
     };
   },
   methods: {
+    //提交
     end() {
       if (!this.btnStatus) return;
-      if (this.areaValue.length == 0 || this.areaValue.indexOf('空') === 0) {
+      // 声明提示文字
+      let tips = '';
+      let tipArr = [
+        { key:'areaValue', msg:'请选支援地区' },
+        { key:'bankValue', msg:'请选支援银行' },
+        { key:'helpCaptain', msg:'请填写支援队长' },
+        { key:'governor', msg:'请填写省长信息' },
+        { key:'member', msg:'请填写常委信息' },
+        { key:'Aclass', msg:'请填A类产品销售金额' },
+        { key:'Bclass', msg:'请填B类产品销售金额' },
+        { key:'arr', msg:'请选择项目产品' },
+      ];
+      tipArr.every( item => {
+          if(!this[item.key]){
+            tips = `请填写${item.msg}`
+            return;
+          }else if(item.key === 'areaValue' && this[item.key].length === 0 || item.key === 'areaValue' && this[item.key].indexOf('空') === 0 ){
+            tips = `请选择${item.msg}`;
+            return;
+          }else if(item.key === 'bankValue' && this[item.key].length === 0){
+            tips = `请选择${item.msg}`;
+            return;
+          }else if(item.key === 'arr' && this[item.key].length){
+            for(let inx in this[item.key]){
+              if(!this[item.key][inx].value.length){
+                tips = `请选择${item.msg}`;
+              }
+              else if(this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty){
+                tips = '请填写产品数量';
+              }
+            }
+            return;
+          }  
+        return true;
+      })
+      if(tips){
         this.$vux.alert.show({
-          title: "提示",
-          content: "请选支援地区"
-        });
-        return;
-      } else if (this.bankValue.length == 0) {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请选支援银行"
-        });
-        return;
-      } else if (this.helpCaptain == "") {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请填写支援队长"
-        });
-        return;
-      } else if (this.arr[0].value.length == 0) {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请选择项目产品"
-        });
-        return;
-      } else if (!this.governor) {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请填写省长信息"
-        });
-        return;
-      } else if (!this.member) {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请填写常委信息"
-        });
+          content: tips
+        })
         return;
       }
-
+      //缓存支援地区模块
       localStorage.setItem(
         "HELP_ZONE_INFO",
         JSON.stringify({
@@ -204,7 +209,7 @@ export default {
           captain: this.helpCaptain
         })
       );
-
+      //获取缓存信息
       let governor = this.governor,
           member = this.member,
           comments = this.comments,
@@ -229,9 +234,25 @@ export default {
           varchar10: ROSE_OPTION.region,     //省份(业务自带信息)
           varchar11: ROSE_OPTION.bank,        //银行(业务自带信息)
           varchar12: ROSE_OPTION.userCode     //工号
-
         },
-        transDetailUncalc: [],
+        transDetailUncalc: [
+          {
+            id: this.guid(),
+            transObjCode: "A类产品", //项目类产品名称
+            containerCode: "A", //类型
+            qty: "",
+            amount: Number(this.Aclass), //总金额
+            fgCode: ""
+          },
+          {
+            id: this.guid(),
+            transObjCode: "B类产品", //项目类产品名称
+            containerCode: "B", //类型
+            qty: "",
+            amount: Number(this.Bclass), //总金额
+            fgCode: ""
+          }
+        ],
         transCode: "XHXSDD"
       };
       // 项目类产品
@@ -254,38 +275,6 @@ export default {
           });
         }
       }
-      if (!this.Aclass) {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请填A类产品"
-        });
-        return;
-      } else if (!this.Bclass) {
-        this.$vux.alert.show({
-          title: "提示",
-          content: "请填B类产品"
-        });
-        return;
-      } else {
-        jsonData.transDetailUncalc.push(
-          {
-            id: this.guid(),
-            transObjCode: "A类产品", //项目类产品名称
-            containerCode: "A", //类型
-            qty: "",
-            amount: Number(this.Aclass), //总金额
-            fgCode: ""
-          },
-          {
-            id: this.guid(),
-            transObjCode: "B类产品", //项目类产品名称
-            containerCode: "B", //类型
-            qty: "",
-            amount: Number(this.Bclass), //总金额
-            fgCode: ""
-          }
-        );
-      }
       let totalInfo = {
         isMobile: true,
         conn: 20000,
@@ -294,7 +283,7 @@ export default {
         jsonData: JSON.stringify(jsonData)
       };
       this.totalInfo = totalInfo;
-
+      // 提交表单内容缓存
       localStorage.setItem(
         "saleReportInfo",
         JSON.stringify({
@@ -302,6 +291,7 @@ export default {
           time: new Date().getTime()
         })
       );
+      // 表单缓存
       localStorage.setItem(
         "help_saleReport",
         JSON.stringify({
@@ -311,7 +301,7 @@ export default {
           time: new Date().getTime()
         })
       );
-
+      // 用户所属信息缓存
       localStorage.setItem(
         "HELP_INFO_LIST",
         JSON.stringify({
@@ -326,33 +316,25 @@ export default {
   created(){
     this.getArea();
     this.getBank();
-    if (localStorage.getItem("HELP_INFO_LIST")) {
-      this.helpCaptain = JSON.parse(
-        localStorage.getItem("HELP_INFO_LIST")
-      ).captain;
-      this.governor = JSON.parse(
-        localStorage.getItem("HELP_INFO_LIST")
-      ).governor;
-      this.member = JSON.parse(localStorage.getItem("HELP_INFO_LIST")).member;
-    }  
-  },
-  mounted() {
-    if (localStorage.getItem("help_saleReport")) {
-      this.arr = JSON.parse(
-        localStorage.getItem("help_saleReport")
-      ).saleReportArr;
-      this.Aclass = JSON.parse(localStorage.getItem("help_saleReport")).Aclass;
-      this.Bclass = JSON.parse(localStorage.getItem("help_saleReport")).Bclass;
+    let HELP_INFO_LIST = localStorage.getItem("HELP_INFO_LIST") || '';
+    let help_saleReport = localStorage.getItem("help_saleReport") || '';
+    let HELP_ZONE_INFO = localStorage.getItem("HELP_ZONE_INFO") || '';
+    // 默认信息缓存
+    if (HELP_INFO_LIST) {
+      this.helpCaptain = JSON.parse(HELP_INFO_LIST).captain;
+      this.governor = JSON.parse( HELP_INFO_LIST).governor;
+      this.member = JSON.parse(HELP_INFO_LIST).member;
     }
-    if (localStorage.getItem("HELP_ZONE_INFO")) {
-      this.areaValue = [
-        JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).areaValue
-      ];
-      this.bankValue = [
-        JSON.parse(localStorage.getItem("HELP_ZONE_INFO")).bank
-      ];
+    if (help_saleReport) {
+      this.arr = JSON.parse(help_saleReport).saleReportArr;
+      this.Aclass = JSON.parse(help_saleReport).Aclass;
+      this.Bclass = JSON.parse(help_saleReport).Bclass;
     }
-
+    if (HELP_ZONE_INFO) {
+      this.areaValue = [JSON.parse(HELP_ZONE_INFO).areaValue];
+      this.bankValue = [JSON.parse(HELP_ZONE_INFO).bank];
+    }
+  
   },
   beforeRouteLeave(to, from, next) {
     let that = this;
