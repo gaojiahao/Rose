@@ -296,17 +296,17 @@
           let dept = [];
           let vicePresident = [];
           data.tableContent && data.tableContent.forEach(item => {
-            dept.push(item.CName);
+            item.CName && dept.push(item.CName || '');
           });
           data2.tableContent && data2.tableContent.forEach(item => {
-            vicePresident.push(item.comName);
+            item.comName && vicePresident.push(item.comName || '');
           });
           this.opList[0].options = dept;
-          this.opList[0].value = val || dept[0];
+          this.opList[0].value = val || dept[0] || '';
           this.opList[0].datas = data.tableContent;
 
           this.opList[1].options = vicePresident;
-          this.opList[1].value = val2 || vicePresident[0];
+          this.opList[1].value = val2 || vicePresident[0] || '';
           this.opList[1].datas = data2.tableContent;
         })
       },
@@ -342,17 +342,17 @@
           let committee = [];
           let vicePresident = [];
           data.tableContent && data.tableContent.forEach(item => {
-            committee.push(item.CName);
+            item.CName && committee.push(item.CName || '');
           });
           data2.tableContent && data2.tableContent.forEach(item => {
-            vicePresident.push(item.NICKNAME);
+            item.NICKNAME && vicePresident.push(item.NICKNAME || '');
           });
           this.opList[0].options = committee;
-          this.opList[0].value = val || committee[0];
+          this.opList[0].value = val || committee[0] || '';
           this.opList[0].datas = data.tableContent;
 
           this.opList[1].options = vicePresident;
-          this.opList[1].value = val2 || vicePresident[0];
+          this.opList[1].value = val2 || vicePresident[0] || '';
           this.opList[1].datas = data2.tableContent;
         })
       },
