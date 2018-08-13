@@ -125,10 +125,16 @@ export default {
 .search {
   margin: .1rem 0;
 }
+.inPage{
+  overflow: hidden;
+}
 .wrapper{
   width:100%;
   height: calc(100% - .5rem - .49rem);
   overflow: hidden;
+  .content{
+    padding-top:10px;
+  }
 }
 .each_msg{
   position: relative;

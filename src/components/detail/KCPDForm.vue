@@ -56,6 +56,7 @@
         </div>
       </div>
       <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -65,7 +66,7 @@
   import workFlow from 'components/workFlow'
   import detailCommon from 'components/mixins/detailCommon'
   import PopWarehouseList from 'components/PopWarehouseList'
-
+  import RAction from 'components/RAction'
   export default {
     data() {
       return {
@@ -78,6 +79,7 @@
     components: {
       workFlow,
       PopWarehouseList,
+      RAction
     },
     methods: {
       //选择默认图片
