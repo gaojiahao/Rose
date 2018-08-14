@@ -1,19 +1,22 @@
 <template>
   <div class="pages">
-    <component
-      :is='currentComponent'
-      v-model='showLoadding'
-      @change='modifyRoute'>
-    </component>
-    <loading-form :show='showLoadding'></loading-form>
+    <div class="pages" ref='detail'>
+      <component
+        :is='currentComponent'
+        v-model='showLoadding'
+        @change='modifyRoute'>
+      </component>
+    </div>   
+    <!-- 页面进入加载动画-->
+    <loadding-form :show='showLoadding'></loadding-form>
   </div>
 
 </template>
 
 <script>
-import Loadding from 'components/Loading'
+import LoaddingForm from 'components/Loading'
 import detailMap from './../../../maps/detail'
-
+import Bscroll from 'better-scroll'
 export default {
   data(){
     return {
@@ -21,10 +24,11 @@ export default {
       showLoadding : true,
       transCode :'',
       submitSuccess : false,
+      detailScroll : null,
     }
   },
   components:{
-    'loading-form' : Loadding
+    LoaddingForm
   },
   methods:{
     modifyRoute(val){
@@ -52,6 +56,14 @@ export default {
     //   this.showLoadding = false
     // },1000)
   },
+  mounted(){
+    this.$nextTick(()=>{
+      this.detailScroll = new Bscroll(this.$refs.detail,{
+        click : true,
+      })
+    })
+
+  },
   beforeRouteLeave (to, from, next) {
      let {path} = to;
     // 新建物料，修改列表页的meta值
@@ -64,6 +76,11 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
+.apply_detail{
+  width:100%;
+  height:100%;
+  overflow: hidden;
+}
 
 </style>

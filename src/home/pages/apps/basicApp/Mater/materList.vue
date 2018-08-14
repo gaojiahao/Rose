@@ -197,7 +197,8 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          console.log(this.total);
+          //判断最近有无新增数据
+          //console.log(this.total);
           let text = '';
           if(noReset && this.activeIndex ===0){
             if(this.total){
@@ -206,9 +207,13 @@
                 text: text,
                 position:'top',
                 width:'50%',
-                type:"text"
+                type:"text",
+                time : 700
               })  
             }
+          }
+          //将总数量缓存
+          if(this.activeIndex === 0 && this.page === 1){
             sessionStorage.setItem("WL",dataCount);
           }
           tableContent.forEach(item => {

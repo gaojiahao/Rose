@@ -11,6 +11,7 @@
 }
 // 表单内容
 .basicPart {
+<<<<<<< HEAD
   z-index: 100;
   overflow: auto;
   // position: relative;
@@ -20,6 +21,15 @@
   .content {
     min-height: calc(100% + 1%);
     
+=======
+  z-index: 1;
+  overflow: hidden;
+  position: relative;
+  height: calc(100% - .44rem);
+  -webkit-overflow-scrolling: touch; 
+  .fill_wrapper{
+    overflow: hidden;
+>>>>>>> 8780af6a66bbabfb7b6207814cf0d1731c21f545
   }
 }
 //底部为提交时

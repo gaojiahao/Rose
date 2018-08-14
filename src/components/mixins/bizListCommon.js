@@ -22,7 +22,7 @@ export default {
       activeTab: '',
       count: 0,
       total:null, //列表数据总量
-      applyCode : '' 
+      applyCode : '' ,
     }
   },
   components: {
@@ -148,7 +148,7 @@ export default {
           })
         }
         //判断最近有无新增数据
-        console.log(this.total);
+        //console.log(this.total);
         let text = '';
         if(noReset && this.activeIndex ===0){
           if(this.total){
@@ -160,7 +160,10 @@ export default {
               type:"text",
               time : 700
             })
-          }
+          }          
+        }
+        //列表总数据缓存
+        if(this.activeIndex == 0 && this.page ===1){
           sessionStorage.setItem(this.applyCode,total);
         }
       }).catch(e => {
@@ -196,8 +199,8 @@ export default {
       this.activeTab = '';
       this.activeIndex = 0;
       this.resetCondition();
-      this.getData(false);
-
+      // this.getData(false);
+      this.onPullingDown();
     },
     //获取上次存储的列表总数量
     getSession(){

@@ -1,5 +1,5 @@
 <template>
-    <div class="pages">
+    <div class="detail_wrapper">
         <div class="basicPart" v-if='orderInfo && orderInfo.order'>
             <!-- 工作流 -->
           <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"

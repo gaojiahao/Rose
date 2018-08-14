@@ -1,8 +1,13 @@
 <template>
   <div class="pages">
+<<<<<<< HEAD
     <!-- 表单基本内容 -->
     <div class="basicPart">
       <div class="content">
+=======
+    <div class="basicPart" ref='fill'>
+      <div class='fill_wrapper'>
+>>>>>>> 8780af6a66bbabfb7b6207814cf0d1731c21f545
         <!-- 用户地址和基本信息-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div v-if='dealerInfo.dealerName'>
@@ -137,7 +142,6 @@
   import {getBaseInfoData, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import {getSOList} from 'service/detailService.js'
   import common from 'components/mixins/applyCommon.js'
-
   export default {
     directives: {
       TransferDom
@@ -378,7 +382,7 @@
             this.matterList = data.formData.order.dataSet;
         })
       }
-    }
+    },
   }
 </script>
 

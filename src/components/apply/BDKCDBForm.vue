@@ -1,81 +1,82 @@
 <template>
   <div class="pages bdkcdb-apply-container">
-    <div class="basicPart no_count">
+    <div class="basicPart no_count" ref='fill'>
+      <div class='fill_wrapper'>
+        <!-- 出库仓库-->
+        <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
 
-      <!-- 出库仓库-->
-      <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
+        <!-- 入库仓库-->
+        <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
 
-      <!-- 入库仓库-->
-      <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
-
-      <!-- 物料列表 -->
-      <div class="materiel_list mg_auto box_sd">
-        <!-- 没有选择物料 -->
-        <template v-if="!matterList.length">
-          <div @click="showMaterielPop = !showMaterielPop">
+        <!-- 物料列表 -->
+        <div class="materiel_list mg_auto box_sd">
+          <!-- 没有选择物料 -->
+          <template v-if="!matterList.length">
+            <div @click="showMaterielPop = !showMaterielPop">
+              <div class="title">物料列表</div>
+              <div class="tips">请选择物料</div>
+              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+            </div>
+          </template>
+          <!-- 已经选择了物料 -->
+          <template v-else>
             <div class="title">物料列表</div>
-            <div class="tips">请选择物料</div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-        </template>
-        <!-- 已经选择了物料 -->
-        <template v-else>
-          <div class="title">物料列表</div>
-          <div class="mater_list">
-            <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key="index">
-              <swipeout>
-                <swipeout-item>
-                  <div slot="right-menu">
-                    <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
-                  </div>
-                  <div class="each_mater_wrapper" slot="content">
-                    <div class="mater_img">
-                      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+            <div class="mater_list">
+              <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key="index">
+                <swipeout>
+                  <swipeout-item>
+                    <div slot="right-menu">
+                      <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
                     </div>
-                    <div class="mater_main">
-                      <!-- 物料名称 -->
-                      <div class="mater_name">
-                        <span class="whiNum">No.{{index + 1}}</span>
-                        {{item.inventoryName}}
+                    <div class="each_mater_wrapper" slot="content">
+                      <div class="mater_img">
+                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                       </div>
-                      <!-- 物料基本信息 -->
-                      <div class="mater_info">
-                        <!-- 物料编码、规格 -->
-                        <div class="withColor">
-                          <!-- 物料编码 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_code">
-                              <span class="title">编码</span>
-                              <span class="num">{{item.inventoryCode}}</span>
+                      <div class="mater_main">
+                        <!-- 物料名称 -->
+                        <div class="mater_name">
+                          <span class="whiNum">No.{{index + 1}}</span>
+                          {{item.inventoryName}}
+                        </div>
+                        <!-- 物料基本信息 -->
+                        <div class="mater_info">
+                          <!-- 物料编码、规格 -->
+                          <div class="withColor">
+                            <!-- 物料编码 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_code">
+                                <span class="title">编码</span>
+                                <span class="num">{{item.inventoryCode}}</span>
+                              </div>
                             </div>
-                          </div>
-                          <!-- 物料规格 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_spec">
-                              <span class="title">规格</span>
-                              <span class="num">{{item.specification || '无'}}</span>
+                            <!-- 物料规格 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_spec">
+                                <span class="title">规格</span>
+                                <span class="num">{{item.specification || '无'}}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <!-- 物料数量和价格 -->
-                      <div class="mater_other">
-                        <span class="matter-remain">库存: {{item.qtyBal}}</span>
-                        <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
+                        <!-- 物料数量和价格 -->
+                        <div class="mater_other">
+                          <span class="matter-remain">库存: {{item.qtyBal}}</span>
+                          <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </swipeout-item>
-              </swipeout>
+                  </swipeout-item>
+                </swipeout>
+              </div>
             </div>
-          </div>
-        </template>
-        <!-- 新增更多 按钮 -->
-        <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
-        <!-- 物料popup -->
-        <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                         :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
-                         ref="matter"></pop-matter-list>
+          </template>
+          <!-- 新增更多 按钮 -->
+          <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
+          <!-- 物料popup -->
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+                          :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
+                          ref="matter"></pop-matter-list>
+        </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -92,7 +93,6 @@
   import ApplyCommon from './../mixins/applyCommon'
   import PopWarehouseList from 'components/PopWarehouseList'
   import RNumber from 'components/RNumber'
-
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -120,7 +120,7 @@
         warehouseIn: null,
         warehouseParams: {
           whCode: '',
-        }
+        },
       }
     },
     methods: {

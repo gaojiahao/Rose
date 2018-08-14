@@ -140,7 +140,8 @@ export default {
             })
           })
           await dealerService.getDealerList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
-            console.log(this.total);
+            //console.log(this.total);
+            //判断最近有无新增数据
             let text = '';
             if(noReset && this.activeIndex ===0){
               if(this.total){
@@ -149,9 +150,13 @@ export default {
                   text: text,
                   position:'top',
                   width:'50%',
-                  type:"text"
+                  type:"text",
+                  time : 700
                 })  
-              }
+              }             
+            }
+            //将总数据缓存
+            if(this.activeIndex === 0 && this.page === 1){
               sessionStorage.setItem("DL",dataCount);
             }
             this.dealerList = this.page === 1? tableContent : this.dealerList.concat(tableContent);

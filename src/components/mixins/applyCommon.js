@@ -1,7 +1,7 @@
 import {saveAndStartWf, saveAndCommitTask, commitTask, getBaseInfoData,} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {numberComma,} from 'vux'
-
+import Bscroll from 'better-scroll'
 export default {
   data() {
     return {
@@ -14,6 +14,7 @@ export default {
       btnInfo: {}, //操作按钮信息
       comment: '',//审批意见
       formViewUniqueId: '',
+      fillBscroll :null
     }
   },
   computed: {
@@ -171,5 +172,12 @@ export default {
         this.$emit('input',false);
       })()
     }
+  },
+  mounted(){
+    this.$nextTick(()=>{
+      this.fillBscroll = new Bscroll(this.$refs.fill,{
+        click : true
+      })
+    })
   }
 }
