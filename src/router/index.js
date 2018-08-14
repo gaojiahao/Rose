@@ -12,12 +12,13 @@ import MeetingDetail from '@/pages/detail/meetingDetail'
 import HouseDetail from '@/pages/detail/houseDetail'
 import AssetsDetail from '@/pages/detail/assetsDetail'
 import Operation from '@/pages/operation'
+import MySubmit from '@/pages/mySubmit'
 
 Vue.use(Router);
 
 export default new Router({
   mode: 'history',
-  base:'/Zeus',
+  base: '/Zeus',
   routes: [
     {path: '/', name: 'Home', component: Home, meta: {title: '首页'}},
     {path: '/spread', name: 'Spread', component: Spread, meta: {title: ''}},
@@ -31,5 +32,6 @@ export default new Router({
     {path: '/houseDetail', name: 'HouseDetail', component: HouseDetail, meta: {title: ''}},
     {path: '/assetsDetail', name: 'AssetsDetail', component: AssetsDetail, meta: {title: ''}},
     {path: '/operation', name: 'Operation', component: Operation, meta: {title: ''}},
+    {path: '/mySubmit', name: 'MySubmit', component: MySubmit, meta: {title: '我的提交', keepAlive: true}},
   ]
 })

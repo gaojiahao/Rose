@@ -64,6 +64,10 @@
             name: '查看我的',
             path: '/mylist',
             query: {},
+          }, {
+            name: '我的提交',
+            path: '/mySubmit',
+            query: {},
           }
         ],
         currentUser: {}

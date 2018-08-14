@@ -18,7 +18,20 @@ let mylist={
             url:'/H_roleplay-si/ds/getCompletedListData2',
             data:data,
         })
-    }
+    },
+    // TODO 我的提交
+    getListStartedByMe(data = {}){
+      return $axios.ajax({
+        url:'/H_roleplay-si/ds/listStartedByMe2',
+        data:{
+          _dc: Date.now(),
+          page: 1,
+          start: 0,
+          limit: 10,
+          ...data,
+        },
+      })
+    },
 };
 
 export default mylist;
