@@ -131,16 +131,16 @@ export default {
               key: "assetCostDepartment",
               value: ""
             },
-            {
-              title: "核算归属省份",
-              key: "assetCheckProvince",
-              value: ""
-            },
-            {
-              title: "费用所属银行",
-              key: "assetCostBank",
-              value: ""
-            }
+            // {
+            //   title: "核算归属省份",
+            //   key: "assetCheckProvince",
+            //   value: ""
+            // },
+            // {
+            //   title: "费用所属银行",
+            //   key: "assetCostBank",
+            //   value: ""
+            // }
           ]
         },
         {
@@ -158,6 +158,32 @@ export default {
     };
   },
   methods: {
+    //获取数据
+    restoreJsonData(jsonData){
+      let arrData = jsonData.transDetailUncalc;
+      arrData.forEach((val,idx) => {
+        let formData = {
+          assetType:val.inventoryType.value,                 //类型
+          assetModel:val.var7,          //规格
+          meteringUnit:val.batchNo.value,        //单位
+          assetPrice: val.num1,               //单价
+          assetNumber:val.num2,               //数量
+          assetCostTotal:val.num3,            //总价
+          applyDepartment:val.var1,       //申请部门
+          useDepartment:val.var2, //使用部门
+          assetCostBU:val.var3.value,         //费用所属事业部
+          assetCostDepartment:val.var4.value, //费用所属部门
+          comment: val.comment                //说明
+        }
+        this.listData.push(JSON.stringify(this.listObj));
+        this.listData[idx] = JSON.parse(this.listData[idx]);
+        this.listData[idx].forEach(lItem => {
+            lItem.items.forEach(item => {
+              item.value = formData[item.key];
+            })
+        });
+      });
+    },
     //审批弹窗
     endToast(taskId, data) {
       createService
@@ -168,7 +194,7 @@ export default {
               text: res.message,
               position: "middle",
               type: "text",
-              onShow() {
+              onShow:()=> {
                 setTimeout(() => {
                   this.$vux.toast.hide();
                   this.$router.go(-1);
@@ -182,7 +208,7 @@ export default {
             text: c.message,
             position: "middle",
             type: "text",
-            onShow() {
+            onShow:()=> {
               setTimeout(() => {
                 this.$vux.toast.hide();
               }, 800);
@@ -219,9 +245,7 @@ export default {
     }
   },
   created() {
-    this.$nextTick(() => {
-      this.pageSwiper = new Swiper(".swiper-container", {});
-    });
+    
   },
   mounted() {},
   computed: {
