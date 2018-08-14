@@ -69,6 +69,10 @@ export default {
     if (this.submitSuccess && (path.indexOf('/list') !== -1 ||path.indexOf('/msglist') !== -1)) {
       to.meta.reload = true;
     }
+    //删除缓存的往来信息
+    if(to.name === "LIST"){
+      sessionStorage.removeItem('DEALERLIST_SELITEMS');
+    }
     //离开数据保存为草稿
     let keys = Object.keys(this.saveData)[0];
     if(to.name === "LIST" && keys){
