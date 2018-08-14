@@ -151,6 +151,7 @@
             this.showToast('提交失败');
           }
         }).catch(e => {
+          this.showLoading = false;
           this.showToast(e.message);
         })
       },

@@ -304,12 +304,12 @@
           this.TobedoneList = [];
           this.TobedoneLoad = true;
           this.Tobedone(0);
-        } 
+        }
         // else if (val == 1) {
         //   this.underWayList = [];
         //   this.underWayLoad = true;
         //   this.underWay(1);
-        // } 
+        // }
         else if (val == 1) {
           this.overList = [];
           this.overLoad = true;
@@ -332,11 +332,11 @@
             if (this.whichIndex == 0) {
               this.dbnothing = true;
               this.Tobedone();
-            } 
+            }
             // else if (this.whichIndex == 1) {
             //   this.underWaynothing = true;
             //   this.underWay();
-            // } 
+            // }
             else if (this.whichIndex == 1) {
               this.overnothing = true;
               this.over();
@@ -358,7 +358,7 @@
               pageNo: this.dbpageNo > this.maxpage ? this.maxpage : this.dbpageNo,
               list: this.TobedoneList
             };
-          } 
+          }
           // else if (this.whichIndex == 1) {
           //   jsonData = {
           //     scrollEndY: this.scrollEndY,
@@ -366,7 +366,7 @@
           //     pageNo: this.underwaypageNo > this.maxpage ? this.maxpage : this.underwaypageNo,
           //     list: this.underWayList
           //   };
-          // } 
+          // }
           else if (this.whichIndex == 1) {
             jsonData = {
               scrollEndY: this.scrollEndY,
@@ -399,7 +399,7 @@
           // 查看的视图id
           "f8d68ff8-fe3e-469e-b5c0-a7a23efaef4d": "/spreadDetail",
           "19a4bb35-2a3b-478d-8e04-e749b61cf0c9": "/meetingDetail",
-          "e21f5960-7f7a-4e8b-9faf-bd10595ff768": "/houseDetail",
+          "084c577d-3f41-4c17-a1e0-736b2dc8e357": "/houseDetail",
           "1034f15e-3f90-4e9c-a401-0955db09e179": "/assetsDetail",
         };
         // 待处理页签才允许审批
@@ -472,12 +472,12 @@
           this.dbpageNo = MYLIST_LIST.pageNo;
           this.TobedoneList = MYLIST_LIST.list;
           this.TobedoneLoad = false;
-        } 
+        }
         // else if (MYLIST_LIST.idx == 1) {
         //   this.underwaypageNo = MYLIST_LIST.pageNo;
         //   this.underWayList = MYLIST_LIST.list;
         //   this.underWayLoad = false;
-        // } 
+        // }
         else if (MYLIST_LIST.idx == 1) {
           this.overpageNo = MYLIST_LIST.pageNo;
           this.overList = MYLIST_LIST.list;

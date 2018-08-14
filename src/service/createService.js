@@ -246,6 +246,18 @@ let createService = {
       }
     });
   },
+  // TODO 房屋立项申请获取省份列表
+  getProvinceForWarehouse(data = {}){
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getProvinceForWarehouse',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+      }
+    });
+  }
 };
 
 export default createService
