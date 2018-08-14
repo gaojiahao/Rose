@@ -461,8 +461,9 @@ export default {
 <style lang="scss">
   .content {
     height: 90%;
-    overflow-y: auto;
+    overflow-y: auto; 
     overflow-x: hidden;
+    -webkit-overflow-scrolling: auto;
     input {
       border: none;
       outline: none;

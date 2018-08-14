@@ -24,15 +24,19 @@
 </template>
 
 <script>
+// 接口引入
 import homeService from 'service/homeservice'
+// 映射表引入
+import basicMap from './maps/basic'
 import businessMap from './maps/business'
-import basicApp from 'components/home/basicApp'     // 基础应用
-import saleApp from 'components/home/saleApp'       // 销售应用
-import buyApp from 'components/home/buyApp'         // 采购应用
+// 组件引入
+import buyApp from 'components/home/buyApp'            // 采购应用
+import saleApp from 'components/home/saleApp'          // 销售应用
+import basicApp from 'components/home/basicApp'        // 基础应用
 import allocaApp from 'components/home/allocationApp'  // 调拨应用
+// 插件引入
 import Bscroll from 'better-scroll'
 import Loadding from 'components/Loading'
-// import {buyApp, saleApp, basicApp} from 'components/home'
 export default {
   data(){
     return{
@@ -45,25 +49,11 @@ export default {
       showLoadding : true,
     }
   },
-  components:{
-    buyApp,
-    saleApp,
-    basicApp,
-    allocaApp,
-    Loadding
-  },
+  components:{ buyApp, saleApp, basicApp, allocaApp, Loadding },
   methods:{
     // 基础应用
     goBasic(item){
-      if(item === '物料'){
-        this.$router.push({ path : '/materlist'})
-      }
-      else if(item === '往来'){
-        this.$router.push({ path : '/adress'})
-      }
-      else if(item === '仓库'){
-        this.$router.push({ path : '/warehouse'})
-      }
+      this.$router.push({ path : `${basicMap[item]}`})
     },
     // 前往列表
     goList(item){
@@ -76,11 +66,11 @@ export default {
       await homeService.getMeau().then( res => {
         for(let val of res){
           // 获取基础对象
-          if(val.text === '业务对象'){
+          if(val.text === '基础对象'){
             for(let item of val.children ){
-              // 由于应用没有开发完全 临时处理方法
-              if(item.text === '物料' || item.text === '往来' || item.text === '仓库'){
-                // 动态添加对应的背景图
+              // 基础对象
+              if(basicMap[item.text]){
+                // 动态添加对应的背景底色
                 switch(item.text){
                   case '仓库':
                     item.bgColor = '#D85656';
@@ -164,7 +154,7 @@ export default {
 
 <style lang='scss' scoped>
 .inPage {
-  background: #F3F3F3;
+  background: #F5F5F5;
 }
 .vux-1px-b:after {
   border-color: #e8e8e8;

@@ -4,7 +4,7 @@
     <div class='picker'>
       <span class="horizontal-title" :class='{ required : required}'>{{title}}</span>
       <span class='mater_nature'>{{showValue}}</span>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-if="showArrow"></x-icon>
+      <x-icon class="r_arrow" type="ios-arrow-forward" size="16" v-if="showArrow"></x-icon>
       <span class='iconfont icon-gengduo' :class="!pickerStatus?'iconfont_fff':''" v-else></span>
     </div>
     <div v-transfer-dom>
@@ -114,14 +114,14 @@
         display: none;
       }
       .picker {
-        padding-right: .3rem;
+        padding-right: .1rem;
       }
       .horizontal-title {
         display: block;
       }
       .r_arrow {
         position: absolute;
-        right: 0;
+        right: -.04rem;
       }
     }
     label {

@@ -67,12 +67,9 @@
                 </div>
                 <!-- 物料数量和价格 -->
                 <div class='mater_other'>
-                  <div class="price_type">
-                    <span>价格类型: </span>
-                    <span>{{item.priceType || '无'}}</span>
-                  </div>
                   <div class='mater_price'>
-                    <span style="fontSize:.12rem;">￥</span>{{item.price | numberComma(3)}}
+                    <span class="symbol">￥</span>{{item.price | numberComma(3)}}
+                    <span class="num">[类型: {{item.priceType || '无'}}]</span>
                   </div>
                 </div>
               </div>

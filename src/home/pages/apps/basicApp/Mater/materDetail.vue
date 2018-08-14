@@ -183,8 +183,9 @@
 
 <style lang='scss' scoped>
   .main_content {
-    height: 90%;
     overflow: auto;
+    height: calc(100% - 10%);
+    -webkit-overflow-scrolling: touch;
   }
 
   // 阴影
@@ -416,7 +417,7 @@
     bottom: 0;
     width: 100%;
     height: 10%;
-    position: fixed;
+    position: absolute;
     background: #fff;
     .cfm_btn {
       top: 50%;

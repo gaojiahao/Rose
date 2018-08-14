@@ -2,7 +2,7 @@
   <div class='input_wrapper vux-1px-b'>
     <div class='input_com'>
       <label class='name'>{{options.title}}</label>
-      <input  class='input_box' :placeholder="options.placeholder" :type='options.type' :value='val' @input='getVal($event)'>
+      <input class='input_box' :placeholder="options.placeholder" :type='options.type' :value='val' @input='getVal($event)'>
       <icon type="clear" class='clear_btn' v-if='val.length>0' @click.native="clear"></icon>   
     </div>
   </div>
@@ -49,10 +49,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .input_wrapper{
-  margin-top: 1.17647059em;
-  background-color: #FFFFFF;
+  background-color: #FFF;
   line-height: 1.41176471;
-  font-size: 17px;
+  font-size: .14rem;
   overflow: hidden;
   position: relative;
   .input_com{
@@ -60,9 +59,6 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
-    label{
-
-    }
     .input_box{
       flex: 1;
       width: 100%;

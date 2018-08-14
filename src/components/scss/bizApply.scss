@@ -9,13 +9,18 @@
   box-sizing: border-box;
   box-shadow: 0 0 8px #e8e8e8;
 }
-//底部为合计时
+// 表单内容
 .basicPart {
-  z-index: 1;
+  z-index: 100;
   overflow: auto;
-  position: relative;
+  // position: relative;
+  position: static;
   height: calc(100% - .44rem);
   -webkit-overflow-scrolling: touch; 
+  .content {
+    min-height: calc(100% + 1%);
+    
+  }
 }
 //底部为提交时
 .no_count{    

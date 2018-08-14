@@ -1,6 +1,5 @@
 'use strict'
 const path = require('path')
-const utils = require('./utils')
 const webpack = require('webpack')
 const pkg = require('../package')
 const vuxLoader = require('vux-loader')
@@ -10,7 +9,7 @@ const vendorPackages = Object.keys(pkg.dependencies);
 let DllWebpack = {
   entry: {
     vendor: vendorPackages.filter((item) => {
-      return !item.includes('babel-runtime') && !item.includes('vux') 
+      return item != ('babel-runtime') && item != ('vux') 
     })
   },
   output: {

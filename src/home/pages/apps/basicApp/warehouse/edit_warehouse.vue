@@ -34,37 +34,6 @@
       </div>
       <r-picker  v-if="transCode == ''" title="仓库关系类型:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
                 @on-change="warehouseLabel"></r-picker>
-      <!-- <r-picker title="仓库大类:" :data="AccountBigType" value="warehouse.warehouseType"  v-model="warehouse.warehouseType"
-                @on-change="bigChange"></r-picker>
-      <r-picker title="仓库子类:" :data="AccountSmlType" value="warehouse.warehouseSubclass"
-                v-model="warehouse.warehouseSubclass"></r-picker>
-      <div class='each_property vux-1px-b'>
-        <label></label>
-        <div class='picker'>
-            <span class='mater_nature'>{{warehouse.province}}{{warehouse.city}}{{warehouse.county}}</span>
-            <span class='iconfont icon-gengduo'></span>
-        </div>
-        <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress'></x-address>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>详细地址:</label>
-        <input type='text' v-model="warehouse.address" class='property_val'/>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>固定电话:</label>
-        <input type='text' v-model="warehouse.warehousePhone" class='property_val' @blur="checkPhone"/>
-        <icon type="warn" class='warn' v-if='PhoneWarn'></icon>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>手机:</label>
-        <input type='number' v-model="warehouse.warehouseMobilePhone" class='property_val' @blur="checkMobile"/>
-        <icon type="warn" class='warn' v-if='MobileWarn'></icon>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>电子邮件:</label>
-        <input type='text' v-model="warehouse.warehouseMail" class='property_val' @blur='checkEmail'/>
-        <icon type="warn" class='warn' v-if='EmailWarn'></icon>
-      </div> -->
     </div>
     <div class='vux-1px-t btn '>
       <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
@@ -475,8 +444,8 @@ export default {
 <style lang="scss">
   .content {
     height: 90%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .vux-1px-b:after{
       transform: scaleY(1);
     }
@@ -624,7 +593,7 @@ export default {
     bottom: 0;
     width: 100%;
     height: 10%;
-    position: fixed;
+    position: absolute;
     background: #fff;
     .cfm_btn {
       top: 50%;

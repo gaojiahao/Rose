@@ -75,8 +75,8 @@
                       <!-- 物料数量和价格 -->
                       <div class='mater_other'>
                         <div class='mater_price'>
-                          ￥{{item.price}}
-                          <span class='unit' v-if='item.measureUnit'>/{{item.measureUnit}}</span>
+                          <span class="symbol">￥</span>{{item.price}}
+                          <span class='unit' v-if='item.measureUnit'>/ {{item.measureUnit}}</span>
                         </div>
                         <div class='mater_num'>
                           <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
