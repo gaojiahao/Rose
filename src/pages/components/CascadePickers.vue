@@ -140,8 +140,8 @@
       buDeptChange(val) {
         this.formData.costBU = val[0] || '';
         this.getDept();
-        this.getProv();
-        this.getBank();
+        // this.getProv();
+        // this.getBank();
       },
       // TODO 费用所属部门切换
       deptChange(val) {

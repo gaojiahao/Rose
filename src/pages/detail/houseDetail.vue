@@ -55,24 +55,32 @@
                 key: 'moveReason',
                 value: '',
               }, {
-                title: '入驻人数',
-                key: 'checkInNumber',
-                value: '',
-              }, {
                 title: '房屋面积',
                 key: 'area',
+                value: '',
+              }, {
+                title: '入住人数',
+                key: 'checkInNumber',
                 value: '',
               }, {
                 title: '月租',
                 key: 'rental',
                 value: '',
               }, {
+                title: '押金',
+                key: 'deposit',
+                value: '',
+              }, {
                 title: '付款方式',
                 key: 'paymentType',
                 value: '',
               }, {
-                title: '租期',
-                key: 'tenancy',
+                title: '是否中介',
+                key: 'intermediary',
+                value: '',
+              }, {
+                title: '中介费',
+                key: 'intermediaryFee',
                 value: '',
               }, {
                 title: '租期开始时间',
@@ -95,14 +103,6 @@
                 title: '费用所属部门',
                 key: 'costDepartment',
                 value: '',
-              }, {
-                title: '核算归属省份',
-                key: 'checkProvince',
-                value: '',
-              }, {
-                title: '费用所属银行',
-                key: 'costBank',
-                value: '',
               }
             ]
           }
@@ -114,6 +114,44 @@
         let {tenancy = 0, rental = 0} = this.formData;
         return `￥${numberComma(Number(tenancy) * Number(rental))}`;
       }
+    },
+    methods: {
+      // TODO 展示数据
+      restoreJsonData(jsonData) {
+        console.log(jsonData)
+        let {baseinfoExt} = jsonData;
+        let gs = {...jsonData['baseinfoExt#gs']};
+        let mx = {...jsonData['baseinfoExt#mx']};
+        let zq = {...jsonData['baseinfoExt#zq']};
+        let formData = {
+          office: mx.varchar10 && mx.varchar10.value, // 省仓/办事处
+          moveType: mx.varchar1 && mx.varchar1.value, // 异动类型
+          province: mx.varchar11 && mx.varchar11.value, // 省份
+          area: mx.double3, // 面积 (㎡)
+          checkInNumber: mx.integer1, // 入住人数
+          paymentType: mx.varchar2 && mx.varchar2.value, // 付款方式 (月)
+          rental: mx.double1, // 月租
+          deposit: mx.double4, // 押金
+          intermediary: mx.integer5 === 1 ? '是' : '否', // 是否中介
+          intermediaryFee: mx.double5, // 中介费
+          begin: zq.datetime1, // 始于
+          end: zq.datetime2, // 止于
+          moveReason: zq.varchar3, // 新增/搬家原因
+          costBU: gs.varchar4 && gs.varchar4.value,// 费用所属事业部
+          costDepartment: gs.varchar5 && gs.varchar5.value,// 费用所属部门
+        };
+
+        this.cascadeValue = {
+          costBU: formData.costBU,
+          costDepartment: formData.costDepartment,
+        };
+        this.formData = formData;
+        this.listData.forEach(lItem => {
+          lItem.items.forEach(item => {
+            item.value = formData[item.key]
+          })
+        });
+      },
     }
   }
 </script>

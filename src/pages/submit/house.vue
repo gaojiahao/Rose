@@ -54,7 +54,7 @@
     },
     data() {
       return {
-        listid: '',
+        listId: '',
         h_type: [['省仓', '办事处']],
         type_value: [],
         h_hdtype: [['新增', '搬家']],
@@ -70,7 +70,7 @@
           }, {
             title: '房屋面积',
             key: 'area',
-            type: 'text',
+            type: 'number',
           }, {
             title: '入住人数',
             key: 'checkInNumber',
@@ -86,16 +86,14 @@
           }
         ],
         formData: {
-          transType: '房屋立项申请', // 交易类型
           office: '', // 省仓/办事处
           moveType: '', // 异动类型
-          province: '',
+          province: '', // 省份
           area: '', // 面积 (㎡)
           checkInNumber: '', // 入住人数
           paymentType: '', // 付款方式 (月)
           rental: '', // 月租
-          deposit: '', // 租期 (月)
-          houseCostTotal: '', // 费用合计（房屋立项）
+          deposit: '', // 押金
           intermediary: '否', // 是否中介
           intermediaryFee: '', // 中介费
           begin: '', // 始于
@@ -113,6 +111,7 @@
         taskId: '',
         provinceList: [], // 省份列表
         provinceSelected: [],
+        baseinfo: {},
       }
     },
     mixins: [common],
@@ -127,7 +126,7 @@
         this.$router.push({
           path: '/myList',
           query: {
-            listId: this.listid
+            listId: this.listId
           }
         })
       },
@@ -136,53 +135,48 @@
           {
             title: '地点类型',
             key: 'office',
-            value: '',
           }, {
             title: '处理类型',
             key: 'moveType',
-            value: '',
+          }, {
+            title: '省份',
+            key: 'province',
           }, {
             title: '新增/搬家原因',
             key: 'moveReason',
-            value: '',
           }, {
             title: '房屋面积',
             key: 'area',
-            value: '',
           }, {
             title: '入住人数',
             key: 'checkInNumber',
-            value: '',
-          }, {
-            title: '付款方式',
-            key: 'paymentType',
-            value: '',
           }, {
             title: '月租',
             key: 'rental',
-            value: '',
           }, {
             title: '押金',
             key: 'deposit',
-            value: '',
+          }, {
+            title: '付款方式',
+            key: 'paymentType',
           }, {
             title: '租期开始时间',
             key: 'begin',
-            value: '',
           }, {
             title: '租期结束时间',
             key: 'end',
-            value: '',
           }, {
             title: '费用所属事业部',
             key: 'costBU',
-            value: '',
           }, {
             title: '费用所属部门',
             key: 'costDepartment',
-            value: '',
           }
         ];
+        let jsonData = {
+          listId: this.listId,
+          referenceId: this.guid(),
+        };
         let warn = '';
         // this.formData.houseCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
         Object.assign(this.formData, this.$refs.cascadePickers.getFormData());
@@ -197,14 +191,90 @@
           this.showToast(warn);
           return
         }
-        sessionStorage.setItem(this.sessionKey, JSON.stringify(this.formData));
+        let formData = this.formData;
+        let [province] = this.provinceList.filter(item => item.name === formData.province);
+        // 重新提交
+        if (this.transCode) {
+          jsonData.referenceId = this.formData.referenceId;
+          jsonData.$review = this.formData.review;
+          jsonData.$review2 = this.formData.review2;
+        }
+        jsonData.baseinfo = {
+          id: this.guid(),
+          transType2: '房屋立项申请',
+          zhuti: '国富黄金',
+          effectiveTime: '',
+          transCode: 'KFSCPCGRK',
+          statusText: '',
+          transType: 'tspcchin',
+          status: '',
+          comment: '',
+          fj: [],
+          ...this.baseinfo,
+        };
+        // 日期
+        jsonData['baseinfoExt#zq'] = {
+          id: this.guid(),
+          datetime1: formData.begin,
+          datetime2: formData.end,
+          varchar3: formData.moveReason, // 搬家原因
+        };
+
+        jsonData['baseinfoExt#mx'] = {
+          id: this.guid(),
+          varchar10: this.assembleDropDownData(formData.office),
+          varchar1: this.assembleDropDownData(formData.moveType),
+          varchar11: {
+            text: province.value,
+            selection: {
+              data: province.origin,
+            },
+            value: province.value
+          },
+          double3: Number(formData.area), // 面积
+          double5: Number(formData.intermediaryFee), // 中介费
+          integer1: Number(formData.checkInNumber), // 入住人数
+          varchar2: this.assembleDropDownData(formData.paymentType), // 付款方式
+          double1: Number(formData.rental), // 月租
+          integer2: null, // 租期
+          integer5: formData.intermediary === '是' ? 1 : 0, // 是否为中介
+          double4: Number(formData.deposit), // 押金
+        };
+        // 所属部门
+        jsonData['baseinfoExt#gs'] = {
+          id: this.guid(),
+          varchar4: this.assembleDropDownData(formData.costBU, 'dep'),
+          varchar5: this.assembleDropDownData(formData.costDepartment, 'dep'),
+          // $varchar6: this.assembleDropDownData(),
+          // $varchar7: this.assembleDropDownData(),
+        };
+        jsonData['$comment'] = {
+          'baseinfo.comment': jsonData.baseinfo.comment
+        };
+        jsonData['baseinfo.fj'] = [];
+        jsonData.transCode = jsonData.baseinfo.transCode;
+
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(jsonData));
         this.$router.push({
           path: '/flow',
           query: {
-            list: this.listid,
+            list: this.listId,
             taskId: this.taskId,
           }
         })
+      },
+      // TODO 组装下拉框的提交数据
+      assembleDropDownData(value = '', dataKey = 'text') {
+        return {
+          text: value,
+          selection: {
+            data: {
+              [dataKey]: value,
+              id: ''
+            }
+          },
+          value,
+        }
       },
       // TODO 地点类型切换
       officeChange(val) {
@@ -215,36 +285,14 @@
         this.formData.moveType = val[0] || '';
       },
       // TODO 获取表单详情
-      getFormData() {
-        return createService.getFormData({
-          formKey: this.formKey,
-          transCode: this.transCode,
-        }).then(data => {
+      getJsonData() {
+        return createService.getJsonData(this.transCode).then(({tableContent = []}) => {
+          let [data = {}] = tableContent;
+          let jsonData = JSON.parse(data.json_data || '{}');
           this.hasDefault = true;
           this.showPage = true;
-          let {formData = {}, success = true, message = ''} = data;
-          // 请求失败提示
-          if (!success) {
-            this.showToast(message);
-            return;
-          }
 
-          formData.begin = this.changeDate(formData.begin);
-          formData.end = this.changeDate(formData.end);
-          // formData.crtTime = this.changeDate(formData.crtTime, true);
-          // formData.modTime = this.changeDate(formData.modTime, true);
-
-          this.type_value = [formData.office];
-          this.hd_value = [formData.moveType];
-
-          this.cascadeValue = {
-            costBU: formData.costBU,
-            costDepartment: formData.costDepartment,
-            checkProvince: formData.checkProvince,
-            costBank: formData.costBank
-          };
-
-          this.formData = formData;
+          this.restoreJsonData(jsonData);
           this.$nextTick(() => {
             // 在渲染一次以后将该值设置为false
             this.hasDefault = false;
@@ -255,13 +303,14 @@
       },
       // TODO 请求省份列表
       getProvinceList() {
-        return createService.getAccountingUnitByid().then(data => {
+        return createService.getProvinceForWarehouse().then(data => {
           let {tableContent = []} = data;
           this.provinceList = tableContent && tableContent.map(item => {
-            let {unitName} = item;
+            let {name} = item;
             return {
-              name: unitName,
-              value: unitName,
+              name,
+              value: name,
+              origin: {...item}
             }
           });
         }).catch(e => {
@@ -276,6 +325,46 @@
       paymentChange(val) {
         this.formData.paymentType = val[0] || '';
       },
+      // TODO 还原数据
+      restoreJsonData(jsonData) {
+        console.log(jsonData)
+        let {baseinfo} = jsonData;
+        let gs = {...jsonData['baseinfoExt#gs']};
+        let mx = {...jsonData['baseinfoExt#mx']};
+        let zq = {...jsonData['baseinfoExt#zq']};
+        let formData = {
+          referenceId: jsonData.referenceId,
+          office: mx.varchar10 && mx.varchar10.value, // 省仓/办事处
+          moveType: mx.varchar1 && mx.varchar1.value, // 异动类型
+          province: mx.varchar11 && mx.varchar11.value, // 省份
+          area: mx.double3, // 面积 (㎡)
+          checkInNumber: mx.integer1, // 入住人数
+          paymentType: mx.varchar2 && mx.varchar2.value, // 付款方式 (月)
+          rental: mx.double1, // 月租
+          deposit: mx.double4, // 押金
+          intermediary: mx.integer5 === 1 ? '是' : '否', // 是否中介
+          intermediaryFee: mx.double5, // 中介费
+          begin: zq.datetime1, // 始于
+          end: zq.datetime2, // 止于
+          moveReason: zq.varchar3, // 新增/搬家原因
+          costBU: gs.varchar4 && gs.varchar4.value,// 费用所属事业部
+          costDepartment: gs.varchar5 && gs.varchar5.value,// 费用所属部门
+          review: jsonData.review,
+          review2: jsonData.review2,
+        };
+        this.baseinfo = baseinfo;
+
+        this.type_value = [formData.office];
+        this.hd_value = [formData.moveType];
+        this.provinceSelected = [formData.province];
+        this.paymentSelected = [formData.paymentType];
+
+        this.cascadeValue = {
+          costBU: formData.costBU,
+          costDepartment: formData.costDepartment,
+        };
+        this.formData = formData;
+      },
     },
     beforeRouteLeave(to, from, next) {
       let {name} = to;
@@ -288,24 +377,23 @@
     created() {
       let {query} = this.$route;
       let requestPromises = [];
-      this.listid = query.list;
+      this.listId = query.list;
       this.formKey = query.formKey;
       this.transCode = query.transCode;
       this.taskId = query.taskId;
-      this.sessionKey = `${this.listid}-FORMDATA`;
+      this.sessionKey = `${this.listId}-FORMDATA`;
       this.showLoading = true;
       let formData = sessionStorage.getItem(this.sessionKey);
       if (formData) {
         formData = JSON.parse(formData);
         // 先将时间赋值，在mounted中赋值会失败
-        this.formData.begin = formData.begin;
-        this.formData.end = formData.end;
+        this.restoreJsonData(formData);
       }
 
       // 从接口中获取数据
       if (!formData && this.formKey) {
         this.showPage = false;
-        requestPromises.push(this.getFormData());
+        requestPromises.push(this.getJsonData());
       }
 
       this.$nextTick(() => {
@@ -321,15 +409,7 @@
       if (formData) {
         this.hasDefault = true;
         formData = JSON.parse(formData);
-        this.formData = formData;
-        this.type_value = [formData.office];
-        this.hd_value = [formData.moveType];
-        this.cascadeValue = {
-          costBU: formData.costBU,
-          costDepartment: formData.costDepartment,
-          checkProvince: formData.checkProvince,
-          costBank: formData.costBank
-        };
+        this.restoreJsonData(formData);
         sessionStorage.removeItem(this.sessionKey);
         this.$nextTick(() => {
           // 在渲染一次以后将该值设置为false
