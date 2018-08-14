@@ -423,11 +423,11 @@ export default {
         // }
       }
       if(this.formDataNew && this.formDataNew!=''){
-        this.formDataNew.$review = this.formDataNew.review;
-        this.formDataNew.$review2 = this.formDataNew.review2;
-        delete(this.formDataNew.review);
-        delete(this.formDataNew.review2);
-        formDataNew = this.formDataNew;
+        formDataNew.$review = this.formDataNew.review;
+        formDataNew.$review2 = this.formDataNew.review2;
+        formDataNew.baseinfo = this.formDataNew.baseinfo;
+        delete(formDataNew.review);
+        delete(formDataNew.review2);
       }
       console.log(formDataNew)
       sessionStorage.setItem(

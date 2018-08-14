@@ -323,11 +323,11 @@ export default {
         })
       }
       if(this.formDataNew && this.formDataNew!=''){
-        this.formDataNew.$review = this.formDataNew.review;
-        this.formDataNew.$review2 = this.formDataNew.review2;
+        formDataNew.$review = this.formDataNew.review;
+        formDataNew.$review2 = this.formDataNew.review2;
+        formDataNew.baseinfo = this.formDataNew.baseinfo;
         delete(this.formDataNew.review);
         delete(this.formDataNew.review2);
-        formDataNew = this.formDataNew;
       }
       sessionStorage.setItem(
         this.$route.query.list + "-FORMDATA",
