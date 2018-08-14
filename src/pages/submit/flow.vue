@@ -183,8 +183,6 @@
       getBaseInfo() {
         let handleBaseInfo = async (data = {}) => {
           let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
-          // nickname = '耿延聪'; // 测试
-          // nickname = '徐子庆'; // 测试
           area = area.split(',')[0];
           areaID = areaID.split(',')[0];
           groupName = groupName.split(',')[0];
@@ -393,7 +391,7 @@
               },
               wfPara: {
                 '部门主管ID': dept.CId,
-                '分管副总ID': vicePresident.comId,
+                '副总ID': vicePresident.comId,
                 '省长ID': null,
                 '常委ID': null,
                 '副总裁ID': null
@@ -429,7 +427,7 @@
               },
               wfPara: {
                 '部门主管ID': null,
-                '分管副总ID': null,
+                '副总ID': null,
                 '省长ID': null,
                 '常委ID': committee.CId,
                 '副总裁ID': vicePresident2.PRINCIPAL
