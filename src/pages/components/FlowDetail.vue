@@ -12,7 +12,6 @@
                          v-if="index !== flowList.length - 1"></flow-line>
             </template>
           </flow>
-          <!--<panel header="审批意见" :list="commentList" :type="'4'"></panel>-->
           <group title="审批意见">
             <ul class="comment-container">
               <li class="comment-item" v-for="(item, index) in commentList" :key="index">
@@ -32,8 +31,7 @@
 </template>
 
 <script>
-  import {Flow, Cell, Group, FlowState, FlowLine, LoadMore, Panel} from "vux";
-  import createService from './../../service/createService'
+  import {Flow, Cell, Group, FlowState, FlowLine, LoadMore,} from "vux";
 
   export default {
     props: {
@@ -92,7 +90,6 @@
       FlowLine,
       FlowState,
       LoadMore,
-      Panel,
     },
     methods: {
       // TODO 组装工作流数据
@@ -110,9 +107,6 @@
               title: item.userName,
               desc: item.message || '无',
               time: item.startTime,
-              meta: {
-                date: item.startTime
-              }
             })
           }
           if (item.nodeName === '常委' || item.nodeName === '部门主管') {
@@ -131,11 +125,13 @@
       // TODO 组装工作流流程图
       assembleFlow(item) {
         let tmp = [];
+        // 已完成
         let done = {
           stateDone: true,
           lineDone: true,
           tip: '',
         };
+        // 进行中
         let doing = {
           stateDone: true,
           lineDone: false,
@@ -189,7 +185,6 @@
       },
     },
     created() {
-      // this.getFlows();
       this.assembleWorkFlow();
     }
   }

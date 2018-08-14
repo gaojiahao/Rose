@@ -1,5 +1,6 @@
 import $axios from '../plugins/ajax'
 
+const USER_INFO = 'RFD_CURRENT_USER_INFO';
 let createService = {
   // TODO 获取配置
   getConfig(data = {}) {
@@ -146,9 +147,19 @@ let createService = {
   },
   // TODO 获取用户基本信息
   getBaseInfoData() {
-    return $axios.ajax({
-      url: '/H_roleplay-si/trans/getModelData?refresh=true&dsCode=getUserDetails',
-    })
+    return new Promise((resolve, reject) => {
+      let currentUser = sessionStorage.getItem(USER_INFO);
+      if (currentUser) {
+        resolve(JSON.parse(currentUser));
+        return
+      }
+      $axios.ajax({
+        url: '/H_roleplay-si/trans/getModelData?refresh=true&dsCode=getUserDetails',
+      }).then((data = {}) => {
+        sessionStorage.setItem(USER_INFO, JSON.stringify(data));
+        resolve(data);
+      })
+    });
   },
   // TODO 获取表单详情
   getFormData({formKey = '', transCode = ''}) {
@@ -223,7 +234,7 @@ let createService = {
     });
   },
   // TODO 获取经办人所属区域
-  getAreas(data = {}){
+  getAreas(data = {}) {
     return $axios.ajax({
       url: '/H_roleplay-si/ds/getAreasByUserId',
       data: {

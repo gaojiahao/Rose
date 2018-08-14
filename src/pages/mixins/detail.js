@@ -99,6 +99,7 @@ export default {
         transCode: this.transCode
       }).then(({tableContent = []}) => {
         let lastNode = tableContent[tableContent.length - 1] || {};
+        // this.taskId = lastNode.taskId;
         this.workFlow = tableContent;
         if (this.canSubmit) {
           // 自己提交自己审批

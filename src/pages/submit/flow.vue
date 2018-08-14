@@ -58,12 +58,11 @@
         searchList: [], // 搜索结果列表
         searchType: '', // 当前聚焦的输入框类型
         hasSelected: false, // 是否选中搜索项
-        formData: {}, // 表单数据
         procCode: '', // 表单编码
         searchListTop: 0, // 匹配列表距离顶部的距离
         sessionKey: '', // 存储formData的key
         taskId: '', // 任务id，修改时会有
-        jsonData: {},
+        jsonData: {}, // 提交数据
         currentUser: {}, // 当前用户信息
         opList: [], // 审批人列表
         handlerData: {},
@@ -181,7 +180,7 @@
       },
       // TODO 初始化基本信息
       getBaseInfo() {
-        let handleBaseInfo = async (data = {}) => {
+        return createService.getBaseInfoData().then((data = {}) => {
           let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
           area = area.split(',')[0];
           areaID = areaID.split(',')[0];
@@ -218,16 +217,7 @@
             };
             this.handlerData = handlerData;
           });
-        };
-
-        /*let currentUser = sessionStorage.getItem(USER_INFO);
-        if (currentUser) {
-          currentUser = JSON.parse(currentUser);
-          handleBaseInfo(currentUser);
-          return Promise.resolve();
-        }*/
-
-        return createService.getBaseInfoData().then(handleBaseInfo);
+        });
       },
       // TODO 还原常委、副总裁
       restoreOpList() {
@@ -235,7 +225,6 @@
         let review2 = {...this.jsonData.$review2};
         let val = '';
         let val2 = '';
-        console.log(review)
         switch (this.handlerData.area) {
           case '总部':
             val = review.reviewer.text; // 部门主管
@@ -254,11 +243,9 @@
         switch (area) {
           // 总部展示部门主管和分管总裁
           case '总部':
-            this.headquartersHandler(val, val2);
-            break;
+            return this.headquartersHandler(val, val2);
           default:
-            this.handlerBusiness(val, val2);
-            break;
+            return this.handlerBusiness(val, val2);
         }
       },
       // TODO 处理总部展示数据
@@ -290,7 +277,7 @@
           group: area,
           grouRole: '副总裁',
         }));
-        Promise.all(promises).then(([data, data2]) => {
+        return Promise.all(promises).then(([data, data2]) => {
           let dept = [];
           let vicePresident = [];
           data.tableContent && data.tableContent.forEach(item => {
@@ -306,7 +293,9 @@
           this.opList[1].options = vicePresident;
           this.opList[1].value = val2 || vicePresident[0] || '';
           this.opList[1].datas = data2.tableContent;
-        })
+        }).catch(e => {
+          this.showToast(e.message);
+        });
       },
       // TODO 处理事业部展示数据
       handlerBusiness(val = '', val2 = '') {
@@ -336,7 +325,7 @@
         promises.push(createService.getGroupPrinicalInfo({
           groupId
         }));
-        Promise.all(promises).then(([data, data2]) => {
+        return Promise.all(promises).then(([data, data2]) => {
           let committee = [];
           let vicePresident = [];
           data.tableContent && data.tableContent.forEach(item => {
@@ -352,7 +341,9 @@
           this.opList[1].options = vicePresident;
           this.opList[1].value = val2 || vicePresident[0] || '';
           this.opList[1].datas = data2.tableContent;
-        })
+        }).catch(e => {
+          this.showToast(e.message);
+        });
       },
       // TODO 获取审批者参数
       getOpParams(area) {
@@ -453,7 +444,6 @@
       let now = this.changeDate(new Date(), true);
       let jsonData = JSON.parse(sessionStorage.getItem(this.sessionKey) || "{}");
       this.jsonData = jsonData;
-      this.formData = Object.assign({}, jsonData);
       // 修改时有创建时间，使用原来的创建时间
       this.jsonData.baseinfo.crtTime = jsonData.baseinfo.crtTime ? this.changeDate(jsonData.baseinfo.crtTime, true) : now;
       this.jsonData.baseinfo.modTime = now;
@@ -466,8 +456,9 @@
       this.showLoading = true;
       this.getProcess();
       this.getBaseInfo().then(data => {
-        this.showLoading = false;
-        this.opHandler();
+        this.opHandler().then(() => {
+          this.showLoading = false;
+        })
       });
     }
   }

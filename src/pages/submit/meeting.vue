@@ -215,7 +215,7 @@
         }
         let formData = this.formData;
         // 重新提交
-        if (this.taskId) {
+        if (this.transCode) {
           jsonData.referenceId = this.formData.referenceId;
           jsonData.$review = this.formData.review;
           jsonData.$review2 = this.formData.review2;

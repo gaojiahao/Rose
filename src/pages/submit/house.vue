@@ -11,8 +11,16 @@
             <popup-picker title="处理类型" :data="h_hdtype" v-model="hd_value" @on-change="moveTypeChange"></popup-picker>
           </group>
           <group title="请填写明细">
-            <x-input :type="item.type" :title='item.title' :key="index" text-align='right'
+            <popup-picker title="省份" :data="provinceList" :value="provinceSelected" :columns="1"
+                          @on-change="provinceChange" v-model="provinceSelected"></popup-picker>
+            <x-input :type="item.type" :title="item.title" :key="index" text-align="right"
                      v-for="(item, index) in bj_list" v-model="formData[item.key]"></x-input>
+            <popup-picker title="付款方式" :data="paymentList" v-model="paymentSelected"
+                          @on-change="paymentChange"></popup-picker>
+            <popup-radio title="是否中介" :options="zj_list" v-model="formData.intermediary"></popup-radio>
+            <x-input type="number" title="中介费" text-align="right" v-model="formData.intermediaryFee"
+                     v-show="formData.intermediary === '是'"></x-input>
+
             <datetime v-model="formData.begin" format="YYYY-MM-DD" title="租期开始时间"></datetime>
             <datetime v-model="formData.end" format="YYYY-MM-DD" title="租期结束时间"></datetime>
           </group>
@@ -20,7 +28,7 @@
         </div>
       </div>
       <div class="h_btm vux-1px-t">
-        <span class="count_part">合计:{{totalCost}}</span>
+        <!--<span class="count_part">合计:{{totalCost}}</span>-->
         <span class="h_button" @click="goflow">确定</span>
       </div>
     </div>
@@ -29,7 +37,7 @@
 </template>
 
 <script>
-  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma} from 'vux'
+  import {Cell, Group, XInput, Datetime, PopupPicker, numberComma, PopupRadio} from 'vux'
   import createService from './../../service/createService'
   import CascadePickers from './../components/CascadePickers'
   import common from './../mixins/common'
@@ -42,6 +50,7 @@
       Datetime,
       PopupPicker,
       CascadePickers,
+      PopupRadio,
     },
     data() {
       return {
@@ -50,8 +59,9 @@
         type_value: [],
         h_hdtype: [['新增', '搬家']],
         hd_value: [],
-        zj_list: [['否','是']], // 是否有中介
-        zj_value: [],
+        zj_list: ['否', '是'], // 是否有中介
+        paymentList: [['月付', '季付', '半年付', '年付']],
+        paymentSelected: [],
         bj_list: [
           {
             title: '新增/搬家原因',
@@ -60,15 +70,11 @@
           }, {
             title: '房屋面积',
             key: 'area',
-            type: 'number',
+            type: 'text',
           }, {
             title: '入住人数',
             key: 'checkInNumber',
             type: 'number',
-          }, {
-            title: '付款方式',
-            key: 'paymentType',
-            type: 'text',
           }, {
             title: '月租',
             key: 'rental',
@@ -80,36 +86,23 @@
           }
         ],
         formData: {
-          'handlerName': '', // 经办人
-          'handlerAreaName': '', // 所属区域
-          'handlerUnitName': '', // 经办部门
-          'handlerRoleName': '', // 经办角色
-          'creatorName': '', // 创建者
-          'crtTime': '', // 创建时间
-          'modifer': '', // 修改者
-          'modTime': '', // 修改时间
-          'handerId': '', // 经办人id
-          'transType': '房屋立项申请', // 交易类型
-          'handlerUnitId': '', // 经办部门id
-          'handlerRoleId': '', // 经办角色id
-          'cjz': '', // 创建者id
-          'xgz': '', // 修改者id
-          'handlerArea': '', // 所属区域id
-          'office': '', // 省仓/办事处
-          'moveType': '', // 异动类型
-          'area': '', // 面积 (㎡)
-          'checkInNumber': '', // 入住人数
-          'paymentType': '', // 付款方式 (月)
-          'rental': '', // 月租
-          'deposit': '', // 租期 (月)
-          'houseCostTotal': '', // 费用合计（房屋立项）
-          'begin': '', // 始于
-          'end': '', // 止于
-          'moveReason': '', // 新增/搬家原因
-          'costBU': '',// 费用所属事业部
-          'costDepartment': '',// 费用所属部门
-          'checkProvince': '',// 核算归属省份
-          'costBank': ''// 费用所属银行
+          transType: '房屋立项申请', // 交易类型
+          office: '', // 省仓/办事处
+          moveType: '', // 异动类型
+          province: '',
+          area: '', // 面积 (㎡)
+          checkInNumber: '', // 入住人数
+          paymentType: '', // 付款方式 (月)
+          rental: '', // 月租
+          deposit: '', // 租期 (月)
+          houseCostTotal: '', // 费用合计（房屋立项）
+          intermediary: '否', // 是否中介
+          intermediaryFee: '', // 中介费
+          begin: '', // 始于
+          end: '', // 止于
+          moveReason: '', // 新增/搬家原因
+          costBU: '',// 费用所属事业部
+          costDepartment: '',// 费用所属部门
         },
         hasDefault: false,
         cascadeValue: {},
@@ -118,13 +111,15 @@
         transCode: '',
         showPage: true,
         taskId: '',
+        provinceList: [], // 省份列表
+        provinceSelected: [],
       }
     },
     mixins: [common],
     computed: {
       totalCost() {
-        let {deposit = 0, rental = 0} = this.formData;
-        return `￥${numberComma(Number(deposit) * Number(rental))}`;
+        let {deposit = 0, rental = 0, intermediaryFee = 0} = this.formData;
+        return `￥${numberComma(Number(deposit) * Number(rental) + Number(intermediaryFee))}`;
       }
     },
     methods: {
@@ -151,20 +146,20 @@
             key: 'moveReason',
             value: '',
           }, {
-            title: '入住人数',
-            key: 'checkInNumber',
-            value: '',
-          }, {
             title: '房屋面积',
             key: 'area',
             value: '',
           }, {
-            title: '月租',
-            key: 'rental',
+            title: '入住人数',
+            key: 'checkInNumber',
             value: '',
           }, {
             title: '付款方式',
             key: 'paymentType',
+            value: '',
+          }, {
+            title: '月租',
+            key: 'rental',
             value: '',
           }, {
             title: '押金',
@@ -186,18 +181,10 @@
             title: '费用所属部门',
             key: 'costDepartment',
             value: '',
-          }, {
-            title: '核算归属省份',
-            key: 'checkProvince',
-            value: '',
-          }, {
-            title: '费用所属银行',
-            key: 'costBank',
-            value: '',
           }
         ];
         let warn = '';
-        this.formData.houseCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
+        // this.formData.houseCostTotal = this.totalCost.replace(/￥/g, '').replace(/,/g, '');
         Object.assign(this.formData, this.$refs.cascadePickers.getFormData());
         lists.every(item => {
           if (!this.formData[item.key]) {
@@ -266,6 +253,29 @@
           this.showToast(e.message);
         });
       },
+      // TODO 请求省份列表
+      getProvinceList() {
+        return createService.getAccountingUnitByid().then(data => {
+          let {tableContent = []} = data;
+          this.provinceList = tableContent && tableContent.map(item => {
+            let {unitName} = item;
+            return {
+              name: unitName,
+              value: unitName,
+            }
+          });
+        }).catch(e => {
+          this.showToast(e.message);
+        });
+      },
+      // TODO 切换省份
+      provinceChange(val) {
+        this.formData.province = val[0] || '';
+      },
+      // TODO 切换付款方式
+      paymentChange(val) {
+        this.formData.paymentType = val[0] || '';
+      },
     },
     beforeRouteLeave(to, from, next) {
       let {name} = to;
@@ -299,6 +309,7 @@
       }
 
       this.$nextTick(() => {
+        requestPromises.push(this.getProvinceList());
         requestPromises.push(this.$refs.cascadePickers.init());
         Promise.all(requestPromises).then(data => {
           this.showLoading = false;

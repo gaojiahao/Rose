@@ -28,7 +28,6 @@
   import Loading from './components/loading'
   import common from './mixins/common'
 
-  const USER_INFO = 'RFD_CURRENT_USER_INFO';
   export default {
     data() {
       return {
@@ -80,22 +79,16 @@
       }
     },
     created() {
-      let currentUser = sessionStorage.getItem(USER_INFO);
       if (sessionStorage.getItem('MYLIST_TAB')) {
         sessionStorage.removeItem('MYLIST_TAB')
       }
       if (sessionStorage.getItem('MYLIST_LIST')) {
         sessionStorage.removeItem('MYLIST_LIST')
       }
-      if (currentUser) {
-        this.currentUser = JSON.parse(currentUser);
-        return;
-      }
       this.showLoading = true;
       createService.getBaseInfoData().then(data => {
         this.currentUser = data || {};
         this.showLoading = false;
-        sessionStorage.setItem(USER_INFO, JSON.stringify(data));
       }).catch(e => {
         this.showToast(e.message);
       });
