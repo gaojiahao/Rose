@@ -158,9 +158,11 @@ export default {
     //提交
     goCount() {
       if (!this.btnStatus) return;
+      const ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
       //获取缓存信息
-      let governor = this.governor, member = this.member, comments = this.comments,
-          ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
+      let governor = this.governor, 
+          member = this.member, 
+          comments = this.comments;
       // 声明提示文字
       let tips = '';
       let tipArr = [
@@ -177,10 +179,12 @@ export default {
           if(!this[item.key] && this[item.key] !== 0){
             tips = `请填写${item.msg}`
             return;
-          }else if(item.key === 'areaValue' && this[item.key].length === 0 || item.key === 'areaValue' && this[item.key].indexOf('空') === 0 || item.key === 'bankValue' && this[item.key].length === 0){
+          }
+          else if(item.key === 'areaValue' && !this[item.key].length || this[item.key][0] === '空' || item.key === 'bankValue' && !this[item.key].length){
             tips = `请选择${item.msg}`;
             return;
-          }else if(item.key === 'arr' && this[item.key].length){
+          }
+          else if(item.key === 'arr'){
             for(let inx in this[item.key]){
               if(!this[item.key][inx].value.length){
                 tips = `请选择${item.msg}`;
@@ -199,29 +203,26 @@ export default {
         })
         return;
       }
-
-
       // 表单提交信息
       let jsonData = {
         listId: "4bda3e47-a088-4749-a988-ebb07cfb00e4",
         referenceId: this.guid(),
         baseinfoExt: {
           id: this.guid(),
-          varchar1: ROSE_OPTION.dept,         //区域(事业部) (业务自带信息)
-          varchar2: this.captain,   //支援队长
-          varchar3: this.areaValue[0], //支援地区(省份)
-          varchar4: this.bankValue[0],      //支援银行
-          varchar5: ROSE_OPTION.groupName,    //部门(业务自带信息)
-          varchar6: "是",                     //区分是否为支援
-          varchar7: governor,                 //省长
-          varchar8: member,                   //常委
-          varchar9: comments,                 //备注
-          varchar10: ROSE_OPTION.region,     //省份(业务自带信息)
-          varchar11: ROSE_OPTION.bank,        //银行(业务自带信息)
-          varchar12: ROSE_OPTION.userCode     //工号
+          varchar1: ROSE_OPTION.dept,         // 区域(事业部) (业务自带信息)
+          varchar2: this.captain,             // 支援队长
+          varchar3: this.areaValue[0],        // 支援地区(省份)
+          varchar4: this.bankValue[0],        // 支援银行
+          varchar5: ROSE_OPTION.groupName,    // 部门(业务自带信息)
+          varchar6: "是",                     // 区分是否为支援
+          varchar7: governor,                 // 省长
+          varchar8: member,                   // 常委
+          varchar9: comments,                 // 备注
+          varchar10: ROSE_OPTION.region,      // 省份(业务自带信息)
+          varchar11: ROSE_OPTION.bank,        // 银行(业务自带信息)
+          varchar12: ROSE_OPTION.userCode     // 工号
         },
-        transDetailUncalc: [
-          {
+        transDetailUncalc: [{ 
             id: this.guid(),
             transObjCode: "A类产品", //项目类产品名称
             containerCode: "A", //类型
@@ -229,8 +230,7 @@ export default {
             amount: Number(this.Aclass), //总金额
             fgCode: ""
           },
-          {
-            id: this.guid(),
+          { id: this.guid(),
             transObjCode: "B类产品", //项目类产品名称
             containerCode: "B", //类型
             qty: "",
@@ -281,7 +281,7 @@ export default {
       );
       // 缓存 支援地区模块
       localStorage.setItem(
-        "HELP_ZONE_INFO",
+        "HELP_BASIC_INFO",
         JSON.stringify({
           member: this.member,
           governor: this.governor,
@@ -296,33 +296,17 @@ export default {
   },
   created(){
     // 缓存
-    const HELP_ZONE_INFO = JSON.parse(localStorage.getItem("HELP_ZONE_INFO")) || '';
+    const HELP_BASIC_INFO = JSON.parse(localStorage.getItem("HELP_BASIC_INFO")) || '';
     const HELP_FORM_INFO = JSON.parse(localStorage.getItem("HELP_FORM_INFO")) || '';
-    // 队长、省长等信息
-    let { member, governor, captain } = HELP_ZONE_INFO;
-    let { Aclass, Bclass, comments, saleReportArr } = HELP_FORM_INFO;
-    // 用户支援地区信息
-    if (HELP_ZONE_INFO) {
-      this.member = member;
-      this.governor = governor;
-      this.helpCaptain = captain;
-      this.areaValue = [HELP_ZONE_INFO.areaValue];
-      this.bankValue = [HELP_ZONE_INFO.bank];
-    }
     // 用户填写表单内容
-    if (HELP_FORM_INFO) {
-      this.Aclass = Aclass;
-      this.Bclass = Bclass;
-      this.arr = saleReportArr;
-      this.comments = comments;
-    }
+    this.echoStorage(HELP_BASIC_INFO, HELP_FORM_INFO);
     // 支援地区
     this.getArea();
     // 支援银行
     this.getBank();
   },
   beforeRouteLeave(to, from, next) {
-    if (this.arr[0].value.length == 0 || to.name == "Count") next();
+    if (!this.arr[0].value.length || to.name == "Count") next();
     else {
       this.$vux.confirm.show({
         title: "温馨提示",
@@ -346,7 +330,7 @@ export default {
           );
           //缓存支援地区模块
           localStorage.setItem(
-            "HELP_ZONE_INFO",
+            "HELP_BASIC_INFO",
             JSON.stringify({
               member: this.member,
               governor: this.governor,

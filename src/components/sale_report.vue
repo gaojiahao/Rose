@@ -268,22 +268,10 @@ export default {
   },
   created(){
     // 所属信息 缓存
-    const SALE_FORM_INFO = JSON.parse(localStorage.getItem("SALE_FORM_INFO"));       
-    const SALE_BASIC_INFO = JSON.parse(localStorage.getItem("SALE_BASIC_INFO"));
-    // 用户所属信息 (队长、省长、常委)
-    if(SALE_BASIC_INFO){
-      this.member = SALE_BASIC_INFO.member || '';
-      this.governor = SALE_BASIC_INFO.governor || '';
-      this.helpCaptain = SALE_BASIC_INFO.captain || '';
-    }
-    // 用户填写内容 (A、B类产品金额，项目类产品，备注)
-    if(SALE_FORM_INFO){
-      this.Aclass = SALE_FORM_INFO.Aclass;
-      this.Bclass = SALE_FORM_INFO.Bclass;
-      this.arr = SALE_FORM_INFO.saleReportArr;
-      this.comments = SALE_FORM_INFO.comments || '';
-    }
-
+    const SALE_FORM_INFO = JSON.parse(localStorage.getItem("SALE_FORM_INFO")) || '';       
+    const SALE_BASIC_INFO = JSON.parse(localStorage.getItem("SALE_BASIC_INFO")) || '';
+    // 回显表单内容
+    this.echoStorage(SALE_BASIC_INFO, SALE_FORM_INFO);
   },
   beforeRouteLeave(to, from, next) {
     if (!this.arr[0].value.length || to.name === "Count") next();
@@ -302,11 +290,19 @@ export default {
           localStorage.setItem(
             "SALE_FORM_INFO",
             JSON.stringify({
-              member: this.member,  
               Aclass: this.Aclass,
               Bclass: this.Bclass,
-              governor: this.governor,
               saleReportArr: this.arr,
+              comments: this.comments,
+              time: new Date().getTime()
+            })
+          );
+          // 用户 所属信息 缓存
+          localStorage.setItem(
+            "SALE_BASIC_INFO",
+            JSON.stringify({
+              member: this.member,             
+              governor: this.governor,         
               captain: this.helpCaptain,
               time: new Date().getTime()
             })
