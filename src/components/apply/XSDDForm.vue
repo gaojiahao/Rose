@@ -172,6 +172,18 @@
       }
     },
     mixins: [common],
+    watch:{
+      matterList(val){
+        let data = {
+          XSDD_DATA:{
+            matter : this.matterList,
+            dealer : this.dealerInfo
+          }
+        }
+        this.$emit('sel-data',data)
+      }
+
+    },
     methods: {
       // 选择地址
       goSetAds() {
@@ -217,7 +229,15 @@
         })
         this.numMap = {};
         this.matterList = sels;
-        this.getMatPrice();
+        this.getMatPrice();        
+        // let data = {
+        //   XSDD_DATA:{
+        //     matter : this.matterList,
+        //     dealer : this.dealerInfo
+        //   }
+        // }
+        // this.$emit('sel-data',data)
+        
       },
       //选择默认图片
       getDefaultImg(item) {
@@ -377,6 +397,13 @@
         })
       }
     },
+    created(){
+      let data = sessionStorage.getItem('XSDD_DATA');
+      if(data){
+        this.matterList = JSON.parse(data).matter;
+        this.dealerInfo = JSON.parse(data).dealer;
+      }
+    }
   }
 </script>
 

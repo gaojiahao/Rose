@@ -174,6 +174,11 @@ export default {
         this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
         this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         // this.getMatPrice();
+        let data = {
+          matter : this.matterList,
+          dealer : this.dealerInfo
+        }
+        this.$emit('sel-data',data)
     },
     // TODO 选中物料项
     selMatter(val) {
@@ -190,6 +195,13 @@ export default {
       this.numMap = {};
       this.matterList = sels;
       // this.getMatPrice();
+      let data = {
+        CGDD_DATA:{
+          matter : this.matterList,
+          dealer : this.dealerInfo
+        }        
+      }
+      this.$emit('sel-data',data)
     },
     //选择默认图片
     getDefaultImg(item) {
@@ -347,6 +359,11 @@ export default {
     }
   },
   created(){
+    let data = sessionStorage.getItem('CGDD_DATA');
+    if(data){
+      this.matterList = JSON.parse(data).matter;
+      this.dealerInfo = JSON.parse(data).dealer
+    }
 
   },
 }

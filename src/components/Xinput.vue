@@ -3,7 +3,7 @@
     <div class='input_com'>
       <label class='name'>{{options.title}}</label>
       <input class='input_box' :placeholder="options.placeholder" :type='options.type' :value='val' @input='getVal($event)'>
-      <icon type="clear" class='clear_btn' v-if='val.length>0' @click.native="clear"></icon>   
+      <icon type="clear" class='clear_btn' v-show="clearStatus" @click.native="clear"></icon>   
     </div>
   </div>
   
@@ -24,11 +24,16 @@ export default {
         }
       }
     },
+    defaultValue:{
+      type : String,
+      default:''
+    }
 
   },
   data(){
     return{
-      val : ''
+      val : '',
+      clearStatus: false,
     }
   },
   components:{
@@ -37,21 +42,33 @@ export default {
   methods:{
     getVal(e){
       this.val = e.target.value;
-      this.$emit('input',this.val)
+      if(this.val.length>0){
+        this.clearStatus = true;
+      }
+      this.$emit('input',this.val);
     },
     clear(){
       this.val = '';
-      this.$emit('input',this.val)
+      this.$emit('input',this.val);
+      this.clearStatus = false;
     }
+  },
+  created(){
+    this.val = this.defaultValue;
   }
 
 }
 </script>
 <style lang="scss" scoped>
+.vux-1px-b{
+  &:after{
+    border-color: #D9D9D9 !important;
+  }
+}
 .input_wrapper{
   background-color: #FFF;
   line-height: 1.41176471;
-  font-size: .14rem;
+  font-size: 17px;
   overflow: hidden;
   position: relative;
   .input_com{

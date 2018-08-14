@@ -2,7 +2,7 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <!-- 物料列表 -->
+        <!-- 费用列表 -->
         <div class="materiel_list mg_auto box_sd">
           <!-- 没有选择物料 -->
           <template v-if="!CostList.length">
@@ -52,12 +52,13 @@
                         <div class="userInp_mode">
                           <group>
                             <cell title="费用科目" text-align='right' :value="item.expSubject" @click.native="item.showPop = true" is-link></cell>
-                            <x-input  title="金额" text-align='right' placeholder='请填写'
+                            <!-- <x-input  title="金额" text-align='right' placeholder='请填写'
                                       type='number'
-                                      v-model='item.price'></x-input>
+                                      v-model='item.price'></x-input> -->
                             <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'
                             v-model="item.reson"></x-input>
                           </group>
+                          <input-box :options="inputOptions"  v-model='item.price' class='matter_price' :defaultValue='item.price'></input-box>
                           <div v-transfer-dom>
                             <popup v-model="item.showPop" height="70%" class="trade_pop_part">
                               <div class="trade_pop">
@@ -107,6 +108,7 @@
   import PopCostList from 'components/PopCostList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
+  import InputBox from 'components/Xinput'
   export default {
     mixins: [ApplyCommon],
     components: { 
@@ -118,6 +120,7 @@
       SwipeoutItem,
       SwipeoutButton,
       PopCostList,
+      InputBox
     },
     data() {
       return {
@@ -130,6 +133,11 @@
         showPop: false,
         tmp: '',
         taxRate: 0, // 税率
+        inputOptions:{
+          title:'金额',
+          type : 'number',
+          placeholder : '请填写'
+        }
       }
     },
     computed: {
@@ -142,6 +150,20 @@
           }         
         })
         return total;
+      }
+    },
+    watch:{
+      CostList(val){
+        val.forEach(item=>{
+          if(item.price){
+            let data = {
+              FXBX_DATA : {
+                cost : this.CostList
+              }
+            }
+            this.$emit('sel-data',data)
+          }
+        })
       }
     },
     methods: {
@@ -235,14 +257,17 @@
       },
     },
     created() {
-    },
+      let data = sessionStorage.getItem('FXBX_DATA');
+      if(data){
+        this.CostList = JSON.parse(data).cost
+      }
+    }, 
   }
 </script>
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
   .weui-cell{
-    padding: 10px 0;
     &:before{
       left:0;
     }

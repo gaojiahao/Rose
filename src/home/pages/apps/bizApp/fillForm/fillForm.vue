@@ -3,6 +3,7 @@
     <component
       :is='currentComponent'
       v-model='showLoadding'
+      @sel-data='selData'
       @close='closeLoad'
       @change='modifyRoute'>
     </component>
@@ -24,7 +25,8 @@ export default {
       showLoadding : true,
       transCode :'',
       submitSuccess :false,
-      submitLoadding : false
+      submitLoadding : false,
+      saveData:{} //缓存的数据
     }
   },
   components:{
@@ -38,14 +40,15 @@ export default {
     },
     modifyRoute(val){
       this.submitSuccess = val;
+    },
+    //保存草稿
+    selData(val){
+      this.saveData = val;
     }
   },
   created(){
     let {code} = this.$route.params;
     this.currentComponent = require(`components/apply/${code}Form.vue`).default;
-    // setTimeout(()=>{
-    //   this.showLoadding = false
-    // },1000)
   },
   mounted(){
     // this.$nextTick(()=>{
@@ -66,7 +69,24 @@ export default {
     if (this.submitSuccess && (path.indexOf('/list') !== -1 ||path.indexOf('/msglist') !== -1)) {
       to.meta.reload = true;
     }
-    next();
+    //离开数据保存为草稿
+    let keys = Object.keys(this.saveData)[0];
+    if(to.name === "LIST" && keys){
+      this.$vux.confirm.show({
+        content:'即将离开，是否保存数据？',
+        onConfirm : ()=>{         
+          sessionStorage.setItem(keys,JSON.stringify(this.saveData[keys]));
+          next();
+        },
+        onCancel : ()=>{
+          sessionStorage.removeItem(keys);
+          next();         
+        }
+      })
+      return
+    }
+    next()
+    
   },
 }
 </script>
