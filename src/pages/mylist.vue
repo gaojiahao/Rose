@@ -15,8 +15,8 @@
     </div>
     <tab bar-active-color="#5077AA" active-color="#5077AA" :line-width=1 class="tabSelect">
       <tab-item :selected="whichIndex==0" @on-item-click="selStatus">待处理</tab-item>
-      <tab-item :selected="whichIndex==1" @on-item-click="selStatus">进行中</tab-item>
-      <tab-item :selected="whichIndex==2" @on-item-click="selStatus">已完成</tab-item>
+      <!-- <tab-item :selected="whichIndex==1" @on-item-click="selStatus">进行中</tab-item> -->
+      <tab-item :selected="whichIndex==1" @on-item-click="selStatus">已完成</tab-item>
     </tab>
     <div class="m_list" style="height:auto;">
       <div class="wrapper" ref="wrapper">
@@ -26,7 +26,7 @@
             <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx" @click="goDetail(val)">
               <div class="e_top">
                 <span class="e_status" :class="{wait_c:whichIndex===0}">待处理</span><span
-                class="e_name">{{val.title}}</span>
+                class="e_name">{{val.TITLE}}</span>
               </div>
               <div class="e_main">
                                 <span class="e_code">
@@ -47,7 +47,7 @@
             </div>
           </div>
           <!-- 进行中 -->
-          <div v-if="whichIndex === 1">
+          <!-- <div v-if="whichIndex === 1">
             <div class="each_list" v-for="(val,idx) in underWayList" :key="idx" @click="goDetail(val)">
               <div class="e_top">
                 <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span
@@ -70,12 +70,12 @@
             <div class="underWaynothing" v-if="!underWaynothing&&underWayMore">
               <load-more :show-loading="false" tip="没有更多了" background-color="#fbf9fe"></load-more>
             </div>
-          </div>
+          </div> -->
           <!-- 已完成 -->
-          <div v-if="whichIndex === 2">
+          <div v-if="whichIndex === 1">
             <div class="each_list" v-for="(val,idx) in overList" :key="idx" @click="goDetail(val)">
               <div class="e_top">
-                <span class="e_status" :class="{done_c:whichIndex===2}">已完成</span><span
+                <span class="e_status" :class="{done_c:whichIndex===1}">已完成</span><span
                 class="e_name">{{val.title}}</span>
               </div>
               <div class="e_main">
@@ -122,19 +122,19 @@
         headerInfo: "",
         TobedoneList: [],
         TobedoneLoad: true,
-        underWayList: [],
-        underWayLoad: true,
+        // underWayList: [],
+        // underWayLoad: true,
         overList: [],
         overLoad: true,
         ch: 0,
         dbpageNo: 0,
-        underwaypageNo: 0,
+        //underwaypageNo: 0,
         overpageNo: 0,
         dbnothing: false,
-        underWaynothing: false,
+        //underWaynothing: false,
         overnothing: false,
         dbnothingMore: false,
-        underWayMore: false,
+        //underWayMore: false,
         overMore: false,
         userName: "",
         userRole: "",
@@ -220,53 +220,53 @@
         });
       },
       //获取进行中
-      underWay(e) {
-        let data = {
-          entityId: 20000,
-          _dc: Date.parse(new Date()),
-          status: 2,
-          start: this.underwaypageNo * 11,
-          page: ++this.underwaypageNo,
-          limit: 11
-        };
-        mylistService.getCompletedListDataByStatus(data).then(res => {
-          this.maxpage = Math.ceil(res.dataCount / 11);
-          if (e == 1) {
-            this.underWayList = [];
-          }
-          if (res.tableContent.length == 0) {
-            this.underWayLoad = false;
-            this.underWayMore = true;
-            this.underWaynothing = false;
-            this.scroll.closePullUp();
-            return;
-          } else {
-            for (let i = 0; i < res.tableContent.length; i++) {
-              this.underWayList.push(res.tableContent[i]);
-            }
-            this.underWayLoad = false;
-          }
-          this.$nextTick(() => {
-            this.scroll.refresh();
-          });
-          this.scroll.finishPullUp();
-        }).catch(e => {
-          this.showToast(e.message);
-        });
-      },
+      // underWay(e) {
+      //   let data = {
+      //     entityId: 20000,
+      //     _dc: Date.parse(new Date()),
+      //     status: 2,
+      //     start: this.underwaypageNo * 11,
+      //     page: ++this.underwaypageNo,
+      //     limit: 11
+      //   };
+      //   mylistService.getCompletedListDataByStatus(data).then(res => {
+      //     this.maxpage = Math.ceil(res.dataCount / 11);
+      //     if (e == 1) {
+      //       this.underWayList = [];
+      //     }
+      //     if (res.tableContent.length == 0) {
+      //       this.underWayLoad = false;
+      //       this.underWayMore = true;
+      //       this.underWaynothing = false;
+      //       this.scroll.closePullUp();
+      //       return;
+      //     } else {
+      //       for (let i = 0; i < res.tableContent.length; i++) {
+      //         this.underWayList.push(res.tableContent[i]);
+      //       }
+      //       this.underWayLoad = false;
+      //     }
+      //     this.$nextTick(() => {
+      //       this.scroll.refresh();
+      //     });
+      //     this.scroll.finishPullUp();
+      //   }).catch(e => {
+      //     this.showToast(e.message);
+      //   });
+      // },
       //获取已完成
       over(e) {
         let data = {
           entityId: 20000,
           _dc: Date.parse(new Date()),
-          status: 1,
+          para1: '',
           start: this.overpageNo * 11,
           page: ++this.overpageNo,
           limit: 11
         };
         mylistService.getCompletedListDataByStatus(data).then(res => {
           this.maxpage = Math.ceil(res.dataCount / 11);
-          if (e == 2) {
+          if (e == 1) {
             this.overList = [];
           }
           if (res.tableContent.length == 0) {
@@ -293,10 +293,10 @@
       selStatus(val) {
         this.whichIndex = val;
         this.dbpageNo = 0;
-        this.underwaypageNo = 0;
+        //this.underwaypageNo = 0;
         this.overpageNo = 0;
         this.dbnothingMore = false;
-        this.underWayMore = false;
+        //this.underWayMore = false;
         this.overMore = false;
         this.scrollEndY = 0;
         sessionStorage.setItem("MYLIST_TAB", val);
@@ -304,14 +304,16 @@
           this.TobedoneList = [];
           this.TobedoneLoad = true;
           this.Tobedone(0);
-        } else if (val == 1) {
-          this.underWayList = [];
-          this.underWayLoad = true;
-          this.underWay(1);
-        } else if (val == 2) {
+        } 
+        // else if (val == 1) {
+        //   this.underWayList = [];
+        //   this.underWayLoad = true;
+        //   this.underWay(1);
+        // } 
+        else if (val == 1) {
           this.overList = [];
           this.overLoad = true;
-          this.over(2);
+          this.over(1);
         }
       },
       //滚动加载启动
@@ -330,10 +332,12 @@
             if (this.whichIndex == 0) {
               this.dbnothing = true;
               this.Tobedone();
-            } else if (this.whichIndex == 1) {
-              this.underWaynothing = true;
-              this.underWay();
-            } else if (this.whichIndex == 2) {
+            } 
+            // else if (this.whichIndex == 1) {
+            //   this.underWaynothing = true;
+            //   this.underWay();
+            // } 
+            else if (this.whichIndex == 1) {
               this.overnothing = true;
               this.over();
             }
@@ -354,14 +358,16 @@
               pageNo: this.dbpageNo > this.maxpage ? this.maxpage : this.dbpageNo,
               list: this.TobedoneList
             };
-          } else if (this.whichIndex == 1) {
-            jsonData = {
-              scrollEndY: this.scrollEndY,
-              idx: this.whichIndex,
-              pageNo: this.underwaypageNo > this.maxpage ? this.maxpage : this.underwaypageNo,
-              list: this.underWayList
-            };
-          } else if (this.whichIndex == 2) {
+          } 
+          // else if (this.whichIndex == 1) {
+          //   jsonData = {
+          //     scrollEndY: this.scrollEndY,
+          //     idx: this.whichIndex,
+          //     pageNo: this.underwaypageNo > this.maxpage ? this.maxpage : this.underwaypageNo,
+          //     list: this.underWayList
+          //   };
+          // } 
+          else if (this.whichIndex == 1) {
             jsonData = {
               scrollEndY: this.scrollEndY,
               idx: this.whichIndex,
@@ -431,10 +437,10 @@
           case 0:
             this.Tobedone();
             break;
+          // case 1:
+          //   this.underWay();
+          //   break;
           case 1:
-            this.underWay();
-            break;
-          case 2:
             this.over();
             break;
           default:
@@ -466,11 +472,13 @@
           this.dbpageNo = MYLIST_LIST.pageNo;
           this.TobedoneList = MYLIST_LIST.list;
           this.TobedoneLoad = false;
-        } else if (MYLIST_LIST.idx == 1) {
-          this.underwaypageNo = MYLIST_LIST.pageNo;
-          this.underWayList = MYLIST_LIST.list;
-          this.underWayLoad = false;
-        } else if (MYLIST_LIST.idx == 2) {
+        } 
+        // else if (MYLIST_LIST.idx == 1) {
+        //   this.underwaypageNo = MYLIST_LIST.pageNo;
+        //   this.underWayList = MYLIST_LIST.list;
+        //   this.underWayLoad = false;
+        // } 
+        else if (MYLIST_LIST.idx == 1) {
           this.overpageNo = MYLIST_LIST.pageNo;
           this.overList = MYLIST_LIST.list;
           this.overLoad = false;
@@ -481,13 +489,13 @@
         // 审批或者提交成功后重新请求列表
         if (this.$route.meta.reload) {
           this.dbpageNo = 0;
-          this.underwaypageNo = 0;
+          //this.underwaypageNo = 0;
           this.overpageNo = 0;
           this.TobedoneList = [];
-          this.underWayList = [];
+          //this.underWayList = [];
           this.overList = [];
           this.TobedoneLoad = true;
-          this.underWayLoad = true;
+          //this.underWayLoad = true;
           this.overLoad = true;
           this.loadData();
         }
