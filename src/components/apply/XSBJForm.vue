@@ -102,12 +102,13 @@
                     </div>
                   </swipeout-item>
                 </swipeout>
-              <!-- 物料输入内容 -->
-              </div>
-              <div class="userInp_mode">
-                <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
-                <input-box :options="inputOptions"  v-model='item.price' class='matter_price'></input-box>
-              </div>
+                <!-- 物料输入内容 -->
+                <div class="userInp_mode">
+                  <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
+                  <input-box :options="inputOptions"  v-model='item.price' class='matter_price'></input-box>
+                </div>              
+            </div>
+
             </div>
           </template>
           <!-- 新增更多 按钮 -->

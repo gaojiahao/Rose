@@ -73,18 +73,18 @@
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <!-- 物料数量和价格 -->
-                      <div class='mater_other'>
-                        <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.price}}
-                          <span class='unit' v-if='item.measureUnit'>/ {{item.measureUnit}}</span>
-                        </div>
-                        <div class='mater_num'>
-                          <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
-                          <input class='num' type='number' v-model.number='item.tdQty'/>
-                          <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                        </div>
+                        <!-- 物料数量和价格 -->
+                        <div class='mater_other'>
+                          <div class='mater_price'>
+                            <span class="symbol">￥</span>{{item.price}}
+                            <span class='unit' v-if='item.measureUnit'>/ {{item.measureUnit}}</span>
+                          </div>
+                          <div class='mater_num'>
+                            <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
+                            <input class='num' type='number' v-model.number='item.tdQty'/>
+                            <span class='handle plus' @click='plusNum(item,index)'>+</span>
+                          </div>
+                        </div>                      
                       </div>
                     </div>
                   </swipeout-item>
