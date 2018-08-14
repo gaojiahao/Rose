@@ -15,8 +15,8 @@
             </div>
           </div>
           <div v-else>
-              <div class="title">往来列表</div>
-              <div class="mode">请选择往来</div>
+            <div class="title">往来列表</div>
+            <div class="mode">请选择往来</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
@@ -73,7 +73,6 @@
                             </div>
                           </div>
                         </div>
-<<<<<<< HEAD
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other'>
@@ -85,21 +84,6 @@
                           <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
                           <input class='num' type='number' v-model.number='item.tdQty'/>
                           <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                        </div>
-=======
-                        <!-- 物料数量和价格 -->
-                        <div class='mater_other'>
-                          <div class='mater_price'>
-                            ￥{{item.price}}
-                            <span class='unit' v-if='item.measureUnit'>/{{item.measureUnit}}</span>
-                          </div>
-                          <div class='mater_num'>
-                            <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
-                            <input class='num' type='number' v-model.number='item.tdQty'/>
-                            <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                          </div>
->>>>>>> 8780af6a66bbabfb7b6207814cf0d1731c21f545
-
                         </div>
                       </div>
                     </div>

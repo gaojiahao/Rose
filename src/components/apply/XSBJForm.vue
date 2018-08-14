@@ -100,29 +100,13 @@
                         </div>
                       </div>
                     </div>
-<<<<<<< HEAD
-                  </div>
-                </swipeout-item>
-              </swipeout>
+                  </swipeout-item>
+                </swipeout>
               <!-- 物料输入内容 -->
-              
+              </div>
               <div class="userInp_mode">
                 <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
                 <input-box :options="inputOptions"  v-model='item.price' class='matter_price'></input-box>
-=======
-                  </swipeout-item>
-                </swipeout>
-                <!-- 物料输入内容 -->
-                
-                <div class="userInp_mode">
-                  <input-box :options="inputOptions"  v-model='item.price' class='matter_price'></input-box>
-                  <!-- <group>
-                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                            v-model.number="item.price"></x-input>
-                  </group> -->
-                  <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
-                </div>
->>>>>>> 8780af6a66bbabfb7b6207814cf0d1731c21f545
               </div>
             </div>
           </template>
