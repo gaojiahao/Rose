@@ -311,15 +311,13 @@
     height: 90%;
     overflow: auto;
   }
-
   .childPage {
-    position: absolute;
+    bottom: 0;
     width: 100%;
     height: 100%;
-    bottom: 0;
+    position: absolute;
     background: #fff;
   }
-
   .app_top {
     width: 100%;
     padding-top: .1rem;

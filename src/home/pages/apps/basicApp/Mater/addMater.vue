@@ -45,10 +45,6 @@
         <label>主材质:</label>
         <input type='text' v-model.trim="inventory.material" class='property_val'/>
       </div>
-      <!--<div class='each_property vux-1px-b'>
-        <label>主计量单位:</label>
-        <input type='text' v-model="inventory.measureUnit" class='property_val'/>
-      </div>-->
       <r-picker title="主计量单位:" :data="measureList" value="inventory.measureUnit" :required="true"
                 v-model="inventory.measureUnit"></r-picker>
     </div>
@@ -408,6 +404,7 @@
       .mater_pic {
         .add_icon {
           position: relative;
+          z-index: 99;
           label {
             display: block;
             width: 1.2rem;

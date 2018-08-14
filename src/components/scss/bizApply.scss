@@ -124,9 +124,10 @@
       }
       // 物料图片
       .mater_img {
-        display: inline-block;
         width: .75rem;
         height: .75rem;
+        display: inline-block;
+        margin-top: .04rem;
         img {
           width: 100%;
           max-height: 100%;
@@ -134,10 +135,10 @@
       }
       // 物料主体
       .mater_main {
-        flex: 1;
-        padding-left: .1rem;
-        box-sizing: border-box;
+        max-width: 2.6rem;
+        margin-left: .1rem;
         display: inline-block;
+        box-sizing: border-box;
         // 物料名称
         .mater_name {
           color: #111;
@@ -147,6 +148,7 @@
           max-height: .46rem;
           display: -webkit-box;
           -webkit-line-clamp: 2;
+          margin-bottom: .04rem;
           text-overflow: ellipsis;
           -webkit-box-orient: vertical;
           // 每个物料的索引
@@ -211,18 +213,16 @@
           .withoutColor {
             // 物料分类
             .mater_classify {
-              // color: #111;
-              // font-weight: bold;
-              font-size: .14rem;
+              font-size: .12rem;
               margin-top: .04rem;
               .father {
-                margin-right: .1rem;
+                // margin-right: .1rem;
               }
             }
             // 物料颜色 材质
             .mater_material {
               font-size: .12rem;
-              margin-top: .1rem;
+              // margin-top: .1rem;
               .unit,
               .color {
                 margin-right: .06rem;
