@@ -1,12 +1,20 @@
 <template>
-  <div class='r-picker vux-1px-b' :class="{'r-picker-2': mode === '2'}" @click='showStatus'>
-    <label :class='{ required : required}'>{{title}}</label>
-    <div class='picker'>
-      <span class="horizontal-title" :class='{ required : required}'>{{title}}</span>
-      <span class='mater_nature'>{{showValue}}</span>
-      <x-icon class="r_arrow" type="ios-arrow-forward" size="16" v-if="showArrow"></x-icon>
-      <span class='iconfont icon-gengduo' :class="!pickerStatus?'iconfont_fff':''" v-else></span>
-    </div>
+  <div class='r-picker vux-1px-b' :class="{'r-picker-2': mode === '2', 'r-picker-3': mode === '3'}" @click='showStatus'>
+    <template v-if="mode === '1' || mode === '2'">
+      <label :class='{ required : required}'>{{title}}</label>
+      <div class='picker'>
+        <span class="horizontal-title" :class='{ required : required}'>{{title}}</span>
+        <span class='mater_nature'>{{showValue}}</span>
+        <x-icon class="r_arrow" type="ios-arrow-forward" size="16" v-if="showArrow"></x-icon>
+        <span class='iconfont icon-gengduo' :class="!pickerStatus?'iconfont_fff':''" v-else></span>
+      </div>
+    </template>
+    <!-- 模式3 -->
+    <template v-else-if="mode === '3'">
+      <div class="title">{{title}}</div>
+      <div class="mode">{{showValue || placeholder}}</div>
+      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
+    </template>
     <div v-transfer-dom>
       <popup id="trade_pop_part" v-model="show">
         <div>
@@ -41,6 +49,7 @@
           return []
         }
       },
+      // 是否必填
       required: {
         type: Boolean
       },
@@ -48,7 +57,7 @@
         type: Boolean,
         default: true
       },
-      // 界面模式，1为默认，2为水平展示
+      // 界面模式，1为默认，2为水平展示,3为项目任务使用
       mode: {
         type: String,
         default: '1'
@@ -57,6 +66,16 @@
       showArrow: {
         type: Boolean,
         default: false,
+      },
+      // 是否禁用
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      // 占位文字，有使用的mode: 3
+      placeholder: {
+        type: String,
+        default: '请选择'
       }
     },
     data() {
@@ -124,6 +143,30 @@
         right: -.04rem;
       }
     }
+    /* 模式3样式 */
+    &.r-picker-3 {
+      position: relative;
+      margin: 10px auto;
+      padding: .06rem .08rem;
+      width: 95%;
+      box-sizing: border-box;
+      box-shadow: 0 0 8px #e8e8e8;
+      .title {
+        color: #757575;
+        font-weight: 200;
+        font-size: .12rem;
+      }
+      .mode {
+        color: #111;
+        font-weight: 500;
+      }
+      .r_arrow {
+        top: 50%;
+        right: .04rem;
+        position: absolute;
+        transform: translate(0, -50%);
+      }
+    }
     label {
       color: #6d6d6d;
       font-size: 0.12rem;
@@ -172,7 +215,8 @@
       color: #FF9900;
     }
   }
-  .iconfont_fff{
+
+  .iconfont_fff {
     color: #fff;
   }
 </style>

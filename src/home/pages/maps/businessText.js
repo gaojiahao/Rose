@@ -9,5 +9,6 @@ export default {
   BDKCDB : '本地库存调拨',
   FYBX : '费用报销',
   SJ :  '商机',
-  KCPD : '库存盘点'
+  KCPD : '库存盘点',
+  XMRW: '项目任务'
 }

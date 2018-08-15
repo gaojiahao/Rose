@@ -99,4 +99,20 @@ export let findProjectTask = (transCode = '') => {
   });
 };
 
+// TODO 获取项目列表
+export let getProjectPlanProjectName = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectPlanProjectName',
+    data: {
+      _dc: Date.now(),
+      page: 1,
+      start: 0,
+      limit: 10000,
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {}

@@ -6,7 +6,7 @@
         v-model='showLoadding'
         @change='modifyRoute'>
       </component>
-    </div>   
+    </div>
     <!-- 页面进入加载动画-->
     <loadding-form :show='showLoadding'></loadding-form>
   </div>
@@ -36,21 +36,16 @@ export default {
     }
   },
   created(){
-    let query = this.$route.query;
-    if(query.transCode){
-      this.transCode = query.transCode;
-      let [prefix] = this.transCode.split('_');
-      let code = detailMap[prefix] || prefix;
-      try {
-        this.currentComponent = require(`components/detail/${code}Form.vue`).default;
-      } catch (e) {
-        this.$vux.alert.show({
-          content: '抱歉，无法支持该应用的查看',
-          onHide: ()=>{
-            this.$router.go(-1);
-          }
-        });
-      }
+    let {code = ''} = this.$route.params;
+    try {
+      this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+    } catch (e) {
+      this.$vux.alert.show({
+        content: '抱歉，无法支持该应用的查看',
+        onHide: ()=>{
+          this.$router.go(-1);
+        }
+      });
     }
     // setTimeout(()=>{
     //   this.showLoadding = false
