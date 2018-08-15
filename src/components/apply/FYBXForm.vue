@@ -23,7 +23,7 @@
                       <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
                     </div>
                     <div class="each_mater_wrapper" slot="content">
-                      <div class="mater_main">
+                      <div class="mater_main" style='max-width:100%;'>
                         <!-- 物料名称 -->
                         <div class="mater_name">
                           <span class="whiNum">No.{{index + 1}}</span>
@@ -52,13 +52,12 @@
                         <div class="userInp_mode">
                           <group>
                             <cell title="费用科目" text-align='right' :value="item.expSubject" @click.native="item.showPop = true" is-link></cell>
-                            <!-- <x-input  title="金额" text-align='right' placeholder='请填写'
+                            <x-input  title="金额" text-align='right' placeholder='请填写'
                                       type='number'
-                                      v-model='item.price'></x-input> -->
+                                      v-model='item.price'></x-input>
                             <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'
                             v-model="item.reson"></x-input>
                           </group>
-                          <input-box :options="inputOptions"  v-model='item.price' class='matter_price' :defaultValue='item.price'></input-box>
                           <div v-transfer-dom>
                             <popup v-model="item.showPop" height="70%" class="trade_pop_part">
                               <div class="trade_pop">
@@ -108,7 +107,6 @@
   import PopCostList from 'components/PopCostList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
-  import InputBox from 'components/Xinput'
   export default {
     mixins: [ApplyCommon],
     components: { 
@@ -119,8 +117,7 @@
       Swipeout,
       SwipeoutItem,
       SwipeoutButton,
-      PopCostList,
-      InputBox
+      PopCostList
     },
     data() {
       return {
@@ -133,11 +130,6 @@
         showPop: false,
         tmp: '',
         taxRate: 0, // 税率
-        inputOptions:{
-          title:'金额',
-          type : 'number',
-          placeholder : '请填写'
-        }
       }
     },
     computed: {
@@ -272,31 +264,6 @@
       left:0;
     }
   }
-  .pop-single-container {
-    position: relative;
-    margin: 10px auto;
-    padding: .06rem .08rem;
-    width: 95%;
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
-    .icon-gengduo {
-      top: 50%;
-      right: .1rem;
-      font-size: .24rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
-    .title {
-      color: #757575;
-      font-weight: 200;
-      font-size: .12rem;
-    }
-    .mode {
-      color: #111;
-      font-weight: 500;
-    }
-  }
-
   /* 弹出框 */
   .trade_pop_part {
     background: #fff;
@@ -347,4 +314,5 @@
       box-shadow: 0 2px 12px #5077aa;
     }
   }
+
 </style>

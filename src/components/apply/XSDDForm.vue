@@ -181,8 +181,16 @@
           }
         }
         this.$emit('sel-data',data)
+      },
+      dealerInfo(val){
+        let data = {
+          XSDD_DATA:{
+            matter : this.matterList,
+            dealer : this.dealerInfo
+          }
+        }
+        this.$emit('sel-data',data)
       }
-
     },
     methods: {
       // 选择地址
@@ -229,15 +237,7 @@
         })
         this.numMap = {};
         this.matterList = sels;
-        this.getMatPrice();        
-        // let data = {
-        //   XSDD_DATA:{
-        //     matter : this.matterList,
-        //     dealer : this.dealerInfo
-        //   }
-        // }
-        // this.$emit('sel-data',data)
-        
+        this.getMatPrice();                
       },
       //选择默认图片
       getDefaultImg(item) {

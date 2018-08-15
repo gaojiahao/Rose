@@ -27,7 +27,7 @@
             <div class="mater_list">
               <div class="each_mater">
                 <div class="each_mater_wrapper">
-                  <div class="mater_main">
+                  <div class="mater_main" style='max-width:100%;'>
                     <div class="userInp_mode">
                       <div class="title">商机明细</div>
                       <group class="SJ_group" @group-title-margin-top="0">
@@ -157,6 +157,20 @@
       }
     },
     mixins: [common],
+    watch:{
+      formData(val){
+        console.log(val)
+        if(val.opportunityTitle){
+          let data = {
+            SJ_DATA:{
+              formData : this.formData
+            }
+          }
+          this.$emit('sel-data',data)
+
+        }
+      }
+    },
     methods: {
       //清除金额
       clearSaleVal(e){
@@ -246,6 +260,10 @@
       },
     },
     created() {
+      let data = sessionStorage.getItem('SJ_DATA');
+      if(data){
+        this.formData = JSON.parse(data).formData;
+      }
     },
   }
 </script>

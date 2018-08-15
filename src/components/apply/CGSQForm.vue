@@ -128,6 +128,18 @@ export default {
     }
   },
   mixins: [common],
+  watch:{
+    matterList(val){
+      let data = {
+        CGSQ_DATA:{
+          matter : this.matterList,
+        }
+      }
+      this.$emit('sel-data',data)
+
+    }
+
+  },
   methods:{
     // TODO 选中物料项
     selMatter(val) {
@@ -273,6 +285,10 @@ export default {
     }
   },
   created(){
+    let data = sessionStorage.getItem('CGSQ_DATA');
+    if(data){
+      this.matterList = JSON.parse(data).matter;
+    }
   },
 }
 </script>

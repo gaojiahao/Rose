@@ -196,6 +196,41 @@
         return(this.totalAmount + Number(this.taxAmount)).toFixed(2)
       }
     },
+    watch:{
+      listData(val){
+        let data = {
+          CGRK_DATA:{
+            matter : this.listData,
+            dealer : this.dealerInfo,
+            warehouse : this.warehouse
+          }
+        }
+        this.$emit('sel-data',data)
+
+      },
+      dealerInfo(val){
+        let data = {
+          CGRK_DATA:{
+            matter : this.listData,
+            dealer : this.dealerInfo,
+            warehouse : this.warehouse
+          }
+        }
+        this.$emit('sel-data',data)
+      },
+      warehouse(val){
+        let data = {
+          CGRK_DATA:{
+            matter : this.listData,
+            dealer : this.dealerInfo,
+            warehouse : this.warehouse
+          }
+        }
+        this.$emit('sel-data',data)
+
+      }
+
+    },
     methods: {
       // TODO 选中的往来
       selDealer(val) {
@@ -401,6 +436,13 @@
       },
     },
     created() {
+      let data = sessionStorage.getItem('CGRK_DATA');
+      if(data){
+        this.listData = JSON.parse(data).matter;
+        this.dealerInfo = JSON.parse(data).dealer;
+        this.warehouse = JSON.parse(data).warehouse;
+
+      }
     },
   }
 </script>

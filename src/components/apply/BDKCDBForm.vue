@@ -123,6 +123,22 @@
         },
       }
     },
+    watch:{
+      matterList(val){
+        if(val.length){
+          let data = {
+            KCDB_DATA:{
+              matter : this.matterList,
+              warehouseOut : this.warehouseOut,
+              warehouseIn : this.warehouseIn
+            }
+          }
+          this.$emit('sel-data',data)
+        }
+        
+      }
+
+    },
     methods: {
       // TODO 滑动删除
       delClick(item, index) {
@@ -245,6 +261,13 @@
       },
     },
     created() {
+      let data = sessionStorage.getItem('KCDB_DATA');
+      if(data){
+        this.matterList = JSON.parse(data).matter;
+        this.warehouseOut = JSON.parse(data).warehouseOut;
+        this.warehouseIn = JSON.parse(data).warehouseIn;
+
+      }
     },
   }
 </script>

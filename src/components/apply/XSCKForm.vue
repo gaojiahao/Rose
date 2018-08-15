@@ -214,6 +214,23 @@
         return (this.totalAmount * this.taxRate).toFixed(2)
       },
     },
+    watch:{
+      orderList(val){ 
+        let arr = Object.keys(val);
+        if(arr.length){
+          console.log(val);
+          let data = {
+            XSCK_DATA:{
+              orderList : this.orderList,
+              warehouse : this.warehouse,
+              dealer : this.dealerInfo
+            }
+          }
+          this.$emit('sel-data',data)
+        }
+      }
+
+    },
     methods: {
       // TODO 选中的往来
       selDealer(val) {
@@ -470,6 +487,13 @@
       },
     },
     created() {
+      let data = sessionStorage.getItem('CGSQ_DATA');
+      if(data){        
+        this.orderList = JSON.parse(data).orderList;
+        this.warehouse = JSON.parse(data).warehouse;
+        this.dealerInfo = JSON.parse(data).dealer;
+
+      }
     }
   }
 </script>

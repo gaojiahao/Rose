@@ -104,11 +104,13 @@
                 </swipeout>
                 <!-- 物料输入内容 -->
                 <div class="userInp_mode">
+                  <group>
+                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
+                            v-model.number="item.price"></x-input>
+                  </group>
                   <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
-                  <input-box :options="inputOptions"  v-model='item.price' class='matter_price' :defaultValue='item.price'></input-box>
-                </div>              
-            </div>
-
+                </div>
+              </div>
             </div>
           </template>
           <!-- 新增更多 按钮 -->
@@ -139,6 +141,7 @@
   import PopSingleSelect from 'components/PopSingleSelect'
   import RPicker from 'components/RPicker'
   import InputBox from 'components/Xinput'
+import { resolve } from 'url';
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -177,6 +180,27 @@
           type : 'number',
           placeholder : '请填写'
         }
+      }
+    },
+    watch:{
+      matterList(val){
+        let data = {
+          XSBJ_DATA:{
+            matter : this.matterList,
+            dealer : this.dealerInfo,
+          }
+        }
+        this.$emit('sel-data',data)
+      },
+      dealerInfo(val){
+        let data = {
+          XSBJ_DATA:{
+            matter : this.matterList,
+            dealer : this.dealerInfo,
+          }
+        }
+        this.$emit('sel-data',data)
+
       }
     },
     methods: {
@@ -309,15 +333,17 @@
       },
     },
     created() {
+      let data = sessionStorage.getItem('XSBJ_DATA');
+      if(data){
+        this.matterList = JSON.parse(data).matter;
+        this.dealerInfo = JSON.parse(data).dealer;
+      }
     },
   }
 </script>
 
 <style lang="scss" scoped>
   @import './../scss/bizApply';
-  .matter_price{
-    font-size: .14rem !important;
-  }
   .xsbj-apply-container {
     /deep/ .weui-cells {
       font-size: .14rem;
