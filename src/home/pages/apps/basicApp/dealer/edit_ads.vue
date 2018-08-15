@@ -29,7 +29,7 @@
       </div>
       <r-picker title="往来关系标签:" :data="AccountRelType" :pickerStatus="pickerStatus" value="dealer.dealerLabelName"  v-model="dealer.dealerLabelName" :required='true'
                 @on-change="dealerLabel"></r-picker>
-      <r-picker title="往来大类:" :data="AccountBigType" value="dealer.dealerType"  v-model="dealer.dealerType"
+      <r-picker title="往来大类:" :data="AccountBigType" value="dealer.dealerType"   v-model="dealer.dealerType"
                 @on-change="bigChange"></r-picker>
       <r-picker title="往来子类:" :data="AccountSmlType" value="dealer.dealerSubclass"
                 v-model="dealer.dealerSubclass"></r-picker>
@@ -65,6 +65,7 @@
     <div class='vux-1px-t btn '>
       <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
+    <loading :show="showLoading"></loading>
   </div>
 </template>
 <script>
@@ -74,9 +75,11 @@ import { upload } from 'service/materService.js';
 import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
+import Loading from 'components/Loading'
 export default {
   data() {
     return {
+      showLoading: false,
       hasDefault : false,
       btnStatus : false, //按钮不可点击
       transCode  : '',
@@ -123,9 +126,10 @@ export default {
         dealerStatus: '1', //往来状态
         comment: '',  //往来说明
         dealerPic : '',
-        submitSuccess: false, // 是否提交成功
+        
       },
-    pickerStatus:true
+      submitSuccess: false, // 是否提交成功
+      pickerStatus:true
     }
   },
   directives: {
@@ -138,7 +142,8 @@ export default {
     Group,
     RPicker,
     XAddress,
-    Icon
+    Icon,
+    Loading
   },
   methods: {
     preloadFile(file) {
@@ -415,16 +420,15 @@ export default {
 
 
   },
-  beforeRouteLeave(to, from, next) {
-    let {path} = to;
-    // 新建物料，修改列表页的meta值
-    console.log(this.submitSuccess);
-    if (this.submitSuccess && path === '/adress') {
-      to.meta.reload = true;
-    }
-    next();
-  },
   created() {
+    this.showLoading = true;
+    let data = sessionStorage.getItem('WL_DATA');
+    if(data){
+      this.dealer = JSON.parse(data);
+      this.MatPic = this.dealer.dealerPic;
+      this.picShow = true;
+      this.showLoading = false;
+    }
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
@@ -434,18 +438,23 @@ export default {
         await this.getBig();
         this.getSml();
         this.hasDefault = false;
+        this.showLoading = false;
       })();
     }
     else{
-      this.getDealer().then(data => {
-        let [defaultSelect = {}] = data;
-        if(this.$route.query.pickVal){
-          this.dealer.dealerLabelName = this.$route.query.pickVal;
-          this.pickerStatus = false;
-        }else{
-          this.dealer.dealerLabelName = defaultSelect.name;
-        }
-      });
+      if(!data){
+        this.getDealer().then(data => {
+          this.showLoading = false;
+          let [defaultSelect = {}] = data;
+          if(this.$route.query.pickVal){
+            this.dealer.dealerLabelName = this.$route.query.pickVal;
+            this.pickerStatus = false;
+          }else{
+            this.dealer.dealerLabelName = defaultSelect.name;
+          }
+        });
+
+      }
       //获取当前用户信息
       getBaseInfoData().then(data => {
         this.baseinfo = {
@@ -455,7 +464,48 @@ export default {
         }
       });
     }
-  }
+  },
+   beforeRouteLeave(to, from, next) {
+    let {path} = to;
+    // 新建物料，修改列表页的meta值
+    //console.log(this.submitSuccess);
+    if(path === '/adress'){
+      if(this.submitSuccess){
+        to.meta.reload = true;
+        return
+      }
+      let newDealer = JSON.parse(JSON.stringify(this.dealer));
+      delete newDealer.dealerLabelName;
+      delete newDealer.dealerStatus;
+      let arr = Object.values(newDealer);
+      let isHasVal = false;
+      for(let i=0;i<arr.length;i++){
+        console.log(arr[i]);
+        if(arr[i]){
+          isHasVal = true;
+          break;
+        }
+      }
+      if(isHasVal){
+        this.$vux.confirm.show({
+          content:'即将离开，是否保存数据？',
+          onConfirm : ()=>{         
+            sessionStorage.setItem('WL_DATA',JSON.stringify(this.dealer));
+            next();
+          },
+          onCancel : ()=>{
+            sessionStorage.removeItem('WL_DATA');
+            next();      
+          }
+        })
+        return
+      }           
+    }
+    // if (this.submitSuccess && path === '/adress') {
+    //   to.meta.reload = true;
+    // }
+    next();
+  },
 }
 </script>
 <style lang="scss">
