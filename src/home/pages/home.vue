@@ -11,12 +11,9 @@
         </div>
         <!-- 基础应用部分 -->
         <basic-app :BSarray='BSarray' :goBasic='goBasic'></basic-app>
-        <!-- 销售应用部分 -->
-        <sale-app :XSarray='XSarray' :goList='goList'></sale-app>
-        <!-- 采购应用部分 -->
-        <buy-app :PURarray='PURarray' :goList='goList'></buy-app>
-        <!-- 调拨应用部分 -->
-        <alloca-app :ACAarray='ACAarray' :goList='goList'></alloca-app>
+        <!-- 业务应用部分 -->
+        <bus-app :BUSarray='BUSarray' :goList='goList'></bus-app>
+
       </div>   
     </div>
     <loadding :show='showLoadding'></loadding>
@@ -28,28 +25,24 @@
 import homeService from 'service/homeservice'
 // 映射表引入
 import basicMap from './maps/basic'
-import businessMap from './maps/business'
+import businessMap from './maps/businessApp'
 // 组件引入
-import buyApp from 'components/home/buyApp'            // 采购应用
-import saleApp from 'components/home/saleApp'          // 销售应用
+import busApp from 'components/home/busAppList'        // 业务应用
 import basicApp from 'components/home/basicApp'        // 基础应用
-import allocaApp from 'components/home/allocationApp'  // 调拨应用
 // 插件引入
 import Bscroll from 'better-scroll'
 import Loadding from 'components/Loading'
 export default {
   data(){
     return{
+      BUSobj: {},
       BSarray : [],        // 基础对象 数组
-      XSarray : [],        // 销售 数组
-      PURarray: [],        // 采购 数组
-      ACAarray: [],        // 调拨 数组
-      FINarray: [],        // 财务 数组
+      BUSarray: [],        // 业务应用 数组
       homeScroll : null,
       showLoadding : true,
     }
   },
-  components:{ buyApp, saleApp, basicApp, allocaApp, Loadding },
+  components:{ busApp, basicApp, Loadding },
   methods:{
     // 基础应用
     goBasic(item){
@@ -58,12 +51,17 @@ export default {
     // 前往列表
     goList(item){
       this.$router.push({ path:`/list/${item}`})
+    },
+    getDefaultIcon(){
+      let url = require('assets/defaultApp.png');
+      return url;
     }
   },
   created(){
     (async() => {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
+        let BUSobj = this.BUSobj;
         for(let val of res){
           // 获取基础对象
           if(val.text === '基础对象'){
@@ -97,43 +95,28 @@ export default {
           else if(val.text === '业务应用'){
             for(let item of val.children){
               // 获取 业务应用-销售 应用
-              if(item.text === '销售'){
-                for(let ite of item.children){
+              if(businessMap[item.text]){
+                // 循环生成空数组
+                BUSobj[item.text] = [];
+                for(let app of item.children){
                   //映射表 赋值
-                  if(businessMap[ite.text]){
-                    ite.code = businessMap[ite.text]
-                    ite.icon = ite.icon
-                      ? `/dist/${ite.icon}`
-                      : ''                    
-                    this.XSarray.push(ite);
+                  if(businessMap[item.text][app.text]){
+                    app.code = businessMap[item.text][app.text]
+                    app.icon = app.icon
+                      ? `/dist/${app.icon}`
+                      : this.getDefaultIcon();
+                    // 归类到相应的小数组
+                    BUSobj[item.text].push(app);           
                   }
                 }
-              }
-              // 获取 采购应用
-              if(item.text === '采购'){
-                for(let val of item.children){
-                  if(businessMap[val.text]){
-                    val.code = businessMap[val.text]
-                    val.icon = val.icon
-                      ? `/dist/${val.icon}`
-                      : ''                    
-                    this.PURarray.push(val);
-                  }
-                }
-              }
-              // 获取 调拨应用
-              if(item.text === '库存' || item.text === '财务'){
-                for(let val of item.children){
-                  if(businessMap[val.text]){
-                    val.code = businessMap[val.text]
-                    val.icon = val.icon
-                      ? `/dist/${val.icon}`
-                      : ''                    
-                    this.ACAarray.push(val);
-                  }
-                }
+                // 针对应用数组 进行 分类大汇总
+                this.BUSarray.push({ 
+                  name: item.text, 
+                  appList: BUSobj[item.text]
+                });              
               }
             }
+
           }
         }
         this.showLoadding = false;

@@ -7,7 +7,7 @@
             :key='index'
             :style="{ 
               background:`${item.bgColor} url(${item.icon}) no-repeat .7rem .1rem / 50%` ,
-              boxShadow: `0 2px 5px ${item.boxShadow}`
+              boxShadow: `0 2px 2px ${item.boxShadow}`
             }">
           <div class="app_type">{{item.transName}}</div>
           <div class="app_name">{{item.text}}</div>
