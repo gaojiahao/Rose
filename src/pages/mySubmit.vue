@@ -31,7 +31,7 @@
               <span class="e_code">
                 {{item.transCode}}
                 <span class="e_crtname">{{item.starterName}}</span></span>
-            <span class="e_time" v-html="item.startTime?item.startTime.split(' ')[0]:''"></span>
+            <span class="e_time">{{item.startTime | dateFormat('YYYY-MM-DD')}}</span>
           </div>
         </div>
       </r-scroll>
@@ -40,12 +40,11 @@
 </template>
 
 <script>
-  import {Tab, TabItem,} from 'vux';
+  import {Tab, TabItem, dateFormat,} from 'vux';
   import mylistService from '../service/mylistService.js';
   import createService from './../service/createService.js';
   import RScroll from './components/RScroll'
 
-  const RELOAD_SUBMIT = 'RFD_RELOAD_MY_SUBMIT';
   export default {
     name: 'mySubmit',
     components: {
@@ -85,19 +84,22 @@
     },
     watch: {
       $route: {
-        handler(to) {
+        handler(to, from) {
           if (to.name === 'Home') {
             this.activeTab = this.tabList[0].value;
             this.resetCondition();
-            sessionStorage.setItem(RELOAD_SUBMIT, 1);
+            from.meta.reload = true;
           }
         }
       }
     },
+    filters: {
+      dateFormat,
+    },
     methods: {
       //获取当前用户
       getUser() {
-        createService.getBaseInfoData().then((data = {}) => {
+        return createService.getBaseInfoData().then((data = {}) => {
           this.userInfo = data;
         }).catch(e => {
           this.showToast(e.message);
@@ -161,6 +163,7 @@
         this.hasNext = true;
         this.$refs.bScroll && this.$refs.bScroll.scrollTo(0, 0);
       },
+      // TODO 下拉刷新
       onPullingUp() {
         this.page++;
         this.loadData();
@@ -185,10 +188,10 @@
       this.loadData();
     },
     activated() {
-      let reload = sessionStorage.getItem(RELOAD_SUBMIT);
+      let reload = this.$route.meta.reload;
       if (reload) {
         this.loadData();
-        sessionStorage.removeItem(RELOAD_SUBMIT);
+        this.$route.meta.reload = false;
       }
     }
   };

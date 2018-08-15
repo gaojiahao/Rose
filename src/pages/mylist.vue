@@ -1,396 +1,112 @@
 <template>
   <div class="pages">
     <div class="m_top">
-      <img class="user_img" :src="headerInfo.avatar">
+      <img class="user_img" :src="avatar">
       <div class="user_part">
         <div class="user_name_part">
-          <span class="user_name" v-if="userName!=''">{{userName}}</span>
-          <span class="user_level" v-if="userRole!=''">{{userRole}}</span>
+          <span class="user_name" v-if="userInfo.nickname">{{userInfo.nickname}}</span>
+          <span class="user_level" v-if="userInfo.position">{{userInfo.position}}</span>
         </div>
         <div class="user_info_part">
-          <span class="user_bank" v-if="userBank!=''">{{userBank}}</span>
-          <span class="user_dp" v-if="userDept!=''">{{userDept}}</span>
+          <span class="user_bank" v-if="userInfo.homeBank">{{userInfo.homeBank}}</span>
+          <span class="user_dp" v-if="userInfo.groupName">{{userInfo.groupName}}</span>
         </div>
       </div>
     </div>
     <tab bar-active-color="#5077AA" active-color="#5077AA" :line-width=1 class="tabSelect">
-      <tab-item :selected="whichIndex==0" @on-item-click="selStatus">待处理</tab-item>
-      <!-- <tab-item :selected="whichIndex==1" @on-item-click="selStatus">进行中</tab-item> -->
-      <tab-item :selected="whichIndex==1" @on-item-click="selStatus">已完成</tab-item>
+      <tab-item :selected="index === activeTab" v-for="(item, index) in tabList" @on-item-click="selStatus"
+                :key="index">{{item.name}}
+      </tab-item>
     </tab>
-    <div class="m_list" style="height:0;">
-      <div class="wrapper" ref="wrapper">
-        <div class="content">
-          <!-- 待处理 -->
-          <div v-if="whichIndex === 0">
-            <div class="each_list" v-for="(val,idx) in TobedoneList" :key="idx" @click="goDetail(val)">
-              <div class="e_top">
-                <span class="e_status" :class="{wait_c:whichIndex===0}">待处理</span><span
-                class="e_name">{{val.TITLE}}</span>
-              </div>
-              <div class="e_main">
-                                <span class="e_code">
-                                    {{val.businessKey}}
-                                    <span class="e_crtname">{{val.crtName}}</span>
-                                </span>
-                <span class="e_time" v-html="val.crtTime?val.crtTime.split(' ')[0]:''"></span>
-              </div>
-            </div>
-            <div class="spinner_container" v-if="TobedoneLoad">
-              <loading :show="true"></loading>
-            </div>
-            <div class="dbnothing" v-if="dbnothing">
-              <load-more tip="正在加载"></load-more>
-            </div>
-            <div class="dbnothing" v-if="!dbnothing&&dbnothingMore">
-              <load-more :show-loading="false" tip="没有更多了" background-color="#fbf9fe"></load-more>
-            </div>
+    <div class="m_list">
+      <r-scroll class="wrapper" :options="scrollOptions" :has-next="hasNext"
+                :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
+        <div class="each_list" v-for="(item,idx) in listData" :key="idx" @click="goDetail(item)">
+          <div class="e_top">
+              <span class="e_status"
+                    :class="item.statusText === '进行中' ? 'ing_c' : 'done_c'">{{item.statusText}}</span><span
+            class="e_name">{{item.title}}</span>
           </div>
-          <!-- 进行中 -->
-          <!-- <div v-if="whichIndex === 1">
-            <div class="each_list" v-for="(val,idx) in underWayList" :key="idx" @click="goDetail(val)">
-              <div class="e_top">
-                <span class="e_status" :class="{ing_c:whichIndex===1}">进行中</span><span
-                class="e_name">{{val.title}}</span>
-              </div>
-              <div class="e_main">
-                                <span class="e_code">
-                                    {{val.transId}}
-                                    <span class="e_crtname">{{val.creatorName}}</span>
-                                </span>
-                <span class="e_time" v-html="val.crtTime?val.crtTime.split(' ')[0]:''"></span>
-              </div>
-            </div>
-            <div class="spinner_container" v-if="underWayLoad">
-              <loading :show="true"></loading>
-            </div>
-            <div class="underWaynothing" v-if="underWaynothing">
-              <load-more tip="正在加载"></load-more>
-            </div>
-            <div class="underWaynothing" v-if="!underWaynothing&&underWayMore">
-              <load-more :show-loading="false" tip="没有更多了" background-color="#fbf9fe"></load-more>
-            </div>
-          </div> -->
-          <!-- 已完成 -->
-          <div v-if="whichIndex === 1">
-            <div class="each_list" v-for="(val,idx) in overList" :key="idx" @click="goDetail(val)">
-              <div class="e_top">
-                <span class="e_status" :class="{done_c:whichIndex===1}">已完成</span><span
-                class="e_name">{{val.title}}</span>
-              </div>
-              <div class="e_main">
-                                <span class="e_code">
-                                    {{val.transId}}
-                                    <span class="e_crtname">{{val.creatorName}}</span>
-                                </span>
-                <span class="e_time" v-html="val.crtTime?val.crtTime.split(' ')[0]:''"></span>
-              </div>
-            </div>
-            <div class="spinner_container" v-if="overLoad">
-              <loading :show="true"></loading>
-            </div>
-            <div class="overnothing" v-if="overnothing">
-              <load-more tip="正在加载"></load-more>
-            </div>
-            <div class="overnothing" v-if="!overnothing&&overMore">
-              <load-more :show-loading="false" tip="没有更多了" background-color="#fbf9fe"></load-more>
-            </div>
+          <div class="e_main">
+              <span class="e_code">
+                {{item.transCode}}
+                <span class="e_crtname">{{item.starterName}}</span></span>
+            <span class="e_time">{{item.startTime | dateFormat('YYYY-MM-DD')}}</span>
           </div>
         </div>
-      </div>
+      </r-scroll>
     </div>
   </div>
 </template>
 
 <script>
-  import {Tab, TabItem, LoadMore} from "vux";
+  import {Tab, TabItem, dateFormat,} from "vux";
   import mylistService from "../service/mylistService.js";
   import createService from "./../service/createService.js";
-  import Bscroll from "better-scroll";
-  import Loading from "./components/loading";
+  import RScroll from './components/RScroll'
 
   export default {
     components: {
       Tab,
       TabItem,
-      LoadMore,
-      Loading
+      RScroll,
     },
     data() {
       return {
-        whichIndex: 0,
-        headerInfo: "",
-        TobedoneList: [],
-        TobedoneLoad: true,
-        // underWayList: [],
-        // underWayLoad: true,
-        overList: [],
-        overLoad: true,
-        ch: 0,
-        dbpageNo: 0,
-        //underwaypageNo: 0,
-        overpageNo: 0,
-        dbnothing: false,
-        //underWaynothing: false,
-        overnothing: false,
-        dbnothingMore: false,
-        //underWayMore: false,
-        overMore: false,
-        userName: "",
-        userRole: "",
-        userBank: "",
-        userDept: "",
-        currentUser: {},
-        startY: 0,
-        scrollEndY: 0,
-        maxpage: 0
+        avatar: '',
+        listData: [], // 数据列表
+        page: 1, // 当前页数
+        limit: 10, // 每页条数
+        hasNext: true, // 是否有下一页
+        tabList: [
+          {
+            name: '待处理',
+            request: 'getTasksListData'
+          }, {
+            name: '已完成',
+            request: 'getCompletedListDataByStatus'
+          }
+        ], // tab列表
+        activeTab: 0, // 选中的tab
+        userInfo: {}, // 用户信息
+        scrollOptions: { // 滚动配置
+          click: true,
+          pullUpLoad: true,
+        }
       };
+    },
+    watch: {
+      $route: {
+        handler(to, from) {
+          if (to.name === 'Home') {
+            this.activeTab = 0;
+            this.resetCondition();
+            from.meta.reload = true;
+          }
+        }
+      }
+    },
+    filters: {
+      dateFormat,
     },
     methods: {
       //获取当前用户
       getUser() {
-        createService.getUser().then(res => {
-          createService.getCurrentUser(res.nickname).then(e => {
-            let user = e.tableContent[0];
-            this.currentUser = user
-            //用户姓名
-            this.userName = user.nickname;
-            //用户级别
-            if (user.role) {
-              if (user.role.indexOf(",") == -1) {
-                this.userRole = user.role;
-              } else {
-                this.userRole = user.role.split(",")[0];
-              }
-            }
-            //用户银行
-            if (user.HOME_BANK) {
-              if (user.HOME_BANK.indexOf(",") == -1) {
-                this.userBank = user.HOME_BANK;
-              } else {
-                this.userBank = user.HOME_BANK.split(",")[0];
-              }
-            }
-            //用户部门
-            if (user.dept) {
-              if (user.dept.indexOf(",") == -1) {
-                this.userDept = user.dept;
-              } else {
-                this.userDept = user.dept.split(",")[0];
-              }
-            }
-          });
-        }).catch(e => {
-          this.showToast(e.message);
-        });
-      },
-      //获取待办
-      Tobedone(e) {
-        let data = {
-          entityId: 20000,
-          _dc: Date.parse(new Date()),
-          para1: "",
-          start: this.dbpageNo * 11,
-          page: ++this.dbpageNo,
-          limit: 11
-        };
-        mylistService.getTasksListData(data).then(res => {
-          this.maxpage = Math.ceil(res.dataCount / 11);
-          if (e == 0) {
-            this.TobedoneList = [];
-          }
-          if (res.tableContent.length == 0) {
-            this.TobedoneLoad = false;
-            this.dbnothingMore = true;
-            this.dbnothing = false;
-            this.scroll.closePullUp();
-            return;
-          } else {
-            for (let i = 0; i < res.tableContent.length; i++) {
-              this.TobedoneList.push(res.tableContent[i]);
-            }
-            this.TobedoneLoad = false;
-          }
-          this.$nextTick(() => {
-            this.scroll.refresh();
-          });
-          this.scroll.finishPullUp();
-        }).catch(e => {
-          this.showToast(e.message);
-        });
-      },
-      //获取进行中
-      // underWay(e) {
-      //   let data = {
-      //     entityId: 20000,
-      //     _dc: Date.parse(new Date()),
-      //     status: 2,
-      //     start: this.underwaypageNo * 11,
-      //     page: ++this.underwaypageNo,
-      //     limit: 11
-      //   };
-      //   mylistService.getCompletedListDataByStatus(data).then(res => {
-      //     this.maxpage = Math.ceil(res.dataCount / 11);
-      //     if (e == 1) {
-      //       this.underWayList = [];
-      //     }
-      //     if (res.tableContent.length == 0) {
-      //       this.underWayLoad = false;
-      //       this.underWayMore = true;
-      //       this.underWaynothing = false;
-      //       this.scroll.closePullUp();
-      //       return;
-      //     } else {
-      //       for (let i = 0; i < res.tableContent.length; i++) {
-      //         this.underWayList.push(res.tableContent[i]);
-      //       }
-      //       this.underWayLoad = false;
-      //     }
-      //     this.$nextTick(() => {
-      //       this.scroll.refresh();
-      //     });
-      //     this.scroll.finishPullUp();
-      //   }).catch(e => {
-      //     this.showToast(e.message);
-      //   });
-      // },
-      //获取已完成
-      over(e) {
-        let data = {
-          entityId: 20000,
-          _dc: Date.parse(new Date()),
-          para1: '',
-          start: this.overpageNo * 11,
-          page: ++this.overpageNo,
-          limit: 11
-        };
-        mylistService.getCompletedListDataByStatus(data).then(res => {
-          this.maxpage = Math.ceil(res.dataCount / 11);
-          if (e == 1) {
-            this.overList = [];
-          }
-          if (res.tableContent.length == 0) {
-            this.overLoad = false;
-            this.overMore = true;
-            this.overnothing = false;
-            this.scroll.closePullUp();
-            return;
-          } else {
-            for (let i = 0; i < res.tableContent.length; i++) {
-              this.overList.push(res.tableContent[i]);
-            }
-            this.overLoad = false;
-          }
-          this.$nextTick(function () {
-            this.scroll.refresh();
-          });
-          this.scroll.finishPullUp();
+        return createService.getBaseInfoData().then((data = {}) => {
+          this.userInfo = data;
         }).catch(e => {
           this.showToast(e.message);
         });
       },
       //tab切换
       selStatus(val) {
-        this.whichIndex = val;
-        this.dbpageNo = 0;
-        //this.underwaypageNo = 0;
-        this.overpageNo = 0;
-        this.dbnothingMore = false;
-        //this.underWayMore = false;
-        this.overMore = false;
-        this.scrollEndY = 0;
-        sessionStorage.setItem("MYLIST_TAB", val);
-        if (val == 0) {
-          this.TobedoneList = [];
-          this.TobedoneLoad = true;
-          this.Tobedone(0);
-        }
-        // else if (val == 1) {
-        //   this.underWayList = [];
-        //   this.underWayLoad = true;
-        //   this.underWay(1);
-        // }
-        else if (val == 1) {
-          this.overList = [];
-          this.overLoad = true;
-          this.over(1);
-        }
-      },
-      //滚动加载启动
-      scrollOn() {
-        this.$nextTick(() => {
-          let tabH = document.querySelector(".tabSelect").offsetHeight;
-          let topH = document.querySelector(".m_top").offsetHeight;
-          let ch = window.innerHeight - tabH - topH - 20;
-          document.querySelector(".m_list").style.height = ch + "px";
-          this.scroll = new Bscroll(this.$refs.wrapper, {
-            click: true,
-            startY: this.startY,
-            scrollEndY:this.scrollEndY
-          });
-          this.scroll.openPullUp();
-          this.scroll.on("pullingUp", e => {
-            if (this.whichIndex == 0) {
-              this.dbnothing = true;
-              this.Tobedone();
-            }
-            // else if (this.whichIndex == 1) {
-            //   this.underWaynothing = true;
-            //   this.underWay();
-            // }
-            else if (this.whichIndex == 1) {
-              this.overnothing = true;
-              this.over();
-            }
-          });
-          this.scroll.on("scrollEnd", e => {
-            console.log(e)
-            this.scrollEndY = e.y;
-          });
-        });
+        this.activeTab = val;
+        this.resetCondition();
+        this.loadData();
       },
       // TODO 查看详情
       goDetail(item) {
-        if (this.scrollEndY !== "") {
-          let jsonData = {};
-          if (this.whichIndex == 0) {
-            jsonData = {
-              scrollEndY: this.scrollEndY,
-              idx: this.whichIndex,
-              pageNo: this.dbpageNo > this.maxpage ? this.maxpage : this.dbpageNo,
-              list: this.TobedoneList
-            };
-          }
-          // else if (this.whichIndex == 1) {
-          //   jsonData = {
-          //     scrollEndY: this.scrollEndY,
-          //     idx: this.whichIndex,
-          //     pageNo: this.underwaypageNo > this.maxpage ? this.maxpage : this.underwaypageNo,
-          //     list: this.underWayList
-          //   };
-          // }
-          else if (this.whichIndex == 1) {
-            jsonData = {
-              scrollEndY: this.scrollEndY,
-              idx: this.whichIndex,
-              pageNo: this.overpageNo > this.maxpage ? this.maxpage : this.overpageNo,
-              list: this.overList
-            };
-          }
-          sessionStorage.setItem("MYLIST_LIST", JSON.stringify(jsonData));
-        }
-
-        let {
-          listId,
-          formKey,
-          businessKey,
-          taskId,
-          transId,
-          assignee,
-          assigneeId,
-          creator,
-          crtID,
-        } = item;
+        let {listId, formKey, businessKey, taskId, transId, assignee, assigneeId, creator, crtID,} = item;
         let isMyTask = '0'; // 是否为我提交
         let canSubmit = '0'; // 是否允许审批
         let map = {
@@ -405,21 +121,15 @@
           "1034f15e-3f90-4e9c-a401-0955db09e179": "/assetsDetail",
         };
         // 待处理页签才允许审批
-        if (!this.whichIndex) {
+        if (!this.activeTab) {
           map["a9238c91-36f3-4b09-9705-9d50870b3c46"] = "/spread";
           map["d189cc14-3a77-4e81-a220-55c771a2bdff"] = "/meeting";
           map["e59dcb25-3a14-44b7-b619-433c63d2327b"] = "/house";
           map["1ab51ee6-2836-4728-b0a5-9fa5c8902c31"] = "/assets";
           if (assignee) {
-            canSubmit = `${assignee}` === `${this.currentUser.userId}` ? '1' : '0';
+            canSubmit = `${assignee}` === `${this.userInfo.userId}` ? '1' : '0';
           }
-          /*if (assigneeId) {
-            canSubmit = `${assigneeId}` === `${this.currentUser.userId}` ? '1' : '0';
-          }*/
-          isMyTask = `${crtID}` === `${this.currentUser.userId}` ? '1' : '0';
-        }
-        if (this.whichIndex === 1) {
-          isMyTask = `${creator}` === `${this.currentUser.userId}` ? '1' : '0';
+          isMyTask = `${crtID}` === `${this.userInfo.userId}` ? '1' : '0';
         }
         this.$router.push({
           path: map[formKey],
@@ -435,19 +145,44 @@
       },
       // TODO 加载数据
       loadData() {
-        switch (this.whichIndex) {
-          case 0:
-            this.Tobedone();
-            break;
-          // case 1:
-          //   this.underWay();
-          //   break;
-          case 1:
-            this.over();
-            break;
-          default:
-            break;
-        }
+        let method = this.tabList[this.activeTab].request;
+        return mylistService[method]({
+          entityId: 20000,
+          _dc: Date.now(),
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          limit: this.limit,
+        }).then(({dataCount = 0, tableContent = []}) => {
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          tableContent = tableContent.map(item => {
+            return {
+              ...item,
+              title: item.title || item.TITLE,
+              statusText: item.status || '已完成',
+              transCode: item.businessKey || item.transId,
+              starterName: item.crtName || item.creatorName,
+              startTime: item.crtTime
+            }
+          });
+          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+        }).catch(e => {
+          this.showToast(e.message);
+        })
+      },
+      // TODO 重置列表条件
+      resetCondition() {
+        this.listData = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.$refs.bScroll && this.$refs.bScroll.scrollTo(0, 0);
+      },
+      // TODO 上拉加载
+      onPullingUp() {
+        this.page++;
+        this.loadData();
       },
       // TODO 显示错误提示
       showToast(test = "") {
@@ -463,54 +198,18 @@
     },
     created() {
       //获取顶部头像名字
-      this.headerInfo = JSON.parse(localStorage.getItem("ROSE_LOGIN_TOKEN"));
-      if (sessionStorage.getItem("MYLIST_TAB")) {
-        this.whichIndex = Number(sessionStorage.getItem("MYLIST_TAB"));
-      }
-      //缓存下拉位置
-      if (sessionStorage.getItem("MYLIST_LIST")) {
-        let MYLIST_LIST = JSON.parse(sessionStorage.getItem("MYLIST_LIST"));
-        if (MYLIST_LIST.idx == 0) {
-          this.dbpageNo = MYLIST_LIST.pageNo;
-          this.TobedoneList = MYLIST_LIST.list;
-          this.TobedoneLoad = false;
-        }
-        // else if (MYLIST_LIST.idx == 1) {
-        //   this.underwaypageNo = MYLIST_LIST.pageNo;
-        //   this.underWayList = MYLIST_LIST.list;
-        //   this.underWayLoad = false;
-        // }
-        else if (MYLIST_LIST.idx == 1) {
-          this.overpageNo = MYLIST_LIST.pageNo;
-          this.overList = MYLIST_LIST.list;
-          this.overLoad = false;
-        }
-        this.startY = MYLIST_LIST.scrollEndY;
-        this.scrollEndY = MYLIST_LIST.scrollEndY;
-        sessionStorage.removeItem("MYLIST_LIST");
-        // 审批或者提交成功后重新请求列表
-        if (this.$route.meta.reload) {
-          this.dbpageNo = 0;
-          //this.underwaypageNo = 0;
-          this.overpageNo = 0;
-          this.TobedoneList = [];
-          //this.underWayList = [];
-          this.overList = [];
-          this.TobedoneLoad = true;
-          //this.underWayLoad = true;
-          this.overLoad = true;
-          this.loadData();
-        }
-        this.getUser();
-        this.scrollOn();
-      } else {
-        this.getUser();
-        this.scrollOn();
-        this.loadData();
-      }
-
+      let {avatar = ''} = JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN') || '{}');
+      //获取顶部头像图片
+      this.avatar = avatar;
+      this.getUser();
+      this.loadData();
     },
-    mounted() {
+    activated() {
+      let reload = this.$route.meta.reload;
+      if (reload) {
+        this.loadData();
+        this.$route.meta.reload = false;
+      }
     }
   };
 </script>
@@ -555,10 +254,10 @@
 
   .m_list {
     width: 100%;
+    height: calc(100% - 144px);
     .each_list {
       width: 90%;
       margin: 20px auto;
-      margin-top: 0;
       padding: 4px 10px;
       box-sizing: border-box;
       box-shadow: 0 2px 10px #e8e8e8;
@@ -639,7 +338,4 @@
   .overnothing {
     text-align: center;
   }
-  .content>div{
-      padding-top: 20px;
-    }
 </style>

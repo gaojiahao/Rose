@@ -25,7 +25,7 @@ export default new Router({
     {path: '/meeting', name: 'Meeting', component: Meeting, meta: {title: ''}},
     {path: '/house', name: 'House', component: House, meta: {title: ''}},
     {path: '/assets', name: 'Assets', component: Assets, meta: {title: ''}},
-    {path: '/mylist', name: 'Mylist', component: Mylist, meta: {title: '我的提交'}},
+    {path: '/mylist', name: 'Mylist', component: Mylist, meta: {title: '查看我的', keepAlive: true}},
     {path: '/flow', name: 'Flow', component: Flow, meta: {title: ''}},
     {path: '/spreadDetail', name: 'SpreadDetail', component: SpreadDetail, meta: {title: ''}},
     {path: '/meetingDetail', name: 'MeetingDetail', component: MeetingDetail, meta: {title: ''}},
