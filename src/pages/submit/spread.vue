@@ -86,6 +86,7 @@ export default {
     return {
       baseInfo: "",
       formData: true,
+      formDataNew:'',
       xp_list: [
         {
           name: "", //项目名称

@@ -99,6 +99,7 @@ export default {
     return {
       baseInfo: "",
       formData: true,
+      formDataNew:'',
       assetsList: [
         {
           model: [["电脑", "桌子", "椅子"]], //资产型号
@@ -379,7 +380,6 @@ export default {
       this.assetsList[idx].status = true;
     },
     cacheData(dataSet) {
-      console.log(dataSet)
       let sessionArr = [];
       for (let i = 0; i < dataSet.length; i++) {
         sessionArr.push({
