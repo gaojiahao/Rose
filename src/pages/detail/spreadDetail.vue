@@ -177,65 +177,6 @@ export default {
         });
       });
     },
-    //审批弹窗
-    endToast(taskId, data) {
-      createService
-        .examineTask(taskId, data)
-        .then(res => {
-          if (res.success) {
-            this.$vux.toast.show({
-              text: res.message,
-              position: "middle",
-              type: "text",
-              onShow:()=> {
-                setTimeout(() => {
-                  this.$vux.toast.hide();
-                  this.$router.go(-1);
-                }, 800);
-              }
-            });
-          }
-        })
-        .catch(c => {
-          this.$vux.toast.show({
-            text: c.message,
-            position: "middle",
-            type: "text",
-            onShow:() => {
-              setTimeout(() => {
-                this.$vux.toast.hide();
-              }, 800);
-            }
-          });
-        });
-    },
-    //审批
-    end(num) {
-      this.showConfirm = true;
-      //拒绝
-      if (num == 0) {
-        this.result = 0;
-      } else if (num == 1) {
-        //同意
-        this.result = 1;
-      }
-    },
-    //确定
-    confirm(reason) {
-      let taskId = this.$route.query.taskId,
-        transCode = this.$route.query.transCode,
-        data = { result: this.result, transCode: transCode, comment: reason };
-      if (this.result === 0 && !reason) {
-        this.$vux.toast.show({
-          text: "拒绝理由不能为空",
-          type: "text",
-          position: "middle"
-        });
-        return;
-      } else {
-        this.endToast(taskId, data);
-      }
-    }
   },
   created() {
 

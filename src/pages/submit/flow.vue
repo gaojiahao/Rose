@@ -94,7 +94,7 @@
         // 校验数据
         this.opList.every(item => {
           if (!item.value) {
-            warn = `${item.name}不能为空`;
+            warn = `${item.title}不能为空`;
             return false
           }
           return true
