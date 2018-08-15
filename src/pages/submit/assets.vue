@@ -65,19 +65,6 @@
                 v-model="item.deptOn"
                 :disabled="item.buOn.length==0?true:false"
             ></popup-picker>
-            <!-- <popup-picker
-                title="核算归属省份"
-                :data="item.provlist"
-                v-model="item.provOn"
-                :disabled="item.deptOn.length==0?true:false"
-                @on-hide="getSelect(item.banklist,'N4',item.buOn[0],item.deptOn[0],item.provOn[0],3,index,$event)"
-            ></popup-picker>
-            <popup-picker
-                title="费用所属银行"
-                :data="item.banklist"
-                v-model="item.bankOn"
-                :disabled="item.provOn.length==0?true:false"
-            ></popup-picker> -->
         </group>
         <group title="要说点什么吗？" v-if="item.status">
             <x-textarea title="说明" v-model="item.explain" :max="100"></x-textarea>
@@ -112,6 +99,7 @@ export default {
     return {
       baseInfo: "",
       formData: true,
+      formDataNew:'',
       assetsList: [
         {
           model: [["电脑", "桌子", "椅子"]], //资产型号
@@ -169,15 +157,7 @@ export default {
       if (e === true) {
         if (num == "1") {
           this.assetsList[index].deptOn = [];
-          // this.assetsList[index].provOn = [];
-          // this.assetsList[index].bankOn = [];
         } 
-        // else if (num == "2") {
-        //   this.assetsList[index].provOn = [];
-        //   this.assetsList[index].bankOn = [];
-        // } else if (num == "3") {
-        //   this.assetsList[index].bankOn = [];
-        // }
       } else {
         return;
       }
@@ -245,26 +225,6 @@ export default {
       this.assetsList.pop();
     },
     goflow() {
-      // let jsonData = {
-      //   handlerName: this.baseInfo.nickname, //经办人
-      //   handlerAreaName: this.baseInfo.area, //所属区域
-      //   handlerUnitName: this.baseInfo.groupName, //经办部门
-      //   handlerRoleName: this.baseInfo.position, //经办角色
-      //   creatorName: this.baseInfo.nickname, //创建者
-      //   crtTime: Date.parse(new Date()), //创建时间
-      //   modifer: "", //修改者
-      //   modTime: "", //修改时间
-      //   handerId: this.baseInfo.userId, //经办人id
-      //   transType: "固定资产", //交易类型
-      //   handlerUnitId: this.baseInfo.groupNameID, //经办部门id
-      //   handlerRoleId: this.baseInfo.roleID, //经办角色id
-      //   cjz: this.baseInfo.userId, //创建者id
-      //   xgz: "", //修改者id
-      //   handlerArea: this.baseInfo.areaID, //所属区域id
-      //   order: {
-      //     dataSet: []
-      //   }
-      // };
       let formDataNew = {
           "listId": "e3937a5c-98d2-4799-a74c-759222fb4a6d",
           "referenceId": this.guid(),
@@ -296,14 +256,6 @@ export default {
           "baseinfo.fj": [],
           "transCode": "KFSCPCGRK"
         };
-      // if (this.formData != "") {
-      //   jsonData.biId = this.formData.biId;
-      //   jsonData.biReferenceId = this.formData.biReferenceId;
-      //   jsonData.transType = this.formData.transType;
-      //   jsonData.modTime = this.formData.modTime;
-      //   jsonData.modifer = this.formData.modifer;
-      //   jsonData.xgz = this.formData.xgz;
-      // }
       for (let i = 0; i < this.assetsList.length; i++) {
         let item = this.assetsList[i];
         if (item.modelOn.length == 0) {
@@ -333,33 +285,10 @@ export default {
         } else if (item.deptOn.length == 0) {
           this.layer("请选择部门", "cancel");
           return;
-        } 
-        // else if (item.provOn.length == 0) {
-        //   this.layer("请选择省份", "cancel");
-        //   return;
-        // } else if (item.bankOn.length == 0) {
-        //   this.layer("请选择银行", "cancel");
-        //   return;
-        // }
-        // jsonData.order.dataSet.push({
-        //   assetType: item.modelOn[0], //资产类型
-        //   assetModel: item.modSpec, //资产型号/规格
-        //   meteringUnit: item.unitOn[0], //计量单位
-        //   assetNumber: item.num, //数量（固定资产）
-        //   assetPrice: item.unitPrice, //单价
-        //   applyDepartment: item.applydept, //申请部门
-        //   useDepartment: item.usedept, //使用部门
-        //   assetCostTotal: Number(item.num) * Number(item.unitPrice), //费用合计
-        //   assetCostBU: item.buOn[0], //费用所属事业部
-        //   assetCostDepartment: item.deptOn[0], //费用所属部门
-        //   assetCheckProvince: item.provOn[0], //核算归属省份
-        //   assetCostBank: item.bankOn[0], //费用所属银行
-        //   comment: item.explain, //说明
-        //   fgCode: "fgwmiw" //组合字段组编码，固定值为fgwmiw
-        // });
+        }
         formDataNew.transDetailUncalc.push(
           {
-            "id": this.guid(),
+            "id": this.formDataNew && this.formDataNew!=''?this.formDataNew.transDetailUncalc[i].id:this.guid(),
             "inventoryType": {
               "text": item.modelOn[0],
               "selection": {
@@ -412,24 +341,18 @@ export default {
             "comment": item.explain
           }
         )
-        // if (this.formData != "") {
-        //   if (this.formData.order.dataSet[i]) {
-        //     jsonData.order.dataSet[i].uncalcID = this.formData.order.dataSet[
-        //       i
-        //     ].uncalcID;
-        //   } else {
-        //     jsonData.order.dataSet[i].uncalcID = "";
-        //   }
-        // }
       }
       if(this.formDataNew && this.formDataNew!=''){
+        for(let k in formDataNew){
+          if(k!='transDetailUncalc'){
+            formDataNew[k] = this.formDataNew[k]
+          }
+        }
         formDataNew.$review = this.formDataNew.review;
         formDataNew.$review2 = this.formDataNew.review2;
-        formDataNew.baseinfo = this.formDataNew.baseinfo;
         delete(formDataNew.review);
         delete(formDataNew.review2);
       }
-      console.log(formDataNew)
       sessionStorage.setItem(
         this.$route.query.list + "-FORMDATA",
         JSON.stringify(formDataNew)
@@ -457,7 +380,6 @@ export default {
       this.assetsList[idx].status = true;
     },
     cacheData(dataSet) {
-      console.log(dataSet)
       let sessionArr = [];
       for (let i = 0; i < dataSet.length; i++) {
         sessionArr.push({
@@ -474,10 +396,6 @@ export default {
           buOn: [dataSet[i].var3.value], //费用所属事业部选中
           deptlist: [], //费用所属部门
           deptOn: [dataSet[i].var4.value], //费用所属部门选中
-          // provlist: [], //核算归属省份
-          // provOn: [dataSet[i].assetCheckProvince], //核算归属省份选中
-          // banklist: [], //费用所属银行
-          // bankOn: [dataSet[i].assetCostBank], //费用所属银行选中
           explain: dataSet[i].comment, //说明
           status: true
         });
@@ -500,30 +418,6 @@ export default {
             true
           );
         }
-        // if (xp_item.provOn.length != 0) {
-        //   this.getSelect(
-        //     xp_item.provlist,
-        //     "N3",
-        //     xp_item.buOn[0],
-        //     xp_item.deptOn[0],
-        //     111,
-        //     0,
-        //     j,
-        //     true
-        //   );
-        // }
-        // if (xp_item.bankOn.length != 0) {
-        //   this.getSelect(
-        //     xp_item.banklist,
-        //     "N4",
-        //     xp_item.buOn[0],
-        //     xp_item.deptOn[0],
-        //     xp_item.provOn[0],
-        //     0,
-        //     j,
-        //     true
-        //   );
-        // }
       }
     }
   },
@@ -540,9 +434,6 @@ export default {
     //回显
     if (this.$route.query.formKey && this.$route.query.transCode) {
       createService.getJsonData(this.$route.query.transCode).then(res => {
-          // this.formData = res.formData;
-          // this.cacheData(res.formData.order.dataSet);
-          // this.listDefault();
           let json_data = JSON.parse(res.tableContent[0].json_data);
           this.formDataNew = json_data;
           this.cacheData(this.formDataNew.transDetailUncalc);

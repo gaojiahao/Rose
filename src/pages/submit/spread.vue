@@ -86,6 +86,7 @@ export default {
     return {
       baseInfo: "",
       formData: true,
+      formDataNew:'',
       xp_list: [
         {
           name: "", //项目名称
@@ -271,7 +272,7 @@ export default {
           return;
         } 
         formDataNew.transDetailUncalc.push({
-          "id": this.guid(),
+          "id": this.formDataNew && this.formDataNew!=''?this.formDataNew.transDetailUncalc[i].id:this.guid(),
           "var1": item.name,
           "var2": {
             "text": item.s_conduct[0],
@@ -323,11 +324,15 @@ export default {
         })
       }
       if(this.formDataNew && this.formDataNew!=''){
+        for(let k in formDataNew){
+          if(k!='transDetailUncalc'){
+            formDataNew[k] = this.formDataNew[k]
+          }
+        }
         formDataNew.$review = this.formDataNew.review;
         formDataNew.$review2 = this.formDataNew.review2;
-        formDataNew.baseinfo = this.formDataNew.baseinfo;
-        delete(this.formDataNew.review);
-        delete(this.formDataNew.review2);
+        delete(formDataNew.review);
+        delete(formDataNew.review2);
       }
       sessionStorage.setItem(
         this.$route.query.list + "-FORMDATA",
