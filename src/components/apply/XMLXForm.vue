@@ -32,6 +32,7 @@
                                 <x-textarea title="项目说明" :max="200"></x-textarea>
                                 <cell title="预算利润"></cell>
                                 <cell title="预算利润率"></cell>
+                                <x-textarea title="备注" :max="200"></x-textarea>
                             </group>
                         </div>
                         </div>
