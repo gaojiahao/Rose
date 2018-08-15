@@ -155,25 +155,29 @@ export default {
   mixins: [common],
   watch:{
     matterList(val){
-      let data = {
-        CGDD_DATA:{
-          matter : this.matterList,
-          dealer : this.dealerInfo
+      console.log(val.length);
+      if(val.length){
+        let data = {
+          CGDD_DATA:{
+            matter : this.matterList,
+            dealer : this.dealerInfo
+          }
+          
         }
-        
-      }
-      this.$emit('sel-data',data)    
+        this.$emit('sel-data',data)    
+      }      
     },
     dealerInfo(val){
-      let data = {
-        CGDD_DATA:{
-          matter : this.matterList,
-          dealer : this.dealerInfo
+      if(this.matterList.length){
+        let data = {
+          CGDD_DATA:{
+            matter : this.matterList,
+            dealer : this.dealerInfo
+          }
+          
         }
-        
+        this.$emit('sel-data',data)  
       }
-      this.$emit('sel-data',data)   
-
     }
   },
   methods:{

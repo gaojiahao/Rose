@@ -209,24 +209,29 @@
 
       },
       dealerInfo(val){
-        let data = {
-          CGRK_DATA:{
-            matter : this.listData,
-            dealer : this.dealerInfo,
-            warehouse : this.warehouse
+        if(this.listData.length){
+          let data = {
+            CGRK_DATA:{
+              matter : this.listData,
+              dealer : this.dealerInfo,
+              warehouse : this.warehouse
+            }
           }
+          this.$emit('sel-data',data)
         }
-        this.$emit('sel-data',data)
+        
       },
       warehouse(val){
-        let data = {
-          CGRK_DATA:{
-            matter : this.listData,
-            dealer : this.dealerInfo,
-            warehouse : this.warehouse
+        if(this.listData.length){
+          let data = {
+            CGRK_DATA:{
+              matter : this.listData,
+              dealer : this.dealerInfo,
+              warehouse : this.warehouse
+            }
           }
+          this.$emit('sel-data',data)
         }
-        this.$emit('sel-data',data)
 
       }
 

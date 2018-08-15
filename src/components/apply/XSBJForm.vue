@@ -183,24 +183,37 @@ import { resolve } from 'url';
       }
     },
     watch:{
-      matterList(val){
-        let data = {
-          XSBJ_DATA:{
-            matter : this.matterList,
-            dealer : this.dealerInfo,
+      matterList:{
+        handler(val){
+          let data;
+          for(let i=0;i<val.length;i++){
+            if(val[i].price){
+              data = {
+                XSBJ_DATA:{
+                  matter : this.matterList,
+                  dealer : this.dealerInfo,
+                }
+              }
+              break;
+            }
           }
-        }
-        this.$emit('sel-data',data)
+          if(data){
+            this.$emit('sel-data',data)
+          }
+        },
+        deep: true
       },
       dealerInfo(val){
-        let data = {
-          XSBJ_DATA:{
-            matter : this.matterList,
-            dealer : this.dealerInfo,
+        if(this.matterList.length){
+          let data = {
+            XSBJ_DATA:{
+              matter : this.matterList,
+              dealer : this.dealerInfo,
+            }
           }
+          this.$emit('sel-data',data)
         }
-        this.$emit('sel-data',data)
-
+        
       }
     },
     methods: {

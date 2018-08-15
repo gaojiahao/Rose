@@ -183,13 +183,15 @@
         this.$emit('sel-data',data)
       },
       dealerInfo(val){
-        let data = {
-          XSDD_DATA:{
-            matter : this.matterList,
-            dealer : this.dealerInfo
+        if(this.matterList.length){
+          let data = {
+            XSDD_DATA:{
+              matter : this.matterList,
+              dealer : this.dealerInfo
+            }
           }
-        }
-        this.$emit('sel-data',data)
+          this.$emit('sel-data',data)
+        }        
       }
     },
     methods: {
