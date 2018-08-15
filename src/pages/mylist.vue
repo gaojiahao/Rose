@@ -18,7 +18,7 @@
       <!-- <tab-item :selected="whichIndex==1" @on-item-click="selStatus">进行中</tab-item> -->
       <tab-item :selected="whichIndex==1" @on-item-click="selStatus">已完成</tab-item>
     </tab>
-    <div class="m_list" style="height:auto;">
+    <div class="m_list" style="height:0;">
       <div class="wrapper" ref="wrapper">
         <div class="content">
           <!-- 待处理 -->
@@ -325,7 +325,8 @@
           document.querySelector(".m_list").style.height = ch + "px";
           this.scroll = new Bscroll(this.$refs.wrapper, {
             click: true,
-            startY: this.startY
+            startY: this.startY,
+            scrollEndY:this.scrollEndY
           });
           this.scroll.openPullUp();
           this.scroll.on("pullingUp", e => {
@@ -343,6 +344,7 @@
             }
           });
           this.scroll.on("scrollEnd", e => {
+            console.log(e)
             this.scrollEndY = e.y;
           });
         });
@@ -556,8 +558,8 @@
     .each_list {
       width: 90%;
       margin: 20px auto;
+      margin-top: 0;
       padding: 4px 10px;
-      margin-bottom: 20px;
       box-sizing: border-box;
       box-shadow: 0 2px 10px #e8e8e8;
       border-radius: 4px;
@@ -637,4 +639,7 @@
   .overnothing {
     text-align: center;
   }
+  .content>div{
+      padding: 20px 0;
+    }
 </style>
