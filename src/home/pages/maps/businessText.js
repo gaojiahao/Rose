@@ -10,5 +10,8 @@ export default {
   FYBX : '费用报销',
   SJ :  '商机',
   KCPD : '库存盘点',
-  XMRW: '项目任务'
+  XMRW: '项目任务',
+  XMLX: '项目立项',
+  XMJH: '项目计划',
+
 }
