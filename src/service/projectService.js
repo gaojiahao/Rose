@@ -1,0 +1,102 @@
+import $axios from '../plugins/ajax';
+import {AlertModule} from 'vux'
+
+// TODO 错误处理回调
+let errorHandler = (e) => {
+  AlertModule.show({
+    content: e.message,
+  });
+  return Promise.reject(e)
+};
+
+// TODO 保存项目立项
+export let saveProjectApproval = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectApproval/save',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 修改项目立项
+export let updateProjectApproval = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectApproval/save',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 查看项目立项
+export let findProjectApproval = (transCode = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/projectApproval/findData',
+    data: {transCode}
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 保存项目计划
+export let saveProjectPlan = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectPlan/save',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 修改项目计划
+export let updateProjectPlan = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectPlan/update',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 查看项目计划
+export let findProjectPlan = (transCode = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/projectPlan/findData',
+    data: {transCode}
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 保存项目任务
+export let saveProjectTask = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectTask/save',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 修改项目任务
+export let updateProjectTask = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectTask/update',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 查看项目任务
+export let findProjectTask = (transCode = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/projectTask/findData',
+    data: {transCode}
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+export default {}
