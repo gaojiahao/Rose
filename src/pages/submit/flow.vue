@@ -183,12 +183,6 @@
       getBaseInfo() {
         return createService.getBaseInfoData().then((data = {}) => {
           let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
-          area = area.split(',')[0];
-          areaID = areaID.split(',')[0];
-          groupName = groupName.split(',')[0];
-          groupNameID = groupNameID.split(',')[0];
-          position = position.split(',')[0];
-          roleID = roleID.split(',')[0];
           this.currentUser = data;
           return createService.getCurrentUser(nickname).then(({tableContent = []}) => {
             let [handlerData = {}] = tableContent;

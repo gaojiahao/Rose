@@ -149,15 +149,22 @@ let createService = {
   getBaseInfoData() {
     return new Promise((resolve, reject) => {
       let currentUser = sessionStorage.getItem(USER_INFO);
+      // 处理当前用户数据，默认取第一个
+      let handleCurrentUser = (data = {}) => {
+        for (let [key, value] of Object.entries(data)) {
+          data[key] = value && value.split(',')[0];
+        }
+        return data
+      };
       if (currentUser) {
-        resolve(JSON.parse(currentUser));
+        resolve(handleCurrentUser(JSON.parse(currentUser)));
         return
       }
       $axios.ajax({
         url: '/H_roleplay-si/trans/getModelData?refresh=true&dsCode=getUserDetails',
       }).then((data = {}) => {
         sessionStorage.setItem(USER_INFO, JSON.stringify(data));
-        resolve(data);
+        resolve(handleCurrentUser(data));
       })
     });
   },
@@ -247,7 +254,7 @@ let createService = {
     });
   },
   // TODO 房屋立项申请获取省份列表
-  getProvinceForWarehouse(data = {}){
+  getProvinceForWarehouse(data = {}) {
     return $axios.ajax({
       url: '/H_roleplay-si/ds/getProvinceForWarehouse',
       data: {
