@@ -640,6 +640,6 @@
     text-align: center;
   }
   .content>div{
-      padding: 20px 0;
+      padding-top: 20px;
     }
 </style>
