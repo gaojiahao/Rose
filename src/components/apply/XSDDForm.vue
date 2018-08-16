@@ -53,7 +53,7 @@
                       <div class="mater_main">
                         <!-- 物料名称 -->
                         <div class="mater_name">
-                          <span class="whiNum">No.{{index + 1}}</span>
+                          <span class="whiNum">#{{index + 1}}</span>
                           {{item.inventoryName || item.inventoryName_transObjCode}}
                         </div>
                         <!-- 物料基本信息 -->
@@ -79,7 +79,7 @@
                         <!-- 物料数量和价格 -->
                         <div class='mater_other'>
                           <div class='mater_price'>
-                            ￥{{item.price}}
+                            <span class="symbol">￥</span>{{item.price}}
                           </div>
                           <div class='mater_num'>
                             <span class='handle' @click="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
