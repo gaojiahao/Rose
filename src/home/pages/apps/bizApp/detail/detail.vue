@@ -9,12 +9,14 @@
     </div>
     <!-- 页面进入加载动画-->
     <loadding-form :show='showLoadding'></loadding-form>
+    <submit-load :submit='submitLoadding'></submit-load>
   </div>
 
 </template>
 
 <script>
 import LoaddingForm from 'components/Loading'
+import SubmitLoad from 'components/submitLoading'
 import detailMap from './../../../maps/detail'
 import Bscroll from 'better-scroll'
 export default {
@@ -25,10 +27,12 @@ export default {
       transCode :'',
       submitSuccess : false,
       detailScroll : null,
+      submitLoadding :false
     }
   },
   components:{
-    LoaddingForm
+    LoaddingForm,
+    SubmitLoad
   },
   methods:{
     modifyRoute(val){
@@ -47,6 +51,9 @@ export default {
         }
       });
     }
+    this.$event.$on('close',(val)=>{
+      this.submitLoadding = val;
+    })
     // setTimeout(()=>{
     //   this.showLoadding = false
     // },1000)

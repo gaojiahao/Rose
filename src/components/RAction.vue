@@ -7,7 +7,7 @@
       <span class="agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
     </div>
      <!-- 操作时加载动画-->
-    <submit-load :submit='submitLoadding'></submit-load>
+    <!-- <submit-load :submit='submitLoadding'></submit-load> -->
   </div>
   
 </template>
@@ -98,7 +98,8 @@
       },
       // TODO 审批
       commitTask({result, value, successMsg, callback}) {
-        this.submitLoadding = true;
+        // this.submitLoadding = true;
+        this.$event.$emit('close',true)
         let submitData = {
           taskId: this.taskId,
           taskData: JSON.stringify({
@@ -108,7 +109,8 @@
           })
         };
         return commitTask(submitData).then(data => {
-          this.submitLoadding = false;
+          // this.submitLoadding = false;
+          this.$event.$emit('close',false)
           let {success = false, message = '提交失败'} = data;
           let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
           if (success) {

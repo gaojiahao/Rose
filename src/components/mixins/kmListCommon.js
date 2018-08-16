@@ -1,4 +1,4 @@
-import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, } from 'vux'
+import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, dateFormat } from 'vux'
 import { getListClassfiy,getView,getViewList} from 'service/kmService.js'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
@@ -108,6 +108,9 @@ export default {
       }).then(({data=[],total=0})=>{
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach(item=>{
+          if(item.calcTime){
+            item.calcTime = dateFormat (item.calcTime);
+          }
           item.status = false;
         })
         this.listData = this.page === 1 ? data : this.listData.concat(data);
