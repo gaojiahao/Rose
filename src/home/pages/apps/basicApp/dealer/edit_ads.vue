@@ -34,13 +34,14 @@
       <r-picker title="往来子类:" :data="AccountSmlType" value="dealer.dealerSubclass"
                 v-model="dealer.dealerSubclass"></r-picker>
       <!-- <x-address title="省市区" v-model="AccountAddress" :list="addressData"></x-address> -->
-      <div class='each_property vux-1px-b'>
-        <label></label>
+      <div class='each_property vux-1px-b' @click="showAddress = true">
+        <label>省市区:</label>
         <div class='picker'>
             <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
             <span class='iconfont icon-gengduo'></span>
         </div>
-        <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress'></x-address>
+        <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress'
+                   :show.sync="showAddress" v-show="false"></x-address>
       </div>
       <div class='each_property vux-1px-b'>
         <label>详细地址:</label>
@@ -126,10 +127,10 @@ export default {
         dealerStatus: '1', //往来状态
         comment: '',  //往来说明
         dealerPic : '',
-        
       },
       submitSuccess: false, // 是否提交成功
-      pickerStatus:true
+      pickerStatus:true,
+      showAddress: false,
     }
   },
   directives: {
@@ -434,7 +435,7 @@ export default {
         this.showLoading = false;
       })();
     }
-    else{      
+    else{
         this.getDealer().then(data => {
           this.showLoading = false;
           let [defaultSelect = {}] = data;
@@ -444,7 +445,7 @@ export default {
           }else{
             this.dealer.dealerLabelName = defaultSelect.name;
           }
-        });     
+        });
       //获取当前用户信息
       getBaseInfoData().then(data => {
         this.baseinfo = {
@@ -469,7 +470,7 @@ export default {
 <style lang="scss">
   .content {
     height: 90%;
-    overflow-y: auto; 
+    overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: auto;
     input {
