@@ -35,14 +35,17 @@
   export default {
     name: "RPicker",
     props: {
+      // 标题
       title: {
         type: String,
         default: ''
       },
+      // 默认值
       value: {
         type: String,
         default: ''
       },
+      // picker列表
       data: {
         type: Array,
         default() {
@@ -111,7 +114,7 @@
       },
       //picker显示
       showStatus() {
-        if (!this.pickerStatus) {
+        if (!this.pickerStatus || this.disabled) {
           return;
         }
         this.show = !this.show;

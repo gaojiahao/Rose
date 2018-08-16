@@ -2,17 +2,29 @@
   <div class="pages xmrw-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <!-- 项目名称-->
+        <!-- 项目-->
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
                   v-model="projectTask.projectName"></r-picker>
-
-        <!-- 有效期至 -->
+        <!-- 任务 -->
+        <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
+                  @on-change="taskChange" v-model="projectTask.taskName"></r-picker>
+        <!-- 任务详情 -->
+        <div class="or_ads mg_auto box_sd" v-show="projectTask.taskName">
+          <p class="title">任务详情</p>
+          <group>
+            <cell title="任务类型" :value="projectTask.taskType"></cell>
+            <cell title="任务说明" :value="projectTask.comment"></cell>
+            <cell title="截止日期" :value="projectTask.deadline"></cell>
+            <cell title="计划工时" :value="projectTask.planTime"></cell>
+          </group>
+        </div>
+        <!-- 实际情况 -->
         <div class="or_ads mg_auto box_sd">
           <p class="title">实际情况</p>
-          <!--<div class="mode" @click="clickDateSelect">{{'请选择有效期'}}</div>-->
           <group>
-            <datetime title="实际完成日期"></datetime>
-            <x-input type="number" title="实际工时" text-align="right" placeholder="请填写实际工时"></x-input>
+            <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime"></datetime>
+            <x-input type="number" title="实际工时" text-align="right" placeholder="请填写实际工时"
+                     v-model="projectTask.actualTime"></x-input>
           </group>
         </div>
       </div>
@@ -25,8 +37,7 @@
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, Datetime,} from 'vux'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, dateFormat,} from 'vux'
   import ApplyCommon from './../mixins/applyCommon'
   import RPicker from 'components/RPicker'
   import {getProjectPlanProjectName, saveProjectTask, updateProjectTask, findProjectTask} from 'service/projectService'
@@ -46,12 +57,28 @@
     },
     data() {
       return {
-        projectList: [],
+        projectList: [], // 项目列表
+        taskList: [
+          {
+            name: '任务1',
+            value: '任务1',
+            taskType: '任务类型1', // 任务类型
+            deadline: '2018-08-18', // 截止时间
+            planTime: 16, // 计划工时
+            comment: '任务说明1', // 任务说明
+          },
+          {
+            name: '任务2',
+            value: '任务2',
+            taskType: '任务类型2', // 任务类型
+            deadline: '2018-08-19', // 截止时间
+            planTime: 24, // 计划工时
+            comment: '任务说明2', // 任务说明
+          },
+        ], // 任务列表
         formData: {},
         jsonData: {
-          bomType: {
-            bomType: ''
-          },
+          baseinfo: {},
           comment: {
             biComment: ''
           },
@@ -59,10 +86,13 @@
         projectTask: {
           projectName: '', // 项目名称
           taskName: '', // 任务名称
+          taskType: '', // 任务类型
+          comment: '', // 任务说明,
+          deadline: '', // 截止时间
+          planTime: '', // 计划工时
           actualCompleteTime: '', // 实际完成日期
           actualTime: '', // 实际工时
-          comment: '' // 备注
-        }
+        },
       }
     },
     methods: {
@@ -72,32 +102,24 @@
         let dataSet = [];
         let validateMap = [
           {
-            key: 'dealerInfo',
-            message: '往来信息'
+            key: 'projectName',
+            message: '项目'
+          }, {
+            key: 'taskName',
+            message: '任务'
+          }, {
+            key: 'actualCompleteTime',
+            message: '实际完成日期'
+          }, {
+            key: 'actualTime',
+            message: '实际工时'
           },
         ];
         validateMap.every(item => {
-          if (!this[item.key]) {
-            warn = `请选择${item.message}`;
+          if (!this.projectTask[item.key]) {
+            warn = `${item.message}不能为空`;
             return false
           }
-          return true
-        });
-        if (!warn && !this.matterList.length) {
-          warn = '请选择物料';
-        }
-        this.matterList.every(item => {
-          if (!item.price) {
-            warn = '请输入单价';
-            return false
-          }
-          dataSet.push({
-            inventoryName_transObjCode: item.inventoryName,
-            transObjCode: item.inventoryCode,
-            comment: item.comment || null,
-            priceType: item.priceType || null,
-            price: item.price
-          });
           return true
         });
         if (warn) {
@@ -110,27 +132,23 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            let operation = submitAndCalc;
+            this.jsonData.baseinfo = {
+              ...this.formData,
+              creator: this.formData.handler,
+              ...this.jsonData.baseinfo,
+              modifer: this.formData.handler,
+            };
+            let operation = saveProjectTask;
             let submitData = {
               listId: 'ee4ff0a1-c612-419d-afd7-471913d57a2a',
-              biComment: '',
-              formData: JSON.stringify({
-                ...this.formData,
-                creator: this.transCode ? this.formData.handler : '',
-                modifer: this.transCode ? this.formData.handler : '',
-                dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
-                dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
-                order: {
-                  dealerDebit: this.dealerInfo.dealerCode || '',
-                  drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
-                  drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
-                  dataSet
-                }
-              }),
+              formData: {
+                ...this.jsonData,
+                projectTask: this.projectTask,
+              },
             };
 
             if (this.transCode) {
-              operation = saveAndCommitTask
+              operation = updateProjectTask
             }
             console.log(submitData)
             this.saveData(operation, submitData);
@@ -147,6 +165,7 @@
           }
         })
       },
+      // TODO 请求项目列表
       getProjectList() {
         return getProjectPlanProjectName().then(({tableContent = []}) => {
           let tmp = [];
@@ -154,6 +173,28 @@
             item.projectName && tmp.push(item.projectName);
           });
           this.projectList = tmp;
+        })
+      },
+      // TODO 切换任务
+      taskChange(val) {
+        let [sel = {}] = this.taskList.filter(item => {
+          return item.value === val;
+        });
+        console.log(sel)
+        this.projectTask = {
+          ...this.projectTask,
+          ...sel,
+        }
+      },
+      // TODO 获取详情
+      getFormData() {
+        return findProjectTask(this.transCode).then(({formData = {}}) => {
+          let {projectTask} = formData;
+          this.jsonData = formData;
+          this.projectTask = {
+            ...projectTask,
+            actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
+          };
         })
       }
     },
