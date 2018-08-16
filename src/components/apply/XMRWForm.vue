@@ -24,7 +24,7 @@
           <group>
             <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime"></datetime>
             <x-input type="number" title="实际工时" text-align="right" placeholder="请填写实际工时"
-                     v-model="projectTask.actualTime"></x-input>
+                     v-model.number="projectTask.actualTime"></x-input>
           </group>
         </div>
       </div>

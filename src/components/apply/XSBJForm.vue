@@ -23,10 +23,10 @@
         </div>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
-                          v-model="drDealerPaymentTerm"></pop-single-select>
+                           v-model="drDealerPaymentTerm"></pop-single-select>
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
-                          v-model="formData.drDealerLogisticsTerms"></pop-single-select>
+                           v-model="formData.drDealerLogisticsTerms"></pop-single-select>
         <!-- 有效期至 -->
         <div class="or_ads mg_auto box_sd" @click="clickDateSelect">
           <p class="title">有效期至</p>
@@ -106,9 +106,10 @@
                 <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                            v-model.number="item.price"></x-input>
+                             v-model.number="item.price"></x-input>
                   </group>
-                  <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true" v-model="item.priceType"></r-picker>
+                  <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true"
+                            v-model="item.priceType"></r-picker>
                 </div>
               </div>
             </div>
@@ -117,31 +118,34 @@
           <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
           <!-- 往来popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                          @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
-                          ref="dealer"></pop-dealer-list>
+                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
+                           ref="dealer"></pop-dealer-list>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          :default-value="matterList" ref="matter"></pop-matter-list>
+                           :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">提交</div>
+    <div class='count_mode vux-1px-t'>
+      <div class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
+      <div class="count_btn" @click="save">提交</div>
     </div>
   </div>
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
+  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, dateFormat,} from 'vux'
   import PopMatterList from 'components/PopMatterList'
   import PopDealerList from 'components/PopDealerList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {getSOList} from 'service/detailService'
   import ApplyCommon from './../mixins/applyCommon'
   import PopSingleSelect from 'components/PopSingleSelect'
   import RPicker from 'components/RPicker'
   import InputBox from 'components/Xinput'
-import { resolve } from 'url';
+  import {resolve} from 'url';
+
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -175,45 +179,46 @@ import { resolve } from 'url';
         priceMap: {},
         showDealerPop: false,
         priceTypeList: ['渠道价', '零售价'],
-        inputOptions:{
-          title:'单价',
-          type : 'number',
-          placeholder : '请填写'
-        }
+        inputOptions: {
+          title: '单价',
+          type: 'number',
+          placeholder: '请填写'
+        },
+        actions: [],
       }
     },
-    watch:{
-      matterList:{
-        handler(val){
+    watch: {
+      matterList: {
+        handler(val) {
           let data;
-          for(let i=0;i<val.length;i++){
-            if(val[i].price){
+          for (let i = 0; i < val.length; i++) {
+            if (val[i].price) {
               data = {
-                XSBJ_DATA:{
-                  matter : this.matterList,
-                  dealer : this.dealerInfo,
+                XSBJ_DATA: {
+                  matter: this.matterList,
+                  dealer: this.dealerInfo,
                 }
               }
               break;
             }
           }
-          if(data){
-            this.$emit('sel-data',data)
+          if (data) {
+            this.$emit('sel-data', data)
           }
         },
         deep: true
       },
-      dealerInfo(val){
-        if(this.matterList.length){
+      dealerInfo(val) {
+        if (this.matterList.length) {
           let data = {
-            XSBJ_DATA:{
-              matter : this.matterList,
-              dealer : this.dealerInfo,
+            XSBJ_DATA: {
+              matter: this.matterList,
+              dealer: this.dealerInfo,
             }
           }
-          this.$emit('sel-data',data)
+          this.$emit('sel-data', data)
         }
-        
+
       }
     },
     methods: {
@@ -285,13 +290,17 @@ import { resolve } from 'url';
             warn = '请输入单价';
             return false
           }
-          dataSet.push({
+          let mItem = {
             inventoryName_transObjCode: item.inventoryName,
             transObjCode: item.inventoryCode,
             comment: item.comment || null,
             priceType: item.priceType || null,
             price: item.price
-          });
+          };
+          if (this.transCode) {
+            mItem.tdId = item.tdId || '';
+          }
+          dataSet.push(mItem);
           return true
         });
         if (warn) {
@@ -304,14 +313,32 @@ import { resolve } from 'url';
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            let operation = submitAndCalc;
+            let operation = saveAndStartWf;
+            let wfPara = {
+              PROC_1808_d30d481f4d69: {
+                businessKey: 'QUOT',
+                createdBy: this.formData.handler,
+              }
+            };
+            if (this.transCode) {
+              operation = saveAndCommitTask;
+              wfPara = {
+                businessKey: this.transCode,
+                createdBy: this.formData.creator,
+                transCode: this.transCode,
+                result: 3,
+                taskId: this.taskId,
+                comment: ''
+              };
+            }
             let submitData = {
               listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
               biComment: '',
+              biReferenceId: this.biReferenceId,
               formData: JSON.stringify({
+                creator: this.formData.handler,
                 ...this.formData,
-                creator: this.transCode ? this.formData.handler : '',
-                modifer: this.transCode ? this.formData.handler : '',
+                modifer: this.formData.handler,
                 dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
                 dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
                 order: {
@@ -321,11 +348,12 @@ import { resolve } from 'url';
                   dataSet
                 }
               }),
+              wfPara: JSON.stringify(wfPara),
             };
-
-            if (this.transCode) {
-              operation = saveAndCommitTask
+            if (!this.transCode) {
+              delete submitData.biReferenceId
             }
+
             console.log(submitData)
             this.saveData(operation, submitData);
           }
@@ -333,6 +361,60 @@ import { resolve } from 'url';
       },
       // TODO 获取详情
       getFormData() {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode: this.transCode
+        }).then(data => {
+          let {success = true, formData = {}} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          let matterList = [];
+          // 获取合计
+          let {order, dealerDebit} = formData;
+          let {dataSet = []} = order;
+          for (let item of dataSet) {
+            item = {
+              ...item,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.inventoryCode_transObjCode,
+              specification: item.specification_transObjCode,
+              processing: item.processing_transObjCode,
+              inventoryType: item.inventoryType_transObjCode,
+              inventorySubclass: item.inventorySubclass_transObjCode,
+              measureUnit: item.measureUnit_transObjCode,
+              inventoryColor: item.inventoryColor_transObjCode,
+              material: item.material_transObjCode,
+            };
+            matterList.push(item);
+          }
+          // 客户信息
+          this.dealerInfo = {
+            creatorName: formData.dealerDebitContactPersonName || '', // 客户名
+            dealerName: order.dealerName_dealerDebit || '', // 公司名
+            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+            dealerCode: order.dealerDebit || '', // 客户编码
+            dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+            province: order.province_dealerDebit || '', // 省份
+            city: order.city_dealerDebit || '', // 城市
+            county: order.county_dealerDebit || '', // 地区
+            address: order.address_dealerDebit || '', // 详细地址
+          };
+          this.formData = {
+            ...this.formData,
+            biComment: formData.biComment,
+            drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
+            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+          };
+          this.drDealerPaymentTerm = order.drDealerPaymentTerm;
+          this.biReferenceId = formData.biReferenceId;
+          this.matterList = matterList;
+        })
       },
       clickDateSelect() {
         this.$vux.datetime.show({
@@ -347,7 +429,7 @@ import { resolve } from 'url';
     },
     created() {
       let data = sessionStorage.getItem('XSBJ_DATA');
-      if(data){
+      if (data) {
         this.matterList = JSON.parse(data).matter;
         this.dealerInfo = JSON.parse(data).dealer;
       }
@@ -357,6 +439,7 @@ import { resolve } from 'url';
 
 <style lang="scss" scoped>
   @import './../scss/bizApply';
+
   .xsbj-apply-container {
     /deep/ .weui-cells {
       font-size: .14rem;

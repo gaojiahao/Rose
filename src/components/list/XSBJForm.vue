@@ -4,13 +4,13 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search='searchList'></searchIcon>
-        <!--<div class="filter_part">
+        <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>
-        </div>-->
+        </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -20,7 +20,7 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <!--<span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>-->
+              <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
@@ -70,15 +70,6 @@
     },
     mixins: [listCommon],
     methods: {
-      goDetail(transCode) {
-        let {code} = this.$route.params;
-        this.$router.push({
-          path: `/list/${code}/detail`,
-          query: {
-            transCode: transCode
-          }
-        })
-      },
     },
     created() {
     }

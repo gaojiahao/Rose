@@ -1,6 +1,9 @@
 <template>
-  <div class="detail_wrapper xsbj-detail-container"  >
+  <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
@@ -78,6 +81,8 @@
         </div>
       </div>
       <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -86,6 +91,7 @@
   import {dateFormat} from 'vux'
   import {getSOList,} from 'service/detailService'
   import workFlow from 'components/workFlow'
+  import RAction from 'components/RAction'
   import detailCommon from 'components/mixins/detailCommon'
 
   export default {
@@ -98,7 +104,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow,
+      workFlow, RAction,
     },
     methods: {
       //选择默认图片
@@ -129,8 +135,8 @@
           let {dataSet} = data.formData.order;
           for (let val of dataSet) {
             this.count += val.price * 100;
-            val.inventoryPic = val.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            val.inventoryPic = val.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
           this.count = this.count / 100;

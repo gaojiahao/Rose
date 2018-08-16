@@ -4,6 +4,13 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search="searchList"></searchIcon>
+        <!--<div class="filter_part">
+          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
+                      @on-item-click="tabClick(item, index)">{{item.name}}
+            </tab-item>
+          </tab>
+        </div>-->
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -11,7 +18,10 @@
         <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
           <!-- 订单 时期 -->
           <div class="duty_top">
-            <p class="duty_code">{{item.transCode}}</p>
+            <p class="duty_code">
+              {{item.transCode}}
+              <!--<span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>-->
+            </p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
           <!-- 金额合计 -->
