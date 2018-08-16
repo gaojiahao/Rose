@@ -12,7 +12,7 @@
         <!-- 基础应用部分 -->
         <basic-app :BSarray='BSarray' :goBasic='goBasic'></basic-app>
         <!-- 业务应用部分 -->
-        <bus-app :BUSarray='BUSarray' :goList='goList'></bus-app>
+        <bus-app :BUSarray='BUSarray' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
 
       </div>   
     </div>
@@ -52,8 +52,11 @@ export default {
     goList(item){
       this.$router.push({ path:`/list/${item}`})
     },
-    getDefaultIcon(){
+    getDefaultIcon(app){
       let url = require('assets/defaultApp.png');
+      if(app){
+        app.icon = url;
+      }
       return url;
     }
   },
