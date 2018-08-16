@@ -136,8 +136,8 @@
     },
     data() {
       return {
-        defaulImg: require('assets/avatar.png'),   // 默认图片1
-        defaulImg2: require('assets/io.jpg'),       // 默认图片2
+        defaulImg: require('assets/ava03.png'),   // 默认图片1
+        defaulImg2: require('assets/ava04.png'),       // 默认图片2
         simpleWL: [],
         popupShow: false,
       }

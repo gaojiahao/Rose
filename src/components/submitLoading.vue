@@ -31,23 +31,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-
-    // position: fixed;
-    // display: table;
-    // z-index: 5000;
-    // width: 80%;
-    // max-width: 300px;
-    // top: 0;
-    // right: 0;
-    // bottom: 0;
-    // left: 0;
-    // margin: auto;
-    // background-color: #FFFFFF;
-    // text-align: center;
-    // border-radius: 3px;
-    // overflow: hidden;
   }
-
   .loading-container {
     top: 0;
     left: 0;
