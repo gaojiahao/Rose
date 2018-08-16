@@ -422,13 +422,6 @@ export default {
   },
   created() {
     this.showLoading = true;
-    let data = sessionStorage.getItem('WL_DATA');
-    if(data){
-      this.dealer = JSON.parse(data);
-      this.MatPic = this.dealer.dealerPic;
-      this.picShow = true;
-      this.showLoading = false;
-    }
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
@@ -441,8 +434,7 @@ export default {
         this.showLoading = false;
       })();
     }
-    else{
-      if(!data){
+    else{      
         this.getDealer().then(data => {
           this.showLoading = false;
           let [defaultSelect = {}] = data;
@@ -452,9 +444,7 @@ export default {
           }else{
             this.dealer.dealerLabelName = defaultSelect.name;
           }
-        });
-
-      }
+        });     
       //获取当前用户信息
       getBaseInfoData().then(data => {
         this.baseinfo = {
@@ -469,41 +459,9 @@ export default {
     let {path} = to;
     // 新建物料，修改列表页的meta值
     //console.log(this.submitSuccess);
-    if(path === '/adress'){
-      if(this.submitSuccess){
-        to.meta.reload = true;
-        return
-      }
-      let newDealer = JSON.parse(JSON.stringify(this.dealer));
-      delete newDealer.dealerLabelName;
-      delete newDealer.dealerStatus;
-      let arr = Object.values(newDealer);
-      let isHasVal = false;
-      for(let i=0;i<arr.length;i++){
-        console.log(arr[i]);
-        if(arr[i]){
-          isHasVal = true;
-          break;
-        }
-      }
-      if(isHasVal){
-        this.$vux.confirm.show({
-          content:'即将离开，是否保存数据？',
-          onConfirm : ()=>{         
-            sessionStorage.setItem('WL_DATA',JSON.stringify(this.dealer));
-            next();
-          },
-          onCancel : ()=>{
-            sessionStorage.removeItem('WL_DATA');
-            next();      
-          }
-        })
-        return
-      }           
+    if (this.submitSuccess && path === '/adress') {
+      to.meta.reload = true;
     }
-    // if (this.submitSuccess && path === '/adress') {
-    //   to.meta.reload = true;
-    // }
     next();
   },
 }

@@ -18,7 +18,7 @@
               @click='goList(app.code)'
               v-for="(app, index) of item.appList" :key='index'>
               <div class="app_img">
-                <img :src='app.icon'>
+                <img :src='app.icon' @error="getDefaultIcon(app)">
               </div>
               <div class="app_info">
                 <div class="app_name">{{app.text}}</div>
@@ -38,6 +38,10 @@ export default {
       require: true
     },
     goList: {
+      type: Function,
+      require: true
+    },
+    getDefaultIcon: {
       type: Function,
       require: true
     }

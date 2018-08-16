@@ -14,6 +14,8 @@ import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
 import LIST from '../pages/apps/bizApp/list/list'
 import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
+// ------- >科目应用 <-------
+import CKLIST from '../pages/apps/calApp/list/list.vue'
 
 
 export default [
@@ -99,6 +101,12 @@ export default [
         meta:{ title:'地址详情' }
       }
     ]
+  },
+  {
+    path: '/subject',
+    name: 'CKLIST',
+    component: CKLIST,
+    meta: {title:'科目列表'}
   },
   { path: '/', redirect:'/home' },
   { path:'*', redirect:'/home' },
