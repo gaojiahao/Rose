@@ -94,7 +94,8 @@ export default {
         // 赋值 完整版工作流
         this.fullWL = workFlow;
 
-        this.actions = actions.split(',');
+        // this.actions = actions.split(',');
+        this.actions = ['agreement', 'disagree']; // actions字段没有返回，修改固定赋值
         // 判断是否为我创建的任务
         if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
           this.isMine = true;
