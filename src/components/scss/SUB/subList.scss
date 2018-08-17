@@ -22,28 +22,32 @@
   height: calc(100% - .52rem);
   overflow: hidden;
   box-sizing: border-box;
+  margin-bottom: .3rem;
   .each_duty {
     width: 95%;
-    margin: .1rem auto .2rem;
     position: relative;
+    border-radius: .04rem;
+    box-sizing: border-box;    
+    margin: .1rem auto .2rem;
     padding: .06rem .08rem .04rem;
-    box-shadow: 0 2px 10px #e8e8e8;
-    box-sizing: border-box;
+    box-shadow: 0 2px 5px #e8e8e8;
     .duty_top{
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      box-sizing: border-box;
+      justify-content: space-between;
+      // 仓库编码
       .warehouse_info{
         display: flex;
         .warehouse{
           font-weight: bold;
-          font-size: .1rem;
-          padding: 0 .06rem;
+          font-size: .12rem;
+          padding: 0 .04rem;
         }
         .warehouse_name{
           color: #fff;
           background: #3f72af;
-          // border-top-left-radius: .12rem;
+          border-top-left-radius: .04rem;
         }
         .warehouse_code{
           color: #111;
@@ -51,83 +55,64 @@
         }
         
       }
+      // 余额
+      .mater_code{
+        display: flex;
+        // margin-right: .1rem;
+        font-weight: 200;
+        span{
+          font-size: .12rem;
+          display: inline-block;
+          // padding: .01rem .04rem;
+        }
+        .title{
+          margin-right: .04rem;
+        }
+        // .num{
+        //   color: #111;
+        //   max-width: .9rem;
+        //   overflow: hidden;
+        //   white-space: nowrap;
+        //   background: #dbe2ef;
+        // }
+      }      
       .warehouse_type{
           font-size: .14rem;
           color: #757575;
-        }
+      }
     }
+    // 物料名称
     .matter{
-      padding:0.06rem 0;
-      .matter_processing{
-        .mater_code{
-          display: flex;
-          margin-right: .1rem;
-          font-weight: 200;
-          span{
-            font-size: .1rem;
-            display: inline-block;
-            padding: .01rem .04rem;
-          }
-          .title{
-            color: #fff;
-            background: #3f72af;
-          }
-          .num{
-            color: #111;
-            max-width: .9rem;
-            overflow: hidden;
-            white-space: nowrap;
-            background: #dbe2ef;
-          }
-        }
-        .mater_spec{
-          display: flex;
-          font-weight: 200;
-          span{
-            font-size: .1rem;
-            display: inline-block;
-            padding: .01rem .04rem;
-          }
-          .title{
-            color: #fff;
-            background: #537791;
-          }
-          .num{
-            color: #fff;
-            max-width: .6rem;
-            background: #ff7f50;
-            overflow: hidden;
-            white-space: nowrap;
-          }
-        }
-        // color: #fff;
-        // background: #537791;
-        // font-size: .12rem;
-        // padding: .01rem .04rem;
-      }
       .matter_name{
-        font-size:.18rem;
+        font-size:.2rem;
+        font-weight: 300;
+        padding: .04rem 0;
+        .type {
+          font-size: .1rem;
+        }
       }
     }
-    .r-arrow{
-      text-align: center;
-      height: 30px;
-    }
-    .duty_other{
-      display: flex;
-      flex-wrap: wrap;
-      .each_property{
-        min-width:50%;
-        line-height: 0.24rem;
-        font-size:0.12rem;
-        color: rgb(117, 117, 117);
+    // 仓库关系 金额余额
+    .duty_btm {
+      @extend .duty_top;
+      font-size: .14rem;
+      padding: .04rem 0 .02rem;
+      // 仓库关系
+      .ware_type {
+        font-weight: bold;
+        .type {
+          font-size: .1rem;
+        }
       }
-
+      // 余额 
+      .balance {
+        color: #c93d1b;
+        font-weight: bold;
+        .symbol {
+          font-size: .1rem;
+        }
+      }
     }
-    .other_wapper{
-      border-top:1px dashed #C7C7C7;
-    }
-    
   }
 }
 //流水详情

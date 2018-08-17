@@ -12,44 +12,52 @@
           </tab>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper":options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class='each_duty' v-for='(item,index) in listData' :key='index' @click="getFlow(item)">
+          <!-- 仓库名称 仓库编码 -->
           <div class="duty_top">
               <!-- 表单状态 及 编码 -->
               <div class="warehouse_info">
+                <!-- <span class="warehouse warehouse_code">{{item.warehouseRelType}}</span> -->
                 <!-- 状态 -->
-                <span class="warehouse warehouse_name" >仓库编码</span>
+                <span class="warehouse warehouse_name">
+                  <!-- 仓库编码 -->
+                  {{item.warehouseName}}
+                </span>
                 <!-- 编码 -->
                 <span class="warehouse warehouse_code">{{item.whCode}}</span>
               </div>
-              <!-- 时间 -->
-              <div class="warehouse_type">
-               {{item.warehouseRelType}}
-              </div>
-          </div>
-          <div class='matter'>
-            <div class='matter_name'>{{item.inventoryName}}</div>
-            <div class='matter_processing'>
               <!-- 数量余额 -->
-              <div class="ForInline" style="display:inline-block">
-                <div class="mater_code">
-                  <span class="title">数量余额</span>
-                  <span class="num">{{item.qtyBalance}}</span>
-                </div>
-              </div>
+              <div class="mater_code">
+                <span class="title">数量剩余</span>
+                <span class="num">{{item.qtyBalance}}</span>
+              </div>      
+          </div>
+          <!-- 物料 -->
+          <div class='matter'>
+            <div class='matter_name'>
+              {{item.inventoryName}}<span class="type">[{{item.invProcessing}}]</span>
             </div>
           </div>
-          <!-- 收起状态 -->
-          <div class='r-arrow vux-1px-t' v-if='!item.status'>
-            <x-icon type="ios-arrow-down" size="30"></x-icon>
+          <!-- 仓库类型、金额余额等 -->
+          <div class='duty_btm vux-1px-t'>
+            <!-- 仓库类型 -->
+            <div class="ware_type">
+              {{item.warehouseRelType}}<span class="type">[类型]</span>
+            </div>
+            <!-- 余额 -->
+            <div class="balance">
+              <span class="symbol">余额: ￥</span>{{item.amountBalance}}
+            </div>
+            <!-- <x-icon type="ios-arrow-down" size="30"></x-icon> -->
           </div>
         </div>
       </r-scroll>
       <!-- 展开状态 -->
       <div v-transfer-dom>
-        <popup v-model="flowShow" position="bottom" height="100%">
+        <popup v-model="flowShow" position="bottom" height="80%">
           <div class="flow">
             <div class='flow_top'>
               <div class="title">流水详情</div>
