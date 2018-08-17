@@ -74,14 +74,15 @@
           <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
-                          ref="matter"></pop-matter-list>
+                           :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
+                           ref="matter"></pop-matter-list>
         </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">提交</div>
+    <div class='count_mode vux-1px-t'>
+      <div class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
+      <div class="count_btn" @click="save">提交</div>
     </div>
   </div>
 </template>
@@ -90,9 +91,11 @@
   import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
   import PopMatterList from 'components/PopMatterList'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {getSOList} from 'service/detailService'
   import ApplyCommon from './../mixins/applyCommon'
   import PopWarehouseList from 'components/PopWarehouseList'
   import RNumber from 'components/RNumber'
+
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -109,6 +112,7 @@
     },
     data() {
       return {
+        listId: 'edf7b34b-8916-410f-801f-2db7e97efbde',
         matterList: [],  // 物料列表
         showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
@@ -122,17 +126,17 @@
         },
       }
     },
-    watch:{
-      matterList(val){
-        if(val.length){
+    watch: {
+      matterList(val) {
+        if (val.length) {
           let data = {
-            KCPD_DATA:{
-              matter : this.matterList,
-              warehouseIn : this.warehouseIn
+            KCPD_DATA: {
+              matter: this.matterList,
+              warehouseIn: this.warehouseIn
             }
-          }
-          this.$emit('sel-data',data) 
-        }           
+          };
+          this.$emit('sel-data', data)
+        }
       }
     },
     methods: {
@@ -199,7 +203,7 @@
           warn = '请选择物料';
         }
         this.matterList.every(item => {
-          dataSet.push({
+          let mItem = {
             transObjCode: item.inventoryCode, // 物料编码
             thenQtyStock: item.qtyBal, // 可用库存
             tdQty: item.tdQty, // 盘点数量
@@ -207,8 +211,11 @@
             assistQty: item.assistQty || 0, // 辅计数量（明细）
             assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
             assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
-            // comment: item.comment || null,
-          });
+          };
+          if (this.transCode) {
+            mItem.tdId = item.tdId || '';
+          }
+          dataSet.push(mItem);
           return true
         });
         if (warn) {
@@ -221,36 +228,117 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            let operation = submitAndCalc;
+            let operation = saveAndStartWf;
+            let formData = {
+              creator: this.formData.handler,
+              ...this.formData,
+              modifer: this.formData.handler,
+              containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
+              inPut: {
+                containerCode: this.warehouseIn.warehouseCode,
+                dataSet
+              }
+            };
             let submitData = {
-              listId: 'edf7b34b-8916-410f-801f-2db7e97efbde',
+              listId: this.listId,
               biComment: '',
-              formData: JSON.stringify({
-                ...this.formData,
-                creator: this.transCode ? this.formData.handler : '',
-                modifer: this.transCode ? this.formData.handler : '',
-                containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
-                inPut: {
-                  containerCode: this.warehouseIn.warehouseCode,
-                  dataSet
+              formData: JSON.stringify(formData),
+              wfPara: JSON.stringify({
+                [this.processCode]: {
+                  businessKey: 'STCK',
+                  createdBy: formData.creator,
                 }
               }),
             };
-
+            // 若为重新提交，则修改提交参数
             if (this.transCode) {
-              operation = saveAndCommitTask
+              operation = saveAndCommitTask;
+              submitData.biReferenceId = this.biReferenceId;
+              submitData.wfPara = JSON.stringify({
+                businessKey: this.transCode,
+                createdBy: formData.creator,
+                transCode: this.transCode,
+                result: 3,
+                taskId: this.taskId,
+                comment: ''
+              });
             }
+
+            console.log(submitData)
             this.saveData(operation, submitData);
           }
         });
       },
+      // TODO 获取详情
+      getFormData() {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode: this.transCode
+        }).then(data => {
+          let {success = true, formData = {}} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          let matterList = [];
+          // 获取合计
+          let {inPut} = formData;
+          let {dataSet = []} = inPut;
+          for (let item of dataSet) {
+            item = {
+              ...item,
+              qtyBal: item.thenQtyStock,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              // inventoryCode: item.inventoryCode_transObjCode,
+              inventoryCode: item.transObjCode,
+              specification: item.specification_transObjCode,
+              measureUnit: item.measureUnit_transObjCode,
+            };
+            matterList.push(item);
+          }
+          // 入库
+          this.warehouseIn = {
+            warehouseCode: inPut.containerCode,
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseRelType: inPut.warehouseType_containerCode,
+            warehouseProvince: inPut.warehouseProvince_containerCode,
+            warehouseCity: inPut.warehouseCity_containerCode,
+            warehouseDistrict: inPut.warehouseDistrict_containerCode,
+            warehouseAddress: inPut.warehouseAddress_containerCode,
+          };
+          // 出库
+          this.warehouseOut = {
+            warehouseCode: inPut.containerCodeOut,
+            warehouseName: inPut.warehouseName_containerCodeOut,
+            warehouseRelType: inPut.warehouseType_containerCodeOut,
+            warehouseProvince: inPut.warehouseProvince_containerCodeOut,
+            warehouseCity: inPut.warehouseCity_containerCodeOut,
+            warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
+            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
+          };
+          this.warehouseParams = {
+            whCode: this.warehouseOut.warehouseCode,
+          };
+          this.formData = {
+            ...this.formData,
+            creator: formData.creator,
+            biComment: formData.biComment,
+          };
+          this.biReferenceId = formData.biReferenceId;
+          this.matterList = matterList;
+        })
+      },
     },
     created() {
       let data = sessionStorage.getItem('KCPD_DATA');
-    if(data){
-      this.matterList = JSON.parse(data).matter;
-      this.warehouseIn = JSON.parse(data).warehouseIn
-    }
+      if (data) {
+        this.matterList = JSON.parse(data).matter;
+        this.warehouseIn = JSON.parse(data).warehouseIn
+      }
     },
   }
 </script>
