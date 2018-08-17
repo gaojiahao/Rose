@@ -1,4 +1,4 @@
-import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, dateFormat } from 'vux'
+import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, TransferDom, Popup,dateFormat } from 'vux'
 import { getListClassfiy,getView,getViewList} from 'service/kmService.js'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
@@ -18,17 +18,27 @@ export default {
       calc_rel_code : '',
       view_id : '',
       listField :[], //列表字段
+      flowShow :false, //流水展示状态
+      flowTitle:{}, //流水标题
+      flowField : [], //流水显示字段
+      flowData:[],//流水数据
       activeIndex: 0,
       serachVal: '',
-      listData: [],
+      listData: [], //存货列表数据
       activeTab: '',
       count: 0,
       total:null, //列表数据总量
       applyCode : '' ,
     }
   },
+  directives: {
+    TransferDom
+  },
   components: {
-    CellFormPreview,Group,Cell,searchIcon,RScroll,Tab, Icon, TabItem,
+    CellFormPreview,Group,Cell,searchIcon,RScroll,Tab, Icon, TabItem,Popup
+  },
+  filters: {
+    dateFormat
   },
   methods: {
     // TODO 重置列表条件
@@ -48,6 +58,7 @@ export default {
       this.resetCondition();
       this.getList();
     },
+    //搜索
     searchList(val) {
       this.serachVal = val;
       this.resetCondition();
@@ -63,7 +74,47 @@ export default {
         this.view_id = data[0].view_id;        
       })
     },
-    //获取展示字段
+    //显示流水详情
+    async getFlow(item){
+      this.flowTitle = item;
+      this.handleLoadding = true;
+      let row = {};
+      this.listField.forEach(item1=>{  
+        row[item1.field] = item[item1.field];
+            
+      })
+      let requestData = {
+        view_id: 'obj_water_1',
+        active_type: 'water',
+        row :row
+      }
+      //流水列表字段
+      await getView({...requestData,view_scope: 'model'}).then(data=>{
+        let arr = [];
+        data.model.forEach(item=>{
+          if(!item.hidden){
+            if(item.field !== 'transCode' && item.field !== 'appTitle' && item.field !== 'calcTime' 
+                && item.field !== 'drQty' && item.field !== 'crQty'
+                && item.field !== 'amntBalance'){
+                  arr.push(item);
+            }
+          }
+        })
+        this.flowField = arr;
+
+      });
+      //流水列表数据
+      await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
+        data.forEach(item=>{
+          item.showList = false;
+        })
+        this.flowData = data;
+
+      })
+      this.handleLoadding = false;
+      this.flowShow = true;
+    },
+    //获取列表展示字段
     getView(){
       return getView({
         calc_rel_code: this.calc_rel_code,
@@ -71,17 +122,8 @@ export default {
         user_code: 1,
         view_scope: 'model'
       }).then(data=>{
-        let arr = JSON.parse(JSON.stringify(data.model));
-        let field = [];
-        arr.forEach(item=>{
-          if(!item.hidden){
-            if(item.field !== 'warehouseName' && item.field !== 'warehouseRelType' && item.field !== 'whCode' 
-            && item.field !== 'inventoryName' && item.field !== 'invProcessing'){
-              field.push(item);
-            }
-          }
-        })
-        this.listField = field;
+        this.listField = data.model;
+     
       })
     },
     //获取列表数据
@@ -108,9 +150,6 @@ export default {
       }).then(({data=[],total=0})=>{
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach(item=>{
-          if(item.calcTime){
-            item.calcTime = dateFormat (item.calcTime);
-          }
           item.status = false;
         })
         this.listData = this.page === 1 ? data : this.listData.concat(data);
