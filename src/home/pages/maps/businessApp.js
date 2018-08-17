@@ -13,8 +13,9 @@ export default {
     采购入库: 'CGRK',
   },
   库存: {
-    本地库存调拨: 'BDKCDB',
-    库存盘点: 'KCPD'
+    存货: 'CH',
+    库存盘点: 'KCPD',
+    本地库存调拨: 'BDKCDB'
   },
   财务: {
     费用报销: 'FYBX'

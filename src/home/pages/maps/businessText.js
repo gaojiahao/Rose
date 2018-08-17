@@ -13,5 +13,5 @@ export default {
   XMRW: '项目任务',
   XMLX: '项目立项',
   XMJH: '项目计划',
-
+  CH: '存货'
 }
