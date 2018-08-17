@@ -3,12 +3,21 @@
     <div class="basicPart">
       <!-- 项目明细 -->
       <div class="trade_mode mg_auto box_sd">
-        <p class="title">项目明细</p>
+        <p class="title">项目信息</p>
         <group>
           <cell title="项目名称" :value="approval.projectName || '无'"></cell>
           <cell title="项目类型" :value="approval.projectType || '无'"></cell>
-          <cell title="项目经理" :value="approval.projectManager || '无'"></cell>
-          <cell title="手机号码" :value="approval.phoneNumber || '无'"></cell>
+        </group>
+      </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">项目经理</p>
+        <group>
+          <cell :title="approval.projectManager" :value="approval.phoneNumber"></cell>
+        </group>
+      </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">项目其他</p>
+        <group>
           <cell title="项目说明" primary="content" align-items="flex-start" :value="approval.comment || '无'"></cell>
           <cell title="项目备注" primary="content" align-items="flex-start" :value="comment.biComment || '无'"></cell>
         </group>
