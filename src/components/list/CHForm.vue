@@ -30,7 +30,7 @@
                 <span class="warehouse warehouse_code">{{item.whCode}}</span>
               </div>
               <!-- 数量余额 -->
-              <div class="mater_code">
+              <div class="mater_code" v-if="item.qtyBalance !== ''">
                 <span class="title">数量剩余</span>
                 <span class="num">{{item.qtyBalance}}</span>
               </div>      
@@ -48,13 +48,16 @@
               {{item.warehouseRelType}}<span class="type">[类型]</span>
             </div>
             <!-- 余额 -->
-            <div class="balance">
+            <div class="balance" v-if="item.amountBalance !== ''">
               <span class="symbol">余额: ￥</span>{{item.amountBalance}}
             </div>
             <!-- <x-icon type="ios-arrow-down" size="30"></x-icon> -->
           </div>
         </div>
       </r-scroll>
+      <!-- <div class="">哈哈哈
+
+      </div> -->
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
@@ -66,23 +69,68 @@
             <div class="flow_list">
               <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
                 <!--展开状态-->
-                <!-- 实例编码 -->
-                <div class='transCode vux-1px-b'>{{Fitem.transCode}}</div>
-                <!-- 数量，金额 -->
-                <div class='show_list'>
-                  <div class="num">
-                    <span>{{Fitem.appTitle}}</span>
-                    <span v-if='Fitem.drQty>0'>+{{Fitem.drQty.toFixed(2)}}</span>
-                    <span v-else-if='Fitem.crQty>0'>-{{Fitem.crQty.toFixed(2)}}</span>
-                    <span v-else>0</span>
-                  </div>
-                  <div class="num">
-                    <span>{{Fitem.calcTime | dateFormat}}</span>
-                    <span>￥{{Fitem.amntBalance}}</span>
+                
+                <div class="duty_top">
+                  <!-- 实例编码 -->
+                  <div class='transCode'>
+                    <span class="order_title">编码</span>
+                    <span class="order_num">{{Fitem.transCode.replace(/_/g,'')}}</span>
+                  </div>   
+                  <!-- 时间 -->
+                  <div class="time">
+                    {{Fitem.calcTime | dateFormat}}
                   </div>
                 </div>
+
+                <!-- 数量，金额 -->
+                <div class='show_list'>
+                  <!-- 应用名称 -->
+                  <div class="app_name">
+                    {{Fitem.appTitle}}<span class="symbol">[应用]</span>
+                  </div>
+                  <div class="num_info">
+                    <!-- 数量 -->
+                    <div class="count">
+                      <div class="num_part" v-if='Fitem.drQty>0'>
+                        <span class="symbol">本次数量: </span> 
+                        <span class="number_incre">+ {{Fitem.drQty.toFixed(2)}}</span>
+                      </div>
+                      <div class="num_part" v-else-if='Fitem.drQty>0'>
+                        <span class="symbol">本次数量: </span> 
+                        <span class="number_incre">- {{Fitem.crQty.toFixed(2)}}</span>
+                      </div>
+                      <div class="num_part" v-else>
+                        <span class="symbol">本次数量: </span> 
+                        <span>不变</span>
+                      </div>
+                    </div>
+                    <!-- 金额 -->
+                    <div class="amount_money">
+                      <div class="num_part" v-if='Fitem.drQty>0'>
+                        <span class="symbol">本次金额: </span> 
+                        <span class="number_incre">+ {{Fitem.drAmnt.toFixed(2)}}</span>
+                      </div>
+                      <div class="num_part" v-else-if='Fitem.drQty>0'>
+                        <span class="symbol">本次金额: </span> 
+                        <span class="number_incre">- {{Fitem.crAmnt.toFixed(2)}}</span>
+                      </div>
+                      <div class="num_part" v-else>
+                        <span class="symbol">本次金额: </span> 
+                        <span>不变</span>
+                      </div>                    
+                    </div>
+                  </div>
+                </div>
+                <div class="summary_part vux-1px-t">
+                  <!-- <div class="number">
+                    <span class="symbol">数量: </span>{{Fitem.qtyBalance}}
+                  </div> -->
+                  <div class="price">
+                    <span class="symbol">余额: ￥</span>{{Fitem.amntBalance}}
+                  </div>                
+                </div>
                 <!--收起的每个流水明细-->
-                <div class='hidden_list' v-if='Fitem.showList'>
+                <!-- <div class='hidden_list' v-if='Fitem.showList'>
                   <div class='each_property' v-for='(HItem,HIndex) in flowField' :key='HIndex'>
                     <label>{{HItem.text}}:</label>
                     <span v-if='HItem.field === "qtyBalance"'>{{Fitem[HItem.field].toFixed(2)}}</span>    
@@ -96,7 +144,7 @@
                   <p v-else>
                     <x-icon type="ios-arrow-down" size="30" ></x-icon>
                   </p>
-                </div>
+                </div> -->
                 
                 
               </div>
@@ -104,7 +152,8 @@
               </div>                 
             </div>
           </div>
-          <div class="btn">
+          <div class="btn"
+            :class="flowData.length < 3 ? 'when_less': '' ">
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
           </div>
         </popup>

@@ -89,19 +89,8 @@ export default {
         row :row
       }
       //流水列表字段
-      await getView({...requestData,view_scope: 'model'}).then(data=>{
-        let arr = [];
-        data.model.forEach(item=>{
-          if(!item.hidden){
-            if(item.field !== 'transCode' && item.field !== 'appTitle' && item.field !== 'calcTime' 
-                && item.field !== 'drQty' && item.field !== 'crQty'
-                && item.field !== 'amntBalance'){
-                  arr.push(item);
-            }
-          }
-        })
-        this.flowField = arr;
-
+      await getView({...requestData,view_scope: 'model'}).then( data =>{
+        this.flowField = data.model;
       });
       //流水列表数据
       await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
