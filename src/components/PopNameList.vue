@@ -33,7 +33,7 @@
                     <span>预期开始日期：{{item.EXPECT_START_DATE}}</span>
                   </div>
                    <div class="withoutColor">
-                    <span>预期结束日期：{{item.EXPECT_END_DATE}}</span>
+                    <span>预期截止日期：{{item.EXPECT_END_DATE}}</span>
                   </div>
                 </div>
               </div>
