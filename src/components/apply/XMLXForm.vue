@@ -248,9 +248,11 @@
         let ProjectApproval = this.ProjectApproval;
         let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
         let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
+        let budgetCost =  ProjectApproval.budgetCost == ''?0:ProjectApproval.budgetCost;
+        let subCost = budgetIncome-budgetCost;
         let profitMarginVal = 0;
         if(budgetCapital!=0&&budgetIncome!=0){
-          profitMarginVal = (budgetCapital/budgetIncome).toFixed(2)
+          profitMarginVal = (budgetCapital/subCost).toFixed(2)
         }
         ProjectApproval.budgetProfitMargin = profitMarginVal;
         return profitMarginVal;

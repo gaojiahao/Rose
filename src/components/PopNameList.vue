@@ -14,7 +14,7 @@
                  @click.stop="selThis(item,index)">
               <div class="mater_main ">
                 <div class="mater_info">
-                  <!--联系人电话 -->
+                  <!--项目名称 -->
                   <div class="withColor ">
                     <div class="ForInline name" style="display:inline-block">
                         <span>{{item.PROJECT_NAME}}</span>
@@ -28,12 +28,12 @@
                         <span class='dealer'>{{item.COMMENT}}</span>
                     </div>
                   </div>
-                  <!-- 地址 -->
+                  <!-- 时间 -->
                   <div class="withoutColor">
                     <span>预期开始日期：{{item.EXPECT_START_DATE}}</span>
                   </div>
                    <div class="withoutColor">
-                    <span>预期结束日期：{{item.EXPECT_END_DATE}}</span>
+                    <span>预期截止日期：{{item.EXPECT_END_DATE}}</span>
                   </div>
                 </div>
               </div>
@@ -137,7 +137,6 @@
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = [sItem];
-        // sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.selItems));
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -173,7 +172,6 @@
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          // filter:JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           for(let i = 0 ; i<tableContent.length ; i++){
@@ -181,23 +179,6 @@
             tableContent[i].EXPECT_END_DATE = tableContent[i].EXPECT_END_DATE.split(' ')[0];
           }
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
-          //获取缓存
-          // if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
-          //   let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
-          //   for(let i = 0 ; i<this.dealerList.length ; i++ ){
-          //     if(this.dealerList[i].transCode == EDIT_ADS_TRANSCODE){
-          //       this.selItems.push(this.dealerList[i]);
-          //       this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
-          //       sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
-          //     }
-          //   }
-          // }
-          // if(sessionStorage.getItem('DEALERLIST_SELITEMS')){
-          //   let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS'));
-          //   this.selItems = [...DEALERLIST_SELITEMS];
-          //   this.$emit('sel-dealer', JSON.stringify(DEALERLIST_SELITEMS));
-          //   sessionStorage.removeItem('DEALERLIST_SELITEMS');
-          // }
           this.$nextTick(() => {
             this.bScroll.refresh();
             if (!this.hasNext) {
