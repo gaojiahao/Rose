@@ -250,27 +250,7 @@
         this.getProjectList();
     },
     computed:{
-      //利润
-      profit(){
-        let ProjectApproval = this.ProjectApproval;
-        let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
-        let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
-        let budgetCost = ProjectApproval.budgetCost == ''?0:ProjectApproval.budgetCost;
-        ProjectApproval.budgetProfit = budgetIncome-budgetCapital-budgetCost;
-        return budgetIncome-budgetCapital-budgetCost;
-      },
-      //利润率
-      profitMargin(){
-        let ProjectApproval = this.ProjectApproval;
-        let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
-        let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
-        let profitMarginVal = 0;
-        if(budgetCapital!=0&&budgetIncome!=0){
-          profitMarginVal = (budgetCapital/budgetIncome).toFixed(2)
-        }
-        ProjectApproval.budgetProfitMargin = profitMarginVal;
-        return profitMarginVal;
-      }
+      
     },
   }
 </script>
