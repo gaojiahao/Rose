@@ -14,29 +14,15 @@
 
       <!-- 预算开始日期 -->
       <div class="trade_mode mg_auto box_sd">
-        <group>
-          <cell title="预算开始日期" :value="projectApproval.expectStartDate | timeSplit"></cell>
-        </group>
+        <p class="title">预算开始日期</p>
+        <p class="mode">{{projectApproval.expectStartDate | timeSplit}}</p>
       </div>
 
       <!-- 预算截止日期 -->
       <div class="trade_mode mg_auto box_sd">
-        <group>
-          <cell title="预算截止日期" :value="projectApproval.expectEndDate | timeSplit"></cell>
-        </group>
+        <p class="title">预算截止日期</p>
+        <p class="mode">{{projectApproval.expectEndDate | timeSplit}}</p>
       </div>
-
-      <!-- 预算明细 -->
-      <!-- <div class="trade_mode mg_auto box_sd" v-for="(val,idx) in projectPlan" :key="idx">
-        <p class="title">任务计划明细</p>
-        <group>
-          <cell title="任务名称" :value="val.taskName"></cell>
-          <cell title="任务类型" :value="val.taskType"></cell>
-          <cell title="任务说明" primary="content" align-items="flex-start" :value="val.comment"></cell>
-          <cell title="计划工时" :value="val.planTime"></cell>
-          <cell title="截止日期" :value="val.deadline | timeSplit"></cell>
-        </group>
-      </div> -->
 
       <!-- 任务计划明细 -->
       <div class="materiel_list mg_auto box_sd">
@@ -50,20 +36,6 @@
                     <span class="whiNum">#{{index+1}}</span>
                   {{item.taskName}}
                   </div>
-                  <!-- <div class="mater_info">
-                    <div class="withColor">
-                      <div class="ForInline" style="display:flex">
-                        <div class="mater_code">
-                          <span class="title">任务类型</span>
-                          <span class="num">{{item.taskType}}</span>
-                        </div>
-                        <div class="mater_spec">
-                          <span class="title">计划工时</span>
-                          <span class="num">{{item.planTime}}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div> -->
                   <div class='mater_other'>
                     <div class='mater_reimb'>
                       <div class="reason">
