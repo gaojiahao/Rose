@@ -5,18 +5,19 @@
         <!-- 用户地址和基本信息-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div class="no-selected" v-if="!dealerInfo">
-            <div class="title">客户列表</div>
-            <div class="mode">请选择客户</div>
+            <div class="title">项目计划</div>
+            <div class="mode">请选择项目</div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
           </div>
           <div v-else>
             <div class="user_info">
-              <span class="user_name">{{dealerInfo.creatorName}}</span>
-              <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+              <span class="user_name">{{dealerInfo.PROJECT_NAME}}</span>
+              <span class="user_tel">{{dealerInfo.PROJECT_MANAGER}}</span>
             </div>
             <div class="cp_info">
-              <p class="cp_name">{{dealerInfo.dealerName}}</p>
-              <p class="cp_ads">{{dealerInfo.province + dealerInfo.city + dealerInfo.county + dealerInfo.address}}</p>
+              <p class="cp_name">{{dealerInfo.COMMENT}}</p>
+              <p class="cp_ads">预期开始日期：{{dealerInfo.EXPECT_START_DATE}}</p>
+              <p class="cp_ads">预期结束日期：{{dealerInfo.EXPECT_END_DATE}}</p>
             </div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
           </div>
@@ -40,24 +41,25 @@
         </div> -->
         
         <!-- 项目类型-->
-        <r-picker title="任务类型" :data="projectTypes" mode="3" placeholder="请选择任务类型"
-                  v-model="ProjectApproval.projectType"></r-picker>
+        <!-- <r-picker title="任务类型" :data="projectTypes" mode="3" placeholder="请选择任务类型"
+                  v-model="ProjectApproval.projectType"></r-picker> -->
                   
         <div class="xmlx_list">
             <!-- 商机列表 -->
-            <div class="materiel_list mg_auto box_sd">
+            <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
                 <div class="mater_list">
                     <div class="each_mater">
                     <div class="each_mater_wrapper">
                         <div class="mater_main" style='max-width:100%;'>
                         <div class="userInp_mode">
-                            <div class="title">任务计划明细</div>
+                            <div class="title">任务计划</div>
                             <group class="SJ_group" @group-title-margin-top="0">
-                                <x-input  title="任务名称" v-model="ProjectApproval.projectName" text-align='right'  placeholder='请填写'></x-input> 
-                                <datetime title="截至日期" v-model='ProjectApproval.expectEndDate'></datetime>
-                                <x-textarea title="任务说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
-                                <x-input  title="计划工时" v-model="ProjectApproval.budgetIncome" text-align='right'  placeholder='请填写' ref="budgetIncome" @input="filterNum($event,'budgetIncome')"></x-input>
-                                <x-textarea title="任务备注" v-model="FormDataComment" :max="200"></x-textarea>
+                                <x-input  title="任务名称" v-model="item.taskName" text-align='right'  placeholder='请填写'></x-input>
+                                <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]" @on-change=" typeTask($event,item) "></popup-picker>
+                                <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea> 
+                                <datetime title="截至日期" v-model='item.deadline'></datetime>
+                                <x-input  title="计划工时" v-model="item.planTime" text-align='right'  placeholder='请填写' :ref="'planTime'+index" @input="filterNum($event,'planTime',index)"></x-input>
+                                <!-- <x-textarea title="任务备注" v-model="item.comment" :max="200"></x-textarea> -->
                             </group>
                         </div>
                         </div>
@@ -66,7 +68,12 @@
                 </div>
             </div>
         </div>
-        <!-- 往来popup -->
+
+        <!-- 新增 -->
+        <div class="XMJH_add">
+          <div>您还需要添加新的计划?请点击<span @click="addPlan">添加</span><span @click="delatePlan" v-if="projectPlan.length>1">删除</span></div>
+        </div>
+        <!-- 项目计划popup -->
           <pop-name-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
                           ref="dealer"></pop-name-list>
@@ -80,12 +87,12 @@
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput,XTextarea, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, TransferDom, Picker, Popup,PopupRadio} from 'vux'
+  import {Icon, Cell, Group, XInput,XTextarea, Datetime, TransferDom, Picker, Popup,PopupRadio,PopupPicker} from 'vux'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
   import RPicker from 'components/RPicker'
   import PopNameList from 'components/PopNameList'
-  import {getProjectPlanProjectName, saveProjectApproval, saveProjectTask, updateProjectTask, findProjectTask} from 'service/projectService'
+  import {getProjectApproval, saveProjectPlan} from 'service/projectService'
 
   export default {
     mixins: [ApplyCommon],
@@ -94,9 +101,6 @@
       Cell,
       Group,
       XInput,
-      Swipeout,
-      SwipeoutItem,
-      SwipeoutButton,
       RPicker,
       Datetime,
       XTextarea, 
@@ -104,27 +108,28 @@
       Picker, 
       Popup,
       PopupRadio,
-      PopNameList
+      PopNameList,
+      PopupPicker
     },
     data() {
       return {
-        managerList:[
-          {
-            name:'马云',
-            value:'132634679879',
-            parent: '0'
-          },{
-            name:'马化腾',
-            value:'123444897997',
-            parent: '0'
-          }],
-        managerTask:[],
-        managerName:'',
-        managerValue:'',
-        placeholder:'请选择',
-        projectTypes:['单品','客制','展销','促销'],
-        projectType:'',
-        XMLXshow: false,
+        // managerList:[
+        //   {
+        //     name:'马云',
+        //     value:'132634679879',
+        //     parent: '0'
+        //   },{
+        //     name:'马化腾',
+        //     value:'123444897997',
+        //     parent: '0'
+        //   }],
+        // managerTask:[],
+        // managerName:'',
+        // managerValue:'',
+        // placeholder:'请选择',
+        projectTypes:[['单品','客制','展销','促销']],
+        projectType:[],
+        // XMLXshow: false,
         projectList: [],
         showDealerPop:false,
         dealerInfo:null,
@@ -142,49 +147,72 @@
           "budgetProfitMargin": '',//预算利润率
           "comment": ""//项目说明
         },
-        FormDataComment:'',//备注
-        formData: {},
-        jsonData: {
-          bomType: {
-            bomType: ''
-          },
-          comment: {
-            biComment: ''
-          },
+        planModel:{
+          "taskName": "",//任务名称
+          "taskType": "",//任务大类
+          "deadline": "",//截止日期
+          "planTime": "",//计划工时
+          "comment": ""//备注
         },
+        projectPlan: [],
+        formData: {},
+        // FormDataComment:'',//备注
+        // jsonData: {
+        //   bomType: {
+        //     bomType: ''
+        //   },
+        //   comment: {
+        //     biComment: ''
+        //   },
+        // },
       }
     },
     methods: {
-        // TODO 选中往来项
+      //添加项目计划
+      addPlan(){
+        let planModel = JSON.stringify(this.planModel);
+        this.projectPlan.push(JSON.parse(planModel));
+        this.projectType.push([]);
+      },
+      //删除项目计划
+      delatePlan(){
+        this.projectPlan.pop();
+        this.projectType.pop();
+      },
+      //任务类型选择
+      typeTask(e,item){
+        item.taskType = e[0];
+      },
+      // TODO 选中项目计划项
       selDealer(val) {
         let [sels] = JSON.parse(val);
         this.dealerInfo = sels;
       },
-      //picker显示
-      XMLXshowStatus() {
-        this.XMLXshow = !this.XMLXshow;
-      },
-      //picker确认
-      XMLXconfirm(e){
-        for(let i = 0 ; i<this.managerList.length; i++){
-          if(this.managerList[i].value == e[0]){
-            this.managerName = this.managerList[i].name;
-            this.ProjectApproval.projectManager = this.managerList[i].name;
-            this.ProjectApproval.phoneNumber = this.managerList[i].value;
-          }
-        }
-        this.managerValue = e[0];
-        this.XMLXshow = false;
-      },
-      //picker取消
-      XMLXcancel(){
-        this.XMLXshow = false;
-      },
+      // //picker显示
+      // XMLXshowStatus() {
+      //   this.XMLXshow = !this.XMLXshow;
+      // },
+      // //picker确认
+      // XMLXconfirm(e){
+      //   for(let i = 0 ; i<this.managerList.length; i++){
+      //     if(this.managerList[i].value == e[0]){
+      //       this.managerName = this.managerList[i].name;
+      //       this.ProjectApproval.projectManager = this.managerList[i].name;
+      //       this.ProjectApproval.phoneNumber = this.managerList[i].value;
+      //     }
+      //   }
+      //   this.managerValue = e[0];
+      //   this.XMLXshow = false;
+      // },
+      // //picker取消
+      // XMLXcancel(){
+      //   this.XMLXshow = false;
+      // },
       //限制只能输入数字
-      filterNum(e,ref){
+      filterNum(e,ref,idx){
         let num = e.replace(/[^\d]/g,'');
-        this.$refs[ref].currentValue = num;
-        this.ProjectApproval[ref] = num;
+        this.$refs[ref+idx][0].currentValue = num;
+        this.projectPlan[idx].planTime = num;
       },
       //获取今天时间
       getNowFormatDate() {
@@ -204,38 +232,38 @@
       },
       // TODO 提交
       save() {
-        let msgTask='';
-        let objArr = [
-          {tip:'projectManager',msg:'项目经理'},
-          {tip:'projectType',msg:'项目类型'},
-          {tip:'projectName',msg:'项目名称'},
-          {tip:'budgetIncome',msg:'预算收入'},
-          {tip:'budgetCapital',msg:'预算成本'},
-          {tip:'budgetCost',msg:'预算费用'},
-          {tip:'expectStartDate',msg:'预期开始日期'},
-          {tip:'expectEndDate',msg:'预期截至日期'},
-          {tip:'comment',msg:'项目说明'},
-        ];
-        for(let i = 0 ; i<objArr.length;i++){
-          if(this.ProjectApproval[objArr[i].tip] == ''){
-            let msgTitle = objArr[i].tip == 'projectManager' || objArr[i].tip == 'projectType' || objArr[i].tip == 'expectStartDate' || objArr[i].tip == 'expectEndDate'?'请选择':'请填写';
-             msgTask = msgTitle + objArr[i].msg
-             this.$vux.alert.show({
-                content:msgTask
-              })
-            return;
-          }
-        }
+        // let msgTask='';
+        // let objArr = [
+        //   {tip:'projectManager',msg:'项目经理'},
+        //   {tip:'projectType',msg:'项目类型'},
+        //   {tip:'projectName',msg:'项目名称'},
+        //   {tip:'budgetIncome',msg:'预算收入'},
+        //   {tip:'budgetCapital',msg:'预算成本'},
+        //   {tip:'budgetCost',msg:'预算费用'},
+        //   {tip:'expectStartDate',msg:'预期开始日期'},
+        //   {tip:'expectEndDate',msg:'预期截至日期'},
+        //   {tip:'comment',msg:'项目说明'},
+        // ];
+        // for(let i = 0 ; i<objArr.length;i++){
+        //   if(this.ProjectApproval[objArr[i].tip] == ''){
+        //     let msgTitle = objArr[i].tip == 'projectManager' || objArr[i].tip == 'projectType' || objArr[i].tip == 'expectStartDate' || objArr[i].tip == 'expectEndDate'?'请选择':'请填写';
+        //      msgTask = msgTitle + objArr[i].msg
+        //      this.$vux.alert.show({
+        //         content:msgTask
+        //       })
+        //     return;
+        //   }
+        // }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            let operation = saveProjectApproval;
+            let operation = saveProjectPlan;
             let submitData = {
-              listId: '630a9b96-f257-48b6-b0bc-fd64c455d92b',
+              listId: "0281f8eb-f1d2-415c-b566-756fc749ccb3",
               formData: {
                 comment:{
-                  biComment: this.FormDataComment,
+                  biComment: this.dealerInfo.COMMENT,
                 },
                 baseinfo: {
                     creator: this.formData.handler,
@@ -248,7 +276,10 @@
                     id: '',
                     modifer: this.formData.handler,
                 },
-                projectApproval:this.ProjectApproval
+                projectApproval:{
+                  projectName:this.dealerInfo.PROJECT_NAME
+                },
+                projectPlan:this.projectPlan
               },
               wfParam:null
             };
@@ -258,16 +289,19 @@
       },
       // TODO 请求项目列表
       getProjectList() {
-        return getProjectPlanProjectName().then(({tableContent = []}) => {
+        return getProjectApproval().then(({tableContent = []}) => {
           let tmp = [];
           tableContent.forEach(item => {
-            item.projectName && tmp.push(item.projectName);
+            tmp.push(item);
           });
           this.projectList = tmp;
         })
       },
     },
     created() {
+        let plan = JSON.stringify(this.planModel);
+        this.projectPlan.push(JSON.parse(plan));
+        this.projectType.push([]);
         this.getProjectList();
     },
     computed:{
@@ -330,6 +364,28 @@
   }
   .materiel_list .mater_list .each_mater_wrapper .mater_main{
     margin-left: 0;
+  }
+  .cp_info{
+    p{
+      margin-right: 30px;
+    }
+  }
+  .vux-cell-box:not(:first-child):before{
+    left: 0;
+  }
+  .XMJH_add{
+    text-align: center;
+    font-size: 0.075rem;
+    color: #757575;
+    span{
+      margin-left: 5px;
+      &:nth-child(1){
+        color: #5077aa;
+      }
+      &:nth-child(2){
+        color: #fc3c3c;
+      }
+    }
   }
 </style>
 <style scoped lang="scss">

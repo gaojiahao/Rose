@@ -7,12 +7,12 @@
         <group>
           <cell title="项目名称" :value="val.projectName"></cell>
           <cell title="项目经理" :value="val.budgetCapital"></cell>
-          <cell title="项目说明" :value="val.budgetCost"></cell>
+          <cell title="项目说明" primary="content" align-items="flex-start" :value="val.budgetCost"></cell>
           <cell title="预算开始日期" :value="val.expectStartDate | timeSplit"></cell>
           <cell title="预算截至日期" :value="val.expectEndDate | timeSplit"></cell>
-          <cell title="任务名称" :value="val.projectName"></cell>
+          <cell title="任务名称" :value="val.taskName"></cell>
           <cell title="任务类型" :value="val.taskType"></cell>
-          <cell title="任务说明" :value="val.comment"></cell>
+          <cell title="任务说明" primary="content" align-items="flex-start" :value="val.comment"></cell>
           <cell title="计划工时" :value="val.planTime"></cell>
           <cell title="截至日期" :value="val.deadline | timeSplit"></cell>
         </group>

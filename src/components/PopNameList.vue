@@ -1,5 +1,5 @@
 <template>
-  <!-- 往来popup -->
+  <!-- 项目计划popup -->
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
@@ -7,7 +7,7 @@
           <!-- 搜索栏 -->
           <d-search @search='searchMat' @turnOff="onHide" :isFill='true'></d-search>
         </div>
-        <!-- 往来列表 -->
+        <!-- 项目计划列表 -->
         <div class="mater_list" ref="dealer">
           <div class="mater_list_wrapper">
             <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key='index'
@@ -17,20 +17,23 @@
                   <!--联系人电话 -->
                   <div class="withColor ">
                     <div class="ForInline name" style="display:inline-block">
-                        <span>{{item.creatorName}}</span>
+                        <span>{{item.PROJECT_NAME}}</span>
                     </div>
                     <div class="ForInline name" style="display:inline-block">
-                        <span>{{item.dealerMobilePhone}}</span>
+                        <span>{{item.PROJECT_MANAGER}}</span>
                     </div>
                   </div>
                   <div class="withColor">
                     <div class="ForInline " style="display:inline-block">
-                        <span class='dealer'>{{item.dealerName}}</span>
+                        <span class='dealer'>{{item.COMMENT}}</span>
                     </div>
                   </div>
                   <!-- 地址 -->
                   <div class="withoutColor">
-                    <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
+                    <span>预期开始日期：{{item.EXPECT_START_DATE}}</span>
+                  </div>
+                   <div class="withoutColor">
+                    <span>预期结束日期：{{item.EXPECT_END_DATE}}</span>
                   </div>
                 </div>
               </div>
@@ -44,7 +47,7 @@
               <div class="title">抱歉，没有找到您搜索的内容</div>
               <ul class="tips">
                 <li>
-                  不用担心，您马上可以进行 <span class="addNew" @click="add">新增往来</span>
+                  不用担心，您马上可以进行 <span class="addNew" @click="add">新增项目计划</span>
                 </li>
                 <li>
                   或者检查“输入内容”是否正确
@@ -63,6 +66,7 @@
   import DSearch from 'components/search'
   import dealerService from 'service/dealerService.js'
   import BScroll from 'better-scroll'
+  import {getProjectApproval} from 'service/projectService'
 
   export default {
     name: "dealerList",
@@ -121,7 +125,7 @@
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.dealerCode === item.dealerCode) {
+          if (sItem.colId === item.colId) {
             flag = true;
             return false;
           }
@@ -129,11 +133,11 @@
         });
         return flag;
       },
-      // TODO 选择往来
+      // TODO 选择项目计划
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = [sItem];
-        sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.selItems));
+        // sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.selItems));
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -144,51 +148,55 @@
         }
         return url
       },
-      // TODO 获取往来列表
+      // TODO 获取项目计划列表
       getDealer() {
         let filter = [];
         if (this.srhInpTx) {
           filter = [
             ...filter,
-            // 搜索 往来名称 或  编码
+            // 搜索 项目计划名称 或  编码
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'dealerCode',
+              property: 'PROJECT_NAME',
               attendedOperation: 'or'
             },
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'dealerName',
+              property: 'PROJECT_MANAGER',
             },
           ];
         }
-        dealerService.getDealerList(this.dealerLabelName,{
+       getProjectApproval({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
+          filter:JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          for(let i = 0 ; i<tableContent.length ; i++){
+            tableContent[i].EXPECT_START_DATE = tableContent[i].EXPECT_START_DATE.split(' ')[0];
+            tableContent[i].EXPECT_END_DATE = tableContent[i].EXPECT_END_DATE.split(' ')[0];
+          }
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           //获取缓存
-          if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
-            let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
-            for(let i = 0 ; i<this.dealerList.length ; i++ ){
-              if(this.dealerList[i].transCode == EDIT_ADS_TRANSCODE){
-                this.selItems.push(this.dealerList[i]);
-                this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
-                sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
-              }
-            }
-          }
-          if(sessionStorage.getItem('DEALERLIST_SELITEMS')){
-            let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS'));
-            this.selItems = [...DEALERLIST_SELITEMS];
-            this.$emit('sel-dealer', JSON.stringify(DEALERLIST_SELITEMS));
-            sessionStorage.removeItem('DEALERLIST_SELITEMS');
-          }
+          // if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
+          //   let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
+          //   for(let i = 0 ; i<this.dealerList.length ; i++ ){
+          //     if(this.dealerList[i].transCode == EDIT_ADS_TRANSCODE){
+          //       this.selItems.push(this.dealerList[i]);
+          //       this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
+          //       sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
+          //     }
+          //   }
+          // }
+          // if(sessionStorage.getItem('DEALERLIST_SELITEMS')){
+          //   let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS'));
+          //   this.selItems = [...DEALERLIST_SELITEMS];
+          //   this.$emit('sel-dealer', JSON.stringify(DEALERLIST_SELITEMS));
+          //   sessionStorage.removeItem('DEALERLIST_SELITEMS');
+          // }
           this.$nextTick(() => {
             this.bScroll.refresh();
             if (!this.hasNext) {
@@ -203,7 +211,7 @@
         })
 
       },
-      // TODO 搜索往来
+      // TODO 搜索项目计划
       searchMat(val) {
         this.srhInpTx = val;
         this.dealerList = [];
@@ -230,7 +238,7 @@
           });
         })
       },
-      //新增往来
+      //新增项目计划
       add(){
         let pickVal = '';
         if(this.dealerLabelName == 2167){
@@ -317,7 +325,7 @@
       .vux-1px:before {
         border-radius: 40px;
       }
-      // 往来列表
+      // 项目计划列表
       .mater_list {
         width: 100%;
         overflow: hidden;
@@ -340,7 +348,7 @@
             .title {
               font-size: .2rem;
             }
-            // 新增往来
+            // 新增项目计划
             .tips {
               li { list-style : square; margin-top: .1rem;}
               font-weight: 200;
@@ -356,7 +364,7 @@
 
           }
         }
-        // 每个往来
+        // 每个项目计划
         .each_mater {
           position: relative;
           display: flex;
@@ -368,7 +376,7 @@
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
-          // 往来图片
+          // 项目计划图片
           .mater_img {
             display: inline-block;
             width: .75rem;
@@ -378,13 +386,13 @@
               max-height: 100%;
             }
           }
-          // 往来主体
+          // 项目计划主体
           .mater_main {
             flex: 1;
             padding-left: .1rem;
             box-sizing: border-box;
             display: inline-block;
-            // 往来名称
+            // 项目计划名称
             .mater_name {
               color: #111;
               overflow: hidden;
@@ -395,7 +403,7 @@
               -webkit-line-clamp: 2;
               text-overflow: ellipsis;
               -webkit-box-orient: vertical;
-              // 每个往来的索引
+              // 每个项目计划的索引
               .whiNum {
                 color: #fff;
                 font-weight: 200;
@@ -407,7 +415,7 @@
                 margin: -.02rem .04rem 0 0;
               }
             }
-            // 往来信息
+            // 项目计划信息
             .mater_info {
               color: #757575;
               font-size: .14rem;
@@ -423,7 +431,7 @@
                   color:#111;
                   font-weight: bold;
                 }
-                // 往来编码
+                // 项目计划编码
                 .mater_code {
                   display: flex;
                   .title,
@@ -463,7 +471,7 @@
               }
               // 没颜色包裹的
               .withoutColor {
-                // 往来分类
+                // 项目计划分类
                 .mater_classify {
                   font-size: .1rem;
                   margin-top: .02rem;
@@ -472,7 +480,7 @@
                     margin-right: .04rem;
                   }
                 }
-                // 往来颜色 材质
+                // 项目计划颜色 材质
                 .mater_material {
                   font-size: .1rem;
                   .unit,

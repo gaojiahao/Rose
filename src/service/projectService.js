@@ -115,4 +115,17 @@ export let getProjectPlanProjectName = (data = {}) => {
   });
 };
 
+// TODO 获取项目列表自动填充字段带出
+export let getProjectApproval = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectApproval',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {}
