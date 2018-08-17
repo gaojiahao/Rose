@@ -1,6 +1,9 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 出库仓库 -->
       <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" disabled></pop-warehouse-list>
       <!-- 入库仓库 -->
@@ -56,7 +59,8 @@
         </div>
       </div>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -67,6 +71,7 @@
   import detailCommon from 'components/mixins/detailCommon'
   import PopWarehouseList from 'components/PopWarehouseList'
   import RAction from 'components/RAction'
+
   export default {
     data() {
       return {
@@ -101,7 +106,7 @@
           if (data.success === false) {
             this.$vux.alert.show({
               content: '抱歉，数据有误，暂无法查看',
-              onHide:()=>{
+              onHide: () => {
                 this.$router.back();
               }
             });
@@ -110,8 +115,8 @@
           let {inPut = {}} = data.formData;
           let {dataSet} = inPut;
           for (let val of dataSet) {
-            val.inventoryPic = val.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            val.inventoryPic = val.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
           // 入库
@@ -135,7 +140,7 @@
             warehouseAddress: inPut.warehouseAddress_containerCodeOut,
           };
           this.orderInfo = data.formData;
-          // this.workFlowInfoHandler();
+          this.workFlowInfoHandler();
         })
       },
     },

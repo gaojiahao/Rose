@@ -1,7 +1,8 @@
-import {saveAndStartWf, saveAndCommitTask, commitTask, getBaseInfoData,} from 'service/commonService'
+import {saveAndStartWf, saveAndCommitTask, commitTask, getBaseInfoData, getProcess,} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
+
 export default {
   data() {
     return {
@@ -14,14 +15,16 @@ export default {
       btnInfo: {}, //操作按钮信息
       comment: '',//审批意见
       formViewUniqueId: '',
-      fillBscroll :null
+      fillBscroll: null,
+      actions: [],
+      processCode: '', // 流程编码，用于新建的工作流
     }
   },
   computed: {
     // 合计金额
     totalAmount() {
       let total = 0;
-      this.matterList.forEach(item=>{
+      this.matterList.forEach(item => {
         total += item.tdQty * item.price;
       })
       return Number(total);
@@ -30,7 +33,7 @@ export default {
     taxAmount() {
       return (this.totalAmount * this.taxRate).toFixed(2)
     },
-    tdAmount(){
+    tdAmount() {
       return (this.totalAmount + Number(this.taxAmount)).toFixed(2)
     }
   },
@@ -51,7 +54,7 @@ export default {
     getUniqueId(transCode) {
       return new Promise(resolve => {
         isMyflow({transCode}).then(({dataCount, tableContent}) => {
-         
+
           if (dataCount > 0) {
             this.taskId = tableContent[0].taskId;
             if (tableContent[0].isMyTask === 1) {
@@ -71,9 +74,9 @@ export default {
     },
     //提交订单
     saveData(request, submitData) {
-      this.$emit('close',true)
+      this.$emit('close', true)
       request(submitData).then(data => {
-        this.$emit('close',false)
+        this.$emit('close', false)
         let {success = false, message = '提交失败'} = data;
         if (success) {
           message = '订单提交成功';
@@ -87,8 +90,8 @@ export default {
             }
           }
         });
-      }).catch(e=>{
-        this.$emit('close',false)
+      }).catch(e => {
+        this.$emit('close', false)
       })
     },
     //终止订单
@@ -96,7 +99,7 @@ export default {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
         onConfirm: (value) => {
-          this.$emit('close',true);
+          this.$emit('close', true);
           if (value) {
             this.comment = value;
           }
@@ -109,7 +112,7 @@ export default {
             })
           }
           commitTask(submitData).then(data => {
-            this.$emit('close',false);
+            this.$emit('close', false);
             let {success = false, message = '提交失败'} = data;
             if (success) {
               message = '终止成功';
@@ -123,8 +126,8 @@ export default {
                 }
               }
             });
-          }).catch(e=>{
-            this.$emit('close',false);
+          }).catch(e => {
+            this.$emit('close', false);
           })
         }
       })
@@ -132,8 +135,8 @@ export default {
     // TODO 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(data => {
-        if(!this.transCode){
-          this.$emit('input',false)
+        if (!this.transCode) {
+          this.$emit('input', false)
         }
         this.formData = {
           ...this.formData,
@@ -158,6 +161,12 @@ export default {
         })
       });
     },
+    // TODO 获取工作流的processCode
+    getProcess() {
+      return getProcess(this.listId).then(([data = {}]) => {
+        this.processCode = data.processCode || '';
+      })
+    },
   },
   created() {
     let {transCode} = this.$route.query;
@@ -169,14 +178,16 @@ export default {
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
         this.getFormData && this.getFormData();
-        this.$emit('input',false);
-      })()
+        this.$emit('input', false);
+      })();
+      return
     }
+    this.getProcess();
   },
-  mounted(){
-    this.$nextTick(()=>{
-      this.fillBscroll = new Bscroll(this.$refs.fill,{
-        click : true
+  mounted() {
+    this.$nextTick(() => {
+      this.fillBscroll = new Bscroll(this.$refs.fill, {
+        click: true
       })
     })
   }

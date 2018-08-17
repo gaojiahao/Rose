@@ -45,13 +45,13 @@ export let submitAndCalc = (data = {}) => {
   });
 };
 
-export let commitTask  = ( data={} )=>{
+export let commitTask = (data = {}) => {
   return $axios.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
-    url:'/H_roleplay-si/flow/commitTask',
+    url: '/H_roleplay-si/flow/commitTask',
     data
-  }).catch(e=>{
+  }).catch(e => {
     return errorHandler(e);
   })
 }
@@ -168,6 +168,19 @@ export let getDictByValue = (value = '', data = {}) => {
   });
 };
 
+// TODO 获取工作流的processCode
+export let getProcess = (listId = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/list/getProcessByListId',
+    data: {
+      _dc: Date.now(),
+      listId
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {
   saveAndStartWf,
   saveAndCommitTask,
@@ -177,4 +190,5 @@ export default {
   upload,
   getDictByType,
   getDictByValue,
+  getProcess,
 }

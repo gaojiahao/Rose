@@ -164,6 +164,7 @@
     },
     data() {
       return {
+        listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
         matterList: [],  // 物料列表
         showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
@@ -184,7 +185,6 @@
           type: 'number',
           placeholder: '请填写'
         },
-        actions: [],
       }
     },
     watch: {
@@ -314,44 +314,42 @@
           // 确定回调
           onConfirm: () => {
             let operation = saveAndStartWf;
-            let wfPara = {
-              PROC_1808_d30d481f4d69: {
-                businessKey: 'QUOT',
-                createdBy: this.formData.handler,
+            let formData = {
+              creator: this.formData.handler,
+              ...this.formData,
+              modifer: this.formData.handler,
+              dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
+              dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
+              order: {
+                dealerDebit: this.dealerInfo.dealerCode || '',
+                drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
+                drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
+                dataSet
               }
             };
+            let submitData = {
+              listId: this.listId,
+              biComment: '',
+              formData: JSON.stringify(formData),
+              wfPara: JSON.stringify({
+                [this.processCode]: {
+                  businessKey: 'QUOT',
+                  createdBy: formData.creator,
+                }
+              }),
+            };
+            // 若为重新提交，则修改提交参数
             if (this.transCode) {
               operation = saveAndCommitTask;
-              wfPara = {
+              submitData.biReferenceId = this.biReferenceId;
+              submitData.wfPara = JSON.stringify({
                 businessKey: this.transCode,
-                createdBy: this.formData.creator,
+                createdBy: formData.creator,
                 transCode: this.transCode,
                 result: 3,
                 taskId: this.taskId,
                 comment: ''
-              };
-            }
-            let submitData = {
-              listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
-              biComment: '',
-              biReferenceId: this.biReferenceId,
-              formData: JSON.stringify({
-                creator: this.formData.handler,
-                ...this.formData,
-                modifer: this.formData.handler,
-                dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
-                dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
-                order: {
-                  dealerDebit: this.dealerInfo.dealerCode || '',
-                  drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
-                  drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
-                  dataSet
-                }
-              }),
-              wfPara: JSON.stringify(wfPara),
-            };
-            if (!this.transCode) {
-              delete submitData.biReferenceId
+              });
             }
 
             console.log(submitData)
@@ -375,7 +373,7 @@
           }
           let matterList = [];
           // 获取合计
-          let {order, dealerDebit} = formData;
+          let {order} = formData;
           let {dataSet = []} = order;
           for (let item of dataSet) {
             item = {
@@ -407,6 +405,7 @@
           };
           this.formData = {
             ...this.formData,
+            creator: formData.creator,
             biComment: formData.biComment,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),

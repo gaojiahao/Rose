@@ -70,6 +70,11 @@
               operator: 'like',
               value: this.serachVal,
               property: 'transCode',
+              attendedOperation: 'or'
+            },{
+              operator: 'like',
+              value: this.serachVal,
+              property: 'handlerName',
             },
           ]
         }

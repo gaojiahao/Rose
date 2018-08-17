@@ -89,10 +89,16 @@ export default {
         let {isMyTask = 0, actions = '', taskId, viewId} = flow;
 
         let [createFlow = {}] = workFlow;
+        let last = workFlow[workFlow.length - 1] || {};
         let operationList = ['同意', '不同意']; // 操作列表的status
 
         // 赋值 完整版工作流
         this.fullWL = workFlow;
+
+        // 已终止
+        if (last.status === '终止') {
+          return
+        }
 
         // this.actions = actions.split(',');
         this.actions = ['agreement', 'disagree']; // actions字段没有返回，修改固定赋值
@@ -144,7 +150,7 @@ export default {
       await this.getFlowAndActions();
       // 获取表单表单详情
       this.getOrderList(transCode);
-      this.$emit('input',false)
+      this.$emit('input', false)
     })()
   }
 }
