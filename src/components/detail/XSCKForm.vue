@@ -119,7 +119,8 @@
         orderInfo: {},      // 表单内容
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         orderList: {}, // 物料列表
-        warehouse: {}
+        warehouse: {},
+        dealerInfo: {}, // 客户信息
       }
     },
     mixins: [detailCommon],
@@ -157,8 +158,8 @@
           let {dataSet} = formData.outPut;
           for (let item of dataSet) {
             this.count += item.tdAmount;
-            item.inventoryPic = item.inventoryPic_outPutMatCode 
-              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` 
+            item.inventoryPic = item.inventoryPic_outPutMatCode
+              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
               : this.getDefaultImg();
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];

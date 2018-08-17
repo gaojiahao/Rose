@@ -11,7 +11,8 @@
             </div>
             <div class="cp_info">
               <p class="cp_name">{{dealerInfo.dealerName}}</p>
-              <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+              <p class="cp_ads">
+                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
             </div>
           </div>
           <div v-else>
@@ -24,7 +25,7 @@
         <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
-                          v-model="crDealerPaymentTerm"></pop-single-select>
+                           v-model="crDealerPaymentTerm"></pop-single-select>
         <!-- 物料列表 -->
         <div class="materiel_list mg_auto box_sd">
           <!-- 没有选择物料 -->
@@ -93,10 +94,10 @@
           <div class="add_more" v-if="listData.length" @click="addOrder">新增更多订单</div>
           <!-- 往来popup -->
           <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
-                          @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
+                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          :default-value="listData" ref="matter"></pop-matter-list>
+                           :default-value="listData" ref="matter"></pop-matter-list>
         </div>
       </div>
     </div>
@@ -132,8 +133,9 @@
   import applyCommon from 'components/mixins/applyCommon'
   import PopSingleSelect from 'components/PopSingleSelect'
   import RNumber from 'components/RNumber'
+
   export default {
-    name: 'ApplyXSCKForm',
+    name: 'ApplyCGRKForm',
     mixins: [applyCommon],
     directives: {
       TransferDom
@@ -192,45 +194,45 @@
       taxAmount() {
         return (this.totalAmount * this.taxRate).toFixed(2)
       },
-      tdAmount(){
-        return(this.totalAmount + Number(this.taxAmount)).toFixed(2)
+      tdAmount() {
+        return (this.totalAmount + Number(this.taxAmount)).toFixed(2)
       }
     },
-    watch:{
-      listData(val){
+    watch: {
+      listData(val) {
         let data = {
-          CGRK_DATA:{
-            matter : this.listData,
-            dealer : this.dealerInfo,
-            warehouse : this.warehouse
+          CGRK_DATA: {
+            matter: this.listData,
+            dealer: this.dealerInfo,
+            warehouse: this.warehouse
           }
         }
-        this.$emit('sel-data',data)
+        this.$emit('sel-data', data)
 
       },
-      dealerInfo(val){
-        if(this.listData.length){
+      dealerInfo(val) {
+        if (this.listData.length) {
           let data = {
-            CGRK_DATA:{
-              matter : this.listData,
-              dealer : this.dealerInfo,
-              warehouse : this.warehouse
+            CGRK_DATA: {
+              matter: this.listData,
+              dealer: this.dealerInfo,
+              warehouse: this.warehouse
             }
           }
-          this.$emit('sel-data',data)
+          this.$emit('sel-data', data)
         }
-        
+
       },
-      warehouse(val){
-        if(this.listData.length){
+      warehouse(val) {
+        if (this.listData.length) {
           let data = {
-            CGRK_DATA:{
-              matter : this.listData,
-              dealer : this.dealerInfo,
-              warehouse : this.warehouse
+            CGRK_DATA: {
+              matter: this.listData,
+              dealer: this.dealerInfo,
+              warehouse: this.warehouse
             }
           }
-          this.$emit('sel-data',data)
+          this.$emit('sel-data', data)
         }
 
       }
@@ -359,7 +361,7 @@
                 dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
                 crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
                 containerCode: this.warehouse.warehouseCode, // 仓库编码
-                crDealerPaymentTerm: this.crDealerPaymentTerm ,
+                crDealerPaymentTerm: this.crDealerPaymentTerm,
                 dataSet
               }
             };
@@ -416,17 +418,27 @@
               specification: item.specification_transObjCode,
             };
           });
+          // 供应商信息
           this.dealerInfo = {
-            creatorName: formData.dealerCreditContactPersonName,
-            dealerName: inPut.dealerName_dealerCodeCredit,
-            dealerMobilePhone: formData.dealerCreditContactInformation,
-            dealerCode: inPut.dealerCodeCredit,
-            dealerLabelName: inPut.crDealerLabel,
+            creatorName: formData.dealerCreditContactPersonName, // 客户名
+            dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+            dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+            dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
+            dealerLabelName: inPut.crDealerLabel, // 关系标签
+            province: inPut.province_dealerCodeCredit, // 省份
+            city: inPut.city_dealerCodeCredit, // 城市
+            county: inPut.county_dealerCodeCredit, // 地区
+            address: inPut.address_dealerCodeCredit, // 详细地址
           };
+          // 仓库信息
           this.warehouse = {
-            warehouseName: inPut.warehouseName_containerCode,
             warehouseCode: inPut.containerCode,
-            warehouseType: inPut.warehouseType_containerCode,
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseRelType: inPut.warehouseType_containerCode,
+            warehouseProvince: inPut.warehouseProvince_containerCode,
+            warehouseCity: inPut.warehouseCity_containerCode,
+            warehouseDistrict: inPut.warehouseDistrict_containerCode,
+            warehouseAddress: inPut.warehouseAddress_containerCode,
             containerInWarehouseManager: inPut.containerInWarehouseManager,
           };
           this.formData = {
@@ -442,7 +454,7 @@
     },
     created() {
       let data = sessionStorage.getItem('CGRK_DATA');
-      if(data){
+      if (data) {
         this.listData = JSON.parse(data).matter;
         this.dealerInfo = JSON.parse(data).dealer;
         this.warehouse = JSON.parse(data).warehouse;
