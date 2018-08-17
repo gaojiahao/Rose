@@ -7,13 +7,13 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
-          <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
+          <span class="user_name">{{dealerInfo.creatorName}}</span>
+          <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{orderInfo.order.dealerName_dealerDebit}}</p>
+          <p class="cp_name">{{dealerInfo.dealerName}}</p>
           <p class="cp_ads">
-            {{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit}}</p>
+            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
         </div>
       </div>
       <!-- 结算方式 -->
@@ -97,9 +97,9 @@
   export default {
     data() {
       return {
-        count: 0,          // 金额合计
         orderInfo: {},      // 表单内容
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'
+        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
+        dealerInfo: {},
       }
     },
     mixins: [detailCommon],
@@ -120,9 +120,9 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(data => {
+        }).then(({success = true, formData = {}}) => {
           // http200时提示报错信息
-          if (data.success === false) {
+          if (success === false) {
             this.$vux.alert.show({
               content: '抱歉，数据有误，暂无法查看',
               onHide: () => {
@@ -131,17 +131,28 @@
             });
             return;
           }
+          let {order} = formData;
           // 获取合计
-          let {dataSet} = data.formData.order;
+          let {dataSet} = order;
           for (let val of dataSet) {
-            this.count += val.price * 100;
             val.inventoryPic = val.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
-          this.count = this.count / 100;
-          data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
-          this.orderInfo = data.formData;
+          // 客户信息
+          this.dealerInfo = {
+            creatorName: formData.dealerDebitContactPersonName || '', // 客户名
+            dealerName: order.dealerName_dealerDebit || '', // 公司名
+            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+            dealerCode: order.dealerDebit || '', // 客户编码
+            dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+            province: order.province_dealerDebit || '', // 省份
+            city: order.city_dealerDebit || '', // 城市
+            county: order.county_dealerDebit || '', // 地区
+            address: order.address_dealerDebit || '', // 详细地址
+          };
+          formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
+          this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
       },

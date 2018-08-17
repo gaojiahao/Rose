@@ -7,12 +7,13 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <span class="user_name">{{orderInfo.dealerCreditContactPersonName}}</span>
-          <span class="user_tel">{{orderInfo.dealerCreditContactInformation}}</span>
+          <span class="user_name">{{dealerInfo.creatorName}}</span>
+          <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{orderInfo.inPut.dealerName_dealerCodeCredit}}</p>
-          <p class="cp_ads"></p>
+          <p class="cp_name">{{dealerInfo.dealerName}}</p>
+          <p class="cp_ads">
+            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
         </div>
       </div>
       <!-- 入库仓库 -->
@@ -127,10 +128,9 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(data => {
-          this.submitInfo = JSON.parse(JSON.stringify(data));
+        }).then(({success = true, formData = {}}) => {
           // http200时提示报错信息
-          if (data.success === false) {
+          if (success === false) {
             this.$vux.alert.show({
               content: '抱歉，数据有误，暂无法查看',
               onHide: () => {
@@ -139,14 +139,25 @@
             });
             return;
           }
-          let {inPut} = data.formData;
+          let {inPut} = formData;
           let {dataSet} = inPut;
           for (let val of dataSet) {
             this.count += val.tdAmount;
-            val.inventoryPic = val.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            val.inventoryPic = val.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
+          this.dealerInfo = {
+            creatorName: formData.dealerCreditContactPersonName, // 客户名
+            dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+            dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+            dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
+            dealerLabelName: inPut.crDealerLabel, // 关系标签
+            province: inPut.province_dealerCodeCredit, // 省份
+            city: inPut.city_dealerCodeCredit, // 城市
+            county: inPut.county_dealerCodeCredit, // 地区
+            address: inPut.address_dealerCodeCredit, // 详细地址
+          };
           // 入库
           this.warehouse = {
             warehouseCode: inPut.containerCode,
@@ -156,8 +167,9 @@
             warehouseCity: inPut.warehouseCity_containerCode,
             warehouseDistrict: inPut.warehouseDistrict_containerCode,
             warehouseAddress: inPut.warehouseAddress_containerCode,
+            containerInWarehouseManager: inPut.containerInWarehouseManager,
           };
-          this.orderInfo = data.formData;
+          this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
       },
