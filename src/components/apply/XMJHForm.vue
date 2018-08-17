@@ -17,7 +17,7 @@
             <div class="cp_info">
               <p class="cp_name">{{dealerInfo.COMMENT}}</p>
               <p class="cp_ads">预期开始日期：{{dealerInfo.EXPECT_START_DATE}}</p>
-              <p class="cp_ads">预期结束日期：{{dealerInfo.EXPECT_END_DATE}}</p>
+              <p class="cp_ads">预期截止日期：{{dealerInfo.EXPECT_END_DATE}}</p>
             </div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
           </div>
@@ -109,7 +109,7 @@
     },
     data() {
       return {
-        projectTypes:[['单品','客制','展销','促销']],
+        projectTypes:[['设计类','协调类','执行类']],
         projectType:[],
         projectList: [],
         showDealerPop:false,
