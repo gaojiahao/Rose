@@ -443,7 +443,9 @@
           };
           this.formData = {
             ...this.formData,
+            creator: formData.creator,
             biId: formData.biId,
+            biComment: formData.biComment,
           };
           this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
           this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';

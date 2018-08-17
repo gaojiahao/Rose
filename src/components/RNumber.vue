@@ -11,10 +11,12 @@
   export default {
     name: "RNumber",
     props: {
+      // 默认值
       num: {
         type: Number,
         default: 0
       },
+      // 最大值
       max: {
         type: Number,
         default: 0
@@ -33,7 +35,7 @@
       }
     },
     methods: {
-      // TODO 数量--
+      // TODO 数量减一
       subNum() {
         if (this.currentNum === 1) {
           return
@@ -41,7 +43,7 @@
         this.currentNum--;
         this.$emit('input', this.currentNum);
       },
-      // TODO 数量++
+      // TODO 数量加一
       plusNum() {
         if (this.max && this.max === this.num) {
           return
@@ -49,7 +51,7 @@
         this.currentNum++;
         this.$emit('input', this.currentNum);
       },
-      // TODO 修改数量
+      // TODO 数量自定义
       getNum(e) {
         let val = Number(e.target.value);
         if (this.max && val > this.max) {
