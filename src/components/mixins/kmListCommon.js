@@ -3,6 +3,7 @@ import { getListClassfiy,getView,getViewList} from 'service/kmService.js'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 
+
 export default {
   data() {
     return {
@@ -62,7 +63,7 @@ export default {
     searchList(val) {
       this.serachVal = val;
       this.resetCondition();
-      this.getList();
+      this.getListData();
     },
     //获取列表视图
     getClassfiy(){
@@ -102,6 +103,9 @@ export default {
       })
       this.handleLoadding = false;
       this.flowShow = true;
+      this.$nextTick(() => {
+        this.$refs.flowListWrapper.refresh();
+      })
     },
     //获取列表展示字段
     getView(){
@@ -117,16 +121,6 @@ export default {
     },
     //获取列表数据
     getListData(noReset = false){
-      let filter = [];
-      if(this.serachVal){
-        filter = [
-          {
-            operator:'like',
-            value : this.serachVal,
-            property : 'inventoryName'
-          }
-        ]
-      }
        return getViewList({
         calc_rel_code: this.calc_rel_code,
         view_id: this.view_id,
@@ -135,7 +129,8 @@ export default {
         page:this.page,
         start:(this.page-1)*this.limit,
         limit: this.limit,
-        filter:JSON.stringify(filter)
+        device_type :'phone',
+        filter:this.serachVal
       }).then(({data=[],total=0})=>{
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach(item=>{
