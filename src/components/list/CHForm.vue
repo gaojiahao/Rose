@@ -55,9 +55,7 @@
           </div>
         </div>
       </r-scroll>
-      <!-- <div class="">哈哈哈
-
-      </div> -->
+      
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
@@ -96,9 +94,9 @@
                           <span class="symbol">本次数量: </span> 
                           <span class="number_incre">+ {{Fitem.drQty.toFixed(2)}}</span>
                         </div>
-                        <div class="num_part" v-else-if='Fitem.drQty>0'>
+                        <div class="num_part" v-else-if='Fitem.crQty>0'>
                           <span class="symbol">本次数量: </span> 
-                          <span class="number_incre">- {{Fitem.crQty.toFixed(2)}}</span>
+                          <span class="number_redu">- {{Fitem.crQty.toFixed(2)}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">本次数量: </span> 
@@ -107,13 +105,13 @@
                       </div>
                       <!-- 金额 -->
                       <div class="amount_money">
-                        <div class="num_part" v-if='Fitem.drQty>0'>
+                        <div class="num_part" v-if='Fitem.drAmnt>0'>
                           <span class="symbol">本次金额: </span> 
                           <span class="number_incre">+ {{Fitem.drAmnt.toFixed(2)}}</span>
                         </div>
-                        <div class="num_part" v-else-if='Fitem.drQty>0'>
+                        <div class="num_part" v-else-if='Fitem.crAmnt>0'>
                           <span class="symbol">本次金额: </span> 
-                          <span class="number_incre">- {{Fitem.crAmnt.toFixed(2)}}</span>
+                          <span class="number_redu">- {{Fitem.crAmnt.toFixed(2)}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">本次金额: </span> 
@@ -123,11 +121,11 @@
                     </div>
                   </div>
                   <div class="summary_part vux-1px-t">
-                    <!-- <div class="number">
-                      <span class="symbol">数量: </span>{{Fitem.qtyBalance}}
-                    </div> -->
+                    <div class="number">
+                      <span class="symbol">当前数量: </span>{{Fitem.qtyBalance}}
+                    </div>
                     <div class="price">
-                      <span class="symbol">余额: ￥</span>{{Fitem.amntBalance}}
+                      <span class="symbol">当前余额: ￥</span>{{Fitem.amntBalance}}
                     </div>                
                   </div>
                   <!--收起的每个流水明细-->
