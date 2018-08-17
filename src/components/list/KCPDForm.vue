@@ -4,13 +4,13 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search='searchList'></searchIcon>
-        <!--<div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+        <div class="filter_part">
+          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
-          </tab>
-        </div>-->
+          </tab>-->
+        </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -20,7 +20,7 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <!--<span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>-->
+              <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
             </p>
             <p class="duty_time">{{item.modTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
@@ -70,18 +70,15 @@
     },
     mixins: [listCommon],
     methods: {
-      goDetail(transCode) {
-        let {code} = this.$route.params;
-        this.$router.push({
-          path: `/list/${code}/detail`,
-          query: {
-            transCode: transCode
-          }
-        })
-      },
       //获取销售订单数据
       getList(noReset = false) {
-        let filter = [];
+        let filter = [
+          /*{
+            operator: 'eq',
+            value: this.activeTab,
+            property: 'biStatus',
+          },*/
+        ];
 
         if (this.serachVal) {
           filter = [
@@ -100,8 +97,11 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input',false)
+          this.$emit('input', false)
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          tableContent.forEach(item => {
+            this.setStatus(item);
+          });
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {
             this.$nextTick(() => {

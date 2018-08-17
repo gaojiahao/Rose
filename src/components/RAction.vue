@@ -6,15 +6,12 @@
       <span class="reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
       <span class="agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
     </div>
-     <!-- 操作时加载动画-->
-    <!-- <submit-load :submit='submitLoadding'></submit-load> -->
   </div>
-  
 </template>
 
 <script>
   import {commitTask} from 'service/commonService'
-  import SubmitLoad from 'components/submitLoading'
+
   export default {
     name: "RAction",
     props: {
@@ -36,11 +33,7 @@
     data() {
       return {
         show: true,
-        submitLoadding :false
       }
-    },
-    components:{
-       SubmitLoad
     },
     methods: {
       // TODO 拒绝
@@ -98,8 +91,7 @@
       },
       // TODO 审批
       commitTask({result, value, successMsg, callback}) {
-        // this.submitLoadding = true;
-        this.$event.$emit('close',true)
+        this.$event.$emit('detail-show-loading', true);
         let submitData = {
           taskId: this.taskId,
           taskData: JSON.stringify({
@@ -109,8 +101,7 @@
           })
         };
         return commitTask(submitData).then(data => {
-          // this.submitLoadding = false;
-          this.$event.$emit('close',false)
+          this.$event.$emit('detail-show-loading', false);
           let {success = false, message = '提交失败'} = data;
           let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
           if (success) {
@@ -131,8 +122,8 @@
               }
             }
           });
-        }).catch( e=>{
-          this.submitLoadding = false;
+        }).catch(e => {
+          this.$event.$emit('detail-show-loading', false);
         });
       },
     },

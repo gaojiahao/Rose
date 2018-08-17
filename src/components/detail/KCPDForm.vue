@@ -1,6 +1,9 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 入库仓库 -->
       <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" disabled></pop-warehouse-list>
       <!-- 创建时间 -->
@@ -109,8 +112,8 @@
           let {inPut = {}} = data.formData;
           let {dataSet} = inPut;
           for (let val of dataSet) {
-            val.inventoryPic = val.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            val.inventoryPic = val.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
           // 入库
@@ -124,7 +127,7 @@
             warehouseAddress: inPut.warehouseAddress_containerCode,
           };
           this.orderInfo = data.formData;
-          // this.workFlowInfoHandler();
+          this.workFlowInfoHandler();
         })
       },
     }

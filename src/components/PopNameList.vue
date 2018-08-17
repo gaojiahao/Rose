@@ -45,14 +45,14 @@
             <!-- 当没有数据的时候 显示提醒文字 -->
             <div class="when_null" v-show="!dealerList.length && !hasNext">
               <div class="title">抱歉，没有找到您搜索的内容</div>
-              <ul class="tips">
+              <!-- <ul class="tips">
                 <li>
                   不用担心，您马上可以进行 <span class="addNew" @click="add">新增项目计划</span>
                 </li>
                 <li>
                   或者检查“输入内容”是否正确
                 </li>
-              </ul>
+              </ul> -->
             </div>
           </div>
         </div>
@@ -169,10 +169,11 @@
           ];
         }
        getProjectApproval({
+          projectName:this.srhInpTx,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          filter:JSON.stringify(filter)
+          // filter:JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           for(let i = 0 ; i<tableContent.length ; i++){

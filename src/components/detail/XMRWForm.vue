@@ -10,7 +10,7 @@
         <p class="title">任务详情</p>
         <group>
           <cell title="任务类型" :value="projectTask.taskType"></cell>
-          <cell title="任务说明" :value="projectTask.comment"></cell>
+          <cell title="任务说明" :value="projectTask.comment" primary="content"></cell>
           <cell title="截止日期" :value="projectTask.deadline"></cell>
           <cell title="计划工时" :value="projectTask.planTime"></cell>
         </group>
@@ -58,7 +58,8 @@
       // 获取详情
       getOrderList(transCode = '') {
         return findProjectTask(transCode).then(({formData = {}}) => {
-          let {projectTask} = formData;
+          let projectTask = formData.projectTask || {};
+          this.jsonData = formData;
           this.projectTask = {
             ...projectTask,
             actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')

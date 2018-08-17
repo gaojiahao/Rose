@@ -1,30 +1,33 @@
 <template>
   <div class="detail_wrapper xmrw-detail-container">
     <div class="basicPart">
+      <!-- 项目经理 -->
+      <div class="or_ads mg_auto box_sd">
+        <div class="user_info group_mar_left">
+          <span class="user_name">{{approval.projectManager}}</span>
+          <span class="user_tel">{{approval.phoneNumber}}</span>
+        </div>
+      </div>
       <!-- 项目明细 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">项目信息</p>
-        <group>
+        <group class="group_mar_left">
           <cell title="项目名称" :value="approval.projectName || '无'"></cell>
           <cell title="项目类型" :value="approval.projectType || '无'"></cell>
         </group>
       </div>
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">项目经理</p>
-        <group>
-          <cell :title="approval.projectManager" :value="approval.phoneNumber"></cell>
-        </group>
-      </div>
+      <!-- 项目其他 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">项目其他</p>
-        <group>
+        <group class="group_mar_left">
           <cell title="项目说明" primary="content" align-items="flex-start" :value="approval.comment || '无'"></cell>
           <cell title="项目备注" primary="content" align-items="flex-start" :value="comment.biComment || '无'"></cell>
         </group>
       </div>
+      <!-- 预算明细 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">预算明细</p>
-        <group>
+        <group class="group_mar_left">
           <cell title="预算收入" :value="approval.budgetIncome || '无'"></cell>
           <cell title="预算成本" :value="approval.budgetCapital || '无'"></cell>
           <cell title="预算费用" :value="approval.budgetCost || '无'"></cell>
@@ -160,7 +163,10 @@
       }
     }
   }
-  .materiel_list .mater_list .each_mater .each_mater_wrapper .mater_main{
-    margin-left: 0;
+  .group_mar_left{
+    margin: 0 0.08rem;
   }
+  // .materiel_list .mater_list .each_mater .each_mater_wrapper .mater_main{
+  //   margin-left: 0;
+  // }
 </style>

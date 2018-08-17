@@ -2,7 +2,7 @@
   <div class="pages xmrw-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <!-- 用户地址和基本信息-->
+        <!-- 项目计划基本信息-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div class="no-selected" v-if="!dealerInfo">
             <div class="title">项目计划</div>
@@ -22,33 +22,12 @@
             <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
           </div>
         </div>
-        <!-- 项目经理-->
-        <!-- <div class='r-picker vux-1px-b r-picker-3' @click='XMLXshowStatus'>
-          <div class="title">项目经理</div>
-          <div class="mode">{{managerName || placeholder}} {{managerValue}}</div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20" ></x-icon>
-          <div v-transfer-dom>
-            <popup id="trade_pop_part" v-model="XMLXshow">
-              <div>
-                <div class='popup_header vux-1px-b'>
-                  <span class='cancel' @click="XMLXcancel">取消</span>
-                  <span class='confirm' @click="XMLXconfirm(managerTask)">确认</span>
-                </div>
-                <picker :data="managerList" :columns="1"  v-model="managerTask"></picker>
-              </div>
-            </popup>
-          </div>
-        </div> -->
-        
-        <!-- 项目类型-->
-        <!-- <r-picker title="任务类型" :data="projectTypes" mode="3" placeholder="请选择任务类型"
-                  v-model="ProjectApproval.projectType"></r-picker> -->
                   
         <div class="xmlx_list">
-            <!-- 商机列表 -->
+            <!-- 任务计划列表 -->
             <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
                 <div class="mater_list">
-                    <div class="each_mater">
+                    <div class="each_mater JH_mar_btm0">
                     <div class="each_mater_wrapper">
                         <div class="mater_main" style='max-width:100%;'>
                         <div class="userInp_mode">
@@ -57,9 +36,8 @@
                                 <x-input  title="任务名称" v-model="item.taskName" text-align='right'  placeholder='请填写'></x-input>
                                 <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]" @on-change=" typeTask($event,item) "></popup-picker>
                                 <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea> 
-                                <datetime title="截至日期" v-model='item.deadline'></datetime>
+                                <datetime title="截止日期" v-model='item.deadline'></datetime>
                                 <x-input  title="计划工时" v-model="item.planTime" text-align='right'  placeholder='请填写' :ref="'planTime'+index" @input="filterNum($event,'planTime',index)"></x-input>
-                                <!-- <x-textarea title="任务备注" v-model="item.comment" :max="200"></x-textarea> -->
                             </group>
                         </div>
                         </div>
@@ -73,6 +51,24 @@
         <div class="XMJH_add">
           <div>您还需要添加新的计划?请点击<span @click="addPlan">添加</span><span @click="delatePlan" v-if="projectPlan.length>1">删除</span></div>
         </div>
+
+        <!-- 备注 -->
+        <div class="materiel_list mg_auto box_sd">
+            <div class="mater_list">
+                <div class="each_mater">
+                <div>
+                    <div class="mater_main">
+                    <div class="userInp_mode">
+                        <group class="SJ_group" @group-title-margin-top="0">
+                            <x-textarea title="备注" v-model="FormDataComment"  :max="200"></x-textarea> 
+                        </group>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+            
         <!-- 项目计划popup -->
           <pop-name-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
@@ -113,58 +109,21 @@
     },
     data() {
       return {
-        // managerList:[
-        //   {
-        //     name:'马云',
-        //     value:'132634679879',
-        //     parent: '0'
-        //   },{
-        //     name:'马化腾',
-        //     value:'123444897997',
-        //     parent: '0'
-        //   }],
-        // managerTask:[],
-        // managerName:'',
-        // managerValue:'',
-        // placeholder:'请选择',
         projectTypes:[['单品','客制','展销','促销']],
         projectType:[],
-        // XMLXshow: false,
         projectList: [],
         showDealerPop:false,
         dealerInfo:null,
-        ProjectApproval:{
-          "projectName": "", //项目名称
-          "projectType": "",//项目类型
-          "projectManager": "",//项目经理
-          "phoneNumber": "",//手机号
-          "expectStartDate": this.getNowFormatDate(),//预期开始日期
-          "expectEndDate": this.getNowFormatDate(),//预期截至日期
-          "budgetIncome": "",//预算收入
-          "budgetCapital": "",//预算成本
-          "budgetCost": "",//预算费用
-          "budgetProfit": '',//预算利润
-          "budgetProfitMargin": '',//预算利润率
-          "comment": ""//项目说明
-        },
         planModel:{
           "taskName": "",//任务名称
-          "taskType": "",//任务大类
+          "taskType": "",//任务类型
+          "comment": "",//备注
           "deadline": "",//截止日期
           "planTime": "",//计划工时
-          "comment": ""//备注
         },
         projectPlan: [],
         formData: {},
-        // FormDataComment:'',//备注
-        // jsonData: {
-        //   bomType: {
-        //     bomType: ''
-        //   },
-        //   comment: {
-        //     biComment: ''
-        //   },
-        // },
+        FormDataComment:'',//备注
       }
     },
     methods: {
@@ -188,26 +147,6 @@
         let [sels] = JSON.parse(val);
         this.dealerInfo = sels;
       },
-      // //picker显示
-      // XMLXshowStatus() {
-      //   this.XMLXshow = !this.XMLXshow;
-      // },
-      // //picker确认
-      // XMLXconfirm(e){
-      //   for(let i = 0 ; i<this.managerList.length; i++){
-      //     if(this.managerList[i].value == e[0]){
-      //       this.managerName = this.managerList[i].name;
-      //       this.ProjectApproval.projectManager = this.managerList[i].name;
-      //       this.ProjectApproval.phoneNumber = this.managerList[i].value;
-      //     }
-      //   }
-      //   this.managerValue = e[0];
-      //   this.XMLXshow = false;
-      // },
-      // //picker取消
-      // XMLXcancel(){
-      //   this.XMLXshow = false;
-      // },
       //限制只能输入数字
       filterNum(e,ref,idx){
         let num = e.replace(/[^\d]/g,'');
@@ -232,28 +171,34 @@
       },
       // TODO 提交
       save() {
-        // let msgTask='';
-        // let objArr = [
-        //   {tip:'projectManager',msg:'项目经理'},
-        //   {tip:'projectType',msg:'项目类型'},
-        //   {tip:'projectName',msg:'项目名称'},
-        //   {tip:'budgetIncome',msg:'预算收入'},
-        //   {tip:'budgetCapital',msg:'预算成本'},
-        //   {tip:'budgetCost',msg:'预算费用'},
-        //   {tip:'expectStartDate',msg:'预期开始日期'},
-        //   {tip:'expectEndDate',msg:'预期截至日期'},
-        //   {tip:'comment',msg:'项目说明'},
-        // ];
-        // for(let i = 0 ; i<objArr.length;i++){
-        //   if(this.ProjectApproval[objArr[i].tip] == ''){
-        //     let msgTitle = objArr[i].tip == 'projectManager' || objArr[i].tip == 'projectType' || objArr[i].tip == 'expectStartDate' || objArr[i].tip == 'expectEndDate'?'请选择':'请填写';
-        //      msgTask = msgTitle + objArr[i].msg
-        //      this.$vux.alert.show({
-        //         content:msgTask
-        //       })
-        //     return;
-        //   }
-        // }
+        //验证选择项目
+        if(!this.dealerInfo){
+           this.$vux.alert.show({
+                content:'请选择项目'
+              })
+            return;
+        }
+        let msgTask='';
+        let objArr = {
+          taskName:'任务名称',
+          taskType:'任务类型',
+          comment:'任务说明',
+          deadline:'截止日期',
+          planTime:'计划工时',
+        }
+        //验证任务计划
+        for(let i = 0 ; i<this.projectPlan.length ; i++){
+          for(let j in this.projectPlan[i]){
+            if(this.projectPlan[i][j] == ''){
+              let msgTitle = j == 'taskType'|| j == 'deadline'?'请选择':'请填写';
+              msgTask= msgTitle + objArr[j];
+              this.$vux.alert.show({
+                  content:msgTask
+                })
+              return;
+            }
+          }
+        }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
@@ -263,7 +208,7 @@
               listId: "0281f8eb-f1d2-415c-b566-756fc749ccb3",
               formData: {
                 comment:{
-                  biComment: this.dealerInfo.COMMENT,
+                  biComment: this.FormDataComment,
                 },
                 baseinfo: {
                     creator: this.formData.handler,
@@ -375,7 +320,8 @@
   }
   .XMJH_add{
     text-align: center;
-    font-size: 0.075rem;
+    font-size: 0.12rem;
+    padding: 0.1rem 0;
     color: #757575;
     span{
       margin-left: 5px;
@@ -386,6 +332,9 @@
         color: #fc3c3c;
       }
     }
+  }
+  .JH_mar_btm0{
+    margin-bottom: 0!important;
   }
 </style>
 <style scoped lang="scss">

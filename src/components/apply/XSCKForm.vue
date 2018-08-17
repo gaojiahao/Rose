@@ -215,7 +215,7 @@
       },
     },
     watch:{
-      orderList(val){ 
+      orderList(val){
         let arr = Object.keys(val);
         if(arr.length){
           console.log(val);
@@ -478,6 +478,8 @@
           };
           this.formData = {
             ...this.formData,
+            creator: formData.creator,
+            biComment: formData.biComment,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
           };
           this.drDealerPaymentTerm = outPut.drDealerPaymentTerm;
@@ -488,7 +490,7 @@
     },
     created() {
       let data = sessionStorage.getItem('CGSQ_DATA');
-      if(data){        
+      if(data){
         this.orderList = JSON.parse(data).orderList;
         this.warehouse = JSON.parse(data).warehouse;
         this.dealerInfo = JSON.parse(data).dealer;
