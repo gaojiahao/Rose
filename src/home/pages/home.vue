@@ -66,60 +66,54 @@ export default {
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
         for(let val of res){
-          // 获取基础对象
-          if(val.text === '基础对象'){
+          // 获取应用
+          if(businessMap[val.text]){
+            // 循环生成空数组
+            BUSobj[val.text] = [];
             for(let item of val.children ){
               // 基础对象
               if(basicMap[item.text]){
-                // 动态添加对应的背景底色
-                switch(item.text){
-                  case '仓库':
-                    item.bgColor = '#D85656';
-                    item.boxShadow = '#D85656';
-                    break;
-                  case '物料':
-                    item.bgColor = '#F29C35';
-                    item.boxShadow = '#F29C35';
-                    break;
-                  case '往来':
-                    item.bgColor = '#338183';
-                    item.boxShadow = '#338183';
-                    break;
+                if(item.transName){
+                  // 动态添加对应的背景底色
+                  switch(item.text){
+                    case '仓库':
+                      item.bgColor = '#D85656';
+                      item.boxShadow = '#D85656';
+                      break;
+                    case '物料':
+                      item.bgColor = '#F29C35';
+                      item.boxShadow = '#F29C35';
+                      break;
+                    case '往来':
+                      item.bgColor = '#338183';
+                      item.boxShadow = '#338183';
+                      break;
+                  }
+                  // 图片处理
+                  item.icon = item.icon
+                    ? `/dist/${item.icon}`
+                    : ''
+                  this.BSarray.push(item);              
                 }
-                // 图片处理
+              }
+              // 业务应用
+              if(businessMap[val.text][item.text]){
+                item.code = businessMap[val.text][item.text]
                 item.icon = item.icon
                   ? `/dist/${item.icon}`
-                  : ''
-                this.BSarray.push(item);
+                  : this.getDefaultIcon();
+                // 归类到相应的小数组
+                BUSobj[val.text].push(item);     
               }
             }
-          }
-          // 获取业务应用
-          else if(val.text === '业务应用'){
-            for(let item of val.children){
-              // 获取 业务应用-销售 应用
-              if(businessMap[item.text]){
-                // 循环生成空数组
-                BUSobj[item.text] = [];
-                for(let app of item.children){
-                  //映射表 赋值
-                  if(businessMap[item.text][app.text]){
-                    app.code = businessMap[item.text][app.text]
-                    app.icon = app.icon
-                      ? `/dist/${app.icon}`
-                      : this.getDefaultIcon();
-                    // 归类到相应的小数组
-                    BUSobj[item.text].push(app);           
-                  }
-                }
-                // 针对应用数组 进行 分类大汇总
-                this.BUSarray.push({ 
-                  name: item.text, 
-                  appList: BUSobj[item.text]
-                });              
-              }
+            if(val.text !== '产品'){
+              // 针对应用数组 进行 分类大汇总
+              this.BUSarray.push({ 
+                name: val.text, 
+                appList: BUSobj[val.text]
+              });                  
             }
-
+      
           }
         }
         this.showLoadding = false;
