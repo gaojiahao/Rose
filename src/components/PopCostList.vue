@@ -9,7 +9,7 @@
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
-                  @on-pulling-down="onPullingDown" ref="bScroll">
+                   ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item,index)">
             <div class="mater_main ">
@@ -44,11 +44,6 @@
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
-      </div>
-      <!-- 底部栏 -->
-      <div class="count_mode vux-1px-t">
-        <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
-        <span class="count_btn" @click="cfmMater">确定</span>
       </div>
     </popup>
   </div>
@@ -99,12 +94,6 @@
           this.showPop = val;
         }
       },
-       defaultValue: {
-        handler(val) {
-          // 默认值改变，重新赋值
-          this.setDefaultValue();
-        }
-      },
        
     },
     methods: {
@@ -123,32 +112,21 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.COST_CODE === sItem.COST_CODE) !== -1;
+        let flag = false;
+        this.selItems && this.selItems.every(item => {
+          if (sItem.COST_CODE === item.COST_CODE) {
+            flag = true;
+            return false;
+          }
+          return true;
+        });
+        return flag;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.COST_CODE === sItem.COST_CODE);
-        // 若存在重复的 则清除
-        if (delIndex !== -1) {
-          arr.splice(delIndex, 1);
-          return;
-        }
-        arr.push(sItem);
-      },
-      // TODO 确定选择往来
-      cfmMater() {
-        let sels = [];
-        // 返回上层
         this.showPop = false;
-        this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
-        console.log(this.tmpItems)
-        this.selItems = [...this.tmpItems];
-        this.selItems.map(item=>{
-          item.COST_SUB = item.COST_SUB_SUBJECTS.split(',');
-          item.expSubject= item.COST_SUB[0];
-        })
-        this.$emit('sel-matter', JSON.stringify(this.selItems));
+        this.selItems = [sItem];
+        this.$emit('sel-matter',this.selItems[0]);
       },
       // TODO 获取物料列表
       getCostList() {
@@ -186,26 +164,10 @@
         this.$refs.bScroll.scrollTo(0, 0);
         this.getCostList();
       },
-      // TODO 设置默认值
-      setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
-      },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
         this.getCostList();
-      },
-      // TODO 下拉刷新
-      onPullingDown() {
-        this.page = 1;
-        this.getCostList(true).then(() => {
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullDown().then(() => {
-              this.$refs.bScroll.finishPullUp();
-            });
-          })
-        });
       },
     },
     created() {
@@ -220,7 +182,7 @@
     background: #fff;
     .trade_pop {
       padding: 0 .08rem;
-      height: calc(100% - .44rem);
+      height: 100%;
       // 顶部
       .title {
         font-size: .2rem;
