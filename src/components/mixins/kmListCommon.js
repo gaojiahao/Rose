@@ -51,11 +51,9 @@ export default {
       this.$refs.bScroll.resetPullDown();
     },
     ///tab切换
-    tabClick(item, index) {
-      this.activeIndex = index;
-      this.activeTab = item.status;
-      this.calc_rel_code = item.calc_rel_code;
-      this.view_id = item.view_id;
+    tabClick(val) {
+      this.calc_rel_code = val.calc_rel_code;
+      this.view_id = val.view_id;
       this.resetCondition();
       this.getList();
     },
