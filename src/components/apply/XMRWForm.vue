@@ -4,7 +4,7 @@
       <div class="fill_wrapper">
         <!-- 项目-->
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
-                  v-model="projectTask.projectName"></r-picker>
+                  @on-change="projectChange" v-model="projectTask.projectName"></r-picker>
         <!-- 任务 -->
         <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
                   @on-change="taskChange" v-model="projectTask.taskName"></r-picker>
@@ -40,7 +40,13 @@
   import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, dateFormat,} from 'vux'
   import ApplyCommon from './../mixins/applyCommon'
   import RPicker from 'components/RPicker'
-  import {getProjectPlanProjectName, saveProjectTask, updateProjectTask, findProjectTask} from 'service/projectService'
+  import {
+    getProjectPlanProjectName,
+    saveProjectTask,
+    updateProjectTask,
+    findProjectTask,
+    getProjectTodoTask
+  } from 'service/projectService'
 
   export default {
     mixins: [ApplyCommon],
@@ -58,24 +64,7 @@
     data() {
       return {
         projectList: [], // 项目列表
-        taskList: [
-          {
-            name: '任务1',
-            value: '任务1',
-            taskType: '任务类型1', // 任务类型
-            deadline: '2018-08-18', // 截止时间
-            planTime: 16, // 计划工时
-            comment: '任务说明1', // 任务说明
-          },
-          {
-            name: '任务2',
-            value: '任务2',
-            taskType: '任务类型2', // 任务类型
-            deadline: '2018-08-19', // 截止时间
-            planTime: 24, // 计划工时
-            comment: '任务说明2', // 任务说明
-          },
-        ], // 任务列表
+        taskList: [], // 任务列表
         formData: {},
         jsonData: {
           baseinfo: {},
@@ -180,11 +169,26 @@
         let [sel = {}] = this.taskList.filter(item => {
           return item.value === val;
         });
-        console.log(sel)
         this.projectTask = {
           ...this.projectTask,
-          ...sel,
+          taskName: sel.TASK_NAME, // 任务名称
+          taskType: sel.TASK_TYPE, // 任务类型
+          comment: sel.COMMENT, // 任务说明,
+          deadline: dateFormat(sel.DEADLINE, 'YYYY-MM-DD'), // 截止时间
+          planTime: sel.PLAN_TIME, // 计划工时
         }
+      },
+      // TODO 项目切换
+      projectChange(val) {
+        this.projectTask = {
+          ...this.projectTask,
+          taskName: '', // 任务名称
+          taskType: '', // 任务类型
+          comment: '', // 任务说明,
+          deadline: '', // 截止时间
+          planTime: '', // 计划工时
+        };
+        this.getTaskList();
       },
       // TODO 获取详情
       getFormData() {
@@ -196,7 +200,21 @@
             actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
           };
         })
-      }
+      },
+      // TODO 获取任务列表
+      getTaskList() {
+        return getProjectTodoTask({
+          projectName: this.projectTask.projectName
+        }).then(({tableContent = []}) => {
+          this.taskList = tableContent.map(item => {
+            return item = {
+              ...item,
+              name: item.TASK_NAME,
+              value: item.TASK_NAME,
+            }
+          });
+        })
+      },
     },
     created() {
       this.getProjectList();

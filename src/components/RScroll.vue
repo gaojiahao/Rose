@@ -2,11 +2,11 @@
   <div class="scroll-container" ref="bScroll">
     <div class="scroll-wrapper" :class="{hasRefresh: hasRefresh}">
       <slot></slot>
-      <slot name="loadmore">
+      <slot name="loadmore" v-if="options.pullDownRefresh">
         <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext || noData"></load-more>
       </slot>
     </div>
-    <slot name="refresh">
+    <slot name="refresh" v-if="options.pullUpLoad">
       <div class="refresh-container" :style="{top: pullDownTop + 'px'}" v-show="hasRefresh">
         <spinner class="icon" type="crescent" v-show="!refreshDone"></spinner>
         <div class="tips">{{-pullDownTop > 30 ? '下拉刷新' : '释放刷新'}}</div>
@@ -63,6 +63,7 @@
       // TODO 初始化滚动
       _initScroll() {
         let options = {
+          click: true,
           probeType: 1,
           ...this.options,
         };
@@ -182,7 +183,7 @@
   .weui-toast.vux-toast-top {
     top: 18px;
   }
-  .weui-toast {   
+  .weui-toast {
     background: rgba(17, 17, 17, 0.5);
   }
 </style>
