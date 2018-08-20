@@ -121,12 +121,12 @@ export default {
     //获取列表数据
     getListData(noReset = false){
       let filters='';
-      if(this.serachVal!=''){
-        for(let i = 0 ; i<this.filterArr.length ; i++){
-          this.filterArr[i].value = this.serachVal;
-        }
-        filters = JSON.stringify(this.filterArr);
-      }
+      // if(this.serachVal!=''){
+      //   for(let i = 0 ; i<this.filterArr.length ; i++){
+      //     this.filterArr[i].value = this.serachVal;
+      //   }
+      //   filters = JSON.stringify(this.filterArr);
+      // }
        return getViewList({
         calc_rel_code: this.calc_rel_code,
         view_id: this.view_id,
@@ -135,7 +135,8 @@ export default {
         page:this.page,
         start:(this.page-1)*this.limit,
         limit: this.limit,
-        filter:filters
+        device_type : 'phone',
+        filter:this.serachVal
       }).then(({data=[],total=0})=>{
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach(item=>{
