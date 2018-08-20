@@ -63,8 +63,6 @@
                   <span class="title">标题:</span>
                   {{orderInfo.opportunityTitle || '无'}}
                 </div>
-
-
                 <div class='mater_other'>
                   <!-- 商机类型 -->
                   <div class="mater_spec">
@@ -158,8 +156,19 @@
             width: 100%;
             max-width: inherit;
             margin-left: 0.04rem;
+            // .mater_name {
+            //   font-size: .18rem;
+            // }
           }
-  .group_mar_left{
-      margin: 0 0.04rem;
-    }
+  .materiel_list 
+    .mater_list 
+      .each_mater 
+        .each_mater_wrapper 
+          .mater_main 
+            .mater_info 
+              .withColor 
+                .mater_code 
+                  .num {
+                    border-top-right-radius: .08rem;
+                  }
 </style>
