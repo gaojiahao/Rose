@@ -60,6 +60,16 @@ export default {
       return url;
     }
   },
+  watch:{
+    $route:{
+      handler(val){
+        if(val.name === 'HOME'){
+          this.homeScroll.refresh();
+        }
+
+      }
+    }
+  },
   created(){
     (async() => {
       // 获取首页应用列表
@@ -129,6 +139,7 @@ export default {
       click:true
     })
   }
+    
 }
 </script>
 

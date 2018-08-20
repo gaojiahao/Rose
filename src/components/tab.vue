@@ -3,13 +3,7 @@
     <!-- 收起状态-->
     <div class='only_tab_item' @click="tabShow = !tabShow">
       <div class='tab_item_name'>{{choicedTab}}
-        <p class="arrow" v-if='!tabShow'>
-          <x-icon type="ios-arrow-down" size="24" ></x-icon>
-        </p>
-        <p class="arrow" v-else>
-          <x-icon type="ios-arrow-up" size="24" class="arrow"></x-icon>
-        </p>
-        
+        <x-icon type="ios-arrow-down" size="24" class="arrow"></x-icon>        
       </div>  
     </div>
     <!--展开状态 -->
@@ -78,6 +72,7 @@ export default {
         line-height: 44px;
         .arrow{
           display: inline-block;
+          vertical-align: middle;
         }
       }
     }

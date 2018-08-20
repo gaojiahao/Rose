@@ -5,11 +5,12 @@
         <!-- 搜索栏 -->
         <searchIcon @search="searchList"></searchIcon>
         <div class="filter_part">
-          <tab :line-width="2" default-color="#757575" active-color="#2c2727">
+          <tab-item :tabVal='listView' @tab-click="tabClick"></tab-item>
+          <!-- <tab :line-width="2" default-color="#757575" active-color="#2c2727">
             <tab-item v-for="(item, index) in listView" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.view_name}}
             </tab-item>
-          </tab>
+          </tab> -->
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -129,6 +130,7 @@
 <script>
   import listCommon from './../mixins/kmListCommon'
   import handleLoad from 'components/submitLoading'
+  import TabItem from 'components/tab'
 
   export default {
     data() {
@@ -142,7 +144,7 @@
       }
     },
     components: {
-      handleLoad
+      handleLoad,TabItem
     },
     mixins: [listCommon],
     methods: {},
