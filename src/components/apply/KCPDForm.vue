@@ -32,7 +32,7 @@
                       <div class="mater_main">
                         <!-- 物料名称 -->
                         <div class="mater_name">
-                          <span class="whiNum">No.{{index + 1}}</span>
+                          <span class="whiNum">#{{index + 1}}</span>
                           {{item.inventoryName}}
                         </div>
                         <!-- 物料基本信息 -->
@@ -56,12 +56,16 @@
                           </div>
                         </div>
                         <div class="matter-remain">
-                          <span>库存: {{item.qtyBal}}</span>
-                          <span>差异数量: {{Math.floor(item.tdQty - item.qtyBal)}}</span>
+                          <div class="remain">
+                            <span class="symbol">库存: </span>
+                            <span class="num">{{item.qtyBal}}</span>
+                          </div>
+                          <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
                         </div>
                         <!-- 物料数量和价格 -->
                         <div class="mater_other">
-                          <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
+                          <span>差异数量: {{Math.floor(item.tdQty - item.qtyBal)}}</span>
+                          <!-- <r-number :num="item.tdQty" v-model="item.tdQty"></r-number> -->
                         </div>
                       </div>
                     </div>
@@ -345,19 +349,27 @@
 
 <style lang="scss" scoped>
   @import './../scss/bizApply';
-
   .kcpd-apply-container {
     .matter-remain {
-      margin-top: .02rem;
+      margin-top: .04rem;
       color: #757575;
-      font-size: 0.12rem;
+      font-size: .14rem;
+      display: flex;
+      justify-content: space-between;
+      .remain {
+        .num {
+          color: #5077aa;
+          font-size: .16rem;
+          font-weight: bold;
+        }
+      }
     }
     .materiel_list {
       .mater_list {
         .each_mater_wrapper {
           .mater_main {
             .mater_other {
-              justify-content: flex-end;
+              // justify-content: flex-end;
             }
           }
         }
