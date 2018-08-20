@@ -3,6 +3,7 @@
     <div class="basicPart">
       <!-- 项目经理 -->
       <div class="or_ads mg_auto box_sd">
+        <p class="title">项目经理</p>
         <div class="user_info group_mar_left">
           <span class="user_name">{{approval.projectManager}}</span>
           <span class="user_tel">{{approval.phoneNumber}}</span>
