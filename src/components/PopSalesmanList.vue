@@ -4,7 +4,9 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="trade_pop_title">
-          <div class="title">销售人员
+          <div class="title">
+             <span v-if="this.dealerLabelName == '员工'">销售人员</span> 
+             <span v-if="this.dealerLabelName == '渠道商'">销售渠道</span>
               <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
           </div>
         </div>
@@ -59,6 +61,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      dealerLabelName:{
+        type: String,
+        default:''
       },
     },
     directives: {TransferDom},
@@ -121,7 +127,7 @@
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          dealerLabelName: '员工',
+          dealerLabelName: this.dealerLabelName,
           //filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;

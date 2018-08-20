@@ -38,13 +38,13 @@
                           v-model="formData.validUntil"
                           title="有效期至"
                           ></datetime>
-                          <div class="SJForm_cell" @click="showSalesmanPop = !showSalesmanPop">
+                          <div class="SJForm_cell" @click="salesChange('员工')">
                             <div>销售人员</div>
                             <div>
                               <span>{{salesmanInfo.dealerName}}</span>
                             </div>
                           </div>
-                          <div class="SJForm_cell" @click="showSalechannelPop = !showSalechannelPop">
+                          <div class="SJForm_cell" @click="salesChange('渠道商')">
                             <div>销售渠道</div>
                             <div>
                               <span>{{salechannelInfo.dealerName}}</span>
@@ -66,13 +66,14 @@
                           @sel-dealer="selDealer" :dealerLabelName="'2167'">
           </pop-dealer-list>
           <!-- 销售人员popup -->
-          <pop-salesman-list :show="showSalesmanPop" v-model="showSalesmanPop"
-                          @sel-dealer="selSalesman">
+          <pop-salesman-list :show="showSalesmanPop1" v-model="showSalesmanPop1"
+           dealerLabelName='员工'  @sel-dealer="selSalesman">
           </pop-salesman-list>
-          <!-- 销售渠道popup -->
-          <pop-salechannel-list :show="showSalechannelPop" v-model="showSalechannelPop"
-                          @sel-dealer="selSalechannel">
-          </pop-salechannel-list>
+
+           <!-- 销售渠道popup -->
+          <pop-salesman-list :show="showSalesmanPop2" v-model="showSalesmanPop2" 
+           dealerLabelName='渠道商'  @sel-dealer="selSalechannel">
+          </pop-salesman-list>
         </div>
       </div>
     </div>
@@ -116,8 +117,10 @@
     },
     data() {
       return {
+        listId: '32a2c333-02a3-416f-a133-95c7a32da678',
         showDealerPop: false,                          // 是否显示往来的popup
-        showSalesmanPop: false,                          // 是否显示销售人员的popup
+        showSalesmanPop1: false,                          // 是否显示销售人员的popup
+        showSalesmanPop2: false,                          // 是否显示销售人员的popup
         showSalechannelPop: false,                          // 是否显示销售渠道的popup
         dealerInfo: {},
         salesmanInfo:{},
@@ -172,6 +175,14 @@
       }
     },
     methods: {
+      //渠道商,人员选择
+      salesChange(val){
+        if(val == '员工'){
+          this.showSalesmanPop1 = !this.showSalesmanPop1;
+        }else if(val == '渠道商'){
+          this.showSalesmanPop2 = !this.showSalesmanPop2;
+        }
+      },
       //清除金额
       clearSaleVal(e){
         this.formData.tdAmount = '';
@@ -242,9 +253,9 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            let operation = submitAndCalc;
+            let operation = saveAndStartWf;
             let submitData = {
-              listId: '32a2c333-02a3-416f-a133-95c7a32da678',
+              listId: this.listId,
               biComment: '',
               formData: JSON.stringify({
                 ...this.formData,
@@ -252,6 +263,12 @@
                 modifer:this.formData.handler,
                 salesPerson: this.salesmanInfo.dealerName ? this.formData.handler : '',
                 salesChannels: this.salechannelInfo.dealerName ? this.formData.handler : '',
+              }),
+              wfPara: JSON.stringify({
+                [this.processCode]: {
+                  businessKey: 'OPPT',
+                  createdBy: this.formData.creator != ''?this.formData.creator:this.formData.handler,
+                }
               }),
             };
             this.saveData(operation, submitData);
@@ -265,6 +282,9 @@
         this.formData = JSON.parse(data).formData;
       }
     },
+    mounted(){
+
+    }
   }
 </script>
 
