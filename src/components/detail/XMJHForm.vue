@@ -13,7 +13,7 @@
       <div class="trade_mode mg_auto box_sd">
         <p class="title">项目明细</p>
         <group class="JH_mar_left">
-          <cell title="项目名称" :value="projectApproval.projectName"></cell>
+          <cell title="项目名称" primary="content" align-items="flex-start" :value="projectApproval.projectName"></cell>
           <cell title="项目说明" primary="content" align-items="flex-start" :value="projectApproval.comment"></cell>
         </group>
       </div>
