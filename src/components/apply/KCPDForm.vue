@@ -23,7 +23,7 @@
                 <swipeout>
                   <swipeout-item>
                     <div slot="right-menu">
-                      <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
+                      <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
                     </div>
                     <div class="each_mater_wrapper" slot="content">
                       <div class="mater_img">
