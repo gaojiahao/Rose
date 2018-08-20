@@ -35,48 +35,47 @@
         <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
       </div>
       <!-- 审批操作 -->
-      <!-- 物料列表 -->
+      <!-- 商机列表 -->
       <div class="materiel_list mg_auto box_sd">
         <div class="title">商机明细</div>
         <div class="mater_list">
           <div class="each_mater vux-1px-b">
             <div class="each_mater_wrapper">
               <div class="mater_main">
-                <!-- 物料名称 -->
-                <div class="mater_name">
-                  <span class="whiNum">商机标题</span>
-                  {{orderInfo.opportunityTitle || '无'}}
-                </div>
-                <!-- 物料基本信息 -->
+                <!-- 商机基本信息 -->
                 <div class="mater_info">
-                  <!-- 物料编码、规格 -->
+                  <!-- 商机编码、规格 -->
                   <div class="withColor">
-                    <!-- 物料编码 -->
+                    <!-- 商机编码 -->
                     <div class="ForInline" style="display:inline-block">
                       <div class="mater_code">
                         <span class="title">编码</span>
                         <span class="num">{{orderInfo.dealerDebit}}</span>
                       </div>
                     </div>
-                    <!-- 物料规格 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_spec">
-                        <span class="title">类型</span>
-                        <span class="num">{{orderInfo.categoryLabels || '无'}}</span>
+                  </div>
+                </div>
+                <!-- 商机名称 -->
+                <div class="mater_name">
+                  <span class="title">标题:</span>
+                  {{orderInfo.opportunityTitle || '无'}}
+                </div>
+
+
+                <div class='mater_other'>
+                  <!-- 商机类型 -->
+                  <div class="mater_spec">
+                    <span class="title">类型:</span>
+                    <span class="content">{{orderInfo.categoryLabels || '无'}}</span>
+                  </div>   
+                  <!-- 商机内容 -->               
+                  <div class='mater_reimb'>
+                      <div class="reason">
+                        <span class="title">商机内容: </span>
+                        <span class="content">{{orderInfo.comment || '无'}}</span>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <div class='mater_other'>
-                  <div class='mater_reimb'>
-                    <!-- 报销事由 -->
-                    <div class="reason">
-                      <span class="title">商机内容: </span>
-                      <span class="content">{{orderInfo.comment || '无'}}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
