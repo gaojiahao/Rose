@@ -1,5 +1,5 @@
 <template>
-  <div class="detail_wrapper xmrw-detail-container">
+  <div class="detail_wrapper xmlw-detail-container">
     <div class="basicPart">
       <!-- 项目经理 -->
       <div class="or_ads mg_auto box_sd">
@@ -12,15 +12,15 @@
       <!-- 项目明细 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">项目信息</p>
-        <group class="group_mar_left">
-          <cell title="项目名称" :value="approval.projectName || '无'"></cell>
+        <group class="group_mar_left" gutter="0">
+          <cell title="项目名称"  primary="content" align-items="flex-start" :value="approval.projectName || '无'"></cell>
           <cell title="项目类型" :value="approval.projectType || '无'"></cell>
         </group>
       </div>
       <!-- 项目其他 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">项目其他</p>
-        <group class="group_mar_left">
+        <group class="group_mar_left" gutter="0">
           <cell title="项目说明" primary="content" align-items="flex-start" :value="approval.comment || '无'"></cell>
           <cell title="项目备注" primary="content" align-items="flex-start" :value="comment.biComment || '无'"></cell>
         </group>
@@ -28,7 +28,7 @@
       <!-- 预算明细 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">预算明细</p>
-        <group class="group_mar_left">
+        <group class="group_mar_left" gutter="0">
           <cell title="预算收入" :value="approval.budgetIncome || '无'"></cell>
           <cell title="预算成本" :value="approval.budgetCapital || '无'"></cell>
           <cell title="预算费用" :value="approval.budgetCost || '无'"></cell>
@@ -38,61 +38,6 @@
           <cell title="预算截至日期" :value="approval.expectEndDate | timeSplit"></cell>
         </group>
       </div>
-      <!-- 项目明细 -->
-      <!-- <div class="materiel_list mg_auto box_sd">
-        <div class="title">项目明细</div>
-        <div class="mater_list">
-          <div class="each_mater">
-            <div class="each_mater_wrapper ">
-              <div class="mater_main">
-                <div class="mater_name">
-                  <span class="whiNum">项目名称</span>
-                 {{approval.projectName}}
-                </div>
-                <div class="mater_info">
-                  <div class="withColor">
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_code">
-                        <span class="title">项目类型</span>
-                        <span class="num">{{approval.projectType}}</span>
-                      </div>
-                    </div>
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_spec">
-                        <span class="title">项目经理</span>
-                        <span class="num">{{approval.projectManager}}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class='mater_other'>
-                  <div class='mater_reimb'>
-                     <div class="price">
-                      <span class="title">手机号码: </span>
-                      <span class="content">
-                        {{approval.phoneNumber}}
-                      </span>
-                    </div>
-                    <div class="reason">
-                      <span class="title">项目说明: </span>
-                      <span class="content">
-                        {{approval.comment}}
-                      </span>
-                    </div>
-                    <div class="reason">
-                      <span class="title">项目备注: </span>
-                      <span class="content">
-                        {{comment.biComment || '无'}}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
     </div>
   </div>
@@ -122,14 +67,6 @@
       Cell,
     },
     methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
       // 获取详情
       getOrderList(transCode = '') {
         return findProjectApproval(transCode).then(({formData = {}}) => {
@@ -146,9 +83,8 @@
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
 
-  .xmrw-detail-container {
+  .xmlw-detail-container {
     /deep/ .weui-cells {
-      margin-top: 0;
       font-size: .16rem;
       &:before {
         border-top: none;
@@ -167,7 +103,4 @@
   .group_mar_left{
     margin: 0 0.08rem;
   }
-  // .materiel_list .mater_list .each_mater .each_mater_wrapper .mater_main{
-  //   margin-left: 0;
-  // }
 </style>
