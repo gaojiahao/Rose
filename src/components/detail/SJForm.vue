@@ -1,6 +1,9 @@
 <template>
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
