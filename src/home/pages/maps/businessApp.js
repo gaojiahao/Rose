@@ -20,7 +20,9 @@ export default {
     本地库存调拨: 'BDKCDB'
   },
   财务: {
-    费用报销: 'FYBX'
+    费用报销: 'FYBX',
+    往来余额: 'WLYE',
+    货币资金: 'HBZJ'
   },
   项目: {
     项目立项: 'XMLX',
