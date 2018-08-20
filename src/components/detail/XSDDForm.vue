@@ -41,7 +41,7 @@
                       <div class="mater_main">
                         <!-- 物料名称 -->
                         <div class="mater_name">
-                          {{item.inventoryName_transObjCode}}
+                          {{item.inventoryName_transObjCode || '该物料未获取到名称，请检查物料信息。'}}
                         </div>
                         <!-- 物料基本信息 -->
                         <div class="mater_info">
@@ -51,7 +51,7 @@
                             <div class="ForInline" style="display:inline-block">
                               <div class="mater_code">
                                 <span class="title">编码</span>
-                                <span class="num">{{item.transObjCode}}</span>
+                                <span class="num">{{item.transObjCode || '无'}}</span>
                               </div>
                             </div>
                             <!-- 物料规格 -->
