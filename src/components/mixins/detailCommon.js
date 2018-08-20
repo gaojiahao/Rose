@@ -149,7 +149,9 @@ export default {
       await this.getListId();
       await this.getFlowAndActions();
       // 获取表单表单详情
-      this.getOrderList(transCode);
+      await this.getOrderList(transCode);
+      // 触发父组件的scroll刷新
+      this.$emit('refresh-scroll');
       this.$emit('input', false)
     })()
   }

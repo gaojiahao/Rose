@@ -97,8 +97,8 @@
         return url
       },
       // 获取详情
-      async getOrderList(transCode = '') {
-        await getSOList({
+      getOrderList(transCode = '') {
+        return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
         }).then(data => {
@@ -117,8 +117,8 @@
           let {dataSet} = data.formData.order;
           for (let val of dataSet) {
             this.count += val.tdQty * val.price * 100;
-            val.inventoryPic = val.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            val.inventoryPic = val.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
           this.count = this.count / 100;

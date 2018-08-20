@@ -70,7 +70,7 @@
                     <span class="symbol">￥</span>{{item.tdAmount | numberComma(3)}}
                     <span class="num"
                           :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
-                              [金额: <span class="symbol">￥</span>{{item.noTaxAmount | numberComma(3)}} + 
+                              [金额: <span class="symbol">￥</span>{{item.noTaxAmount | numberComma(3)}} +
                                 税金: <span class="symbol">￥</span>{{item.taxAmount | numberComma(3)}}]
                             </span>
                   </div>
@@ -119,8 +119,8 @@
         return url
       },
       // 获取详情
-      async getOrderList(transCode = '') {
-        await getSOList({
+      getOrderList(transCode = '') {
+        return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
         }).then(data => {
@@ -139,8 +139,8 @@
           let {dataSet} = data.formData.order;
           for (let val of dataSet) {
             this.count += val.tdAmount * 100;
-            val.inventoryPic = val.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400` 
+            val.inventoryPic = val.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
           this.count = this.count / 100;

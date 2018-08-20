@@ -4,7 +4,8 @@
       <component
         :is='currentComponent'
         v-model='showLoadding'
-        @change='modifyRoute'>
+        @change='modifyRoute'
+        @refresh-scroll="refresh">
       </component>
     </div>
     <!-- 页面进入加载动画-->
@@ -38,6 +39,10 @@
     methods: {
       modifyRoute(val) {
         this.submitSuccess = val;
+      },
+      // TODO 刷新better-scroll
+      refresh() {
+        this.detailScroll.refresh();
       }
     },
     created() {
@@ -53,9 +58,6 @@
         });
       }
       this.$event.$on('detail-show-loading', this.modifyRoute)
-      // setTimeout(()=>{
-      //   this.showLoadding = false
-      // },1000)
     },
     mounted() {
       this.$nextTick(() => {
@@ -63,7 +65,6 @@
           click: true,
         })
       })
-
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
