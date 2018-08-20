@@ -177,54 +177,20 @@
     .trade_pop {
       padding: 0 .08rem;
       height: calc(100% - .44rem);
-      // 顶部
-      .title {
-        position: relative;
-        font-size: .2rem;
-        // 搜索
-        .search_part {
-          width: 100%;
-          display: flex;
-          height: .3rem;
-          line-height: .3rem;
+      .trade_pop_title {
+        padding: 0 .08rem;
+        // 顶部
+        .title {
+          font-size: .2rem;
           position: relative;
-          // 搜索输入框
-          .srh_inp {
-            flex: 5;
-            outline: none;
-            border: none;
-            color: #2D2D2D;
-            font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
-            background: #F3F1F2;
-            border-top-left-radius: .3rem;
-            border-bottom-left-radius: .3rem;
-          }
-          // 取消 按钮
-          .pop_cancel {
-            flex: 1;
-            color: #fff;
-            font-size: .14rem;
-            text-align: center;
-            background: #fc3c3c;
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-          }
-          // 搜索icon
-          .serach_icon {
-            top: 50%;
-            left: 10px;
-            fill: #2D2D2D;
+          padding: .08rem 0 .14rem;
+          // 关闭icon
+          .close_icon {
+            top: 45%;
+            right: -2%;
             position: absolute;
             transform: translate(0, -50%);
           }
-        }
-        // 关闭icon
-        .close_icon {
-          top: 50%;
-          right: -2%;
-          position: absolute;
-          transform: translate(0, -50%);
         }
       }
       .each_mode {
@@ -426,20 +392,5 @@
     height: 100%;
     background: #fff;
   }
-  .trade_pop_title {
-      padding: 0 .08rem;
-      // 顶部
-      .title {
-        font-size: .2rem;
-        position: relative;
-        padding: 0.08rem 0 .14rem;
-        // 关闭icon
-        .close_icon {
-          top: 50%;
-          right: -2%;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
-      }
-    }
+
 </style>

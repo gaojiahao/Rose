@@ -3,7 +3,10 @@
   width: 95%;
   margin: 10px auto;
 }
-
+.symbol,
+.unit {
+  font-size: .1rem;
+}
 // 阴影
 .box_sd {
   box-sizing: border-box;
@@ -243,10 +246,6 @@
             line-height: 0.2rem;
             color: #ea5455;
             margin-right: 0.9rem;
-            .symbol,
-            .unit {
-              font-size: .1rem;
-            }
             .unit {
               color: #757575;
             }
@@ -340,11 +339,11 @@
     }
     &.ele_up {
       font-size: .12rem;
-      .total_price {
-        .symbol {
-          font-size: .1rem;
-        }
-      }  
+      // .total_price {
+      //   .symbol {
+      //     font-size: .1rem;
+      //   }
+      // }  
       .taxAmount {
         font-size: .1rem;
       }
