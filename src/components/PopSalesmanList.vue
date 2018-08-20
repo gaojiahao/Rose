@@ -441,7 +441,7 @@
         padding: 0.08rem 0 .14rem;
         // 关闭icon
         .close_icon {
-          top: 50%;
+          top: 45%;
           right: -2%;
           position: absolute;
           transform: translate(0, -50%);

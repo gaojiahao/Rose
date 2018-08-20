@@ -2,11 +2,11 @@
   <div class="scroll-container" ref="bScroll">
     <div class="scroll-wrapper" :class="{hasRefresh: hasRefresh}">
       <slot></slot>
-      <slot name="loadmore" v-if="options.pullDownRefresh">
+      <slot name="loadmore">
         <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext || noData"></load-more>
       </slot>
     </div>
-    <slot name="refresh" v-if="options.pullUpLoad">
+    <slot name="refresh" v-if="options.pullDownRefresh">
       <div class="refresh-container" :style="{top: pullDownTop + 'px'}" v-show="hasRefresh">
         <spinner class="icon" type="crescent" v-show="!refreshDone"></spinner>
         <div class="tips">{{-pullDownTop > 30 ? '下拉刷新' : '释放刷新'}}</div>

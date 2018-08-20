@@ -1,22 +1,24 @@
 <template>
-  <div class='tab' v-if='choicedTab'>
+  <div class='tab'>
     <!-- 收起状态-->
     <div class='only_tab_item' @click="tabShow = !tabShow">
       <div class='tab_item_name'>{{choicedTab}}
-        <p class="arrow" v-if='!tabShow'>
+        <p class="arrow" :class='tabShow ? "arrow_up" : "arrow_down" '>
+          <x-icon type="ios-arrow-down" size="24" ></x-icon>  
+        </p>
+        <!-- <p class="arrow" v-if='!tabShow'>
           <x-icon type="ios-arrow-down" size="24" ></x-icon>  
         </p>
         <p class="arrow" v-else>
           <x-icon type="ios-arrow-up" size="24" ></x-icon>  
-        </p>
-              
+        </p>          -->
       </div>  
     </div>
     <!--展开状态 -->
     <div class='all_tab_item' ref='tabItem' v-show='tabShow'> 
       <div class='tab_wrapper'>
-        <div class='tab_item_name' v-for='(item,index) in tabVal' 
-            :key='index'  @click="switchTab(item)">
+        <div class='tab_item_name' v-for='(item,index) in tabVal' :class='{active : index===activeTabIndex}'
+            :key='index'  @click="switchTab(item,index)">
             {{item.view_name}}
         </div>         
       </div>                      
@@ -24,45 +26,44 @@
   </div>
 </template>
 <script>
-import RScroll from 'components/RScroll'
 import Bscroll from 'better-scroll'
 export default {
   data(){
     return{
       tabShow : false,
-      choicedTab :'',
+      choicedTab :'', //选中的值
+      activeTabIndex:0,
+      tabScroll : null,
     }
   },
   props:{
-    tabVal:{
+    tabVal:{ //所有tab值
       type : Array,
       default:[]
     }
   },
-  components:{
-    RScroll
-
-  },
   methods:{
-    switchTab(item){
+    //切换tab传值
+    switchTab(item,index){
       this.choicedTab = item.view_name;
+      this.activeTabIndex = index;
       this.tabShow = false;
       this.$emit('tab-click',item)
     }
   },
   watch:{
-    tabVal:{
+    tabVal:{//监听父组件的传值，赋初始值
       handler(val){
         if(val.length){
           this.choicedTab = val[0].view_name;
         }
       }
     },
-    tabShow:{
+    tabShow:{ //监听展开tab列表展开状态，创建bscroll
       handler(val){
         if(val){
           this.$nextTick(()=>{          
-            let tabScroll = new Bscroll(this.$refs.tabItem,{
+            this.tabScroll = new Bscroll(this.$refs.tabItem,{
               click:true
             })           
           })
@@ -71,7 +72,7 @@ export default {
       }
     }
   },
-  created(){
+  created(){//当页面刷新时重新赋值
     if(this.tabVal.length){
       this.choicedTab = this.tabVal[0].view_name;
     }
@@ -80,6 +81,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  //修改vux箭头
   .vux-x-icon {
     fill: rgb(117, 117, 117);
     vertical-align: middle;
@@ -98,6 +100,18 @@ export default {
         .arrow{
           display: inline-block;
         }
+        .arrow_up{
+          transition: all .2s;
+          -webkit-transition : all .2s;
+          transform: rotate(180deg);
+          -webkit-transform : rotate(180deg);
+        }
+        .arrow_down{
+          transition: all .2s;
+          -webkit-transition : all .2s;
+          transform: rotate(0);
+          -webkit-transform : rotate(0);
+        }
       }
     }
     //展开的tab
@@ -115,6 +129,9 @@ export default {
       border-bottom: 1px solid #e8e8e8;
       .tab_item_name{
         line-height: 44px;
+      }
+      .active{
+        background: #ddd;
       }
     }
   }
