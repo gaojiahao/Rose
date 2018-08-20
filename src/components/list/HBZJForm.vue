@@ -16,38 +16,31 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class='each_duty' v-for='(item,index) in listData' :key='index' @click="getFlow(item)">
-          <!-- 仓库名称 仓库编码 -->
           <div class="duty_top">
-              <!-- 表单状态 及 编码 -->
               <div class="warehouse_info">
-                <!-- <span class="warehouse warehouse_code">{{item.warehouseRelType}}</span> -->
-                <!-- 状态 -->
                 <span class="warehouse warehouse_name">
-                  <!-- 仓库编码 -->
-                  账户编码:
+                  <!-- 账户编码 -->
+                  账户编码
                 </span>
                 <!-- 编码 -->
                 <span class="warehouse warehouse_code">{{item.cashCode}}</span>
               </div>
-              <!-- 数量余额 -->   
           </div>
-          <!-- 物料 -->
+          <!-- 资金账户名称 -->
           <div class='matter'>
             <div class='matter_name'>
-              {{item.bank}}
+              {{item.fundName}}
             </div>
           </div>
-          <!-- 仓库类型、金额余额等 -->
           <div class='duty_btm vux-1px-t'>
-            <!-- 仓库类型 -->
+            <!-- 开户银行 -->
             <div class="ware_type">
-              {{item.fundName}}
+              {{item.bank}}
             </div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance !== ''">
               <span class="symbol">余额: ￥</span>{{item.amountBalance}}
             </div>
-            <!-- <x-icon type="ios-arrow-down" size="30"></x-icon> -->
           </div>
         </div>
       </r-scroll>
@@ -65,7 +58,7 @@
                   <!--展开状态-->
                   
                   <div class="duty_top">
-                    <!-- 实例编码 -->
+                    <!-- 编码 -->
                     <div class='transCode'>
                       <span class="order_title">编码</span>
                       <span class="order_num">{{Fitem.transCode.replace(/_/g,'')}}</span>
@@ -76,14 +69,14 @@
                     </div>
                   </div>
 
-                  <!-- 数量，金额 -->
+                  <!-- 金额 -->
                   <div class='show_list'>
                     <!-- 应用名称 -->
                     <div class="app_name">
                       {{Fitem.appTitle}}<span class="symbol">[应用]</span>
                     </div>
                     <div class="num_info">
-                      <!-- 金额 -->
+                      <!-- 借方金额 -->
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.drAmnt>0">
                           <span class="symbol" >借方金额: </span> 
@@ -98,6 +91,7 @@
                           <span>0</span>
                         </div>                    
                       </div>
+                      <!-- 贷方金额 -->
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.crAmnt>0">
                           <span class="symbol">贷方金额: </span> 
@@ -114,9 +108,9 @@
                       </div>
                     </div>
                   </div>
+                  <!-- 金额余额 -->
                   <div class="summary_part vux-1px-t">
                     <div class="number">
-                      <!-- <span class="symbol">当前数量: </span>{{Fitem.qtyBalance}} -->
                     </div>
                     <div class="price HBZJ_total">
                       <span class="symbol">金额余额:</span>
@@ -125,24 +119,6 @@
                       <span v-else>￥{{Fitem.amntBalance}}</span>
                     </div>                
                   </div>
-                  <!--收起的每个流水明细-->
-                  <!-- <div class='hidden_list' v-if='Fitem.showList'>
-                    <div class='each_property' v-for='(HItem,HIndex) in flowField' :key='HIndex'>
-                      <label>{{HItem.text}}:</label>
-                      <span v-if='HItem.field === "qtyBalance"'>{{Fitem[HItem.field].toFixed(2)}}</span>    
-                      <span v-else>{{Fitem[HItem.field]}}</span>                                
-                    </div>
-                  </div>
-                  <div class='r-arrow vux-1px-t'>
-                    <p v-if='Fitem.showList'>
-                      <x-icon type="ios-arrow-up" size="30" ></x-icon>
-                    </p>                     
-                    <p v-else>
-                      <x-icon type="ios-arrow-down" size="30" ></x-icon>
-                    </p>
-                  </div> -->
-                  
-                  
                 </div>
                 <div>
                 </div>                 
