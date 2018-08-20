@@ -3,12 +3,15 @@
     <!-- 收起状态-->
     <div class='only_tab_item' @click="tabShow = !tabShow">
       <div class='tab_item_name'>{{choicedTab}}
-        <p class="arrow" v-if='!tabShow'>
+        <p class="arrow" :class='tabShow ? "arrow_up" : "arrow_down" '>
+          <x-icon type="ios-arrow-down" size="24" ></x-icon>  
+        </p>
+        <!-- <p class="arrow" v-if='!tabShow'>
           <x-icon type="ios-arrow-down" size="24" ></x-icon>  
         </p>
         <p class="arrow" v-else>
           <x-icon type="ios-arrow-up" size="24" ></x-icon>  
-        </p>         
+        </p>          -->
       </div>  
     </div>
     <!--展开状态 -->
@@ -96,6 +99,18 @@ export default {
         line-height: 44px;
         .arrow{
           display: inline-block;
+        }
+        .arrow_up{
+          transition: all .2s;
+          -webkit-transition : all .2s;
+          transform: rotate(180deg);
+          -webkit-transform : rotate(180deg);
+        }
+        .arrow_down{
+          transition: all .2s;
+          -webkit-transition : all .2s;
+          transform: rotate(0);
+          -webkit-transform : rotate(0);
         }
       }
     }
