@@ -370,6 +370,10 @@
           //物料价格，数量
           .mater_other {
             margin-top: .02rem;
+            // 类型
+            .mater_spec {
+              font-size: .14rem;
+            }
             // 一般金额
             .mater_price {
               color: #ea5455;
