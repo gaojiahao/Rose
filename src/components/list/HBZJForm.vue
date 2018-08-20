@@ -20,11 +20,10 @@
           <div class="duty_top">
               <!-- 表单状态 及 编码 -->
               <div class="warehouse_info">
-                <!-- <span class="warehouse warehouse_code">{{item.warehouseRelType}}</span> -->
                 <!-- 状态 -->
                 <span class="warehouse warehouse_name">
                   <!-- 仓库编码 -->
-                  账户编码:
+                  账户编码
                 </span>
                 <!-- 编码 -->
                 <span class="warehouse warehouse_code">{{item.cashCode}}</span>
@@ -34,7 +33,7 @@
           <!-- 物料 -->
           <div class='matter'>
             <div class='matter_name'>
-              {{item.bank}}
+              {{item.bank || '暂无相关银行数据'}}
             </div>
           </div>
           <!-- 仓库类型、金额余额等 -->
@@ -52,18 +51,16 @@
         </div>
       </r-scroll>
       
-      <!-- 展开状态 -->
+      <!-- 流水展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
-          <r-scroll class="list_wrapper" ref="flowListWrapper">
+          <r-scroll class="flow_list_wrapper" ref="flowListWrapper">
             <div class="flow">
               <div class='flow_top'>
                 <div class="title">流水详情</div>
               </div>
               <div class="flow_list">
                 <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
-                  <!--展开状态-->
-                  
                   <div class="duty_top">
                     <!-- 实例编码 -->
                     <div class='transCode'>
@@ -82,8 +79,8 @@
                     <div class="app_name">
                       {{Fitem.appTitle}}<span class="symbol">[应用]</span>
                     </div>
+                    <!-- 金额 -->
                     <div class="num_info">
-                      <!-- 金额 -->
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.drAmnt>0">
                           <span class="symbol" >借方金额: </span> 
@@ -114,10 +111,8 @@
                       </div>
                     </div>
                   </div>
+                  <!-- 合计一栏  -->
                   <div class="summary_part vux-1px-t">
-                    <div class="number">
-                      <!-- <span class="symbol">当前数量: </span>{{Fitem.qtyBalance}} -->
-                    </div>
                     <div class="price HBZJ_total">
                       <span class="symbol">金额余额:</span>
                       <span class="number_incre" v-if="Fitem.amntBalance>0">￥{{Fitem.amntBalance}}</span>
@@ -125,24 +120,6 @@
                       <span v-else>￥{{Fitem.amntBalance}}</span>
                     </div>                
                   </div>
-                  <!--收起的每个流水明细-->
-                  <!-- <div class='hidden_list' v-if='Fitem.showList'>
-                    <div class='each_property' v-for='(HItem,HIndex) in flowField' :key='HIndex'>
-                      <label>{{HItem.text}}:</label>
-                      <span v-if='HItem.field === "qtyBalance"'>{{Fitem[HItem.field].toFixed(2)}}</span>    
-                      <span v-else>{{Fitem[HItem.field]}}</span>                                
-                    </div>
-                  </div>
-                  <div class='r-arrow vux-1px-t'>
-                    <p v-if='Fitem.showList'>
-                      <x-icon type="ios-arrow-up" size="30" ></x-icon>
-                    </p>                     
-                    <p v-else>
-                      <x-icon type="ios-arrow-down" size="30" ></x-icon>
-                    </p>
-                  </div> -->
-                  
-                  
                 </div>
                 <div>
                 </div>                 
@@ -152,10 +129,10 @@
               <span class="cfm_btn" @click="flowShow = false">关闭</span>
             </div>
           </r-scroll>
+          <!-- 关闭按钮 -->
           <div class="btn when_less" v-if='flowData.length < 3'>
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
           </div>
-          
         </popup>
       </div>
     </div>
@@ -194,15 +171,12 @@
 
 <style lang='scss' scoped>
   @import './../scss/SUB/subList';
-  .list_wrapper{
-    height:100%;
-  }
   .HBZJ_total{
-      .number_incre{
-          color: #c93d1b;
-      }
-      .number_redu{
-          color: #53d397;
-      }
+    .number_incre{
+        color: #c93d1b;
+    }
+    .number_redu{
+        color: #53d397;
+    }
   }
 </style>
