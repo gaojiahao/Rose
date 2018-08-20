@@ -48,7 +48,7 @@
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
-          <r-scroll class="list_wrapper" ref="flowListWrapper">
+          <r-scroll class="flow_list_wrapper" ref="flowListWrapper">
             <div class="flow">
               <div class='flow_top'>
                 <div class="title">流水详情</div>
