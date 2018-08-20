@@ -169,9 +169,6 @@
 
 <style lang='scss' scoped>
   @import './../scss/SUB/subList';
-  .list_wrapper{
-    height:100%;
-  }
   .HBZJ_total{
       .number_incre{
           color: #c93d1b;
