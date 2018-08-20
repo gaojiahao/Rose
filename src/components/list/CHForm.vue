@@ -175,6 +175,9 @@
         uniqueId : 1400,
         showContent : false,
         handleLoadding : false,
+        filterArr: [
+            {"operator":"like","value":"","property":"warehouseName"}
+        ],
       }
     },
     components:{

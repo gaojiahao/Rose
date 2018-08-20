@@ -172,9 +172,8 @@
         uniqueId : 1000,
         showContent : false,
         handleLoadding : false,
-        filterArr:[
-            {"operator":"like","value":"","property":"cashCode"},
-            {"operator":"like","value":"","property":"bank"},
+        filterArr: [
+            {"operator":"like","value":"","property":"cashCode"}
         ],
       }
     },
