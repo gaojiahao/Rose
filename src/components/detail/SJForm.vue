@@ -5,37 +5,37 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd">
+      <div class="or_ads mg_auto box_sd" v-if="orderInfo.dealerDebitContactPersonName">
         <div class="user_info">
           <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
           <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
         </div>
         <div class="cp_info">
           <p class="cp_name">{{orderInfo.order.dataSet.dealerDebit}}</p>
-          <p class="cp_ads">
+          <p class="cp_ads group_mar_left">
             {{orderInfo.order.dataSet.province_dealerDebit}}{{orderInfo.order.dataSet.city_dealerDebit}}{{orderInfo.order.dataSet.county_dealerDebit}}{{orderInfo.order.dataSet.address_dealerDebit}}</p>
         </div>
       </div>
       <!-- 结算方式 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">当前所在阶段</p>
-        <p class="mode">{{orderInfo.currentStage || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.currentStage || '暂无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">销售人员</p>
-        <p class="mode">{{orderInfo.salesPerson || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.salesPerson || '暂无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">销售渠道</p>
-        <p class="mode">{{orderInfo.salesChannels || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.salesChannels || '暂无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">有效期至</p>
-        <p class="mode">{{orderInfo.validUntil || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.validUntil || '暂无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
-        <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.crtTime || '暂无'}}</p>
       </div>
       <!-- 审批操作 -->
       <!-- 商机列表 -->
@@ -157,5 +157,9 @@
           .mater_main {
             width: 100%;
             max-width: inherit;
+            margin-left: 0.04rem;
           }
+  .group_mar_left{
+      margin: 0 0.04rem;
+    }
 </style>
