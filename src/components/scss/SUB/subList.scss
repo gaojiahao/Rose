@@ -2,14 +2,17 @@
 .vux-1px-b:after {
   border-color: #e8e8e8;
 }
+
 .symbol {
   font-size: .1rem;
 }
+
 .content {
   width: 100%;
   height: 100%;
   overflow: auto;
 }
+
 .list_top {
   width: 100%;
   padding-top: .1rem;
@@ -18,14 +21,16 @@
     margin-top: .04rem;
   }
 }
+
 .scroll-container {
   .scroll-wrapper {
     padding-bottom: .3rem;
   }
 }
+
 .list_wrapper {
   position: relative;
-  height: calc(100% - .52rem);
+  height: calc(100% - .4rem - 44px);
   overflow: hidden;
   box-sizing: border-box;
   .scroll-wrapper {
@@ -35,54 +40,54 @@
     width: 95%;
     position: relative;
     border-radius: .04rem;
-    box-sizing: border-box;    
+    box-sizing: border-box;
     margin: .1rem auto .2rem;
     padding: .06rem .08rem .04rem;
     box-shadow: 0 2px 5px #e8e8e8;
-    .duty_top{
+    .duty_top {
       display: flex;
       align-items: center;
       box-sizing: border-box;
       justify-content: space-between;
       // 仓库编码
-      .warehouse_info{
+      .warehouse_info {
         display: flex;
-        .warehouse{
+        .warehouse {
           font-weight: bold;
           font-size: .12rem;
           padding: 0 .04rem;
         }
-        .warehouse_name{
+        .warehouse_name {
           color: #fff;
           background: #3f72af;
           border-top-left-radius: .04rem;
         }
-        .warehouse_code{
+        .warehouse_code {
           color: #111;
           background: #dbe2ef;
         }
       }
       // 余额
-      .mater_code{
+      .mater_code {
         display: flex;
         font-weight: 200;
-        span{
+        span {
           font-size: .12rem;
           display: inline-block;
         }
-        .title{
+        .title {
           margin-right: .04rem;
         }
-      }      
-      .warehouse_type{
-          font-size: .14rem;
-          color: #757575;
+      }
+      .warehouse_type {
+        font-size: .14rem;
+        color: #757575;
       }
     }
     // 物料名称
-    .matter{
-      .matter_name{
-        font-size:.2rem;
+    .matter {
+      .matter_name {
+        font-size: .2rem;
         font-weight: 300;
         padding: .04rem 0;
         .type {
@@ -102,7 +107,7 @@
           font-size: .1rem;
         }
       }
-      // 余额 
+      // 余额
       .balance {
         color: #c93d1b;
         font-weight: bold;
@@ -111,6 +116,7 @@
     }
   }
 }
+
 //流水详情
 .vux-popup-dialog {
   background: #fff;
@@ -122,7 +128,7 @@
   .flow {
     .flow_top {
       text-align: center;
-      margin-bottom:0.1rem;
+      margin-bottom: 0.1rem;
       // 标题
       .title {
         color: #111;
@@ -132,7 +138,7 @@
     }
     // 流水列表信息
     .flow_list {
-      .each_flow{
+      .each_flow {
         width: 95%;
         position: relative;
         border-radius: .08rem;
@@ -169,7 +175,7 @@
           }
         }
         // 明细
-        .show_list{
+        .show_list {
           // padding-left: .06rem;
           box-sizing: border-box;
           // 应用名称
@@ -207,7 +213,7 @@
             }
           }
           //数量
-          .num{
+          .num {
             display: flex;
             justify-content: space-between;
             line-height: 0.3rem;
@@ -220,24 +226,31 @@
           align-items: baseline;
           // text-align: right;
           padding: .04rem 0 .02rem;
-          
+          // 增加
+          .increase {
+            color: #c93d1b;
+          }
+          // 减少
+          .reduce {
+            color: #53d397;
+          }
         }
         //向下箭头
-        .r-arrow{
+        .r-arrow {
           text-align: center;
         }
         //收起流水列表
-        .hidden_list{
-          .each_property{
+        .hidden_list {
+          .each_property {
             line-height: 0.35rem;
             display: flex;
             justify-content: space-between;
           }
 
         }
-        
+
       }
-    }     
+    }
   }
   // 确定
   .btn {
