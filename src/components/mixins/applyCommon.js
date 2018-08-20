@@ -53,15 +53,15 @@ export default {
     //获取uniqueid
     getUniqueId(transCode) {
       return new Promise(resolve => {
-        isMyflow({transCode}).then(({dataCount, tableContent}) => {
-
+        isMyflow({transCode}).then(({dataCount, tableContent = []}) => {
           if (dataCount > 0) {
-            this.taskId = tableContent[0].taskId;
-            if (tableContent[0].isMyTask === 1) {
-              this.uniqueId = tableContent[0].viewId;
-              this.formViewUniqueId = tableContent[0].viewId;
-              this.btnInfo = tableContent[0];
-              this.actions = tableContent[0].actions.split(',');
+            let [createNode = {}] = tableContent;
+            this.taskId = createNode.taskId;
+            if (createNode.isMyTask === 1) {
+              this.uniqueId = createNode.viewId;
+              this.formViewUniqueId = createNode.viewId;
+              this.btnInfo = createNode;
+              this.actions = createNode.actions && createNode.actions.split(',');
             }
           }
           let [action = {}] = tableContent;
