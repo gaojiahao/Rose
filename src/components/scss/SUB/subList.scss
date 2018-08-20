@@ -125,6 +125,9 @@
   padding: 0.1rem;
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
+  .flow_list_wrapper {
+    height: 100%;
+  }
   .flow {
     .flow_top {
       text-align: center;
