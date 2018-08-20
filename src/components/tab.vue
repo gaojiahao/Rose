@@ -3,25 +3,34 @@
     <!-- 收起状态-->
     <div class='only_tab_item' @click="tabShow = !tabShow">
       <div class='tab_item_name'>{{choicedTab}}
-        <x-icon type="ios-arrow-down" size="24" class="arrow"></x-icon>        
+        <p class="arrow" v-if='!tabShow'>
+          <x-icon type="ios-arrow-down" size="24" ></x-icon>  
+        </p>
+        <p class="arrow" v-else>
+          <x-icon type="ios-arrow-up" size="24" ></x-icon>  
+        </p>
+              
       </div>  
     </div>
     <!--展开状态 -->
-    <div class='all_tab_item' v-show="tabShow"> 
-      <div class='tab_item_name' v-for='(item,index) in tabVal' 
-          :key='index'  @click="switchTab(item)">
-          {{item.view_name}}
-      </div>                  
+    <div class='all_tab_item' ref='tabItem' v-show='tabShow'> 
+      <div class='tab_wrapper'>
+        <div class='tab_item_name' v-for='(item,index) in tabVal' 
+            :key='index'  @click="switchTab(item)">
+            {{item.view_name}}
+        </div>         
+      </div>                      
     </div>
   </div>
 </template>
 <script>
+import RScroll from 'components/RScroll'
+import Bscroll from 'better-scroll'
 export default {
   data(){
     return{
       tabShow : false,
-      choicedTab :''
-
+      choicedTab :'',
     }
   },
   props:{
@@ -29,6 +38,10 @@ export default {
       type : Array,
       default:[]
     }
+  },
+  components:{
+    RScroll
+
   },
   methods:{
     switchTab(item){
@@ -44,6 +57,18 @@ export default {
           this.choicedTab = val[0].view_name;
         }
       }
+    },
+    tabShow:{
+      handler(val){
+        if(val){
+          this.$nextTick(()=>{          
+            let tabScroll = new Bscroll(this.$refs.tabItem,{
+              click:true
+            })           
+          })
+
+        }
+      }
     }
   },
   created(){
@@ -51,13 +76,13 @@ export default {
       this.choicedTab = this.tabVal[0].view_name;
     }
   }
-
 }
 </script>
 
 <style lang="scss" scoped>
   .vux-x-icon {
     fill: rgb(117, 117, 117);
+    vertical-align: middle;
   }
   .tab{
     width: 100%;
@@ -72,7 +97,6 @@ export default {
         line-height: 44px;
         .arrow{
           display: inline-block;
-          vertical-align: middle;
         }
       }
     }
@@ -86,7 +110,7 @@ export default {
       text-align: center;
       background: rgba(245,245,245,0.95);
       height:132px;
-      overflow: auto;
+      overflow: hidden;
       opacity: 0.95;
       border-bottom: 1px solid #e8e8e8;
       .tab_item_name{
