@@ -17,10 +17,10 @@
           <div v-else>
             <div class="title">往来列表</div>
             <div class="mode">请选择往来</div>
-          </div>    
+          </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
-        
+
         <div class="basicPart">
           <!-- 商机列表 -->
           <div class="materiel_list mg_auto box_sd">
@@ -107,12 +107,12 @@
       PopSalesmanList,
       PopSalechannelList,
       Cell ,
-      Group, 
+      Group,
       XInput,
       PopBusinessList,
       XTextarea,
       PopupRadio,
-      Datetime   
+      Datetime
     },
     data() {
       return {
@@ -372,8 +372,6 @@
     border-color: #C8C8CD;
     border-style: solid;
     transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-    position: relative;
-    top: -2px;
     position: absolute;
     top: 50%;
     margin-top: -4px;
@@ -381,9 +379,6 @@
   }
   .materiel_list{
     padding: 0;
-  }
-  .basicPart{
-    height: auto;
   }
   .materiel_list .mater_list .each_mater_wrapper .mater_main{
     padding-left: 0;
