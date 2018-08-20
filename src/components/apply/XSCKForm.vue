@@ -207,7 +207,7 @@
             total += item.tdQty * item.price;
           }
         }
-        return total;
+        return total.toFixed(2);
       },
       // 税金
       taxAmount() {
@@ -380,7 +380,8 @@
               modifer: this.transCode ? this.formData.handler : '',
               dealerDebitContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
               dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
-              containerOutWarehouseManager: null,
+              containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 仓库管理员
+              // project: null,
               outPut: {
                 dealerDebit: this.dealerInfo.dealerCode, // 往来编码
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 往来页签
@@ -470,6 +471,7 @@
             warehouseCity: outPut.warehouseCity_containerCodeOut,
             warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: outPut.warehouseAddress_containerCodeOut,
+            containerOutWarehouseManager: formData.containerOutWarehouseManager, // 仓库管理员
           };
           // 订单请求参数
           this.orderParams = {

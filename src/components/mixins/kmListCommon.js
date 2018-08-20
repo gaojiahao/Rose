@@ -70,7 +70,7 @@ export default {
       }).then(({data = []})=>{
         this.listView = data;
         this.calc_rel_code = data[0].calc_rel_code;
-        this.view_id = data[0].view_id;        
+        this.view_id = data[0].view_id;
       })
     },
     //显示流水详情
@@ -78,9 +78,9 @@ export default {
       this.flowTitle = item;
       this.handleLoadding = true;
       let row = {};
-      this.listField.forEach(item1=>{  
+      this.listField.forEach(item1=>{
         row[item1.field] = item[item1.field];
-            
+
       })
       let requestData = {
         view_id: 'obj_water_1',
@@ -102,6 +102,7 @@ export default {
       this.handleLoadding = false;
       this.flowShow = true;
       this.$nextTick(() => {
+        this.$refs.flowListWrapper.scrollTo(0, 0);
         this.$refs.flowListWrapper.refresh();
       })
     },
@@ -114,11 +115,18 @@ export default {
         view_scope: 'model'
       }).then(data=>{
         this.listField = data.model;
-     
+
       })
     },
     //获取列表数据
     getListData(noReset = false){
+      let filters='';
+      if(this.serachVal!=''){
+        for(let i = 0 ; i<this.filterArr.length ; i++){
+          this.filterArr[i].value = this.serachVal;
+        }
+        filters = JSON.stringify(this.filterArr);
+      }
        return getViewList({
         calc_rel_code: this.calc_rel_code,
         view_id: this.view_id,
@@ -127,8 +135,7 @@ export default {
         page:this.page,
         start:(this.page-1)*this.limit,
         limit: this.limit,
-        device_type :'phone',
-        filter:this.serachVal
+        filter:filters
       }).then(({data=[],total=0})=>{
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach(item=>{

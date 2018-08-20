@@ -1,13 +1,19 @@
 <template>
   <div class="detail_wrapper xmrw-detail-container">
     <div class="basicPart">
-
+      <!-- 项目经理 -->
+      <div class="or_ads mg_auto box_sd">
+        <p class="title">项目经理</p>
+        <div class="user_info group_mar_left">
+          <span class="user_name">{{projectApproval.projectManager}}</span>
+          <span class="user_tel">{{projectApproval.phoneNumber}}</span>
+        </div>
+      </div>
        <!-- 项目明细 -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">项目明细</p>
         <group class="JH_mar_left">
           <cell title="项目名称" :value="projectApproval.projectName"></cell>
-          <cell title="项目经理" :value="projectApproval.projectManager"></cell>
           <cell title="项目说明" primary="content" align-items="flex-start" :value="projectApproval.comment"></cell>
         </group>
       </div>
@@ -166,6 +172,9 @@
     }
     .JH_mar_left{
       margin-left: 0.04rem;
+    }
+    .group_mar_left{
+      margin: 0 0.04rem;
     }
 </style>
 

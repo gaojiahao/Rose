@@ -16,11 +16,9 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="each_duty" v-for="(item,index) in listData" :key="index" @click="getFlow(item)">
-          <!-- 仓库名称 仓库编码 -->
           <div class="duty_top">
             <!-- 表单状态 及 编码 -->
             <div class="warehouse_info">
-              <!-- <span class="warehouse warehouse_code">{{item.warehouseRelType}}</span> -->
               <!-- 状态 -->
               <span class="warehouse warehouse_name">
                   <!-- 往来关系标签/二级科目 -->
@@ -41,7 +39,7 @@
               {{item.dealerName}}
             </div>
           </div>
-          <!-- 仓库类型、金额余额等 -->
+          <!-- 金额余额等 -->
           <div class="duty_btm" :class="{'vux-1px-t': item.dealerName}">
             <!-- 仓库类型 -->
             <div class="ware_type"></div>
@@ -138,6 +136,9 @@
         uniqueId: 9000,
         showContent: false,
         handleLoadding: false,
+        filterArr: [
+          {operator: 'like', value: '', property: 'dealerCode'}
+        ],
       }
     },
     components: {

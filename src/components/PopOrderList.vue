@@ -161,7 +161,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+        return this.tmpItems.findIndex(item => item.transMatchedCode === sItem.transMatchedCode && item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
@@ -172,7 +172,7 @@
           return
         }
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+        let delIndex = arr.findIndex(item => item.transMatchedCode === sItem.transMatchedCode && item.inventoryCode === sItem.inventoryCode);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -247,7 +247,7 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.inventoryCode === dItem.inventoryCode);
+        let delIndex = this.selItems.findIndex(item => item.transMatchedCode === dItem.transMatchedCode && item.inventoryCode === dItem.inventoryCode);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }

@@ -128,4 +128,20 @@ export let getProjectApproval = (data = {}) => {
   });
 };
 
+// TODO 获取项目相关的任务列表
+export let getProjectTodoTask = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectTodoTask',
+    data: {
+      _dc: Date.now(),
+      page: 1,
+      start: 0,
+      limit: 100,
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {}
