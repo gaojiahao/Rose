@@ -38,18 +38,13 @@
                           v-model="formData.validUntil"
                           title="有效期至"
                           ></datetime>
-                          <div class="SJForm_cell" @click="salesChange('员工')">
-                            <div>销售人员</div>
+                          <div class="SJForm_cell" @click="salesChange(item)" v-for="(item,idx) in saleManArr" :key="idx">
+                            <div>{{item.title}}</div>
                             <div>
-                              <span>{{salesmanInfo.dealerName}}</span>
+                              <span>{{item.dealerName}}</span>
                             </div>
                           </div>
-                          <div class="SJForm_cell" @click="salesChange('渠道商')">
-                            <div>销售渠道</div>
-                            <div>
-                              <span>{{salechannelInfo.dealerName}}</span>
-                            </div>
-                          </div>
+
                         <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                       </group>
                     </div>
@@ -65,15 +60,12 @@
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" :dealerLabelName="'2167'">
           </pop-dealer-list>
-          <!-- 销售人员popup -->
-          <pop-salesman-list :show="showSalesmanPop1" v-model="showSalesmanPop1"
-           dealerLabelName='员工'  @sel-dealer="selSalesman">
+
+          <!-- 销售人员popup, 销售渠道popup -->
+          <pop-salesman-list :show="item.status" v-model="item.status"
+           :dealerLabelName='item'  @sel-dealer="selSalesman($event,item)" v-for="(item,index) in saleManArr" :key="index">
           </pop-salesman-list>
 
-           <!-- 销售渠道popup -->
-          <pop-salesman-list :show="showSalesmanPop2" v-model="showSalesmanPop2" 
-           dealerLabelName='渠道商'  @sel-dealer="selSalechannel">
-          </pop-salesman-list>
         </div>
       </div>
     </div>
@@ -118,13 +110,12 @@
     data() {
       return {
         listId: '32a2c333-02a3-416f-a133-95c7a32da678',
-        showDealerPop: false,                          // 是否显示往来的popup
-        showSalesmanPop1: false,                          // 是否显示销售人员的popup
-        showSalesmanPop2: false,                          // 是否显示销售人员的popup
-        showSalechannelPop: false,                          // 是否显示销售渠道的popup
+        showDealerPop: false,                          // 是否显示往来的popup                     
+        saleManArr:[
+          {title:'销售人员',name:'员工',dealerName:'',status:false},// 是否显示销售人员的popup
+          {title:'销售渠道',name:'渠道商',dealerName:'',status:false}// 是否显示销售渠道的popup
+        ],
         dealerInfo: {},
-        salesmanInfo:{},
-        salechannelInfo:{},
         dealer: {},
         formData: {
           "handlerName": "",
@@ -162,7 +153,6 @@
     mixins: [common],
     watch:{
       formData(val){
-        console.log(val)
         if(val.opportunityTitle){
           let data = {
             SJ_DATA:{
@@ -176,12 +166,8 @@
     },
     methods: {
       //渠道商,人员选择
-      salesChange(val){
-        if(val == '员工'){
-          this.showSalesmanPop1 = !this.showSalesmanPop1;
-        }else if(val == '渠道商'){
-          this.showSalesmanPop2 = !this.showSalesmanPop2;
-        }
+      salesChange(item){
+        item.status= !item.status;
       },
       //清除金额
       clearSaleVal(e){
@@ -207,13 +193,9 @@
         this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
-      //选中销售人员
-      selSalesman(val){
-        this.salesmanInfo = JSON.parse(val)[0];
-      },
-      //选中销售渠道
-      selSalechannel(val){
-        this.salechannelInfo = JSON.parse(val)[0];
+      //选中销售人员,销售渠道
+      selSalesman(val,item){
+        item.dealerName = JSON.parse(val)[0].dealerName;
       },
       // TODO 提交
       submitOrder() {
@@ -261,8 +243,8 @@
                 ...this.formData,
                 creator:this.formData.handler,
                 modifer:this.formData.handler,
-                salesPerson: this.salesmanInfo.dealerName ? this.formData.handler : '',
-                salesChannels: this.salechannelInfo.dealerName ? this.formData.handler : '',
+                salesPerson: this.saleManArr[0].dealerName ? this.formData.handler : '',
+                salesChannels: this.saleManArr[1].dealerName ? this.formData.handler : '',
               }),
               wfPara: JSON.stringify({
                 [this.processCode]: {

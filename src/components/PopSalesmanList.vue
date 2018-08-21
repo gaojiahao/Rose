@@ -1,16 +1,15 @@
 <template>
-  <!-- 往来popup -->
+  <!-- 销售popup -->
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="trade_pop_title">
           <div class="title">
-             <span v-if="this.dealerLabelName == '员工'">销售人员</span> 
-             <span v-if="this.dealerLabelName == '渠道商'">销售渠道</span>
+             <span>{{dealerLabelName.title}}</span>
               <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
           </div>
         </div>
-        <!-- 往来列表 -->
+        <!-- 销售列表 -->
         <div class="mater_list" ref="dealer">
           <div class="mater_list_wrapper">
             <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key='index'
@@ -63,8 +62,8 @@
         default: false
       },
       dealerLabelName:{
-        type: String,
-        default:''
+        type: Object,
+        default:{}
       },
     },
     directives: {TransferDom},
@@ -121,13 +120,13 @@
         this.selItems = [sItem];
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
       },
-      // TODO 获取往来列表
+      // TODO 获取销售列表
       getDealer() {
         listService.getSalesmanList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          dealerLabelName: this.dealerLabelName,
+          dealerLabelName: this.dealerLabelName.name,
           //filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
@@ -241,7 +240,7 @@
       .vux-1px:before {
         border-radius: 40px;
       }
-      // 往来列表
+      // 销售列表
       .mater_list {
         width: 100%;
         overflow: hidden;
@@ -264,7 +263,7 @@
             .title {
               font-size: .2rem;
             }
-            // 新增往来
+            // 新增销售
             .tips {
               li { list-style : square; margin-top: .1rem;}
               font-weight: 200;
@@ -280,7 +279,7 @@
 
           }
         }
-        // 每个往来
+        // 每个销售
         .each_mater {
           position: relative;
           display: flex;
@@ -292,7 +291,7 @@
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
-          // 往来图片
+          // 销售图片
           .mater_img {
             display: inline-block;
             width: .75rem;
@@ -302,13 +301,13 @@
               max-height: 100%;
             }
           }
-          // 往来主体
+          // 销售主体
           .mater_main {
             flex: 1;
             padding-left: .1rem;
             box-sizing: border-box;
             display: inline-block;
-            // 往来名称
+            // 销售名称
             .mater_name {
               color: #111;
               overflow: hidden;
