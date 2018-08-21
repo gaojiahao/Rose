@@ -23,7 +23,7 @@
           </div>
           <div class='add_icon' v-else>
             <label for="file"></label>
-            <img :src='matPic' class='upload'/>
+            <img :src='matPic' class='upload' @error="getDefaultImg()"/>
           </div>
         </div>
       </div>
@@ -335,6 +335,10 @@
             activeTime: this.changeDate(new Date(), true),
           }
         });
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+        this.matPic = require('assets/wl.png');
       },
     },
     beforeRouteLeave(to, from, next) {
