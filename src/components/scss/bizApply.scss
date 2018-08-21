@@ -300,6 +300,27 @@
     font-family: -apple-system-font, "Helvetica Neue", sans-serif, Microsoft YaHei, Arial, Helvetica, sans-serif;
   }
   // 新增更多
+  .handle_part {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    .add_more {
+      display: inline-block;
+    }
+    .symbol {
+      left: 50%;
+      bottom: 25%;
+      color: #757575;
+      font-size: .12rem;
+      position: absolute;
+      transform: translate(-50%, 0);
+    }
+    .stop {
+      margin-right: .24rem;
+      background: #ea5455;
+      box-shadow: 0 2px 5px #ea5455;
+    }
+  }
   .add_more {
     width: 1rem;
     color: #fff;
