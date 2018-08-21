@@ -22,13 +22,13 @@
               {{item.transCode}}
               <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
             </p>
-            <p class="duty_time">{{item.effectiveTime}}</p>
+            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
           <div class="duty_content">{{item.opportunityTitle}}</div>
           <!-- 报销人，金额合计 -->
           <div class="order_count">
             <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[报销人]</span>
+              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
               <span class="money">
