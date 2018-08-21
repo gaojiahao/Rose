@@ -155,8 +155,6 @@
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
   .mater_other {
-      position: absolute;
-      bottom: 0;
       .mater_num {
         .num {
           color: #5077aa;
