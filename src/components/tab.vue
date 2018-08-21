@@ -6,12 +6,6 @@
         <p class="arrow" :class='tabShow ? "arrow_up" : "arrow_down" '>
           <x-icon type="ios-arrow-down" size="24" ></x-icon>  
         </p>
-        <!-- <p class="arrow" v-if='!tabShow'>
-          <x-icon type="ios-arrow-down" size="24" ></x-icon>  
-        </p>
-        <p class="arrow" v-else>
-          <x-icon type="ios-arrow-up" size="24" ></x-icon>  
-        </p>          -->
       </div>  
     </div>
     <!--展开状态 -->
@@ -96,8 +90,12 @@ export default {
       text-align: center;
       position: relative;
       .tab_item_name{
+        font-size: .18rem;
+        font-weight: 400;
+        color: #757575;
         line-height: 44px;
         .arrow{
+          position: absolute;
           display: inline-block;
         }
         .arrow_up{
