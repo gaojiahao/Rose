@@ -87,18 +87,18 @@
                       <div class="count">
                         <div class="num_part">
                           <span class="symbol">借方金额: </span>
-                          <span class="number_incre" v-if="Fitem.drAmnt > 0">+ {{Fitem.drAmnt.toFixed(2)}}</span>
-                          <span class="number_redu" v-else-if="Fitem.drAmnt < 0">- {{Fitem.drAmnt.toFixed(2)}}</span>
-                          <span v-else>不变</span>
+                          <span class="number_incre" v-if="Fitem.drAmnt > 0">{{Fitem.drAmnt.toFixed(2)}}</span>
+                          <!-- <span class="number_redu" v-else-if="Fitem.drAmnt < 0">- {{Fitem.drAmnt.toFixed(2)}}</span> -->
+                          <span v-else>0</span>
                         </div>
                       </div>
                       <!-- 金额 -->
                       <div class="amount_money">
                         <div class="num_part">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_incre" v-if="Fitem.crAmnt > 0">+ {{Fitem.crAmnt.toFixed(2)}}</span>
-                          <span class="number_redu" v-else-if="Fitem.crAmnt < 0">- {{Fitem.crAmnt.toFixed(2)}}</span>
-                          <span v-else>不变</span>
+                          <span class="number_incre" v-if="Fitem.crAmnt > 0">{{Fitem.crAmnt.toFixed(2)}}</span>
+                          <!-- <span class="number_redu" v-else-if="Fitem.crAmnt < 0">- {{Fitem.crAmnt.toFixed(2)}}</span> -->
+                          <span v-else>0</span>
                         </div>
                       </div>
                     </div>
@@ -107,7 +107,7 @@
                     <div class="number"></div>
                     <div class="price">
                       <span class="symbol">当前余额: ￥</span>
-                      <span :class="{increase: Fitem.amntBalance > 0,reduce: Fitem.amntBalance < 0}">{{Fitem.amntBalance}}</span>
+                      <span :class="{increase: Fitem.amntBalance > 0,reduce: Fitem.amntBalance < 0}">{{Fitem.amountBalance}}</span>
                     </div>
                   </div>
                 </div>
