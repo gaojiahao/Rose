@@ -35,11 +35,11 @@
           <div class='duty_btm vux-1px-t'>
             <!-- 开户银行 -->
             <div class="ware_type">
-              {{item.bank}}
+              {{item.bank || '暂无银行信息'}}
             </div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance !== ''">
-              <span class="symbol">余额: ￥</span>{{item.amountBalance}}
+              <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma(3)}}
             </div>
           </div>
         </div>
@@ -113,10 +113,13 @@
                     <div class="number">
                     </div>
                     <div class="price HBZJ_total">
-                      <span class="symbol">金额余额:</span>
-                      <span class="number_incre" v-if="Fitem.amntBalance>0">￥{{Fitem.amntBalance}}</span>
-                      <span class="number_redu" v-else-if="Fitem.amntBalance<0">￥{{Fitem.amntBalance}}</span>
-                      <span v-else>￥{{Fitem.amntBalance}}</span>
+                      <span class="symbol">当前余额:</span>
+                      <span :class="{increase: Fitem.amountBalance > 0,reduce: Fitem.amountBalance < 0}">
+                        ￥{{Fitem.amountBalance}}
+                      </span>
+                      <!-- <span class="number_incre" v-if="Fitem.amntBalance>0">￥{{Fitem.amountBalance}}</span>
+                      <span class="number_redu" v-else-if="Fitem.amntBalance<0">￥{{Fitem.amountBalance}}</span>
+                      <span v-else>￥{{Fitem.amountBalance}}</span> -->
                     </div>                
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, TransferDom, Popup,dateFormat } from 'vux'
+import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, TransferDom, Popup,dateFormat,numberComma } from 'vux'
 import { getListClassfiy,getView,getViewList} from 'service/kmService.js'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
@@ -32,15 +32,13 @@ export default {
       applyCode : '' ,
     }
   },
-  directives: {
-    TransferDom
-  },
+  directives: { TransferDom },
   components: {
-    CellFormPreview,Group,Cell,searchIcon,RScroll,Tab, Icon, TabItem,Popup
+    Tab, Icon, Cell, 
+    Group, Popup, RScroll,
+    TabItem, searchIcon, CellFormPreview
   },
-  filters: {
-    dateFormat
-  },
+  filters: { dateFormat, numberComma },
   methods: {
     // TODO 重置列表条件
     resetCondition() {
