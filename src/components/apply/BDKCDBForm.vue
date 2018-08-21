@@ -60,7 +60,9 @@
                         </div>
                         <!-- 物料数量和价格 -->
                         <div class="mater_other">
-                          <span class="matter-remain">库存: {{item.qtyBal}}</span>
+                          <span class="matter-remain">
+                            <span class="symbol">库存数量: </span>{{item.qtyBal}}
+                          </span>
                           <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
                         </div>
                       </div>
@@ -360,8 +362,12 @@
 
   .bdkcdb-apply-container {
     .matter-remain {
-      color: #757575;
-      font-size: 0.12rem;
+      color: #5077aa;
+      font-size: .16rem;
+      font-weight: bold;
+      .symbol {
+        color: #757575;
+      }
     }
   }
 </style>
