@@ -30,7 +30,7 @@
                   <div class="mater_main" style='max-width:100%;'>
                     <div class="userInp_mode">
                       <div class="title">商机明细</div>
-                      <group class="SJ_group" @group-title-margin-top="0">
+                      <group class="SJ_group cell_bor_none" @group-title-margin-top="0">
                         <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
                         <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
                         <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
@@ -85,8 +85,6 @@
   import common from 'components/mixins/applyCommon.js'
   import PopDealerList from 'components/PopDealerList'
   import PopSalesmanList from 'components/PopSalesmanList'
-  import PopSalechannelList from 'components/PopSalechannelList'
-  import PopBusinessList from 'components/PopBusinessList'
   export default {
     directives: {
       TransferDom
@@ -98,11 +96,9 @@
       Popup,
       PopDealerList,
       PopSalesmanList,
-      PopSalechannelList,
       Cell ,
       Group,
       XInput,
-      PopBusinessList,
       XTextarea,
       PopupRadio,
       Datetime
@@ -272,7 +268,6 @@
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
-  // @import '~components/scss/bizDetail.scss';
   .weui-cell{
     padding: 10px 0;
     &:before{
@@ -358,26 +353,22 @@
     padding: 10px 0;
     display: flex;
     justify-content: space-between;
-    border-top: 0.5px solid #D9D9D9;
+    position: relative;
+  }
+  .SJForm_cell:before{
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    border-top: 1px solid #D9D9D9;
+    color: #D9D9D9;
+    transform-origin: 0 0;
+    transform: scaleY(0.5);
   }
   .SJForm_cell>div:last-child{
     padding-right: 13px;
     color: #999;
-    position: relative;
-  }
-  .SJForm_cell>div:last-child:after{
-    content: " ";
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #C8C8CD;
-    border-style: solid;
-    transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-    position: absolute;
-    top: 50%;
-    margin-top: -4px;
-    right: 2px;
   }
   .materiel_list{
     padding: 0;
@@ -389,5 +380,8 @@
 <style>
   .SJ_group>.vux-no-group-title{
     margin-top: 0.08rem;
+  }
+  .cell_bor_none>.weui-cells:after{
+    border-bottom: inherit!important;
   }
 </style>
