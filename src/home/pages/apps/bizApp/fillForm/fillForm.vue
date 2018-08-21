@@ -80,7 +80,7 @@ export default {
     }
     //离开数据保存为草稿
     let keys = Object.keys(this.saveData)[0];
-    if(to.name === "LIST" && keys && this.transCode && !this.submitSuccess){
+    if(to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
         onConfirm : ()=>{         
