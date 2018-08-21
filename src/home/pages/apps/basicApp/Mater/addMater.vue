@@ -187,6 +187,11 @@
           processing: '加工属性',
           measureUnit: '主计量单位',
         };
+        for(let key in this.inventory){
+          if(typeof(this.inventory[key]) === 'string' && this.inventory[key].indexOf(' ')>=0){
+            this.inventory[key] = this.inventory[key].replace(/\s/g,'');
+          }
+        }
         let submitData = {
           listId: this.listId,
           // biReferenceId: this.biReferenceId,
@@ -195,6 +200,7 @@
             inventory: this.inventory
           }
         };
+        //console.log(submitData);
         let operation = save;
         let warn = '';
         Object.entries(requiredMap).every(([key, msg]) => {

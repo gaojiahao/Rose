@@ -252,11 +252,10 @@ export default {
       if(this.dealer.dealerPhone.length>0 && !reg.test(this.dealer.dealerPhone)){
         this.PhoneWarn = true;
         this.btnStatus = true;
+        return
       }
-      else{
-        this.PhoneWarn = false;
-        this.btnStatus = false;
-      }
+      this.PhoneWarn = false;
+      this.btnStatus = false;     
     },
     //校验手机号
     checkMobile(){
@@ -264,13 +263,10 @@ export default {
       if(this.dealer.dealerMobilePhone.length>0 && !reg.test(this.dealer.dealerMobilePhone)){
         this.MobileWarn = true;
         this.btnStatus = true;
-      }
-      else{
-        this.MobileWarn = false;
-        this.btnStatus = false;
-      }
-
-
+        return
+      }     
+      this.MobileWarn = false;
+      this.btnStatus = false;
     },
     //校验邮箱
     checkEmail(){
@@ -278,11 +274,11 @@ export default {
       if(this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
         this.EmailWarn = true;
         this.btnStatus = true;
+        return
       }
-      else{
-        this.EmailWarn = false;
-        this.btnStatus = false;
-      }
+      this.EmailWarn = false;
+      this.btnStatus = false;
+
 
     },
     //往来信息
