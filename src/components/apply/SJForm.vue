@@ -11,7 +11,8 @@
             </div>
             <div class="cp_info">
               <p class="cp_name">{{dealerInfo.dealerName}}</p>
-              <p class="cp_ads">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+              <p class="cp_ads">
+                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
             </div>
           </div>
           <div v-else>
@@ -29,19 +30,22 @@
                 <div class="userInp_mode">
                   <div class="title">商机明细</div>
                   <group class="SJ_group cell_bor_none" @group-title-margin-top="0">
-                    <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                    <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount" @on-change="filterNum($event,'salePrice')" text-align='right' placeholder='请填写'></x-input>
+                    <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
+                             placeholder='请填写'></x-input>
+                    <x-input title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal"
+                             :value="formData.tdAmount" @on-change="filterNum($event,'salePrice')" text-align='right'
+                             placeholder='请填写'></x-input>
                     <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
                     <datetime
                       v-model="formData.validUntil"
                       title="有效期至"
-                      ></datetime>
-                      <div class="SJForm_cell" @click="salesChange(item)" v-for="(item,idx) in saleManArr" :key="idx">
-                        <div>{{item.title}}</div>
-                        <div>
-                          <span>{{item.dealerName}}</span>
-                        </div>
+                    ></datetime>
+                    <div class="SJForm_cell" @click="salesChange(item)" v-for="(item,idx) in saleManArr" :key="idx">
+                      <div>{{item.title}}</div>
+                      <div>
+                        <span>{{item.dealerName}}</span>
                       </div>
+                    </div>
 
                     <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                   </group>
@@ -52,41 +56,55 @@
         </div>
         <!-- 往来popup -->
         <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                        @sel-dealer="selDealer" :dealerLabelName="'2167'">
+                         @sel-dealer="selDealer" :dealerLabelName="'2167'">
         </pop-dealer-list>
         <!-- 销售人员popup, 销售渠道popup -->
         <pop-salesman-list :show="item.status" v-model="item.status"
-          :dealerLabelName='item'  @sel-dealer="selSalesman($event,item)" v-for="(item,index) in saleManArr" :key="index">
+                           :dealerLabelName='item' @sel-dealer="selSalesman($event,item)"
+                           v-for="(item,index) in saleManArr" :key="index">
         </pop-salesman-list>
       </div>
     </div>
-    <div class="count_mode vux-1px-t">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{total}}
-      </span>
-      <span class="count_btn" @click="submitOrder">提交</span>
+    <div class='btn-no-amt vux-1px-t'>
+      <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
+      <div class="btn-item" @click="submitOrder">提交</div>
     </div>
   </div>
 </template>
 
 <script>
-  import {Popup,TransferDom,Cell ,CellBox ,Group,XInput,numberComma,XTextarea,PopupRadio,Datetime,AlertModule } from 'vux'
-  import {saveAndStartWf} from 'service/commonService'
+  import {
+    Popup,
+    TransferDom,
+    Cell,
+    CellBox,
+    Group,
+    XInput,
+    numberComma,
+    XTextarea,
+    PopupRadio,
+    Datetime,
+    AlertModule,
+    dateFormat
+  } from 'vux'
+  import {saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {getSOList} from 'service/detailService'
   import common from 'components/mixins/applyCommon.js'
   import PopDealerList from 'components/PopDealerList'
   import PopSalesmanList from 'components/PopSalesmanList'
+
   export default {
     directives: {
       TransferDom
     },
-    filters:{
+    filters: {
       numberComma
     },
     components: {
       Popup,
       PopDealerList,
       PopSalesmanList,
-      Cell ,
+      Cell,
       Group,
       XInput,
       XTextarea,
@@ -96,10 +114,10 @@
     data() {
       return {
         listId: '32a2c333-02a3-416f-a133-95c7a32da678',
-        showDealerPop: false,                          // 是否显示往来的popup                     
-        saleManArr:[
-          {title:'销售人员',name:'员工',dealerName:'',status:false},// 是否显示销售人员的popup
-          {title:'销售渠道',name:'渠道商',dealerName:'',status:false}// 是否显示销售渠道的popup
+        showDealerPop: false,                          // 是否显示往来的popup
+        saleManArr: [
+          {title: '销售人员', name: '员工', dealerName: '', status: false},// 是否显示销售人员的popup
+          {title: '销售渠道', name: '渠道商', dealerName: '', status: false}// 是否显示销售渠道的popup
         ],
         dealerInfo: {},
         dealer: {},
@@ -127,42 +145,43 @@
           "categoryLabels": "",
           "biComment": ""
         },
-        options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)','签约交款(100%)','签约失败(0%)'],
+        options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)', '签约交款(100%)', '签约失败(0%)'],
+        biReferenceId: '',
       }
     },
     computed: {
       //总金额
-      total(){
-        return this.formData.tdAmount == ''?0:numberComma(this.formData.tdAmount);
+      total() {
+        return this.formData.tdAmount == '' ? 0 : numberComma(this.formData.tdAmount);
       }
     },
     mixins: [common],
-    watch:{
-      formData(val){
-        if(val.opportunityTitle){
+    watch: {
+      formData(val) {
+        if (val.opportunityTitle) {
           let data = {
-            SJ_DATA:{
-              formData : this.formData
+            SJ_DATA: {
+              formData: this.formData
             }
           }
-          this.$emit('sel-data',data)
+          this.$emit('sel-data', data)
 
         }
       }
     },
     methods: {
-       //限制只能输入数字
-      filterNum(e,ref){
-        let num = e.replace(/[^\d]/g,'');
+      //限制只能输入数字
+      filterNum(val, ref) {
+        let num = `${val}`.replace(/[^\d]/g, '');
         this.$refs[ref].currentValue = num;
         this.formData.tdAmount = num;
       },
       //渠道商,人员选择
-      salesChange(item){
-        item.status= !item.status;
+      salesChange(item) {
+        item.status = !item.status;
       },
       //清除金额
-      clearSaleVal(e){
+      clearSaleVal(e) {
         this.formData.tdAmount = '';
       },
       //选中的往来
@@ -174,77 +193,132 @@
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
       //选中销售人员,销售渠道
-      selSalesman(val,item){
+      selSalesman(val, item) {
         item.dealerName = JSON.parse(val)[0].dealerName;
       },
       // TODO 提交
       submitOrder() {
         let that = this;
         let salePriceVal = this.$refs.salePrice.currentValue;
-        if(JSON.stringify(this.dealerInfo)=='{}'){
-              AlertModule.show({
-                content: '请选择往来',
-              });
-            return;
-          }else if(this.formData.opportunityTitle == ''){
-            AlertModule.show({
-                content: '请填写商机标题',
-              });
-            return;
-          }else if(this.formData.tdAmount == ''){
-            AlertModule.show({
-                content: '请填写预期销售额',
-              });
-            return;
-          }else if(salePriceVal!=''&&!/^[0-9]+.?[0-9]*$/.test(salePriceVal)){
+        if (JSON.stringify(this.dealerInfo) == '{}') {
           AlertModule.show({
-              content: '请输入正确的金额格式',
-              onHide (){
-                salePriceVal = '';
-                that.formData.tdAmount = '';
-              }
+            content: '请选择往来',
           });
           return;
-        }else if(this.formData.currentStage == ''){
-            AlertModule.show({
-                content: '请选择所在阶段',
-              });
-            return;
-          }
+        } else if (this.formData.opportunityTitle == '') {
+          AlertModule.show({
+            content: '请填写商机标题',
+          });
+          return;
+        } else if (this.formData.tdAmount == '') {
+          AlertModule.show({
+            content: '请填写预期销售额',
+          });
+          return;
+        } else if (salePriceVal != '' && !/^[0-9]+.?[0-9]*$/.test(salePriceVal)) {
+          AlertModule.show({
+            content: '请输入正确的金额格式',
+            onHide() {
+              salePriceVal = '';
+              that.formData.tdAmount = '';
+            }
+          });
+          return;
+        } else if (this.formData.currentStage == '') {
+          AlertModule.show({
+            content: '请选择所在阶段',
+          });
+          return;
+        }
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
             let operation = saveAndStartWf;
+            let wfPara = {
+              [this.processCode]: {
+                businessKey: 'OPPT',
+                createdBy: this.formData.creator != '' ? this.formData.creator : this.formData.handler,
+              }
+            };
+            if (this.transCode) {
+              operation = saveAndCommitTask;
+              wfPara = {
+                businessKey: this.transCode,
+                createdBy: this.formData.creator || this.formData.handler,
+                transCode: this.transCode,
+                result: 3,
+                taskId: this.taskId,
+                comment: ''
+              }
+            }
             let submitData = {
               listId: this.listId,
               biComment: '',
               formData: JSON.stringify({
                 ...this.formData,
-                creator:this.formData.handler,
-                modifer:this.formData.handler,
-                salesPerson: this.saleManArr[0].dealerName ? this.formData.handler : '',
-                salesChannels: this.saleManArr[1].dealerName ? this.formData.handler : '',
+                creator: this.formData.handler,
+                modifer: this.formData.handler,
+                salesPerson: this.saleManArr[0].dealerName ? this.saleManArr[0].dealerName : '',
+                salesChannels: this.saleManArr[1].dealerName ? this.saleManArr[1].dealerName : '',
               }),
-              wfPara: JSON.stringify({
-                [this.processCode]: {
-                  businessKey: 'OPPT',
-                  createdBy: this.formData.creator != ''?this.formData.creator:this.formData.handler,
-                }
-              }),
+              wfPara: JSON.stringify(wfPara),
             };
+            if(this.transCode){
+              submitData.biReferenceId = this.biReferenceId;
+            }
             this.saveData(operation, submitData);
           }
         });
       },
+      // TODO 获取详情
+      getFormData() {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode: this.transCode
+        }).then(data => {
+          let {success = true, formData = {}} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          let matterList = [];
+          // 获取合计
+          let {order} = formData;
+          let {dataSet = []} = order;
+          // 客户信息
+          this.dealerInfo = {
+            creatorName: formData.dealerDebitContactPersonName || '', // 客户名
+            dealerName: order.dealerName_dealerDebit || '', // 公司名
+            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+            dealerCode: order.dealerDebit || '', // 客户编码
+            dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+            province: order.province_dealerDebit || '', // 省份
+            city: order.city_dealerDebit || '', // 城市
+            county: order.county_dealerDebit || '', // 地区
+            address: order.address_dealerDebit || '', // 详细地址
+          };
+          this.formData = {
+            ...formData,
+            creator: formData.creator,
+            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+          };
+          this.saleManArr[0].dealerName = formData.salesPerson;
+          this.saleManArr[1].dealerName = formData.salesChannels;
+          // this.biReferenceId = formData.biReferenceId;
+        })
+      },
     },
     created() {
       let data = sessionStorage.getItem('SJ_DATA');
-      if(data){
+      if (data) {
         this.formData = JSON.parse(data).formData;
       }
     },
-    mounted(){
+    mounted() {
 
     }
   }
@@ -252,12 +326,14 @@
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
-  .weui-cell{
+
+  .weui-cell {
     padding: 10px 0;
-    &:before{
-      left:0;
+    &:before {
+      left: 0;
     }
   }
+
   .pop-single-container {
     position: relative;
     margin: 10px auto;
@@ -303,7 +379,7 @@
       }
       .each_mode {
         margin-right: .1rem;
-        margin-bottom : .1rem;
+        margin-bottom: .1rem;
         display: inline-block;
         padding: .04rem .2rem;
         border: 1px solid #C7C7C7;
@@ -333,13 +409,15 @@
       box-shadow: 0 2px 12px #5077aa;
     }
   }
-  .SJForm_cell{
+
+  .SJForm_cell {
     padding: 10px 0;
     display: flex;
     justify-content: space-between;
     position: relative;
   }
-  .SJForm_cell:before{
+
+  .SJForm_cell:before {
     content: " ";
     position: absolute;
     left: 0;
@@ -350,22 +428,26 @@
     transform-origin: 0 0;
     transform: scaleY(0.5);
   }
-  .SJForm_cell>div:last-child{
+
+  .SJForm_cell > div:last-child {
     padding-right: 13px;
     color: #999;
   }
-  .materiel_list{
+
+  .materiel_list {
     padding: 0;
   }
-  .materiel_list .mater_list .each_mater_wrapper .mater_main{
+
+  .materiel_list .mater_list .each_mater_wrapper .mater_main {
     padding-left: 0;
   }
 </style>
 <style>
-  .SJ_group>.vux-no-group-title{
+  .SJ_group > .vux-no-group-title {
     margin-top: 0.08rem;
   }
-  .cell_bor_none>.weui-cells:after{
+
+  .cell_bor_none > .weui-cells:after {
     border-bottom: inherit;
   }
 </style>

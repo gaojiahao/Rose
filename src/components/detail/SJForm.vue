@@ -20,7 +20,7 @@
           </p>
         </div>
       </div>
-      
+
       <div class="trade_mode mg_auto box_sd">
         <p class="title">当前所在阶段</p>
         <p class="mode group_mar_left">{{orderInfo.currentStage || '暂无'}}</p>
@@ -72,8 +72,8 @@
                   <div class="mater_spec">
                     <span class="title">类型:</span>
                     <span class="content">{{orderInfo.categoryLabels || '无'}}</span>
-                  </div>   
-                  <!-- 商机内容 -->               
+                  </div>
+                  <!-- 商机内容 -->
                   <div class='mater_reimb'>
                       <div class="reason">
                         <span class="title">商机内容: </span>
@@ -91,6 +91,9 @@
           </div>
         </div>
       </div>
+      <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -99,6 +102,7 @@
   import {dateFormat} from 'vux'
   import {getSOList} from 'service/detailService'
   import workFlow from 'components/workFlow'
+  import RAction from 'components/RAction'
   import detailCommon from 'components/mixins/detailCommon'
 
   export default {
@@ -111,7 +115,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow,
+      workFlow, RAction,
     },
     methods: {
       // 获取详情
@@ -164,14 +168,14 @@
             //   font-size: .18rem;
             // }
           }
-  .materiel_list 
-    .mater_list 
-      .each_mater 
-        .each_mater_wrapper 
-          .mater_main 
-            .mater_info 
-              .withColor 
-                .mater_code 
+  .materiel_list
+    .mater_list
+      .each_mater
+        .each_mater_wrapper
+          .mater_main
+            .mater_info
+              .withColor
+                .mater_code
                   .num {
                     border-top-right-radius: .08rem;
                   }

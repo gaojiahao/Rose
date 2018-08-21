@@ -347,7 +347,7 @@
       .title {
         font-size: .2rem;
         position: relative;
-        padding-top: 0.08rem;
+        padding: .08rem 0;
         // 搜索
         .search_part {
           width: 100%;
@@ -424,7 +424,7 @@
         height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .14rem .04rem 0 .3rem;
+          padding: .04rem .04rem 0 .3rem;
         }
         // 每个物料
         .each_mater {
