@@ -48,9 +48,10 @@
                 <!-- 物料数量和价格 -->
                 <div class='mater_other'>
                   <div class='mater_num'>
-                    <!--<span class="num">库存: {{item.thenQtyStock}}</span>-->
-                    <span class="num">盘点数量: {{item.tdQty}}</span>
-                    <!--<span class="num">差异数量: {{item.differenceNum}}</span>-->
+                    <span class="num">
+                      <span class="symbol">盘点数量: </span>
+                      {{item.tdQty}}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -136,4 +137,18 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .mater_other {
+      position: absolute;
+      bottom: 0;
+      .mater_num {
+        .num {
+          color: #5077aa;
+          font-size: .16rem;
+          font-weight: bold;
+          .symbol {
+            color: #757575;
+          }
+        }
+      }
+  }
 </style>

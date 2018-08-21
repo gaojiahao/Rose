@@ -47,10 +47,13 @@
                     </div>
                   </div>
                 </div>
-                <!-- 物料数量和价格 -->
+                <!-- 调拨数量 -->
                 <div class='mater_other'>
                   <div class='mater_num'>
-                    <span class="num">调拨数量: {{item.tdQty}}</span>
+                    <span class="num">
+                      <span class="symbol">调拨数量: </span>
+                      {{item.tdQty}}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -151,4 +154,18 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .mater_other {
+      position: absolute;
+      bottom: 0;
+      .mater_num {
+        .num {
+          color: #5077aa;
+          font-size: .16rem;
+          font-weight: bold;
+          .symbol {
+            color: #757575;
+          }
+        }
+      }
+  }
 </style>
