@@ -26,47 +26,38 @@
           <div class="materiel_list mg_auto box_sd">
             <div class="mater_list">
               <div class="each_mater">
-                <div class="each_mater_wrapper">
-                  <div class="mater_main" style='max-width:100%;'>
-                    <div class="userInp_mode">
-                      <div class="title">商机明细</div>
-                      <group class="SJ_group cell_bor_none" @group-title-margin-top="0">
-                        <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                        <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount" @on-change="filterNum($event,'salePrice')" text-align='right' placeholder='请填写'></x-input>
-                        <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
-                        <datetime
-                          v-model="formData.validUntil"
-                          title="有效期至"
-                          ></datetime>
-                          <div class="SJForm_cell" @click="salesChange(item)" v-for="(item,idx) in saleManArr" :key="idx">
-                            <div>{{item.title}}</div>
-                            <div>
-                              <span>{{item.dealerName}}</span>
-                            </div>
-                          </div>
+                <div class="userInp_mode">
+                  <div class="title">商机明细</div>
+                  <group class="SJ_group cell_bor_none" @group-title-margin-top="0">
+                    <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
+                    <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount" @on-change="filterNum($event,'salePrice')" text-align='right' placeholder='请填写'></x-input>
+                    <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
+                    <datetime
+                      v-model="formData.validUntil"
+                      title="有效期至"
+                      ></datetime>
+                      <div class="SJForm_cell" @click="salesChange(item)" v-for="(item,idx) in saleManArr" :key="idx">
+                        <div>{{item.title}}</div>
+                        <div>
+                          <span>{{item.dealerName}}</span>
+                        </div>
+                      </div>
 
-                        <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
-                      </group>
-                    </div>
-                  </div>
+                    <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
+                  </group>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- popup列表 -->
-        <div class=" mg_auto box_sd">
-          <!-- 往来popup -->
-          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                          @sel-dealer="selDealer" :dealerLabelName="'2167'">
-          </pop-dealer-list>
-
-          <!-- 销售人员popup, 销售渠道popup -->
-          <pop-salesman-list :show="item.status" v-model="item.status"
-           :dealerLabelName='item'  @sel-dealer="selSalesman($event,item)" v-for="(item,index) in saleManArr" :key="index">
-          </pop-salesman-list>
-
-        </div>
+        <!-- 往来popup -->
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
+                        @sel-dealer="selDealer" :dealerLabelName="'2167'">
+        </pop-dealer-list>
+        <!-- 销售人员popup, 销售渠道popup -->
+        <pop-salesman-list :show="item.status" v-model="item.status"
+          :dealerLabelName='item'  @sel-dealer="selSalesman($event,item)" v-for="(item,index) in saleManArr" :key="index">
+        </pop-salesman-list>
       </div>
     </div>
     <div class="count_mode vux-1px-t">
