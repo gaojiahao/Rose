@@ -81,41 +81,43 @@
 </template>
 
 <script>
-  import {Group, Cell} from 'vux'
-  import detailCommon from 'components/mixins/detailCommon'
-  import {findProjectPlan} from 'service/projectService'
-
-  export default {
-    data() {
-      return {
-        projectPlan:'',
-        comment:'',
-        projectApproval:'',
-      }
-    },
-    filters:{
-      timeSplit(val){
-        return val?val.split(' ')[0]:'';
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      Group,
-      Cell,
-    },
-    methods: {
-      // 获取详情
-      getOrderList(transCode = '') {
-        return findProjectPlan(transCode).then(({formData = {}}) => {
-          this.projectPlan = formData.projectPlan;
-          this.comment = formData.comment;
-          this.projectApproval = formData.projectApproval;
-        })
-      },
-    },
-    created() {
+// vux组件引入
+import {Cell, Group } from 'vux'
+// 请求 引入
+import {findProjectPlan} from 'service/projectService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+export default {
+  data() {
+    return {
+      projectPlan:'',
+      comment:'',
+      projectApproval:'',
     }
+  },
+  filters:{
+    timeSplit(val){
+      return val?val.split(' ')[0]:'';
+    }
+  },
+  mixins: [detailCommon],
+  components: {
+    Group,
+    Cell,
+  },
+  methods: {
+    // 获取详情
+    getOrderList(transCode = '') {
+      return findProjectPlan(transCode).then(({formData = {}}) => {
+        this.projectPlan = formData.projectPlan;
+        this.comment = formData.comment;
+        this.projectApproval = formData.projectApproval;
+      })
+    },
+  },
+  created() {
   }
+}
 </script>
 
 <style lang='scss' scoped>

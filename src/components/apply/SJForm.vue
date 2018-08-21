@@ -73,255 +73,239 @@
 </template>
 
 <script>
-  import {
-    Popup,
-    TransferDom,
-    Cell,
-    CellBox,
-    Group,
-    XInput,
-    numberComma,
-    XTextarea,
-    PopupRadio,
-    Datetime,
-    AlertModule,
-    dateFormat
-  } from 'vux'
-  import {saveAndStartWf, saveAndCommitTask} from 'service/commonService'
-  import {getSOList} from 'service/detailService'
-  import common from 'components/mixins/applyCommon.js'
-  import PopDealerList from 'components/PopDealerList'
-  import PopSalesmanList from 'components/PopSalesmanList'
-
-  export default {
-    directives: {
-      TransferDom
-    },
-    filters: {
-      numberComma
-    },
-    components: {
-      Popup,
-      PopDealerList,
-      PopSalesmanList,
-      Cell,
-      Group,
-      XInput,
-      XTextarea,
-      PopupRadio,
-      Datetime
-    },
-    data() {
-      return {
-        listId: '32a2c333-02a3-416f-a133-95c7a32da678',
-        showDealerPop: false,                          // 是否显示往来的popup
-        saleManArr: [
-          {title: '销售人员', name: '员工', dealerName: '', status: false},// 是否显示销售人员的popup
-          {title: '销售渠道', name: '渠道商', dealerName: '', status: false}// 是否显示销售渠道的popup
-        ],
-        dealerInfo: {},
-        dealer: {},
-        formData: {
-          "handlerName": "",
-          "handlerUnitName": "",
-          "handlerRoleName": "",
-          "handler": "",
-          "handlerUnit": "",
-          "handlerRole": "",
-          "creator": "",
-          "modifer": "",
-          "biId": "",//为空
-          "dealerDebit": "",
-          "drDealerLabel": "",
-          "dealerDebitContactPersonName": "",
-          "dealerDebitContactInformation": "",
-          "opportunityTitle": "",
-          "comment": "",
-          "tdAmount": '',
-          "currentStage": "",//与PC端一致
-          "validUntil": "",
-          "salesPerson": "",
-          "salesChannels": "",
-          "categoryLabels": "",
-          "biComment": ""
-        },
-        options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)', '签约交款(100%)', '签约失败(0%)'],
-        biReferenceId: '',
-      }
-    },
-    computed: {
-      //总金额
-      total() {
-        return this.formData.tdAmount == '' ? 0 : numberComma(this.formData.tdAmount);
-      }
-    },
-    mixins: [common],
-    watch: {
-      formData(val) {
-        if (val.opportunityTitle) {
-          let data = {
-            SJ_DATA: {
-              formData: this.formData
-            }
+// vux组件引入
+import {
+  Cell, Popup, TransferDom,
+  Group, XInput, CellBox, Datetime,
+  XTextarea, numberComma, dateFormat, 
+  PopupRadio, AlertModule
+} from 'vux'
+// 请求 引入
+import {getSOList} from 'service/detailService'
+import {saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+// mixins 引入
+import common from 'components/mixins/applyCommon.js'
+// 组件引入
+import PopDealerList from 'components/Popup/PopDealerList'
+import PopSalesmanList from 'components/Popup/PopSalesmanList'
+export default {
+  directives: { TransferDom },
+  filters: { numberComma },
+  components: {
+    Cell, Popup, Group, XInput,
+    Datetime, XTextarea, PopupRadio, PopDealerList, PopSalesmanList
+  },
+  data() {
+    return {
+      listId: '32a2c333-02a3-416f-a133-95c7a32da678',
+      showDealerPop: false,                          // 是否显示往来的popup
+      saleManArr: [
+        {title: '销售人员', name: '员工', dealerName: '', status: false},// 是否显示销售人员的popup
+        {title: '销售渠道', name: '渠道商', dealerName: '', status: false}// 是否显示销售渠道的popup
+      ],
+      dealerInfo: {},
+      dealer: {},
+      formData: {
+        "handlerName": "",
+        "handlerUnitName": "",
+        "handlerRoleName": "",
+        "handler": "",
+        "handlerUnit": "",
+        "handlerRole": "",
+        "creator": "",
+        "modifer": "",
+        "biId": "",//为空
+        "dealerDebit": "",
+        "drDealerLabel": "",
+        "dealerDebitContactPersonName": "",
+        "dealerDebitContactInformation": "",
+        "opportunityTitle": "",
+        "comment": "",
+        "tdAmount": '',
+        "currentStage": "",//与PC端一致
+        "validUntil": "",
+        "salesPerson": "",
+        "salesChannels": "",
+        "categoryLabels": "",
+        "biComment": ""
+      },
+      options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)', '签约交款(100%)', '签约失败(0%)'],
+      biReferenceId: '',
+    }
+  },
+  computed: {
+    //总金额
+    total() {
+      return this.formData.tdAmount == '' ? 0 : numberComma(this.formData.tdAmount);
+    }
+  },
+  mixins: [common],
+  watch: {
+    formData(val) {
+      if (val.opportunityTitle) {
+        let data = {
+          SJ_DATA: {
+            formData: this.formData
           }
-          this.$emit('sel-data', data)
+        }
+        this.$emit('sel-data', data)
 
-        }
       }
+    }
+  },
+  methods: {
+    //限制只能输入数字
+    filterNum(val, ref) {
+      let num = `${val}`.replace(/[^\d]/g, '');
+      this.$refs[ref].currentValue = num;
+      this.formData.tdAmount = num;
     },
-    methods: {
-      //限制只能输入数字
-      filterNum(val, ref) {
-        let num = `${val}`.replace(/[^\d]/g, '');
-        this.$refs[ref].currentValue = num;
-        this.formData.tdAmount = num;
-      },
-      //渠道商,人员选择
-      salesChange(item) {
-        item.status = !item.status;
-      },
-      //清除金额
-      clearSaleVal(e) {
-        this.formData.tdAmount = '';
-      },
-      //选中的往来
-      selDealer(val) {
-        this.dealerInfo = JSON.parse(val)[0];
-        this.formData.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
-        this.formData.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
-        this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
-        this.formData.dealerDebit = this.dealerInfo.dealerCode;
-      },
-      //选中销售人员,销售渠道
-      selSalesman(val, item) {
-        item.dealerName = JSON.parse(val)[0].dealerName;
-      },
-      // TODO 提交
-      submitOrder() {
-        let that = this;
-        let salePriceVal = this.$refs.salePrice.currentValue;
-        if (JSON.stringify(this.dealerInfo) == '{}') {
-          AlertModule.show({
-            content: '请选择往来',
-          });
-          return;
-        } else if (this.formData.opportunityTitle == '') {
-          AlertModule.show({
-            content: '请填写商机标题',
-          });
-          return;
-        } else if (this.formData.tdAmount == '') {
-          AlertModule.show({
-            content: '请填写预期销售额',
-          });
-          return;
-        } else if (salePriceVal != '' && !/^[0-9]+.?[0-9]*$/.test(salePriceVal)) {
-          AlertModule.show({
-            content: '请输入正确的金额格式',
-            onHide() {
-              salePriceVal = '';
-              that.formData.tdAmount = '';
-            }
-          });
-          return;
-        } else if (this.formData.currentStage == '') {
-          AlertModule.show({
-            content: '请选择所在阶段',
-          });
-          return;
-        }
-        this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            let operation = saveAndStartWf;
-            let wfPara = {
-              [this.processCode]: {
-                businessKey: 'OPPT',
-                createdBy: this.formData.creator != '' ? this.formData.creator : this.formData.handler,
-              }
-            };
-            if (this.transCode) {
-              operation = saveAndCommitTask;
-              wfPara = {
-                businessKey: this.transCode,
-                createdBy: this.formData.creator || this.formData.handler,
-                transCode: this.transCode,
-                result: 3,
-                taskId: this.taskId,
-                comment: ''
-              }
-            }
-            let submitData = {
-              listId: this.listId,
-              biComment: '',
-              formData: JSON.stringify({
-                ...this.formData,
-                creator: this.formData.handler,
-                modifer: this.formData.handler,
-                salesPerson: this.saleManArr[0].dealerName ? this.saleManArr[0].dealerName : '',
-                salesChannels: this.saleManArr[1].dealerName ? this.saleManArr[1].dealerName : '',
-              }),
-              wfPara: JSON.stringify(wfPara),
-            };
-            if(this.transCode){
-              submitData.biReferenceId = this.biReferenceId;
-            }
-            this.saveData(operation, submitData);
+    //渠道商,人员选择
+    salesChange(item) {
+      item.status = !item.status;
+    },
+    //清除金额
+    clearSaleVal(e) {
+      this.formData.tdAmount = '';
+    },
+    //选中的往来
+    selDealer(val) {
+      this.dealerInfo = JSON.parse(val)[0];
+      this.formData.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
+      this.formData.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+      this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
+      this.formData.dealerDebit = this.dealerInfo.dealerCode;
+    },
+    //选中销售人员,销售渠道
+    selSalesman(val, item) {
+      item.dealerName = JSON.parse(val)[0].dealerName;
+    },
+    // TODO 提交
+    submitOrder() {
+      let that = this;
+      let salePriceVal = this.$refs.salePrice.currentValue;
+      if (JSON.stringify(this.dealerInfo) == '{}') {
+        AlertModule.show({
+          content: '请选择往来',
+        });
+        return;
+      } else if (this.formData.opportunityTitle == '') {
+        AlertModule.show({
+          content: '请填写商机标题',
+        });
+        return;
+      } else if (this.formData.tdAmount == '') {
+        AlertModule.show({
+          content: '请填写预期销售额',
+        });
+        return;
+      } else if (salePriceVal != '' && !/^[0-9]+.?[0-9]*$/.test(salePriceVal)) {
+        AlertModule.show({
+          content: '请输入正确的金额格式',
+          onHide() {
+            salePriceVal = '';
+            that.formData.tdAmount = '';
           }
         });
-      },
-      // TODO 获取详情
-      getFormData() {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode: this.transCode
-        }).then(data => {
-          let {success = true, formData = {}} = data;
-          // http200时提示报错信息
-          if (!success) {
-            this.$vux.alert.show({
-              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
-            });
-            return;
-          }
-          let matterList = [];
-          // 获取合计
-          let {order} = formData;
-          let {dataSet = []} = order;
-          // 客户信息
-          this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName || '', // 客户名
-            dealerName: order.dealerName_dealerDebit || '', // 公司名
-            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
-            dealerCode: order.dealerDebit || '', // 客户编码
-            dealerLabelName: order.drDealerLabel || '客户', // 关系标签
-            province: order.province_dealerDebit || '', // 省份
-            city: order.city_dealerDebit || '', // 城市
-            county: order.county_dealerDebit || '', // 地区
-            address: order.address_dealerDebit || '', // 详细地址
-          };
-          this.formData = {
-            ...formData,
-            creator: formData.creator,
-            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
-          };
-          this.saleManArr[0].dealerName = formData.salesPerson;
-          this.saleManArr[1].dealerName = formData.salesChannels;
-          // this.biReferenceId = formData.biReferenceId;
-        })
-      },
-    },
-    created() {
-      let data = sessionStorage.getItem('SJ_DATA');
-      if (data) {
-        this.formData = JSON.parse(data).formData;
+        return;
+      } else if (this.formData.currentStage == '') {
+        AlertModule.show({
+          content: '请选择所在阶段',
+        });
+        return;
       }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          let operation = saveAndStartWf;
+          let wfPara = {
+            [this.processCode]: {
+              businessKey: 'OPPT',
+              createdBy: this.formData.creator != '' ? this.formData.creator : this.formData.handler,
+            }
+          };
+          if (this.transCode) {
+            operation = saveAndCommitTask;
+            wfPara = {
+              businessKey: this.transCode,
+              createdBy: this.formData.creator || this.formData.handler,
+              transCode: this.transCode,
+              result: 3,
+              taskId: this.taskId,
+              comment: ''
+            }
+          }
+          let submitData = {
+            listId: this.listId,
+            biComment: '',
+            formData: JSON.stringify({
+              ...this.formData,
+              creator: this.formData.handler,
+              modifer: this.formData.handler,
+              salesPerson: this.saleManArr[0].dealerName ? this.saleManArr[0].dealerName : '',
+              salesChannels: this.saleManArr[1].dealerName ? this.saleManArr[1].dealerName : '',
+            }),
+            wfPara: JSON.stringify(wfPara),
+          };
+          if(this.transCode){
+            submitData.biReferenceId = this.biReferenceId;
+          }
+          this.saveData(operation, submitData);
+        }
+      });
     },
-    mounted() {
-
+    // TODO 获取详情
+    getFormData() {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode: this.transCode
+      }).then(data => {
+        let {success = true, formData = {}} = data;
+        // http200时提示报错信息
+        if (!success) {
+          this.$vux.alert.show({
+            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+          });
+          return;
+        }
+        let matterList = [];
+        // 获取合计
+        let {order} = formData;
+        let {dataSet = []} = order;
+        // 客户信息
+        this.dealerInfo = {
+          creatorName: formData.dealerDebitContactPersonName || '', // 客户名
+          dealerName: order.dealerName_dealerDebit || '', // 公司名
+          dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+          dealerCode: order.dealerDebit || '', // 客户编码
+          dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+          province: order.province_dealerDebit || '', // 省份
+          city: order.city_dealerDebit || '', // 城市
+          county: order.county_dealerDebit || '', // 地区
+          address: order.address_dealerDebit || '', // 详细地址
+        };
+        this.formData = {
+          ...formData,
+          creator: formData.creator,
+          validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+        };
+        this.saleManArr[0].dealerName = formData.salesPerson;
+        this.saleManArr[1].dealerName = formData.salesChannels;
+        // this.biReferenceId = formData.biReferenceId;
+      })
+    },
+  },
+  created() {
+    let data = sessionStorage.getItem('SJ_DATA');
+    if (data) {
+      this.formData = JSON.parse(data).formData;
     }
+  },
+  mounted() {
+
   }
+}
 </script>
 
 <style lang="scss" scoped>

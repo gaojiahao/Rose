@@ -1,15 +1,6 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <!-- 用户地址和基本信息-->
-      <!-- <div class="or_ads mg_auto box_sd">
-        <div class="user_info">
-          <span class="user_name">{{orderInfo.creatorName}}</span>
-        </div>
-        <div class="cp_info">
-          <p class="cp_name">{{orderInfo.order.dealerName_dealerDebit}}</p>
-        </div>
-      </div> -->
       <div class="trade_mode mg_auto box_sd">
         <p class="title">报销人</p>
         <p class="mode">{{orderInfo.creatorName }}</p>
@@ -92,53 +83,56 @@
 </template>
 
 <script>
-  import {dateFormat} from 'vux'
-  import {getSOList,} from 'service/detailService'
-  import workFlow from 'components/workFlow'
-  import detailCommon from 'components/mixins/detailCommon'
-
-  export default {
-    data() {
-      return {
-        count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
-        formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70'
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      workFlow,
-    },
-    methods: {
-      // 获取详情
-      getOrderList(transCode = '') {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode
-        }).then(data => {
-          // http200时提示报错信息
-          if (data.success === false) {
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-               onHide:()=>{
-                this.$router.back();
-              }
-            });
-            return;
-          }
-          // 获取合计
-          let {dataSet} = data.formData.order;
-          for (let val of dataSet) {
-            this.count += val.tdAmount * 100;
-          }
-          this.count = this.count / 100;
-          data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
-          this.orderInfo = data.formData;
-          this.workFlowInfoHandler();
-        })
-      }
+// vux组件引入
+import { dateFormat } from 'vux'
+// 请求 引入
+import { getSOList } from 'service/detailService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件引入
+import workFlow from 'components/workFlow'
+export default {
+  data() {
+    return {
+      count: 0,          // 金额合计
+      orderInfo: {},      // 表单内容
+      formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70'
+    }
+  },
+  mixins: [detailCommon],
+  components: {
+    workFlow,
+  },
+  methods: {
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(data => {
+        // http200时提示报错信息
+        if (data.success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+              onHide:()=>{
+              this.$router.back();
+            }
+          });
+          return;
+        }
+        // 获取合计
+        let {dataSet} = data.formData.order;
+        for (let val of dataSet) {
+          this.count += val.tdAmount * 100;
+        }
+        this.count = this.count / 100;
+        data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
+        this.orderInfo = data.formData;
+        this.workFlowInfoHandler();
+      })
     }
   }
+}
 </script>
 
 <style lang='scss' scoped>

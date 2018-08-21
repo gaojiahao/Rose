@@ -28,48 +28,51 @@
 </template>
 
 <script>
-  import {Group, Cell, dateFormat,} from 'vux'
-  import {getSOList,} from 'service/detailService'
-  import detailCommon from 'components/mixins/detailCommon'
-  import {findProjectTask} from 'service/projectService'
-  import RPicker from 'components/RPicker'
-
-  export default {
-    data() {
-      return {
-        projectTask: {}
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      Group,
-      Cell,
-      RPicker,
-    },
-    methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // 获取详情
-      getOrderList(transCode = '') {
-        return findProjectTask(transCode).then(({formData = {}}) => {
-          let projectTask = formData.projectTask || {};
-          this.jsonData = formData;
-          this.projectTask = {
-            ...projectTask,
-            actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
-          };
-        })
-      },
-    },
-    created() {
+// vux组件引入
+import { Cell, Group, dateFormat } from 'vux'
+// 请求 引入
+import { getSOList } from 'service/detailService'
+import { findProjectTask } from 'service/projectService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件 引入
+import RPicker from 'components/RPicker'
+export default {
+  data() {
+    return {
+      projectTask: {}
     }
+  },
+  mixins: [detailCommon],
+  components: {
+    Group,
+    Cell,
+    RPicker,
+  },
+  methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // 获取详情
+    getOrderList(transCode = '') {
+      return findProjectTask(transCode).then(({formData = {}}) => {
+        let projectTask = formData.projectTask || {};
+        this.jsonData = formData;
+        this.projectTask = {
+          ...projectTask,
+          actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
+        };
+      })
+    },
+  },
+  created() {
   }
+}
 </script>
 
 <style lang='scss' scoped>

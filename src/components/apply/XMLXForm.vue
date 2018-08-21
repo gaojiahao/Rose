@@ -63,201 +63,197 @@
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput,XTextarea, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, TransferDom, Picker, Popup,PopupRadio} from 'vux'
-  import ApplyCommon from './../mixins/applyCommon'
-  import RPicker from 'components/RPicker'
-  import {saveProjectApproval} from 'service/projectService'
-
-  export default {
-    mixins: [ApplyCommon],
-    components: {
-      Icon,
-      Cell,
-      Group,
-      XInput,
-      Swipeout,
-      SwipeoutItem,
-      SwipeoutButton,
-      RPicker,
-      Datetime,
-      XTextarea, 
-      TransferDom, 
-      Picker, 
-      Popup,
-      PopupRadio
+// vux组件引入
+import {
+  Icon, Cell, Group, XInput,
+  XTextarea, Swipeout, SwipeoutItem, SwipeoutButton, 
+  Datetime, TransferDom, Picker, Popup, PopupRadio} from 'vux'
+// 请求 引入
+import { saveProjectApproval } from 'service/projectService'
+// mixins 引入
+import ApplyCommon from './../mixins/applyCommon'
+// 组件 引入
+import RPicker from 'components/RPicker'
+export default {
+  mixins: [ApplyCommon],
+  components: {
+    Icon, Cell, Group, XInput,
+    Swipeout, SwipeoutItem, SwipeoutButton, RPicker, 
+    Datetime, XTextarea, TransferDom, 
+    Picker, Popup, PopupRadio
+  },
+  data() {
+    return {
+      managerList:[
+        {
+          name:'马云',
+          value:'132634679879',
+          parent: '0'
+        },{
+          name:'马化腾',
+          value:'123444897997',
+          parent: '0'
+        }],
+      managerTask:[],
+      managerName:'',
+      managerValue:'',
+      placeholder:'请选择',
+      projectTypes:['单品','客制','展销','促销'],
+      projectType:'',
+      XMLXshow: false,
+      projectList: [],
+      ProjectApproval:{
+        "projectName": "", //项目名称
+        "projectType": "",//项目类型
+        "projectManager": "",//项目经理
+        "phoneNumber": "",//手机号
+        "expectStartDate": this.getNowFormatDate(),//预期开始日期
+        "expectEndDate": this.getNowFormatDate(),//预期截至日期
+        "budgetIncome": "",//预算收入
+        "budgetCapital": "",//预算成本
+        "budgetCost": "",//预算费用
+        "budgetProfit": '',//预算利润
+        "budgetProfitMargin": '',//预算利润率
+        "comment": ""//项目说明
+      },
+      FormDataComment:'',//备注
+      formData: {},
+      jsonData: {
+        bomType: {
+          bomType: ''
+        },
+        comment: {
+          biComment: ''
+        },
+      },
+    }
+  },
+  methods: {
+    //picker显示
+    XMLXshowStatus() {
+      this.XMLXshow = !this.XMLXshow;
     },
-    data() {
-      return {
-        managerList:[
-          {
-            name:'马云',
-            value:'132634679879',
-            parent: '0'
-          },{
-            name:'马化腾',
-            value:'123444897997',
-            parent: '0'
-          }],
-        managerTask:[],
-        managerName:'',
-        managerValue:'',
-        placeholder:'请选择',
-        projectTypes:['单品','客制','展销','促销'],
-        projectType:'',
-        XMLXshow: false,
-        projectList: [],
-        ProjectApproval:{
-          "projectName": "", //项目名称
-          "projectType": "",//项目类型
-          "projectManager": "",//项目经理
-          "phoneNumber": "",//手机号
-          "expectStartDate": this.getNowFormatDate(),//预期开始日期
-          "expectEndDate": this.getNowFormatDate(),//预期截至日期
-          "budgetIncome": "",//预算收入
-          "budgetCapital": "",//预算成本
-          "budgetCost": "",//预算费用
-          "budgetProfit": '',//预算利润
-          "budgetProfitMargin": '',//预算利润率
-          "comment": ""//项目说明
-        },
-        FormDataComment:'',//备注
-        formData: {},
-        jsonData: {
-          bomType: {
-            bomType: ''
-          },
-          comment: {
-            biComment: ''
-          },
-        },
+    //picker确认
+    XMLXconfirm(e){
+      for(let i = 0 ; i<this.managerList.length; i++){
+        if(this.managerList[i].value == e[0]){
+          this.managerName = this.managerList[i].name;
+          this.ProjectApproval.projectManager = this.managerList[i].name;
+          this.ProjectApproval.phoneNumber = this.managerList[i].value;
+        }
       }
+      this.managerValue = e[0];
+      this.XMLXshow = false;
     },
-    methods: {
-      //picker显示
-      XMLXshowStatus() {
-        this.XMLXshow = !this.XMLXshow;
-      },
-      //picker确认
-      XMLXconfirm(e){
-        for(let i = 0 ; i<this.managerList.length; i++){
-          if(this.managerList[i].value == e[0]){
-            this.managerName = this.managerList[i].name;
-            this.ProjectApproval.projectManager = this.managerList[i].name;
-            this.ProjectApproval.phoneNumber = this.managerList[i].value;
-          }
+    //picker取消
+    XMLXcancel(){
+      this.XMLXshow = false;
+    },
+    //限制只能输入数字
+    filterNum(e,ref){
+      let num = e.replace(/[^\d]/g,'');
+      this.$refs[ref].currentValue = num;
+      this.ProjectApproval[ref] = num;
+    },
+    //获取今天时间
+    getNowFormatDate() {
+        let date = new Date();
+        let seperator1 = "-";
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
         }
-        this.managerValue = e[0];
-        this.XMLXshow = false;
-      },
-      //picker取消
-      XMLXcancel(){
-        this.XMLXshow = false;
-      },
-      //限制只能输入数字
-      filterNum(e,ref){
-        let num = e.replace(/[^\d]/g,'');
-        this.$refs[ref].currentValue = num;
-        this.ProjectApproval[ref] = num;
-      },
-      //获取今天时间
-      getNowFormatDate() {
-          let date = new Date();
-          let seperator1 = "-";
-          let month = date.getMonth() + 1;
-          let strDate = date.getDate();
-          if (month >= 1 && month <= 9) {
-              month = "0" + month;
-          }
-          if (strDate >= 0 && strDate <= 9) {
-              strDate = "0" + strDate;
-          }
-          let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-                  + " " ;
-          return currentdate;
-      },
-      // TODO 提交
-      save() {
-        let msgTask='';
-        let objArr = [
-          {tip:'projectManager',msg:'项目经理'},
-          {tip:'projectType',msg:'项目类型'},
-          {tip:'projectName',msg:'项目名称'},
-          {tip:'budgetIncome',msg:'预算收入'},
-          {tip:'budgetCapital',msg:'预算成本'},
-          {tip:'budgetCost',msg:'预算费用'},
-          {tip:'expectStartDate',msg:'预期开始日期'},
-          {tip:'expectEndDate',msg:'预期截至日期'},
-          {tip:'comment',msg:'项目说明'},
-        ];
-        for(let i = 0 ; i<objArr.length;i++){
-          if(this.ProjectApproval[objArr[i].tip] == ''){
-            let msgTitle = objArr[i].tip == 'projectManager' || objArr[i].tip == 'projectType' || objArr[i].tip == 'expectStartDate' || objArr[i].tip == 'expectEndDate'?'请选择':'请填写';
-             msgTask = msgTitle + objArr[i].msg
-             this.$vux.alert.show({
-                content:msgTask
-              })
-            return;
-          }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
         }
-        this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            let operation = saveProjectApproval;
-            let submitData = {
-              listId: '630a9b96-f257-48b6-b0bc-fd64c455d92b',
-              formData: {
-                comment:{
-                  biComment: this.FormDataComment,
-                },
-                baseinfo: {
-                    creator: this.formData.handler,
-                    handler: this.formData.handler,
-                    handlerName: this.formData.handlerName ,
-                    handlerRole: this.formData.handlerRole,
-                    handlerRoleName: this.formData.handlerRoleName,
-                    handlerUnit:  this.formData.handlerUnit,
-                    handlerUnitName: this.formData.handlerUnitName,
-                    id: '',
-                    modifer: this.formData.handler,
-                },
-                projectApproval:this.ProjectApproval
+        let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " ;
+        return currentdate;
+    },
+    // TODO 提交
+    save() {
+      let msgTask='';
+      let objArr = [
+        {tip:'projectManager',msg:'项目经理'},
+        {tip:'projectType',msg:'项目类型'},
+        {tip:'projectName',msg:'项目名称'},
+        {tip:'budgetIncome',msg:'预算收入'},
+        {tip:'budgetCapital',msg:'预算成本'},
+        {tip:'budgetCost',msg:'预算费用'},
+        {tip:'expectStartDate',msg:'预期开始日期'},
+        {tip:'expectEndDate',msg:'预期截至日期'},
+        {tip:'comment',msg:'项目说明'},
+      ];
+      for(let i = 0 ; i<objArr.length;i++){
+        if(this.ProjectApproval[objArr[i].tip] == ''){
+          let msgTitle = objArr[i].tip == 'projectManager' || objArr[i].tip == 'projectType' || objArr[i].tip == 'expectStartDate' || objArr[i].tip == 'expectEndDate'?'请选择':'请填写';
+            msgTask = msgTitle + objArr[i].msg
+            this.$vux.alert.show({
+              content:msgTask
+            })
+          return;
+        }
+      }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          let operation = saveProjectApproval;
+          let submitData = {
+            listId: '630a9b96-f257-48b6-b0bc-fd64c455d92b',
+            formData: {
+              comment:{
+                biComment: this.FormDataComment,
               },
-              wfParam:null
-            };
-            this.saveData(operation, submitData);
-          }
-        });
-      }
-    },
-    created() {
-    },
-    computed:{
-      //利润
-      profit(){
-        let ProjectApproval = this.ProjectApproval;
-        let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
-        let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
-        let budgetCost = ProjectApproval.budgetCost == ''?0:ProjectApproval.budgetCost;
-        ProjectApproval.budgetProfit = budgetIncome-budgetCapital-budgetCost;
-        return budgetIncome-budgetCapital-budgetCost;
-      },
-      //利润率
-      profitMargin(){
-        let ProjectApproval = this.ProjectApproval;
-        let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
-        let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
-        let budgetCost =  ProjectApproval.budgetCost == ''?0:ProjectApproval.budgetCost;
-        let subCost = budgetIncome-budgetCost;
-        let profitMarginVal = 0;
-        if(budgetCapital!=0&&budgetIncome!=0){
-          profitMarginVal = (budgetCapital/subCost).toFixed(2)
+              baseinfo: {
+                  creator: this.formData.handler,
+                  handler: this.formData.handler,
+                  handlerName: this.formData.handlerName ,
+                  handlerRole: this.formData.handlerRole,
+                  handlerRoleName: this.formData.handlerRoleName,
+                  handlerUnit:  this.formData.handlerUnit,
+                  handlerUnitName: this.formData.handlerUnitName,
+                  id: '',
+                  modifer: this.formData.handler,
+              },
+              projectApproval:this.ProjectApproval
+            },
+            wfParam:null
+          };
+          this.saveData(operation, submitData);
         }
-        ProjectApproval.budgetProfitMargin = profitMarginVal;
-        return profitMarginVal;
-      }
+      });
+    }
+  },
+  created() {
+  },
+  computed:{
+    //利润
+    profit(){
+      let ProjectApproval = this.ProjectApproval;
+      let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
+      let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
+      let budgetCost = ProjectApproval.budgetCost == ''?0:ProjectApproval.budgetCost;
+      ProjectApproval.budgetProfit = budgetIncome-budgetCapital-budgetCost;
+      return budgetIncome-budgetCapital-budgetCost;
     },
-  }
+    //利润率
+    profitMargin(){
+      let ProjectApproval = this.ProjectApproval;
+      let budgetIncome = ProjectApproval.budgetIncome == ''?0:ProjectApproval.budgetIncome;
+      let budgetCapital = ProjectApproval.budgetCapital == ''?0:ProjectApproval.budgetCapital;
+      let budgetCost =  ProjectApproval.budgetCost == ''?0:ProjectApproval.budgetCost;
+      let subCost = budgetIncome-budgetCost;
+      let profitMarginVal = 0;
+      if(budgetCapital!=0&&budgetIncome!=0){
+        profitMarginVal = (budgetCapital/subCost).toFixed(2)
+      }
+      ProjectApproval.budgetProfitMargin = profitMarginVal;
+      return profitMarginVal;
+    }
+  },
+}
 </script>
 
 <style lang="scss" scoped>

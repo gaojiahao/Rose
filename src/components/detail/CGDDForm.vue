@@ -92,67 +92,69 @@
 </template>
 
 <script>
-  import {isMyflow, getSOList, getListId} from 'service/detailService.js'
-  import common from 'components/mixins/detailCommon.js'
-  import workFlow from 'components/workFlow.vue'
-  import RAction from 'components/RAction'
-
-  export default {
-    data() {
-      return {
-        count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
-        formViewUniqueId: ''
-      }
-    },
-    components: {
-      workFlow, RAction,
-    },
-    mixins: [common],
-    methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // 获取详情
-      getOrderList(transCode = '') {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode
-        }).then(data => {
-          this.submitInfo = JSON.parse(JSON.stringify(data));
-          // http200时提示报错信息
-          if (data.success === false) {
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-               onHide:()=>{
-                this.$router.back();
-              }
-            })
-            return;
-          }
-          // 获取合计
-          let {dataSet} = data.formData.order;
-          for (let val of dataSet) {
-            this.count += val.tdAmount * 100;
-            val.inventoryPic = val.inventoryPic_transObjCode
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
-              : this.getDefaultImg();
-          }
-          this.count = this.count / 100;
-          this.orderInfo = data.formData;
-          this.workFlowInfoHandler();
-        })
-
-      },
-    },
-    created() {
+// 请求 引入
+import {isMyflow, getSOList, getListId} from 'service/detailService'
+// mixins 引入
+import common from 'components/mixins/detailCommon'
+// 组件 引入
+import RAction from 'components/RAction'
+import workFlow from 'components/workFlow'
+export default {
+  data() {
+    return {
+      count: 0,          // 金额合计
+      orderInfo: {},      // 表单内容
+      formViewUniqueId: ''
     }
+  },
+  components: {
+    workFlow, RAction,
+  },
+  mixins: [common],
+  methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(data => {
+        this.submitInfo = JSON.parse(JSON.stringify(data));
+        // http200时提示报错信息
+        if (data.success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+              onHide:()=>{
+              this.$router.back();
+            }
+          })
+          return;
+        }
+        // 获取合计
+        let {dataSet} = data.formData.order;
+        for (let val of dataSet) {
+          this.count += val.tdAmount * 100;
+          val.inventoryPic = val.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
+            : this.getDefaultImg();
+        }
+        this.count = this.count / 100;
+        this.orderInfo = data.formData;
+        this.workFlowInfoHandler();
+      })
+
+    },
+  },
+  created() {
   }
+}
 </script>
 
 <style lang='scss' scoped>

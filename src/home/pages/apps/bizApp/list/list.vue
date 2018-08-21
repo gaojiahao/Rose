@@ -28,11 +28,8 @@ export default {
   created(){
     let code = this.$route.params.code;
     if(code){
-      this.currentComponent = require(`components/list/${code}Form.vue`).default;
+      this.currentComponent = require(`components/list/${code}_List.vue`).default;
     }
-    // setTimeout(()=>{
-    //   this.showLoadding = false
-    // },1000)
   },
   watch: {
     $route: {

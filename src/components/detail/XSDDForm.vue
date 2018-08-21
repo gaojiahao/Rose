@@ -95,11 +95,13 @@
 </template>
 
 <script>
-import { getSOList, } from 'service/detailService.js'
-import common from 'components/mixins/detailCommon.js'
-import workFlow from 'components/workFlow.vue'
+// 请求 引入
+import { getSOList, } from 'service/detailService'
+// mixins 引入
+import common from 'components/mixins/detailCommon'
+// 组件 引入
 import RAction from 'components/RAction'
-
+import workFlow from 'components/workFlow'
 export default {
   data(){
     return{

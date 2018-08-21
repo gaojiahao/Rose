@@ -104,17 +104,21 @@
 </template>
 
 <script>
+// vux插件引入
 import {Swipeout, SwipeoutItem, SwipeoutButton,TransferDom} from 'vux'
-import PopMatterList from 'components/PopMatterList'
+// 请求 引入
+import { getSOList } from 'service/detailService'
 import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService'
-import { getSOList} from 'service/detailService.js'
-import common from 'components/mixins/applyCommon.js'
+// mixins 引入
+import common from 'components/mixins/applyCommon'
+// 组件引入
+import PopMatterList from 'components/Popup/PopMatterList'
 export default {
   directives: {
     TransferDom
   },
   components:{
-    Swipeout, SwipeoutItem, SwipeoutButton,PopMatterList
+    Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList
   },
   data(){
     return{

@@ -88,76 +88,79 @@
 </template>
 
 <script>
-  import {dateFormat} from 'vux'
-  import {getSOList,} from 'service/detailService'
-  import workFlow from 'components/workFlow'
-  import RAction from 'components/RAction'
-  import detailCommon from 'components/mixins/detailCommon'
-
-  export default {
-    data() {
-      return {
-        orderInfo: {},      // 表单内容
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-        dealerInfo: {},
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      workFlow, RAction,
-    },
-    methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // 获取详情
-      getOrderList(transCode = '') {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode
-        }).then(({success = true, formData = {}}) => {
-          // http200时提示报错信息
-          if (success === false) {
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-              onHide: () => {
-                this.$router.back();
-              }
-            });
-            return;
-          }
-          let {order} = formData;
-          // 获取合计
-          let {dataSet} = order;
-          for (let val of dataSet) {
-            val.inventoryPic = val.inventoryPic_transObjCode
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
-              : this.getDefaultImg();
-          }
-          // 客户信息
-          this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName || '', // 客户名
-            dealerName: order.dealerName_dealerDebit || '', // 公司名
-            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
-            dealerCode: order.dealerDebit || '', // 客户编码
-            dealerLabelName: order.drDealerLabel || '客户', // 关系标签
-            province: order.province_dealerDebit || '', // 省份
-            city: order.city_dealerDebit || '', // 城市
-            county: order.county_dealerDebit || '', // 地区
-            address: order.address_dealerDebit || '', // 详细地址
-          };
-          formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
-          this.orderInfo = formData;
-          this.workFlowInfoHandler();
-        })
-      },
+// vux 组件引入
+import { dateFormat } from 'vux'
+// 请求 引入
+import { getSOList } from 'service/detailService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件 引入
+import workFlow from 'components/workFlow'
+import RAction from 'components/RAction'
+export default {
+  data() {
+    return {
+      orderInfo: {},      // 表单内容
+      formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
+      dealerInfo: {},
     }
+  },
+  mixins: [detailCommon],
+  components: {
+    workFlow, RAction,
+  },
+  methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(({success = true, formData = {}}) => {
+        // http200时提示报错信息
+        if (success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+            onHide: () => {
+              this.$router.back();
+            }
+          });
+          return;
+        }
+        let {order} = formData;
+        // 获取合计
+        let {dataSet} = order;
+        for (let val of dataSet) {
+          val.inventoryPic = val.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
+            : this.getDefaultImg();
+        }
+        // 客户信息
+        this.dealerInfo = {
+          creatorName: formData.dealerDebitContactPersonName || '', // 客户名
+          dealerName: order.dealerName_dealerDebit || '', // 公司名
+          dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+          dealerCode: order.dealerDebit || '', // 客户编码
+          dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+          province: order.province_dealerDebit || '', // 省份
+          city: order.city_dealerDebit || '', // 城市
+          county: order.county_dealerDebit || '', // 地区
+          address: order.address_dealerDebit || '', // 详细地址
+        };
+        formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
+        this.orderInfo = formData;
+        this.workFlowInfoHandler();
+      })
+    },
   }
+}
 </script>
 
 <style lang='scss' scoped>

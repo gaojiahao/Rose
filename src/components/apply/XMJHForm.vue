@@ -83,175 +83,172 @@
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput,XTextarea, Datetime, TransferDom, Picker, Popup,PopupRadio,PopupPicker} from 'vux'
-  import ApplyCommon from './../mixins/applyCommon'
-  import RPicker from 'components/RPicker'
-  import PopNameList from 'components/PopNameList'
-  import {getProjectApproval, saveProjectPlan} from 'service/projectService'
+// vux组件引入
+import { 
+Icon, Cell, Group, XInput, 
+XTextarea, Datetime, TransferDom, 
+Picker, Popup,PopupRadio,PopupPicker } from 'vux'
+// 请求 引入
+import { getProjectApproval, saveProjectPlan } from 'service/projectService'
+// mixins 引入
+import ApplyCommon from './../mixins/applyCommon'
+// 组件引入
+import RPicker from 'components/RPicker'
+import PopNameList from 'components/Popup/PopNameList'
 
-  export default {
-    mixins: [ApplyCommon],
-    components: {
-      Icon,
-      Cell,
-      Group,
-      XInput,
-      RPicker,
-      Datetime,
-      XTextarea, 
-      TransferDom, 
-      Picker, 
-      Popup,
-      PopupRadio,
-      PopNameList,
-      PopupPicker
+export default {
+  mixins: [ApplyCommon],
+  components: {
+    Icon, Cell, Group, XInput,
+    RPicker, Datetime, XTextarea, TransferDom, 
+    Popup, Picker, PopupRadio, PopNameList, PopupPicker
+  },
+  data() {
+    return {
+      projectTypes:[['设计类','协调类','执行类']],
+      projectType:[],
+      projectList: [],
+      showDealerPop:false,
+      dealerInfo:null,
+      planModel:{
+        "taskName": "",//任务名称
+        "taskType": "",//任务类型
+        "comment": "",//备注
+        "deadline": "",//截止日期
+        "planTime": "",//计划工时
+      },
+      projectPlan: [],
+      formData: {},
+      FormDataComment:'',//备注
+    }
+  },
+  methods: {
+    //添加项目计划
+    addPlan(){
+      let planModel = JSON.stringify(this.planModel);
+      this.projectPlan.push(JSON.parse(planModel));
+      this.projectType.push([]);
     },
-    data() {
-      return {
-        projectTypes:[['设计类','协调类','执行类']],
-        projectType:[],
-        projectList: [],
-        showDealerPop:false,
-        dealerInfo:null,
-        planModel:{
-          "taskName": "",//任务名称
-          "taskType": "",//任务类型
-          "comment": "",//备注
-          "deadline": "",//截止日期
-          "planTime": "",//计划工时
-        },
-        projectPlan: [],
-        formData: {},
-        FormDataComment:'',//备注
+    //删除项目计划
+    delatePlan(){
+      this.projectPlan.pop();
+      this.projectType.pop();
+    },
+    //任务类型选择
+    typeTask(e,item){
+      item.taskType = e[0];
+    },
+    // TODO 选中项目计划项
+    selDealer(val) {
+      let [sels] = JSON.parse(val);
+      this.dealerInfo = sels;
+    },
+    //限制只能输入数字
+    filterNum(e,ref,idx){
+      let num = e.replace(/[^\d]/g,'');
+      this.$refs[ref+idx][0].currentValue = num;
+      this.projectPlan[idx].planTime = num;
+    },
+    //获取今天时间
+    getNowFormatDate() {
+        let date = new Date();
+        let seperator1 = "-";
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                + " " ;
+        return currentdate;
+    },
+    // TODO 提交
+    save() {
+      //验证选择项目
+      if(!this.dealerInfo){
+          this.$vux.alert.show({
+              content:'请选择项目'
+            })
+          return;
       }
-    },
-    methods: {
-      //添加项目计划
-      addPlan(){
-        let planModel = JSON.stringify(this.planModel);
-        this.projectPlan.push(JSON.parse(planModel));
-        this.projectType.push([]);
-      },
-      //删除项目计划
-      delatePlan(){
-        this.projectPlan.pop();
-        this.projectType.pop();
-      },
-      //任务类型选择
-      typeTask(e,item){
-        item.taskType = e[0];
-      },
-      // TODO 选中项目计划项
-      selDealer(val) {
-        let [sels] = JSON.parse(val);
-        this.dealerInfo = sels;
-      },
-      //限制只能输入数字
-      filterNum(e,ref,idx){
-        let num = e.replace(/[^\d]/g,'');
-        this.$refs[ref+idx][0].currentValue = num;
-        this.projectPlan[idx].planTime = num;
-      },
-      //获取今天时间
-      getNowFormatDate() {
-          let date = new Date();
-          let seperator1 = "-";
-          let month = date.getMonth() + 1;
-          let strDate = date.getDate();
-          if (month >= 1 && month <= 9) {
-              month = "0" + month;
-          }
-          if (strDate >= 0 && strDate <= 9) {
-              strDate = "0" + strDate;
-          }
-          let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-                  + " " ;
-          return currentdate;
-      },
-      // TODO 提交
-      save() {
-        //验证选择项目
-        if(!this.dealerInfo){
-           this.$vux.alert.show({
-                content:'请选择项目'
+      let msgTask='';
+      let objArr = {
+        taskName:'任务名称',
+        taskType:'任务类型',
+        comment:'任务说明',
+        deadline:'截止日期',
+        planTime:'计划工时',
+      }
+      //验证任务计划
+      for(let i = 0 ; i<this.projectPlan.length ; i++){
+        for(let j in this.projectPlan[i]){
+          if(this.projectPlan[i][j] == ''){
+            let msgTitle = j == 'taskType'|| j == 'deadline'?'请选择':'请填写';
+            msgTask= msgTitle + objArr[j];
+            this.$vux.alert.show({
+                content:msgTask
               })
             return;
-        }
-        let msgTask='';
-        let objArr = {
-          taskName:'任务名称',
-          taskType:'任务类型',
-          comment:'任务说明',
-          deadline:'截止日期',
-          planTime:'计划工时',
-        }
-        //验证任务计划
-        for(let i = 0 ; i<this.projectPlan.length ; i++){
-          for(let j in this.projectPlan[i]){
-            if(this.projectPlan[i][j] == ''){
-              let msgTitle = j == 'taskType'|| j == 'deadline'?'请选择':'请填写';
-              msgTask= msgTitle + objArr[j];
-              this.$vux.alert.show({
-                  content:msgTask
-                })
-              return;
-            }
           }
         }
-        this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            let operation = saveProjectPlan;
-            let submitData = {
-              listId: "0281f8eb-f1d2-415c-b566-756fc749ccb3",
-              formData: {
-                comment:{
-                  biComment: this.FormDataComment,
-                },
-                baseinfo: {
-                    creator: this.formData.handler,
-                    handler: this.formData.handler,
-                    handlerName: this.formData.handlerName ,
-                    handlerRole: this.formData.handlerRole,
-                    handlerRoleName: this.formData.handlerRoleName,
-                    handlerUnit:  this.formData.handlerUnit,
-                    handlerUnitName: this.formData.handlerUnitName,
-                    id: '',
-                    modifer: this.formData.handler,
-                },
-                projectApproval:{
-                  projectName:this.dealerInfo.PROJECT_NAME
-                },
-                projectPlan:this.projectPlan
+      }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          let operation = saveProjectPlan;
+          let submitData = {
+            listId: "0281f8eb-f1d2-415c-b566-756fc749ccb3",
+            formData: {
+              comment:{
+                biComment: this.FormDataComment,
               },
-              wfParam:null
-            };
-            this.saveData(operation, submitData);
-          }
+              baseinfo: {
+                  creator: this.formData.handler,
+                  handler: this.formData.handler,
+                  handlerName: this.formData.handlerName ,
+                  handlerRole: this.formData.handlerRole,
+                  handlerRoleName: this.formData.handlerRoleName,
+                  handlerUnit:  this.formData.handlerUnit,
+                  handlerUnitName: this.formData.handlerUnitName,
+                  id: '',
+                  modifer: this.formData.handler,
+              },
+              projectApproval:{
+                projectName:this.dealerInfo.PROJECT_NAME
+              },
+              projectPlan:this.projectPlan
+            },
+            wfParam:null
+          };
+          this.saveData(operation, submitData);
+        }
+      });
+    },
+    // TODO 请求项目列表
+    getProjectList() {
+      return getProjectApproval().then(({tableContent = []}) => {
+        let tmp = [];
+        tableContent.forEach(item => {
+          tmp.push(item);
         });
-      },
-      // TODO 请求项目列表
-      getProjectList() {
-        return getProjectApproval().then(({tableContent = []}) => {
-          let tmp = [];
-          tableContent.forEach(item => {
-            tmp.push(item);
-          });
-          this.projectList = tmp;
-        })
-      },
+        this.projectList = tmp;
+      })
     },
-    created() {
-        let plan = JSON.stringify(this.planModel);
-        this.projectPlan.push(JSON.parse(plan));
-        this.projectType.push([]);
-        this.getProjectList();
-    },
-    computed:{
-      
-    },
-  }
+  },
+  created() {
+      let plan = JSON.stringify(this.planModel);
+      this.projectPlan.push(JSON.parse(plan));
+      this.projectType.push([]);
+      this.getProjectList();
+  },
+  computed:{
+    
+  },
+}
 </script>
 
 <style lang="scss" scoped>

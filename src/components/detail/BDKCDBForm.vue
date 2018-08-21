@@ -69,89 +69,90 @@
 </template>
 
 <script>
-  import {getSOList,} from 'service/detailService'
-  import workFlow from 'components/workFlow'
-  import detailCommon from 'components/mixins/detailCommon'
-  import PopWarehouseList from 'components/PopWarehouseList'
-  import RAction from 'components/RAction'
-
-  export default {
-    data() {
-      return {
-        orderInfo: {},      // 表单内容
-        warehouseIn: {}, // 入库仓库详情
-        warehouseOut: {}, // 出库仓库详情
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      workFlow,
-      PopWarehouseList,
-      RAction
-    },
-    methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // 获取详情
-      getOrderList(transCode = '') {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode
-        }).then(data => {
-          // http200时提示报错信息
-          if (data.success === false) {
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-              onHide: () => {
-                this.$router.back();
-              }
-            });
-            return;
-          }
-          let {inPut = {}} = data.formData;
-          let {dataSet} = inPut;
-          for (let val of dataSet) {
-            val.inventoryPic = val.inventoryPic_transObjCode
-              ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
-              : this.getDefaultImg();
-          }
-          // 入库
-          this.warehouseIn = {
-            warehouseCode: inPut.containerCode,
-            warehouseName: inPut.warehouseName_containerCode,
-            warehouseType: inPut.warehouseType_containerCode,
-            warehouseProvince: inPut.warehouseProvince_containerCode,
-            warehouseCity: inPut.warehouseCity_containerCode,
-            warehouseDistrict: inPut.warehouseDistrict_containerCode,
-            warehouseAddress: inPut.warehouseAddress_containerCode,
-          };
-          // 出库
-          this.warehouseOut = {
-            warehouseCode: inPut.containerCodeOut,
-            warehouseName: inPut.warehouseName_containerCodeOut,
-            warehouseType: inPut.warehouseType_containerCodeOut,
-            warehouseProvince: inPut.warehouseProvince_containerCodeOut,
-            warehouseCity: inPut.warehouseCity_containerCodeOut,
-            warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
-            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
-          };
-          this.orderInfo = data.formData;
-          this.workFlowInfoHandler();
-        })
-      },
-    },
-    created() {
+// 请求 引入
+import {getSOList,} from 'service/detailService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件引入
+import RAction from 'components/RAction'
+import workFlow from 'components/workFlow'
+import PopWarehouseList from 'components/Popup/PopWarehouseList'
+export default {
+  data() {
+    return {
+      orderInfo: {},      // 表单内容
+      warehouseIn: {}, // 入库仓库详情
+      warehouseOut: {}, // 出库仓库详情
+      formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'
     }
+  },
+  mixins: [detailCommon],
+  components: {
+    workFlow,
+    PopWarehouseList,
+    RAction
+  },
+  methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(data => {
+        // http200时提示报错信息
+        if (data.success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+            onHide: () => {
+              this.$router.back();
+            }
+          });
+          return;
+        }
+        let {inPut = {}} = data.formData;
+        let {dataSet} = inPut;
+        for (let val of dataSet) {
+          val.inventoryPic = val.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
+            : this.getDefaultImg();
+        }
+        // 入库
+        this.warehouseIn = {
+          warehouseCode: inPut.containerCode,
+          warehouseName: inPut.warehouseName_containerCode,
+          warehouseType: inPut.warehouseType_containerCode,
+          warehouseProvince: inPut.warehouseProvince_containerCode,
+          warehouseCity: inPut.warehouseCity_containerCode,
+          warehouseDistrict: inPut.warehouseDistrict_containerCode,
+          warehouseAddress: inPut.warehouseAddress_containerCode,
+        };
+        // 出库
+        this.warehouseOut = {
+          warehouseCode: inPut.containerCodeOut,
+          warehouseName: inPut.warehouseName_containerCodeOut,
+          warehouseType: inPut.warehouseType_containerCodeOut,
+          warehouseProvince: inPut.warehouseProvince_containerCodeOut,
+          warehouseCity: inPut.warehouseCity_containerCodeOut,
+          warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
+          warehouseAddress: inPut.warehouseAddress_containerCodeOut,
+        };
+        this.orderInfo = data.formData;
+        this.workFlowInfoHandler();
+      })
+    },
+  },
+  created() {
   }
+}
 </script>
-
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
   .mater_other {

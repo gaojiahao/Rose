@@ -98,249 +98,245 @@
 </template>
 
 <script>
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
-  import PopMatterList from 'components/PopMatterList'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
-  import {getSOList} from 'service/detailService'
-  import ApplyCommon from './../mixins/applyCommon'
-  import PopWarehouseList from 'components/PopWarehouseList'
-  import RNumber from 'components/RNumber'
-
-  export default {
-    mixins: [ApplyCommon],
-    components: {
-      Icon,
-      Cell,
-      Group,
-      XInput,
-      Swipeout,
-      SwipeoutItem,
-      SwipeoutButton,
-      PopMatterList,
-      PopWarehouseList,
-      RNumber,
-    },
-    data() {
-      return {
-        listId: 'edf7b34b-8916-410f-801f-2db7e97efbde',
-        matterList: [],  // 物料列表
-        showMaterielPop: false, // 是否显示物料的popup
-        transCode: '',
-        formData: {
-          biComment: '',
-        },
-        numMap: {},
-        warehouseIn: null,
-        warehouseParams: {
-          whCode: '',
-        },
+// vux插件引入
+import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
+// 请求 引入
+import {getSOList} from 'service/detailService'
+import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+// mixins 引入
+import ApplyCommon from './../mixins/applyCommon'
+// 组件引入
+import RNumber from 'components/RNumber'
+import PopMatterList from 'components/Popup/PopMatterList'
+import PopWarehouseList from 'components/Popup/PopWarehouseList'
+export default {
+  mixins: [ApplyCommon],
+  components: {
+    Icon, Cell, Group, XInput,
+    Swipeout, SwipeoutItem, SwipeoutButton,
+    PopMatterList, PopWarehouseList, RNumber
+  },
+  data() {
+    return {
+      listId: 'edf7b34b-8916-410f-801f-2db7e97efbde',
+      matterList: [],  // 物料列表
+      showMaterielPop: false, // 是否显示物料的popup
+      transCode: '',
+      formData: {
+        biComment: '',
+      },
+      numMap: {},
+      warehouseIn: null,
+      warehouseParams: {
+        whCode: '',
+      },
+    }
+  },
+  watch: {
+    matterList(val) {
+      if (val.length) {
+        let data = {
+          KCPD_DATA: {
+            matter: this.matterList,
+            warehouseIn: this.warehouseIn
+          }
+        };
+        this.$emit('sel-data', data)
       }
+    }
+  },
+  methods: {
+    // TODO 滑动删除
+    delClick(item, index) {
+      let arr = this.matterList;
+      arr.splice(index, 1);
+      // 删除输入过的价格
+      delete this.numMap[item.inventoryCode];
+      this.$refs.matter.delSelItem(item);
     },
-    watch: {
-      matterList(val) {
-        if (val.length) {
-          let data = {
-            KCPD_DATA: {
-              matter: this.matterList,
-              warehouseIn: this.warehouseIn
+    // TODO 点击增加更多物料
+    addMatter() {
+      this.matterList.forEach(item => {
+        // 存储已输入的价格
+        this.numMap[item.inventoryCode] = item.tdQty;
+      });
+      this.showMaterielPop = !this.showMaterielPop
+    },
+    // TODO 选中入库仓库
+    selWarehouseIn(val) {
+      this.warehouseIn = JSON.parse(val);
+      this.warehouseParams = {
+        ...this.warehouseParams,
+        whCode: this.warehouseIn.warehouseCode,
+      };
+      this.matterList = [];
+    },
+    // TODO 选中物料项
+    selMatter(val) {
+      let sels = JSON.parse(val);
+      sels.forEach(item => {
+        item.tdQty = this.numMap[item.inventoryCode] || 1
+      });
+      this.numMap = {};
+      this.matterList = [...sels];
+    },
+    // TODO 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // TODO 提交
+    save() {
+      let warn = '';
+      let dataSet = [];
+      let validateMap = [
+        {
+          key: 'warehouseIn',
+          message: '入库仓库'
+        },
+      ];
+      validateMap.every(item => {
+        if (!this[item.key]) {
+          warn = `请选择${item.message}`;
+          return false
+        }
+        return true
+      });
+      if (!warn && !this.matterList.length) {
+        warn = '请选择物料';
+      }
+      this.matterList.every(item => {
+        let mItem = {
+          transObjCode: item.inventoryCode, // 物料编码
+          thenQtyStock: item.qtyBal, // 可用库存
+          tdQty: item.tdQty, // 盘点数量
+          differenceNum: Math.floor(item.tdQty - item.qtyBal) || 0,
+          assistQty: item.assistQty || 0, // 辅计数量（明细）
+          assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
+          assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
+        };
+        if (this.transCode) {
+          mItem.tdId = item.tdId || '';
+        }
+        dataSet.push(mItem);
+        return true
+      });
+      if (warn) {
+        this.$vux.alert.show({
+          content: warn,
+        });
+        return
+      }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          let operation = saveAndStartWf;
+          let formData = {
+            creator: this.formData.handler,
+            ...this.formData,
+            modifer: this.formData.handler,
+            containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
+            inPut: {
+              containerCode: this.warehouseIn.warehouseCode,
+              dataSet
             }
           };
-          this.$emit('sel-data', data)
+          let submitData = {
+            listId: this.listId,
+            biComment: '',
+            formData: JSON.stringify(formData),
+            wfPara: JSON.stringify({
+              [this.processCode]: {
+                businessKey: 'STCK',
+                createdBy: formData.creator,
+              }
+            }),
+          };
+          // 若为重新提交，则修改提交参数
+          if (this.transCode) {
+            operation = saveAndCommitTask;
+            submitData.biReferenceId = this.biReferenceId;
+            submitData.wfPara = JSON.stringify({
+              businessKey: this.transCode,
+              createdBy: formData.creator,
+              transCode: this.transCode,
+              result: 3,
+              taskId: this.taskId,
+              comment: ''
+            });
+          }
+
+          console.log(submitData)
+          this.saveData(operation, submitData);
         }
-      }
+      });
     },
-    methods: {
-      // TODO 滑动删除
-      delClick(item, index) {
-        let arr = this.matterList;
-        arr.splice(index, 1);
-        // 删除输入过的价格
-        delete this.numMap[item.inventoryCode];
-        this.$refs.matter.delSelItem(item);
-      },
-      // TODO 点击增加更多物料
-      addMatter() {
-        this.matterList.forEach(item => {
-          // 存储已输入的价格
-          this.numMap[item.inventoryCode] = item.tdQty;
-        });
-        this.showMaterielPop = !this.showMaterielPop
-      },
-      // TODO 选中入库仓库
-      selWarehouseIn(val) {
-        this.warehouseIn = JSON.parse(val);
+    // TODO 获取详情
+    getFormData() {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode: this.transCode
+      }).then(data => {
+        let {success = true, formData = {}} = data;
+        // http200时提示报错信息
+        if (!success) {
+          this.$vux.alert.show({
+            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+          });
+          return;
+        }
+        let matterList = [];
+        // 获取合计
+        let {inPut} = formData;
+        let {dataSet = []} = inPut;
+        for (let item of dataSet) {
+          item = {
+            ...item,
+            qtyBal: item.thenQtyStock,
+            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            inventoryName: item.inventoryName_transObjCode,
+            // inventoryCode: item.inventoryCode_transObjCode,
+            inventoryCode: item.transObjCode,
+            specification: item.specification_transObjCode,
+            measureUnit: item.measureUnit_transObjCode,
+          };
+          matterList.push(item);
+        }
+        // 入库
+        this.warehouseIn = {
+          warehouseCode: inPut.containerCode,
+          warehouseName: inPut.warehouseName_containerCode,
+          warehouseType: inPut.warehouseType_containerCode,
+          warehouseProvince: inPut.warehouseProvince_containerCode,
+          warehouseCity: inPut.warehouseCity_containerCode,
+          warehouseDistrict: inPut.warehouseDistrict_containerCode,
+          warehouseAddress: inPut.warehouseAddress_containerCode,
+        };
         this.warehouseParams = {
-          ...this.warehouseParams,
           whCode: this.warehouseIn.warehouseCode,
         };
-        this.matterList = [];
-      },
-      // TODO 选中物料项
-      selMatter(val) {
-        let sels = JSON.parse(val);
-        sels.forEach(item => {
-          item.tdQty = this.numMap[item.inventoryCode] || 1
-        });
-        this.numMap = {};
-        this.matterList = [...sels];
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // TODO 提交
-      save() {
-        let warn = '';
-        let dataSet = [];
-        let validateMap = [
-          {
-            key: 'warehouseIn',
-            message: '入库仓库'
-          },
-        ];
-        validateMap.every(item => {
-          if (!this[item.key]) {
-            warn = `请选择${item.message}`;
-            return false
-          }
-          return true
-        });
-        if (!warn && !this.matterList.length) {
-          warn = '请选择物料';
-        }
-        this.matterList.every(item => {
-          let mItem = {
-            transObjCode: item.inventoryCode, // 物料编码
-            thenQtyStock: item.qtyBal, // 可用库存
-            tdQty: item.tdQty, // 盘点数量
-            differenceNum: Math.floor(item.tdQty - item.qtyBal) || 0,
-            assistQty: item.assistQty || 0, // 辅计数量（明细）
-            assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
-            assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
-          };
-          if (this.transCode) {
-            mItem.tdId = item.tdId || '';
-          }
-          dataSet.push(mItem);
-          return true
-        });
-        if (warn) {
-          this.$vux.alert.show({
-            content: warn,
-          });
-          return
-        }
-        this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            let operation = saveAndStartWf;
-            let formData = {
-              creator: this.formData.handler,
-              ...this.formData,
-              modifer: this.formData.handler,
-              containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
-              inPut: {
-                containerCode: this.warehouseIn.warehouseCode,
-                dataSet
-              }
-            };
-            let submitData = {
-              listId: this.listId,
-              biComment: '',
-              formData: JSON.stringify(formData),
-              wfPara: JSON.stringify({
-                [this.processCode]: {
-                  businessKey: 'STCK',
-                  createdBy: formData.creator,
-                }
-              }),
-            };
-            // 若为重新提交，则修改提交参数
-            if (this.transCode) {
-              operation = saveAndCommitTask;
-              submitData.biReferenceId = this.biReferenceId;
-              submitData.wfPara = JSON.stringify({
-                businessKey: this.transCode,
-                createdBy: formData.creator,
-                transCode: this.transCode,
-                result: 3,
-                taskId: this.taskId,
-                comment: ''
-              });
-            }
-
-            console.log(submitData)
-            this.saveData(operation, submitData);
-          }
-        });
-      },
-      // TODO 获取详情
-      getFormData() {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode: this.transCode
-        }).then(data => {
-          let {success = true, formData = {}} = data;
-          // http200时提示报错信息
-          if (!success) {
-            this.$vux.alert.show({
-              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
-            });
-            return;
-          }
-          let matterList = [];
-          // 获取合计
-          let {inPut} = formData;
-          let {dataSet = []} = inPut;
-          for (let item of dataSet) {
-            item = {
-              ...item,
-              qtyBal: item.thenQtyStock,
-              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_transObjCode,
-              // inventoryCode: item.inventoryCode_transObjCode,
-              inventoryCode: item.transObjCode,
-              specification: item.specification_transObjCode,
-              measureUnit: item.measureUnit_transObjCode,
-            };
-            matterList.push(item);
-          }
-          // 入库
-          this.warehouseIn = {
-            warehouseCode: inPut.containerCode,
-            warehouseName: inPut.warehouseName_containerCode,
-            warehouseType: inPut.warehouseType_containerCode,
-            warehouseProvince: inPut.warehouseProvince_containerCode,
-            warehouseCity: inPut.warehouseCity_containerCode,
-            warehouseDistrict: inPut.warehouseDistrict_containerCode,
-            warehouseAddress: inPut.warehouseAddress_containerCode,
-          };
-          this.warehouseParams = {
-            whCode: this.warehouseIn.warehouseCode,
-          };
-          this.formData = {
-            ...this.formData,
-            creator: formData.creator,
-            biComment: formData.biComment,
-          };
-          this.biReferenceId = formData.biReferenceId;
-          this.matterList = matterList;
-        })
-      },
+        this.formData = {
+          ...this.formData,
+          creator: formData.creator,
+          biComment: formData.biComment,
+        };
+        this.biReferenceId = formData.biReferenceId;
+        this.matterList = matterList;
+      })
     },
-    created() {
-      let data = sessionStorage.getItem('KCPD_DATA');
-      if (data) {
-        this.matterList = JSON.parse(data).matter;
-        this.warehouseIn = JSON.parse(data).warehouseIn
-      }
-    },
-  }
+  },
+  created() {
+    let data = sessionStorage.getItem('KCPD_DATA');
+    if (data) {
+      this.matterList = JSON.parse(data).matter;
+      this.warehouseIn = JSON.parse(data).warehouseIn
+    }
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -357,17 +353,6 @@
           color: #5077aa;
           font-size: .16rem;
           font-weight: bold;
-        }
-      }
-    }
-    .materiel_list {
-      .mater_list {
-        .each_mater_wrapper {
-          .mater_main {
-            .mater_other {
-              // justify-content: flex-end;
-            }
-          }
         }
       }
     }

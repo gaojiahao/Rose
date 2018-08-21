@@ -55,19 +55,6 @@ export default {
     let {code} = this.$route.params;
     this.currentComponent = require(`components/apply/${code}Form.vue`).default;
   },
-  mounted(){
-    // this.$nextTick(()=>{
-    //   if(platfrom.isAndroid){
-    //     window.addEventListener("resize", function() {
-    //       if(document.activeElement.tagName=="INPUT" || document.activeElement.tagName=="TEXTAREA") {
-    //         setTimeout(() => {
-    //           document.activeElement.scrollIntoViewIfNeeded();
-    //         }, 0);
-    //       }
-    //     })
-    //   }
-    // })
-  },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
     // 新建物料，修改列表页的meta值

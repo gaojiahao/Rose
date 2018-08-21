@@ -44,39 +44,41 @@
 </template>
 
 <script>
-  import {Group, Cell, dateFormat,} from 'vux'
-  import detailCommon from 'components/mixins/detailCommon'
-  import {findProjectApproval} from 'service/projectService'
-
-  export default {
-    data() {
-      return {
-        approval:'',
-        comment:'',
-      }
-    },
-    filters:{
-      timeSplit(val){
-        return val?val.split(' ')[0]:'';
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      Group,
-      Cell,
-    },
-    methods: {
-      // 获取详情
-      getOrderList(transCode = '') {
-        return findProjectApproval(transCode).then(({formData = {}}) => {
-          this.approval = formData.approval;
-          this.comment = formData.comment;
-        })
-      },
-    },
-    created() {
+// vux组件引入
+import { Cell, Group, dateFormat } from 'vux'
+// 请求 引入
+import {findProjectApproval} from 'service/projectService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+export default {
+  data() {
+    return {
+      approval:'',
+      comment:'',
     }
+  },
+  filters:{
+    timeSplit(val){
+      return val?val.split(' ')[0]:'';
+    }
+  },
+  mixins: [detailCommon],
+  components: {
+    Group,
+    Cell,
+  },
+  methods: {
+    // 获取详情
+    getOrderList(transCode = '') {
+      return findProjectApproval(transCode).then(({formData = {}}) => {
+        this.approval = formData.approval;
+        this.comment = formData.comment;
+      })
+    },
+  },
+  created() {
   }
+}
 </script>
 
 <style lang='scss' scoped>

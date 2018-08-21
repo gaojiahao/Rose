@@ -133,14 +133,17 @@
 </template>
 
 <script>
-  import {Popup, Swipeout, SwipeoutItem, SwipeoutButton, TransferDom} from 'vux'
-  import dealerService from 'service/dealerService.js'
-  import PopMatterList from 'components/PopMatterList'
-  import PopDealerList from 'components/PopDealerList'
-  import PopSingleSelect from 'components/PopSingleSelect'
-  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
-  import {getSOList} from 'service/detailService.js'
-  import common from 'components/mixins/applyCommon.js'
+// vux组件引入
+import {Popup, Swipeout, SwipeoutItem, SwipeoutButton, TransferDom} from 'vux'
+// 请求 引入
+import {getSOList} from 'service/detailService'
+import {getBaseInfoData, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+// mixins 引入
+import common from 'components/mixins/applyCommon'
+// 组件引入
+import PopMatterList from 'components/Popup/PopMatterList'
+import PopDealerList from 'components/Popup/PopDealerList'
+import PopSingleSelect from 'components/Popup/PopSingleSelect'
   export default {
     directives: {
       TransferDom

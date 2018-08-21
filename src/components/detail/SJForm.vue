@@ -99,51 +99,54 @@
 </template>
 
 <script>
-  import {dateFormat} from 'vux'
-  import {getSOList} from 'service/detailService'
-  import workFlow from 'components/workFlow'
-  import RAction from 'components/RAction'
-  import detailCommon from 'components/mixins/detailCommon'
-
-  export default {
-    data() {
-      return {
-        count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
-        formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5'
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      workFlow, RAction,
-    },
-    methods: {
-      // 获取详情
-      getOrderList(transCode = '') {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode
-        }).then(data => {
-          // http200时提示报错信息
-          if (data.success === false) {
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-              onHide: () => {
-                this.$router.back();
-              }
-            });
-            return;
-          }
-          // 获取合计
-          let {dataSet} = data.formData.order;
-          this.count = this.count / 100;
-          data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
-          this.orderInfo = data.formData;
-          this.workFlowInfoHandler();
-        })
-      },
+// vux组件引入
+import { dateFormat } from 'vux'
+// 请求 引入
+import { getSOList } from 'service/detailService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件 引入
+import RAction from 'components/RAction'
+import workFlow from 'components/workFlow'
+export default {
+  data() {
+    return {
+      count: 0,          // 金额合计
+      orderInfo: {},      // 表单内容
+      formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5'
     }
+  },
+  mixins: [detailCommon],
+  components: {
+    workFlow, RAction,
+  },
+  methods: {
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(data => {
+        // http200时提示报错信息
+        if (data.success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+            onHide: () => {
+              this.$router.back();
+            }
+          });
+          return;
+        }
+        // 获取合计
+        let {dataSet} = data.formData.order;
+        this.count = this.count / 100;
+        data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
+        this.orderInfo = data.formData;
+        this.workFlowInfoHandler();
+      })
+    },
   }
+}
 </script>
 
 <style lang='scss' scoped>
