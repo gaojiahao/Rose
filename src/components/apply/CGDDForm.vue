@@ -93,7 +93,13 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div>
+          <!-- <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div> -->
+          <div class="handle_part" v-if="matterList.length">
+            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0' 
+              @click="stopOrder" >终止提交</span>
+            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
+            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
+          </div>
           <!-- 往来popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @closePop='showDealerPop = !showDealerPop'
                           @sel-dealer="selDealer" :dealerLabelName="'2168'">
@@ -110,7 +116,7 @@
         <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
         <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
       </span>
-      <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions && btnInfo.actions.indexOf("stop")>=0'>终止</span>
+      <!-- <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>

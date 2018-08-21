@@ -130,7 +130,7 @@ export default {
             item.count += mitem.price * mitem.tdQty * 100
 
           })
-          item.count = item.count / 100;
+          item.count = (item.count / 100).toFixed(2);
           // 列表当中每个订单最多展现5个物料
           item.itmes = item.itmes.slice(0, 5);
           item.itmes.forEach(mItem => {

@@ -73,7 +73,13 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div>
+          <!-- <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div> -->
+          <div class="handle_part" v-if="matterList.length">
+            <span class="add_more stop" v-if="this.actions.includes('stop')" 
+              @click="stopOrder" >终止提交</span>
+            <span class="symbol" v-if="this.actions.includes('stop')">或</span>
+            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
+          </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
@@ -83,7 +89,7 @@
     </div>
     <!-- 底部确认栏 -->
     <div class='btn-no-amt vux-1px-t'>
-      <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
+      <!-- <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div> -->
       <div class="btn-item" @click="save">提交</div>
     </div>
   </div>

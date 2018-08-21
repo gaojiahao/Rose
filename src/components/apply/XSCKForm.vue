@@ -102,7 +102,13 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="add_more" v-if="Object.keys(orderList).length" @click="addOrder">新增更多订单</div>
+          <!-- <div class="add_more" v-if="Object.keys(orderList).length" @click="addOrder">新增更多订单</div> -->
+          <div class="handle_part" v-if="matterList.length">
+            <span class="add_more stop" v-if="this.actions.includes('stop')" 
+              @click="stopOrder" >终止提交</span>
+            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
+            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
+          </div>
           <!-- 往来popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
@@ -118,7 +124,7 @@
         <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
-      <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
+      <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
