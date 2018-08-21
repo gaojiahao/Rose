@@ -5,7 +5,7 @@
       <div class="title">{{title}}</div>
       <div class="user_info">
         <span class="user_name">{{selItems.warehouseName}}</span>
-        <span class="user_tel">{{selItems.warehouseRelType}}</span>
+        <span class="user_tel">{{selItems.warehouseType}}</span>
       </div>
       <div class="cp_info">
         <p class="cp_name"></p>
@@ -45,7 +45,7 @@
                   </div>
                   <div class="withColor">
                     <div class="ForInline " style="display:inline-block">
-                      <span class='creator'>{{item.warehouseRelType}}</span>
+                      <span class='creator'>{{item.warehouseType}}</span>
                     </div>
                   </div>
                   <!-- 地址 -->
