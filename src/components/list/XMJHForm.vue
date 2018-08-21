@@ -9,12 +9,12 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
-          <!-- 订单 时期 -->
+          <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">{{item.transCode}}</p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
-          <!-- 金额合计 -->
+          <!-- 项目计划经办人 -->
           <div class="order_count">
             <div class="handle_man">
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>

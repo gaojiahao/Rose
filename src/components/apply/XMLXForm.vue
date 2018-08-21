@@ -26,7 +26,7 @@
                   v-model="ProjectApproval.projectType"></r-picker>
                   
         <div class="xmlx_list">
-            <!-- 商机列表 -->
+            <!-- 项目立项明细 -->
             <div class="materiel_list mg_auto box_sd">
                 <div class="mater_list">
                     <div class="each_mater">

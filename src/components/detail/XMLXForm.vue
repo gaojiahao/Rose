@@ -45,9 +45,8 @@
 
 <script>
   import {Group, Cell, dateFormat,} from 'vux'
-  import {getSOList,} from 'service/detailService'
   import detailCommon from 'components/mixins/detailCommon'
-  import {findProjectTask,findProjectApproval} from 'service/projectService'
+  import {findProjectApproval} from 'service/projectService'
 
   export default {
     data() {

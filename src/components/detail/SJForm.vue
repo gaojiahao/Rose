@@ -16,7 +16,7 @@
             {{orderInfo.order.dataSet.province_dealerDebit}}{{orderInfo.order.dataSet.city_dealerDebit}}{{orderInfo.order.dataSet.county_dealerDebit}}{{orderInfo.order.dataSet.address_dealerDebit}}</p>
         </div>
       </div>
-      <!-- 结算方式 -->
+      
       <div class="trade_mode mg_auto box_sd">
         <p class="title">当前所在阶段</p>
         <p class="mode group_mar_left">{{orderInfo.currentStage || '暂无'}}</p>
@@ -37,7 +37,7 @@
         <p class="title">创建时间</p>
         <p class="mode group_mar_left">{{orderInfo.crtTime || '暂无'}}</p>
       </div>
-      <!-- 审批操作 -->
+
       <!-- 商机列表 -->
       <div class="materiel_list mg_auto box_sd">
         <div class="title">商机明细</div>
@@ -80,7 +80,7 @@
               </div>
             </div>
           </div>
-          <!-- 金额合计栏 -->
+          <!-- 预期销售额 -->
           <div class="price_list">
             <div class='title'>预期销售额:</div>
             <div class="num"><span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount || 0}}</div>
