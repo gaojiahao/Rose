@@ -81,10 +81,9 @@
 </template>
 
 <script>
-  import {Group, Cell, dateFormat,} from 'vux'
-  import {getSOList,} from 'service/detailService'
+  import {Group, Cell} from 'vux'
   import detailCommon from 'components/mixins/detailCommon'
-  import {findProjectTask,findProjectApproval,findProjectPlan} from 'service/projectService'
+  import {findProjectPlan} from 'service/projectService'
 
   export default {
     data() {
