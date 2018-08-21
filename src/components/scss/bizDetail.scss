@@ -9,8 +9,7 @@
   margin: 10px auto;
 }
               
-.symbol,
-.num {
+.symbol {
   font-size: .1rem;
 }
 // 阴影
@@ -388,6 +387,7 @@
               display: inline-block;
 
               .num {
+                font-size: .1rem;
                 color: #757575;
                 .symbol {
                   font-size: .08rem;
