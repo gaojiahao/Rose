@@ -54,7 +54,7 @@
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEdit">新增一个订单</div>
+      <div class="cfm_btn" @click="goEdit">新增一个采购入库</div>
     </div>
   </div>
 </template>
@@ -72,7 +72,7 @@
     },
     mixins: [listCommon],
     methods: {
-      
+
     },
     created() {
     }

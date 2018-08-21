@@ -110,14 +110,14 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num"
-          :class="{nine_up : tdAmount.length  > 8 , 
+          :class="{nine_up : tdAmount.length  > 8 ,
           ten_up : tdAmount.length  > 9,
           ele_up : tdAmount.length  > 10}"
           >
         <span class="total_price">
           <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
         </span>
-        
+
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
       </span>
       <!-- <span class="count_btn stop" @click="stopOrder"
@@ -191,7 +191,7 @@
             }
           }
           this.$emit('sel-data',data)
-        }        
+        }
       }
     },
     methods: {
@@ -239,7 +239,7 @@
         })
         this.numMap = {};
         this.matterList = sels;
-        this.getMatPrice();                
+        this.getMatPrice();
       },
       //选择默认图片
       getDefaultImg(item) {
@@ -313,7 +313,7 @@
                 })
               })
               let wfPara = {
-                "PROC_1801_0002": {businessKey: "SO", createdBy: ""}
+                [this.processCode]: {businessKey: "SO", createdBy: ""}
               }
               if (this.isResubmit) {
                 wfPara = {
@@ -361,8 +361,8 @@
           this.biReferenceId = data.biReferenceId;
           let {formData} = data;
           formData.order.dataSet.map(item => {
-            item.inventoryPic = item.inventoryPic_transObjCode 
-              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` 
+            item.inventoryPic = item.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           })
           //基本信息

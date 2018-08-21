@@ -344,6 +344,7 @@
             this.listData.forEach(item => {
               let oItem = {
                 transObjCode: item.inventoryCode, // 物料编码
+                tdProcessing: item.processing,
                 assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
                 assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
                 tdQty: item.tdQty, // 明细发生数

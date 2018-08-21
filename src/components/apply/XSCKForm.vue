@@ -170,6 +170,7 @@
     },
     data() {
       return {
+        listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
         srhInpTx: '',                                   // 搜索框内容
         orderList: {},                                  // 订单列表
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
@@ -343,7 +344,7 @@
             let operation = saveAndStartWf;
             let formData = {};
             let wfPara = {
-              PROC_1710_0460: {
+              [this.processCode]: {
                 businessKey: 'SODL',
                 createdBy: ''
               }
@@ -403,7 +404,7 @@
               };
             }
             let submitData = {
-              listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
+              listId: this.listId,
               biComment: '',
               biReferenceId: this.biReferenceId,
               formData: JSON.stringify(formData),

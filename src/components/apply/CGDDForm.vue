@@ -290,7 +290,7 @@ export default {
               })
             })
             let wfPara = {
-              "PROC_1802_0005":{businessKey:"PO",createdBy:""}
+              [this.processCode]:{businessKey:"PO",createdBy:""}
             }
             if(this.isResubmit){
               wfPara = {
