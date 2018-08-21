@@ -146,7 +146,7 @@ export default {
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
-        this.count = this.count/100;
+        this.count = (this.count/100).toFixed(2);
         this.orderInfo = data.formData;
         this.workFlowInfoHandler();
       })
