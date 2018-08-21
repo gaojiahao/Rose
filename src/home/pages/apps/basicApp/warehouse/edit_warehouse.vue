@@ -3,18 +3,13 @@
     <div class='content'>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
-          <div class='each_property vux-1px-b' v-if="transCode == ''">
+          <div class='each_property vux-1px-b'>
             <label class='required'>仓库编码:</label>
-            <input type='text' v-model="warehouse.warehouseCode" class='property_val' :disabled ='transCode!=""?true:false'/>
+            <input type='text' v-model="warehouse.warehouseCode" class='property_val' :disabled ='transCode!=""'/>
           </div>
           <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
             <label class='required'>仓库名称:</label>
             <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
-          </div>
-
-          <div class="edit_r_picker" v-if="transCode != ''">
-            <r-picker title="仓库关系类型:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
-                @on-change="warehouseLabel"></r-picker>
           </div>
         </div>
         <div class='mater_pic vux-1px-l'>
@@ -32,16 +27,17 @@
           </div>
         </div>
       </div>
-      <r-picker  v-if="transCode == ''" title="仓库关系类型:" :data="AccountRelType" value="warehouse.warehouseRelType"  v-model="warehouse.warehouseRelType" :required='true'
-                @on-change="warehouseLabel"></r-picker>
+      <r-picker title="仓库类型:" :data="AccountRelType" value="warehouse.warehouseType"  
+                v-model="warehouse.warehouseType" :required='true'>
+      </r-picker>
     </div>
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
+      <div class="cfm_btn" @click="save"  v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
   </div>
 </template>
 <script>
-import { TransferDom, Picker, Popup, Group, AlertModule, XAddress, ChinaAddressV4Data,Icon } from 'vux';
+import { TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data,Icon } from 'vux';
 import { upload } from 'service/materService.js';
 import { getBaseInfoData } from 'service/commonService.js';
 import warehouseService from 'service/warehouseService.js'
@@ -50,21 +46,12 @@ import common from 'mixins/common.js'
 export default {
   data() {
     return {
-      hasDefault : false,
-      btnStatus : false, //按钮不可点击
       transCode  : '',
       picShow: false,
       imgFileObj: {}, // 上传的图片对象
       biReferenceId : '',
       MatPic: '', // 图片地址
-      AccountRelType : ['全部','个人仓','客户仓','部门仓','加工商仓','渠道商仓'],
-      AccountBigType : [],
-      AccountSmlType : [],
-      AccountAddress : [],
-      addressData : ChinaAddressV4Data,
-      PhoneWarn : false, //固定电话校验提示
-      MobileWarn : false, //手机检验提示
-      EmailWarn :false, //邮箱校验提示
+      AccountRelType : [],
       baseinfo: {
         handler: '', // 经办人ID
         handlerName: '', // 经办人
@@ -78,10 +65,12 @@ export default {
         comment: '' // 注释
       },
       warehouse: {
+        customerDealerCode:null, //客户
         warehouseCode: '', // 仓库编码
         warehouseName: '', // 仓库名称
-        warehouseRelType : '',//仓库关系标签
-        warehouseType: '', // 仓库大类
+        warehouseType: '', // 仓库类型
+        warehouseStatus: '1', //仓库状态
+        warehouseRelType : '',//仓库关系类型
         warehouseSubclass: '', // 仓库子类
         province  : '',  //省
         city: '',  //市
@@ -93,12 +82,8 @@ export default {
         paymentTerm: '',  //结算方式
         warehouseLogisticsTerms: '', //物流条款
         pamentDays: '',  //账期天数
-        warehouseStatus: '1', //仓库状态
         comment: '',  //仓库说明
         warehousePic : '',
-        submitSuccess: false, // 是否提交成功
-
-
           // comment:"说明改",
           // warehouseAddress:"",
           // warehouseCity:"",
@@ -112,6 +97,7 @@ export default {
           // warehouseSubclass:"计量设备仓",
           // warehouseType:"设备仓库"
       },
+      submitSuccess: false, // 是否提交成功
 
 
     }
@@ -146,134 +132,42 @@ export default {
         this.warehouse.warehousePic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
         // this.biReferenceId = detail.biReferenceId
       }).catch(e => {
-        AlertModule.show({
+        this.$vux.alert.show({
           content: e.message,
         })
       });
     },
-    // TODO 仓库关系标签
-    warehouseLabel(val) {
-      if (this.hasDefault) {
-        console.log('进入');
-        return
-      }
-      // this.getBig().then(data => {
-      //   let [defaultSelect = {}] = data;
-      //   this.warehouse.warehouseType = defaultSelect.name || '';
-      // });
-    },
-    // TODO 仓库大类切换
-    bigChange(val) {
-      if (this.hasDefault) {
-        return
-      }
-      this.getSml(val).then(data => {
-        let [defaultSelect = {}] = data;
-        this.warehouse.warehouseSubclass = defaultSelect.name || '';
-      });
-    },
-    //获取仓库关系标签
-  //   getwarehouse(){
-  //     //获取仓库关系标签
-  //     return warehouseService.getDictByType().then(data=>{
-  //       let {tableContent} = data;
-  //       tableContent && tableContent.forEach(item => {
-  //         item.originValue = item.value;
-  //         item.value = item.name;
-  //       });
-  //       //this.AccountRelType = tableContent;
-  //       return tableContent
-  //     }).catch(e=>{
-  //       AlertModule.show({
-  //         content: e.message,
-  //       })
-  //     })
-  //   },
-    // TODO 获取仓库大类
-  //   getBig() {
-  //     let [selected = {}] = this.AccountRelType.filter(item => {
-  //       return item.name === this.warehouse.warehouseRelType
-  //     });
-  //     return warehouseService.getDictByValue(selected.originValue).then(data => {
-  //       let {tableContent} = data;
-  //       tableContent && tableContent.forEach(item => {
-  //         item.originValue = item.value;
-  //         item.value = item.name;
-  //       });
-  //       //this.AccountBigType = tableContent;
-  //       return tableContent
-  //     }).catch(e => {
-  //       AlertModule.show({
-  //         content: e.message,
-  //       })
-  //     })
-  //   },
-    // TODO 获取仓库子类
-    getSml() {
-      let [selected = {}] = this.AccountBigType.filter(item => {
-        return item.name === this.warehouse.warehouseType
-      });
-      return warehouseService.getDictByValue(selected.originValue).then(data => {
+    //获取仓库类型
+    getwarehouse(){
+      //获取仓库关系标签
+      return warehouseService.getwarehouseClassfiy().then(data=>{
+        //仓库分类无值，请求
         let {tableContent} = data;
         tableContent && tableContent.forEach(item => {
           item.originValue = item.value;
           item.value = item.name;
         });
-        let [defaultSelect = {}] = tableContent;
-        this.AccountSmlType = tableContent;
-        return tableContent
-      }).catch(e => {
-        AlertModule.show({
-          content: e.message,
-        })
+        this.AccountRelType = tableContent;
+        if(this.warehouse.warehouseRelType === ""){
+          this.warehouse.warehouseType = tableContent[0].name
+        }
+        
       })
     },
-    //校验固定电话号
-    checkPhone(){
-      let reg = /^0\d{2,3}-?\d{7,8}$/;
-      if(this.warehouse.warehousePhone.length>0 && !reg.test(this.warehouse.warehousePhone)){
-        this.PhoneWarn = true;
-        this.btnStatus = true;
-      }
-      else{
-        this.PhoneWarn = false;
-        this.btnStatus = false;
-      }
+    //获取客户信息用于提交
+    getDealer(){
+      warehouseService.getDealer().then(({tableContent=[]})=>{
+        this.warehouse.customerDealerCode = tableContent[0].dealerCode        
+      })
     },
-    //校验手机号
-    checkMobile(){
-      let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-      if(this.warehouse.warehouseMobilePhone.length>0 && !reg.test(this.warehouse.warehouseMobilePhone)){
-        this.MobileWarn = true;
-        this.btnStatus = true;
-      }
-      else{
-        this.MobileWarn = false;
-        this.btnStatus = false;
-      }
-
-
-    },
-    //校验邮箱
-    checkEmail(){
-      let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
-      if(this.warehouse.warehouseMail.length>0 && !reg.test(this.warehouse.warehouseMail)){
-        this.EmailWarn = true;
-        this.btnStatus = true;
-      }
-      else{
-        this.EmailWarn = false;
-        this.btnStatus = false;
-      }
-
-    },
-    //仓库信息
+    //查询仓库信息
     findData() {
       return warehouseService.getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         let {baseinfo = {}, warehouse = {}} = formData;
-        this.hasDefault = true;
-        this.baseinfo = {...this.baseinfo, ...baseinfo,};
-        this.warehouse = {...this.warehouse, ...warehouse,};
+        // this.baseinfo = {...this.baseinfo, ...baseinfo,};
+        // this.warehouse = {...this.warehouse, ...warehouse,};
+        this.baseinfo = baseinfo;
+        this.warehouse = warehouse;
         this.biReferenceId = this.warehouse.referenceId;
         if (this.warehouse.warehousePic.length>0) {
           this.picShow = true;
@@ -323,12 +217,12 @@ export default {
               warehouse: this.warehouse
             }
           };
-          if(this.transCode.length>0){
+          if(this.transCode.length>0){//修改
             warehouseService.update(submitData).then(data=>{
               let that = this;
               if(data.success){
                 that.submitSuccess  = true;
-                AlertModule.show({
+                this.$vux.alert.show({
                   content: data.message,
                   onHide(){
                     that.$router.go(-1);
@@ -336,23 +230,18 @@ export default {
                 })
               }
               else{
-                AlertModule.show({
+                this.$vux.alert.show({
                   content: data.message
                 })
               }
-
-            }).catch(e=>{
-              AlertModule.show({
-                content: e.message,
-              })
             })
           }
-          else{
+          else{//新增
             warehouseService.save(submitData).then(data=>{
               let that = this;
               if(data.success){
                 that.submitSuccess  = true;
-                AlertModule.show({
+                this.$vux.alert.show({
                   content:data.message,
                   onHide(){
                     if(that.$route.query.add == 1){
@@ -363,14 +252,10 @@ export default {
                 })
               }
               else{
-                AlertModule.show({
+                this.$vux.alert.show({
                   content:data.message
                 })
               }
-            }).catch(e=>{
-              AlertModule.show({
-                content: e.message,
-              })
             })
           }
 
@@ -378,28 +263,27 @@ export default {
       })
     },
     save(){
-      if(!this.btnStatus){
         if(this.warehouse.warehouseCode === ''){
-            AlertModule.show({
-              content: '【仓库编码】不能为空',
-            })
-          }
-          else if(this.warehouse.warehouseName === ''){
-            AlertModule.show({
-              content: '【仓库名称】不能为空',
-            })
-          }
-          else if(this.warehouse.warehouseRelType === ''){
-            AlertModule.show({
-              content: '【仓库关系标签】不能为空',
-            })
-          }
-          else{
-            this.submit()
-          }
-
+          this.$vux.alert.show({
+            content: '【仓库编码】不能为空',
+          })
         }
-      }
+        else if(this.warehouse.warehouseName === ''){
+          this.$vux.alert.show({
+            content: '【仓库名称】不能为空',
+          })
+        }
+        else if(this.warehouse.warehouseType === ''){
+          this.$vux.alert.show({
+            content: '【仓库类型】不能为空',
+          })
+        }
+        else{
+          this.submit()
+        }
+
+      
+    }
 
 
   },
@@ -416,28 +300,23 @@ export default {
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
-        (async () => {
+      (async () => {
         await this.findData();
-        //await this.getwarehouse();
-      //   await this.getBig();
-        this.getSml();
+        await this.getwarehouse();
         this.hasDefault = false;
       })();
+      return
     }
-    else{
-      // this.getwarehouse().then(data => {
-      //   let [defaultSelect = {}] = data;
-      //   this.warehouse.warehouseRelType = defaultSelect.name
-      // });
-      //获取当前用户信息
-      getBaseInfoData().then(data => {
-        this.baseinfo = {
-          ...this.baseinfo,
-          ...data,
-          activeTime: this.changeDate(new Date(), true),
-        }
-      });
-    }
+    //获取当前用户信息
+    getBaseInfoData().then(data => {
+      this.baseinfo = {
+        ...this.baseinfo,
+        ...data,
+        activeTime: this.changeDate(new Date(), true),
+      }
+    });
+    this.getwarehouse();   
+    this.getDealer();   
   }
 }
 </script>
@@ -608,10 +487,6 @@ export default {
       border-radius: .4rem;
       transform: translate(-50%, -50%);
       box-shadow: 0 2px 5px #5077aa;
-    }
-    .disabled{
-      background:#c7c7c7;
-      box-shadow: 0 2px 5px #c7c7c7;
     }
   }
   .edit_bor_btm:after{

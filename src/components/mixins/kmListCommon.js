@@ -66,7 +66,8 @@ export default {
     //获取列表视图
     getClassfiy(){
       return getListClassfiy({
-        account_code: this.uniqueId
+        account_code: this.uniqueId,
+        device_type : 'phone'
       }).then(({data = []})=>{
         this.listView = data;
         this.calc_rel_code = data[0].calc_rel_code;
