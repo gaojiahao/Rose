@@ -26,6 +26,7 @@ export default {
       transCode :'',
       submitSuccess :false,
       submitLoadding : false,
+      transCode : null, //应用编码
       saveData:{} //缓存的数据
     }
   },
@@ -47,6 +48,10 @@ export default {
     }
   },
   created(){
+    let {transCode} = this.$route.query;
+    if(transCode){
+      this.transCode = transCode;
+    }
     let {code} = this.$route.params;
     this.currentComponent = require(`components/apply/${code}Form.vue`).default;
   },
@@ -75,7 +80,7 @@ export default {
     }
     //离开数据保存为草稿
     let keys = Object.keys(this.saveData)[0];
-    if(to.name === "LIST" && keys && !this.submitSuccess){
+    if(to.name === "LIST" && keys && this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
         onConfirm : ()=>{         
