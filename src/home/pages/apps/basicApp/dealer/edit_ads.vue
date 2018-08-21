@@ -314,8 +314,12 @@ export default {
     getAddress(){
       if(this.AccountAddress.length>0){
         this.dealer.province = this.AccountAddress[0];
-        this.dealer.city = this.AccountAddress[1];
         this.dealer.county = this.AccountAddress[2]
+        if(this.AccountAddress[1] === '市辖区'){
+          this.dealer.city = '';
+          return
+        };
+        this.dealer.city = this.AccountAddress[1]; 
       }
     },
     //提交
