@@ -314,18 +314,8 @@
             warehouseDistrict: inPut.warehouseDistrict_containerCode,
             warehouseAddress: inPut.warehouseAddress_containerCode,
           };
-          // 出库
-          this.warehouseOut = {
-            warehouseCode: inPut.containerCodeOut,
-            warehouseName: inPut.warehouseName_containerCodeOut,
-            warehouseRelType: inPut.warehouseType_containerCodeOut,
-            warehouseProvince: inPut.warehouseProvince_containerCodeOut,
-            warehouseCity: inPut.warehouseCity_containerCodeOut,
-            warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
-            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
-          };
           this.warehouseParams = {
-            whCode: this.warehouseOut.warehouseCode,
+            whCode: this.warehouseIn.warehouseCode,
           };
           this.formData = {
             ...this.formData,

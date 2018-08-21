@@ -71,8 +71,8 @@ export let getSumInvBalance = (data = {}) => {
     return errorHandler(e);
   });
 };
-//获取费用 
-export let  getCost = (data={})=>{
+//获取费用
+export let getCost = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getCostAll',
     data
@@ -81,6 +81,45 @@ export let  getCost = (data={})=>{
   });
 
 }
+
+// TODO 获取物料Pop列表
+export let getObjInventoryByProcessing = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjInventoryByProcessing',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 获取物料Pop列表(采购订单)
+export let getInventory7501 = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getInventory7501',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 获取物料Pop列表(采购入库)
+export let getInventory7502 = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getInventory7502',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
 
 export default {
   save,

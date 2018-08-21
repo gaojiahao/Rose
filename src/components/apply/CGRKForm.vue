@@ -97,7 +97,8 @@
                            @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="listData" ref="matter"></pop-matter-list>
+                           :default-value="listData" get-list-method="getInventory7502" :params="matterParams"
+                           ref="matter"></pop-matter-list>
         </div>
       </div>
     </div>
@@ -157,6 +158,7 @@
     },
     data() {
       return {
+        listId: '1c5896d8-1500-4569-b0c5-6b596d03fb9b',
         srhInpTx: '',                                   // 搜索框内容
         listData: [],                                  // 订单列表
         DealerPaymentTerm: '现付',                        //结算方式
@@ -179,6 +181,9 @@
         actions: [],
         taskId: '',
         showMaterielPop: false,
+        matterParams: { // 物料列表的请求参数
+          dealerCode: ''
+        }
       }
     },
     computed: {
@@ -243,6 +248,11 @@
       selDealer(val) {
         let [sel] = JSON.parse(val);
         this.dealerInfo = sel;
+        this.matterParams = {
+          ...this.matterParams,
+          dealerCode: sel.dealerCode
+        };
+        this.listData = [];
       },
       // TODO 选中仓库
       selWarehouse(val) {
@@ -325,7 +335,7 @@
             let operation = saveAndStartWf;
             let formData = {};
             let wfPara = {
-              PROC_1710_0444: {
+              [this.processCode]: {
                 businessKey: 'POPI',
                 createdBy: ''
               }
@@ -378,7 +388,7 @@
               };
             }
             let submitData = {
-              listId: '1c5896d8-1500-4569-b0c5-6b596d03fb9b',
+              listId: this.listId,
               biComment: '',
               biReferenceId: this.biReferenceId,
               formData: JSON.stringify(formData),
@@ -441,6 +451,11 @@
             warehouseAddress: inPut.warehouseAddress_containerCode,
             containerInWarehouseManager: inPut.containerInWarehouseManager,
           };
+          // 物料请求参数
+          this.matterParams = {
+            dealerCode: this.dealerInfo.dealerCode
+          };
+
           this.formData = {
             ...this.formData,
             creator: formData.creator,

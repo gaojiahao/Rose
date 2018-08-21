@@ -84,7 +84,7 @@
                             <input class='num' type='number' v-model.number='item.tdQty'/>
                             <span class='handle plus' @click='plusNum(item,index)'>+</span>
                           </div>
-                        </div>                      
+                        </div>
                       </div>
                     </div>
                   </swipeout-item>
@@ -100,7 +100,7 @@
           </pop-dealer-list  ref="matter">
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
-                          ref="matter"></pop-matter-list>
+                           get-list-method="getInventory7501" ref="matter"></pop-matter-list>
         </div>
       </div>
     </div>
@@ -162,10 +162,10 @@ export default {
             matter : this.matterList,
             dealer : this.dealerInfo
           }
-          
+
         }
-        this.$emit('sel-data',data)    
-      }      
+        this.$emit('sel-data',data)
+      }
     },
     dealerInfo(val){
       if(this.matterList.length){
@@ -174,9 +174,9 @@ export default {
             matter : this.matterList,
             dealer : this.dealerInfo
           }
-          
+
         }
-        this.$emit('sel-data',data)  
+        this.$emit('sel-data',data)
       }
     }
   },

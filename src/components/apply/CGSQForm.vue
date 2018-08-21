@@ -63,7 +63,7 @@
                             <input class='num' type='number' v-model.number='item.tdQty'/>
                             <span class='handle plus' @click='plusNum(item,index)'>+</span>
                           </div>
-                            
+
                         </div>
                       </div>
                     </div>
@@ -76,7 +76,7 @@
           <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          :default-value="matterList"
+                          :default-value="matterList" :params="matterParams"
                           ref="matter"></pop-matter-list>
         </div>
         <!-- 申请说明 -->
@@ -100,7 +100,7 @@
 <script>
 import {Swipeout, SwipeoutItem, SwipeoutButton,TransferDom} from 'vux'
 import PopMatterList from 'components/PopMatterList'
-import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService' 
+import {getBaseInfoData,saveAndStartWf,saveAndCommitTask} from 'service/commonService'
 import { getSOList} from 'service/detailService.js'
 import common from 'components/mixins/applyCommon.js'
 export default {
@@ -121,10 +121,13 @@ export default {
         modifer : '',
         biId: '',
         biComment : ''
-      }, 
+      },
       applyComment : '',
       numMap: {},
       taxRate: 0, // 税率
+      matterParams: {
+        processing: '成品,商品,服务,原料'
+      }
     }
   },
   mixins: [common],
@@ -183,7 +186,7 @@ export default {
       let oldNum = item.tdQty;
       item.tdQty++;
       this.$set(this.matterList, i, item);
-      
+
     },
     // TODO 新增更多物料
     addMatter() {
@@ -250,8 +253,8 @@ export default {
             }
             this.saveData(saveAndStartWf,submitData);
           }
-         })        
-      }      
+         })
+      }
     },
     //获取订单信息用于重新提交
     async getFormData(){
@@ -281,7 +284,7 @@ export default {
 
         }
         this.matterList = data.formData.order.dataSet;
-      })     
+      })
     }
   },
   created(){

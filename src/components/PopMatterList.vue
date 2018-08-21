@@ -81,7 +81,12 @@
 <script>
   import {Icon, Popup,} from 'vux'
   import {getList} from 'service/commonService'
-  import {getSumInvBalance} from 'service/materService'
+  import {
+    getSumInvBalance,
+    getObjInventoryByProcessing,
+    getInventory7501,
+    getInventory7502,
+  } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
 
@@ -207,31 +212,18 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryCode',
-              attendedOperation: 'or'
-            },
-            {
-              operator: 'like',
-              value: this.srhInpTx,
               property: 'inventoryName',
             },
           ];
         }
-        return getList(2132, {
+        return getObjInventoryByProcessing({
+          processing: '成品,商品,服务',
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          tableContent.forEach(item => {
-            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
-          });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
-        });
+          ...this.params,
+        }).then(this.dataHandler);
       },
       // TODO 搜索物料
       searchMat(val) {
@@ -280,17 +272,61 @@
           calcRelCode: 1406,
           ...this.params,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          tableContent.forEach(item => {
-            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
-          });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
+        }).then(this.dataHandler);
+      },
+      // TODO 获取物料列表(采购订单)
+      getInventory7501() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'inventoryName',
+            },
+          ];
+        }
+        return getInventory7501({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // TODO 获取物料列表(采购入库)
+      getInventory7502() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'inventoryName',
+            },
+          ];
+        }
+        return getInventory7502({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // TODO 共用的数据处理方法
+      dataHandler({dataCount = 0, tableContent = []}){
+        tableContent.forEach(item => {
+          item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
         });
-      }
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullUp();
+        })
+      },
     },
     created() {
       this.setDefaultValue();
