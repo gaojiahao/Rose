@@ -317,7 +317,7 @@
           this.warehouseIn = {
             warehouseCode: inPut.containerCode,
             warehouseName: inPut.warehouseName_containerCode,
-            warehouseRelType: inPut.warehouseType_containerCode,
+            warehouseType: inPut.warehouseType_containerCode,
             warehouseProvince: inPut.warehouseProvince_containerCode,
             warehouseCity: inPut.warehouseCity_containerCode,
             warehouseDistrict: inPut.warehouseDistrict_containerCode,
@@ -327,7 +327,7 @@
           this.warehouseOut = {
             warehouseCode: inPut.containerCodeOut,
             warehouseName: inPut.warehouseName_containerCodeOut,
-            warehouseRelType: inPut.warehouseType_containerCodeOut,
+            warehouseType: inPut.warehouseType_containerCodeOut,
             warehouseProvince: inPut.warehouseProvince_containerCodeOut,
             warehouseCity: inPut.warehouseCity_containerCodeOut,
             warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
