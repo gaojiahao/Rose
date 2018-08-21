@@ -127,9 +127,9 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='count_mode vux-1px-t'>
-      <div class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
-      <div class="count_btn" @click="save">提交</div>
+    <div class='btn-no-amt vux-1px-t'>
+      <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
+      <div class="btn-item" @click="save">提交</div>
     </div>
   </div>
 </template>
