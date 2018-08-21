@@ -1,4 +1,4 @@
-import {Tab, Icon, TabItem, numberPad, numberComma, dateFormat, } from 'vux'
+import {Tab, Icon, TabItem, numberComma, dateFormat, } from 'vux'
 import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'

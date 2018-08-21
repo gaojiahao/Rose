@@ -1,5 +1,4 @@
 import {getWorkFlow, currentUser, getListId, isMyflow} from 'service/detailService.js'
-import {commitTask} from 'service/commonService.js'
 import {numberComma,} from 'vux'
 
 export default {
