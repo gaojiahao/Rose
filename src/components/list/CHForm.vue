@@ -6,11 +6,6 @@
         <searchIcon @search='searchList'></searchIcon>
         <div class="filter_part">
           <tab-item :tabVal="listView" @tab-click='tabClick'></tab-item>
-          <!-- <tab :line-width='2' default-color='#757575' active-color='#2c2727' :scroll-threshold='5'>
-            <tab-item v-for="(item, index) in listView" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.view_name}}
-            </tab-item>
-          </tab> -->
         </div>
       </div>
       <r-scroll class="list_wrapper":options="scrollOptions" :has-next="hasNext"
@@ -52,7 +47,6 @@
             <div class="balance" v-if="item.amountBalance !== ''">
               <span class="symbol">余额: ￥</span>{{item.amountBalance}}
             </div>
-            <!-- <x-icon type="ios-arrow-down" size="30"></x-icon> -->
           </div>
         </div>
       </r-scroll>
@@ -126,27 +120,9 @@
                       <span class="symbol">当前数量: </span>{{Fitem.qtyBalance}}
                     </div>
                     <div class="price">
-                      <span class="symbol">当前余额: ￥</span>{{Fitem.amntBalance}}
+                      <span class="symbol">当前余额: ￥</span>{{Fitem.amountBalance}}
                     </div>
                   </div>
-                  <!--收起的每个流水明细-->
-                  <!-- <div class='hidden_list' v-if='Fitem.showList'>
-                    <div class='each_property' v-for='(HItem,HIndex) in flowField' :key='HIndex'>
-                      <label>{{HItem.text}}:</label>
-                      <span v-if='HItem.field === "qtyBalance"'>{{Fitem[HItem.field].toFixed(2)}}</span>
-                      <span v-else>{{Fitem[HItem.field]}}</span>
-                    </div>
-                  </div>
-                  <div class='r-arrow vux-1px-t'>
-                    <p v-if='Fitem.showList'>
-                      <x-icon type="ios-arrow-up" size="30" ></x-icon>
-                    </p>
-                    <p v-else>
-                      <x-icon type="ios-arrow-down" size="30" ></x-icon>
-                    </p>
-                  </div> -->
-
-
                 </div>
                 <div>
                 </div>
