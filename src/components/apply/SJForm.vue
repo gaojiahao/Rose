@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <!-- 用户地址和基本信息-->
+        <!-- 选择往来-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div v-if='dealerInfo.dealerName'>
             <div class="user_info" v-if="dealerInfo.creatorName">
@@ -22,7 +22,7 @@
         </div>
 
         <div class="basicPart">
-          <!-- 商机列表 -->
+          <!-- 商机明细 -->
           <div class="materiel_list mg_auto box_sd">
             <div class="mater_list">
               <div class="each_mater">
@@ -32,7 +32,7 @@
                       <div class="title">商机明细</div>
                       <group class="SJ_group cell_bor_none" @group-title-margin-top="0">
                         <x-input  title="商机标题" text-align='right' v-model="formData.opportunityTitle" placeholder='请填写'></x-input>
-                        <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount | numberComma(3)" @on-blur="saleVal" text-align='right' placeholder='请填写'></x-input>
+                        <x-input  title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal" :value="formData.tdAmount" @on-change="filterNum($event,'salePrice')" text-align='right' placeholder='请填写'></x-input>
                         <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
                         <datetime
                           v-model="formData.validUntil"
@@ -81,7 +81,7 @@
 
 <script>
   import {Popup,TransferDom,Cell ,CellBox ,Group,XInput,numberComma,XTextarea,PopupRadio,Datetime,AlertModule } from 'vux'
-  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from 'service/commonService'
+  import {saveAndStartWf} from 'service/commonService'
   import common from 'components/mixins/applyCommon.js'
   import PopDealerList from 'components/PopDealerList'
   import PopSalesmanList from 'components/PopSalesmanList'
@@ -161,6 +161,12 @@
       }
     },
     methods: {
+       //限制只能输入数字
+      filterNum(e,ref){
+        let num = e.replace(/[^\d]/g,'');
+        this.$refs[ref].currentValue = num;
+        this.formData.tdAmount = num;
+      },
       //渠道商,人员选择
       salesChange(item){
         item.status= !item.status;
@@ -168,18 +174,6 @@
       //清除金额
       clearSaleVal(e){
         this.formData.tdAmount = '';
-      },
-      //格式化金额
-      saleVal(e){
-        let str = '';
-        if(e.toString().indexOf(",") != -1 ){
-          for(let i = 0 ;i<e.toString().split(',').length ; i++){
-            str += e.toString().split(',')[i];
-          }
-          this.formData.tdAmount = str;
-        }else{
-          this.formData.tdAmount = e;
-        }
       },
       //选中的往来
       selDealer(val) {
@@ -382,6 +376,6 @@
     margin-top: 0.08rem;
   }
   .cell_bor_none>.weui-cells:after{
-    border-bottom: inherit!important;
+    border-bottom: inherit;
   }
 </style>

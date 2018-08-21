@@ -84,7 +84,6 @@
 
 <script>
   import {Icon, Cell, Group, XInput,XTextarea, Datetime, TransferDom, Picker, Popup,PopupRadio,PopupPicker} from 'vux'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
   import RPicker from 'components/RPicker'
   import PopNameList from 'components/PopNameList'

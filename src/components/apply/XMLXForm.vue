@@ -64,10 +64,9 @@
 
 <script>
   import {Icon, Cell, Group, XInput,XTextarea, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, TransferDom, Picker, Popup,PopupRadio} from 'vux'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   import ApplyCommon from './../mixins/applyCommon'
   import RPicker from 'components/RPicker'
-  import {getProjectPlanProjectName, saveProjectApproval, saveProjectTask, updateProjectTask, findProjectTask} from 'service/projectService'
+  import {saveProjectApproval} from 'service/projectService'
 
   export default {
     mixins: [ApplyCommon],
