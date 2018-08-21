@@ -300,6 +300,8 @@
             // 确定回调
             onConfirm: () => {
               let dataSet = [];
+              // console.log(this.matterList);
+              // return false;
               this.matterList.map(item => {
                 dataSet.push({
                   tdId: item.tdId || '',
@@ -307,6 +309,7 @@
                   transObjCode: item.inventoryCode || item.transObjCode, //物料编码
                   assMeasureUnit: item.assMeasureUnit || '个',    //辅助计量
                   assMeasureScale: item.assMeasureScale || null,  //与主计量单位倍数
+                  tdProcessing : item.processing || item.tdProcessing,//加工属性
                   tdQty: item.tdQty,     //数量
                   assistQty: item.assistQty || 0,        //辅计数量
                   price: item.price, //单价
@@ -369,6 +372,7 @@
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
+            item.inventoryCode = item.inventoryCode_transObjCode;
           })
           //基本信息
           this.formData = {
