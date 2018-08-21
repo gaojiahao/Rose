@@ -20,7 +20,7 @@
     <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
 
     <!-- 仓库popup -->
-    <div v-transfer-dom>
+    <div v-transfer-dom v-if="!disabled">
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
           <div class="title">

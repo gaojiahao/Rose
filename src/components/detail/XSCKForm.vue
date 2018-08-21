@@ -181,7 +181,7 @@
           this.warehouse = {
             warehouseCode: outPut.containerCodeOut,
             warehouseName: outPut.warehouseName_containerCodeOut,
-            warehouseRelType: outPut.warehouseType_containerCodeOut,
+            warehouseType: outPut.warehouseType_containerCodeOut,
             warehouseProvince: outPut.warehouseProvince_containerCodeOut,
             warehouseCity: outPut.warehouseCity_containerCodeOut,
             warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,

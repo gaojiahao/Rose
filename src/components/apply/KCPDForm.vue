@@ -308,7 +308,7 @@
           this.warehouseIn = {
             warehouseCode: inPut.containerCode,
             warehouseName: inPut.warehouseName_containerCode,
-            warehouseRelType: inPut.warehouseType_containerCode,
+            warehouseType: inPut.warehouseType_containerCode,
             warehouseProvince: inPut.warehouseProvince_containerCode,
             warehouseCity: inPut.warehouseCity_containerCode,
             warehouseDistrict: inPut.warehouseDistrict_containerCode,
