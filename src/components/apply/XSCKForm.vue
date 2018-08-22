@@ -103,11 +103,11 @@
           </template>
           <!-- 新增更多 按钮 -->
           <!-- <div class="add_more" v-if="Object.keys(orderList).length" @click="addOrder">新增更多订单</div> -->
-          <div class="handle_part" v-if="matterList.length">
+          <div class="handle_part" v-if="Object.keys(orderList).length">
             <span class="add_more stop" v-if="this.actions.includes('stop')" 
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
+            <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
           <!-- 往来popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
@@ -353,6 +353,7 @@ export default {
                 assistQty: item.assistQty || 0, // 辅计数量（明细）
                 thenQtyStock: item.qtyStockBal, // 当时可用库存
                 thenQtyBal: item.qtyBal, // 待交付数量
+                tdProcessing : item.processing, //加工属性
                 price: item.price, // 明细单价
                 taxRate: this.taxRate, // 税率
                 taxAmount: this.taxAmount, // 税金
@@ -378,6 +379,7 @@ export default {
               drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 往来页签
               containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
               drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
+              project :'',//项目
               dataSet
             }
           };
@@ -435,6 +437,7 @@ export default {
             inventoryName: item.inventoryName_outPutMatCode,
             inventoryCode: item.outPutMatCode,
             specification: item.specification_outPutMatCode,
+            processing : item.tdProcessing
           };
           if (!orderList[item.transMatchedCode]) {
             orderList[item.transMatchedCode] = [];

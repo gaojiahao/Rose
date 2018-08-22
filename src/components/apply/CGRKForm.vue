@@ -92,11 +92,11 @@
           </template>
           <!-- 新增更多 按钮 -->
           <!-- <div class="add_more" v-if="listData.length" @click="addOrder">新增更多订单</div> -->
-          <div class="handle_part" v-if="matterList.length">
+          <div class="handle_part" v-if="listData.length">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
+            <span class="add_more"  @click="addOrder">新增更多物料</span>
           </div>
           <!-- 往来popup -->
           <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
@@ -339,6 +339,8 @@ export default {
               assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
               assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
               tdQty: item.tdQty, // 明细发生数
+              thenQtyBal : item.thenQtyBal ||0, //余额
+              tdProcessing :item.processing, //加工属性
               assistQty: item.assistQty || 0, // 辅计数量（明细）
               price: item.price, // 明细单价
               taxRate: this.taxRate, // 税率
@@ -418,6 +420,7 @@ export default {
             inventoryName: item.inventoryName_transObjCode,
             inventoryCode: item.transObjCode,
             specification: item.specification_transObjCode,
+            processing : item.tdProcessing,
           };
         });
         // 供应商信息

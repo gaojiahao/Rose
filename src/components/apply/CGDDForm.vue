@@ -290,6 +290,8 @@ export default {
                 assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
                 tdQty : item.tdQty,     //数量
                 assistQty : item.assistQty || 0,        //辅计数量
+                thenQtyBal : item.thenQtyBal || 0,//余额
+                tdProcessing : item.processing || item.tdProcessing,//加工属性
                 price : item.price, //单价
                 taxRate : item.taxRate || 0.16,              //税率
                 taxAmount : item.price*item.tdQty*0.16,           //税金
