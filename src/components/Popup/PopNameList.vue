@@ -14,27 +14,25 @@
                  @click.stop="selThis(item,index)">
               <div class="mater_main ">
                 <div class="mater_info">
-                  <!--项目名称 -->
-                  <div class="withColor ">
-                    <div class="ForInline name" style="display:inline-block">
-                        <span>{{item.PROJECT_NAME}}</span>
+
+                    <!-- 项目名称 -->
+                    <div class="mater_name">
+                      {{item.PROJECT_NAME}}<span class="symbol"> [项目名称]</span>
                     </div>
-                    <div class="ForInline name" style="display:inline-block">
-                        <span>{{item.PROJECT_MANAGER}}</span>
+                    <div class="mater_detail">
+                      <!-- 项目经理 -->
+                      <div class="mater_manager">
+                        {{item.PROJECT_MANAGER}}<span class="symbol"> [项目经理]</span>
+                      </div>
+                      <!-- 项目备注 -->
+                      <div class='mater_comment' v-if="item.COMMENT">
+                        {{item.COMMENT}}<span class="symbol"> [备注]</span>
+                      </div>
+                      <div class="mater_time">
+                        <div>预期开始日期：{{item.EXPECT_START_DATE}}</div>
+                        <div>预期截止日期：{{item.EXPECT_END_DATE}}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="withColor">
-                    <div class="ForInline " style="display:inline-block">
-                        <span class='dealer'>{{item.COMMENT}}</span>
-                    </div>
-                  </div>
-                  <!-- 时间 -->
-                  <div class="withoutColor">
-                    <span>预期开始日期：{{item.EXPECT_START_DATE}}</span>
-                  </div>
-                   <div class="withoutColor">
-                    <span>预期截止日期：{{item.EXPECT_END_DATE}}</span>
-                  </div>
                 </div>
               </div>
               <!-- icon -->
@@ -241,260 +239,194 @@
 </script>
 
 <style scoped lang="scss">
-  // 弹出层
-  .trade_pop_part {
-    background: #fff;
-    .trade_pop {
-      padding: 0 .08rem;
-      height: calc(100% - .44rem);
-      // 顶部
-      .title {
+.symbol {
+  color: #757575;
+  font-size: .1rem;
+}
+// 弹出层
+.trade_pop_part {
+  background: #fff;
+  .trade_pop {
+    padding: 0 .08rem;
+    height: calc(100% - .44rem);
+    // 顶部
+    .title {
+      position: relative;
+      margin: 0.08rem 0;
+      font-size: .2rem;
+      // 搜索
+      .search_part {
+        width: 100%;
+        display: flex;
+        height: .3rem;
+        line-height: .3rem;
         position: relative;
-        margin: 0.08rem 0;
-        font-size: .2rem;
-        // 搜索
-        .search_part {
-          width: 100%;
-          display: flex;
-          height: .3rem;
-          line-height: .3rem;
-          position: relative;
-          // 搜索输入框
-          .srh_inp {
-            flex: 5;
-            outline: none;
-            border: none;
-            color: #2D2D2D;
-            font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
-            background: #F3F1F2;
-            border-top-left-radius: .3rem;
-            border-bottom-left-radius: .3rem;
-          }
-          // 取消 按钮
-          .pop_cancel {
-            flex: 1;
-            color: #fff;
-            font-size: .14rem;
-            text-align: center;
-            background: #fc3c3c;
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-          }
-          // 搜索icon
-          .serach_icon {
-            top: 50%;
-            left: 10px;
-            fill: #2D2D2D;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
+        // 搜索输入框
+        .srh_inp {
+          flex: 5;
+          outline: none;
+          border: none;
+          color: #2D2D2D;
+          font-size: .16rem;
+          padding: 0 .3rem 0 .4rem;
+          background: #F3F1F2;
+          border-top-left-radius: .3rem;
+          border-bottom-left-radius: .3rem;
         }
-        // 关闭icon
-        .close_icon {
+        // 取消 按钮
+        .pop_cancel {
+          flex: 1;
+          color: #fff;
+          font-size: .14rem;
+          text-align: center;
+          background: #fc3c3c;
+          border-top-right-radius: .3rem;
+          border-bottom-right-radius: .3rem;
+        }
+        // 搜索icon
+        .serach_icon {
           top: 50%;
-          right: -2%;
+          left: 10px;
+          fill: #2D2D2D;
           position: absolute;
           transform: translate(0, -50%);
         }
       }
-      .each_mode {
-        margin-right: .1rem;
-        display: inline-block;
-        padding: .04rem .2rem;
+      // 关闭icon
+      .close_icon {
+        top: 50%;
+        right: -2%;
+        position: absolute;
+        transform: translate(0, -50%);
       }
-      .vux-1px:before {
-        border-radius: 40px;
-      }
-      // 项目计划列表
-      .mater_list {
+    }
+    .each_mode {
+      margin-right: .1rem;
+      display: inline-block;
+      padding: .04rem .2rem;
+    }
+    .vux-1px:before {
+      border-radius: 40px;
+    }
+    // 项目计划列表
+    .mater_list {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      height: 100%;
+      padding: 0 .04rem 0 .3rem;
+      .mater_list_wrapper {
         width: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-        height: 100%;
-        padding: 0 .04rem 0 .3rem;
-        .mater_list_wrapper {
-          width: 100%;
-          padding-top: .04rem;
-          position: relative;
-          // 当没有数据时
-          .when_null {
-            left: 50%;
-            width: 3rem;
-            position: absolute;
-            color: #757575;
-            font-weight: bold;
-            transform: translate(-50%, 0);
-            // 提醒文字
-            .title {
-              font-size: .2rem;
+        padding-top: .04rem;
+        position: relative;
+        // 当没有数据时
+        .when_null {
+          left: 50%;
+          width: 3rem;
+          position: absolute;
+          color: #757575;
+          font-weight: bold;
+          transform: translate(-50%, 0);
+          // 提醒文字
+          .title {
+            font-size: .2rem;
+          }
+          // 新增项目计划
+          .tips {
+            li { list-style : square; margin-top: .1rem;}
+            font-weight: 200;
+            font-size: .14rem;
+            .addNew {
+              color: #fff;
+              background: #5077aa;
+              display: inline-block;
+              padding: 0 .04rem;
+              border-radius: .04rem;
             }
-            // 新增项目计划
-            .tips {
-              li { list-style : square; margin-top: .1rem;}
-              font-weight: 200;
-              font-size: .14rem;
-              .addNew {
-                color: #fff;
-                background: #5077aa;
-                display: inline-block;
-                padding: 0 .04rem;
-                border-radius: .04rem;
-              }
-            }
+          }
 
+        }
+      }
+      // 每个项目计划
+      .each_mater {
+        position: relative;
+        display: flex;
+        padding: 0.08rem;
+        margin-bottom: .2rem;
+        box-sizing: border-box;
+        // 阴影
+        &.box_sd {
+          box-sizing: border-box;
+          box-shadow: 0 0 8px #e8e8e8;
+        }
+        // 项目计划图片
+        .mater_img {
+          display: inline-block;
+          width: .75rem;
+          height: .75rem;
+          img {
+            width: 100%;
+            max-height: 100%;
           }
         }
-        // 每个项目计划
-        .each_mater {
-          position: relative;
-          display: flex;
-          padding: 0.08rem;
-          margin-bottom: .2rem;
+        // 项目计划主体
+        .mater_main {
+          flex: 1;
           box-sizing: border-box;
-          // 阴影
-          &.box_sd {
-            box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
-          }
-          // 项目计划图片
-          .mater_img {
-            display: inline-block;
-            width: .75rem;
-            height: .75rem;
-            img {
-              width: 100%;
-              max-height: 100%;
-            }
-          }
-          // 项目计划主体
-          .mater_main {
-            flex: 1;
-            padding-left: .1rem;
-            box-sizing: border-box;
-            display: inline-block;
-            // 项目计划名称
+          display: inline-block;
+          // 项目计划信息
+          .mater_info {
+            color: #757575;
+            font-size: .16rem;
+            // 项目名称
             .mater_name {
               color: #111;
-              overflow: hidden;
-              font-size: .12rem;
+              font-size: .18rem;
               font-weight: bold;
-              max-height: .46rem;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              text-overflow: ellipsis;
-              -webkit-box-orient: vertical;
-              // 每个项目计划的索引
-              .whiNum {
-                color: #fff;
-                font-weight: 200;
-                padding: 0 .04rem;
-                font-size: .1rem;
-                display: inline-block;
-                background: #ea5455;
-                vertical-align: middle;
-                margin: -.02rem .04rem 0 0;
+              .symbol {
+                font-weight: normal;
               }
+            }       
+            // 项目经理
+            .mater_manager {
+              color: #111;
+              font-size: .16rem;
             }
-            // 项目计划信息
-            .mater_info {
-              color: #757575;
-              font-size: .14rem;
-              // 有颜色包裹的
-              .withColor {
-                margin-top: .04rem;
-                .name{
-                  color:#5077aa;
-                  font-size: .14rem;
-                  font-weight: bold;
-                }
-                .dealer{
-                  color:#111;
-                  font-weight: bold;
-                }
-                // 项目计划编码
-                .mater_code {
-                  display: flex;
-                  .title,
-                  .num {
-                    font-size: .1rem;
-                    display: inline-block;
-                    padding: .01rem .04rem;
-                  }
-                  .title {
-                    color: #fff;
-                    background: #3f72af;
-                  }
-                  .num {
-                    color: #111;
-                    max-width: .85rem;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    background: #dbe2ef;
-                    box-sizing: border-box;
-                    text-overflow: ellipsis;
-                  }
-                }
-                // 规格
-                .mater_spec {
-                  @extend .mater_code;
-                  margin-left: .1rem;
-                  .title {
-                    color: #fff;
-                    background: #537791;
-                  }
-                  .num {
-                    color: #fff;
-                    max-width: .6rem;
-                    background: #ff7f50;
-                  }
-                }
-              }
-              // 没颜色包裹的
-              .withoutColor {
-                // 项目计划分类
-                .mater_classify {
-                  font-size: .1rem;
-                  margin-top: .02rem;
-                  .type,
-                  .father {
-                    margin-right: .04rem;
-                  }
-                }
-                // 项目计划颜色 材质
-                .mater_material {
-                  font-size: .1rem;
-                  .unit,
-                  .color {
-                    margin-right: .06rem;
-                  }
-                }
-              }
+            // 项目备注
+            .mater_comment {
+              font-size: .12rem;
+              color: #111;
             }
-          }
-          // 下划线
-          .vux-1px-b:after {
-            border-bottom: 1px solid #e8e8e8;
-          }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
+            // 项目时间
+            .mater_time {
+              margin-top: .1rem;
+              font-size: .12rem;
+            }
           }
         }
+        // 下划线
+        .vux-1px-b:after {
+          border-bottom: 1px solid #e8e8e8;
+        }
+        // 选择icon
+        .selIcon,
+        .isSelIcon {
+          top: 50%;
+          left: -.3rem;
+          position: absolute;
+          transform: translate(0, -50%);
+        }
+        .isSelIcon {
+          fill: #5077aa;
+        }
       }
-
     }
+
   }
-  .editAds{
-    width: 100%;
-    height: 100%;
-    background: #fff;
-  }
+}
+.editAds{
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
 </style>
