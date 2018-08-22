@@ -320,7 +320,11 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+  .vux-1px-l:before,
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
   .content {
     height: 90%;
     overflow: auto;
