@@ -35,7 +35,7 @@
                     <x-input title="预期销售额" ref="salePrice" @on-click-clear-icon="clearSaleVal"
                              :value="formData.tdAmount" @on-change="filterNum($event,'salePrice')" text-align='right'
                              placeholder='请填写'></x-input>
-                    <popup-radio title="当前所在阶段" :options="options" v-model="formData.currentStage"></popup-radio>
+                    <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage"></popup-radio>
                     <datetime
                       v-model="formData.validUntil"
                       title="有效期至"
@@ -45,6 +45,7 @@
                       <div>
                         <span>{{item.dealerName}}</span>
                       </div>
+                      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
                     </div>
 
                     <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
@@ -77,7 +78,7 @@
 import {
   Cell, Popup, TransferDom,
   Group, XInput, CellBox, Datetime,
-  XTextarea, numberComma, dateFormat, 
+  XTextarea, numberComma, dateFormat,
   PopupRadio, AlertModule
 } from 'vux'
 // 请求 引入
@@ -104,7 +105,6 @@ export default {
         {title: '销售渠道', name: '渠道商', dealerName: '', status: false}// 是否显示销售渠道的popup
       ],
       dealerInfo: {},
-      dealer: {},
       formData: {
         "handlerName": "",
         "handlerUnitName": "",
@@ -129,7 +129,7 @@ export default {
         "categoryLabels": "",
         "biComment": ""
       },
-      options: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)', '签约交款(100%)', '签约失败(0%)'],
+      stageOptions: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)', '签约交款(100%)', '签约失败(0%)'],
       biReferenceId: '',
     }
   },
@@ -272,18 +272,17 @@ export default {
         let matterList = [];
         // 获取合计
         let {order} = formData;
-        let {dataSet = []} = order;
         // 客户信息
         this.dealerInfo = {
           creatorName: formData.dealerDebitContactPersonName || '', // 客户名
-          dealerName: order.dealerName_dealerDebit || '', // 公司名
+          dealerName: formData.dealerName_dealerDebit || '', // 公司名
           dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
-          dealerCode: order.dealerDebit || '', // 客户编码
-          dealerLabelName: order.drDealerLabel || '客户', // 关系标签
-          province: order.province_dealerDebit || '', // 省份
-          city: order.city_dealerDebit || '', // 城市
-          county: order.county_dealerDebit || '', // 地区
-          address: order.address_dealerDebit || '', // 详细地址
+          dealerCode: formData.dealerDebit || '', // 客户编码
+          dealerLabelName: formData.drDealerLabel || '客户', // 关系标签
+          province: formData.province_dealerDebit || '', // 省份
+          city: formData.city_dealerDebit || '', // 城市
+          county: formData.county_dealerDebit || '', // 地区
+          address: formData.address_dealerDebit || '', // 详细地址
         };
         this.formData = {
           ...formData,
@@ -292,7 +291,7 @@ export default {
         };
         this.saleManArr[0].dealerName = formData.salesPerson;
         this.saleManArr[1].dealerName = formData.salesChannels;
-        // this.biReferenceId = formData.biReferenceId;
+        this.biReferenceId = formData.biReferenceId;
       })
     },
   },
