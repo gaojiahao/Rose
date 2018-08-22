@@ -5,7 +5,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd" v-if="orderInfo.dealerDebitContactPersonName">
+      <div class="or_ads mg_auto box_sd">
         <div class="user_info">
           <!-- 联系人 和 电话 -->
           <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
