@@ -238,6 +238,8 @@
     .r_arrow {
       bottom: 0;
       left: 50%;
+      fill: #d8d8d8;
+      stroke: #d8d8d8;
       position: absolute;
       transform: translate(-50%, 0);
     }
@@ -303,6 +305,7 @@
           height: .65rem;
           img {
             width: 100%;
+            border-radius: .1rem;
           }
         }
         // 操作信息
