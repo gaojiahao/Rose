@@ -5,7 +5,7 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class='required'>仓库编码:</label>
-            <input type='text' v-model="warehouse.warehouseCode" class='property_val' :disabled ='transCode!=""'/>
+            <input type='text' v-model="warehouse.warehouseCode" class='property_val' :class='{readonly :transCode!==""}' :readonly ='transCode!==""'/>
           </div>
           <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
             <label class='required'>仓库名称:</label>
@@ -403,8 +403,8 @@ export default {
         line-height: 0.24rem;
         width:100%;
       }
-      .property_val:disabled{
-          background:#fff;
+      .readonly{
+        color: #999;
       }
       .picker {
         display: flex;

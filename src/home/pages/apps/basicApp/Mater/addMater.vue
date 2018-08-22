@@ -5,7 +5,7 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">物料编码:</label>
-            <input type='text' :readonly="codeReadOnly" v-model.trim="inventory.inventoryCode" class='property_val'/>
+            <input type='text' :readonly="codeReadOnly" v-model.trim="inventory.inventoryCode" class='property_val' :class='{readonly : codeReadOnly}'/>
           </div>
           <div class='each_property'>
             <label class="required">物料名称:</label>
@@ -463,6 +463,9 @@
         width: 100%;
         font-size: 0.16rem;
         line-height: 0.24rem;
+      }
+      .readonly{
+        color:#999;
       }
     }
   }

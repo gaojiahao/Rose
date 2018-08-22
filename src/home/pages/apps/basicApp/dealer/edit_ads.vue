@@ -5,7 +5,7 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b '>
             <label class='required'>往来编码:</label>
-            <input type='text' v-model="dealer.dealerCode" class='property_val'/>
+            <input type='text' v-model="dealer.dealerCode" class='property_val' :class='{readonly : transCode!==""}' :readonly ='transCode!==""'/>
           </div>
           <div class='each_property required'>
             <label class='required'>往来名称:</label>
@@ -547,6 +547,10 @@ export default {
         font-size: 0.16rem;
         line-height: 0.24rem;
         width:100%;
+      }
+      //只读
+      .readonly{
+        color:#999;
       }
       .picker {
         display: flex;
