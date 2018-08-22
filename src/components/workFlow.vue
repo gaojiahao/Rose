@@ -18,7 +18,7 @@
            :key=index>
         <!-- 头像 -->
         <div class="user_avatar">
-          <img :src='index % 2 ? defaulImg2: defaulImg' alt="avatar">
+          <img :src='item.photoUrl || defaulImg ' @error="getDefaultIcon(item)" alt="avatar">
         </div>
         <!-- 操作信息 -->
         <div class="handle_info">
@@ -62,7 +62,7 @@
                   <!-- 头像 -->
                   <div class="user_info">
                     <div class="user_avatar">
-                      <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
+                      <img :src='item.photoUrl || defaulImg ' @error="getDefaultIcon(item)" alt="avatar">
                       <div class="name">{{item.userName}}</div>
                     </div>
                   </div>
@@ -144,7 +144,6 @@
     data() {
       return {
         defaulImg: require('assets/ava03.png'),   // 默认图片1
-        defaulImg2: require('assets/ava04.png'),       // 默认图片2
         simpleWL: [],
         popupShow: false,
       }
@@ -199,6 +198,14 @@
         }
         this.simpleWL = this.fullWorkFlow.slice(-2);
       },
+      // 设置默认图片
+      getDefaultIcon(app){
+        let url = this.defaulImg;
+        if(app){
+          app.icon = url;
+        }
+        return url;
+      }    
     },
     created() {
       this.workFlowHandler();
