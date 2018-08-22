@@ -5,8 +5,8 @@
         <!-- 用户头像部分 -->
         <div class="user_part">
           <div class="user_avatar vux-1px-b">
-            <img src="../../assets/ava03.png" alt="avatar">
-            <div class="tips">欢迎,瑞福登</div>
+            <img :src="userInfo.avatar" alt="avatar">
+            <div class="tips">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
           </div>
         </div>
         <!-- 基础应用部分 -->
@@ -36,6 +36,7 @@ export default {
   data(){
     return{
       BUSobj: {},
+      userInfo:{},         // 用户信息
       BSarray : [],        // 基础对象 数组
       BUSarray: [],        // 业务应用 数组
       homeScroll : null,
@@ -52,6 +53,7 @@ export default {
     goList(item){
       this.$router.push({ path:`/list/${item}`})
     },
+    // 设置默认图片
     getDefaultIcon(app){
       let url = require('assets/defaultApp.png');
       if(app){
@@ -63,10 +65,10 @@ export default {
   watch:{
     $route:{
       handler(val){
+        // 返回首页进行滑动刷新
         if(val.name === 'HOME'){
           this.homeScroll.refresh();
         }
-
       }
     }
   },
@@ -129,9 +131,17 @@ export default {
         this.showLoadding = false;
       }).catch( err => {
         this.$vux.alert.show({
-          content: err.message
+          content: '首页加载有误，请尝试刷新'
         })
-      })
+      });
+      // 获取 头像姓名
+      let { name, avatar } = JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN'));
+      // 如果头像不存在则指定默认头像
+      if(!avatar){
+        let url = require('assets/ava03.png')
+        avatar = url;
+      };
+      this.userInfo = { name, avatar };
     })()
   },
   mounted(){
