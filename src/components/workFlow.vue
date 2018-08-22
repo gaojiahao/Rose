@@ -42,55 +42,61 @@
     <!-- 工作流详情 -->
     <div v-transfer-dom>
       <popup v-model="popupShow" position="bottom" height="100%">
-        <div class="flow">
-          <div class='flow_top'>
-            <span class="title">工作流详情</span>
-            <span class="close" @click="closePop" v-if="fullWorkFlow.length >= 5">关闭</span>
-            <!-- <icon type="cancel" @click.native="closePop"></icon> -->
-          </div>
-          <div class="flow_list">
-            <div class="each_msg"
-                :class="isMyTask && index === fullWorkFlow.length - 1 || userName === item.userName ? 'whenisMine' : ''"                v-for="(item, index) in fullWorkFlow"
-                :key=index>
-              <!-- 接收时间 -->
-              <div class="recive_time">
-                <span class="num">{{item.startTime || crtTime}}</span>
-              </div>
-              <div class="info_part">
-                <!-- 头像 -->
-                <div class="user_info">
-                  <div class="user_avatar">
-                    <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
-                    <div class="name">{{item.userName}}</div>
-                  </div>              
+        <r-scroll class="full-flow-container" ref="bScroll">
+          <div class="flow">
+            <div class='flow_top'>
+              <span class="title">工作流详情</span>
+              <span class="close" @click="closePop" v-if="fullWorkFlow.length >= 5">关闭</span>
+              <!-- <icon type="cancel" @click.native="closePop"></icon> -->
+            </div>
+            <div class="flow_list">
+              <div class="each_msg"
+                   :class="isMyTask && index === fullWorkFlow.length - 1 || userName === item.userName ? 'whenisMine' : ''"
+                   v-for="(item, index) in fullWorkFlow"
+                   :key=index>
+                <!-- 接收时间 -->
+                <div class="recive_time">
+                  <span class="num">{{item.startTime || crtTime}}</span>
                 </div>
-                <!-- 操作信息 -->
-                <div class="handle_info">
-                  <div class="triangle"></div>
-                  <div class="content">
-                    <div class="handle_name">
-                      <!-- 操作动作 -->
-                      <span>{{item.nodeName}}</span>
-                      <!-- 操作状态 B(有返回状态) -->
-                      <span class="status"
-                            :class=item.dyClass
-                            v-if='index > 0'>
+                <div class="info_part">
+                  <!-- 头像 -->
+                  <div class="user_info">
+                    <div class="user_avatar">
+                      <img :src='item.userName === userName ? defaulImg: defaulImg2' alt="avatar">
+                      <div class="name">{{item.userName}}</div>
+                    </div>
+                  </div>
+                  <!-- 操作信息 -->
+                  <div class="handle_info">
+                    <div class="triangle"></div>
+                    <div class="content">
+                      <div class="handle_name">
+                        <!-- 操作动作 -->
+                        <span>{{item.nodeName}}</span>
+                        <!-- 操作状态 B(有返回状态) -->
+                        <span class="status"
+                              :class=item.dyClass
+                              v-if='index > 0'>
                       {{item.status === '撤回'? '提交者主动撤回' : item.status || noStatus}}
                     </span>
+                      </div>
+                      <!-- 备注 -->
+                      <div class="remark">备注: {{item.message || '无'}}</div>
+                      <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
                     </div>
-                    <!-- 备注 -->
-                    <div class="remark">备注: {{item.message || '无'}}</div>
-                    <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
                   </div>
+                  <!-- 此处为空白div 解决因为浮动而没有高度的问题 -->
+                  <div class="del_f"></div>
                 </div>
-                <!-- 此处为空白div 解决因为浮动而没有高度的问题 -->
-                <div class="del_f"></div>              
               </div>
             </div>
-          </div>        
-        </div>
-
-        <div class="btn" :class="fullWorkFlow.length < 5? 'when_less': ''">
+          </div>
+          <div class="btn" v-if="fullWorkFlow.length >= 5">
+            <span class="cfm_btn" @click="closePop">关闭工作流</span>
+          </div>
+        </r-scroll>
+        <!-- 少于5条数据时固定在底部 -->
+        <div class="btn when_less" v-if="fullWorkFlow.length < 5">
           <span class="cfm_btn" @click="closePop">关闭工作流</span>
         </div>
       </popup>
@@ -99,6 +105,7 @@
 </template>
 <script>
   import {TransferDom, Popup, Group, Icon, XButton} from 'vux'
+  import RScroll from 'components/RScroll'
 
   export default {
     props: {
@@ -147,6 +154,17 @@
         handler() {
           this.workFlowHandler();
         }
+      },
+      popupShow: {
+        handler(bool) {
+          if (bool) {
+            this.$nextTick(() => {
+              if (this.$refs.bScroll) {
+                this.$refs.bScroll.refresh();
+              }
+            });
+          }
+        }
       }
     },
     directives: {
@@ -156,7 +174,8 @@
       Popup,
       Group,
       Icon,
-      XButton
+      XButton,
+      RScroll,
     },
     methods: {
       closePop() {
@@ -191,16 +210,19 @@
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
   // 居中
   .mg_auto {
     width: 95%;
     margin: 10px auto;
   }
+
   // 阴影
   .box_sd {
     box-sizing: border-box;
     box-shadow: 0 0 8px #e8e8e8;
   }
+
   // 简易版工作流
   .work_flow {
     position: relative;
@@ -316,22 +338,26 @@
           // 备注
           .remark {
             max-width: 2.6rem;
-            overflow:hidden;
-            white-space:nowrap;
+            overflow: hidden;
+            white-space: nowrap;
             font-size: .1rem;
             color: #757575;
-            text-overflow:ellipsis;
+            text-overflow: ellipsis;
           }
         }
       }
     }
   }
+
   // 完整版工作流
   .vux-popup-dialog {
     background: #fff;
     height: 100%;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    .full-flow-container {
+      height: 100%;
+    }
     .flow {
       .flow_top {
         display: flex;
@@ -402,7 +428,7 @@
               color: #111;
               font-size: .12rem;
               margin-left: .2rem;
-              position: relative;   
+              position: relative;
               display: inline-block;
               // 内容区域
               .content {
@@ -472,7 +498,7 @@
               margin-left: inherit;
               margin-right: .64rem;
               //#cde3eb
-              $bgcolor : #d6e4f0;
+              $bgcolor: #d6e4f0;
               .content {
                 background: $bgcolor;
               }
@@ -492,7 +518,7 @@
             }
             .del_f {
               clear: both;
-            }          
+            }
           }
         }
       }
