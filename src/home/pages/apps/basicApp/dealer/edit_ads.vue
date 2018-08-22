@@ -469,7 +469,11 @@ export default {
   },
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+  .vux-1px-l:before,
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
   .vux-x-icon {
     fill: #5077aa;
     vertical-align: middle;
@@ -626,14 +630,15 @@ export default {
       background: #fff;
       height: calc(100% - .44rem);
       overflow: hidden;
-      .dealer_list{
+      .dealer_list {
         width: 100%;
         height: 100%;
-        .dealer_type{
-          padding:0  0.2rem;
+        .dealer_type {
           display: flex;
-          justify-content: space-between;
+          color: #757575;
+          padding: 0  0.2rem;
           line-height: 0.4rem;
+          justify-content: space-between;
         }
       }
     }

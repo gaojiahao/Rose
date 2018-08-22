@@ -127,12 +127,12 @@
                 <div>
                 </div>
               </div>
-            <div class="btn" v-if='flowData.length>=3'>
+            <div class="btn" v-if='flowData.length >= 2'>
               <span class="cfm_btn" @click="flowShow = false">关闭</span>
             </div>
             </div>
           </r-scroll>
-          <div class="btn when_less" v-if='flowData.length < 3'>
+          <div class="btn when_less" v-if='flowData.length < 2'>
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
           </div>
 
