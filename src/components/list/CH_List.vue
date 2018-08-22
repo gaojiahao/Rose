@@ -41,7 +41,7 @@
           <div class='duty_btm vux-1px-t'>
             <!-- 仓库类型 -->
             <div class="ware_type">
-              {{item.warehouseRelType}}<span class="type">[类型]</span>
+              {{item.warehouseRelType || '暂无'}}<span class="type">[仓库类型]</span>
             </div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance !== ''">
@@ -58,7 +58,9 @@
             <div class="flow">
               <div class='flow_top'>
                 <div class="title">流水详情</div>
-                <div class="name">{{flowTitle.warehouseName}}-{{flowTitle.inventoryName}}[{{flowTitle.invProcessing}}]</div>
+                <div class="name">
+                  {{flowTitle.inventoryName}}<span class="symbol">[{{flowTitle.invProcessing}}]</span>
+                </div>
               </div>
               <div class="flow_list">
                 <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
@@ -161,14 +163,7 @@
     components:{
       handleLoad,TabItem
     },
-    mixins: [listCommon],
-    methods: {
-
-
-    },
-    created(){
-
-    }
+    mixins: [listCommon]
   }
 </script>
 
