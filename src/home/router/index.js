@@ -97,7 +97,7 @@ export default [
         path:'warehouseDetail',
         name:'WAREHOUSEDETAIL',
         component:WAREHOUSEDETAIL,
-        meta:{ title:'地址详情' }
+        meta:{ title:'仓库详情' }
       }
     ]
   },
