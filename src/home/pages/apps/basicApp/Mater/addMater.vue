@@ -105,7 +105,8 @@
           nearKeepingDays: 1, // 临保天数
           inventoryStatus: 1, // 物料状态
           inventoryPic: '',
-          comment: '' // 物料说明
+          comment: '', // 物料说明
+          technicsCode :'' //工艺路线
         },
         transCode: '',
         hasDefault: false, // 判断是否为回写
