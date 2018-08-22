@@ -21,34 +21,31 @@
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
+        <!-- 商机明细 -->
+        <div class="materiel_list mg_auto box_sd">
+          <div class="mater_list">
+            <div class="each_mater">
+              <div class="userInp_mode">
+                <div class="title">商机明细</div>
+                <group class="SJ_group" @group-title-margin-top="0">
+                  <!-- 商机标题 -->
+                  <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
+                            placeholder='请填写'></x-input>
+                  <!-- 预期销售额 -->
+                  <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
+                            v-model.number="formData.tdAmount"></x-input>
+                  <!-- 当前阶段 -->
+                  <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage"></popup-radio>
+                  <!-- 有效期 -->
+                  <datetime v-model="formData.validUntil" title="有效期至"></datetime>
+                  <!-- 销售人员popup, 销售渠道popup -->
+                  <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
+                                      v-model="formData.salesPerson"></pop-salesman-list>
+                  <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
+                                      v-model="formData.salesChannels"></pop-salesman-list>
 
-        <div class="basicPart">
-          <!-- 商机明细 -->
-          <div class="materiel_list mg_auto box_sd">
-            <div class="mater_list">
-              <div class="each_mater">
-                <div class="userInp_mode">
-                  <div class="title">商机明细</div>
-                  <group class="SJ_group" @group-title-margin-top="0">
-                    <!-- 商机标题 -->
-                    <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
-                             placeholder='请填写'></x-input>
-                    <!-- 预期销售额 -->
-                    <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
-                             v-model.number="formData.tdAmount"></x-input>
-                    <!-- 当前阶段 -->
-                    <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage"></popup-radio>
-                    <!-- 有效期 -->
-                    <datetime v-model="formData.validUntil" title="有效期至"></datetime>
-                    <!-- 销售人员popup, 销售渠道popup -->
-                    <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
-                                       v-model="formData.salesPerson"></pop-salesman-list>
-                    <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
-                                       v-model="formData.salesChannels"></pop-salesman-list>
-
-                    <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
-                  </group>
-                </div>
+                  <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
+                </group>
               </div>
             </div>
           </div>

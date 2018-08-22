@@ -29,7 +29,7 @@
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEditAds">新增一个地址</div>
+      <div class="cfm_btn" @click="goEditAds">新增一个往来</div>
     </div>
     <router-view></router-view>
   </div>
