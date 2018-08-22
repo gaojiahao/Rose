@@ -293,6 +293,7 @@ export default {
           modifer : formData.modifer,
 
         }
+        this.applyComment = formData.biComment;
         this.matterList = data.formData.order.dataSet;
       })
     }

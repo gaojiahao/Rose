@@ -27,13 +27,13 @@
           </div>
         </div>
       </div>
-      <r-picker title="往来关系标签:" :data="AccountRelType" :pickerStatus="pickerStatus" value="dealer.dealerLabelName"  v-model="dealer.dealerLabelName" :required='true'
-                @on-change="dealerLabel"></r-picker>
-      <r-picker title="往来大类:" :data="AccountBigType" value="dealer.dealerType"   v-model="dealer.dealerType"
-                @on-change="bigChange"></r-picker>
-      <r-picker title="往来子类:" :data="AccountSmlType" value="dealer.dealerSubclass"
-                v-model="dealer.dealerSubclass"></r-picker>
-      <!-- <x-address title="省市区" v-model="AccountAddress" :list="addressData"></x-address> -->
+      <div class='each_property vux-1px-b' @click="DealerPop">
+        <label>往来类型</label>
+        <div class='picker'>
+            <span class='mater_nature'>{{dealer.dealerLabelName}}</span>
+            <span class='iconfont icon-gengduo'></span>
+        </div>
+      </div>
       <div class='each_property vux-1px-b' @click="showAddress = true">
         <label>省市区:</label>
         <div class='picker'>
@@ -63,6 +63,28 @@
         <icon type="warn" class='warn' v-if='EmailWarn'></icon>
       </div>
     </div>
+    <!--往来类型的列表-->
+    <div v-transfer-dom>
+      <popup v-model="pickerStatus" position="bottom" height="50%" class="trade_pop_part"  @on-show="onShow">
+        <div class="trade_pop">
+          <r-scroll class='dealer_list' :options="scrollOptions" ref="bScroll">
+            <div v-for='(item,index) in AccountRelType' :key='index' class='dealer_type vux-1px-b' @click="selectType(item)">
+              <div class='dealer_name'>{{item.name}}</div>
+              <div class='checked' v-show='showSelIcon(item)'>
+                <x-icon type="ios-checkmark-empty" size="30"></x-icon>
+              </div>
+              
+            </div>
+          </r-scroll>
+        </div>
+        <!-- 底部栏 -->
+        <div class="count_mode vux-1px-t">
+          <span class="count_num"> {{dealerType.length ? `已选 ${dealerType.length} 个` : '请选择'}} </span>
+          <span class="count_btn" @click="cfmMater">确定</span>
+        </div>
+      </popup>
+    </div>
+    <!--提交按钮-->
     <div class='vux-1px-t btn '>
       <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
@@ -77,22 +99,22 @@ import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
 import Loading from 'components/Loading'
+import RScroll from 'components/RScroll'
 export default {
   data() {
     return {
-      showLoading: false,
-      hasDefault : false,
+      addressData : ChinaAddressV4Data,
+      showLoading: true,
       btnStatus : false, //按钮不可点击
       transCode  : '',
       picShow: false,
       imgFileObj: {}, // 上传的图片对象
-      biReferenceId : '',
       MatPic: '', // 图片地址
-      AccountRelType : [],
-      AccountBigType : [],
-      AccountSmlType : [],
-      AccountAddress : [],
-      addressData : ChinaAddressV4Data,
+      AccountRelType : [], //往来类型数据
+      AccountAddress : [], //省市区数据
+      pickerStatus:false, //往来类型pop
+      showAddress: false,//地址pop
+      dealerType:[], //选好的往来类型列表
       PhoneWarn : false, //固定电话校验提示
       MobileWarn : false, //手机检验提示
       EmailWarn :false, //邮箱校验提示
@@ -111,9 +133,7 @@ export default {
       dealer: {
         dealerCode: '', // 往来编码
         dealerName: '', // 往来名称
-        dealerLabelName : '',//往来关系标签
-        dealerType: '', // 往来大类
-        dealerSubclass: '', // 往来子类
+        dealerLabelName : '',//往来类型
         province  : '',  //省
         city: '',  //市
         county: '',  //区
@@ -129,8 +149,9 @@ export default {
         dealerPic : '',
       },
       submitSuccess: false, // 是否提交成功
-      pickerStatus:true,
-      showAddress: false,
+      scrollOptions : {
+        click : true
+      },
     }
   },
   directives: {
@@ -144,7 +165,8 @@ export default {
     RPicker,
     XAddress,
     Icon,
-    Loading
+    Loading,
+    RScroll
   },
   methods: {
     preloadFile(file) {
@@ -154,6 +176,7 @@ export default {
       };
       reader.readAsDataURL(file);
     },
+    //上传图片
     uploadFile(e) {
       let file = e.target.files[0];
       upload({file}).then(res => {
@@ -162,44 +185,24 @@ export default {
         this.picShow = true;
         this.preloadFile(file);
         this.dealer.dealerPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
-        // this.biReferenceId = detail.biReferenceId
       }).catch(e => {
         this.$vux.alert.show({
           content: e.message,
         })
       });
     },
-    // TODO 往来关系标签
-    dealerLabel(val) {
-      if (this.hasDefault) {
-        console.log('进入');
-        return
-      }
-      this.getBig().then(data => {
-        let [defaultSelect = {}] = data;
-        this.dealer.dealerType = defaultSelect.name || '';
-      });
-    },
-    // TODO 往来大类切换
-    bigChange(val) {
-      if (this.hasDefault) {
-        return
-      }
-      this.getSml(val).then(data => {
-        let [defaultSelect = {}] = data;
-        this.dealer.dealerSubclass = defaultSelect.name || '';
-      });
-    },
-    //获取往来关系标签
+    //获取往来类型
     getDealer(){
       //获取往来关系标签
       return dealerService.getDictByType().then(data=>{
         let {tableContent} = data;
         tableContent && tableContent.forEach(item => {
-          item.originValue = item.value;
-          item.value = item.name;
+          item.selected = false;
         });
         this.AccountRelType = tableContent;
+        this.$nextTick(() => {
+          this.$refs.bScroll.refresh();
+        })
         return tableContent
       }).catch(e=>{
         this.$vux.alert.show({
@@ -207,44 +210,54 @@ export default {
         })
       })
     },
-    // TODO 获取往来大类
-    getBig() {
-      let [selected = {}] = this.AccountRelType.filter(item => {
-        return item.name === this.dealer.dealerLabelName
-      });
-      return dealerService.getDictByValue(selected.originValue).then(data => {
-        let {tableContent} = data;
-        tableContent && tableContent.forEach(item => {
-          item.originValue = item.value;
-          item.value = item.name;
-        });
-        this.AccountBigType = tableContent;
-        return tableContent
-      }).catch(e => {
-        this.$vux.alert.show({
-          content: e.message,
-        })
+    //显示往来类型pop
+    DealerPop(){
+      this.pickerStatus = true;
+      this.dealerType = [];
+      let arr = this.dealer.dealerLabelName.split(',');
+      arr.forEach(item=>{
+        let obj = {
+          name :item
+        }
+        this.dealerType.push(obj);
       })
     },
-    // TODO 获取往来子类
-    getSml() {
-      let [selected = {}] = this.AccountBigType.filter(item => {
-        return item.name === this.dealer.dealerType
-      });
-      return dealerService.getDictByValue(selected.originValue).then(data => {
-        let {tableContent} = data;
-        tableContent && tableContent.forEach(item => {
-          item.originValue = item.value;
-          item.value = item.name;
-        });
-        let [defaultSelect = {}] = tableContent;
-        this.AccountSmlType = tableContent;
-        return tableContent
-      }).catch(e => {
-        this.$vux.alert.show({
-          content: e.message,
-        })
+    onShow() {
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          // 弹窗展示时刷新滚动，防止无法拖动问题
+          this.$refs.bScroll.refresh();
+        }
       })
+    },
+    // TODO 判断是否展示选中图标
+    showSelIcon(sItem) {
+        return this.dealerType.findIndex(item => item.name === sItem.name) !== -1;
+      },
+    //选择往来类型
+    selectType(sItem){
+      sItem.selected = ! sItem.selected;
+      let arr = this.dealerType;
+      let delIndex = arr.findIndex(item => item.name === sItem.name);
+      // 若存在重复的 则清除
+      if (delIndex !== -1) {
+        arr.splice(delIndex, 1);
+        return;
+      }
+      arr.push(sItem);
+    },
+    //确认选择往来类型
+    cfmMater(){
+      this.pickerStatus = false;
+      this.dealer.dealerLabelName = '';
+      this.dealerType.forEach(item=>{
+        if(this.dealer.dealerLabelName.length){
+          this.dealer.dealerLabelName += ','+item.name;
+          return
+        }
+        this.dealer.dealerLabelName += item.name
+      })
+
     },
     //校验固定电话号
     checkPhone(){
@@ -278,17 +291,13 @@ export default {
       }
       this.EmailWarn = false;
       this.btnStatus = false;
-
-
     },
     //往来信息
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         let {baseinfo = {}, dealer = {}} = formData;
-        this.hasDefault = true;
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.dealer = {...this.dealer, ...dealer,};
-        this.biReferenceId = this.dealer.referenceId;
         if (this.dealer.dealerPic.length>0) {
           this.picShow = true;
           this.MatPic = this.dealer.dealerPic;
@@ -343,13 +352,12 @@ export default {
           };
           if(this.transCode.length>0){
             dealerService.update(submitData).then(data=>{
-              let that = this;
               if(data.success){
-                that.submitSuccess  = true;
+                this.submitSuccess  = true;
                 this.$vux.alert.show({
                   content: data.message,
-                  onHide(){
-                    that.$router.go(-1);
+                  onHide:()=>{
+                    this.$router.go(-1);
                   }
                 })
               }
@@ -367,16 +375,15 @@ export default {
           }
           else{
             dealerService.save(submitData).then(data=>{
-              let that = this;
               if(data.success){
-                that.submitSuccess  = true;
+                this.submitSuccess  = true;
                 this.$vux.alert.show({
                   content:data.message,
-                  onHide(){
-                    if(that.$route.query.add == 1){
+                  onHide:()=>{
+                    if(this.$route.query.add == 1){
                       sessionStorage.setItem('EDIT_ADS_TRANSCODE',JSON.stringify({transCode:data.transCode}));
                     }
-                    that.$router.go(-1);
+                    this.$router.go(-1);
                   }
                 })
               }
@@ -409,7 +416,7 @@ export default {
           }
           else if(this.dealer.dealerLabelName === ''){
             this.$vux.alert.show({
-              content: '【往来关系标签】不能为空',
+              content: '【往来类型】不能为空',
             })
           }
           else{
@@ -426,14 +433,9 @@ export default {
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
-        (async () => {
-        await this.findData();
-        await this.getDealer();
-        await this.getBig();
-        this.getSml();
-        this.hasDefault = false;
-        this.showLoading = false;
-      })();
+      this.findData();
+      this.getDealer();
+      this.showLoading = false;
     }
     else{
         this.getDealer().then(data => {
@@ -468,6 +470,10 @@ export default {
 }
 </script>
 <style lang="scss">
+  .vux-x-icon {
+    fill: #5077aa;
+    vertical-align: middle;
+  }
   .content {
     height: 90%;
     overflow-y: auto;
@@ -586,25 +592,8 @@ export default {
       }
     }
   }
-  //确认框
-  .popup_header {
-    display: flex;
-    justify-content: space-between;
-    height: 44px;
-    line-height: 44px;
-    font-size: 16px;
-    background-color: #fbf9fe;
-    padding: 0 15px;
-    .cancel {
-      color: #828282;
-    }
-    .confirm {
-      color: #FF9900;
 
-    }
-  }
-
-  // 确定
+  // 提交
   .btn {
     left: 0;
     bottom: 0;
@@ -629,6 +618,47 @@ export default {
     .disabled{
       background:#c7c7c7;
       box-shadow: 0 2px 5px #c7c7c7;
+    }
+  }
+  //往来类型弹出层
+  .trade_pop_part {
+    .trade_pop {
+      background: #fff;
+      height: calc(100% - .44rem);
+      overflow: hidden;
+      .dealer_list{
+        width: 100%;
+        height: 100%;
+        .dealer_type{
+          padding:0  0.2rem;
+          display: flex;
+          justify-content: space-between;
+          line-height: 0.4rem;
+        }
+      }
+    }
+    // 底部栏
+    .count_mode {
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      height: .44rem;
+      position: fixed;
+      line-height: .44rem;
+      background: #fff;
+      .count_num {
+        flex: 2.5;
+        color: #5077aa;
+        font-size: .24rem;
+        padding-left: .1rem;
+      }
+      .count_btn {
+        flex: 1.5;
+        color: #fff;
+        text-align: center;
+        background: #5077aa;
+      }
     }
   }
 
