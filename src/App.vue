@@ -11,7 +11,7 @@
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
-        <badge :text='newsNumber' v-if='tab.title === "消息" && newsNumber > 0'></badge>
+        <badge v-if='tab.title === "消息" && newsNumber > 0'></badge>
       </router-link>
     </nav>
   </div>
@@ -120,13 +120,10 @@
         color: #666;
       }
       .vux-badge {
-        top: 2px;
+        top: 8%;
         left: 53%;
-        height: .16rem;
-        font-size: .1rem;
-        padding: 0 .04rem;
         position: absolute;
-        line-height: .16rem;
+
       }
     }
     // 点击样式

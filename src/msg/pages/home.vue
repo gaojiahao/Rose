@@ -32,10 +32,16 @@
   </div>
 </template>
 <script>
+// vux组件引入
 import { Badge } from 'vux'
-import {getMsgList} from 'service/msgService.js'
-import search from 'components/search'
+// 映射表 引入
+import businessMap from './maps/businessApp'
+// 请求 引入
+import { getMsgList } from 'service/msgService'
+// 组件 引入
 import BScroll from 'better-scroll' 
+import search from 'components/search'
+
 export default {
   data(){
     return{
@@ -61,19 +67,23 @@ export default {
     //获取应用消息数据
     getList() {
       getMsgList().then(({ tableContent }) => {     
-        tableContent.forEach(item => {
-          // console.log('item');
-          item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultImg();
-          if (!this.listData[item.processName]) {
-             // 以 <应用名称> 进行分类
-            this.$set(this.listData, item.processName, [item])
-          }
-          else{
-            this.listData[item.processName].push(item);
+        tableContent.forEach(  item => {
+          // app图标处理
+          item.pic = item.icon 
+            ? `/dist/${item.icon}` 
+            : this.getDefaultImg();
+          // 只针对已经移动化的应用做消息的显示
+          if(businessMap[item.processName]){
+            if (!this.listData[item.processName]) {
+              // 以 <应用名称> 进行分类
+              this.$set(this.listData, item.processName, [item])
+            }
+            else{
+              this.listData[item.processName].push(item);
+            }          
           }
         })
         this.$nextTick(()=>{
-          // console.log('数据更新了')
           this.scroll = new BScroll(this.$refs.bScroll, {
             click:true
           })
@@ -82,7 +92,6 @@ export default {
     },
     // 前往应用消息列表
     goMsglist(item){
-      // this.$router.push({ path : `/notice/msglist/${item.processName}`})
        this.$router.push({
           path :`/notice/msglist/${item.taskId}`,
           query : {
@@ -103,19 +112,19 @@ export default {
       leave3 = leave2 - ( minutes * 60 ) ,     //计算分钟数后剩余的毫秒数
       seconds = Math.round(leave3),
       backTime;
-      if(hours>0){
+      if(hours > 0){
         backTime = `${hours}小时前`;
       }
       else{       
         backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;        
       }
-      return hours<24 ? backTime : `${val.crtTime.split(' ')[0]}`;
+      return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
       
     }
   },
   created(){
     this.getList();
-  },
+  }
 }
 </script>
 

@@ -24,7 +24,7 @@
             <!-- 上个节点审批信息 -->
             <div class="handle_info vux-1px-b">
               <div class="handle_avatar">
-                <img src="../../assets/ava03.png" alt="avatar">
+                <img :src="item.lastNode.photoUrl || DefaultImg" alt="avatar">
               </div>
               <div class="info">
                 <div class="handle_part">
@@ -86,18 +86,19 @@ import LoadingForm from 'components/Loading'
 export default {
   data(){
     return{
+      serachVal: '',
+      processName : '',
+      listData: [],
       page: 1,
       limit: 10,
       hasNext: true,
+      showLoadding : true,
+      DefaultImg : require('assets/ava03.png'),
       scrollOptions: {
         click: true,
         pullDownRefresh: true,
         pullUpLoad: true,
-      },
-      serachVal: '',
-      listData: [],
-      showLoadding : true,
-      processName : '',
+      }
     }
   },
   components: {
