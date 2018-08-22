@@ -1,10 +1,11 @@
 /* 详情编码映射表 */
 export default {
-  OPPT: 'SJ', // 商机
+  OPPT: 'SJ',   // 商机
   QUOT: 'XSBJ', // 销售报价
-  SO: 'XSDD', // 销售订单
+  SO: 'XSDD',   // 销售订单
+  SO1: 'XSDD',  // 销售订单
   PAPP: 'CGSQ', // 采购申请
-  PO: 'CGDD', // 采购订单
+  PO: 'CGDD',   // 采购订单
   POPI: 'CGRK', // 采购入库
   WTSK: 'GDRW', // 工单任务
   SODL: 'XSCK', // 销售出库
