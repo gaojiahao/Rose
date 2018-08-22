@@ -5,7 +5,7 @@
         <!-- 费用列表 -->
         <div class="materiel_list mg_auto box_sd" v-for="(item, index) in CostList" :key='index'>
           <group :title='`费用明细${index+1}`'>
-            <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index)"></cell>
+            <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)"></cell>
             <cell title="费用编码" v-model='item.COST_CODE' ></cell>
             <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker>
             <x-input title="金额" text-align='right' placeholder='请填写'
@@ -16,13 +16,12 @@
         </div>
         <!-- 新增更多 按钮 -->
         <div class="add_more">
-          <span @click="addCost">新增</span>
-          <span v-show="CostList.length>1">
-            或 <span  class='delete' @click="deleteCost" >删除</span>
-          </span>
+          您还需要添加新的报销?请点击
+          <span class='add' @click="addCost">新增</span>或
+          <span class='delete' @click="deleteCost"  v-show="CostList.length>1">删除</span>
         </div>
         <!-- 费用popup -->
-        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter"
+        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        ref="matter"></pop-cost-list>
       
       </div>
@@ -68,6 +67,7 @@ export default {
           reson : '', // 报销事由
         }
       ], 
+      selectedCost:[],
       costIndex : 0, 
       transCode: '',
       formData: {
@@ -101,9 +101,10 @@ export default {
     }
   },
   methods: {
-    getCost(index){
+    getCost(index,item){
       this.showCostPop = true;
       this.costIndex = index;
+      this.selectedCost = [item];
     },   
     // TODO 点击增加费用
     addCost() {
@@ -212,6 +213,15 @@ export default {
   .add_more{
     width:100%;
     text-align: center;
+    font-size: 0.12rem;
+    padding: 0.1rem 0;
+    color: #757575;
+    span{
+      margin: 0 5px;
+    }
+    .add{
+      color: #5077aa;
+    }
     .delete{
       color:red;
     }

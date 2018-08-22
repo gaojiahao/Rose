@@ -93,6 +93,12 @@
           this.showPop = val;
         }
       },
+      defaultValue: {
+        handler(val) {
+          // 默认值改变，重新赋值
+          this.setDefaultValue();
+        }
+      },
 
     },
     methods: {
@@ -126,6 +132,11 @@
         this.showPop = false;
         this.selItems = [sItem];
         this.$emit('sel-matter',this.selItems[0]);
+      },
+      // TODO 设置默认值
+      setDefaultValue() {
+        this.tmpItems = [...this.defaultValue];
+        this.selItems = [...this.defaultValue];
       },
       // TODO 获取物料列表
       getCostList() {
@@ -170,6 +181,7 @@
       },
     },
     created() {
+      this.setDefaultValue();
       this.getCostList();
     }
   }
