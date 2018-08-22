@@ -25,8 +25,11 @@ Vue.config.devtools = isDebug_mode
 Vue.config.productionTip = false
 Vue.prototype.$event = new Vue();
 
-
+const NO_SET_TITLE_LIST = ['FILLFORM', 'DETAIL']; // 不设置title
 router.afterEach( route =>{
+  if (NO_SET_TITLE_LIST.includes(route.name)) {
+    return
+  }
   document.title = route.meta.title || '';
 })
 

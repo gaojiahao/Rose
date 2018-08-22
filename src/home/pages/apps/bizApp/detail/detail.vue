@@ -18,7 +18,7 @@
 <script>
   import LoaddingForm from 'components/Loading'
   import SubmitLoad from 'components/submitLoading'
-  import detailMap from './../../../maps/detail'
+  import businessText from './../../../maps/businessText'
   import Bscroll from 'better-scroll'
 
   export default {
@@ -48,6 +48,7 @@
     created() {
       let {code = ''} = this.$route.params;
       try {
+        document.title = `${businessText[code]}详情`;
         this.currentComponent = require(`components/detail/${code}Form.vue`).default;
       } catch (e) {
         this.$vux.alert.show({

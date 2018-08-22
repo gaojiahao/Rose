@@ -16,7 +16,7 @@
 <script>
 import Loadding from 'components/Loading'
 import SubmitLoad from 'components/submitLoading'
-import detailMap from './../../../maps/detail'
+import businessText from './../../../maps/businessText'
 import platfrom from '@/plugins/platform'
 export default {
   data(){
@@ -53,6 +53,7 @@ export default {
       this.transCode = transCode;
     }
     let {code} = this.$route.params;
+    document.title = `新增${businessText[code]}`;
     this.currentComponent = require(`components/apply/${code}Form.vue`).default;
   },
   beforeRouteLeave(to, from, next) {
@@ -70,19 +71,19 @@ export default {
     if(to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
-        onConfirm : ()=>{         
+        onConfirm : ()=>{
           sessionStorage.setItem(keys,JSON.stringify(this.saveData[keys]));
           next();
         },
         onCancel : ()=>{
           sessionStorage.removeItem(keys);
-          next();         
+          next();
         }
       })
       return
     }
     next()
-    
+
   },
 }
 </script>
