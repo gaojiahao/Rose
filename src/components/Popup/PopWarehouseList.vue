@@ -55,7 +55,6 @@
                 </div>
               </div>
               <!-- icon -->
-              <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
               <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
             <!-- 加载中、没有更多的提示 -->
@@ -340,73 +339,11 @@
         position: relative;
         margin: .08rem 0;
         font-size: .2rem;
-        // 搜索
-        .search_part {
-          width: 100%;
-          display: flex;
-          height: .3rem;
-          line-height: .3rem;
-          position: relative;
-          // 搜索输入框
-          .srh_inp {
-            flex: 5;
-            outline: none;
-            border: none;
-            color: #2D2D2D;
-            font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
-            background: #F3F1F2;
-            border-top-left-radius: .3rem;
-            border-bottom-left-radius: .3rem;
-          }
-          // 取消 按钮
-          .pop_cancel {
-            flex: 1;
-            color: #fff;
-            font-size: .14rem;
-            text-align: center;
-            background: #fc3c3c;
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-          }
-          // 搜索icon
-          .serach_icon {
-            top: 50%;
-            left: 10px;
-            fill: #2D2D2D;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          // 清除icon
-          .clear_icon {
-            top: 50%;
-            right: 14%;
-            width: .3rem;
-            height: .3rem;
-            z-index: 100;
-            display: block;
-            font-size: .12rem;
-            line-height: .3rem;
-            text-align: center;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-        }
-        // 关闭icon
-        .close_icon {
-          top: 50%;
-          right: -2%;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
       }
       .each_mode {
         margin-right: .1rem;
         display: inline-block;
         padding: .04rem .2rem;
-      }
-      .vux-1px:before {
-        border-radius: 40px;
       }
       // 列表容器
       .pop-list-container {

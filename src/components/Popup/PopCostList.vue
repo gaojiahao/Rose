@@ -40,7 +40,6 @@
               </div>
             </div>
             <!-- icon -->
-            <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
@@ -94,7 +93,7 @@
           this.showPop = val;
         }
       },
-       
+
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -131,7 +130,7 @@
       // TODO 获取物料列表
       getCostList() {
         let filter = [];
-        
+
         if (this.srhInpTx) {
           filter = [
             ...filter,
