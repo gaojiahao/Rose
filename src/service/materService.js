@@ -98,7 +98,7 @@ export let getObjInventoryByProcessing = (data = {}) => {
 // TODO 获取物料Pop列表(采购订单)
 export let getInventory7501 = (data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/ds/getInventory7501',
+    url: '/H_roleplay-si/ds/getPurchaseOrder',
     data: {
       _dc: Date.now(),
       ...data
@@ -111,7 +111,7 @@ export let getInventory7501 = (data = {}) => {
 // TODO 获取物料Pop列表(采购入库)
 export let getInventory7502 = (data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/ds/getInventory7502',
+    url: '/H_roleplay-si/ds/getPurchaseWarehousing',
     data: {
       _dc: Date.now(),
       ...data

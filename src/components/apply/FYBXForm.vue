@@ -17,7 +17,7 @@
         <!-- 新增更多 按钮 -->
         <div class="add_more">
           您还需要添加新的报销?请点击
-          <span class='add' @click="addCost">新增</span>或
+          <span class='add' @click="addCost">新增</span>
           <span class='delete' @click="deleteCost"  v-show="CostList.length>1">删除</span>
         </div>
         <!-- 费用popup -->
