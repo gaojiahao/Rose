@@ -357,6 +357,9 @@
     -webkit-overflow-scrolling: touch;
     .full-flow-container {
       height: 100%;
+      /deep/ .scroll-wrapper {
+        overflow: visible;
+      }
     }
     .flow {
       .flow_top {
