@@ -2,32 +2,30 @@
   <div class="inPage">
     <template v-if="listData">
       <!-- 搜索框 -->
-      <search @search='searchList'></search>
+      <!-- <search @search='searchList'></search> -->
       <div class='wrapper' ref="bScroll">
-        <div class='content'>
-          <div class="msg_list" >
-            <div class="each_msg"
-                @click="goMsglist(value[0])" 
-                v-for='(value,i) in listData' 
-                :key='i'>
-              <div class="msg_info">
-                <!-- 图片 和 应用名称 -->
-                <div class="app_info">
-                  <span class="app_img">
-                    <img :src='value[0].pic' alt="appImg" @error='getDefaultImg(value[0])'>
-                  </span>
-                  <span class="app_name">{{i}}</span>
-                </div>
-                <!-- 时间 -->
-                <div class="msg_time">{{value[0] | handleCrt }}</div>
-                <badge :text="value.length"></badge>
+        <div class="msg_list" >
+          <div class="each_msg"
+              @click="goMsglist(value[0])" 
+              v-for='(value,i) in listData' 
+              :key='i'>
+            <div class="msg_info">
+              <!-- 图片 和 应用名称 -->
+              <div class="app_info">
+                <span class="app_img">
+                  <img :src='value[0].pic' alt="appImg" @error='getDefaultImg(value[0])'>
+                </span>
+                <span class="app_name">{{i}}</span>
               </div>
-              <div class="recv_msg">
-                您收到{{value.length>1 ? '多' : '一'}}条新的消息
-              </div>
+              <!-- 时间 -->
+              <div class="msg_time">{{value[0] | handleCrt }}</div>
+              <badge :text="value.length"></badge>
+            </div>
+            <div class="recv_msg">
+              您收到{{value.length>1 ? '多' : '一'}}条新的消息
             </div>
           </div>
-        </div>     
+        </div>   
       </div>
     </template>
     <router-view></router-view>
@@ -130,10 +128,10 @@ export default {
 }
 .wrapper{
   width:100%;
-  height: calc(100% - .5rem - .49rem);
+  height: calc(100% - .49rem);
   overflow: hidden;
-  .content{
-    padding-top:10px;
+  .msg_list {
+    padding: .04rem 0 .02rem;
   }
 }
 .each_msg{

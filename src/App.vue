@@ -11,7 +11,7 @@
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
-        <badge :text='newsNumber' v-if='tab.title === "消息"'></badge>
+        <badge :text='newsNumber' v-if='tab.title === "消息" && newsNumber > 0'></badge>
       </router-link>
     </nav>
   </div>
@@ -36,14 +36,13 @@
       Badge
     },
     created(){
-      getMsgList().then(data=>{
-        if(data.dataCount>99){
+      getMsgList().then( data => {
+        if(data.dataCount > 99){
           this.newsNumber = '99+';
           return
         }
         this.newsNumber = data.dataCount;
       })
-
     }
   }
 </script>
@@ -120,10 +119,14 @@
         font-style: normal;
         color: #666;
       }
-      .vux-badge{
+      .vux-badge {
+        top: 2px;
+        left: 53%;
+        height: .16rem;
+        font-size: .1rem;
+        padding: 0 .04rem;
         position: absolute;
-        left:56%;
-        top:2px;
+        line-height: .16rem;
       }
     }
     // 点击样式
