@@ -11,11 +11,17 @@
           </div>
           <div v-else>
             <div class="user_info">
-              <span class="user_name">{{dealerInfo.PROJECT_NAME}}</span>
-              <span class="user_tel">{{dealerInfo.PROJECT_MANAGER}}</span>
+              <div class="user_name">
+                {{dealerInfo.PROJECT_NAME}}<span class="symbol"> [项目名称]</span>
+              </div>
             </div>
             <div class="cp_info">
-              <p class="cp_name">{{dealerInfo.COMMENT}}</p>
+              <div class="cp_manager">
+                {{dealerInfo.PROJECT_MANAGER}}<span class="symbol"> [项目经理]</span>
+              </div>              
+              <p class="cp_name" v-if="dealerInfo.COMMENT">
+                {{dealerInfo.COMMENT}}<span class="symbol"> [备注]</span>
+              </p>
               <p class="cp_ads">预期开始日期：{{dealerInfo.EXPECT_START_DATE}}</p>
               <p class="cp_ads">预期截止日期：{{dealerInfo.EXPECT_END_DATE}}</p>
             </div>
@@ -24,51 +30,36 @@
         </div>
                   
         <div class="xmlx_list">
-            <!-- 任务计划列表 -->
-            <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
-                <div class="mater_list">
-                    <div class="each_mater JH_mar_btm0">
-                    <div class="each_mater_wrapper">
-                        <div class="mater_main" style='max-width:100%;'>
-                        <div class="userInp_mode">
-                            <div class="title">任务计划</div>
-                            <group class="SJ_group" @group-title-margin-top="0">
-                                <x-input  title="任务名称" v-model="item.taskName" text-align='right'  placeholder='请填写'></x-input>
-                                <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]" @on-change=" typeTask($event,item) "></popup-picker>
-                                <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea> 
-                                <datetime title="截止日期" v-model='item.deadline'></datetime>
-                                <x-input  title="计划工时" v-model="item.planTime" text-align='right'  placeholder='请填写' :ref="'planTime'+index" @input="filterNum($event,'planTime',index)"></x-input>
-                            </group>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
+          <!-- 任务计划列表 -->
+          <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
+              <div class="mater_list">
+                  <div class="each_mater JH_mar_btm0">
+                  <div class="each_mater_wrapper">
+                      <div class="mater_main" style='max-width:100%;'>
+                      <div class="userInp_mode">
+                          <div class="title">任务计划</div>
+                          <group class="SJ_group" @group-title-margin-top="0">
+                              <x-input  title="任务名称" v-model="item.taskName" text-align='right'  placeholder='请填写'></x-input>
+                              <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]" @on-change=" typeTask($event,item) "></popup-picker>
+                              <datetime title="截止日期" v-model='item.deadline'></datetime>
+                              <x-input  title="计划工时" v-model="item.planTime" text-align='right'  placeholder='请填写' :ref="'planTime'+index" @input="filterNum($event,'planTime',index)"></x-input>
+                              <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea> 
+                          </group>
+                      </div>
+                      </div>
+                  </div>
+                  </div>
+              </div>
+          </div>
         </div>
-
         <!-- 新增 -->
         <div class="XMJH_add">
-          <div>您还需要添加新的计划?请点击<span @click="addPlan">添加</span><span @click="delatePlan" v-if="projectPlan.length>1">删除</span></div>
+          <div>您还需要添加新的计划? 请点击
+            <span @click="addPlan">添加</span>
+            <em v-if="projectPlan.length>1">或</em>
+            <span @click="delatePlan" v-if="projectPlan.length>1"> 删除</span>
+          </div>
         </div>
-
-        <!-- 备注 -->
-        <div class="materiel_list mg_auto box_sd">
-            <div class="mater_list">
-                <div class="each_mater">
-                <div>
-                    <div class="mater_main">
-                    <div class="userInp_mode">
-                        <group class="SJ_group" @group-title-margin-top="0">
-                            <x-textarea title="备注" v-model="FormDataComment"  :max="200"></x-textarea> 
-                        </group>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
-            
         <!-- 项目计划popup -->
           <pop-name-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
@@ -286,9 +277,23 @@ export default {
   .materiel_list .mater_list .each_mater_wrapper .mater_main{
     margin-left: 0;
   }
-  .cp_info{
+  .or_ads .user_info {
+    font-size: .18rem;
+  }
+  .or_ads .cp_info{
     p{
       margin-right: 30px;
+    }
+    .cp_manager {
+      color: #111;
+      font-size: .18rem;
+    }
+    .cp_name {
+      font-size: .14rem;
+      font-weight: normal;
+    }
+    .cp_ads {
+      font-size: .14rem;
     }
   }
   .vux-cell-box:not(:first-child):before{
@@ -300,12 +305,14 @@ export default {
     padding: 0.1rem 0;
     color: #757575;
     span{
-      margin-left: 5px;
+      color: #fff;
+      padding: .01rem .04rem;
+      border-radius: .12rem;
       &:nth-child(1){
-        color: #5077aa;
+        background: #5077aa;
       }
-      &:nth-child(2){
-        color: #fc3c3c;
+      &:nth-child(3){
+        background: #fc3c3c;
       }
     }
   }
