@@ -45,19 +45,19 @@ export default [
     path:'/adress',
     name:'ADRESS',
     component:ADRESS,
-    meta:{ title:'选择地址' },
+    meta:{ title:'往来列表' },
     children:[
       {
         path:'edit_ads',
         name:'EDIT_ADS',
         component:EDIT_ADS,
-        meta:{ title:'编辑地址' }
+        meta:{ title:'编辑往来' }
       },
       {
         path:'adressDetail',
         name:'ADRESSDETAL',
         component:ADRESSDETAL,
-        meta:{ title:'地址详情' }
+        meta:{ title:'往来详情' }
       }
     ]
   },
@@ -85,7 +85,7 @@ export default [
     path: '/warehouse',
     name: 'WAREHOUSE',
     component: WAREHOUSE,
-    meta: {title:'仓库'},
+    meta: {title:'仓库列表'},
     children:[
       {
         path:'edit_warehouse',
