@@ -1,7 +1,7 @@
 <template>
   <div class="inPage">
     <div class="content" ref='home'>
-      <div>
+      <div class="wrapper">
         <!-- 用户头像部分 -->
         <div class="user_part">
           <div class="user_avatar vux-1px-b">
@@ -13,7 +13,6 @@
         <basic-app :BSarray='BSarray' :goBasic='goBasic'></basic-app>
         <!-- 业务应用部分 -->
         <bus-app :BUSarray='BUSarray' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
-
       </div>   
     </div>
     <loadding :show='showLoadding'></loadding>
@@ -164,6 +163,9 @@ export default {
   width: 100%;
   height: calc(100% - .49rem);
   overflow: hidden;
+  .wrapper {
+    padding-bottom: .1rem;
+  }
 }
 .mg_auto {
   width: 95%;
