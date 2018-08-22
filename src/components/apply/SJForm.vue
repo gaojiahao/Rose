@@ -45,7 +45,6 @@
                       <div>
                         <span>{{item.dealerName}}</span>
                       </div>
-                      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
                     </div>
 
                     <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
