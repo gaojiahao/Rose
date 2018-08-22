@@ -64,6 +64,7 @@ export default {
     getList() {
       getMsgList().then(({ tableContent }) => {     
         tableContent.forEach(item => {
+          // console.log('item');
           item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultImg();
           if (!this.listData[item.processName]) {
              // 以 <应用名称> 进行分类
@@ -72,6 +73,12 @@ export default {
           else{
             this.listData[item.processName].push(item);
           }
+        })
+        this.$nextTick(()=>{
+          // console.log('数据更新了')
+          this.scroll = new BScroll(this.$refs.bScroll, {
+            click:true
+          })
         })
       })
     },
@@ -111,13 +118,6 @@ export default {
   created(){
     this.getList();
   },
-  mounted(){
-    this.$nextTick(()=>{
-      this.scroll = new BScroll(this.$refs.bScroll, {
-        click:true
-      })
-    })
-  }
 }
 </script>
 
