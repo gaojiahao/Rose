@@ -11,6 +11,7 @@
       <router-link class="tab" v-for="(tab, index) in tablist" :to="tab.path" :key='index'>
         <span class="tabicon iconfont" :class="tab.icon"></span>
         <span class="title">{{tab.title}}</span>
+        <badge :text='newsNumber' v-if='tab.title === "消息"'></badge>
       </router-link>
     </nav>
   </div>
@@ -18,6 +19,8 @@
 
 <script>
   require('../static/css/iconfont/iconfont.css')
+  import {getMsgList} from 'service/msgService.js'
+  import { Badge } from 'vux'
   export default {
     name: 'app',
     data(){
@@ -25,8 +28,22 @@
         tablist: [
 					{title: '首页', path: '/home', icon: 'icon-shouye1'},
 					{title: '消息', path: '/notice', icon: 'icon-xiaoxi'},
-        ]
+        ],
+        newsNumber:0,
       }
+    },
+    components:{
+      Badge
+    },
+    created(){
+      getMsgList().then(data=>{
+        if(data.dataCount>99){
+          this.newsNumber = '99+';
+          return
+        }
+        this.newsNumber = data.dataCount;
+      })
+
     }
   }
 </script>
@@ -82,6 +99,7 @@
     position: absolute!important;
     .tab {
       flex: 1;
+      position: relative;
       // icon图标
       .tabicon{
         width: 100%;
@@ -101,6 +119,11 @@
         font-size: .12rem;
         font-style: normal;
         color: #666;
+      }
+      .vux-badge{
+        position: absolute;
+        left:56%;
+        top:2px;
       }
     }
     // 点击样式
