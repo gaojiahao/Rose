@@ -45,10 +45,14 @@
         this.detailScroll.refresh();
       }
     },
+    beforeRouteEnter(to, from, next) {
+      let code = businessText[to.params.code];
+      to.meta.title = `${code.slice(-4)}详情`;
+      next();
+    },
     created() {
       let {code = ''} = this.$route.params;
       try {
-        document.title = `${businessText[code]}详情`;
         this.currentComponent = require(`components/detail/${code}Form.vue`).default;
       } catch (e) {
         this.$vux.alert.show({

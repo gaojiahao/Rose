@@ -47,6 +47,11 @@ export default {
       this.saveData = val;
     }
   },
+  beforeRouteEnter (to, from, next) {
+    let code  = businessText[to.params.code];
+    to.meta.title = `新增${code.slice(-4)}`;
+    next();
+  },
   created(){
     let {transCode} = this.$route.query;
     if(transCode){
