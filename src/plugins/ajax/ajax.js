@@ -41,7 +41,7 @@ let Rxports = {
         if (opts.type && opts.type.toUpperCase() === 'POST') {
           params.data = qs.stringify(opts.data) || {}
         } else {
-          params.params = opts.data || {}
+          params.params = qs.stringify(opts.data) || {}
         }
         axios(params).then(function (res) {
           let data = res.data;
