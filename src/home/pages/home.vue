@@ -91,11 +91,11 @@ export default {
                       item.bgColor = '#D85656';
                       item.boxShadow = '#D85656';
                       break;
-                    case '物料':
+                    case '产品与物料':
                       item.bgColor = '#F29C35';
                       item.boxShadow = '#F29C35';
                       break;
-                    case '往来':
+                    case '所有往来账户':
                       item.bgColor = '#338183';
                       item.boxShadow = '#338183';
                       break;

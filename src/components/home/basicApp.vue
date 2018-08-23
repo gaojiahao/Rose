@@ -6,7 +6,7 @@
             v-for='(item, index) of BSarray'
             :key='index'
             :style="{ 
-              background:`${item.bgColor} url(${item.icon}) no-repeat .7rem .1rem / 50%` ,
+              background:`${item.bgColor} url(${item.icon}) no-repeat .7rem .05rem / 50%` ,
               boxShadow: `0 2px 2px ${item.boxShadow}`
             }">
           <div class="app_type">{{item.transName}}</div>
@@ -41,7 +41,7 @@ export default {
   border-bottom-right-radius: 8rem .5rem;
   .basic_list {
     display: flex;
-    padding: .1rem .04rem .24rem;
+    padding: .1rem .04rem .18rem;
     // 单个APP
     .indval_app {
       flex: 1;
@@ -57,7 +57,7 @@ export default {
       }
       // 应用名称
       .app_name {
-        font-size: .18rem;
+        font-size: .12rem;
       }
       .app_intro {
         overflow: hidden;

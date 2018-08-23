@@ -1,6 +1,6 @@
 /* 基础应用 映射表*/
 export default {
-  物料 : '/materlist',
+  产品与物料 : '/materlist',
   仓库 : '/warehouse',
-  往来 : '/adress'
+  所有往来账户 : '/adress'
 } 
