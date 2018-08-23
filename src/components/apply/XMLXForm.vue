@@ -18,14 +18,12 @@
                       <group class="SJ_group" @group-title-margin-top="0">
                         <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right'
                                  placeholder='请填写'></x-input>
-                        <x-input title="预算收入" v-model="ProjectApproval.budgetIncome" text-align='right'
-                                 placeholder='请填写' ref="budgetIncome"
-                                 @input="filterNum($event,'budgetIncome')"></x-input>
-                        <x-input title="预算成本" v-model="ProjectApproval.budgetCapital" text-align='right'
-                                 placeholder='请填写' ref="budgetCapital"
-                                 @input="filterNum($event,'budgetCapital')"></x-input>
-                        <x-input title="预算费用" v-model="ProjectApproval.budgetCost" text-align='right' placeholder='请填写'
-                                 ref="budgetCost" @input="filterNum($event,'budgetCost')"></x-input>
+                        <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
+                                 text-align='right' placeholder='请填写'></x-input>
+                        <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
+                                 text-align='right' placeholder='请填写'></x-input>
+                        <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
+                                 text-align='right' placeholder='请填写'></x-input>
                         <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'></datetime>
                         <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'></datetime>
                         <cell title="预算利润" :value="profit"></cell>
@@ -53,7 +51,7 @@
   import {
     Icon, Cell, Group, XInput,
     XTextarea, Swipeout, SwipeoutItem, SwipeoutButton,
-    Datetime, TransferDom, Picker, Popup, PopupRadio
+    Datetime, TransferDom, Picker, Popup, PopupRadio, dateFormat
   } from 'vux'
   // 请求 引入
   import {saveProjectApproval} from 'service/projectService'
@@ -86,8 +84,8 @@
           "projectType": "",//项目类型
           "projectManager": "",//项目经理
           "phoneNumber": "",//手机号
-          "expectStartDate": this.getNowFormatDate(),//预期开始日期
-          "expectEndDate": this.getNowFormatDate(),//预期截至日期
+          "expectStartDate": dateFormat(new Date, 'YYYY-MM-DD'),//预期开始日期
+          "expectEndDate": dateFormat(new Date, 'YYYY-MM-DD'),//预期截至日期
           "budgetIncome": "",//预算收入
           "budgetCapital": "",//预算成本
           "budgetCost": "",//预算费用
@@ -107,52 +105,25 @@
         },
       }
     },
+    computed: {
+      //利润
+      profit() {
+        let {budgetIncome = 0, budgetCapital = 0, budgetCost = 0} = this.ProjectApproval;
+        let budgetProfit = Number(budgetIncome) - Number(budgetCapital) - Number(budgetCost);
+        this.ProjectApproval.budgetProfit = budgetProfit;
+        return budgetProfit;
+      },
+      //利润率
+      profitMargin() {
+        let {budgetIncome = 0, budgetProfit = 1} = this.ProjectApproval;
+        let budgetProfitMargin = Math.floor(Number(budgetProfit) / (Number(budgetIncome) || 1) * 10000) / 10000;
+        this.ProjectApproval.budgetProfitMargin = budgetProfitMargin;
+        return `${budgetProfitMargin * 10000 / 100}%`;
+      }
+    },
     methods: {
-      //picker显示
-      XMLXshowStatus() {
-        this.XMLXshow = !this.XMLXshow;
-      },
-      //picker确认
-      XMLXconfirm(e) {
-        for (let i = 0; i < this.managerList.length; i++) {
-          if (this.managerList[i].value == e[0]) {
-            this.managerName = this.managerList[i].name;
-            this.ProjectApproval.projectManager = this.managerList[i].name;
-            this.ProjectApproval.phoneNumber = this.managerList[i].value;
-          }
-        }
-        this.managerValue = e[0];
-        this.XMLXshow = false;
-      },
-      //picker取消
-      XMLXcancel() {
-        this.XMLXshow = false;
-      },
-      //限制只能输入数字
-      filterNum(e, ref) {
-        let num = e.replace(/[^\d]/g, '');
-        this.$refs[ref].currentValue = num;
-        this.ProjectApproval[ref] = num;
-      },
-      //获取今天时间
-      getNowFormatDate() {
-        let date = new Date();
-        let seperator1 = "-";
-        let month = date.getMonth() + 1;
-        let strDate = date.getDate();
-        if (month >= 1 && month <= 9) {
-          month = "0" + month;
-        }
-        if (strDate >= 0 && strDate <= 9) {
-          strDate = "0" + strDate;
-        }
-        let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-          + " ";
-        return currentdate;
-      },
       // TODO 提交
       save() {
-        let msgTask = '';
         let objArr = [
           {tip: 'projectManager', msg: '项目经理'},
           {tip: 'projectType', msg: '项目类型'},
@@ -164,15 +135,24 @@
           {tip: 'expectEndDate', msg: '预期截至日期'},
           {tip: 'comment', msg: '项目说明'},
         ];
-        for (let i = 0; i < objArr.length; i++) {
-          if (this.ProjectApproval[objArr[i].tip] == '') {
-            let msgTitle = objArr[i].tip == 'projectManager' || objArr[i].tip == 'projectType' || objArr[i].tip == 'expectStartDate' || objArr[i].tip == 'expectEndDate' ? '请选择' : '请填写';
-            msgTask = msgTitle + objArr[i].msg
-            this.$vux.alert.show({
-              content: msgTask
-            })
-            return;
+        let selArr = ['projectManager', 'projectType'];
+        let warn = '';
+        objArr.every(item => {
+          if (!this.ProjectApproval[item.tip]) {
+            if (selArr.includes(item.tip)) {
+              warn = `请选择${item.msg}`;
+            } else {
+              warn = `请填写${item.msg}`;
+            }
+            return false
           }
+          return true
+        })
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          })
+          return
         }
         this.$vux.confirm.show({
           content: '确认提交?',
@@ -212,31 +192,6 @@
       }
     },
     created() {
-    },
-    computed: {
-      //利润
-      profit() {
-        let ProjectApproval = this.ProjectApproval;
-        let budgetIncome = ProjectApproval.budgetIncome == '' ? 0 : ProjectApproval.budgetIncome;
-        let budgetCapital = ProjectApproval.budgetCapital == '' ? 0 : ProjectApproval.budgetCapital;
-        let budgetCost = ProjectApproval.budgetCost == '' ? 0 : ProjectApproval.budgetCost;
-        ProjectApproval.budgetProfit = budgetIncome - budgetCapital - budgetCost;
-        return budgetIncome - budgetCapital - budgetCost;
-      },
-      //利润率
-      profitMargin() {
-        let ProjectApproval = this.ProjectApproval;
-        let budgetIncome = ProjectApproval.budgetIncome == '' ? 0 : ProjectApproval.budgetIncome;
-        let budgetCapital = ProjectApproval.budgetCapital == '' ? 0 : ProjectApproval.budgetCapital;
-        let budgetCost = ProjectApproval.budgetCost == '' ? 0 : ProjectApproval.budgetCost;
-        let subCost = budgetIncome - budgetCost;
-        let profitMarginVal = 0;
-        if (budgetCapital != 0 && budgetIncome != 0) {
-          profitMarginVal = (budgetCapital / subCost).toFixed(2)
-        }
-        ProjectApproval.budgetProfitMargin = profitMarginVal;
-        return profitMarginVal;
-      }
     },
   }
 </script>
