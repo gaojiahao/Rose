@@ -75,7 +75,6 @@ export default {
     },
     //显示流水详情
     async getFlow(item){
-      console.log(item);
       //工作流锁定余额标不查询流水
       if(item.qtyLocked>=0){
         return;

@@ -82,7 +82,9 @@
                       <div class="count">
                         <div class="num_part">
                           <span class="symbol">借方金额: </span>
-                          <span class="number_incre" v-if="Fitem.drAmnt > 0">{{Fitem.drAmnt}}</span>
+                          <span class="number_incre" v-if="Fitem.drAmnt > 0">
+                            <span class="symbol">￥</span>{{Fitem.drAmnt}}
+                          </span>
                           <!-- <span class="number_redu" v-else-if="Fitem.drAmnt < 0">- {{Fitem.drAmnt.toFixed(2)}}</span> -->
                           <span v-else>0</span>
                         </div>
@@ -91,8 +93,9 @@
                       <div class="amount_money">
                         <div class="num_part">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_incre" v-if="Fitem.crAmnt > 0">{{Fitem.crAmnt}}</span>
-                          <!-- <span class="number_redu" v-else-if="Fitem.crAmnt < 0">- {{Fitem.crAmnt.toFixed(2)}}</span> -->
+                          <span class="number_incre" v-if="Fitem.crAmnt > 0">
+                            <span class="symbol">￥</span>{{Fitem.crAmnt}}
+                          </span>
                           <span v-else>0</span>
                         </div>
                       </div>
@@ -101,8 +104,10 @@
                   <div class="summary_part vux-1px-t">
                     <div class="number"></div>
                     <div class="price">
-                      <span class="symbol">当前余额: ￥</span>
-                      <span :class="{increase: Fitem.amntBalance > 0,reduce: Fitem.amntBalance < 0}">{{Fitem.amountBalance}}</span>
+                      <span class="symbol">当前余额:</span>
+                      <span :class="{increase: Fitem.amountBalance > 0, reduce: Fitem.amountBalance < 0}">
+                        <span class="symbol"> ￥</span>{{Fitem.amountBalance}}
+                      </span>
                     </div>
                   </div>
                 </div>

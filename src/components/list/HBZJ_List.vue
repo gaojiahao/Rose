@@ -80,11 +80,11 @@
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.drAmnt>0">
                           <span class="symbol" >借方金额: </span> 
-                          <span class="number_incre">+ {{Fitem.drAmnt.toFixed(2)}}</span>
+                          <span class="number_incre">+ {{Fitem.drAmnt}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.drAmnt<0">
                           <span class="symbol">借方金额: </span> 
-                          <span class="number_redu">- {{Fitem.drAmnt.toFixed(2)}}</span>
+                          <span class="number_redu">- {{Fitem.drAmnt}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">借方金额: </span> 
@@ -95,11 +95,11 @@
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.crAmnt>0">
                           <span class="symbol">贷方金额: </span> 
-                          <span class="number_incre">+ {{Fitem.crAmnt.toFixed(2)}}</span>
+                          <span class="number_incre">+ {{Fitem.crAmnt}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.crAmnt<0">
                           <span class="symbol">贷方金额: </span> 
-                          <span class="number_redu">- {{Fitem.crAmnt.toFixed(2)}}</span>
+                          <span class="number_redu">- {{Fitem.crAmnt}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">贷方金额: </span> 
