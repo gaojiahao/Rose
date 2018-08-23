@@ -175,7 +175,7 @@ export default {
         }
       });
     },
-    //获取区域
+    // 获取区域
     getArea() {
       optionService.getRegion().then(data => {
         for (let i = 0; i < data.length; i++) {
@@ -186,7 +186,7 @@ export default {
         }
       });
     },
-    //获取银行
+    // 获取银行
     getBank() {
       optionService.getBank().then(data => {
         for (let i = 0; i < data.length; i++) {
@@ -194,6 +194,24 @@ export default {
         }
         this.bankList = data;
       });
+    },
+    // 回显表单内容
+    echoStorage(basicSrg = {} , formSrc = {}){
+      let { member, governor, captain } = basicSrg;
+      let { Aclass, Bclass, comments, saleReportArr } = formSrc;
+      if(basicSrg){
+        this.member = member;
+        this.governor = governor;
+        this.helpCaptain = captain;
+        this.areaValue = [basicSrg.areaValue] || [];
+        this.bankValue = [basicSrg.bank] || [];  
+      }
+      if(formSrc){
+        this.Aclass = Aclass;
+        this.Bclass = Bclass;
+        this.arr = saleReportArr;
+        this.comments = comments;      
+      }
     }
   },
   mounted() {
@@ -201,5 +219,5 @@ export default {
     this.listData();
     //提交时间是否超过20点
     this.isTwoZero();
-  },
+  }
 }

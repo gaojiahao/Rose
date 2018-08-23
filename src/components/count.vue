@@ -106,8 +106,8 @@ export default {
                   content: data.message,
                   onHide() {
                     that.$router.replace("/Home");
-                    localStorage.removeItem("help_saleReport");
                     localStorage.removeItem("saleReportInfo");
+                    localStorage.removeItem("HELP_FORM_INFO");
                     localStorage.removeItem("SALE_FORM_INFO");
                   }
                 });

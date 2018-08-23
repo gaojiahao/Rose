@@ -7,7 +7,7 @@ let saleReportService={
             url:'/ds/extr/fb14652e-6706-40f9-af82-35ffcfd205a0?page=1&start=0&limit=25',
             // url: '/ds/extr/fb14652e-6706-40f9-af82-35ffcfd205a0',
             data:{
-                sort:JSON.stringify([{"property":"trans_detail_uncalc.bankCharge","direction":"ASC"}])
+                sort:'%5B%7B%22property%22:%22trans_detail_uncalc.bankCharge%22,%22direction%22:%22ASC%22%7D%5D'
             }
         });
     },
