@@ -98,7 +98,8 @@ export default {
         click: true,
         pullDownRefresh: true,
         pullUpLoad: true,
-      }
+      },
+      isRefresh :false,//页面是否重新请求了
     }
   },
   components: {
@@ -177,20 +178,11 @@ export default {
               this.resetScroll();
             })
           }
+          this.showLoadding = false;
         }).catch(e => {
           this.resetScroll();
         })
       },
-      // //获取工作流
-      // async getWorkFlow(transCode){
-      //   await getWorkFlow({transCode}).then(({agenda})=>{
-      //     let lastNode;
-      //     lastNode = agenda[agenda.length-2];
-      //     console.log(lastNode);
-      //     return  lastNode
-
-      //   })
-      // },
       // TODO 获取默认图片
       getDefaultImg(item) {
         let url = require('assets/avatar.png');
@@ -251,7 +243,7 @@ export default {
       handler(to, from) {
         // 判断是否重新请求页面
         if (to.meta.reload && to.path.indexOf('/notice/msglist') !== -1) {
-          console.log("进入")
+          this.isRefresh = true;
           to.meta.reload = false;
           this.reloadData();
         }
@@ -259,16 +251,17 @@ export default {
     }
   },
   created(){
-    // this.processName = this.$route.params.name;
     this.processName = this.$route.query.name;
     this.getList();
-    setTimeout(()=>{
-      this.showLoadding = false;
-
-    },1000)
   },
   beforeRouteEnter (to, from, next) {
     to.meta.title = to.query.name ;
+    next();
+  },
+  beforeRouteLeave (to, from, next) {
+    if(this.isRefresh && to.name === 'MSGHOME'){
+      to.meta.reload = true;
+    }
     next();
   }
 }
