@@ -114,13 +114,13 @@ export let getBaseInfoData = () => {
 // TODO 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
   return $axios.ajax({
-    url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
-    data: {
-      limit: 10,
-      page: 1,
-      start: 11,
-      ...data
-    }
+    url: encodeURI(`/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}?limit=${data.limit}&page=${data.page}&start=${data.start}&filter=${data.filter}`),
+    // data: {
+    //   limit: 10,
+    //   page: 1,
+    //   start: 11,
+    //   ...data
+    // }
   }).catch(e => {
     return errorHandler(e);
   });

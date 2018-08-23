@@ -40,6 +40,7 @@
 <script>
 import { Tab,TabItem} from 'vux'
 import warehouseService from 'service/warehouseService.js'
+import { getList} from 'service/commonService'
 import LoadIcon from 'components/Loading.vue'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
@@ -160,7 +161,7 @@ export default {
         if(filter){
           data.filter = JSON.stringify(filter);
         }
-        return warehouseService.getwarehouseList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
+        return getList(this.id,data).then( ({dataCount = 0, tableContent = []}) => {
           // console.log(this.total);
           //判断最近有无新增数据
           let text = '';
