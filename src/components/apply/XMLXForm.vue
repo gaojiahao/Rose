@@ -2,31 +2,10 @@
   <div class="pages xmrw-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-
-        <!-- 项目经理-->
-        <!--<div class='r-picker vux-1px-b r-picker-3' @click='XMLXshowStatus'>
-          <div class="title">项目经理</div>
-          <div class="mode">{{managerName || placeholder}} {{managerValue}}</div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          <div v-transfer-dom>
-            <popup id="trade_pop_part" v-model="XMLXshow">
-              <div>
-                <div class='popup_header vux-1px-b'>
-                  <span class='cancel' @click="XMLXcancel">取消</span>
-                  <span class='confirm' @click="XMLXconfirm(managerTask)">确认</span>
-                </div>
-                <picker :data="managerList" :columns="1" v-model="managerTask"></picker>
-              </div>
-            </popup>
-          </div>
-        </div>-->
-
         <pop-manager-list @sel-item="selManager"></pop-manager-list>
-
         <!-- 项目类型-->
         <r-picker title="项目类型" :data="projectTypes" mode="3" placeholder="请选择项目类型"
                   v-model="ProjectApproval.projectType"></r-picker>
-
         <div class="xmlx_list">
           <!-- 项目立项明细 -->
           <div class="materiel_list mg_auto box_sd">
@@ -49,10 +28,9 @@
                                  ref="budgetCost" @input="filterNum($event,'budgetCost')"></x-input>
                         <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'></datetime>
                         <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'></datetime>
-                        <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
                         <cell title="预算利润" :value="profit"></cell>
                         <cell title="预算利润率" :value="profitMargin"></cell>
-                        <x-textarea title="备注" v-model="FormDataComment" :max="200"></x-textarea>
+                        <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
                       </group>
                     </div>
                   </div>
@@ -95,16 +73,6 @@
     },
     data() {
       return {
-        managerList: [
-          {
-            name: '马云',
-            value: '132634679879',
-            parent: '0'
-          }, {
-            name: '马化腾',
-            value: '123444897997',
-            parent: '0'
-          }],
         managerTask: [],
         managerName: '',
         managerValue: '',

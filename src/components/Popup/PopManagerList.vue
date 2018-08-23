@@ -269,14 +269,15 @@
     // 用户信息
     .user_info {
       color: #111;
-      font-size: .2rem;
+      font-size: .18rem;
       font-weight: 500;
       // 用户姓名
       .user_name {
-        margin-right: .08rem;
+        margin-right: .02rem;
       }
       // 用户电话
       .user_tel {
+        font-size: .14rem;
         font-family: sans-serif, -apple-system-font;
       }
     }
