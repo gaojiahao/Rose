@@ -87,8 +87,8 @@
         </div>
         <!-- 申请说明 -->
         <div class="materiel_list mg_auto box_sd">
-          <div class="title">申请说明</div>
-          <textarea class='comment' v-model="applyComment" placeholder="请输入"></textarea>
+          <div class="title">备注</div>
+          <textarea class='comment' v-model="formData.biComment" placeholder="请输入"></textarea>
         </div>
       </div>
     </div>
@@ -233,7 +233,7 @@ export default {
                 assistQty : item.assistQty || 0,        //辅计数量
                 price : item.price, //单价
                 promDeliTime : null, //预期交货日
-                comment : this.applyComment               //申请说明
+                comment : ''               //申请说明
               })
             })
             let wfPara = {
@@ -249,7 +249,6 @@ export default {
               biComment : this.biComment,
               formData: JSON.stringify({
                 ...this.formData,
-                biComment : '',
                 order: {
                   dataSet
                 }
@@ -274,7 +273,7 @@ export default {
         transCode : this.transCode
       }).then( (data)=>{
         this.listId = data.listId;
-        this.biComment = data.biComment;
+        this.applyComment = data.biComment;
         this.biReferenceId = data.biReferenceId;
         let {formData} = data;
         formData.order.dataSet.map(item=>{
@@ -292,7 +291,6 @@ export default {
           modifer : formData.modifer,
 
         }
-        this.applyComment = formData.biComment;
         this.matterList = data.formData.order.dataSet;
         this.$emit('input', false);
       })

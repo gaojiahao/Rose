@@ -24,14 +24,6 @@
         <div class='property_val'>{{dealer.dealerLabelName}}</div>
       </div>
       <div class='each_property vux-1px-b'>
-        <label>往来大类:</label>
-        <div class='property_val'>{{dealer.dealerType || '无'}} </div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>往来子类:</label>
-        <div class='property_val'>{{dealer.dealerSubclass || '无'}} </div>
-      </div>
-      <div class='each_property vux-1px-b'>
         <label>省市区:</label>
         <div class='property_val'>
            {{dealer.province}}{{dealer.city}}{{dealer.county}}
