@@ -49,30 +49,34 @@
           <div class="each_mater vux-1px-b">
             <div class="each_mater_wrapper">
               <div class="mater_main">
+                <!-- 商机名称 -->
+                <div class="mater_title">
+                  <!-- <span class="title">标题:</span> -->
+                  {{orderInfo.opportunityTitle || '无'}}
+                </div>
                 <!-- 商机基本信息 -->
-                <div class="mater_info">
+                <!-- <div class="mater_info"> -->
                   <!-- 商机编码、规格 -->
-                  <div class="withColor">
+                  <!-- <div class="withColor"> -->
                     <!-- 商机编码 -->
-                    <div class="ForInline" style="display:inline-block">
+                    <!-- <div class="ForInline" style="display:inline-block">
                       <div class="mater_code">
                         <span class="title">编码</span>
                         <span class="num">{{orderInfo.dealerDebit}}</span>
                       </div>
                     </div>
                   </div>
-                </div>
-                <!-- 商机名称 -->
-                <div class="mater_name">
-                  <span class="title">标题:</span>
-                  {{orderInfo.opportunityTitle || '无'}}
-                </div>
+                </div>  -->
                 <div class='mater_other'>
+                  <span class="mater_spec">
+                    <span class="title">编码:</span>
+                    <span class="content">{{orderInfo.dealerDebit}}</span>
+                  </span>
                   <!-- 商机类型 -->
-                  <div class="mater_spec">
+                  <span class="mater_spec">
                     <span class="title">类型:</span>
                     <span class="content">{{orderInfo.categoryLabels || '无'}}</span>
-                  </div>
+                  </span>
                   <!-- 商机内容 -->
                   <div class='mater_reimb'>
                       <div class="reason">
@@ -166,10 +170,22 @@ export default {
           .mater_main {
             width: 100%;
             max-width: inherit;
-            margin-left: 0.04rem;
-            // .mater_name {
-            //   font-size: .18rem;
-            // }
+            margin-left: inherit;
+            .mater_title {
+              font-size: .18rem;
+            }
+            .mater_other {
+              margin-top: -.04rem;
+            }
+            .mater_spec {
+              margin-right: .04rem;
+              .content {
+                font-size: .12rem;
+              }
+            }
+            .mater_reimb {
+              margin-top: .04rem;
+            }
           }
   .materiel_list
     .mater_list
