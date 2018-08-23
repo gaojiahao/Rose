@@ -391,6 +391,8 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
           }
           //往来信息展示
           this.dealerInfo = {
+            creatorName:formData.dealerDebitContactPersonName,
+            dealerMobilePhone :formData.dealerDebitContactInformation,
             dealerCode: formData.order.dealerDebit,
             dealerSubclass: formData.order.drAccountSub,
             dealerName: formData.order.dealerName_dealerDebit,

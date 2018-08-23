@@ -110,6 +110,8 @@
 import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
+//公共方法引入
+import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
@@ -159,7 +161,8 @@ export default {
         // 获取合计
         let {dataSet} = formData.outPut;
         for (let item of dataSet) {
-          this.count += item.tdAmount *100;
+          this.count = accAdd(this.count,item.tdAmount)
+          // this.count += item.tdAmount *100;
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
             : this.getDefaultImg();
@@ -168,7 +171,7 @@ export default {
           }
           orderList[item.transMatchedCode].push(item);
         }
-        this.count = (this.count/100).toFixed(2);
+        // this.count = (this.count/100).toFixed(2);
         this.orderList = orderList;
         this.dealerInfo = {
           creatorName: formData.dealerDebitContactPersonName, // 客户名

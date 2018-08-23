@@ -3,7 +3,7 @@ import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
-
+import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
@@ -124,13 +124,13 @@ export default {
           item.count = 0;
           item.itmes.forEach(mitem => {
             if (mitem.tdAmount > 0) {
-              item.count += mitem.tdAmount * 100;
+              item.count = accAdd(item.count,mitem.tdAmount);
               return
             }
-            item.count += mitem.price * mitem.tdQty * 100
+            let amount = mitem.price * mitem.tdQty ;
+            item.count = accAdd(item.count,amount);
 
           })
-          item.count = (item.count / 100).toFixed(2);
           // 列表当中每个订单最多展现5个物料
           item.itmes = item.itmes.slice(0, 5);
           item.itmes.forEach(mItem => {

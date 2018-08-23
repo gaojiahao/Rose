@@ -91,6 +91,8 @@ import { getSOList } from 'service/detailService'
 import detailCommon from 'components/mixins/detailCommon'
 // 组件引入
 import workFlow from 'components/workFlow'
+//公共方法引入
+import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
@@ -123,9 +125,8 @@ export default {
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let val of dataSet) {
-          this.count += val.tdAmount * 100;
+          this.count = accAdd(this.count,val.tdAmount);
         }
-        this.count = this.count / 100;
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
         this.workFlowInfoHandler();

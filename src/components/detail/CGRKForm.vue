@@ -102,6 +102,8 @@ import detailCommon from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
+//公共方法引入
+import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
@@ -144,7 +146,7 @@ export default {
         let {inPut} = formData;
         let {dataSet} = inPut;
         for (let val of dataSet) {
-          this.count += val.tdAmount;
+          this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();

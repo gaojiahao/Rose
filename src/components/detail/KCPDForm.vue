@@ -1,6 +1,6 @@
 <template>
   <div class="detail_wrapper">
-    <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+    <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>

@@ -77,6 +77,8 @@ import common from 'components/mixins/detailCommon'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
+//公共方法引入
+import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
@@ -118,12 +120,11 @@ export default {
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let val of dataSet) {
-          this.count += val.tdQty * val.price * 100;
+          this.count = accAdd(this.count,val.tdQty* val.price);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
-        this.count = this.count / 100;
         this.orderInfo = data.formData;
         this.workFlowInfoHandler();
       })

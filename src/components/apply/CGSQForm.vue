@@ -279,9 +279,7 @@ export default {
         let {formData} = data;
         formData.order.dataSet.map(item=>{
           item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
-          this.count += item.price*item.tdQty*100
         })
-        this.count = this.count/100;
         //基本信息
         this.formData = {
           handler: formData.handler,
