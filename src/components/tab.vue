@@ -44,7 +44,7 @@
         this.choicedTab = item.view_name;
         this.activeTabIndex = index;
         this.tabShow = false;
-        this.$emit('tab-click', item)
+        this.$emit('tab-click', item,index)
       }
     },
     watch: {
