@@ -89,11 +89,11 @@
                       <div class="count">
                         <div class="num_part" v-if='Fitem.drQty>0'>
                           <span class="symbol">本次数量: </span>
-                          <span class="number_incre">+ {{Fitem.drQty.toFixed(2)}}</span>
+                          <span class="number_incre">+ {{Fitem.drQty}}</span>
                         </div>
                         <div class="num_part" v-else-if='Fitem.crQty>0'>
                           <span class="symbol">本次数量: </span>
-                          <span class="number_redu">- {{Fitem.crQty.toFixed(2)}}</span>
+                          <span class="number_redu">- {{Fitem.crQty}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">本次数量: </span>
@@ -104,11 +104,11 @@
                       <div class="amount_money">
                         <div class="num_part" v-if='Fitem.drAmnt>0'>
                           <span class="symbol">本次金额: </span>
-                          <span class="number_incre">+ {{Fitem.drAmnt.toFixed(2)}}</span>
+                          <span class="number_incre">+ {{Fitem.drAmnt}}</span>
                         </div>
                         <div class="num_part" v-else-if='Fitem.crAmnt>0'>
                           <span class="symbol">本次金额: </span>
-                          <span class="number_redu">- {{Fitem.crAmnt.toFixed(2)}}</span>
+                          <span class="number_redu">- {{Fitem.crAmnt}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">本次金额: </span>
