@@ -6,11 +6,6 @@
         <searchIcon @search="searchList"></searchIcon>
         <div class="filter_part">
           <tab-item :tabVal='listView' @tab-click="tabClick"></tab-item>
-          <!-- <tab :line-width="2" default-color="#757575" active-color="#2c2727">
-            <tab-item v-for="(item, index) in listView" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.view_name}}
-            </tab-item>
-          </tab> -->
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -87,7 +82,7 @@
                       <div class="count">
                         <div class="num_part">
                           <span class="symbol">借方金额: </span>
-                          <span class="number_incre" v-if="Fitem.drAmnt > 0">{{Fitem.drAmnt.toFixed(2)}}</span>
+                          <span class="number_incre" v-if="Fitem.drAmnt > 0">{{Fitem.drAmnt}}</span>
                           <!-- <span class="number_redu" v-else-if="Fitem.drAmnt < 0">- {{Fitem.drAmnt.toFixed(2)}}</span> -->
                           <span v-else>0</span>
                         </div>
@@ -96,7 +91,7 @@
                       <div class="amount_money">
                         <div class="num_part">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_incre" v-if="Fitem.crAmnt > 0">{{Fitem.crAmnt.toFixed(2)}}</span>
+                          <span class="number_incre" v-if="Fitem.crAmnt > 0">{{Fitem.crAmnt}}</span>
                           <!-- <span class="number_redu" v-else-if="Fitem.crAmnt < 0">- {{Fitem.crAmnt.toFixed(2)}}</span> -->
                           <span v-else>0</span>
                         </div>
