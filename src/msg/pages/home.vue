@@ -45,12 +45,22 @@ import search from 'components/search'
 export default {
   data(){
     return{
-      serachVal: '',
       listData: {},     
     }
   },
   components: {
     search,Badge
+  },
+  watch:{
+    $route:{
+      handler(to,from){
+        if (to.meta.reload && to.name === 'MSGHOME') {
+          to.meta.reload = false;
+          this.listData = {};
+          this.getList();
+        }
+      }
+    }
   },
   methods:{
     getDefaultImg(item) {
@@ -59,10 +69,6 @@ export default {
         item.pic = url;
       }
       return url
-    },
-    searchList(val) {
-      this.serachVal = val;
-      this.getList();
     },
     //获取应用消息数据
     getList() {
@@ -124,7 +130,8 @@ export default {
   },
   created(){
     this.getList();
-  }
+  },
+  
 }
 </script>
 

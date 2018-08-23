@@ -159,7 +159,7 @@ export default {
         // 获取合计
         let {dataSet} = formData.outPut;
         for (let item of dataSet) {
-          this.count += item.tdAmount;
+          this.count += item.tdAmount *100;
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
             : this.getDefaultImg();
@@ -168,6 +168,7 @@ export default {
           }
           orderList[item.transMatchedCode].push(item);
         }
+        this.count = (this.count/100).toFixed(2);
         this.orderList = orderList;
         this.dealerInfo = {
           creatorName: formData.dealerDebitContactPersonName, // 客户名

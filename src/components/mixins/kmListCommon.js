@@ -49,7 +49,8 @@ export default {
       this.$refs.bScroll.resetPullDown();
     },
     ///tab切换
-    tabClick(val) {
+    tabClick(val,index) {
+      this.activeIndex = index;
       this.calc_rel_code = val.calc_rel_code;
       this.view_id = val.view_id;
       this.resetCondition();
@@ -119,13 +120,6 @@ export default {
     },
     //获取列表数据
     getListData(noReset = false){
-      let filters='';
-      // if(this.serachVal!=''){
-      //   for(let i = 0 ; i<this.filterArr.length ; i++){
-      //     this.filterArr[i].value = this.serachVal;
-      //   }
-      //   filters = JSON.stringify(this.filterArr);
-      // }
        return getViewList({
         calc_rel_code: this.calc_rel_code,
         view_id: this.view_id,
@@ -146,6 +140,25 @@ export default {
           this.$nextTick(() => {
             this.resetScroll();
           })
+        }
+        //判断最近有无新增数据
+        //console.log(this.total);
+        let text = '';
+        if(noReset && this.activeIndex ===0){
+          if(this.total){
+            text = total - this.total === 0 ? '暂无新数据' : text = `新增${total-this.total}条数据`;
+            this.$vux.toast.show({
+              text: text,
+              position:'top',
+              width:'50%',
+              type:"text",
+              time : 700
+            })
+          }          
+        }
+        //列表总数据缓存
+        if(this.activeIndex == 0 && this.page ===1){
+          sessionStorage.setItem(this.applyCode,total);
         }
       }).catch(e => {
         this.resetScroll();
@@ -169,18 +182,33 @@ export default {
     // TODO 下拉刷新
     onPullingDown() {
       this.page = 1;
-      this.getList(true).then(()=>{
-        this.$nextTick(() => {
-          this.$refs.bScroll.finishPullDown().then(() => {
-            this.$refs.bScroll.finishPullUp();
-          });
-        })
-
-      });
+      this.getData(true);
     },
+    //获取上次存储的列表总数量
+    getSession(){
+      return new Promise(resolve=>{
+        this.total = sessionStorage.getItem(this.applyCode);
+        resolve()
+      })
+    },
+    async getData(noReset){
+      await this.getSession();
+      if(noReset){
+        await this.getList(true).then(() => {
+            this.$nextTick(() => {
+              this.$refs.bScroll.finishPullDown().then(() => {
+                this.$refs.bScroll.finishPullUp();
+              });
+            })
+        });
+        return
+      }
+      await this.getList();
+
+    }
   },
   created() {
-    // this.applyCode = this.$route.params.code;
+    this.applyCode = this.$route.params.code;
     // this.getData(false);
     (async()=>{
       await this.getClassfiy();
