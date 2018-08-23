@@ -62,11 +62,6 @@
       },
       getList(noReset = false) {
         let filter = [];
-        let params = {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-        };
 
         if (this.serachVal) {
           filter = [
@@ -83,10 +78,14 @@
               property: 'handlerName',
             }
           ];
-          params.filter = JSON.stringify(filter);
         }
 
-        return getList(2270, params).then(({dataCount = 0, tableContent = []}) => {
+        return getList(2270, {
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter)
+        }).then(({dataCount = 0, tableContent = []}) => {
           this.$emit('input', false);
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);

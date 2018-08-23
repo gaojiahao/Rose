@@ -104,49 +104,5 @@
       }
     }
   }
-
-  .materiel_list .mater_list .each_mater .each_mater_wrapper .mater_main {
-    margin-left: 0;
-    max-width: inherit;
-  }
-
-  .mater_other .reason {
-    display: flex;
-    .content {
-      flex: 1;
-    }
-  }
-
-  .bor_bottom {
-    position: relative;
-  }
-
-  .bor_bottom::after {
-    content: " ";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    border-top: 1px solid #D9D9D9;
-    color: #D9D9D9;
-    transform-origin: 0 0;
-    transform: scaleY(0.5);
-  }
-
-  .bor_bottom:last-child()::after {
-    border: none;
-  }
-
-  .materiel_list .mater_list .JH_pad0 {
-    padding: 0.04rem 0;
-  }
-
-  .JH_mar_left {
-    margin-left: 0.04rem;
-  }
-
-  .group_mar_left {
-    margin: 0 0.04rem;
-  }
 </style>
 
