@@ -19,7 +19,8 @@
 
 <script>
   require('../static/css/iconfont/iconfont.css')
-  import {getMsgList} from 'service/msgService.js'
+  import platfrom from './plugins/platform/index'
+  import { getMsgList } from 'service/msgService.js'
   import { Badge } from 'vux'
   export default {
     name: 'app',
@@ -43,6 +44,18 @@
         }
         this.newsNumber = data.dataCount;
       })
+    },
+    updated(){
+      // 安卓的输入框会挡住input输入的解决办法
+      if(platfrom.isAndroid){
+        window.addEventListener("resize", function() {
+          if(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+            setTimeout(() => {
+              document.activeElement.scrollIntoViewIfNeeded();
+            }, 0);
+          }
+        })
+      }
     }
   }
 </script>

@@ -55,7 +55,7 @@
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn ">
-      <div class="cfm_btn" @click="goEdit">新增一个订单</div>
+      <div class="cfm_btn" @click="goEdit">新增一个报销</div>
     </div>
   </div>
 </template>

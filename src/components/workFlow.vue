@@ -369,6 +369,7 @@
       height: 100%;
       /deep/ .scroll-wrapper {
         overflow: visible;
+        padding-bottom: .01rem;
       }
     }
     .flow {
