@@ -170,7 +170,6 @@ export default {
   },
   created() {
     let {transCode} = this.$route.query;
-    this.getBaseInfoData();
     if (transCode) {
       this.isResubmit = true;
       this.transCode = transCode;
@@ -178,10 +177,11 @@ export default {
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
         this.getFormData && this.getFormData();
-        this.$emit('input', false);
+        // this.$emit('input', false);
       })();
       return
     }
+    this.getBaseInfoData();
     this.getProcess();
   },
   mounted() {

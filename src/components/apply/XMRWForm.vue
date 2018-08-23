@@ -194,6 +194,7 @@ export default {
           ...projectTask,
           actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
         };
+        this.$emit('input', false);
       })
     },
     // TODO 获取任务列表

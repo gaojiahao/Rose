@@ -241,6 +241,7 @@
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
           };
           this.biReferenceId = formData.biReferenceId;
+          this.$emit('input', false);
         })
       },
     },

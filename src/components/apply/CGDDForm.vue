@@ -4,7 +4,7 @@
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-          <div v-if='dealerInfo.dealerName'>
+          <div v-if='dealerInfo.dealerCode'>
             <div class="user_info" v-if="dealerInfo.creatorName">
               <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
               <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
@@ -265,7 +265,7 @@ export default {
       },
     //提价订单
     submitOrder(){
-      if(!this.dealerInfo.dealerName){
+      if(!this.dealerInfo.dealerCode){
         this.$vux.alert.show({
           content : '请选择往来信息'
         })
@@ -362,6 +362,8 @@ export default {
           }
           //往来信息展示
           this.dealerInfo = {
+            creatorName :formData.dealerDebitContactPersonName,
+            dealerMobilePhone :formData.dealerDebitContactInformation,
             dealerCode: formData.order.dealerDebit,
             dealerSubclass: formData.order.drAccountSub,
             dealerName: formData.order.dealerName_dealerDebit,
@@ -373,12 +375,13 @@ export default {
           //订单信息
           this.dealer = {
             dealerDebitContactPersonName: formData.dealerDebitContactPersonName, //联系人
-            dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话
+            dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话dealerDebitContactPersonName
             drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
             biComment: formData.biComment //备注
           },
-            this.matterList = data.formData.order.dataSet;
+          this.matterList = data.formData.order.dataSet;
+          this.$emit('input', false);
       })
 
 

@@ -481,6 +481,7 @@ export default {
         this.drDealerPaymentTerm = outPut.drDealerPaymentTerm;
         this.biReferenceId = formData.biReferenceId;
         this.orderList = orderList;
+        this.$emit('input', false);
       })
     },
   },

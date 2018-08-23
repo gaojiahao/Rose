@@ -413,6 +413,7 @@ export default {
         this.drDealerPaymentTerm = order.drDealerPaymentTerm;
         this.biReferenceId = formData.biReferenceId;
         this.matterList = matterList;
+        this.$emit('input', false);
       })
     },
     clickDateSelect() {

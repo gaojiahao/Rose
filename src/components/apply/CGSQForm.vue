@@ -296,6 +296,7 @@ export default {
         }
         this.applyComment = formData.biComment;
         this.matterList = data.formData.order.dataSet;
+        this.$emit('input', false);
       })
     }
   },
