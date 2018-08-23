@@ -26,8 +26,8 @@
     data(){
       return{
         tablist: [
-					{title: '首页', path: '/home', icon: 'icon-shouye1'},
-					{title: '消息', path: '/notice', icon: 'icon-xiaoxi'},
+					{title: '应用', path: '/home', icon: 'icon-1'},
+					{title: '消息', path: '/notice', icon: 'icon-message'},
         ],
         newsNumber:0,
       }
@@ -121,7 +121,7 @@
       }
       .vux-badge {
         top: 8%;
-        left: 53%;
+        left: 52%;
         position: absolute;
 
       }

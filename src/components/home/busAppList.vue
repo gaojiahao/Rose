@@ -5,10 +5,10 @@
       <div class="list_title">
         <div class="bg_title">
           <div class="title">{{item.name}}</div>
-          <div class="more">
+          <!-- <div class="more">
             <span>更多</span>
             <x-icon class="right_arrow" type="ios-arrow-forward" size="14"></x-icon>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- 应用列表 -->
