@@ -99,6 +99,36 @@ export let findProjectTask = (transCode = '') => {
   });
 };
 
+// TODO 保存项目结项
+export let saveProjectConclusion = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectConclusion/save',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 修改项目结项
+export let updateProjectConclusion = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/projectConclusion/update',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 查看项目结项
+export let findProjectConclusion = (transCode = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/projectConclusion/findData',
+    data: {transCode}
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 // TODO 获取项目列表
 export let getProjectPlanProjectName = (data = {}) => {
   return $axios.ajax({
@@ -118,7 +148,7 @@ export let getProjectPlanProjectName = (data = {}) => {
 // TODO 获取项目列表自动填充字段带出
 export let getProjectApproval = (data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/ds/getProjectApproval',
+    url: '/H_roleplay-si/ds/getProjectApprovalAll',
     data: {
       _dc: Date.now(),
       ...data

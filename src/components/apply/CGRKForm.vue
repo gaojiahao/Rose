@@ -123,8 +123,8 @@
 <script>
 // vux插件引入
 import {
-  Icon, Cell, Popup, Group, XInput, 
-  Swipeout, SwipeoutItem, SwipeoutButton, TransferDom 
+  Icon, Cell, Popup, Group, XInput,
+  Swipeout, SwipeoutItem, SwipeoutButton, TransferDom
 } from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
@@ -335,7 +335,6 @@ export default {
           this.listData.forEach(item => {
             let oItem = {
               transObjCode: item.inventoryCode, // 物料编码
-              tdProcessing: item.processing,
               assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
               assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
               tdQty: item.tdQty, // 明细发生数

@@ -13,6 +13,7 @@ export default {
   XMRW: '项目任务',
   XMLX: '项目立项',
   XMJH: '项目计划',
+  XMJX: '项目结项',
   CH: '存货',
   WLYE: '往来余额',
   HBZJ: '货币资金'
