@@ -20,7 +20,7 @@
                         <span class='dealer'>{{item.dealerName}}</span>
                     </div>
                   </div>
-                  <div class="withColor" v-if="item.dealerMobilePhone">
+                  <div class="withColor" v-if="item.dealerMobilePhone || item.dealerPhone">
                     <div class="ForInline name" style="display:inline-block">
                         <span style="marginRight:.1rem;" v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
                         <span v-if="item.dealerPhone">{{item.dealerPhone}}</span>
