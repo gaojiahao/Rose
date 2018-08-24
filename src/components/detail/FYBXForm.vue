@@ -5,16 +5,16 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <div class="trade_mode mg_auto box_sd">
-        <p class="title">报销人</p>
-        <p class="mode">{{orderInfo.creatorName }}</p>
+        <p class="title">项目名称</p>
+        <p class="mode">{{orderInfo.order.project || '无'}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
         <p class="mode">{{orderInfo.crtTime}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
-        <p class="title">项目名称</p>
-        <p class="mode">{{orderInfo.order.project || '无'}}</p>
+        <p class="title">报销人</p>
+        <p class="mode">{{orderInfo.creatorName }}</p>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
@@ -25,36 +25,8 @@
               <div class="mater_main">
                 <!-- 物料名称 -->
                 <div class="mater_name">
-                  <span class="whiNum">#{{index + 1}}</span>
                   {{item.costName_expCode}}
                 </div>
-                <!-- 物料基本信息 -->
-                <div class="mater_info">
-                  <!-- 物料编码、规格 -->
-                  <div class="withColor">
-                    <!-- 物料编码 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_code">
-                        <span class="title">编码</span>
-                        <span class="num">{{item.expCode}}</span>
-                      </div>
-                    </div>
-                    <!-- 物料规格 -->
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_spec">
-                        <span class="title">类型</span>
-                        <span class="num">{{item.costType_expCode || '无'}}</span>
-                      </div>
-                    </div>
-                    <div class="ForInline" style="display:inline-block">
-                      <div class="mater_sub">
-                        <span class="title">科目</span>
-                        <span class="num">{{item.expSubject || '无'}}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div class='mater_other'>
                   <div class='mater_reimb'>
                     <!-- 报销金额 -->
@@ -155,5 +127,9 @@ export default {
           .mater_main {
             width: 100%;
             max-width: inherit;
+            margin-left: inherit;
+            .mater_name {
+              font-size: .18rem;
+            }
           }
 </style>
