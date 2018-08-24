@@ -61,7 +61,7 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getSalesmanList} from 'service/listService'
+  import {getObjDealerByLabelName} from 'service/commonService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
 
@@ -169,7 +169,7 @@
               property: 'dealerName',
             }];
         }
-        return getSalesmanList({
+        return getObjDealerByLabelName({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

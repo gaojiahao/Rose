@@ -234,6 +234,16 @@ export let getProcess = (listId = '') => {
   });
 };
 
+// TODO 获取员工、客户、加工商、渠道商
+export let getObjDealerByLabelName = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjDealerByLabelName',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
 export default {
   saveAndStartWf,
   saveAndCommitTask,
@@ -244,4 +254,5 @@ export default {
   getDictByType,
   getDictByValue,
   getProcess,
+  getObjDealerByLabelName,
 }

@@ -36,7 +36,7 @@
 
 <script>
   import {Icon, Popup, AlertModule, TransferDom} from 'vux'
-  import listService from 'service/listService'
+  import {getObjDealerByLabelName} from 'service/commonService'
   import RScroll from 'components/RScroll'
 
   export default {
@@ -110,7 +110,7 @@
       },
       // TODO 获取销售列表
       getDealer() {
-        listService.getSalesmanList({
+        return getObjDealerByLabelName({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

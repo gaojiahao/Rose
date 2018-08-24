@@ -47,19 +47,8 @@ export let getBusinessList = (data = {}) => {
   });
 };
 
-// TODO 销售人员列表
-export let getSalesmanList = (data = {}) => {
-  return $axios.ajax({
-    url: '/H_roleplay-si/ds/getObjDealerByLabelName',
-    data
-  }).catch(e => {
-    return errorHandler(e);
-  });
-};
-
 export default {
   getList,
   getSellOrderList,
   getBusinessList,
-  getSalesmanList
 }
