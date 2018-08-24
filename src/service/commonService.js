@@ -55,6 +55,63 @@ export let commitTask = (data = {}) => {
     return errorHandler(e);
   })
 }
+
+// TODO 获取当前用户信息(基础对象调用)
+export let getBaseInfoDataBase = () => {
+  return new Promise(async (resolve, reject) => {
+    let user = {};
+    let baseErrorHandler = (e) => {
+      AlertModule.show({
+        content: e.message,
+      });
+      reject(e);
+    };
+    let {nickname, userId} = await $axios.ajax({
+      url: '/H_roleplay-si/userInfo/currentUser',
+    }).then(data => {
+      return data
+    }).catch(e => {
+      baseErrorHandler(e);
+    });
+    let {userGroupId = '', userGroupName = ''} = await $axios.ajax({
+      url: '/H_roleplay-si/ds/getUnitsByUserId',
+      data: {
+        userId: userId,
+        page: 1,
+        start: 0,
+        limit: 10000
+      }
+    }).then(({tableContent = []}) => {
+      let [unit = {}] = tableContent;
+      return unit
+    }).catch(e => {
+      baseErrorHandler(e);
+    });
+    $axios.ajax({
+      url: '/H_roleplay-si/ds/getRolesByUserId',
+      data: {
+        userId: userId,
+        parentId: userGroupId,
+        page: 1,
+        start: 0,
+        limit: 10000
+      }
+    }).then(({tableContent = []}) => {
+      let [role = {}] = tableContent;
+      resolve({
+        handler: userId,
+        handlerName: nickname,
+        handlerUnit: userGroupId,
+        handlerUnitName: userGroupName,
+        handlerRole: role.userGroupId || '',
+        handlerRoleName: role.userGroupName || '',
+      });
+    }).catch(e => {
+      baseErrorHandler(e);
+    });
+  });
+};
+
 // TODO 获取当前用户信息
 export let getBaseInfoData = () => {
   return new Promise(async (resolve, reject) => {
