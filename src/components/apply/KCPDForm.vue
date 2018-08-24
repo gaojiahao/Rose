@@ -19,7 +19,7 @@
           <template v-else>
             <div class="title">物料列表</div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key="index">
+              <div class="each_mater" v-for="(item, index) in matterList" :key="index">
                 <swipeout>
                   <swipeout-item>
                     <div slot="right-menu">
@@ -60,17 +60,22 @@
                             <span class="symbol">库存: </span>
                             <span class="num">{{item.qtyBal}}</span>
                           </div>
-                          <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
-                        </div>
-                        <!-- 物料数量和价格 -->
-                        <div class="mater_other">
-                          <span>差异数量: {{Math.floor(item.tdQty - item.qtyBal)}}</span>
                           <!-- <r-number :num="item.tdQty" v-model="item.tdQty"></r-number> -->
                         </div>
                       </div>
                     </div>
                   </swipeout-item>
                 </swipeout>
+                 <!-- 物料输入内容 -->
+                <div class="userInp_mode">
+                  <group>
+                    <x-input type="number" title="数量" text-align='right' placeholder='请填写'
+                            v-model.number="item.tdQty"></x-input>
+                  </group>
+                  <group>
+                    <cell title="差异数量" text-align='right' placeholder='请填写' :value='Math.floor(item.tdQty - item.qtyBal)'></cell>
+                  </group>
+                </div>
               </div>
             </div>
           </template>
@@ -175,7 +180,7 @@ export default {
     selMatter(val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
-        item.tdQty = this.numMap[item.inventoryCode] || 1
+        item.tdQty = this.numMap[item.inventoryCode] || ''
       });
       this.numMap = {};
       this.matterList = [...sels];
@@ -356,6 +361,17 @@ export default {
           font-size: .16rem;
           font-weight: bold;
         }
+      }
+    }
+  }
+  .pages {
+  /deep/ .vux-no-group-title{
+    margin-top:0;
+  }
+    /deep/ .weui-cells {
+      font-size: .14rem;
+      &:before {
+        border-top: none;
       }
     }
   }
