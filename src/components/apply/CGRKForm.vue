@@ -40,7 +40,7 @@
           <template v-else>
             <div class="title">物料列表</div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(item, index) in listData" :key="index">
+              <div class="each_mater" v-for="(item, index) in listData" :key="index">
                 <swipeout>
                   <swipeout-item>
                     <div slot="right-menu">
@@ -75,23 +75,33 @@
                               </div>
                             </div>
                           </div>
+                          
                         </div>
                         <!-- 物料数量和价格 -->
                         <div class="mater_other">
                           <div class="mater_price">
-                            ￥{{item.price | numberComma}}
+                            <span class='unit' v-if='item.measureUnit'>计量单位: {{item.measureUnit}}</span>
                           </div>
-                          <r-number :num="item.tdQty" v-model="item.tdQty"></r-number>
                         </div>
                       </div>
                     </div>
                   </swipeout-item>
                 </swipeout>
+                <!-- 物料输入内容 -->
+                <div class="userInp_mode">
+                  <group>
+                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
+                             v-model.number="item.price"></x-input>
+                  </group>
+                  <group>
+                    <x-input type="number" title="数量" text-align='right' placeholder='请填写'
+                    v-model.number="item.tdQty"></x-input>
+                  </group>
+                </div>
               </div>
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="listData.length" @click="addOrder">新增更多订单</div> -->
           <div class="handle_part" v-if="listData.length">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
@@ -114,7 +124,6 @@
         <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
-      <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
   </div>
@@ -257,8 +266,8 @@ export default {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
         } else {
-          item.tdQty = 1;
-          item.price = 90;
+          item.tdQty = '';
+          item.price = '';
         }
       });
       this.numMap = {};
@@ -478,4 +487,15 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
+  .pages {
+  /deep/ .vux-no-group-title{
+    margin-top:0;
+  }
+    /deep/ .weui-cells {
+      font-size: .14rem;
+      &:before {
+        border-top: none;
+      }
+    }
+  }
 </style>
