@@ -7,11 +7,10 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <span class="user_name">{{dealerInfo.creatorName}}</span>
-          <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+          <span class="user_name">{{dealerInfo.dealerName}}</span>
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{dealerInfo.dealerName}}</p>
+          <p class="cp_name">{{dealerInfo.dealerMobilePhone}}</p>
           <p class="cp_ads">
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
         </div>
@@ -60,7 +59,7 @@
                       <div class="ForInline" style="display:inline-block">
                         <div class="mater_code">
                           <span class="title">编码</span>
-                          <span class="num">{{item.inventoryCode_outPutMatCode}}</span>
+                          <span class="num">{{item.inventoryCode_outPutMatCode || '无'}}</span>
                         </div>
                       </div>
                       <!-- 物料规格 -->

@@ -8,7 +8,6 @@
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
           <span class="user_name">{{dealerInfo.dealerName}}</span>
-          <!-- <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span> -->
         </div>
         <div class="cp_info">
           <p class="cp_name">{{dealerInfo.dealerMobilePhone}}</p>
