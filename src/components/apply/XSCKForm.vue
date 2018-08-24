@@ -122,11 +122,11 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma}}
+        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
       <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
-      <span class="count_btn" @click="submitOrder">提交订单</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
   </div>
 </template>
@@ -189,22 +189,6 @@ export default {
       taskId: '',
       matterList: [],
     }
-  },
-  computed: {
-    // 合计金额
-    totalAmount() {
-      let total = 0;
-      for (let items of Object.values(this.orderList)) {
-        for (let item of items) {
-          total += item.tdQty * item.price;
-        }
-      }
-      return total.toFixed(2);
-    },
-    // 税金
-    taxAmount() {
-      return (this.totalAmount * this.taxRate).toFixed(2)
-    },
   },
   watch:{
     orderList(val){
