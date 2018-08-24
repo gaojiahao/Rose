@@ -54,37 +54,15 @@
                   <!-- <span class="title">标题:</span> -->
                   {{orderInfo.opportunityTitle || '无'}}
                 </div>
-                <!-- 商机基本信息 -->
-                <!-- <div class="mater_info"> -->
-                  <!-- 商机编码、规格 -->
-                  <!-- <div class="withColor"> -->
-                    <!-- 商机编码 -->
-                    <!-- <div class="ForInline" style="display:inline-block">
-                      <div class="mater_code">
-                        <span class="title">编码</span>
-                        <span class="num">{{orderInfo.dealerDebit}}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>  -->
                 <div class='mater_other'>
-                  <span class="mater_spec">
-                    <span class="title">编码:</span>
-                    <span class="content">{{orderInfo.dealerDebit}}</span>
-                  </span>
-                  <!-- 商机类型 -->
-                  <span class="mater_spec">
-                    <span class="title">类型:</span>
-                    <span class="content">{{orderInfo.categoryLabels || '无'}}</span>
-                  </span>
                   <!-- 商机内容 -->
                   <div class='mater_reimb'>
-                      <div class="reason">
-                        <span class="title">商机内容: </span>
-                        <span class="content">{{orderInfo.comment || '无'}}</span>
-                      </div>
+                    <div class="reason">
+                      <span class="title">商机内容: </span>
+                      <span class="content">{{orderInfo.comment || '无'}}</span>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>

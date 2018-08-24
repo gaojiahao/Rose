@@ -16,12 +16,10 @@
       <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !dealerList.length"
                 @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
           <div class="client_ads vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
-            <div class="user_info">
-              <span class="user_name">{{item.creatorName}}</span>
-              <span class="user_tel">{{item.dealerMobilePhone}}</span>
-            </div>
-            <div class="cp_info">
+            <div class="cp_info user_info">
               <p class="cp_name">{{item.dealerName}}</p>
+              <span class="user_phone" v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
+              <span class="user_tel" v-if="item.dealerPhone">{{item.dealerPhone}}</span>
               <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>              
             </div>
             <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
@@ -319,6 +317,9 @@ export default {
         // 用户姓名
         .user_name {
           margin-right: .08rem;
+        }
+        .user_phone {
+          margin-right: .1rem;
         }
         // 用户电话
         .user_tel {

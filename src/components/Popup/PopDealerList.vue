@@ -15,17 +15,15 @@
               <div class="mater_main ">
                 <div class="mater_info">
                   <!--联系人电话 -->
-                  <div class="withColor ">
-                    <div class="ForInline name" style="display:inline-block">
-                        <span>{{item.creatorName}}</span>
-                    </div>
-                    <div class="ForInline name" style="display:inline-block">
-                        <span>{{item.dealerMobilePhone}}</span>
-                    </div>
-                  </div>
                   <div class="withColor">
                     <div class="ForInline " style="display:inline-block">
                         <span class='dealer'>{{item.dealerName}}</span>
+                    </div>
+                  </div>
+                  <div class="withColor" v-if="item.dealerMobilePhone">
+                    <div class="ForInline name" style="display:inline-block">
+                        <span style="marginRight:.1rem;" v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
+                        <span v-if="item.dealerPhone">{{item.dealerPhone}}</span>
                     </div>
                   </div>
                   <!-- 地址 -->

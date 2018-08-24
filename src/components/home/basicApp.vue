@@ -6,11 +6,11 @@
             v-for='(item, index) of BSarray'
             :key='index'
             :style="{ 
-              background:`${item.bgColor} url(${item.icon}) no-repeat .7rem .05rem / 50%` ,
+              background:`${item.bgColor} url(${item.icon}) no-repeat .75rem .01rem / 50%` ,
               boxShadow: `0 2px 2px ${item.boxShadow}`
             }">
-          <div class="app_type">{{item.transName}}</div>
           <div class="app_name">{{item.text}}</div>
+          <div class="app_type">{{item.transName}}</div>
         </div>
       </div>
 
