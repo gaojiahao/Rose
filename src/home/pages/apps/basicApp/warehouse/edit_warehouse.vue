@@ -5,7 +5,8 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class='required'>仓库编码:</label>
-            <input type='text' v-model="warehouse.warehouseCode" class='property_val' :class='{readonly :transCode!==""}' :readonly ='transCode!==""'/>
+            <input type='text' v-model="warehouse.warehouseCode" class='property_val'
+                   :class='{readonly :transCode!==""}' :readonly='transCode!==""'/>
           </div>
           <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
             <label class='required'>仓库名称:</label>
@@ -27,309 +28,377 @@
           </div>
         </div>
       </div>
-      <r-picker title="仓库类型:" :data="AccountRelType" value="warehouse.warehouseType"  
-                v-model="warehouse.warehouseType" :required='true'>
+      <r-picker title="仓库类型:" :data="AccountRelType" :value="warehouse.warehouseType"
+                @on-change="warehouseTypeChange" v-model="warehouse.warehouseType" :required='true'>
+      </r-picker>
+      <r-picker :title="`${typeSubMap[typeSub].title}:`" :data="typeSubMap[typeSub].list"
+                :value="typeSubMap[typeSub].value"
+                v-model="typeSubMap[typeSub].value" :required='true'>
       </r-picker>
     </div>
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save"  v-html="this.$route.query.add?'保存并使用':'提交'"></div>
+      <div class="cfm_btn" @click="save" v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
   </div>
 </template>
 <script>
-import { TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data,Icon } from 'vux';
-import { upload } from 'service/materService.js';
-import { getBaseInfoData } from 'service/commonService.js';
-import warehouseService from 'service/warehouseService.js'
-import RPicker from 'components/RPicker';
-import common from 'mixins/common.js'
-export default {
-  data() {
-    return {
-      transCode  : '',
-      picShow: false,
-      imgFileObj: {}, // 上传的图片对象
-      biReferenceId : '',
-      MatPic: '', // 图片地址
-      AccountRelType : [],
-      baseinfo: {
-        handler: '', // 经办人ID
-        handlerName: '', // 经办人
-        handlerArea: '', // 所属区域ID
-        handlerAreaName: '', // 所属区域
-        handlerUnit: '', // 经办组织ID
-        handlerUnitName: '', // 经办部门
-        handlerRole: '', // 经办角色ID
-        handlerRoleName: '', // 经办角色
-        activeTime: '', // 业务发生时间
-        comment: '' // 注释
-      },
-      warehouse: {
-        customerDealerCode:null, //客户
-        warehouseCode: '', // 仓库编码
-        warehouseName: '', // 仓库名称
-        warehouseType: '', // 仓库类型
-        warehouseStatus: '1', //仓库状态
-        warehouseRelType : '',//仓库关系类型
-        warehouseSubclass: '', // 仓库子类
-        province  : '',  //省
-        city: '',  //市
-        county: '',  //区
-        address: '',  //地址
-        warehousePhone: '', //联系电话
-        warehouseMobilePhone: '',  //手机
-        warehouseMail: '',  //电子邮件
-        paymentTerm: '',  //结算方式
-        warehouseLogisticsTerms: '', //物流条款
-        pamentDays: '',  //账期天数
-        comment: '',  //仓库说明
-        warehousePic : '',
-          // comment:"说明改",
-          // warehouseAddress:"",
-          // warehouseCity:"",
-          // warehouseCode:"仓库编码",
-          // warehouseCondtions:"冷藏",
-          // warehouseDistrict:"",
-          // warehouseName:"仓库名称改",
-          // warehouseProvince:"",
-          // warehouseRelType:"部门仓",
-          // warehouseStatus:"1",
-          // warehouseSubclass:"计量设备仓",
-          // warehouseType:"设备仓库"
-      },
-      submitSuccess: false, // 是否提交成功
+  import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon} from 'vux';
+  import {upload} from 'service/materService.js';
+  import {getBaseInfoDataBase} from 'service/commonService.js';
+  import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
+  import {getDictByType, getObjDealerByLabelName} from 'service/commonService.js'
+  import RPicker from 'components/RPicker';
+  import common from 'mixins/common.js'
 
-
-    }
-  },
-  directives: {
-    TransferDom
-  },
-  mixins: [common],
-  components: {
-    Picker,
-    Popup,
-    Group,
-    RPicker,
-    XAddress,
-    Icon
-  },
-  methods: {
-    preloadFile(file) {
-      let reader = new FileReader();
-      reader.onload = (evt) => {
-        this.MatPic = evt.target.result;
-      };
-      reader.readAsDataURL(file);
+  export default {
+    data() {
+      return {
+        transCode: '',
+        picShow: false,
+        imgFileObj: {}, // 上传的图片对象
+        biReferenceId: '',
+        MatPic: '', // 图片地址
+        AccountRelType: [],
+        baseinfo: {},
+        warehouse: {
+          warehouseCode: '', // 仓库编码
+          warehouseName: '', // 仓库名称
+          warehouseType: '', // 仓库类型
+          warehousePic: '', // 图片
+          staffDealerCode: null, // 员工
+          groupCode: null, // 组织
+          customerDealerCode: null, //客户
+          processorsDealerCode: '', // 加工商
+          channelDealerCode: null, // 渠道商
+          warehouseCondtions: '', // 仓储条件
+          warehouseProvince: '', // 省
+          warehouseCity: '', // 市
+          warehouseDistrict: '', // 区
+          warehouseAddress: '', // 地址
+          warehouseStatus: '1', //仓库状态
+        },
+        submitSuccess: false, // 是否提交成功
+        typeSubMap: { // 仓库类型相关二级列表
+          staff: {
+            title: '员工',
+            dealerLabelName: '员工',
+            key: 'staffDealerCode',
+            value: '',
+            code: '',
+            list: [], // 员工列表
+          },
+          group: {
+            title: '组织',
+            dealerLabelName: '',
+            key: 'groupCode',
+            value: '',
+            code: '',
+            list: [], // 组织列表
+          },
+          customer: {
+            title: '客户',
+            dealerLabelName: '客户',
+            key: 'customerDealerCode',
+            value: '',
+            code: '',
+            list: [], // 客户列表
+          },
+          processors: {
+            title: '加工商',
+            dealerLabelName: '加工商',
+            key: 'processorsDealerCode',
+            value: '',
+            code: '',
+            list: [], // 加工商列表
+          },
+          channel: {
+            title: '渠道商',
+            dealerLabelName: '渠道商',
+            key: 'channelDealerCode',
+            value: '',
+            code: '',
+            list: [], // 渠道商列表
+          },
+        },
+        typeSub: 'group',
+        typeSubValue: '',
+        typeToSubMap: {
+          '配送中心仓': 'group',
+          '加工商仓': 'processors',
+          '加工车间仓': 'group',
+          '客户仓': 'customer',
+          '渠道商仓': 'channel',
+          '个人仓': 'staff',
+          '一般部门仓': 'group',
+        }
+      }
     },
-    uploadFile(e) {
-      let file = e.target.files[0];
-      upload({file}).then(res => {
-        let {success = false, message = '上传失败', data} = res;
-        let [detail = {}] = data;
-        this.picShow = true;
-        this.preloadFile(file);
-        this.warehouse.warehousePic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
-        // this.biReferenceId = detail.biReferenceId
-      }).catch(e => {
-        this.$vux.alert.show({
-          content: e.message,
+    directives: {
+      TransferDom
+    },
+    mixins: [common],
+    components: {
+      Picker,
+      Popup,
+      Group,
+      RPicker,
+      XAddress,
+      Icon
+    },
+    methods: {
+      preloadFile(file) {
+        let reader = new FileReader();
+        reader.onload = (evt) => {
+          this.MatPic = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      },
+      uploadFile(e) {
+        let file = e.target.files[0];
+        upload({file}).then(res => {
+          let {success = false, message = '上传失败', data} = res;
+          let [detail = {}] = data;
+          this.picShow = true;
+          this.preloadFile(file);
+          this.warehouse.warehousePic = detail.attacthment;
+          // this.biReferenceId = detail.biReferenceId
+        }).catch(e => {
+          this.$vux.alert.show({
+            content: e.message,
+          })
+        });
+      },
+      //获取仓库类型
+      getwarehouse() {
+        //获取仓库关系标签
+        return getDictByType('warehouseRelType').then(data => {
+          //仓库分类无值，请求
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.value;
+            item.value = item.name;
+          });
+          this.AccountRelType = tableContent;
+          if (this.warehouse.warehouseType === '') {
+            this.warehouse.warehouseType = tableContent[0].name
+          }
         })
-      });
-    },
-    //获取仓库类型
-    getwarehouse(){
-      //获取仓库关系标签
-      return warehouseService.getwarehouseClassfiy().then(data=>{
-        //仓库分类无值，请求
-        let {tableContent} = data;
-        tableContent && tableContent.forEach(item => {
-          item.originValue = item.value;
-          item.value = item.name;
-        });
-        this.AccountRelType = tableContent;
-        if(this.warehouse.warehouseRelType === ""){
-          this.warehouse.warehouseType = tableContent[0].name
-        }
-        
-      })
-    },
-    //获取客户信息用于提交
-    getDealer(){
-      warehouseService.getDealer().then(({tableContent=[]})=>{
-        this.warehouse.customerDealerCode = tableContent[0].dealerCode        
-      })
-    },
-    //查询仓库信息
-    findData() {
-      return warehouseService.getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
-        let {baseinfo = {}, warehouse = {}} = formData;
-        // this.baseinfo = {...this.baseinfo, ...baseinfo,};
-        // this.warehouse = {...this.warehouse, ...warehouse,};
-        this.baseinfo = baseinfo;
-        this.warehouse = warehouse;
-        this.biReferenceId = this.warehouse.referenceId;
-        if (this.warehouse.warehousePic.length>0) {
-          this.picShow = true;
-          this.MatPic = this.warehouse.warehousePic;
-        }
-        else{
-          this.picShow = true;
-          this.getDefaultImg()
-        }
-        let [imgFileObj = {}] = attachment.filter(item => {
-          return item.attacthment === this.warehouse.warehousePic
-        });
-        this.imgFileObj = imgFileObj;
-      });
-    },
-    // TODO 获取默认图片
-    getDefaultImg() {
-        this.MatPic = require('assets/dealer.png');
-    },
-    //选择地址
-    changeAddress(ids,names){
-      this.AccountAddress = names;
-    },
-    getAddress(){
-      if(this.AccountAddress.length>0){
-        this.warehouse.province = this.AccountAddress[0];
-        this.warehouse.city = this.AccountAddress[1];
-        this.warehouse.county = this.AccountAddress[2]
-      }
-    },
-    //提交
-    submit(){
-      console.log(this.warehouse);
-      for(let key in this.warehouse){
-        if(typeof(this.warehouse[key]) === 'string' && this.warehouse[key].indexOf(' ')>=0){
-          this.warehouse[key] = this.warehouse[key].replace(/\s/g,'');
-        }
-      }
-      this.$vux.confirm.show({
-        content: '确认提交?',
-        // 确定回调
-        onConfirm: () => {
-          let submitData = {
-            listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
-            formData: {
-              baseinfo: this.baseinfo,
-              warehouse: this.warehouse
+      },
+      //查询仓库信息
+      findData() {
+        return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+          let {baseinfo = {}, warehouse = {}} = formData;
+          this.baseinfo = baseinfo;
+          this.warehouse = warehouse;
+          this.biReferenceId = this.warehouse.referenceId;
+          if (this.warehouse.warehousePic) {
+            this.picShow = true;
+            this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
+          } else {
+            this.picShow = true;
+            this.getDefaultImg()
+          }
+          for (let item of Object.values(this.typeSubMap)) {
+            let code = this.warehouse[item.key];
+            if (code) {
+              item.code = code;
+              this.warehouse[item.key] = null;
+              break;
             }
-          };
-          if(this.transCode.length>0){//修改
-            warehouseService.update(submitData).then(data=>{
-              let that = this;
-              if(data.success){
-                that.submitSuccess  = true;
-                this.$vux.alert.show({
-                  content: data.message,
-                  onHide(){
-                    that.$router.go(-1);
-                  }
-                })
-              }
-              else{
-                this.$vux.alert.show({
-                  content: data.message
-                })
-              }
-            })
           }
-          else{//新增
-            warehouseService.save(submitData).then(data=>{
-              let that = this;
-              if(data.success){
-                that.submitSuccess  = true;
-                this.$vux.alert.show({
-                  content:data.message,
-                  onHide(){
-                    if(that.$route.query.add == 1){
-                      sessionStorage.setItem('EDIT_WAREHOUSE_TRANSCODE',JSON.stringify({transCode:data.transCode}));
-                    }
-                    that.$router.go(-1);
-                  }
-                })
-              }
-              else{
-                this.$vux.alert.show({
-                  content:data.message
-                })
-              }
-            })
-          }
-
+        });
+      },
+      // TODO 获取默认图片
+      getDefaultImg() {
+        this.MatPic = require('assets/dealer.png');
+      },
+      //选择地址
+      changeAddress(ids, names) {
+        this.AccountAddress = names;
+      },
+      getAddress() {
+        if (this.AccountAddress.length > 0) {
+          this.warehouse.province = this.AccountAddress[0];
+          this.warehouse.city = this.AccountAddress[1];
+          this.warehouse.county = this.AccountAddress[2]
         }
-      })
+      },
+      //提交
+      submit() {
+        for (let key in this.warehouse) {
+          if (typeof(this.warehouse[key]) === 'string' && this.warehouse[key].indexOf(' ') >= 0) {
+            this.warehouse[key] = this.warehouse[key].replace(/\s/g, '');
+          }
+        }
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            let operation = save;
+            let submitData = {
+              listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
+              formData: {
+                baseinfo: this.baseinfo,
+                warehouse: this.warehouse
+              }
+            };
+            if (this.transCode) {
+              operation = update;
+            }
+            for (let item of Object.values(this.typeSubMap)) {
+              if (item.value) {
+                let [sel = {}] = item.list.filter(lItem => {
+                  return item.value === lItem.value
+                });
+                this.warehouse[item.key] = sel.code;
+                break;
+              }
+            }
+            operation(submitData).then((data = {}) => {
+              let {success = false, message = '提交失败'} = data;
+              if (success) {
+                message = '仓库提交成功';
+                this.submitSuccess = true;
+                if (!this.transCode && `${this.$route.query.add}` === '1') {
+                  sessionStorage.setItem('EDIT_WAREHOUSE_TRANSCODE', JSON.stringify({transCode: data.transCode}));
+                }
+              }
+              this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                  if (success) {
+                    this.$router.go(-1);
+                  }
+                }
+              });
+            });
+          }
+        })
+      },
+      save() {
+        let warn = '';
+        let validateMap = [
+          {
+            key: 'warehouseCode',
+            message: '【仓库编码】',
+          }, {
+            key: 'warehouseName',
+            message: '【仓库名称】',
+          }, {
+            key: 'warehouseType',
+            message: '【仓库类型】',
+          },
+        ];
+        validateMap.every(item => {
+          if (this.warehouse[item.key] === '') {
+            warn = `${item.message}不能为空`;
+            return false
+          }
+          return true
+        });
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
+        }
+        this.submit()
+      },
+      warehouseTypeChange(val) {
+        // 清空之前的选中值
+        this.typeSubMap[this.typeSub].value = '';
+        this.typeSubMap[this.typeSub].code = '';
+        this.typeSub = this.typeToSubMap[val];
+        this.getTypeSubList();
+      },
+      // TODO 获取仓库类型关联子项下拉列表
+      getTypeSubList() {
+        let currentTypeSub = this.typeSubMap[this.typeSub]; // 当前仓库类型关联子项对象
+        if (!!currentTypeSub.list.length) {
+          this.typeSubMap[this.typeSub].value = currentTypeSub.list[0].value;
+          return
+        }
+        switch (this.typeSub) {
+          // 请求组织列表
+          case 'group':
+            return getDepartMentWage().then(({tableContent = []}) => {
+              tableContent.forEach(item => {
+                item.name = item.GROUP_NAME;
+                item.value = item.GROUP_NAME;
+                item.code = item.GROUP_CODE;
+                if (item.code === currentTypeSub.code) {
+                  this.typeSubMap[this.typeSub].value = item.value;
+                }
+              });
+              this.typeSubMap[this.typeSub].list = tableContent;
+              if (currentTypeSub.code === '') {
+                this.typeSubMap[this.typeSub].value = tableContent[0].value;
+              }
+            });
+          // 请求员工、客户、加工商、渠道商列表
+          default:
+            return getObjDealerByLabelName({
+              dealerLabelName: currentTypeSub.dealerLabelName
+            }).then(({tableContent = []}) => {
+              tableContent.forEach(item => {
+                item.name = item.dealerName;
+                item.value = item.dealerName;
+                item.code = item.dealerCode;
+                if (item.code === currentTypeSub.code) {
+                  this.typeSubMap[this.typeSub].value = item.value;
+                }
+              });
+              this.typeSubMap[this.typeSub].list = tableContent;
+              if (currentTypeSub.code === '') {
+                this.typeSubMap[this.typeSub].value = tableContent[0].value;
+              }
+            })
+        }
+      },
     },
-    save(){
-        if(this.warehouse.warehouseCode === ''){
-          this.$vux.alert.show({
-            content: '【仓库编码】不能为空',
-          })
-        }
-        else if(this.warehouse.warehouseName === ''){
-          this.$vux.alert.show({
-            content: '【仓库名称】不能为空',
-          })
-        }
-        else if(this.warehouse.warehouseType === ''){
-          this.$vux.alert.show({
-            content: '【仓库类型】不能为空',
-          })
-        }
-        else{
-          this.submit()
-        }
-
-      
-    }
-
-
-  },
-  beforeRouteLeave(to, from, next) {
-    let {path} = to;
-    // 新建物料，修改列表页的meta值
-    console.log(this.submitSuccess);
-    if (this.submitSuccess && path === '/warehouse') {
-      to.meta.reload = true;
-    }
-    next();
-  },
-  created() {
-    let query = this.$route.query;
-    if(query.transCode){
-      this.transCode = query.transCode;
-      (async () => {
-        await this.findData();
-        await this.getwarehouse();
-        this.hasDefault = false;
-      })();
-      return
-    }
-    //获取当前用户信息
-    getBaseInfoData().then(data => {
-      this.baseinfo = {
-        ...this.baseinfo,
-        ...data,
-        activeTime: this.changeDate(new Date(), true),
+    beforeRouteLeave(to, from, next) {
+      let {path} = to;
+      // 新建物料，修改列表页的meta值
+      console.log(this.submitSuccess);
+      if (this.submitSuccess && path === '/warehouse') {
+        to.meta.reload = true;
       }
-    });
-    this.getwarehouse();   
-    this.getDealer();   
+      next();
+    },
+    created() {
+      let query = this.$route.query;
+      if (query.transCode) {
+        this.transCode = query.transCode;
+        (async () => {
+          await this.findData();
+          await this.getwarehouse();
+          this.hasDefault = false;
+        })();
+        return
+      }
+      //获取当前用户信息
+      getBaseInfoDataBase().then(data => {
+        this.baseinfo = {
+          ...this.baseinfo,
+          ...data,
+          // activeTime: this.changeDate(new Date(), true),
+        }
+      });
+      this.getwarehouse();
+    }
   }
-}
 </script>
 <style lang="scss" scoped>
   .vux-1px-l:before,
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
   .content {
     height: 90%;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    .vux-1px-b:after{
+    .vux-1px-b:after {
       transform: scaleY(1);
     }
     input {
@@ -385,29 +454,29 @@ export default {
         color: #6d6d6d;
         font-size: 0.12rem;
         display: block;
-        height:0.2rem;
+        height: 0.2rem;
         line-height: 0.2rem;
       }
-      .required{
-        color:red;
+      .required {
+        color: red;
         font-weight: bold;
       }
       //校验错误提示按钮
-      .warn{
+      .warn {
         position: absolute;
         right: 0.08rem;
         top: 0.27rem;
       }
-      .weui-icon-warn{
-        font-size:0.18rem;
+      .weui-icon-warn {
+        font-size: 0.18rem;
       }
       .property_val {
         display: block;
         font-size: 0.16rem;
         line-height: 0.24rem;
-        width:100%;
+        width: 100%;
       }
-      .readonly{
+      .readonly {
         color: #999;
       }
       .picker {
@@ -422,37 +491,39 @@ export default {
           font-size: 0.24rem;
         }
       }
-      .vux-cell-box{
+      .vux-cell-box {
         position: absolute;
-        left:0;
-        top:0;
+        left: 0;
+        top: 0;
         padding: 0.05rem 0.08rem;
-        width:100%;
+        width: 100%;
         box-sizing: border-box;
         color: #6d6d6d;
         font-size: 0.12rem;
-        label{
-          height:0.58rem;
+        label {
+          height: 0.58rem;
         }
-        .vux-cell-primary{
+        .vux-cell-primary {
           display: none;
         }
-        &:not(:first-child):before{
-          border:none;
+        &:not(:first-child):before {
+          border: none;
         }
 
       }
     }
   }
-  .edit_r_picker{
-    padding: 0 ;
-    .vux-1px-b{
-      padding: 0 0.08rem!important;
-      &:after{
+
+  .edit_r_picker {
+    padding: 0;
+    .vux-1px-b {
+      padding: 0 0.08rem !important;
+      &:after {
         border-bottom: none;
       }
     }
   }
+
   //确认框
   .popup_header {
     display: flex;
@@ -470,6 +541,7 @@ export default {
 
     }
   }
+
   // 确定
   .btn {
     left: 0;
@@ -493,7 +565,8 @@ export default {
       box-shadow: 0 2px 5px #5077aa;
     }
   }
-  .edit_bor_btm:after{
+
+  .edit_bor_btm:after {
     content: " ";
     position: absolute;
     left: 0;

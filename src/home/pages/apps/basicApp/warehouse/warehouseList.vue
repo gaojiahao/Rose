@@ -34,12 +34,11 @@
     <router-view></router-view>
     <load-icon :show='Loadding'></load-icon>
   </div>
-  
+
 </template>
 
 <script>
 import { Tab,TabItem} from 'vux'
-import warehouseService from 'service/warehouseService.js'
 import { getList} from 'service/commonService'
 import LoadIcon from 'components/Loading.vue'
 import searchIcon from 'components/search'
@@ -87,28 +86,28 @@ export default {
       this.getwarehouse()
     },
     //搜索
-    searchList(value){ 
+    searchList(value){
       this.srhInpTx = value;
       this.resetCondition();
       this.getwarehouse()
     },
     // 编辑地址
     goEditAds(item){
-      this.$router.push({ 
+      this.$router.push({
         path:'/warehouse/edit_warehouse',
         query:{
           transCode: item.transCode
         }
-      })      
+      })
     },
     goDetail(item){
-      this.$router.push({ 
+      this.$router.push({
         path:'/warehouse/warehouseDetail',
         query:{
           transCode: item.transCode
         }
       })
-          
+
     },
     //获取仓库列表
     getwarehouse(noReset = false){
@@ -174,7 +173,7 @@ export default {
                 width:'50%',
                 type:"text",
                 time : 700
-              })  
+              })
             }
           }
           //将总数据缓存
@@ -192,7 +191,7 @@ export default {
         }).catch(e=>{
           this.resetScroll();
         })
-                     
+
     },
      // TODO 重置下拉刷新、上拉加载的状态
     resetScroll() {
@@ -248,7 +247,7 @@ export default {
   created(){
     this.getData(false)
   },
-  
+
 }
 </script>
 
@@ -361,10 +360,10 @@ export default {
         width: .35rem;
         display: block;
         font-size: .24rem;
-        text-align: center;    
+        text-align: center;
         position: absolute;
         transform: translate(0, -50%);
-      }  
+      }
       // 用户信息
       .user_info {
         color: #5077aa;
