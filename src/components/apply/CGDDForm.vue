@@ -38,7 +38,7 @@
           <template v-else>
             <div class="title">物料列表</div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key='index'>
+              <div class="each_mater" v-for="(item, index) in matterList" :key='index'>
                 <swipeout>
                   <swipeout-item>
                     <div slot="right-menu">
@@ -77,19 +77,30 @@
                         <!-- 物料数量和价格 -->
                         <div class='mater_other'>
                           <div class='mater_price'>
-                            <span class="symbol">￥</span>{{item.price}}
-                            <span class='unit' v-if='item.measureUnit'>/ {{item.measureUnit}}</span>
+                            <!-- <span class="symbol">￥</span>{{item.price}} -->
+                            <span class='unit' v-if='item.measureUnit'>计量单位: {{item.measureUnit}}</span>
                           </div>
-                          <div class='mater_num'>
+                          <!-- <div class='mater_num'>
                             <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
                             <input class='num' type='number' v-model.number='item.tdQty'/>
                             <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                          </div>
+                          </div> -->
                         </div>
                       </div>
                     </div>
                   </swipeout-item>
                 </swipeout>
+                <!-- 物料输入内容 -->
+                <div class="userInp_mode">
+                  <group>
+                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
+                             v-model.number="item.price"></x-input>
+                  </group>
+                  <group>
+                    <x-input type="number" title="数量" text-align='right' placeholder='请填写'
+                    v-model.number="item.tdQty"></x-input>
+                  </group>
+                </div>
               </div>
             </div>
           </template>
@@ -125,7 +136,7 @@
 
 <script>
 // vux插件引入
-import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom} from 'vux'
+import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom,Group,XInput} from 'vux'
 // 请求 引入 
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData,saveAndStartWf,saveAndCommitTask } from 'service/commonService'
@@ -139,7 +150,7 @@ export default {
   directives: { TransferDom },
   components:{
     Popup, Swipeout, SwipeoutItem, 
-    SwipeoutButton,PopMatterList,PopDealerList,PopSingleSelect
+    SwipeoutButton,PopMatterList,PopDealerList,PopSingleSelect,Group,XInput
   },
   data(){
     return{
@@ -220,8 +231,8 @@ export default {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
         } else {
-          item.tdQty = 1;
-          item.price = 90;
+          item.tdQty = '';
+          item.price = '';
         }
       })
       this.numMap = {};
@@ -401,5 +412,17 @@ export default {
 
 <style lang='scss' scoped>
 @import './../scss/bizApply';
+.pages {
+  /deep/ .vux-no-group-title{
+    margin-top:0;
+  }
+    /deep/ .weui-cells {
+      font-size: .14rem;
+      &:before {
+        border-top: none;
+        left:0;
+      }
+    }
+  }
 </style>
 
