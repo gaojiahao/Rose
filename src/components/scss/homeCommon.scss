@@ -8,10 +8,13 @@
   border-radius: .06rem;
   box-sizing: border-box;
 }
+.vux-1px-b:after {
+  border-color: #e8e8e8;
+}
 // 应用标题
 .list_title{
-  height: .4rem;
-  display: flex;
+  // height: .4rem;
+  // display: flex;
   padding: .04rem 0;
   position: relative;
   margin-bottom: .02rem;
@@ -28,10 +31,14 @@
     z-index: 99;
     width: 100%;
     color: #3f72af;
-    text-align: center;
-    font-size: .24rem;
     font-weight: 400;
+    font-size: .18rem;
+    padding: .02rem .12rem;
     position: relative;
+    box-sizing: border-box;
+    .title {
+      padding: .02rem 0;
+    }
     .more {
       top: 50%;
       right: 3%;
@@ -61,6 +68,8 @@
       padding: .1rem;
       background: #fff;
       display: -webkit-box;
+      align-items: center;
+      border-radius: .04rem;
       box-sizing: border-box;
       margin: 0 0 .02rem .02rem;
       // 图片
@@ -76,24 +85,28 @@
         margin-left: .08rem;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        // justify-content: space-between;
         // app 名称
         .app_name {
-          font-size: .14rem;
-          font-weight: blod;
-        }
-        // app 介绍
-        .app_intro {
           max-width: 1rem;
-          color: #757575;
+          font-size: .14rem;
+          font-weight: bold;
+          display: -webkit-box;
           overflow: hidden;
-          font-size: .1rem;
-          max-height: .46rem;
+          max-height: .44rem;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           box-sizing: border-box;
           text-overflow: ellipsis;
           -webkit-box-orient: vertical;
+        }
+        // app 介绍
+        .app_intro {
+          @extend .app_name;
+          max-width: .8rem;
+          color: #757575;
+          font-size: .1rem;
+          max-height: .46rem;
         }
       }
     }
