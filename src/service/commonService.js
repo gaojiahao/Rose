@@ -65,7 +65,7 @@ export let getBaseInfoData = () => {
       });
       reject(e);
     };
-    let {nickname, userId} = await $axios.ajax({
+    let {nickname, userId ,userCode} = await $axios.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
@@ -104,6 +104,7 @@ export let getBaseInfoData = () => {
         handlerUnitName: groupName,
         handlerRole: role.roleId || '',
         handlerRoleName: role.roleName || '',
+        userCode : userCode
       });
     }).catch(e => {
       baseErrorHandler(e);

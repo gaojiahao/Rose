@@ -8,35 +8,18 @@
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
+                  :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
+          <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
                @click.stop="selThis(item,index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
-              <div class="mater_name">
-                <!-- <span class="whiNum">No.{{index + 1}}</span> -->
-                {{item.COST_NAME}}
+              <div class="project_name">
+                {{item.PROJECT_NAME}}
               </div>
               <!-- 物料基本信息 -->
-              <div class="mater_info">
-                <!-- 物料编码、规格 -->
-                <div class="withColor">
-                  <!-- 物料编码 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_code">
-                      <span class="title">编码</span>
-                      <span class="num">{{item.COST_CODE}}</span>
-                    </div>
-                  </div>
-                  <!-- 物料规格 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_spec">
-                      <span class="title">类型</span>
-                      <span class="num">{{item.COST_TYPE || '无'}}</span>
-                    </div>
-                  </div>
-                </div>
+              <div class="project_type">
+                {{item.PROJECT_TYPE}}
               </div>
             </div>
             <!-- icon -->
@@ -50,7 +33,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import {getCost} from 'service/materService.js'
+ import {getProjectList} from 'service/projectService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
@@ -77,7 +60,7 @@
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
         tmpItems: [],
-        costList: [],
+        projectList: [],
         limit: 10,
         page: 1.,
         hasNext: true,
@@ -91,12 +74,6 @@
       show: {
         handler(val) {
           this.showPop = val;
-        }
-      },
-      defaultValue: {
-        handler(val) {
-          // 默认值改变，重新赋值
-          this.setDefaultValue();
         }
       },
 
@@ -119,7 +96,7 @@
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.COST_CODE === item.COST_CODE) {
+          if (sItem.PROJECT_NAME === item.PROJECT_NAME) {
             flag = true;
             return false;
           }
@@ -131,15 +108,10 @@
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = [sItem];
-        this.$emit('sel-matter',this.selItems[0]);
-      },
-      // TODO 设置默认值
-      setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
+        this.$emit('sel-project',this.selItems[0]);
       },
       // TODO 获取物料列表
-      getCostList() {
+      getProjectLsit() {
         let filter = [];
 
         if (this.srhInpTx) {
@@ -148,18 +120,18 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'COST_NAME'
+              property: 'PROJECT_NAME'
             },
           ];
         }
-        return getCost({
+        return getProjectList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
+          this.projectList = this.page === 1 ? tableContent : [...this.projectList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
@@ -168,21 +140,20 @@
       // TODO 搜索物料
       searchMat(val) {
         this.srhInpTx = val;
-        this.costList = [];
+        this.projectList = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
-        this.getCostList();
+        this.getProjectLsit();
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this.getCostList();
+        this.getProjectLsit();
       },
     },
     created() {
-      this.setDefaultValue();
-      this.getCostList();
+      this.getProjectLsit();
     }
   }
 </script>
@@ -306,93 +277,23 @@
             box-sizing: border-box;
             display: inline-block;
             // 物料名称
-            .mater_name {
-              color: #111;
+            .project_name {
               overflow: hidden;
-              font-size: .12rem;
+              color: #5077aa;
+              font-size: .14rem;
               font-weight: bold;
               max-height: .46rem;
               display: -webkit-box;
               -webkit-line-clamp: 2;
               text-overflow: ellipsis;
               -webkit-box-orient: vertical;
-              // 每个物料的索引
-              .whiNum {
-                color: #fff;
-                font-weight: 200;
-                padding: 0 .04rem;
-                font-size: .1rem;
-                display: inline-block;
-                background: #ea5455;
-                vertical-align: middle;
-                margin: -.02rem .04rem 0 0;
-              }
             }
             // 物料信息
-            .mater_info {
+            .project_type {
+              color: #111;
+              font-weight: bold;
               color: #757575;
-              font-size: .12rem;
-              // 有颜色包裹的
-              .withColor {
-                margin-top: .04rem;
-                // 物料编码
-                .mater_code {
-                  display: flex;
-                  .title,
-                  .num {
-                    font-size: .1rem;
-                    display: inline-block;
-                    padding: .01rem .04rem;
-                  }
-                  .title {
-                    color: #fff;
-                    background: #3f72af;
-                  }
-                  .num {
-                    color: #111;
-                    max-width: .85rem;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    background: #dbe2ef;
-                    box-sizing: border-box;
-                    text-overflow: ellipsis;
-                  }
-                }
-                // 规格
-                .mater_spec {
-                  @extend .mater_code;
-                  margin-left: .1rem;
-                  .title {
-                    color: #fff;
-                    background: #537791;
-                  }
-                  .num {
-                    color: #fff;
-                    max-width: .6rem;
-                    background: #ff7f50;
-                  }
-                }
-              }
-              // 没颜色包裹的
-              .withoutColor {
-                // 物料分类
-                .mater_classify {
-                  font-size: .1rem;
-                  margin-top: .02rem;
-                  .type,
-                  .father {
-                    margin-right: .04rem;
-                  }
-                }
-                // 物料颜色 材质
-                .mater_material {
-                  font-size: .1rem;
-                  .unit,
-                  .color {
-                    margin-right: .06rem;
-                  }
-                }
-              }
+              font-size: .14rem;
             }
           }
           // 下划线

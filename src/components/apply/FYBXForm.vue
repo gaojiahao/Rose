@@ -1,12 +1,28 @@
 <template>
   <div class="pages xsbj-apply-container">
-    <div class="basicPart" ref='fill'>
+    <div class="basicPart cost" ref='fill'>
       <div class='fill_wrapper'>
+        <!--项目信息-->
+        <div class="or_ads mg_auto box_sd" @click="showProjectPop = !showProjectPop">
+          <div v-if='project.name'>
+            <!-- <div class="user_info">
+              <span class="user_name">{{project.name}}</span>
+            </div> -->
+            <div class="cp_info">
+              <p class="cp_name">{{project.name}}</p>
+              <p class="cp_ads">{{project.type}}</p>
+            </div>
+          </div>
+          <div v-else>
+            <div class="title">项目列表</div>
+            <div class="mode">请选择项目</div>
+          </div>
+          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+        </div>
         <!-- 费用列表 -->
         <div class="materiel_list mg_auto box_sd" v-for="(item, index) in CostList" :key='index'>
           <group :title='`费用明细${index+1}`'>
             <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)"></cell>
-            <cell title="费用编码" v-model='item.COST_CODE' ></cell>
             <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker>
             <x-input title="金额" text-align='right' placeholder='请填写'
                      type='number'v-model='item.price'>
@@ -23,7 +39,8 @@
         <!-- 费用popup -->
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        ref="matter"></pop-cost-list>
-      
+        <!--项目的popup-->
+        <pop-project-list :show='showProjectPop' v-model='showProjectPop' @sel-project='selProject'></pop-project-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -32,7 +49,7 @@
         <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
       </span>
       <!-- <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
-      <span class="count_btn" @click="submitOrder">提交订单</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
   </div>
 </template>
@@ -46,16 +63,18 @@ import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonSe
 import ApplyCommon from './../mixins/applyCommon'
 // 组件引入
 import PopCostList from 'components/Popup/PopCostList'
+import PopProjectList from 'components/Popup/PopProjectList'
 export default {
   mixins: [ApplyCommon],
   components: { 
     Cell, Group, Popup,
     XInput, Swipeout, SwipeoutItem,
-    SwipeoutButton, PopCostList, PopupPicker 
+    SwipeoutButton, PopCostList, PopupPicker ,PopProjectList
   },
   data() {
     return {
       showCostPop :false,
+      showProjectPop :false,
       CostList: [ // 费用列表
         {
           COST_NAME : '', //费用名称
@@ -73,6 +92,7 @@ export default {
       formData: {
         biComment: ''
       },
+      project:{},//项目名称
       showPop: false,
       tmp: '',
       taxRate: 0, // 税率
@@ -113,7 +133,6 @@ export default {
         COST_CODE : '', //费用编码
         expSubject : [], //费用科目
         expSubjectList : [],//费用科目列表
-
         price :'', //报销金额
         reson : '', // 报销事由
       })
@@ -125,12 +144,21 @@ export default {
     // TODO 选中费用
     selMatter(val) {
       let sels = val;
-      console.log(sels);
+      this.CostList[this.costIndex].expSubjectList = [];
       this.CostList[this.costIndex].COST_NAME = sels.COST_NAME;
       this.CostList[this.costIndex].COST_CODE = sels.COST_CODE;
-      this.CostList[this.costIndex].expSubject.push(sels.COST_SUB_SUBJECTS.split(',')[0]);
+      this.CostList[this.costIndex].expSubject[0] = sels.COST_SUB_SUBJECTS.split(',')[0];
       this.CostList[this.costIndex].expSubjectList.push(sels.COST_SUB_SUBJECTS.split(','));
       this.CostList[this.costIndex].COST_TYPE = sels.COST_TYPE;
+      console.log(this.CostList[this.costIndex].expSubjectList);
+    },
+    // TODO 选中项目
+    selProject(val){
+      console.log(val);
+      this.project = {
+        name : val.PROJECT_NAME,
+        type : val.PROJECT_TYPE
+      }
     },
     // TODO 提交
     submitOrder() {
@@ -183,7 +211,9 @@ export default {
               modifer: this.transCode ? this.formData.handler : '',
               order: {
                 dealerDebit: this.formData.handler,
-                project : null,
+                dealerCodeCredit : this.formData.userCode,
+		            crDealerLabel: '员工',
+                project : this.project.name,
                 dataSet
               }
             }),
@@ -210,6 +240,10 @@ export default {
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
+    /deep/ >.weui-cells__title{
+      padding-left: 0;
+      font-size:0.12rem;
+    }
   .add_more{
     width:100%;
     text-align: center;
