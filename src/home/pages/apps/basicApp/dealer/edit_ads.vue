@@ -73,7 +73,7 @@
               <div class='checked' v-show='showSelIcon(item)'>
                 <x-icon type="ios-checkmark-empty" size="30"></x-icon>
               </div>
-              
+
             </div>
           </r-scroll>
         </div>
@@ -86,7 +86,7 @@
     </div>
     <!--提交按钮-->
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save" :class='{disabled : btnStatus}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
+      <div class="cfm_btn" @click="save" :class='{disabled : disabledSubmit}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
     <loading :show="showLoading"></loading>
   </div>
@@ -105,7 +105,6 @@ export default {
     return {
       addressData : ChinaAddressV4Data,
       showLoading: true,
-      btnStatus : false, //按钮不可点击
       transCode  : '',
       picShow: false,
       imgFileObj: {}, // 上传的图片对象
@@ -152,6 +151,12 @@ export default {
       scrollOptions : {
         click : true
       },
+    }
+  },
+  computed: {
+    // 提交按钮是否可点击
+    disabledSubmit(){
+      return this.PhoneWarn || this.MobileWarn || this.EmailWarn;
     }
   },
   directives: {
@@ -261,36 +266,30 @@ export default {
     },
     //校验固定电话号
     checkPhone(){
-      let reg = /^0\d{2,3}-?\d{7,8}$/;
+      let reg = /^0\d{2,3}-\d{7,8}$/;
       if(this.dealer.dealerPhone.length>0 && !reg.test(this.dealer.dealerPhone)){
         this.PhoneWarn = true;
-        this.btnStatus = true;
         return
       }
       this.PhoneWarn = false;
-      this.btnStatus = false;     
     },
     //校验手机号
     checkMobile(){
       let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
       if(this.dealer.dealerMobilePhone.length>0 && !reg.test(this.dealer.dealerMobilePhone)){
         this.MobileWarn = true;
-        this.btnStatus = true;
         return
-      }     
+      }
       this.MobileWarn = false;
-      this.btnStatus = false;
     },
     //校验邮箱
     checkEmail(){
       let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
       if(this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
         this.EmailWarn = true;
-        this.btnStatus = true;
         return
       }
       this.EmailWarn = false;
-      this.btnStatus = false;
     },
     //往来信息
     findData() {
@@ -328,7 +327,7 @@ export default {
           this.dealer.city = '';
           return
         };
-        this.dealer.city = this.AccountAddress[1]; 
+        this.dealer.city = this.AccountAddress[1];
       }
     },
     //提交
@@ -402,31 +401,46 @@ export default {
         }
       })
     },
-    save(){
-      if(!this.btnStatus){
-        if(this.dealer.dealerCode === ''){
-            this.$vux.alert.show({
-              content: '【往来编码】不能为空',
-            })
+    save() {
+      if (!this.disabledSubmit) {
+        let warn = '';
+        let validateMap = [
+          {
+            key: 'dealerCode',
+            message: '【往来编码】',
+          }, {
+            key: 'dealerName',
+            message: '【往来名称】',
+          }, {
+            key: 'dealerLabelName',
+            message: '【往来类型】',
+          },
+        ];
+        validateMap.every(item => {
+          if (this.dealer[item.key] === '') {
+            warn = `${item.message}不能为空`;
+            return false
           }
-          else if(this.dealer.dealerName === ''){
-            this.$vux.alert.show({
-              content: '【往来名称】不能为空',
-            })
-          }
-          else if(this.dealer.dealerLabelName === ''){
-            this.$vux.alert.show({
-              content: '【往来类型】不能为空',
-            })
-          }
-          else{
-            this.submit()
-          }
-
+          return true
+        });
+        if (!warn && this.PhoneWarn) {
+          warn = '电话号码格式不正确'
         }
+        if (!warn && this.MobileWarn) {
+          warn = '手机号码格式不正确'
+        }
+        if (!warn && this.EmailWarn) {
+          warn = '邮件格式不正确'
+        }
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
+        }
+        this.submit();
       }
-
-
+    }
   },
   created() {
     this.showLoading = true;
