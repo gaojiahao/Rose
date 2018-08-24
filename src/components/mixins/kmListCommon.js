@@ -34,7 +34,7 @@ export default {
   },
   directives: { TransferDom },
   components: {
-    Tab, Icon, Cell, 
+    Tab, Icon, Cell,
     Group, Popup, RScroll,
     TabItem, searchIcon, CellFormPreview
   },
@@ -89,7 +89,7 @@ export default {
       let requestData = {
         view_id: 'obj_water_1',
         active_type: 'water',
-        row :row
+        row :JSON.stringify(row)
       }
       //流水列表字段
       await getView({...requestData,view_scope: 'model'}).then( data =>{
@@ -158,7 +158,7 @@ export default {
               type:"text",
               time : 700
             })
-          }          
+          }
         }
         //列表总数据缓存
         if(this.activeIndex == 0 && this.page ===1){
