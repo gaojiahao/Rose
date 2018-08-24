@@ -5,12 +5,12 @@
         <!-- 选择往来-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div v-if='dealerInfo.dealerName'>
-            <div class="user_info" v-if="dealerInfo.creatorName">
-              <span class="user_name">{{dealerInfo.creatorName || ''}}</span>
-              <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+            <div class="user_info">
+              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
             </div>
             <div class="cp_info">
-              <p class="cp_name">{{dealerInfo.dealerName}}</p>
+              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
+              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
               <p class="cp_ads">
                 {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
             </div>

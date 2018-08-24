@@ -69,13 +69,16 @@
   }
   // 公司信息
   .cp_info {
+    color: #111;
     .cp_name {
-      color: #111;
-      font-weight: 500;
+      font-weight: bold;
     }
     .cp_ads {
       font-weight: 200;
       color: #757575;
+    }
+    .user_tel {
+      margin-right: .04rem;
     }
   }
 }

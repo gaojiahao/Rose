@@ -11,12 +11,13 @@
           </div>
           <div v-else>
             <div class="user_info">
-              <span class="user_name">{{dealerInfo.creatorName}}</span>
-              <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
             </div>
             <div class="cp_info">
-              <p class="cp_name">{{dealerInfo.dealerName}}</p>
-              <p class="cp_ads">{{dealerInfo.province + dealerInfo.city + dealerInfo.county + dealerInfo.address}}</p>
+              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
+              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
+              <p class="cp_ads">
+                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
             </div>
             <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
           </div>
