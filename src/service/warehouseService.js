@@ -8,80 +8,65 @@ let errorHandler = (e) => {
   });
   return Promise.reject(e)
 };
-const warehouseService = {
-    //获取id
-    getId(id){
-        return $axios.ajax({
-            url:`/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
-        }).catch(e => {
-            return errorHandler(e);
-          });
-    },
-    //获取仓库列表
-    getwarehouseList(id,data){
-        return $axios.ajax({
-            url:`/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
-            data
-        }).catch(e => {
-            return errorHandler(e);
-          });
-    },
-    //获取仓库分类
-    getwarehouseClassfiy(){
-        return $axios.ajax({
-            url:'/H_roleplay-si/ds/getDictByType',
-            data:{
-                type: 'warehouseRelType',
-                page: 1,
-                start: 0,
-                limit: 50
-            }
-        }).catch(e => {
-            return errorHandler(e);
-        });
-    },
-    //获取客户
-    getDealer(){
-        return $axios.ajax({
-            url:'/H_roleplay-si/ds/getObjDealerByLabelName',
-            data:{
-                dealerLabelName: '客户',
-                page: 1,
-                start: 0,
-                limit: 1000
-            }
-        }).catch(e => {
-            return errorHandler(e);
-        });
-    },
-    //保存仓库
-    save(data){
-        return $axios.post({
-            url:'/H_roleplay-si/warehouse/save',
-            data
-        }).catch(e => {
-            return errorHandler(e);
-        });
-    },
-    //修改仓库
-    update(data){
-        return $axios.post({
-            url:'/H_roleplay-si/warehouse/update',
-            data
-        }).catch(e => {
-            return errorHandler(e);
-        });
-    },
-    //查询仓库信息
-    getwarehouseInfo(code){
-        return $axios.ajax({
-            url:`/H_roleplay-si/warehouse/findData?transCode=${code}`
-        }).catch(e => {
-            return errorHandler(e);
-        });
 
+//获取id
+export let getId = (id) => {
+  return $axios.ajax({
+    url: `/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+//保存仓库
+export let save = (data) => {
+  return $axios.post({
+    url: '/H_roleplay-si/warehouse/save',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+//修改仓库
+export let update = (data) => {
+  return $axios.post({
+    url: '/H_roleplay-si/warehouse/update',
+    data
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+//查询仓库信息
+export let getwarehouseInfo = (code) => {
+  return $axios.ajax({
+    url: `/H_roleplay-si/warehouse/findData?transCode=${code}`
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
+
+// TODO 获取组织列表
+export let getDepartMentWage = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getDepartMentWage',
+    data: {
+      _dc: Date.now(),
+      page: 1,
+      start: 0,
+      limit: 10000,
+      ...data
     }
+  }).catch(e => {
+    return errorHandler(e);
+  });
+};
 
-
+export default {
+  getId,
+  save,
+  update,
+  getwarehouseInfo,
+  getDepartMentWage,
 }
-export default warehouseService

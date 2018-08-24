@@ -122,7 +122,7 @@ export let getBaseInfoData = () => {
       });
       reject(e);
     };
-    let {nickname, userId ,userCode} = await $axios.ajax({
+    let {nickname, userId, userCode} = await $axios.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
@@ -161,7 +161,7 @@ export let getBaseInfoData = () => {
         handlerUnitName: groupName,
         handlerRole: role.roleId || '',
         handlerRoleName: role.roleName || '',
-        userCode : userCode
+        userCode: userCode
       });
     }).catch(e => {
       baseErrorHandler(e);
@@ -172,7 +172,7 @@ export let getBaseInfoData = () => {
 // TODO 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
   return $axios.ajax({
-    url:`/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
+    url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
     data
   }).catch(e => {
     return errorHandler(e);
@@ -238,7 +238,13 @@ export let getProcess = (listId = '') => {
 export let getObjDealerByLabelName = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getObjDealerByLabelName',
-    data
+    data: {
+      _dc: Date.now(),
+      page: 1,
+      start: 0,
+      limit: 10000,
+      ...data
+    }
   }).catch(e => {
     return errorHandler(e);
   });
