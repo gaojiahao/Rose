@@ -363,8 +363,8 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
         }
       },
       //获取订单信息用于重新提交
-      async getFormData() {
-        await getSOList({
+     getFormData() {
+       return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
         }).then((data) => {

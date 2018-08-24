@@ -5,9 +5,9 @@
         <!--项目信息-->
         <div class="or_ads mg_auto box_sd" @click="showProjectPop = !showProjectPop">
           <div class="title">项目名称</div>
-          <div v-if='project.name'>
+          <div v-if='projectName'>
             <div class="cp_info">
-              <p class="cp_name">{{project.name}}</p>
+              <p class="cp_name">{{projectName}}</p>
             </div>
           </div>
           <div v-else>
@@ -19,7 +19,7 @@
         <div class="materiel_list mg_auto box_sd" v-for="(item, index) in CostList" :key='index'>
           <group :title='`费用明细${index+1}`' class='costGroup'>
             <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)"></cell>
-            <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker>
+            <!-- <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker> -->
             <x-input title="金额" text-align='right' placeholder='请填写'
                      type='number'v-model='item.price'>
             </x-input>
@@ -55,6 +55,7 @@
 // vux插件引入
 import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup,PopupPicker } from 'vux'
 // 请求 引入
+import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
 // mixins 引入
 import ApplyCommon from './../mixins/applyCommon'
@@ -70,17 +71,20 @@ export default {
   },
   data() {
     return {
+      listId: 'b61ef324-f261-48d6-9c79-d1b475c24943',
+      biComment:  '',
+      biReferenceId:'',
       showCostPop :false,
       showProjectPop :false,
       CostList: [ // 费用列表
         {
           COST_NAME : '', //费用名称
           COST_CODE : '', //费用编码
-          expSubject : [], //费用科目
-          expSubjectList : [],//费用科目列表
+          expSubject : '', //费用科目
           COST_TYPE : '', //费用类型
           price :'', //报销金额
           reson : '', // 报销事由
+          comment :''
         }
       ], 
       selectedCost:[],
@@ -89,7 +93,7 @@ export default {
       formData: {
         biComment: ''
       },
-      project:{},//项目名称
+      projectName : '',//项目名称
       showPop: false,
       tmp: '',
       taxRate: 0, // 税率
@@ -132,10 +136,10 @@ export default {
       this.CostList.push({
         COST_NAME : '', //费用名称
         COST_CODE : '', //费用编码
-        expSubject : [], //费用科目
-        expSubjectList : [],//费用科目列表
+        expSubject : '', //费用科目
         price :'', //报销金额
         reson : '', // 报销事由
+        comment : ''
       })
     },
     //删除费用明细
@@ -145,21 +149,16 @@ export default {
     // TODO 选中费用
     selMatter(val) {
       let sels = val;
-      this.CostList[this.costIndex].expSubjectList = [];
       this.CostList[this.costIndex].COST_NAME = sels.COST_NAME;
       this.CostList[this.costIndex].COST_CODE = sels.COST_CODE;
-      this.CostList[this.costIndex].expSubject[0] = sels.COST_SUB_SUBJECTS.split(',')[0];
-      this.CostList[this.costIndex].expSubjectList.push(sels.COST_SUB_SUBJECTS.split(','));
+      this.CostList[this.costIndex].expSubject = sels.COST_SUB_SUBJECTS.split(',')[0];
       this.CostList[this.costIndex].COST_TYPE = sels.COST_TYPE;
       console.log(this.CostList[this.costIndex].expSubjectList);
     },
     // TODO 选中项目
     selProject(val){
       console.log(val);
-      this.project = {
-        name : val.PROJECT_NAME,
-        type : val.PROJECT_TYPE
-      }
+      this.projectName = val.PROJECT_NAME;
     },
     // TODO 提交
     submitOrder() {
@@ -182,13 +181,14 @@ export default {
           return false
         }
         dataSet.push({
+          tdId : item.tdId || '',
           costName_expCode: item.COST_NAME, //费用名称
           expCode: item.COST_CODE, //费用编码
-          expSubject: item.expSubject[0] , //费用科目
+          expSubject: item.expSubject , //费用科目
           costType_expCode: item.COST_TYPE || null, //费用类型
           tdAmount: item.price, //报销金额
           expCause : item.reson, // 报销事由
-          comment : null
+          comment : item.comment
         });
         return true
       });
@@ -202,33 +202,83 @@ export default {
         content: '确认提交?',
         // 确定回调
         onConfirm: () => {
-          let operation = submitAndCalc;
+          let operation = saveAndStartWf;
+          let wfPara = {
+            [this.processCode]: {businessKey: "REIM1", createdBy: JSON.stringify(this.formData.handler)}
+          }
+          if (this.isResubmit) {
+            wfPara = {
+              businessKey: this.transCode,
+              createdBy: this.formData.handler,
+              transCode: this.transCode,
+              result: 3,
+              taskId: this.taskId,
+              comment: ""
+            }
+          }
           let submitData = {
-            listId: 'b61ef324-f261-48d6-9c79-d1b475c24943',
+            listId: this.listId,
             biComment: '',
             formData: JSON.stringify({
               ...this.formData,
               creator: this.transCode ? this.formData.handler : '',
               modifer: this.transCode ? this.formData.handler : '',
               order: {
-                dealerDebit: this.formData.handler,
+                // dealerDebit: this.formData.handler,
                 dealerCodeCredit : this.formData.userCode,
 		            crDealerLabel: '员工',
-                project : this.project.name,
+                project : this.projectName,
                 dataSet
               }
             }),
+            wfPara: JSON.stringify(wfPara)
           };
-          if (this.transCode) {
+          if (this.isResubmit) {
+            submitData.biReferenceId = this.biReferenceId;
             operation = saveAndCommitTask
           }
           this.saveData(operation, submitData);
         }
       });
     },
-    // TODO 获取详情
+     //获取订单信息用于重新提交
     getFormData() {
-    },
+        return getSOList({
+          formViewUniqueId: this.uniqueId,
+          transCode: this.transCode
+        }).then((data) => {
+          this.listId = data.listId;
+          console.log(data);
+          this.biComment = data.biComment;
+          this.biReferenceId = data.biReferenceId;
+          this.CostList = [];
+          let {formData} = data;
+          this.projectName = formData.order.project;
+          //基本信息
+          this.formData = {
+            ...this.formData,
+            creator: formData.creator,
+            modifer: formData.modifer,
+            biComment :formData.biComment,
+
+          }
+          //费用明细
+          formData.order.dataSet.forEach(item=>{
+            let obj = {
+              COST_NAME : item.costName_expCode, //费用名称
+              COST_CODE : item.expCode, //费用编码
+              COST_TYPE :item.costType_expCode, 
+              expSubject : item.expSubject, //费用科目
+              price :item.tdAmount, //报销金额
+              reson : item.expCause, // 报销事由
+              comment :item.comment,
+              tdId : item.tdId
+            }
+            this.CostList.push(obj);
+          })
+          this.$emit('input', false);
+        })
+      }
   },
   created() {
     let data = sessionStorage.getItem('FXBX_DATA');

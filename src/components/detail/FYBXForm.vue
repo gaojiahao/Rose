@@ -1,6 +1,9 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+       <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">报销人</p>
         <p class="mode">{{orderInfo.creatorName }}</p>
@@ -8,6 +11,10 @@
       <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
         <p class="mode">{{orderInfo.crtTime}}</p>
+      </div>
+      <div class="trade_mode mg_auto box_sd">
+        <p class="title">项目名称</p>
+        <p class="mode">{{orderInfo.order.project || '无'}}</p>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list mg_auto box_sd">
@@ -78,6 +85,7 @@
         </div>
       </div>
       <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -90,6 +98,8 @@ import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
 // 组件引入
+// 组件 引入
+import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
@@ -103,7 +113,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow,
+    workFlow,RAction
   },
   methods: {
     // 获取详情

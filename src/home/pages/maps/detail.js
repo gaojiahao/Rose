@@ -11,6 +11,7 @@ export default {
   SODL: 'XSCK', // 销售出库
   TRAN: 'BDKCDB', // 本地库存调拨
   STCK: 'KCPD', // 库存盘点
+  REIM1: 'FYBX', // 费用报销
   REIM: 'FYBX', // 费用报销
   PRCD: 'SK', // 收款
   PAY: 'FK', // 付款
