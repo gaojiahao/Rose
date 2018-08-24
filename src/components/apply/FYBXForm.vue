@@ -108,13 +108,17 @@ export default {
     }
   },
   watch:{
-    CostList(val){
-      let data = {
-        FXBX_DATA : {
-          cost : this.CostList
+    CostList:{
+      handler(val){
+        let data = {
+          FXBX_DATA : {
+            cost : val
+          }
         }
-      }
-      this.$emit('sel-data',data);
+        this.$emit('sel-data',data);
+
+      },
+      deep:true
     }
   },
   methods: {
