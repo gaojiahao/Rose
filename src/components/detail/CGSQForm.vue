@@ -49,7 +49,7 @@
                     <span class='num'>数量: {{item.tdQty}}</span>
                   </div>
                   <div class='mater_price'>
-                    ￥{{item.price*item.tdQty | numberComma(3)}}
+                    ￥{{item.amount | numberComma(3)}}
                   </div>
                 </div>
               </div>
@@ -78,7 +78,7 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
@@ -119,12 +119,14 @@ export default {
         }
         // 获取合计
         let {dataSet} = data.formData.order;
-        for (let val of dataSet) {
-          this.count = accAdd(this.count,val.tdQty* val.price);
-          val.inventoryPic = val.inventoryPic_transObjCode
-            ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
+        dataSet.forEach(item=>{
+          item.amount = accMul(item.tdQty,item.price)
+          this.count = accAdd(this.count,item.amount);
+          item.inventoryPic = item.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
-        }
+
+        })
         this.orderInfo = data.formData;
         this.workFlowInfoHandler();
       })

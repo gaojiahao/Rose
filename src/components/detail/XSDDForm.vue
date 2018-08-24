@@ -73,7 +73,7 @@
                             ￥{{item.tdAmount | numberComma(3)}}
                             <span class="num"
                                   :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
-                              [金额: ￥{{item.price* item.tdQty| numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
+                              [金额: ￥{{item.noTaxAmount| numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
                             </span>
                           </div>
                         </div>
@@ -102,7 +102,7 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data(){
     return{

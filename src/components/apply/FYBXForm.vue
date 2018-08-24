@@ -1,27 +1,23 @@
 <template>
   <div class="pages xsbj-apply-container">
-    <div class="basicPart cost" ref='fill'>
+    <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!--项目信息-->
         <div class="or_ads mg_auto box_sd" @click="showProjectPop = !showProjectPop">
+          <div class="title">项目名称</div>
           <div v-if='project.name'>
-            <!-- <div class="user_info">
-              <span class="user_name">{{project.name}}</span>
-            </div> -->
             <div class="cp_info">
               <p class="cp_name">{{project.name}}</p>
-              <p class="cp_ads">{{project.type}}</p>
             </div>
           </div>
           <div v-else>
-            <div class="title">项目列表</div>
-            <div class="mode">请选择项目</div>
+            <div class="mode">请选择项目名称</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
         <!-- 费用列表 -->
         <div class="materiel_list mg_auto box_sd" v-for="(item, index) in CostList" :key='index'>
-          <group :title='`费用明细${index+1}`'>
+          <group :title='`费用明细${index+1}`' class='costGroup'>
             <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)"></cell>
             <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker>
             <x-input title="金额" text-align='right' placeholder='请填写'
@@ -240,6 +236,29 @@ export default {
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
+  .costGroup{
+    /deep/ > .vux-no-group-title {
+      margin-top: 0.08rem;
+    }
+    /deep/ > .weui-cells:after {
+      border-bottom: none;
+    }
+    .vux-cell-box{
+      /deep/ > .weui-cell {
+        padding: 10px 0;
+      }
+      &:before {
+        left: 0;
+      }
+
+    }
+    .weui-cell {
+      padding: 10px 0;
+      &:before {
+        left: 0;
+      }
+    }
+  }
     /deep/ >.weui-cells__title{
       padding-left: 0;
       font-size:0.12rem;
