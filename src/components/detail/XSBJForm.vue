@@ -7,11 +7,11 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <span class="user_name">{{dealerInfo.creatorName}}</span>
-          <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span>
+          <span class="user_name">{{dealerInfo.dealerName}}</span>
+          <!-- <span class="user_tel">{{dealerInfo.dealerMobilePhone}}</span> -->
         </div>
         <div class="cp_info">
-          <p class="cp_name">{{dealerInfo.dealerName}}</p>
+          <p class="cp_name">{{dealerInfo.dealerMobilePhone}}</p>
           <p class="cp_ads">
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
         </div>

@@ -7,13 +7,11 @@
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
-          <!-- 联系人 和 电话 -->
-          <span class="user_name">{{orderInfo.dealerDebitContactPersonName}}</span>
-          <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
+          <!-- 公司名 -->
+          <span class="user_name">{{orderInfo.dealerName_dealerDebit}}</span>
         </div>
         <div class="cp_info">
-          <!-- 公司名 -->
-          <p class="cp_name">{{orderInfo.dealerName_dealerDebit}}</p>
+          <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
           <!-- 公司地址 -->
           <p class="cp_ads">
             {{orderInfo.address_dealerDebit}}

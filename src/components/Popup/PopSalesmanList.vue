@@ -20,7 +20,7 @@
                 <!-- 名称 -->
                 <div class="name">{{item.dealerName}}</div>
                 <!-- 编码 -->
-                <div class="code">{{item.dealerCode}}</div>
+                <!-- <div class="code">{{item.dealerCode}}</div> -->
                 <!-- 地址 -->
                 <div>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</div>
               </div>

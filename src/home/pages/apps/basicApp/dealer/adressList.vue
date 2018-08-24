@@ -313,13 +313,13 @@ export default {
       .user_info {
         color: #5077aa;
         font-size: .14rem;
-        font-weight: bold;
+        // font-weight: bold;
         // 用户姓名
         .user_name {
           margin-right: .08rem;
         }
         .user_phone {
-          margin-right: .1rem;
+          margin-right: .04rem;
         }
         // 用户电话
         .user_tel {
