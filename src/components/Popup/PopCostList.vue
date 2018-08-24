@@ -11,33 +11,10 @@
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
-               @click.stop="selThis(item,index)">
+               @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
-              <div class="mater_name">
-                <!-- <span class="whiNum">No.{{index + 1}}</span> -->
-                {{item.COST_NAME}}
-              </div>
-              <!-- 物料基本信息 -->
-              <div class="mater_info">
-                <!-- 物料编码、规格 -->
-                <div class="withColor">
-                  <!-- 物料编码 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_code">
-                      <span class="title">编码</span>
-                      <span class="num">{{item.COST_CODE}}</span>
-                    </div>
-                  </div>
-                  <!-- 物料规格 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_spec">
-                      <span class="title">类型</span>
-                      <span class="num">{{item.COST_TYPE || '无'}}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div class="mater_name">{{item.COST_NAME}}</div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -188,6 +165,9 @@
 </script>
 
 <style scoped lang="scss">
+  .symbol {
+    font-size: .1rem;
+  }
   // 弹出层
   .trade_pop_part {
     background: #fff;
@@ -301,32 +281,13 @@
           }
           // 物料主体
           .mater_main {
-            flex: 1;
-            padding-left: .1rem;
+            padding-left: .04rem;
             box-sizing: border-box;
             display: inline-block;
             // 物料名称
             .mater_name {
               color: #111;
-              overflow: hidden;
-              font-size: .12rem;
-              font-weight: bold;
-              max-height: .46rem;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              text-overflow: ellipsis;
-              -webkit-box-orient: vertical;
-              // 每个物料的索引
-              .whiNum {
-                color: #fff;
-                font-weight: 200;
-                padding: 0 .04rem;
-                font-size: .1rem;
-                display: inline-block;
-                background: #ea5455;
-                vertical-align: middle;
-                margin: -.02rem .04rem 0 0;
-              }
+              font-size: .18rem;
             }
             // 物料信息
             .mater_info {
