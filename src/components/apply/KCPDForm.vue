@@ -73,7 +73,9 @@
                             v-model.number="item.tdQty"></x-input>
                   </group>
                   <group>
-                    <cell title="差异数量" text-align='right' placeholder='请填写' :value='Math.floor(item.tdQty - item.qtyBal) > 0 ? `+${Math.floor(item.tdQty - item.qtyBal) }` : Math.floor(item.tdQty - item.qtyBal) '></cell>
+                    <cell title="差异数量" text-align='right' placeholder='请填写' 
+                    :value='Math.floor(item.tdQty - item.qtyBal) > 0 ? `+${Math.floor(item.tdQty - item.qtyBal) }` : Math.floor(item.tdQty - item.qtyBal) '
+                    :class='{high_light : item.tdQty - item.qtyBal !== 0}'></cell>
                   </group>
                 </div>
               </div>
@@ -362,6 +364,13 @@ export default {
           font-weight: bold;
         }
       }
+    }
+    .high_light{
+      /deep/ .weui-cell__ft{
+        color:red;
+
+      }
+      
     }
   }
   .pages {
