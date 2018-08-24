@@ -239,6 +239,9 @@
         background: #fc3c3c;
       }
     }
+    em{
+      font-style: normal;
+    }
   }
 
   .JH_mar_btm0 {
