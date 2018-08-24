@@ -368,6 +368,7 @@ export default {
     .high_light{
       /deep/ .weui-cell__ft{
         color:red;
+        font-weight: 700;
 
       }
       
