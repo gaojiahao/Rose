@@ -1,30 +1,28 @@
 <template>
-  <div class='upload-image-container vux-1px-l'>
-    <input type="file" name="file" id="upload-image" @change="uploadFile" accept="image/*" style="display:none;"
-           ref="img_file"/>
-    <div class="add_icon" v-if='!imgSrc'>
-      <label for="upload-image"></label>
-      <div class="upload">
-        <span class='iconfont icon-icon'></span>
-        <span class='add_text'>增加图片</span>
-      </div>
+  <div class="upload-image-container vux-1px-l">
+    <input type="file" name="file" id="upload-image" @change="uploadFile" accept="image/*" style="display:none;"/>
+    <label class="label" for="upload-image"></label>
+    <!-- 没有选中图片 -->
+    <div class="upload" v-if="!imgSrc">
+      <span class="iconfont icon-icon"></span>
+      <span class="add_text">增加图片</span>
     </div>
-    <div class='add_icon' v-else>
-      <label for="upload-image"></label>
-      <img :src="imgSrc" class="upload" @load="imgLoad" @error="getDefaultImg()"/>
-    </div>
+    <!-- 选中图片 -->
+    <img :src="imgSrc" class="upload" @load="imgLoad" @error="getDefaultImg()" v-else/>
+    <!-- loading图标 -->
     <spinner type="circles" class="loading vux-1px-l" v-show="showLoading"></spinner>
   </div>
 </template>
 
 <script>
   import {Spinner} from 'vux'
-  import {upload,} from 'service/materService';
+  import {upload,} from 'service/commonService';
   import Exif from 'exif-js'
 
   export default {
     name: "UploadImage",
     props: {
+      // 初始图片路径
       src: {
         type: String,
         default: ''
@@ -35,10 +33,9 @@
     },
     data() {
       return {
-        picShow: false,
-        imgSrc: '',
-        imgFile: '',
-        showLoading: false,
+        imgSrc: '', // 图片地址
+        imgFile: '', // 上传的图片file
+        showLoading: false, // 是否展示loading
       }
     },
     watch: {
@@ -93,7 +90,7 @@
             img.src = result;
             //判断图片是否小于100K,是就直接上传，反之压缩图片
             if (result.length <= (100 * 1024)) {
-              this.postImg(this.result);
+              this.postImg(result);
             } else {
               img.onload = () => {
                 this.postImg(this.compress(img, Orientation));
@@ -105,18 +102,20 @@
       // TODO 上传图片
       postImg(img) {
         let file = this.dataURLtoFile(img, this.imgFile.name);
-        console.log(file);
         upload({
           file: file,
         }).then(res => {
           let {success = false, message = '上传失败', data} = res;
           let [detail = {}] = data;
-          // this.preloadFile(e);
           this.imgSrc = `/H_roleplay-si/ds/download?url=${detail.attacthment}&width=400&height=400`;
           this.$emit('on-upload', {
             src: detail.attacthment
           })
-        });
+        }).catch(e => {
+          this.$vux.alert.show({
+            content: e.message,
+          })
+        });;
       },
       // TODO 压缩图片
       compress(img, Orientation) {
@@ -240,6 +239,7 @@
         this.showLoading = false;
         this.$emit('on-error', e);
       },
+      // TODO 加载图片成功
       imgLoad() {
         this.showLoading = false;
       },
@@ -252,35 +252,34 @@
 
 <style scoped lang="scss">
   .upload-image-container {
-    .add_icon {
-      position: relative;
-      z-index: 99;
-      label {
-        display: block;
-        width: 1.2rem;
-        height: 1.2rem;
-      }
-      .upload {
-        width: 1.2rem;
-        height: 1.2rem;
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: -999;
-        span {
-          display: block;
-          text-align: center;
-        }
-        .iconfont {
-          font-size: 0.24rem;
-          margin-top: 0.24rem;
-        }
-      }
+    position: relative;
+    z-index: 1;
+    width: 1.2rem;
+    height: 1.2rem;
+    > .label {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
-    .pic {
-      width: 1.2rem;
-      height: 1.2rem;
-      border: 0;
+    .upload {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -999;
+      %blockCenter {
+        display: block;
+        text-align: center;
+      }
+      .add_text {
+        @extend %blockCenter;
+      }
+      .iconfont {
+        @extend %blockCenter;
+        margin-top: 0.24rem;
+        font-size: 0.24rem;
+      }
     }
     .loading {
       position: absolute;

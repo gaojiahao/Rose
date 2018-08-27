@@ -12,20 +12,7 @@
             <input type='text' v-model="dealer.dealerName" class='property_val'/>
           </div>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <input type="file" name="file" id='file' @change="uploadFile($event)" accept="image/*" style="display:none;"/>
-          <div class='add_icon' v-if='!picShow'>
-            <label for="file"></label>
-            <div class='upload'>
-              <span class='iconfont icon-icon'></span>
-              <span class='add_text'>增加图片</span>
-            </div>
-          </div>
-          <div class='add_icon' v-else>
-            <label for="file"></label>
-            <img :src='MatPic' class='upload'/>
-          </div>
-        </div>
+        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
       <div class='each_property vux-1px-b' @click="DealerPop">
         <label>往来类型</label>
@@ -93,13 +80,14 @@
 </template>
 <script>
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data,Icon } from 'vux';
-import { getBaseInfoData } from 'service/commonService.js';
-import { upload } from 'service/materService.js';
+import { getBaseInfoDataBase } from 'service/commonService.js';
 import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
 import Loading from 'components/Loading'
 import RScroll from 'components/RScroll'
+import UploadImage from 'components/UploadImage'
+
 export default {
   data() {
     return {
@@ -171,30 +159,13 @@ export default {
     XAddress,
     Icon,
     Loading,
-    RScroll
+    RScroll,
+    UploadImage,
   },
   methods: {
-    preloadFile(file) {
-      let reader = new FileReader();
-      reader.onload = (evt) => {
-        this.MatPic = evt.target.result;
-      };
-      reader.readAsDataURL(file);
-    },
-    //上传图片
-    uploadFile(e) {
-      let file = e.target.files[0];
-      upload({file}).then(res => {
-        let {success = false, message = '上传失败', data} = res;
-        let [detail = {}] = data;
-        this.picShow = true;
-        this.preloadFile(file);
-        this.dealer.dealerPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}`;
-      }).catch(e => {
-        this.$vux.alert.show({
-          content: e.message,
-        })
-      });
+    // TODO 上传图片成功触发
+    onUpload(val){
+      this.dealer.dealerPic = val.src;
     },
     //获取往来类型
     getDealer(){
@@ -299,7 +270,7 @@ export default {
         this.dealer = {...this.dealer, ...dealer,};
         if (this.dealer.dealerPic.length>0) {
           this.picShow = true;
-          this.MatPic = this.dealer.dealerPic;
+          this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
         }
         else{
           this.picShow = true;
@@ -463,7 +434,7 @@ export default {
           }
         });
       //获取当前用户信息
-      getBaseInfoData().then(data => {
+      getBaseInfoDataBase().then(data => {
         this.baseinfo = {
           ...this.baseinfo,
           ...data,
@@ -506,39 +477,6 @@ export default {
       align-items: flex-end;
       .mater_property {
         flex: 1;
-      }
-      .mater_pic {
-        .add_icon {
-          position: relative;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
-          }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
-            }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
-            }
-          }
-
-        }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
-        }
       }
     }
 

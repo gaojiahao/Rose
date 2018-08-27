@@ -12,7 +12,7 @@
             <input type='text' v-model.trim="inventory.inventoryName" class='property_val'/>
           </div>
         </div>
-        <upload-image :src="matPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
+        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
       <r-picker title="加工属性:" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
                 :required="true" @on-change="natureChange"></r-picker>
@@ -50,9 +50,8 @@
     save,
     update,
     findData,
-    upload,
   } from 'service/materService';
-  import {getBaseInfoData, getDictByType, getDictByValue,} from 'service/commonService';
+  import {getBaseInfoDataBase, getDictByType, getDictByValue,} from 'service/commonService';
   import UploadImage from 'components/UploadImage'
 
   export default {
@@ -60,7 +59,7 @@
       return {
         listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
         biReferenceId: '',
-        matPic: '', // 图片地址
+        MatPic: '', // 图片地址
         matNatureList: [], // 加工属性列表
         matBigList: [], // 材料大类列表
         matSmlList: [], // 材料子类列表
@@ -221,7 +220,7 @@
           // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
-            this.matPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}&width=400&height=400`;
+            this.MatPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}&width=400&height=400`;
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.inventory.inventoryPic
@@ -297,7 +296,7 @@
       },
       // TODO 获取用户基本信息
       getBaseInfoData() {
-        return getBaseInfoData().then(data => {
+        return getBaseInfoDataBase().then(data => {
           this.baseinfo = {
             ...this.baseinfo,
             ...data,
@@ -307,7 +306,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.matPic = require('assets/wl.png');
+        this.MatPic = require('assets/wl.png');
       },
     },
     beforeRouteLeave(to, from, next) {
@@ -374,40 +373,6 @@
       .mater_property {
         flex: 1;
       }
-      /*.mater_pic {
-        .add_icon {
-          position: relative;
-          z-index: 99;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
-          }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
-            }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
-            }
-          }
-
-        }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
-        }
-      }*/
     }
     .each_property {
       padding: 0.05rem 0.08rem;
