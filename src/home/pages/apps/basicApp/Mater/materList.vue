@@ -49,8 +49,8 @@
               <div class="withoutColor">
                 <!-- 物料分类 -->
                 <div class="mater_classify">
-                  <span class="father">大类: {{item.inventoryType}}</span>
-                  <span class="child">子类: {{item.inventorySubclass}}</span>
+                  <span class="father">大类: {{item.inventoryType || '无'}}</span>
+                  <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
                 </div>
                 <!-- 物料材质等 -->
                 <div class="mater_material">
