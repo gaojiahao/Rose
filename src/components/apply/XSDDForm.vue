@@ -102,7 +102,7 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
-          <!-- 往来popup -->
+          <!-- 客户popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" :dealerLabelName="'2167'">
           </pop-dealer-list  ref="matter">
@@ -164,7 +164,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
         assistUnitList: ['A', 'B', 'C'],               // 辅助计量列表
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
         logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
-        showDealerPop: false,                          // 是否显示往来的popup
+        showDealerPop: false,                          // 是否显示客户的popup
         showLogPop: false,                              // 是否显示物流条款的popup
         showTransPop: false,                            // 是否显示结算方式的popup
         showMaterielPop: false,                         // 是否显示物料的popup
@@ -226,7 +226,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
         this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
         this.showLogPop = false;
       },
-      //选中的往来
+      //选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
@@ -289,7 +289,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
       submitOrder() {
         if (!this.dealerInfo.dealerName) {
           this.$vux.alert.show({
-            content: '请选择往来信息'
+            content: '请选择客户信息'
           })
         }
         else if (this.matterList.length === 0) {
@@ -389,7 +389,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
             modifer: formData.modifer,
 
           }
-          //往来信息展示
+          //客户信息展示
           this.dealerInfo = {
             creatorName:formData.dealerDebitContactPersonName,
             dealerMobilePhone :formData.dealerDebitContactInformation,

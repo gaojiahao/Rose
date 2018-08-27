@@ -54,10 +54,10 @@
     data() {
       return {
         transCode  : '',
-        MatPic: '', // 图片地址   
-        imgFileObj: {}, // 上传的图片对象  
+        MatPic: '', // 图片地址
+        imgFileObj: {}, // 上传的图片对象
         dealer : {},
-        baseinfo :{} 
+        baseinfo :{}
       }
     },
     methods: {
@@ -75,7 +75,7 @@
           }
           this.biReferenceId = this.dealer.referenceId;
           if (this.dealer.dealerPic) {
-            this.MatPic = this.dealer.dealerPic;
+            this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
           }
           else{
             this.getDefaultImg()
@@ -98,9 +98,9 @@
     created() {
       let query = this.$route.query;
       if(query.transCode){
-        this.transCode = query.transCode;         
+        this.transCode = query.transCode;
           this.findData();
-      }      
+      }
     }
   }
 </script>
@@ -108,7 +108,7 @@
   .vux-1px-l:before,
   .vux-1px-b:after {
     border-color: #e8e8e8;
-  } 
+  }
   .detail_content {
     height: 100%;
     overflow-y: auto;
@@ -202,10 +202,10 @@
         &:not(:first-child):before{
           border:none;
         }
-    
+
       }
     }
-  }  
+  }
   //确认框
   .popup_header {
     display: flex;

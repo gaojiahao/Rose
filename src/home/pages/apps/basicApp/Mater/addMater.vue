@@ -12,26 +12,13 @@
             <input type='text' v-model.trim="inventory.inventoryName" class='property_val'/>
           </div>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <input type="file" name="file" id='file' @change="uploadFile" accept="image/*" style="display:none;"/>
-          <div class='add_icon' v-if='!picShow'>
-            <label for="file"></label>
-            <div class='upload'>
-              <span class='iconfont icon-icon'></span>
-              <span class='add_text'>增加图片</span>
-            </div>
-          </div>
-          <div class='add_icon' v-else>
-            <label for="file"></label>
-            <img :src='matPic' class='upload' @error="getDefaultImg()"/>
-          </div>
-        </div>
+        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <r-picker title="加工属性:" :data="matNatureList" value="inventory.processing" v-model="inventory.processing"
+      <r-picker title="加工属性:" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
                 :required="true" @on-change="natureChange"></r-picker>
-      <r-picker title="材料大类:" :data="matBigList" value="inventory.inventoryType" v-model="inventory.inventoryType"
+      <r-picker title="材料大类:" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
                 @on-change="bigChange"></r-picker>
-      <r-picker title="材料子类:" :data="matSmlList" value="inventory.inventorySubclass"
+      <r-picker title="材料子类:" :data="matSmlList" :value="inventory.inventorySubclass"
                 v-model="inventory.inventorySubclass"></r-picker>
       <div class='each_property vux-1px-b'>
         <label>型号规格:</label>
@@ -45,7 +32,7 @@
         <label>主材质:</label>
         <input type='text' v-model.trim="inventory.material" class='property_val'/>
       </div>
-      <r-picker title="主计量单位:" :data="measureList" value="inventory.measureUnit" :required="true"
+      <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
                 v-model="inventory.measureUnit"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
@@ -63,16 +50,16 @@
     save,
     update,
     findData,
-    upload,
   } from 'service/materService';
-  import {getBaseInfoData, getDictByType, getDictByValue,} from 'service/commonService';
+  import {getBaseInfoDataBase, getDictByType, getDictByValue,} from 'service/commonService';
+  import UploadImage from 'components/UploadImage'
 
   export default {
     data() {
       return {
         listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
         biReferenceId: '',
-        matPic: '', // 图片地址
+        MatPic: '', // 图片地址
         matNatureList: [], // 加工属性列表
         matBigList: [], // 材料大类列表
         matSmlList: [], // 材料子类列表
@@ -127,38 +114,12 @@
       Group,
       RPicker,
       Loading,
+      UploadImage,
     },
     methods: {
-      // TODO 预览图片
-      preloadFile(e) {
-        let file = e.target.files[0];
-        let reader = new FileReader();
-        this.imgFile = file;
-        reader.onload = (evt) => {
-          this.picShow = true;
-          this.matPic = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-        // this.uploadFile();
-      },
-      // TODO 选择、预览图片
-      uploadFile(e) {
-        let file = e.target.files[0];
-        if (!file) {
-          return
-        }
-        return upload({
-          file: file,
-          // biReferenceId: this.biReferenceId
-        }).then(res => {
-          let {success = false, message = '上传失败', data} = res;
-          let [detail = {}] = data;
-          this.picShow = true;
-          // this.preloadFile(e);
-          this.matPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}&width=400&height=400`;
-          this.inventory.inventoryPic = detail.attacthment;
-          // this.biReferenceId = detail.biReferenceId
-        });
+      // TODO 上传图片成功触发
+      onUpload(val){
+        this.inventory.inventoryPic = val.src;
       },
       // TODO 加工属性切换
       natureChange(val) {
@@ -259,7 +220,7 @@
           // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
-            this.matPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}&width=400&height=400`;
+            this.MatPic = `/H_roleplay-si/ds/download?url=${this.inventory.inventoryPic}&width=400&height=400`;
           }
           let [imgFileObj = {}] = attachment.filter(item => {
             return item.attacthment === this.inventory.inventoryPic
@@ -335,7 +296,7 @@
       },
       // TODO 获取用户基本信息
       getBaseInfoData() {
-        return getBaseInfoData().then(data => {
+        return getBaseInfoDataBase().then(data => {
           this.baseinfo = {
             ...this.baseinfo,
             ...data,
@@ -345,7 +306,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.matPic = require('assets/wl.png');
+        this.MatPic = require('assets/wl.png');
       },
     },
     beforeRouteLeave(to, from, next) {
@@ -411,40 +372,6 @@
       align-items: flex-end;
       .mater_property {
         flex: 1;
-      }
-      .mater_pic {
-        .add_icon {
-          position: relative;
-          z-index: 99;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
-          }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
-            }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
-            }
-          }
-
-        }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
-        }
       }
     }
     .each_property {

@@ -16,8 +16,8 @@
             </div>
           </div>
           <div v-else>
-            <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>
+            <div class="title">供应商列表</div>
+            <div class="mode">请选择供应商</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
@@ -108,7 +108,7 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more"  @click="addOrder">新增更多物料</span>
           </div>
-          <!-- 往来popup -->
+          <!-- 供应商popup -->
           <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
                            @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 物料popup -->
@@ -163,8 +163,8 @@ export default {
       listData: [],                                  // 订单列表
       DealerPaymentTerm: '现付',                        //结算方式
       transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-      showDealerPop: false,                          // 是否显示往来的popup
-      dealerInfo: null, // 往来客户信息
+      showDealerPop: false,                          // 是否显示供应商的popup
+      dealerInfo: null, // 供应商客户信息
       crDealerPaymentTerm: '现付',  //结算方式
       formData: {
         biId: '',
@@ -244,7 +244,7 @@ export default {
 
   },
   methods: {
-    // TODO 选中的往来
+    // TODO 选中的供应商
     selDealer(val) {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
@@ -304,7 +304,7 @@ export default {
       let validateMap = [
         {
           key: 'dealerInfo',
-          message: '往来信息'
+          message: '供应商信息'
         },
         {
           key: 'warehouse',
@@ -370,8 +370,8 @@ export default {
             dealerCreditContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
             containerInWarehouseManager: this.warehouse.containerInWarehouseManager || null,
             inPut: {
-              dealerCodeCredit: this.dealerInfo.dealerCode, // 往来编码
-              crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 往来页签
+              dealerCodeCredit: this.dealerInfo.dealerCode, // 供应商编码
+              crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
               containerCode: this.warehouse.warehouseCode, // 仓库编码
               crDealerPaymentTerm: this.crDealerPaymentTerm,
               dataSet

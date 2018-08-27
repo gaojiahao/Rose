@@ -13,20 +13,7 @@
             <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
           </div>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <input type="file" name="file" id='file' @change="uploadFile($event)" accept="image/*" style="display:none;"/>
-          <div class='add_icon' v-if='!picShow'>
-            <label for="file"></label>
-            <div class='upload'>
-              <span class='iconfont icon-icon'></span>
-              <span class='add_text'>增加图片</span>
-            </div>
-          </div>
-          <div class='add_icon' v-else>
-            <label for="file"></label>
-            <img :src='MatPic' class='upload'/>
-          </div>
-        </div>
+        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
       <r-picker title="仓库类型:" :data="AccountRelType" :value="warehouse.warehouseType"
                 @on-change="warehouseTypeChange" v-model="warehouse.warehouseType" :required='true'>
@@ -43,12 +30,12 @@
 </template>
 <script>
   import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon} from 'vux';
-  import {upload} from 'service/materService.js';
   import {getBaseInfoDataBase} from 'service/commonService.js';
   import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
   import {getDictByType, getObjDealerByLabelName} from 'service/commonService.js'
   import RPicker from 'components/RPicker';
   import common from 'mixins/common.js'
+  import UploadImage from 'components/UploadImage'
 
   export default {
     data() {
@@ -143,30 +130,13 @@
       Group,
       RPicker,
       XAddress,
-      Icon
+      Icon,
+      UploadImage,
     },
     methods: {
-      preloadFile(file) {
-        let reader = new FileReader();
-        reader.onload = (evt) => {
-          this.MatPic = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-      },
-      uploadFile(e) {
-        let file = e.target.files[0];
-        upload({file}).then(res => {
-          let {success = false, message = '上传失败', data} = res;
-          let [detail = {}] = data;
-          this.picShow = true;
-          this.preloadFile(file);
-          this.warehouse.warehousePic = detail.attacthment;
-          // this.biReferenceId = detail.biReferenceId
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message,
-          })
-        });
+      // TODO 上传图片成功触发
+      onUpload(val){
+        this.warehouse.warehousePic = val.src;
       },
       //获取仓库类型
       getwarehouse() {
@@ -410,39 +380,6 @@
       align-items: flex-end;
       .mater_property {
         flex: 1;
-      }
-      .mater_pic {
-        .add_icon {
-          position: relative;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
-          }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
-            }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
-            }
-          }
-
-        }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
-        }
       }
     }
 

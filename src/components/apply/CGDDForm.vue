@@ -16,8 +16,8 @@
             </div>
           </div>
           <div v-else>
-            <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>
+            <div class="title">供应商列表</div>
+            <div class="mode">请选择供应商</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
@@ -112,7 +112,7 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
-          <!-- 往来popup -->
+          <!-- 供应商popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @closePop='showDealerPop = !showDealerPop'
                           @sel-dealer="selDealer" :dealerLabelName="'2168'">
           </pop-dealer-list  ref="matter">
@@ -159,7 +159,7 @@ export default {
       paymentIndex : 0,
       DealerPaymentTerm : '现付',                        //结算方式
       transMode:['现付','预付','账期','票据'],          // 结算方式
-      showDealerPop : false,                          // 是否显示往来的popup
+      showDealerPop : false,                          // 是否显示供应商的popup
       showTransPop:false,                            // 是否显示结算方式的popup
       showMaterielPop:false,                         // 是否显示物料的popup
       dealerInfo : {},
@@ -216,7 +216,7 @@ export default {
       this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
       this.showTransPop = false;
     },
-    //选中的往来
+    //选中的供应商
     selDealer(val){
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
@@ -279,7 +279,7 @@ export default {
     submitOrder(){
       if(!this.dealerInfo.dealerCode){
         this.$vux.alert.show({
-          content : '请选择往来信息'
+          content : '请选择供应商信息'
         })
       }
       else if(this.matterList.length === 0){
@@ -372,7 +372,7 @@ export default {
             modifer: formData.modifer,
 
           }
-          //往来信息展示
+          //供应商信息展示
           this.dealerInfo = {
             creatorName :formData.dealerDebitContactPersonName,
             dealerMobilePhone :formData.dealerDebitContactInformation,

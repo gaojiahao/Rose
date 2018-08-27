@@ -81,7 +81,9 @@
                     </span>
                       </div>
                       <!-- 备注 -->
-                      <div class="remark">备注: {{item.message || '无'}}</div>
+                      <div class="remark" v-if="index === fullWorkFlow.length - 1 && noStatus === '进行中'">备注: 待操作人填写</div>
+                      <div class="remark" v-else>备注: {{item.message || '无'}}</div>
+                      <!-- 处理时间 -->
                       <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
                     </div>
                   </div>
@@ -92,12 +94,12 @@
             </div>
           </div>
           <div class="btn" v-if="fullWorkFlow.length >= 5">
-            <span class="cfm_btn" @click="closePop">隐藏工作流</span>
+            <span class="cfm_btn" @click="closePop">关闭</span>
           </div>
         </r-scroll>
         <!-- 少于5条数据时固定在底部 -->
         <div class="btn when_less" v-if="fullWorkFlow.length < 5">
-          <span class="cfm_btn" @click="closePop">隐藏工作流</span>
+          <span class="cfm_btn" @click="closePop">关闭</span>
         </div>
       </popup>
     </div>
@@ -390,8 +392,10 @@
           color: #fff;
           padding: 0 .1rem;
           font-size: .18rem;
+          margin-top: -.04rem;
           background: #dd0a35;
           border-radius: .24rem;
+          box-shadow: 0 .2px 2px #dd0a35;
         }
       }
       // 工作流信息
@@ -413,12 +417,13 @@
           }
           // 内容部分
           .info_part {
-            position: relative;
-            padding-left: .44rem;
+            // position: relative;
+            // padding-left: .44rem;
+            display: flex;
             .user_info {
-              position: absolute;
-              left: 0;
-              top: 0;
+              // position: absolute;
+              // left: 0;
+              // top: 0;
               // 用户头像
               .user_avatar {
                 width: .5rem;
@@ -503,14 +508,15 @@
         // 当工作流为最后一个 并且节点与我有关时
         .whenisMine {
           .info_part {
+            flex-direction: row-reverse;
             .user_info {
-              right: 0;
-              left: inherit;
+              // right: 0;
+              // left: inherit;
             }
             .handle_info {
-              float: right;
+              // float: right;
               margin-left: inherit;
-              margin-right: .64rem;
+              margin-right: .2rem;
               //#cde3eb
               $bgcolor: #d6e4f0;
               .content {
