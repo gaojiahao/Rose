@@ -4,10 +4,13 @@
       <!-- 搜索框 -->
       <!-- <search @search='searchList'></search> -->
       <div class='wrapper' ref="bScroll">
-        <div class="msg_list" >
+        <div class="when_null" v-if="isNull">
+          暂无待办消息
+        </div>        
+        <div class="msg_list" v-else>
           <div class="each_msg"
               @click="goMsglist(value[0])" 
-              v-for='(value,i) in listData' 
+              v-for='(value, i) in listData' 
               :key='i'>
             <div class="msg_info">
               <!-- 图片 和 应用名称 -->
@@ -25,7 +28,8 @@
               您收到{{value.length>1 ? '多' : '一'}}条新的消息
             </div>
           </div>
-        </div>   
+        </div>
+
       </div>
     </template>
     <router-view></router-view>
@@ -45,7 +49,8 @@ import search from 'components/search'
 export default {
   data(){
     return{
-      listData: {},     
+      listData: {},
+      isNull: false    
     }
   },
   components: {
@@ -72,8 +77,14 @@ export default {
     },
     //获取应用消息数据
     getList() {
-      getMsgList().then(({ tableContent }) => {     
-        tableContent.forEach(  item => {
+      getMsgList().then(({ tableContent }) => {  
+        if(!tableContent.length){
+          // 没有数据的时候
+          this.isNull = true;
+          return;
+        }
+        tableContent.forEach( item => {
+          this.isNull = false;
           // app图标处理
           item.pic = item.icon 
             ? `/dist/${item.icon}` 
@@ -130,14 +141,20 @@ export default {
   },
   created(){
     this.getList();
-  },
-  
+  }
 }
 </script>
 
 <style lang='scss' scoped>
-.search {
-  margin: .1rem 0;
+.when_null {
+  top: 50%;
+  width: 100%;
+  font-size: .24rem;
+  color: #c8c8c8;
+  font-weight: bold;
+  text-align: center;
+  position: absolute;
+  transform: translate(0, -50%);
 }
 .inPage{
   overflow: hidden;

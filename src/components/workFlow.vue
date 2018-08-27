@@ -92,12 +92,12 @@
             </div>
           </div>
           <div class="btn" v-if="fullWorkFlow.length >= 5">
-            <span class="cfm_btn" @click="closePop">关闭工作流</span>
+            <span class="cfm_btn" @click="closePop">隐藏工作流</span>
           </div>
         </r-scroll>
         <!-- 少于5条数据时固定在底部 -->
         <div class="btn when_less" v-if="fullWorkFlow.length < 5">
-          <span class="cfm_btn" @click="closePop">关闭工作流</span>
+          <span class="cfm_btn" @click="closePop">隐藏工作流</span>
         </div>
       </popup>
     </div>

@@ -72,7 +72,7 @@
                           <div class='mater_price'>
                             ￥{{item.tdAmount | numberComma(3)}}
                             <span class="num"
-                                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
+                                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 6 ? 'block' : '')}">
                               [金额: ￥{{item.noTaxAmount| numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
                             </span>
                           </div>
