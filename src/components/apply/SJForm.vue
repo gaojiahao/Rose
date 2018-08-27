@@ -2,7 +2,7 @@
   <div class="pages sj-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <!-- 选择往来-->
+        <!-- 选择客户-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div v-if='dealerInfo.dealerName'>
             <div class="user_info">
@@ -16,8 +16,8 @@
             </div>
           </div>
           <div v-else>
-            <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>
+            <div class="title">客户列表</div>
+            <div class="mode">请选择客户</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
@@ -50,7 +50,7 @@
             </div>
           </div>
         </div>
-        <!-- 往来popup -->
+        <!-- 客户popup -->
         <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                          @sel-dealer="selDealer" :dealerLabelName="'2167'">
         </pop-dealer-list>
@@ -90,7 +90,7 @@
     data() {
       return {
         listId: '32a2c333-02a3-416f-a133-95c7a32da678',
-        showDealerPop: false,                          // 是否显示往来的popup
+        showDealerPop: false,                          // 是否显示客户的popup
         dealerInfo: {},
         formData: {
           modifer: '',
@@ -127,7 +127,7 @@
       }
     },
     methods: {
-      //选中的往来
+      //选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.formData.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
@@ -151,7 +151,7 @@
           },
         ];
         if (JSON.stringify(this.dealerInfo) == '{}') {
-          warn = '请选择往来';
+          warn = '请选择客户';
         }
         if (!warn) {
           validateMap.every(item => {
