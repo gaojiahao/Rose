@@ -41,7 +41,7 @@
           <div class='duty_btm vux-1px-t'>
             <!-- 仓库类型 -->
             <div class="ware_type">
-              {{item.warehouseRelType || '暂无'}}<span class="type">[仓库类型]</span>
+              {{item.warehouseType || '暂无'}}<span class="type">[仓库类型]</span>
             </div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance">

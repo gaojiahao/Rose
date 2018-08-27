@@ -153,20 +153,15 @@ export default {
       this.CostList[this.costIndex].COST_CODE = sels.COST_CODE;
       this.CostList[this.costIndex].expSubject = sels.COST_SUB_SUBJECTS.split(',')[0];
       this.CostList[this.costIndex].COST_TYPE = sels.COST_TYPE;
-      console.log(this.CostList[this.costIndex].expSubjectList);
     },
     // TODO 选中项目
     selProject(val){
-      console.log(val);
       this.projectName = val.PROJECT_NAME;
     },
     // TODO 提交
     submitOrder() {
       let warn = '';
       let dataSet = [];
-      // if (!warn && !this.CostList.length) {
-      //   warn = '请选择费用';
-      // }
       this.CostList.every(item => {
         if(!item.COST_NAME){
           warn = '请选择费用名称';
@@ -192,6 +187,9 @@ export default {
         });
         return true
       });
+      if (!this.projectName.length) {
+        warn = '请选择项目';
+      }
       if (warn) {
         this.$vux.alert.show({
           content: warn,

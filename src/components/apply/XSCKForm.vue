@@ -16,8 +16,8 @@
             </div>
           </div>
           <div v-else>
-            <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>
+            <div class="title">客户列表</div>
+            <div class="mode">请选择客户</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
@@ -110,7 +110,7 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <!-- 往来popup -->
+          <!-- 客户popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 订单popup -->
@@ -166,9 +166,9 @@ export default {
       orderList: {},                                  // 订单列表
       transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
       logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
-      showDealerPop: false,                          // 是否显示往来的popup
+      showDealerPop: false,                          // 是否显示客户的popup
       showOrderPop: false,                         // 是否显示物料的popup
-      dealerInfo: null, // 往来客户信息
+      dealerInfo: null, // 客户客户信息
       drDealerPaymentTerm: '现付',  //结算方式
       formData: {
         drDealerLogisticsTerms: '上门', //物流条件
@@ -208,7 +208,7 @@ export default {
 
   },
   methods: {
-    // TODO 选中的往来
+    // TODO 选中的客户
     selDealer(val) {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
@@ -288,7 +288,7 @@ export default {
       let validateMap = [
         {
           key: 'dealerInfo',
-          message: '往来信息'
+          message: '客户信息'
         },
         {
           key: 'warehouse',
@@ -360,8 +360,8 @@ export default {
             containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 仓库管理员
             // project: null,
             outPut: {
-              dealerDebit: this.dealerInfo.dealerCode, // 往来编码
-              drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 往来页签
+              dealerDebit: this.dealerInfo.dealerCode, // 客户编码
+              drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 客户页签
               containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
               drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
               project :'',//项目

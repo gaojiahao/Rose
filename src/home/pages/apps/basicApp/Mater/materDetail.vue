@@ -42,11 +42,11 @@
         <div class="d_classify vux-1px-b">
           <div class="father">
             <p class="title">物料大类:</p>
-            <p class="content">{{inventory.inventoryType}}</p>
+            <p class="content">{{inventory.inventoryType || '无'}}</p>
           </div>
           <div class="child">
             <p class="title">物料子类:</p>
-            <p class="content">{{inventory.inventorySubclass}}</p>
+            <p class="content">{{inventory.inventorySubclass || '无'}}</p>
           </div>
         </div>
         <div class="d_material vux-1px-b">
