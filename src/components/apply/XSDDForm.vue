@@ -16,8 +16,8 @@
             </div>
           </div>
           <div v-else>
-            <div class="title">往来列表</div>
-            <div class="mode">请选择往来</div>
+            <div class="title">客户列表</div>
+            <div class="mode">请选择客户</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>

@@ -36,6 +36,25 @@
       LoaddingForm,
       SubmitLoad
     },
+    watch:{
+      $route:{
+        handler(to,from){
+          let {code = ''} = this.$route.params;
+          try {
+            this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+          } catch (e) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持该应用的查看',
+              onHide: () => {
+                this.$router.go(-1);
+              }
+            });
+          }
+          this.$event.$on('detail-show-loading', this.modifyRoute)
+        }
+      }
+
+    },
     methods: {
       modifyRoute(val) {
         this.submitSuccess = val;

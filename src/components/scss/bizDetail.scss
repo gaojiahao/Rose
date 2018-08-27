@@ -2,7 +2,9 @@
 .vux-1px-b:after {
   border-bottom: 1px solid #e8e8e8;
 }
-
+.swiper-pagination-bullets{
+  top:-11px;
+}
 // 居中
 .mg_auto {
   width: 95%;
@@ -24,6 +26,12 @@
   overflow: auto;
   position:relative;
   -webkit-overflow-scrolling: touch;
+  //相关实例提示
+  .related_tips{
+    width:95%;
+    margin:3px auto;
+    color:darkred;
+  }
 }
 
 // 工作流

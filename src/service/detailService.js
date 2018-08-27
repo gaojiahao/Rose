@@ -65,7 +65,20 @@ export let getSaleQuotePrice = (data = {}) => {
     return errorHandler(err);
   })
 };
-
+// TODO 获取相关实例分类
+export let getAppExampleDetails = (data = {})=>{
+    return $axios.ajax({
+        url:'/H_roleplay-si/trans/getAppExampleDetails',
+        data
+    })
+}
+// TODO 获取相关实例应用的视图
+export let getListView = (data = {})=>{
+    return $axios.ajax({
+        url:'/H_roleplay-si/ds/list/getListViews',
+        data
+    })
+}
 export default{
     isMyflow,
     getSOList,

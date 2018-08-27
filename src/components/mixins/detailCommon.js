@@ -1,12 +1,14 @@
-import {getWorkFlow, currentUser, getListId, isMyflow} from 'service/detailService.js'
-import {numberComma,} from 'vux'
-
+import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from 'service/detailService.js'
+import {numberComma} from 'vux'
+// 映射表 引入
+import businessMap from '@/msg/pages/maps/businessApp'
 export default {
   data() {
     return {
       transCode: '',
       comment: '',//审批意见
-      taskId: '',
+      taskId : '',
+      listId : '',
       userId: '',
       userName: '',
       cancelStatus: false,
@@ -18,18 +20,40 @@ export default {
       actions: [],
       isMine: false, // 是否为我创建
       noOperation: true, // 是否审批过
+      RelatedAppList : [] ,//相关实例列表
+      detailSwiper : null,
+      filtersData : []
     }
   },
   filters: {
-    numberComma,
+    numberComma
   },
   methods: {
+    //显示相关实例的pop
+    getRelatedData(item){
+      console.log(item);
+      if(item.itemCount>0){
+        console.log('jinru')
+        this.listId = item.listId;
+        this.showPop = true;
+        item.content.forEach(val=>{
+          this.filtersData.push(val.transCode);
+        })
+      }
+    },
+    //选中相关实例的Swiper
+    getSwiper(){
+      this.detailSwiper.slideTo(1)
+    },
+    //重新加载页面
+    reloadPage(){
+      this.$emit('input',true)
+    },
     // TODO 生成随机ID
     randomID() {
       function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
-
       return (S4() + S4() + S4());
     },
     // TODO 获取当前用户
@@ -43,6 +67,7 @@ export default {
     getListId() {
       return getListId(this.transCode).then(data => {
         this.formViewUniqueId = data[0].uniqueId;
+        this.listId = data[0].listId;
       });
     },
     // TODO 判断是否为我的任务
@@ -136,6 +161,22 @@ export default {
         this.$emit('change', true);
       }  
     },
+    //TODO 获取相关实例
+    getAppExampleDetails(){
+       return getAppExampleDetails({
+        transCode :this.transCode,
+        listId :this.listId
+      }).then(data=>{
+        let relatedApply = data.relevantItems;
+        relatedApply.forEach(item=>{
+          if(businessMap[item.listName]){
+           this.RelatedAppList.push(item);      
+          }
+        })
+        console.log(this.RelatedAppList);
+
+      })
+    }
   },
   created() {
     (async () => {
@@ -151,11 +192,29 @@ export default {
       await this.getCurrentUser();
       await this.getListId();
       await this.getFlowAndActions();
+      await this.getAppExampleDetails();
       // 获取表单表单详情
       await this.getOrderList(transCode);
+      let Swiper = this.Swiper;
+      this.$nextTick(()=>{
+        this.detailSwiper = new Swiper ('.swiper-container', {
+          click:true,
+          // 如果需要分页器
+          pagination: {
+            el: '.swiper-pagination',
+          },
+          
+        })  
+
+      })
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
       this.$emit('input', false)
     })()
-  }
+  },
+  mounted() {
+    
+          
+    
+  },
 }

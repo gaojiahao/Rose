@@ -71,7 +71,7 @@
         </div>
       </div>
       <!-- 大标题 -->
-      <!-- <div class="big_title">
+      <div class="big_title">
         <p class="vux-1px-b">相关实例</p>
       </div>
       <div class="relevant_list">
@@ -114,7 +114,7 @@
             <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
     <!-- 修改按钮 -->
     <div class="btn vux-1px-t">
