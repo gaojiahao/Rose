@@ -81,7 +81,9 @@
                     </span>
                       </div>
                       <!-- 备注 -->
-                      <div class="remark">备注: {{item.message || '无'}}</div>
+                      <div class="remark" v-if="index === fullWorkFlow.length - 1 && noStatus === '进行中'">备注: 待操作人填写</div>
+                      <div class="remark" v-else>备注: {{item.message || '无'}}</div>
+                      <!-- 处理时间 -->
                       <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
                     </div>
                   </div>
