@@ -174,12 +174,33 @@ export let getProjectTodoTask = (data = {}) => {
   });
 };
 //TODO获取费用报销中的项目列表
-export let getProjectList = (data={})=>{
+export let getProjectList = (data = {}) => {
   return $axios.ajax({
-    url:'/H_roleplay-si/ds/getProjectApproval',
+    url: '/H_roleplay-si/ds/getProjectApproval',
     data
   })
+};
 
-}
+//TODO 项目计划列表
+export let getProjectPlanList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectPlan',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
+//TODO 销售出库获取项目列表接口
+export let getSalesOutStockProject = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSalesOutStockProject',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
 
 export default {}
