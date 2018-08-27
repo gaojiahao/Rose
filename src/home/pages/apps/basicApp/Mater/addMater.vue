@@ -12,26 +12,13 @@
             <input type='text' v-model.trim="inventory.inventoryName" class='property_val'/>
           </div>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <input type="file" name="file" id='file' @change="uploadFile" accept="image/*" style="display:none;"/>
-          <div class='add_icon' v-if='!picShow'>
-            <label for="file"></label>
-            <div class='upload'>
-              <span class='iconfont icon-icon'></span>
-              <span class='add_text'>增加图片</span>
-            </div>
-          </div>
-          <div class='add_icon' v-else>
-            <label for="file"></label>
-            <img :src='matPic' class='upload' @error="getDefaultImg()"/>
-          </div>
-        </div>
+        <upload-image :src="matPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <r-picker title="加工属性:" :data="matNatureList" value="inventory.processing" v-model="inventory.processing"
+      <r-picker title="加工属性:" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
                 :required="true" @on-change="natureChange"></r-picker>
-      <r-picker title="材料大类:" :data="matBigList" value="inventory.inventoryType" v-model="inventory.inventoryType"
+      <r-picker title="材料大类:" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
                 @on-change="bigChange"></r-picker>
-      <r-picker title="材料子类:" :data="matSmlList" value="inventory.inventorySubclass"
+      <r-picker title="材料子类:" :data="matSmlList" :value="inventory.inventorySubclass"
                 v-model="inventory.inventorySubclass"></r-picker>
       <div class='each_property vux-1px-b'>
         <label>型号规格:</label>
@@ -45,7 +32,7 @@
         <label>主材质:</label>
         <input type='text' v-model.trim="inventory.material" class='property_val'/>
       </div>
-      <r-picker title="主计量单位:" :data="measureList" value="inventory.measureUnit" :required="true"
+      <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
                 v-model="inventory.measureUnit"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
@@ -66,6 +53,7 @@
     upload,
   } from 'service/materService';
   import {getBaseInfoData, getDictByType, getDictByValue,} from 'service/commonService';
+  import UploadImage from 'components/UploadImage'
 
   export default {
     data() {
@@ -127,38 +115,12 @@
       Group,
       RPicker,
       Loading,
+      UploadImage,
     },
     methods: {
-      // TODO 预览图片
-      preloadFile(e) {
-        let file = e.target.files[0];
-        let reader = new FileReader();
-        this.imgFile = file;
-        reader.onload = (evt) => {
-          this.picShow = true;
-          this.matPic = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-        // this.uploadFile();
-      },
-      // TODO 选择、预览图片
-      uploadFile(e) {
-        let file = e.target.files[0];
-        if (!file) {
-          return
-        }
-        return upload({
-          file: file,
-          // biReferenceId: this.biReferenceId
-        }).then(res => {
-          let {success = false, message = '上传失败', data} = res;
-          let [detail = {}] = data;
-          this.picShow = true;
-          // this.preloadFile(e);
-          this.matPic = `/H_roleplay-si/ds/download?url=${detail.attacthment}&width=400&height=400`;
-          this.inventory.inventoryPic = detail.attacthment;
-          // this.biReferenceId = detail.biReferenceId
-        });
+      // TODO 上传图片成功触发
+      onUpload(val){
+        this.inventory.inventoryPic = val.src;
       },
       // TODO 加工属性切换
       natureChange(val) {
@@ -412,7 +374,7 @@
       .mater_property {
         flex: 1;
       }
-      .mater_pic {
+      /*.mater_pic {
         .add_icon {
           position: relative;
           z-index: 99;
@@ -445,7 +407,7 @@
           height: 1.2rem;
           border: 0;
         }
-      }
+      }*/
     }
     .each_property {
       padding: 0.05rem 0.08rem;
