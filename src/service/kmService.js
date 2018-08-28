@@ -4,7 +4,7 @@ import {AlertModule} from 'vux'
 // TODO 错误处理回调
 let errorHandler = (e) => {
   AlertModule.show({
-    content: e.message,
+    content: '数据请求有误，请尝试重新刷新'
   });
   return Promise.reject(e)
 };
