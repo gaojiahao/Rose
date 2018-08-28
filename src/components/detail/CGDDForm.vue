@@ -71,7 +71,7 @@
                           <span>税率: {{item.taxRate}}</span>
                         </div>
                         <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.tdAmount | numberComma(3)}}
+                          <span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}
                           <span class="num"
                                 :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
                                     [金额: <span class="symbol">￥</span>{{item.noTaxAmount | toFixed | numberComma(3)}} +

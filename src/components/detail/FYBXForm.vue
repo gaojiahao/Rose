@@ -33,7 +33,7 @@
                     <div class="price">
                       <span class="title">报销金额: </span>
                       <span class="content">
-                        <span style="fontSize:.12rem;">￥</span>{{item.tdAmount | numberComma(3)}}
+                        <span style="fontSize:.12rem;">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}
                       </span>
                     </div>
                     <!-- 报销事由 -->
@@ -52,7 +52,7 @@
           <!-- 金额合计栏 -->
           <div class="price_list">
             <div class='title'><span>合计</span></div>
-            <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
+            <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
           </div>
         </div>
       </div>

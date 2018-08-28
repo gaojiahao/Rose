@@ -79,7 +79,7 @@ export default {
         this.$emit('close', false)
         let {success = false, message = '提交失败'} = data;
         if (success) {
-          message = '订单提交成功';
+          message = '提交成功';
           this.$emit('change', true);
         }
         this.$vux.alert.show({

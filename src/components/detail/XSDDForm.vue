@@ -89,7 +89,7 @@
                     <!-- 金额合计栏 -->
                     <div class="price_list">
                       <div class='title' >合计<span style="fontSize:.12rem;">(含税)</span></div>
-                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
+                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
                     </div>
                   </div>
               </div>
