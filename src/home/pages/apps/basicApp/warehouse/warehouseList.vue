@@ -19,7 +19,7 @@
           <div class="client_ads vux-1px-b" v-for="(item, index) in warehouseList" :key="index" @click="goDetail(item)">
             <div class="user_info">
               <span class="user_name">{{item.warehouseCode}}</span>
-              <span class="user_tel">{{item.warehouseRelType}}</span>
+              <span class="user_tel">{{item.warehouseType}}</span>
             </div>
             <div class="cp_info">
               <p class="cp_name">{{item.warehouseName}}</p>
@@ -116,7 +116,7 @@ export default {
             filter=[{
                 operator: 'eq',
                 value: this.tabSelect,
-                property: 'warehouseRelType',
+                property: 'warehouseType',
             }];
             if(this.srhInpTx){
               filter[0].attendedOperation = 'and (';
