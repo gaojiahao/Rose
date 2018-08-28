@@ -1,5 +1,5 @@
 import { CellFormPreview, Group, Cell,Tab, Icon, TabItem, TransferDom, Popup,dateFormat,numberComma } from 'vux'
-import { getListClassfiy,getView,getViewList} from 'service/kmService.js'
+import { getListClassfiy, getView, getViewList } from 'service/kmService.js'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 
@@ -94,6 +94,9 @@ export default {
       //流水列表字段
       await getView({...requestData,view_scope: 'model'}).then( data =>{
         this.flowField = data.model;
+      }).catch( err => {
+        // 关闭笼罩层  
+        this.handleLoadding = false;
       });
       //流水列表数据
       await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
