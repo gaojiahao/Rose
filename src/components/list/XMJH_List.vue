@@ -30,13 +30,14 @@
 </template>
 
 <script>
-  import {getList} from 'service/commonService'
+  import {getProjectPlanList} from 'service/projectService'
   import listCommon from './../mixins/bizListCommon'
 
   export default {
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
+        listViewID: 2290,
       }
     },
     mixins: [listCommon],
@@ -62,15 +63,16 @@
               property: 'transCode',
               attendedOperation: 'or'
             },
-            {
+            /*{
               operator: 'like',
               value: this.serachVal,
               property: 'handlerName',
-            }
+            }*/
           ];
         }
 
-        return getList(2290, {
+        return getProjectPlanList({
+          listViewID: this.listViewID,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
