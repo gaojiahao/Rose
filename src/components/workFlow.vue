@@ -9,7 +9,7 @@
       <span class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</span>
       <!-- 编码 -->
       <span class="work_code"
-            :class="workFlowInfo.coClass">{{workFlowInfo.transCode.replace(/_/g,'')}}</span>
+            :class="workFlowInfo.coClass">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
     </div>
     <!-- 简化版工作流 -->
     <div class="flow_list">

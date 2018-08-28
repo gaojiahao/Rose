@@ -157,7 +157,11 @@
           validateMap.every(item => {
             if (!this.formData[item.key]) {
               warn = item.message;
-              return false
+              return false;
+            }
+            else if(this.formData[item.key] < 0){
+              warn = '抱歉，销售额不允许为负数';
+              return false;
             }
             return true
           });

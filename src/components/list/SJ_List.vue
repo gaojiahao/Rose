@@ -58,13 +58,7 @@
         listViewID :2244 
       }
     },
-    mixins: [listCommon],
-    methods: {
-    },
-    created() {
-      
-    }
-
+    mixins: [listCommon]
   }
 </script>
 

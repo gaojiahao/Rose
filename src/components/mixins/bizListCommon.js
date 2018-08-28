@@ -3,7 +3,8 @@ import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+
 import {toFixed} from '@/plugins/calc'
 
 export default {
@@ -125,13 +126,12 @@ export default {
           this.setStatus(item);
           item.count = 0;
           item.itmes.forEach(mitem => {
-            if (mitem.tdAmount > 0) {
-              item.count = accAdd(item.count,mitem.tdAmount);
+            if (mitem.tdAmount > 0 || mitem.tdAmount < 0) {
+              item.count = toFixed(accAdd(item.count, mitem.tdAmount));
               return
             }
             let amount = accMul(mitem.price, mitem.tdQty);
-            item.count = accAdd(item.count,amount);
-
+            item.count = toFixed(accAdd(item.count, amount));
           })
           item.itemCount = item.itmes.length;
           // 列表当中每个订单最多展现5个物料

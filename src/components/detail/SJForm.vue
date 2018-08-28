@@ -1,6 +1,6 @@
 <template>
   <div class="detail_wrapper xsbj-detail-container">
-    <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+    <div class="basicPart" v-if='orderInfo'>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -67,7 +67,7 @@
           <!-- 预期销售额 -->
           <div class="price_list">
             <div class='title'>预期销售额:</div>
-            <div class="num"><span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount || 0}}</div>
+            <div class="num"><span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount | numberComma(3) || 0}}</div>
           </div>
         </div>
       </div>
@@ -86,8 +86,10 @@ import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
 // 组件 引入
+import { toFixed } from '@/plugins/calc'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
+
 export default {
   data() {
     return {
@@ -118,9 +120,10 @@ export default {
           return;
         }
         // 获取合计
-        let {dataSet} = data.formData.order;
+        // let {dataSet} = data.formData.order;
         this.count = this.count / 100;
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
+        data.formData.tdAmount = toFixed(data.formData.tdAmount);
         this.orderInfo = data.formData;
         this.workFlowInfoHandler();
       })
