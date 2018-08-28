@@ -3,7 +3,7 @@ export default {
   经销销售订单: 'XSDD',
   销售报价: 'XSBJ',
   商机: 'SJ',
-  销售出库: 'XSCK',
+  产品销售出库: 'XSCK',
   采购申请: 'CGSQ',
   采购订单: 'CGDD',
   采购入库: 'CGRK',
