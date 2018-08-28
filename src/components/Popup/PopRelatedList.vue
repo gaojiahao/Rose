@@ -18,9 +18,9 @@
                 <span class="order_num">{{item.transCode.replace(/_/g,'')}}</span>
               </div>
               <!-- 时间 -->
-              <div class="time">
+              <!-- <div class="time">
                 {{item.crtTime | dateFormat}}
-              </div>
+              </div> -->
             </div>
             <!-- 数量，金额 -->
             <div class='show_list'>
@@ -34,6 +34,13 @@
                   <div class="num_part">
                     <span class="symbol">创建人: </span>
                     <span class="number_incre">{{item.creatorName}}</span>
+                  </div>
+                </div>
+                <!-- 创建时间 -->
+                <div class="count">
+                  <div class="num_part">
+                    <span class="symbol">创建时间: </span>
+                    <span class="number_incre">{{item.crtTime | dateFormat}}</span>
                   </div>
                 </div>
                 <!-- 生效时间 -->
@@ -122,6 +129,7 @@
     methods: {
       // TODO 弹窗展示时调用
       onShow() {
+        console.log('显示了');
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
             // 弹窗展示时刷新滚动，防止无法拖动问题
@@ -156,8 +164,8 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'handlerName',
-            },
+              property: 'transCode'
+            }
           ];
         }
         return getList(this.viewId,{
@@ -214,6 +222,7 @@
     background: #fff;
     .trade_pop {
       padding: 0 .08rem;
+      height: 100%;
       // 顶部
       .title {
         font-size: .2rem;
@@ -286,6 +295,12 @@
       }
       .vux-1px:before {
         border-radius: 40px;
+      }
+      .mater_list {
+        width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        height: calc(100% - .38rem);
       }
      .each_flow {
         width: 95%;

@@ -21,7 +21,8 @@ export default {
       actions: [],
       isMine: false, // 是否为我创建
       noOperation: true, // 是否审批过
-      RelatedAppList : [] ,//相关实例列表
+      RelatedAppList : [] ,//相关实例所有数据
+      HasValRealted : false,//相关实例是否有值为0
       detailSwiper : null,
       filtersData : [],
       showPop : false,
@@ -173,6 +174,10 @@ export default {
         relatedApply.forEach(item=>{
           if(businessMap[item.listName]){
            this.RelatedAppList.push(item);
+           if(item.itemCount > 0){
+             this.HasValRealted = true;
+             
+           }
           }
         })
       })

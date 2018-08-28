@@ -50,7 +50,12 @@
               }
             });
           }
-          this.$event.$on('detail-show-loading', this.modifyRoute)
+          this.$nextTick(() => {
+            this.detailScroll = new Bscroll(this.$refs.detail, {
+              click: true,
+            })
+          })
+          // this.$event.$on('detail-show-loading', this.modifyRoute)
         }
       }
 
@@ -85,13 +90,14 @@
       this.$event.$on('detail-show-loading',(val)=>{
         this.submitLoadding = val;
       })
-    },
-    mounted() {
       this.$nextTick(() => {
         this.detailScroll = new Bscroll(this.$refs.detail, {
           click: true,
         })
       })
+    },
+    mounted() {
+      
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
