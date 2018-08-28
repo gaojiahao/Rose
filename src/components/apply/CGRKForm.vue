@@ -29,7 +29,7 @@
         <!-- 物料列表 -->
         <div class="materiel_list mg_auto box_sd">
           <!-- 没有选择物料 -->
-          <template v-if="!listData.length">
+          <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
               <div class="tips">请选择物料</div>
@@ -40,7 +40,7 @@
           <template v-else>
             <div class="title">物料列表</div>
             <div class="mater_list">
-              <div class="each_mater" v-for="(item, index) in listData" :key="index">
+              <div class="each_mater" v-for="(item, index) in matterList" :key="index">
                 <swipeout>
                   <swipeout-item>
                     <div slot="right-menu">
@@ -102,7 +102,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="listData.length">
+          <div class="handle_part" v-if="matterList.length">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -113,7 +113,7 @@
                            @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="listData" get-list-method="getInventory7502" :params="matterParams"
+                           :default-value="matterList" get-list-method="getInventory7502" :params="matterParams"
                            ref="matter"></pop-matter-list>
         </div>
       </div>
@@ -163,7 +163,7 @@ export default {
     return {
       listId: '1c5896d8-1500-4569-b0c5-6b596d03fb9b',
       srhInpTx: '',                                   // 搜索框内容
-      listData: [],                                  // 订单列表
+      matterList: [],                                  // 订单列表
       DealerPaymentTerm: '现付',                        //结算方式
       transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
       showDealerPop: false,                          // 是否显示供应商的popup
@@ -190,10 +190,10 @@ export default {
     }
   },
   watch: {
-    listData(val) {
+    matterList(val) {
       let data = {
         CGRK_DATA: {
-          matter: this.listData,
+          matter: this.matterList,
           dealer: this.dealerInfo,
           warehouse: this.warehouse
         }
@@ -202,10 +202,10 @@ export default {
 
     },
     dealerInfo(val) {
-      if (this.listData.length) {
+      if (this.matterList.length) {
         let data = {
           CGRK_DATA: {
-            matter: this.listData,
+            matter: this.matterList,
             dealer: this.dealerInfo,
             warehouse: this.warehouse
           }
@@ -215,10 +215,10 @@ export default {
 
     },
     warehouse(val) {
-      if (this.listData.length) {
+      if (this.matterList.length) {
         let data = {
           CGRK_DATA: {
-            matter: this.listData,
+            matter: this.matterList,
             dealer: this.dealerInfo,
             warehouse: this.warehouse
           }
@@ -238,7 +238,7 @@ export default {
         ...this.matterParams,
         dealerCode: sel.dealerCode
       };
-      this.listData = [];
+      this.matterList = [];
     },
     // TODO 选中仓库
     selWarehouse(val) {
@@ -257,7 +257,7 @@ export default {
         }
       });
       this.numMap = {};
-      this.listData = sels;
+      this.matterList = sels;
     },
     // TODO 选择默认图片
     getDefaultImg(item) {
@@ -269,13 +269,13 @@ export default {
     },
     // TODO 滑动删除
     delClick(index, item) {
-      let arr = this.listData;
+      let arr = this.matterList;
       arr.splice(index, 1);
       this.$refs.matter.delSelItem(item);
     },
     // TODO 新增更多订单
     addOrder() {
-      this.listData.forEach(item => {
+      this.matterList.forEach(item => {
         // 存储已输入的价格
         this.numMap[item.inventoryCode] = {
           tdQty: item.tdQty,
@@ -304,7 +304,7 @@ export default {
         }
         return true
       });
-      if (!warn && !this.listData.length) {
+      if (!warn && !this.matterList.length) {
         warn = '请选择物料'
       }
       if (warn) {
@@ -327,7 +327,7 @@ export default {
             }
           };
           // 组装dataSet
-          this.listData.forEach(item => {
+          this.matterList.forEach(item => {
             let taxRate = item.taxRate || this.taxRate;
             let taxAmount = accMul(item.price, item.tdQty, taxRate);
             let oItem = {
@@ -456,7 +456,7 @@ export default {
         this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
         this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
         this.biReferenceId = formData.biReferenceId;
-        this.listData = dataSet;
+        this.matterList = dataSet;
         this.$emit('input', false);
       })
     },
@@ -464,7 +464,7 @@ export default {
   created() {
     let data = sessionStorage.getItem('CGRK_DATA');
     if (data) {
-      this.listData = JSON.parse(data).matter;
+      this.matterList = JSON.parse(data).matter;
       this.dealerInfo = JSON.parse(data).dealer;
       this.warehouse = JSON.parse(data).warehouse;
 
