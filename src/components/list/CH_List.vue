@@ -28,7 +28,7 @@
               <!-- 数量余额 -->
               <div class="mater_code" v-if="item.qtyBalance !== ''">
                 <span class="title">数量剩余</span>
-                <span class="num">{{item.qtyBalance || item.qtyLocked}}</span>
+                <span class="num">{{item.qtyBalance}}</span>
               </div>
           </div>
           <!-- 物料 -->
@@ -44,7 +44,7 @@
               {{item.warehouseType || '暂无'}}<span class="type">[仓库类型]</span>
             </div>
             <!-- 余额 -->
-            <div class="balance" v-if="item.amountBalance">
+            <div class="balance" v-if="item.amountBalance !== ''">
               <span class="symbol">余额: ￥</span>{{item.amountBalance}}
             </div>
           </div>
