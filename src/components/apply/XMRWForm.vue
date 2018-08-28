@@ -40,9 +40,9 @@
 // vux组件引入
 import { Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, dateFormat,} from 'vux'
 // 请求 引入
-import { 
-  saveProjectTask, findProjectTask, 
-  updateProjectTask, getProjectTodoTask, 
+import {
+  saveProjectTask, findProjectTask,
+  updateProjectTask, getProjectTodoTask,
   getProjectPlanProjectName
 } from 'service/projectService'
 // mixins 引入
@@ -126,6 +126,7 @@ export default {
           let submitData = {
             listId: 'ee4ff0a1-c612-419d-afd7-471913d57a2a',
             formData: {
+              handlerEntity: this.entity.dealerName,
               ...this.jsonData,
               projectTask: this.projectTask,
             },

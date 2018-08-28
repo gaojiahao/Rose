@@ -19,6 +19,9 @@ export default {
       fillBscroll: null,
       actions: [],
       processCode: '', // 流程编码，用于新建的工作流
+      entity: {
+        dealerName: '中国特瑞'
+      }
     }
   },
   computed: {

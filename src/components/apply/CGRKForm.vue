@@ -352,6 +352,7 @@ export default {
           });
           formData = {
             ...this.formData,
+            handlerEntity: this.entity.dealerName,
             creator: this.transCode ? this.formData.handler : '',
             modifer: this.transCode ? this.formData.handler : '',
             dealerCreditContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名

@@ -162,6 +162,7 @@
             let submitData = {
               listId: '630a9b96-f257-48b6-b0bc-fd64c455d92b',
               formData: {
+                handlerEntity: this.entity.dealerName,
                 comment: {
                   biComment: this.FormDataComment,
                 },

@@ -147,6 +147,7 @@
             let submitData = {
               listId: this.listId,
               formData: {
+                handlerEntity: this.entity.dealerName,
                 comment: {
                   biComment: this.FormDataComment,
                 },

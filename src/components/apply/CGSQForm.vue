@@ -259,6 +259,7 @@ export default {
               biComment : this.biComment,
               formData: JSON.stringify({
                 ...this.formData,
+                handlerEntity: this.entity.dealerName,
                 order: {
                   dataSet
                 }

@@ -110,6 +110,7 @@
             let submitData = {
               listId: this.listId,
               formData: {
+                handlerEntity: this.entity.dealerName,
                 ...this.jsonData,
                 projectApproval: {
                   projectName: this.projectApproval.PROJECT_NAME

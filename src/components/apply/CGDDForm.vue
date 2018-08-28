@@ -107,7 +107,7 @@
           <!-- 新增更多 按钮 -->
           <!-- <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div> -->
           <div class="handle_part" v-if="matterList.length">
-            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0' 
+            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
@@ -137,7 +137,7 @@
 <script>
 // vux插件引入
 import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom,Group,XInput} from 'vux'
-// 请求 引入 
+// 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData,saveAndStartWf,saveAndCommitTask } from 'service/commonService'
 // mixins 引入
@@ -149,7 +149,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
 export default {
   directives: { TransferDom },
   components:{
-    Popup, Swipeout, SwipeoutItem, 
+    Popup, Swipeout, SwipeoutItem,
     SwipeoutButton,PopMatterList,PopDealerList,PopSingleSelect,Group,XInput
   },
   data(){
@@ -326,6 +326,7 @@ export default {
               formData: JSON.stringify({
                 ...this.formData,
                 ...this.dealer,
+                handlerEntity: this.entity.dealerName,
                 order: {
                   dealerDebit: this.dealerInfo.dealerCode,
                   drDealerLabel : this.dealerInfo.dealerLabelName || '渠道商',

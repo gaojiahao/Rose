@@ -319,6 +319,7 @@ export default {
             creator: this.formData.handler,
             ...this.formData,
             modifer: this.formData.handler,
+            handlerEntity: this.entity.dealerName,
             dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
             dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
             order: {

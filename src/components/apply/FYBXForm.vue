@@ -64,7 +64,7 @@ import PopCostList from 'components/Popup/PopCostList'
 import PopProjectList from 'components/Popup/PopProjectList'
 export default {
   mixins: [ApplyCommon],
-  components: { 
+  components: {
     Cell, Group, Popup,
     XInput, Swipeout, SwipeoutItem,
     SwipeoutButton, PopCostList, PopupPicker ,PopProjectList
@@ -86,9 +86,9 @@ export default {
           reson : '', // 报销事由
           comment :''
         }
-      ], 
+      ],
       selectedCost:[],
-      costIndex : 0, 
+      costIndex : 0,
       transCode: '',
       formData: {
         biComment: ''
@@ -106,7 +106,7 @@ export default {
       this.CostList.forEach(item=>{
         if(item.price){
           total += Number(item.price);
-        }         
+        }
       })
       return total;
     }
@@ -130,7 +130,7 @@ export default {
       this.showCostPop = true;
       this.costIndex = index;
       this.selectedCost = [item];
-    },   
+    },
     // TODO 点击增加费用
     addCost() {
       this.CostList.push({
@@ -219,6 +219,7 @@ export default {
             biComment: '',
             formData: JSON.stringify({
               ...this.formData,
+              handlerEntity: this.entity.dealerName,
               creator: this.transCode ? this.formData.handler : '',
               modifer: this.transCode ? this.formData.handler : '',
               order: {
@@ -265,7 +266,7 @@ export default {
             let obj = {
               COST_NAME : item.costName_expCode, //费用名称
               COST_CODE : item.expCode, //费用编码
-              COST_TYPE :item.costType_expCode, 
+              COST_TYPE :item.costType_expCode,
               expSubject : item.expSubject, //费用科目
               price :item.tdAmount, //报销金额
               reson : item.expCause, // 报销事由
@@ -283,7 +284,7 @@ export default {
     if(data){
       this.CostList = JSON.parse(data).cost
     }
-  }, 
+  },
 }
 </script>
 

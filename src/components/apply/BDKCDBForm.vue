@@ -248,6 +248,7 @@ export default {
             creator: this.formData.handler,
             ...this.formData,
             modifer: this.formData.handler,
+            handlerEntity: this.entity.dealerName,
             containerOutWarehouseManager: this.warehouseOut.containerOutWarehouseManager || null, // 出库管理员
             containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
             inPut: {

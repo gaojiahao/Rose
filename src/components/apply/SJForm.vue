@@ -178,6 +178,7 @@
               creator: this.formData.handler,
               ...this.formData,
               modifer: this.formData.handler,
+              handlerEntity: this.entity.dealerName,
             };
             let submitData = {
               listId: this.listId,
