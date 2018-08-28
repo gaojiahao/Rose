@@ -92,8 +92,6 @@
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
-        selItems: [], // 哪些被选中了
-        tmpItems: [], // 临时存储
         relatedAppList: [], // 物料列表
         limit: 10, // 每页条数
         page: 1., // 当前页码
@@ -108,13 +106,11 @@
     watch: {
       show: {
         handler(val) {
-          console.log(val);
           this.showPop = val;
         }
       },
       filter:{
         handler(val){
-          console.log(val);
             (async()=>{
               await this.getListView();
               await this.getList();
@@ -135,6 +131,7 @@
       // TODO 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
+        // this.relatedAppList = [];
       },
       //获取相关实例应用的视图
       getListView(){

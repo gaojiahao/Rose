@@ -133,8 +133,7 @@
                   </div>
                 </div>
               </div>
-            </div>
-            
+            </div>           
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>     
@@ -162,7 +161,6 @@ export default {
       orderList: {}, // 物料列表
       warehouse: {},
       dealerInfo: {}, // 客户信息
-      showPop : false,
     }
   },
   mixins: [detailCommon],
@@ -241,55 +239,4 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-  .swiper-slide{
-    .big_title {
-      width: 95%;
-      color: #111;
-      margin: 0 auto;
-      padding: .04rem;
-      font-size: .3rem;
-      font-weight: 300;
-      box-sizing: border-box;
-    }
-    // 相关应用
-  .relevant_list {
-    width: 90%;
-    margin: 0 auto;
-    .each_app {
-      margin-bottom: .1rem;
-      position: relative;
-      border-radius: .08rem;
-      .app_info {
-        padding: .1rem;
-        box-sizing: border-box;
-        .title {
-          color: #4F90F9;
-          font-size: .12rem;
-          font-weight: bold;
-        }
-        .app_name {
-          font-size: .18rem;
-          .msg_count {
-            float: right;
-            margin-right: .1rem;
-          }
-        }
-        .msg_num {
-          color: #3f72af;
-          font-size: .2rem;
-          .msg_tx {
-            // color: #757575;
-            font-size: .12rem;
-          }
-        }
-        .r_arrow {
-          position: absolute;
-          right: 0;
-          top: 50%;
-          transform: translate(0, -50%);
-        }
-      }
-    }
-  }
-  }
 </style>

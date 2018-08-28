@@ -22,7 +22,8 @@ export default {
       noOperation: true, // 是否审批过
       RelatedAppList : [] ,//相关实例列表
       detailSwiper : null,
-      filtersData : []
+      filtersData : [],
+      showPop : false,
     }
   },
   filters: {
