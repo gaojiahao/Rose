@@ -2,6 +2,7 @@ import {commitTask, getBaseInfoData, getProcess,} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
 export default {
   data() {
@@ -25,16 +26,16 @@ export default {
     totalAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        total += item.tdQty * item.price;
-      })
+        total = accAdd(total, accMul(item.tdQty, item.price));
+      });
       return Number(total);
     },
     // 税金
     taxAmount() {
-      return (this.totalAmount * this.taxRate).toFixed(2)
+      return (accMul(this.totalAmount, this.taxRate)).toFixed(2)
     },
     tdAmount() {
-      return (this.totalAmount + Number(this.taxAmount)).toFixed(2)
+      return parseFloat(accAdd(this.totalAmount, this.taxAmount).toFixed(2))
     }
   },
   filters: {

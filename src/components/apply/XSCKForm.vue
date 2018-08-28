@@ -2,6 +2,8 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <!-- 经办主体 -->
+        <pop-entity-list :value="entity" v-model="entity"></pop-entity-list>
         <!-- 用户地址和基本信息-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div v-if='dealerInfo'>
@@ -152,6 +154,10 @@
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
+  import PopEntityList from 'components/Popup/PopEntityList'
+  // 公共方法
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  import {toFixed} from '@/plugins/calc'
 
   export default {
     name: 'ApplyXSCKForm',
@@ -162,12 +168,11 @@
       XInput, RAction, RNumber, Swipeout,
       PopOrderList, SwipeoutItem, PopDealerList,
       SwipeoutButton, PopSingleSelect, PopWarehouseList,
-      PopSodlProjectList,
+      PopSodlProjectList, PopEntityList,
     },
     data() {
       return {
         listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
-        srhInpTx: '',                                   // 搜索框内容
         orderList: {},                                  // 订单列表
         transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
         logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
@@ -183,7 +188,7 @@
         warehouse: null, // 选中仓库属性
         taxRate: 0.16, // 税率
         numMap: {}, // 用于记录订单物料的数量和价格
-        orderParams: {
+        orderParams: { // 订单列表查询参数
           dealerCode: '',
           whCode: '',
         },
@@ -192,8 +197,9 @@
         biReferenceId: '',
         actions: [],
         taskId: '',
-        matterList: [],
-        project: {},
+        matterList: [], // 物料列表，用于计算金额、请求单价
+        project: {}, // 项目
+        entity: {}, // 经办主体
       }
     },
     watch: {
@@ -241,17 +247,18 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          if (this.numMap[item.inventoryCode]) {
-            item.tdQty = this.numMap[item.inventoryCode].tdQty;
-            item.price = this.numMap[item.inventoryCode].price;
+          let key = `${item.transCode}_${item.inventoryCode}`;
+          if (this.numMap[key]) {
+            item.tdQty = this.numMap[key].tdQty;
+            item.price = this.numMap[key].price;
           } else {
             item.tdQty = 1;
             item.price = 0;
           }
-          if (!orderList[item.transMatchedCode]) {
-            orderList[item.transMatchedCode] = [];
+          if (!orderList[item.transCode]) {
+            orderList[item.transCode] = [];
           }
-          orderList[item.transMatchedCode].push(item);
+          orderList[item.transCode].push(item);
         });
         this.numMap = {};
         this.matterList = sels;
@@ -280,7 +287,7 @@
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[item.inventoryCode] = {
+            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
               tdQty: item.tdQty,
               price: item.price
             };
@@ -333,9 +340,11 @@
             // 组装dataSet
             for (let items of Object.values(this.orderList)) {
               for (let item of items) {
+                let taxRate = item.taxRate || this.taxRate;
+                let taxAmount = accMul(item.price, item.tdQty, taxRate);
                 let oItem = {
-                  transMatchedCode: item.transMatchedCode, // 明细被核销交易号
-                  orderCode: item.transMatchedCode, // 销售订单号（明细）
+                  transMatchedCode: item.transCode, // 明细被核销交易号
+                  orderCode: item.transCode, // 销售订单号（明细）
                   outPutMatCode: item.inventoryCode, // 输出物料
                   orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
                   assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
@@ -346,11 +355,11 @@
                   thenQtyBal: item.qtyBal, // 待交付数量
                   tdProcessing: item.processing, //加工属性
                   price: item.price, // 明细单价
-                  taxRate: this.taxRate, // 税率
-                  taxAmount: this.taxAmount, // 税金
-                  tdAmount: item.price * item.tdQty * (100 + 16) / 100, // 明细发生金额
+                  taxRate: taxRate, // 税率
+                  taxAmount: taxAmount, // 税金
+                  tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
                   promDeliTime: item.promDeliTime || '', // 承诺交付时间
-                  comment: "", // 说明
+                  comment: item.comment || '', // 说明
                 };
                 if (this.transCode) {
                   oItem.tdId = item.tdId || '';
@@ -364,6 +373,7 @@
               dealerDebitContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
               dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
               containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 仓库管理员
+              handlerEntity: this.entity.dealerName,
               outPut: {
                 dealerDebit: this.dealerInfo.dealerCode, // 客户编码
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 客户页签
@@ -416,11 +426,12 @@
           }
           let orderList = {};
           // 获取合计
-          let {outPut, dealerDebit} = formData;
+          let {outPut} = formData;
           let {dataSet = []} = outPut;
           for (let item of dataSet) {
             item = {
               ...item,
+              transCode: item.transMatchedCode,
               qtyBal: item.thenQtyBal,
               qtyStockBal: item.thenQtyStock,
               inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
@@ -429,11 +440,12 @@
               specification: item.specification_outPutMatCode,
               processing: item.tdProcessing
             };
-            if (!orderList[item.transMatchedCode]) {
-              orderList[item.transMatchedCode] = [];
+            if (!orderList[item.transCode]) {
+              orderList[item.transCode] = [];
             }
-            orderList[item.transMatchedCode].push(item);
+            orderList[item.transCode].push(item);
           }
+          this.matterList = dataSet;
           // 客户信息
           this.dealerInfo = {
             creatorName: formData.dealerDebitContactPersonName, // 客户名
@@ -469,6 +481,9 @@
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
           };
           this.drDealerPaymentTerm = outPut.drDealerPaymentTerm;
+          this.entity = {
+            dealerName: formData.handlerEntity
+          };
           this.project = {
             projectName: outPut.project
           };
@@ -484,7 +499,6 @@
         this.orderList = JSON.parse(data).orderList;
         this.warehouse = JSON.parse(data).warehouse;
         this.dealerInfo = JSON.parse(data).dealer;
-
       }
     }
   }

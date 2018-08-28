@@ -30,17 +30,22 @@ export function accAdd(arg1, arg2) {
     }
     return (arg1 + arg2) / m;
 }
-export function accMul(arg1, arg2) {
-    var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
-    try {
-        m += s1.split(".")[1].length;
+
+// TODO 数字相乘，可传入多个数字
+export function accMul(...args) {
+  let m = 0;
+  let total = 1;
+  try {
+    for (let item of args) {
+      item = `${item}`;
+      let iArr = item.split('.');
+      if (iArr.length > 1) {
+        m += item.split('.')[1].length;
+      }
+      total *= Number(item.replace('.', ''));
     }
-    catch (e) {
-    }
-    try {
-        m += s2.split(".")[1].length;
-    }
-    catch (e) {
-    }
-    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+  } catch (e) {
+
+  }
+  return total / Math.pow(10, m);
 }

@@ -12,7 +12,7 @@
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item,index)">
-            <div class="order-code">{{item.transMatchedCode}}</div>
+            <div class="order-code">{{item.transCode}}</div>
             <div class="order-matter">
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -81,7 +81,7 @@
 <script>
   import {Icon, Popup} from 'vux'
   import RScroll from 'components/RScroll'
-  import {getTransMatchedCode} from 'service/listService'
+  import {getSalesOrderList} from 'service/listService'
   import RSearch from 'components/search'
 
   export default {
@@ -161,7 +161,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.transMatchedCode === sItem.transMatchedCode && item.inventoryCode === sItem.inventoryCode) !== -1;
+        return this.tmpItems.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
@@ -172,7 +172,7 @@
           return
         }
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.transMatchedCode === sItem.transMatchedCode && item.inventoryCode === sItem.inventoryCode);
+        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -206,12 +206,11 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'transMatchedCode',
+              property: 'transCode',
             }];
         }
-        return getTransMatchedCode({
+        return getSalesOrderList({
           ...this.params,
-          calcRelCode: '8801',
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -235,7 +234,8 @@
         this.$refs.bScroll.scrollTo(0, 0);
       },
       // TODO 搜索订单
-      searchList() {
+      searchList(val) {
+        this.srhInpTx = val;
         this.resetCondition();
         this.getList();
       },
@@ -247,7 +247,7 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.transMatchedCode === dItem.transMatchedCode && item.inventoryCode === dItem.inventoryCode);
+        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode && item.inventoryCode === dItem.inventoryCode);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }

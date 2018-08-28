@@ -75,7 +75,7 @@
                               </div>
                             </div>
                           </div>
-                          
+
                         </div>
                         <!-- 物料数量和价格 -->
                         <div class="mater_other">
@@ -146,6 +146,9 @@ import PopDealerList from 'components/Popup/PopDealerList'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
+// 公共方法
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
+
 export default {
   name: 'ApplyCGRKForm',
   mixins: [applyCommon],
@@ -184,23 +187,6 @@ export default {
       matterParams: { // 物料列表的请求参数
         dealerCode: ''
       }
-    }
-  },
-  computed: {
-    // 合计金额
-    totalAmount() {
-      let total = 0;
-      this.listData.forEach(item => {
-        total += item.tdQty * item.price;
-      });
-      return Number(total);
-    },
-    // 税金
-    taxAmount() {
-      return (this.totalAmount * this.taxRate).toFixed(2)
-    },
-    tdAmount() {
-      return (this.totalAmount + Number(this.taxAmount)).toFixed(2)
     }
   },
   watch: {
@@ -342,6 +328,8 @@ export default {
           };
           // 组装dataSet
           this.listData.forEach(item => {
+            let taxRate = item.taxRate || this.taxRate;
+            let taxAmount = accMul(item.price, item.tdQty, taxRate);
             let oItem = {
               transObjCode: item.inventoryCode, // 物料编码
               assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
@@ -351,11 +339,11 @@ export default {
               tdProcessing :item.processing, //加工属性
               assistQty: item.assistQty || 0, // 辅计数量（明细）
               price: item.price, // 明细单价
-              taxRate: this.taxRate, // 税率
-              taxAmount: this.taxAmount, // 税金
-              tdAmount: item.price * item.tdQty * (100 + 16) / 100, // 明细发生金额
+              taxRate: taxRate, // 税率
+              taxAmount: taxAmount, // 税金
+              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
               promDeliTime: item.promDeliTime || '', // 承诺交付时间
-              comment: "", // 说明
+              comment: item.comment || '', // 说明
             };
             if (this.transCode) {
               oItem.tdId = item.tdId || null;

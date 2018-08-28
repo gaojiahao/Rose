@@ -28,10 +28,13 @@ export let getSellOrderList = (data = {}) => {
 };
 
 // TODO 获取弹出框的销售订单列表
-export let getTransMatchedCode = (data = {}) => {
+export let getSalesOrderList = (data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/ds/getTransMatchedCode',
-    data
+    url: '/H_roleplay-si/ds/getSalesOutStock',
+    data:{
+      _dc: Date.now(),
+      ...data
+    }
   }).catch(e => {
     return errorHandler(e);
   });
