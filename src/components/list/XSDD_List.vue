@@ -44,9 +44,9 @@
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
-              <span class="num">共{{item.itmes.length}}件:</span>
+              <span class="num">共{{item.itemCount}}件:</span>
               <span class="money">
-                <span style="fontSize:.1rem;">[含税]￥</span>{{item.count | numberComma(3)}}
+                <span style="fontSize:.1rem;">[含税]￥</span>{{item.count | toFixed | numberComma(3)}}
               </span>
             </div>
           </div>
@@ -67,8 +67,8 @@
     data() {
       return {
         listStatus: [
-          {name: '全部', status: ''}, 
-          {name: '已生效', status: '已生效'}, 
+          {name: '全部', status: ''},
+          {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
         listViewID : 2190
@@ -76,8 +76,8 @@
       }
     },
     mixins: [listCommon],
-    methods: {     
-      
+    methods: {
+
     }
   }
 </script>

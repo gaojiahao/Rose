@@ -107,7 +107,7 @@
                 <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                             v-model.number="item.price"></x-input>
+                             @on-blur="priceBlur(item)" v-model.number="item.price"></x-input>
                   </group>
                   <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true"
                             v-model="item.priceType"></r-picker>
@@ -118,7 +118,7 @@
           <!-- 新增更多 按钮 -->
           <!-- <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div> -->
           <div class="handle_part" v-if="matterList.length">
-            <span class="add_more stop" v-if="this.actions.includes('stop')" 
+            <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
@@ -417,6 +417,7 @@ export default {
         this.$emit('input', false);
       })
     },
+    // TODO 展示时间选择器
     clickDateSelect() {
       this.$vux.datetime.show({
         confirmText: '确定',
@@ -426,6 +427,10 @@ export default {
           this.formData.validUntil = value;
         }
       })
+    },
+    // TODO 价格保留两位小数
+    priceBlur(item){
+      item.price = item.price.toFixed(2);
     },
   },
   created() {

@@ -66,7 +66,7 @@
                       <!-- 物料数量和价格 -->
                       <div class='mater_other'>
                         <div class='mater_num'>
-                          <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
+                          <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
                           <span class='num'>数量: {{item.tdQty}}</span>
                           <span>税率: {{item.taxRate}}</span>
                         </div>
@@ -74,8 +74,8 @@
                           <span class="symbol">￥</span>{{item.tdAmount | numberComma(3)}}
                           <span class="num"
                                 :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
-                                    [金额: <span class="symbol">￥</span>{{item.noTaxAmount | numberComma(3)}} +
-                                      税金: <span class="symbol">￥</span>{{item.taxAmount | numberComma(3)}}]
+                                    [金额: <span class="symbol">￥</span>{{item.noTaxAmount | toFixed | numberComma(3)}} +
+                                      税金: <span class="symbol">￥</span>{{item.taxAmount | toFixed | numberComma(3)}}]
                                   </span>
                         </div>
                       </div>
@@ -85,7 +85,7 @@
                 <!-- 金额合计栏 -->
                 <div class="price_list">
                   <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-                  <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
+                  <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
                 </div>
               </div>
             </div>
@@ -110,11 +110,11 @@
                   <div class="r_arrow" v-if='item.itemCount>0'>
                     <x-icon type="ios-arrow-right" size="20" ></x-icon>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
-          </div>   
+          </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>

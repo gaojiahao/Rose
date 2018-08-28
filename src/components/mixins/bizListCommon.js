@@ -4,6 +4,8 @@ import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {toFixed} from '@/plugins/calc'
+
 export default {
   data() {
     return {
@@ -131,6 +133,7 @@ export default {
             item.count = accAdd(item.count,amount);
 
           })
+          item.itemCount = item.itmes.length;
           // 列表当中每个订单最多展现5个物料
           item.itmes = item.itmes.slice(0, 5);
           item.itmes.forEach(mItem => {
@@ -160,7 +163,7 @@ export default {
               type:"text",
               time : 700
             })
-          }          
+          }
         }
         //列表总数据缓存
         if(this.activeIndex == 0 && this.page ===1){
@@ -236,6 +239,7 @@ export default {
     },
     numberComma,
     dateFormat,
+    toFixed,
   },
   created() {
     this.applyCode = this.$route.params.code;

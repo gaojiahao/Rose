@@ -44,7 +44,7 @@
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
-              <span class="num">共{{item.itmes.length}}件物料</span>
+              <span class="num">共{{item.itemCount}}件物料</span>
               <span class="money"></span>
             </div>
           </div>

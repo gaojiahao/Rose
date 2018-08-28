@@ -63,15 +63,15 @@
                 <!-- 物料数量和价格 -->
                 <div class='mater_other'>
                   <div class='mater_num'>
-                    <span class="num">单价: ￥{{item.price | numberComma(3)}}</span>
+                    <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
                     <span class='num'>数量: {{item.tdQty}}</span>
                     <span>税率: {{item.taxRate}}</span>
                   </div>
                   <div class='mater_price'>
-                    ￥{{item.tdAmount | numberComma(3)}}
+                    ￥{{item.tdAmount | toFixed | numberComma(3)}}
                     <span class="num"
                           :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}">
-                              [金额: ￥{{item.noTaxAmount | numberComma(3)}} + 税金: ￥{{item.taxAmount | numberComma(3)}}]
+                              [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                             </span>
                   </div>
                 </div>
@@ -81,7 +81,7 @@
           <!-- 金额合计栏 -->
           <div class="price_list">
             <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-            <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | numberComma(3)}}</div>
+            <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
           </div>
         </div>
       </div>

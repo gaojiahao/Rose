@@ -1,5 +1,6 @@
 import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from 'service/detailService.js'
 import {numberComma} from 'vux'
+import {toFixed} from '@/plugins/calc'
 // 映射表 引入
 import businessMap from '@/msg/pages/maps/businessApp'
 export default {
@@ -27,7 +28,8 @@ export default {
     }
   },
   filters: {
-    numberComma
+    numberComma,
+    toFixed,
   },
   methods: {
     //显示相关实例的pop
@@ -160,7 +162,7 @@ export default {
       let type = JSON.parse(val).type;
       if(type !== 'revoke'){
         this.$emit('change', true);
-      }  
+      }
     },
     //TODO 获取相关实例
     getAppExampleDetails(){
@@ -171,7 +173,7 @@ export default {
         let relatedApply = data.relevantItems;
         relatedApply.forEach(item=>{
           if(businessMap[item.listName]){
-           this.RelatedAppList.push(item);      
+           this.RelatedAppList.push(item);
           }
         })
         console.log(this.RelatedAppList);
@@ -204,8 +206,8 @@ export default {
           pagination: {
             el: '.swiper-pagination',
           },
-          
-        })  
+
+        })
 
       })
       // 触发父组件的scroll刷新
@@ -214,8 +216,8 @@ export default {
     })()
   },
   mounted() {
-    
-          
-    
+
+
+
   },
 }
