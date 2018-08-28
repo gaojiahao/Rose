@@ -3,7 +3,7 @@
     <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
       <div class="swiper-container">
         <!-- 如果需要分页器 -->
-        <!-- <div class="swiper-pagination"></div> -->
+        <div class="swiper-pagination" v-if='RelatedAppList.length'></div>
         <div class="swiper-wrapper">
             <div class="swiper-slide">
               <div class='related_tips' v-if='RelatedAppList.length' @click="getSwiper">
@@ -114,7 +114,7 @@
               <r-action :code="transCode" :task-id="taskId" :actions="actions"
                         @on-submit-success="submitSuccessCallback"></r-action>
             </div>
-            <div class="swiper-slide">
+            <div class="swiper-slide" v-if='RelatedAppList.length'>
               <div class="big_title">
                 <p class="vux-1px-b">相关实例</p>
               </div>

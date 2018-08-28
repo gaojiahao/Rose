@@ -34,7 +34,6 @@ export default {
     getRelatedData(item){
       console.log(item);
       if(item.itemCount>0){
-        console.log('jinru')
         this.listId = item.listId;
         this.showPop = true;
         item.content.forEach(val=>{
@@ -174,8 +173,6 @@ export default {
            this.RelatedAppList.push(item);      
           }
         })
-        console.log(this.RelatedAppList);
-
       })
     }
   },

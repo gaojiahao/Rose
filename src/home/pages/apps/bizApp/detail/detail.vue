@@ -81,7 +81,10 @@
           }
         });
       }
-      this.$event.$on('detail-show-loading', this.modifyRoute)
+      // this.$event.$on('detail-show-loading', this.modifyRoute)
+      this.$event.$on('detail-show-loading',(val)=>{
+        this.submitLoadding = val;
+      })
     },
     mounted() {
       this.$nextTick(() => {

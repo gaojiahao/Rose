@@ -1,7 +1,7 @@
 <template>
   <!-- 物料popup -->
   <div v-transfer-dom>
-    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow">
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
@@ -104,13 +104,14 @@
       }
     },
     watch: {
-      show: {
-        handler(val) {
-          this.showPop = val;
-        }
-      },
+      // show: {
+      //   handler(val) {
+      //     this.showPop = val;
+      //   }
+      // },
       filter:{
         handler(val){
+            this.$event.$emit('detail-show-loading',true);
             (async()=>{
               await this.getListView();
               await this.getList();
@@ -128,10 +129,9 @@
           }
         })
       },
-      // TODO 弹窗隐藏时调用
-      onHide() {
-        this.$emit('input', false);
-        // this.relatedAppList = [];
+      onHide(){
+        this.$emit('input',false)
+
       },
       //获取相关实例应用的视图
       getListView(){
@@ -156,7 +156,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryName',
+              property: 'handlerName',
             },
           ];
         }
@@ -166,6 +166,8 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          this.$event.$emit('detail-show-loading',false)
+          this.showPop = this.show;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.relatedAppList = this.page === 1 ? tableContent : [...this.relatedAppList, ...tableContent];
           this.$nextTick(() => {
@@ -344,14 +346,14 @@
                 .number_redu {
                   margin-left: .04rem;
                 }
-                // 增加
-                .number_incre {
-                  color: #c93d1b;
-                }
-                // 减少
-                .number_redu {
-                  color: #53d397;
-                }
+                // // 增加
+                // .number_incre {
+                //   color: #c93d1b;
+                // }
+                // // 减少
+                // .number_redu {
+                //   color: #53d397;
+                // }
               }
             }
             // 金额
