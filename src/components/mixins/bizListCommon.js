@@ -3,7 +3,7 @@ import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
 
 export default {
@@ -129,7 +129,7 @@ export default {
               item.count = accAdd(item.count,mitem.tdAmount);
               return
             }
-            let amount = mitem.price * mitem.tdQty ;
+            let amount = accMul(mitem.price, mitem.tdQty);
             item.count = accAdd(item.count,amount);
 
           })
