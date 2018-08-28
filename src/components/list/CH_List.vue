@@ -26,9 +26,13 @@
                 <span class="warehouse warehouse_code">{{item.whCode}}</span>
               </div>
               <!-- 数量余额 -->
-              <div class="mater_code" v-if="item.qtyBalance !== ''">
+              <div class="mater_code" v-if="item.qtyBalance >= 0">
                 <span class="title">数量剩余</span>
                 <span class="num">{{item.qtyBalance}}</span>
+              </div>
+              <div class="mater_code" v-if="item.qtyLocked >= 0">
+                <span class="title">数量剩余</span>
+                <span class="num">{{item.qtyLocked}}</span>
               </div>
           </div>
           <!-- 物料 -->
