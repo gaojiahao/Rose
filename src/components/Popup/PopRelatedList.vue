@@ -44,7 +44,7 @@
                   </div>
                 </div>
                 <!-- 生效时间 -->
-                <div class="amount_money">
+                <div class="amount_money" v-if='item.effectiveTime'>
                   <div class="num_part">
                     <span class="symbol">生效时间: </span>
                     <span class="number_incre">{{item.effectiveTime | dateFormat}}</span>
