@@ -325,7 +325,7 @@
       display: none;
     }
     .required {
-      color: red;
+      color: #5077aa;
       font-weight: bold;
     }
     .picker {
