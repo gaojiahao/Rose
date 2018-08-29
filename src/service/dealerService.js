@@ -72,6 +72,13 @@ const dealerService = {
             url:`/H_roleplay-si/dealer/findData?transCode=${code}`
         })
 
+    },
+    //获取新增应用中的往来
+    getAppdealer(data){
+        return $axios.ajax({
+            url:'/H_roleplay-si/ds/getObjDealerByLabelName',
+            data
+        })
     }
 
 

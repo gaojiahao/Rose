@@ -70,7 +70,7 @@
       },
       dealerLabelName : {
         type: String,
-        default: "2167"
+        default: "客户"
       }
     },
     directives: {TransferDom},
@@ -148,12 +148,12 @@
           filter = [
             ...filter,
             // 搜索 往来名称 或  编码
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'dealerCode',
-              attendedOperation: 'or'
-            },
+            // {
+            //   operator: 'like',
+            //   value: this.srhInpTx,
+            //   property: 'dealerCode',
+            //   attendedOperation: 'or'
+            // },
             {
               operator: 'like',
               value: this.srhInpTx,
@@ -161,7 +161,8 @@
             },
           ];
         }
-        dealerService.getDealerList(this.dealerLabelName,{
+        dealerService.getAppdealer({
+          dealerLabelName : this.dealerLabelName,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
