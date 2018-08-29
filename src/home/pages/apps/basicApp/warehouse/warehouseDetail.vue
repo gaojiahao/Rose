@@ -23,7 +23,7 @@
         <label>仓库关系类型:</label>
         <div class='property_val'>{{warehouse.warehouseType}}</div>
       </div>
-      <div class='each_property vux-1px-b'>
+      <div class='each_property vux-1px-b' v-if="typeSubMap[typeSub].title">
         <label>{{typeSubMap[typeSub].title}}:</label>
         <div class='property_val'>{{typeSubMap[typeSub].value}}</div>
       </div>
@@ -82,6 +82,14 @@
             code: '',
             list: [], // 渠道商列表
           },
+          noMatched: {
+            title: '',
+            dealerLabelName: '',
+            key: '',
+            value: '',
+            code: '',
+            list: [],
+          },
         },
         typeSub: 'group',
         typeToSubMap: {
@@ -116,7 +124,10 @@
             }
           }
           // 展示员工、客户、加工商、渠道商列表
-          this.typeSub = this.typeToSubMap[this.warehouse.warehouseType];
+          this.typeSub = this.typeToSubMap[this.warehouse.warehouseType] || 'noMatched';
+          if(this.typeSub === 'noMatched') {
+            return
+          }
           for (let item of Object.values(this.typeSubMap)) {
             if (this.warehouse[item.key]) {
               item.code = this.warehouse[item.key];
@@ -149,7 +160,10 @@
               }
             });
           // 请求员工、客户、加工商、渠道商列表
-          default:
+          case 'staff':
+          case 'customer':
+          case 'processors':
+          case 'channel':
             return getObjDealerByLabelName({
               dealerLabelName: this.typeSubMap[this.typeSub].dealerLabelName
             }).then(({tableContent = []}) => {
@@ -159,7 +173,9 @@
                   break;
                 }
               }
-            })
+            });
+          default:
+            break;
         }
       },
     },
