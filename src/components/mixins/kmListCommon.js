@@ -167,6 +167,7 @@ export default {
         if(this.activeIndex == 0 && this.page ===1){
           sessionStorage.setItem(this.applyCode,total);
         }
+        this.$loading.hide();
       }).catch(e => {
         this.resetScroll();
       })

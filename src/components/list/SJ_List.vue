@@ -76,11 +76,13 @@
         }
         if(this.serachVal){
           filter = [
-            {
-              operator:"in",
-              value:this.biStatus,
-              property:"biStatus",
-            },
+            ...filter,
+            // {
+            //   operator:"in",
+            //   value:this.biStatus,
+            //   property:"biStatus",
+            //   attendedOperation:"and (",
+            // },
             {
               operator:"like",
               value:this.serachVal,
@@ -101,7 +103,7 @@
           start : (this.page-1)*this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          this.$loading.hide();
+          
           // this.$emit('input',false);
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
@@ -132,6 +134,7 @@
           if(this.activeIndex == 0 && this.page ===1){
             sessionStorage.setItem(this.applyCode,dataCount);
           }
+          this.$loading.hide();
         }).catch(e => {
           this.resetScroll();
         })
