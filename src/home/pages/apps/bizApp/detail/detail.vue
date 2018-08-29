@@ -3,38 +3,27 @@
     <div class="pages" ref='detail'>
       <component
         :is='currentComponent'
-        v-model='showLoadding'
         @change='modifyRoute'
         @refresh-scroll="refresh">
       </component>
     </div>
     <!-- 页面进入加载动画-->
-    <loadding-form :show='showLoadding'></loadding-form>
-    <submit-load :submit='submitLoadding'></submit-load>
+    <!-- <loadding-form :show='showLoadding'></loadding-form> -->
   </div>
 
 </template>
 
 <script>
-  import LoaddingForm from 'components/Loading'
-  import SubmitLoad from 'components/submitLoading'
   import businessText from './../../../maps/businessText'
   import Bscroll from 'better-scroll'
-
   export default {
     data() {
       return {
         currentComponent: '',
-        showLoadding: true,
         transCode: '',
         submitSuccess: false,
         detailScroll: null,
-        submitLoadding: false
       }
-    },
-    components: {
-      LoaddingForm,
-      SubmitLoad
     },
     watch:{
       $route:{
@@ -75,6 +64,7 @@
       next();
     },
     created() {
+      this.$loading.show();
       let {code = ''} = this.$route.params;
       try {
         this.currentComponent = require(`components/detail/${code}Form.vue`).default;
@@ -87,9 +77,9 @@
         });
       }
       // this.$event.$on('detail-show-loading', this.modifyRoute)
-      this.$event.$on('detail-show-loading',(val)=>{
-        this.submitLoadding = val;
-      })
+      // this.$event.$on('detail-show-loading',(val)=>{
+      //   this.submitLoadding = val;
+      // })
       this.$nextTick(() => {
         this.detailScroll = new Bscroll(this.$refs.detail, {
           click: true,
@@ -101,7 +91,8 @@
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
-      this.$event.$off('detail-show-loading', this.modifyRoute)
+      this.$loading1.hide();
+      // this.$event.$off('detail-show-loading', this.modifyRoute)
       // 新建物料，修改列表页的meta值
       if (this.submitSuccess && (path.indexOf('/list') !== -1 || path.indexOf('msglist') !== -1)) {
         to.meta.reload = true;

@@ -4,18 +4,15 @@ let HandleLoad = {}
 HandleLoad.install = (Vue) => {
   Vue.prototype.$loading1 = { // $loading即是你后期调用的名称
     show () {
-      console.log('展示')
       const Loading = Vue.extend(loading) // 扩展vue实例，引入loading
-      const root = document.getElementById('App')
       instance = new Loading().$mount() // 创建loading实例并挂载
       document.body.appendChild(instance.$el)
       // root.appendChild(instance.$el) // 向指定目录添加dom
     },
     hide () {
-      console.log('关闭')
       // 只有实例存在，才会隐藏
       if (!instance) return
-      instance.show = false
+      instance.handle = false
     }
   }
 }

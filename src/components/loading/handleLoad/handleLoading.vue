@@ -1,11 +1,10 @@
 <template>
-  <div class="loading-container" v-show="show">
+  <div class="loading-container" v-show="handle">
     <div class="loading-wrapper">
       <spinner class="loading-animation" type="circles" size="34"></spinner>
     </div>
   </div>
 </template>
-
 <script>
   import {Spinner} from 'vux'
 
@@ -13,7 +12,7 @@
     name: "loading",
     data(){
       return{
-        show :true
+        handle :true
       }
     },
     components: {Spinner},
