@@ -22,7 +22,7 @@
               {{item.transCode}}
               <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
             </p>
-            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
+            <p class="duty_time">{{item.effectiveTime | dateFormat}}</p>
           </div>
           <div class="duty_content">{{item.opportunityTitle}}</div>
           <!-- 报销人，金额合计 -->
@@ -32,7 +32,7 @@
             </div>
             <div class="money_part">
               <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.count | numberComma}}
+                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | numberComma}}
               </span>
             </div>
           </div>
@@ -47,6 +47,7 @@
 
 <script>
   import listCommon from './../mixins/bizListCommon'
+  import {getList} from 'service/listService.js'
   export default {
     data() {
       return {
@@ -55,10 +56,79 @@
           {name: '已生效', status: '已生效'}, 
           {name: '进行中', status: '进行中'}
         ],
-        listViewID :2244 
+        listViewID :2244,
+        biStatus:'',
       }
     },
-    mixins: [listCommon]
+    mixins: [listCommon],
+    methods:{
+      //获取销售订单数据
+      getList(noReset = false) {
+        let filter = [];
+        if(this.biStatus.length){
+          filter = [{operator:"in",value:this.biStatus,property:"biStatus"}];
+        }
+        if(this.serachVal){
+          filter = [
+            {
+              operator:"in",
+              value:this.biStatus,
+              property:"biStatus",
+            },
+            {
+              operator:"like",
+              value:this.serachVal,
+              property:"transCode",
+              attendedOperation: 'or'
+            },
+            {
+              operator: 'like',
+              value: this.serachVal,
+              property: 'handlerName'
+            }
+          ]
+        }
+        return getList(this.listViewID,{
+          limit: this.limit,
+          page: this.page,
+          start : (this.page-1)*this.limit,
+          filter: JSON.stringify(filter),
+        }).then(({dataCount = 0, tableContent = []}) => {
+          this.$emit('input',false);
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          tableContent.forEach(item => {
+            this.setStatus(item);
+          });
+          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+          if (!noReset) {
+            this.$nextTick(() => {
+              this.resetScroll();
+            })
+          }
+          //判断最近有无新增数据
+          //console.log(this.dataCount);
+          let text = '';
+          if(noReset && this.activeIndex ===0){
+            if(this.dataCount){
+              text = dataCount - this.dataCount === 0 ? '暂无新数据' : text = `新增${dataCount-this.dataCount}条数据`;
+              this.$vux.toast.show({
+                text: text,
+                position:'top',
+                width:'50%',
+                type:"text",
+                time : 700
+              })
+            }
+          }
+          //列表总数据缓存
+          if(this.activeIndex == 0 && this.page ===1){
+            sessionStorage.setItem(this.applyCode,dataCount);
+          }
+        }).catch(e => {
+          this.resetScroll();
+        })
+      },
+    }
   }
 </script>
 

@@ -8,9 +8,9 @@ let errorHandler = (e) => {
   });
   return Promise.reject(e)
 };
-export let getList = (data = {}) => {
+export let getList = (id,data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/seconds/getReportInfoByListViewId/2176',
+    url:`/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
     data
   }).catch(e => {
     return errorHandler(e);
@@ -26,7 +26,6 @@ export let getSellOrderList = (data = {}) => {
     return errorHandler(e);
   });
 };
-
 // TODO 获取弹出框的销售订单列表
 export let getSalesOrderList = (data = {}) => {
   return $axios.ajax({

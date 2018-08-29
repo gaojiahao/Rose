@@ -79,6 +79,17 @@ export default {
     },
     ///tab切换
     tabClick(item, index) {
+      switch (item.status){
+        case '已生效' :
+          this.biStatus = '1';
+          break;
+        case '进行中' :
+          this.biStatus = '2';
+          break;
+        case '' :
+          this.biStatus = '';
+          break;
+      }
       this.activeIndex = index;
       this.activeTab = item.status;
       this.resetCondition();
