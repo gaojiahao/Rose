@@ -394,7 +394,7 @@ export default {
             biComment: formData.biComment //备注
           },
           this.matterList = data.formData.order.dataSet;
-          this.$emit('input', false);
+          this.$loading.hide();
       })
 
 

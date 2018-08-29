@@ -347,7 +347,7 @@ export default {
         };
         this.biReferenceId = formData.biReferenceId;
         this.matterList = matterList;
-        this.$emit('input', false);
+        this.$loading.hide();
       })
     },
   },

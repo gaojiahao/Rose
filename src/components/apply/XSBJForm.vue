@@ -415,7 +415,8 @@ export default {
         this.drDealerPaymentTerm = order.drDealerPaymentTerm;
         this.biReferenceId = formData.biReferenceId;
         this.matterList = matterList;
-        this.$emit('input', false);
+        this.$loading.hide();
+        // this.$emit('input', false);
       })
     },
     // TODO 展示时间选择器

@@ -9,7 +9,10 @@ import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
 import { TransferDom } from 'vux'
 import  { AlertPlugin, ConfirmPlugin, DatetimePlugin ,ToastPlugin } from 'vux'
-
+import Loading from './components/loading/pageLoad/loading'
+import HandleLoad from './components/loading/handleLoad/handleLoading'
+Vue.use(Loading);
+Vue.use(HandleLoad);
 Vue.directive('transfer-dom', TransferDom)
 Vue.use(VueRouter)
 Vue.use(AlertPlugin)

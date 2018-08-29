@@ -489,7 +489,8 @@
           };
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
-          this.$emit('input', false);
+          this.$loading.hide();
+          // this.$emit('input', false);
         })
       },
     },

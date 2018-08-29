@@ -458,7 +458,7 @@ export default {
         this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
         this.biReferenceId = formData.biReferenceId;
         this.matterList = dataSet;
-        this.$emit('input', false);
+        this.$loading.hide();
       })
     },
   },

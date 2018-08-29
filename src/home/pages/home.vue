@@ -15,7 +15,7 @@
         <bus-app :BUSarray='BUSarray' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
       </div>   
     </div>
-    <loadding :show='showLoadding'></loadding>
+    <!-- <loadding :show='showLoadding'></loadding> -->
   </div>
 </template>
 
@@ -72,6 +72,7 @@ export default {
     }
   },
   created(){
+    this.$loading.show();
     (async() => {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
@@ -127,7 +128,8 @@ export default {
       
           }
         }
-        this.showLoadding = false;
+        this.$loading.hide();
+        // this.showLoadding = false;
       }).catch( err => {
         this.$vux.alert.show({
           content: '首页加载有误，请尝试刷新'

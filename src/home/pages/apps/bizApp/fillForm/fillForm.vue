@@ -2,12 +2,10 @@
   <div class="pages">
     <component
       :is='currentComponent'
-      v-model='showLoadding'
       @sel-data='selData'
       @close='closeLoad'
       @change='modifyRoute'>
     </component>
-    <loading-form :show='showLoadding'></loading-form>
     <submit-load :submit='submitLoadding'></submit-load>
   </div>
 
@@ -53,6 +51,7 @@ export default {
     next();
   },
   created(){
+    this.$loading.show();
     let {transCode} = this.$route.query;
     if(transCode){
       this.transCode = transCode;

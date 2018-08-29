@@ -287,7 +287,8 @@ export default {
             }
             this.CostList.push(obj);
           })
-          this.$emit('input', false);
+          this.$loading.hide();
+          // this.$emit('input', false);
         })
       }
   },
