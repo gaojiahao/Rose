@@ -86,6 +86,7 @@
               this.resetScroll();
             })
           }
+          this.$loading.hide();
         }).catch(e => {
           this.resetScroll();
         })
