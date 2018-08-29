@@ -22,7 +22,7 @@
               <template slot="title">
                 <span class='required'>费用名称
                 </span>
-              </template> 
+              </template>
             </cell>
             <!-- <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker> -->
             <x-input title="金额" text-align='right' placeholder='请填写'
@@ -30,7 +30,7 @@
               <template slot="label">
                 <span class='required'>金额
                 </span>
-              </template> 
+              </template>
             </x-input>
             <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'v-model="item.reson"></x-input>
           </group>
@@ -71,6 +71,9 @@ import ApplyCommon from './../mixins/applyCommon'
 // 组件引入
 import PopCostList from 'components/Popup/PopCostList'
 import PopProjectList from 'components/Popup/PopProjectList'
+// 方法引入
+import {accAdd} from '@/home/pages/maps/decimalsAdd'
+
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -112,11 +115,11 @@ export default {
     // 合计金额
     totalAmount() {
       let total = 0;
-      this.CostList.forEach(item=>{
-        if(item.price){
-          total += Number(item.price);
+      this.CostList.forEach(item => {
+        if (item.price) {
+          total = accAdd(total, item.price);
         }
-      })
+      });
       return total;
     }
   },
