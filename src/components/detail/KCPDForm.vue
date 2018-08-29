@@ -61,6 +61,10 @@
                             <span class="symbol">盘点数量: </span>
                             {{item.tdQty}}
                           </span>
+                          <span class="num">
+                            <span class="symbol">差异数量: </span>
+                            {{item.differenceNum}}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -89,11 +93,11 @@
                     <div class="r_arrow" v-if='item.itemCount>0'>
                       <x-icon type="ios-arrow-right" size="20" ></x-icon>
                     </div>
-                    
+
                   </div>
                 </div>
               </div>
-            </div>   
+            </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>

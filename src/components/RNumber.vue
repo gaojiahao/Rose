@@ -8,6 +8,8 @@
 </template>
 
 <script>
+  import {toFixed} from '@/plugins/calc'
+
   export default {
     name: "RNumber",
     props: {
@@ -20,7 +22,7 @@
       max: {
         type: Number,
         default: 0
-      }
+      },
     },
     data() {
       return {
@@ -60,7 +62,7 @@
         if (val <= 0) {
           val = 1;
         }
-        this.currentNum = Math.floor(val);
+        this.currentNum = toFixed(val, 2);
         e.target.value = this.currentNum;
         this.$emit('input', this.currentNum);
       },
