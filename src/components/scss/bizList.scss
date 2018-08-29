@@ -3,7 +3,9 @@
   height: 90%;
   overflow: auto;
 }
-
+.vux-1px-b:after {
+  border-color: #E8E8E8;
+}
 .list_top {
   width: 100%;
   padding-top: .1rem;

@@ -22,9 +22,15 @@
               {{item.transCode}}
               <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
             </p>
-            <p class="duty_time">{{item.effectiveTime | dateFormat}}</p>
+            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
-          <div class="duty_content">{{item.opportunityTitle}}</div>
+          <div class="duty_content">
+            <div class="content_title">{{item.opportunityTitle}}</div>
+            <div class="content_step vux-1px-b">
+              <div>{{item.dealerName}}</div>
+              <div>{{item.currentStage}}</div>
+            </div>
+          </div>
           <!-- 报销人，金额合计 -->
           <div class="order_count">
             <div class="handle_man">
@@ -135,7 +141,21 @@
 <style lang='scss' scoped>
   @import "../scss/bizList.scss";
   .duty_content{
-    padding: .04rem .1rem;
+    width: 100%;
     color: #7d7d7d;
+    padding: .02rem .1rem;
+    box-sizing: border-box;
+    .content_title {
+      color: #111;
+      font-size: .2rem;
+      font-weight: 300;
+    }
+    .content_step {
+      font-size: .12rem;
+      padding: .02rem 0 .04rem;
+      // display: flex;
+      // justify-content: space-between;
+      // align-items: center;
+    }
   }
 </style>
