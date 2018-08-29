@@ -5,7 +5,7 @@
         <pop-manager-list @sel-item="selManager"></pop-manager-list>
         <!-- 项目类型-->
         <r-picker title="项目类型" :data="projectTypes" mode="3" placeholder="请选择项目类型"
-                  v-model="ProjectApproval.projectType"></r-picker>
+                  v-model="ProjectApproval.projectType" :required="ProjectApproval.projectType === ''"></r-picker>
         <div class="xmlx_list">
           <!-- 项目立项明细 -->
           <div class="materiel_list mg_auto box_sd">
@@ -21,7 +21,7 @@
                           <template slot="label">
                             <span class='required'>项目名称
                             </span>
-                          </template>        
+                          </template>
                         </x-input>
                         <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
                                  text-align='right' placeholder='请填写'
@@ -29,7 +29,7 @@
                           <template slot="label">
                             <span class='required'>预算收入
                             </span>
-                          </template> 
+                          </template>
                         </x-input>
                         <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
                                  text-align='right' placeholder='请填写'
@@ -37,7 +37,7 @@
                            <template slot="label">
                             <span class='required'>预算成本
                             </span>
-                          </template> 
+                          </template>
                         </x-input>
                         <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
                                  text-align='right' placeholder='请填写'
@@ -45,19 +45,19 @@
                            <template slot="label">
                             <span class='required'>预算费用
                             </span>
-                          </template> 
+                          </template>
                         </x-input>
                         <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'>
                            <template slot="title">
                             <span class='required'>预算开始日期
                             </span>
-                          </template> 
+                          </template>
                         </datetime>
                         <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'>
                            <template slot="title">
                             <span class='required'>预算截至日期
                             </span>
-                          </template> 
+                          </template>
                         </datetime>
                         <cell title="预算利润" :value="profit"></cell>
                         <cell title="预算利润率" :value="profitMargin"></cell>
