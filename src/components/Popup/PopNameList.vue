@@ -16,7 +16,7 @@
           {{selItems.PROJECT_MANAGER}}<span class="symbol"> [项目经理]</span>
         </div>
         <p class="cp_name" v-if="selItems.COMMENT">
-          {{selItems.COMMENT}}<span class="symbol"> [备注]</span>
+          {{selItems.COMMENT}}<span class="symbol"> [项目说明]</span>
         </p>
         <p class="cp_ads">预期开始日期：{{selItems.EXPECT_START_DATE}}</p>
         <p class="cp_ads">预期截止日期：{{selItems.EXPECT_END_DATE}}</p>
@@ -47,9 +47,9 @@
                     <div class="mater_manager">
                       {{item.PROJECT_MANAGER}}<span class="symbol"> [项目经理]</span>
                     </div>
-                    <!-- 项目备注 -->
+                    <!-- 项目说明 -->
                     <div class='mater_comment' v-if="item.COMMENT">
-                      {{item.COMMENT}}<span class="symbol"> [备注]</span>
+                      {{item.COMMENT}}<span class="symbol"> [项目说明]</span>
                     </div>
                     <div class="mater_time">
                       <div>预期开始日期：{{item.EXPECT_START_DATE}}</div>
@@ -116,7 +116,7 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.$emit('input', false);
+        this.showPop = false;
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -325,7 +325,7 @@
                 color: #111;
                 font-size: .16rem;
               }
-              // 项目备注
+              // 项目说明
               .mater_comment {
                 font-size: .12rem;
                 color: #111;

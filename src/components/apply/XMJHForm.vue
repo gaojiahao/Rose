@@ -19,7 +19,7 @@
                           <template slot="label">
                             <span class='required'>任务名称
                             </span>
-                          </template>  
+                          </template>
                         </x-input>
                         <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]"
                                       @on-change=" typeTask($event,item) "></popup-picker>
@@ -27,10 +27,10 @@
                           <template slot="title">
                             <span class='required'>截止日期
                             </span>
-                          </template>  
+                          </template>
                         </datetime>
                         <x-input title="计划工时" type="number" v-model.number="item.planTime" text-align='right'
-                                 placeholder='请填写'></x-input>
+                                 placeholder='请填写' @on-blur="checkTime(item)"></x-input>
                         <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
                       </group>
                     </div>
@@ -71,6 +71,8 @@
   // 组件引入
   import RPicker from 'components/RPicker'
   import PopNameList from 'components/Popup/PopNameList'
+  // 方法引入
+  import {toFixed} from '@/plugins/calc'
 
   export default {
     mixins: [ApplyCommon],
@@ -140,7 +142,7 @@
         for (let i = 0; i < this.projectPlan.length; i++) {
           for (let j in this.projectPlan[i]) {
             if (this.projectPlan[i][j] == '') {
-              let msgTitle = j == 'taskType' || j == 'deadline' ? '请选择' : '请填写';
+              let msgTitle = j === 'taskType' || j === 'deadline' ? '请选择' : '请填写';
               msgTask = msgTitle + objArr[j];
               this.$vux.alert.show({
                 content: msgTask
@@ -181,6 +183,13 @@
             this.saveData(operation, submitData);
           }
         });
+      },
+      // TODO 校验计划工时,保留一位小数
+      checkTime(item) {
+        console.log(item.planTime)
+        if (item.planTime) {
+          item.planTime = Math.abs(toFixed(item.planTime, 1));
+        }
       },
     },
     created() {
@@ -250,7 +259,7 @@
         background: #fc3c3c;
       }
     }
-    em{
+    em {
       font-style: normal;
     }
   }
