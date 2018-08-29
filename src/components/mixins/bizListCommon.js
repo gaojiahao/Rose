@@ -138,7 +138,14 @@ export default {
           this.setStatus(item);
           item.count = 0;
           item.itmes.forEach(mitem => {
-            item.count = toFixed(accAdd(item.count, mitem.tdAmount));
+            // 当 count = tdAmount 相加的时候
+            if (mitem.tdAmount > 0 || mitem.tdAmount < 0) {
+              item.count = toFixed(accAdd(item.count, mitem.tdAmount));
+              return
+            }  
+            // 当 count = price * tdqty
+            let amount = accMul(mitem.price, mitem.tdQty);
+            item.count = toFixed(accAdd(item.count, amount));
           })
           item.itemCount = item.itmes.length;
           // 列表当中每个订单最多展现5个物料
