@@ -63,7 +63,8 @@
                           <span class="matter-remain">
                             <span class="symbol">库存数量: </span>{{item.qtyBal}}
                           </span>
-                          <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
+                          <r-number :num="item.tdQty" :max="item.qtyBal" 
+                          :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                         </div>
                       </div>
                     </div>

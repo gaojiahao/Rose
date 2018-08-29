@@ -70,7 +70,7 @@
                 <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="数量" text-align='right' placeholder='请填写'
-                            v-model.number="item.tdQty"></x-input>
+                             @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
                   </group>
                   <group>
                     <cell title="差异数量" text-align='right' placeholder='请填写'
