@@ -21,19 +21,19 @@
 
       <div class="trade_mode mg_auto box_sd">
         <p class="title">当前所在阶段</p>
-        <p class="mode group_mar_left">{{orderInfo.currentStage || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.currentStage}}</p>
       </div>
-      <div class="trade_mode mg_auto box_sd">
+      <div class="trade_mode mg_auto box_sd" v-if="orderInfo.salesPerson">
         <p class="title">销售人员</p>
-        <p class="mode group_mar_left">{{orderInfo.salesPerson || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.salesPerson}}</p>
       </div>
-      <div class="trade_mode mg_auto box_sd">
+      <div class="trade_mode mg_auto box_sd" v-if="orderInfo.salesChannels">
         <p class="title">销售渠道</p>
-        <p class="mode group_mar_left">{{orderInfo.salesChannels || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.salesChannels}}</p>
       </div>
-      <div class="trade_mode mg_auto box_sd">
+      <div class="trade_mode mg_auto box_sd" v-if="orderInfo.validUntil">
         <p class="title">有效期至</p>
-        <p class="mode group_mar_left">{{orderInfo.validUntil || '暂无'}}</p>
+        <p class="mode group_mar_left">{{orderInfo.validUntil}}</p>
       </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
