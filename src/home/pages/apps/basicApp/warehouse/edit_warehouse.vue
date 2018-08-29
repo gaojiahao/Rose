@@ -20,7 +20,7 @@
       </r-picker>
       <r-picker :title="`${typeSubMap[typeSub].title}:`" :data="typeSubMap[typeSub].list"
                 :value="typeSubMap[typeSub].value"
-                v-model="typeSubMap[typeSub].value" :required='true'>
+                v-model="typeSubMap[typeSub].value" :required='true' v-show="typeSubMap[typeSub].title">
       </r-picker>
     </div>
     <div class='vux-1px-t btn '>
@@ -105,6 +105,14 @@
             value: '',
             code: '',
             list: [], // 渠道商列表
+          },
+          noMatched: {
+            title: '',
+            dealerLabelName: '',
+            key: '',
+            value: '',
+            code: '',
+            list: [],
           },
         },
         typeSub: 'group',
@@ -278,7 +286,10 @@
         // 清空之前的选中值
         this.typeSubMap[this.typeSub].value = '';
         this.typeSubMap[this.typeSub].code = '';
-        this.typeSub = this.typeToSubMap[val];
+        this.typeSub = this.typeToSubMap[val] || 'noMatched';
+        if(this.typeSub === 'noMatched') {
+          return
+        }
         this.getTypeSubList();
       },
       // TODO 获取仓库类型关联子项下拉列表
@@ -306,7 +317,10 @@
               }
             });
           // 请求员工、客户、加工商、渠道商列表
-          default:
+          case 'staff':
+          case 'customer':
+          case 'processors':
+          case 'channel':
             return getObjDealerByLabelName({
               dealerLabelName: currentTypeSub.dealerLabelName
             }).then(({tableContent = []}) => {
@@ -322,7 +336,9 @@
               if (currentTypeSub.code === '') {
                 this.typeSubMap[this.typeSub].value = tableContent[0].value;
               }
-            })
+            });
+          default:
+            break;
         }
       },
     },
