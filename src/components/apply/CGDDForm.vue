@@ -98,7 +98,7 @@
                   </group>
                   <group>
                     <x-input type="number" title="数量" text-align='right' placeholder='请填写'
-                    v-model.number="item.tdQty"></x-input>
+                             @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
                   </group>
                 </div>
               </div>
@@ -399,14 +399,7 @@ export default {
           this.matterList = data.formData.order.dataSet;
           this.$loading.hide();
       })
-    },
-    // TODO 检查金额，取正数、保留两位小数
-    checkAmt(item){
-      let val = item.price;
-      if (val) {
-        item.price = Math.abs(toFixed(val));
-      }
-    },
+    }
   },
   created(){
     let data = sessionStorage.getItem('CGDD_DATA');

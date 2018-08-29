@@ -291,14 +291,7 @@ export default {
           this.$loading.hide();
           // this.$emit('input', false);
         })
-      },
-    // TODO 检查金额，取正数、保留两位小数
-    checkAmt(item){
-      let val = item.price;
-      if (val) {
-        item.price = Math.abs(toFixed(val));
       }
-    },
   },
   created() {
     let data = sessionStorage.getItem('FXBX_DATA');

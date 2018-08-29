@@ -3,6 +3,7 @@ import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import {toFixed} from '@/plugins/calc'
 
 export default {
   data() {
@@ -171,6 +172,18 @@ export default {
       return getProcess(this.listId).then(([data = {}]) => {
         this.processCode = data.processCode || '';
       })
+    },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let { price, tdQty } = item;
+      // 金额
+      if (price) {
+        item.price = Math.abs(toFixed(price));
+      }
+      // 数量
+      if(tdQty){
+        item.tdQty = Math.abs(toFixed(tdQty));
+      }
     },
   },
   created() {
