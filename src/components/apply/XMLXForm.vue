@@ -24,34 +24,37 @@
                           </template>        
                         </x-input>
                         <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
-                                 text-align='right' placeholder='请填写'>
+                                 text-align='right' placeholder='请填写'
+                                 @on-blur="checkAmt('budgetIncome', $event)">
                           <template slot="label">
                             <span class='required'>预算收入
                             </span>
                           </template> 
                         </x-input>
                         <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
-                                 text-align='right' placeholder='请填写'>
-                          <template slot="label">
+                                 text-align='right' placeholder='请填写'
+                                 @on-blur="checkAmt('budgetCapital', $event)">
+                           <template slot="label">
                             <span class='required'>预算成本
                             </span>
                           </template> 
                         </x-input>
                         <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
-                                 text-align='right' placeholder='请填写'>
-                          <template slot="label">
+                                 text-align='right' placeholder='请填写'
+                                 @on-blur="checkAmt('budgetCost', $event)">
+                           <template slot="label">
                             <span class='required'>预算费用
                             </span>
                           </template> 
                         </x-input>
                         <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'>
-                          <template slot="title">
+                           <template slot="title">
                             <span class='required'>预算开始日期
                             </span>
                           </template> 
                         </datetime>
                         <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'>
-                          <template slot="title">
+                           <template slot="title">
                             <span class='required'>预算截至日期
                             </span>
                           </template> 
@@ -126,9 +129,6 @@
         FormDataComment: '',//备注
         formData: {},
         jsonData: {
-          bomType: {
-            bomType: ''
-          },
           comment: {
             biComment: ''
           },
@@ -220,7 +220,13 @@
         let sel = JSON.parse(val);
         this.ProjectApproval.projectManager = sel.dealerName;
         this.ProjectApproval.phoneNumber = sel.dealerMobilePhone;
-      }
+      },
+      // TODO 检查金额
+      checkAmt(key = '', val) {
+        if (val) {
+          this.ProjectApproval[key] = Math.abs(parseInt(val));
+        }
+      },
     },
     created() {
     },

@@ -431,7 +431,7 @@ export default {
     },
     // TODO 价格保留两位小数
     priceBlur(item){
-      item.price = item.price.toFixed(2);
+      item.price = Math.abs(item.price.toFixed(2));
     },
   },
   created() {
