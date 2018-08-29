@@ -20,15 +20,15 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
+              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>           
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
           <div class="duty_content">
             <div class="content_title">{{item.opportunityTitle}}</div>
             <div class="content_step vux-1px-b">
-              <div>{{item.dealerName}}</div>
               <div>{{item.currentStage}}</div>
+              <div>{{item.dealerName}}</div>
             </div>
           </div>
           <!-- 报销人，金额合计 -->
@@ -149,15 +149,21 @@
     box-sizing: border-box;
     .content_title {
       color: #111;
-      font-size: .2rem;
-      font-weight: 300;
+      font-size: .18rem;
     }
     .content_step {
+      display: flex;
       font-size: .12rem;
+      align-items: center;
       padding: .02rem 0 .04rem;
-      // display: flex;
-      // justify-content: space-between;
-      // align-items: center;
+      justify-content: space-between;
     }
+  }
+  .duty_steps {
+    padding: .02rem;
+    font-size: .12rem;
+    // margin-right: -.02rem;
+    // position: absolute;
+    // right: 0;
   }
 </style>
