@@ -38,7 +38,7 @@
             </div>
             <div class="money_part">
               <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | numberComma}}
+                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | toFixed | numberComma}}
               </span>
             </div>
           </div>
