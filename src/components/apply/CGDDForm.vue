@@ -114,7 +114,7 @@
           </div>
           <!-- 供应商popup -->
           <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @closePop='showDealerPop = !showDealerPop'
-                          @sel-dealer="selDealer" :dealerLabelName="'2168'">
+                          @sel-dealer="selDealer" dealer-label-name="供应商">
           </pop-dealer-list  ref="matter">
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"

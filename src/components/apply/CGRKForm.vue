@@ -109,7 +109,7 @@
             <span class="add_more"  @click="addOrder">新增更多物料</span>
           </div>
           <!-- 供应商popup -->
-          <pop-dealer-list :show="showDealerPop" dealer-label-name="2168" v-model="showDealerPop"
+          <pop-dealer-list :show="showDealerPop" dealer-label-name="供应商" v-model="showDealerPop"
                            @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"

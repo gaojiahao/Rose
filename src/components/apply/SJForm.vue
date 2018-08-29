@@ -52,7 +52,7 @@
         </div>
         <!-- 客户popup -->
         <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                         @sel-dealer="selDealer" :dealerLabelName="'2167'">
+                         @sel-dealer="selDealer" :dealerLabelName="'客户'">
         </pop-dealer-list>
       </div>
     </div>
