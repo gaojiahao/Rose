@@ -1,5 +1,5 @@
 <template>
-  <div class="pages xsbj-list-conatiner" ref='list'>
+  <div class="pages xmlx-list-container" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -13,6 +13,9 @@
           <div class="duty_top">
             <p class="duty_code">{{item.transCode}}</p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
+          </div>
+          <div class="project_name">
+            {{item.projectName}}
           </div>
           <!-- 项目立项经办人 -->
           <div class="order_count">
@@ -70,7 +73,7 @@
           ];
         }
 
-        return getList(2269, {
+        return getList(2301, {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -97,9 +100,13 @@
 <style lang='scss' scoped>
   @import './../scss/bizList';
 
-  .xsbj-list-conatiner {
+  .xmlx-list-container {
     .list_wrapper {
       height: calc(100% - .4rem);
+    }
+    .project_name {
+      padding: 0 .1rem;
+      line-height: .24rem;
     }
   }
 </style>
