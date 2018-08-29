@@ -280,7 +280,7 @@
       
       
       /deep/ >.vux-label{
-        color: red;
+        color: #5077aa;
         font-weight: bold;
       }
       /deep/ > .vux-no-group-title {
@@ -289,7 +289,7 @@
       /deep/ > .weui-cells{
         .vux-tap-active{
           .vux-label{
-            color: red;
+            color: #5077aa;
             font-weight: bold;
           }
         }

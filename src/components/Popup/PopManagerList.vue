@@ -261,7 +261,7 @@
       font-weight: 500;
     }
     .required{
-      color: red;
+      color: #5077aa;
       font-weight: bold;
     }
     .r_arrow {

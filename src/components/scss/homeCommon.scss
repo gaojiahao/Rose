@@ -78,19 +78,17 @@
         height: .54rem;
         img {
           width: 100%;
-          border-radius: .12rem;
+          // border-radius: .12rem;
         }
       }
       .app_info {
         margin-left: .08rem;
         display: flex;
         flex-direction: column;
-        // justify-content: space-between;
         // app 名称
         .app_name {
           max-width: 1rem;
           font-size: .14rem;
-          font-weight: bold;
           display: -webkit-box;
           overflow: hidden;
           max-height: .44rem;
