@@ -492,7 +492,7 @@ export default {
         line-height: 0.2rem;
       }
       .required{
-        color:red;
+        color:#5077aa;
         font-weight: bold;
       }
       //校验错误提示按钮

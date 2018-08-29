@@ -383,7 +383,7 @@
         line-height: 0.2rem;
       }
       .required {
-        color: red;
+        color: #5077aa;
         font-weight: bold;
       }
       .property_val {
