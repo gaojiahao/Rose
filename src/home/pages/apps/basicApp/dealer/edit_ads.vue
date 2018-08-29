@@ -75,7 +75,6 @@
     <div class='vux-1px-t btn '>
       <div class="cfm_btn" @click="save" :class='{disabled : disabledSubmit}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
-    <loading :show="showLoading"></loading>
   </div>
 </template>
 <script>
@@ -84,7 +83,6 @@ import { getBaseInfoDataBase } from 'service/commonService.js';
 import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
-import Loading from 'components/Loading'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
 
@@ -92,7 +90,6 @@ export default {
   data() {
     return {
       addressData : ChinaAddressV4Data,
-      showLoading: true,
       transCode  : '',
       picShow: false,
       imgFileObj: {}, // 上传的图片对象
@@ -158,7 +155,6 @@ export default {
     RPicker,
     XAddress,
     Icon,
-    Loading,
     RScroll,
     UploadImage,
   },
@@ -414,17 +410,17 @@ export default {
     }
   },
   created() {
-    this.showLoading = true;
+    this.$loading.show();
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
       this.findData();
       this.getDealer();
-      this.showLoading = false;
+      this.$loading.hide();
     }
     else{
         this.getDealer().then(data => {
-          this.showLoading = false;
+          this.$loading.hide();
           let [defaultSelect = {}] = data;
           if(this.$route.query.pickVal){
             this.dealer.dealerLabelName = this.$route.query.pickVal;

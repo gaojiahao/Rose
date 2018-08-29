@@ -160,6 +160,7 @@
           if (this.warehouse.warehouseType === '') {
             this.warehouse.warehouseType = tableContent[0].name
           }
+          this.$loading.hide();
         })
       },
       //查询仓库信息
@@ -352,6 +353,7 @@
       next();
     },
     created() {
+      this.$loading.show();
       let query = this.$route.query;
       if (query.transCode) {
         this.transCode = query.transCode;

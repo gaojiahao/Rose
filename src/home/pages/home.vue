@@ -125,10 +125,9 @@ export default {
                 appList: BUSobj[val.text]
               });                  
             }
-      
+            this.$loading.hide();     
           }
-        }
-        this.$loading.hide();
+        }        
         // this.showLoadding = false;
       }).catch( err => {
         this.$vux.alert.show({

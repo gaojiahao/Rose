@@ -38,12 +38,10 @@
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">提交</div>
     </div>
-    <loading :show="showLoading"></loading>
   </div>
 </template>
 <script>
   import {TransferDom, Picker, Popup, Group} from 'vux';
-  import Loading from 'components/Loading'
   import RPicker from 'components/RPicker';
   import common from 'mixins/common'
   import {
@@ -99,7 +97,6 @@
         hasDefault: false, // 判断是否为回写
         imgFileObj: {}, // 上传的图片对象
         imgFile: null,
-        showLoading: false,
         codeReadOnly: false, // 物料编码是否只读
         submitSuccess: false, // 是否提交成功
       }
@@ -113,7 +110,6 @@
       Popup,
       Group,
       RPicker,
-      Loading,
       UploadImage,
     },
     methods: {
@@ -188,9 +184,9 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
-            this.showLoading = true;
+            this.$loading.show();
             operation(submitData).then(data => {
-              this.showLoading = false;
+              this.$loading.hide();
               let {success = false, message = '提交失败'} = data;
               if (success) {
                 message = '物料提交成功';
@@ -205,7 +201,7 @@
                 }
               });
             }).catch(e => {
-              this.showLoading = false;
+              this.$loading.hide();
             });
           }
         });
@@ -318,7 +314,7 @@
       next();
     },
     created() {
-      this.showLoading = true;
+      this.$loading.show();
       let {transCode = ''} = this.$route.query;
       let requestPromise = [];
       this.transCode = transCode;
@@ -333,7 +329,7 @@
           this.hasDefault = false;
           this.codeReadOnly = true;
           Promise.all(requestPromise).then(() => {
-            this.showLoading = false;
+            this.$loading.hide();
           })
         })();
         return
@@ -345,7 +341,7 @@
       requestPromise.push(this.getMeasure());
       requestPromise.push(this.getBaseInfoData());
       Promise.all(requestPromise).then(() => {
-        this.showLoading = false;
+        this.$loading.hide();
       })
     }
   }
