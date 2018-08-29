@@ -91,7 +91,7 @@
       },
       // TODO 审批
       commitTask({result, value, successMsg, callback}) {
-        this.$loading1.show();
+        this.$HandleLoad.show();
         // this.$event.$emit('detail-show-loading', true);
         let submitData = {
           taskId: this.taskId,
@@ -102,7 +102,7 @@
           })
         };
         return commitTask(submitData).then(data => {
-          this.$loading1.hide();
+          this.$HandleLoad.hide();
           // this.$event.$emit('detail-show-loading', false);
           let {success = false, message = '提交失败'} = data;
           let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
@@ -125,7 +125,7 @@
             }
           });
         }).catch(e => {
-          this.$loading1.hide();
+          this.$HandleLoad.hide();
           // this.$event.$emit('detail-show-loading', false);
         });
       },

@@ -1,24 +1,23 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import FastClick from 'fastclick'
-import VueRouter from 'vue-router'
 import App from './App'
 import router from './router'
+import FastClick from 'fastclick'
+import VueRouter from 'vue-router'
 import adapation from './common/adapation'
 import Swiper from './common/swiper-4.2.2.min.js'
-import { TransferDom } from 'vux'
-import  { AlertPlugin, ConfirmPlugin, DatetimePlugin ,ToastPlugin } from 'vux'
-import Loading from './components/loading/pageLoad/loading'
-import HandleLoad from './components/loading/handleLoad/handleLoading'
-Vue.use(Loading);
-Vue.use(HandleLoad);
-Vue.directive('transfer-dom', TransferDom)
+import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin  } from 'vux'
+import Loading from 'components/loading/pageLoad/loading'
+import HandleLoad from 'components/loading/handleLoad/handleLoading'
+
+Vue.use(Loading)
 Vue.use(VueRouter)
+Vue.use(HandleLoad)
+Vue.use(ToastPlugin)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(DatetimePlugin)
-Vue.use(ToastPlugin)
+Vue.directive('transfer-dom', TransferDom)
+
 Vue.prototype.Swiper = Swiper;
 FastClick.attach(document.body)
 

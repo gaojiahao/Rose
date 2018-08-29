@@ -128,7 +128,6 @@ export default {
             this.$loading.hide();     
           }
         }        
-        // this.showLoadding = false;
       }).catch( err => {
         this.$vux.alert.show({
           content: '首页加载有误，请尝试刷新'
