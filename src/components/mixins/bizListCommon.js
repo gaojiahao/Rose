@@ -238,10 +238,10 @@ export default {
     // TODO 过滤日期
     filterTime(val) {
       if (val) {
+        val = dateFormat(val);
         let date = val.split(' ')[0];
         return date
       }
-
     },
     numberComma,
     dateFormat,
