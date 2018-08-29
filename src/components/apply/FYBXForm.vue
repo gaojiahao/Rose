@@ -26,7 +26,7 @@
             </cell>
             <!-- <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker> -->
             <x-input title="金额" text-align='right' placeholder='请填写'
-                     type='number'v-model='item.price'>
+                     @on-blur="checkAmt(item)" type='number' v-model.number='item.price'>
               <template slot="label">
                 <span class='required'>金额
                 </span>
@@ -73,6 +73,7 @@ import PopCostList from 'components/Popup/PopCostList'
 import PopProjectList from 'components/Popup/PopProjectList'
 // 方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd'
+import {toFixed} from '@/plugins/calc'
 
 export default {
   mixins: [ApplyCommon],
@@ -290,7 +291,14 @@ export default {
           this.$loading.hide();
           // this.$emit('input', false);
         })
+      },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let val = item.price;
+      if (val) {
+        item.price = Math.abs(toFixed(val));
       }
+    },
   },
   created() {
     let data = sessionStorage.getItem('FXBX_DATA');

@@ -91,7 +91,7 @@
                 <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                             v-model.number="item.price"></x-input>
+                             @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
                   </group>
                   <group>
                     <x-input type="number" title="数量" text-align='right' placeholder='请填写'
@@ -148,6 +148,7 @@ import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 // 公共方法
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
+import {toFixed} from '@/plugins/calc'
 
 export default {
   name: 'ApplyCGRKForm',
@@ -460,6 +461,13 @@ export default {
         this.matterList = dataSet;
         this.$loading.hide();
       })
+    },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let val = item.price;
+      if (val) {
+        item.price = Math.abs(toFixed(val));
+      }
     },
   },
   created() {

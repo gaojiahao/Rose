@@ -94,7 +94,7 @@
                 <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                             v-model.number="item.price"></x-input>
+                             @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
                   </group>
                   <group>
                     <x-input type="number" title="数量" text-align='right' placeholder='请填写'
@@ -146,6 +146,9 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
+// 方法引入
+import {toFixed} from '@/plugins/calc'
+
 export default {
   directives: { TransferDom },
   components:{
@@ -396,9 +399,14 @@ export default {
           this.matterList = data.formData.order.dataSet;
           this.$loading.hide();
       })
-
-
-    }
+    },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let val = item.price;
+      if (val) {
+        item.price = Math.abs(toFixed(val));
+      }
+    },
   },
   created(){
     let data = sessionStorage.getItem('CGDD_DATA');

@@ -30,19 +30,19 @@
                 <group class="SJ_group" @group-title-margin-top="0">
                   <!-- 商机标题 -->
                   <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
-                            placeholder='请填写'>
+                           placeholder='请填写'>
                     <template slot="label">
                       <span class='required'>商机标题
                       </span>
-                    </template>       
+                    </template>
                   </x-input>
                   <!-- 预期销售额 -->
                   <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
-                            v-model.number="formData.tdAmount">
+                           @on-blur="checkAmt" v-model.number="formData.tdAmount">
                     <template slot="label">
                       <span class='required'>预期销售额
                       </span>
-                    </template> 
+                    </template>
                   </x-input>
                   <!-- 当前阶段 -->
                   <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage">
@@ -51,9 +51,9 @@
                   <datetime v-model="formData.validUntil" title="有效期至"></datetime>
                   <!-- 销售人员popup, 销售渠道popup -->
                   <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
-                                      v-model="formData.salesPerson"></pop-salesman-list>
+                                     v-model="formData.salesPerson"></pop-salesman-list>
                   <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
-                                      v-model="formData.salesChannels"></pop-salesman-list>
+                                     v-model="formData.salesChannels"></pop-salesman-list>
 
                   <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                 </group>
@@ -90,6 +90,8 @@
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
+  // 方法引入
+  import {toFixed} from '@/plugins/calc'
 
   export default {
     directives: {TransferDom},
@@ -170,7 +172,7 @@
               warn = item.message;
               return false;
             }
-            else if(this.formData[item.key] < 0){
+            else if (this.formData[item.key] < 0) {
               warn = '抱歉，销售额不允许为负数';
               return false;
             }
@@ -261,6 +263,12 @@
           // this.$emit('input', false);
         })
       },
+      // TODO 检查金额
+      checkAmt(val) {
+        if (val) {
+          this.formData.tdAmount = Math.abs(toFixed(val));
+        }
+      },
     },
     created() {
       let data = sessionStorage.getItem('SJ_DATA');
@@ -273,23 +281,23 @@
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
+
   .sj-apply-container {
     .materiel_list {
       padding: 0;
     }
     .SJ_group {
-      
-      
-      /deep/ >.vux-label{
+
+      /deep/ > .vux-label {
         color: #5077aa;
         font-weight: bold;
       }
       /deep/ > .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/ > .weui-cells{
-        .vux-tap-active{
-          .vux-label{
+      /deep/ > .weui-cells {
+        .vux-tap-active {
+          .vux-label {
             color: #5077aa;
             font-weight: bold;
           }
@@ -301,7 +309,7 @@
     }
     .weui-cell {
       padding: 10px 0;
-     
+
       &:before {
         left: 0;
       }
