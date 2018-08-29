@@ -131,7 +131,8 @@ export default {
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
-        this.$emit('input',false);
+        this.$loading.hide();
+        // this.$emit('input',false);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
         orders.forEach(item => {
           this.setStatus(item);

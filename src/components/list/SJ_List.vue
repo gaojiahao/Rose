@@ -38,7 +38,7 @@
             </div>
             <div class="money_part">
               <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | numberComma}}
+                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | toFixed | numberComma}}
               </span>
             </div>
           </div>
@@ -90,7 +90,8 @@
             {
               operator: 'like',
               value: this.serachVal,
-              property: 'handlerName'
+              property: 'handlerName',
+              attendedOperation: ')'
             }
           ]
         }
@@ -100,7 +101,8 @@
           start : (this.page-1)*this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input',false);
+          this.$loading.hide();
+          // this.$emit('input',false);
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
             this.setStatus(item);
@@ -115,8 +117,8 @@
           //console.log(this.dataCount);
           let text = '';
           if(noReset && this.activeIndex ===0){
-            if(this.dataCount){
-              text = dataCount - this.dataCount === 0 ? '暂无新数据' : text = `新增${dataCount-this.dataCount}条数据`;
+            if(this.total){
+              text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
               this.$vux.toast.show({
                 text: text,
                 position:'top',

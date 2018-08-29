@@ -50,7 +50,8 @@ export default {
     },
     //重新加载页面
     reloadPage(){
-      this.$emit('input',true)
+      this.$loading.show();
+      // this.$emit('input',true)
     },
     // TODO 生成随机ID
     randomID() {
@@ -214,7 +215,8 @@ export default {
       })
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
-      this.$emit('input', false)
+      this.$loading.hide();
+      // this.$emit('input', false)
     })()
   },
   mounted() {
