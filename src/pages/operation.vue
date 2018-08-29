@@ -6,7 +6,7 @@
         <li class="each_part"
             v-for=" (item, index) in sel_list"
             :key="index"
-            @click="goForward(item)"
+            @click="goCreate(item)"
         >
           {{item.name}}
           <x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon>
@@ -29,37 +29,40 @@
       return {
         sel_list: [
           {
-            name: '查看我的',
-            type: 'view',
-            count: 0,
+            name: '市场费用',
+            path: '/spread',
+            query: {
+              view: 'a9238c91-36f3-4b09-9705-9d50870b3c46',
+              list: 'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c',
+            },
           }, {
-            name: '发起申请',
-            type: 'create',
+            name: '会务立项申请',
+            path: '/meeting',
+            query: {
+              view: 'd189cc14-3a77-4e81-a220-55c771a2bdff',
+              list: '696c5648-88ba-4bea-b5b1-1780f3c4febf',
+            },
+          }, {
+            name: '房屋立项申请',
+            path: '/house',
+            query: {
+              view: 'e59dcb25-3a14-44b7-b619-433c63d2327b',
+              list: '4912df2a-612e-462a-a6f4-c7c72f497bb8',
+            },
+          }, {
+            name: '固定资产',
+            path: '/assets',
+            query: {
+              view: '1ab51ee6-2836-4728-b0a5-9fa5c8902c31',
+              list: 'e3937a5c-98d2-4799-a74c-759222fb4a6d',
+            },
           }
         ],
       }
     },
     methods: {
-      goForward(item) {
-        let {type} = item;
-        let {view, list, create} = this.$route.query;
-        let path = '/';
-        let query = {};
-        switch (type) {
-          case 'create':
-            path = `/${create}`;
-            query = {
-              view: view,
-              list: list,
-            };
-            break;
-          default:
-            path = '/mylist';
-            query = {
-              listId: list,
-            };
-            break;
-        }
+      goCreate(item) {
+        let {path, query} = item;
         this.$router.push({
           path,
           query,
@@ -67,24 +70,7 @@
       }
     },
     created() {
-      /*mylistService.getTasksListData({
-        entityId: 20000,
-        _dc: Date.parse(new Date()),
-        listID: this.$route.query.list,
-        para1: "",
-      }).then(data => {
-        let {dataCount = 0} = data;
-        console.log(data)
-      }).catch(e => {
-        this.showToast(e.message);
-      })*/
     },
-    mounted() {
-      //清除mylist的选项卡状态
-      if(sessionStorage.getItem('MYLIST_TAB')){
-          sessionStorage.removeItem('MYLIST_TAB')
-      }
-    }
   }
 </script>
 

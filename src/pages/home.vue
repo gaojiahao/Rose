@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages home-container">
     <div class="h_title">
       立项申请
       <span class="username">欢迎,{{currentUser.nickname}}</span>
@@ -13,6 +13,7 @@
         >
           {{item.name}}
           <x-icon class="right_arrow" type="ios-arrow-forward" size="16"></x-icon>
+          <badge v-if="item.name === '我的待办'" v-show="showBadge"></badge>
         </li>
       </ul>
     </div>
@@ -25,43 +26,21 @@
 
 <script>
   import createService from './../service/createService'
+  import mylistService from './../service/mylistService'
   import Loading from './components/loading'
   import common from './mixins/common'
+  import {Badge} from 'vux'
 
   export default {
     data() {
       return {
         sel_list: [
           {
-            name: '市场费用',
-            path: '/spread',
-            query: {
-              view: 'a9238c91-36f3-4b09-9705-9d50870b3c46',
-              list: 'cefa61bb-8a2c-48f5-819b-011e0cf4fb6c',
-            },
+            name: '新增申请',
+            path: '/operation',
+            query: {},
           }, {
-            name: '会务立项申请',
-            path: '/meeting',
-            query: {
-              view: 'd189cc14-3a77-4e81-a220-55c771a2bdff',
-              list: '696c5648-88ba-4bea-b5b1-1780f3c4febf',
-            },
-          }, {
-            name: '房屋立项申请',
-            path: '/house',
-            query: {
-              view: 'e59dcb25-3a14-44b7-b619-433c63d2327b',
-              list: '4912df2a-612e-462a-a6f4-c7c72f497bb8',
-            },
-          }, {
-            name: '固定资产',
-            path: '/assets',
-            query: {
-              view: '1ab51ee6-2836-4728-b0a5-9fa5c8902c31',
-              list: 'e3937a5c-98d2-4799-a74c-759222fb4a6d',
-            },
-          }, {
-            name: '查看我的',
+            name: '我的待办',
             path: '/mylist',
             query: {},
           }, {
@@ -70,37 +49,59 @@
             query: {},
           }
         ],
-        currentUser: {}
+        currentUser: {},
+        showBadge: false,
       }
     },
     mixins: [common],
-    components: {Loading},
+    components: {
+      Loading, Badge,
+    },
     methods: {
       goForward({path, query}) {
         this.$router.push({
           path, query
         })
+      },
+      // TODO 获取当前用户信息
+      getBaseInfo() {
+        return createService.getBaseInfoData().then(data => {
+          this.currentUser = data || {};
+        }).catch(e => {
+          this.showToast(e.message);
+        });
+      },
+      // TODO 获取待办任务
+      getTasksNumber() {
+        return mylistService.getTasksNumber().then(({tableContent = []}) => {
+          let [data = {}] = tableContent;
+          this.showBadge = data.total && data.total > 0;
+        }).catch(e => {
+          this.showToast(e.message);
+        });
       }
     },
     created() {
-      if (sessionStorage.getItem('MYLIST_TAB')) {
-        sessionStorage.removeItem('MYLIST_TAB')
-      }
-      if (sessionStorage.getItem('MYLIST_LIST')) {
-        sessionStorage.removeItem('MYLIST_LIST')
-      }
+      let promises = [];
       this.showLoading = true;
-      createService.getBaseInfoData().then(data => {
-        this.currentUser = data || {};
+      promises.push(this.getBaseInfo());
+      promises.push(this.getTasksNumber());
+      Promise.all(promises).then(() => {
         this.showLoading = false;
-      }).catch(e => {
-        this.showToast(e.message);
       });
     }
   }
 </script>
 
 <style lang='scss' scoped>
+  .home-container {
+    .vux-badge {
+      position: absolute;
+      right: -4px;
+      top: -4px;
+    }
+  }
+
   .h_title {
     width: 100%;
     height: 150px;
