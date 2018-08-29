@@ -9,8 +9,8 @@
       </div>
     </div>
     <div v-else>
-      <div class="title">{{title}}</div>
-      <div class="mode required">请选择</div>
+      <div class="title required">{{title}}</div>
+      <div class="mode">请选择</div>
     </div>
     <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
 

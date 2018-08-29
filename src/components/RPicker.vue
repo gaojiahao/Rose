@@ -11,8 +11,8 @@
     </template>
     <!-- 模式3 -->
     <template v-else-if="mode === '3'">
-      <div class="title">{{title}}</div>
-      <div class="mode" :class="{required : required}">{{showValue || placeholder}}</div>
+      <div class="title" :class="{required : required}">{{title}}</div>
+      <div class="mode">{{showValue || placeholder}}</div>
       <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
     </template>
     <div v-transfer-dom>
