@@ -15,7 +15,7 @@
         <div class='mater_pic vux-1px-l'>
           <div class='add_icon'>
             <label for="file"></label>
-            <img :src='MatPic' class='upload' alt="materImg" @error="getDefaultImg"/>
+            <img :src='MatPic' class='upload' @error="getDefaultImg"/>
           </div>
         </div>
       </div>
@@ -33,6 +33,7 @@
 <script>
   import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
   import {getObjDealerByLabelName} from 'service/commonService.js'
+import { setTimeout } from 'timers';
 
   export default {
     data() {
@@ -144,7 +145,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.MatPic = require('assets/dealer.png');
+        this.MatPic = require('assets/ck_default.png');
       },
       // TODO 获取仓库类型关联子项下拉列表
       getTypeSubList() {

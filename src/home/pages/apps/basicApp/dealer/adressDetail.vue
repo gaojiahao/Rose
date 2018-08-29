@@ -15,7 +15,7 @@
         <div class='mater_pic vux-1px-l'>
           <div class='add_icon'>
             <label for="file"></label>
-            <img :src='MatPic' class='upload' alt="materImg" @error="getDefaultImg"/>
+            <img :src='MatPic' class='upload' @error="getDefaultImg"/>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-         this.MatPic = require('assets/dealer.png');
+         this.MatPic = require('assets/contact_default02.png');
       },
     },
     created() {
