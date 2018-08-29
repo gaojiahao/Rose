@@ -19,11 +19,14 @@
                         <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right'
                                  placeholder='请填写'></x-input>
                         <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
-                                 text-align='right' placeholder='请填写'></x-input>
+                                 text-align='right' placeholder='请填写'
+                                 @on-blur="checkAmt('budgetIncome', $event)"></x-input>
                         <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
-                                 text-align='right' placeholder='请填写'></x-input>
+                                 text-align='right' placeholder='请填写'
+                                 @on-blur="checkAmt('budgetCapital', $event)"></x-input>
                         <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
-                                 text-align='right' placeholder='请填写'></x-input>
+                                 text-align='right' placeholder='请填写'
+                                 @on-blur="checkAmt('budgetCost', $event)"></x-input>
                         <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'></datetime>
                         <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'></datetime>
                         <cell title="预算利润" :value="profit"></cell>
@@ -96,9 +99,6 @@
         FormDataComment: '',//备注
         formData: {},
         jsonData: {
-          bomType: {
-            bomType: ''
-          },
           comment: {
             biComment: ''
           },
@@ -190,7 +190,13 @@
         let sel = JSON.parse(val);
         this.ProjectApproval.projectManager = sel.dealerName;
         this.ProjectApproval.phoneNumber = sel.dealerMobilePhone;
-      }
+      },
+      // TODO 检查金额
+      checkAmt(key = '', val) {
+        if (val) {
+          this.ProjectApproval[key] = Math.abs(parseInt(val));
+        }
+      },
     },
     created() {
     },

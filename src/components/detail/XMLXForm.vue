@@ -15,14 +15,7 @@
         <group class="group_mar_left" gutter="0">
           <cell title="项目名称"  primary="content" align-items="flex-start" :value="approval.projectName || '无'"></cell>
           <cell title="项目类型" :value="approval.projectType || '无'"></cell>
-        </group>
-      </div>
-      <!-- 项目其他 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">项目其他</p>
-        <group class="group_mar_left" gutter="0">
           <cell title="项目说明" primary="content" align-items="flex-start" :value="approval.comment || '无'"></cell>
-          <cell title="项目备注" primary="content" align-items="flex-start" :value="comment.biComment || '无'"></cell>
         </group>
       </div>
       <!-- 预算明细 -->
