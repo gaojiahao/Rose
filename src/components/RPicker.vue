@@ -12,7 +12,7 @@
     <!-- 模式3 -->
     <template v-else-if="mode === '3'">
       <div class="title">{{title}}</div>
-      <div class="mode">{{showValue || placeholder}}</div>
+      <div class="mode" :class='{required : title === "项目类型"}'>{{showValue || placeholder}}</div>
       <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
     </template>
     <div v-transfer-dom>
@@ -162,6 +162,10 @@
       .mode {
         color: #111;
         font-weight: 500;
+      }
+      .required{
+        color: red;
+        font-weight: bold;
       }
       .r_arrow {
         top: 50%;

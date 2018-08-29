@@ -10,7 +10,7 @@
     </div>
     <div v-else>
       <div class="title">{{title}}</div>
-      <div class="mode">请选择</div>
+      <div class="mode required">请选择</div>
     </div>
     <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
 
@@ -259,6 +259,10 @@
     .mode {
       color: #111;
       font-weight: 500;
+    }
+    .required{
+      color: red;
+      font-weight: bold;
     }
     .r_arrow {
       top: 50%;

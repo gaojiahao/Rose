@@ -11,17 +11,26 @@
             </div>
           </div>
           <div v-else>
-            <div class="mode">请选择项目名称</div>
+            <div class="mode required">请选择项目名称</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
         <!-- 费用列表 -->
         <div class="materiel_list mg_auto box_sd" v-for="(item, index) in CostList" :key='index'>
           <group :title='`费用明细${index+1}`' class='costGroup'>
-            <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)"></cell>
+            <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)">
+              <template slot="title">
+                <span class='required'>费用名称
+                </span>
+              </template> 
+            </cell>
             <!-- <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker> -->
             <x-input title="金额" text-align='right' placeholder='请填写'
                      type='number'v-model='item.price'>
+              <template slot="label">
+                <span class='required'>金额
+                </span>
+              </template> 
             </x-input>
             <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'v-model="item.reson"></x-input>
           </group>
@@ -171,10 +180,10 @@ export default {
           warn = '请输入报销金额';
           return false
         }
-        if(!item.reson){
-          warn = '请输入报销事由'
-          return false
-        }
+        // if(!item.reson){
+        //   warn = '请输入报销事由'
+        //   return false
+        // }
         dataSet.push({
           tdId : item.tdId || '',
           costName_expCode: item.COST_NAME, //费用名称

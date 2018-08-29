@@ -17,7 +17,7 @@
           </div>
           <div v-else>
             <div class="title">客户列表</div>
-            <div class="mode">请选择客户</div>
+            <div class="mode required">请选择客户</div>
           </div>
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
@@ -30,12 +30,23 @@
                 <group class="SJ_group" @group-title-margin-top="0">
                   <!-- 商机标题 -->
                   <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
-                            placeholder='请填写'></x-input>
+                            placeholder='请填写'>
+                    <template slot="label">
+                      <span class='required'>商机标题
+                      </span>
+                    </template>       
+                  </x-input>
                   <!-- 预期销售额 -->
                   <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
-                            v-model.number="formData.tdAmount"></x-input>
+                            v-model.number="formData.tdAmount">
+                    <template slot="label">
+                      <span class='required'>预期销售额
+                      </span>
+                    </template> 
+                  </x-input>
                   <!-- 当前阶段 -->
-                  <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage"></popup-radio>
+                  <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage">
+                  </popup-radio>
                   <!-- 有效期 -->
                   <datetime v-model="formData.validUntil" title="有效期至"></datetime>
                   <!-- 销售人员popup, 销售渠道popup -->
@@ -261,21 +272,35 @@
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
-
   .sj-apply-container {
     .materiel_list {
       padding: 0;
     }
     .SJ_group {
+      
+      
+      /deep/ >.vux-label{
+        color: red;
+        font-weight: bold;
+      }
       /deep/ > .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/ > .weui-cells:after {
-        border-bottom: none;
+      /deep/ > .weui-cells{
+        .vux-tap-active{
+          .vux-label{
+            color: red;
+            font-weight: bold;
+          }
+        }
+        &:after {
+          border-bottom: none;
+        }
       }
     }
     .weui-cell {
       padding: 10px 0;
+     
       &:before {
         left: 0;
       }

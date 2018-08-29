@@ -17,15 +17,45 @@
                       <div class="title">项目立项明细</div>
                       <group class="SJ_group" @group-title-margin-top="0">
                         <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right'
-                                 placeholder='请填写'></x-input>
+                                 placeholder='请填写'>
+                          <template slot="label">
+                            <span class='required'>项目名称
+                            </span>
+                          </template>        
+                        </x-input>
                         <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
-                                 text-align='right' placeholder='请填写'></x-input>
+                                 text-align='right' placeholder='请填写'>
+                          <template slot="label">
+                            <span class='required'>预算收入
+                            </span>
+                          </template> 
+                        </x-input>
                         <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
-                                 text-align='right' placeholder='请填写'></x-input>
+                                 text-align='right' placeholder='请填写'>
+                          <template slot="label">
+                            <span class='required'>预算成本
+                            </span>
+                          </template> 
+                        </x-input>
                         <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
-                                 text-align='right' placeholder='请填写'></x-input>
-                        <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'></datetime>
-                        <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'></datetime>
+                                 text-align='right' placeholder='请填写'>
+                          <template slot="label">
+                            <span class='required'>预算费用
+                            </span>
+                          </template> 
+                        </x-input>
+                        <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'>
+                          <template slot="title">
+                            <span class='required'>预算开始日期
+                            </span>
+                          </template> 
+                        </datetime>
+                        <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'>
+                          <template slot="title">
+                            <span class='required'>预算截至日期
+                            </span>
+                          </template> 
+                        </datetime>
                         <cell title="预算利润" :value="profit"></cell>
                         <cell title="预算利润率" :value="profitMargin"></cell>
                         <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>

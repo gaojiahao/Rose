@@ -15,10 +15,20 @@
                     <div class="userInp_mode">
                       <div class="title">任务计划</div>
                       <group class="SJ_group" @group-title-margin-top="0">
-                        <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'></x-input>
+                        <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'>
+                          <template slot="label">
+                            <span class='required'>任务名称
+                            </span>
+                          </template>  
+                        </x-input>
                         <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]"
                                       @on-change=" typeTask($event,item) "></popup-picker>
-                        <datetime title="截止日期" v-model='item.deadline'></datetime>
+                        <datetime title="截止日期" v-model='item.deadline'>
+                          <template slot="title">
+                            <span class='required'>截止日期
+                            </span>
+                          </template>  
+                        </datetime>
                         <x-input title="计划工时" type="number" v-model.number="item.planTime" text-align='right'
                                  placeholder='请填写'></x-input>
                         <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
