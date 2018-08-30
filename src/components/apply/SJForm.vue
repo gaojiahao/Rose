@@ -281,11 +281,10 @@
 
 <style lang="scss" scoped>
   @import '../scss/bizApply.scss';
-
+  .materiel_list .mater_list .each_mater {
+    padding: unset;
+  }
   .sj-apply-container {
-    .materiel_list {
-      padding: 0;
-    }
     .SJ_group {
 
       /deep/ > .vux-label {
