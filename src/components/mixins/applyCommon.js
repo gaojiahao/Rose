@@ -22,7 +22,9 @@ export default {
       processCode: '', // 流程编码，用于新建的工作流
       entity: {
         dealerName: '中国特瑞'
-      }
+      },
+      matterModifyClass : false, 
+      selItems : [], //选中的要删除的物料
     }
   },
   computed: {
@@ -46,6 +48,11 @@ export default {
     numberComma,
   },
   methods: {
+    //展开可删除装填
+    showDelete(){
+      this.matterModifyClass = ! this.matterModifyClass;
+      this.selItems = [];
+    },
     //获取listId
     getListId(transCode) {
       return new Promise(resolve => {

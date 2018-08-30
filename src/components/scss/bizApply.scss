@@ -42,6 +42,7 @@
     color: #757575;
     font-weight: 200;
     font-size: .12rem;
+
   }
   .mode {
     color: #111;
@@ -306,13 +307,16 @@
         }
       }
       .delete_icon{
+        height: 20px;
         position: absolute;
         top:50%;
         left: -28px;
         transform: translateY(-50%);
-        .vux-x-icon {
+        .checked{
           fill: #ea5455;
+
         }
+        
       }
       // 下划线
       .vux-1px-b:after {
@@ -383,6 +387,7 @@
     color: #5077aa;
     font-size: .24rem;
     padding-left: .1rem;
+    position: relative;
     &.nine_up {
       font-size: .2rem;
     }
@@ -411,6 +416,23 @@
       font-size: .1rem;
       display: inline-block;
     }
+  }
+  //全选
+  .all_checked{
+    font-size:0.16rem;
+    position: relative;
+    padding-left: 0.35rem;
+    box-sizing: border-box;
+    .vux-x-icon{
+      left:0.1rem;
+      top:50%;
+      position: absolute;
+      transform: translateY(-50%);
+    }
+    .checked{
+      fill:#ea5455;
+    }
+
   }
   .count_btn {
     flex: 1.5;

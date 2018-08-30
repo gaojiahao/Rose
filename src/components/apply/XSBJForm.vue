@@ -46,63 +46,64 @@
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
-            <div class="title">物料列表</div>
+            <div class="title" @click="showDelete">
+              <div>物料列表</div>
+              <div class='edit' v-if='!matterModifyClass'>编辑</div>
+              <div class='finished' v-else>完成</div>
+            </div>
             <div class="mater_list">
-              <div class="each_mater" v-for="(item, index) in matterList" :key='index'>
-                <swipeout>
-                  <swipeout-item>
-                    <div slot="right-menu">
-                      <swipeout-button @click.native="delClick(item, index)" type="warn">删除</swipeout-button>
+              <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
+                <div class="each_mater_wrapper" @click="delClick(index,item)">
+                  <div class="mater_img">
+                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                  </div>
+                  <div class="mater_main">
+                    <!-- 物料名称 -->
+                    <div class="mater_name">
+                      <!-- <span class="whiNum">No.{{index + 1}}</span> -->
+                      {{item.inventoryName}}
                     </div>
-                    <div class="each_mater_wrapper" slot="content">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                      </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          <!-- <span class="whiNum">No.{{index + 1}}</span> -->
-                          {{item.inventoryName}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
-                            </div>
+                    <!-- 物料基本信息 -->
+                    <div class="mater_info">
+                      <!-- 物料编码、规格 -->
+                      <div class="withColor">
+                        <!-- 物料编码 -->
+                        <div class="ForInline" style="display:inline-block">
+                          <div class="mater_code">
+                            <span class="title">编码</span>
+                            <span class="num">{{item.inventoryCode}}</span>
                           </div>
-                          <!-- 物料分类、材质 -->
-                          <div class="withoutColor">
-                            <!-- 物料分类 -->
-                            <div class="mater_classify">
-                              <span class="type">属性: {{item.processing}}</span>
-                              <span class="father">大类: {{item.inventoryType}}</span>
-                              <span class="child">子类: {{item.inventorySubclass}}</span>
-                            </div>
-                            <!-- 物料材质等 -->
-                            <div class="mater_material">
-                              <span class="unit">单位: {{item.measureUnit}}</span>
-                              <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                              <span class="spec">材质: {{item.material || '无'}}</span>
-                            </div>
+                        </div>
+                        <!-- 物料规格 -->
+                        <div class="ForInline" style="display:inline-block">
+                          <div class="mater_spec">
+                            <span class="title">规格</span>
+                            <span class="num">{{item.specification || '无'}}</span>
                           </div>
                         </div>
                       </div>
+                      <!-- 物料分类、材质 -->
+                      <div class="withoutColor">
+                        <!-- 物料分类 -->
+                        <div class="mater_classify">
+                          <span class="type">属性: {{item.processing}}</span>
+                          <span class="father">大类: {{item.inventoryType}}</span>
+                          <span class="child">子类: {{item.inventorySubclass}}</span>
+                        </div>
+                        <!-- 物料材质等 -->
+                        <div class="mater_material">
+                          <span class="unit">单位: {{item.measureUnit}}</span>
+                          <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                          <span class="spec">材质: {{item.material || '无'}}</span>
+                        </div>
+                      </div>
                     </div>
-                  </swipeout-item>
-                </swipeout>
+                  </div>
+                  <div class='delete_icon' v-if='matterModifyClass'>
+                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                  </div>
+                </div> 
                 <!-- 物料输入内容 -->
                 <div class="userInp_mode">
                   <group>
@@ -134,9 +135,18 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t'>
+    <div class='btn-no-amt vux-1px-t' v-if="!matterModifyClass">
       <!-- <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div> -->
       <div class="btn-item" @click="save">提交</div>
+    </div>
+    <!-- 底部删除确认栏 -->
+    <div class="count_mode vux-1px-t delete_mode" v-else>
+      <div class='count_num all_checked' @click="checkAll">
+        <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
+        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
+        全选
+      </div>
+      <div class='count_btn' @click="deleteCheckd">删除</div>
     </div>
   </div>
 </template>
@@ -224,13 +234,58 @@ export default {
   },
   methods: {
     // TODO 滑动删除
-    delClick(item, index) {
-      let arr = this.matterList;
-      arr.splice(index, 1);
-      // 删除输入过的价格
-      delete this.priceMap[item.inventoryCode];
-      this.$refs.matter.delSelItem(item);
-    },
+    // delClick(item, index) {
+    //   let arr = this.matterList;
+    //   arr.splice(index, 1);
+    //   // 删除输入过的价格
+    //   delete this.priceMap[item.inventoryCode];
+    //   this.$refs.matter.delSelItem(item);
+    // },
+    // 滑动删除
+      delClick(index, sItem) {
+        let arr = this.selItems;
+        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+        //若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
+        }
+        arr.push(sItem);
+      },
+      // TODO 判断是否展示选中图标
+      showSelIcon(sItem) {
+        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+      },
+      //全选
+      checkAll(){
+        if(this.selItems.length === this.matterList.length){
+          this.selItems = [];
+          return
+        }
+        this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      },
+      //删除选中的
+      deleteCheckd(){
+        this.$vux.confirm.show({
+          content: '确认删除?',
+          // 确定回调
+          onConfirm: () => {
+            let arr1 = this.selItems,
+                arr2 = this.matterList;
+            for(var i=0;i<arr1.length;i++){
+              for(var j=0;j<arr2.length;j++){
+                  if(arr2[j].inventoryCode==arr1[i].inventoryCode){
+                      arr2.splice(j,1);
+                      j--;
+                  }
+              }
+            }
+            this.selItems = [];
+            this.matterModifyClass = false;
+          }
+        })
+
+      },
     // TODO 点击增加更多物料
     addMatter() {
       this.matterList.forEach(item => {
