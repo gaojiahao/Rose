@@ -39,59 +39,60 @@
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
-            <div class="title">物料列表</div>
+            <div class="title" @click="showDelete">
+              <div>物料列表</div>
+              <div class='edit' v-if='!matterModifyClass'>编辑</div>
+              <div class='finished' v-else>完成</div>
+            </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(item, index) in matterList" :key='index'>
-                <swipeout>
-                  <swipeout-item>
-                    <div slot="right-menu">
-                      <swipeout-button @click.native="delClick(index,item)" type="warn">删除</swipeout-button>
+              <div class="each_mater vux-1px-b"  :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
+                <div class="each_mater_wrapper"  @click="delClick(index,item)">
+                  <div class="mater_img">
+                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                  </div>
+                  <div class="mater_main">
+                    <!-- 物料名称 -->
+                    <div class="mater_name">
+                      {{item.inventoryName || item.inventoryName_transObjCode}}
                     </div>
-                    <div class="each_mater_wrapper" slot="content">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                    <!-- 物料基本信息 -->
+                    <div class="mater_info">
+                      <!-- 物料编码、规格 -->
+                      <div class="withColor">
+                        <!-- 物料编码 -->
+                        <div class="ForInline" style="display:inline-block">
+                          <div class="mater_code">
+                            <span class="title">编码</span>
+                            <span class="num">{{item.inventoryCode || item.transObjCode}}</span>
+                          </div>
+                        </div>
+                        <!-- 物料规格 -->
+                        <div class="ForInline" style="display:inline-block">
+                          <div class="mater_spec">  
+                            <span class="title">规格</span>
+                            <span class="num">{{item.specification || item.specification_transObjCode || '无'}}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName || item.inventoryName_transObjCode}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode || item.transObjCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || item.specification_transObjCode || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 物料数量和价格 -->
-                        <div class='mater_other'>
-                          <div class='mater_price'>
-                            <span class="symbol">￥</span>{{item.price}}
-                          </div>
-                          <div class='mater_num'>
-                            <span class='handle' @click="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
-                            <input class='num' type='number' v-model.number='item.tdQty' :blur='checkAmt(item)'/>
-                            <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                          </div>
+                    </div>
+                    <!-- 物料数量和价格 -->
+                    <div class='mater_other'>
+                      <div class='mater_price'>
+                        <span class="symbol">￥</span>{{item.price}}
+                      </div>
+                      <div class='mater_num'>
+                        <span class='handle' @click="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
+                        <input class='num' type='number' v-model.number='item.tdQty' :blur='checkAmt(item)'/>
+                        <span class='handle plus' @click='plusNum(item,index)'>+</span>
+                      </div>
 
-                        </div>
-                      </div>
                     </div>
-                  </swipeout-item>
-                </swipeout>
+                  </div>
+                  <div class='delete_icon' v-if='matterModifyClass'>
+                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                  </div>
+                </div>
               </div>
             </div>
           </template>
@@ -112,8 +113,8 @@
         </div>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t">
+    <!-- 底部提交确认栏 -->
+    <div class="count_mode vux-1px-t" v-if="!matterModifyClass">
       <span class="count_num"
           :class="{nine_up : tdAmount.length  > 8 ,
           ten_up : tdAmount.length  > 9,
@@ -125,9 +126,16 @@
 
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
       </span>
-      <!-- <span class="count_btn stop" @click="stopOrder"
-            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
       <span class="count_btn" @click="submitOrder">提交订单</span>
+    </div>
+    <!-- 底部删除确认栏 -->
+    <div class="count_mode vux-1px-t delete_mode" v-else>
+      <div class='count_num all_checked' @click="checkAll">
+        <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
+        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
+        全选
+      </div>
+      <div class='count_btn' @click="deleteCheckd">删除</div>
     </div>
   </div>
 </template>
@@ -258,10 +266,49 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
         return url
       },
       // 滑动删除
-      delClick(index, item) {
-        let arr = this.matterList;
-        let total = item.tdQty * item.price;
-        arr.splice(index, 1);
+      delClick(index, sItem) {
+        let arr = this.selItems;
+        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+        //若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
+        }
+        arr.push(sItem);
+      },
+      // TODO 判断是否展示选中图标
+      showSelIcon(sItem) {
+        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+      },
+      //全选
+      checkAll(){
+        if(this.selItems.length === this.matterList.length){
+          this.selItems = [];
+          return
+        }
+        this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      },
+      //删除选中的
+      deleteCheckd(){
+        this.$vux.confirm.show({
+          content: '确认删除?',
+          // 确定回调
+          onConfirm: () => {
+            let arr1 = this.selItems,
+                arr2 = this.matterList;
+            for(var i=0;i<arr1.length;i++){
+              for(var j=0;j<arr2.length;j++){
+                  if(arr2[j].inventoryCode==arr1[i].inventoryCode){
+                      arr2.splice(j,1);
+                      j--;
+                  }
+              }
+            }
+            this.selItems = [];
+            this.matterModifyClass = false;
+          }
+        })
+
       },
       // 数量减少
       subNum(item, i) {
