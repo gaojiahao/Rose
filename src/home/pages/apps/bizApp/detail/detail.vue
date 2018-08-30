@@ -24,17 +24,23 @@
         transCode: '',
         submitSuccess: false,
         detailScroll: null,
-        code: '',
       }
     },
     watch:{
       $route:{
         handler(to,from){
-          let {code = ''} = this.$route.params;
+          let {code = ''} = to.params;
+          let fromCode = from.params.code || '';
           try {
-            this.currentComponent = require(`components/detail/${code}Form.vue`).default;
-            if(this.code === code) {
-              this.$refs.detailComponent.loadPage();
+            // 从相关实例进入另一个详情
+            if (to.name === 'DETAIL') {
+              this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+              // 如果进入的应用与当前应用相同，需要调用该方法请求数据
+              if (fromCode === code) {
+                this.$nextTick(() => {
+                  this.$refs.detailComponent.loadPage();
+                })
+              }
             }
           } catch (e) {
             this.$vux.alert.show({
@@ -72,7 +78,6 @@
     created() {
       this.$loading.show();
       let {code = ''} = this.$route.params;
-      this.code = code;
       try {
         this.currentComponent = require(`components/detail/${code}Form.vue`).default;
       } catch (e) {
