@@ -47,6 +47,13 @@ export default {
         vm.isrefresh = true;
       }
     });
+  },
+  beforeRouteLeave (to, from, next) {
+    let { path } = to;
+    if(path === '/home'){
+      this.$loading.hide();
+      next();
+    }
   }
 }
 </script>
