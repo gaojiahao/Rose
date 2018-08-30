@@ -121,9 +121,9 @@
     }
     // 每个物料
     .each_mater {
-      padding: 0.08rem;
+      padding: .08rem 0;
       position: relative;
-      margin-bottom: .2rem;
+      // margin-bottom: .2rem;
       box-sizing: border-box;
     }
     .each_mater_wrapper {
@@ -156,15 +156,15 @@
         // 物料名称
         .mater_name {
           color: #111;
-          overflow: hidden;
+          // overflow: hidden;
           font-size: .14rem;
           font-weight: bold;
-          max-height: .46rem;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          margin-bottom: .04rem;
-          text-overflow: ellipsis;
-          -webkit-box-orient: vertical;
+          // max-height: .46rem;
+          // display: -webkit-box;
+          // -webkit-line-clamp: 2;
+          margin-bottom: .02rem;
+          // text-overflow: ellipsis;
+          // -webkit-box-orient: vertical;
           // 每个物料的索引
           .whiNum {
             color: #fff;
@@ -189,12 +189,14 @@
               .title,
               .num {
                 font-size: .1rem;
+                padding: 0 .04rem;
                 display: inline-block;
-                padding: .01rem .04rem;
               }
               .title {
                 color: #fff;
                 background: #3f72af;
+                border-top-left-radius: .02rem;
+                border-bottom-left-radius: .02rem;
               }
               .num {
                 color: #111;
@@ -203,6 +205,8 @@
                 white-space: nowrap;
                 background: #dbe2ef;
                 text-overflow: ellipsis;
+                border-top-right-radius: .02rem;
+                border-bottom-right-radius: .02rem;
               }
             }
             // 规格
@@ -212,6 +216,7 @@
               .title {
                 color: #fff;
                 background: #537791;
+
               }
               .num {
                 color: #fff;
@@ -256,7 +261,6 @@
             font-size: 0.16rem;
             line-height: 0.2rem;
             color: #ea5455;
-            margin-right: 0.9rem;
             .unit {
               font-size: .1rem;
               color: #757575;
@@ -317,6 +321,7 @@
     width: 100%;
     text-align: center;
     position: relative;
+    margin-top: .14rem;
     .add_more {
       display: inline-block;
     }
