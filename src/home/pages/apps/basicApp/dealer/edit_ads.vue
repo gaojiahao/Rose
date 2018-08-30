@@ -304,7 +304,6 @@ export default {
           this.dealer[key] = this.dealer[key].replace(/\s/g,'');
         }
       }
-
       this.$vux.confirm.show({
         content: '确认保存?',
         // 确定回调
@@ -347,8 +346,9 @@ export default {
                   content:data.message,
                   onHide:()=>{
                     if(this.$route.query.add === 1){
-                      sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.dealer));
-                    }
+                      let dealer = [this.dealer];
+                      sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(dealer));
+                    }                    
                     this.$router.go(-1);
                   }
                 })

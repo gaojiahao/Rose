@@ -173,9 +173,10 @@
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           //获取缓存
           if(DEALERLIST_SELITEMS){
-            this.selItems = [DEALERLIST_SELITEMS];
+            this.selItems = [...DEALERLIST_SELITEMS];
             this.$emit('sel-dealer', JSON.stringify(this.selItems));
-          }
+            sessionStorage.removeItem('DEALERLIST_SELITEMS');
+          } 
           this.$nextTick(() => {
             this.bScroll.refresh();
             if (!this.hasNext) {
