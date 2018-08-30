@@ -6,11 +6,11 @@
       <div class='wrapper' ref="bScroll">
         <div class="when_null" v-if="isNull">
           暂无待办消息
-        </div>        
+        </div>
         <div class="msg_list" v-else>
           <div class="each_msg"
-              @click="goMsglist(value[0])" 
-              v-for='(value, i) in listData' 
+              @click="goMsglist(value[0])"
+              v-for='(value, i) in listData'
               :key='i'>
             <div class="msg_info">
               <!-- 图片 和 应用名称 -->
@@ -43,14 +43,14 @@ import businessMap from './maps/businessApp'
 // 请求 引入
 import { getMsgList } from 'service/msgService'
 // 组件 引入
-import BScroll from 'better-scroll' 
+import BScroll from 'better-scroll'
 import search from 'components/search'
 
 export default {
   data(){
     return{
       listData: {},
-      isNull: false    
+      isNull: false
     }
   },
   components: {
@@ -77,7 +77,7 @@ export default {
     },
     //获取应用消息数据
     getList() {
-      getMsgList().then(({ tableContent }) => {  
+      return getMsgList().then(({ tableContent }) => {
         if(!tableContent.length){
           // 没有数据的时候
           this.isNull = true;
@@ -86,8 +86,8 @@ export default {
         tableContent.forEach( item => {
           this.isNull = false;
           // app图标处理
-          item.pic = item.icon 
-            ? `/dist/${item.icon}` 
+          item.pic = item.icon
+            ? `/dist/${item.icon}`
             : this.getDefaultImg();
           // 只针对已经移动化的应用做消息的显示
           if(businessMap[item.processName]){
@@ -97,7 +97,7 @@ export default {
             }
             else{
               this.listData[item.processName].push(item);
-            }          
+            }
           }
         })
         this.$nextTick(()=>{
@@ -132,15 +132,18 @@ export default {
       if(hours > 0){
         backTime = `${hours}小时前`;
       }
-      else{       
-        backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;        
+      else{
+        backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
       }
       return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
-      
+
     }
   },
   created(){
-    this.getList();
+    this.$loading.show();
+    this.getList().then(() => {
+      this.$loading.hide();
+    });
   }
 }
 </script>
@@ -190,7 +193,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     span {
-      display: inline-block;      
+      display: inline-block;
     }
     // 图片、应用名称
     .app_info {
