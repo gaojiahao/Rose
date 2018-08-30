@@ -168,24 +168,13 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS')) || '';
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           //获取缓存
-          if(sessionStorage.getItem('EDIT_ADS_TRANSCODE')){
-            let EDIT_ADS_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_ADS_TRANSCODE')).transCode;
-            for(let i = 0 ; i<this.dealerList.length ; i++ ){
-              if(this.dealerList[i].transCode == EDIT_ADS_TRANSCODE){
-                this.selItems.push(this.dealerList[i]);
-                this.$emit('sel-dealer', JSON.stringify([this.dealerList[i]]));
-                sessionStorage.removeItem('EDIT_ADS_TRANSCODE')
-              }
-            }
-          }
-          if(sessionStorage.getItem('DEALERLIST_SELITEMS')){
-            let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS'));
-            this.selItems = [...DEALERLIST_SELITEMS];
-            this.$emit('sel-dealer', JSON.stringify(DEALERLIST_SELITEMS));
-            sessionStorage.removeItem('DEALERLIST_SELITEMS');
+          if(DEALERLIST_SELITEMS){
+            this.selItems = [DEALERLIST_SELITEMS];
+            this.$emit('sel-dealer', JSON.stringify(this.selItems));
           }
           this.$nextTick(() => {
             this.bScroll.refresh();
@@ -230,21 +219,13 @@
       },
       //新增往来
       add(){
-        let pickVal = '';
-        if(this.dealerLabelName == 2167){
-          pickVal = '客户';
-        }else if(this.dealerLabelName == 2168){
-          pickVal = '供应商';
-        }
+        let pickVal = this.dealerLabelName;
         this.$router.push({ path:'/adress/edit_ads', query:{ add:1,pickVal:pickVal} })
       }
     },
     created() {
       this.initScroll();
       this.getDealer();
-    },
-    mounted(){
-
     }
   }
 </script>
