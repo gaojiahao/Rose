@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 经办主体 -->
-        <pop-entity-list :value="entity" v-model="entity"></pop-entity-list>
+        <!-- <pop-entity-list :value="entity" v-model="entity"></pop-entity-list> -->
         <!-- 用户地址和基本信息-->
         <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
           <div v-if='dealerInfo'>
@@ -96,7 +96,8 @@
                             <div class="mater_price">
                               ￥{{item.price | numberComma}}
                             </div>
-                            <r-number :num="item.tdQty" :max="item.qtyStockBal" v-model="item.tdQty"></r-number>
+                            <r-number :num="item.tdQty" :max="item.qtyStockBal" 
+                            :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                           </div>
                         </div>
                       </div>

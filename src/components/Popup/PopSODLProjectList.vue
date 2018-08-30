@@ -183,6 +183,10 @@
       right: .04rem;
       transform: translate(0, -50%);
     }
+    .mode {
+      color: #111;
+      font-weight: 500;    
+    }
   }
 
   // 弹出层
