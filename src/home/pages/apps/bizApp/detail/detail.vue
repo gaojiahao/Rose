@@ -4,7 +4,8 @@
       <component
         :is='currentComponent'
         @change='modifyRoute'
-        @refresh-scroll="refresh">
+        @refresh-scroll="refresh"
+        ref="detailComponent">
       </component>
     </div>
     <!-- 页面进入加载动画-->
@@ -23,6 +24,7 @@
         transCode: '',
         submitSuccess: false,
         detailScroll: null,
+        code: '',
       }
     },
     watch:{
@@ -31,6 +33,9 @@
           let {code = ''} = this.$route.params;
           try {
             this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+            if(this.code === code) {
+              this.$refs.detailComponent.loadPage();
+            }
           } catch (e) {
             this.$vux.alert.show({
               content: '抱歉，无法支持该应用的查看',
@@ -67,6 +72,7 @@
     created() {
       this.$loading.show();
       let {code = ''} = this.$route.params;
+      this.code = code;
       try {
         this.currentComponent = require(`components/detail/${code}Form.vue`).default;
       } catch (e) {
