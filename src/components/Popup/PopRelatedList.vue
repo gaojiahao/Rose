@@ -53,13 +53,10 @@
               </div>
             </div>
           </div>
-          <div class="btn" v-if='relatedAppList.length >3'>
-            <span class="cfm_btn" @click="flowShow = false">关闭</span>
-          </div>
         </r-scroll>
       </div>
       <!-- 底部栏 -->
-      <div class="btn when_less" v-if='relatedAppList.length <= 3'>
+      <div class="btn when_less">
         <span class="cfm_btn" @click="showPop = false">关闭</span>
       </div>
     </popup>
@@ -300,7 +297,7 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .38rem);
+        height: calc(100% - 1.1rem);
       }
      .each_flow {
         width: 95%;
@@ -421,7 +418,7 @@
       width: 100%;
       background: #fff;
       text-align: center;
-      margin-bottom: .1rem;
+      padding: .1rem 0;
       .cfm_btn {
         width: 2.8rem;
         color: #fff;
