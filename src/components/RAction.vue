@@ -79,7 +79,7 @@
               callback: () => {
                 let {code} = this.$route.params;
                 this.$router.replace({
-                  path: `/list/${code}/fillform`,
+                  path: `/fillform/${code}`,
                   query: {
                     transCode: this.code
                   }

@@ -46,14 +46,14 @@ export default {
           let {isMyTask, nodeName} = tableContent[0];
           if (isMyTask === 1 && nodeName === '重新提交') {
             this.$router.push({
-              path: `/list/${code}/fillform`,
+              path: `/fillform/${code}`,
               query: {
                 transCode: transCode
               }
             })
           } else {
             this.$router.push({
-              path: `/list/${code}/detail`,
+              path: `/detail/${code}`,
               query: {
                 transCode: transCode
               }
@@ -61,7 +61,7 @@ export default {
           }
         } else {
           this.$router.push({
-            path: `/list/${code}/detail`,
+            path: `/detail/${code}`,
             query: {
               transCode: transCode
             }
@@ -72,7 +72,7 @@ export default {
     goEdit() {
       let {code} = this.$route.params;
       this.$router.push({
-        path: `/list/${code}/fillform`,
+        path: `/fillform/${code}`,
       })
     },
     // TODO 重置列表条件
@@ -137,9 +137,6 @@ export default {
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
-        if(this.refreshRequest){
-          this.$loading.hide();
-        }
         // this.$emit('input',false);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
         orders.forEach(item => {
@@ -150,7 +147,7 @@ export default {
             if (mitem.tdAmount > 0 || mitem.tdAmount < 0) {
               item.count = toFixed(accAdd(item.count, mitem.tdAmount));
               return
-            }  
+            }
             // 当 count = price * tdqty
             let amount = accMul(mitem.price, mitem.tdQty);
             item.count = toFixed(accAdd(item.count, amount));
@@ -265,7 +262,9 @@ export default {
   },
   created() {
     this.applyCode = this.$route.params.code;
-    this.getData(false);
+    this.getData(false).then(() => {
+      this.$loading.hide();
+    });
   },
 
 }

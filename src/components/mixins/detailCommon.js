@@ -178,15 +178,13 @@ export default {
            this.RelatedAppList.push(item);
            if(item.itemCount > 0){
              this.HasValRealted = true;
-             
+
            }
           }
         })
       })
-    }
-  },
-  created() {
-    (async () => {
+    },
+    async loadPage() {
       let {transCode} = this.$route.query;
       if (!transCode) {
         this.$vux.alert.show({
@@ -195,6 +193,7 @@ export default {
         return;
       }
       this.transCode = transCode;
+      this.$loading.show();
       //查询当前用户的userId
       await this.getCurrentUser();
       await this.getListId();
@@ -214,11 +213,13 @@ export default {
         })
 
       })
+      this.$loading.hide();
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
-      // this.$loading.hide();
-      // this.$emit('input', false)
-    })()
+    },
+  },
+  created() {
+    this.loadPage();
   },
   mounted() {
 

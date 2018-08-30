@@ -89,14 +89,14 @@ export default {
           let {isMyTask, nodeName} = tableContent[0];
           if (isMyTask === 1 && nodeName === '重新提交') {
             this.$router.push({
-              path: `/notice/msglist/${code}/fillform`,
+              path: `/fillform/${code}`,
               query: {
                 transCode: item.businessKey
               }
             })
           } else {
             this.$router.push({
-              path: `/notice/msglist/${code}/detail`,
+              path: `/detail/${code}`,
               query: {
                 transCode: item.businessKey
               }
@@ -104,7 +104,7 @@ export default {
           }
         } else {
           this.$router.push({
-            path: `/notice/msglist/${code}/detail`,
+            path: `/detail/${code}`,
             query: {
               transCode: item.businessKey
             }
@@ -136,7 +136,7 @@ export default {
           limit: this.limit,
           page: this.page,
           filter: JSON.stringify(filter),
-        }).then(({total = 0, tasks = []}) => {         
+        }).then(({total = 0, tasks = []}) => {
           tasks.forEach(item => {
             if(!item.endTime){
               item.status = "待处理"
@@ -205,11 +205,11 @@ export default {
       if(hours>0){
         backTime = `${hours}小时前`;
       }
-      else{        
-         backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;  
+      else{
+         backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
       }
       return hours<24 ? backTime : `${val.crtTime.split(' ')[0]}`;
-      
+
     }
   },
   watch: {
@@ -283,7 +283,7 @@ export default {
         background: #53d397;
         border-top-left-radius: .12rem;
       }
-      
+
       // 进行中
       .doing_work {
         background: #5077aa;
@@ -351,12 +351,12 @@ export default {
           font-size: .12rem;
           color: #fff;
           background: #53d397;
-               
+
           padding: 0 .04rem;
           display: inline-block;
         }
         .reject_c{
-           background: #c93d1b;   
+           background: #c93d1b;
         }
       }
       // 审批结果
@@ -366,7 +366,7 @@ export default {
         .result {
           color: #fff;
           background: #c93d1b;
-         
+
           padding: 0 .04rem;
           display: inline-block;
         }
@@ -379,8 +379,8 @@ export default {
   // 用户操作部分
   .user_handle {
     width: 100%;
-    text-align: center; 
-    margin-top: .04rem;   
+    text-align: center;
+    margin-top: .04rem;
     .tips {
       color: #757575;
       font-size: .14rem;
@@ -392,8 +392,8 @@ export default {
       font-weight: bold;
     }
   }
-    
-  
+
+
 }
 
 

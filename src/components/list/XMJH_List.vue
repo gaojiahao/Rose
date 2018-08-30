@@ -45,7 +45,7 @@
       goDetail(transCode) {
         let {code} = this.$route.params;
         this.$router.push({
-          path: `/list/${code}/detail`,
+          path: `/detail/${code}`,
           query: {
             transCode: transCode
           }

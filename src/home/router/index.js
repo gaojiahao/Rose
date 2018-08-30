@@ -24,22 +24,19 @@ export default [
     path:'/list/:code',
     name:'LIST',
     component:LIST,
-    meta:{ title:'列表'},
-    children:[
-      {
-        path:'fillform',
-        name:'FILLFORM',
-        component:FILLFORM,
-        meta:{ title:'填写新内容' }
-      },
-      {
-        path:'detail',
-        name:'DETAIL',
-        component:DETAIL,
-        meta:{ title:'订单详情' }
-      }
-
-    ]
+    meta:{ title:'列表', keepAlive: true},
+  },
+  {
+    path:'/fillform/:code',
+    name:'FILLFORM',
+    component:FILLFORM,
+    meta:{ title:'填写新内容' }
+  },
+  {
+    path:'/detail/:code',
+    name:'DETAIL',
+    component:DETAIL,
+    meta:{ title:'订单详情' }
   },
   {
     path:'/adress',
