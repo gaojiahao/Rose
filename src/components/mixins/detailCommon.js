@@ -107,6 +107,7 @@ export default {
           this.workFlowInfo[newkey] = 'invalid_work';
           break;
       }
+      this.$loading.hide();
     },
     // TODO 处理工作流，判断审批按钮
     getFlowAndActions() {
@@ -215,7 +216,7 @@ export default {
       })
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
-      this.$loading.hide();
+      // this.$loading.hide();
       // this.$emit('input', false)
     })()
   },
