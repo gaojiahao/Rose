@@ -97,6 +97,8 @@
   position: relative;
   padding: .06rem .08rem;
   .title {
+    display: flex;
+    justify-content: space-between;
     color: #757575;
     font-weight: 200;
     font-size: .12rem;
@@ -125,6 +127,9 @@
       position: relative;
       margin-bottom: .2rem;
       box-sizing: border-box;
+    }
+    .mater_delete{
+      padding-left: 0.3rem;
     }
     .each_mater_wrapper {
       position: relative;
@@ -294,6 +299,15 @@
               border-radius: 0 !important;
             }
           }
+        }
+      }
+      .delete_icon{
+        position: absolute;
+        top:50%;
+        left: -28px;
+        transform: translateY(-50%);
+        .vux-x-icon {
+          fill: #ea5455;
         }
       }
       // 下划线
