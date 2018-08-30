@@ -124,7 +124,7 @@
         <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
-      <span class="count_btn" @click="submitOrder">提交订单</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
   </div>
 </template>
