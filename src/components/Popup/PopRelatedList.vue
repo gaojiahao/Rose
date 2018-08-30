@@ -202,7 +202,7 @@
         this.showPop = false;
         this.$emit('reload-page',true)
         let code = businessMap[item.transCode.split('_')[0]];
-        this.$router.replace({
+        this.$router.push({
           path: `/list/${code}/detail`,
           query: {
             transCode: item.transCode
@@ -211,7 +211,7 @@
       }
     },
     created() {
-     
+
     }
   }
 </script>

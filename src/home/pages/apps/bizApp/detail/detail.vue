@@ -45,6 +45,7 @@
             })
           })
           // this.$event.$on('detail-show-loading', this.modifyRoute)
+          document.title = `${businessText[code].slice(-4)}详情`;
         }
       }
 
@@ -87,7 +88,7 @@
       })
     },
     mounted() {
-      
+
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
