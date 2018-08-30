@@ -77,12 +77,6 @@
         if(this.serachVal){
           filter = [
             ...filter,
-            // {
-            //   operator:"in",
-            //   value:this.biStatus,
-            //   property:"biStatus",
-            //   attendedOperation:"and (",
-            // },
             {
               operator:"like",
               value:this.serachVal,
@@ -93,9 +87,13 @@
               operator: 'like',
               value: this.serachVal,
               property: 'handlerName',
-              attendedOperation: ')'
             }
           ]
+          if(this.biStatus.length){
+            filter[0].attendedOperation = "and (";
+            filter[filter.length-1].attendedOperation = ')';
+            
+          }         
         }
         return getList(this.listViewID,{
           limit: this.limit,
