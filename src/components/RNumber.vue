@@ -1,8 +1,8 @@
 <template>
   <div class="r-number-container">
-    <span class="r-number-handle" @click="subNum" :class="{disabled : currentNum <= 1}">-</span>
+    <span class="r-number-handle" @click.stop="subNum" :class="{disabled : currentNum <= 1}">-</span>
     <input class="num" type="number" :value="currentNum" @blur="getNum"/>
-    <span class="r-number-handle plus" @click="plusNum"
+    <span class="r-number-handle plus" @click.stop="plusNum"
           :class="{disabled: max && currentNum >= max}">+</span>
   </div>
 </template>
