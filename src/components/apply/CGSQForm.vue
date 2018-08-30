@@ -29,8 +29,8 @@
                       <div class="mater_main">
                         <!-- 物料名称 -->
                         <div class="mater_name">
-                          <span class="whiNum">No.{{index + 1}}</span>
                           {{item.inventoryName || item.inventoryName_transObjCode}}
+                          <span class="symbol">[{{item.processing}}]</span>
                         </div>
                         <!-- 物料基本信息 -->
                         <div class="mater_info">
@@ -53,7 +53,11 @@
                           </div>
                         </div>
                         <!-- 物料数量和价格 -->
-                        <div class='mater_other'>
+                        <div class='mater_others'>
+                          <div class="mater_type">
+                            <span class='unit' v-if='item.inventoryType'>大类: {{item.inventoryType}}</span>
+                            <span class='unit' v-if='item.inventorySubclass'>子类: {{item.inventorySubclass}}</span>
+                          </div>
                           <div class='mater_price'>
                             <span class='unit' v-if='item.measureUnit'>计量单位: {{item.measureUnit}}</span>
                           </div>
@@ -326,5 +330,16 @@ export default {
         border-top: none;
       }
     }
+}
+.mater_others {
+  .mater_type,
+  .mater_price {
+    height: .18rem;
+    line-height: .18rem;
   }
+  .unit {
+    font-size: .1rem;
+    color: #757575;
+  }
+}
 </style>
