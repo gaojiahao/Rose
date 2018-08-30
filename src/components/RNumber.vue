@@ -1,7 +1,7 @@
 <template>
   <div class="r-number-container">
     <span class="r-number-handle" @click="subNum" :class="{disabled : currentNum <= 1}">-</span>
-    <input class="num" type="number" :value="currentNum" @change="getNum" :blur='checkAmt(currentNum)'/>
+    <input class="num" type="number" :value="currentNum" @blur="getNum"/>
     <span class="r-number-handle plus" @click="plusNum"
           :class="{disabled: max && currentNum >= max}">+</span>
   </div>
@@ -23,9 +23,15 @@
         type: Number,
         default: 0
       },
-      checkAmt: {
+      // 失去焦点时对值做的处理
+      checkNum: {
         type: Function,
-        required: true
+        default(val) {
+          if (val === 0) {
+            val = 1;
+          }
+          return Math.abs(toFixed(val, 2));
+        }
       }
     },
     data() {
@@ -63,10 +69,8 @@
         if (this.max && val > this.max) {
           val = this.max;
         }
-        if (val <= 0) {
-          val = 1;
-        }
-        this.currentNum = toFixed(val, 2);
+
+        this.currentNum = this.checkNum(val);
         e.target.value = this.currentNum;
         this.$emit('input', this.currentNum);
       },

@@ -141,7 +141,6 @@ import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,} from 's
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -158,7 +157,6 @@ export default {
     Icon, Cell, Popup, Group,
     XInput, Swipeout, SwipeoutItem, SwipeoutButton,
     PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,
-    RNumber,
   },
   data() {
     return {
