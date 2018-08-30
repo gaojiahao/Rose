@@ -233,14 +233,6 @@ export default {
     }
   },
   methods: {
-    // TODO 滑动删除
-    // delClick(item, index) {
-    //   let arr = this.matterList;
-    //   arr.splice(index, 1);
-    //   // 删除输入过的价格
-    //   delete this.priceMap[item.inventoryCode];
-    //   this.$refs.matter.delSelItem(item);
-    // },
     // 滑动删除
       delClick(index, sItem) {
         let arr = this.selItems;
@@ -408,8 +400,6 @@ export default {
               comment: ''
             });
           }
-
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       });
@@ -506,6 +496,7 @@ export default {
   .xsbj-apply-container {
     /deep/ .weui-cells {
       font-size: .14rem;
+      margin-top: unset;
       &:before {
         border-top: none;
       }

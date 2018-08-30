@@ -299,14 +299,14 @@ export default {
     },
     //提交
     submit(){
-      console.log(this.dealer);
       for(let key in this.dealer){
         if(typeof(this.dealer[key]) === 'string' && this.dealer[key].indexOf(' ')>=0){
           this.dealer[key] = this.dealer[key].replace(/\s/g,'');
         }
       }
+
       this.$vux.confirm.show({
-        content: '确认提交?',
+        content: '确认保存?',
         // 确定回调
         onConfirm: () => {
           let submitData = {
@@ -316,13 +316,13 @@ export default {
               dealer: this.dealer
             }
           };
-          if(this.transCode.length>0){
-            dealerService.update(submitData).then(data=>{
+          if(this.transCode.length > 0){
+            dealerService.update(submitData).then( data => {
               if(data.success){
-                this.submitSuccess  = true;
+                this.submitSuccess = true;
                 this.$vux.alert.show({
                   content: data.message,
-                  onHide:()=>{
+                  onHide: () => {
                     this.$router.go(-1);
                   }
                 })
@@ -346,8 +346,8 @@ export default {
                 this.$vux.alert.show({
                   content:data.message,
                   onHide:()=>{
-                    if(this.$route.query.add == 1){
-                      sessionStorage.setItem('EDIT_ADS_TRANSCODE',JSON.stringify({transCode:data.transCode}));
+                    if(this.$route.query.add === 1){
+                      sessionStorage.setItem('DEALERLIST_SELITEMS',JSON.stringify(this.dealer));
                     }
                     this.$router.go(-1);
                   }
@@ -442,7 +442,6 @@ export default {
    beforeRouteLeave(to, from, next) {
     let {path} = to;
     // 新建物料，修改列表页的meta值
-    //console.log(this.submitSuccess);
     if (this.submitSuccess && path === '/adress') {
       to.meta.reload = true;
     }

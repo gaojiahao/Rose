@@ -123,7 +123,46 @@ export default {
           break;
       }
     },
-    //获取销售订单数据
+    // TODO 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // TODO 重置下拉刷新、上拉加载的状态
+    resetScroll() {
+      this.$refs.bScroll.finishPullDown();
+      this.$refs.bScroll.finishPullUp();
+    },
+    // TODO 上拉加载
+    onPullingUp() {
+      this.page++;
+      this.getList();
+    },
+    // TODO 下拉刷新
+    onPullingDown() {
+      this.page = 1;
+      this.getData(true);
+    },
+    //重置数据
+    reloadData() {
+      this.serachVal = '';
+      this.activeTab = '';
+      this.activeIndex = 0;
+      this.resetCondition();
+      // this.getData(false);
+      this.onPullingDown();
+    },
+    //获取上次存储的列表总数量
+    getSession(){
+      return new Promise(resolve=>{
+        this.total = sessionStorage.getItem(this.applyCode);
+        resolve()
+      })
+    },
+    //获取订单数据
     getList(noReset = false) {
       let filter = {
         biStatus: this.activeTab,
@@ -170,7 +209,6 @@ export default {
           })
         }
         //判断最近有无新增数据
-        //console.log(this.total);
         let text = '';
         if(noReset && this.activeIndex ===0){
           if(this.total){
@@ -191,46 +229,7 @@ export default {
       }).catch(e => {
         this.resetScroll();
       })
-    },
-    // TODO 获取默认图片
-    getDefaultImg(item) {
-      let url = require('assets/wl.png');
-      if (item) {
-        item.inventoryPic = url;
-      }
-      return url
-    },
-    // TODO 重置下拉刷新、上拉加载的状态
-    resetScroll() {
-      this.$refs.bScroll.finishPullDown();
-      this.$refs.bScroll.finishPullUp();
-    },
-    // TODO 上拉加载
-    onPullingUp() {
-      this.page++;
-      this.getList();
-    },
-    // TODO 下拉刷新
-    onPullingDown() {
-      this.page = 1;
-      this.getData(true);
-    },
-    //重置数据
-    reloadData() {
-      this.serachVal = '';
-      this.activeTab = '';
-      this.activeIndex = 0;
-      this.resetCondition();
-      // this.getData(false);
-      this.onPullingDown();
-    },
-    //获取上次存储的列表总数量
-    getSession(){
-      return new Promise(resolve=>{
-        this.total = sessionStorage.getItem(this.applyCode);
-        resolve()
-      })
-    },
+    },    
     async getData(noReset){
       await this.getSession();
       if(noReset){
@@ -240,6 +239,8 @@ export default {
                 this.$refs.bScroll.finishPullUp();
               });
             })
+            // 提交之后成功请求数据 隐藏动画
+            this.$loading.hide();
         });
         return
       }
@@ -263,6 +264,7 @@ export default {
   created() {
     this.applyCode = this.$route.params.code;
     this.getData(false).then(() => {
+      // 第一次进入页面成功之后 隐藏动画
       this.$loading.hide();
     });
   },

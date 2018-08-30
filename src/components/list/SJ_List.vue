@@ -24,11 +24,12 @@
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
+          <!-- 商机标题、状态、公司 -->
           <div class="duty_content">
             <div class="content_title">{{item.opportunityTitle}}</div>
             <div class="content_step vux-1px-b">
               <div>{{item.currentStage}}</div>
-              <div>{{item.dealerName}}</div>
+              <div>{{item.dealerName || item.dealerName_dealerDebit}}</div>
             </div>
           </div>
           <!-- 报销人，金额合计 -->
