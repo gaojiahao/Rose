@@ -2,6 +2,7 @@
   <div class="inPage">
     <component
       :is='currentComponent'
+      :refresh-request='isrefresh'
       ref='list'>
     </component>
     <router-view></router-view>
@@ -15,11 +16,12 @@ export default {
   data(){
     return {
       currentComponent : '',
-      code :''
+      code :'',
+      isrefresh : false,
     }
   },
   created(){
-    this.$loading.show();
+    // this.$loading.show();
     let code = this.$route.params.code;
     if(code){
       this.currentComponent = require(`components/list/${code}_List.vue`).default;
@@ -39,7 +41,12 @@ export default {
   beforeRouteEnter (to, from, next) {
     let code  = businessMap[to.params.code];
     to.meta.title = code.slice(-4) + '列表';
-    next();
+    next(vm=>{
+      if(from.name){
+        vm.$loading.show();
+        vm.isrefresh = true;
+      }
+    });
   }
 }
 </script>

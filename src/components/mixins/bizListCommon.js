@@ -8,6 +8,12 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 
 export default {
+  props:{
+    refreshRequest:{
+      type : Boolean,
+      default:false
+    }
+  },
   data() {
     return {
       page: 1,
@@ -131,7 +137,9 @@ export default {
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
       }).then(({total = 0, orders = []}) => {
-        this.$loading.hide();
+        if(this.refreshRequest){
+          this.$loading.hide();
+        }
         // this.$emit('input',false);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
         orders.forEach(item => {
