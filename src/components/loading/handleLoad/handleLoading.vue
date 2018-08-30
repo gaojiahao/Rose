@@ -1,5 +1,5 @@
 <template>
-  <div class="loading-container" v-show="handle">
+  <div class="loading-container" v-show="show">
     <div class="loading-wrapper">
       <spinner class="loading-animation" type="circles" size="34"></spinner>
     </div>
@@ -12,7 +12,7 @@
     name: "loading",
     data(){
       return{
-        handle :true
+        show :false
       }
     },
     components: {Spinner},

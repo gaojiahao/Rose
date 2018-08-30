@@ -11,7 +11,7 @@
     name: "Loading",
     data(){
       return{
-        show : true
+        show : false
       }
     },
     components: {Spinner}
