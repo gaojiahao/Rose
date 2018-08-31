@@ -93,6 +93,8 @@
           comment: '', // 物料说明
           technicsCode :'' //工艺路线
         },
+        invMoreUnit: [],
+        invNetWeight: [],
         transCode: '',
         hasDefault: false, // 判断是否为回写
         imgFileObj: {}, // 上传的图片对象
@@ -155,7 +157,9 @@
           // biReferenceId: this.biReferenceId,
           formData: {
             baseinfo: this.baseinfo,
-            inventory: this.inventory
+            inventory: this.inventory,
+            invMoreUnit: this.invMoreUnit,
+            invNetWeight: this.invNetWeight,
           }
         };
         //console.log(submitData);
@@ -209,10 +213,12 @@
       // TODO 查询物料详情
       findData() {
         return findData(this.transCode).then(({formData = {}, attachment = []}) => {
-          let {baseinfo = {}, inventory = {}} = formData;
+          let {baseinfo = {}, inventory = {}, invMoreUnit = [], invNetWeight = []} = formData;
           this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.inventory = {...this.inventory, ...inventory,};
+          this.invMoreUnit = invMoreUnit;
+          this.invNetWeight = invNetWeight;
           // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
@@ -293,6 +299,7 @@
       // TODO 获取用户基本信息
       getBaseInfoData() {
         return getBaseInfoDataBase().then(data => {
+          console.log(data)
           this.baseinfo = {
             ...this.baseinfo,
             ...data,
