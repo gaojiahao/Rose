@@ -18,23 +18,6 @@
           </p>
         </div>
       </div>
-
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">当前所在阶段</p>
-        <p class="mode group_mar_left">{{orderInfo.currentStage}}</p>
-      </div>
-      <div class="trade_mode mg_auto box_sd" v-if="orderInfo.salesPerson">
-        <p class="title">销售人员</p>
-        <p class="mode group_mar_left">{{orderInfo.salesPerson}}</p>
-      </div>
-      <div class="trade_mode mg_auto box_sd" v-if="orderInfo.salesChannels">
-        <p class="title">销售渠道</p>
-        <p class="mode group_mar_left">{{orderInfo.salesChannels}}</p>
-      </div>
-      <div class="trade_mode mg_auto box_sd" v-if="orderInfo.validUntil">
-        <p class="title">有效期至</p>
-        <p class="mode group_mar_left">{{orderInfo.validUntil}}</p>
-      </div>
       <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
         <p class="mode group_mar_left">{{orderInfo.crtTime || '暂无'}}</p>
@@ -71,6 +54,15 @@
           </div>
         </div>
       </div>
+      <div class="materiel_list mg_auto box_sd">
+        <div class="title">商机其他</div>
+        <group>
+            <cell title='当前所在阶段' :value='orderInfo.currentStage'></cell>
+            <cell title='销售人员' :value='orderInfo.salesPerson' v-if="orderInfo.salesPerson"></cell>
+            <cell title='销售渠道' :value='orderInfo.salesChannels' v-if="orderInfo.salesChannels"></cell>
+            <cell title='有效期至' :value='orderInfo.validUntil' v-if="orderInfo.validUntil"></cell>
+          </group>
+      </div>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 @on-submit-success="submitSuccessCallback"></r-action>
@@ -80,7 +72,7 @@
 
 <script>
 // vux组件引入
-import { dateFormat } from 'vux'
+import { Cell, Group,dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 // mixins 引入
@@ -100,7 +92,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,
+    workFlow, RAction,Cell, Group
   },
   methods: {
     // 获取详情
@@ -134,7 +126,24 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-
+  .xsbj-detail-container{
+    /deep/ .weui-cells {
+      margin-top: 0;
+      font-size: .16rem;
+      &:before {
+        border-top: none;
+      }
+      &:after {
+        border-bottom: none;
+      }
+      .weui-cell {
+        padding: 10px 0;
+        &:before {
+          left: 0;
+        }
+      }
+    }
+  }
   .xsbj-detail-container {
     .price_type {
       margin-top: .04rem;

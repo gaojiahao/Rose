@@ -151,7 +151,7 @@ export default {
         // if (!this.transCode) {
         //   this.$emit('input', false)
         // }
-        this.entity.dealerName = data.entityId;
+        // this.entity.dealerName = data.entityId;
         this.formData = {
           ...this.formData,
           ...data,
@@ -195,6 +195,10 @@ export default {
     },
   },
   created() {
+    let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
+    if(data){
+      this.entity.dealerName = JSON.parse(data).entityId
+    }
     let {transCode} = this.$route.query;
     if (transCode) {
       this.isResubmit = true;
