@@ -302,7 +302,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.MatPic = require('assets/wl.png');
+        this.MatPic = require('assets/wl_default02.png');
       },
     },
     beforeRouteLeave(to, from, next) {
