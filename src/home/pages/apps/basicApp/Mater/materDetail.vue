@@ -169,7 +169,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.inventory.inventoryPic = require('assets/wl.png');
+        this.inventory.inventoryPic = require('assets/wl_default02.png');
       },
     },
     created() {

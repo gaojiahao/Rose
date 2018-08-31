@@ -11,7 +11,7 @@ let tokenService = {
    * 清除toke
    */
   clean() {
-    window.localStorage.removeItem(TOKEN_KEY);
+    window.sessionStorage.removeItem(TOKEN_KEY);
     window.localStorage.removeItem(RFD_TOKEN_KEY);
   },
   /**
@@ -31,7 +31,7 @@ let tokenService = {
    * 设置token
    */
   setToken(data) {
-    window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
+    window.sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
       name: data.name,
@@ -49,7 +49,7 @@ let tokenService = {
   },
   // TODO 检查是否登录
   checkLogin(key = 'token') {
-    let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {};
+    let token = JSON.parse(window.sessionStorage.getItem(TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token[key]) {
       let timestamp = token.timestamp;

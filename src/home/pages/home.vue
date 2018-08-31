@@ -5,7 +5,7 @@
         <!-- 用户头像部分 -->
         <div class="user_part">
           <div class="user_avatar vux-1px-b">
-            <img :src="userInfo.avatar" alt="avatar">
+            <img :src="userInfo.avatar">
             <div class="tips">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default {
         })
       });
       // 获取 头像姓名
-      let { name, avatar } = JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN'));
+      let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
       // 如果头像不存在则指定默认头像
       if(!avatar){
         let url = require('assets/ava03.png')

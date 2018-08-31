@@ -13,11 +13,6 @@
               <!-- 工作流 -->
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>
-              <!-- 经办主体 -->
-              <div class="trade_mode mg_auto box_sd">
-                <p class="title">经办主体</p>
-                <p class="mode">{{orderInfo.handlerEntity || '无'}}</p>
-              </div>
               <!-- 用户地址和基本信息-->
               <div class="or_ads mg_auto box_sd">
                 <div class="user_info">
