@@ -158,8 +158,8 @@
           formData: {
             baseinfo: this.baseinfo,
             inventory: this.inventory,
-            invMoreUnit: this.invMoreUnit,
-            invNetWeight: this.invNetWeight,
+            invMoreUnit: this.invMoreUnit.length ? this.invMoreUnit : null,
+            invNetWeight: this.invNetWeight.length ? this.invNetWeight : null,
           }
         };
         //console.log(submitData);
@@ -299,7 +299,6 @@
       // TODO 获取用户基本信息
       getBaseInfoData() {
         return getBaseInfoDataBase().then(data => {
-          console.log(data)
           this.baseinfo = {
             ...this.baseinfo,
             ...data,
