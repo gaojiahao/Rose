@@ -202,7 +202,9 @@
 
 <style lang="scss" scoped>
   @import './../scss/bizApply';
-
+  .materiel_list .mater_list .each_mater {
+    padding: unset;
+  }
   .xmjh-apply-container {
     .or_ads {
       padding: .06rem .08rem;
@@ -223,10 +225,6 @@
         }
       }
     }
-  }
-
-  .materiel_list {
-    padding: 0;
   }
 
   .xmlx_list .materiel_list .mater_list .each_mater_wrapper .mater_main {

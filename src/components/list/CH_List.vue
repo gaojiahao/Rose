@@ -40,6 +40,11 @@
             <div class='matter_name'>
               {{item.inventoryName}}<span class="type">[{{item.invProcessing}}]</span>
             </div>
+            <div class="mater_days" >
+              <span class="days" v-if="item.accountAge >= 0">账龄天数 {{item.accountAge}}</span>
+              <span class="days" v-if="item.libraryAge >= 0">库龄天数 {{item.libraryAge}}</span>
+              <span class="days" v-if="item.nearKeepingDays >= 0">保质剩余天数 {{item.nearKeepingDays}}</span>
+            </div>
           </div>
           <!-- 仓库类型、金额余额等 -->
           <div class='duty_btm vux-1px-t'>

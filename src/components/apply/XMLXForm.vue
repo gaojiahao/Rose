@@ -258,10 +258,6 @@
     }
   }
 
-  .materiel_list {
-    padding: 0;
-  }
-
   .xmlx_list .materiel_list .mater_list .each_mater_wrapper .mater_main {
     width: 100%;
     max-width: inherit !important;
@@ -273,6 +269,9 @@
   }
 </style>
 <style scoped lang="scss">
+  .materiel_list .mater_list .each_mater {
+    padding: unset;
+  }
   .r-picker {
     padding: 0.05rem 0.08rem;
     font-size: 0.16rem;
