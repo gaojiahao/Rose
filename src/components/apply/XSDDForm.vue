@@ -53,7 +53,7 @@
                   <div class="mater_main">
                     <!-- 物料名称 -->
                     <div class="mater_name">
-                      {{item.inventoryName || item.inventoryName_transObjCode}}
+                      {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
                     <div class="mater_info">
@@ -63,14 +63,14 @@
                         <div class="ForInline" style="display:inline-block">
                           <div class="mater_code">
                             <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode || item.transObjCode}}</span>
+                            <span class="num">{{item.inventoryCode}}</span>
                           </div>
                         </div>
                         <!-- 物料规格 -->
                         <div class="ForInline" style="display:inline-block">
                           <div class="mater_spec">  
                             <span class="title">规格</span>
-                            <span class="num">{{item.specification || item.specification_transObjCode || '无'}}</span>
+                            <span class="num">{{item.specification || '无'}}</span>
                           </div>
                         </div>
                       </div>
@@ -294,16 +294,12 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
           content: '确认删除?',
           // 确定回调
           onConfirm: () => {
-            let arr1 = this.selItems,
-                arr2 = this.matterList;
-            for(var i=0;i<arr1.length;i++){
-              for(var j=0;j<arr2.length;j++){
-                  if(arr2[j].inventoryCode==arr1[i].inventoryCode){
-                      arr2.splice(j,1);
-                      j--;
-                  }
+            this.selItems.forEach(item=>{
+              let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
+              if(index >= 0){
+                this.matterList.splice(index,1);
               }
-            }
+            })
             this.selItems = [];
             this.matterModifyClass = false;
           }
@@ -355,11 +351,11 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
               this.matterList.map(item => {
                 dataSet.push({
                   tdId: item.tdId || '',
-                  inventoryName_transObjCode: item.inventoryName || item.inventoryName_transObjCode, //物料名称
-                  transObjCode: item.inventoryCode || item.transObjCode, //物料编码
+                  inventoryName_transObjCode: item.inventoryName , //物料名称
+                  transObjCode: item.inventoryCode , //物料编码
                   assMeasureUnit: item.assMeasureUnit || '个',    //辅助计量
                   assMeasureScale: item.assMeasureScale || null,  //与主计量单位倍数
-                  tdProcessing : item.processing || item.tdProcessing,//加工属性
+                  tdProcessing : item.processing ,//加工属性
                   tdQty: item.tdQty,     //数量
                   assistQty: item.assistQty || 0,        //辅计数量
                   price: item.price, //单价
@@ -420,10 +416,16 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
           this.biReferenceId = data.biReferenceId;
           let {formData} = data;
           formData.order.dataSet.map(item => {
-            item.inventoryPic = item.inventoryPic_transObjCode
-              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
-              : this.getDefaultImg();
-            item.inventoryCode = item.inventoryCode_transObjCode;
+            item = {
+              ...item,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.inventoryCode_transObjCode,
+              specification: item.specification_transObjCode,
+              processing: item.tdProcessing || '商品',
+              measureUnit: item.measureUnit_transObjCode,
+            }
+            this.matterList.push(item);
           })
           //基本信息
           this.formData = {
@@ -457,8 +459,8 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
             biComment: formData.biComment //备注
           },
-            this.matterList = data.formData.order.dataSet;
-            this.$loading.hide();
+          // this.matterList = data.formData.order.dataSet;
+          this.$loading.hide();
             // this.$emit('input', false);
         })
       }

@@ -47,63 +47,73 @@
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
-            <div class="title">物料列表</div>
+            <div class="title" @click="showDelete">
+              <div>订单列表</div>
+              <div class='edit' v-if='!matterModifyClass'>编辑</div>
+              <div class='finished' v-else>完成</div>
+            </div>
             <div class="mater_list">
               <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
-                <div class="order_code">
+                <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">所属订单</span>
                   <span class="order_num">{{key.replace(/_/g,'')}}</span>
                 </div>
-                <swipeout v-for="(item, index) in oItem" :key="index">
+                <!-- <swipeout v-for="(item, index) in oItem" :key="index">
                   <swipeout-item>
                     <div slot="right-menu">
                       <swipeout-button @click.native="delClick(index,item, key)" type="warn">删除</swipeout-button>
-                    </div>
-                    <div class="each_mater_wrapper" slot="content">
-                      <div class="order-matter">
-                        <div class="mater_img">
-                          <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                        </div>
-                        <div class="mater_main">
-                          <!-- 物料名称 -->
-                          <div class="mater_name">
-                            <span class="whiNum">No.{{index + 1}}</span>
-                            {{item.inventoryName}}
+                    </div> -->
+                    <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                      <div class="each_mater_wrapper" @click="delClick(index,item, key)">
+                        <div class="order-matter">
+                          <div class="mater_img">
+                            <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                           </div>
-                          <!-- 物料基本信息 -->
-                          <div class="mater_info">
-                            <!-- 物料编码、规格 -->
-                            <div class="withColor">
-                              <!-- 物料编码 -->
-                              <div class="ForInline" style="display:inline-block">
-                                <div class="mater_code">
-                                  <span class="title">编码</span>
-                                  <span class="num">{{item.inventoryCode}}</span>
+                          <div class="mater_main">
+                            <!-- 物料名称 -->
+                            <div class="mater_name">
+                              <span class="whiNum">No.{{index + 1}}</span>
+                              {{item.inventoryName}}
+                            </div>
+                            <!-- 物料基本信息 -->
+                            <div class="mater_info">
+                              <!-- 物料编码、规格 -->
+                              <div class="withColor">
+                                <!-- 物料编码 -->
+                                <div class="ForInline" style="display:inline-block">
+                                  <div class="mater_code">
+                                    <span class="title">编码</span>
+                                    <span class="num">{{item.inventoryCode}}</span>
+                                  </div>
                                 </div>
-                              </div>
-                              <!-- 物料规格 -->
-                              <div class="ForInline" style="display:inline-block">
-                                <div class="mater_spec">
-                                  <span class="title">规格</span>
-                                  <span class="num">{{item.specification || '无'}}</span>
+                                <!-- 物料规格 -->
+                                <div class="ForInline" style="display:inline-block">
+                                  <div class="mater_spec">
+                                    <span class="title">规格</span>
+                                    <span class="num">{{item.specification || '无'}}</span>
+                                  </div>
                                 </div>
+                                <div class="matter-remain">库存: {{item.qtyStockBal}}</div>
                               </div>
-                              <div class="matter-remain">库存: {{item.qtyStockBal}}</div>
+                            </div>
+                            <!-- 物料数量和价格 -->
+                            <div class="mater_other">
+                              <div class="mater_price">
+                                ￥{{item.price | numberComma}}
+                              </div>
+                              <r-number :num="item.tdQty" :max="item.qtyStockBal" 
+                              :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                             </div>
                           </div>
-                          <!-- 物料数量和价格 -->
-                          <div class="mater_other">
-                            <div class="mater_price">
-                              ￥{{item.price | numberComma}}
-                            </div>
-                            <r-number :num="item.tdQty" :max="item.qtyStockBal" 
-                            :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                          <div class='delete_icon' v-if='matterModifyClass'>
+                            <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                            <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </swipeout-item>
-                </swipeout>
+                  <!-- </swipeout-item>
+                </swipeout> -->
               </div>
             </div>
           </template>
@@ -125,13 +135,22 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t">
+    <div class="count_mode vux-1px-t" v-if="!matterModifyClass">
       <span class="count_num">
         <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
       </span>
       <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
       <span class="count_btn" @click="submitOrder">提交</span>
+    </div>
+     <!-- 底部删除确认栏 -->
+    <div class="count_mode vux-1px-t delete_mode" v-else>
+      <div class='count_num all_checked' @click="checkAll">
+        <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
+        <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
+        全选
+      </div>
+      <div class='count_btn' @click="deleteCheckd">删除</div>
     </div>
   </div>
 </template>
@@ -201,6 +220,7 @@
         matterList: [], // 物料列表，用于计算金额、请求单价
         project: {}, // 项目
         entity: {}, // 经办主体
+        tmpItems : {},//选中的订单
       }
     },
     watch: {
@@ -275,13 +295,70 @@
         return url
       },
       // TODO 滑动删除
-      delClick(index, item, key) {
-        let arr = this.orderList[key];
-        arr.splice(index, 1);
-        if (!arr.length) {
-          delete this.orderList[key];
+      // delClick(index, item, key) {
+      //   let arr = this.orderList[key];
+      //   arr.splice(index, 1);
+      //   if (!arr.length) {
+      //     delete this.orderList[key];
+      //   }
+      //   this.$refs.order.delSelItem(item);
+      // },
+      // 滑动删除
+      delClick(index, sItem,key) {
+        let arr = this.selItems;
+        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        //若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
         }
-        this.$refs.order.delSelItem(item);
+        arr.push(sItem);
+      },
+      // TODO 判断是否展示选中图标
+      showSelIcon(sItem) {
+        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+      },
+      //全选
+      checkAll(){
+        if(this.selItems.length === this.matterList.length){
+          this.selItems = [];
+          return
+        }
+        this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      },
+      //删除选中的
+      deleteCheckd(){
+        this.$vux.confirm.show({
+          content: '确认删除?',
+          // 确定回调
+          onConfirm: () => {
+            let newArr = [];
+            let keys = Object.keys(this.orderList);
+            keys.forEach(item=>{
+              newArr = newArr.concat(this.orderList[item]);
+            })
+            this.selItems.forEach(SItem=>{
+              newArr.forEach(OItem=>{
+                if(OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode){
+                  let delArr = this.orderList[OItem.transCode];
+                  let delIndex = delArr.findIndex(item=>item.inventoryCode === OItem.inventoryCode);
+                  if(delIndex >= 0){
+                    this.$refs.order.delSelItem(delArr[delIndex]);
+                    delArr.splice(delIndex,1); 
+                  }
+                  if(!delArr.length){
+                    delete this.orderList[OItem.transCode];
+                  }
+
+                }
+
+              })
+            })
+            this.selItems = [];
+            this.matterModifyClass = false;
+          }
+        })
+
       },
       // TODO 新增更多订单
       addOrder() {

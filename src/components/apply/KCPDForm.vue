@@ -200,16 +200,12 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let arr1 = this.selItems,
-              arr2 = this.matterList;
-          for(var i=0;i<arr1.length;i++){
-            for(var j=0;j<arr2.length;j++){
-                if(arr2[j].inventoryCode==arr1[i].inventoryCode){
-                    arr2.splice(j,1);
-                    j--;
-                }
+          this.selItems.forEach(item=>{
+            let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
+            if(index >= 0){
+              this.matterList.splice(index,1);
             }
-          }
+          })
           this.selItems = [];
           this.matterModifyClass = false;
         }

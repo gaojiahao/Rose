@@ -51,7 +51,7 @@
                     <!-- 物料名称 -->
                     <div class="mater_name">
                       <span class="whiNum">No.{{index + 1}}</span>
-                      {{item.inventoryName || item.inventoryName_transObjCode}}
+                      {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
                     <div class="mater_info">
@@ -61,14 +61,14 @@
                         <div class="ForInline" style="display:inline-block">
                           <div class="mater_code">
                             <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode || item.transObjCode}}</span>
+                            <span class="num">{{item.inventoryCode}}</span>
                           </div>
                         </div>
                         <!-- 物料规格 -->
                         <div class="ForInline" style="display:inline-block">
                           <div class="mater_spec">
                             <span class="title">规格</span>
-                            <span class="num">{{item.specification || item.specification_transObjCode || '无'}}</span>
+                            <span class="num">{{item.specification || '无'}}</span>
                           </div>
                         </div>
                       </div>
@@ -76,14 +76,8 @@
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='mater_price'>
-                        <!-- <span class="symbol">￥</span>{{item.price}} -->
                         <span class='unit' v-if='item.measureUnit'>计量单位: {{item.measureUnit}}</span>
                       </div>
-                      <!-- <div class='mater_num'>
-                        <span class='handle' @click="subNum(item,index)" :class='{disabled: item.tdQty<=1}'>-</span>
-                        <input class='num' type='number' v-model.number='item.tdQty'/>
-                        <span class='handle plus' @click='plusNum(item,index)'>+</span>
-                      </div> -->
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
@@ -106,7 +100,6 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div> -->
           <div class="handle_part" v-if="matterList.length">
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
               @click="stopOrder" >终止提交</span>
@@ -129,7 +122,6 @@
         <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
         <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
       </span>
-      <!-- <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
     <!-- 底部删除确认栏 -->
@@ -289,16 +281,12 @@ export default {
         content: '确认删除?',
         // 确定回调
         onConfirm: () => {
-          let arr1 = this.selItems,
-              arr2 = this.matterList;
-          for(var i=0;i<arr1.length;i++){
-            for(var j=0;j<arr2.length;j++){
-                if(arr2[j].inventoryCode==arr1[i].inventoryCode){
-                    arr2.splice(j,1);
-                    j--;
-                }
-            }
-          }
+          this.selItems.forEach(item=>{
+              let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
+              if(index >= 0){
+                this.matterList.splice(index,1);
+              }
+            })
           this.selItems = [];
           this.matterModifyClass = false;
         }
@@ -349,13 +337,13 @@ export default {
               dataSet.push({
                 tdId : item.tdId || '',
                 // inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
-                transObjCode : item.inventoryCode || item.transObjCode, //物料编码
+                transObjCode : item.inventoryCode, //物料编码
                 assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
                 assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
                 tdQty : item.tdQty,     //数量
                 assistQty : item.assistQty || 0,        //辅计数量
                 thenQtyBal : item.thenQtyBal || 0,//余额
-                tdProcessing : item.processing || item.tdProcessing,//加工属性
+                tdProcessing : item.processing ,//加工属性
                 price : item.price, //单价
                 taxRate : item.taxRate || 0.16,              //税率
                 taxAmount : item.price*item.tdQty*0.16,           //税金
@@ -411,7 +399,16 @@ export default {
         this.biReferenceId = data.biReferenceId;
         let {formData} = data;
         formData.order.dataSet.map(item=>{
-          item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg();
+          item = {
+            ...item,
+            inventoryPic : item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            inventoryName: item.inventoryName_transObjCode,
+            inventoryCode: item.inventoryCode_transObjCode,
+            specification: item.specification_transObjCode,
+            processing: item.tdProcessing || '商品',
+            measureUnit: item.measureUnit_transObjCode,
+          }
+          this.matterList.push(item);
         })
           //基本信息
           this.formData = {
@@ -445,7 +442,6 @@ export default {
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
             biComment: formData.biComment //备注
           },
-          this.matterList = data.formData.order.dataSet;
           this.$loading.hide();
       })
     }
