@@ -151,6 +151,7 @@ export default {
         // if (!this.transCode) {
         //   this.$emit('input', false)
         // }
+        this.entity.dealerName = data.entityId;
         this.formData = {
           ...this.formData,
           ...data,
