@@ -1,19 +1,19 @@
 <template>
   <!-- 工作流 -->
-  <div class="work_flow mg_auto box_sd" @click="popupShow = true" :class="{hidden : simpleWL.length<=0}">
+  <div class="work_flow  " @click="popupShow = true" :class="{hidden : simpleWL.length<=0}">
     <!-- 右箭头 -->
     <x-icon class="r_arrow" type="ios-arrow-down" size="30"></x-icon>
     <!-- 表单状态 及 编码 -->
-    <div class="work_info">
+    <!-- <div class="work_info"> -->
       <!-- 状态 -->
-      <span class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</span>
+      <!-- <span class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</span> -->
       <!-- 编码 -->
-      <span class="work_code"
+      <!-- <span class="work_code"
             :class="workFlowInfo.coClass">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
-    </div>
+    </div> -->
     <!-- 简化版工作流 -->
     <div class="flow_list">
-      <div class="each_msg vux-1px-b"
+      <div class="each_msg"
            v-for="(item, index) in simpleWL"
            :key=index>
         <!-- 头像 -->
@@ -235,7 +235,7 @@
   // 简易版工作流
   .work_flow {
     position: relative;
-    padding: .06rem .08rem .2rem;
+    // padding: .06rem .08rem .2rem;
     // 右箭头
     .r_arrow {
       bottom: 0;
@@ -294,17 +294,26 @@
     }
     // 工作流信息
     .flow_list {
+      display: flex;
       margin-top: .1rem;
       position: relative;
+      justify-content: space-evenly;
       // 每一个明细
-      .each_msg {
+      .each_msg { 
         display: flex;
-        padding-bottom: .1rem;
+        color: #fff;
+        padding: .04rem .1rem;
+        align-items: center;
         margin-bottom: .1rem;
+        // padding-bottom: .1rem;
+        // background: #5077aa;
+        border-radius: .12rem;
+        background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
+        // box-shadow: 0 2px 5px #5077aa;
         // 用户头像
         .user_avatar {
-          width: .65rem;
-          height: .65rem;
+          width: .4rem;
+          height: .4rem;
           img {
             width: 100%;
             border-radius: .1rem;
@@ -312,7 +321,7 @@
         }
         // 操作信息
         .handle_info {
-          color: #111;
+          color: #fff;
           display: flex;
           font-size: .12rem;
           margin-left: .1rem;
@@ -324,7 +333,7 @@
           }
           // 操作名称
           .handle_name {
-            font-size: .18rem;
+            font-size: .12rem;
             font-weight: bold;
             span {
               display: inline-block;
@@ -353,7 +362,7 @@
             overflow: hidden;
             white-space: nowrap;
             font-size: .1rem;
-            color: #757575;
+            color: #fff;
             text-overflow: ellipsis;
           }
         }

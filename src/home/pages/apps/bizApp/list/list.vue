@@ -36,7 +36,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     let code  = businessMap[to.params.code];
-    to.meta.title = code.slice(-4) + '列表';
+    to.meta.title = code + '列表';
     next();
   },
   activated() {

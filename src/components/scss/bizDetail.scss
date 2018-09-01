@@ -51,7 +51,7 @@
 // 工作流
 .work_flow {
   position: relative;
-  padding: .06rem .08rem .2rem;
+  // padding: .06rem .08rem .2rem;
   // 右箭头
   .r_arrow {
     bottom: 0;
@@ -569,3 +569,40 @@
       }
     }
   }
+    // 表单基本信息
+    .work_info {
+      display: flex;
+      .work_status,
+      .work_code {
+        font-weight: bold;
+        font-size: .14rem;
+        padding: 0 .06rem;
+        display: inline-block;
+      }
+      // 表单状态
+      .work_status {
+        color: #fff;
+        background: #53d397;
+        border-top-left-radius: .12rem;
+      }
+      // 进行中
+      .doing_work {
+        background: #5077aa;
+      }
+      // 已失效
+      .invalid_work {
+        background: #c93d1b;
+      }
+      // 表单编码
+      .work_code {
+        display: inline-block;
+        background: #455d7a;
+        color: #fff;
+      }
+      // 进行中 编码 {
+      .doing_code {
+        color: #111;
+        background: #dbe2ef;
+      }
+
+    }

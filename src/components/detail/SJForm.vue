@@ -1,9 +1,18 @@
 <template>
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo'>
-      <!-- 工作流 -->
-      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                 :no-status="orderInfo.biStatus"></work-flow>
+      <div class="form_top vux-1px-b">
+        <div class="basic_info">
+          <div class="cp_info">
+            <p class="l_size_name vux-1px-b">{{orderInfo.dealerName_dealerDebit}}</p>
+            <p class="m_size_name">{{orderInfo.address_dealerDebit}}</p>
+            <p class="s_size_name">{{orderInfo.dealerDebitContactInformation}}</p>
+          </div>
+        </div>
+        <!-- 工作流 -->
+        <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                  :no-status="orderInfo.biStatus"></work-flow>
+      </div>
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
         <div class="user_info">
@@ -18,10 +27,10 @@
           </p>
         </div>
       </div>
-      <div class="trade_mode mg_auto box_sd">
+      <!-- <div class="trade_mode mg_auto box_sd">
         <p class="title">创建时间</p>
         <p class="mode group_mar_left">{{orderInfo.crtTime || '暂无'}}</p>
-      </div>
+      </div> -->
 
       <!-- 商机列表 -->
       <div class="materiel_list mg_auto box_sd">
@@ -30,20 +39,15 @@
           <div class="each_mater vux-1px-b">
             <div class="each_mater_wrapper">
               <div class="mater_main">
-                <!-- 商机名称 -->
-                <div class="mater_title">
-                  <!-- <span class="title">标题:</span> -->
-                  {{orderInfo.opportunityTitle || '无'}}
-                </div>
-                <div class='mater_other'>
-                  <!-- 商机内容 -->
-                  <div class='mater_reimb'>
-                    <div class="reason">
-                      <span class="title">商机内容: </span>
-                      <span class="content">{{orderInfo.comment || '无'}}</span>
-                    </div>
-                  </div>
-                </div>
+                <group label-width="1rem">
+                    <cell title='商机标题' align-items="flex-start"  :value='orderInfo.opportunityTitle'></cell>
+                    <cell title='当前所在阶段' :value='orderInfo.currentStage'></cell>
+                    <cell title='商机内容' align-items="flex-start" value-align="right" :value='orderInfo.comment || "无"'></cell>
+                    <cell title='销售人员' :value='orderInfo.salesPerson' v-if="orderInfo.salesPerson"></cell>
+                    <cell title='销售渠道' :value='orderInfo.salesChannels' v-if="orderInfo.salesChannels"></cell>
+                    <cell title='有效期至' :value='orderInfo.validUntil' v-if="orderInfo.validUntil"></cell>
+                    <cell title='创建时间' :value='orderInfo.crtTime'></cell>
+                </group>
               </div>
             </div>
           </div>
@@ -54,15 +58,9 @@
           </div>
         </div>
       </div>
-      <div class="materiel_list mg_auto box_sd">
+      <!-- <div class="materiel_list mg_auto box_sd">
         <div class="title">商机其他</div>
-        <group>
-            <cell title='当前所在阶段' :value='orderInfo.currentStage'></cell>
-            <cell title='销售人员' :value='orderInfo.salesPerson' v-if="orderInfo.salesPerson"></cell>
-            <cell title='销售渠道' :value='orderInfo.salesChannels' v-if="orderInfo.salesChannels"></cell>
-            <cell title='有效期至' :value='orderInfo.validUntil' v-if="orderInfo.validUntil"></cell>
-          </group>
-      </div>
+      </div> -->
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 @on-submit-success="submitSuccessCallback"></r-action>
@@ -126,6 +124,37 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .form_top {
+    width: 100%;
+    height: 2rem;
+    padding: 0 .1rem;
+    background: #fff;
+    box-sizing: border-box;
+    .cp_info {
+      color: #757575;
+      .l_size_name {
+        color: #111;
+        padding: .06rem 0;
+        font-size: .24rem;
+        font-weight: 400;
+      }
+      .m_size_name {
+        font-size: .18rem;
+      }
+      .s_size_name {
+        font-size: .16rem;
+      }
+      
+    }
+  }
+
+
+
+
+
+
+
+
   .xsbj-detail-container{
     /deep/ .weui-cells {
       margin-top: 0;
@@ -153,7 +182,8 @@ export default {
   }
   .materiel_list
     .mater_list
-      .each_mater
+      .each_mater {
+        padding: unset;
         .each_mater_wrapper
           .mater_main {
             width: 100%;
@@ -175,6 +205,8 @@ export default {
               margin-top: .04rem;
             }
           }
+      }
+        
   .materiel_list
     .mater_list
       .each_mater
