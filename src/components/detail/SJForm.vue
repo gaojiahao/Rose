@@ -3,6 +3,14 @@
     <div class="basicPart" v-if='orderInfo'>
       <div class="form_top vux-1px-b">
         <div class="basic_info">
+          <!-- 订单编码栏 -->
+          <div class="serial_bar vux-1px-b">
+            <div>
+              <span class="iconfont icon-dingdan1"></span>
+              <span class="l_size_name">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
+            </div>
+            <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
+          </div>
           <div class="cp_info">
             <p class="l_size_name vux-1px-b">{{orderInfo.dealerName_dealerDebit}}</p>
             <p class="m_size_name">{{orderInfo.address_dealerDebit}}</p>
@@ -10,8 +18,8 @@
           </div>
         </div>
         <!-- 工作流 -->
-        <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow>
+        <!-- <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                  :no-status="orderInfo.biStatus"></work-flow> -->
       </div>
       <!-- 用户地址和基本信息-->
       <div class="or_ads mg_auto box_sd">
@@ -124,37 +132,6 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-  .form_top {
-    width: 100%;
-    height: 2rem;
-    padding: 0 .1rem;
-    background: #fff;
-    box-sizing: border-box;
-    .cp_info {
-      color: #757575;
-      .l_size_name {
-        color: #111;
-        padding: .06rem 0;
-        font-size: .24rem;
-        font-weight: 400;
-      }
-      .m_size_name {
-        font-size: .18rem;
-      }
-      .s_size_name {
-        font-size: .16rem;
-      }
-      
-    }
-  }
-
-
-
-
-
-
-
-
   .xsbj-detail-container{
     /deep/ .weui-cells {
       margin-top: 0;

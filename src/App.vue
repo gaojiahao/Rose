@@ -96,7 +96,7 @@
     bottom: .49rem;
     overflow: hidden;
     position: absolute;
-    background: #fff;
+    background: #FFF;
     z-index: 10;
   }
   // 导航标签

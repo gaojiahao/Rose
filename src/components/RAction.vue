@@ -136,6 +136,9 @@
 </script>
 
 <style scoped lang="scss">
+  .handle_wrapper {
+    overflow: hidden;
+  }
   // 审批操作
   .handle_btn {
     display: flex;
@@ -145,6 +148,7 @@
     padding: 0 .2rem;
     line-height: .4rem;
     text-align: center;
+
     justify-content: center;
     box-sizing: border-box;
     span {

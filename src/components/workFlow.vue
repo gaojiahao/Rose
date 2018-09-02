@@ -1,19 +1,23 @@
 <template>
   <!-- 工作流 -->
   <div class="work_flow  " @click="popupShow = true" :class="{hidden : simpleWL.length<=0}">
-    <!-- 右箭头 -->
-    <x-icon class="r_arrow" type="ios-arrow-down" size="30"></x-icon>
-    <!-- 表单状态 及 编码 -->
-    <!-- <div class="work_info"> -->
-      <!-- 状态 -->
-      <!-- <span class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</span> -->
-      <!-- 编码 -->
-      <!-- <span class="work_code"
-            :class="workFlowInfo.coClass">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
-    </div> -->
+    <div class="work_title">
+      <div>
+        <span class="iconfont icon-chakangongzuoliu"></span>
+        <span class="content">工作流</span>
+      </div>
+      <div class="tips">查看更多</div>
+    </div>
     <!-- 简化版工作流 -->
     <div class="flow_list">
+      <div class="left_tabBar">
+        <span class="iconfont icon-gongzuoliuyiqueren"></span>
+        <div class="side_bar vux-1px-r"></div>
+        <span class="iconfont icon-gongzuoliushenpizhong" v-if="workFlowInfo.biStatus === '进行中'"></span>
+        <span class="iconfont icon-gongzuoliuyiqueren" v-if="workFlowInfo.biStatus === '已生效'"></span>
+      </div>
       <div class="each_msg"
+           :class="{'vux-1px-b' : index === 0}"
            v-for="(item, index) in simpleWL"
            :key=index>
         <!-- 头像 -->
@@ -216,34 +220,32 @@
 </script>
 
 <style lang='scss' scoped>
-  .vux-1px-b:after {
+  .vux-1px-b:after,
+  .vux-1px-r:after {
     border-color: #e8e8e8;
-  }
-
-  // 居中
-  .mg_auto {
-    width: 95%;
-    margin: 10px auto;
-  }
-
-  // 阴影
-  .box_sd {
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
   }
 
   // 简易版工作流
   .work_flow {
     position: relative;
-    // padding: .06rem .08rem .2rem;
-    // 右箭头
-    .r_arrow {
-      bottom: 0;
-      left: 50%;
-      fill: #d8d8d8;
-      stroke: #d8d8d8;
-      position: absolute;
-      transform: translate(-50%, 0);
+    background: #fff;
+    .work_title {
+      display: flex;
+      align-items: center;
+      padding: .04rem .1rem 0;
+      justify-content: space-between;
+      .iconfont {
+        font-size: .14rem;
+      }
+      .content {
+        font-size: .18rem;
+        font-weight: bold;
+      }
+      .tips {
+        color: #5077aa;
+        font-size: .14rem;
+        // font-weight: bold;
+      }
     }
     .hidden {
       display: none;
@@ -255,65 +257,43 @@
       color: #757575;
       padding: .04rem 0;
     }
-    // 表单基本信息
-    .work_info {
-      display: flex;
-      .work_status,
-      .work_code {
-        font-weight: bold;
-        font-size: .14rem;
-        padding: 0 .06rem;
-        display: inline-block;
-      }
-      // 表单状态
-      .work_status {
-        color: #fff;
-        background: #53d397;
-        border-top-left-radius: .12rem;
-      }
-      // 进行中
-      .doing_work {
-        background: #5077aa;
-      }
-      // 已失效
-      .invalid_work {
-        background: #c93d1b;
-      }
-      // 表单编码
-      .work_code {
-        display: inline-block;
-        background: #455d7a;
-        color: #fff;
-      }
-      // 进行中 编码 {
-      .doing_code {
-        color: #111;
-        background: #dbe2ef;
-      }
-
-    }
     // 工作流信息
     .flow_list {
-      display: flex;
-      margin-top: .1rem;
+      margin-bottom: .1rem;
+      padding: 0 .1rem 0 .4rem;
+      background: #fff;
       position: relative;
-      justify-content: space-evenly;
+      .left_tabBar {
+        display: flex;
+        position: absolute;
+        align-items: center;
+        flex-direction: column;
+        left: .1rem;
+        top: .22rem;
+      }
+      // 竖线
+      .side_bar {
+        height: .4rem;
+      }
+      // 工作流
+      .icon-gongzuoliuyiqueren {
+        color: #5077aa;
+        font-size: .16rem;
+      }
+      .icon-gongzuoliushenpizhong {
+        font-size: .16rem;
+      }
       // 每一个明细
       .each_msg { 
         display: flex;
-        color: #fff;
-        padding: .04rem .1rem;
+        color: #111;
+        padding: .05rem 0;
         align-items: center;
-        margin-bottom: .1rem;
-        // padding-bottom: .1rem;
-        // background: #5077aa;
         border-radius: .12rem;
-        background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
-        // box-shadow: 0 2px 5px #5077aa;
         // 用户头像
         .user_avatar {
-          width: .4rem;
-          height: .4rem;
+          width: .45rem;
+          height: .45rem;
           img {
             width: 100%;
             border-radius: .1rem;
@@ -321,31 +301,32 @@
         }
         // 操作信息
         .handle_info {
-          color: #fff;
+          color: #111;
           display: flex;
-          font-size: .12rem;
+          font-size: .1rem;
           margin-left: .1rem;
           flex-direction: column;
           justify-content: center;
           // 用户名称
           .user_name {
-            font-size: .14rem;
+            font-size: .12rem;
           }
           // 操作名称
           .handle_name {
+            // width: 1rem;
+            display: flex;
             font-size: .12rem;
             font-weight: bold;
-            span {
-              display: inline-block;
-            }
+            align-items: center;
+            justify-content: space-between;
             // 默认样式
             .status {
               color: #fff;
-              font-size: .1rem;
+              font-size: .1rem;              
               padding: 0 .04rem;
-              margin-top: -.02rem;
+              margin-left: .04rem;
               background: #5077aa;
-              vertical-align: middle;
+              border-radius: .12rem;
             }
             // 同意样式
             .agree_c {
@@ -360,9 +341,9 @@
           .remark {
             max-width: 2.6rem;
             overflow: hidden;
-            white-space: nowrap;
             font-size: .1rem;
-            color: #fff;
+            color: #454545;
+            white-space: nowrap;
             text-overflow: ellipsis;
           }
         }

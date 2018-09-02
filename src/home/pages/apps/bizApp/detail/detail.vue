@@ -120,5 +120,7 @@
     height: 100%;
     overflow: hidden;
   }
-
+  .pages {
+    background: #F4F4F4;
+  }   
 </style>

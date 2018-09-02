@@ -1,3 +1,4 @@
+
 .vux-1px-t:before,
 .vux-1px-b:after {
   border-bottom: 1px solid #e8e8e8;
@@ -48,42 +49,164 @@
   }
 }
 
-// 工作流
-.work_flow {
-  position: relative;
-  // padding: .06rem .08rem .2rem;
-  // 右箭头
-  .r_arrow {
-    bottom: 0;
-    left: 50%;
-    position: absolute;
-    transform: translate(-50%, 0);
-  }
-  .hidden {
-    display: none;
-  }
-  // 提示文字
-  .tip_tx {
-    width: 100%;
-    font-size: .1rem;
-    color: #757575;
-    padding: .04rem 0;
-  }
-  // 表单基本信息
-  .work_info {
+// // 工作流
+// .work_flow {
+//   position: relative;
+//   // padding: .06rem .08rem .2rem;
+//   // 右箭头
+//   .r_arrow {
+//     bottom: 0;
+//     left: 50%;
+//     position: absolute;
+//     transform: translate(-50%, 0);
+//   }
+//   .hidden {
+//     display: none;
+//   }
+//   // 提示文字
+//   .tip_tx {
+//     width: 100%;
+//     font-size: .1rem;
+//     color: #757575;
+//     padding: .04rem 0;
+//   }
+//   // 表单基本信息
+//   .work_info {
+//     display: flex;
+//     .work_status,
+//     .work_code {
+//       font-weight: bold;
+//       font-size: .14rem;
+//       padding: 0 .06rem;
+//       display: inline-block;
+//     }
+//     // 表单状态
+//     .work_status {
+//       color: #fff;
+//       background: #53d397;
+//       border-top-left-radius: .12rem;
+//     }
+//     // 进行中
+//     .doing_work {
+//       background: #5077aa;
+//     }
+//     // 已失效
+//     .invalid_work {
+//       background: #c93d1b;
+//     }
+//     // 表单编码
+//     .work_code {
+//       display: inline-block;
+//       background: #455d7a;
+//       color: #fff;
+//     }
+//     // 进行中 编码 {
+//     .doing_code {
+//       color: #111;
+//       background: #dbe2ef;
+//     }
+
+//   }
+//   // 工作流信息
+//   .flow_list {
+//     margin-top: .1rem;
+//     position: relative;
+//     // 每一个明细
+//     .each_msg {
+//       display: flex;
+//       padding-bottom: .1rem;
+//       margin-bottom: .1rem;
+//       // 用户头像
+//       .user_avatar {
+//         width: .65rem;
+//         height: .65rem;
+//         img {
+//           width: 100%;
+//         }
+//       }
+//       // 操作信息
+//       .handle_info {
+//         color: #111;
+//         display: flex;
+//         font-size: .12rem;
+//         margin-left: .1rem;
+//         flex-direction: column;
+//         justify-content: center;
+//         // 用户名称
+//         .user_name {
+//           font-size: .14rem;
+//         }
+//         // 操作名称
+//         .handle_name {
+//           font-size: .18rem;
+//           font-weight: bold;
+//           span {
+//             display: inline-block;
+//           }
+//           // 默认样式
+//           .status {
+//             color: #fff;
+//             font-size: .1rem;
+//             padding: 0 .04rem;
+//             margin-top: -.02rem;
+//             background: #5077aa;
+//             vertical-align: middle;
+//           }
+//           // 同意样式
+//           .agree_c {
+//             background: #53d397;
+//           }
+//           // 拒绝样式
+//           .reject_c {
+//             background: #c93d1b;
+//           }
+//         }
+//         // 备注
+//         .remark {
+//           font-size: .1rem;
+//           color: #757575;
+//         }
+//       }
+//     }
+//   }
+// }
+
+.l_size_name {
+  color: #111;
+  padding: .06rem 0;
+  font-size: .22rem;
+  font-weight: 400;
+}
+.m_size_name {
+  font-size: .18rem;
+}
+.s_size_name {
+  font-size: .14rem;
+}
+.bs_common {
+  width: 100%;
+  padding: 0 .1rem;
+  background: #fff;
+  margin-bottom: .1rem;
+  box-sizing: border-box;  
+}
+// 基本信息 （订单、经办主体等）
+.basic_info {
+  @extend .bs_common;
+  // 订单栏
+  .serial_bar {
     display: flex;
-    .work_status,
-    .work_code {
-      font-weight: bold;
-      font-size: .14rem;
-      padding: 0 .06rem;
-      display: inline-block;
-    }
+    padding: .04rem 0;
+    align-items: center;
+    justify-content: space-between;
     // 表单状态
     .work_status {
       color: #fff;
+      font-size: .12rem;
+      font-weight: bold;
+      padding: .01rem .04rem;
       background: #53d397;
-      border-top-left-radius: .12rem;
+      border-radius: .12rem;
     }
     // 进行中
     .doing_work {
@@ -91,84 +214,66 @@
     }
     // 已失效
     .invalid_work {
-      background: #c93d1b;
-    }
-    // 表单编码
-    .work_code {
-      display: inline-block;
-      background: #455d7a;
-      color: #fff;
-    }
-    // 进行中 编码 {
-    .doing_code {
-      color: #111;
-      background: #dbe2ef;
-    }
-
-  }
-  // 工作流信息
-  .flow_list {
-    margin-top: .1rem;
-    position: relative;
-    // 每一个明细
-    .each_msg {
-      display: flex;
-      padding-bottom: .1rem;
-      margin-bottom: .1rem;
-      // 用户头像
-      .user_avatar {
-        width: .65rem;
-        height: .65rem;
-        img {
-          width: 100%;
-        }
-      }
-      // 操作信息
-      .handle_info {
-        color: #111;
-        display: flex;
-        font-size: .12rem;
-        margin-left: .1rem;
-        flex-direction: column;
-        justify-content: center;
-        // 用户名称
-        .user_name {
-          font-size: .14rem;
-        }
-        // 操作名称
-        .handle_name {
-          font-size: .18rem;
-          font-weight: bold;
-          span {
-            display: inline-block;
-          }
-          // 默认样式
-          .status {
-            color: #fff;
-            font-size: .1rem;
-            padding: 0 .04rem;
-            margin-top: -.02rem;
-            background: #5077aa;
-            vertical-align: middle;
-          }
-          // 同意样式
-          .agree_c {
-            background: #53d397;
-          }
-          // 拒绝样式
-          .reject_c {
-            background: #c93d1b;
-          }
-        }
-        // 备注
-        .remark {
-          font-size: .1rem;
-          color: #757575;
-        }
-      }
+      background: #474a56;
     }
   }
+  // 经办主体
+  .handle_info {
+    padding: .06rem 0;
+    .each_handle {
+      margin: .04rem 0;
+    }
+    .title {
+      font-weight: bold;
+    }
+    .content {
+      color: #454545;
+      font-weight: 200;
+    }
+  }
+  // 创建时间
+  .crt_time {
+    @extend .handle_info;
+  }  
 }
+
+.contacts_part {
+  @extend .bs_common;
+  padding: .06rem .1rem 0;
+  .main_content {
+    position: relative;
+    padding: 0 .1rem .06rem .2rem;
+  }
+  .iconfont {
+    top: .02rem;
+    left: -.01rem;
+    position: absolute;
+  }
+  // 公司信息
+  .cp_name {
+    font-weight: bold;
+  }
+  // 其他信息
+  .other_info {
+    color: #454545;
+    font-weight: 200;
+  }
+  .other_content {
+    padding: .06rem 0;
+    .trade_info {
+      margin: .04rem 0;
+      .title {
+        font-weight: bold;
+      }
+      .mode {
+        color: #454545;
+        font-weight: 200;
+      }
+    }
+  }
+  // 结算、物流等基本交易信息
+}
+
 
 // 地址栏
 .or_ads {
@@ -517,92 +622,92 @@
   }
 
 }
-  //相关实例
-  .swiper-slide{
-    .big_title {
-      width: 95%;
-      color: #111;
-      margin: 0 auto;
-      padding: .04rem;
-      font-size: .3rem;
-      font-weight: 300;
-      box-sizing: border-box;
-    }
-    // 相关应用
-    .relevant_list {
-      width: 90%;
-      margin: 0 auto;
-      .each_app {
-        margin-bottom: .1rem;
-        position: relative;
-        border-radius: .08rem;
-        .app_info {
-          padding: .1rem;
-          box-sizing: border-box;
-          .title {
-            color: #4F90F9;
+//相关实例
+.swiper-slide{
+  .big_title {
+    width: 95%;
+    color: #111;
+    margin: 0 auto;
+    padding: .04rem;
+    font-size: .3rem;
+    font-weight: 300;
+    box-sizing: border-box;
+  }
+  // 相关应用
+  .relevant_list {
+    width: 90%;
+    margin: 0 auto;
+    .each_app {
+      margin-bottom: .1rem;
+      position: relative;
+      border-radius: .08rem;
+      .app_info {
+        padding: .1rem;
+        box-sizing: border-box;
+        .title {
+          color: #4F90F9;
+          font-size: .12rem;
+          font-weight: bold;
+        }
+        .app_name {
+          font-size: .18rem;
+          .msg_count {
+            float: right;
+            margin-right: .1rem;
+          }
+        }
+        .msg_num {
+          color: #3f72af;
+          font-size: .2rem;
+          .msg_tx {
+            // color: #757575;
             font-size: .12rem;
-            font-weight: bold;
           }
-          .app_name {
-            font-size: .18rem;
-            .msg_count {
-              float: right;
-              margin-right: .1rem;
-            }
-          }
-          .msg_num {
-            color: #3f72af;
-            font-size: .2rem;
-            .msg_tx {
-              // color: #757575;
-              font-size: .12rem;
-            }
-          }
-          .r_arrow {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translate(0, -50%);
-          }
+        }
+        .r_arrow {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translate(0, -50%);
         }
       }
     }
   }
-    // 表单基本信息
-    .work_info {
-      display: flex;
-      .work_status,
-      .work_code {
-        font-weight: bold;
-        font-size: .14rem;
-        padding: 0 .06rem;
-        display: inline-block;
-      }
-      // 表单状态
-      .work_status {
-        color: #fff;
-        background: #53d397;
-        border-top-left-radius: .12rem;
-      }
-      // 进行中
-      .doing_work {
-        background: #5077aa;
-      }
-      // 已失效
-      .invalid_work {
-        background: #c93d1b;
-      }
-      // 表单编码
-      .work_code {
-        display: inline-block;
-        background: #455d7a;
-        color: #fff;
-      }
-      // 进行中 编码 {
-      .doing_code {
-        color: #111;
-        background: #dbe2ef;
-      }
+}
+// 表单基本信息
+.work_info {
+  display: flex;
+  .work_status,
+  .work_code {
+    font-weight: bold;
+    font-size: .14rem;
+    padding: 0 .06rem;
+    display: inline-block;
+  }
+  // 表单状态
+  .work_status {
+    color: #fff;
+    background: #53d397;
+    border-top-left-radius: .12rem;
+  }
+  // 进行中
+  .doing_work {
+    background: #5077aa;
+  }
+  // 已失效
+  .invalid_work {
+    background: #c93d1b;
+  }
+  // 表单编码
+  .work_code {
+    display: inline-block;
+    background: #455d7a;
+    color: #fff;
+  }
+  // 进行中 编码 {
+  .doing_code {
+    color: #111;
+    background: #dbe2ef;
+  }
 
-    }
+}
