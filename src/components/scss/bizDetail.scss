@@ -247,6 +247,7 @@
   .iconfont {
     top: .02rem;
     left: -.01rem;
+    font-size: .16rem;
     position: absolute;
   }
   // 公司信息
@@ -329,11 +330,17 @@
 // 物料列表
 .materiel_list {
   position: relative;
+  background: #FFF;
   padding: .06rem .08rem;
   .title {
-    color: #757575;
+    color: #111;
+    font-weight: bold;
+    font-size: .18rem;
+  }
+  .icon-Shape {
+    font-size: .14rem;
     font-weight: 200;
-    font-size: .12rem;
+    margin-right: .02rem;
   }
   .tips {
     color: #111;
@@ -437,12 +444,13 @@
                 .title,
                 .num {
                   font-size: .1rem;
-                  display: inline-block;
                   padding: .01rem .04rem;
                 }
                 .title {
                   color: #fff;
                   background: #3f72af;
+                  border-top-left-radius: .12rem;
+                  border-bottom-left-radius: .12rem;
                 }
                 .num {
                   color: #111;
@@ -451,6 +459,8 @@
                   white-space: nowrap;
                   background: #dbe2ef;
                   text-overflow: ellipsis;
+                  border-top-right-radius: .12rem;
+                  border-bottom-right-radius: .12rem;
                 }
               }
               // 规格
@@ -541,11 +551,8 @@
                   font-size: .14rem;
                 }
                 .content {
-                  // right: 0;
                   font-size: .18rem;
                   color: #5077aa;
-                  // position: absolute;
-
                 }
               }
               // 报销事由
@@ -565,8 +572,11 @@
         }
       }
     }
-    // 合计
     .price_list {
+      
+    }
+    // 合计
+    .price_count {
       width: 100%;
       display: flex;
       margin-top: .1rem;
