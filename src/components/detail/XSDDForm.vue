@@ -41,30 +41,7 @@
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>              
               <!-- 往来联系部分 交易基本信息-->
-              <div class="contacts_part">
-                <div class="main_content vux-1px-b">
-                  <span class="iconfont icon-kehu"></span>
-                  <div class="cp_name m_size_name">{{orderInfo.order.dealerName_dealerDebit}}</div>
-                  <div class="other_info s_size_name">
-                    <span class="title">手机：</span>
-                    <span class="content">{{orderInfo.dealerDebitContactInformation || '暂无'}}</span>
-                  </div>
-                  <div class="other_info s_size_name">
-                    <span class="title">地址：</span>
-                    <span class="content">{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit || '暂无'}}</span>
-                  </div>
-                </div>
-                <div class="other_content">
-                  <div class="trade_info s_size_name">
-                    <span class="title">结算方式：</span>
-                    <span class="mode">{{orderInfo.order.drDealerPaymentTerm || '暂无'}}</span>
-                  </div>
-                  <div class="trade_info s_size_name">
-                    <span class="title">物流条款：</span>
-                    <span class="mode">{{orderInfo.drDealerLogisticsTerms || '暂无'}}</span>
-                  </div>              
-                </div>
-              </div>                
+              <contact-part :contact-info="contactInfo" ></contact-part>                
               <!-- 物料列表 -->
               <div class="materiel_list">
                 <div class="title">
@@ -125,21 +102,7 @@
                 </div>
               </div>
               <!-- 金额明细 -->
-              <div class="price_detail">
-                <div class="price_list">
-                  <div class='title'>金额</div>
-                  <div class="num"><span class="symbol">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
-                </div>
-                <div class="price_list">
-                  <div class='title'>税金</div>
-                  <div class="num"><span class="symbol">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
-                </div>
-                <!-- 金额合计栏 -->
-                <div class="price_count vux-1px-t">
-                  <span class='title'>合计：</span>
-                  <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
-                </div>
-              </div>              
+              <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>     
               <!-- 审批操作 -->
               <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
             </div>
@@ -181,6 +144,8 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import contactPart from 'components/detail/commonPart/ContactPart'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
@@ -188,11 +153,12 @@ export default {
     return{
       count : 0,          // 金额合计
       orderInfo: {},      // 表单内容
-      formViewUniqueId : ''
+      formViewUniqueId : '',
+      contactInfo: {}, // 客户、付款方式、物流条款的值
     }
   },
   components:{
-    workFlow, RAction,PopRelatedList
+    workFlow, RAction,PopRelatedList,contactPart,PriceTotal
   },
   mixins: [common],
   methods:{
@@ -224,15 +190,37 @@ export default {
         // 获取合计
         let { dataSet } = data.formData.order;
         for(let val of dataSet){
+          val.noTaxAmount = accMul(val.price,val.tdQty);
+          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
+          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
           this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
         this.orderInfo = data.formData;
+        this.getcontactInfo()
         this.workFlowInfoHandler();
       })
-    }
+    },
+    // TODO 生成contactInfo对象
+    getcontactInfo(key = 'order') {
+      let orderInfo = this.orderInfo;
+      let order = orderInfo[key];
+      this.contactInfo = {
+        creatorName: order.dealerDebitContactPersonName, // 客户名
+        dealerName: order.dealerName_dealerDebit, // 公司名
+        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerCode: order.dealerDebit, // 客户编码
+        dealerLabelName: order.drDealerLabel, // 关系标签
+        province: order.province_dealerDebit, // 省份
+        city: order.city_dealerDebit, // 城市
+        county: order.county_dealerDebit, // 地区
+        address: order.address_dealerDebit, // 详细地址
+        payment: order.drDealerPaymentTerm, // 付款方式,
+        logistics : orderInfo.drDealerLogisticsTerms, //物料方式
+      };
+    },
   }
 }
 </script>
