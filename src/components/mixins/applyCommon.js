@@ -1,4 +1,4 @@
-import {commitTask, getBaseInfoData, getProcess,} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess,submitAndCalc} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'

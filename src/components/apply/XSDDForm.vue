@@ -145,7 +145,7 @@
 import {Popup, Swipeout, SwipeoutItem, SwipeoutButton, TransferDom} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
@@ -395,12 +395,17 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
                 }),
                 wfPara: JSON.stringify(wfPara)
               }
+              if(this.processCode.length){
+                submitData.wfPara = JSON.stringify(wfPara);
+                this.saveData(saveAndStartWf, submitData);
+                return
+              }
               if (this.isResubmit) {
                 submitData.biReferenceId = this.biReferenceId;
                 this.saveData(saveAndCommitTask, submitData);
                 return
               }
-              this.saveData(saveAndStartWf, submitData);
+              this.saveData(submitAndCalc, submitData);
             }
           })
         }
