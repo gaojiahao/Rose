@@ -1,11 +1,16 @@
 import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from 'service/detailService.js'
 import {numberComma} from 'vux'
-import {toFixed} from '@/plugins/calc'
+import BasicInfo from 'components/detail/BasicInfo'
 // 映射表 引入
 import businessMap from '@/msg/pages/maps/businessApp'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {toFixed} from '@/plugins/calc'
+
 export default {
+  components: {
+    BasicInfo,
+  },
   data() {
     return {
       transCode: '',

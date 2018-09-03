@@ -10,15 +10,13 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
+            <!-- 经办信息 （订单、主体等） -->
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">创建时间</p>
-              <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
-            </div>
             <!-- 物料列表 -->
-            <div class="materiel_list mg_auto box_sd">
+            <div class="materiel_list">
               <div class="title">物料列表</div>
               <div class="mater_list">
                 <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
@@ -65,10 +63,7 @@
                   </div>
                 </div>
                 <!-- 金额合计栏 -->
-                <div class="price_list">
-                  <div class='title'>合计</div>
-                  <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
-                </div>
+                <price-total :count="count" noAmt noTaxAmt></price-total>
               </div>
             </div>
             <!-- 审批操作 -->
@@ -91,11 +86,11 @@
                   </div>
                   <div class="r_arrow" v-if='item.itemCount>0'>
                     <x-icon type="ios-arrow-right" size="20" ></x-icon>
-                  </div>                    
+                  </div>
                 </div>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>
@@ -113,6 +108,7 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import PriceTotal from 'components/detail/PriceTotal'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
@@ -124,7 +120,7 @@ export default {
     }
   },
   components: {
-    workFlow, RAction,PopRelatedList
+    workFlow, RAction, PopRelatedList, PriceTotal,
   },
   mixins: [common],
   methods: {

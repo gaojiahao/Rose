@@ -10,30 +10,15 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
+            <!-- 经办信息 （订单、主体等） -->
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <!-- 用户地址和基本信息-->
-            <div class="or_ads mg_auto box_sd">
-              <div class="user_info">
-                <span class="user_name">{{orderInfo.order.dealerName_dealerDebit}}</span>
-              </div>
-              <div class="cp_info">
-                <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
-                <p class="cp_ads">{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit}}</p>
-              </div>
-            </div>
-            <!-- 结算方式 -->
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">结算方式</p>
-              <p class="mode">{{orderInfo.order.drDealerPaymentTerm || '无'}}</p>
-            </div>
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">创建时间</p>
-              <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
-            </div>
+            <!-- 往来联系部分 交易基本信息-->
+            <contract-part :contract-info="contractInfo" :logistics="false"></contract-part>
             <!-- 物料列表 -->
-            <div class="materiel_list mg_auto box_sd">
+            <div class="materiel_list">
               <div class="title">物料列表</div>
               <div class="mater_list">
                 <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
@@ -85,11 +70,23 @@
                     </div>
                   </div>
                 </div>
-                <!-- 金额合计栏 -->
-                <div class="price_list">
-                  <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-                  <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
+                <!-- 金额明细 -->
+                <div class="price_detail">
+                  <div class="price_list">
+                    <div class='title'>金额</div>
+                    <div class="num"><span class="symbol">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
+                  </div>
+                  <div class="price_list">
+                    <div class='title'>税金</div>
+                    <div class="num"><span class="symbol">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
+                  </div>
+                  <!-- 金额合计栏 -->
+                  <div class="price_count vux-1px-t">
+                    <span class='title'>合计：</span>
+                    <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
+                  </div>
                 </div>
+                <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
               </div>
             </div>
             <!-- 审批操作 -->
@@ -134,6 +131,8 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import ContractPart from 'components/detail/ContractPart'
+import PriceTotal from 'components/detail/PriceTotal'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
@@ -141,11 +140,12 @@ export default {
     return {
       count: 0,          // 金额合计
       orderInfo: {},      // 表单内容
-      formViewUniqueId: ''
+      formViewUniqueId: '',
+      contractInfo: {}, // 客户、付款方式、物流条款的值
     }
   },
   components: {
-    workFlow, RAction,PopRelatedList
+    workFlow, RAction, PopRelatedList, ContractPart, PriceTotal,
   },
   mixins: [common],
   methods: {
@@ -183,9 +183,26 @@ export default {
             : this.getDefaultImg();
         }
         this.orderInfo = data.formData;
+        this.getContractInfo();
         this.workFlowInfoHandler();
       })
-
+    },
+    // TODO 生成contractInfo对象
+    getContractInfo(key = 'order') {
+      let orderInfo = this.orderInfo;
+      let order = orderInfo[key];
+      this.contractInfo = {
+        creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
+        dealerName: order.dealerName_dealerDebit, // 公司名
+        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerCode: order.dealerDebit, // 客户编码
+        dealerLabelName: order.drDealerLabel, // 关系标签
+        province: order.province_dealerDebit, // 省份
+        city: order.city_dealerDebit, // 城市
+        county: order.county_dealerDebit, // 地区
+        address: order.address_dealerDebit, // 详细地址
+        payment: order.drDealerPaymentTerm, // 付款方式
+      };
     },
   },
   created() {
