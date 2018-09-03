@@ -11,8 +11,9 @@ let errorHandler = (e) => {
 // TODO 消息代办列表
 export let getMsgList = (data = {}) => {
     return $axios.ajax({
-        url: '/H_roleplay-si/ds/getMyAgenda',
-        data
+        // url: '/H_roleplay-si/ds/getMyAgenda',
+        url:'/H_roleplay-si/ds/getTasksListData?entityId=20000&para1='
+        // data
     }).catch(e => {
         return errorHandler(e);
     });

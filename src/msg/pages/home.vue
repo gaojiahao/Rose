@@ -90,15 +90,25 @@ export default {
             ? `/dist/${item.icon}`
             : this.getDefaultImg();
           // 只针对已经移动化的应用做消息的显示
-          if(businessMap[item.processName]){
-            if (!this.listData[item.processName]) {
+          let key = item.businessKey.split('_')[0];
+          if(businessMap[key]){
+            if (!this.listData[businessMap[key]]) {
               // 以 <应用名称> 进行分类
-              this.$set(this.listData, item.processName, [item])
+              this.$set(this.listData, businessMap[key], [item])
             }
             else{
-              this.listData[item.processName].push(item);
+              this.listData[businessMap[key]].push(item);
             }
           }
+          // if(businessMap[item.processName]){
+          //   if (!this.listData[item.processName]) {
+          //     // 以 <应用名称> 进行分类
+          //     this.$set(this.listData, item.processName, [item])
+          //   }
+          //   else{
+          //     this.listData[item.processName].push(item);
+          //   }
+          // }
         })
         this.$nextTick(()=>{
           this.scroll = new BScroll(this.$refs.bScroll, {
@@ -109,10 +119,11 @@ export default {
     },
     // 前往应用消息列表
     goMsglist(item){
+      let key =  item.businessKey.split('_')[0];
        this.$router.push({
           path :`/notice/msglist/${item.taskId}`,
           query : {
-            name : item.processName
+            name : businessMap[key]
           }
         })
     }
