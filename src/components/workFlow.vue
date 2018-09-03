@@ -1,6 +1,6 @@
 <template>
   <!-- 工作流 -->
-  <div class="work_flow  " @click="popupShow = true" :class="{hidden : simpleWL.length<=0}">
+  <div class="work_flow" @click="popupShow = true" :class="{hidden : simpleWL.length<=0}" v-if="simpleWL.length">
     <div class="work_title">
       <div>
         <span class="iconfont icon-chakangongzuoliu"></span>
@@ -211,7 +211,7 @@
           app.icon = url;
         }
         return url;
-      }    
+      }
     },
     created() {
       this.workFlowHandler();
@@ -284,7 +284,7 @@
         font-size: .16rem;
       }
       // 每一个明细
-      .each_msg { 
+      .each_msg {
         display: flex;
         color: #111;
         padding: .05rem 0;
@@ -320,7 +320,7 @@
             // 默认样式
             .status {
               color: #fff;
-              font-size: .1rem;              
+              font-size: .1rem;
               padding: 0 .04rem;
               margin-left: .04rem;
               background: #5077aa;
