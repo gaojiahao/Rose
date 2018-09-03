@@ -71,21 +71,6 @@
                   </div>
                 </div>
                 <!-- 金额明细 -->
-                <div class="price_detail">
-                  <div class="price_list">
-                    <div class='title'>金额</div>
-                    <div class="num"><span class="symbol">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
-                  </div>
-                  <div class="price_list">
-                    <div class='title'>税金</div>
-                    <div class="num"><span class="symbol">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
-                  </div>
-                  <!-- 金额合计栏 -->
-                  <div class="price_count vux-1px-t">
-                    <span class='title'>合计：</span>
-                    <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
-                  </div>
-                </div>
                 <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
               </div>
             </div>
@@ -131,8 +116,8 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
-import ContractPart from 'components/detail/ContractPart'
-import PriceTotal from 'components/detail/PriceTotal'
+import ContractPart from 'components/detail/commonPart/ContactPart'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {

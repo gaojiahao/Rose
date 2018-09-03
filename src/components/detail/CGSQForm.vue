@@ -108,7 +108,7 @@ import common from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
-import PriceTotal from 'components/detail/PriceTotal'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {

@@ -10,66 +10,14 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
+            
             <!-- 经办信息 （订单、主体等） -->
-            <div class="basic_info">
-              <!-- 订单编码栏 -->
-              <div class="serial_bar vux-1px-b">
-                <div>
-                  <span class="iconfont icon-dingdan1"></span>
-                  <span class="l_size_name">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
-                </div>
-                <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
-              </div>
-              <!-- 经办信息 -->
-              <div class="handle_info vux-1px-b">
-                <div class="each_handle s_size_name">
-                  <span class="title">经办人：</span>
-                  <span class="content">{{orderInfo.handlerName}}</span>
-                </div>
-                <div class="each_handle s_size_name">
-                  <span class="title">经办主体：</span>
-                  <span class="content">{{orderInfo.handlerEntityName}}</span>
-                </div>
-              </div>
-              <!-- 创建时间 -->
-              <div class="crt_time s_size_name">
-                <span class="title">创建时间：</span>
-                <span class="content">{{orderInfo.crtTime}}</span>
-              </div>
-            </div>            
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>   
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
             <!-- 往来联系部分 交易基本信息-->
-            <div class="contacts_part">
-              <div class="main_content vux-1px-b">
-                <span class="iconfont icon-kehu"></span>
-                <div class="cp_name m_size_name">{{orderInfo.order.dealerName_dealerDebit}}</div>
-                <div class="other_info s_size_name">
-                  <span class="title">手机：</span>
-                  <span class="content">{{orderInfo.dealerDebitContactInformation || '暂无'}}</span>
-                </div>
-                <div class="other_info s_size_name">
-                  <span class="title">地址：</span>
-                  <span class="content" v-if="orderInfo.order.province_dealerDebit">{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit}}</span>
-                  <span class="content" v-else>{{orderInfo.order.province_dealerDebit}}{{orderInfo.order.city_dealerDebit}}{{orderInfo.order.county_dealerDebit}}{{orderInfo.order.address_dealerDebit || '暂无'}}</span>
-                </div>
-              </div>
-              <div class="other_content">
-                <div class="trade_info s_size_name">
-                  <span class="title">结算方式：</span>
-                  <span class="mode">{{orderInfo.order.drDealerPaymentTerm || '暂无'}}</span>
-                </div>
-                <div class="trade_info s_size_name">
-                  <span class="title">物流条款：</span>
-                  <span class="mode">{{orderInfo.drDealerLogisticsTerms || '暂无'}}</span>
-                </div>  
-                 <div class="trade_info s_size_name">
-                  <span class="title">有效期至：</span>
-                  <span class="mode">{{orderInfo.validUntil || '暂无'}}</span>
-                </div>            
-              </div>
-            </div>   
+            <contract-part :contract-info="contractInfo" :validUntil="true"></contract-part>
             <!-- 物料列表 -->
             <div class="materiel_list">
               <div class="title">
@@ -162,17 +110,19 @@ import detailCommon from 'components/mixins/detailCommon'
 import workFlow from 'components/workFlow'
 import RAction from 'components/RAction'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import ContractPart from 'components/detail/commonPart/ContactPart'
 export default {
   data() {
     return {
       orderInfo: {},      // 表单内容
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
       dealerInfo: {},
+      contractInfo: {}, // 客户、付款方式、物流条款的值
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,PopRelatedList
+    workFlow, RAction,PopRelatedList,ContractPart
   },
   methods: {
     //选择默认图片
@@ -208,21 +158,42 @@ export default {
             : this.getDefaultImg();
         }
         // 客户信息
-        this.dealerInfo = {
-          creatorName: formData.dealerDebitContactPersonName || '', // 客户名
-          dealerName: order.dealerName_dealerDebit || '', // 公司名
-          dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
-          dealerCode: order.dealerDebit || '', // 客户编码
-          dealerLabelName: order.drDealerLabel || '客户', // 关系标签
-          province: order.province_dealerDebit || '', // 省份
-          city: order.city_dealerDebit || '', // 城市
-          county: order.county_dealerDebit || '', // 地区
-          address: order.address_dealerDebit || '', // 详细地址
-        };
+        // this.dealerInfo = {
+        //   creatorName: formData.dealerDebitContactPersonName || '', // 客户名
+        //   dealerName: order.dealerName_dealerDebit || '', // 公司名
+        //   dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+        //   dealerCode: order.dealerDebit || '', // 客户编码
+        //   dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+        //   province: order.province_dealerDebit || '', // 省份
+        //   city: order.city_dealerDebit || '', // 城市
+        //   county: order.county_dealerDebit || '', // 地区
+        //   address: order.address_dealerDebit || '', // 详细地址
+        // };
         formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = formData;
+        this.getContractInfo();
         this.workFlowInfoHandler();
       })
+    },
+    // TODO 生成contractInfo对象
+    getContractInfo(key = 'order') {
+      let orderInfo = this.orderInfo;
+      let order = orderInfo[key];
+      this.contractInfo = {
+        creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
+        dealerName: order.dealerName_dealerDebit, // 公司名
+        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerCode: order.dealerDebit, // 客户编码
+        dealerLabelName: order.drDealerLabel, // 关系标签
+        province: order.province_dealerDebit, // 省份
+        city: order.city_dealerDebit, // 城市
+        county: order.county_dealerDebit, // 地区
+        address: order.address_dealerDebit, // 详细地址
+        payment: order.drDealerPaymentTerm, // 付款方式
+        validUntil : order.validUntil, //有效期
+        logistics : order.drDealerLogisticsTerms,//物流条件
+
+      };
     },
   }
 }

@@ -1,6 +1,6 @@
 import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from 'service/detailService.js'
 import {numberComma} from 'vux'
-import BasicInfo from 'components/detail/BasicInfo'
+import BasicInfo from 'components/detail/commonPart/BasicInfo'
 // 映射表 引入
 import businessMap from '@/msg/pages/maps/businessApp'
 //公共方法引入

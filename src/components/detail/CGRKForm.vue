@@ -11,32 +11,7 @@
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
             <!-- 经办信息 （订单、主体等） -->
-            <div class="basic_info">
-              <!-- 订单编码栏 -->
-              <div class="serial_bar vux-1px-b">
-                <div>
-                  <span class="iconfont icon-dingdan1"></span>
-                  <span class="l_size_name">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
-                </div>
-                <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
-              </div>
-              <!-- 经办信息 -->
-              <div class="handle_info vux-1px-b">
-                <div class="each_handle s_size_name">
-                  <span class="title">经办人：</span>
-                  <span class="content">{{orderInfo.handlerName}}</span>
-                </div>
-                <div class="each_handle s_size_name">
-                  <span class="title">经办主体：</span>
-                  <span class="content">{{orderInfo.handlerEntityName || "暂无"}}</span>
-                </div>
-              </div>
-              <!-- 创建时间 -->
-              <div class="crt_time s_size_name">
-                <span class="title">创建时间：</span>
-                <span class="content">{{orderInfo.crtTime}}</span>
-              </div>
-            </div>
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
@@ -136,21 +111,7 @@
               </div>
             </div>
             <!-- 金额明细 -->
-            <div class="price_detail">
-                <div class="price_list">
-                  <div class='title'>金额</div>
-                  <div class="num"><span class="symbol">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
-                </div>
-                <div class="price_list">
-                  <div class='title'>税金</div>
-                  <div class="num"><span class="symbol">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
-                </div>
-                <!-- 金额合计栏 -->
-                <div class="price_count vux-1px-t">
-                  <span class='title'>合计：</span>
-                  <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
-                </div>
-              </div>  
+            <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
             <!-- 审批操作 -->
             <r-action :code="transCode" :task-id="taskId" :actions="actions"
               @on-submit-success="submitSuccessCallback"></r-action>
@@ -194,6 +155,7 @@ import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
@@ -226,7 +188,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,PopRelatedList
+    workFlow, RAction, PopWarehouseList,PopRelatedList,PriceTotal
   },
   methods: {
     //选择默认图片

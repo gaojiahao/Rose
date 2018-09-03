@@ -23,6 +23,10 @@
         <span class="title">物流条款：</span>
         <span class="mode">{{contractInfo.logistics || '暂无'}}</span>
       </div>
+      <div class="trade_info s_size_name" v-if="validUntil">
+        <span class="title">有效期至：</span>
+        <span class="mode">{{contractInfo.validUntil || '暂无'}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -46,6 +50,12 @@
       logistics: {
         type: Boolean,
         default: true
+      },
+      //是否展示有限期
+      validUntil : {
+        type : Boolean,
+        default : false
+
       }
     },
     data() {
