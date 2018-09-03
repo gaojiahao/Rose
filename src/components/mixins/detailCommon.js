@@ -3,6 +3,8 @@ import {numberComma} from 'vux'
 import {toFixed} from '@/plugins/calc'
 // 映射表 引入
 import businessMap from '@/msg/pages/maps/businessApp'
+//公共方法引入
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
@@ -27,6 +29,24 @@ export default {
       filtersData : [],
       showPop : false,
     }
+  },
+  computed:{
+    // 合计金额
+    noTaxAmount() {
+      let total = 0;
+      this.orderInfo.order.dataSet.forEach(item => {
+        total = accAdd(total, item.noTaxAmount);
+      });
+      return total;
+    },
+    // 税金
+    taxAmount() {
+      let total = 0;
+      this.orderInfo.order.dataSet.forEach(item => {
+        total = accAdd(total, item.taxAmount);
+      });
+      return total;
+    },
   },
   filters: {
     numberComma,

@@ -573,7 +573,16 @@
       }
     }
     .price_list {
-      
+      display: flex;
+      justify-content: space-between;
+      margin : 0.04rem 0;
+      .title{
+        font-weight: normal;
+        font-size: 0.16rem;
+      }
+      .num{
+        color: #5077aa;
+      }
     }
     // 合计
     .price_count {

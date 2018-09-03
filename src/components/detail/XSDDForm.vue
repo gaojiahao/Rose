@@ -123,7 +123,12 @@
                   <!-- 金额明细 -->
                   <div class="price_detail">
                     <div class="price_list">
-                      
+                      <div class='title'>金额<span style="fontSize:.12rem;"></span></div>
+                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
+                    </div>
+                    <div class="price_list">
+                      <div class='title'>税金<span style="fontSize:.12rem;"></span></div>
+                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
                     </div>
                     <!-- 金额合计栏 -->
                     <div class="price_count">
