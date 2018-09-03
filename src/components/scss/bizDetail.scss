@@ -120,13 +120,18 @@
   .main_content {
     position: relative;
     padding: 0 .1rem .06rem .2rem;
+    .iconfont {
+      top: .02rem;
+      left: -.01rem;
+      font-size: .16rem;
+      position: absolute;
+    }  
   }
-  .iconfont {
-    top: .02rem;
-    left: -.01rem;
-    font-size: .16rem;
-    position: absolute;
+  .warehouse_content {
+    @extend .main_content;
+    padding: .04rem .1rem .06rem .2rem;
   }
+
   // 公司信息
   .cp_name {
     font-weight: bold;
