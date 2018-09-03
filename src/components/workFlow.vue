@@ -13,8 +13,10 @@
       <div class="left_tabBar">
         <span class="iconfont icon-gongzuoliuyiqueren"></span>
         <div class="side_bar vux-1px-r"></div>
-        <span class="iconfont icon-gongzuoliushenpizhong" v-if="workFlowInfo.biStatus === '进行中'"></span>
-        <span class="iconfont icon-gongzuoliuyiqueren" v-if="workFlowInfo.biStatus === '已生效'"></span>
+        <span class="iconfont"
+             :class="[{'icon-gongzuoliushenpizhong' : workFlowInfo.biStatus === '进行中' },
+             {'icon-gongzuoliuyiqueren' : workFlowInfo.biStatus === '已生效' },
+             {'icon-gongzuoliuyibohui' : workFlowInfo.biStatus === '已失效' }]"></span>
       </div>
       <div class="each_msg"
            :class="{'vux-1px-b' : index === 0}"
