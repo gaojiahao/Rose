@@ -17,9 +17,12 @@
                       :no-status="orderInfo.biStatus"></work-flow>
             <!-- 物料列表 -->
             <div class="materiel_list">
-              <div class="title">物料列表</div>
+              <div class="title">
+                <span class="iconfont icon-Shape"></span>物料列表
+              </div>
               <div class="mater_list">
-                <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+                <div class="each_mater" :class="{'vux-1px-b' : index !==  orderInfo.order.dataSet.length - 1}"
+                     v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
                   <div class="each_mater_wrapper">
                     <div class="mater_img">
                       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -62,10 +65,10 @@
                     </div>
                   </div>
                 </div>
-                <!-- 金额合计栏 -->
-                <price-total :count="count" noAmt noTaxAmt></price-total>
               </div>
             </div>
+            <!-- 金额合计栏 -->
+            <price-total :count="count" noAmt noTaxAmt></price-total>
             <!-- 审批操作 -->
             <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
           </div>
