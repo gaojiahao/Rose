@@ -22,26 +22,31 @@
            :class="{'vux-1px-b' : index === 0}"
            v-for="(item, index) in simpleWL"
            :key=index>
-        <!-- 头像 -->
-        <div class="user_avatar">
-          <img :src='item.photoUrl || defaulImg ' @error="getDefaultIcon(item)" alt="avatar">
+        <div class="main_content">
+          <!-- 头像 -->
+          <div class="user_avatar">
+            <img :src='item.photoUrl || defaulImg ' @error="getDefaultIcon(item)" alt="avatar">
+          </div>
+          <!-- 操作信息 -->
+          <div class="handle_info">
+            <div class="handle_name">
+              <!-- 操作动作 -->
+              <span>{{item.nodeName}}</span>
+              <!-- 操作状态 A(没有返回状态) -->
+              <span class="status" v-if="!item.status">{{workFlowInfo.biStatus}}</span>
+              <!-- 操作状态 B(有返回状态) -->
+              <span class="status" :class=item.dyClass v-else-if="item.status">{{item.status}}</span>
+            </div>
+            <!-- 流程节点 用户名 -->
+            <div class="user_name">
+              {{item.userName}}
+            </div>
+            <!-- 备注 -->
+            <div class="remark">备注: {{item.message || '无'}}</div>
+          </div>
         </div>
-        <!-- 操作信息 -->
-        <div class="handle_info">
-          <div class="handle_name">
-            <!-- 操作动作 -->
-            <span>{{item.nodeName}}</span>
-            <!-- 操作状态 A(没有返回状态) -->
-            <span class="status" v-if="!item.status">{{workFlowInfo.biStatus}}</span>
-            <!-- 操作状态 B(有返回状态) -->
-            <span class="status" :class=item.dyClass v-else-if="item.status">{{item.status}}</span>
-          </div>
-          <!-- 流程节点 用户名 -->
-          <div class="user_name">
-            {{item.userName}}
-          </div>
-          <!-- 备注 -->
-          <div class="remark">备注: {{item.message || '无'}}</div>
+        <div class="tips_content" v-if="index === simpleWL.length - 1">
+          最新节点状态
         </div>
       </div>
     </div>
@@ -222,8 +227,7 @@
 </script>
 
 <style lang='scss' scoped>
-  .vux-1px-b:after,
-  .vux-1px-r:after {
+  .vux-1px-b:after {
     border-color: #e8e8e8;
   }
 
@@ -292,12 +296,25 @@
         padding: .05rem 0;
         align-items: center;
         border-radius: .12rem;
+        justify-content: space-between;
+        .main_content {
+          display: flex;
+          align-items: center;
+        }
+        .tips_content {
+          font-size: .1rem;
+          color: #454545;
+          background: #e8e8e8;
+          border-radius: .12rem;
+          padding: 0 .04rem;
+        }
         // 用户头像
         .user_avatar {
           width: .45rem;
           height: .45rem;
           img {
             width: 100%;
+            height: 100%;
             border-radius: .1rem;
           }
         }
@@ -334,7 +351,7 @@
             }
             // 拒绝样式
             .reject_c {
-              background: #c93d1b;
+              background: #474a56;
             }
           }
           // 备注
