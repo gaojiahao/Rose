@@ -3,29 +3,29 @@
   <div class="contacts_part">
     <div class="main_content vux-1px-b">
       <span class="iconfont icon-kehu"></span>
-      <div class="cp_name m_size_name">{{contractInfo.dealerName}}</div>
+      <div class="cp_name m_size_name">{{contactInfo.dealerName}}</div>
       <div class="other_info s_size_name">
         <span class="title">手机：</span>
-        <span class="content">{{contractInfo.dealerMobilePhone || '暂无'}}</span>
+        <span class="content">{{contactInfo.dealerMobilePhone || '暂无'}}</span>
       </div>
       <div class="other_info s_size_name">
         <span class="title">地址：</span>
         <span class="content" v-if="noAddress">暂无</span>
-        <span class="content" v-else>{{contractInfo.province}}{{contractInfo.city}}{{contractInfo.county}}{{contractInfo.address}}</span>
+        <span class="content" v-else>{{contactInfo.province}}{{contactInfo.city}}{{contactInfo.county}}{{contactInfo.address}}</span>
       </div>
     </div>
     <div class="other_content">
       <div class="trade_info s_size_name" v-if="payment">
         <span class="title">结算方式：</span>
-        <span class="mode">{{contractInfo.payment || '暂无'}}</span>
+        <span class="mode">{{contactInfo.payment || '暂无'}}</span>
       </div>
       <div class="trade_info s_size_name" v-if="logistics">
         <span class="title">物流条款：</span>
-        <span class="mode">{{contractInfo.logistics || '暂无'}}</span>
+        <span class="mode">{{contactInfo.logistics || '暂无'}}</span>
       </div>
       <div class="trade_info s_size_name" v-if="validUntil">
         <span class="title">有效期至：</span>
-        <span class="mode">{{contractInfo.validUntil || '暂无'}}</span>
+        <span class="mode">{{contactInfo.validUntil || '暂无'}}</span>
       </div>
     </div>
   </div>
@@ -33,9 +33,9 @@
 
 <script>
   export default {
-    name: "ContractPart",
+    name: "contactPart",
     props: {
-      contractInfo: {
+      contactInfo: {
         type: Object,
         default() {
           return {}
@@ -63,7 +63,7 @@
     },
     computed:{
       noAddress() {
-        let {province = '', city = '', county = '', address = ''} = this.contractInfo;
+        let {province = '', city = '', county = '', address = ''} = this.contactInfo;
         return !province && !city && !county && !address;
       }
     },

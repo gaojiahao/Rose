@@ -17,7 +17,7 @@
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
             <!-- 往来联系部分 交易基本信息-->
-            <contract-part :contract-info="contractInfo" :validUntil="true"></contract-part>
+            <contact-part :contact-info="contactInfo" :validUntil="true"></contact-part>
             <!-- 物料列表 -->
             <div class="materiel_list">
               <div class="title">
@@ -110,19 +110,19 @@ import detailCommon from 'components/mixins/detailCommon'
 import workFlow from 'components/workFlow'
 import RAction from 'components/RAction'
 import PopRelatedList from 'components/Popup/PopRelatedList'
-import ContractPart from 'components/detail/commonPart/ContactPart'
+import contactPart from 'components/detail/commonPart/ContactPart'
 export default {
   data() {
     return {
       orderInfo: {},      // 表单内容
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
       dealerInfo: {},
-      contractInfo: {}, // 客户、付款方式、物流条款的值
+      contactInfo: {}, // 客户、付款方式、物流条款的值
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,PopRelatedList,ContractPart
+    workFlow, RAction,PopRelatedList,contactPart
   },
   methods: {
     //选择默认图片
@@ -171,15 +171,15 @@ export default {
         // };
         formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = formData;
-        this.getContractInfo();
+        this.getcontactInfo();
         this.workFlowInfoHandler();
       })
     },
-    // TODO 生成contractInfo对象
-    getContractInfo(key = 'order') {
+    // TODO 生成contactInfo对象
+    getcontactInfo(key = 'order') {
       let orderInfo = this.orderInfo;
       let order = orderInfo[key];
-      this.contractInfo = {
+      this.contactInfo = {
         creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
         dealerName: order.dealerName_dealerDebit, // 公司名
         dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
