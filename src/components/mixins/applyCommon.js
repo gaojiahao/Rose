@@ -209,7 +209,7 @@ export default {
         this.getFormData && this.getFormData();
         // this.$emit('input', false);
       })();
-      return
+      
     }
     this.getBaseInfoData();
     this.getProcess();
