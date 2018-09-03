@@ -65,14 +65,16 @@
                   </div>              
                 </div>
               </div>                
-
               <!-- 物料列表 -->
               <div class="materiel_list">
                 <div class="title">
                   <span class="iconfont icon-Shape"></span>物料列表
                 </div>
                 <div class="mater_list">
-                  <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+                  <div class="each_mater" 
+                  :class="{'vux-1px-b' : index !==  orderInfo.order.dataSet.length - 1}"
+                  v-for="(item, index) in orderInfo.order.dataSet" 
+                  :key='index'>
                     <div class="each_mater_wrapper">
                       <div class="mater_img">
                         <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -120,24 +122,24 @@
                       </div>
                     </div>
                   </div>
-                  <!-- 金额明细 -->
-                  <div class="price_detail">
-                    <div class="price_list">
-                      <div class='title'>金额<span style="fontSize:.12rem;"></span></div>
-                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
-                    </div>
-                    <div class="price_list">
-                      <div class='title'>税金<span style="fontSize:.12rem;"></span></div>
-                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
-                    </div>
-                    <!-- 金额合计栏 -->
-                    <div class="price_count">
-                      <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-                      <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
-                    </div>
-                  </div>
                 </div>
               </div>
+              <!-- 金额明细 -->
+              <div class="price_detail">
+                <div class="price_list">
+                  <div class='title'>金额</div>
+                  <div class="num"><span class="symbol">￥</span>{{noTaxAmount | toFixed | numberComma(3)}}</div>
+                </div>
+                <div class="price_list">
+                  <div class='title'>税金</div>
+                  <div class="num"><span class="symbol">￥</span>{{taxAmount | toFixed | numberComma(3)}}</div>
+                </div>
+                <!-- 金额合计栏 -->
+                <div class="price_count vux-1px-t">
+                  <span class='title'>合计：</span>
+                  <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
+                </div>
+              </div>              
               <!-- 审批操作 -->
               <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
             </div>

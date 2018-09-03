@@ -1,11 +1,10 @@
 
 .vux-1px-t:before,
-.vux-1px-b:after {
-  border-bottom: 1px solid #e8e8e8;
+.vux-1px-b:after,
+.vux-1px-t:before {
+  border-color: #e8e8e8;
 }
 .swiper-pagination-bullets{
-  // top:-6px;
-  // bottom:inherit;
   position: static;
 }
 // 居中
@@ -48,128 +47,6 @@
     }
   }
 }
-
-// // 工作流
-// .work_flow {
-//   position: relative;
-//   // padding: .06rem .08rem .2rem;
-//   // 右箭头
-//   .r_arrow {
-//     bottom: 0;
-//     left: 50%;
-//     position: absolute;
-//     transform: translate(-50%, 0);
-//   }
-//   .hidden {
-//     display: none;
-//   }
-//   // 提示文字
-//   .tip_tx {
-//     width: 100%;
-//     font-size: .1rem;
-//     color: #757575;
-//     padding: .04rem 0;
-//   }
-//   // 表单基本信息
-//   .work_info {
-//     display: flex;
-//     .work_status,
-//     .work_code {
-//       font-weight: bold;
-//       font-size: .14rem;
-//       padding: 0 .06rem;
-//       display: inline-block;
-//     }
-//     // 表单状态
-//     .work_status {
-//       color: #fff;
-//       background: #53d397;
-//       border-top-left-radius: .12rem;
-//     }
-//     // 进行中
-//     .doing_work {
-//       background: #5077aa;
-//     }
-//     // 已失效
-//     .invalid_work {
-//       background: #c93d1b;
-//     }
-//     // 表单编码
-//     .work_code {
-//       display: inline-block;
-//       background: #455d7a;
-//       color: #fff;
-//     }
-//     // 进行中 编码 {
-//     .doing_code {
-//       color: #111;
-//       background: #dbe2ef;
-//     }
-
-//   }
-//   // 工作流信息
-//   .flow_list {
-//     margin-top: .1rem;
-//     position: relative;
-//     // 每一个明细
-//     .each_msg {
-//       display: flex;
-//       padding-bottom: .1rem;
-//       margin-bottom: .1rem;
-//       // 用户头像
-//       .user_avatar {
-//         width: .65rem;
-//         height: .65rem;
-//         img {
-//           width: 100%;
-//         }
-//       }
-//       // 操作信息
-//       .handle_info {
-//         color: #111;
-//         display: flex;
-//         font-size: .12rem;
-//         margin-left: .1rem;
-//         flex-direction: column;
-//         justify-content: center;
-//         // 用户名称
-//         .user_name {
-//           font-size: .14rem;
-//         }
-//         // 操作名称
-//         .handle_name {
-//           font-size: .18rem;
-//           font-weight: bold;
-//           span {
-//             display: inline-block;
-//           }
-//           // 默认样式
-//           .status {
-//             color: #fff;
-//             font-size: .1rem;
-//             padding: 0 .04rem;
-//             margin-top: -.02rem;
-//             background: #5077aa;
-//             vertical-align: middle;
-//           }
-//           // 同意样式
-//           .agree_c {
-//             background: #53d397;
-//           }
-//           // 拒绝样式
-//           .reject_c {
-//             background: #c93d1b;
-//           }
-//         }
-//         // 备注
-//         .remark {
-//           font-size: .1rem;
-//           color: #757575;
-//         }
-//       }
-//     }
-//   }
-// }
 
 .l_size_name {
   color: #111;
@@ -338,9 +215,9 @@
     font-size: .18rem;
   }
   .icon-Shape {
-    font-size: .14rem;
+    font-size: .12rem;
     font-weight: 200;
-    margin-right: .02rem;
+    margin-right: .04rem;
   }
   .tips {
     color: #111;
@@ -572,32 +449,6 @@
         }
       }
     }
-    .price_list {
-      display: flex;
-      justify-content: space-between;
-      margin : 0.04rem 0;
-      .title{
-        font-weight: normal;
-        font-size: 0.16rem;
-      }
-      .num{
-        color: #5077aa;
-      }
-    }
-    // 合计
-    .price_count {
-      width: 100%;
-      display: flex;
-      margin-top: .1rem;
-      color: #5077aa;
-      font-size: .2rem;
-      text-align: center;
-      justify-content: space-between;
-      .title {
-        font-size: .2rem;
-        font-weight: 200;
-      }
-    }
   }
   // 新增更多
   .add_more {
@@ -613,7 +464,38 @@
     box-shadow: 0 2px 5px #5077aa;
   }
 }
-
+.price_detail {
+  width: 100%;
+  margin-top: .1rem;
+  background: #FFF;
+  padding: .04rem .1rem;
+  box-sizing: border-box;
+  .price_list {
+    display: flex;
+    justify-content: space-between;
+    margin : 0.04rem 0;
+    .title,
+    .num {
+      font-weight: bold;
+      font-size: .14rem;
+    }
+  }
+  // 合计
+  .price_count {
+    width: 100%;
+    font-size: .14rem;
+    text-align: right;
+    padding: .04rem 0;
+    .title {
+      font-weight: bold;
+    }
+    .num {
+      color: #ea5455;
+      font-weight: bold;
+      font-size: .18rem;
+    }
+  }
+}
 // 审批操作
 .handle_btn {
   width: 100%;

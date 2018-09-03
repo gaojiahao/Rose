@@ -137,6 +137,7 @@
 
 <style scoped lang="scss">
   .handle_wrapper {
+    background: #FFF;
     overflow: hidden;
   }
   // 审批操作

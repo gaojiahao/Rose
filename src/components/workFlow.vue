@@ -313,12 +313,10 @@
           }
           // 操作名称
           .handle_name {
-            // width: 1rem;
             display: flex;
             font-size: .12rem;
             font-weight: bold;
             align-items: center;
-            justify-content: space-between;
             // 默认样式
             .status {
               color: #fff;
