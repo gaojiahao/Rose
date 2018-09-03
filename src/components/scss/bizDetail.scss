@@ -67,147 +67,7 @@
   margin-bottom: .1rem;
   box-sizing: border-box;  
 }
-// 基本信息 （订单、经办主体等）
-.basic_info {
-  @extend .bs_common;
-  // 订单栏
-  .serial_bar {
-    display: flex;
-    padding: .04rem 0;
-    align-items: center;
-    justify-content: space-between;
-    // 表单状态
-    .work_status {
-      color: #fff;
-      font-size: .12rem;
-      font-weight: bold;
-      padding: .01rem .04rem;
-      background: #53d397;
-      border-radius: .12rem;
-    }
-    // 进行中
-    .doing_work {
-      background: #5077aa;
-    }
-    // 已失效
-    .invalid_work {
-      background: #474a56;
-    }
-  }
-  // 经办主体
-  .handle_info {
-    padding: .06rem 0;
-    .each_handle {
-      margin: .04rem 0;
-    }
-    .title {
-      font-weight: bold;
-    }
-    .content {
-      color: #454545;
-      font-weight: 200;
-    }
-  }
-  // 创建时间
-  .crt_time {
-    @extend .handle_info;
-  }  
-}
 
-.contacts_part {
-  @extend .bs_common;
-  padding: .06rem .1rem 0;
-  .main_content {
-    position: relative;
-    padding: 0 .1rem .06rem .2rem;
-    .iconfont {
-      top: .02rem;
-      left: -.01rem;
-      font-size: .16rem;
-      position: absolute;
-    }  
-  }
-  .warehouse_content {
-    @extend .main_content;
-    padding: .04rem .1rem .06rem .2rem;
-  }
-
-  // 公司信息
-  .cp_name {
-    font-weight: bold;
-  }
-  // 其他信息
-  .other_info {
-    color: #454545;
-    font-weight: 200;
-  }
-  .other_content {
-    padding: .06rem 0;
-    .trade_info {
-      margin: .04rem 0;
-      .title {
-        font-weight: bold;
-      }
-      .mode {
-        color: #454545;
-        font-weight: 200;
-      }
-    }
-  }
-  // 结算、物流等基本交易信息
-}
-
-
-// 地址栏
-.or_ads {
-  position: relative;
-  padding: .06rem .08rem;
-  .title {
-    color: #757575;
-    font-weight: 200;
-    font-size: .12rem;
-  }
-  // 用户信息
-  .user_info {
-    color: #111;
-    font-size: .18rem;
-    font-weight: 500;
-    // 用户电话
-    .user_tel {
-      font-size: .14rem;
-      font-weight: bold;
-      font-family: sans-serif, -apple-system-font;
-    }
-  }
-  // 公司信息
-  .cp_info {
-    .cp_name {
-      color: #111;
-      font-weight: 500;
-    }
-    .cp_ads {
-      font-weight: 200;
-      color: #757575;
-    }
-  }
-}
-
-// 结算方式
-.trade_mode {
-  position: relative;
-  padding: .06rem .08rem;
-  .title {
-    color: #757575;
-    font-weight: 200;
-    font-size: .12rem;
-  }
-  .mode {
-    color: #111;
-    font-weight: 500;
-    display: flex;
-    justify-content: space-between;
-  }
-}
 
 // 物料列表
 .materiel_list {
@@ -218,6 +78,18 @@
     color: #111;
     font-weight: bold;
     font-size: .18rem;
+  }
+  .main_content {
+    .each_cell {
+      padding: .1rem 0;
+      font-size: .16rem;
+      .cell_name {
+        color: #454545;
+      }
+      .cell_content {
+        font-weight: bold;
+      }
+    }
   }
   .icon-Shape {
     font-size: .12rem;
@@ -320,9 +192,9 @@
             .withColor {
               // 物料编码
               .mater_code {
-                display: flex;
-                margin-right: .1rem;
+                // display: flex;
                 font-weight: 200;
+                margin-right: .02rem;
                 .title,
                 .num {
                   font-size: .1rem;
@@ -339,6 +211,7 @@
                   max-width: .9rem;
                   overflow: hidden;
                   white-space: nowrap;
+                  margin-left: -.04rem;
                   background: #dbe2ef;
                   text-overflow: ellipsis;
                   border-top-right-radius: .12rem;
@@ -354,6 +227,7 @@
                 .num {
                   color: #fff;
                   max-width: .6rem;
+                  margin-left: -.04rem;
                   background: #ff7f50;
                 }
               }

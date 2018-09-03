@@ -1,17 +1,17 @@
 <template>
   <!-- 金额明细 -->
   <div class="price_detail" :class="{'only-count': onlyCount}">
-    <div class="price_list" v-if="!noAmt">
-      <div class='title'>金额</div>
-      <div class="num"><span class="symbol">￥</span>{{amt | toFixed | numberComma(3)}}</div>
-    </div>
     <div class="price_list" v-if="!noTaxAmt">
       <div class='title'>税金</div>
       <div class="num"><span class="symbol">￥</span>{{taxAmt | toFixed | numberComma(3)}}</div>
     </div>
+    <div class="price_list" v-if="!noAmt">
+      <div class='title'>金额</div>
+      <div class="num"><span class="symbol">￥</span>{{amt | toFixed | numberComma(3)}}</div>
+    </div>
     <!-- 金额合计栏 -->
     <div class="price_count vux-1px-t" v-if="!noCount">
-      <span class='title'>合计：</span>
+      <span class='title'>合计:</span>
       <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
     </div>
   </div>
@@ -81,8 +81,8 @@
     }
     .price_list {
       display: flex;
+      margin: .06rem 0;
       justify-content: space-between;
-      margin: 0.04rem 0;
       .title,
       .num {
         font-weight: bold;
@@ -98,7 +98,7 @@
       .title {
         color: #111;
         font-weight: bold;
-        font-size: .18rem;
+        font-size: .14rem;
       }
       .num {
         color: #ea5455;

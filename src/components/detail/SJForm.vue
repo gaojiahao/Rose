@@ -7,32 +7,25 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow> 
       <!-- 往来联系部分 交易基本信息-->
-      <!-- <div class="contacts_part">
-        <div class="main_content vux-1px-b">
-          <span class="iconfont icon-kehu"></span>
-          <div class="cp_name m_size_name">{{orderInfo.dealerName_dealerDebit}}</div>
-          <div class="other_info s_size_name">
-            <span class="title">手机：</span>
-            <span class="content">{{orderInfo.dealerDebitContactInformation || '暂无'}}</span>
-          </div>
-          <div class="other_info s_size_name">
-            <span class="title">地址：</span>
-            <span class="content" v-if="orderInfo.province_dealerDebit">
-              {{orderInfo.province_dealerDebit}}{{orderInfo.city_dealerDebit}}{{orderInfo.county_dealerDebit}}{{orderInfo.address_dealerDebit}}
-            </span>
-            <span class="content" v-else>
-              {{orderInfo.province_dealerDebit}}{{orderInfo.city_dealerDebit}}{{orderInfo.county_dealerDebit}}{{orderInfo.address_dealerDebit || '暂无'}}
-            </span>
-          </div>
-        </div>
-      </div>                 -->
-      <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo"></contact-part>
       <div class="materiel_list">
-        <div class=""></div>
+        <div class="title">
+          <span class="iconfont icon-mingxi1"></span>
+          <span>商机明细</span>
+        </div>
+        <div class="main_content">
+          <div class="each_cell vux-1px-t">
+            <span class="cell_name">标题：</span>
+            <span class="cell_content">{{orderInfo.opportunityTitle}}</span>
+          </div>
+          <div class="each_cell vux-1px-t">
+            <span class="cell_name">内容：</span>
+            <span class="cell_content">{{orderInfo.comment || "无"}}</span>
+          </div>
+        </div>
       </div>
       <!-- 商机列表 -->
-      <div class="materiel_list">
+      <!-- <div class="materiel_list">
         <div class="title">商机明细</div>
         <div class="mater_list">
           <div class="each_mater vux-1px-b">
@@ -50,16 +43,13 @@
               </div>
             </div>
           </div>
-          <!-- 预期销售额 -->
           <div class="price_list">
             <div class='title'>预期销售额:</div>
             <div class="num"><span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount | numberComma(3) || 0}}</div>
           </div>
         </div>
-      </div>
-      <!-- <div class="materiel_list mg_auto box_sd">
-        <div class="title">商机其他</div>
       </div> -->
+
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 @on-submit-success="submitSuccessCallback"></r-action>
@@ -171,8 +161,14 @@ export default {
       font-size: .12rem;
     }
   }
-  .materiel_list
-    .mater_list
+  .materiel_list {
+    .title {
+      padding-bottom: .06rem;
+      .iconfont {
+        font-size: .14rem;
+      }
+    }
+    .mater_list {
       .each_mater {
         padding: unset;
         .each_mater_wrapper
@@ -197,6 +193,10 @@ export default {
             }
           }
       }
+
+    }
+  }
+
         
   .materiel_list
     .mater_list
