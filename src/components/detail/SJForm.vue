@@ -1,47 +1,38 @@
 <template>
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo'>
-      <div class="form_top vux-1px-b">
-        <div class="basic_info">
-          <!-- 订单编码栏 -->
-          <div class="serial_bar vux-1px-b">
-            <div>
-              <span class="iconfont icon-dingdan1"></span>
-              <span class="l_size_name">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
-            </div>
-            <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>   
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                :no-status="orderInfo.biStatus"></work-flow> 
+      <!-- 往来联系部分 交易基本信息-->
+      <!-- <div class="contacts_part">
+        <div class="main_content vux-1px-b">
+          <span class="iconfont icon-kehu"></span>
+          <div class="cp_name m_size_name">{{orderInfo.dealerName_dealerDebit}}</div>
+          <div class="other_info s_size_name">
+            <span class="title">手机：</span>
+            <span class="content">{{orderInfo.dealerDebitContactInformation || '暂无'}}</span>
           </div>
-          <div class="cp_info">
-            <p class="l_size_name vux-1px-b">{{orderInfo.dealerName_dealerDebit}}</p>
-            <p class="m_size_name">{{orderInfo.address_dealerDebit}}</p>
-            <p class="s_size_name">{{orderInfo.dealerDebitContactInformation}}</p>
+          <div class="other_info s_size_name">
+            <span class="title">地址：</span>
+            <span class="content" v-if="orderInfo.province_dealerDebit">
+              {{orderInfo.province_dealerDebit}}{{orderInfo.city_dealerDebit}}{{orderInfo.county_dealerDebit}}{{orderInfo.address_dealerDebit}}
+            </span>
+            <span class="content" v-else>
+              {{orderInfo.province_dealerDebit}}{{orderInfo.city_dealerDebit}}{{orderInfo.county_dealerDebit}}{{orderInfo.address_dealerDebit || '暂无'}}
+            </span>
           </div>
         </div>
-        <!-- 工作流 -->
-        <!-- <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow> -->
+      </div>                 -->
+      <!-- 往来联系部分 交易基本信息-->
+      <contact-part :contact-info="contactInfo"></contact-part>
+      <div class="materiel_list">
+        <div class=""></div>
       </div>
-      <!-- 用户地址和基本信息-->
-      <div class="or_ads mg_auto box_sd">
-        <div class="user_info">
-          <!-- 公司名 -->
-          <span class="user_name">{{orderInfo.dealerName_dealerDebit}}</span>
-        </div>
-        <div class="cp_info">
-          <span class="user_tel">{{orderInfo.dealerDebitContactInformation}}</span>
-          <!-- 公司地址 -->
-          <p class="cp_ads">
-            {{orderInfo.address_dealerDebit}}
-          </p>
-        </div>
-      </div>
-      <!-- <div class="trade_mode mg_auto box_sd">
-        <p class="title">创建时间</p>
-        <p class="mode group_mar_left">{{orderInfo.crtTime || '暂无'}}</p>
-      </div> -->
-
       <!-- 商机列表 -->
-      <div class="materiel_list mg_auto box_sd">
+      <div class="materiel_list">
         <div class="title">商机明细</div>
         <div class="mater_list">
           <div class="each_mater vux-1px-b">
@@ -87,18 +78,21 @@ import detailCommon from 'components/mixins/detailCommon'
 import { toFixed } from '@/plugins/calc'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
+import contactPart from 'components/detail/commonPart/ContactPart'
+
 
 export default {
   data() {
     return {
       count: 0,          // 金额合计
       orderInfo: {},      // 表单内容
+      contactInfo: {},
       formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5'
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,Cell, Group
+    workFlow, RAction,Cell, Group, contactPart
   },
   methods: {
     // 获取详情
@@ -123,9 +117,29 @@ export default {
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         data.formData.tdAmount = toFixed(data.formData.tdAmount);
         this.orderInfo = data.formData;
+        this.getcontactInfo();
         this.workFlowInfoHandler();
       })
     },
+    // TODO 生成contactInfo对象
+    getcontactInfo(key = 'order') {
+      let orderInfo = this.orderInfo;
+      this.contactInfo = {
+        creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
+        dealerName: orderInfo.dealerName_dealerDebit, // 公司名
+        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerCode: orderInfo.dealerDebit, // 客户编码
+        dealerLabelName: orderInfo.drDealerLabel, // 关系标签
+        province: orderInfo.province_dealerDebit, // 省份
+        city: orderInfo.city_dealerDebit, // 城市
+        county: orderInfo.county_dealerDebit, // 地区
+        address: orderInfo.address_dealerDebit, // 详细地址
+        payment: orderInfo.drDealerPaymentTerm, // 付款方式
+        validUntil : orderInfo.validUntil, //有效期
+        logistics : orderInfo.drDealerLogisticsTerms,//物流条件
+
+      };
+    }
   }
 }
 </script>
