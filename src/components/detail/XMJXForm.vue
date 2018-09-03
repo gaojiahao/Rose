@@ -1,6 +1,8 @@
 <template>
   <div class="detail_wrapper xmrw-detail-container">
     <div class="basicPart">
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
       <!-- 项目经理 -->
       <div class="or_ads mg_auto box_sd">
         <p class="title">项目经理</p>
@@ -75,6 +77,10 @@
           this.projectApproval = formData.projectApproval;
           this.projectTime = formData.projectTime;
           this.projectConclusion = formData.projectConclusion;
+          this.orderInfo = {
+            ...formData.baseinfo,
+            biStatus: '已生效'
+          };
         })
       },
     },

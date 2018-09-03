@@ -98,7 +98,6 @@
                   <div class="r_arrow" v-if='item.itemCount>0'>
                     <x-icon type="ios-arrow-right" size="20" ></x-icon>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -127,7 +126,6 @@ export default {
   data() {
     return {
       count: 0,          // 金额合计
-      orderInfo: {},      // 表单内容
       formViewUniqueId: '',
       contactInfo: {}, // 客户、付款方式、物流条款的值
     }

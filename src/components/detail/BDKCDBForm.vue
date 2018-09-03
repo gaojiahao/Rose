@@ -10,23 +10,24 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
+            <!-- 经办信息 （订单、主体等） -->
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <!-- 出库仓库 -->
-            <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" disabled></pop-warehouse-list>
-            <!-- 入库仓库 -->
-            <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" disabled></pop-warehouse-list>
-            <!-- 创建时间 -->
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">创建时间</p>
-              <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
+            <!-- 仓库信息 -->
+            <div class="contacts_part">
+              <!-- 出库-->
+              <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
+              <!-- 入库 -->
+              <warehouse-content :warehouse="warehouseIn"></warehouse-content>
             </div>
             <!-- 物料列表 -->
-            <div class="materiel_list mg_auto box_sd">
+            <div class="materiel_list">
               <div class="title">物料列表</div>
               <div class="mater_list">
-                <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
+                <div class="each_mater" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
+                     v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
                   <div class="each_mater_wrapper">
                     <div class="mater_img">
                       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -92,11 +93,10 @@
                   <div class="r_arrow" v-if='item.itemCount>0'>
                     <x-icon type="ios-arrow-right" size="20" ></x-icon>
                   </div>
-                  
                 </div>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>
@@ -114,10 +114,10 @@ import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 export default {
   data() {
     return {
-      orderInfo: {},      // 表单内容
       warehouseIn: {}, // 入库仓库详情
       warehouseOut: {}, // 出库仓库详情
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'
@@ -128,7 +128,8 @@ export default {
     workFlow,
     PopWarehouseList,
     RAction,
-    PopRelatedList
+    PopRelatedList,
+    WarehouseContent,
   },
   methods: {
     //选择默认图片
@@ -165,7 +166,7 @@ export default {
         // 入库
         this.warehouseIn = {
           warehouseCode: inPut.containerCode,
-          warehouseName: inPut.warehouseName_containerCode,
+          warehouseName: `${inPut.warehouseName_containerCode}(入库)`,
           warehouseType: inPut.warehouseType_containerCode,
           warehouseProvince: inPut.warehouseProvince_containerCode,
           warehouseCity: inPut.warehouseCity_containerCode,
@@ -175,7 +176,7 @@ export default {
         // 出库
         this.warehouseOut = {
           warehouseCode: inPut.containerCodeOut,
-          warehouseName: inPut.warehouseName_containerCodeOut,
+          warehouseName: `${inPut.warehouseName_containerCodeOut}(出库)`,
           warehouseType: inPut.warehouseType_containerCodeOut,
           warehouseProvince: inPut.warehouseProvince_containerCodeOut,
           warehouseCity: inPut.warehouseCity_containerCodeOut,

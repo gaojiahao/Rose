@@ -1,6 +1,8 @@
 <template>
   <div class="detail_wrapper xmlw-detail-container">
     <div class="basicPart">
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
       <!-- 项目经理 -->
       <div class="or_ads mg_auto box_sd">
         <p class="title">项目经理</p>
@@ -47,8 +49,8 @@
   export default {
     data() {
       return {
-        approval: '',
-        comment: '',
+        approval: {},
+        comment: {},
       }
     },
     filters: {
@@ -67,6 +69,10 @@
         return findProjectApproval(transCode).then(({formData = {}}) => {
           this.approval = formData.approval;
           this.comment = formData.comment;
+          this.orderInfo = {
+            ...formData.baseinfo,
+            biStatus: '已生效'
+          };
         })
       },
       // TODO 使用千分符

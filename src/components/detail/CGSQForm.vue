@@ -118,7 +118,6 @@ export default {
   data() {
     return {
       count: 0,          // 金额合计
-      orderInfo: {},      // 表单内容
       formViewUniqueId: '',
     }
   },

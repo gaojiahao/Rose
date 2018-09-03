@@ -33,6 +33,7 @@ export default {
       detailSwiper : null,
       filtersData : [],
       showPop : false,
+      orderInfo: {}, // 表单内容
     }
   },
   computed:{

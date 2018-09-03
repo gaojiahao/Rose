@@ -10,21 +10,22 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
+            <!-- 经办信息 （订单、主体等） -->
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <!-- 入库仓库 -->
-            <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" disabled></pop-warehouse-list>
-            <!-- 创建时间 -->
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">创建时间</p>
-              <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
+            <!-- 仓库信息 -->
+            <div class="contacts_part">
+              <!-- 入库 -->
+              <warehouse-content :warehouse="warehouseIn"></warehouse-content>
             </div>
             <!-- 物料列表 -->
-            <div class="materiel_list mg_auto box_sd">
+            <div class="materiel_list">
               <div class="title">物料列表</div>
               <div class="mater_list">
-                <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
+                <div class="each_mater" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
+                     v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
                   <div class="each_mater_wrapper">
                     <div class="mater_img">
                       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -115,10 +116,10 @@ import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 export default {
   data() {
     return {
-      orderInfo: {},      // 表单内容
       warehouseIn: {}, // 入库仓库详情
       formViewUniqueId: '064e455d-4277-473a-9e54-d9ae4b1f23be'
     }
@@ -128,7 +129,8 @@ export default {
     workFlow,
     PopWarehouseList,
     RAction,
-    PopRelatedList
+    PopRelatedList,
+    WarehouseContent,
   },
   methods: {
     //选择默认图片

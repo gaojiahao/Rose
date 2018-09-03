@@ -10,16 +10,14 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
+            <!-- 经办信息 （订单、主体等） -->
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
             <div class="trade_mode mg_auto box_sd">
               <p class="title">项目名称</p>
               <p class="mode">{{orderInfo.order.project || '无'}}</p>
-            </div>
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">创建时间</p>
-              <p class="mode">{{orderInfo.crtTime}}</p>
             </div>
             <div class="trade_mode mg_auto box_sd">
               <p class="title">报销人</p>
@@ -85,11 +83,11 @@
                   </div>
                   <div class="r_arrow" v-if='item.itemCount>0'>
                     <x-icon type="ios-arrow-right" size="20" ></x-icon>
-                  </div>                    
+                  </div>
                 </div>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>
@@ -115,7 +113,6 @@ export default {
   data() {
     return {
       count: 0,          // 金额合计
-      orderInfo: {},      // 表单内容
       formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70'
     }
   },

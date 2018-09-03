@@ -1,6 +1,8 @@
 <template>
   <div class="detail_wrapper xmrw-detail-container">
     <div class="basicPart">
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
       <!-- 项目-->
       <r-picker title="项目名称" mode="3" placeholder="" v-model="projectTask.projectName" disabled></r-picker>
       <!-- 任务 -->
@@ -66,6 +68,10 @@ export default {
         this.projectTask = {
           ...projectTask,
           actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
+        };
+        this.orderInfo = {
+          ...formData.baseinfo,
+          biStatus: '已生效'
         };
       })
     },
