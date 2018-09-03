@@ -33,7 +33,7 @@
               <div class="other_content vux-1px-b">
                 <div class="trade_info s_size_name">
                   <span class="title">结算方式：</span>
-                  <span class="mode">{{orderInfo.inPut.crDealerPaymentTerm || '无'}}</span>
+                  <span class="mode">{{orderInfo.inPut.crDealerPaymentTerm || '暂无'}}</span>
                 </div>            
               </div>
               <!-- 仓库信息-->

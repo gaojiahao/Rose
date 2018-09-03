@@ -10,45 +10,65 @@
                 <span>其他应用里存在与本条相关联的数据，快去看看</span>
                 <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
               </div>
+              <!-- 经办信息 （订单、主体等） -->
+              <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
               <!-- 工作流 -->
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>
               <!-- 用户地址和基本信息-->
-              <div class="or_ads mg_auto box_sd">
-                <div class="user_info">
-                  <span class="user_name">{{dealerInfo.dealerName}}</span>
+              <div class="contacts_part">
+                <div class="main_content vux-1px-b">
+                  <span class="iconfont icon-kehu"></span>
+                  <div class="cp_name m_size_name">{{dealerInfo.dealerName}}</div>
+                  <div class="other_info s_size_name">
+                    <span class="title">手机：</span>
+                    <span class="content">{{dealerInfo.dealerMobilePhone || '暂无'}}</span>
+                  </div>
+                  <div class="other_info s_size_name">
+                    <span class="title">地址：</span>
+                    <span class="content" v-if="dealerInfo.province">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</span>
+                    <span class="content" v-else>{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address || '暂无'}}</span>
+                  </div>
                 </div>
-                <div class="cp_info">
-                  <p class="cp_name">{{dealerInfo.dealerMobilePhone}}</p>
-                  <p class="cp_ads">
-                    {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+                <div class="other_content vux-1px-b">
+                  <div class="trade_info s_size_name">
+                    <span class="title">结算方式：</span>
+                    <span class="mode">{{dealerInfo.payment || '暂无'}}</span>
+                  </div> 
+                  <div class="trade_info s_size_name">
+                    <span class="title">物流方式：</span>
+                    <span class="mode">{{dealerInfo.logistics || '暂无'}}</span>
+                  </div>                
                 </div>
-              </div>
-              <!-- 出库仓库 -->
-              <pop-warehouse-list title="仓库" :default-value="warehouse" disabled></pop-warehouse-list>
-              <!-- 结算方式 -->
-              <div class="trade_mode mg_auto box_sd">
-                <p class="title">结算方式</p>
-                <p class="mode">{{orderInfo.outPut.drDealerPaymentTerm || '无'}}</p>
-              </div>
-              <!-- 物流条款 -->
-              <div class="trade_mode mg_auto box_sd">
-                <p class="title">物流条款</p>
-                <p class="mode">{{orderInfo.drDealerLogisticsTerms || '无'}}</p>
-              </div>
-              <div class="trade_mode mg_auto box_sd">
-                <p class="title">创建时间</p>
-                <p class="mode">{{orderInfo.crtTime || '暂无'}}</p>
-              </div>
+                <!-- 出库仓库 -->
+                <div class="main_content vux-1px-b">
+                  <span class="iconfont icon--"></span>
+                  <div class="cp_name m_size_name">{{warehouse.warehouseName}}</div>
+                  <div class="other_info s_size_name">
+                    <span class="title">类型：</span>
+                    <span class="content">{{warehouse.warehouseType || '暂无'}}</span>
+                  </div>
+                  <div class="other_info s_size_name">
+                    <span class="title">地址：</span>
+                    <span class="content" v-if="warehouse.warehouseProvince">{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}} </span>
+                    <span class="content" v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress || "暂无"}} </span>
+                  </div>
+                </div>
+              </div> 
+              <!-- 项目 -->
               <div class="trade_mode mg_auto box_sd">
                 <p class="title">项目名称</p>
                 <p class="mode">{{orderInfo.outPut.project || '无'}}</p>
               </div>
               <!-- 物料列表 -->
-              <div class="materiel_list mg_auto box_sd">
-                <div class="title">物料列表</div>
+              <div class="materiel_list">
+                <div class="title">
+                  <span class="iconfont icon-Shape"></span>物料列表
+                </div>
                 <div class="mater_list">
-                  <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key='key'>
+                  <div class="each_mater" 
+                      :class="{'vux-1px-b' : key !==  orderList.length - 1}"
+                      v-for="(oItem, key) in orderList" :key='key'>
                     <div class="order_code">
                       <span class="order_title">所属订单</span>
                       <span class="order_num">{{key.replace(/_/g,'')}}</span>
@@ -102,13 +122,9 @@
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <!-- 金额合计栏 -->
-                  <div class="price_list">
-                    <div class='title'>合计<span style="fontSize:.12rem;">(含税)</span></div>
-                    <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
-                  </div>
+                  </div>             
                 </div>
+                <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
               </div>
               <!-- 审批操作 -->
               <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -149,12 +165,14 @@ import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import contactPart from 'components/detail/commonPart/ContactPart'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
 export default {
   data() {
     return {
@@ -164,11 +182,30 @@ export default {
       orderList: {}, // 物料列表
       warehouse: {},
       dealerInfo: {}, // 客户信息
+      basicInfo :{},//存放基本信息
     }
+  },
+  computed:{
+    // 合计金额
+    noTaxAmount() {
+      let total = 0;
+      this.orderInfo.outPut.dataSet.forEach(item => {
+        total = accAdd(total, item.noTaxAmount);
+      });
+      return total;
+    },
+    // 税金
+    taxAmount() {
+      let total = 0;
+      this.orderInfo.outPut.dataSet.forEach(item => {
+        total = accAdd(total, item.taxAmount);
+      });
+      return total;
+    },
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,PopRelatedList
+    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal
   },
   methods: {
     //选择默认图片
@@ -200,6 +237,9 @@ export default {
         // 获取合计
         let {dataSet} = formData.outPut;
         for (let item of dataSet) {
+          item.noTaxAmount = accMul(item.price,item.tdQty);
+          item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
+          item.tdAmount = accAdd(item.noTaxAmount,item.taxAmount);
           this.count = accAdd(this.count,item.tdAmount)
           // this.count += item.tdAmount *100;
           item.inventoryPic = item.inventoryPic_outPutMatCode
@@ -222,6 +262,8 @@ export default {
           city: outPut.city_dealerDebit, // 城市
           county: outPut.county_dealerDebit, // 地区
           address: outPut.address_dealerDebit, // 详细地址
+          payment: outPut.drDealerPaymentTerm, // 付款方式
+          logistics: formData.drDealerLogisticsTerms,//物流方式
         };
         this.warehouse = {
           warehouseCode: outPut.containerCodeOut,
