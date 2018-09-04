@@ -3,6 +3,7 @@ import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
+import ListItem from 'components/list/commonPart/ListItem'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
 import {toFixed} from '@/plugins/calc'
@@ -35,7 +36,7 @@ export default {
     }
   },
   components: {
-    Tab, Icon, TabItem, searchIcon, RScroll
+    Tab, Icon, TabItem, searchIcon, RScroll, ListItem,
   },
   methods: {
     goDetail(transCode) {
@@ -234,7 +235,7 @@ export default {
       }).catch(e => {
         this.resetScroll();
       })
-    },    
+    },
     async getData(noReset){
       await this.getSession();
       if(noReset){

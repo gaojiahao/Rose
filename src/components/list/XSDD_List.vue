@@ -15,55 +15,7 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
-          <!-- 订单 时期 -->
-          <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
-          </div>
-          <!-- 物料图片和名称 -->
-          <ul class="duty_matter">
-            <li class="duty_matter_item vux-1px-b" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
-              <div class="matter_img">
-                <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
-              </div>
-              <div class="matter_main">
-                <div class="main_top">
-                  <div class="matter_info">
-                    <div class="matter_name">{{mItem.inventoryName}}</div>
-                    <div class="matter_units">
-                      <span>编码: {{mItem.inventoryCode}}</span>
-                      <span>规格: {{mItem.specification || '无'}}</span>
-                    </div>
-                    <div class="matter_units">单位: {{mItem.measureUnit}}</div>
-                  </div>
-                  <div class="matter_price_part">
-                    <p class="price_num">
-                      <span class="symbol">￥</span>{{mItem.price}}
-                    </p>
-                    <p class="mater_count"><span class="symbol">x</span>{{mItem.tdQty}}</p>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <!-- 金额合计 -->
-          <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-            </div>
-            <div class="money_part">
-              <span class="num">合计:</span>
-              <span class="money">
-                <span style="fontSize:.1rem;">[含税]￥</span>{{item.count | toFixed | numberComma(3)}}
-              </span>
-            </div>
-          </div>
-        </div>
-
+        <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item.transCode)"></list-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
