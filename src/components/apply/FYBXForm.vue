@@ -245,9 +245,16 @@ export default {
             }),
             wfPara: JSON.stringify(wfPara)
           };
+          //重新提交
           if (this.isResubmit) {
             submitData.biReferenceId = this.biReferenceId;
             operation = saveAndCommitTask
+          }
+          //无工作流
+          if(!this.processCode.length){
+            operation = submitAndCalc;
+            delete submitData.wfPara;
+            delete submitData.biReferenceId;
           }
           this.saveData(operation, submitData);
         }

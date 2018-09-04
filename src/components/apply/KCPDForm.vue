@@ -329,7 +329,12 @@ export default {
               comment: ''
             });
           }
-
+          //无工作流
+          if(!this.processCode.length){
+            operation = submitAndCalc;
+            delete submitData.wfPara;
+            delete submitData.biReferenceId;
+          }
           console.log(submitData)
           this.saveData(operation, submitData);
         }

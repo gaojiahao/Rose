@@ -54,7 +54,7 @@
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEdit">新增一个入库</div>
+      <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
 </template>

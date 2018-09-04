@@ -163,7 +163,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask} from 'service/commonService'
+  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask,submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -482,6 +482,11 @@
             };
             if (!this.transCode) {
               delete submitData.biReferenceId
+            }
+            if(!this.processCode.length){ //无工作流
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
             }
             console.log(submitData)
             this.saveData(operation, submitData);

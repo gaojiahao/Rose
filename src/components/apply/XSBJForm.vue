@@ -159,7 +159,7 @@
   // 请求 引入
   import {resolve} from 'url';
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from './../mixins/applyCommon'
   // 组件引入
@@ -397,6 +397,12 @@
                 taskId: this.taskId,
                 comment: ''
               });
+            }
+            //无工作流
+            if(!this.processCode.length){
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
             }
             this.saveData(operation, submitData);
           }

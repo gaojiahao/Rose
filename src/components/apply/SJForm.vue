@@ -84,7 +84,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入

@@ -141,7 +141,7 @@
 import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom,Group,XInput} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { getBaseInfoData,saveAndStartWf,saveAndCommitTask } from 'service/commonService'
+import { getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
@@ -333,6 +333,7 @@ export default {
           // 确定回调
           onConfirm: () => {
             let dataSet = [];
+            let operation = saveAndStartWf;
             this.matterList.map(item=>{
               dataSet.push({
                 tdId : item.tdId || '',
@@ -378,12 +379,18 @@ export default {
               wfPara: JSON.stringify(wfPara)
             }
             //console.log(submitData);
+            //重新提交
             if(this.isResubmit){
+              operation = saveAndCommitTask
               submitData.biReferenceId = this.biReferenceId;
-              this.saveData(saveAndCommitTask,submitData);
-              return
             }
-            this.saveData(saveAndStartWf,submitData);
+            //没有工作流
+            if(!this.processCode.length){
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
+            }
+            this.saveData(operation,submitData);
           }
          })
       }

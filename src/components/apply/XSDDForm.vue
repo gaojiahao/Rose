@@ -346,8 +346,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
             // 确定回调
             onConfirm: () => {
               let dataSet = [];
-              // console.log(this.matterList);
-              // return false;
+              let operation = saveAndStartWf;//默认有工作流
               this.matterList.map(item => {
                 dataSet.push({
                   tdId: item.tdId || '',
@@ -393,19 +392,18 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
                     dataSet
                   }
                 }),
-                wfPara: JSON.stringify(wfPara)
+                wfPara : JSON.stringify(wfPara)
               }
-              if(this.processCode.length){
-                submitData.wfPara = JSON.stringify(wfPara);
-                this.saveData(saveAndStartWf, submitData);
-                return
-              }
-              if (this.isResubmit) {
+              if (this.isResubmit) {//重新提交
+                operation = saveAndCommitTask;
                 submitData.biReferenceId = this.biReferenceId;
-                this.saveData(saveAndCommitTask, submitData);
-                return
               }
-              this.saveData(submitAndCalc, submitData);
+              if(!this.processCode.length){//无工作流
+                operation = submitAndCalc;
+                delete submitData.wfPara;
+                delete submitData.biReferenceId;
+              }
+              this.saveData(operation, submitData);
             }
           })
         }
