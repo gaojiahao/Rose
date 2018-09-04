@@ -10,14 +10,14 @@
               <span>其他应用里存在与本条相关联的数据，快去看看</span>
               <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
             </div>
-            
+
             <!-- 经办信息 （订单、主体等） -->
-            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>   
+            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
             <!-- 往来联系部分 交易基本信息-->
-            <contact-part :contact-info="contactInfo" :validUntil="true"></contact-part>
+            <contact-part :contact-info="contactInfo" validUntil></contact-part>
             <!-- 物料列表 -->
             <div class="materiel_list">
               <div class="title">
@@ -87,11 +87,11 @@
                   </div>
                   <div class="r_arrow" v-if='item.itemCount>0'>
                     <x-icon type="ios-arrow-right" size="20" ></x-icon>
-                  </div>                    
+                  </div>
                 </div>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>
@@ -116,7 +116,6 @@ export default {
     return {
       orderInfo: {},      // 表单内容
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-      dealerInfo: {},
       contactInfo: {}, // 客户、付款方式、物流条款的值
     }
   },
@@ -157,18 +156,6 @@ export default {
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
-        // 客户信息
-        // this.dealerInfo = {
-        //   creatorName: formData.dealerDebitContactPersonName || '', // 客户名
-        //   dealerName: order.dealerName_dealerDebit || '', // 公司名
-        //   dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
-        //   dealerCode: order.dealerDebit || '', // 客户编码
-        //   dealerLabelName: order.drDealerLabel || '客户', // 关系标签
-        //   province: order.province_dealerDebit || '', // 省份
-        //   city: order.city_dealerDebit || '', // 城市
-        //   county: order.county_dealerDebit || '', // 地区
-        //   address: order.address_dealerDebit || '', // 详细地址
-        // };
         formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = formData;
         this.getcontactInfo();
@@ -192,7 +179,6 @@ export default {
         payment: order.drDealerPaymentTerm, // 付款方式
         validUntil : orderInfo.validUntil, //有效期
         logistics : orderInfo.drDealerLogisticsTerms,//物流条件
-
       };
     },
   }

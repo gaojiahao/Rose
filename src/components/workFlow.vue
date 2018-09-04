@@ -16,7 +16,7 @@
         <span class="iconfont"
              :class="[{'icon-gongzuoliushenpizhong' : workFlowInfo.biStatus === '进行中' },
              {'icon-gongzuoliuyiqueren' : workFlowInfo.biStatus === '已生效' },
-             {'icon-gongzuoliuyibohui' : workFlowInfo.biStatus === '已失效' }]"></span>
+             {'icon-zhongzhi' : workFlowInfo.biStatus === '已失效' }]"></span>
       </div>
       <div class="each_msg"
            :class="{'vux-1px-b' : index === 0}"
