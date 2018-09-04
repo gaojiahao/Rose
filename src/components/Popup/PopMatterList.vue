@@ -196,7 +196,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl.png');
+        let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
         }

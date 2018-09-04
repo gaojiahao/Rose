@@ -259,7 +259,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
       },
       //选择默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl.png');
+        let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
         }

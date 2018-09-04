@@ -3,8 +3,12 @@
   height: 90%;
   overflow: auto;
 }
+.vux-1px-t:before,
 .vux-1px-b:after {
   border-color: #E8E8E8;
+}
+.symbol {
+  font-size: .1rem;
 }
 .list_top {
   width: 100%;
@@ -22,9 +26,10 @@
   box-sizing: border-box;
   .each_duty {
     width: 95%;
-    margin: .1rem auto .2rem;
     position: relative;
+    margin: .1rem auto .2rem;
     padding: .02rem 0 .04rem;
+    border-radius: .08rem;
     box-shadow: 0 2px 10px #e8e8e8;
     .duty_name { //任务名称
       width: 100%;
@@ -64,8 +69,8 @@
     }
     .duty_top {
       height: .24rem;
-      padding: 0 .1rem;
       line-height: .24rem;
+      padding: .04rem .1rem .02rem;
       .duty_code { //任务编码
         float: left;
         font-size: .15rem;
@@ -120,33 +125,74 @@
   }
   /* 物料 */
   .duty_matter {
-    // display: flex;
     display: block;
-    padding: .14rem .1rem;
     margin: .02rem 0;
+    padding: 0 .1rem;
     box-sizing: border-box;
-    background: #FAFAFA;
     .duty_matter_item {
-      display: inline-block;
-    }
-    .show_one {
       width: 100%;
       display: flex;
+      margin: .02rem 0;
+      padding: .04rem 0;
+      box-sizing: border-box;
+      .matter_img {
+        width: .65rem;
+        margin-right: .1rem;
+        border-radius: .04rem;
+        img {
+          width: 100%;
+        }
+      }
+      .matter_main {
+        width: 100%;
+        .main_top {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          .matter_info {
+            width: 85%;
+            .matter_name {
+              color: #111;
+              overflow: hidden;
+              font-size: .14rem;
+              // font-weight: bold;
+              display: -webkit-box;
+              // margin-bottom: .04rem;
+              -webkit-line-clamp: 2;
+              text-overflow: ellipsis;
+              -webkit-box-orient: vertical;
+            }
+            .matter_units {
+              font-size: .1rem;
+              color: #7D7D7D;
+            }
+          }
+          .matter_price_part {
+            font-size: .12rem;
+            text-align: right;
+            display: inline-block;
+            margin-top: -.02rem;
+            .price_num {
+              // color: #c93d1b;
+              font-size: .14rem;
+              font-weight: bold;
+            }
+            .mater_count {
+              color: #7D7D7D;
+            }
+          }
+        }
+        .main_m {
+          color: #7D7D7D;
+          font-size: .1rem;
+        }
+      }
+    }
+    .show_one {
       align-items: center;
     }
-    .matter_img {
-      width: .5rem;
-      height: .5rem;
-      margin-right: .1rem;
-      border-radius: .04rem;
-      vertical-align: middle;
-    }
-    .matter_name {
-      max-width: 3rem;
-      color: #757575;
-      font-size: .12rem;
-      display: inline-block;
-    }
+
+
   }
   .order_count {
     width: 100%;

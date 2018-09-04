@@ -26,17 +26,29 @@
           </div>
           <!-- 物料图片和名称 -->
           <ul class="duty_matter">
-            <template v-if="item.itmes.length > 1">
-              <li class="duty_matter_item" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
-                <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
-              </li>
-            </template>
-            <template v-else>
-              <li class="duty_matter_item show_one" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
-                <img class="matter_img" :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
-                <div class="matter_name">{{mItem.inventoryName}}</div>
-              </li>
-            </template>
+            <li class="duty_matter_item vux-1px-b" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
+              <div class="matter_img">
+                <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
+              </div>
+              <div class="matter_main">
+                <div class="main_top">
+                  <div class="matter_info">
+                    <div class="matter_name">{{mItem.inventoryName}}</div>
+                    <div class="matter_units">
+                      <span>编码: {{mItem.inventoryCode}}</span>
+                      <span>规格: {{mItem.specification || '无'}}</span>
+                    </div>
+                    <div class="matter_units">单位: {{mItem.measureUnit}}</div>
+                  </div>
+                  <div class="matter_price_part">
+                    <p class="price_num">
+                      <span class="symbol">￥</span>{{mItem.price}}
+                    </p>
+                    <p class="mater_count"><span class="symbol">x</span>{{mItem.tdQty}}</p>
+                  </div>
+                </div>
+              </div>
+            </li>
           </ul>
           <!-- 金额合计 -->
           <div class="order_count">
@@ -44,7 +56,7 @@
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
-              <span class="num">共{{item.itemCount}}件:</span>
+              <span class="num">合计:</span>
               <span class="money">
                 <span style="fontSize:.1rem;">[含税]￥</span>{{item.count | toFixed | numberComma(3)}}
               </span>
