@@ -23,10 +23,10 @@
         <span class="title">物流条款：</span>
         <span class="mode">{{contactInfo.logistics || '暂无'}}</span>
       </div>
-      <div class="trade_info s_size_name" v-if="validUntil">
-        <span class="title">有效期至：</span>
+    </div>
+    <div class="valid vux-1px-t" v-if="validUntil">
+       <span class="title">有效期至：</span>
         <span class="mode">{{contactInfo.validUntil || '暂无'}}</span>
-      </div>
     </div>
   </div>
 </template>
@@ -116,6 +116,17 @@
         }
       }
     }
+    .valid{
+      padding: .06rem 0;
+      font-size: .14rem;
+      .title {
+          font-weight: bold;
+        }
+        .mode {
+          color: #454545;
+          font-weight: 200;
+        }
+    }
     .l_size_name {
       color: #111;
       padding: .06rem 0;
@@ -129,6 +140,9 @@
       font-size: .14rem;
     }
     .vux-1px-b:after {
+      border-color: #e8e8e8;
+    }
+    .vux-1px-t:before {
       border-color: #e8e8e8;
     }
   }

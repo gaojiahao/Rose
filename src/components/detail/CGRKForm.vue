@@ -207,6 +207,7 @@ export default {
           city: inPut.city_dealerCodeCredit, // 城市
           county: inPut.county_dealerCodeCredit, // 地区
           address: inPut.address_dealerCodeCredit, // 详细地址
+          payment :  inPut.crDealerPaymentTerm,//结算方式
         };
         // 入库
         this.warehouse = {

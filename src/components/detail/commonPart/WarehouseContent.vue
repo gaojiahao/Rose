@@ -44,9 +44,16 @@
     .iconfont {
       top: .02rem;
       left: -.01rem;
-      font-size: .16rem;
+      font-size: .14rem;
       position: absolute;
     }
+    &:last-of-type{
+      padding-top: 0.06rem;
+      .iconfont{
+        top:0.09rem;
+      }
+    }
+    
 
     // 仓库名称
     .warehouse-name {

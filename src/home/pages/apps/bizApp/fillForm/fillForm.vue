@@ -62,16 +62,19 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
+    let keys = Object.keys(this.saveData)[0];
     // 新建物料，修改列表页的meta值
     if (this.submitSuccess && (path.indexOf('/list') !== -1 ||path.indexOf('/msglist') !== -1)) {
       to.meta.reload = true;
+      if(keys){
+        sessionStorage.removeItem(keys)
+      }     
     }
     //删除缓存的往来信息
     if(to.name === "LIST"){
       sessionStorage.removeItem('DEALERLIST_SELITEMS');
     }
     //离开数据保存为草稿
-    let keys = Object.keys(this.saveData)[0];
     if(to.name === "LIST" && keys && !this.transCode && !this.submitSuccess){
       this.$vux.confirm.show({
         content:'即将离开，是否保存数据？',
