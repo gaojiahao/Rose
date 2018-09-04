@@ -190,8 +190,8 @@ export default {
         county: order.county_dealerDebit, // 地区
         address: order.address_dealerDebit, // 详细地址
         payment: order.drDealerPaymentTerm, // 付款方式
-        validUntil : order.validUntil, //有效期
-        logistics : order.drDealerLogisticsTerms,//物流条件
+        validUntil : orderInfo.validUntil, //有效期
+        logistics : orderInfo.drDealerLogisticsTerms,//物流条件
 
       };
     },
