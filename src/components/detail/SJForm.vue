@@ -14,42 +14,20 @@
           <span>商机明细</span>
         </div>
         <div class="main_content">
-          <div class="each_cell vux-1px-t">
-            <span class="cell_name">标题：</span>
-            <span class="cell_content">{{orderInfo.opportunityTitle}}</span>
-          </div>
-          <div class="each_cell vux-1px-t">
-            <span class="cell_name">内容：</span>
-            <span class="cell_content">{{orderInfo.comment || "无"}}</span>
-          </div>
+          <form-cell cellTitle='标题' :cellContent="orderInfo.opportunityTitle"></form-cell>
+          <form-cell cellTitle='内容' :cellContent="orderInfo.comment || '无'"></form-cell>
+          <form-cell cellTitle='当前所在阶段' :cellContent="orderInfo.currentStage"></form-cell>
+          <form-cell cellTitle='有效期至' :cellContent="orderInfo.validUntil"></form-cell>
+          <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
+          <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>
+        </div>
+        <div class="price_cell vux-1px-tb">
+          <span class="title">预期销售额:</span>
+          <span class="num">
+            <span class="symbol">￥</span><span>{{orderInfo.tdAmount | numberComma(3) || 0}}</span>
+          </span>
         </div>
       </div>
-      <!-- 商机列表 -->
-      <!-- <div class="materiel_list">
-        <div class="title">商机明细</div>
-        <div class="mater_list">
-          <div class="each_mater vux-1px-b">
-            <div class="each_mater_wrapper">
-              <div class="mater_main">
-                <group label-width="1rem">
-                    <cell title='商机标题' align-items="flex-start"  :value='orderInfo.opportunityTitle'></cell>
-                    <cell title='当前所在阶段' :value='orderInfo.currentStage'></cell>
-                    <cell title='商机内容' align-items="flex-start" value-align="right" :value='orderInfo.comment || "无"'></cell>
-                    <cell title='销售人员' :value='orderInfo.salesPerson' v-if="orderInfo.salesPerson"></cell>
-                    <cell title='销售渠道' :value='orderInfo.salesChannels' v-if="orderInfo.salesChannels"></cell>
-                    <cell title='有效期至' :value='orderInfo.validUntil' v-if="orderInfo.validUntil"></cell>
-                    <cell title='创建时间' :value='orderInfo.crtTime'></cell>
-                </group>
-              </div>
-            </div>
-          </div>
-          <div class="price_list">
-            <div class='title'>预期销售额:</div>
-            <div class="num"><span style="fontSize:.12rem;">￥</span>{{orderInfo.tdAmount | numberComma(3) || 0}}</div>
-          </div>
-        </div>
-      </div> -->
-
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 @on-submit-success="submitSuccessCallback"></r-action>
@@ -68,6 +46,7 @@ import detailCommon from 'components/mixins/detailCommon'
 import { toFixed } from '@/plugins/calc'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
+import FormCell from 'components/detail/commonPart/FormCell'
 import contactPart from 'components/detail/commonPart/ContactPart'
 
 
@@ -82,7 +61,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,Cell, Group, contactPart
+    Cell, Group, RAction, workFlow, contactPart, FormCell
   },
   methods: {
     // 获取详情
@@ -166,6 +145,7 @@ export default {
       padding-bottom: .06rem;
       .iconfont {
         font-size: .14rem;
+        margin-left: .03rem;
       }
     }
     .mater_list {

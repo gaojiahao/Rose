@@ -1,7 +1,9 @@
 
 .vux-1px-t:before,
 .vux-1px-b:after,
-.vux-1px-t:before {
+.vux-1px-t:before,
+.vux-1px-tb:before,
+.vux-1px-tb:after {
   border-color: #e8e8e8;
 }
 .swiper-pagination-bullets{
@@ -79,16 +81,20 @@
     font-weight: bold;
     font-size: .18rem;
   }
-  .main_content {
-    .each_cell {
-      padding: .1rem 0;
-      font-size: .16rem;
-      .cell_name {
-        color: #454545;
-      }
-      .cell_content {
-        font-weight: bold;
-      }
+  .price_cell {
+    padding: .08rem 0;
+    .title {
+      color: #757575;
+      font-size: .14rem;
+      font-weight: normal;
+    }
+    .symbol {
+      font-size: .14rem;
+    }
+    .num {
+      color: #c93d1b;
+      font-size: .2rem;
+      font-weight: bold;
     }
   }
   .icon-Shape {
