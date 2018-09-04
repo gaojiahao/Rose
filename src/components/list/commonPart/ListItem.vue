@@ -26,10 +26,10 @@
             </div>
             <div class="matter_price_part">
               <p class="price_num" v-if="!noPrice">
-                <span class="symbol">￥</span>{{mItem.price}}
+                <span class="symbol">￥</span>{{mItem.price | toFixed}}
               </p>
               <p class="mater_count" v-if="!noQty">
-                <span class="symbol">x</span>{{mItem.tdQty}}
+                <span class="symbol">x</span>{{mItem.tdQty | toFixed}}
               </p>
             </div>
           </div>
