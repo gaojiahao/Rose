@@ -16,66 +16,9 @@
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>              
               <!-- 往来联系部分 交易基本信息-->
-              <contact-part :contact-info="contactInfo" ></contact-part>                
+              <contact-part :contact-info="contactInfo" ></contact-part>               
               <!-- 物料列表 -->
-              <div class="materiel_list">
-                <div class="title">
-                  <span class="iconfont icon-Shape"></span>物料列表
-                </div>
-                <div class="mater_list">
-                  <div class="each_mater" 
-                  :class="{'vux-1px-b' : index !==  orderInfo.order.dataSet.length - 1}"
-                  v-for="(item, index) in orderInfo.order.dataSet" 
-                  :key='index'>
-                    <div class="each_mater_wrapper">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                      </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName_transObjCode || '该物料未获取到名称，请检查物料信息。'}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                            <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.transObjCode || '无'}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification_transObjCode || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 物料数量和价格 -->
-                        <div class='mater_other'>
-                          <div class='mater_num'>
-                            <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                            <span class='num'>数量: {{item.tdQty}}</span>
-                            <span>税率: {{item.taxRate}}</span>
-                          </div>
-                          <div class='mater_price'>
-                            ￥{{item.tdAmount | toFixed | numberComma(3)}}
-                            <span class="num"
-                                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 4 ? 'block' : '')}">
-                              [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <matter-list :matter-list='orderInfo.order.dataSet'></matter-list> 
               <!-- 金额明细 -->
               <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>     
               <!-- 审批操作 -->
@@ -121,6 +64,7 @@ import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
+import MatterList from 'components/detail/commonPart/MatterList'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
@@ -133,7 +77,7 @@ export default {
     }
   },
   components:{
-    workFlow, RAction,PopRelatedList,contactPart,PriceTotal
+    workFlow, RAction,PopRelatedList,contactPart,PriceTotal,MatterList
   },
   mixins: [common],
   methods:{

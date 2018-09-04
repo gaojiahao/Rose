@@ -19,53 +19,7 @@
             <!-- 往来联系部分 交易基本信息-->
             <contact-part :contact-info="contactInfo" validUntil></contact-part>
             <!-- 物料列表 -->
-            <div class="materiel_list">
-              <div class="title">
-                <span class="iconfont icon-Shape"></span>物料列表
-              </div>
-              <div class="mater_list">
-                <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-                  <div class="each_mater_wrapper">
-                    <div class="mater_img">
-                      <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                    </div>
-                    <div class="mater_main">
-                      <!-- 物料名称 -->
-                      <div class="mater_name">
-                        {{item.inventoryName_transObjCode}}
-                      </div>
-                      <!-- 物料基本信息 -->
-                      <div class="mater_info">
-                        <!-- 物料编码、规格 -->
-                        <div class="withColor">
-                          <!-- 物料编码 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_code">
-                              <span class="title">编码</span>
-                              <span class="num">{{item.transObjCode}}</span>
-                            </div>
-                          </div>
-                          <!-- 物料规格 -->
-                          <div class="ForInline" style="display:inline-block">
-                            <div class="mater_spec">
-                              <span class="title">规格</span>
-                              <span class="num">{{item.specification_transObjCode || '无'}}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- 物料数量和价格 -->
-                      <div class='mater_other'>
-                        <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.price | toFixed |numberComma(3)}}
-                          <span class="num">[类型: {{item.priceType || '无'}}]</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <matter-list :matter-list="orderInfo.order.dataSet" class="vux-1px-b"></matter-list>
             <!-- 审批操作 -->
             <r-action :code="transCode" :task-id="taskId" :actions="actions"
                       @on-submit-success="submitSuccessCallback"></r-action>
@@ -111,6 +65,7 @@ import workFlow from 'components/workFlow'
 import RAction from 'components/RAction'
 import PopRelatedList from 'components/Popup/PopRelatedList'
 import contactPart from 'components/detail/commonPart/ContactPart'
+import MatterList from 'components/detail/commonPart/MatterList'
 export default {
   data() {
     return {
@@ -121,7 +76,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,PopRelatedList,contactPart
+    workFlow, RAction,PopRelatedList,contactPart,MatterList
   },
   methods: {
     //选择默认图片
