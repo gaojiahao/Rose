@@ -16,45 +16,10 @@
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>
               <!-- 用户地址和基本信息-->
-              <div class="contacts_part">
-                <div class="main_content vux-1px-b">
-                  <span class="iconfont icon-kehu"></span>
-                  <div class="cp_name m_size_name">{{dealerInfo.dealerName}}</div>
-                  <div class="other_info s_size_name">
-                    <span class="title">手机：</span>
-                    <span class="content">{{dealerInfo.dealerMobilePhone || '暂无'}}</span>
-                  </div>
-                  <div class="other_info s_size_name">
-                    <span class="title">地址：</span>
-                    <span class="content" v-if="dealerInfo.province">{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</span>
-                    <span class="content" v-else>{{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address || '暂无'}}</span>
-                  </div>
-                </div>
-                <div class="other_content vux-1px-b">
-                  <div class="trade_info s_size_name">
-                    <span class="title">结算方式：</span>
-                    <span class="mode">{{dealerInfo.payment || '暂无'}}</span>
-                  </div> 
-                  <div class="trade_info s_size_name">
-                    <span class="title">物流方式：</span>
-                    <span class="mode">{{dealerInfo.logistics || '暂无'}}</span>
-                  </div>                
-                </div>
-                <!-- 出库仓库 -->
-                <div class="main_content vux-1px-b">
-                  <span class="iconfont icon--"></span>
-                  <div class="cp_name m_size_name">{{warehouse.warehouseName}}</div>
-                  <div class="other_info s_size_name">
-                    <span class="title">类型：</span>
-                    <span class="content">{{warehouse.warehouseType || '暂无'}}</span>
-                  </div>
-                  <div class="other_info s_size_name">
-                    <span class="title">地址：</span>
-                    <span class="content" v-if="warehouse.warehouseProvince">{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}} </span>
-                    <span class="content" v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress || "暂无"}} </span>
-                  </div>
-                </div>
-              </div> 
+              <div class='contacts_part'>
+                <contact-part :contact-info="dealerInfo" :hasClass='false'></contact-part>
+                <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
+              </div>
               <!-- 项目 -->
               <div class="trade_mode mg_auto box_sd">
                 <p class="title">项目名称</p>
@@ -173,6 +138,7 @@ import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopRelatedList from 'components/Popup/PopRelatedList'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
+import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 export default {
   data() {
     return {
@@ -205,7 +171,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal
+    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal,WarehouseContent
   },
   methods: {
     //选择默认图片
@@ -284,4 +250,11 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .contacts_part {
+    margin-bottom: .1rem;
+    padding: .06rem .1rem 0;
+    width: 100%;
+    background: #fff;
+    box-sizing: border-box;
+  }
 </style>

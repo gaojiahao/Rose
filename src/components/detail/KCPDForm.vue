@@ -184,6 +184,13 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .contacts_part {
+    margin-bottom: .1rem;
+    padding: .06rem .1rem 0;
+    width: 100%;
+    background: #fff;
+    box-sizing: border-box;
+  }
   .mater_other {
       .mater_num {
         .num {

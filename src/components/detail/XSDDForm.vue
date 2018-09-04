@@ -11,32 +11,7 @@
                 <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
               </div>
               <!-- 经办信息 （订单、主体等） -->
-              <div class="basic_info">
-                <!-- 订单编码栏 -->
-                <div class="serial_bar vux-1px-b">
-                  <div>
-                    <span class="iconfont icon-dingdan1"></span>
-                    <span class="l_size_name">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
-                  </div>
-                  <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
-                </div>
-                <!-- 经办信息 -->
-                <div class="handle_info vux-1px-b">
-                  <div class="each_handle s_size_name">
-                    <span class="title">经办人：</span>
-                    <span class="content">{{orderInfo.handlerName}}</span>
-                  </div>
-                  <div class="each_handle s_size_name">
-                    <span class="title">经办主体：</span>
-                    <span class="content">{{orderInfo.handlerEntityName}}</span>
-                  </div>
-                </div>
-                <!-- 创建时间 -->
-                <div class="crt_time s_size_name">
-                  <span class="title">创建时间：</span>
-                  <span class="content">{{orderInfo.crtTime}}</span>
-                </div>
-              </div>
+              <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
               <!-- 工作流 -->
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>              
