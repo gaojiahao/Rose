@@ -14,7 +14,7 @@
         <span class="content" v-else>{{contactInfo.province}}{{contactInfo.city}}{{contactInfo.county}}{{contactInfo.address}}</span>
       </div>
     </div>
-    <div class="other_content">
+    <div class="other_content" v-if="payment || logistics">
       <div class="trade_info s_size_name" v-if="payment">
         <span class="title">结算方式：</span>
         <span class="mode">{{contactInfo.payment || '暂无'}}</span>
