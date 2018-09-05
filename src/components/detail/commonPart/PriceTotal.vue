@@ -78,6 +78,9 @@
       .vux-1px-t:before {
         display: none;
       }
+      .price_count {
+        text-align: left;
+      }
     }
     .price_list {
       display: flex;

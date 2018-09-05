@@ -18,15 +18,15 @@
             <!-- 物料列表 -->
             <matter-list :matter-list="orderInfo.order.dataSet"></matter-list>
             <!-- 金额合计栏 -->
-            <!-- <price-total :count="count" noAmt noTaxAmt></price-total> -->
+            <price-total :count="count" noAmt noTaxAmt></price-total>
             <!-- 金额明细 -->
-            <div class="price_detail">
+            <!-- <div class="price_detail"> -->
               <!-- 金额合计栏 -->
-              <div class="price_count vux-1px-t">
+              <!-- <div class="price_count vux-1px-t">
                 <span class='title'>合计:</span>
                 <span class="num"><span class="symbol">￥</span>{{count | toFixed | numberComma(3)}}</span>
               </div>
-            </div>            
+            </div>             -->
             <!-- 审批操作 -->
             <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
           </div>
