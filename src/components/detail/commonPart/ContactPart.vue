@@ -1,7 +1,7 @@
 <template>
   <!-- 往来联系部分 交易基本信息-->
   <div :class="{contacts_part : hasClass}">
-    <div class="main_content vux-1px-b">
+    <div class="main_content" :class="{'vux-1px-b' : payment || logistics}">
       <span class="iconfont icon-kehu1"></span>
       <div class="cp_name m_size_name">{{contactInfo.dealerName}}</div>
       <div class="other_info s_size_name">

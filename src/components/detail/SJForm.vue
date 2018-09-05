@@ -7,7 +7,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow> 
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="contactInfo"></contact-part>
+      <contact-part :contact-info="contactInfo" :payment="false" :logistics="false"></contact-part>
       <div class="materiel_list">
         <div class="title">
           <span class="iconfont icon-mingxi1"></span>

@@ -77,6 +77,7 @@
             <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
           </div>
           <div class="swiper-slide" v-if='HasValRealted'>
+            <div class='related_apply'>
               <div class="big_title">
                 <p class="vux-1px-b">相关实例</p>
               </div>
@@ -99,6 +100,7 @@
                 </div>
               </div>
             </div>
+          </div>
         </div>
         <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>
