@@ -4,7 +4,7 @@
     <div class="info_content">
       <div class="each_info">
         <span class="title">项目名称：</span>
-        <span class="content">{{projectInfo.project || '无'}}</span>
+        <span class="content">{{projectInfo.project || '无'}}</span>project
       </div>
       <div class="each_info">
         <span class="title">项目类型：</span>
@@ -19,7 +19,7 @@ export default {
   name : 'Project',
   props:{
     projectInfo : {
-      type : Boolean,
+      type : Object,
       default() {
         return {}
       }

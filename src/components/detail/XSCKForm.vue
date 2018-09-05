@@ -1,5 +1,5 @@
 <template>
-  <div class="detail_wrapper">
+  <div class="detail_wrapper xsck-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
       <div class="swiper-container">
         <!-- 如果需要分页器 -->
@@ -13,7 +13,7 @@
               <!-- 经办信息 （订单、主体等） -->
               <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
               <!-- 项目 -->
-              <project-part :project-info="orderInfo.outPut"></project-part>          
+              <project-part :project-info="orderInfo.outPut"></project-part>
               <!-- 工作流 -->
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>
@@ -28,63 +28,17 @@
                   <span class="iconfont icon-Shape"></span>物料列表
                 </div>
                 <div class="mater_list">
-                  <div class="each_mater" 
+                  <div class="each_mater"
                       v-for="(oItem, key) in orderList" :key='key'>
                     <div class="order_code">
                       <span class="order_title">所属订单</span>
                       <span class="order_num">{{key.replace(/_/g,'')}}</span>
                     </div>
-                    <div class="each_mater_wrapper">
-                      <!-- 物料信息 -->
-                      <div class="order_matter" v-for="(item, index) in oItem" :key="index"
-                      :class="{'vux-1px-b' : index !==  oItem.length - 1}">
-                        <div class="mater_img">
-                          <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                        </div>
-                        <div class="mater_main">
-                          <!-- 物料名称 -->
-                          <div class="mater_name">
-                            {{item.inventoryName_outPutMatCode}}
-                          </div>
-                          <!-- 物料基本信息 -->
-                          <div class="mater_info">
-                            <!-- 物料编码、规格 -->
-                            <div class="withColor">
-                              <!-- 物料编码 -->
-                              <div class="ForInline" style="display:inline-block">
-                                <div class="mater_code">
-                                  <span class="title">编码</span>
-                                  <span class="num">{{item.inventoryCode_outPutMatCode || '无'}}</span>
-                                </div>
-                              </div>
-                              <!-- 物料规格 -->
-                              <div class="ForInline" style="display:inline-block">
-                                <div class="mater_spec">
-                                  <span class="title">规格</span>
-                                  <span class="num">{{item.specification_transObjCode || '无'}}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <!-- 物料数量和价格 -->
-                          <div class='mater_other'>
-                            <div class='mater_num'>
-                              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                              <span class='num'>数量: {{item.tdQty}}</span>
-                              <span>税率: {{item.taxRate}}</span>
-                            </div>
-                            <div class='mater_price'>
-                              ￥{{item.tdAmount | toFixed | numberComma(3)}}
-                              <span class="num"
-                                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 4 ? 'block' : '')}">
-                                      [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                                    </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="order_matter">
+                      <matter-item :item="item" v-for="(item, index) in oItem" :key="index"
+                                   :class="{'vux-1px-b' : index !==  oItem.length - 1}"></matter-item>
                     </div>
-                  </div>             
+                  </div>
                 </div>
               </div>
               <!-- 金额合计 -->
@@ -140,6 +94,8 @@ import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 import ProjectPart from 'components/detail/commonPart/Project'
+import MatterItem from 'components/detail/commonPart/MatterItem'
+
 export default {
   data() {
     return {
@@ -172,7 +128,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal,WarehouseContent,ProjectPart
+    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal,WarehouseContent,ProjectPart,MatterItem,
   },
   methods: {
     //选择默认图片
@@ -212,6 +168,8 @@ export default {
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
             : this.getDefaultImg();
+          item.inventoryName_transObjCode = item.inventoryName_outPutMatCode;
+          item.transObjCode = item.inventoryCode_outPutMatCode;
           if (!orderList[item.transMatchedCode]) {
             orderList[item.transMatchedCode] = [];
           }
@@ -251,6 +209,31 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+
+  .xsck-detail-container {
+    // 所属订单
+    .order_code {
+      display: flex;
+      color: #fff;
+      font-size: .12rem;
+      font-weight: bold;
+      > span {
+        display: inline-block;
+        padding: 0 .04rem;
+      }
+      .order_title {
+        background: #1160aa;
+      }
+      // 订单号
+      .order_num {
+        background: #9bb4da;
+        border-top-right-radius: .08rem;
+      }
+    }
+    .order_matter {
+      margin-top: .04rem;
+    }
+  }
   .contacts_part {
     margin-bottom: .1rem;
     padding: .06rem .1rem 0;
