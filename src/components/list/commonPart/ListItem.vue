@@ -129,7 +129,7 @@
   .duty_top {
     height: .24rem;
     line-height: .24rem;
-    padding: .04rem .1rem .02rem;
+    padding: .04rem .1rem;
     .duty_code { //任务编码
       float: left;
       font-size: .15rem;
