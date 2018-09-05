@@ -5,9 +5,9 @@
         <span class="iconfont icon-Shape"></span>物料列表
       </div>
       <div class="mater_list">
-        <div class="each_mater" 
+        <div class="each_mater"
         :class="{'vux-1px-b' : index !== matterList.length - 1}"
-        v-for="(item, index) in matterList" 
+        v-for="(item, index) in matterList"
         :key='index'>
           <div class="each_mater_wrapper">
             <div class="mater_img">
@@ -45,7 +45,7 @@
                   <span class='num'>数量: {{item.tdQty}}</span>
                   <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
                 </div>
-                <div class='mater_other' v-if="item.priceType">
+                <div class='mater_other' v-if="item.priceType || item.priceType === ''">
                   <div class='mater_price'>
                     <span class="symbol">￥</span>{{item.price | toFixed |numberComma(3)}}
                     <span class="num">[类型: {{item.priceType || '无'}}]</span>
@@ -86,7 +86,7 @@
     created(){
       console.log(this.matterList)
     }
-    
+
   }
 </script>
 
@@ -372,6 +372,6 @@
     border-color: #e8e8e8;
   }
 }
-  
-  
+
+
 </style>
