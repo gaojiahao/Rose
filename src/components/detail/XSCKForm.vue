@@ -211,6 +211,25 @@ export default {
   @import './../scss/bizDetail';
 
   .xsck-detail-container {
+    // 所属订单
+    .order_code {
+      display: flex;
+      color: #fff;
+      font-size: .12rem;
+      font-weight: bold;
+      > span {
+        display: inline-block;
+        padding: 0 .04rem;
+      }
+      .order_title {
+        background: #1160aa;
+      }
+      // 订单号
+      .order_num {
+        background: #9bb4da;
+        border-top-right-radius: .08rem;
+      }
+    }
     .order_matter {
       margin-top: .04rem;
     }
