@@ -11,7 +11,7 @@
       <div class="materiel_list">
         <div class="title">
           <span class="iconfont icon-mingxi1"></span>
-          <span>商机明细</span>
+          <span>商机信息</span>
         </div>
         <div class="main_content">
           <form-cell cellTitle='标题' :cellContent="orderInfo.opportunityTitle"></form-cell>
