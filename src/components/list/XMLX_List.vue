@@ -14,8 +14,8 @@
             <p class="duty_code">{{item.transCode}}</p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
-          <div class="project_name">
-            {{item.projectName}}
+          <div class="duty_item">
+            {{item.projectName_project}}
           </div>
           <!-- 项目立项经办人 -->
           <div class="order_count">
