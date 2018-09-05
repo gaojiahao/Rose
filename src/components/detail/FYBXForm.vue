@@ -15,10 +15,7 @@
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <div class="trade_mode mg_auto box_sd">
-              <p class="title">项目名称</p>
-              <p class="mode">{{orderInfo.order.project || '无'}}</p>
-            </div>
+            <project-part :project-info="orderInfo.order"></project-part>
             <div class="trade_mode mg_auto box_sd">
               <p class="title">报销人</p>
               <p class="mode">{{orderInfo.creatorName }}</p>
@@ -109,6 +106,7 @@ import detailCommon from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import PopRelatedList from 'components/Popup/PopRelatedList'
+import ProjectPart from 'components/detail/commonPart/Project'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
@@ -120,7 +118,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow,RAction,PopRelatedList
+    workFlow,RAction,PopRelatedList,ProjectPart
   },
   methods: {
     // 获取详情

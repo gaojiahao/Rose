@@ -13,20 +13,7 @@
               <!-- 经办信息 （订单、主体等） -->
               <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
               <!-- 项目 -->
-              <div class="other_info">
-                <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
-                <div class="info_content">
-                  <div class="each_info">
-                    <span class="title">项目名称：</span>
-                    <span class="content">{{orderInfo.outPut.project || '无'}}</span>
-                  </div>
-                  <div class="each_info">
-                    <span class="title">项目类型：</span>
-                    <span class="content">{{orderInfo.outPut.projectType_project || '无'}}</span>
-                  </div>
-                  
-                </div>
-              </div>              
+              <project-part :project-info="orderInfo.outPut"></project-part>          
               <!-- 工作流 -->
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>
@@ -152,6 +139,7 @@ import PopRelatedList from 'components/Popup/PopRelatedList'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
+import ProjectPart from 'components/detail/commonPart/Project'
 export default {
   data() {
     return {
@@ -184,7 +172,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal,WarehouseContent
+    workFlow, RAction, PopWarehouseList,PopRelatedList,contactPart,PriceTotal,WarehouseContent,ProjectPart
   },
   methods: {
     //选择默认图片

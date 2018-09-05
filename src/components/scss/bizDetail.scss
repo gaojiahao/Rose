@@ -69,37 +69,6 @@
   margin-bottom: .1rem;
   box-sizing: border-box;
 }
-
-// 项目信息
-.other_info {
-  width: 100%;
-  padding: 0 .1rem;
-  background: #FFF;
-  margin-bottom: .1rem;
-  box-sizing: border-box;
-  .info_title {
-    padding: .06rem 0;
-    font-size: .18rem;
-    font-weight: bold;
-    .iconfont {
-      font-weight: normal;
-      margin-right: .03rem;
-    }
-  }
-  .info_content {
-    padding: .06rem 0;
-    .each_info {
-      margin: .04rem 0;
-      font-size: .14rem;
-      .title {
-        font-weight: bold;
-      }
-      .content {
-        font-weight: 200;
-      }
-    }
-  }
-}
 // 物料列表
 .materiel_list {
   position: relative;
