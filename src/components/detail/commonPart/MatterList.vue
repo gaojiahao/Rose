@@ -55,7 +55,7 @@
                   <span>￥{{item.tdAmount | toFixed | numberComma(3)}}</span>
                   <span class="num"
                         :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 4 ? 'block' : '')}"
-                        v-show="item.taxRate">
+                        v-if="item.taxRate">
                     [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                   </span>
                 </div>
@@ -211,11 +211,12 @@
             // display: inline-block;
             // 有颜色包裹的
             .withColor {
+              font-size: 0;
               // 物料编码
               .mater_code {
                 // display: flex;
                 font-weight: 200;
-                margin-right: .02rem;
+                margin-right: .06rem;
                 .title,
                 .num {
                   font-size: .1rem;
@@ -232,7 +233,6 @@
                   max-width: .9rem;
                   overflow: hidden;
                   white-space: nowrap;
-                  margin-left: -.04rem;
                   background: #dbe2ef;
                   text-overflow: ellipsis;
                   border-top-right-radius: .12rem;
@@ -248,7 +248,6 @@
                 .num {
                   color: #fff;
                   max-width: .6rem;
-                  margin-left: -.04rem;
                   background: #ff7f50;
                 }
               }

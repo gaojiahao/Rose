@@ -14,7 +14,7 @@
   width: 95%;
   margin: 10px auto;
 }
-              
+
 .symbol {
   font-size: .1rem;
 }
@@ -25,7 +25,7 @@
 }
 
 .basicPart {
-  z-index: 1; 
+  z-index: 1;
   height: 100%;
   overflow: auto;
   position:relative;
@@ -67,7 +67,7 @@
   padding: 0 .1rem;
   background: #fff;
   margin-bottom: .1rem;
-  box-sizing: border-box;  
+  box-sizing: border-box;
 }
 
 
@@ -196,11 +196,12 @@
             display: inline-block;
             // 有颜色包裹的
             .withColor {
+              font-size: 0;
               // 物料编码
               .mater_code {
                 // display: flex;
                 font-weight: 200;
-                margin-right: .02rem;
+                margin-right: .06rem;
                 .title,
                 .num {
                   font-size: .1rem;
@@ -217,7 +218,6 @@
                   max-width: .9rem;
                   overflow: hidden;
                   white-space: nowrap;
-                  margin-left: -.04rem;
                   background: #dbe2ef;
                   text-overflow: ellipsis;
                   border-top-right-radius: .12rem;
@@ -233,7 +233,6 @@
                 .num {
                   color: #fff;
                   max-width: .6rem;
-                  margin-left: -.04rem;
                   background: #ff7f50;
                 }
               }
