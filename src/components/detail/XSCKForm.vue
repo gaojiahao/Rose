@@ -12,6 +12,21 @@
               </div>
               <!-- 经办信息 （订单、主体等） -->
               <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+              <!-- 项目 -->
+              <div class="other_info">
+                <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
+                <div class="info_content">
+                  <div class="each_info">
+                    <span class="title">项目名称：</span>
+                    <span class="content">{{orderInfo.outPut.project || '无'}}</span>
+                  </div>
+                  <div class="each_info">
+                    <span class="title">项目类型：</span>
+                    <span class="content">{{orderInfo.outPut.projectType_project || '无'}}</span>
+                  </div>
+                  
+                </div>
+              </div>              
               <!-- 工作流 -->
               <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                         :no-status="orderInfo.biStatus"></work-flow>
@@ -20,11 +35,6 @@
                 <contact-part :contact-info="dealerInfo" :hasClass='false'></contact-part>
                 <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
               </div>
-              <!-- 项目 -->
-              <div class="trade_mode mg_auto box_sd">
-                <p class="title">项目名称</p>
-                <p class="mode">{{orderInfo.outPut.project || '无'}}</p>
-              </div>
               <!-- 物料列表 -->
               <div class="materiel_list">
                 <div class="title">
@@ -32,7 +42,6 @@
                 </div>
                 <div class="mater_list">
                   <div class="each_mater" 
-                      :class="{'vux-1px-b' : key !==  orderList.length - 1}"
                       v-for="(oItem, key) in orderList" :key='key'>
                     <div class="order_code">
                       <span class="order_title">所属订单</span>
@@ -40,7 +49,8 @@
                     </div>
                     <div class="each_mater_wrapper">
                       <!-- 物料信息 -->
-                      <div class="order_matter" v-for="(item, index) in oItem" :key="index">
+                      <div class="order_matter" v-for="(item, index) in oItem" :key="index"
+                      :class="{'vux-1px-b' : index !==  oItem.length - 1}">
                         <div class="mater_img">
                           <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                         </div>
@@ -89,8 +99,9 @@
                     </div>
                   </div>             
                 </div>
-                <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
               </div>
+              <!-- 金额合计 -->
+              <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
               <!-- 审批操作 -->
               <r-action :code="transCode" :task-id="taskId" :actions="actions"
                         @on-submit-success="submitSuccessCallback"></r-action>

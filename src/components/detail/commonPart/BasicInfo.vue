@@ -17,7 +17,7 @@
       </div>
       <div class="each_handle s_size_name">
         <span class="title">经办主体：</span>
-        <span class="content">{{orderInfo.handlerEntityName}}</span>
+        <span class="content">{{orderInfo.handlerEntityName || '无'}}</span>
       </div>
     </div>
     <!-- 创建时间 完成时间 -->
