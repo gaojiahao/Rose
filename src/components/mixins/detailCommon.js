@@ -2,7 +2,7 @@ import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from
 import {numberComma} from 'vux'
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 // 映射表 引入
-import businessMap from '@/msg/pages/maps/businessApp'
+import businessMap from '@/home/pages/maps/businessApply.js'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
@@ -204,7 +204,6 @@ export default {
            this.RelatedAppList.push(item);
            if(item.itemCount > 0){
              this.HasValRealted = true;
-
            }
           }
         })

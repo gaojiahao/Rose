@@ -23,22 +23,24 @@
             <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
           </div>
           <div class="swiper-slide" v-if='HasValRealted'>
-            <div class="big_title">
-              <p class="vux-1px-b">相关实例</p>
-            </div>
-            <div class="relevant_list">
-              <div class="each_app vux-1px-b" v-for='(item,index) in RelatedAppList' :key="index" @click="getRelatedData(item)">
-                <div class="app_info">
-                  <div class="title">业务应用</div>
-                  <div class="app_name">
-                    <span>{{item.listName}}</span>
-                  </div>
-                  <div class="msg_num">
-                    {{item.itemCount}}
-                    <span class="msg_tx">关联</span>
-                  </div>
-                  <div class="r_arrow" v-if='item.itemCount>0'>
-                    <x-icon type="ios-arrow-right" size="20" ></x-icon>
+            <div class='related_apply'>
+              <div class="big_title">
+                <p class="vux-1px-b">相关实例</p>
+              </div>
+              <div class="relevant_list">
+                <div class="each_app vux-1px-b" v-for='(item,index) in RelatedAppList' :key="index" @click="getRelatedData(item)">
+                  <div class="app_info">
+                    <div class="title">业务应用</div>
+                    <div class="app_name">
+                      <span>{{item.listName}}</span>
+                    </div>
+                    <div class="msg_num">
+                      {{item.itemCount}}
+                      <span class="msg_tx">关联</span>
+                    </div>
+                    <div class="r_arrow" v-if='item.itemCount>0'>
+                      <x-icon type="ios-arrow-right" size="20" ></x-icon>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -105,8 +107,8 @@ export default {
         // 获取合计
         let {dataSet} = data.formData.order;
         dataSet.forEach(item=>{
-          item.amount = accMul(item.tdQty,item.price)
-          this.count = accAdd(this.count,item.amount);
+          item.tdAmount = accMul(item.tdQty,item.price)
+          this.count = accAdd(this.count,item.tdAmount);
           item.inventoryPic = item.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();

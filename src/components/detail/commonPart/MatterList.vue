@@ -52,8 +52,7 @@
                   </div>
                 </div>
                 <div class='mater_price' v-else>
-                  <span v-if='item.tdAmount>0'>￥{{item.tdAmount | toFixed | numberComma(3)}}</span>
-                  <span v-else>￥{{item.amount | toFixed | numberComma(3)}}</span>
+                  <span>￥{{item.tdAmount | toFixed | numberComma(3)}}</span>
                   <span class="num"
                         :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 4 ? 'block' : '')}"
                         v-show="item.taxRate">

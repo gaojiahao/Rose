@@ -10,14 +10,14 @@
       <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
     </div>
     <!-- 往来信息 -->
-    <div class="dealer_part">
+    <div class="dealer_part" v-show='item.dealerName'>
       <div class="dealer_name vux-1px-t">
         <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
       </div>
     </div>        
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
-      <li class="duty_matter_item vux-1px-b" v-for="(mItem, mIndex) in item.itmes" :key="mIndex">
+      <li class="duty_matter_item vux-1px-b" v-for="(mItem, mIndex) in item.itmes" :key="mIndex" v-if='mIndex<3'>
         <div class="matter_img">
           <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
         </div>
@@ -44,9 +44,13 @@
       </li>
     </ul>
     <!-- 提示 -->
-    <div class="tips_part" v-if="item.itemCount > 5">
-      <span>本条信息包含物料数据过多，查看更多</span>
-      <x-icon type="ios-arrow-right" size="12"></x-icon>
+    <div class="tips_part" v-show="item.itemCount > 3">
+      <span class='more'>……</span>
+      <div>
+        <span>共 {{item.itemCount}} 条物料，查看更多</span>
+        <x-icon type="ios-arrow-right" size="12"></x-icon>
+      </div>
+     
     </div>
     <!-- 金额合计 -->
     <div class="order_count">
@@ -270,7 +274,8 @@
     align-items: center;
     padding: .04rem .1rem 0;
     box-sizing: border-box;
-    justify-content: flex-end;
+    justify-content :space-between;
+    // justify-content: flex-end;
   }
   /* 合计栏 */
   .order_count {
