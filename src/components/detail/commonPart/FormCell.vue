@@ -23,8 +23,8 @@ export default {
 
 <style lang='scss' scoped>
 .each_cell {
-  padding: .08rem 0;
   font-size: .14rem;
+  padding: .08rem .1rem;
   .cell_name {
     color: #757575;
     margin-right: .1rem;

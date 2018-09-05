@@ -1,6 +1,6 @@
 <template>
   <!-- 审批操作 -->
-  <div class='handle_wrapper'>
+  <div class='handle_wrapper vux-1px-t'>
     <div class="handle_btn" v-if="!!actions.length">
       <span class="reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
       <span class="reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>

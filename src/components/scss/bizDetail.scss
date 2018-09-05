@@ -79,27 +79,6 @@
     font-weight: bold;
     font-size: .18rem;
   }
-  .price_cell {
-    padding: .08rem 0;
-    .title {
-      color: #757575;
-      font-size: .14rem;
-      font-weight: normal;
-    }
-    .symbol {
-      font-size: .14rem;
-    }
-    .num {
-      color: #c93d1b;
-      font-size: .2rem;
-      font-weight: bold;
-    }
-  }
-  .icon-Shape {
-    font-size: .12rem;
-    font-weight: 200;
-    margin-right: .04rem;
-  }
   .tips {
     color: #111;
     font-weight: 500;
@@ -310,6 +289,38 @@
     border-radius: .4rem;
     background: #5077aa;
     box-shadow: 0 2px 5px #5077aa;
+  }
+}
+// 表格
+.form_content {
+  position: relative;
+  background: #FFF;
+  padding-top: .06rem;
+  .form_title {
+    color: #111;
+    font-weight: bold;
+    font-size: .18rem;
+    padding: 0 .1rem;
+  }
+  .price_cell {
+    padding: .08rem .1rem;
+    .price_title {
+      color: #757575;
+      font-size: .14rem;
+    }
+    .symbol {
+      font-size: .14rem;
+    }
+    .num {
+      color: #c93d1b;
+      font-size: .2rem;
+      font-weight: bold;
+    }
+  }
+  .icon-Shape {
+    font-size: .12rem;
+    font-weight: 200;
+    margin-right: .04rem;
   }
 }
 // 审批操作

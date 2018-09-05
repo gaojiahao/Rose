@@ -1,5 +1,5 @@
 <template>
-  <div class="materiel_list">
+  <div class="materiel_ct_list">
     <div class="title">
       <span class="iconfont icon-Shape"></span>物料列表
     </div>
@@ -35,7 +35,7 @@
 
 <style scoped lang="scss">
 // 物料列表
-.materiel_list {
+.materiel_ct_list {
   position: relative;
   background: #FFF;
   padding: .06rem .08rem 0;

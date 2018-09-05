@@ -12,44 +12,29 @@
             </div>
             <!-- 经办信息 （订单、主体等） -->
             <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+            <!-- 项目信息 -->
+            <project-part :project-info="orderInfo.order"></project-part>
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <project-part :project-info="orderInfo.order"></project-part>
-            <div class="trade_mode mg_auto box_sd">
+            <!-- <div class="trade_mode mg_auto box_sd">
               <p class="title">报销人</p>
               <p class="mode">{{orderInfo.creatorName }}</p>
-            </div>
+            </div> -->
             <!-- 物料列表 -->
-            <div class="materiel_list mg_auto box_sd">
-              <div class="title">费用列表</div>
+            <div class="materiel_list">
+              <div class="title">
+                <span class="iconfont icon-mingxi1"></span>
+                <span>费用列表</span>
+              </div>
               <div class="mater_list">
-                <div class="each_mater vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+                <div class="each_mater" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
                   <div class="each_mater_wrapper">
                     <div class="mater_main">
-                      <!-- 物料名称 -->
-                      <div class="mater_name">
-                        {{item.costName_expCode}}
-                      </div>
-                      <div class='mater_other'>
-                        <div class='mater_reimb'>
-                          <!-- 报销金额 -->
-                          <div class="price">
-                            <span class="title">报销金额: </span>
-                            <span class="content">
-                              <span style="fontSize:.12rem;">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}
-                            </span>
-                          </div>
-                          <!-- 报销事由 -->
-                          <div class="reason">
-                            <span class="title">报销事由: </span>
-                            <span class="content">{{item.expCause}}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class='mater_other'>
-                      </div>
+                      <div class="which_part">第{{ index + 1 }}个</div>
+                      <form-cell cellTitle='名称' :cellContent="item.costName_expCode" ></form-cell>
+                      <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+                      <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
                     </div>
                   </div>
                 </div>
@@ -153,16 +138,4 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-  .materiel_list
-    .mater_list
-      .each_mater
-        .each_mater_wrapper
-          .mater_main {
-            width: 100%;
-            max-width: inherit;
-            margin-left: inherit;
-            .mater_name {
-              font-size: .18rem;
-            }
-          }
 </style>

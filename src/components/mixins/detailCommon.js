@@ -1,6 +1,8 @@
 import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from 'service/detailService.js'
 import {numberComma} from 'vux'
+// 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
+import FormCell from 'components/detail/commonPart/FormCell'
 // 映射表 引入
 import businessMap from '@/home/pages/maps/businessApply.js'
 //公共方法引入
@@ -9,7 +11,7 @@ import {toFixed} from '@/plugins/calc'
 
 export default {
   components: {
-    BasicInfo,
+    FormCell, BasicInfo
   },
   data() {
     return {

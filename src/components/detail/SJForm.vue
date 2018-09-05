@@ -8,8 +8,8 @@
                 :no-status="orderInfo.biStatus"></work-flow> 
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" :payment="false" :logistics="false"></contact-part>
-      <div class="materiel_list">
-        <div class="title">
+      <div class="form_content">
+        <div class="form_title">
           <span class="iconfont icon-mingxi1"></span>
           <span>商机信息</span>
         </div>
@@ -21,8 +21,8 @@
           <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
           <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>
         </div>
-        <div class="price_cell vux-1px-tb">
-          <span class="title">预期销售额:</span>
+        <div class="price_cell vux-1px-t">
+          <span class="price_title">预期销售额:</span>
           <span class="num">
             <span class="symbol">￥</span><span>{{orderInfo.tdAmount | numberComma(3) || 0}}</span>
           </span>
@@ -46,7 +46,6 @@ import detailCommon from 'components/mixins/detailCommon'
 import { toFixed } from '@/plugins/calc'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
-import FormCell from 'components/detail/commonPart/FormCell'
 import contactPart from 'components/detail/commonPart/ContactPart'
 
 
@@ -61,7 +60,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    Cell, Group, RAction, workFlow, contactPart, FormCell
+    Cell, Group, RAction, workFlow, contactPart
   },
   methods: {
     // 获取详情
