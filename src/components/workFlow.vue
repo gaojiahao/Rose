@@ -244,7 +244,7 @@
         font-size: .14rem;
       }
       .content {
-        font-size: .18rem;
+        font-size: .16rem;
         font-weight: bold;
       }
       .tips {
