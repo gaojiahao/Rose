@@ -20,10 +20,16 @@
         <span class="content">{{orderInfo.handlerEntityName}}</span>
       </div>
     </div>
-    <!-- 创建时间 -->
-    <div class="crt_time s_size_name">
-      <span class="title">创建时间：</span>
-      <span class="content">{{orderInfo.crtTime}}</span>
+    <!-- 创建时间 完成时间 -->
+    <div class="time_info s_size_name">
+      <div class="each_time">
+        <span class="title">创建时间：</span>
+        <span class="content">{{orderInfo.crtTime}}</span>
+      </div>
+      <div class="each_time" v-if="orderInfo.effectiveTime">
+        <span class="title">生效时间：</span>
+        <span class="content">{{orderInfo.effectiveTime}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -95,8 +101,11 @@
       }
     }
     // 创建时间
-    .crt_time {
+    .time_info {
       @extend .handle_info;
+      .each_time {
+        @extend .each_handle;
+      }
     }
     .l_size_name {
       color: #111;
