@@ -82,11 +82,7 @@
      filters: {
       numberComma,
       toFixed,
-    },
-    created(){
-      console.log(this.matterList)
     }
-
   }
 </script>
 
@@ -95,7 +91,7 @@
 .materiel_list {
   position: relative;
   background: #FFF;
-  padding: .06rem .08rem;
+  padding: .06rem .08rem 0;
   .title {
     color: #111;
     font-weight: bold;
@@ -118,9 +114,9 @@
     }
   }
   .icon-Shape {
-    font-size: .12rem;
+    font-size: .14rem;
     font-weight: 200;
-    margin-right: .04rem;
+    margin-right: .02rem;
   }
   .tips {
     color: #111;
@@ -212,8 +208,8 @@
           .mater_info {
             color: #757575;
             font-size: .12rem;
-            margin-top: .04rem;
-            display: inline-block;
+            margin-top: .02rem;
+            // display: inline-block;
             // 有颜色包裹的
             .withColor {
               // 物料编码

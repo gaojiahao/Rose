@@ -119,8 +119,7 @@
   width: 95%;
   position: relative;
   margin: .1rem auto .2rem;
-  // padding: .02rem 0 .04rem;
-  padding-bottom: .04rem;
+  // padding-bottom: .04rem;
   border-radius: .08rem;
   box-shadow: 0 2px 10px #e8e8e8;
   .duty_top {
@@ -190,33 +189,33 @@
       margin-right: .02rem;
     }
     .dealer_name {
-      padding: .04rem 0;
+      padding: .04rem 0 .02rem;
     }
   }
   /* 物料 */
   .duty_matter {
     display: block;
-    margin: .02rem 0;
     padding: 0 .1rem;
     box-sizing: border-box;
     .duty_matter_item {
       width: 100%;
       display: flex;
-      margin: .02rem 0;
-      padding: .04rem 0;
+      padding: .04rem 0 .06rem;
       box-sizing: border-box;
       .matter_img {
         width: .6rem;
         height: .6rem;
-        margin-right: .1rem;
+        margin-top: .04rem;
         border-radius: .04rem;
+        display: inline-block;
         img {
-          // width: 100%;
-          height: 100%;
+          width: 100%;
+          max-height: 100%;
         }
       }
       .matter_main {
-        width: 100%;
+        width: calc( 100% - .6rem) ;
+        margin-left: .1rem;
         .main_top {
           width: 100%;
           display: flex;
