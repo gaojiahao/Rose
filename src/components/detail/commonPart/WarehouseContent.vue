@@ -50,7 +50,9 @@
     &:last-of-type{
       padding-top: 0.06rem;
       .iconfont{
-        top:0.09rem;
+        top: .08rem;
+        font-size: .15rem;
+        font-weight: bold;
       }
     }
     
