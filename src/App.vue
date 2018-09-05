@@ -64,7 +64,6 @@
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
-
   html {
     height: 100%;
   }
@@ -76,6 +75,9 @@
     font-size: .16rem;
     background-color: #fff;
     font-family: -apple-system-font, "Helvetica Neue", sans-serif, Microsoft YaHei, Arial, Helvetica, sans-serif;
+  }
+  .iconfont {
+    font-size: .16rem;
   }
   ul,li{
     list-style: none;

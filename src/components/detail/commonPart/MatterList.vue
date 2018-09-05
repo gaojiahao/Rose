@@ -134,7 +134,7 @@
     box-sizing: border-box;
     // 每个物料
     .each_mater {
-      padding: .04rem 0 .08rem;
+      padding: .04rem 0 .02rem;
       position: relative;
       box-sizing: border-box;
       // 所属订单

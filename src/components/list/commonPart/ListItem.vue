@@ -45,8 +45,8 @@
     </ul>
     <!-- 提示 -->
     <div class="tips_part" v-show="item.itemCount > 3">
-      <span class='more'>……</span>
-      <div>
+      <span class='iconfont icon-shenglvehao'></span>
+      <div class="more">
         <span>共 {{item.itemCount}} 条物料，查看更多</span>
         <x-icon type="ios-arrow-right" size="12"></x-icon>
       </div>
@@ -271,10 +271,16 @@
     font-size: .12rem;
     font-weight: bold;
     align-items: center;
-    padding: .04rem .1rem 0;
     box-sizing: border-box;
+    padding: .04rem .1rem 0;
     justify-content :space-between;
-    // justify-content: flex-end;
+    .icon-shenglvehao {
+      font-size: .16rem;
+    }
+    .more {
+      display: flex;
+      align-items: center;
+    }
   }
   /* 合计栏 */
   .order_count {
