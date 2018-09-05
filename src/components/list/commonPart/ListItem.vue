@@ -230,9 +230,7 @@
               color: #111;
               overflow: hidden;
               font-size: .14rem;
-              // font-weight: bold;
               display: -webkit-box;
-              // margin-bottom: .04rem;
               -webkit-line-clamp: 2;
               text-overflow: ellipsis;
               -webkit-box-orient: vertical;
@@ -270,12 +268,15 @@
     color: #757575;
     font-size: .12rem;
     font-weight: bold;
+    position: relative;
     align-items: center;
     box-sizing: border-box;
     padding: .04rem .1rem 0;
-    justify-content :space-between;
+    justify-content :flex-end;
     .icon-shenglvehao {
-      font-size: .16rem;
+      left: .1rem;
+      font-size: .3rem;
+      position: absolute;
     }
     .more {
       display: flex;

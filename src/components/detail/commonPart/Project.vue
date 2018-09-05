@@ -47,7 +47,7 @@ export default {
   box-sizing: border-box;
   .info_title {
     padding: .06rem 0;
-    font-size: .18rem;
+    font-size: .16rem;
     font-weight: bold;
     .iconfont {
       font-weight: normal;

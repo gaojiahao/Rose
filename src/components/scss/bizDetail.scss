@@ -105,10 +105,11 @@
         position: relative;
         // 物料主体
         .mater_main {
-          max-width: 2.6rem;
-          margin-left: .1rem;
-          display: inline-block;
-          box-sizing: border-box;
+          width: 100%;
+          // max-width: 2.6rem;
+          // margin-left: .1rem;
+          // display: inline-block;
+          // box-sizing: border-box;
           // 物料名称
           .mater_name {
             color: #111;
@@ -299,28 +300,31 @@
   .form_title {
     color: #111;
     font-weight: bold;
-    font-size: .18rem;
+    font-size: .16rem;
+    padding: .04rem .1rem;
+    .iconfont {
+      font-size: .14rem;
+    }
+  }
+  .main_content {
     padding: 0 .1rem;
   }
-  .price_cell {
-    padding: .08rem .1rem;
-    .price_title {
-      color: #757575;
-      font-size: .14rem;
-    }
-    .symbol {
-      font-size: .14rem;
-    }
-    .num {
-      color: #c93d1b;
-      font-size: .2rem;
-      font-weight: bold;
-    }
+}
+.price_cell {
+  width: 100%;
+  background: #FFF;
+  padding: .08rem .1rem;
+  .price_title {
+    color: #757575;
+    font-size: .14rem;
   }
-  .icon-Shape {
-    font-size: .12rem;
-    font-weight: 200;
-    margin-right: .04rem;
+  .symbol {
+    font-size: .14rem;
+  }
+  .num {
+    color: #c93d1b;
+    font-size: .2rem;
+    font-weight: bold;
   }
 }
 // 审批操作

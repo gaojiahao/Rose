@@ -22,29 +22,22 @@
               <p class="mode">{{orderInfo.creatorName }}</p>
             </div> -->
             <!-- 物料列表 -->
-            <div class="materiel_list">
-              <div class="title">
+            <div class="form_content vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+              <div class="form_title">
                 <span class="iconfont icon-mingxi1"></span>
-                <span>费用列表</span>
+                <span>费用</span><span class="symbol">{{ index + 1 }}</span>
               </div>
-              <div class="mater_list">
-                <div class="each_mater" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-                  <div class="each_mater_wrapper">
-                    <div class="mater_main">
-                      <div class="which_part">第{{ index + 1 }}个</div>
-                      <form-cell cellTitle='名称' :cellContent="item.costName_expCode" ></form-cell>
-                      <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
-                      <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
-                    </div>
-                  </div>
-                </div>
-                <!-- 金额合计栏 -->
-                <div class="price_list">
-                  <div class='title'><span>合计</span></div>
-                  <div class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</div>
-                </div>
+              <div class="main_content" >
+                  <form-cell cellTitle='名称' :cellContent="item.costName_expCode"></form-cell>
+                  <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+                  <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
               </div>
             </div>
+            <div class="price_cell">
+              <span class='title'>合计：</span>
+              <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
+            </div>             
+          </div>
             <!-- 审批操作 -->
             <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
           </div>
@@ -138,4 +131,7 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
+  .materiel_list .mater_list .each_mater {
+    padding: .04rem 0 0;  
+  }
 </style>

@@ -110,7 +110,7 @@
       }
     }
     .symbol {
-      font-size: .1rem;
+      font-size: .12rem;
     }
     .vux-1px-t:before {
       border-color: #e8e8e8;
