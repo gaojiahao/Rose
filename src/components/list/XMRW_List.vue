@@ -24,6 +24,9 @@
             </p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
+          <div class="duty_item">
+            {{item.projectName_project}}
+          </div>
           <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
@@ -80,7 +83,7 @@
           ];
         }
 
-        return getList(2270, {
+        return getList(2326, {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
