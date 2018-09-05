@@ -35,6 +35,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.vux-1px-b:after {
+  border-color: #e8e8e8;
+}
 // 项目信息
 .project_info {
   width: 100%;

@@ -159,6 +159,7 @@
       .each_mater_wrapper {
         display: flex;
         position: relative;
+        margin-bottom: .04rem;
         // 订单底下的物料
         .order_matter {
           margin-top: .04rem;
