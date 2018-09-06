@@ -6,9 +6,6 @@
 .vux-1px-tb:after {
   border-color: #e8e8e8;
 }
-.swiper-pagination-bullets{
-  position: static;
-}
 // 居中
 .mg_auto {
   width: 95%;
@@ -354,7 +351,6 @@
   }
 }
 // 项目类公共
-
 .project_info {
   width: 100%;
   padding: 0 .1rem;
@@ -411,61 +407,6 @@
     box-shadow: 0 2px 5px #5077aa;
   }
 
-}
-//相关实例
-.swiper-slide{
-  .related_apply{
-    background: #fff;
-  }
-  .big_title {
-    width: 95%;
-    color: #111;
-    margin: 0 auto;
-    padding: .04rem;
-    font-size: .3rem;
-    font-weight: 300;
-    box-sizing: border-box;
-  }
-  // 相关应用
-  .relevant_list {
-    width: 90%;
-    margin: 0 auto;
-    .each_app {
-      margin-bottom: .1rem;
-      position: relative;
-      border-radius: .08rem;
-      .app_info {
-        padding: .1rem;
-        box-sizing: border-box;
-        .title {
-          color: #4F90F9;
-          font-size: .12rem;
-          font-weight: bold;
-        }
-        .app_name {
-          font-size: .18rem;
-          .msg_count {
-            float: right;
-            margin-right: .1rem;
-          }
-        }
-        .msg_num {
-          color: #3f72af;
-          font-size: .2rem;
-          .msg_tx {
-            // color: #757575;
-            font-size: .12rem;
-          }
-        }
-        .r_arrow {
-          position: absolute;
-          right: 0;
-          top: 50%;
-          transform: translate(0, -50%);
-        }
-      }
-    }
-  }
 }
 // 表单基本信息
 .work_info {

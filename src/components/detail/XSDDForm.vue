@@ -1,56 +1,23 @@
 <template>
   <div class="detail_wrapper">
-      <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-        <div class="swiper-container">
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination" v-if='HasValRealted'></div>
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-                <span>其他应用里存在与本条相关联的数据，快去看看</span>
-                <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-              </div>
-              <!-- 经办信息 （订单、主体等） -->
-              <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-              <!-- 工作流 -->
-              <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                        :no-status="orderInfo.biStatus"></work-flow>              
-              <!-- 往来联系部分 交易基本信息-->
-              <contact-part :contact-info="contactInfo" ></contact-part>               
-              <!-- 物料列表 -->
-              <matter-list :matter-list='orderInfo.order.dataSet'></matter-list> 
-              <!-- 金额明细 -->
-              <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>     
-              <!-- 审批操作 -->
-              <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
-            </div>
-            <div class="swiper-slide" v-if="HasValRealted">
-              <div class='related_apply'>
-                <div class="big_title">
-                  <p class="vux-1px-b">相关实例</p>
-                </div>
-                <div class="relevant_list">
-                  <div class="each_app vux-1px-b" v-for='(item,index) in RelatedAppList' :key="index" @click="getRelatedData(item)">
-                    <div class="app_info">
-                      <div class="title">业务应用</div>
-                      <div class="app_name">
-                        <span>{{item.listName}}</span>
-                      </div>
-                      <div class="msg_num">
-                        {{item.itemCount}}
-                        <span class="msg_tx">关联</span>
-                      </div>
-                      <div class="r_arrow" v-if='item.itemCount>0'>
-                        <x-icon type="ios-arrow-right" size="20" ></x-icon>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
+      <div class="basicPart" v-if='orderInfo && orderInfo.order'>  
+        <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+          <span>其他应用里存在与本条相关联的数据，快去看看</span>
+          <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
         </div>
+        <!-- 经办信息 （订单、主体等） -->
+        <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+        <!-- 工作流 -->
+        <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                  :no-status="orderInfo.biStatus"></work-flow>              
+        <!-- 往来联系部分 交易基本信息-->
+        <contact-part :contact-info="contactInfo" ></contact-part>               
+        <!-- 物料列表 -->
+        <matter-list :matter-list='orderInfo.order.dataSet'></matter-list> 
+        <!-- 金额明细 -->
+        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>     
+        <!-- 审批操作 -->
+        <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>           
       </div>
   </div>
 </template>
@@ -63,7 +30,6 @@ import common from 'components/mixins/detailCommon'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
-import PopRelatedList from 'components/Popup/PopRelatedList'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import MatterList from 'components/detail/commonPart/MatterList'
@@ -79,7 +45,7 @@ export default {
     }
   },
   components:{
-    workFlow, RAction,PopRelatedList,contactPart,PriceTotal,MatterList
+    workFlow, RAction,contactPart,PriceTotal,MatterList
   },
   mixins: [common],
   methods:{

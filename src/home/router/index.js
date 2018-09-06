@@ -14,18 +14,25 @@ import WAREHOUSEDETAIL from '../pages/apps/basicApp/warehouse/warehouseDetail'
 import LIST from '../pages/apps/bizApp/list/list'
 import FILLFORM from '../pages/apps/bizApp/fillForm/fillForm'
 import DETAIL from '../pages/apps/bizApp/detail/detail'
+import RELATED from '../pages/apps/bizApp/detail/related/related'
 // ------- >科目应用 <-------
-
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
+  {
+    path:'/related/:listId',
+    name:'RELATED',
+    component:RELATED,
+    meta:{title:'相关实例'}
+  },
   {
     path:'/list/:code',
     name:'LIST',
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
+  
   {
     path:'/fillform/:code',
     name:'FILLFORM',
