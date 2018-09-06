@@ -1,7 +1,11 @@
 <template>
   <div class="main_content">
-    <span class="iconfont icon--"></span>
-    <div class="warehouse-name m_size_name">{{warehouse.warehouseName}}</div>
+    <span v-if="warehouse.warehouseIcon" class="iconfont" :class="warehouse.warehouseIcon" ></span>
+    <span v-else class="iconfont icon--" ></span>
+    
+    <div class="warehouse_name m_size_name">
+      <span v-if="warehouse.warehouseAction">{{warehouse.warehouseAction}} - </span>{{warehouse.warehouseName}}
+    </div>
     <div class="other_info s_size_name">
       <span class="title">类型：</span>
       <span class="content">{{warehouse.warehouseType || '暂无'}}</span>
@@ -46,22 +50,19 @@
       left: -.01rem;
       font-size: .14rem;
       position: absolute;
+      font-weight: bold;
     }
     &:last-of-type{
-      padding-top: 0.06rem;
+      padding-top: .06rem;
       .iconfont{
         top: .08rem;
         font-size: .15rem;
-        font-weight: bold;
       }
     }
-    
-
     // 仓库名称
-    .warehouse-name {
+    .warehouse_name {
       font-weight: bold;
     }
-
     // 其他信息
     .other_info {
       color: #454545;

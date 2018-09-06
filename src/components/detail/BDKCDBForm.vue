@@ -143,7 +143,9 @@
           // 入库
           this.warehouseIn = {
             warehouseCode: inPut.containerCode,
-            warehouseName: `${inPut.warehouseName_containerCode}(入库)`,
+            warehouseName: `${inPut.warehouseName_containerCode}`,
+            warehouseAction: '入库',
+            warehouseIcon: 'icon-ruku',
             warehouseType: inPut.warehouseType_containerCode,
             warehouseProvince: inPut.warehouseProvince_containerCode,
             warehouseCity: inPut.warehouseCity_containerCode,
@@ -153,7 +155,9 @@
           // 出库
           this.warehouseOut = {
             warehouseCode: inPut.containerCodeOut,
-            warehouseName: `${inPut.warehouseName_containerCodeOut}(出库)`,
+            warehouseName: `${inPut.warehouseName_containerCodeOut}`,
+            warehouseAction: '出库',
+            warehouseIcon: 'icon-chuku',
             warehouseType: inPut.warehouseType_containerCodeOut,
             warehouseProvince: inPut.warehouseProvince_containerCodeOut,
             warehouseCity: inPut.warehouseCity_containerCodeOut,
