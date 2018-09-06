@@ -115,7 +115,6 @@
       // },
       filter:{
         handler(val){
-            this.$event.$emit('detail-show-loading',true);
             (async()=>{
               await this.getListView();
               await this.getList().then(()=>{
@@ -139,7 +138,6 @@
       },
       onHide(){
         this.$emit('input',false)
-
       },
       //获取相关实例应用的视图
       getListView(){
@@ -174,8 +172,6 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          this.$event.$emit('detail-show-loading',false)
-          this.showPop = this.show;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.relatedAppList = this.page === 1 ? tableContent : [...this.relatedAppList, ...tableContent];
           this.$nextTick(() => {

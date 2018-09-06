@@ -46,12 +46,12 @@ export default {
   methods:{
     //显示相关实例的pop
     getRelatedData(item){
-      this.$HandleLoad.show();
       if(item.itemCount>0){
         this.listId = item.listId;
         item.content.forEach(val=>{
           this.filtersData.push(val.transCode);
         })
+        this.$HandleLoad.show();
       }
     },
     //TODO 获取相关实例
