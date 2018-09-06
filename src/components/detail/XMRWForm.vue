@@ -16,7 +16,7 @@
           <form-cell cellTitle="实际完成日期" :cellContent="projectTask.actualCompleteTime"></form-cell>
           <form-cell cellTitle="实际工时" :cellContent="projectTask.actualTime"></form-cell>
         </div>
-      </div>          
+      </div>
     </div>
   </div>
 </template>
@@ -29,6 +29,7 @@ import { getSOList } from 'service/detailService'
 import { findProjectTask } from 'service/projectService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
+import common from '@/mixins/common'
 // 组件 引入
 import RPicker from 'components/RPicker'
 export default {
@@ -37,7 +38,7 @@ export default {
       projectTask: {}
     }
   },
-  mixins: [detailCommon],
+  mixins: [detailCommon, common],
   components: {
     Group,
     Cell,
@@ -59,7 +60,8 @@ export default {
         this.jsonData = formData;
         this.projectTask = {
           ...projectTask,
-          actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
+          deadline: this.changeDate(projectTask.deadline),
+          actualCompleteTime: this.changeDate(projectTask.actualCompleteTime),
         };
         this.orderInfo = {
           ...formData.baseinfo,
