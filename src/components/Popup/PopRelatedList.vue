@@ -118,7 +118,10 @@
             this.$event.$emit('detail-show-loading',true);
             (async()=>{
               await this.getListView();
-              await this.getList();
+              await this.getList().then(()=>{
+                this.$HandleLoad.hide();
+                this.showPop = true;
+              });
             })()
         }
       }
@@ -197,9 +200,8 @@
       //跳转详情
       goDetail(item){
         this.showPop = false;
-        this.$emit('reload-page',true)
         let code = businessMap[item.transCode.split('_')[0]];
-        this.$router.push({
+        this.$router.replace({
           path: `/detail/${code}`,
           query: {
             transCode: item.transCode

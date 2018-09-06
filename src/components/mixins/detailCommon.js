@@ -32,9 +32,6 @@ export default {
       noOperation: true, // 是否审批过
       RelatedAppList : [] ,//相关实例所有数据
       HasValRealted : false,//相关实例是否有值为0
-      detailSwiper : null,
-      filtersData : [],
-      showPop : false,
       orderInfo: {}, // 表单内容
     }
   },
@@ -61,25 +58,14 @@ export default {
     toFixed,
   },
   methods: {
-    //显示相关实例的pop
-    getRelatedData(item){
-      console.log(item);
-      if(item.itemCount>0){
-        this.listId = item.listId;
-        this.showPop = true;
-        item.content.forEach(val=>{
-          this.filtersData.push(val.transCode);
-        })
-      }
-    },
-    //选中相关实例的Swiper
+    //跳转到相关实例
     getSwiper(){
-      this.detailSwiper.slideTo(1)
-    },
-    //重新加载页面
-    reloadPage(){
-      this.$loading.show();
-      // this.$emit('input',true)
+      this.$router.push({
+        path:`/related/${this.listId}`,
+        query:{
+          transCode : this.transCode
+        }
+      })
     },
     // TODO 生成随机ID
     randomID() {
@@ -225,21 +211,10 @@ export default {
       await this.getCurrentUser();
       await this.getListId();
       await this.getFlowAndActions();
+      //获取与当前订单相关的实例
       await this.getAppExampleDetails();
       // 获取表单表单详情
       await this.getOrderList(transCode);
-      let Swiper = this.Swiper;
-      this.$nextTick(()=>{
-        this.detailSwiper = new Swiper ('.swiper-container', {
-          click:true,
-          // 如果需要分页器
-          pagination: {
-            el: '.swiper-pagination',
-          },
-
-        })
-
-      })
       this.$loading.hide();
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');

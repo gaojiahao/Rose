@@ -1,82 +1,46 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
-      <div class="swiper-container">
-        <!-- 如果需要分页器 -->
-        <div class="swiper-pagination" v-if='HasValRealted'></div>
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-              <span>其他应用里存在与本条相关联的数据，快去看看</span>
-              <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-            </div>
-            <!-- 经办信息 （订单、主体等） -->
-            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-            <!-- 工作流 -->
-            <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
-                       :is-my-task="isMyTask"
-                       :no-status="orderInfo.biStatus"></work-flow>
-            <!-- 仓库信息 -->
-            <div class="contacts_part">
-              <!-- 入库 -->
-              <warehouse-content :warehouse="warehouseIn"></warehouse-content>
-            </div>
-            <!-- 物料列表 -->
-            <div class="materiel_list">
-              <div class="title">物料列表</div>
-              <div class="mater_list">
-                <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
-                             v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
-                  <!-- 物料数量和价格 -->
-                  <div class='mater_other' slot="other">
-                    <div class='mater_num'>
-                      <span class="num">
-                        <span class="symbol">盘点数量: </span>
-                        {{item.tdQty}}
-                      </span>
-                      <span class="num">
-                        <span class="symbol">差异数量: </span>
-                        {{item.differenceNum}}
-                      </span>
-                    </div>
-                  </div>
-                </matter-item>
-              </div>
-            </div>
-            <!-- 审批操作 -->
-            <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                      @on-submit-success="submitSuccessCallback"></r-action>
-          </div>
-          <div class="swiper-slide" v-if='HasValRealted'>
-            <div class='related_apply'>
-              <div class="big_title">
-                <p class="vux-1px-b">相关实例</p>
-              </div>
-              <div class="relevant_list">
-                <div class="each_app vux-1px-b" v-for='(item,index) in RelatedAppList' :key="index"
-                     @click="getRelatedData(item)">
-                  <div class="app_info">
-                    <div class="title">业务应用</div>
-                    <div class="app_name">
-                      <span>{{item.listName}}</span>
-                    </div>
-                    <div class="msg_num">
-                      {{item.itemCount}}
-                      <span class="msg_tx">关联</span>
-                    </div>
-                    <div class="r_arrow" v-if='item.itemCount>0'>
-                      <x-icon type="ios-arrow-right" size="20"></x-icon>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop'
-                          @reload-page='reloadPage'></pop-related-list>
+      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+        <span>其他应用里存在与本条相关联的数据，快去看看</span>
+        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
       </div>
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
+                  :is-my-task="isMyTask"
+                  :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 仓库信息 -->
+      <div class="contacts_part">
+        <!-- 入库 -->
+        <warehouse-content :warehouse="warehouseIn"></warehouse-content>
+      </div>
+      <!-- 物料列表 -->
+      <div class="materiel_list">
+        <div class="title">物料列表</div>
+        <div class="mater_list">
+          <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
+                        v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
+            <!-- 物料数量和价格 -->
+            <div class='mater_other' slot="other">
+              <div class='mater_num'>
+                <span class="num">
+                  <span class="symbol">盘点数量: </span>
+                  {{item.tdQty}}
+                </span>
+                <span class="num">
+                  <span class="symbol">差异数量: </span>
+                  {{item.differenceNum}}
+                </span>
+              </div>
+            </div>
+          </matter-item>
+        </div>
+      </div>
+      <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>         
     </div>
   </div>
 </template>
@@ -90,7 +54,6 @@
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
-  import PopRelatedList from 'components/Popup/PopRelatedList'
   import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
   import MatterItem from 'components/detail/commonPart/MatterItem'
 
@@ -106,7 +69,6 @@
       workFlow,
       PopWarehouseList,
       RAction,
-      PopRelatedList,
       WarehouseContent,
       MatterItem,
     },

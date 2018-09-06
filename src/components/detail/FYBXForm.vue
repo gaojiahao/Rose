@@ -1,78 +1,44 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <div class="swiper-container">
-        <!-- 如果需要分页器 -->
-        <div class="swiper-pagination" v-if='HasValRealted'></div>
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-              <span>其他应用里存在与本条相关联的数据，快去看看</span>
-              <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-            </div>
-            <!-- 经办信息 （订单、主体等） -->
-            <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-            <!-- 项目信息 -->
-            <project-part :project-info="orderInfo.order"></project-part>
-            <!-- 工作流 -->
-            <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                      :no-status="orderInfo.biStatus"></work-flow>
-            <!-- 物料列表 -->
-            <div class="form_part">
-              <div class="form_title vux-1px-b">
-                <span class="iconfont icon-baoxiao"></span><span class="title">费用列表</span>
-              </div>
-              <div class="form_content" 
-                  :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
-                  v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-                <div class="main_content" >
-                    <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
-                    <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
-                    <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
-                </div>
-              </div>
-            </div>
-            <div class="price_cell vux-1px-t">
-              <div class="price_title">
-                <span>报销人：</span>
-                <span class="people_name">{{orderInfo.creatorName }}</span>
-              </div>
-              <div>
-                <span class='title'>合计:</span>
-                <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-              </div>
-            </div>             
-          </div>
-            <!-- 审批操作 -->
-            <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
-          </div>
-          <div class="swiper-slide" v-if='HasValRealted'>
-            <div class='related_apply'>
-              <div class="big_title">
-                <p class="vux-1px-b">相关实例</p>
-              </div>
-              <div class="relevant_list">
-                <div class="each_app vux-1px-b" v-for='(item,index) in RelatedAppList' :key="index" @click="getRelatedData(item)">
-                  <div class="app_info">
-                    <div class="title">业务应用</div>
-                    <div class="app_name">
-                      <span>{{item.listName}}</span>
-                    </div>
-                    <div class="msg_num">
-                      {{item.itemCount}}
-                      <span class="msg_tx">关联</span>
-                    </div>
-                    <div class="r_arrow" v-if='item.itemCount>0'>
-                      <x-icon type="ios-arrow-right" size="20" ></x-icon>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+        <span>其他应用里存在与本条相关联的数据，快去看看</span>
+        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
+      </div>
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 项目信息 -->
+      <project-part :project-info="orderInfo.order"></project-part>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 物料列表 -->
+      <div class="form_part">
+        <div class="form_title vux-1px-b">
+          <span class="iconfont icon-baoxiao"></span><span class="title">费用列表</span>
+        </div>
+        <div class="form_content" 
+            :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
+            v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+          <div class="main_content" >
+              <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
+              <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
           </div>
         </div>
-        <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' @reload-page='reloadPage'></pop-related-list>
       </div>
+      <div class="price_cell vux-1px-t">
+        <div class="price_title">
+          <span>报销人：</span>
+          <span class="people_name">{{orderInfo.creatorName }}</span>
+        </div>
+        <div>
+          <span class='title'>合计:</span>
+          <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
+        </div>
+      </div>             
+      <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>   
     </div>
   </div>
 </template>
@@ -88,7 +54,6 @@ import detailCommon from 'components/mixins/detailCommon'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
-import PopRelatedList from 'components/Popup/PopRelatedList'
 import ProjectPart from 'components/detail/commonPart/Project'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
@@ -101,7 +66,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow,RAction,PopRelatedList,ProjectPart
+    workFlow,RAction,ProjectPart
   },
   methods: {
     // 获取详情

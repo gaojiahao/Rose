@@ -7,7 +7,7 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class='each_task' v-for='(item,index) in listData' :key='index' @click='goDetail(item)'>
-          <div class="todo_msg" v-if='item.status === "待处理"'>
+          <div class="todo_msg">
             <div class="msg_top">
               <!-- 表单状态 及 编码 -->
               <div class="work_info">
@@ -62,7 +62,7 @@ export default {
   data(){
     return{
       serachVal: '',
-      processName : '',
+      title : '',
       listData: [],
       page: 1,
       limit: 10,
@@ -128,7 +128,7 @@ export default {
     //获取销售订单数据
     getList(noReset = false) {
         let filter = {
-          processName : this.processName,
+          title : this.title,
           businessKey: this.serachVal,
           crtName: this.serachVal
         };
@@ -137,12 +137,8 @@ export default {
           page: this.page,
           filter: JSON.stringify(filter),
         }).then(({total = 0, tasks = []}) => {
-          tasks.forEach(item => {
-            if(!item.endTime){
-              item.status = "待处理"
-            }else{
-              item.status = '已处理'
-            }
+          tasks.forEach(item => {           
+            item.status = "待处理"
             item.transCode = item.businessKey.replace(/_/g,'');
           });
           this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
@@ -225,7 +221,7 @@ export default {
     }
   },
   created(){
-    this.processName = this.$route.query.name;
+    this.title = this.$route.query.name;
     this.getList();
   },
   beforeRouteEnter (to, from, next) {
