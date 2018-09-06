@@ -38,7 +38,7 @@
 .materiel_ct_list {
   position: relative;
   background: #FFF;
-  padding: .06rem .08rem 0;
+  padding: .06rem .08rem;
   .title {
     color: #111;
     font-weight: bold;
