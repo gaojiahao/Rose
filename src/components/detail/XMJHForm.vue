@@ -3,78 +3,32 @@
     <div class="basicPart">
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目经理 -->
-      <div class="or_ads mg_auto box_sd">
-        <p class="title">项目经理</p>
-        <div class="user_info group_mar_left">
-          <span class="user_name">{{projectApproval.projectManager}}</span>
-          <span class="user_tel">{{projectApproval.phoneNumber}}</span>
+      <!-- 项目信息 -->
+      <div class="project_info">
+        <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
+        <div class="project_content">
+          <form-cell cellTitle="名称" :cellContent="projectApproval.projectName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle="类型" :cellContent="projectApproval.projectType"></form-cell>
+          <form-cell cellTitle="经理" :cellContent="projectApproval.projectManager"></form-cell>
+          <form-cell cellTitle="说明" :cellContent="projectApproval.comment || '无'"></form-cell>
+          <form-cell cellTitle="预算开始日期" :cellContent="projectApproval.expectStartDate | timeSplit"></form-cell>
+          <form-cell cellTitle="预算截止日期" :cellContent="projectApproval.expectEndDate | timeSplit"></form-cell>
         </div>
-      </div>
-       <!-- 项目明细 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">项目明细</p>
-        <group class="JH_mar_left">
-          <cell title="项目名称" primary="content" align-items="flex-start" :value="projectApproval.projectName"></cell>
-          <cell title="项目说明" primary="content" align-items="flex-start" :value="projectApproval.comment"></cell>
-        </group>
-      </div>
-
-      <!-- 预算开始日期 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">预算开始日期</p>
-        <p class="mode">{{projectApproval.expectStartDate | timeSplit}}</p>
-      </div>
-
-      <!-- 预算截止日期 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">预算截止日期</p>
-        <p class="mode">{{projectApproval.expectEndDate | timeSplit}}</p>
-      </div>
-
+      </div>      
       <!-- 任务计划明细 -->
-      <div class="materiel_list mg_auto box_sd">
-        <p class="title">任务计划明细</p>
-        <div class="bor_bottom JH_mar_left" v-for="(item,index) in projectPlan" :key="'JH'+index">
-          <div class="mater_list">
-            <div class="each_mater JH_pad0">
-              <div class="each_mater_wrapper ">
-                <div class="mater_main">
-                  <div class="mater_name">
-                    <span class="whiNum">#{{index+1}}</span>
-                  {{item.taskName}}
-                  </div>
-                  <div class='mater_other'>
-                    <div class='mater_reimb'>
-                      <div class="reason">
-                        <span class="title">任务类型: </span>
-                        <span class="content">
-                          {{item.taskType}}
-                      </span>
-                      </div>
-                      <div class="reason">
-                        <span class="title">计划工时: </span>
-                        <span class="content">
-                          {{item.planTime}}
-                      </span>
-                      </div>
-                      <div class="reason">
-                        <span class="title">截止日期: </span>
-                        <span class="content">
-                          {{item.deadline | timeSplit}}
-                        </span>
-                      </div>
-                      <div class="reason">
-                        <span class="title">任务说明: </span>
-                        <span class="content">
-                          {{item.comment}}
-                      </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div class="form_part">
+        <div class="form_title vux-1px-b">
+          <span class="iconfont icon-renwu"></span><span class="title">任务列表</span>
+        </div>
+        <div class="form_content" 
+             :class="{ 'show_border' : index !== projectPlan.length - 1}"
+             v-for="(item, index) in projectPlan" :key='index'>
+          <div class="main_content" >
+              <form-cell cellTitle='任务名称' :cellContent="item.taskName" :showTopBorder=false></form-cell>
+              <form-cell cellTitle='任务类型' :cellContent="item.taskType"></form-cell>
+              <form-cell cellTitle='计划工时' :cellContent="item.planTime"></form-cell>
+              <form-cell cellTitle='截止日期' :cellContent="item.deadline | timeSplit"></form-cell>
+              <form-cell cellTitle='任务说明' :cellContent="item.comment"></form-cell>
           </div>
         </div>
       </div>
@@ -128,60 +82,5 @@ export default {
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-
-  .xmrw-detail-container {
-    /deep/ .weui-cells {
-      margin-top: 0;
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
-      }
-    }
-  }
-  .materiel_list .mater_list .each_mater .each_mater_wrapper .mater_main{
-      margin-left: 0;
-      max-width: inherit;
-    }
-  .mater_other .reason{
-      display: flex;
-      .content{
-        flex: 1;
-      }
-    }
-    .bor_bottom{
-      position: relative;
-    }
-    .bor_bottom::after{
-      content: " ";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      border-top: 1px solid #D9D9D9;
-      color: #D9D9D9;
-      transform-origin: 0 0;
-      transform: scaleY(0.5);
-    }
-    .bor_bottom:last-child()::after{
-      border:none;
-    }
-    .materiel_list .mater_list .JH_pad0{
-      padding: 0.04rem 0;
-    }
-    .JH_mar_left{
-      margin-left: 0.04rem;
-    }
-    .group_mar_left{
-      margin: 0 0.04rem;
-    }
 </style>
 

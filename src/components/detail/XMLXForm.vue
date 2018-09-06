@@ -3,37 +3,30 @@
     <div class="basicPart">
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目经理 -->
-      <div class="or_ads mg_auto box_sd">
-        <p class="title">项目经理</p>
-        <div class="user_info group_mar_left">
-          <span class="user_name">{{approval.projectManager}}</span>
-          <span class="user_tel">{{approval.phoneNumber}}</span>
+      <!-- 项目信息 -->
+      <div class="project_info">
+        <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
+        <div class="project_content">
+          <form-cell cellTitle="名称" :cellContent="approval.projectName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle="类型" :cellContent="approval.projectType"></form-cell>
+          <form-cell cellTitle="经理" :cellContent="approval.projectManager"></form-cell>
+          <form-cell cellTitle="经理电话" :cellContent="approval.phoneNumber"></form-cell>
+          <form-cell cellTitle="说明" :cellContent="approval.comment || '无'"></form-cell>
         </div>
       </div>
-      <!-- 项目明细 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">项目信息</p>
-        <group class="group_mar_left" gutter="0">
-          <cell title="项目名称" primary="content" align-items="flex-start" :value="approval.projectName || '无'"></cell>
-          <cell title="项目类型" :value="approval.projectType || '无'"></cell>
-          <cell title="项目说明" primary="content" align-items="flex-start" :value="approval.comment || '无'"></cell>
-        </group>
-      </div>
       <!-- 预算明细 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">预算明细</p>
-        <group class="group_mar_left" gutter="0">
-          <cell title="预算收入" :value="numberComma(approval.budgetIncome)"></cell>
-          <cell title="预算成本" :value="numberComma(approval.budgetCapital)"></cell>
-          <cell title="预算费用" :value="numberComma(approval.budgetCost)"></cell>
-          <cell title="预算利润" :value="numberComma(approval.budgetProfit)"></cell>
-          <cell title="预算利润率" :value="percent(approval.budgetProfitMargin)"></cell>
-          <cell title="预算开始日期" :value="approval.expectStartDate | timeSplit"></cell>
-          <cell title="预算截至日期" :value="approval.expectEndDate | timeSplit"></cell>
-        </group>
+      <div class="project_info">
+        <div class="info_title vux-1px-b"><span class="iconfont icon-yusuan2"></span>预算明细</div>
+        <div class="project_content">
+          <form-cell cellTitle="收入" showSymbol :cellContent="numberComma(approval.budgetIncome)" :showTopBorder=false></form-cell>
+          <form-cell cellTitle="成本" showSymbol :cellContent="numberComma(approval.budgetCapital)"></form-cell>
+          <form-cell cellTitle="费用" showSymbol :cellContent="numberComma(approval.budgetCost)"></form-cell>
+          <form-cell cellTitle="利润" showSymbol :cellContent="numberComma(approval.budgetProfit)"></form-cell>
+          <form-cell cellTitle="利润率" :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
+          <form-cell cellTitle="开始日期" :cellContent="approval.expectStartDate | timeSplit"></form-cell>
+          <form-cell cellTitle="截至日期" :cellContent="approval.expectEndDate | timeSplit"></form-cell>
+        </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -97,26 +90,4 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-
-  .xmlw-detail-container {
-    /deep/ .weui-cells {
-      font-size: .16rem;
-      &:before {
-        border-top: none;
-      }
-      &:after {
-        border-bottom: none;
-      }
-      .weui-cell {
-        padding: 10px 0;
-        &:before {
-          left: 0;
-        }
-      }
-    }
-  }
-
-  .group_mar_left {
-    margin: 0 0.08rem;
-  }
 </style>

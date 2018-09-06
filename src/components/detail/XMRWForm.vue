@@ -3,28 +3,20 @@
     <div class="basicPart">
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="orderInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目-->
-      <r-picker title="项目名称" mode="3" placeholder="" v-model="projectTask.projectName" disabled></r-picker>
-      <!-- 任务 -->
-      <r-picker title="任务名称" mode="3" placeholder="" v-model="projectTask.taskName" disabled></r-picker>
-      <!-- 任务详情 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">任务详情</p>
-        <group>
-          <cell title="任务类型" :value="projectTask.taskType"></cell>
-          <cell title="任务说明" :value="projectTask.comment" primary="content"></cell>
-          <cell title="截止日期" :value="projectTask.deadline"></cell>
-          <cell title="计划工时" :value="projectTask.planTime"></cell>
-        </group>
-      </div>
-      <!-- 实际情况 -->
-      <div class="trade_mode mg_auto box_sd">
-        <p class="title">实际情况</p>
-        <group>
-          <cell title="实际完成日期" :value="projectTask.actualCompleteTime"></cell>
-          <cell title="实际工时" :value="projectTask.actualTime"></cell>
-        </group>
-      </div>
+      <!-- 任务信息 -->
+      <div class="project_info">
+        <div class="info_title vux-1px-b"><span class="iconfont icon-renwu"></span>任务信息</div>
+        <div class="project_content">
+          <form-cell cellTitle="项目名称" :cellContent="projectTask.projectName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle="任务名称" :cellContent="projectTask.taskName"></form-cell>
+          <form-cell cellTitle="任务类型" :cellContent="projectTask.taskType"></form-cell>
+          <form-cell cellTitle="任务说明" :cellContent="projectTask.comment || '无'"></form-cell>
+          <form-cell cellTitle="计划截止日期" :cellContent="projectTask.deadline"></form-cell>
+          <form-cell cellTitle="计划工时" :cellContent="projectTask.planTime"></form-cell>
+          <form-cell cellTitle="实际完成日期" :cellContent="projectTask.actualCompleteTime"></form-cell>
+          <form-cell cellTitle="实际工时" :cellContent="projectTask.actualTime"></form-cell>
+        </div>
+      </div>          
     </div>
   </div>
 </template>

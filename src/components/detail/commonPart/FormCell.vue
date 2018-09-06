@@ -1,9 +1,9 @@
 <template>
-  <div class="each_cell" 
-  :class="{'vux-1px-t' : showTopBorder}"
-  v-if="cellContent">
+  <div v-if="cellContent" class="each_cell" :class="{'vux-1px-t' : showTopBorder}">
     <span class="cell_name">{{ cellTitle }}:</span>
-    <span class="cell_content">{{ cellContent }}</span>
+    <span class="cell_content">
+      <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent }}
+    </span>
   </div>
 </template>
 
@@ -13,9 +13,13 @@ export default {
   props:{
     cellTitle: [String, Number],    // 标题
     cellContent: [String, Number],  // 内容
-    showTopBorder:{                 // 是否展示上划线
+    showTopBorder: {                // 是否展示上划线
       type: Boolean,
       default: true
+    },
+    showSymbol: {                   // 展示 ￥
+      type: Boolean,
+      default: false
     }
   }
 }

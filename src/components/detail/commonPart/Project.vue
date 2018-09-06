@@ -1,5 +1,5 @@
 <template>
-  <div class="project_info">
+  <div class="project_ct_info">
     <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
     <div class="info_content">
       <div class="each_info">
@@ -39,7 +39,7 @@ export default {
   border-color: #e8e8e8;
 }
 // 项目信息
-.project_info {
+.project_ct_info {
   width: 100%;
   padding: 0 .1rem;
   background: #FFF;
