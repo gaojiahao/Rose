@@ -296,7 +296,7 @@
 .form_content {
   position: relative;
   background: #FFF;
-  padding-top: .06rem;
+  // padding-top: .06rem;
   .form_title {
     color: #111;
     font-weight: bold;
@@ -312,11 +312,15 @@
 }
 .price_cell {
   width: 100%;
+  display: flex;
   background: #FFF;
+  align-items: center;
   padding: .08rem .1rem;
+  box-sizing: border-box;
+  justify-content: space-between;
   .price_title {
-    color: #757575;
-    font-size: .14rem;
+    color: #111;    
+    font-weight: bold;
   }
   .symbol {
     font-size: .14rem;

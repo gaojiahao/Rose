@@ -17,25 +17,27 @@
             <!-- 工作流 -->
             <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                       :no-status="orderInfo.biStatus"></work-flow>
-            <!-- <div class="trade_mode mg_auto box_sd">
-              <p class="title">报销人</p>
-              <p class="mode">{{orderInfo.creatorName }}</p>
-            </div> -->
             <!-- 物料列表 -->
-            <div class="form_content vux-1px-b" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-              <div class="form_title">
-                <span class="iconfont icon-mingxi1"></span>
+            <div class="form_content" v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+              <!-- <div class="form_title">
+                <span class="iconfont icon-baoxiao"></span>
                 <span>费用</span><span class="symbol">{{ index + 1 }}</span>
-              </div>
+              </div> -->
               <div class="main_content" >
-                  <form-cell cellTitle='名称' :cellContent="item.costName_expCode"></form-cell>
+                  <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
                   <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
                   <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
               </div>
             </div>
             <div class="price_cell">
-              <span class='title'>合计：</span>
-              <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
+              <div class="price_title">
+                <span>报销人：</span>
+                <span class="people_name">{{orderInfo.creatorName }}</span>
+              </div>
+              <div>
+                <span class='title'>合计：</span>
+                <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
+              </div>
             </div>             
           </div>
             <!-- 审批操作 -->
@@ -134,4 +136,16 @@ export default {
   .materiel_list .mater_list .each_mater {
     padding: .04rem 0 0;  
   }
+  .form_content {
+    border-bottom: .03rem solid #e8e8e8;
+  }
+  .form_content .main_content .each_cell {
+    // padding: .08rem .2rem;
+  }
+  // .form_content .form_title {
+  //   background: #fff9e0;
+  // }
+  // .price_cell {
+  //   background: #fff9e0;
+  // }
 </style>
