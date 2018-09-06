@@ -8,7 +8,8 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
+        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index"
+             @click='goDetail(item, index)'>
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">{{item.transCode}}</p>
@@ -44,14 +45,19 @@
     },
     mixins: [listCommon],
     methods: {
-      goDetail(transCode) {
+      goDetail(item, index) {
+        item.visited = true;
+        this.$set(this.listData, index, {...item});
         let {code} = this.$route.params;
-        this.$router.push({
-          path: `/detail/${code}`,
-          query: {
-            transCode: transCode
-          }
-        })
+        // 等待动画结束后跳转
+        setTimeout(() => {
+          this.$router.push({
+            path: `/detail/${code}`,
+            query: {
+              transCode: item.transCode
+            }
+          })
+        }, 200)
       },
       getList(noReset = false) {
         let filter = [];
@@ -64,12 +70,11 @@
               value: this.serachVal,
               property: 'transCode',
               attendedOperation: 'or'
-            },
-            {
+            }, {
               operator: 'like',
               value: this.serachVal,
               property: 'handlerName',
-            }
+            },
           ];
         }
 

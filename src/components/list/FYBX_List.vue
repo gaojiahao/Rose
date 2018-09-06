@@ -15,7 +15,7 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
+        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
           <!-- 订单 时期 -->
           <div class="duty_top">
             <p class="duty_code">
@@ -67,8 +67,8 @@
     data() {
       return {
         listStatus: [
-          {name: '全部', status: ''}, 
-          {name: '已生效', status: '已生效'}, 
+          {name: '全部', status: ''},
+          {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
         listViewID: 2236,
@@ -76,11 +76,11 @@
       }
     },
     mixins: [listCommon],
-    methods: {     
-     
+    methods: {
+
     },
     created() {
-      
+
     }
 
   }

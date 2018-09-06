@@ -39,35 +39,47 @@ export default {
     Tab, Icon, TabItem, searchIcon, RScroll, ListItem,
   },
   methods: {
-    goDetail(transCode) {
+    goDetail(item, index) {
+      let {transCode} = item;
       let {code} = this.$route.params;
+      item.visited = true;
+      this.$set(this.listData, index, {...item});
+      let start = Date.now();
+      const TRANSITION_TIME = 200; // 动画时间
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode}).then(({tableContent}) => {
-        if (tableContent.length > 0) {
-          let {isMyTask, nodeName} = tableContent[0];
-          if (isMyTask === 1 && nodeName === '重新提交') {
-            this.$router.push({
-              path: `/fillform/${code}`,
-              query: {
-                transCode: transCode
-              }
-            })
+        let jump = () => {
+          let path = '';
+          if (tableContent.length > 0) {
+            let {isMyTask, nodeName} = tableContent[0];
+            if (isMyTask === 1 && nodeName === '重新提交') {
+              path = `/fillform/${code}`;
+            } else {
+              path = `/detail/${code}`;
+            }
           } else {
-            this.$router.push({
-              path: `/detail/${code}`,
-              query: {
-                transCode: transCode
-              }
-            })
+            path = `/detail/${code}`;
           }
-        } else {
           this.$router.push({
-            path: `/detail/${code}`,
+            path,
             query: {
-              transCode: transCode
+              transCode
             }
           })
+        };
+        let calcTime = Date.now() - start;
+        // 请求结束时间大于动画时间则直接跳转到详情页
+        if (calcTime > TRANSITION_TIME) {
+          jump();
+        } else {
+          // 等待动画结束后跳转
+          setTimeout(() => {
+            jump();
+          }, TRANSITION_TIME - calcTime);
         }
+      }).catch(e => {
+        item.visited = false;
+        this.$set(this.listData, index, {...item});
       })
     },
     goEdit() {
@@ -252,7 +264,15 @@ export default {
       }
       await this.getList();
 
-    }
+    },
+    // TODO 修改是否访问的状态
+    changeVisitedStatus() {
+      let tmp = [...this.listData];
+      tmp.forEach(item => {
+        item.visited = false;
+      });
+      this.listData = tmp;
+    },
   },
   filters: {
     // TODO 过滤日期

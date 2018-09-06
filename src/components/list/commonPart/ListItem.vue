@@ -1,5 +1,5 @@
 <template>
-  <div class="each_duty">
+  <div class="list_item" :class="{visited: item.visited}">
 
     <!-- 订单 时期 -->
     <div class="duty_top">
@@ -14,7 +14,7 @@
       <div class="dealer_name vux-1px-t">
         <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
       </div>
-    </div>        
+    </div>
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
       <li class="duty_matter_item vux-1px-b" v-for="(mItem, mIndex) in item.itmes" :key="mIndex" v-if='mIndex<3'>
@@ -50,7 +50,7 @@
         <span>共 {{item.itemCount}} 条物料，查看更多</span>
         <x-icon type="ios-arrow-right" size="12"></x-icon>
       </div>
-     
+
     </div>
     <!-- 金额合计 -->
     <div class="order_count">
@@ -119,13 +119,16 @@
 </script>
 
 <style scoped lang="scss">
-.each_duty {
+.list_item {
   width: 95%;
   position: relative;
   margin: .1rem auto .2rem;
-  // padding-bottom: .04rem;
   border-radius: .08rem;
   box-shadow: 0 2px 10px #e8e8e8;
+  transition: background-color 200ms linear;
+  &.visited {
+    background-color: #e8e8e8;
+  }
   .duty_top {
     height: .24rem;
     line-height: .24rem;
@@ -174,7 +177,7 @@
 
     }
     //任务创建时间
-    .duty_time { 
+    .duty_time {
       float: right;
       font-size: .15rem;
       color: #7D7D7D;

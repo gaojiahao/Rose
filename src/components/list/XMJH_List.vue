@@ -8,11 +8,14 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
+        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">{{item.transCode}}</p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
+          </div>
+          <div class="duty_item">
+            {{item.projectName}}
           </div>
           <!-- 项目计划经办人 -->
           <div class="order_count">
@@ -42,33 +45,38 @@
     },
     mixins: [listCommon],
     methods: {
-      goDetail(transCode) {
+      goDetail(item, index) {
+        item.visited = true;
+        this.$set(this.listData, index, {...item});
         let {code} = this.$route.params;
-        this.$router.push({
-          path: `/detail/${code}`,
-          query: {
-            transCode: transCode
-          }
-        })
+        // 等待动画结束后跳转
+        setTimeout(() => {
+          this.$router.push({
+            path: `/detail/${code}`,
+            query: {
+              transCode: item.transCode
+            }
+          })
+        }, 200)
       },
       getList(noReset = false) {
         let filter = [];
 
         if (this.serachVal) {
           filter = [
-            ...filter,
             {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'transCode',
-              attendedOperation: 'or'
-            },
-            /*{
-              operator: 'like',
-              value: this.serachVal,
-              property: 'handlerName',
-            }*/
-          ];
+              operator_1: 'like',
+              value_1: this.serachVal,
+              property_1: 'transCode',
+              link: 'or',
+              operator_2: 'like',
+              value_2: this.serachVal,
+              property_2: 'handlerName',
+              operator_3: 'like',
+              value_3: this.serachVal,
+              property_3: 'projectName',
+            }
+          ]
         }
 
         return getProjectPlanList({

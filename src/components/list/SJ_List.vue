@@ -15,12 +15,12 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" v-for="(item, index) in listData" :key="index" @click='goDetail(item.transCode)'>
+        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>           
+              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
@@ -59,8 +59,8 @@
     data() {
       return {
         listStatus: [
-          {name: '全部', status: ''}, 
-          {name: '已生效', status: '已生效'}, 
+          {name: '全部', status: ''},
+          {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
         listViewID :2244,
@@ -93,8 +93,8 @@
           if(this.biStatus.length){
             filter[0].attendedOperation = "and (";
             filter[filter.length-1].attendedOperation = ')';
-            
-          }         
+
+          }
         }
         return getList(this.listViewID,{
           limit: this.limit,
@@ -102,7 +102,7 @@
           start : (this.page-1)*this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          
+
           // this.$emit('input',false);
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
