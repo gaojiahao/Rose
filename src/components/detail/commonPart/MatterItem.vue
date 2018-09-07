@@ -38,7 +38,7 @@
           <div class='mater_price' v-else>
             <span>￥{{item.tdAmount | toFixed | numberComma(3)}}</span>
             <span class="num"
-                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 4 ? 'block' : '')}"
+                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
                   v-if="item.taxRate">
                     [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                   </span>
@@ -178,7 +178,7 @@
         .mater_price {
           color: #ea5455;
           font-weight: bold;
-          font-size: .16rem;
+          font-size: .14rem;
           line-height: 0.2rem;
           margin-top: .04rem;
           display: inline-block;

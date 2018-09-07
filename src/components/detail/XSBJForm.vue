@@ -13,7 +13,36 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" validUntil></contact-part>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.order.dataSet" class="vux-1px-b"></matter-list>
+      <div class="materiel_list">
+        <div class="title">
+          <span class="iconfont icon-Shape"></span>物料列表
+        </div>
+        <div class="mater_list">
+          <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.order.dataSet.length - 1}"
+                        v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
+            <!-- 调拨数量 -->
+            <div class='mater_other' slot="other">
+              <div class='mater_left'>
+                <span class="units">
+                  属性: {{item.processing_transObjCode}}
+                </span>
+                <span class="units">
+                  计量单位: {{item.measureUnit_transObjCode}}
+                </span>
+              </div>
+              <div class='mater_num'>
+                <span class="diff_num">
+                  ￥{{item.price | toFixed}}
+                </span>
+                <span class="units">
+                  [价格类型: {{item.priceType}}]
+                </span>
+              </div>
+            </div>
+          </matter-item>
+        </div>
+      </div>
+      
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                       @on-submit-success="submitSuccessCallback"></r-action>         
@@ -32,7 +61,8 @@ import detailCommon from 'components/mixins/detailCommon'
 import workFlow from 'components/workFlow'
 import RAction from 'components/RAction'
 import contactPart from 'components/detail/commonPart/ContactPart'
-import MatterList from 'components/detail/commonPart/MatterList'
+import MatterItem from 'components/detail/commonPart/MatterItem'
+
 export default {
   data() {
     return {
@@ -43,7 +73,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction,contactPart,MatterList
+    workFlow, RAction, contactPart, MatterItem
   },
   methods: {
     //选择默认图片
@@ -115,6 +145,28 @@ export default {
       margin-top: .04rem;
       color: #757575;
       font-size: .12rem;
+    }
+  }
+  .materiel_list .matter_item .mater_main {
+    .mater_other {
+      .mater_left {
+        color: #757575;
+        font-size: .12rem;
+        .units {
+          margin-right: .04rem;
+        }
+      }    
+      .mater_num {
+        color: #757575;
+        font-size: .14rem;
+        font-weight: bold;
+        .diff_num {
+          color: #ea5455;
+        }
+        .units {
+          font-size: .1rem;
+        }
+      }
     }
   }
 </style>
