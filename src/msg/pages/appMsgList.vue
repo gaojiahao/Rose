@@ -33,7 +33,12 @@
                   <span class="tips">[上个节点]</span>
                 </div>
                 <div class="handle_result">
-                  操作动作：<span class="result" :class='{reject_c : item.lastNode.status === "同意" || item.lastNode.status === "提交"  }'>{{item.lastNode.status}}</span>
+                  <span>操作动作:</span>
+                  <span class="result" 
+                  :class='{reject_c : item.lastNode.status === "同意" || 
+                  item.lastNode.status === "提交"  }'>
+                  {{item.lastNode.status}}
+                  </span>
                 </div>
               </div>
             </div>
@@ -377,30 +382,18 @@ export default {
           color: #757575;
           font-size: .1rem;
         }
-        .result {
-          color: #fff;
-          color: #757575;
-          font-size: .12rem;
-          padding: 0 .04rem;
-          background: #53d397;
-          display: inline-block;
-        }
-        .reject_c{
-          background: #c93d1b;
-        }
       }
       // 审批结果
       .handle_result {
         color: #757575;
         font-size: .12rem;
         .result {
-          color: #fff;
-          padding: 0 .04rem;
-          background: #c93d1b;
-          display: inline-block;
+          font-size: .12rem;
+          color: #cd5555;
+          font-weight: bold;
         }
         .reject_c{
-          background: #53d397;
+          color: #5077aa
         }
       }
     }
@@ -413,7 +406,6 @@ export default {
     .tips {
       color: #757575;
       font-size: .14rem;
-      font-weight: 200;
     }
     .info {
       font-size: .18rem;
