@@ -8,8 +8,6 @@
         ref="detailComponent">
       </component>
     </div>
-    <!-- 页面进入加载动画-->
-    <!-- <loadding-form :show='showLoadding'></loadding-form> -->
   </div>
 
 </template>
@@ -55,8 +53,7 @@
               click: true,
             })
           })
-          // this.$event.$on('detail-show-loading', this.modifyRoute)
-          document.title = `${businessText[code].slice(-4)}详情`;
+          document.title = `${businessText[code]}详情`;
         }
       }
 
@@ -88,10 +85,6 @@
           }
         });
       }
-      // this.$event.$on('detail-show-loading', this.modifyRoute)
-      // this.$event.$on('detail-show-loading',(val)=>{
-      //   this.submitLoadding = val;
-      // })
       this.$nextTick(() => {
         this.detailScroll = new Bscroll(this.$refs.detail, {
           click: true,
