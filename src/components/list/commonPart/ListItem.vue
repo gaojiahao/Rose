@@ -35,7 +35,7 @@
               <p class="price_num" v-if="!noPrice">
                 <span class="symbol">￥</span>{{mItem.price | toFixed}}
               </p>
-              <p class="mater_count" v-if="!noQty">
+              <p class="mater_count" :class="{ count_mgtop: noPrice }" v-if="!noQty">
                 <span class="symbol">x</span>{{mItem.tdQty | toFixed}}
               </p>
             </div>
@@ -247,7 +247,6 @@
             font-size: .12rem;
             text-align: right;
             display: inline-block;
-            margin-top: -.02rem;
             .price_num {
               // color: #c93d1b;
               font-size: .14rem;
@@ -255,6 +254,9 @@
             }
             .mater_count {
               color: #7D7D7D;
+            }
+            .count_mgtop {
+              margin-top: .04rem;
             }
           }
         }

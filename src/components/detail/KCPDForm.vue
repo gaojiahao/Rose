@@ -12,27 +12,31 @@
                   :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
       <!-- 仓库信息 -->
-      <div class="contacts_part">
+      <div class="warehouse_part">
         <!-- 入库 -->
         <warehouse-content :warehouse="warehouseIn"></warehouse-content>
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list">
-        <div class="title">物料列表</div>
+        <div class="title">
+          <span class="iconfont icon-Shape"></span>物料列表
+        </div>
         <div class="mater_list">
           <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
                         v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
             <!-- 物料数量和价格 -->
             <div class='mater_other' slot="other">
+              <div class='mater_left'>
+                <span class="units">
+                  账存数量: {{item.thenQtyStock | toFixed}}
+                </span>
+                <span class="units">
+                  计量单位: {{item.measureUnit_transObjCode}}
+                </span>
+              </div>
               <div class='mater_num'>
-                <span class="num">
-                  <span class="symbol">盘点数量: </span>
-                  {{item.tdQty}}
-                </span>
-                <span class="num">
-                  <span class="symbol">差异数量: </span>
-                  {{item.differenceNum}}
-                </span>
+                盘点数量: <span class="num">{{item.tdQty | toFixed}}</span>
+                差异数量: <span class="diff_num">{{item.differenceNum | toFixed}}</span>
               </div>
             </div>
           </matter-item>
@@ -124,23 +128,21 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
-  }
-
-  .mater_other {
-    .mater_num {
-      .num {
-        color: #5077aa;
-        font-size: .16rem;
+  .materiel_list .matter_item .mater_main {
+    .mater_other {
+      .mater_left {
+        color: #757575;
+        font-size: .12rem;
+        .units {
+          margin-right: .04rem;
+        }
+      }    
+      .mater_num {
+        color: #111;
+        font-size: .14rem;
         font-weight: bold;
-        .symbol {
-          color: #757575;
+        .diff_num {
+          color: #ea5455;
         }
       }
     }
