@@ -355,7 +355,7 @@
     box-sizing: border-box;
     // 每个物料
     .each_mater {
-      padding: .08rem;
+      padding: .08rem .08rem 0;
       position: relative;
       box-sizing: border-box;
       display: flex;
