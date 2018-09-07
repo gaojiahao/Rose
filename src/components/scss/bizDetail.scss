@@ -74,7 +74,11 @@
   .title {
     color: #111;
     font-weight: bold;
-    font-size: .18rem;
+    font-size: .16rem;
+    .icon-Shape {
+      font-size: .14rem;
+      font-weight: normal;
+    }
   }
   .tips {
     color: #111;
@@ -102,11 +106,10 @@
         position: relative;
         // 物料主体
         .mater_main {
-          width: 100%;
-          // max-width: 2.6rem;
-          // margin-left: .1rem;
-          // display: inline-block;
-          // box-sizing: border-box;
+          width: 2.6rem;
+          margin-left: .1rem;
+          display: inline-block;
+          box-sizing: border-box;
           // 物料名称
           .mater_name {
             color: #111;

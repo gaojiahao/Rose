@@ -46,7 +46,7 @@
     position: relative;
     padding: 0 .1rem .06rem .2rem;
     .iconfont {
-      top: .02rem;
+      top: .03rem;
       left: -.01rem;
       font-size: .14rem;
       position: absolute;
@@ -55,8 +55,12 @@
     &:last-of-type{
       padding-top: .06rem;
       .iconfont{
-        top: .08rem;
+        top: .07rem;
         font-size: .15rem;
+      }
+      .icon-- {
+        top: .08rem;
+        font-size: .16rem;
       }
     }
     // 仓库名称
