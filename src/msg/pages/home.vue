@@ -151,7 +151,6 @@ export default {
     }
   },
   created(){
-    console.log('created-----')
     this.$loading.show();
     this.getList().then(() => {
       this.$loading.hide();
