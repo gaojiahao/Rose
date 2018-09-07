@@ -9,7 +9,7 @@
         </div>
         <div class="msg_list" v-else>
           <div class="each_msg"
-              @click="goMsglist(value[0])"
+              @click="goMsglist(listData[value].list[0],i)"
               v-for='(value, i) in listData'
               :key='i'>
             <div class="msg_info">
@@ -56,17 +56,6 @@ export default {
   components: {
     search,Badge
   },
-  watch:{
-    $route:{
-      handler(to,from){
-        if (to.meta.reload && to.name === 'MSGHOME') {
-          to.meta.reload = false;
-          this.listData = {};
-          this.getList();
-        }
-      }
-    }
-  },
   methods:{
     getDefaultImg(item) {
       let url = require('assets/defaultApp.png');
@@ -94,22 +83,14 @@ export default {
           if(businessMap[key]){
             if (!this.listData[businessMap[key]]) {
               // 以 <应用名称> 进行分类
-              this.$set(this.listData, businessMap[key], [item])
+              this.$set(this.listData, businessMap[key], {list:[item]})
             }
             else{
-              this.listData[businessMap[key]].push(item);
+              this.listData[businessMap[key]].list.push(item);
             }
           }
-          // if(businessMap[item.processName]){
-          //   if (!this.listData[item.processName]) {
-          //     // 以 <应用名称> 进行分类
-          //     this.$set(this.listData, item.processName, [item])
-          //   }
-          //   else{
-          //     this.listData[item.processName].push(item);
-          //   }
-          // }
         })
+        console.log(this.listData);
         this.$nextTick(()=>{
           this.scroll = new BScroll(this.$refs.bScroll, {
             click:true
@@ -118,14 +99,16 @@ export default {
       })
     },
     // 前往应用消息列表
-    goMsglist(item){
+    goMsglist(item,i){
       let key =  item.businessKey.split('_')[0];
-       this.$router.push({
-          path :'/notice/msglist',
-          query : {
-            name : businessMap[key]
-          }
-        })
+      console.log(i);
+      console.log(item);
+      this.$router.push({
+        path :'/msglist',
+        query : {
+          name : businessMap[key]
+        }
+      })
     }
   },
   filters:{
@@ -151,11 +134,29 @@ export default {
     }
   },
   created(){
-    console.log('created-----')
     this.$loading.show();
     this.getList().then(() => {
       this.$loading.hide();
     });
+  },
+  activated(){
+    console.log(this.$route.meta.reload);
+    let reload = this.$route.meta.reload;
+    setTimeout(() => {
+      let tmp = [...this.listData];
+      tmp.forEach(item => {
+        item.visited = false;
+      });
+      this.listData = tmp;
+    },200);
+    if(reload){
+      this.$loading.show();
+      this.listData = {};
+      this.getList().then(()=>{
+         this.$loading.hide();
+      });
+      this.$route.meta.reload = false;
+    }
   }
 }
 </script>
@@ -198,6 +199,10 @@ export default {
   box-sizing: border-box;
   border-radius: .08rem;
   box-shadow: 0 2px 10px #e8e8e8;
+  transition: background-color 200ms linear;
+  &.visited {
+    background-color: #e8e8e8;
+  }
   // 消息头部信息
   .msg_info {
     width: 100%;

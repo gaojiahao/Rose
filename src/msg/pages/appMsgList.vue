@@ -264,18 +264,24 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     to.meta.title = to.query.name ;
+    console.log(from);
     console.log(to);
     next(vm=>{
+      if(from.name === 'DETAIL' && from.meta.isHandle){
+        vm.isRefresh = true;
+        from.meta.isHandle = false;
+      }
     });
   },
   beforeRouteLeave (to, from, next) {
     if(to.name === 'MSGHOME'){
       from.meta.reload = true;
     }
-     //当详情已经审批时，从列表返回首页，首页刷新
+    //当详情已经审批时，从列表返回首页，首页刷新
     if(this.isRefresh && to.name === 'MSGHOME'){
       to.meta.reload = true;
     }
+    this.isRefresh = false;
     next();
   }
 }
