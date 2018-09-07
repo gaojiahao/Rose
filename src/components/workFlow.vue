@@ -205,7 +205,7 @@
               item.dyClass = 'reject_c';
               break;
             case '终止':
-              item.dyClass = 'reject_c';
+              item.dyClass = 'over_c';
               break;
           }
         }
@@ -351,6 +351,9 @@
             }
             // 拒绝样式
             .reject_c {
+              background: #c93d1b;
+            }
+            .over_c {
               background: #474a56;
             }
           }
@@ -489,6 +492,10 @@
                   // 拒绝样式
                   .reject_c {
                     background: #c93d1b;
+                  }
+                  // 终止样式
+                  .over_c {
+                    background: #474a56;
                   }
                 }
                 // 备注
