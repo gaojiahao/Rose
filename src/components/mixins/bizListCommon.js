@@ -270,9 +270,11 @@ export default {
     // TODO 修改是否访问的状态
     changeVisitedStatus() {
       let tmp = [...this.listData];
-      tmp.forEach(item => {
-        item.visited = false;
-      });
+      setTimeout(()=>{
+        tmp.forEach(item => {
+          item.visited = false;
+        });
+      }, 200)
       this.listData = tmp;
     },
   },
