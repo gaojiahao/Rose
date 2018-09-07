@@ -75,6 +75,14 @@ let Rxports = {
             message: message
           })
         });
+      }).catch(e => {
+        let res = e.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
       })
     })
   },
@@ -110,6 +118,14 @@ let Rxports = {
             message: message
           })
         });
+      }).catch(e => {
+        let res = e.response;
+        let data = (res && res.data) || {};
+        let message = data.message || '请求异常';
+        reject({
+          success: false,
+          message: message
+        })
       })
     })
   },
