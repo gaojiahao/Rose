@@ -44,16 +44,15 @@
 <style scoped lang="scss">
   .main_content {
     position: relative;
-    padding: 0 .1rem .06rem .2rem;
+    padding: .06rem .1rem .06rem .2rem;
     .iconfont {
-      top: .03rem;
+      top: .09rem;
       left: -.01rem;
       font-size: .14rem;
       position: absolute;
       font-weight: bold;
     }
     &:last-of-type{
-      padding-top: .06rem;
       .iconfont{
         top: .07rem;
         font-size: .15rem;

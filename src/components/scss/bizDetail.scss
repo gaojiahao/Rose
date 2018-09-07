@@ -383,7 +383,14 @@
     }
   }
 }
-
+// 仓库公共
+.warehouse_part {
+  margin-bottom: .1rem;
+  padding: 0 .1rem;
+  width: 100%;
+  background: #fff;
+  box-sizing: border-box;
+}
 // 审批操作
 .handle_btn {
   width: 100%;

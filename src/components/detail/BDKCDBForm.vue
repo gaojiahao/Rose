@@ -12,7 +12,7 @@
                   :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
       <!-- 仓库信息 -->
-      <div class="contacts_part">
+      <div class="warehouse_part">
         <!-- 出库-->
         <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
         <!-- 入库 -->
@@ -150,15 +150,6 @@
 </script>
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
-  }
-
   .mater_other {
     .mater_left {
       color: #757575;
@@ -175,9 +166,6 @@
         .symbol {
           color: #757575;
         }
-      }
-      .units {
-        // font-size: .12rem;
       }
     }
   }

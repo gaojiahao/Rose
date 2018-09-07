@@ -6,8 +6,8 @@
     <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_task' :class="{visited: item.visited}" v-for='(item,index) in listData' :key='index' @click='goDetail(item,index)'>
-          <div class="todo_msg">
+        <div class='each_task' v-for='(item,index) in listData' :key='index' @click='goDetail(item,index)'>
+          <div class="todo_msg" :class="{visited: item.visited}">
             <div class="msg_top">
               <!-- 表单状态 及 编码 -->
               <div class="work_info">
@@ -77,7 +77,7 @@ export default {
     }
   },
   components: {
-    search,RScroll,LoadingForm
+    search, RScroll, LoadingForm
   },
   methods:{
     goDetail(item,index){
@@ -121,26 +121,6 @@ export default {
         item.visited = false;
         this.$set(this.listData, index, {...item});
       })
-      //判断是否是重新提交，如果是，跳转到创建订单页面
-      // isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
-      //   let path = '';
-      //   if (tableContent.length > 0) {
-      //     let {isMyTask, nodeName} = tableContent[0];
-      //     if (isMyTask === 1 && nodeName === '重新提交') {
-      //       path = `/fillform/${code}`;
-      //     } else {
-      //       path =  `/detail/${code}`;
-      //     }
-      //   } else {
-      //     path = `/detail/${code}`;
-      //   }
-      //   this.$router.push({
-      //       path: path,
-      //       query: {
-      //         transCode: item.businessKey
-      //       }
-      //     })
-      // })
     },
     // TODO 重置列表条件
     resetCondition() {
@@ -215,7 +195,7 @@ export default {
     reloadData() {
       this.serachVal = '';
       this.resetCondition();
-      this.getList().then(()=>{
+      this.getList().then(() => {
         this.$loading.hide();
       });
     }
@@ -224,25 +204,24 @@ export default {
     handleCrt(val){
       let date = val.duration,
       //计算出小时数
-      hours=parseInt(date/(3600)),
+      hours = parseInt(date / (3600)),
       //计算相差分钟数
-      leave2= date-(hours*3600) ,       //计算小时数后剩余的毫秒数
-      minutes=Math.floor(leave2/(60)),
+      leave2 = date - (hours*3600) ,       //计算小时数后剩余的毫秒数
+      minutes = Math.floor(leave2/(60)),
       backTime;
-      if(hours>0){
+      if(hours > 0){
         backTime = `${hours}小时前`;
       }
       else{
          backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
       }
-      return hours<24 ? backTime : `${val.crtTime.split(' ')[0]}`;
-
+      return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
     }
   },
   created(){
     this.$loading.show();
     this.title = this.$route.query.name;
-    this.getList().then(()=>{
+    this.getList().then(() => {
       this.$loading.hide();
     });
   },
@@ -252,6 +231,7 @@ export default {
     setTimeout(() => {
       let tmp = [...this.listData];
       tmp.forEach(item => {
+        // 还原被选中的背景色
         item.visited = false;
       });
       this.listData = tmp;
@@ -300,26 +280,25 @@ export default {
   height: calc(100% - .5rem );
   overflow: hidden;
 }
-.each_task{
+// 待处理消息
+.todo_msg {
+  width: 95%;
+  position: relative;
+  margin: 0 auto .2rem;
+  border-radius: .08rem;
+  box-sizing: border-box;
+  padding: .06rem .08rem .04rem;
+  box-shadow: 0 2px 10px #e8e8e8;
+  // 背景动画
   transition: background-color 200ms linear;
   &.visited {
     background-color: #e8e8e8;
   }
-
-}
-// 待处理消息
-.todo_msg {
-  width: 95%;
-  margin: 0 auto .2rem;
-  position: relative;
-  padding: .06rem .08rem .04rem;
-  box-sizing: border-box;
-  box-shadow: 0 2px 10px #e8e8e8;
   // 消息顶部
   .msg_top {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     // 表单基本信息
     .work_info {
       display: flex;
@@ -356,7 +335,6 @@ export default {
         color: #111;
         background: #dbe2ef;
       }
-
     }
     // 时间
     .time {
@@ -400,16 +378,15 @@ export default {
           font-size: .1rem;
         }
         .result {
+          color: #fff;
           color: #757575;
           font-size: .12rem;
-          color: #fff;
-          background: #53d397;
-
           padding: 0 .04rem;
+          background: #53d397;
           display: inline-block;
         }
         .reject_c{
-           background: #c93d1b;
+          background: #c93d1b;
         }
       }
       // 审批结果
@@ -418,9 +395,8 @@ export default {
         font-size: .12rem;
         .result {
           color: #fff;
-          background: #c93d1b;
-
           padding: 0 .04rem;
+          background: #c93d1b;
           display: inline-block;
         }
         .reject_c{
@@ -445,8 +421,6 @@ export default {
       font-weight: bold;
     }
   }
-
-
 }
 
 
