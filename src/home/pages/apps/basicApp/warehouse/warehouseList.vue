@@ -16,7 +16,8 @@
       <!-- 主要内容区域 -->
        <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !warehouseList.length"
                 @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
-          <div class="client_ads vux-1px-b" v-for="(item, index) in warehouseList" :key="index" @click="goDetail(item)">
+         <div class="client_ads vux-1px-b" :class="{visited: item.visited}" v-for="(item, index) in warehouseList"
+              :key="index" @click="goDetail(item, index)">
             <div class="user_info">
               <span class="user_name">{{item.warehouseCode}}</span>
               <span class="user_tel">{{item.warehouseType}}</span>
@@ -24,7 +25,7 @@
             <div class="cp_info">
               <p class="cp_name">{{item.warehouseName}}</p>
             </div>
-            <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
+            <span class="iconfont icon-bianji" @click.stop="goEditAds(item, index)"></span>
           </div>
        </r-scroll>
     </div>
@@ -92,22 +93,29 @@ export default {
       this.getwarehouse()
     },
     // 编辑地址
-    goEditAds(item){
-      this.$router.push({
-        path:'/warehouse/edit_warehouse',
-        query:{
-          transCode: item.transCode
-        }
-      })
+    goEditAds(item, index){
+      item.visited = true;
+      this.$set(this.warehouseList, index, {...item});
+      setTimeout(() => {
+        this.$router.push({
+          path:'/warehouse/edit_warehouse',
+          query:{
+            transCode: item.transCode
+          }
+        });
+      }, 200);
     },
-    goDetail(item){
-      this.$router.push({
-        path:'/warehouse/warehouseDetail',
-        query:{
-          transCode: item.transCode
-        }
-      })
-
+    goDetail(item, index){
+      item.visited = true;
+      this.$set(this.warehouseList, index, {...item});
+      setTimeout(() => {
+        this.$router.push({
+          path:'/warehouse/warehouseDetail',
+          query:{
+            transCode: item.transCode
+          }
+        });
+      }, 200);
     },
     //获取仓库列表
     getwarehouse(noReset = false){
@@ -228,18 +236,32 @@ export default {
         return
       }
       await this.getwarehouse();
-    }
+    },
+    // TODO 修改是否访问的状态
+    changeVisitedStatus() {
+      setTimeout(() => {
+        let tmp = [...this.warehouseList];
+        tmp.forEach(item => {
+          item.visited = false;
+        });
+        this.warehouseList = tmp;
+      }, 200)
+    },
   },
   watch: {
     $route: {
       handler(to, from) {
-        // 判断是否重新请求页面
-        if (to.meta.reload && to.path === '/warehouse') {
-          to.meta.reload = false;
-          this.srhInpTx = '';
-          //this.activeIndex = 0;
-          this.resetCondition();
-          this.onPullingDown();
+        let {path = '', meta = {}} = to;
+        if (path === '/warehouse') {
+          this.changeVisitedStatus();
+          // 判断是否重新请求页面
+          if (meta.reload) {
+            to.meta.reload = false;
+            this.srhInpTx = '';
+            //this.activeIndex = 0;
+            this.resetCondition();
+            this.onPullingDown();
+          }
         }
       },
     }
@@ -252,6 +274,8 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+  @import '~@/scss/color';
+
   .childPage {
     position: fixed;
     width: 100%;
@@ -353,6 +377,10 @@ export default {
     .client_ads {
       position: relative;
       padding: .06rem .4rem .06rem .08rem;
+      transition: background-color 200ms linear;
+      &.visited {
+        background-color: $list_visited;
+      }
       // 编辑
       .icon-bianji {
         right: 0;

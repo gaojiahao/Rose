@@ -15,14 +15,15 @@
       <!-- 主要内容区域 -->
       <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !dealerList.length"
                 @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
-          <div class="client_ads vux-1px-b" v-for="(item, index) in dealerList" :key="index" @click="goDetail(item)">
+        <div class="client_ads vux-1px-b" :class="{visited: item.visited}" v-for="(item, index) in dealerList"
+             :key="index" @click="goDetail(item, index)">
             <div class="cp_info user_info">
               <p class="cp_name">{{item.dealerName}}</p>
               <span class="user_phone" v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
               <span class="user_tel" v-if="item.dealerPhone">{{item.dealerPhone}}</span>
-              <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>              
+              <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
             </div>
-            <span class="iconfont icon-bianji" @click.stop="goEditAds(item)"></span>
+            <span class="iconfont icon-bianji" @click.stop="goEditAds(item, index)"></span>
           </div>
       </r-scroll>
     </div>
@@ -31,7 +32,7 @@
     </div>
     <router-view></router-view>
   </div>
-  
+
 </template>
 
 <script>
@@ -78,33 +79,41 @@ export default {
       this.getDealer()
     },
     //搜索
-    searchList(value){ 
+    searchList(value){
       this.srhInpTx = value;
       this.resetCondition();
       this.getDealer()
     },
     // 编辑地址
-    goEditAds(item){
-      this.$router.push({ 
-        path:'/adress/edit_ads',
-        query:{
-          transCode: item.transCode
-        }
-      })      
+    goEditAds(item, index){
+      item.visited = true;
+      this.$set(this.dealerList, index, {...item});
+      setTimeout(() => {
+        this.$router.push({
+          path:'/adress/edit_ads',
+          query:{
+            transCode: item.transCode
+          }
+        });
+      }, 200);
     },
-    goDetail(item){
-      this.$router.push({ 
-        path:'/adress/adressDetail',
-        query:{
-          transCode: item.transCode
-        }
-      })
-          
+    // TODO 跳转详情页
+    goDetail(item, index){
+      item.visited = true;
+      this.$set(this.dealerList, index, {...item});
+      setTimeout(() => {
+        this.$router.push({
+          path:'/adress/adressDetail',
+          query:{
+            transCode: item.transCode
+          }
+        })
+      }, 200)
     },
     //获取往来列表
-    getDealer(noReset = false){     
+    getDealer(noReset = false){
         let filter;
-        if(this.srhInpTx != ''){
+        if(this.srhInpTx !== ''){
           filter = [
             {
               operator: 'like',
@@ -150,8 +159,8 @@ export default {
                   width:'50%',
                   type:"text",
                   time : 700
-                })  
-              }             
+                })
+              }
             }
             //将总数据缓存
             if(this.activeIndex === 0 && this.page === 1){
@@ -167,10 +176,10 @@ export default {
           }).catch(e=>{
             this.resetScroll();
           })
-        })()             
+        })()
     },
     //往来分类
-    getClassfiy(){    
+    getClassfiy(){
       dealerService.getDealerClassfiy(this.page).then(data=>{
         data.map(item=>{
           if(item.title ==='往来对象'){
@@ -219,20 +228,33 @@ export default {
         return
       }
       await this.getDealer();
-    }
+    },
+    // TODO 修改是否访问的状态
+    changeVisitedStatus() {
+      setTimeout(() => {
+        let tmp = [...this.dealerList];
+        tmp.forEach(item => {
+          item.visited = false;
+        });
+        this.dealerList = tmp;
+      }, 200)
+    },
   },
   watch: {
     $route: {
       handler(to, from) {
-        // 判断是否重新请求页面
-        if (to.meta.reload && to.path === '/adress') {
-          to.meta.reload = false;
-          this.uniqueId = "7f01c808-d338-4711-8c99-319337078cc1";
-          this.srhInpTx = '';
-          this.activeIndex = 0;
-          this.resetCondition();
-          this.onPullingDown()
-          // this.getDealer();
+        let {path = '', meta = {}} = to;
+        if (path === '/adress') {
+          this.changeVisitedStatus();
+          // 判断是否重新请求页面
+          if (meta.reload) {
+            to.meta.reload = false;
+            this.uniqueId = "7f01c808-d338-4711-8c99-319337078cc1";
+            this.srhInpTx = '';
+            this.activeIndex = 0;
+            this.resetCondition();
+            this.onPullingDown()
+          }
         }
       },
     }
@@ -240,17 +262,14 @@ export default {
   created(){
     this.getClassfiy();
     this.getData(false);
-    // (async()=>{
-    //   await this.getSession();
-    //   await this.getDealer();
-    // })()
-    // this.getDealer();
   },
-  
+
 }
 </script>
 
 <style lang='scss' scoped>
+  @import '~@/scss/color';
+
   .vux-1px-l:before,
   .vux-1px-b:after {
     border-color: #e8e8e8;
@@ -298,6 +317,10 @@ export default {
     .client_ads {
       position: relative;
       padding: .06rem .4rem .06rem .08rem;
+      transition: background-color 200ms linear;
+      &.visited {
+        background-color: $list_visited;
+      }
       // 编辑
       .icon-bianji {
         right: 0;
@@ -305,10 +328,10 @@ export default {
         width: .35rem;
         display: block;
         font-size: .24rem;
-        text-align: center;    
+        text-align: center;
         position: absolute;
         transform: translate(0, -50%);
-      }  
+      }
       // 用户信息
       .user_info {
         color: #5077aa;

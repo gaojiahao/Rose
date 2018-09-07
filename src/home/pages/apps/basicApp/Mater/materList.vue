@@ -16,7 +16,8 @@
       <!-- 主要内容区域 -->
       <r-scroll class="app_main" :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !matterList.length"
                 @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
-        <div class="each_mater" v-for="(item, index) in matterList" :key='index' @click="goDetail(item)">
+        <div class="each_mater" :class="{visited: item.visited}" v-for="(item, index) in matterList" :key='index'
+             @click="goDetail(item, index)">
           <div class="mater_img">
             <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
           </div>
@@ -77,8 +78,8 @@
 </template>
 
 <script>
-  import { Tab, Icon, TabItem, Spinner, LoadMore } from 'vux'
-  import { getList, getDictByType } from 'service/commonService'
+  import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
+  import {getList, getDictByType} from 'service/commonService'
   import RScroll from 'components/RScroll'
   import RSearch from 'components/search'
 
@@ -91,15 +92,15 @@
       return {
         srhInpTx: '',
         matNature: [
-          { name: '全部' },
-          { name: '成品' },
-          { name: '半成品' },
-          { name: '商品' },
-          { name: '原件' },
-          { name: '虚拟件' },
-          { name: '商品库存' },
-          { name: '客供原料' },
-          { name: '服务' },
+          {name: '全部'},
+          {name: '成品'},
+          {name: '半成品'},
+          {name: '商品'},
+          {name: '原件'},
+          {name: '虚拟件'},
+          {name: '商品库存'},
+          {name: '客供原料'},
+          {name: '服务'},
         ],
         activeTab: '',
         activeIndex: 0,
@@ -112,7 +113,7 @@
           pullDownRefresh: true,
           pullUpLoad: true,
         },
-        total : null
+        total: null
       }
     },
     methods: {
@@ -127,13 +128,18 @@
         }
         return url
       },
-      goDetail(item) {
-        this.$router.push({
-          path: '/materlist/materDetail',
-          query: {
-            transCode: item.transCode
-          }
-        })
+      // TODO 跳转到详情页
+      goDetail(item, index) {
+        item.visited = true;
+        this.$set(this.matterList, index, {...item});
+        setTimeout(() => {
+          this.$router.push({
+            path: '/materlist/materDetail',
+            query: {
+              transCode: item.transCode
+            }
+          });
+        }, 200);
       },
       // TODO 重置列表条件
       resetCondition() {
@@ -200,26 +206,26 @@
           //判断最近有无新增数据
           //console.log(this.total);
           let text = '';
-          if(noReset && this.activeIndex ===0){
-            if(this.total){
-              text = dataCount - this.total === 0 ? '暂无新数据' : `新增${dataCount-this.total}条数据`;
+          if (noReset && this.activeIndex === 0) {
+            if (this.total) {
+              text = dataCount - this.total === 0 ? '暂无新数据' : `新增${dataCount - this.total}条数据`;
               this.$vux.toast.show({
                 text: text,
-                position:'top',
-                width:'50%',
-                type:"text",
-                time : 700
-              })  
+                position: 'top',
+                width: '50%',
+                type: "text",
+                time: 700
+              })
             }
           }
           //将总数量缓存
-          if(this.activeIndex === 0 && this.page === 1){
-            sessionStorage.setItem("WL",dataCount);
+          if (this.activeIndex === 0 && this.page === 1) {
+            sessionStorage.setItem("WL", dataCount);
           }
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic
-            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`
-            : this.getDefaultImg();
+              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`
+              : this.getDefaultImg();
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
@@ -251,66 +257,80 @@
         this.getMatList();
       },
       // TODO 下拉刷新
-     onPullingDown() {
+      onPullingDown() {
         this.page = 1;
         this.getData(true)
       },
       //获取上次存储的列表总数量
-      getSession(){
-        return new Promise(resolve=>{
+      getSession() {
+        return new Promise(resolve => {
           this.total = sessionStorage.getItem("WL");
           resolve()
         })
       },
-      async getData(noReset){
+      async getData(noReset) {
         await this.getSession();
-        if(noReset){
+        if (noReset) {
           await this.getMatList(true).then(() => {
-              this.$nextTick(() => {
-                this.$refs.bScroll.finishPullDown().then(() => {
-                  this.$refs.bScroll.finishPullUp();
-                });
-              })
+            this.$nextTick(() => {
+              this.$refs.bScroll.finishPullDown().then(() => {
+                this.$refs.bScroll.finishPullUp();
+              });
+            })
           });
           return
         }
         await this.getMatList();
-
-      }
+      },
+      // TODO 修改是否访问的状态
+      changeVisitedStatus() {
+        setTimeout(() => {
+          let tmp = [...this.matterList];
+          tmp.forEach(item => {
+            item.visited = false;
+          });
+          this.matterList = tmp;
+        }, 200);
+      },
     },
     watch: {
       $route: {
         handler(to, from) {
-          // 判断是否重新请求页面
-          if (to.meta.reload && to.path === '/materlist') {
-            to.meta.reload = false;
-            this.srhInpTx = '';
-            this.activeTab = '';
-            this.activeIndex = 0;
-            this.resetCondition();
-            this.getData(false)
+          let {path = '', meta = {}} = to;
+          if (path === '/materlist') {
+            this.changeVisitedStatus();
+            // 判断是否重新请求页面
+            if (meta.reload) {
+              to.meta.reload = false;
+              this.srhInpTx = '';
+              this.activeTab = '';
+              this.activeIndex = 0;
+              this.resetCondition();
+              this.getData(false);
+            }
           }
         },
       }
     },
     created() {
-      (async()=>{
+      (async () => {
         await this.getSession();
         await this.getDictByType().then(() => {
-                this.getMatList();
-              });
-
+          this.getMatList();
+        });
       })()
-      
     },
   }
 </script>
 
 <style lang='scss' scoped>
+  @import '~@/scss/color';
+
   .content {
     height: 90%;
     overflow: auto;
   }
+
   .childPage {
     bottom: 0;
     width: 100%;
@@ -318,68 +338,10 @@
     position: absolute;
     background: #fff;
   }
+
   .app_top {
     width: 100%;
     padding-top: .1rem;
-    // 搜索
-    .search_part {
-      width: 100%;
-      display: flex;
-      height: .3rem;
-      padding: 0 .08rem;
-      line-height: .3rem;
-      position: relative;
-      box-sizing: border-box;
-      // 搜索输入框
-      .srh_inp {
-        flex: 5;
-        outline: none;
-        border: none;
-        color: #2D2D2D;
-        font-size: .16rem;
-        padding: 0 .3rem 0 .4rem;
-        background: #F3F1F2;
-        border-top-left-radius: .3rem;
-        border-bottom-left-radius: .3rem;
-        -webkit-appearance: none;
-        appearance: none;
-        &::-webkit-search-cancel-button {
-          display: none;
-        }
-      }
-      // 取消 按钮
-      .pop_cancel {
-        flex: 1;
-        color: #fff;
-        font-size: .14rem;
-        text-align: center;
-        background: #3f72af;
-        border-top-right-radius: .3rem;
-        border-bottom-right-radius: .3rem;
-      }
-      // 搜索icon
-      .serach_icon {
-        top: 50%;
-        left: .14rem;
-        fill: #2D2D2D;
-        position: absolute;
-        transform: translate(0, -50%);
-      }
-      // 清除icon
-      .clear_icon {
-        top: 50%;
-        right: 14%;
-        width: .3rem;
-        height: .3rem;
-        z-index: 100;
-        display: block;
-        font-size: .12rem;
-        line-height: .3rem;
-        text-align: center;
-        position: absolute;
-        transform: translate(0, -50%);
-      }
-    }
     // 过滤
     .filter_part {
       margin-top: .04rem;
@@ -397,6 +359,10 @@
       position: relative;
       box-sizing: border-box;
       display: flex;
+      transition: background-color 200ms linear;
+      &.visited {
+        background-color: $list_visited;
+      }
       // 物料图片
       .mater_img {
         flex: 1;
