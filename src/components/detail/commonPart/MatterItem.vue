@@ -105,9 +105,9 @@
     }
     // 物料主体
     .mater_main {
-      display: inline-block;
+      width: 2.6rem;
       margin-left: .1rem;
-      max-width: 2.6rem;
+      display: inline-block;
       box-sizing: border-box;
       // 物料名称
       .mater_name {

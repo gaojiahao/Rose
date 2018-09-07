@@ -42,7 +42,11 @@
   .title {
     color: #111;
     font-weight: bold;
-    font-size: .18rem;
+    font-size: .16rem;
+    .icon-Shape {
+      font-size: .14rem;
+      font-weight: normal;
+    }
   }
   .price_cell {
     padding: .08rem 0;

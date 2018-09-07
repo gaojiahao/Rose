@@ -121,7 +121,7 @@ export default {
     goMsglist(item){
       let key =  item.businessKey.split('_')[0];
        this.$router.push({
-          path :`/notice/msglist/${item.taskId}`,
+          path :'/notice/msglist',
           query : {
             name : businessMap[key]
           }
@@ -151,6 +151,7 @@ export default {
     }
   },
   created(){
+    console.log('created-----')
     this.$loading.show();
     this.getList().then(() => {
       this.$loading.hide();

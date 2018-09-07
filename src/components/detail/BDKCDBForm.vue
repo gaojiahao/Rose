@@ -20,16 +20,28 @@
       </div>
       <!-- 物料列表 -->
       <div class="materiel_list">
-        <div class="title">物料列表</div>
+        <div class="title">
+          <span class="iconfont icon-Shape"></span>物料列表
+        </div>
         <div class="mater_list">
           <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
                         v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
             <!-- 调拨数量 -->
             <div class='mater_other' slot="other">
+              <div class='mater_left'>
+                <span class="units">
+                  属性: {{item.tdProcessing}}
+                </span>
+                <span class="units">
+                  计量单位: {{item.measureUnit_transObjCode}}
+                </span>
+              </div>
               <div class='mater_num'>
                 <span class="num">
-                  <span class="symbol">调拨数量: </span>
-                  {{item.tdQty}}
+                  调拨数量: {{item.tdQty | toFixed}}
+                </span>
+                <span class="units">
+                  [库存数量: {{item.thenQtyStock | toFixed}}]
                 </span>
               </div>
             </div>
@@ -148,14 +160,24 @@
   }
 
   .mater_other {
+    .mater_left {
+      color: #757575;
+      font-size: .12rem;
+      .units {
+        margin-right: .04rem;
+      }
+    }
     .mater_num {
       .num {
-        color: #5077aa;
-        font-size: .16rem;
+        color: #111;
+        font-size: .14rem;
         font-weight: bold;
         .symbol {
           color: #757575;
         }
+      }
+      .units {
+        // font-size: .12rem;
       }
     }
   }
