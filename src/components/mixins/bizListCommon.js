@@ -1,4 +1,4 @@
-import {Tab, Icon, TabItem, numberComma, dateFormat, } from 'vux'
+import {Tab, Icon, TabItem, numberComma, dateFormat,} from 'vux'
 import {getSellOrderList} from 'service/listService'
 import {isMyflow} from 'service/detailService'
 import searchIcon from 'components/search'
@@ -9,10 +9,10 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 
 export default {
-  props:{
-    refreshRequest:{
-      type : Boolean,
-      default:false
+  props: {
+    refreshRequest: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -31,8 +31,9 @@ export default {
       listData: [],
       activeTab: '',
       count: 0,
-      total:null, //列表数据总量
-      applyCode : '' ,
+      total: null, //列表数据总量
+      applyCode: '',
+      clickVisited: false, // 判断是否点击过其它列表项
     }
   },
   components: {
@@ -40,8 +41,12 @@ export default {
   },
   methods: {
     goDetail(item, index) {
+      if (this.clickVisited) {
+        return
+      }
       let {transCode} = item;
       let {code} = this.$route.params;
+      this.clickVisited = true;
       item.visited = true;
       this.$set(this.listData, index, {...item});
       let start = Date.now();
@@ -50,6 +55,7 @@ export default {
       isMyflow({transCode}).then(({tableContent}) => {
         let jump = () => {
           let path = '';
+          this.clickVisited = false;
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
@@ -78,6 +84,7 @@ export default {
           }, TRANSITION_TIME - calcTime);
         }
       }).catch(e => {
+        this.clickVisited = false;
         item.visited = false;
         this.$set(this.listData, index, {...item});
       })
@@ -100,7 +107,7 @@ export default {
     },
     ///tab切换
     tabClick(item, index) {
-      switch (item.status){
+      switch (item.status) {
         case '已生效' :
           this.biStatus = '1';
           break;
@@ -171,8 +178,8 @@ export default {
       this.onPullingDown();
     },
     //获取上次存储的列表总数量
-    getSession(){
-      return new Promise(resolve=>{
+    getSession() {
+      return new Promise(resolve => {
         this.total = sessionStorage.getItem(this.applyCode);
         resolve()
       })
@@ -199,10 +206,10 @@ export default {
           item.itmes.forEach(mitem => {
             // 当 count = tdAmount 相加的时候
             if (mitem.tdAmount > 0) {
-              if(mitem.tdQty>0 && mitem.price>0){
-                mitem.noTaxAmount = accMul(mitem.price,mitem.tdQty);
-                mitem.taxAmount = accMul(mitem.noTaxAmount,0.16);
-                mitem.tdAmount = accAdd(mitem.noTaxAmount,mitem.taxAmount);
+              if (mitem.tdQty > 0 && mitem.price > 0) {
+                mitem.noTaxAmount = accMul(mitem.price, mitem.tdQty);
+                mitem.taxAmount = accMul(mitem.noTaxAmount, 0.16);
+                mitem.tdAmount = accAdd(mitem.noTaxAmount, mitem.taxAmount);
               }
               item.count = toFixed(accAdd(item.count, mitem.tdAmount));
               return
@@ -230,37 +237,37 @@ export default {
         }
         //判断最近有无新增数据
         let text = '';
-        if(noReset && this.activeIndex ===0){
-          if(this.total){
-            text = total - this.total === 0 ? '暂无新数据' : text = `新增${total-this.total}条数据`;
+        if (noReset && this.activeIndex === 0) {
+          if (this.total) {
+            text = total - this.total === 0 ? '暂无新数据' : text = `新增${total - this.total}条数据`;
             this.$vux.toast.show({
               text: text,
-              position:'top',
-              width:'50%',
-              type:"text",
-              time : 700
+              position: 'top',
+              width: '50%',
+              type: "text",
+              time: 700
             })
           }
         }
         //列表总数据缓存
-        if(this.activeIndex == 0 && this.page ===1){
-          sessionStorage.setItem(this.applyCode,total);
+        if (this.activeIndex == 0 && this.page === 1) {
+          sessionStorage.setItem(this.applyCode, total);
         }
       }).catch(e => {
         this.resetScroll();
       })
     },
-    async getData(noReset){
+    async getData(noReset) {
       await this.getSession();
-      if(noReset){
+      if (noReset) {
         await this.getList(true).then(() => {
-            this.$nextTick(() => {
-              this.$refs.bScroll.finishPullDown().then(() => {
-                this.$refs.bScroll.finishPullUp();
-              });
-            })
-            // 提交之后成功请求数据 隐藏动画
-            this.$loading.hide();
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullDown().then(() => {
+              this.$refs.bScroll.finishPullUp();
+            });
+          })
+          // 提交之后成功请求数据 隐藏动画
+          this.$loading.hide();
         });
         return
       }
@@ -270,7 +277,7 @@ export default {
     // TODO 修改是否访问的状态
     changeVisitedStatus() {
       let tmp = [...this.listData];
-      setTimeout(()=>{
+      setTimeout(() => {
         tmp.forEach(item => {
           item.visited = false;
         });

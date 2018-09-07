@@ -55,11 +55,16 @@
     mixins: [listCommon],
     methods: {
       goDetail(item, index) {
+        if (this.clickVisited) {
+          return
+        }
+        this.clickVisited = true;
         item.visited = true;
         this.$set(this.listData, index, {...item});
         let {code} = this.$route.params;
         // 等待动画结束后跳转
         setTimeout(() => {
+          this.clickVisited = false;
           this.$router.push({
             path: `/detail/${code}`,
             query: {
