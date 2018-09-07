@@ -42,7 +42,7 @@ export default {
   activated() {
     let reload = this.$route.meta.reload;
     setTimeout(() => {
-      this.$refs.list.changeVisitedStatus();
+      this.$refs.list.changeVisitedStatus && this.$refs.list.changeVisitedStatus();
     });
     if (reload) {
       let code = this.$route.params.code;
