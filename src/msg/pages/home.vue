@@ -1,32 +1,33 @@
 <template>
   <div class="inPage">
     <template v-if="listData">
-      <!-- 搜索框 -->
-      <!-- <search @search='searchList'></search> -->
       <div class='wrapper' ref="bScroll">
         <div class="when_null" v-if="isNull">
           暂无待办消息
         </div>
         <div class="msg_list" v-else>
-          <div class="each_msg"
-              @click="goMsglist(listData[value].list[0],i)"
+          <div class="msg"
+              @click="goMsglist(value.list[0],i)"
               v-for='(value, i) in listData'
               :key='i'>
-            <div class="msg_info">
-              <!-- 图片 和 应用名称 -->
-              <div class="app_info">
-                <span class="app_img">
-                  <img :src='value[0].pic' alt="appImg" @error='getDefaultImg(value[0])'>
-                </span>
-                <span class="app_name">{{i}}</span>
+            <div class='each_msg':class="{visited: value.visited}">
+              <div class="msg_info">
+                <!-- 图片 和 应用名称 -->
+                <div class="app_info">
+                  <span class="app_img">
+                    <img :src='value.list[0].pic' alt="appImg" @error='getDefaultImg(value[0])'>
+                  </span>
+                  <span class="app_name">{{i}}</span>
+                </div>
+                <!-- 时间 -->
+                <div class="msg_time">{{value.list[0] | handleCrt }}</div>
+                <badge :text="value.list.length"></badge>
               </div>
-              <!-- 时间 -->
-              <div class="msg_time">{{value[0] | handleCrt }}</div>
-              <badge :text="value.length"></badge>
+              <div class="recv_msg">
+                您收到{{value.list.length>1 ? '多' : '一'}}条新的消息
+              </div>
             </div>
-            <div class="recv_msg">
-              您收到{{value.length>1 ? '多' : '一'}}条新的消息
-            </div>
+            
           </div>
         </div>
 
@@ -101,14 +102,17 @@ export default {
     // 前往应用消息列表
     goMsglist(item,i){
       let key =  item.businessKey.split('_')[0];
-      console.log(i);
-      console.log(item);
-      this.$router.push({
-        path :'/msglist',
-        query : {
-          name : businessMap[key]
-        }
-      })
+      this.$set(this.listData[i],'visited',true);
+       // 等待动画结束后跳转
+      setTimeout(() => {
+        this.$router.push({
+          path :'/msglist',
+          query : {
+            name : businessMap[key]
+          }
+        })
+      },300);
+     
     }
   },
   filters:{
@@ -140,13 +144,12 @@ export default {
     });
   },
   activated(){
-    console.log(this.$route.meta.reload);
     let reload = this.$route.meta.reload;
     setTimeout(() => {
-      let tmp = [...this.listData];
-      tmp.forEach(item => {
-        item.visited = false;
-      });
+      let tmp = {...this.listData};
+      for(let i in tmp){
+        tmp[i].visited = false;
+      }
       this.listData = tmp;
     },200);
     if(reload){
