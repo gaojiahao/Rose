@@ -1,10 +1,10 @@
 <template>
-  <div class="project_ct_info">
+  <div class="project_ct_info" v-if="projectInfo.project">
     <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
     <div class="info_content">
       <div class="each_info">
         <span class="title">项目名称：</span>
-        <span class="content">{{projectInfo.project || '无'}}</span>project
+        <span class="content">{{projectInfo.project || '无'}}</span>
       </div>
       <div class="each_info">
         <span class="title">项目类型：</span>
