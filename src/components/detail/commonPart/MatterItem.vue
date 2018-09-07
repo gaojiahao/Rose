@@ -86,6 +86,9 @@
 </script>
 
 <style scoped lang="scss">
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
   // 每个物料
   .matter_item {
     display: flex;

@@ -296,7 +296,7 @@
   width: 100%;
   .icon-renwu {
     font-size: .14rem;
-    margin-right: .06rem;
+    margin-right: .04rem;
   }
   .form_title {
     color: #111;
@@ -364,9 +364,13 @@
     padding: .06rem 0;
     font-size: .16rem;
     font-weight: bold;
-    .iconfont {
+    .icon-renwu {
+      font-size: .14rem;
       font-weight: normal;
-      margin-right: .03rem;
+      margin-right: .05rem;
+    }
+    .icon-xiangmu {
+      margin-right: .01rem;
     }
   }
   .info_content {

@@ -11,12 +11,22 @@
         <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
-            <p class="duty_code">{{item.transCode}}</p>
+            <p class="duty_code">
+              {{item.transCode}}
+              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
+            </p>
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
-          <div class="duty_item">
-            {{item.projectName}}
-          </div>
+          <!-- 项目 -->
+          <div class="duty_name">
+            <div class="major_content vux-1px-b">
+              <!-- <div class="status_part">
+                <span class="iconfont icon-503020"></span>
+                <span class="status_name">{{item.projectType_project}}</span>
+              </div> -->
+              {{item.projectName}}
+            </div>
+          </div>          
           <!-- 项目计划经办人 -->
           <div class="order_count">
             <div class="handle_man">
@@ -87,6 +97,9 @@
           filter: JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.$emit('input', false);
+          tableContent.forEach(item => {
+            this.setStatus(item);
+          });          
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {

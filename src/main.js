@@ -25,6 +25,7 @@ const isDebug_mode = process.env.NODE_ENV !== 'production'
 Vue.config.debug = isDebug_mode
 Vue.config.devtools = isDebug_mode
 Vue.config.productionTip = false
+// 此处声明空实例 用于非父子组件之间传值
 Vue.prototype.$event = new Vue();
 
 router.afterEach( route =>{
