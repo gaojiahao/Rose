@@ -73,22 +73,26 @@
       getList(noReset = false) {
         let filter = [];
         if(this.biStatus.length){
-          filter = [{operator:"in",value:this.biStatus,property:"biStatus"}];
+          filter = [{operator: "in", value: this.biStatus, property: "biStatus"}];
         }
         if(this.serachVal){
           filter = [
             ...filter,
             {
-              operator:"like",
-              value:this.serachVal,
-              property:"transCode",
+              operator: "like",
+              value: this.serachVal,
+              property: "transCode",
               attendedOperation: 'or'
-            },
-            {
+            }, {
               operator: 'like',
               value: this.serachVal,
               property: 'handlerName',
-            }
+              attendedOperation: 'or'
+            }, {
+              operator: 'like',
+              value: this.serachVal,
+              property: 'opportunityTitle',
+            },
           ]
           if(this.biStatus.length){
             filter[0].attendedOperation = "and (";
