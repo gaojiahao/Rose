@@ -163,7 +163,6 @@
           {tip: 'budgetCost', msg: '预算费用'},
           {tip: 'expectStartDate', msg: '预期开始日期'},
           {tip: 'expectEndDate', msg: '预期截至日期'},
-          {tip: 'comment', msg: '项目说明'},
         ];
         let selArr = ['projectManager', 'projectType'];
         let warn = '';

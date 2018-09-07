@@ -4,10 +4,10 @@
       <div class="fill_wrapper">
         <!-- 项目-->
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
-                  @on-change="projectChange" v-model="projectTask.projectName"></r-picker>
+                  @on-change="projectChange" v-model="projectTask.projectName" required></r-picker>
         <!-- 任务 -->
         <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
-                  @on-change="taskChange" v-model="projectTask.taskName"></r-picker>
+                  @on-change="taskChange" v-model="projectTask.taskName" required></r-picker>
         <!-- 任务详情 -->
         <div class="or_ads mg_auto box_sd" v-show="projectTask.taskName">
           <p class="title">任务详情</p>
@@ -22,7 +22,9 @@
         <div class="or_ads mg_auto box_sd">
           <p class="title">实际情况</p>
           <group>
-            <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime"></datetime>
+            <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime">
+              <span class="required" slot="title">实际完成日期</span>
+            </datetime>
             <x-input type="number" title="实际工时" text-align="right" placeholder="请填写实际工时"
                      @on-blur="checkTime" v-model.number="projectTask.actualTime"></x-input>
           </group>
@@ -97,9 +99,6 @@
           }, {
             key: 'actualCompleteTime',
             message: '实际完成日期'
-          }, {
-            key: 'actualTime',
-            message: '实际工时'
           },
         ];
         validateMap.every(item => {

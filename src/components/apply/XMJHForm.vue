@@ -123,33 +123,33 @@
       },
       // TODO 提交
       save() {
+        let warn = '';
         //验证选择项目
         if (!this.projectName) {
-          this.$vux.alert.show({
-            content: '请选择项目'
-          });
-          return;
+          warn = '请选择项目';
         }
-        let msgTask = '';
         let objArr = {
           taskName: '任务名称',
-          taskType: '任务类型',
-          comment: '任务说明',
           deadline: '截止日期',
-          planTime: '计划工时',
-        }
+        };
         //验证任务计划
-        for (let i = 0; i < this.projectPlan.length; i++) {
-          for (let j in this.projectPlan[i]) {
-            if (this.projectPlan[i][j] == '') {
-              let msgTitle = j === 'taskType' || j === 'deadline' ? '请选择' : '请填写';
-              msgTask = msgTitle + objArr[j];
-              this.$vux.alert.show({
-                content: msgTask
-              })
-              return;
-            }
-          }
+        if (!warn) {
+          this.projectPlan.every(item => {
+            Object.entries(objArr).every(([key, value]) => {
+              if (!item[key]) {
+                warn = `${value}不能为空`;
+                return false
+              }
+              return true
+            });
+            return !warn
+          });
+        }
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
         }
         this.$vux.confirm.show({
           content: '确认提交?',

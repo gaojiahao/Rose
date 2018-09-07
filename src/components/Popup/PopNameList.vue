@@ -1,8 +1,8 @@
 <template>
   <div class="pop-name-list-container" @click="itemClick">
     <template v-if="!selItems.PROJECT_NAME">
-      <div class="title">项目计划</div>
-      <div class="mode required">请选择项目</div>
+      <div class="title required">项目计划</div>
+      <div class="mode">请选择项目</div>
       <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
     </template>
     <template v-else>

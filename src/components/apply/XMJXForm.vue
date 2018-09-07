@@ -8,8 +8,12 @@
         <div class="or_ads mg_auto box_sd">
           <p class="title">实际情况</p>
           <group>
-            <datetime title="实际开始日期" v-model="projectTime.actualStartTime"></datetime>
-            <datetime title="实际完成日期" v-model="projectTime.actualCompleteTime"></datetime>
+            <datetime title="实际开始日期" v-model="projectTime.actualStartTime">
+              <span class="required" slot="title">实际开始日期</span>
+            </datetime>
+            <datetime title="实际完成日期" v-model="projectTime.actualCompleteTime">
+              <span class="required" slot="title">实际完成日期</span>
+            </datetime>
           </group>
         </div>
       </div>

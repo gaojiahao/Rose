@@ -93,8 +93,10 @@ export default {
       this.listData = [];
       this.page = 1;
       this.hasNext = true;
-      this.$refs.bScroll.scrollTo(0, 0);
-      this.$refs.bScroll.resetPullDown();
+      this.$nextTick(() => {
+        this.$refs.bScroll.scrollTo(0, 0);
+        this.$refs.bScroll.resetPullDown();
+      })
     },
     ///tab切换
     tabClick(item, index) {
