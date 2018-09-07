@@ -72,7 +72,7 @@
     },
     beforeRouteEnter(to, from, next) {
       let code = businessText[to.params.code];
-      to.meta.title = `${code.slice(-4)}详情`;
+      to.meta.title = `${code}详情`;
       next();
     },
     created() {
