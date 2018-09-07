@@ -86,9 +86,8 @@ export default {
     },
     //提交订单
     saveData(request, submitData) {
-      this.$emit('close', true)
       request(submitData).then(data => {
-        this.$emit('close', false)
+        this.$HandleLoad.hide()
         let {success = false, message = '提交失败'} = data;
         if (success) {
           message = '提交成功';
@@ -103,7 +102,7 @@ export default {
           }
         });
       }).catch(e => {
-        this.$emit('close', false)
+        this.$HandleLoad.hide();
       })
     },
     //终止订单
@@ -111,7 +110,7 @@ export default {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
         onConfirm: (value) => {
-          this.$emit('close', true);
+          this.$HandleLoad.show();
           if (value) {
             this.comment = value;
           }
@@ -124,7 +123,7 @@ export default {
             })
           }
           commitTask(submitData).then(data => {
-            this.$emit('close', false);
+            this.$HandleLoad.hide();
             let {success = false, message = '提交失败'} = data;
             if (success) {
               message = '终止成功';
@@ -139,7 +138,7 @@ export default {
               }
             });
           }).catch(e => {
-            this.$emit('close', false);
+            this.$HandleLoad.hide();
           })
         }
       })
@@ -148,10 +147,6 @@ export default {
     getBaseInfoData() {
       getBaseInfoData().then(data => {
         this.$loading.hide();
-        // if (!this.transCode) {
-        //   this.$emit('input', false)
-        // }
-        // this.entity.dealerName = data.entityId;
         this.formData = {
           ...this.formData,
           ...data,
@@ -207,7 +202,6 @@ export default {
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
         this.getFormData && this.getFormData();
-        // this.$emit('input', false);
       })();
       
     }

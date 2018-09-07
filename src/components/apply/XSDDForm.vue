@@ -345,6 +345,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
             content: '确认提交?',
             // 确定回调
             onConfirm: () => {
+              this.$HandleLoad.show();
               let dataSet = [];
               let operation = saveAndStartWf;//默认有工作流
               this.matterList.map(item => {

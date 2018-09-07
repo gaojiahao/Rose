@@ -3,10 +3,8 @@
     <component
       :is='currentComponent'
       @sel-data='selData'
-      @close='closeLoad'
       @change='modifyRoute'>
     </component>
-    <submit-load :submit='submitLoadding'></submit-load>
   </div>
 
 </template>
@@ -33,10 +31,7 @@ export default {
     SubmitLoad
   },
   methods:{
-    //关闭等待动画
-    closeLoad(val){
-      this.submitLoadding = val;
-    },
+    //提交,终止成功
     modifyRoute(val){
       this.submitSuccess = val;
     },
@@ -64,8 +59,10 @@ export default {
     let {path} = to;
     let keys = Object.keys(this.saveData)[0];
     // 新建物料，修改列表页的meta值
-    if (this.submitSuccess && (path.indexOf('/list') !== -1 ||path.indexOf('/msglist') !== -1)) {
+    if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {
       to.meta.reload = true;
+      //返回消息列表时，用于通知要刷新
+      from.meta.isHandle = true;
       if(keys){
         sessionStorage.removeItem(keys)
       }     

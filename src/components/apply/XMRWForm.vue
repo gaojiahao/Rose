@@ -118,6 +118,7 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
+            this.$HandleLoad.show();
             this.jsonData.baseinfo = {
               ...this.formData,
               creator: this.formData.handler,

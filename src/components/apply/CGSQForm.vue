@@ -277,6 +277,7 @@ export default {
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
+            this.$HandleLoad.show();
             let dataSet = [];
             let operation = saveAndStartWf;
             this.matterList.map(item=>{

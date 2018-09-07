@@ -249,10 +249,8 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     to.meta.title = to.query.name ;
-    console.log(from);
-    console.log(to);
     next(vm=>{
-      if(from.name === 'DETAIL' && from.meta.isHandle){
+      if((from.name === 'DETAIL' || from.name === 'FILLFORM') && from.meta.isHandle){
         vm.isRefresh = true;
         from.meta.isHandle = false;
       }

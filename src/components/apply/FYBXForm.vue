@@ -213,6 +213,7 @@ export default {
         content: '确认提交?',
         // 确定回调
         onConfirm: () => {
+          this.$HandleLoad.show();
           let operation = saveAndStartWf;
           let wfPara = {
             [this.processCode]: {businessKey: "REIM1", createdBy: JSON.stringify(this.formData.handler)}

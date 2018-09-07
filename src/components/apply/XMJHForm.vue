@@ -155,6 +155,7 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
+            this.$HandleLoad.show();
             let operation = saveProjectPlan;
             let submitData = {
               listId: this.listId,
