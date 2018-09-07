@@ -6,7 +6,7 @@
     <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_task' v-for='(item,index) in listData' :key='index' @click='goDetail(item)'>
+        <div class='each_task' :class="{visited: item.visited}" v-for='(item,index) in listData' :key='index' @click='goDetail(item,index)'>
           <div class="todo_msg">
             <div class="msg_top">
               <!-- 表单状态 及 编码 -->
@@ -45,7 +45,6 @@
           </div>
         </div>
     </r-scroll>
-    <loading-form :show='showLoadding'></loading-form>
    <router-view></router-view>
   </div>
 </template>
@@ -58,6 +57,7 @@ import {isMyflow} from 'service/detailService'
 import businessMap from '@/home/pages/maps/detail.js'
 import RScroll from 'components/RScroll'
 import LoadingForm from 'components/Loading'
+import { format } from 'url';
 export default {
   data(){
     return{
@@ -67,7 +67,6 @@ export default {
       page: 1,
       limit: 10,
       hasNext: true,
-      showLoadding : true,
       DefaultImg : require('assets/ava03.png'),
       scrollOptions: {
         click: true,
@@ -81,36 +80,67 @@ export default {
     search,RScroll,LoadingForm
   },
   methods:{
-    goDetail(item){
+    goDetail(item,index){
       let code = businessMap[item.businessKey.split('_')[0]] ;
+      item.visited = true;
+      this.$set(this.listData, index, {...item});
+      let start = Date.now();
+      const TRANSITION_TIME = 200; // 动画时间
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
-        if (tableContent.length > 0) {
-          let {isMyTask, nodeName} = tableContent[0];
-          if (isMyTask === 1 && nodeName === '重新提交') {
-            this.$router.push({
-              path: `/fillform/${code}`,
-              query: {
-                transCode: item.businessKey
-              }
-            })
+        let jump = () => {
+          let path = '';
+          if (tableContent.length > 0) {
+            let {isMyTask, nodeName} = tableContent[0];
+            if (isMyTask === 1 && nodeName === '重新提交') {
+              path = `/fillform/${code}`;
+            } else {
+              path = `/detail/${code}`;
+            }
           } else {
-            this.$router.push({
-              path: `/detail/${code}`,
-              query: {
-                transCode: item.businessKey
-              }
-            })
+            path = `/detail/${code}`;
           }
-        } else {
           this.$router.push({
-            path: `/detail/${code}`,
+            path,
             query: {
-              transCode: item.businessKey
+              transCode : item.businessKey
             }
           })
+        };
+        let calcTime = Date.now() - start;
+        // 请求结束时间大于动画时间则直接跳转到详情页
+        if (calcTime > TRANSITION_TIME) {
+          jump();
+        } else {
+          // 等待动画结束后跳转
+          setTimeout(() => {
+            jump();
+          }, TRANSITION_TIME - calcTime);
         }
+      }).catch(e => {
+        item.visited = false;
+        this.$set(this.listData, index, {...item});
       })
+      //判断是否是重新提交，如果是，跳转到创建订单页面
+      // isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
+      //   let path = '';
+      //   if (tableContent.length > 0) {
+      //     let {isMyTask, nodeName} = tableContent[0];
+      //     if (isMyTask === 1 && nodeName === '重新提交') {
+      //       path = `/fillform/${code}`;
+      //     } else {
+      //       path =  `/detail/${code}`;
+      //     }
+      //   } else {
+      //     path = `/detail/${code}`;
+      //   }
+      //   this.$router.push({
+      //       path: path,
+      //       query: {
+      //         transCode: item.businessKey
+      //       }
+      //     })
+      // })
     },
     // TODO 重置列表条件
     resetCondition() {
@@ -148,7 +178,6 @@ export default {
               this.resetScroll();
             })
           }
-          this.showLoadding = false;
         }).catch(e => {
           this.resetScroll();
         })
@@ -186,7 +215,9 @@ export default {
     reloadData() {
       this.serachVal = '';
       this.resetCondition();
-      this.getList();
+      this.getList().then(()=>{
+        this.$loading.hide();
+      });
     }
   },
   filters:{
@@ -208,27 +239,40 @@ export default {
 
     }
   },
-  watch: {
-    $route: {
-      handler(to, from) {
-        // 判断是否重新请求页面
-        if (to.meta.reload && to.path.indexOf('/notice/msglist') !== -1) {
-          this.isRefresh = true;
-          to.meta.reload = false;
-          this.reloadData();
-        }
-      },
-    }
-  },
   created(){
+    this.$loading.show();
     this.title = this.$route.query.name;
-    this.getList();
+    this.getList().then(()=>{
+      this.$loading.hide();
+    });
+  },
+  activated(){
+    let reload = this.$route.meta.reload;
+    this.title = this.$route.query.name;
+    setTimeout(() => {
+      let tmp = [...this.listData];
+      tmp.forEach(item => {
+        item.visited = false;
+      });
+      this.listData = tmp;
+    },200);
+    if(reload){
+      this.$loading.show();
+      this.reloadData();
+      this.$route.meta.reload = false;
+    }
   },
   beforeRouteEnter (to, from, next) {
     to.meta.title = to.query.name ;
-    next();
+    console.log(to);
+    next(vm=>{
+    });
   },
   beforeRouteLeave (to, from, next) {
+    if(to.name === 'MSGHOME'){
+      from.meta.reload = true;
+    }
+     //当详情已经审批时，从列表返回首页，首页刷新
     if(this.isRefresh && to.name === 'MSGHOME'){
       to.meta.reload = true;
     }
@@ -249,6 +293,13 @@ export default {
   width:100%;
   height: calc(100% - .5rem );
   overflow: hidden;
+}
+.each_task{
+  transition: background-color 200ms linear;
+  &.visited {
+    background-color: #e8e8e8;
+  }
+
 }
 // 待处理消息
 .todo_msg {

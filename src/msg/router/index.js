@@ -7,24 +7,10 @@ export default [
     meta: { title: '消息列表'},
     children:[
       {
-        path:'msglist/:code',
+        path:'msglist',
         name:'MSGLIST',
         component:MSGLIST,
-        meta:{ title:'应用消息列表'},
-        children:[
-          {
-            path:'detail',
-            name:'MSGDETAIL',
-            component:DETAIL,
-            meta:{ title:'订单详情' }
-          },
-          {
-            path:'fillform',
-            name:'MSGFILLFORM',
-            component:FILLFORM,
-            meta:{ title:'填写新内容' }
-          }
-        ]
+        meta:{ title:'应用消息列表',keepAlive: true},
       },
     ]
   }
