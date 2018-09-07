@@ -119,6 +119,8 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~@/scss/color';
+
 .list_item {
   width: 95%;
   position: relative;
@@ -127,7 +129,7 @@
   box-shadow: 0 2px 10px #e8e8e8;
   transition: background-color 200ms linear;
   &.visited {
-    background-color: #e8e8e8;
+    background-color: $list_visited;
   }
   .duty_top {
     height: .24rem;
