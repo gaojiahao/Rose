@@ -113,7 +113,8 @@
           pullDownRefresh: true,
           pullUpLoad: true,
         },
-        total: null
+        total: null,
+        clickVisited: false, // 判断是否点击过其它列表项
       }
     },
     methods: {
@@ -130,9 +131,14 @@
       },
       // TODO 跳转到详情页
       goDetail(item, index) {
+        if (this.clickVisited) {
+          return
+        }
+        this.clickVisited = true;
         item.visited = true;
         this.$set(this.matterList, index, {...item});
         setTimeout(() => {
+          this.clickVisited = false;
           this.$router.push({
             path: '/materlist/materDetail',
             query: {

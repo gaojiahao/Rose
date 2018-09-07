@@ -62,7 +62,8 @@ export default {
         pullUpLoad: true,
       },
       Loadding : true,
-      total : null
+      total : null,
+      clickVisited: false, // 判断是否点击过其它列表项
     }
   },
   components:{
@@ -92,30 +93,30 @@ export default {
       this.resetCondition();
       this.getwarehouse()
     },
-    // 编辑地址
-    goEditAds(item, index){
+    // TODO 页面跳转
+    goNextPage(item, index, path) {
+      if (this.clickVisited) {
+        return
+      }
+      this.clickVisited = true;
       item.visited = true;
       this.$set(this.warehouseList, index, {...item});
       setTimeout(() => {
+        this.clickVisited = false;
         this.$router.push({
-          path:'/warehouse/edit_warehouse',
-          query:{
+          path,
+          query: {
             transCode: item.transCode
           }
         });
       }, 200);
     },
+    // 编辑地址
+    goEditAds(item, index){
+      this.goNextPage(item, index, '/warehouse/edit_warehouse');
+    },
     goDetail(item, index){
-      item.visited = true;
-      this.$set(this.warehouseList, index, {...item});
-      setTimeout(() => {
-        this.$router.push({
-          path:'/warehouse/warehouseDetail',
-          query:{
-            transCode: item.transCode
-          }
-        });
-      }, 200);
+      this.goNextPage(item, index, '/warehouse/warehouseDetail');
     },
     //获取仓库列表
     getwarehouse(noReset = false){

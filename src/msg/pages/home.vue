@@ -7,10 +7,10 @@
         </div>
         <div class="msg_list" v-else>
           <div class="msg"
-              @click="goMsglist(value.list[0],i)"
+              @click="goMsglist(value,i)"
               v-for='(value, i) in listData'
               :key='i'>
-            <div class='each_msg':class="{visited: value.visited}">
+            <div class='each_msg' :class="{visited: value.visited}">
               <div class="msg_info">
                 <!-- 图片 和 应用名称 -->
                 <div class="app_info">
@@ -46,7 +46,6 @@ import { getMsgList } from 'service/msgService'
 // 组件 引入
 import BScroll from 'better-scroll'
 import search from 'components/search'
-
 export default {
   data(){
     return{
@@ -101,8 +100,9 @@ export default {
     },
     // 前往应用消息列表
     goMsglist(item,i){
-      let key =  item.businessKey.split('_')[0];
-      this.$set(this.listData[i],'visited',true);
+      let key =  item.list[0].businessKey.split('_')[0];
+      item.visited = true;
+      this.$set(this.listData,i,{...item});
        // 等待动画结束后跳转
       setTimeout(() => {
         this.$router.push({
@@ -111,7 +111,7 @@ export default {
             name : businessMap[key]
           }
         })
-      },300);
+      },200);
      
     }
   },
