@@ -70,75 +70,25 @@
           </div>
         </div>
       </div>
-      <!-- 大标题 -->
-      <!-- <div class="big_title">
-        <p class="vux-1px-b">相关实例</p>
-      </div>
-      <div class="relevant_list">
-        <div class="each_app vux-1px-b">
-          <div class="app_info">
-            <div class="title">业务应用</div>
-            <div class="app_name">
-              <span>销售出库</span>
-            </div>
-            <div class="msg_num">
-              1
-              <span class="msg_tx">关联</span>
-            </div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-        </div>
-        <div class="each_app vux-1px-b">
-          <div class="app_info">
-            <div class="title">业务应用</div>
-            <div class="app_name">
-              <span>销售报价</span>
-            </div>
-            <div class="msg_num">
-              44
-              <span class="msg_tx">关联</span>
-            </div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-        </div>
-        <div class="each_app vux-1px-b">
-          <div class="app_info">
-            <div class="title">业务应用</div>
-            <div class="app_name">
-              <span>销售订单</span>
-            </div>
-            <div class="msg_num">
-              30
-              <span class="msg_tx">关联</span>
-            </div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-        </div>
-      </div> -->
     </div>
     <!-- 修改按钮 -->
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEdit">修改</div>
     </div>
-    <loading :show="showLoading"></loading>
   </div>
 </template>
 
 <script>
   import {AlertModule} from 'vux';
-  import Loading from 'components/Loading'
   import {findData} from 'service/materService'
-
   export default {
     name: 'materDetail',
     data() {
       return {
         transCode: '',
         inventory: {},
-        showLoading: false,
       }
     },
-    components: {Loading},
     methods: {
       // TODO 跳转到修改页面
       goEdit() {
@@ -152,7 +102,6 @@
       // TODO 获取物料详情
       findData() {
         return findData(this.transCode).then(({formData}) => {
-          this.showLoading = false;
           this.inventory = formData.inventory;
           let {inventoryPic} = this.inventory;
           if (inventoryPic) {
@@ -160,8 +109,9 @@
           } else {
             this.getDefaultImg();
           }
+          this.$loading.hide();
         }).catch(e => {
-          this.showLoading = false;
+          this.$loading.hide();
           AlertModule.show({
             content: e.message,
           })
@@ -173,7 +123,7 @@
       },
     },
     created() {
-      this.showLoading = true;
+      this.$loading.show();
       let {transCode = ''} = this.$route.query;
       this.transCode = transCode;
       this.findData();

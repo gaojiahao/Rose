@@ -84,7 +84,9 @@
             return item.attacthment === this.dealer.dealerPic
           });
           this.imgFileObj = imgFileObj;
+          this.$loading.hide();
         }).catch(e=>{
+          this.$loading.hide();
           this.$vux.alert.show({
             content:e.message
           })
@@ -96,10 +98,11 @@
       },
     },
     created() {
+      this.$loading.show()
       let query = this.$route.query;
       if(query.transCode){
         this.transCode = query.transCode;
-          this.findData();
+          this.findData()
       }
     }
   }

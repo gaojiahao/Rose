@@ -205,9 +205,13 @@ export default {
       this.getDealer();
     },
     // TODO 下拉刷新
-    onPullingDown() {
+    onPullingDown(refresh = true) {
       this.page = 1;
-      this.getData(true);
+      if(refresh){
+        this.getData(true);
+        return;
+      }
+      this.getData();
     },
     //获取上次存储的列表总数量
     getSession(){
@@ -254,6 +258,12 @@ export default {
             this.srhInpTx = '';
             this.activeIndex = 0;
             this.resetCondition();
+            //修改不提示新增数据
+            if(from.query.transCode){
+              this.onPullingDown(false);
+              return
+            }
+            //新增提示
             this.onPullingDown()
           }
         }

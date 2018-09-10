@@ -27,7 +27,7 @@
             <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
             <span class='iconfont icon-gengduo'></span>
         </div>
-        <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress'
+        <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
                    :show.sync="showAddress" v-show="false"></x-address>
       </div>
       <div class='each_property vux-1px-b'>
@@ -275,6 +275,7 @@ export default {
         let [imgFileObj = {}] = attachment.filter(item => {
           return item.attacthment === this.dealer.dealerPic
         });
+        this.AccountAddress = [this.dealer.province,this.dealer.city,this.dealer.county];
         this.imgFileObj = imgFileObj;
       });
     },

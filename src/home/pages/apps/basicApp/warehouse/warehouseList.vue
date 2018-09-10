@@ -33,7 +33,7 @@
       <div class="cfm_btn" @click="goEditAds">新增</div>
     </div>
     <router-view></router-view>
-    <load-icon :show='Loadding'></load-icon>
+    <!-- <load-icon :show='Loadding'></load-icon> -->
   </div>
 
 </template>
@@ -61,7 +61,7 @@ export default {
         pullDownRefresh: true,
         pullUpLoad: true,
       },
-      Loadding : true,
+      // Loadding : true,
       total : null,
       clickVisited: false, // 判断是否点击过其它列表项
     }
@@ -190,7 +190,8 @@ export default {
             sessionStorage.setItem("CK",dataCount);
           }
           this.warehouseList = this.page === 1? tableContent : this.warehouseList.concat(tableContent);
-          this.Loadding = false;
+          // this.Loadding = false;
+          this.$loading.hide();
           this.hasNext = dataCount > (this.page-1)*this.limit + tableContent.length;
           if (!noReset) {
             this.$nextTick(() => {
@@ -213,9 +214,13 @@ export default {
       this.getwarehouse();
     },
     // TODO 下拉刷新
-   onPullingDown() {
+   onPullingDown(refresh=true) {
       this.page = 1;
-      this.getData(true)
+      if(refresh){
+        this.getData(true);
+        return
+      }
+      this.getData();
     },
     //获取上次存储的列表总数量
     getSession(){
@@ -261,6 +266,10 @@ export default {
             this.srhInpTx = '';
             //this.activeIndex = 0;
             this.resetCondition();
+            if(from.query.transCode){
+              this.onPullingDown(false);
+              return
+            }
             this.onPullingDown();
           }
         }
@@ -268,6 +277,7 @@ export default {
     }
   },
   created(){
+    this.$loading.show();
     this.getData(false)
   },
 

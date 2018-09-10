@@ -137,7 +137,9 @@ import { setTimeout } from 'timers';
             }
           }
           this.biReferenceId = this.warehouse.referenceId;
+          this.$loading.hide();
         }).catch(e => {
+          this.$loading.hide();
           this.$vux.alert.show({
             content: e.message
           })
@@ -181,6 +183,7 @@ import { setTimeout } from 'timers';
       },
     },
     created() {
+      this.$loading.show()
       let query = this.$route.query;
       if (query.transCode) {
         this.transCode = query.transCode;
