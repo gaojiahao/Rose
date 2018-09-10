@@ -131,7 +131,7 @@
         <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
         全选
       </div>
-      <div class='count_btn' @click="deleteCheckd">删除</div>
+      <div class='delete_btn' @click="deleteCheckd">删除</div>
     </div>
   </div>
 </template>

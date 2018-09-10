@@ -443,6 +443,10 @@
       background: #ea5455;
     }
   }
+  .delete_btn {
+    @extend .count_btn;
+    background: #ea5455;
+  }
 }
 
 .vux-1px-t:before {
