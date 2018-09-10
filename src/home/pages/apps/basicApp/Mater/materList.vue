@@ -339,6 +339,7 @@
 
   .childPage {
     bottom: 0;
+    z-index: 5;
     width: 100%;
     height: 100%;
     position: absolute;
@@ -401,7 +402,7 @@
           // 每个物料的索引
           .whiNum {
             color: #fff;
-            
+
             padding: 0 .1rem;
             font-size: .1rem;
             display: inline-block;

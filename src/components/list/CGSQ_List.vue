@@ -36,7 +36,18 @@
           {name: '进行中', status: '进行中'}
         ],
         listViewID: 2208,
-
+        filterList: [ // 过滤列表
+          {
+            name: '编码',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          }, {
+            name: '物料名称',
+            value: 'inventoryName',
+          },
+        ],
       }
     },
     mixins: [listCommon],

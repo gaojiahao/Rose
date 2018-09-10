@@ -292,6 +292,7 @@ export default {
     width: 100%;
     height: 100%;
     bottom:0;
+    z-index: 5;
     background: #fff;
   }
   .vux-1px-b:after, .vux-1px-l:before {
@@ -432,7 +433,7 @@ export default {
           }
         }
         .cp_ads {
-          
+
           color: #757575;
         }
       }

@@ -150,7 +150,7 @@
       position: absolute;
       left: 0.14rem;
       top: 50%;
-      z-index: 101;
+      z-index: 1;
       fill: #2d2d2d;
       transform: translate(0, -50%);
     }
