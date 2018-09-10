@@ -104,8 +104,7 @@
         font-weight: bold;
       }
       .content {
-        color: #757575;
-        // 
+        color: #454545;
       }
     }
     // 创建时间
