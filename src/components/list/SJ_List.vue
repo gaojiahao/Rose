@@ -111,6 +111,7 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
             this.setStatus(item);
+            item.transCode = item.transCode.replace(/_/g,'');
           });
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {
