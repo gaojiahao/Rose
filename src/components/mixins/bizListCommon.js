@@ -203,20 +203,26 @@ export default {
     },
     //获取订单数据
     getList(noReset = false) {
-      let filter = [
-        {
+      let filter = [];
+      if (this.activeTab) {
+        filter = [{
           operator: "like",     //模糊查询like，精确查询eq
           property: "biStatus",
           value: this.activeTab
-        }
-      ];
+        }]
+      }
       if (this.serachVal) {
-        filter[0].attendedOperation = 'and';
-        filter.push({
-          operator: "like",     //模糊查询like，精确查询eq
-          property: this.filterProperty,
-          value: this.serachVal
-        })
+        if (this.activeTab) {
+          filter[0].attendedOperation = 'and';
+        }
+        filter = [
+          ...filter,
+          {
+            operator: "like",     //模糊查询like，精确查询eq
+            property: this.filterProperty,
+            value: this.serachVal
+          }
+        ];
       }
       return getSellOrderList({
         limit: this.limit,

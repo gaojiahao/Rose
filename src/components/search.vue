@@ -106,6 +106,13 @@
         padding-left: .9rem;
       }
     }
+    /* 下拉框 */
+    .r-dropdown {
+      position: absolute;
+      left: .2rem;
+      top: 0;
+      width: .5rem;
+    }
     // 搜索输入框
     .srh_inp {
       flex: 5;

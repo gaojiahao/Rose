@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
@@ -65,6 +65,21 @@
         ],
         listViewID :2244,
         biStatus:'',
+        filterList: [ // 过滤列表
+          {
+            name: '编码',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          }, /*{
+            name: '往来信息',
+            value: 'dealerName_dealerDebit',
+          },*/ {
+            name: '商机标题',
+            value: 'opportunityTitle',
+          },
+        ],
       }
     },
     mixins: [listCommon],
@@ -81,23 +96,11 @@
             {
               operator: "like",
               value: this.serachVal,
-              property: "transCode",
-              attendedOperation: 'or'
-            }, {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'handlerName',
-              attendedOperation: 'or'
-            }, {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'opportunityTitle',
+              property: this.filterProperty,
             },
-          ]
+          ];
           if(this.biStatus.length){
-            filter[0].attendedOperation = "and (";
-            filter[filter.length-1].attendedOperation = ')';
-
+            filter[0].attendedOperation = "and";
           }
         }
         return getList(this.listViewID,{

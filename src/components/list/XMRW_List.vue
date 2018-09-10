@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search="searchList"></searchIcon>
+        <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
         <!--<div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
@@ -32,7 +32,7 @@
               </div>
               {{item.projectName_project}}
             </div>
-          </div>          
+          </div>
           <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
@@ -56,6 +56,21 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
+        filterList: [ // 过滤列表
+          {
+            name: '编码',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          }, {
+            name: '任务类型',
+            value: 'taskType',
+          }, /*{
+            name: '项目名称',
+            value: 'projectName_project',
+          }, */
+        ],
       }
     },
     mixins: [listCommon],
@@ -88,14 +103,8 @@
             {
               operator: 'like',
               value: this.serachVal,
-              property: 'transCode',
-              attendedOperation: 'or'
+              property: this.filterProperty,
             },
-            {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'handlerName',
-            }
           ];
         }
 
@@ -108,7 +117,7 @@
           this.$emit('input', false);
           tableContent.forEach(item => {
             this.setStatus(item);
-          });          
+          });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {

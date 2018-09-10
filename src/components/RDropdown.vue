@@ -61,16 +61,14 @@
 
 <style scoped lang="scss">
   .r-dropdown {
-    position: absolute;
-    left: .2rem;
-    top: 0;
-    width: .5rem;
-    background-color: #f4f4f4;
+    width: 100%;
+    /* 选中值 */
     .r-dropdown-value {
       width: 100%;
       white-space: nowrap;
       text-overflow: ellipsis;
       text-align: center;
+      font-size: .14rem;
       overflow: hidden;
     }
     /* 列表容器 */
@@ -86,6 +84,7 @@
       box-shadow: 0 2px 10px #e8e8e8;
       box-sizing: border-box;
     }
+    /* 列表项 */
     .r-dropdown-item {
       position: relative;
       line-height: .4rem;
