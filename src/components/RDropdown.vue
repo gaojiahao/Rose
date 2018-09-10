@@ -111,6 +111,7 @@
     .r-dropdown-item {
       position: relative;
       line-height: .4rem;
+      font-size: .16rem;
       .weui_icon_success-no-circle {
         position: absolute;
         top: 50%;

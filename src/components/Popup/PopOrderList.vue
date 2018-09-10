@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <r-search @search='searchList' @turnOff="onHide" :isFill='true'></r-search>
+          <r-search :filterList="filterList" @search='searchList' @turnOff="onHide" :isFill='true'></r-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -124,7 +124,20 @@
         scrollOptions: {
           click: true,
           pullUpLoad: true,
-        }
+        },
+        filterProperty: '', // 过滤的key
+        filterList: [ // 过滤列表
+          {
+            name: '名称',
+            value: 'inventoryName',
+          }, {
+            name: '编码',
+            value: 'inventoryCode',
+          }, {
+            name: '交易号',
+            value: 'transCode'
+          }
+        ],
       }
     },
     watch: {
@@ -206,7 +219,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'transCode',
+              property: this.filterProperty,
             }];
         }
         return getSalesOrderList({
@@ -234,8 +247,9 @@
         this.$refs.bScroll.scrollTo(0, 0);
       },
       // TODO 搜索订单
-      searchList({val = ''}) {
+      searchList({val = '', property = ''}) {
         this.srhInpTx = val;
+        this.filterProperty = property;
         this.resetCondition();
         this.getList();
       },

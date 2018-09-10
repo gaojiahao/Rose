@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <m-search @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
+          <m-search :filterList="filterList" @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -91,7 +91,7 @@
   import MSearch from 'components/search'
 
   export default {
-    name: "MatterList",
+    name: "PopMatterList",
     props: {
       show: {
         type: Boolean,
@@ -133,7 +133,17 @@
         scrollOptions: { // 滚动配置
           click: true,
           pullUpLoad: true,
-        }
+        },
+        filterProperty: '', // 过滤的key
+        filterList: [ // 过滤列表
+          {
+            name: '名称',
+            value: 'inventoryName',
+          }, {
+            name: '编码',
+            value: 'inventoryCode',
+          },
+        ],
       }
     },
     watch: {
@@ -212,7 +222,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryName',
+              property: this.filterProperty,
             },
           ];
         }
@@ -228,6 +238,7 @@
       // TODO 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
+        this.filterProperty = property;
         this.matterList = [];
         this.page = 1;
         this.hasNext = true;
