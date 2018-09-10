@@ -349,6 +349,14 @@
       Promise.all(requestPromise).then(() => {
         this.$loading.hide();
       })
+    },
+    beforeRouteEnter (to, from, next) {
+      // 修改title
+      to.meta.title = '新增物料';
+      if(to.query.transCode){
+        to.meta.title = '编辑物料';
+      }
+      next()
     }
   }
 </script>

@@ -439,6 +439,14 @@ export default {
       });
     }
   },
+  beforeRouteEnter (to, from, next) {
+    // 修改title
+    to.meta.title = '新增往来'
+    if(to.query.transCode){
+      to.meta.title = '编辑往来';
+    }
+    next()
+  },
    beforeRouteLeave(to, from, next) {
     let {path} = to;
     // 新建物料，修改列表页的meta值

@@ -71,7 +71,7 @@
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
-      <div class="cfm_btn" @click="goEditAds">新建另一条物料</div>
+      <div class="cfm_btn" @click="goEditAds">新建</div>
     </div>
     <router-view></router-view>
   </div>

@@ -95,7 +95,7 @@ export default [
         path:'edit_warehouse',
         name:'EDIT_WAREHOUSE',
         component:EDIT_WAREHOUSE,
-        meta:{ title:'编辑地址' }
+        meta:{ title:'编辑仓库' }
       },
       {
         path:'warehouseDetail',
