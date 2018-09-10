@@ -401,7 +401,7 @@
           // 每个物料的索引
           .whiNum {
             color: #fff;
-            font-weight: 200;
+            
             padding: 0 .1rem;
             font-size: .1rem;
             display: inline-block;

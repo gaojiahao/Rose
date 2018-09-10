@@ -69,7 +69,7 @@
     // 其他信息
     .other_info {
       color: #454545;
-      font-weight: 200;
+      
     }
     .m_size_name {
       font-size: .18rem;

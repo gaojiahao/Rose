@@ -300,7 +300,7 @@
       box-shadow: 0 0 8px #e8e8e8;
       .title {
         color: #757575;
-        font-weight: 200;
+        
         font-size: .12rem;
       }
       .mode {

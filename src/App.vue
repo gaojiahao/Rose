@@ -74,7 +74,10 @@
     max-width: 640px;
     font-size: .16rem;
     background-color: #fff;
-    font-family: -apple-system-font, "Helvetica Neue", sans-serif, Microsoft YaHei, Arial, Helvetica, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   }
   .iconfont {
     font-size: .16rem;

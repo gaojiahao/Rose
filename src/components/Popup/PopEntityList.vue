@@ -177,7 +177,7 @@
     box-sizing: border-box;
     .title {
       color: #757575;
-      font-weight: 200;
+      
       font-size: .12rem;
     }
     .r_arrow {

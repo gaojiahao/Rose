@@ -243,7 +243,7 @@ export default {
   // 消息内容
   .recv_msg {
     color: #3a3a3a;
-    font-weight: 200;
+    
     margin-top: .1rem;
   }
 }

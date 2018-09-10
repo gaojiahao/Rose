@@ -253,7 +253,7 @@
     }
     .title {
       color: #757575;
-      font-weight: 200;
+      
       font-size: .12rem;
     }
     .mode {
@@ -292,7 +292,7 @@
         font-weight: 500;
       }
       .cp_ads {
-        font-weight: 200;
+        
         color: #757575;
       }
     }
@@ -397,7 +397,7 @@
           list-style: square;
           margin-top: .1rem;
         }
-        font-weight: 200;
+        
         font-size: .14rem;
         .addNew {
           color: #fff;

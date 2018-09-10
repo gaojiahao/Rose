@@ -323,7 +323,7 @@
             // 新增往来
             .tips {
               li { list-style : square; margin-top: .1rem;}
-              font-weight: 200;
+              
               font-size: .14rem;
               .addNew {
                 color: #fff;
@@ -378,7 +378,7 @@
               // 每个往来的索引
               .whiNum {
                 color: #fff;
-                font-weight: 200;
+                
                 padding: 0 .04rem;
                 font-size: .1rem;
                 display: inline-block;

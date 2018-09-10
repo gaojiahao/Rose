@@ -374,7 +374,7 @@ export default {
         // 操作
         .handle {
           font-size: .14rem;
-          font-weight: 200;
+          
         }
         .tips {
           color: #757575;

@@ -63,7 +63,7 @@ export default {
         font-weight: bold;
       }
       .content {
-        font-weight: 200;
+        
       }
     }
   }

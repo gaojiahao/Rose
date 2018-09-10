@@ -101,7 +101,7 @@
     // 其他信息
     .other_info {
       color: #454545;
-      font-weight: 200;
+      // 
     }
     .other_content {
       padding: .06rem 0;
@@ -112,7 +112,7 @@
         }
         .mode {
           color: #454545;
-          font-weight: 200;
+          
         }
       }
     }
@@ -124,7 +124,7 @@
         }
         .mode {
           color: #454545;
-          font-weight: 200;
+          
         }
     }
     .l_size_name {

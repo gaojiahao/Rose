@@ -139,7 +139,7 @@
       float: left;
       font-size: .15rem;
       color: #7D7D7D;
-      font-weight: 200;
+      
       .duty_crt_man { // 任务创建者
         color: #fff;
         padding: .02rem;
@@ -183,7 +183,7 @@
       float: right;
       font-size: .15rem;
       color: #7D7D7D;
-      font-weight: 200;
+      
     }
   }
   // 往来

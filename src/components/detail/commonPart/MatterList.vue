@@ -94,7 +94,7 @@
           // 每个物料的索引
           .whiNum {
             color: #fff;
-            font-weight: 200;
+            
             padding: 0 .02rem;
             font-size: .1rem;
             display: inline-block;
@@ -115,7 +115,7 @@
             // 物料编码
             .mater_code {
               // display: flex;
-              font-weight: 200;
+              
               margin-right: .06rem;
               .title,
               .num {
@@ -257,7 +257,7 @@
     }
     .icon-Shape {
       font-size: .14rem;
-      font-weight: 200;
+      
       margin-right: .02rem;
     }
     // 物料列表

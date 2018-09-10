@@ -133,7 +133,7 @@
         .info-item {
           display: inline-block;
           margin-right: .06rem;
-          font-weight: 200;
+          
           .title, .num {
             font-size: .1rem;
             padding: .01rem .04rem;

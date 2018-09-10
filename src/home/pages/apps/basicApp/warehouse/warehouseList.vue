@@ -432,7 +432,7 @@ export default {
           }
         }
         .cp_ads {
-          font-weight: 200;
+          
           color: #757575;
         }
       }
