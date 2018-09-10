@@ -4,7 +4,7 @@
     <!-- 订单 时期 -->
     <div class="duty_top">
       <p class="duty_code">
-        {{item.businessKey}}
+        {{item.transCode}}
         <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
       </p>
       <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>

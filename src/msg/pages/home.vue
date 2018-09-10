@@ -45,7 +45,6 @@ import businessMap from './maps/businessApp'
 import { getMsgList } from 'service/msgService'
 // 组件 引入
 import BScroll from 'better-scroll'
-import search from 'components/search'
 export default {
   data(){
     return{
@@ -54,7 +53,7 @@ export default {
     }
   },
   components: {
-    search,Badge
+   Badge
   },
   methods:{
     getDefaultImg(item) {

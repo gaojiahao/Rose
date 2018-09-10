@@ -80,7 +80,7 @@ export default {
         return;
       }
       this.flowTitle = item;
-      this.handleLoadding = true;
+      this.$HandleLoad.show();
       let row = {};
       this.listField.forEach(item1=>{
         row[item1.field] = item[item1.field];
@@ -96,7 +96,7 @@ export default {
         this.flowField = data.model;
       }).catch( err => {
         // 关闭笼罩层  
-        this.handleLoadding = false;
+        this.$HandleLoad.hide();
       });
       //流水列表数据
       await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
@@ -106,7 +106,7 @@ export default {
         this.flowData = data;
 
       })
-      this.handleLoadding = false;
+      this.$HandleLoad.hide();
       this.flowShow = true;
       this.$nextTick(() => {
         this.$refs.flowListWrapper.scrollTo(0, 0);

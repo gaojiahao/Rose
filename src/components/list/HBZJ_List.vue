@@ -138,26 +138,23 @@
         </popup>
       </div>
     </div>
-    <handle-load :submit='handleLoadding'></handle-load>
   </div>
 </template>
 
 <script>
   import listCommon from './../mixins/kmListCommon'
-  import handleLoad from 'components/submitLoading'
   export default {
     data() {
       return {
         uniqueId : 1000,
         showContent : false,
-        handleLoadding : false,
         filterArr: [
             {"operator":"like","value":"","property":"cashCode"}
         ],
       }
     },
     components:{
-      handleLoad
+      
     },
     mixins: [listCommon],
     methods: {     

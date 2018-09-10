@@ -15,7 +15,6 @@
         <bus-app :BUSarray='BUSarray' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
       </div>   
     </div>
-    <!-- <loadding :show='showLoadding'></loadding> -->
   </div>
 </template>
 
@@ -30,7 +29,6 @@ import busApp from 'components/home/busAppList'        // 业务应用
 import basicApp from 'components/home/basicApp'        // 基础应用
 // 插件引入
 import Bscroll from 'better-scroll'
-import Loadding from 'components/Loading'
 export default {
   data(){
     return{
@@ -39,10 +37,9 @@ export default {
       BSarray : [],        // 基础对象 数组
       BUSarray: [],        // 业务应用 数组
       homeScroll : null,
-      showLoadding : true,
     }
   },
-  components:{ busApp, basicApp, Loadding },
+  components:{ busApp, basicApp},
   methods:{
     // 基础应用
     goBasic(item){

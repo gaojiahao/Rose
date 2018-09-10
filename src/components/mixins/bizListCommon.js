@@ -235,7 +235,6 @@ export default {
         orders.forEach(item => {
           this.setStatus(item);
           item.count = 0;
-          item.businessKey = item.transCode.replace(/_/g, '');
           item.itmes.forEach(mitem => {
             // 当 count = tdAmount 相加的时候
             if (mitem.tdAmount > 0) {

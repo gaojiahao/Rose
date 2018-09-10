@@ -33,7 +33,6 @@
       <div class="cfm_btn" @click="goEditAds">新增</div>
     </div>
     <router-view></router-view>
-    <!-- <load-icon :show='Loadding'></load-icon> -->
   </div>
 
 </template>
@@ -41,7 +40,6 @@
 <script>
 import { Tab,TabItem} from 'vux'
 import { getList} from 'service/commonService'
-import LoadIcon from 'components/Loading.vue'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 export default {
@@ -61,13 +59,12 @@ export default {
         pullDownRefresh: true,
         pullUpLoad: true,
       },
-      // Loadding : true,
       total : null,
       clickVisited: false, // 判断是否点击过其它列表项
     }
   },
   components:{
-    Tab,TabItem,LoadIcon,searchIcon,RScroll
+    Tab,TabItem,searchIcon,RScroll
   },
   methods:{
     // TODO 重置列表条件
@@ -190,7 +187,6 @@ export default {
             sessionStorage.setItem("CK",dataCount);
           }
           this.warehouseList = this.page === 1? tableContent : this.warehouseList.concat(tableContent);
-          // this.Loadding = false;
           this.$loading.hide();
           this.hasNext = dataCount > (this.page-1)*this.limit + tableContent.length;
           if (!noReset) {

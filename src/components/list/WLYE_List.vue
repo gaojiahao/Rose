@@ -123,13 +123,11 @@
         </popup>
       </div>
     </div>
-    <handle-load :submit="handleLoadding"></handle-load>
   </div>
 </template>
 
 <script>
   import listCommon from './../mixins/kmListCommon'
-  import handleLoad from 'components/submitLoading'
   import TabItem from 'components/tab'
 
   export default {
@@ -142,9 +140,6 @@
           {operator: 'like', value: '', property: 'dealerCode'}
         ],
       }
-    },
-    components: {
-      handleLoad,TabItem
     },
     mixins: [listCommon],
     methods: {},

@@ -150,27 +150,24 @@
         </popup>
       </div>
     </div>
-    <handle-load :submit='handleLoadding'></handle-load>
   </div>
 </template>
 
 <script>
   import listCommon from './../mixins/kmListCommon'
-  import handleLoad from 'components/submitLoading'
   import TabItem from 'components/tab'
   export default {
     data() {
       return {
         uniqueId : 1400,
         showContent : false,
-        handleLoadding : false,
         filterArr: [
             {"operator":"like","value":"","property":"warehouseName"}
         ],
       }
     },
     components:{
-      handleLoad,TabItem
+      TabItem
     },
     mixins: [listCommon]
   }

@@ -61,7 +61,6 @@ import {getWorkFlow} from 'service/detailService.js'
 import {isMyflow} from 'service/detailService'
 import businessMap from '@/home/pages/maps/detail.js'
 import RScroll from 'components/RScroll'
-import LoadingForm from 'components/Loading'
 import { format } from 'url';
 export default {
   data(){
@@ -82,7 +81,7 @@ export default {
     }
   },
   components: {
-    search, RScroll, LoadingForm
+    search, RScroll, 
   },
   methods:{
     goDetail(item,index){

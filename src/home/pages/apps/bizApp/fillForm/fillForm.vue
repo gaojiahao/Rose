@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import Loadding from 'components/Loading'
-import SubmitLoad from 'components/submitLoading'
 import businessText from './../../../maps/businessText'
 import platfrom from '@/plugins/platform'
 export default {
@@ -25,10 +23,6 @@ export default {
       transCode : null, //应用编码
       saveData:{} //缓存的数据
     }
-  },
-  components:{
-    'loading-form' : Loadding,
-    SubmitLoad
   },
   methods:{
     //提交,终止成功
