@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <m-search @search='searchMat' @turnOff="onHide" :isFill='true'></m-search>
+          <m-search @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -179,8 +179,8 @@
           })
         });
       },
-      // TODO 搜索物料
-      searchMat(val) {
+      // TODO 搜索列表
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.relatedAppList = [];
         this.page = 1;

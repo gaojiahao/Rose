@@ -9,8 +9,9 @@
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
           <div class="trade_pop_title">
-            <span>{{title}}</span>
-            <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
+            <!--<span>{{title}}</span>-->
+            <!--<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>-->
+            <r-search @search="searchList" @turnOff="onHide" :isFill='true'></r-search>
           </div>
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -38,6 +39,7 @@
   import {Icon, Popup, AlertModule, TransferDom} from 'vux'
   import {getObjDealerByLabelName} from 'service/commonService'
   import RScroll from 'components/RScroll'
+  import RSearch from 'components/search'
 
   export default {
     name: "PopSalesmanList",
@@ -61,7 +63,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll,
+      Icon, Popup, RScroll, RSearch,
     },
     data() {
       return {
@@ -96,6 +98,7 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
+        this.showPop = false;
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -110,12 +113,20 @@
       },
       // TODO 获取销售列表
       getDealer() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [{
+            operator: 'like',
+            value: this.srhInpTx,
+            property: 'dealerName',
+          }]
+        }
         return getObjDealerByLabelName({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           dealerLabelName: this.dealerLabelName,
-          //filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
@@ -136,7 +147,15 @@
       // TODO 点击展示弹窗
       itemClick() {
         this.showPop = true;
-      }
+      },
+      searchList({val = ''}){
+        this.srhInpTx = val;
+        this.dealerList = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.$refs.bScroll.scrollTo(0, 0);
+        this.getDealer();
+      },
     },
     created() {
       this.getDealer();
@@ -186,7 +205,7 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .54rem);
+        height: calc(100% - .46rem);
         /deep/ .scroll-wrapper {
           padding: .04rem .04rem 0 .3rem;
         }
@@ -232,7 +251,7 @@
     .trade_pop_title {
       font-size: .2rem;
       position: relative;
-      padding: 0.08rem .08rem .14rem;
+      padding: 0.08rem 0;
       // 关闭icon
       .close_icon {
         top: 45%;

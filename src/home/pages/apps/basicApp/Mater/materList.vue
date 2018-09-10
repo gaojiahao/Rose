@@ -250,7 +250,7 @@
         this.$refs.bScroll.finishPullUp();
       },
       // TODO 搜索物料
-      searchMat(val) {
+      searchMat({val = '', property = ''}) {
         this.srhInpTx = val;
         this.activeTab = '';
         this.activeIndex = 0;
