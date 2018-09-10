@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search="searchList"></searchIcon>
+        <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -51,6 +51,21 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
+        filterList: [ // 过滤列表
+          {
+            name: '编码',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          },/* {
+            name: '项目类型',
+            value: 'projectType_project',
+          }, {
+            name: '项目名称',
+            value: 'projectName_project',
+          }, */
+        ],
       }
     },
     mixins: [listCommon],
@@ -81,14 +96,9 @@
           filter = [
             ...filter,
             {
-              operator: 'like',
+              operator: "like",
               value: this.serachVal,
-              property: 'transCode',
-              attendedOperation: 'or'
-            }, {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'handlerName',
+              property: this.filterProperty,
             },
           ];
         }
@@ -102,7 +112,7 @@
           this.$emit('input', false);
           tableContent.forEach(item => {
             this.setStatus(item);
-          });          
+          });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {

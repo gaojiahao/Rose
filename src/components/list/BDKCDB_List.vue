@@ -3,7 +3,7 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
@@ -34,6 +34,18 @@
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
         listViewID: 2243,
+        filterList: [ // 过滤列表
+          {
+            name: '编码',
+            value: 'transCode',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
+          }, {
+            name: '物料名称',
+            value: 'inventoryName',
+          },
+        ],
       }
     },
     mixins: [listCommon],

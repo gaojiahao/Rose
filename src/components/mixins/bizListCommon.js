@@ -34,7 +34,22 @@ export default {
       total: null, //列表数据总量
       applyCode: '',
       clickVisited: false, // 判断是否点击过其它列表项
-      filterProperty: '',
+      filterProperty: '', // 过滤的key
+      filterList: [ // 过滤列表
+        {
+          name: '编码',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }, {
+          name: '物料名称',
+          value: 'inventoryName',
+        }, {
+          name: '往来信息',
+          value: 'dealerName',
+        },
+      ],
     }
   },
   components: {
@@ -188,20 +203,26 @@ export default {
     },
     //获取订单数据
     getList(noReset = false) {
-      let filter = [
-        {
+      let filter = [];
+      if (this.activeTab) {
+        filter = [{
           operator: "like",     //模糊查询like，精确查询eq
           property: "biStatus",
           value: this.activeTab
-        }
-      ];
+        }]
+      }
       if (this.serachVal) {
-        filter[0].attendedOperation = 'and';
-        filter.push({
-          operator: "like",     //模糊查询like，精确查询eq
-          property: this.filterProperty,
-          value: this.serachVal
-        })
+        if (this.activeTab) {
+          filter[0].attendedOperation = 'and';
+        }
+        filter = [
+          ...filter,
+          {
+            operator: "like",     //模糊查询like，精确查询eq
+            property: this.filterProperty,
+            value: this.serachVal
+          }
+        ];
       }
       return getSellOrderList({
         limit: this.limit,
