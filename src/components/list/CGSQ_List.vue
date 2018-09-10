@@ -38,7 +38,7 @@
         listViewID: 2208,
         filterList: [ // 过滤列表
           {
-            name: '编码',
+            name: '交易号',
             value: 'transCode',
           }, {
             name: '经办人',

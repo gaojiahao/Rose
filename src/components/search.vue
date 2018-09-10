@@ -116,7 +116,8 @@
     }
     // 搜索输入框
     .srh_inp {
-      flex: 5;
+      /*flex: 5;*/
+      width: calc(100% - .5rem);
       outline: none;
       border: none;
       color: #2d2d2d;
@@ -133,7 +134,8 @@
     }
     // 搜索 按钮
     .pop_cfm {
-      flex: 1;
+      /*flex: 1;*/
+      width: .5rem;
       color: #fff;
       font-size: 0.14rem;
       text-align: center;
