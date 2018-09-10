@@ -20,18 +20,28 @@
           </div>
           <!-- 项目名称 -->
           <div class="duty_name">
-            <div class="major_content vux-1px-b">
+            <div class="major_content">
               <div class="status_part">
                 <span class="iconfont icon-503020"></span>
                 <span class="status_name">{{item.projectType_project}}</span>
               </div>
               {{item.projectName_project}}
             </div>
+            <div class="content_step vux-1px-b">
+              <div>{{item.projectManager_project}}</div>
+              <div>{{item.budgetProfitMargin_project | percent}}</div>
+            </div>
           </div>
           <!-- 项目立项经办人 -->
           <div class="order_count">
             <div class="handle_man">
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
+            </div>
+            <div class="money_part">
+              <span class="num">收入:</span>
+              <span class="money">
+                <span style="fontSize:.1rem;">￥</span>{{item.budgetIncome_project | toFixed | numberComma}}
+              </span>
             </div>
           </div>
         </div>
@@ -69,6 +79,15 @@
       }
     },
     mixins: [listCommon],
+    filters:{
+      // TODO 转为百分比
+      percent(val) {
+        if (!val && val !== 0) {
+          return '无';
+        }
+        return `${val * 100}%`;
+      },
+    },
     methods: {
       goDetail(item, index) {
         if (this.clickVisited) {
@@ -141,6 +160,14 @@
     .project_name {
       padding: 0 .1rem;
       line-height: .24rem;
+    }
+    .content_step {
+      display: flex;
+      font-size: .12rem;
+      align-items: center;
+      padding: .02rem 0 .04rem;
+      justify-content: space-between;
+      color:#7d7d7d;
     }
   }
 </style>
