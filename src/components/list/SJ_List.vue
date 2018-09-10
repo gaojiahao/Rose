@@ -19,7 +19,7 @@
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">
-              {{item.transCode}}
+              {{item.businessKey}}
               <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
@@ -111,7 +111,7 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
             this.setStatus(item);
-            item.transCode = item.transCode.replace(/_/g,'');
+            item.businessKey = item.transCode.replace(/_/g,'');
           });
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {
