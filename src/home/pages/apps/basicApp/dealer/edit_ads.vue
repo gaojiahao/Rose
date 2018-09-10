@@ -416,8 +416,10 @@ export default {
     if(query.transCode){
       this.transCode = query.transCode;
       this.findData();
-      this.getDealer();
-      this.$loading.hide();
+      this.getDealer().then(()=>{
+        this.$loading.hide();
+      });
+      
     }
     else{
         this.getDealer().then(data => {
