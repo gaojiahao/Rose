@@ -109,7 +109,7 @@
     /* 下拉框 */
     .r-dropdown {
       position: absolute;
-      left: .2rem;
+      left: .07rem;
       top: 0;
       width: .5rem;
     }

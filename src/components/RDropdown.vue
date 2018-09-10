@@ -65,12 +65,18 @@
     /* 选中值 */
     .r-dropdown-value {
       width: 100%;
+      overflow: hidden;
+      color: #454545;
+      padding: 0 .04rem;
+      font-size: .12rem;
+      font-weight: bold;
+      text-align: center;
+      background: #dbe2ef;
       white-space: nowrap;
       text-overflow: ellipsis;
-      text-align: center;
-      font-size: .14rem;
-      overflow: hidden;
-    }
+      border-top-left-radius: .3rem;
+      border-bottom-left-radius: .3rem;
+    }    
     /* 列表容器 */
     .r-dropdown-list {
       position: absolute;
