@@ -58,7 +58,7 @@
 
                   <!-- 库存 -->
                   <div class="mater_material" v-if="item.qtyBal !== undefined">
-                    <span class="spec">库存: {{item.qtyBal}}</span>
+                    <span class="spec">余额: {{item.qtyBal}}</span>
                   </div>
                 </div>
               </div>
