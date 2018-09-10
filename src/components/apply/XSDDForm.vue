@@ -75,6 +75,12 @@
                         </div>
                       </div>
                     </div>
+                    <!-- 物料属性和单位 -->
+                    <div class="mater_more">                     
+                        <span class="processing">属性: {{item.processing}}</span>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
+                        <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>                      
+                    </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='mater_price'>

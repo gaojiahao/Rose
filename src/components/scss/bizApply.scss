@@ -201,8 +201,9 @@
               .title {
                 color: #fff;
                 background: #3f72af;
-                border-top-left-radius: .02rem;
-                border-bottom-left-radius: .02rem;
+                
+                border-top-left-radius: .12rem;
+                border-bottom-left-radius: .12rem;
               }
               .num {
                 color: #111;
@@ -211,8 +212,8 @@
                 white-space: nowrap;
                 background: #dbe2ef;
                 text-overflow: ellipsis;
-                border-top-right-radius: .02rem;
-                border-bottom-right-radius: .02rem;
+                border-top-right-radius: .12rem;
+                border-bottom-right-radius: .12rem;
               }
             }
             // 规格
@@ -238,7 +239,7 @@
           .withoutColor {
             // 物料分类
             .mater_classify {
-              font-size: .12rem;
+              font-size: .1rem;
               margin-top: .04rem;
               .father {
                 // margin-right: .1rem;
@@ -246,7 +247,7 @@
             }
             // 物料颜色 材质
             .mater_material {
-              font-size: .12rem;
+              font-size: .1rem;
               // margin-top: .1rem;
               .unit,
               .color {
@@ -255,11 +256,25 @@
             }
           }
         }
+        //物料单价，属性，颜色
+        .mater_more{
+          margin-top: .02rem;
+          color: #757575;
+          font-size: 0.1rem;
+          span{
+            display: inline-block;
+            margin-right: 0.04rem;
+           .mater_color{
+            margin-right: 0;
+           }
+          }       
+          
+        }
         //物料价格，数量
         .mater_other {
           display: flex;
           justify-content: space-between;
-          margin-top: 0.08rem;
+          margin-top: 0.03rem;
           align-items: center;
           .mater_price {
             display: inline-block;
