@@ -67,7 +67,7 @@
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
 
-                </div> 
+                </div>
                 <!-- 物料输入内容 -->
                 <div class="userInp_mode">
                   <group>
@@ -96,10 +96,10 @@
                           ref="matter"></pop-matter-list>
         </div>
         <!-- 申请说明 -->
-        <div class="materiel_list mg_auto box_sd">
+        <!--<div class="materiel_list mg_auto box_sd">
           <div class="title">备注</div>
           <textarea class='comment' v-model="formData.biComment" placeholder="请输入"></textarea>
-        </div>
+        </div>-->
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -158,7 +158,7 @@ export default {
       numMap: {},
       taxRate: 0, // 税率
       matterParams: {
-        processing: '成品,商品,服务,原料'
+        processing: '成品,商品,服务,原料,半成品'
       }
     }
   },
@@ -350,6 +350,8 @@ export default {
             specification: item.specification_transObjCode,
             processing: item.tdProcessing || '商品',
             measureUnit: item.measureUnit_transObjCode,
+            inventoryType: item.inventoryType_transObjCode,
+            inventorySubclass: item.inventorySubclass_transObjCode,
           }
           this.matterList.push(item);
         })
