@@ -34,7 +34,22 @@ export default {
       total: null, //列表数据总量
       applyCode: '',
       clickVisited: false, // 判断是否点击过其它列表项
-      filterProperty: '',
+      filterProperty: '', // 过滤的key
+      filterList: [ // 过滤列表
+        {
+          name: '编码',
+          value: 'transCode',
+        }, {
+          name: '经办人',
+          value: 'handlerName',
+        }, {
+          name: '物料名称',
+          value: 'inventoryName',
+        }, {
+          name: '往来信息',
+          value: 'dealerName',
+        },
+      ],
     }
   },
   components: {
