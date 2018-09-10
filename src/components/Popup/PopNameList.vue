@@ -29,7 +29,7 @@
         <div class="trade_pop">
           <div class="title">
             <!-- 搜索栏 -->
-            <d-search @search='searchMat' @turnOff="onHide" :isFill='true'></d-search>
+            <d-search @search='searchList' @turnOff="onHide" :isFill='true'></d-search>
           </div>
           <!-- 项目计划列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -173,7 +173,7 @@
 
       },
       // TODO 搜索项目计划
-      searchMat(val) {
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.dealerList = [];
         this.page = 1;
@@ -206,7 +206,7 @@
     box-sizing: border-box;
     .title {
       color: #757575;
-      
+
       font-size: .12rem;
     }
     .mode {

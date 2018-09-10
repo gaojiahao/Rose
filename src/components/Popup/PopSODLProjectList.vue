@@ -16,7 +16,7 @@
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
           <div class="title">
-            <m-search @search='searchMat' @turnOff="onHide" :isFill='true'></m-search>
+            <m-search @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
           </div>
           <!-- 费用列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -140,8 +140,8 @@
           })
         });
       },
-      // TODO 搜索物料
-      searchMat(val) {
+      // TODO 搜索列表
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.projectList = [];
         this.page = 1;
@@ -174,7 +174,7 @@
     box-sizing: border-box;
     .title {
       color: #757575;
-      
+
       font-size: .12rem;
     }
     .r_arrow {
@@ -185,7 +185,7 @@
     }
     .mode {
       color: #111;
-      font-weight: 500;    
+      font-weight: 500;
     }
   }
 

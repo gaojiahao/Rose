@@ -4,7 +4,7 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
-          <m-search @search='searchMat' @turnOff="onHide" :isFill='true'></m-search>
+          <m-search @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -143,7 +143,7 @@
         });
       },
       // TODO 搜索物料
-      searchMat(val) {
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.costList = [];
         this.page = 1;

@@ -80,8 +80,8 @@ export default {
       this.getDealer()
     },
     //搜索
-    searchList(value){
-      this.srhInpTx = value;
+    searchList({val = '', property = ''}){
+      this.srhInpTx = val;
       this.resetCondition();
       this.getDealer()
     },

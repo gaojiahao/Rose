@@ -218,7 +218,7 @@
         });
       },
       // TODO 搜索仓库
-      searchList(val) {
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.listData = [];
         this.page = 1;
@@ -287,7 +287,7 @@
     }
     .title {
       color: #757575;
-      
+
       font-size: .12rem;
     }
     .mode {
@@ -321,7 +321,7 @@
         font-weight: 500;
       }
       .cp_ads {
-        
+
         color: #757575;
       }
     }
@@ -426,7 +426,7 @@
           list-style: square;
           margin-top: .1rem;
         }
-        
+
         font-size: .14rem;
         .addNew {
           color: #fff;

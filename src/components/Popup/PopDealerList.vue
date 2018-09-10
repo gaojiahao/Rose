@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <d-search @search='searchMat' @turnOff="onHide" :isFill='true'></d-search>
+          <d-search @search='searchList' @turnOff="onHide" :isFill='true'></d-search>
         </div>
         <!-- 往来列表 -->
         <div class="mater_list" ref="dealer">
@@ -176,7 +176,7 @@
             this.selItems = [...DEALERLIST_SELITEMS];
             this.$emit('sel-dealer', JSON.stringify(this.selItems));
             sessionStorage.removeItem('DEALERLIST_SELITEMS');
-          } 
+          }
           this.$nextTick(() => {
             this.bScroll.refresh();
             if (!this.hasNext) {
@@ -192,7 +192,7 @@
 
       },
       // TODO 搜索往来
-      searchMat(val) {
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.dealerList = [];
         this.page = 1;
@@ -323,7 +323,7 @@
             // 新增往来
             .tips {
               li { list-style : square; margin-top: .1rem;}
-              
+
               font-size: .14rem;
               .addNew {
                 color: #fff;
@@ -378,7 +378,7 @@
               // 每个往来的索引
               .whiNum {
                 color: #fff;
-                
+
                 padding: 0 .04rem;
                 font-size: .1rem;
                 display: inline-block;

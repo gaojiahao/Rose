@@ -5,7 +5,7 @@
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <m-search @search='searchMat' @turnOff="onHide" :isFill='true'></m-search>
+          <m-search @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -226,7 +226,7 @@
         }).then(this.dataHandler);
       },
       // TODO 搜索物料
-      searchMat(val) {
+      searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.matterList = [];
         this.page = 1;
@@ -468,7 +468,7 @@
               // 每个物料的索引
               .whiNum {
                 color: #fff;
-                
+
                 padding: 0 .04rem;
                 font-size: .1rem;
                 display: inline-block;

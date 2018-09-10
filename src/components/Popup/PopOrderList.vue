@@ -234,7 +234,7 @@
         this.$refs.bScroll.scrollTo(0, 0);
       },
       // TODO 搜索订单
-      searchList(val) {
+      searchList({val = ''}) {
         this.srhInpTx = val;
         this.resetCondition();
         this.getList();
@@ -421,7 +421,7 @@
               // 每个物料的索引
               .whiNum {
                 color: #fff;
-                
+
                 padding: 0 .04rem;
                 font-size: .1rem;
                 display: inline-block;
