@@ -34,6 +34,7 @@ export default {
       total: null, //列表数据总量
       applyCode: '',
       clickVisited: false, // 判断是否点击过其它列表项
+      filterProperty: '',
     }
   },
   components: {
@@ -123,8 +124,9 @@ export default {
       this.resetCondition();
       this.getList();
     },
-    searchList(val) {
+    searchList({val = '', property = ''}) {
       this.serachVal = val;
+      this.filterProperty = property;
       this.resetCondition();
       this.getList();
     },
@@ -186,12 +188,21 @@ export default {
     },
     //获取订单数据
     getList(noReset = false) {
-      let filter = {
-        biStatus: this.activeTab,
-        transCode: this.serachVal,
-        handlerName: this.serachVal,
-        inventoryName: this.serachVal
-      };
+      let filter = [
+        {
+          operator: "like",     //模糊查询like，精确查询eq
+          property: "biStatus",
+          value: this.activeTab
+        }
+      ];
+      if (this.serachVal) {
+        filter[0].attendedOperation = 'and';
+        filter.push({
+          operator: "like",     //模糊查询like，精确查询eq
+          property: this.filterProperty,
+          value: this.serachVal
+        })
+      }
       return getSellOrderList({
         limit: this.limit,
         page: this.page,
@@ -203,7 +214,7 @@ export default {
         orders.forEach(item => {
           this.setStatus(item);
           item.count = 0;
-          item.transCode = item.transCode.replace(/_/g,'');
+          item.transCode = item.transCode.replace(/_/g, '');
           item.itmes.forEach(mitem => {
             // 当 count = tdAmount 相加的时候
             if (mitem.tdAmount > 0) {
@@ -229,7 +240,7 @@ export default {
               // 默认图片
               : this.getDefaultImg();
           })
-          
+
         });
         this.listData = this.page === 1 ? orders : this.listData.concat(orders);
         if (!noReset) {
