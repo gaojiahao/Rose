@@ -1,6 +1,9 @@
 <template>
   <div class="r-dropdown" @click.stop="dropClick">
-    <div class="r-dropdown-value">{{selItem.name}}</div>
+    <div class="r-dropdown-value">
+      <span class="value">{{selItem.name}}</span>
+      <x-icon type="ios-arrow-down" :class="{'arrow-up': showDrop}" size="14"></x-icon>
+    </div>
     <ul class="r-dropdown-list" v-show="showDrop">
       <li class="r-dropdown-item" :class="{'vux-1px-b': index !== list.length - 1}" v-for="(item, index) in list"
           @click.stop="dropItemClick(item)" :key="index">
@@ -64,19 +67,32 @@
     width: 100%;
     /* 选中值 */
     .r-dropdown-value {
-      width: 100%;
-      overflow: hidden;
-      color: #454545;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 0 .04rem;
+      width: 100%;
+      color: #454545;
       font-size: .12rem;
       font-weight: bold;
-      text-align: center;
-      background: #dbe2ef;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      border-top-left-radius: .3rem;
-      border-bottom-left-radius: .3rem;
-    }    
+      box-sizing: border-box;
+      .value {
+        display: inline-block;
+        width: calc(100% - .15rem);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    /* 倒三角 */
+    .vux-x-icon-ios-arrow-down {
+      transition: transform 200ms linear;
+      &.arrow-up {
+        transform: rotate(180deg);
+      }
+    }
+
     /* 列表容器 */
     .r-dropdown-list {
       position: absolute;
@@ -84,7 +100,7 @@
       top: 100%;
       z-index: 100;
       padding: 0 .1rem;
-      width: 3rem;
+      width: 1.8rem;
       border-radius: .08rem;
       background-color: #fff;
       box-shadow: 0 2px 10px #e8e8e8;

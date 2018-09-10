@@ -2,7 +2,7 @@
   <div class='search'>
     <form class="search_part" :class="{'has-filter': filterList.length}" action=""
           @submit.prevent="searchMat(srhInpTx)">
-      <!--<r-pop-radio :list="filterList" @on-selected="popSelected" v-if="filterList.length"></r-pop-radio>-->
+      <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
       <r-dropdown :list="filterList" @on-selected="popSelected" v-if="filterList.length"></r-dropdown>
       <input class="srh_inp" type="search" autocomplete="off" @input='getValue($event)' :value='srhInpTx'>
       <div class="pop_cfm" v-if='isFill'
@@ -10,7 +10,6 @@
            @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}
       </div>
       <div class="pop_cfm" v-else @click="searchMat(srhInpTx)">搜索</div>
-      <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
       <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
     </form>
   </div>
@@ -99,11 +98,8 @@
     position: relative;
     box-sizing: border-box;
     &.has-filter {
-      .serach_icon {
-        left: .7rem;
-      }
       .srh_inp {
-        padding-left: .9rem;
+        padding-left: .95rem;
       }
     }
     /* 下拉框 */
@@ -111,7 +107,12 @@
       position: absolute;
       left: .07rem;
       top: 0;
-      width: .5rem;
+      padding-left: .3rem;
+      width: .9rem;
+      border-top-left-radius: .3rem;
+      border-bottom-left-radius: .3rem;
+      background: #dbe2ef;
+      box-sizing: border-box;
     }
     // 搜索输入框
     .srh_inp {
@@ -132,9 +133,7 @@
     }
     // 搜索 按钮
     .pop_cfm {
-      /*width: .5rem;*/
       flex: 1;
-      flex-basis: .1rem;
       color: #fff;
       font-size: 0.14rem;
       text-align: center;
@@ -148,16 +147,17 @@
     }
     // 搜索icon
     .serach_icon {
-      top: 50%;
-      left: 0.14rem;
-      fill: #2d2d2d;
       position: absolute;
+      left: 0.14rem;
+      top: 50%;
+      z-index: 101;
+      fill: #2d2d2d;
       transform: translate(0, -50%);
     }
     // 清除icon
     .clear_icon {
       top: 50%;
-      right: 14%;
+      right: .55rem;
       width: 0.3rem;
       height: 0.3rem;
       z-index: 100;
