@@ -101,7 +101,8 @@
       z-index: 100;
       padding: 0 .1rem;
       width: 1.8rem;
-      border-radius: .08rem;
+      border-bottom-left-radius: .08rem;
+      border-bottom-right-radius: .08rem;
       background-color: #fff;
       box-shadow: 0 2px 10px #e8e8e8;
       box-sizing: border-box;
