@@ -5,8 +5,21 @@
         <!-- 用户头像部分 -->
         <div class="user_part">
           <div class="user_avatar vux-1px-b">
-            <img :src="userInfo.avatar">
-            <div class="tips">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
+            <div class='user_info'>
+              <img :src="userInfo.avatar">
+              <div class="tips" style="display:inline-block;">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
+            </div>
+            <div>
+              <div class='current_entity' @click="showDrop = !showDrop">{{selItem.groupName}}
+                <x-icon type="ios-arrow-down" :class="{'arrow-up': arrowDrop}" size="14"></x-icon>
+              </div>
+              <ul class="r-dropdown-list" v-show="showDrop">
+                <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
+                    @click.stop="dropItemClick(item)" :key="index">
+                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
+                </li>
+              </ul>
+            </div>  
           </div>
         </div>
         <!-- 基础应用部分 -->
@@ -19,6 +32,7 @@
 </template>
 
 <script>
+import {Icon} from 'vux'
 // 接口引入
 import homeService from 'service/homeservice'
 import { getMsgList } from 'service/msgService.js'
@@ -38,9 +52,13 @@ export default {
       BSarray : [],        // 基础对象 数组
       BUSarray: [],        // 业务应用 数组
       homeScroll : null,
+      entityList : [] ,//主体列表
+      arrowDrop : false,
+      showDrop :false,
+      selItem : {}
     }
   },
-  components:{ busApp, basicApp},
+  components:{ busApp, basicApp,Icon},
   methods:{
     // 基础应用
     goBasic(item){
@@ -58,6 +76,7 @@ export default {
       }
       return url;
     },
+    //获取代办数量
     getNews(){
       let newsNumber;
       return getMsgList().then( data => {
@@ -68,7 +87,41 @@ export default {
         newsNumber = data.dataCount;
         this.$event.$emit('badgeNum',newsNumber);
       })
-    }  
+    }, 
+    //获取当前用户信息 
+    getCurrentUser(){
+      homeService.currentUser().then( data=>{
+        data.sysGroupList && data.sysGroupList.forEach(item=>{
+          if(item.groupType === 'C'){
+            this.entityList.push(item);
+            if(item.groupName === data.entityName){
+              this.selItem = item;
+            }
+          }
+        })
+        if(this.entityList.length>1){
+          this.arrowDrop = true;
+        }
+        console.log(this.entityList);
+      })
+    },
+    // TODO 选择单条记录
+    dropItemClick(item) {
+      this.selItem = {...item};
+      this.showDrop = false;
+      this.$loading.show();
+      homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
+        console.log(data);
+        let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
+        if(tokenInfo){
+          tokenInfo = JSON.parse(tokenInfo);
+          tokenInfo.entityId = data.entityId;
+          tokenInfo.token = data.token;
+          sessionStorage.setItem('ROSE_LOGIN_TOKEN',JSON.stringify(tokenInfo));
+          location.reload();
+        }
+      })
+    },
   },
   watch:{
     $route:{
@@ -83,6 +136,8 @@ export default {
   created(){
     this.$loading.show();
     (async() => {
+      //获取当前用户
+      await this.getCurrentUser()
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
@@ -203,5 +258,37 @@ export default {
     }
   }
 }
-
+/* 列表容器 */
+    .r-dropdown-list {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      z-index: 100;
+      border-bottom-left-radius: .08rem;
+      border-bottom-right-radius: .08rem;
+      background-color: #fff;
+      box-shadow: 0 2px 10px #e8e8e8;
+      box-sizing: border-box;
+    }
+    /* 列表项 */
+    .r-dropdown-item {
+      position: relative;
+      line-height: .4rem;
+      font-size: .16rem;
+      span{
+        display: inline-block;
+        width:100%;
+        box-sizing: border-box;
+        padding: 0 .2rem;
+      }
+      .active{
+        background: #e8e8e8;
+      }
+      .weui_icon_success-no-circle {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+    }
 </style>
