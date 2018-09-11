@@ -10,8 +10,9 @@
               <div class="tips" style="display:inline-block;">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
             </div>
             <div>
-              <div class='current_entity' @click="showDrop = !showDrop">{{selItem.groupName}}
-                <x-icon type="ios-arrow-down" :class="{'arrow-up': arrowDrop}" size="14"></x-icon>
+              <div class='current_entity' @click="showDrop = !showDrop">
+                <span>{{currentEntity}}</span>
+                <x-icon v-if="entityList.length > 1" type="ios-arrow-down" :class="{'arrow-up': arrowDrop}" size="14"></x-icon>
               </div>
               <ul class="r-dropdown-list" v-show="showDrop">
                 <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
@@ -254,7 +255,6 @@ export default {
     .user_info{
       display: flex;
       align-items: center;
-      
     }
     img {
       width: .35rem;
@@ -263,6 +263,10 @@ export default {
     }
     .tips {
       margin-left:.05rem;
+    }
+    .current_entity {
+      display: flex;
+      align-items: center;
     }
   }
 }
@@ -283,11 +287,12 @@ export default {
       position: relative;
       line-height: .4rem;
       font-size: .16rem;
+      text-align: right;
       span{
         display: inline-block;
         width:100%;
         box-sizing: border-box;
-        padding: 0 .2rem;
+        padding: 0 .1rem;
       }
       .active{
         background: #e8e8e8;
