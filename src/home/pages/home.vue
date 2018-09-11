@@ -248,13 +248,18 @@ export default {
     padding: .04rem 0 .02rem;
     align-items: center;
     justify-content: space-between;
+    .user_info{
+      display: flex;
+      align-items: center;
+      
+    }
     img {
       width: .35rem;
       height: .35rem;
       border-radius: 50%;
     }
     .tips {
-      font-size: .18rem;
+      margin-left:.05rem;
     }
   }
 }
