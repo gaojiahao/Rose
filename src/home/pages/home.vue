@@ -52,6 +52,7 @@ export default {
       BSarray : [],        // 基础对象 数组
       BUSarray: [],        // 业务应用 数组
       homeScroll : null,
+      currentEntity :'',//当前主体
       entityList : [] ,//主体列表
       arrowDrop : false,
       showDrop :false,
@@ -91,6 +92,7 @@ export default {
     //获取当前用户信息 
     getCurrentUser(){
       homeService.currentUser().then( data=>{
+        this.currentEntity = data.entityName;
         data.sysGroupList && data.sysGroupList.forEach(item=>{
           if(item.groupType === 'C'){
             this.entityList.push(item);
@@ -108,6 +110,7 @@ export default {
     // TODO 选择单条记录
     dropItemClick(item) {
       this.selItem = {...item};
+      this.currentEntity = item.groupName;
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
