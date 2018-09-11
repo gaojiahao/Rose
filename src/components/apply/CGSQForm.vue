@@ -267,69 +267,85 @@ export default {
     },
     //提价订单
     submitOrder(){
-      if(this.matterList.length === 0){
-        this.$vux.alert.show({
-          content : '请选择物料'
+      let warn = '';
+      let dataSet = [];
+      if (this.matterList.length === 0) {
+        warn = '请选择物料';
+      }
+      if (!warn) {
+        // 校验
+        this.matterList.every(item => {
+          if (!item.price) {
+            warn = '单价不能为空';
+            return false
+          }
+          if (!item.tdQty) {
+            warn = '数量不能为空';
+            return false
+          }
+          // 设置提交参数
+          dataSet.push({
+            tdId : item.tdId || '',
+            transObjCode : item.inventoryCode, //物料编码
+            assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
+            assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
+            tdProcessing :item.processing, //加工属性
+            tdQty : item.tdQty,     //数量
+            assistQty : item.assistQty || 0,        //辅计数量
+            price : item.price, //单价
+            promDeliTime : null, //预期交货日
+            comment : ''               //申请说明
+          })
+          return true
         })
       }
-      else{
-         this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            this.$HandleLoad.show();
-            let dataSet = [];
-            let operation = saveAndStartWf;
-            this.matterList.map(item=>{
-              dataSet.push({
-                tdId : item.tdId || '',
-                transObjCode : item.inventoryCode, //物料编码
-                assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
-                assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
-                tdProcessing :item.processing, //加工属性
-                tdQty : item.tdQty,     //数量
-                assistQty : item.assistQty || 0,        //辅计数量
-                price : item.price, //单价
-                promDeliTime : null, //预期交货日
-                comment : ''               //申请说明
-              })
-            })
-            let wfPara = {
-              [this.processCode]: {businessKey: "PAPP", createdBy: ""}
-            }
-            if(this.isResubmit){
-              wfPara = {
-                businessKey:this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
-              }
-            }
-            let submitData = {
-              listId: this.listId,
-              biComment : this.biComment,
-              formData: JSON.stringify({
-                ...this.formData,
-                handlerEntity: this.entity.dealerName,
-                order: {
-                  dataSet
-                }
-              }),
-              wfPara: JSON.stringify(wfPara)
-            }
-            //console.log(submitData);
-            //重新提交
-            if(this.isResubmit){
-              operation = saveAndCommitTask;
-              submitData.biReferenceId = this.biReferenceId;
-            }
-            //无工作流
-            if(!this.processCode.length){
-              operation = submitAndCalc;
-              delete submitData.wfPara;
-              delete submitData.biReferenceId;
-            }
-            this.saveData(operation,submitData);
-          }
-         })
+      if (warn) {
+        this.$vux.alert.show({
+          content: warn
+        });
+        return
       }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          this.$HandleLoad.show();
+          let operation = saveAndStartWf;
+          let wfPara = {
+            [this.processCode]: {businessKey: "PAPP", createdBy: ""}
+          }
+          if(this.isResubmit){
+            wfPara = {
+              businessKey:this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
+            }
+          }
+          let submitData = {
+            listId: this.listId,
+            biComment : this.biComment,
+            formData: JSON.stringify({
+              ...this.formData,
+              handlerEntity: this.entity.dealerName,
+              order: {
+                dataSet
+              }
+            }),
+            wfPara: JSON.stringify(wfPara)
+          }
+          //console.log(submitData);
+          //重新提交
+          if(this.isResubmit){
+            operation = saveAndCommitTask;
+            submitData.biReferenceId = this.biReferenceId;
+          }
+          //无工作流
+          if(!this.processCode.length){
+            operation = submitAndCalc;
+            delete submitData.wfPara;
+            delete submitData.biReferenceId;
+          }
+          this.saveData(operation,submitData);
+        }
+      })
     },
     //获取订单信息用于重新提交
     async getFormData(){
