@@ -12,7 +12,7 @@
             <div>
               <div class='current_entity' @click="showDrop = !showDrop">
                 <span>{{currentEntity}}</span>
-                <x-icon v-if="entityList.length > 1" type="ios-arrow-down" :class="{'arrow-up': arrowDrop}" size="14"></x-icon>
+                <x-icon v-if="entityList.length > 1" type="ios-arrow-down" :class="{'arrow-up': showDrop}" size="14"></x-icon>
               </div>
               <ul class="r-dropdown-list" v-show="showDrop">
                 <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
@@ -55,7 +55,6 @@ export default {
       homeScroll : null,
       currentEntity :'',//当前主体
       entityList : [] ,//主体列表
-      arrowDrop : false,
       showDrop :false,
       selItem : {}
     }
@@ -102,10 +101,6 @@ export default {
             }
           }
         })
-        if(this.entityList.length>1){
-          this.arrowDrop = true;
-        }
-        console.log(this.entityList);
       })
     },
     // TODO 选择单条记录
@@ -302,6 +297,13 @@ export default {
         top: 50%;
         right: 0;
         transform: translateY(-50%);
+      }
+    }
+    /* 倒三角 */
+    .vux-x-icon-ios-arrow-down {
+      transition: transform 200ms linear;
+      &.arrow-up {
+        transform: rotate(-180deg);
       }
     }
 </style>
