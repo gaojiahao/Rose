@@ -5,7 +5,7 @@
     <div class="serial_bar vux-1px-b">
       <div>
         <span class="iconfont icon-dingdan1"></span>
-        <span class="l_size_name">{{workFlowInfo.transCode && workFlowInfo.transCode.replace(/_/g,'')}}</span>
+        <span class="l_size_name">{{workFlowInfo.transCode}}</span>
       </div>
       <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
     </div>
