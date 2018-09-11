@@ -12,8 +12,9 @@
         </div>
         <div class="mater_info">
           <!-- 物料编码、规格 -->
-            <!-- 当物料编码字节超过11个时 加载新的class -->
-          <div class="withColor" :class="{'whenEleven' : inventory.inventoryCode && inventory.inventoryCode.length >= 11  }">
+            <!-- 当物料编码字节超过13个时 加载新的class -->
+          <div class="withColor" 
+               :class="{'whenEleven' : contentLength >= 13 }">
             <div class="justMid">
               <!-- 物料规格 -->
               <div class="ForInline">
@@ -87,6 +88,7 @@
       return {
         transCode: '',
         inventory: {},
+        contentLength: ''
       }
     },
     methods: {
@@ -103,7 +105,10 @@
       findData() {
         return findData(this.transCode).then(({formData}) => {
           this.inventory = formData.inventory;
-          let {inventoryPic} = this.inventory;
+          let { inventoryPic, inventoryCode, specification } = this.inventory;
+          // 获取规格和编码的字符串总长度
+          this.contentLength = inventoryCode.length + specification.length;
+          // 处理图片
           if (inventoryPic) {
             this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}&width=400&height=400`
           } else {
@@ -240,6 +245,7 @@
         //居中
         .justMid {
           left: 50%;
+          width: 100%;
           display: flex;
           position: absolute;
           align-items: center;
