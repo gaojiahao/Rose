@@ -21,6 +21,7 @@
 <script>
 // 接口引入
 import homeService from 'service/homeservice'
+import { getMsgList } from 'service/msgService.js'
 // 映射表引入
 import basicMap from './maps/basic'
 import businessMap from './maps/businessApp'
@@ -56,7 +57,18 @@ export default {
         app.icon = url;
       }
       return url;
-    }
+    },
+    getNews(){
+      let newsNumber;
+      return getMsgList().then( data => {
+        if(data.dataCount > 99){
+          newsNumber = '99+';
+          return
+        }
+        newsNumber = data.dataCount;
+        this.$event.$emit('badgeNum',newsNumber);
+      })
+    }  
   },
   watch:{
     $route:{
@@ -138,6 +150,7 @@ export default {
         avatar = url;
       };
       this.userInfo = { name, avatar };
+      await this.getNews();
     })()
   },
   mounted(){

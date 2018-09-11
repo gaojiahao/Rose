@@ -65,7 +65,8 @@ export default {
     },
     //获取应用消息数据
     getList() {
-      return getMsgList().then(({ tableContent }) => {
+      return getMsgList().then(({dataCount = 0, tableContent = []}) => {
+        this.$event.$emit('badgeNum',dataCount);
         if(!tableContent.length){
           // 没有数据的时候
           this.isNull = true;
