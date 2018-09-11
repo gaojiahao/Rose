@@ -24,7 +24,7 @@
           <form-cell cellTitle="利润" showSymbol :cellContent="numberComma(approval.budgetProfit)"></form-cell>
           <form-cell cellTitle="利润率" :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
           <form-cell cellTitle="开始日期" :cellContent="approval.expectStartDate | timeSplit"></form-cell>
-          <form-cell cellTitle="截至日期" :cellContent="approval.expectEndDate | timeSplit"></form-cell>
+          <form-cell cellTitle="截止日期" :cellContent="approval.expectEndDate | timeSplit"></form-cell>
         </div>
       </div>
     </div>

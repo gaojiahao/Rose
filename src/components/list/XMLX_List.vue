@@ -28,8 +28,12 @@
               {{item.projectName_project}}
             </div>
             <div class="content_step vux-1px-b">
-              <div>{{item.projectManager_project}}</div>
-              <div>{{item.budgetProfitMargin_project | percent}}</div>
+              <div>
+                {{item.projectManager_project}}<span class="symbol">[项目经理]</span>
+              </div>
+              <div>
+                利润率: {{item.budgetProfitMargin_project | percent}}
+              </div>
             </div>
           </div>
           <!-- 项目立项经办人 -->
