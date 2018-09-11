@@ -111,8 +111,8 @@
         .arrow_up {
           transition: all .2s;
           -webkit-transition: all .2s;
-          transform: rotate(180deg);
-          -webkit-transform: rotate(180deg);
+          transform: rotate(-180deg);
+          -webkit-transform: rotate(-180deg);
         }
         .arrow_down {
           transition: all .2s;

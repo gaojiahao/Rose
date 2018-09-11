@@ -214,7 +214,8 @@
 
       /* 是否为搜索匹配项(物料) */
       &.is-matched-mat {
-        background-color: #fff9e0;
+        background: linear-gradient(to right, #dbe2ef, #ffffff);
+        background: -webkit-linear-gradient(to right, #dbe2ef, #ffffff);
       }
       .matter_img {
         width: .6rem;

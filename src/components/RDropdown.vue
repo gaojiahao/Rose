@@ -67,29 +67,21 @@
     width: 100%;
     /* 选中值 */
     .r-dropdown-value {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 .04rem;
       width: 100%;
+      display: flex;
       color: #454545;
       font-size: .12rem;
       font-weight: bold;
+      align-items: center;
       box-sizing: border-box;
-      .value {
-        display: inline-block;
-        width: calc(100% - .15rem);
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
+      justify-content: center;
     }
 
     /* 倒三角 */
     .vux-x-icon-ios-arrow-down {
       transition: transform 200ms linear;
       &.arrow-up {
-        transform: rotate(180deg);
+        transform: rotate(-180deg);
       }
     }
 

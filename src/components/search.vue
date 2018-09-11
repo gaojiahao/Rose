@@ -99,20 +99,19 @@
     box-sizing: border-box;
     &.has-filter {
       .srh_inp {
-        padding-left: .95rem;
+        padding-left: 1.05rem;
       }
     }
     /* 下拉框 */
     .r-dropdown {
-      position: absolute;
-      left: .07rem;
       top: 0;
-      padding-left: .3rem;
-      width: .9rem;
-      border-top-left-radius: .3rem;
-      border-bottom-left-radius: .3rem;
+      width: .75rem;
+      left: .07rem;
+      position: absolute;
+      padding-left: .25rem;
       background: #dbe2ef;
-      box-sizing: border-box;
+      border-top-left-radius: .3rem;
+      border-bottom-left-radius: .3rem;    
     }
     // 搜索输入框
     .srh_inp {
