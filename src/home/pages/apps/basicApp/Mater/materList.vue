@@ -80,6 +80,7 @@
 <script>
   import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
   import {getList, getDictByType} from 'service/commonService'
+  import {getMatList} from 'service/materService'
   import RScroll from 'components/RScroll'
   import RSearch from 'components/search'
 
@@ -186,28 +187,24 @@
           filter[0].operator = 'like';
         }
         if (this.srhInpTx) {
-          filter[0].attendedOperation = 'and (';
           filter = [
             ...filter,
             {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'inventoryCode',
-              attendedOperation: 'or'
-            },
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'inventoryName',
-              attendedOperation: ')'
-            },
+              link: 'or',
+              property_1: 'inventoryCode',
+              operator_1: 'like',
+              value_1: this.srhInpTx,
+              property_1: 'inventoryName',
+              operator_1: 'like',
+              value_2: this.srhInpTx,
+            }
           ];
         }
-        return getList(2132, {
+        return getMatList({
           limit: this.limit,
           page: this.page,
-          start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          listViewID : 2132
         }).then(({dataCount = 0, tableContent = []}) => {
           //判断最近有无新增数据
           //console.log(this.total);

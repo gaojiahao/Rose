@@ -120,7 +120,13 @@ export let getInventory7502 = (data = {}) => {
     return errorHandler(e);
   });
 };
-
+//获取物料列表
+export let getMatList = ( data = {})=>{
+  return $axios.ajax({
+    url:'/H_roleplay-si/ds/getMaterialList',
+    data
+  })
+}
 export default {
   save,
   update,
