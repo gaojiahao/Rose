@@ -72,7 +72,6 @@
                           <div class="mater_main">
                             <!-- 物料名称 -->
                             <div class="mater_name">
-                              <span class="whiNum">No.{{index + 1}}</span>
                               {{item.inventoryName}}
                             </div>
                             <!-- 物料基本信息 -->
@@ -93,8 +92,15 @@
                                     <span class="num">{{item.specification || '无'}}</span>
                                   </div>
                                 </div>
-                                <div class="matter-remain">库存: {{item.qtyStockBal}}</div>
+                                <!-- <div class="matter-remain">库存: {{item.qtyStockBal}}</div> -->
                               </div>
+                            </div>
+                             <!-- 物料属性和单位 -->
+                            <div class='mater_more'>
+                              <span class='unit'>属性: {{item.processing}}</span>
+                              <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                              <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
+                              <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>
                             </div>
                             <!-- 物料数量和价格 -->
                             <div class="mater_other">
@@ -579,7 +585,7 @@
       },
     },
     created() {
-      let data = sessionStorage.getItem('CGSQ_DATA');
+      let data = sessionStorage.getItem('XSCK_DATA');
       if (data) {
         this.orderList = JSON.parse(data).orderList;
         this.warehouse = JSON.parse(data).warehouse;
