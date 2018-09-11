@@ -91,7 +91,7 @@ export default {
     }, 
     //获取当前用户信息 
     getCurrentUser(){
-      homeService.currentUser().then( data=>{
+      return homeService.currentUser().then( data=>{
         this.currentEntity = data.entityName;
         data.sysGroupList && data.sysGroupList.forEach(item=>{
           if(item.groupType === 'C'){
