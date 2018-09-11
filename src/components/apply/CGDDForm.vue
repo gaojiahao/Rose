@@ -78,7 +78,7 @@
                       <span class='processing'>属性: {{item.processing}}</span>
                       <span class='measureUnit'>计量单位: {{item.measureUnit}}</span>
                       <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                      <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>  
+                      <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
@@ -318,84 +318,97 @@ export default {
       },
     //提价订单
     submitOrder(){
-      if(!this.dealerInfo.dealerCode){
-        this.$vux.alert.show({
-          content : '请选择供应商信息'
-        })
+      let warn = '';
+      let dataSet = [];
+      if (!this.dealerInfo.dealerCode) {
+        warn = '请选择供应商信息';
+      } else if (this.matterList.length === 0) {
+        warn = '请选择物料';
       }
-      else if(this.matterList.length === 0){
-        this.$vux.alert.show({
-          content : '请选择物料'
-        })
-      }
-      else{
-         this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            this.$HandleLoad.show();
-            let dataSet = [];
-            let operation = saveAndStartWf;
-            this.matterList.map(item=>{
-              dataSet.push({
-                tdId : item.tdId || '',
-                // inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
-                transObjCode : item.inventoryCode, //物料编码
-                assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
-                assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
-                tdQty : item.tdQty,     //数量
-                assistQty : item.assistQty || 0,        //辅计数量
-                thenQtyBal : item.thenQtyBal || 0,//余额
-                tdProcessing : item.processing ,//加工属性
-                price : item.price, //单价
-                taxRate : item.taxRate || 0.16,              //税率
-                taxAmount : item.price*item.tdQty*0.16,           //税金
-                tdAmount : item.price*item.tdQty*(100+16)/100,           //价税小计
-                promDeliTime : null, //预期交货日
-                comment : ''                //说明
-              })
-            })
-            let wfPara = {
-              [this.processCode]:{businessKey:"PO",createdBy:""}
-            }
-            if(this.isResubmit){
-              wfPara = {
-                businessKey:this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
-              }
-            }
-            let submitData = {
-              listId: this.listId,
-              biComment : this.biComment,
-              formData: JSON.stringify({
-                ...this.formData,
-                ...this.dealer,
-                handlerEntity: this.entity.dealerName,
-                order: {
-                  dealerDebit: this.dealerInfo.dealerCode,
-                  drDealerLabel : this.dealerInfo.dealerLabelName || '渠道商',
-                  // drAccountSub : this.info.dealerSubclass || '直营店',
-                  drDealerPaymentTerm : this.dealer.drDealerPaymentTerm,
-                  dataSet
-                }
-              }),
-              wfPara: JSON.stringify(wfPara)
-            }
-            //console.log(submitData);
-            //重新提交
-            if(this.isResubmit){
-              operation = saveAndCommitTask
-              submitData.biReferenceId = this.biReferenceId;
-            }
-            //没有工作流
-            if(!this.processCode.length){
-              operation = submitAndCalc;
-              delete submitData.wfPara;
-              delete submitData.biReferenceId;
-            }
-            this.saveData(operation,submitData);
+      if(!warn) {
+        // 校验
+        this.matterList.every(item => {
+          if (!item.price) {
+            warn = '单价不能为空';
+            return false
           }
-         })
+          if (!item.tdQty) {
+            warn = '数量不能为空';
+            return false
+          }
+          // 设置提交参数
+          dataSet.push({
+            tdId : item.tdId || '',
+            // inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
+            transObjCode : item.inventoryCode, //物料编码
+            assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
+            assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
+            tdQty : item.tdQty,     //数量
+            assistQty : item.assistQty || 0,        //辅计数量
+            thenQtyBal : item.thenQtyBal || 0,//余额
+            tdProcessing : item.processing ,//加工属性
+            price : item.price, //单价
+            taxRate : item.taxRate || 0.16,              //税率
+            taxAmount : item.price*item.tdQty*0.16,           //税金
+            tdAmount : item.price*item.tdQty*(100+16)/100,           //价税小计
+            promDeliTime : null, //预期交货日
+            comment : ''                //说明
+          });
+          return true
+        })
       }
+      if (warn) {
+        this.$vux.alert.show({
+          content: warn
+        });
+        return
+      }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          this.$HandleLoad.show();
+          let operation = saveAndStartWf;
+          let wfPara = {
+            [this.processCode]:{businessKey:"PO",createdBy:""}
+          }
+          if(this.isResubmit){
+            wfPara = {
+              businessKey:this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
+            }
+          }
+          let submitData = {
+            listId: this.listId,
+            biComment : this.biComment,
+            formData: JSON.stringify({
+              ...this.formData,
+              ...this.dealer,
+              handlerEntity: this.entity.dealerName,
+              order: {
+                dealerDebit: this.dealerInfo.dealerCode,
+                drDealerLabel : this.dealerInfo.dealerLabelName || '渠道商',
+                // drAccountSub : this.info.dealerSubclass || '直营店',
+                drDealerPaymentTerm : this.dealer.drDealerPaymentTerm,
+                dataSet
+              }
+            }),
+            wfPara: JSON.stringify(wfPara)
+          }
+          //console.log(submitData);
+          //重新提交
+          if(this.isResubmit){
+            operation = saveAndCommitTask
+            submitData.biReferenceId = this.biReferenceId;
+          }
+          //没有工作流
+          if(!this.processCode.length){
+            operation = submitAndCalc;
+            delete submitData.wfPara;
+            delete submitData.biReferenceId;
+          }
+          this.saveData(operation,submitData);
+        }
+      })
     },
     //获取订单信息用于重新提交
     async getFormData(){

@@ -44,7 +44,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key="index">               
+              <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key="index">
                 <div class="each_mater_wrapper" @click="delClick(index,item)">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -77,11 +77,11 @@
 
                     </div>
                     <!-- 物料属性和单位 -->
-                    <div class='mater_more'>                     
+                    <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='unit'>计量单位: {{item.measureUnit}}</span>
                         <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                        <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>                        
+                        <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
@@ -338,6 +338,7 @@ export default {
     // TODO 提价订单
     submitOrder() {
       let warn = '';
+      let dataSet = [];
       let validateMap = [
         {
           key: 'dealerInfo',
@@ -358,6 +359,42 @@ export default {
       if (!warn && !this.matterList.length) {
         warn = '请选择物料'
       }
+      if (!warn) {
+        // 校验
+        this.matterList.every(item => {
+          if (!item.price) {
+            warn = '单价不能为空';
+            return false
+          }
+          if (!item.tdQty) {
+            warn = '数量不能为空';
+            return false
+          }
+          // 设置提交参数
+          let taxRate = item.taxRate || this.taxRate;
+          let taxAmount = accMul(item.price, item.tdQty, taxRate);
+          let oItem = {
+            transObjCode: item.inventoryCode, // 物料编码
+            assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
+            assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
+            tdQty: item.tdQty, // 明细发生数
+            thenQtyBal: item.thenQtyBal || 0, //余额
+            tdProcessing: item.processing, //加工属性
+            assistQty: item.assistQty || 0, // 辅计数量（明细）
+            price: item.price, // 明细单价
+            taxRate: taxRate, // 税率
+            taxAmount: taxAmount, // 税金
+            tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
+            promDeliTime: item.promDeliTime || '', // 承诺交付时间
+            comment: item.comment || '', // 说明
+          };
+          if (this.transCode) {
+            oItem.tdId = item.tdId || null;
+          }
+          dataSet.push(oItem);
+          return true
+        })
+      }
       if (warn) {
         this.$vux.alert.show({
           content: warn
@@ -369,7 +406,6 @@ export default {
         // 确定回调
         onConfirm: () => {
           this.$HandleLoad.show();
-          let dataSet = [];
           let operation = saveAndStartWf;
           let formData = {};
           let wfPara = {
@@ -378,30 +414,7 @@ export default {
               createdBy: ''
             }
           };
-          // 组装dataSet
-          this.matterList.forEach(item => {
-            let taxRate = item.taxRate || this.taxRate;
-            let taxAmount = accMul(item.price, item.tdQty, taxRate);
-            let oItem = {
-              transObjCode: item.inventoryCode, // 物料编码
-              assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-              assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
-              tdQty: item.tdQty, // 明细发生数
-              thenQtyBal : item.thenQtyBal ||0, //余额
-              tdProcessing :item.processing, //加工属性
-              assistQty: item.assistQty || 0, // 辅计数量（明细）
-              price: item.price, // 明细单价
-              taxRate: taxRate, // 税率
-              taxAmount: taxAmount, // 税金
-              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
-              promDeliTime: item.promDeliTime || '', // 承诺交付时间
-              comment: item.comment || '', // 说明
-            };
-            if (this.transCode) {
-              oItem.tdId = item.tdId || null;
-            }
-            dataSet.push(oItem);
-          });
+
           formData = {
             ...this.formData,
             handlerEntity: this.entity.dealerName,
