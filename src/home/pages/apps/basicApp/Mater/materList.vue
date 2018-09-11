@@ -249,8 +249,8 @@
       // TODO 搜索物料
       searchMat({val = '', property = ''}) {
         this.srhInpTx = val;
-        this.activeTab = '';
-        this.activeIndex = 0;
+        // this.activeTab = '';
+        // this.activeIndex = 0;
         this.resetCondition();
         this.getMatList();
       },
