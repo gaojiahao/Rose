@@ -17,7 +17,8 @@
     </div>
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
-      <li class="duty_matter_item vux-1px-b" v-for="(mItem, mIndex) in item.itmes" :key="mIndex" v-if='mIndex<3'>
+      <li class="duty_matter_item vux-1px-b" :class="{'is-matched-mat': mItem.matchedMat}"
+          v-for="(mItem, mIndex) in item.itmes" :key="mIndex" v-if='mIndex<3'>
         <div class="matter_img">
           <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
         </div>
@@ -139,7 +140,7 @@
       float: left;
       font-size: .15rem;
       color: #7D7D7D;
-      
+
       .duty_crt_man { // 任务创建者
         color: #fff;
         padding: .02rem;
@@ -183,7 +184,7 @@
       float: right;
       font-size: .15rem;
       color: #7D7D7D;
-      
+
     }
   }
   // 往来
@@ -204,13 +205,17 @@
   /* 物料 */
   .duty_matter {
     display: block;
-    padding: 0 .1rem;
     box-sizing: border-box;
     .duty_matter_item {
-      width: 100%;
       display: flex;
-      padding: .04rem 0 .06rem;
+      width: 100%;
+      padding: .04rem .1rem .06rem;
       box-sizing: border-box;
+
+      /* 是否为搜索匹配项(物料) */
+      &.is-matched-mat {
+        background-color: #fff9e0;
+      }
       .matter_img {
         width: .6rem;
         height: .6rem;

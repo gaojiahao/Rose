@@ -249,7 +249,22 @@ export default {
             // 当 count = price * tdqty
             let amount = accMul(mitem.price, mitem.tdQty);
             item.count = toFixed(accAdd(item.count, amount));
-          })
+          });
+
+          // 如果为搜索物料，将匹配的物料放在前面
+          if (this.serachVal && this.filterProperty === 'inventoryName') {
+            item.itmes = item.itmes.reduce((arr, mitem) => {
+              // 判断是否含有搜索内容
+              if (mitem.inventoryName && mitem.inventoryName.includes(this.serachVal)) {
+                mitem.matchedMat = true;
+                arr.unshift(mitem)
+              } else {
+                arr.push(mitem);
+              }
+              return arr
+            }, []);
+          }
+
           item.itemCount = item.itmes.length;
           // 列表当中每个订单最多展现5个物料
           item.itmes = item.itmes.slice(0, 5);
