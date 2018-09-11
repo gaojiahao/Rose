@@ -49,7 +49,7 @@ export default {
       srhInpTx : '',
       tabSelect:'全部',
       activeIndex :0,
-      warehouseClassfiy :[{name:'全部'}],
+      warehouseClassfiy :[{name:'全部'},{name:'个人仓'},{name:'加工车间仓'},{name:'一般部门仓'},{name:'客户仓'},{name:'加工商仓'}],
       page : 1,
       limit :20,
       id : 2129,
@@ -118,6 +118,8 @@ export default {
     //获取仓库类型
     getwarehouseType() {
       return getDictByType('warehouseRelType').then(data => {
+        this.warehouseClassfiy = [];
+        this.warehouseClassfiy.push({name:'全部'});
         this.warehouseClassfiy = this.warehouseClassfiy.concat(data.tableContent);
       })
     },
