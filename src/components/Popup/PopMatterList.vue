@@ -137,10 +137,10 @@
         filterProperty: '', // 过滤的key
         filterList: [ // 过滤列表
           {
-            name: '名称',
+            name: '物料名称',
             value: 'inventoryName',
           }, {
-            name: '编码',
+            name: '物料编码',
             value: 'inventoryCode',
           },
         ],

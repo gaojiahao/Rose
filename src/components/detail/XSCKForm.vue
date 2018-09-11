@@ -30,8 +30,7 @@
               <span class="order_num">{{key.replace(/_/g,'')}}</span>
             </div>
             <div class="order_matter">
-              <matter-item :item="item" v-for="(item, index) in oItem" :key="index"
-                            :class="{'vux-1px-b' : index !==  oItem.length - 1}"></matter-item>
+              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index"></matter-item>
             </div>
           </div>
         </div>
