@@ -63,6 +63,9 @@
 </script>
 
 <style scoped lang="scss">
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
   .r-dropdown {
     width: 100%;
     /* 选中值 */
@@ -92,10 +95,11 @@
       top: 100%;
       z-index: 100;
       padding: 0 .1rem;
-      width: 1.8rem;
+      width: 1.2rem;
+      // text-align: center;
       border-bottom-left-radius: .08rem;
       border-bottom-right-radius: .08rem;
-      background-color: #fff;
+      background-color: #FFF;   
       box-shadow: 0 2px 10px #e8e8e8;
       box-sizing: border-box;
     }
@@ -105,9 +109,10 @@
       line-height: .4rem;
       font-size: .16rem;
       .weui_icon_success-no-circle {
-        position: absolute;
         top: 50%;
         right: 0;
+        font-size: .16rem;
+        position: absolute;
         transform: translateY(-50%);
       }
     }
