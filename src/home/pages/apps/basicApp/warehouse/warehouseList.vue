@@ -8,7 +8,7 @@
         <div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in warehouseClassfiy" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item}}
+                      @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>
         </div>
@@ -39,7 +39,7 @@
 
 <script>
 import { Tab,TabItem} from 'vux'
-import { getList} from 'service/commonService'
+import { getList,getDictByType} from 'service/commonService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 export default {
@@ -49,7 +49,7 @@ export default {
       srhInpTx : '',
       tabSelect:'全部',
       activeIndex :0,
-      warehouseClassfiy :['全部','个人仓','客户仓','部门仓','加工商仓','渠道商仓'],
+      warehouseClassfiy :[{name:'全部'}],
       page : 1,
       limit :20,
       id : 2129,
@@ -80,7 +80,7 @@ export default {
       this.resetCondition();
       this.tabSelect='';
       //this.srhInpTx= '';
-      this.tabSelect=item;
+      this.tabSelect=item.name;
       this.$refs.bScroll.scrollTo(0, 0);
       this.getwarehouse()
     },
@@ -114,6 +114,12 @@ export default {
     },
     goDetail(item, index){
       this.goNextPage(item, index, '/warehouse/warehouseDetail');
+    },
+    //获取仓库类型
+    getwarehouseType() {
+      return getDictByType('warehouseRelType').then(data => {
+        this.warehouseClassfiy = this.warehouseClassfiy.concat(data.tableContent);
+      })
     },
     //获取仓库列表
     getwarehouse(noReset = false){
@@ -260,7 +266,7 @@ export default {
           if (meta.reload) {
             to.meta.reload = false;
             this.srhInpTx = '';
-            //this.activeIndex = 0;
+            this.activeIndex = 0;
             this.resetCondition();
             if(from.query.transCode){
               this.onPullingDown(false);
@@ -274,6 +280,7 @@ export default {
   },
   created(){
     this.$loading.show();
+    this.getwarehouseType();
     this.getData(false)
   },
 
