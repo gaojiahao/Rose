@@ -85,9 +85,7 @@ let Rxports = {
           rejectError(reject, message);
         });
       }).catch(e => {
-        let res = e.response;
-        let data = (res && res.data) || {};
-        let message = data.message || '请求异常';
+        let {success = false, message = '请求异常'} = e;
         rejectError(reject, message);
       })
     })
@@ -125,9 +123,7 @@ let Rxports = {
           rejectError(reject, message);
         });
       }).catch(e => {
-        let res = e.response;
-        let data = (res && res.data) || {};
-        let message = data.message || '请求异常';
+        let {success = false, message = '请求异常'} = e;
         rejectError(reject, message);
       })
     })
