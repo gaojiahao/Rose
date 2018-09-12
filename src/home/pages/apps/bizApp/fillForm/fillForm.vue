@@ -55,8 +55,6 @@ export default {
     // 新建物料，修改列表页的meta值
     if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {
       to.meta.reload = true;
-      //返回消息列表时，用于通知要刷新
-      from.meta.isHandle = true;
       if(keys){
         sessionStorage.removeItem(keys)
       }     

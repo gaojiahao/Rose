@@ -77,7 +77,6 @@ export default {
         pullDownRefresh: true,
         pullUpLoad: true,
       },
-      isRefresh :false,//页面是否重新请求了
     }
   },
   components: {
@@ -248,22 +247,12 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     to.meta.title = to.query.name ;
-    next(vm=>{
-      if((from.name === 'DETAIL' || from.name === 'FILLFORM') && from.meta.isHandle){
-        vm.isRefresh = true;
-        from.meta.isHandle = false;
-      }
-    });
+    next();
   },
   beforeRouteLeave (to, from, next) {
     if(to.name === 'MSGHOME'){
       from.meta.reload = true;
     }
-    //当详情已经审批时，从列表返回首页，首页刷新
-    if(this.isRefresh && to.name === 'MSGHOME'){
-      to.meta.reload = true;
-    }
-    this.isRefresh = false;
     next();
   }
 }

@@ -90,7 +90,6 @@ export default {
             }
           }
         })
-        console.log(this.listData);
         this.$nextTick(()=>{
           this.scroll = new BScroll(this.$refs.bScroll, {
             click:true
@@ -143,24 +142,6 @@ export default {
       this.$loading.hide();
     });
   },
-  activated(){
-    let reload = this.$route.meta.reload;
-    setTimeout(() => {
-      let tmp = {...this.listData};
-      for(let i in tmp){
-        tmp[i].visited = false;
-      }
-      this.listData = tmp;
-    },200);
-    if(reload){
-      this.$loading.show();
-      this.listData = {};
-      this.getList().then(()=>{
-         this.$loading.hide();
-      });
-      this.$route.meta.reload = false;
-    }
-  }
 }
 </script>
 

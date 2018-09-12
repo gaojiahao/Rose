@@ -100,7 +100,6 @@
       // 新建物料，修改列表页的meta值
       if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {
         to.meta.reload = true;
-        from.meta.isHandle = true;
       }
       next();
     }
