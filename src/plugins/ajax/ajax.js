@@ -6,6 +6,15 @@ import axios from 'axios';
 // import qs from 'qs';
 let qs = require('querystring');
 
+// TODO reject处理
+let rejectError = (reject, message) => {
+  message = message.slice(0, 200);
+  reject && reject.call(null, {
+    success: false,
+    message
+  });
+};
+
 let Rxports = {
   /**
    * @param {String} type      请求的类型，默认post
@@ -58,8 +67,11 @@ let Rxports = {
         }
         axios(params).then(function (res) {
           let data = res.data;
-          if (Number(res.status) === 200) {
+          let {success = true, message = '请求异常'} = data;
+          if (success && Number(res.status) === 200) {
             resolve(data)
+          } else {
+            rejectError(reject, message);
           }
         }).catch(function (error) {
           console.log(error);
@@ -70,19 +82,13 @@ let Rxports = {
           if (status === 401) {
             tokenService.login()
           }
-          reject({
-            success: false,
-            message: message
-          })
+          rejectError(reject, message);
         });
       }).catch(e => {
         let res = e.response;
         let data = (res && res.data) || {};
         let message = data.message || '请求异常';
-        reject({
-          success: false,
-          message: message
-        })
+        rejectError(reject, message);
       })
     })
   },
@@ -102,8 +108,11 @@ let Rxports = {
           }, opts.headers)
         }).then(res => {
           let data = res.data;
-          if (Number(res.status) === 200) {
-            resolve(data);
+          let {success = true, message = '请求异常'} = data;
+          if (success && Number(res.status) === 200) {
+            resolve(data)
+          } else {
+            rejectError(reject, message);
           }
         }).catch(function (error) {
           let res = error.response;
@@ -113,19 +122,13 @@ let Rxports = {
           if (status === 401) {
             tokenService.login()
           }
-          reject({
-            success: false,
-            message: message
-          })
+          rejectError(reject, message);
         });
       }).catch(e => {
         let res = e.response;
         let data = (res && res.data) || {};
         let message = data.message || '请求异常';
-        reject({
-          success: false,
-          message: message
-        })
+        rejectError(reject, message);
       })
     })
   },
