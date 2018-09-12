@@ -53,9 +53,9 @@
                             </span>
                           </template>
                         </datetime>
-                        <datetime title="预算截至日期" v-model='ProjectApproval.expectEndDate'>
+                        <datetime title="预算截止日期" v-model='ProjectApproval.expectEndDate'>
                            <template slot="title">
-                            <span class='required'>预算截至日期
+                            <span class='required'>预算截止日期
                             </span>
                           </template>
                         </datetime>
@@ -118,7 +118,7 @@
           "projectManager": "",//项目经理
           "phoneNumber": "",//手机号
           "expectStartDate": dateFormat(new Date, 'YYYY-MM-DD'),//预期开始日期
-          "expectEndDate": dateFormat(new Date, 'YYYY-MM-DD'),//预期截至日期
+          "expectEndDate": dateFormat(new Date, 'YYYY-MM-DD'),//预期截止日期
           "budgetIncome": "",//预算收入
           "budgetCapital": "",//预算成本
           "budgetCost": "",//预算费用
@@ -162,7 +162,7 @@
           {tip: 'budgetCapital', msg: '预算成本'},
           {tip: 'budgetCost', msg: '预算费用'},
           {tip: 'expectStartDate', msg: '预期开始日期'},
-          {tip: 'expectEndDate', msg: '预期截至日期'},
+          {tip: 'expectEndDate', msg: '预期截止日期'},
         ];
         let selArr = ['projectManager', 'projectType'];
         let warn = '';
