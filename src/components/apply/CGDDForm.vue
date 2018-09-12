@@ -152,7 +152,7 @@ import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
-
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 export default {
   directives: { TransferDom },
   components:{
@@ -337,21 +337,22 @@ export default {
             warn = '数量不能为空';
             return false
           }
+          let taxRate = item.taxRate || this.taxRate;
+          let taxAmount = accMul(item.price, item.tdQty, taxRate);
           // 设置提交参数
           dataSet.push({
             tdId : item.tdId || '',
-            // inventoryName_transObjCode : item.inventoryName || item.inventoryName_transObjCode, //物料名称
             transObjCode : item.inventoryCode, //物料编码
+            tdProcessing : item.processing ,//加工属性
             assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
             assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
-            tdQty : item.tdQty,     //数量
             assistQty : item.assistQty || 0,        //辅计数量
-            thenQtyBal : item.thenQtyBal || 0,//余额
-            tdProcessing : item.processing ,//加工属性
+            thenQtyBal : item.qtyBal || 0,//余额
+            tdQty : item.tdQty,     //数量
             price : item.price, //单价
-            taxRate : item.taxRate || 0.16,              //税率
-            taxAmount : item.price*item.tdQty*0.16,           //税金
-            tdAmount : item.price*item.tdQty*(100+16)/100,           //价税小计
+            taxRate : taxRate, //税金
+            taxAmount :taxAmount, // 税金
+            tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
             promDeliTime : null, //预期交货日
             comment : ''                //说明
           });

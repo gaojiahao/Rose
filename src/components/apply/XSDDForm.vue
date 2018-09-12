@@ -157,6 +157,8 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
+// 方法引入
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   export default {
     directives: {
       TransferDom
@@ -354,6 +356,8 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
               let dataSet = [];
               let operation = saveAndStartWf;//默认有工作流
               this.matterList.map(item => {
+                let taxRate = item.taxRate || this.taxRate;
+                let taxAmount = accMul(item.price, item.tdQty, taxRate);
                 dataSet.push({
                   tdId: item.tdId || '',
                   inventoryName_transObjCode: item.inventoryName , //物料名称
@@ -364,9 +368,9 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
                   tdQty: item.tdQty,     //数量
                   assistQty: item.assistQty || 0,        //辅计数量
                   price: item.price, //单价
-                  taxRate: item.taxRate || 0.16,              //税率
-                  taxAmount: item.price * item.tdQty * 0.16,           //税金
-                  tdAmount: item.price * item.tdQty * (100 + 16) / 100,           //价税小计
+                  taxRate : taxRate, //税金
+                  taxAmount :taxAmount, // 税金
+                  tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
                   promDeliTime: null, //预期交货日
                   comment: ''                //说明
                 })
