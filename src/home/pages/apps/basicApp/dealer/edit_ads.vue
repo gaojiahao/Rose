@@ -281,7 +281,7 @@ export default {
     },
     // TODO 获取默认图片
     getDefaultImg() {
-        this.MatPic = require('assets/dealer.png');
+        this.MatPic = require('assets/contact_default02.png');
     },
     //选择地址
     changeAddress(ids,names){
