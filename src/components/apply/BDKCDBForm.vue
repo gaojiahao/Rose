@@ -34,7 +34,6 @@
                   <div class="mater_main">
                     <!-- 物料名称 -->
                     <div class="mater_name">
-                      <span class="whiNum">No.{{index + 1}}</span>
                       {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
@@ -56,6 +55,12 @@
                           </div>
                         </div>
                       </div>
+                    </div>
+                    <!--单位，属性，颜色-->
+                    <div class="mater_more">                     
+                        <span class="processing">属性: {{item.processing}}</span>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class="mater_other">

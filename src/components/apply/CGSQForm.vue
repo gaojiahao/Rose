@@ -54,11 +54,12 @@
                     <!-- 物料数量和价格 -->
                     <div class='mater_others'>
                       <div class="mater_type">
-                        <span class='unit' v-if='item.inventoryType'>大类: {{item.inventoryType}}</span>
-                        <span class='unit' v-if='item.inventorySubclass'>子类: {{item.inventorySubclass}}</span>
+                        <span>大类: {{item.inventoryType || "无" }}</span>
+                        <span>子类: {{item.inventorySubclass}}</span>
                       </div>
                       <div class='mater_price'>
-                        <span class='unit' v-if='item.measureUnit'>计量单位: {{item.measureUnit}}</span>
+                        <span class='unit'>计量单位: {{item.measureUnit || "无"}}</span>
+                        <span class='color'>颜色: {{item.inventoryColor || "无"}}</span>
                       </div>
                     </div>
                   </div>
@@ -416,9 +417,10 @@ export default {
     height: .18rem;
     line-height: .18rem;
   }
-  .unit {
+  span {
     font-size: .1rem;
     color: #757575;
+    margin-right: 0.04rem;
   }
 }
 </style>
