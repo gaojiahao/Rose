@@ -1,5 +1,5 @@
 <template>
-  <div class="detail_wrapper">
+  <div class="detail_wrapper kcpd-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
       <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
@@ -17,34 +17,25 @@
         <warehouse-content :warehouse="warehouseIn"></warehouse-content>
       </div>
       <!-- 物料列表 -->
-      <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
+      <matter-list :matter-list="orderInfo.inPut.dataSet">
+        <div class='mater_other' slot="matterOther" slot-scope="{item}">
+          <div class='mater_left'>
+            <span class="units">
+              账存数量: {{item.thenQtyStock | toFixed}}
+            </span>
+            <span class="units">
+              计量单位: {{item.measureUnit_transObjCode}}
+            </span>
+          </div>
+          <div class='mater_num'>
+            盘点数量: <span class="num">{{item.tdQty | toFixed}}</span>
+            差异数量: <span class="diff_num">{{item.differenceNum | toFixed}}</span>
+          </div>
         </div>
-        <div class="mater_list">
-          <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
-                        v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
-            <!-- 物料数量和价格 -->
-            <div class='mater_other' slot="other">
-              <div class='mater_left'>
-                <span class="units">
-                  账存数量: {{item.thenQtyStock | toFixed}}
-                </span>
-                <span class="units">
-                  计量单位: {{item.measureUnit_transObjCode}}
-                </span>
-              </div>
-              <div class='mater_num'>
-                盘点数量: <span class="num">{{item.tdQty | toFixed}}</span>
-                差异数量: <span class="diff_num">{{item.differenceNum | toFixed}}</span>
-              </div>
-            </div>
-          </matter-item>
-        </div>
-      </div>
+      </matter-list>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                @on-submit-success="submitSuccessCallback"></r-action>         
+                @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -59,7 +50,7 @@
   import workFlow from 'components/workFlow'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
-  import MatterItem from 'components/detail/commonPart/MatterItem'
+  import MatterList from 'components/detail/commonPart/MatterList'
 
   export default {
     data() {
@@ -74,7 +65,7 @@
       PopWarehouseList,
       RAction,
       WarehouseContent,
-      MatterItem,
+      MatterList,
     },
     methods: {
       //选择默认图片
@@ -128,21 +119,24 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizDetail';
-  .materiel_list .matter_item .mater_main {
-    .mater_other {
-      .mater_left {
-        color: #757575;
-        font-size: .12rem;
-        .units {
-          margin-right: .04rem;
+
+  .kcpd-detail-container {
+    .matter_item {
+      .mater_other {
+        .mater_left {
+          color: #757575;
+          font-size: .12rem;
+          .units {
+            margin-right: .04rem;
+          }
         }
-      }    
-      .mater_num {
-        color: #111;
-        font-size: .14rem;
-        font-weight: bold;
-        .diff_num {
-          color: #ea5455;
+        .mater_num {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+          .diff_num {
+            color: #ea5455;
+          }
         }
       }
     }

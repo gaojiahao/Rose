@@ -19,35 +19,27 @@
         <warehouse-content :warehouse="warehouseIn"></warehouse-content>
       </div>
       <!-- 物料列表 -->
-      <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
+      <matter-list :matter-list="orderInfo.inPut.dataSet">
+        <!-- 调拨数量 -->
+        <div class="mater_other" slot="matterOther" slot-scope="{item}">
+          <div class="mater_left">
+            <span class="units">
+              属性: {{item.tdProcessing}}
+            </span>
+            <span class="units">
+              计量单位: {{item.measureUnit_transObjCode}}
+            </span>
+          </div>
+          <div class="mater_num">
+            <span class="num">
+              调拨数量: {{item.tdQty | toFixed}}
+            </span>
+            <span class="units">
+              [库存数量: {{item.thenQtyStock | toFixed}}]
+            </span>
+          </div>
         </div>
-        <div class="mater_list">
-          <matter-item :item="item" :class="{'vux-1px-b' : index !==  orderInfo.inPut.dataSet.length - 1}"
-                        v-for="(item, index) in orderInfo.inPut.dataSet" :key='index'>
-            <!-- 调拨数量 -->
-            <div class='mater_other' slot="other">
-              <div class='mater_left'>
-                <span class="units">
-                  属性: {{item.tdProcessing}}
-                </span>
-                <span class="units">
-                  计量单位: {{item.measureUnit_transObjCode}}
-                </span>
-              </div>
-              <div class='mater_num'>
-                <span class="num">
-                  调拨数量: {{item.tdQty | toFixed}}
-                </span>
-                <span class="units">
-                  [库存数量: {{item.thenQtyStock | toFixed}}]
-                </span>
-              </div>
-            </div>
-          </matter-item>
-        </div>
-      </div>
+      </matter-list>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 @on-submit-success="submitSuccessCallback"></r-action>
@@ -65,7 +57,7 @@
   import workFlow from 'components/workFlow'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
-  import MatterItem from 'components/detail/commonPart/MatterItem'
+  import MatterList from 'components/detail/commonPart/MatterList'
 
   export default {
     data() {
@@ -81,7 +73,7 @@
       PopWarehouseList,
       RAction,
       WarehouseContent,
-      MatterItem,
+      MatterList,
     },
     methods: {
       //选择默认图片

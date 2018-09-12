@@ -21,12 +21,12 @@
           <span class="num">{{item.specification_transObjCode || '无'}}</span>
         </div>
       </div>
-      <slot name="other">
+      <slot name="other" :item="item">
         <!-- 物料数量和价格 -->
-        <div class='mater_other' v-if="!this.$slots.other">
+        <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
           <div class='mater_num' v-if='item.tdQty'>
             <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-            <span class='num'>数量: {{item.tdQty}}</span>
+            <span class='num'>数量: {{item.tdQty | toFixed}}</span>
             <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
           </div>
           <div class='mater_other' v-if="item.priceType || item.priceType === ''">
@@ -40,8 +40,8 @@
             <span class="num"
                   :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
                   v-if="item.taxRate">
-                    [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                  </span>
+              [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+            </span>
           </div>
         </div>
       </slot>
@@ -112,94 +112,94 @@
       margin-left: .1rem;
       display: inline-block;
       box-sizing: border-box;
-      // 物料名称
-      .mater_name {
-        overflow: hidden;
-        display: -webkit-box;
-        max-height: .46rem;
-        color: #111;
-        font-size: .14rem;
-        font-weight: bold;
-        -webkit-line-clamp: 2;
-        text-overflow: ellipsis;
-        -webkit-box-orient: vertical;
-      }
-      // 物料信息
-      .mater_info {
-        margin-top: .02rem;
-        color: #757575;
-        font-size: 0;
-        // 物料编码和规格
-        .info-item {
-          display: inline-block;
-          margin-right: .06rem;
-          
-          .title, .num {
-            font-size: .1rem;
-            padding: .01rem .04rem;
-          }
+    }
+    // 物料名称
+    .mater_name {
+      overflow: hidden;
+      display: -webkit-box;
+      max-height: .46rem;
+      color: #111;
+      font-size: .14rem;
+      font-weight: bold;
+      -webkit-line-clamp: 2;
+      text-overflow: ellipsis;
+      -webkit-box-orient: vertical;
+    }
+    // 物料信息
+    .mater_info {
+      margin-top: .02rem;
+      color: #757575;
+      font-size: 0;
+      // 物料编码和规格
+      .info-item {
+        display: inline-block;
+        margin-right: .06rem;
+
+        .title, .num {
+          font-size: .1rem;
+          padding: .01rem .04rem;
+        }
+        .title {
+          color: #fff;
+          background: #3f72af;
+          border-top-left-radius: .12rem;
+          border-bottom-left-radius: .12rem;
+        }
+        .num {
+          color: #111;
+          max-width: .9rem;
+          overflow: hidden;
+          white-space: nowrap;
+          background: #dbe2ef;
+          text-overflow: ellipsis;
+          border-top-right-radius: .12rem;
+          border-bottom-right-radius: .12rem;
+        }
+        // 规格
+        &.mater_spec {
           .title {
-            color: #fff;
-            background: #3f72af;
-            border-top-left-radius: .12rem;
-            border-bottom-left-radius: .12rem;
+            background: #537791;
           }
           .num {
-            color: #111;
-            max-width: .9rem;
-            overflow: hidden;
-            white-space: nowrap;
-            background: #dbe2ef;
-            text-overflow: ellipsis;
-            border-top-right-radius: .12rem;
-            border-bottom-right-radius: .12rem;
-          }
-          // 规格
-          &.mater_spec {
-            .title {
-              background: #537791;
-            }
-            .num {
-              color: #fff;
-              max-width: .6rem;
-              background: #ff7f50;
-            }
+            color: #fff;
+            max-width: .6rem;
+            background: #ff7f50;
           }
         }
       }
-      //物料价格，数量
-      .mater_other {
-        margin-top: .02rem;
-        // 类型
-        .mater_spec {
-          font-size: .14rem;
+    }
+    //物料价格，数量
+    .mater_other {
+      margin-top: .02rem;
+      // 类型
+      .mater_spec {
+        font-size: .14rem;
+      }
+      // 一般金额
+      .mater_price {
+        color: #ea5455;
+        font-weight: bold;
+        font-size: .14rem;
+        line-height: 0.2rem;
+        margin-top: .04rem;
+        display: inline-block;
+        .symbol {
+          font-size: .12rem;
         }
-        // 一般金额
-        .mater_price {
-          color: #ea5455;
-          font-weight: bold;
-          font-size: .14rem;
-          line-height: 0.2rem;
-          margin-top: .04rem;
-          display: inline-block;
-          .symbol {
-            font-size: .12rem;
-          }          
-          .num {
-            font-size: .1rem;
-            color: #757575;
-          }
-        }
-        // 单价 数量 税率 等
-        .mater_num {
+        .num {
+          font-size: .1rem;
           color: #757575;
-          font-size: 0.1rem;
-          span {
-            display: inline-block;
-          }
-          .num {
-            margin-right: 0.04rem;
-          }
+        }
+      }
+      // 单价 数量 税率 等
+      .mater_num {
+        color: #757575;
+        font-size: 0.1rem;
+        span {
+          display: inline-block;
+        }
+        .num {
+          margin-right: 0.04rem;
         }
       }
     }
