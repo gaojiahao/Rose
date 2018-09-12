@@ -4,5 +4,10 @@ export default (val, num = 2) => {
     console.error('the value can not change to number');
     return
   }
-  return Number(val).toFixed(num);
+  let vArr = `${val}`.split('.');
+  if (vArr.length > 1) {
+    return parseFloat(Number(val).toFixed(num));
+  } else {
+    return parseInt(val)
+  }
 }
