@@ -150,7 +150,13 @@ export default {
           limit: this.limit,
           page: this.page,
           filter: JSON.stringify(filter),
-        }).then(({total = 0, tasks = []}) => {
+        }).then(({total = 0, tasks = [], success = true}) => {
+          if(!success){
+            this.$vux.alert.show({
+              content: '请求数据有误'
+            });
+            return;
+          }
           tasks.forEach(item => {           
             item.status = "待处理"
             item.transCode = item.businessKey.replace(/_/g,'');
