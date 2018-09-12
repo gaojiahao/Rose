@@ -44,12 +44,12 @@
             name: '物料名称',
             value: 'inventoryName',
           }, {
-            name: '往来信息',
+            name: '往来名称',
             value: 'dealerName',
-          }, {
+          },/* {
             name: '项目名称',
             value: 'projectName',
-          },
+          },*/
         ],
       }
     },

@@ -73,7 +73,7 @@
             name: '经办人',
             value: 'handlerName',
           }, /*{
-            name: '往来信息',
+            name: '往来名称',
             value: 'dealerName_dealerDebit',
           },*/ {
             name: '商机标题',
