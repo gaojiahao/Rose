@@ -75,9 +75,6 @@
             name: '经办人',
             value: 'handlerName',
           }, {
-            name: '往来信息',
-            value: 'dealerName',
-          }, {
             name: '项目名称',
             value: 'projectName',
           },

@@ -46,7 +46,7 @@ export default {
           name: '物料名称',
           value: 'inventoryName',
         }, {
-          name: '往来信息',
+          name: '往来名称',
           value: 'dealerName',
         },
       ],
