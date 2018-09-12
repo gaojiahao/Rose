@@ -1,7 +1,7 @@
 <template>
-  <div v-if="cellContent" class="each_cell" :class="{'vux-1px-t' : showTopBorder}">
-    <span class="cell_name">{{ cellTitle }}:</span>
-    <span class="cell_content" :class="{'when-is-right' : textRight}">
+  <div v-if="cellContent" class="each_cell" :class="{'vux-1px-t' : showTopBorder, 'when-is-right' : textRight}">
+    <span class="cell_name">{{ cellTitle }}: </span>
+    <span class="cell_content">
       <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent }}
     </span>
   </div>
@@ -31,22 +31,23 @@ export default {
 
 <style lang='scss' scoped>
 .each_cell {
-  display: flex;
   font-size: .14rem;
   padding: .08rem 0;
-  align-items: center;
   .cell_name {
     color: #757575;
-    margin-right: .1rem;
+    margin-right: .04rem;
   }
   .cell_content {
     line-height: .28rem;
     font-weight: bold;
   }
-  .when-is-right {
+}
+.when-is-right {
+  display: flex;
+  align-items: center;
+  .cell_content {
     flex: 1;
     text-align: right;
   }
 }
-
 </style>

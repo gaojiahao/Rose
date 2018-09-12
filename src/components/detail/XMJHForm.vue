@@ -11,8 +11,8 @@
           <form-cell cellTitle="类型" :cellContent="projectApproval.projectType"></form-cell>
           <form-cell cellTitle="经理" :cellContent="projectApproval.projectManager"></form-cell>
           <form-cell cellTitle="说明" :cellContent="projectApproval.comment || '无'"></form-cell>
-          <form-cell cellTitle="预算开始日期" :cellContent="projectApproval.expectStartDate | timeSplit"></form-cell>
-          <form-cell cellTitle="预算截止日期" :cellContent="projectApproval.expectEndDate | timeSplit"></form-cell>
+          <form-cell cellTitle="预期开始日期" :cellContent="projectApproval.expectStartDate | timeSplit"></form-cell>
+          <form-cell cellTitle="预期截止日期" :cellContent="projectApproval.expectEndDate | timeSplit"></form-cell>
         </div>
       </div>      
       <!-- 任务计划明细 -->

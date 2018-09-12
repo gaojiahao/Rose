@@ -20,14 +20,14 @@
         </group>
       </div>
 
-      <!-- 预算开始日期 -->
+      <!-- 预期开始日期 -->
       <div class="trade_mode mg_auto box_sd">
-        <p class="title">预算开始日期</p>
+        <p class="title">预期开始日期</p>
         <p class="mode">{{projectApproval.expectStartDate | dateFormat('YYYY-MM-DD')}}</p>
       </div>
-      <!-- 预算截止日期 -->
+      <!-- 预期截止日期 -->
       <div class="trade_mode mg_auto box_sd">
-        <p class="title">预算截止日期</p>
+        <p class="title">预期截止日期</p>
         <p class="mode">{{projectApproval.expectEndDate | dateFormat('YYYY-MM-DD')}}</p>
       </div>
       <!-- 实际开始日期 -->

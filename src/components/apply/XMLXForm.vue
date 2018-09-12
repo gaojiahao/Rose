@@ -47,15 +47,15 @@
                             </span>
                           </template>
                         </x-input>
-                        <datetime title="预算开始日期" v-model='ProjectApproval.expectStartDate'>
+                        <datetime title="预期开始日期" v-model='ProjectApproval.expectStartDate'>
                            <template slot="title">
-                            <span class='required'>预算开始日期
+                            <span class='required'>预期开始日期
                             </span>
                           </template>
                         </datetime>
-                        <datetime title="预算截止日期" v-model='ProjectApproval.expectEndDate'>
+                        <datetime title="预期截止日期" v-model='ProjectApproval.expectEndDate'>
                            <template slot="title">
-                            <span class='required'>预算截止日期
+                            <span class='required'>预期截止日期
                             </span>
                           </template>
                         </datetime>
