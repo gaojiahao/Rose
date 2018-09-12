@@ -52,7 +52,6 @@
                   <div class="mater_main">
                     <!-- 物料名称 -->
                     <div class="mater_name">
-                      <span class="whiNum">No.{{index + 1}}</span>
                       {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
