@@ -1,4 +1,4 @@
-import {getWorkFlow, currentUser, getListId, isMyflow,getAppExampleDetails} from 'service/detailService.js'
+import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService.js'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -6,7 +6,7 @@ import FormCell from 'components/detail/commonPart/FormCell'
 // 映射表 引入
 import businessMap from '@/home/pages/maps/businessApply.js'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
 
 export default {
@@ -17,8 +17,8 @@ export default {
     return {
       transCode: '',
       comment: '',//审批意见
-      taskId : '',
-      listId : '',
+      taskId: '',
+      listId: '',
       userId: '',
       userName: '',
       cancelStatus: false,
@@ -30,12 +30,12 @@ export default {
       actions: [],
       isMine: false, // 是否为我创建
       noOperation: true, // 是否审批过
-      RelatedAppList : [] ,//相关实例所有数据
-      HasValRealted : false,//相关实例是否有值为0
+      RelatedAppList: [],//相关实例所有数据
+      HasValRealted: false,//相关实例是否有值为0
       orderInfo: {}, // 表单内容
     }
   },
-  computed:{
+  computed: {
     // 合计金额
     noTaxAmount() {
       let total = 0;
@@ -59,11 +59,11 @@ export default {
   },
   methods: {
     //跳转到相关实例
-    getSwiper(){
+    getSwiper() {
       this.$router.push({
-        path:`/related/${this.listId}`,
-        query:{
-          transCode : this.transCode
+        path: `/related/${this.listId}`,
+        query: {
+          transCode: this.transCode
         }
       })
     },
@@ -72,6 +72,7 @@ export default {
       function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       }
+
       return (S4() + S4() + S4());
     },
     // TODO 获取当前用户
@@ -143,15 +144,6 @@ export default {
           return
         }
 
-        // this.actions = actions.split(',');
-        this.actions = ['agreement', 'disagree']; // actions字段没有返回，修改固定赋值
-        // 判断是否为我创建的任务
-        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
-          this.isMine = true;
-          // 删除拒绝，加入撤回
-          this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
-        }
-
         // 判断是否有审批操作
         workFlow.filter(item => item.isFirstNode === 1).every(item => {
           // 经过审批则不能撤回
@@ -161,6 +153,17 @@ export default {
           }
           return true
         });
+
+        // this.actions = actions.split(',');
+        this.actions = ['agreement', 'disagree']; // actions字段没有返回，修改固定赋值
+        // 判断是否为我创建的任务
+        if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
+          this.isMine = true;
+          // 如果没有审批操作，则删除拒绝，加入撤回
+          if (this.noOperation) {
+            this.actions.splice(this.actions.findIndex(item => item === 'disagree'), 1, 'revoke');
+          }
+        }
 
         this.taskId = taskId;
         this.isMyTask = isMyTask === 1;
@@ -176,23 +179,23 @@ export default {
     submitSuccessCallback(val) {
       console.log(val);
       let type = JSON.parse(val).type;
-      if(type !== 'revoke'){
+      if (type !== 'revoke') {
         this.$emit('change', true);
       }
     },
     //TODO 获取相关实例
-    getAppExampleDetails(){
-       return getAppExampleDetails({
-        transCode :this.transCode,
-        listId :this.listId
-      }).then(data=>{
+    getAppExampleDetails() {
+      return getAppExampleDetails({
+        transCode: this.transCode,
+        listId: this.listId
+      }).then(data => {
         let relatedApply = data.relevantItems;
-        relatedApply.forEach(item=>{
-          if(businessMap[item.listName]){
-           this.RelatedAppList.push(item);
-           if(item.itemCount > 0){
-             this.HasValRealted = true;
-           }
+        relatedApply.forEach(item => {
+          if (businessMap[item.listName]) {
+            this.RelatedAppList.push(item);
+            if (item.itemCount > 0) {
+              this.HasValRealted = true;
+            }
           }
         })
       })
@@ -224,7 +227,6 @@ export default {
     this.loadPage();
   },
   mounted() {
-
 
 
   },

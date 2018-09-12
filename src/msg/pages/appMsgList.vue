@@ -149,7 +149,7 @@ export default {
           limit: this.limit,
           page: this.page,
           filter: JSON.stringify(filter),
-        }).then(({total = 0, tasks = []}) => {
+        }).then(({total = 0, tasks = [], success = true}) => {
           tasks.forEach(item => {           
             item.status = "待处理"
             item.transCode = item.businessKey.replace(/_/g,'');
