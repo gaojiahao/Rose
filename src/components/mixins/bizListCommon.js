@@ -236,19 +236,19 @@ export default {
           this.setStatus(item);
           item.count = 0;
           item.itmes.forEach(mitem => {
-            // 当 count = tdAmount 相加的时候
-            if (mitem.tdAmount > 0) {
+            if (this.noTaxRate) {
+              // 不含税
+              let amount = accMul(mitem.price, mitem.tdQty);
+              item.count = toFixed(accAdd(item.count, amount));
+            } else {
+              // 含税
               if (mitem.tdQty > 0 && mitem.price > 0) {
                 mitem.noTaxAmount = accMul(mitem.price, mitem.tdQty);
                 mitem.taxAmount = accMul(mitem.noTaxAmount, 0.16);
                 mitem.tdAmount = accAdd(mitem.noTaxAmount, mitem.taxAmount);
               }
               item.count = toFixed(accAdd(item.count, mitem.tdAmount));
-              return
             }
-            // 当 count = price * tdqty
-            let amount = accMul(mitem.price, mitem.tdQty);
-            item.count = toFixed(accAdd(item.count, amount));
           });
 
           // 如果为搜索物料，将匹配的物料放在前面

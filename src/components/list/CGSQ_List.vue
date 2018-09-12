@@ -48,6 +48,7 @@
             value: 'inventoryName',
           },
         ],
+        noTaxRate: true, // 不含税
       }
     },
     mixins: [listCommon],
