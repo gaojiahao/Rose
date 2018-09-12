@@ -18,13 +18,13 @@
       <div class="project_info">
         <div class="info_title vux-1px-b"><span class="iconfont icon-yusuan2"></span>预算明细</div>
         <div class="project_content">
-          <form-cell cellTitle="收入" showSymbol :cellContent="numberComma(approval.budgetIncome)" :showTopBorder=false></form-cell>
-          <form-cell cellTitle="成本" showSymbol :cellContent="numberComma(approval.budgetCapital)"></form-cell>
-          <form-cell cellTitle="费用" showSymbol :cellContent="numberComma(approval.budgetCost)"></form-cell>
-          <form-cell cellTitle="利润" showSymbol :cellContent="numberComma(approval.budgetProfit)"></form-cell>
-          <form-cell cellTitle="利润率" :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
-          <form-cell cellTitle="开始日期" :cellContent="approval.expectStartDate | timeSplit"></form-cell>
-          <form-cell cellTitle="截止日期" :cellContent="approval.expectEndDate | timeSplit"></form-cell>
+          <form-cell cellTitle="收入" showSymbol textRight :cellContent="numberComma(approval.budgetIncome)" :showTopBorder=false></form-cell>
+          <form-cell cellTitle="成本" showSymbol textRight :cellContent="numberComma(approval.budgetCapital)"></form-cell>
+          <form-cell cellTitle="费用" showSymbol textRight :cellContent="numberComma(approval.budgetCost)"></form-cell>
+          <form-cell cellTitle="利润" showSymbol textRight :cellContent="numberComma(approval.budgetProfit)"></form-cell>
+          <form-cell cellTitle="利润率" textRight :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
+          <form-cell cellTitle="开始日期" textRight :cellContent="approval.expectStartDate | timeSplit"></form-cell>
+          <form-cell cellTitle="截止日期" textRight :cellContent="approval.expectEndDate | timeSplit"></form-cell>
         </div>
       </div>
     </div>
