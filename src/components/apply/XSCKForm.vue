@@ -98,8 +98,8 @@
                              <!-- 物料属性和单位 -->
                             <div class='mater_more'>
                               <span class='unit'>属性: {{item.processing}}</span>
-                              <span class='unit'>计量单位: {{item.measureUnit}}</span>
                               <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                              <span class='unit'>计量单位: {{item.measureUnit}}</span>
                             </div>
                             <!-- 库存 -->
                             <div class='mater_more'>
