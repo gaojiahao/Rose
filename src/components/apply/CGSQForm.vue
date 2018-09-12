@@ -135,6 +135,7 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
+import {accMul} from '@/home/pages/maps/decimalsAdd'
 
 export default {
   directives: {
@@ -294,9 +295,10 @@ export default {
             tdQty : item.tdQty,     //数量
             assistQty : item.assistQty || 0,        //辅计数量
             price : item.price, //单价
-            promDeliTime : null, //预期交货日
-            comment : ''               //申请说明
-          })
+            promDeliTime : item.promDeliTime || null, //预期交货日
+            comment : item.comment || '',               //申请说明
+            tdAmount: accMul(item.price, item.tdQty), // 合计
+          });
           return true
         })
       }
