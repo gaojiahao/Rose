@@ -50,7 +50,6 @@
                   <div class="mater_main">
                     <!-- 物料名称 -->
                     <div class="mater_name">
-                      <span class="whiNum">No.{{index + 1}}</span>
                       {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
@@ -77,8 +76,10 @@
                     <div class='mater_more'>
                       <span class='processing'>属性: {{item.processing}}</span>
                       <span class='measureUnit'>计量单位: {{item.measureUnit}}</span>
+                      <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                    </div>
+                    <div class='mater_more'>
                       <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                      <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>

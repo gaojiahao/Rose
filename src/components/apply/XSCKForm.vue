@@ -99,8 +99,11 @@
                             <div class='mater_more'>
                               <span class='unit'>属性: {{item.processing}}</span>
                               <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                              <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                            </div>
+                            <!-- 库存 -->
+                            <div class='mater_more'>
                               <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
-                              <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>
                             </div>
                             <!-- 物料数量和价格 -->
                             <div class="mater_other">

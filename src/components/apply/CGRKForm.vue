@@ -80,8 +80,11 @@
                     <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                    </div>
+                    <!-- 余额-->
+                    <div class='mater_more'>
                         <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                        <span v-show='item.inventoryColor' class='mater_color'>颜色: {{item.inventoryColor}}</span>
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
