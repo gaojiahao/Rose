@@ -60,7 +60,8 @@
 <script>
   import {getList} from 'service/commonService'
   import listCommon from './../mixins/bizListCommon'
-
+  // 方法引入
+  import {accMul} from '@/home/pages/maps/decimalsAdd'
   export default {
     data() {
       return {
@@ -89,7 +90,8 @@
         if (!val && val !== 0) {
           return '无';
         }
-        return `${val * 100}%`;
+        let budget = accMul(val,100);
+        return `${budget}%`;
       },
     },
     methods: {

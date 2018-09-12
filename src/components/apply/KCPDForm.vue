@@ -59,12 +59,8 @@
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                     </div>
-                    <div class="matter-remain">
-                      <div class="remain">
-                        <span class="symbol">库存: </span>
-                        <span class="num">{{item.qtyBal}}</span>
-                      </div>
-                      <!-- <r-number :num="item.tdQty" v-model="item.tdQty"></r-number> -->
+                    <div class="mater_more">                     
+                        <span class="symbol">库存: {{item.qtyBal}}</span>
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
@@ -76,11 +72,12 @@
                 <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="数量" text-align='right' placeholder='请填写'
+                              @on-change="getNum(item)"
                              @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
                   </group>
                   <group>
                     <cell title="差异数量" text-align='right' placeholder='请填写'
-                    :value='Math.floor(item.tdQty - item.qtyBal) > 0 ? `+${Math.floor(item.tdQty - item.qtyBal) }` : Math.floor(item.tdQty - item.qtyBal) '
+                    :value="item.differenceNum"
                     :class='{high_light : item.tdQty - item.qtyBal !== 0}'></cell>
                   </group>
                 </div>
@@ -88,7 +85,6 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div> -->
           <div class="handle_part" v-if="matterList.length">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
@@ -104,7 +100,6 @@
     </div>
     <!-- 底部确认栏 -->
     <div class='btn-no-amt vux-1px-t' v-if="!matterModifyClass">
-      <!-- <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div> -->
       <div class="btn-item" @click="save">提交</div>
     </div>
     <!-- 底部删除确认栏 -->
@@ -131,6 +126,8 @@ import ApplyCommon from './../mixins/applyCommon'
 import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
+// 方法引入
+import {accSub} from '@/home/pages/maps/decimalsAdd'
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -168,14 +165,10 @@ export default {
     }
   },
   methods: {
-    // TODO 滑动删除
-    // delClick(item, index) {
-    //   let arr = this.matterList;
-    //   arr.splice(index, 1);
-    //   // 删除输入过的价格
-    //   delete this.numMap[item.inventoryCode];
-    //   this.$refs.matter.delSelItem(item);
-    // },
+    //计算库存差异
+    getNum(item){
+      item.differenceNum = accSub(item.tdQty,item.qtyBal);
+    },
     // 滑动删除
     delClick(index, sItem) {
       let arr = this.selItems;
@@ -238,7 +231,7 @@ export default {
     selMatter(val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
-        item.tdQty = this.numMap[item.inventoryCode] || ''
+        item.tdQty = this.numMap[item.inventoryCode] ||'';
       });
       this.numMap = {};
       this.matterList = [...sels];
@@ -276,7 +269,7 @@ export default {
           transObjCode: item.inventoryCode, // 物料编码
           thenQtyStock: item.qtyBal, // 可用库存
           tdQty: item.tdQty, // 盘点数量
-          differenceNum: Math.floor(item.tdQty - item.qtyBal) || 0,
+          differenceNum: item.differenceNum || 0,
           assistQty: item.assistQty || 0, // 辅计数量（明细）
           assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
           assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
