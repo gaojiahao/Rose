@@ -17,9 +17,17 @@ import DETAIL from '../pages/apps/bizApp/detail/detail'
 import RELATED from '../pages/apps/bizApp/detail/related/related'
 // ------- >科目应用 <-------
 
+// ------- >仪表视图 <-------
+import DASHBOARD from '../pages/apps/bizApp/dashboard/dashboard'
 export default [
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
+  {
+    path: '/dashboard',
+    name: 'DASHBOARD',
+    component: DASHBOARD,
+    meta: { title: '仪表视图' }
+  },
   {
     path:'/related/:listId',
     name:'RELATED',
