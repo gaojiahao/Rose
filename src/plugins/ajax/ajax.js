@@ -1,4 +1,3 @@
-import conf from './conf';
 import tokenService from '../../service/tokenService'
 import errHandle from 'service/errHandle'
 import axios from 'axios';
@@ -8,12 +7,8 @@ let qs = require('querystring');
 
 // TODO reject处理
 let rejectError = (reject, message) => {
-  message = message.slice(0, 200);
   errHandle(message);
-  reject && reject.call(null, {
-    success: false,
-    message
-  });
+  return Promise.reject({ success: false, message });
 };
 
 let Rxports = {
@@ -42,9 +37,6 @@ let Rxports = {
             'Content-Type': opts.contentType || '*/*',
             Authorization: token
           },
-          // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
-          // 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL
-          // baseURL: conf.base_url,
           timeout: opts.time || 10 * 1000,
           responseType: opts.dataType || 'json'
         }
@@ -66,7 +58,7 @@ let Rxports = {
             }
           }
         }
-        axios(params).then(function (res) {
+        axios(params).then( res => {
           let data = res.data;
           let {success = true, message = '请求异常'} = data;
           if (success && Number(res.status) === 200) {
@@ -74,7 +66,7 @@ let Rxports = {
           } else {
             rejectError(reject, message);
           }
-        }).catch(function (error) {
+        }).catch( error => {
           console.log(error);
           let res = error.response;
           let data = (res && res.data) || {};
@@ -86,6 +78,7 @@ let Rxports = {
           rejectError(reject, message);
         });
       }).catch(e => {
+        console.log(e);
         let {success = false, message = '请求异常'} = e;
         rejectError(reject, message);
       })
@@ -113,7 +106,7 @@ let Rxports = {
           } else {
             rejectError(reject, message);
           }
-        }).catch(function (error) {
+        }).catch( error => {
           let res = error.response;
           let data = (res && res.data) || {};
           let status = (res && res.status) || 0;
@@ -124,6 +117,7 @@ let Rxports = {
           rejectError(reject, message);
         });
       }).catch(e => {
+        console.log(e);
         let {success = false, message = '请求异常'} = e;
         rejectError(reject, message);
       })
