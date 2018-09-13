@@ -28,6 +28,7 @@ let webpackConfig = {
       'service': resolve('src/service'),
       'mixins': resolve('src/mixins'),
       'assets': resolve('src/assets'),
+      'plugins': resolve('src/plugins'),
       'components': resolve('src/components')
     }
   },

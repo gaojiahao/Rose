@@ -1,6 +1,7 @@
 <template>
   <!-- 合规财务报表 -->
   <div class="pages hgcw-list-container">
+    <div class="tips-word">请选择</div>
     <div class="btns">
       <div class="btn-item" v-for="(item, index) in listData" @click="goDetail(item)" :key="index">
         <span>{{item.title}}</span>
@@ -51,26 +52,42 @@
 
 <style scoped lang="scss">
   .hgcw-list-container {
-    .btns {
+    .tips-word {
+      top: 10%;
+      width: 100%;
+      color: #c8c8c8;
+      font-size: .4rem;
+      font-weight: 200;
+      text-align: center;
       position: absolute;
+    }
+    .btns {
       left: 0;
       top: 50%;
-      padding: 0 .2rem;
       width: 100%;
-      transform: translateY(-50%);
+      padding: 0 .2rem;
+      position: absolute;      
       box-sizing: border-box;
+      transform: translateY(-50%);
     }
     .btn-item {
-      display: flex;
-      justify-content: space-between;
-      margin-top: .15rem;
-      padding: .1rem;
-      background-color: #4b8bf4;
-      border-radius: .12rem;
       color: #fff;
+      font-size: .16rem;
+      font-weight: bold;
+      padding: .1rem 0;
+      margin-top: .2rem;
+      text-align: center;
+      position: relative;
+      border-radius: .08rem;
+      background: #5077aa;
+      box-shadow: 0 2px 5px #5077aa;
     }
     .vux-x-icon-ios-arrow-right {
+      top: 50%;
+      right: 1%;
       fill: #fff;
+      position: absolute;
+      transform: translate(0, -50%);
     }
   }
 </style>
