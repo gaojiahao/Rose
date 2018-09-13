@@ -11,7 +11,7 @@ let tokenService = {
    * 清除toke
    */
   clean() {
-    window.localStorage.removeItem(TOKEN_KEY);
+    window.sessionStorage.removeItem(TOKEN_KEY);
     window.localStorage.removeItem(RFD_TOKEN_KEY);
   },
   /**
@@ -31,7 +31,7 @@ let tokenService = {
    * 设置token
    */
   setToken(data) {
-    window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
+    window.sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       token: data.token,
       name: data.name,
@@ -48,7 +48,7 @@ let tokenService = {
   },
   // TODO 检查是否登录
   checkLogin(key = 'token') {
-    let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {};
+    let token = JSON.parse(window.sessionStorage.getItem(TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token[key]) {
       let timestamp = token.timestamp;
@@ -68,8 +68,6 @@ let tokenService = {
   login(key) {
     this.clean();
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
-    //本地测试模拟线上
-    //return this.QYWXLogin(key);
     //实际开发
     if (isQYWX) {
       return this.QYWXLogin(key);
@@ -77,7 +75,7 @@ let tokenService = {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fZeus&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
       }
     }
   },
@@ -95,7 +93,17 @@ let tokenService = {
           data: {
             loginModel: 1,
             password: '123456',
-            userCode: 'rfd14'
+            // userCode: 'rfd14'
+            // A
+            // userCode : '0586'
+            // B
+            userCode : '1229'
+            // C
+            // userCode : '0053'
+            // D 财务
+            // userCode : '0936'
+            // E 总裁
+            // userCode : '0414'
           }
         };
 

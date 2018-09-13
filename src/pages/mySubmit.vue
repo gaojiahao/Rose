@@ -181,7 +181,7 @@
       }
     },
     created() {
-      let {avatar = ''} = JSON.parse(localStorage.getItem('ROSE_LOGIN_TOKEN') || '{}');
+      let {avatar = ''} = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN') || '{}');
       //获取顶部头像图片
       this.avatar = avatar;
       this.getUser();

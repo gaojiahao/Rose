@@ -71,7 +71,7 @@
             stateDone: false,
             lineDone: false,
             tip: '',
-            title: '总裁——王珏'
+            title: '王珏 - 总裁'
           },
         ],
       }
@@ -279,6 +279,7 @@
           flex: 1;
           padding-left: 10px;
           text-align: right;
+          font-size: 14px;
         }
       }
     }
