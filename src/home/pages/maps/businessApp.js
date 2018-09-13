@@ -22,7 +22,8 @@ export default {
   财务: {
     项目费用报销: 'FYBX',
     往来余额: 'WLYE',
-    货币资金: 'HBZJ'
+    货币资金: 'HBZJ',
+    合规财务报表: 'HGCW'
   },
   项目: {
     项目立项: 'XMLX',

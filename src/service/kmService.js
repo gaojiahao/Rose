@@ -31,6 +31,22 @@ export let getViewList = (data = {}) => {
   });
 };
 
+// TODO 获取资产负债表数据
+export let getOffBalance = () => {
+  return $axios.ajax({
+    url: '/account-api/account/getOffBalanceForMobile',
+  }).catch(e => {
+    return errHandle(e);
+  });
+};
+// TODO 获取利润表数据
+export let getProfit = () => {
+  return $axios.ajax({
+    url: '/account-api/account/getProfitForMobile',
+  }).catch(e => {
+    return errHandle(e);
+  });
+};
 
 export default {
   getListClassfiy,

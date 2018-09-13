@@ -16,5 +16,8 @@ export default {
   XMJX: '项目结项',
   CH: '存货',
   WLYE: '往来余额',
-  HBZJ: '货币资金'
+  HBZJ: '货币资金',
+  HGCW: '合规财务报',
+  ZCFZ: '资产负债',
+  LR: '利润'
 }

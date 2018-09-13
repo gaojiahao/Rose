@@ -68,8 +68,11 @@
       }
     },
     beforeRouteEnter(to, from, next) {
-      let code = businessText[to.params.code];
-      to.meta.title = `${code}详情`;
+      let {code = ''} = to.params;
+      if (code === 'HGCW') {
+        code = to.query.code || '';
+      }
+      to.meta.title = `${businessText[code]}详情`;
       next();
     },
     created() {
@@ -115,5 +118,5 @@
   }
   .pages {
     background: #F4F4F4;
-  }   
+  }
 </style>
