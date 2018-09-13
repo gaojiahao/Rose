@@ -1,19 +1,12 @@
 import $axios from '../plugins/ajax'
-import {AlertModule} from 'vux'
+import errHandle from './errHandle'
 
-// TODO 错误处理回调
-let errorHandler = (e) => {
-  AlertModule.show({
-    content: e.message,
-  });
-  return Promise.reject(e)
-};
 let homeService = {
     getMeau(){
         return $axios.ajax({
             url:'/H_roleplay-si/ds/getMenu?_dc=1531978945753'
         }).catch(e => {
-            return errorHandler(e);
+            return errHandle(e);
         });
 
     },
@@ -21,7 +14,7 @@ let homeService = {
         return $axios.ajax({
             url:'/H_roleplay-si/ds/getMyTaskCountAll'
         }).catch(e => {
-         return errorHandler(e);
+         return errHandle(e);
         });
 
     },
@@ -30,7 +23,7 @@ let homeService = {
         return $axios.ajax({
             url:'/H_roleplay-si/userInfo/currentUser'
         }).catch(e => {
-            return errorHandler(e);
+            return errHandle(e);
         });
     },
     //切换主体
@@ -41,7 +34,7 @@ let homeService = {
             url: '/H_roleplay-si/changeEntity',
             data: data
           }).catch(e => {
-            return errorHandler(e);
+            return errHandle(e);
           });
     }
 }

@@ -1,21 +1,12 @@
 import $axios from '../plugins/ajax';
-import {AlertModule} from 'vux'
-// TODO 错误处理回调
-let errorHandler = (e) => {
-  AlertModule.show({
-    content: e.message,
-  });
-  return Promise.reject(e)
-};
+import errHandle from './errHandle'
 
 // TODO 消息代办列表
 export let getMsgList = (data = {}) => {
     return $axios.ajax({
-        // url: '/H_roleplay-si/ds/getMyAgenda',
         url:'/H_roleplay-si/ds/getTasksListData?entityId=20000&para1='
-        // data
     }).catch(e => {
-        return errorHandler(e);
+        return errHandle(e);
     });
 }
 // TODO 所有消息列表
@@ -24,6 +15,6 @@ export let getAllMsgList = (data = {}) => {
         url: '/H_roleplay-si/ds/getMyTasksAndLastNode',
         data
     }).catch(e => {
-        return errorHandler(e);
+        return errHandle(e);
     });
 }

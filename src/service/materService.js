@@ -1,13 +1,5 @@
 import $axios from '../plugins/ajax';
-import {AlertModule} from 'vux'
-
-// TODO 错误处理回调
-let errorHandler = (e) => {
-  AlertModule.show({
-    content: e.message,
-  });
-  return Promise.reject(e)
-};
+import errHandle from './errHandle'
 
 // TODO 保存物料
 export let save = (data = {}) => {
@@ -15,7 +7,7 @@ export let save = (data = {}) => {
     url: '/H_roleplay-si/inventory/save',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -25,7 +17,7 @@ export let update = (data = {}) => {
     url: '/H_roleplay-si/inventory/update',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -35,7 +27,7 @@ export let findData = (transCode = '') => {
     url: '/H_roleplay-si/inventory/findData',
     data: {transCode}
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -45,7 +37,7 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
     file,
     biReferenceId
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -58,7 +50,7 @@ export let delImg = (id = '') => {
       list: 'attachments',
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -68,7 +60,7 @@ export let getSumInvBalance = (data = {}) => {
     url: '/H_roleplay-si/ds/getSumInvBalance',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 //获取费用
@@ -77,7 +69,7 @@ export let getCost = (data = {}) => {
     url: '/H_roleplay-si/ds/getCostAll',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 
 }
@@ -91,7 +83,7 @@ export let getObjInventoryByProcessing = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -104,7 +96,7 @@ export let getInventory7501 = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -117,7 +109,7 @@ export let getInventory7502 = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 //获取物料列表

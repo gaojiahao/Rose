@@ -1,13 +1,5 @@
 import $axios from '../plugins/ajax';
-import {AlertModule} from 'vux'
-
-// TODO 错误处理回调
-let errorHandler = (e) => {
-  AlertModule.show({
-    content: e.message,
-  });
-  return Promise.reject(e)
-};
+import errHandle from './errHandle'
 
 // TODO 保存
 export let saveAndStartWf = (data = {}) => {
@@ -17,7 +9,7 @@ export let saveAndStartWf = (data = {}) => {
     url: '/H_roleplay-si/formAPI/saveAndStartWf',
     data: data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -29,7 +21,7 @@ export let saveAndCommitTask = (data = {}) => {
     url: '/H_roleplay-si/formAPI/saveAndCommitTask',
     data: data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -41,7 +33,7 @@ export let submitAndCalc = (data = {}) => {
     url: '/H_roleplay-si/formAPI/submitAndCalc',
     data: data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -52,26 +44,19 @@ export let commitTask = (data = {}) => {
     url: '/H_roleplay-si/flow/commitTask',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   })
 }
 
 // TODO 获取当前用户信息(基础对象调用)
 export let getBaseInfoDataBase = () => {
   return new Promise(async (resolve, reject) => {
-    let user = {};
-    let baseErrorHandler = (e) => {
-      AlertModule.show({
-        content: e.message,
-      });
-      reject(e);
-    };
     let {nickname, userId} = await $axios.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
     }).catch(e => {
-      baseErrorHandler(e);
+      return errHandle(e);
     });
     let {userGroupId = '', userGroupName = ''} = await $axios.ajax({
       url: '/H_roleplay-si/ds/getUnitsByUserId',
@@ -85,7 +70,7 @@ export let getBaseInfoDataBase = () => {
       let [unit = {}] = tableContent;
       return unit
     }).catch(e => {
-      baseErrorHandler(e);
+      return errHandle(e);
     });
     $axios.ajax({
       url: '/H_roleplay-si/ds/getRolesByUserId',
@@ -107,7 +92,7 @@ export let getBaseInfoDataBase = () => {
         handlerRoleName: role.userGroupName || '',
       });
     }).catch(e => {
-      baseErrorHandler(e);
+      return errHandle(e);
     });
   });
 };
@@ -115,19 +100,13 @@ export let getBaseInfoDataBase = () => {
 // TODO 获取当前用户信息
 export let getBaseInfoData = () => {
   return new Promise(async (resolve, reject) => {
-    let user = {};
-    let baseErrorHandler = (e) => {
-      AlertModule.show({
-        content: e.message,
-      });
-      reject(e);
-    };
+
     let {nickname, userId, userCode} = await $axios.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
     }).catch(e => {
-      baseErrorHandler(e);
+      return errHandle(e);
     });
     let {groupId = '', groupName = ''} = await $axios.ajax({
       url: '/H_roleplay-si/ds/getGroupByUserId',
@@ -141,7 +120,7 @@ export let getBaseInfoData = () => {
       let [unit = {}] = tableContent;
       return unit
     }).catch(e => {
-      baseErrorHandler(e);
+      return errHandle(e);
     });
     $axios.ajax({
       url: '/H_roleplay-si/ds/getRoleByUserId',
@@ -164,7 +143,7 @@ export let getBaseInfoData = () => {
         userCode: userCode,
       });
     }).catch(e => {
-      baseErrorHandler(e);
+      return errHandle(e);
     });
   });
 };
@@ -175,7 +154,7 @@ export let getList = (viewId = 0, data = {}) => {
     url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -185,7 +164,7 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
     file,
     biReferenceId
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -201,7 +180,7 @@ export let getDictByType = (type = '', data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -217,7 +196,7 @@ export let getDictByValue = (value = '', data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -230,7 +209,7 @@ export let getProcess = (listId = '') => {
       listId
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -246,7 +225,7 @@ export let getObjDealerByLabelName = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 

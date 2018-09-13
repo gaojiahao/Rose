@@ -1,13 +1,5 @@
 import $axios from '../plugins/ajax';
-import {AlertModule} from 'vux'
-
-// TODO 错误处理回调
-let errorHandler = (e) => {
-  AlertModule.show({
-    content: '数据请求有误，请尝试重新刷新'
-  });
-  return Promise.reject(e)
-};
+import errHandle from './errHandle'
 
 // TODO 获取list的分类
 export let getListClassfiy = (data = {}) => {
@@ -15,7 +7,7 @@ export let getListClassfiy = (data = {}) => {
     url: '/account-api/account/getEntryView',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -25,7 +17,7 @@ export let getView = (data = {}) => {
     url: '/account-api/account/getView',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -35,7 +27,7 @@ export let getViewList = (data = {}) => {
     url: '/account-api/account/getView',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 

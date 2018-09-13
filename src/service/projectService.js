@@ -1,13 +1,5 @@
 import $axios from '../plugins/ajax';
-import {AlertModule} from 'vux'
-
-// TODO 错误处理回调
-let errorHandler = (e) => {
-  AlertModule.show({
-    content: e.message,
-  });
-  return Promise.reject(e)
-};
+import errHandle from './errHandle'
 
 // TODO 保存项目立项
 export let saveProjectApproval = (data = {}) => {
@@ -15,7 +7,7 @@ export let saveProjectApproval = (data = {}) => {
     url: '/H_roleplay-si/projectApproval/save',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -25,7 +17,7 @@ export let updateProjectApproval = (data = {}) => {
     url: '/H_roleplay-si/projectApproval/save',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -35,7 +27,7 @@ export let findProjectApproval = (transCode = '') => {
     url: '/H_roleplay-si/projectApproval/findData',
     data: {transCode}
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -45,7 +37,7 @@ export let saveProjectPlan = (data = {}) => {
     url: '/H_roleplay-si/projectPlan/save',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -55,7 +47,7 @@ export let updateProjectPlan = (data = {}) => {
     url: '/H_roleplay-si/projectPlan/update',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -65,7 +57,7 @@ export let findProjectPlan = (transCode = '') => {
     url: '/H_roleplay-si/projectPlan/findData',
     data: {transCode}
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -75,7 +67,7 @@ export let saveProjectTask = (data = {}) => {
     url: '/H_roleplay-si/projectTask/save',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -85,7 +77,7 @@ export let updateProjectTask = (data = {}) => {
     url: '/H_roleplay-si/projectTask/update',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -95,7 +87,7 @@ export let findProjectTask = (transCode = '') => {
     url: '/H_roleplay-si/projectTask/findData',
     data: {transCode}
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -105,7 +97,7 @@ export let saveProjectConclusion = (data = {}) => {
     url: '/H_roleplay-si/projectConclusion/save',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -115,7 +107,7 @@ export let updateProjectConclusion = (data = {}) => {
     url: '/H_roleplay-si/projectConclusion/update',
     data
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -125,7 +117,7 @@ export let findProjectConclusion = (transCode = '') => {
     url: '/H_roleplay-si/projectConclusion/findData',
     data: {transCode}
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -141,7 +133,7 @@ export let getProjectPlanProjectName = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -154,7 +146,7 @@ export let getProjectApproval = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 
@@ -170,7 +162,7 @@ export let getProjectTodoTask = (data = {}) => {
       ...data
     }
   }).catch(e => {
-    return errorHandler(e);
+    return errHandle(e);
   });
 };
 //TODO获取费用报销中的项目列表
@@ -178,7 +170,9 @@ export let getProjectList = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getProjectApproval',
     data
-  })
+  }).catch(e => {
+    return errHandle(e);
+  });
 };
 
 //TODO 项目计划列表
@@ -189,7 +183,9 @@ export let getProjectPlanList = (data = {}) => {
       _dc: Date.now(),
       ...data
     }
-  })
+  }).catch(e => {
+    return errHandle(e);
+  });
 };
 
 //TODO 销售出库获取项目列表接口
@@ -200,7 +196,9 @@ export let getSalesOutStockProject = (data = {}) => {
       _dc: Date.now(),
       ...data
     }
-  })
+  }).catch(e => {
+    return errHandle(e);
+  });
 };
 
 export default {}
