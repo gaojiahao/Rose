@@ -1,6 +1,6 @@
 import conf from './conf';
 import tokenService from '../../service/tokenService'
-
+import errHandle from 'service/errHandle'
 import axios from 'axios';
 
 // import qs from 'qs';
@@ -9,6 +9,7 @@ let qs = require('querystring');
 // TODO reject处理
 let rejectError = (reject, message) => {
   message = message.slice(0, 200);
+  errHandle(message);
   reject && reject.call(null, {
     success: false,
     message

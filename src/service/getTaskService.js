@@ -1,5 +1,4 @@
 import $axios from '../plugins/ajax'
-import errHandle from './errHandle'
 
 let getTaskService = {
   // TODO 返回待处理列表
@@ -15,9 +14,7 @@ let getTaskService = {
         
         limit: 11
       }
-    }).catch( err => {
-      return errHandle(err);
-    });
+    })
   },
   //获取进行中列表
   getList(id,page,status) {
@@ -31,8 +28,6 @@ let getTaskService = {
           start: 0,
           limit: 11,
         }
-    }).catch( err => {
-      return errHandle(err);
     })
   }
 

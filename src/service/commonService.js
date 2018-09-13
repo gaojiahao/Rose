@@ -1,5 +1,4 @@
 import $axios from '../plugins/ajax';
-import errHandle from './errHandle'
 
 // TODO 保存
 export let saveAndStartWf = (data = {}) => {
@@ -8,9 +7,7 @@ export let saveAndStartWf = (data = {}) => {
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/saveAndStartWf',
     data: data
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 修改
@@ -20,9 +17,7 @@ export let saveAndCommitTask = (data = {}) => {
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/saveAndCommitTask',
     data: data
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 保存(没有工作流)
@@ -32,9 +27,7 @@ export let submitAndCalc = (data = {}) => {
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/submitAndCalc',
     data: data
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 export let commitTask = (data = {}) => {
@@ -43,8 +36,6 @@ export let commitTask = (data = {}) => {
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/flow/commitTask',
     data
-  }).catch(e => {
-    return errHandle(e);
   })
 }
 
@@ -55,9 +46,7 @@ export let getBaseInfoDataBase = () => {
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
-    }).catch(e => {
-      return errHandle(e);
-    });
+    })
     let {userGroupId = '', userGroupName = ''} = await $axios.ajax({
       url: '/H_roleplay-si/ds/getUnitsByUserId',
       data: {
@@ -69,9 +58,7 @@ export let getBaseInfoDataBase = () => {
     }).then(({tableContent = []}) => {
       let [unit = {}] = tableContent;
       return unit
-    }).catch(e => {
-      return errHandle(e);
-    });
+    })
     $axios.ajax({
       url: '/H_roleplay-si/ds/getRolesByUserId',
       data: {
@@ -91,9 +78,7 @@ export let getBaseInfoDataBase = () => {
         handlerRole: role.userGroupId || '',
         handlerRoleName: role.userGroupName || '',
       });
-    }).catch(e => {
-      return errHandle(e);
-    });
+    })
   });
 };
 
@@ -105,9 +90,7 @@ export let getBaseInfoData = () => {
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
-    }).catch(e => {
-      return errHandle(e);
-    });
+    })
     let {groupId = '', groupName = ''} = await $axios.ajax({
       url: '/H_roleplay-si/ds/getGroupByUserId',
       data: {
@@ -119,9 +102,7 @@ export let getBaseInfoData = () => {
     }).then(({tableContent = []}) => {
       let [unit = {}] = tableContent;
       return unit
-    }).catch(e => {
-      return errHandle(e);
-    });
+    })
     $axios.ajax({
       url: '/H_roleplay-si/ds/getRoleByUserId',
       data: {
@@ -142,9 +123,7 @@ export let getBaseInfoData = () => {
         handlerRoleName: role.roleName || '',
         userCode: userCode,
       });
-    }).catch(e => {
-      return errHandle(e);
-    });
+    })
   });
 };
 
@@ -153,9 +132,7 @@ export let getList = (viewId = 0, data = {}) => {
   return $axios.ajax({
     url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
     data
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 上传图片
@@ -163,9 +140,7 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   return $axios.upload({
     file,
     biReferenceId
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 获取加工属性
@@ -179,9 +154,7 @@ export let getDictByType = (type = '', data = {}) => {
       type,
       ...data
     }
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 获取材料大类、材料子类
@@ -195,9 +168,7 @@ export let getDictByValue = (value = '', data = {}) => {
       value,
       ...data
     }
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 获取工作流的processCode
@@ -208,9 +179,7 @@ export let getProcess = (listId = '') => {
       _dc: Date.now(),
       listId
     }
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 // TODO 获取员工、客户、加工商、渠道商
@@ -224,9 +193,7 @@ export let getObjDealerByLabelName = (data = {}) => {
       limit: 10000,
       ...data
     }
-  }).catch(e => {
-    return errHandle(e);
-  });
+  })
 };
 
 export default {
