@@ -17,7 +17,7 @@
                :class="{'final-total': lItem.isFinal,
                  'border-1px-t': lItem.isFinal || lItem.isTotal,
                  'is-first': lItem.bigSubject,
-                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject}"
+                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes('：')}"
                v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partLeftContent">
             {{lItem.subjectName}}
           </div>
@@ -56,6 +56,7 @@
   import RScroll from 'components/RScroll'
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from "@/home/pages/maps/decimalsAdd";
+  import {numberComma} from 'vux'
 
   export default {
     name: "ZCFZForm",
@@ -172,34 +173,8 @@
         if (!num) {
           return '-'
         }
-        let sym = num > 0 ? '' : '-';
-        let nArr = `${Math.abs(num)}`.split('.');
-        let intNum = nArr[0];
-        let decimal = nArr[1];
-        let len = intNum.length; // 整数长度
-        let unit = '';
-        let spt = 0; // 切割位置
-        if (len > 8) {
-          unit = '亿';
-          spt = 8;
-        } else if (len > 7) {
-          unit = '千万';
-          spt = 7;
-        } else if (len > 6) {
-          unit = '百万';
-          spt = 6;
-        } else if (len > 4) {
-          unit = '万';
-          spt = 4;
-        }
 
-        if (unit) {
-          decimal = `0.${intNum.substr(-spt, 2)}`; // 转换为小数0.xx
-          intNum = parseInt(intNum.slice(0, -spt));
-          return `${sym}${accAdd(intNum, decimal)}${unit}元`
-        }
-
-        return `${num}元`
+        return `${numberComma(toFixed(num))}元`
       }
     },
     created() {
@@ -227,17 +202,17 @@
 
   .detail_wrapper {
     height: 100%;
-    background-color: #000;
-    color: #eee;
     overflow: hidden;
+    background-color: #fff;
 
     /* 头部 */
     .header {
       display: flex;
       justify-content: space-between;
-      padding: 0 .15rem;
+      padding: .05rem .15rem;
       width: 100%;
       height: .3rem;
+      line-height: .2rem;
       box-sizing: border-box;
     }
     /* 顶部期初、期末 */
@@ -263,7 +238,6 @@
         width: 200%;
         height: .4rem;
         line-height: .4rem;
-        color: #fff;
         font-size: .18rem;
         font-weight: bold;
         box-sizing: border-box;
@@ -279,8 +253,7 @@
         &.final-total {
           height: .4rem;
           line-height: .3rem;
-          color: #fff;
-          font-size: .2rem;
+          font-size: .16rem;
           font-weight: bold;
         }
 
@@ -288,7 +261,6 @@
         &.is-first {
           height: .4rem;
           line-height: .3rem;
-          color: #fff;
           font-size: .2rem;
           font-weight: bold;
         }
@@ -313,12 +285,15 @@
           }
         }
         &.indent {
-          padding-left: 4em;
+          padding-left: 3em;
         }
       }
     }
     .part-right {
       text-align: right;
+      .content-item {
+        padding-left: 0;
+      }
     }
   }
 </style>
