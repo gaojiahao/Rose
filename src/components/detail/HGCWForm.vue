@@ -16,8 +16,8 @@
           <div class="content-item"
                :class="{'final-total': lItem.isFinal,
                  'border-1px-t': lItem.isFinal || lItem.isTotal,
-                 'is-first': lItem.isFirst,
-                 'indent': lItem.indent}"
+                 'is-first': lItem.bigSubject,
+                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject}"
                v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partLeftContent">
             {{lItem.subjectName}}
           </div>
@@ -29,7 +29,7 @@
             <div v-for="(item, index) in listData" :key="index">
               <div class="title" v-if="item.assetType"></div>
               <div class="content-item"
-                   :class="{'final-total': lItem.isFinal, 'is-first': lItem.isFirst, 'indent': lItem.indent}"
+                   :class="{'final-total': lItem.isFinal, 'is-first': lItem.bigSubject}"
                    v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partRightInit">
                 {{lItem.initialBalance | formatNum}}
               </div>
@@ -39,7 +39,7 @@
             <div v-for="(item, index) in listData" :key="index">
               <div class="title" v-if="item.assetType"></div>
               <div class="content-item"
-                   :class="{'final-total': lItem.isFinal, 'is-first': lItem.isFirst, 'indent': lItem.indent}"
+                   :class="{'final-total': lItem.isFinal, 'is-first': lItem.bigSubject}"
                    v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partRightFinal">
                 {{lItem.finalBalance | formatNum}}
               </div>
@@ -313,7 +313,7 @@
           }
         }
         &.indent {
-          padding-left: .3rem;
+          padding-left: 4em;
         }
       }
     }
