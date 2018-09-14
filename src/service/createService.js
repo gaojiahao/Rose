@@ -148,7 +148,7 @@ let createService = {
   // TODO 获取用户基本信息
   getBaseInfoData() {
     return new Promise((resolve, reject) => {
-      let currentUser = localStorage.getItem(USER_INFO);
+      let currentUser = sessionStorage.getItem(USER_INFO);
       // 处理当前用户数据，默认取第一个
       let handleCurrentUser = (data = {}) => {
         for (let [key, value] of Object.entries(data)) {
@@ -163,7 +163,7 @@ let createService = {
       $axios.ajax({
         url: '/H_roleplay-si/trans/getModelData?refresh=true&dsCode=getUserDetails',
       }).then((data = {}) => {
-        localStorage.setItem(USER_INFO, JSON.stringify(data));
+        sessionStorage.setItem(USER_INFO, JSON.stringify(data));
         resolve(handleCurrentUser(data));
       })
     });

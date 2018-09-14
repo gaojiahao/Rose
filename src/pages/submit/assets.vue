@@ -29,6 +29,11 @@
         </group>
         <group title="请填写明细" v-if="item.status">
           <x-input
+            title='资产名称'
+            text-align='right'
+            v-model="item.modName"
+          ></x-input>
+          <x-input
             title='单价'
             text-align='right'
             v-model.number="item.unitPrice"
@@ -102,15 +107,15 @@ export default {
       formDataNew:'',
       assetsList: [
         {
-          model: [["电脑", "桌子", "椅子"]], //资产型号
+          model: [['办公设备', '机器设备', '房屋建筑物', '其他设备']], //资产型号
           modelOn: [], //选中资产型号
-          modSpec: "", //资产型号规格
-          unit: [["台", "个", "张", "件"]], //计量单位
+          modSpec: '', //资产型号规格
+          unit: [['台', '套', '只', '量', 'm²']], //计量单位
           unitOn: [], //选中计量单位
-          num: "", //数量
-          unitPrice: "", //单价
-          applydept: "", //申请部门
-          usedept: "", //使用部门
+          num: '', //数量
+          unitPrice: '', //单价
+          applydept: '', //申请部门
+          usedept: '', //使用部门
           bulist: [], //费用所属事业部
           buOn: [], //费用所属事业部选中
           deptlist: [], //费用所属部门
@@ -119,8 +124,9 @@ export default {
           provOn: [], //核算归属省份选中
           banklist: [], //费用所属银行
           bankOn: [], //费用所属银行选中
-          explain: "", //说明
-          status: false
+          explain: '', //说明
+          status: false,
+          modName: '', // 资产名称
         }
       ]
     };
@@ -157,7 +163,7 @@ export default {
       if (e === true) {
         if (num == "1") {
           this.assetsList[index].deptOn = [];
-        } 
+        }
       } else {
         return;
       }
@@ -300,6 +306,7 @@ export default {
               "value": item.modelOn[0]
             },
             "var7": item.modSpec,
+            "var8": item.modName,
             "batchNo": {
               "text": item.unitOn[0],
               "selection": {
@@ -383,10 +390,10 @@ export default {
       let sessionArr = [];
       for (let i = 0; i < dataSet.length; i++) {
         sessionArr.push({
-          model: [["电脑", "桌子", "椅子"]], //资产型号
+          model: [['办公设备', '机器设备', '房屋建筑物', '其他设备']], //资产型号
           modelOn: [dataSet[i].inventoryType.value], //选中资产型号
           modSpec: dataSet[i].var7, //资产型号规格
-          unit: [["台", "个", "张", "件"]], //计量单位
+          unit: [['台', '套', '只', '量', 'm²']], //计量单位
           unitOn: [dataSet[i].batchNo.value], //选中计量单位
           unitPrice: dataSet[i].num1, //单价
           num: dataSet[i].num2, //数量
@@ -397,7 +404,8 @@ export default {
           deptlist: [], //费用所属部门
           deptOn: [dataSet[i].var4.value], //费用所属部门选中
           explain: dataSet[i].comment, //说明
-          status: true
+          status: true,
+          modName: dataSet[i].var8
         });
       }
       this.assetsList = sessionArr;

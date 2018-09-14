@@ -87,6 +87,11 @@ export default {
           title: "请填写明细",
           items: [
             {
+              title: "资产名称",
+              key: "modName",
+              value: ""
+            },
+            {
               title: "单价",
               key: "assetPrice",
               value: ""
@@ -173,7 +178,8 @@ export default {
           useDepartment:val.var2, //使用部门
           assetCostBU:val.var3.value,         //费用所属事业部
           assetCostDepartment:val.var4.value, //费用所属部门
-          comment: val.comment                //说明
+          comment: val.comment,                //说明
+          modName: val.var8,
         }
         this.listData.push(JSON.stringify(this.listObj));
         this.listData[idx] = JSON.parse(this.listData[idx]);

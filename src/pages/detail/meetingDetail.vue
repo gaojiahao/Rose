@@ -132,23 +132,24 @@
       // TODO 展示数据
       restoreJsonData(jsonData) {
         console.log(jsonData)
-        let {baseinfoExt} = jsonData;
+        let me = {...jsonData['baseinfoExt#me']}
         let sygs = {...jsonData['baseinfoExt#fygs']};
+        let sj = {...jsonData['baseinfoExt#sj']};
         let formData = {
-          province: baseinfoExt.varchar1.value, // 省
-          city: baseinfoExt.varchar2.value, // 市
-          hotelName: baseinfoExt.varchar3, // 酒店名称
-          headCount: baseinfoExt.integer1, // 总人数
-          roomNumber: baseinfoExt.integer2, // 房间数量
-          dayCount: baseinfoExt.integer3, // 天数
-          roomAveragePrice: baseinfoExt.double1, // 房间均价
-          siteFees: baseinfoExt.double2, // 会议场地费用
-          wayFees: baseinfoExt.double4, // 路费合计
-          repastFees: baseinfoExt.double5, // 餐饮合计
-          personScope: baseinfoExt.varchar5, // 人员范围
-          agenda: baseinfoExt.varchar4, // 会议议程
-          begin: jsonData['baseinfoExt#sj'].datetime1, // 始于
-          end: jsonData['baseinfoExt#sj'].datetime2, // 止于
+          province: me.varchar1.value, // 省
+          city: me.varchar2.value, // 市
+          hotelName: me.varchar3, // 酒店名称
+          headCount: me.integer1, // 总人数
+          roomNumber: me.integer2, // 房间数量
+          dayCount: me.integer3, // 天数
+          roomAveragePrice: me.double1, // 房间均价
+          siteFees: me.double2, // 会议场地费用
+          wayFees: me.double4, // 路费合计
+          repastFees: me.double5, // 餐饮合计
+          personScope: me.varchar5, // 人员范围
+          agenda: me.varchar4, // 会议议程
+          begin: sj.datetime1, // 始于
+          end: sj.datetime2, // 止于
           costBU: sygs.varchar6 && sygs.varchar6.value,// 费用所属事业部
           costDepartment: sygs.varchar7 && sygs.varchar7.value,// 费用所属部门
           comment: jsonData.baseinfo.comment, // 备注

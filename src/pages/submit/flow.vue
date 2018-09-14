@@ -41,7 +41,6 @@
   import createService from './../../service/createService'
   import common from './../mixins/common'
 
-  const USER_INFO = 'RFD_CURRENT_USER_INFO';
   export default {
     components: {
       Flow,
