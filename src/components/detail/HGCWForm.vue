@@ -12,10 +12,12 @@
     <r-scroll :options="scrollOptions" ref="bScroll">
       <div class="part-left">
         <div v-for="(item, index) in listData" :key="index">
-          <div class="title vux-1px-t vux-1px-b" v-if="item.assetType">{{item.assetType}}</div>
+          <div class="title border-1px-t border-1px-b" v-if="item.assetType"
+               ref="partLeftTitle">{{item.assetType}}
+          </div>
           <div class="content-item"
-               :class="{'final-total': lItem.isFinal,
-                 'border-1px-t': lItem.isFinal || lItem.isTotal,
+               :class="{'final-total': lItem.isTotal,
+                 'border-1px-t': lItem.isTotal,
                  'is-first': lItem.bigSubject,
                  'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes('：')}"
                v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partLeftContent">
@@ -27,9 +29,9 @@
         <div class="swiper-wrapper">
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="title" v-if="item.assetType"></div>
+              <div class="title" v-if="item.assetType" ref="partRightInitTitle"></div>
               <div class="content-item"
-                   :class="{'final-total': lItem.isFinal, 'is-first': lItem.bigSubject}"
+                   :class="{'final-total': lItem.isTotal, 'is-first': lItem.bigSubject}"
                    v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partRightInit">
                 {{lItem.initialBalance | formatNum}}
               </div>
@@ -37,9 +39,9 @@
           </div>
           <div class="swiper-slide">
             <div v-for="(item, index) in listData" :key="index">
-              <div class="title" v-if="item.assetType"></div>
+              <div class="title" v-if="item.assetType" ref="partRightFinalTitle"></div>
               <div class="content-item"
-                   :class="{'final-total': lItem.isFinal, 'is-first': lItem.bigSubject}"
+                   :class="{'final-total': lItem.isTotal, 'is-first': lItem.bigSubject}"
                    v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partRightFinal">
                 {{lItem.finalBalance | formatNum}}
               </div>
@@ -93,8 +95,7 @@
         return this.listMap[this.code].request().then(res => {
           let {data = []} = res;
           let tmp = {};
-          let initialTotal = 0;
-          let finalTotal = 0;
+          // 组装数据
           data.forEach(item => {
             let matchedObj = tmp[item.assetType];
             if (matchedObj) {
@@ -107,55 +108,31 @@
             }
           });
 
-          // 生成汇总数据
-          let tArr = Object.values(tmp);
-          tArr.forEach((tItem, tIndex) => {
-            let initial = 0; // 当前类别期初合计项
-            let final = 0; // 当前类别期末合计项
-
-            // 计算合计项
-            tItem.items.forEach(item => {
-              initial = accAdd(initial, item.initialBalance);
-              final = accAdd(final, item.finalBalance);
-            });
-            initialTotal = accAdd(initialTotal, initial);
-            finalTotal = accAdd(finalTotal, final);
-
-            // 设置合计项
-            tItem.assetType && tItem.items.push(Object.freeze({
-              subjectName: `${tItem.assetType}合计`,
-              isTotal: true,
-              initialBalance: initial,
-              finalBalance: final,
-            }));
-
-            // 设置资产合计
-            if (tItem.assetType && tIndex === tArr.length - 1) {
-              tItem.items.push(Object.freeze({
-                subjectName: '资产合计',
-                isFinal: true, // 总合计
-                initialBalance: initialTotal,
-                finalBalance: finalTotal,
-              }));
-            }
-          });
           this.listData = tmp;
           this.$nextTick(() => {
-            let partLeft = this.$refs.partLeftContent;
-            let partRightInit = this.$refs.partRightInit; // 期初
-            let partRightFinal = this.$refs.partRightFinal; // 期末
-            partLeft && partLeft.forEach((item, index) => {
-              let initialItem = partRightInit[index];
-
-              // 判断高度是否与title相同，不相同则设置为title的高度
-              if (item.clientHeight !== initialItem.clientHeight) {
-                initialItem.style.height = `${item.clientHeight}px`;
-                partRightFinal[index].style.height = `${item.clientHeight}px`;
-              }
-            });
+            // 设置金额行高度，判断高度是否与title相同，不相同则设置为title的高度
+            this.setHeight(this.$refs.partLeftContent, this.$refs.partRightInit, this.$refs.partRightFinal);
+            if (this.code === 'ZCFZ') {
+              // 设置标题高度，判断高度是否与title相同，不相同则设置为title的高度
+              this.setHeight(this.$refs.partLeftTitle, this.$refs.partRightInitTitle, this.$refs.partRightFinalTitle);
+            }
             this.$loading.hide();
           })
         })
+      },
+      // TODO 设置高度
+      setHeight(left, ...right) {
+        let [first] = right;
+        left && left.forEach((item, index) => {
+          let initialItem = first[index];
+
+          // 判断高度是否与title相同，不相同则设置为title的高度
+          if (item.clientHeight !== initialItem.clientHeight) {
+            right.forEach(rItem => {
+              rItem[index].style.height = `${item.clientHeight}px`;
+            });
+          }
+        });
       },
       // TODO 初始化swiper
       initSwiper() {
@@ -193,11 +170,13 @@
     position: absolute;
     left: 0;
     right: 0;
+    height: 1px;
     width: 200%;
     border-top: 1px solid #C7C7C7;
     color: #C7C7C7;
     transform-origin: 0 0;
     transform: scaleY(0.5);
+    box-sizing: border-box;
   }
 
   .detail_wrapper {
@@ -233,11 +212,11 @@
     .part-left, .part-right {
       width: 50%;
       font-size: .14rem;
+      /* 标题 */
       .title {
-        padding: 0 .15rem;
-        width: 200%;
-        height: .4rem;
-        line-height: .4rem;
+        padding: .05rem .15rem;
+        min-height: .4rem;
+        line-height: .3rem;
         font-size: .18rem;
         font-weight: bold;
         box-sizing: border-box;
@@ -251,7 +230,6 @@
 
         /* 资产合计 */
         &.final-total {
-          height: .4rem;
           line-height: .3rem;
           font-size: .16rem;
           font-weight: bold;
@@ -259,7 +237,6 @@
 
         /* 利润表首行 */
         &.is-first {
-          height: .4rem;
           line-height: .3rem;
           font-size: .2rem;
           font-weight: bold;
@@ -267,13 +244,10 @@
       }
     }
     .part-left {
+      .title {
+        position: relative;
+      }
       .content-item {
-        &.border-1px-t {
-          &:before {
-            @extend %border-1px;
-            top: 0;
-          }
-        }
         &.is-first {
           &:before {
             @extend %border-1px;
@@ -293,6 +267,19 @@
       text-align: right;
       .content-item {
         padding-left: 0;
+      }
+    }
+    /* 1px边框 */
+    .border-1px-t {
+      &:before {
+        @extend %border-1px;
+        top: 0;
+      }
+    }
+    .border-1px-b {
+      &:after {
+        @extend %border-1px;
+        bottom: 0;
       }
     }
   }

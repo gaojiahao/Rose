@@ -73,15 +73,15 @@ let tokenService = {
     //本地测试模拟线上
     //return this.QYWXLogin(key);
     //实际开发
-    if (isQYWX) {
-      return this.QYWXLogin(key);
-    } else {
+    // if (isQYWX) {
+    //   return this.QYWXLogin(key);
+    // } else {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
         window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
-    }
+    // }
   },
   // TODO PC端登录，默认返回token
   pcLogin(key = 'token') {
