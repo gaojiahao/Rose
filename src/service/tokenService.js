@@ -2,6 +2,7 @@ import axios from 'axios';
 import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
+import {corpid, corpsecret, agentid, redirect_uri} from '@/plugins/ajax/conf'
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 const RFD_TOKEN_KEY = 'roleplay-token';
@@ -75,7 +76,7 @@ let tokenService = {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fZeus&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     }
   },
@@ -137,8 +138,7 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      //let code = 'ARRpJRKgYHDVZitsyZrSD8yeLNSX7FqnxUsZwnizYjs'
-      axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
+      axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${corpsecret}`).then((res) => {
         console.log(res);
         let data = res.data;
         this.setToken({
