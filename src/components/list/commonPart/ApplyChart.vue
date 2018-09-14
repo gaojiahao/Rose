@@ -51,6 +51,7 @@
     <!--产品销量排名柱状图-->
     <div class='product_rank'>
       <div id="bar"></div>
+      <!-- 产品排行榜 -->
     </div>
    
     
@@ -69,11 +70,10 @@ require('echarts/lib/component/tooltip');
 require('echarts/lib/component/title');
 require('echarts/lib/component/legend');
 //处理图标上字符串过长换行
-let handle = (params,symbol)=>{
-  let name = params.data.name;
+let handle = (params,symbol,num)=>{
   let newParamsName = "";// 最终拼接成的字符串 
-  var paramsNameNumber = name.length;// 实际标签的个数 
-  var provideNumber = 7;// 每行能显示的字的个数 
+  var paramsNameNumber = params.length;// 实际标签的个数 
+  var provideNumber = num;// 每行能显示的字的个数 
   var rowNumber = Math.ceil(paramsNameNumber / provideNumber);// 换行的话，需要显示几行，向上取整 
   /** 
   * 判断标签的个数是否大于规定的个数， 如果大于，则进行换行处理 如果不大于，即等于或小于，就返回原标签 
@@ -86,16 +86,16 @@ let handle = (params,symbol)=>{
       var end = start + provideNumber;// 结束截取的位置 
       // 此处特殊处理最后一行的索引值 
       if (p == rowNumber - 1) { 
-        tempStr = name.substring(start, paramsNameNumber); 
+        tempStr = params.substring(start, paramsNameNumber); 
       } else { 
         // 每一次拼接字符串并换行 
-        tempStr = name.substring(start, end) + symbol; 
+        tempStr = params.substring(start, end) + symbol; 
       } 
       newParamsName += tempStr;// 最终拼成的字符串 
     } 
   } else { 
     // 将旧标签的值赋给新标签 
-    newParamsName = name; 
+    newParamsName = params; 
   } 
   //将最终的字符串返回 
   return newParamsName  
@@ -122,7 +122,7 @@ export default {
         tooltip : {
           trigger: 'item',
           formatter:(params)=>{
-            let tip =  handle(params,'<br/>');
+            let tip =  handle(params.data.name,'<br/>',10);
             return `${tip}<br/>销售额：${params.value} (${params.percent}%)`
 
           },
@@ -151,7 +151,7 @@ export default {
             },
             label:{
               formatter :(params)=>{
-               let name = handle(params,'\n');
+               let name = handle(params.data.name,'\n',7);
                 return name  
               },             
             }
@@ -165,21 +165,38 @@ export default {
         },
         tooltip: {},
         xAxis: {
-            data: ['金币','黄金', '冰淇淋', '蛋糕', '电脑']
-        },
-        itemStyle:{ 
-          color:'#5077aa',
+            axisLabel:{
+              formatter:(value,index)=>{
+                let name = handle(value,'\n',3);
+                return name
+              }
+            },
+            data: ['2018年俄罗斯FIFA世界杯普通金属纪念币-第三系列','草莓奶油冰淇淋蛋糕','五国金砖纪念套装','抹茶蛋糕卷','电脑'],
+            axisTick: {
+              show : false
+            },
             
         },
-        yAxis: {},
+        itemStyle:{ 
+          color:'#5077aa',           
+        },
+        yAxis: {
+          
+        },
         grid:{
           height:'60%',
+          left:'15%',
         },
         series: [{
             name: '销量',
             type: 'bar',
             data: [115, 95, 80, 64, 50],
             barWidth : 30,
+            label:{
+              show: true,
+              position:'top',
+              
+            }
         }]
       },
       currentDate:'',
@@ -318,6 +335,23 @@ export default {
     }
   }
   //产品排行榜柱状图
+  .product_rank{
+    .product_sml{
+      padding: 0 0.1rem;
+      li{
+        list-style: none;
+        margin-bottom: 0.1rem;
+        display: flex;
+        .sml{
+          padding:0.01rem 0.08rem;
+          color:#fff;
+        }
+        .large{
+          margin-left:0.05rem;
+        }
+      }
+    }
+  }
   #bar{
     width:100%;
     height:3rem;

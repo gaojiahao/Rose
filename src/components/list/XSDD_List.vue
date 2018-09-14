@@ -44,6 +44,12 @@
         ],
         listViewID : 2190,
         chartShow : true,
+        hasNext: false,
+        scrollOptions: {
+          click: true,
+          pullDownRefresh: false,
+          pullUpLoad: false,
+        },
 
       }
     },
@@ -52,6 +58,34 @@
     },
     mixins: [listCommon],
     methods: {
+      ///tab切换
+    tabClick(item, index) {
+      switch (item.status) {
+        case '已生效' :
+          this.biStatus = '1';
+          break;
+        case '进行中' :
+          this.biStatus = '2';
+          break;
+        case '' :
+          this.biStatus = '';
+          break;
+      }
+      if(index === 0){
+        this.chartShow  = true;
+        this.hasNext = false;
+      }
+      else{
+        this.chartShow = false;
+        this.hasNext = true;
+        this.scrollOptions.pullDownRefresh = true;
+        this.scrollOptions.pullUpLoad =  true;
+      }
+      this.activeIndex = index;
+      this.activeTab = item.status;
+      this.resetCondition();
+      this.getList();
+    },
 
     }
   }
