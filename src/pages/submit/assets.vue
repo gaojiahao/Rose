@@ -128,7 +128,8 @@ export default {
           status: false,
           modName: '', // 资产名称
         }
-      ]
+      ],
+      attachment: [], // 附件
     };
   },
   methods: {
@@ -253,13 +254,13 @@ export default {
             "handlerArea":this.baseInfo.areaID,
             "status": "",
             "comment": "", //备注
-            "fj": []
+            "fj": this.attachment,
           },
           "transDetailUncalc": [],
           "$comment": {
             "baseinfo.comment": "" //备注
           },
-          "baseinfo.fj": [],
+          "baseinfo.fj": this.attachment,
           "transCode": "KFSCPCGRK"
         };
       for (let i = 0; i < this.assetsList.length; i++) {
@@ -430,33 +431,32 @@ export default {
     }
   },
   mounted() {
+    let sessionKey = `${this.$route.query.list}-FORMDATA`;
     //基本信息
-    spreadService
-      .getBaseInfo()
-      .then(res => {
-        this.baseInfo = res;
-      })
-      .catch(c => {
-        console.log(c);
-      });
+    spreadService.getBaseInfo().then(res => {
+      this.baseInfo = res;
+    }).catch(c => {
+      console.log(c);
+    });
     //回显
-    if (this.$route.query.formKey && this.$route.query.transCode) {
+    if (sessionStorage.getItem(sessionKey)) {
+      this.formDataNew = JSON.parse(sessionStorage.getItem(sessionKey));
+      this.attachment = this.formDataNew.baseinfo.fj;
+      let dataSet = this.formDataNew.transDetailUncalc;
+      this.cacheData(dataSet);
+      this.listDefault();
+      sessionStorage.removeItem(sessionKey);
+    } else if (this.$route.query.formKey && this.$route.query.transCode) {
       createService.getJsonData(this.$route.query.transCode).then(res => {
-          let json_data = JSON.parse(res.tableContent[0].json_data);
-          this.formDataNew = json_data;
-          this.cacheData(this.formDataNew.transDetailUncalc);
-          this.listDefault();
-          this.formData = false;
-        })
+        this.formDataNew = JSON.parse(res.tableContent[0].json_data);
+        this.attachment = this.formDataNew.baseinfo.fj;
+        this.cacheData(this.formDataNew.transDetailUncalc);
+        this.listDefault();
+        this.formData = false;
+      })
         .catch(c => {
           console.log(c);
         });
-    } else if (sessionStorage.getItem(this.$route.query.list + "-FORMDATA")) {
-      let dataSet = JSON.parse(
-        sessionStorage.getItem(this.$route.query.list + "-FORMDATA")
-      ).transDetailUncalc;
-      this.cacheData(dataSet);
-      this.listDefault();
     } else {
       this.listDefault();
     }

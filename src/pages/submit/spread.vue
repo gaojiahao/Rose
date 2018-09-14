@@ -104,7 +104,8 @@ export default {
           status: false
         }
       ], // 宣品 填写内容
-      searchInfo: false
+      searchInfo: false,
+      attachment: [],
     };
   },
   methods: {
@@ -238,9 +239,9 @@ export default {
             "handlerArea":this.baseInfo.areaID,
             "status": "",
             "comment": "", //备注
-            "fj": []
+            "fj": this.attachment
           },
-          "transDetailUncalc": [],
+          "transDetailUncalc": this.attachment,
           "$comment": {
             "baseinfo.comment": "" //备注
           },
@@ -270,7 +271,7 @@ export default {
         } else if (item.deptOn.length == 0) {
           this.layer("请选择部门", "cancel");
           return;
-        } 
+        }
         formDataNew.transDetailUncalc.push({
           "id": this.formDataNew && this.formDataNew!=''?this.formDataNew.transDetailUncalc[i].id:this.guid(),
           "var1": item.name,
@@ -407,40 +408,38 @@ export default {
         if(item.marketInformation){
           arr.push(item.marketInformation)
         }
-        
+
       })
       this.xp_list[0].conduct.push(arr);
     })
-    
+
   },
   mounted() {
+    let sessionKey = `${this.$route.query.list}-FORMDATA`;
     //基本信息
-    spreadService
-      .getBaseInfo()
-      .then(res => {
-        this.baseInfo = res;
-      })
-      .catch(c => {
-        console.log(c);
-      });
+    spreadService.getBaseInfo().then(res => {
+      this.baseInfo = res;
+    }).catch(c => {
+      console.log(c);
+    });
     //回显
-    if (this.$route.query.formKey && this.$route.query.transCode) {
-      createService.getJsonData(this.$route.query.transCode).then(res => {
-          let json_data = JSON.parse(res.tableContent[0].json_data);
-          this.formDataNew = json_data;
-          this.cacheData(this.formDataNew.transDetailUncalc);
-          this.listDefault();
-          this.formData = false;
-        })
-        .catch(c => {
-          console.log(c);
-        });
-    } else if (sessionStorage.getItem(this.$route.query.list + "-FORMDATA")) {
-      let dataSet = JSON.parse(
-        sessionStorage.getItem(this.$route.query.list + "-FORMDATA")
-      ).transDetailUncalc;
+    if (sessionStorage.getItem(sessionKey)) {
+      this.formDataNew = JSON.parse(sessionStorage.getItem(sessionKey));
+      this.attachment = this.formDataNew.baseinfo.fj;
+      let dataSet = this.formDataNew.transDetailUncalc;
       this.cacheData(dataSet);
       this.listDefault();
+      sessionStorage.removeItem(sessionKey);
+    } else if (this.$route.query.formKey && this.$route.query.transCode) {
+      createService.getJsonData(this.$route.query.transCode).then(res => {
+        this.formDataNew = JSON.parse(res.tableContent[0].json_data);
+        this.attachment = this.formDataNew.baseinfo.fj;
+        this.cacheData(this.formDataNew.transDetailUncalc);
+        this.listDefault();
+        this.formData = false;
+      }).catch(c => {
+        console.log(c);
+      });
     } else {
       this.listDefault();
     }

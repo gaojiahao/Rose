@@ -266,7 +266,7 @@
         jsonData['$comment'] = {
           'baseinfo.comment': jsonData.baseinfo.comment
         };
-        jsonData['baseinfo.fj'] = [];
+        jsonData['baseinfo.fj'] = this.baseinfo.fj;
         jsonData.transCode = jsonData.baseinfo.transCode;
         sessionStorage.setItem(this.sessionKey, JSON.stringify(jsonData));
         this.$router.push({
