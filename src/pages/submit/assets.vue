@@ -356,10 +356,8 @@ export default {
             formDataNew[k] = this.formDataNew[k]
           }
         }
-        formDataNew.$review = this.formDataNew.review;
-        formDataNew.$review2 = this.formDataNew.review2;
-        delete(formDataNew.review);
-        delete(formDataNew.review2);
+        formDataNew.$review = this.formDataNew.review || this.formDataNew.$review;
+        formDataNew.$review2 = this.formDataNew.review2 || this.formDataNew.$review2;
       }
       sessionStorage.setItem(
         this.$route.query.list + "-FORMDATA",
