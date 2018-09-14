@@ -2,6 +2,7 @@ import axios from 'axios';
 import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
+import {corpid, corpsecret, agentid, url} from '@/plugins/ajax/conf'
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 const RFD_TOKEN_KEY = 'roleplay-token';
@@ -72,15 +73,15 @@ let tokenService = {
     //本地测试模拟线上
     //return this.QYWXLogin(key);
     //实际开发
-    // if (isQYWX) {
-    //   return this.QYWXLogin(key);
-    // } else {
+    if (isQYWX) {
+      return this.QYWXLogin(key);
+    } else {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww3c1aa17c16e380b7&redirect_uri=https%3a%2f%2frfd.roletask.com%2fRose_test&response_type=code&scope=SCOPE&agentid=1000033&state=1#wechat_redirect')
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${url}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
-    // }
+    }
   },
   // TODO PC端登录，默认返回token
   pcLogin(key = 'token') {
@@ -130,8 +131,7 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      //let code = 'ARRpJRKgYHDVZitsyZrSD8yeLNSX7FqnxUsZwnizYjs'
-      axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
+      axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${corpsecret}`).then((res) => {
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',
