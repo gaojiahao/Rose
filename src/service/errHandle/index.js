@@ -10,7 +10,10 @@ export default function errorHandler(err){
   AlertModule.show({
     content: err,
     onHide(){
-      history.go(-1);
+      // 列表数据出现任何错误都不用返回
+      if(!location.pathname.includes('list')){
+        history.go(-1);
+      }
       Vue.prototype.$loading.hide();
     }
   });
