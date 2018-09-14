@@ -19,7 +19,8 @@ export default {
     return {
       page: 1,
       limit: 20,
-      hasNext: true,
+      // hasNext: true,
+      hasNext: false,
       scrollOptions: {
         click: true,
         pullDownRefresh: true,
@@ -133,6 +134,14 @@ export default {
         case '' :
           this.biStatus = '';
           break;
+      }
+      if(index === 0){
+        this.chartShow  = true;
+        this.hasNext = false;
+      }
+      else{
+        this.chartShow = false;
+        this.hasNext = true;
       }
       this.activeIndex = index;
       this.activeTab = item.status;
@@ -348,10 +357,11 @@ export default {
   },
   created() {
     this.applyCode = this.$route.params.code;
-    this.getData(false).then(() => {
-      // 第一次进入页面成功之后 隐藏动画
-      this.$loading.hide();
-    });
+    this.$loading.hide();
+    // this.getData(false).then(() => {
+    //   // 第一次进入页面成功之后 隐藏动画
+    //   this.$loading.hide();
+    // });
   },
 
 }
