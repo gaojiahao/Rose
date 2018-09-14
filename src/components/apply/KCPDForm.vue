@@ -60,7 +60,7 @@
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                     </div>
                     <div class="mater_more">                     
-                        <span class="symbol">库存: {{item.qtyBal}}</span>
+                        <span class="symbol">账存数量: {{item.qtyBal}}</span>
                     </div>
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
