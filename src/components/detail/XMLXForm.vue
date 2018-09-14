@@ -12,6 +12,9 @@
           <form-cell cellTitle="经理" :cellContent="approval.projectManager"></form-cell>
           <form-cell cellTitle="经理电话" :cellContent="approval.phoneNumber"></form-cell>
           <form-cell cellTitle="说明" :cellContent="approval.comment || '无'"></form-cell>
+          <form-cell cellTitle="预期开始日期" textRight :cellContent="approval.expectStartDate | timeSplit"></form-cell>
+          <form-cell cellTitle="预期截止日期" textRight :cellContent="approval.expectEndDate | timeSplit"></form-cell>
+
         </div>
       </div>
       <!-- 预算明细 -->
@@ -23,8 +26,6 @@
           <form-cell cellTitle="费用" showSymbol textRight :cellContent="numberComma(approval.budgetCost)"></form-cell>
           <form-cell cellTitle="利润" showSymbol textRight :cellContent="numberComma(approval.budgetProfit)"></form-cell>
           <form-cell cellTitle="利润率" textRight :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
-          <form-cell cellTitle="预期开始日期" textRight :cellContent="approval.expectStartDate | timeSplit"></form-cell>
-          <form-cell cellTitle="预期截止日期" textRight :cellContent="approval.expectEndDate | timeSplit"></form-cell>
         </div>
       </div>
     </div>

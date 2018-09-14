@@ -31,7 +31,7 @@
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
       <p class='amount'>
-        <countup  :end-val="businessAmount" :duration="1" :decimals="2"></countup>
+        ￥<countup  :end-val="businessAmount" :duration="1" :decimals="2"></countup>
       </p>
     </div>
     <!-- 销售额排名饼状图-->
@@ -39,19 +39,27 @@
       <div id='pie'></div>
     </div>
     <!--业务量排名-->
-    <div class='list_rank'>
-      <div class='list_title'>业务员业绩排行榜(前三)</div>
-      <div class='each_customer'>
-        <span>No1 徐泽</span>
-        <span>￥100.5万</span>
+    <div class='list_rank vux-1px-t'>
+      <div class='list_title'>
+        业务员业绩排行榜（前三）
       </div>
-      <div class='each_customer'>
-        <span>No2 新奇士</span>
-        <span>￥75.5万</span>
+      <div class='each_staff vux-1px-b'>
+        <div class="staff_name">
+          <span class="rank_num">No.1</span>林杰
+        </div>
+        <div>￥100.5万</div>
       </div>
-      <div class='each_customer'>
-        <span>No3 鲜卑</span>
-        <span>￥60万</span>
+      <div class='each_staff vux-1px-b'>
+        <div class="staff_name">
+          <span class="rank_num">No.2</span>姜兴
+        </div>
+        <div>￥75.5万</div>
+      </div>
+      <div class='each_staff vux-1px-b'>
+        <div class="staff_name">
+          <span class="rank_num">No.3</span>林豪前
+        </div>
+        <div>￥60万</div>
       </div>
 
     </div>
@@ -119,11 +127,10 @@ export default {
         },
         legend: {
             orient: 'vertical',
-            // width:'90%',
-            left:'8%',
+            left:'6%',
             top:'65%',
-            itemGap  : 5,
-            selectedMode  : false,
+            itemGap: 5,
+            selectedMode: true,
             data: ['深圳市金红叶纸业服务有限公司','新奇士集团','鲜卑','中国娃哈哈有限责任公司深圳分公司','篱笆网','其他'],
         },
         tooltip : {
@@ -140,7 +147,7 @@ export default {
             name: '客户业绩排名',
             type: 'pie',
             radius : '40%',
-            center: ['48%', '37%'],
+            center: ['50%', '33%'],
             data:[
                 {value:100.5, name:'深圳市金红叶纸业服务有限公司'},
                 {value:96, name:'新奇士集团'},
@@ -151,13 +158,13 @@ export default {
             ],
             itemStyle: {
                 emphasis: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
                 }
             },
             label:{
-              formatter :(params)=>{
+              formatter :(params) => {
                let name = handle(params.data.name,'\n',7);
                 return name  
               },             
@@ -346,8 +353,10 @@ export default {
     }
   }
   .business_amount {
+    padding: .1rem 0;
+    font-size: .18rem;
+    font-weight: bold;
     text-align: center;
-    padding : 0.05rem 0;
     .amount {
       font-size: .3rem;
       color: #c93d1b;
@@ -367,10 +376,23 @@ export default {
       font-size:0.18rem;
       font-weight: bold;
     }
-    .each_customer {
+    .each_staff {
+      padding: .1rem 0 .02rem;
       line-height: 0.3rem;
       display: flex;
       justify-content: space-between;
+      .staff_name {
+        font-size: .16rem;
+        // font-weight: bold;
+      }
+      .rank_num {
+        color: #FFF;
+        font-size: .12rem;
+        border-radius: .3rem;
+        background: #3f72af;
+        padding: .02rem .04rem;
+        margin-right: .04rem;
+      }
     }
   }
   //产品排行榜柱状图
