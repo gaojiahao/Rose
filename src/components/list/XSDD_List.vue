@@ -12,7 +12,7 @@
           </tab>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :class="{'dashboard': chartShow}" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <apply-chart v-if='chartShow'></apply-chart>
@@ -23,7 +23,7 @@
         
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="!chartShow">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
@@ -59,4 +59,7 @@
 
 <style lang='scss' scoped>
   @import "./../scss/bizList";
+  .dashboard {
+    height: calc(100% - .52rem);
+  }
 </style>

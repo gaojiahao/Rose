@@ -2,29 +2,36 @@
   <div class='chart'>
     <div class='filter_time vux-1px-b'>
       <div class='current_time vux-1px-r'>{{currentDate}}</div>
-      <div class='time_pop' @click="dateShow = true">
-        <span>时间选择</span>
-        <x-icon type="ios-arrow-down" size="18"></x-icon>
+      <div class='time_pop' @click="dateShow = !dateShow">
+        <span class="tips">时间筛选</span>
+        <x-icon type="ios-arrow-down" size="14"></x-icon>
       </div>
       <div class='date vux-1px-b' v-show='dateShow'>
         <div class='choose_date'>
           <div class='start_date'>
             <span class='date_title'>起始日期</span>
-            <span class='date_value' @click="getStart">{{startDate}}</span>
+            <span class='date_value vux-1px' @click="getStart">
+              {{startDate}}
+            </span>
           </div>
           <div class='end_date'>
             <span class='date_title'>截止日期</span>
-            <span class='date_value' @click="getEnd">{{EndDate}}</span>
+            <span class='date_value vux-1px-t' @click="getEnd">
+              {{EndDate}}
+            </span>
           </div>
         </div>
-        <div class='confirm vux-1px-t' @click="confirm">确认</div>
+        <div class='time_sel_btn' @click="confirm">
+          <span class="reset">重置</span>
+          <span class="confirm">确认</span>
+        </div>
         
       </div>
     </div>
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
       <p class='amount'>
-        <countup :start-val="1" :end-val="businessAmount" :duration="2" :decimals="2"></countup>
+        <countup  :end-val="businessAmount" :duration="1" :decimals="2"></countup>
       </p>
     </div>
     <!-- 销售额排名饼状图-->
@@ -237,31 +244,37 @@ export default {
 
 <style lang="scss" scoped>
 .vux-1px-b:after,
-.vux-1px-r:after{
+.vux-1px-r:after,
+.vux-1px-t:before,
+.vux-1px:before {
   border-color: #E8E8E8;
 }
 .chart{
   width:100%;
   //标题
-  .chart_title{
+  .chart_title {
     font-size:0.18rem;
     text-align: center;
     padding: 0.1rem 0;
     font-weight: bold;
   }
-  .filter_time{
+  .filter_time {
     display: flex;
     align-items: center;
     height:0.4rem;
-    .current_time{
+    .current_time {
       flex:1;
       text-align: center;
     }
-    .time_pop{
-      width:1rem;
+    .time_pop {
+      // width: 1rem;
+      padding: 0 .1rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      .tips {
+        font-weight: bold;
+      }
     }
     //选择时间弹出框
     .date{
@@ -273,52 +286,78 @@ export default {
       z-index:50;
       box-shadow: 0 2px 10px #e8e8e8;
       .choose_date{
-        padding-top:0.1rem;
+        // padding: .04rem 0 0;
         display: flex;
-        justify-content: space-around;
-        span{
-          display: block;
-          margin-bottom: 0.05rem;
+        text-align: center;
+        
+        // justify-content: space-around;
+        .start_date,
+        .end_date{
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          margin-top: .05rem;
+          .date_title {
+            // padding: .1rem 0;
+            font-weight: bold;
+            // margin-bottom: .05rem;
+          }
+          .date_value {
+            padding: .1rem;
+            // display: block;
+            border-radius: .12rem;
+          }
         }
       }
-      //确认
-      .confirm{
-        text-align:center;
-        padding: 0.1rem 0;
-        color:#5077aa;
+      // 时间选择 确认栏
+      .time_sel_btn {
+        color: #FFF;
+        display: flex;
+        text-align: center;
+        span {
+          flex: 1;
+          padding: .1rem 0;
+        }
+        .reset {
+          color: #757575;
+          background: #F1F1F1;
+        }
+        .confirm {
+          background: #3f72af;
+        }
       }
     }
   }
-  .business_amount{
+  .business_amount {
     text-align: center;
     padding : 0.05rem 0;
-    .amount{
-      font-size: .16rem;
+    .amount {
+      font-size: .3rem;
       color: #c93d1b;
-      font-weight: bold;
+      font-weight: 200;
     }
   }
   //饼状图
-  #pie{
+  #pie {
     width:100%;
     height:4rem;
   }
   //业绩排行榜
-  .list_rank{
+  .list_rank {
     padding :0.1rem;
-    .list_title{
+    .list_title {
       text-align: center;
       font-size:0.18rem;
       font-weight: bold;
     }
-    .each_customer{
+    .each_customer {
       line-height: 0.3rem;
       display: flex;
       justify-content: space-between;
     }
   }
   //产品排行榜柱状图
-  #bar{
+  #bar {
     width:100%;
     height:3rem;
   }
