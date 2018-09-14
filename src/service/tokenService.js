@@ -2,7 +2,7 @@ import axios from 'axios';
 import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
-import {corpid, corpsecret, agentid, url} from '@/plugins/ajax/conf'
+import {corpid, corpsecret, agentid, redirect_uri} from '@/plugins/ajax/conf'
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 const RFD_TOKEN_KEY = 'roleplay-token';
@@ -79,7 +79,7 @@ let tokenService = {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
-        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${url}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     }
   },
