@@ -2,6 +2,7 @@ import axios from 'axios';
 import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
+import {corpid, corpsecret, agentid, redirect_uri} from '@/plugins/ajax/conf'
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 
@@ -10,7 +11,7 @@ let tokenService = {
    * 清除toke
    */
   clean() {
-    window.localStorage.removeItem(TOKEN_KEY);
+    window.sessionStorage.removeItem(TOKEN_KEY);
   },
   /**
    * 获取token或者用户ID，默认获取token
@@ -29,7 +30,7 @@ let tokenService = {
    * 设置token
    */
   setToken(data) {
-    window.localStorage.setItem(TOKEN_KEY, JSON.stringify({
+    window.sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
       entityId: data.entityId,
       key: data.token,
       timestamp: +new Date()
@@ -37,7 +38,7 @@ let tokenService = {
   },
   // TODO 检查是否登录
   checkLogin(key = 'key') {
-    let token = JSON.parse(window.localStorage.getItem(TOKEN_KEY)) || {};
+    let token = JSON.parse(window.sessionStorage.getItem(TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     if (token[key]) {
       let timestamp = token.timestamp;
@@ -62,7 +63,7 @@ let tokenService = {
       if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
         return this.pcLogin(key);
       } else {
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
       }
     }
   },
@@ -108,8 +109,7 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      // code = 'vcg0t6Z14rLpxNJ9j-9ze4vV4fiMILTa-U9zguO2IMo'
-      axios.get('/H_roleplay-si/wxLogin?code=' + code + '&state=1').then((res) => {
+      axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${corpsecret}`).then((res) => {
         let data = res.data;
         this.clean();
         this.setToken({
