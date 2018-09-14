@@ -20,7 +20,7 @@
         <div class='list' v-else>
           <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></list-item>
         </div>
-        
+
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="!chartShow">
@@ -94,6 +94,6 @@
 <style lang='scss' scoped>
   @import "./../scss/bizList";
   .dashboard {
-    height: calc(100% - .52rem);
+    height: calc(100% - .88rem);
   }
 </style>
