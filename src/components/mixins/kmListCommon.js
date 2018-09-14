@@ -57,7 +57,7 @@ export default {
       this.getList();
     },
     //搜索
-    searchList(val) {
+    searchList({val = ''}) {
       this.serachVal = val;
       this.resetCondition();
       this.getListData();
@@ -95,7 +95,7 @@ export default {
       await getView({...requestData,view_scope: 'model'}).then( data =>{
         this.flowField = data.model;
       }).catch( err => {
-        // 关闭笼罩层  
+        // 关闭笼罩层
         this.$HandleLoad.hide();
       });
       //流水列表数据
