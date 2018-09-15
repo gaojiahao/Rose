@@ -31,7 +31,7 @@
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
       <p class='amount'>
-        ￥<countup  :end-val="businessAmount" :duration="1" :decimals="2"></countup>
+        ￥<countup :end-val=businessAmount :duration="1" :decimals="2"></countup>
       </p>
     </div>
     <!-- 销售额排名饼状图-->
@@ -43,33 +43,19 @@
       <div class='list_title'>
         业务员业绩排行榜（前三）
       </div>
-      <div class='each_staff vux-1px-b'>
+      <div class='each_staff vux-1px-b' v-for="(item, index) in staffRank" :key='index'>
         <div class="staff_name">
-          <span class="rank_num">No.1</span>林杰
+          <span class="rank_num">No.{{index + 1}}</span>
+          <span>{{item.handlerName}} {{item.handlerRoleName}} {{item.handlerUnitName}}</span>
         </div>
-        <div>￥100.5万</div>
+        <div>￥{{item.total | toFixed}}</div>
       </div>
-      <div class='each_staff vux-1px-b'>
-        <div class="staff_name">
-          <span class="rank_num">No.2</span>姜兴
-        </div>
-        <div>￥75.5万</div>
-      </div>
-      <div class='each_staff vux-1px-b'>
-        <div class="staff_name">
-          <span class="rank_num">No.3</span>林豪前
-        </div>
-        <div>￥60万</div>
-      </div>
-
     </div>
     <!--产品销量排名柱状图-->
     <div class='product_rank'>
       <div id="bar"></div>
       <!-- 产品排行榜 -->
     </div>
-   
-    
   </div>
   
 </template>
@@ -115,11 +101,17 @@ let handle = (params,symbol,num)=>{
   //将最终的字符串返回 
   return newParamsName  
 }
+// vux组件引入
 import { dateFormat,Countup } from 'vux'
+// 请求 引入
+import { getDashboard } from 'service/listService'
+// 插件引入
+import {toFixed} from '@/plugins/calc'
+
 export default {
   data(){
     return{
-      pieOption:{//饼图表参数
+      pieOption: {                      // 饼图表参数
         title:{
           text : '客户排名',
           x : 'center',
@@ -144,7 +136,7 @@ export default {
         },
         series : [
           {
-            name: '客户业绩排名',
+            name: '排名',
             type: 'pie',
             radius : '40%',
             center: ['50%', '33%'],
@@ -172,7 +164,7 @@ export default {
           }
         ]
       },
-      barOption:{//柱状图参数
+      barOption: {                      // 柱状图参数
         title: {
             text: '产品销售排名',
             x:'center'
@@ -213,12 +205,17 @@ export default {
             }
         }]
       },
-      currentDate:'',
-      startDate:'请选择',
-      EndDate:'请选择',
-      dateShow :false,
-      businessAmount : 100513.35,
+      currentDate: '',                  // 当前时间
+      staffRank: [],                    // 业务员销售排名(前三)
+      startDate: '请选择',               // 默认文字
+      EndDate: '请选择',                 // 默认文字
+      dateShow: false,                  // 是否显示时间筛选栏
+      businessAmount: 0,                // 金额合计
+
     }
+  },
+  filters: {
+    toFixed
   },
   components:{
     Countup
@@ -248,17 +245,44 @@ export default {
         this.currentDate = `${this.startDate} ~ ${this.EndDate}`;
       } 
       this.dateShow = false;
-    }
+      let timeFilter = {
+        startData: this.startDate,
+        endData: this.EndDate
+      }
+      this.dashboardData(timeFilter).then( data => {
+        console.log(data);
+      })
+    },
+    dashboardData(data = {}){
+      return getDashboard(data).then((
+        { total = 0, dealerPie, productSalesRanking: pdRank , salesmanRanking: staffRank }) => {
+        // console.log('产品排名:', pdRank);
+        this.staffRank = staffRank;
+        let testarr = [];
+        for(let item of dealerPie){
+          console.log(item);
+          let obj = {
+            value: item.total,
+            name: item.dealerName
+          }
+          testarr.push(obj);
+        }
+        console.log(testarr);
+        // console.log('公司:', dealerPie);
+        this.$set(this.pieOption.series[0], 'data', testarr);
+        PieChart.setOption(this.pieOption);
 
+        
+        this.businessAmount = toFixed(total);
+      })
+    }
   },
   created(){
     this.currentDate = dateFormat(new Date(),'YYYY-MM-DD');
-
+    // getDashboard();
+    this.dashboardData();
   },
   mounted(){
-    let PieChart = echarts.init(document.getElementById('pie'));
-    let BarCahrt = echarts.init(document.getElementById('bar'));
-    PieChart.setOption(this.pieOption);
     BarCahrt.setOption(this.barOption);
 
   }
