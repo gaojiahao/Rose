@@ -94,6 +94,6 @@
 <style lang='scss' scoped>
   @import "./../scss/bizList";
   .dashboard {
-    height: calc(100% - .88rem);
+    height: calc(100% - 1rem);
   }
 </style>

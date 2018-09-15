@@ -241,6 +241,7 @@
               overflow: hidden;
               font-size: .14rem;
               display: -webkit-box;
+              word-break: break-all;
               -webkit-line-clamp: 2;
               text-overflow: ellipsis;
               -webkit-box-orient: vertical;
