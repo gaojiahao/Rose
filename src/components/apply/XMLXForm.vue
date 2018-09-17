@@ -1,5 +1,5 @@
 <template>
-  <div class="pages xmrw-apply-container">
+  <div class="pages xmlx-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <pop-manager-list @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
@@ -9,69 +9,50 @@
                   v-model="ProjectApproval.projectType" :required="ProjectApproval.projectType === ''"></r-picker>
         <r-picker title="项目子类" :data="subclassList" mode="3" placeholder="请选择项目子类"
                   v-model="ProjectApproval.projectSubclass"></r-picker>
-        <div class="xmlx_list">
-          <!-- 项目立项明细 -->
-          <div class="materiel_list mg_auto box_sd">
-            <div class="mater_list">
-              <div class="each_mater">
-                <div class="each_mater_wrapper">
-                  <div class="mater_main" style='max-width:100%;'>
-                    <div class="userInp_mode">
-                      <div class="title">项目立项明细</div>
-                      <group class="SJ_group" @group-title-margin-top="0">
-                        <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right'
-                                 placeholder='请填写'>
-                          <template slot="label">
-                            <span class='required'>项目名称
-                            </span>
-                          </template>
-                        </x-input>
-                        <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
-                                 text-align='right' placeholder='请填写'
-                                 @on-blur="checkAmt('budgetIncome', $event)">
-                          <template slot="label">
-                            <span class='required'>预算收入
-                            </span>
-                          </template>
-                        </x-input>
-                        <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
-                                 text-align='right' placeholder='请填写'
-                                 @on-blur="checkAmt('budgetCapital', $event)">
-                          <template slot="label">
-                            <span class='required'>预算成本
-                            </span>
-                          </template>
-                        </x-input>
-                        <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
-                                 text-align='right' placeholder='请填写'
-                                 @on-blur="checkAmt('budgetCost', $event)">
-                          <template slot="label">
-                            <span class='required'>预算费用
-                            </span>
-                          </template>
-                        </x-input>
-                        <datetime title="预期开始日期" v-model='ProjectApproval.expectStartDate'>
-                          <template slot="title">
-                            <span class='required'>预期开始日期
-                            </span>
-                          </template>
-                        </datetime>
-                        <datetime title="预期截止日期" v-model='ProjectApproval.expectEndDate'>
-                          <template slot="title">
-                            <span class='required'>预期截止日期
-                            </span>
-                          </template>
-                        </datetime>
-                        <cell title="预算利润" :value="profit"></cell>
-                        <cell title="预算利润率" :value="profitMargin"></cell>
-                        <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
-                      </group>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- 项目立项明细 -->
+        <div class="materiel_list mg_auto box_sd">
+          <div class="title">项目立项明细</div>
+          <group @group-title-margin-top="0">
+            <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right' placeholder='请填写'>
+              <template slot="label">
+                <span class='required'>项目名称</span>
+              </template>
+            </x-input>
+            <x-input title="预算收入" type="number" v-model.number="ProjectApproval.budgetIncome"
+                     text-align='right' placeholder='请填写'
+                     @on-blur="checkAmt('budgetIncome', $event)">
+              <template slot="label">
+                <span class='required'>预算收入</span>
+              </template>
+            </x-input>
+            <x-input title="预算成本" type="number" v-model.number="ProjectApproval.budgetCapital"
+                     text-align='right' placeholder='请填写'
+                     @on-blur="checkAmt('budgetCapital', $event)">
+              <template slot="label">
+                <span class='required'>预算成本</span>
+              </template>
+            </x-input>
+            <x-input title="预算费用" type="number" v-model.number="ProjectApproval.budgetCost"
+                     text-align='right' placeholder='请填写'
+                     @on-blur="checkAmt('budgetCost', $event)">
+              <template slot="label">
+                <span class='required'>预算费用</span>
+              </template>
+            </x-input>
+            <datetime title="预期开始日期" v-model='ProjectApproval.expectStartDate'>
+              <template slot="title">
+                <span class='required'>预期开始日期</span>
+              </template>
+            </datetime>
+            <datetime title="预期截止日期" v-model='ProjectApproval.expectEndDate'>
+              <template slot="title">
+                <span class='required'>预期截止日期</span>
+              </template>
+            </datetime>
+            <cell title="预算利润" :value="profit"></cell>
+            <cell title="预算利润率" :value="profitMargin"></cell>
+            <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
+          </group>
         </div>
       </div>
     </div>
@@ -85,26 +66,24 @@
 <script>
   // vux组件引入
   import {
-    Icon, Cell, Group, XInput,
-    XTextarea, Swipeout, SwipeoutItem, SwipeoutButton,
-    Datetime, TransferDom, Picker, Popup, PopupRadio, dateFormat
+    Cell, Group, XInput,
+    XTextarea, Datetime, dateFormat
   } from 'vux'
   // 请求 引入
   import {saveProjectApproval, findProjectApproval} from 'service/projectService'
   import {getDictByType, getDictByValue} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from './../mixins/applyCommon'
+  import common from '@/mixins/common'
   // 组件 引入
   import RPicker from 'components/RPicker'
   import PopManagerList from 'components/Popup/PopManagerList'
 
   export default {
-    mixins: [ApplyCommon],
+    mixins: [ApplyCommon, common],
     components: {
-      Icon, Cell, Group, XInput,
-      Swipeout, SwipeoutItem, SwipeoutButton, RPicker,
-      Datetime, XTextarea, TransferDom,
-      Picker, Popup, PopupRadio, PopManagerList,
+      Cell, Group, XInput,
+      RPicker, Datetime, XTextarea, PopManagerList,
     },
     data() {
       return {
@@ -126,14 +105,10 @@
           comment: '', //项目说明
           projectSubclass: '', // 项目子类
         },
-        FormDataComment: '',//备注
+        formDataComment: '',//备注
         formData: {},
-        jsonData: {
-          comment: {
-            biComment: ''
-          },
-        },
-        defaultManager: {},
+        defaultManager: {}, // 项目经理的默认值
+        hasDefault: false, // 是否为界面回写
       }
     },
     computed: {
@@ -195,7 +170,7 @@
               formData: {
                 handlerEntity: this.entity.dealerName,
                 comment: {
-                  biComment: this.FormDataComment,
+                  biComment: this.formDataComment,
                 },
                 baseinfo: {
                   creator: this.formData.handler,
@@ -249,27 +224,37 @@
             item.value = item.name;
           });
           this.subclassList = tableContent;
-          // 没有值则默认取第一个
-          if (!this.ProjectApproval.projectSubclass) {
-            let [defaultSelect = {}] = tableContent;
-            this.ProjectApproval.projectSubclass = defaultSelect.name;
-          }
+          return tableContent;
         });
       },
       // TODO 项目大类切换
       projectBigChange(val) {
-        this.ProjectApproval.projectSubclass = '';
-        this.getType()
+        this.getType().then(data => {
+          if (this.hasDefault) {
+            return
+          }
+          // 默认取第一个
+          let [defaultSelect = {}] = data;
+          this.ProjectApproval.projectSubclass = defaultSelect.name;
+        })
       },
       // TODO 获取显示数据
       getFormData() {
         return findProjectApproval(this.transCode).then(({formData = {}}) => {
+          this.hasDefault = true;
           this.defaultManager = {
             dealerName: formData.approval.projectManager,
             dealerMobilePhone: formData.approval.phoneNumber,
           };
+          formData.approval.expectStartDate = this.changeDate(formData.approval.expectStartDate);
+          formData.approval.expectEndDate = this.changeDate(formData.approval.expectEndDate);
           this.ProjectApproval = formData.approval;
           this.formData = formData.baseinfo;
+          this.formDataComment = formData.comment.biComment;
+          this.$nextTick(() => {
+            // 渲染完后重置为false
+            this.hasDefault = false;
+          })
         })
       },
       // TODO 初始化页面的数据
@@ -287,10 +272,7 @@
 <style lang="scss" scoped>
   @import './../scss/bizApply';
 
-  .xmrw-apply-container {
-    .or_ads {
-      padding: .06rem .08rem;
-    }
+  .xmlx-apply-container {
     /deep/ .weui-cells {
       margin-top: 0;
       font-size: .16rem;
@@ -324,98 +306,4 @@
     padding: unset;
   }
 
-  .r-picker {
-    padding: 0.05rem 0.08rem;
-    font-size: 0.16rem;
-    &.r-picker-2 {
-      > label {
-        display: none;
-      }
-      .picker {
-        padding-right: .1rem;
-      }
-      .horizontal-title {
-        display: block;
-      }
-      .r_arrow {
-        position: absolute;
-        right: -.04rem;
-      }
-    }
-    /* 模式3样式 */
-    &.r-picker-3 {
-      position: relative;
-      margin: 10px auto;
-      padding: .06rem .08rem;
-      width: 95%;
-      box-sizing: border-box;
-      box-shadow: 0 0 8px #e8e8e8;
-      .title {
-        color: #757575;
-
-        font-size: .12rem;
-      }
-      .mode {
-        color: #111;
-        font-weight: 500;
-      }
-      .r_arrow {
-        top: 50%;
-        right: .04rem;
-        position: absolute;
-        transform: translate(0, -50%);
-      }
-    }
-    label {
-      color: #6d6d6d;
-      font-size: 0.12rem;
-      display: block;
-      line-height: 0.2rem;
-    }
-    .horizontal-title {
-      display: none;
-    }
-    .required {
-      color: #5077aa;
-      font-weight: bold;
-    }
-    .picker {
-      position: relative;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      line-height: .38rem;
-      .mater_nature {
-        line-height: 0.2rem;
-      }
-      .iconfont {
-        font-size: 0.24rem;
-      }
-      .r_arrow {
-        display: inline-block;
-        height: .38rem;
-      }
-    }
-  }
-
-  //确认框
-  .popup_header {
-    display: flex;
-    justify-content: space-between;
-    height: 44px;
-    line-height: 44px;
-    font-size: 16px;
-    background-color: #fbf9fe;
-    padding: 0 15px;
-    .cancel {
-      color: #828282;
-    }
-    .confirm {
-      color: #FF9900;
-    }
-  }
-
-  .iconfont_fff {
-    color: #fff;
-  }
 </style>
