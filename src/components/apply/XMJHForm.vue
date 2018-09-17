@@ -5,40 +5,26 @@
         <!-- 项目计划基本信息-->
         <pop-name-list @sel-item="selProject"></pop-name-list>
 
-        <div class="xmlx_list">
-          <!-- 任务计划列表 -->
-          <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
-            <div class="mater_list">
-              <div class="each_mater JH_mar_btm0">
-                <div class="each_mater_wrapper">
-                  <div class="mater_main" style='max-width:100%;'>
-                    <div class="userInp_mode">
-                      <div class="title">任务计划</div>
-                      <group class="SJ_group" @group-title-margin-top="0">
-                        <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'>
-                          <template slot="label">
-                            <span class='required'>任务名称
-                            </span>
-                          </template>
-                        </x-input>
-                        <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]"
-                                      @on-change=" typeTask($event,item) "></popup-picker>
-                        <datetime title="截止日期" v-model='item.deadline'>
-                          <template slot="title">
-                            <span class='required'>截止日期
-                            </span>
-                          </template>
-                        </datetime>
-                        <x-input title="计划工时" type="number" v-model.number="item.planTime" text-align='right'
-                                 placeholder='请填写' @on-blur="checkTime(item)"></x-input>
-                        <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
-                      </group>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- 任务计划列表 -->
+        <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
+          <div class="title">任务计划</div>
+          <group class="SJ_group" @group-title-margin-top="0">
+            <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'>
+              <template slot="label">
+                <span class='required'>任务名称</span>
+              </template>
+            </x-input>
+            <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]"
+                          @on-change=" typeTask($event,item) "></popup-picker>
+            <datetime title="截止日期" v-model='item.deadline'>
+              <template slot="title">
+                <span class='required'>截止日期</span>
+              </template>
+            </datetime>
+            <x-input title="计划工时" type="number" v-model.number="item.planTime" text-align='right'
+                     placeholder='请填写' @on-blur="checkTime(item)"></x-input>
+            <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
+          </group>
         </div>
         <!-- 新增 -->
         <div class="XMJH_add">
@@ -60,16 +46,14 @@
 <script>
   // vux组件引入
   import {
-    Icon, Cell, Group, XInput,
-    XTextarea, Datetime, TransferDom,
-    Picker, Popup, PopupRadio, PopupPicker
+    Cell, Group, XInput,
+    XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
   import {saveProjectPlan} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from './../mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
   import PopNameList from 'components/Popup/PopNameList'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
@@ -77,26 +61,24 @@
   export default {
     mixins: [ApplyCommon],
     components: {
-      Icon, Cell, Group, XInput,
-      RPicker, Datetime, XTextarea, TransferDom,
-      Popup, Picker, PopupRadio, PopNameList, PopupPicker
+      Cell, Group, XInput,
+      Datetime, XTextarea, PopNameList, PopupPicker
     },
     data() {
       return {
         listId: '0281f8eb-f1d2-415c-b566-756fc749ccb3',
         projectTypes: [['设计类', '协调类', '执行类']],
         projectType: [],
-        showDealerPop: false,
         planModel: {
-          "taskName": "",//任务名称
-          "taskType": "",//任务类型
-          "comment": "",//备注
-          "deadline": "",//截止日期
-          "planTime": "",//计划工时
+          taskName: '',//任务名称
+          taskType: '',//任务类型
+          comment: '',//备注
+          deadline: '',//截止日期
+          planTime: '',//计划工时
         },
         projectPlan: [],
         formData: {},
-        FormDataComment: '',//备注
+        formDataComment: '',//备注
         projectName: '', // 项目名称
       }
     },
@@ -162,7 +144,7 @@
               formData: {
                 handlerEntity: this.entity.dealerName,
                 comment: {
-                  biComment: this.FormDataComment,
+                  biComment: this.formDataComment,
                 },
                 baseinfo: {
                   creator: this.formData.handler,
@@ -203,13 +185,8 @@
 
 <style lang="scss" scoped>
   @import './../scss/bizApply';
-  .materiel_list .mater_list .each_mater {
-    padding: unset;
-  }
+
   .xmjh-apply-container {
-    .or_ads {
-      padding: .06rem .08rem;
-    }
     /deep/ .weui-cells {
       margin-top: 0;
       font-size: .16rem;
@@ -226,16 +203,6 @@
         }
       }
     }
-  }
-
-  .xmlx_list .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    width: 100%;
-    max-width: inherit !important;
-    margin-left: 0;
-  }
-
-  .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    margin-left: 0;
   }
 
   .vux-cell-box:not(:first-child):before {
@@ -261,9 +228,5 @@
     em {
       font-style: normal;
     }
-  }
-
-  .JH_mar_btm0 {
-    margin-bottom: 0 !important;
   }
 </style>

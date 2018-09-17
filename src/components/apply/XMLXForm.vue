@@ -290,20 +290,4 @@
       }
     }
   }
-
-  .xmlx_list .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    width: 100%;
-    max-width: inherit !important;
-    margin-left: 0;
-  }
-
-  .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    margin-left: 0;
-  }
-</style>
-<style scoped lang="scss">
-  .materiel_list .mater_list .each_mater {
-    padding: unset;
-  }
-
 </style>
