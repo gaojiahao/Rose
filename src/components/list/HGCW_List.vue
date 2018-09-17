@@ -1,7 +1,7 @@
 <template>
   <!-- 合规财务报表 -->
   <div class="pages hgcw-list-container">
-    <div class="tips-word">请选择</div>
+    <!-- <div class="tips-word">请选择</div> -->
     <div class="btns">
       <div class="btn-item" v-for="(item, index) in listData" @click="goDetail(item)" :key="index">
         <span>{{item.title}}</span>

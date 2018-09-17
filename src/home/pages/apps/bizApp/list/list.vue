@@ -36,6 +36,11 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     let code  = businessMap[to.params.code];
+    // 合规财务报表的title不需要重定义
+    if(code.includes('合规')){
+      to.meta.title = code;
+      next();
+    }
     to.meta.title = code + '列表';
     next();
   },

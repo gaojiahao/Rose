@@ -1,11 +1,11 @@
 <template>
   <div class="detail_wrapper">
     <div class="header">
-      <div class="title">{{title}}</div>
+      <div class="title">{{headInfo.title}}</div>
       <div class="swiper-container swiper-container-header">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">期初</div>
-          <div class="swiper-slide">期末</div>
+          <div class="swiper-slide">{{headInfo.firstName}}</div>
+          <div class="swiper-slide">{{headInfo.LastName}}</div>
         </div>
       </div>
     </div>
@@ -64,25 +64,29 @@
     name: "ZCFZForm",
     data() {
       return {
+        headerSwiper: null,         // 顶部swiper
+        partRightSwiper: null,      // 右侧金额swiper
+        code: '',                   // 路由参数
+        headInfo:{},                // 表头信息
         listData: {},
-        partRightSwiper: null, // 右侧金额swiper
-        headerSwiper: null, // 顶部swiper
+        listMap: {
+          ZCFZ: {
+            title: '资产负债表',
+            firstName: '期初',
+            LastName: '期末',
+            request: getOffBalance
+          },
+          LR: {
+            title: '利润表',
+            firstName: '上期',
+            LastName: '本期',
+            request: getProfit
+          },
+        },
         scrollOptions: {
           bounce: {
             top: false
           }
-        },
-        title: '',
-        code: '',
-        listMap: {
-          ZCFZ: {
-            title: '资产负债表',
-            request: getOffBalance,
-          },
-          LR: {
-            title: '利润表',
-            request: getProfit,
-          },
         }
       }
     },
@@ -150,14 +154,15 @@
         if (!num) {
           return '-'
         }
-
         return `${numberComma(toFixed(num))}元`
       }
     },
     created() {
       let {code = ''} = this.$route.query;
       this.code = code;
-      this.title = this.listMap[code].title;
+      // 获取表格的表头信息
+      this.headInfo = { ...this.listMap[code] };
+      // 初始化数据
       this.initSwiper();
       this.getData();
     }
