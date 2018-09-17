@@ -23,7 +23,7 @@ export default {
       entity: {
         dealerName: '中国特瑞'
       },
-      matterModifyClass : false, 
+      matterModifyClass : false,
       selItems : [], //选中的要删除的物料
     }
   },
@@ -146,7 +146,6 @@ export default {
     // TODO 获取用户基本信息
     getBaseInfoData() {
       getBaseInfoData().then(data => {
-        this.$loading.hide();
         this.formData = {
           ...this.formData,
           ...data,
@@ -195,18 +194,19 @@ export default {
       this.entity.dealerName = JSON.parse(data).entityId
     }
     let {transCode} = this.$route.query;
-    if (transCode) {
-      this.isResubmit = true;
-      this.transCode = transCode;
-      (async () => {
+    (async () => {
+      this.getBaseInfoData();
+      this.getProcess();
+      this.initRequest && await this.initRequest(); // 提交页面不共用的数据请求
+      if (transCode) {
+        this.isResubmit = true;
+        this.transCode = transCode;
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
-        this.getFormData && this.getFormData();
-      })();
-      
-    }
-    this.getBaseInfoData();
-    this.getProcess();
+        this.getFormData && await this.getFormData();
+      }
+      this.$loading.hide();
+    })()
   },
   mounted() {
     this.$nextTick(() => {

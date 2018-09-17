@@ -8,13 +8,13 @@
         <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
         <div class="project_content">
           <form-cell cellTitle="名称" :cellContent="approval.projectName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle="类型" :cellContent="approval.projectType"></form-cell>
+          <form-cell cellTitle="大类" :cellContent="approval.projectType"></form-cell>
+          <form-cell cellTitle="子类" :cellContent="approval.projectSubclass"></form-cell>
           <form-cell cellTitle="经理" :cellContent="approval.projectManager"></form-cell>
           <form-cell cellTitle="经理电话" :cellContent="approval.phoneNumber"></form-cell>
           <form-cell cellTitle="说明" :cellContent="approval.comment || '无'"></form-cell>
           <form-cell cellTitle="预期开始日期" textRight :cellContent="approval.expectStartDate | timeSplit"></form-cell>
           <form-cell cellTitle="预期截止日期" textRight :cellContent="approval.expectEndDate | timeSplit"></form-cell>
-
         </div>
       </div>
       <!-- 预算明细 -->

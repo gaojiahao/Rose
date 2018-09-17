@@ -148,6 +148,7 @@ export let getDictByType = (type = '', data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getDictByType',
     data: {
+      _dc: Date.now(),
       page: 1,
       start: 0,
       limit: 10000,
@@ -162,6 +163,7 @@ export let getDictByValue = (value = '', data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getDictByValue',
     data: {
+      _dc: Date.now(),
       page: 1,
       start: 0,
       limit: 10000,
