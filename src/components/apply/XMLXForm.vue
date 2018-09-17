@@ -158,7 +158,6 @@
         let objArr = [
           {tip: 'projectManager', msg: '项目经理'},
           {tip: 'projectType', msg: '项目大类'},
-          {tip: 'projectSubclass', msg: '项目子类'},
           {tip: 'projectName', msg: '项目名称'},
           {tip: 'budgetIncome', msg: '预算收入'},
           {tip: 'budgetCapital', msg: '预算成本'},
@@ -166,7 +165,7 @@
           {tip: 'expectStartDate', msg: '预期开始日期'},
           {tip: 'expectEndDate', msg: '预期截止日期'},
         ];
-        let selArr = ['projectManager', 'projectType', 'projectSubclass'];
+        let selArr = ['projectManager', 'projectType'];
         let warn = '';
         objArr.every(item => {
           if (!this.ProjectApproval[item.tip]) {
