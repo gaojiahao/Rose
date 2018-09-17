@@ -37,18 +37,18 @@
     data() {
       return {
         listStatus: [
-          // {name: '仪表视图', status:''},
+          {name: '仪表视图', status: '仪表视图'},
           {name: '全部', status: ''},
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
         listViewID : 2190,
-        chartShow : false,
-        hasNext: true,
+        chartShow : true,
+        // hasNext: false,
         scrollOptions: {
           click: true,
-          pullDownRefresh: true,
-          pullUpLoad: true,
+          pullDownRefresh: false,
+          pullUpLoad: false,
         },
 
       }
@@ -59,35 +59,35 @@
     mixins: [listCommon],
     methods: {
       ///tab切换
-      // tabClick(item, index) {
-      //   console.log(item);
-      //   switch (item.status) {
-      //     case '已生效' :
-      //       this.biStatus = '1';
-      //       break;
-      //     case '进行中' :
-      //       this.biStatus = '2';
-      //       break;
-      //     case '' :
-      //       this.biStatus = '';
-      //       break;
-      //   }
-      //   if(index === 0){
-      //     this.chartShow  = true;
-      //     this.hasNext = false;
-      //   }
-      //   else{
-      //     this.chartShow = false;
-      //     this.hasNext = true;
-      //     this.scrollOptions.pullDownRefresh = true;
-      //     this.scrollOptions.pullUpLoad =  true;
-      //     this.resetScroll();
-      //   }
-      //   this.activeIndex = index;
-      //   this.activeTab = item.status;
-      //   this.resetCondition();
-      //   this.getList();
-      // }
+      tabClick(item, index) {
+        console.log(item);
+        switch (item.status) {
+          case '已生效' :
+            this.biStatus = '1';
+            break;
+          case '进行中' :
+            this.biStatus = '2';
+            break;
+          case '' :
+            this.biStatus = '';
+            break;
+        }
+        if(index === 0){
+          this.chartShow = true;
+          this.hasNext = false;
+        }
+        else{
+          this.chartShow = false;
+          this.hasNext = true;
+          this.scrollOptions.pullDownRefresh = true;
+          this.scrollOptions.pullUpLoad =  true;
+          this.resetScroll();
+        }
+        this.activeIndex = index;
+        this.activeTab = item.status;
+        this.resetCondition();
+        this.getList();
+      }
 
     }
   }

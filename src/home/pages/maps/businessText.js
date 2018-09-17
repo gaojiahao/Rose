@@ -1,6 +1,6 @@
 /* BusKey 映射表 */
 export default {
-  XSDD :'经销销售订单' ,
+  XSDD :'大客户订单' ,
   XSCK :'产品销售出库',
   XSBJ : '产品报价',
   CGSQ : '采购申请',

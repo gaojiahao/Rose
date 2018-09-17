@@ -52,10 +52,9 @@
       </div>
     </div>
     <!--产品销量排名柱状图-->
-    <div class='product_rank'>
+    <!-- <div class='product_rank'>
       <div id="bar"></div>
-      <!-- 产品排行榜 -->
-    </div>
+    </div> -->
   </div>
   
 </template>
@@ -107,59 +106,52 @@ import { dateFormat,Countup } from 'vux'
 import { getDashboard } from 'service/listService'
 // 插件引入
 import {toFixed} from '@/plugins/calc'
-
 export default {
   data(){
     return{
       pieOption: {                      // 饼图表参数
-        title:{
-          text : '客户排名',
+        title:{                         // 标题
+          text : '客户交易往来分析',
           x : 'center',
           top:5,
         },
-        legend: {
-            orient: 'vertical',
-            left:'6%',
-            top:'65%',
-            itemGap: 5,
-            selectedMode: true,
-            data: ['深圳市金红叶纸业服务有限公司','新奇士集团','鲜卑','中国娃哈哈有限责任公司深圳分公司','篱笆网','其他'],
+        legend: {                       // 图例组件
+          orient: 'vertical',           // 水平方向 或者 垂直方向
+          left:'6%',
+          top:'65%',
+          itemGap: 10,                   // 图例之间的间距
+          data: [],
         },
-        tooltip : {
-          trigger: 'item',
-          formatter:(params)=>{
-            let tip =  handle(params.data.name,'<br/>',10);
-            return `${tip}<br/>销售额：${params.value} (${params.percent}%)`
+        tooltip : {                     // 饼图的弹窗提示文字
 
+          confine: true,                // 将提示文字限制在屏幕内 
+          textStyle: {                  // 文字样式
+            fontSize: 12
           },
-                // formatter: "{b} <br/>{c} ({d}%)",
+          formatter:(params)=>{
+            // let tip =  handle(params.data.name, '<br/>', 0);
+            return `${params.data.name}<br/>销售额：￥${params.value} (${params.percent}%)`
+          },
         },
-        series : [
+        color: ['#07689f','#a2d5f2','#ff7e67','#abedd8','#283c63','#bad7df'],
+        series : [                      // 饼图数据
           {
-            name: '排名',
+            name: '公司名称',
             type: 'pie',
-            radius : '40%',
-            center: ['50%', '33%'],
-            data:[
-                {value:100.5, name:'深圳市金红叶纸业服务有限公司'},
-                {value:96, name:'新奇士集团'},
-                {value:90, name:'鲜卑'},
-                {value:88.6, name:'中国娃哈哈有限责任公司深圳分公司'},
-                {value:85, name:'篱笆网'},
-                {value:90, name:'其他'}
-            ],
-            itemStyle: {
-                emphasis: {
-                  shadowBlur: 10,
-                  shadowOffsetX: 0,
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
+            radius : '40%',             // 饼图半径
+            center: ['50%', '38%'],     // 饼图位置
+            data:[],
             label:{
+              // show: false,              
+              fontSize: 12,
+              
               formatter :(params) => {
-               let name = handle(params.data.name,'\n',7);
+               let name = handle(params.data.name, '\n', 6);
                 return name  
               },             
+            },
+            labelLine: {
+              // smooth: true,
             }
           }
         ]
@@ -249,41 +241,46 @@ export default {
         startData: this.startDate,
         endData: this.EndDate
       }
-      this.dashboardData(timeFilter).then( data => {
-        console.log(data);
-      })
+      this.dashboardData(timeFilter);
     },
     dashboardData(data = {}){
+      this.$loading.show();
       return getDashboard(data).then((
         { total = 0, dealerPie, productSalesRanking: pdRank , salesmanRanking: staffRank }) => {
-        // console.log('产品排名:', pdRank);
-        this.staffRank = staffRank;
-        let testarr = [];
-        for(let item of dealerPie){
-          console.log(item);
-          let obj = {
-            value: item.total,
-            name: item.dealerName
+          // 初始化
+          let PieChart = echarts.init(document.getElementById('pie')),
+                dealerRank = [];
+                
+          // 业务员业绩排名
+          this.staffRank = staffRank;
+          // 修改数据
+          for(let item of dealerPie){
+            let obj = {
+              value: item.total,
+              name: item.dealerName
+            }
+            dealerRank.push(obj);
           }
-          testarr.push(obj);
-        }
-        console.log(testarr);
-        // console.log('公司:', dealerPie);
-        this.$set(this.pieOption.series[0], 'data', testarr);
-        PieChart.setOption(this.pieOption);
-
-        
-        this.businessAmount = toFixed(total);
+          // 销量额
+          this.businessAmount = toFixed(total);
+          // 饼图数据
+          this.$set(this.pieOption.series[0], 'data', dealerRank);
+          this.$set(this.pieOption.legend, 'data', dealerRank);
+          PieChart.setOption(this.pieOption);
+          this.$loading.hide();
       })
     }
   },
   created(){
+    // let PieChart = echarts.init(document.getElementById('pie'));
+    // let BarCahrt = echarts.init(document.getElementById('bar'));
+
     this.currentDate = dateFormat(new Date(),'YYYY-MM-DD');
     // getDashboard();
     this.dashboardData();
   },
   mounted(){
-    BarCahrt.setOption(this.barOption);
+    // BarCahrt.setOption(this.barOption);
 
   }
 
