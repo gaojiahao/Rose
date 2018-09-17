@@ -237,10 +237,10 @@ export default {
               creator: this.transCode ? this.formData.handler : '',
               modifer: this.transCode ? this.formData.handler : '',
               order: {
-                // dealerDebit: this.formData.handler,
+                crDealerLabel: '员工',
+                project : this.projectName,                                     
                 dealerCodeCredit : this.formData.userCode,
-		            crDealerLabel: '员工',
-                project : this.projectName,
+                departmentName: this.formData.handlerUnitName,
                 dataSet
               }
             }),
