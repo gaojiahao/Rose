@@ -18,7 +18,7 @@
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
           <!-- 项目 -->
-          <div class="duty_name">
+          <div class="project_name">
             <div class="major_content vux-1px-b">
               <!-- <div class="status_part">
                 <span class="iconfont icon-503020"></span>

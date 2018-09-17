@@ -24,7 +24,7 @@
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
-          <div class="duty_name"  v-if="item.projectName">
+          <div class="project_name"  v-if="item.projectName">
             <div class="major_content vux-1px-b">
               <div class="status_part">
                 <span class="iconfont icon-503020"></span>

@@ -50,17 +50,7 @@
       box-sizing: border-box;
       text-overflow: ellipsis;
       -webkit-box-orient: vertical;
-      .status_part {
-        color: #757575;
-        font-size: .12rem;
-        font-weight: normal;
-        .iconfont {
-          font-size: .1rem;
-        }
-      }
-      .major_content {
-        font-weight: bold;
-      }
+
     }
     .duty_top {
       height: .24rem;
@@ -70,7 +60,6 @@
         float: left;
         font-size: .15rem;
         color: #7D7D7D;
-        
         .duty_crt_man { // 任务创建者
           color: #fff;
           padding: .02rem;
@@ -78,43 +67,40 @@
           background: #333;
           font-size: 0.12rem;
           font-weight: bold;
-        }
-        .duty_crt_man:before { //左尖角
-          position: absolute;
-          content: "";
-          width: 0;
-          height: 0;
-          top: 0;
-          left: -.03rem;
-          border-right: .04rem solid #333;
-          border-bottom: .04rem solid transparent;
+          &:before {
+            position: absolute;
+            content: "";
+            width: 0;
+            height: 0;
+            top: 0;
+            left: -.03rem;
+            border-right: .04rem solid #333;
+            border-bottom: .04rem solid transparent;
+          }
         }
         .duty_done_c {
           background: #53d397;
-        }
-        .duty_done_c:before {
-          border-right: .04rem solid #53d397;
+          &:before {
+            border-right: .04rem solid #53d397;
+          }
         }
         .duty_doing_c {
           background: #5077aa;
-        }
-        .duty_doing_c:before {
-          border-right: .04rem solid #5077aa;
+          &:before {
+            border-right: .04rem solid #5077aa;
+          }
         }
         .duty_fall_c {
           background: #474a56;
+          &:before {
+            border-right: .04rem solid #474a56;
+          }
         }
-        .duty_fall_c:before {
-          border-right: .04rem solid #474a56;
-        }
-
       }
-
-      .duty_time { //任务创建时间
-        float: right;
-        font-size: .15rem;
-        color: #7D7D7D;
-        
+    .duty_time { //任务创建时间
+      float: right;
+      font-size: .15rem;
+      color: #7D7D7D;
       }
     }
     .duty_main {
@@ -125,6 +111,23 @@
     }
     .duty_item {
       padding: 0 .1rem;
+    }    
+    // 项目名称
+    .project_name {
+      width: 100%;
+      padding: 0 .1rem;
+      box-sizing: border-box;
+      .status_part {
+        color: #757575;
+        font-size: .12rem;
+        font-weight: normal;
+        .iconfont {
+          font-size: .1rem;
+        }
+      }
+      .major_content {
+        font-weight: bold;
+      }    
     }
   }
   /* 物料 */

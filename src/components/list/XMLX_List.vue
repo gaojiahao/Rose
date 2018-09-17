@@ -19,13 +19,16 @@
             <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
           <!-- 项目名称 -->
-          <div class="duty_name">
+          <div class="project_name">
             <div class="major_content">
               <div class="status_part">
                 <span class="iconfont icon-503020"></span>
                 <span class="status_name">{{item.projectType_project}}</span>
               </div>
-              {{item.projectName_project}}
+              <div>
+                {{item.projectName_project}}
+              </div>
+              
             </div>
             <div class="content_step vux-1px-b">
               <div>
@@ -165,7 +168,6 @@
     }
     .project_name {
       padding: 0 .1rem;
-      line-height: .24rem;
     }
     .content_step {
       display: flex;
