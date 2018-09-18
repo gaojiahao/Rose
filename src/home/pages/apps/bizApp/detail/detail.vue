@@ -13,7 +13,8 @@
 </template>
 
 <script>
-  import businessText from './../../../maps/businessText'
+  import businessText from '@/home/pages/maps/businessText'
+  import Apps from '../maps/Apps'
   import Bscroll from 'better-scroll'
   export default {
     data() {
@@ -26,13 +27,21 @@
     },
     watch:{
       $route:{
-        handler(to,from){
-          let {code = ''} = to.params;
+        handler(to, from){
+          console.log('即将返回：', to);
+          console.log('上个页面：', from);
+          let { code } = to.params;
+          let { name } = this.$route.query;
+          let { fromRalted } = from.query;
+          // if(fromRalted){
+          //   this.$router.back(-1);
+          //   return;
+          // }          
           let fromCode = from.params.code || '';
           try {
             // 从相关实例进入另一个详情
             if (to.name === 'DETAIL') {
-              this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+              this.currentComponent = require(`components/detail/${Apps[code]}Form.vue`).default;
               // 如果进入的应用与当前应用相同，需要调用该方法请求数据
               if (fromCode === code) {
                 this.$nextTick(() => {
@@ -53,7 +62,7 @@
               click: true,
             })
           })
-          document.title = `${businessText[code]}详情`;
+          document.title = `${name}详情`;
         }
       }
 
@@ -68,18 +77,19 @@
       }
     },
     beforeRouteEnter(to, from, next) {
-      let {code = ''} = to.params;
-      if (code === 'HGCW') {
-        code = to.query.code || '';
+      let { name = '' } = to.query;
+      if(name.includes('表')){
+        to.meta.title = name;
+        next();
       }
-      to.meta.title = `${businessText[code]}详情`;
+      to.meta.title = `${name}详情`;
       next();
     },
     created() {
       this.$loading.show();
       let {code = ''} = this.$route.params;
       try {
-        this.currentComponent = require(`components/detail/${code}Form.vue`).default;
+        this.currentComponent = require(`components/detail/${Apps[code]}Form.vue`).default;
       } catch (e) {
         this.$vux.alert.show({
           content: '抱歉，无法支持该应用的查看',
@@ -93,12 +103,10 @@
           click: true,
         })
       })
-    },
-    mounted() {
 
     },
     beforeRouteLeave(to, from, next) {
-      let {path} = to;
+      let { path } = to;
       this.$HandleLoad.hide();
       // 新建物料，修改列表页的meta值
       if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {

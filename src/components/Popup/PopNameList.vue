@@ -29,7 +29,7 @@
         <div class="trade_pop">
           <div class="title">
             <!-- 搜索栏 -->
-            <d-search @search='searchList' @turnOff="onHide" :isFill='true'></d-search>
+            <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
           </div>
           <!-- 项目计划列表 -->
           <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"

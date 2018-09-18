@@ -3,7 +3,7 @@
       <div class="basic_list">
         <div class="indval_app"
             @click="goBasic(item.text)"
-            v-for='(item, index) of BSarray'
+            v-for='(item, index) of BasicApps'
             :key='index'
             :style="{ 
               background:`${item.bgColor} url(${item.icon}) no-repeat .7rem .01rem / 50%` ,
@@ -20,9 +20,9 @@
 <script>
 export default {
   props:{
-    BSarray: {
+    BasicApps: {
       type : Array,
-      require : true
+      require: true
     },
     goBasic: {
       type: Function,

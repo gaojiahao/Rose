@@ -7,7 +7,8 @@ import ListItem from 'components/list/commonPart/ListItem'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
 import {toFixed} from '@/plugins/calc'
-
+// 映射表引入
+import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 export default {
   props: {
     refreshRequest: {
@@ -60,8 +61,11 @@ export default {
       if (this.clickVisited) {
         return
       }
-      let {transCode} = item;
-      let {code} = this.$route.params;
+      // 交易号、应用名称等
+      let { transCode } = item;
+      let { code } = this.$route.params;
+      let { name } = this.$route.query;
+      // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
       this.$set(this.listData, index, {...item});
@@ -85,6 +89,7 @@ export default {
           this.$router.push({
             path,
             query: {
+              name,
               transCode
             }
           })
@@ -106,9 +111,13 @@ export default {
       })
     },
     goEdit() {
-      let {code} = this.$route.params;
+      let { code } = this.$route.params;
+      let { name } = this.$route.query;
       this.$router.push({
-        path: `/fillform/${code}`,
+        path: `/fillform/${Apps[code]}`,
+        query: {
+          name
+        }
       })
     },
     // TODO 重置列表条件

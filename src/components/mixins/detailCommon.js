@@ -1,12 +1,12 @@
-import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService.js'
+import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import FormCell from 'components/detail/commonPart/FormCell'
 // 映射表 引入
-import businessMap from '@/home/pages/maps/businessApply.js'
+import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 //公共方法引入
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
 
 export default {
@@ -30,7 +30,6 @@ export default {
       actions: [],
       isMine: false, // 是否为我创建
       noOperation: true, // 是否审批过
-      RelatedAppList: [],//相关实例所有数据
       HasValRealted: false,//相关实例是否有值为0
       orderInfo: {}, // 表单内容
     }
@@ -183,7 +182,7 @@ export default {
         this.$emit('change', true);
       }
     },
-    //TODO 获取相关实例
+    // 获取相关实例
     getAppExampleDetails() {
       return getAppExampleDetails({
         transCode: this.transCode,
@@ -191,8 +190,7 @@ export default {
       }).then(data => {
         let relatedApply = data.relevantItems;
         relatedApply.forEach(item => {
-          if (businessMap[item.listName]) {
-            this.RelatedAppList.push(item);
+          if (Apps[item.listId]) {
             if (item.itemCount > 0) {
               this.HasValRealted = true;
             }
@@ -225,9 +223,5 @@ export default {
   },
   created() {
     this.loadPage();
-  },
-  mounted() {
-
-
-  },
+  }
 }

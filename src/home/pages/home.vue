@@ -24,9 +24,9 @@
           </div>
         </div>
         <!-- 基础应用部分 -->
-        <basic-app :BSarray='BSarray' :goBasic='goBasic'></basic-app>
+        <basic-app :BasicApps='BasicApps' :goBasic='goBasic'></basic-app>
         <!-- 业务应用部分 -->
-        <bus-app :BUSarray='BUSarray' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
+        <bus-app :BusApps='BusApps' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
       </div>   
     </div>
   </div>
@@ -39,7 +39,7 @@ import homeService from 'service/homeservice'
 import { getMsgList } from 'service/msgService.js'
 // 映射表引入
 import basicMap from './maps/basic'
-import businessMap from './maps/businessApp'
+import Apps from './maps/businessApp'
 // 组件引入
 import busApp from 'components/home/busAppList'        // 业务应用
 import basicApp from 'components/home/basicApp'        // 基础应用
@@ -50,8 +50,8 @@ export default {
     return{
       BUSobj: {},
       userInfo:{},         // 用户信息
-      BSarray : [],        // 基础对象 数组
-      BUSarray: [],        // 业务应用 数组
+      BasicApps : [],        // 基础对象 
+      BusApps: {},        // 业务应用 
       homeScroll : null,
       currentEntity :'',//当前主体
       entityList : [] ,//主体列表
@@ -66,8 +66,8 @@ export default {
       this.$router.push({ path : `${basicMap[item]}`})
     },
     // 前往列表
-    goList(item){
-      this.$router.push({ path:`/list/${item}`})
+    goList(code, name){
+      this.$router.push({ path: `/list/${code}`, query: { name } })
     },
     // 设置默认图片
     getDefaultIcon(app){
@@ -110,7 +110,6 @@ export default {
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
-        console.log(data);
         let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
         if(tokenInfo){
           tokenInfo = JSON.parse(tokenInfo);
@@ -142,9 +141,7 @@ export default {
         let BUSobj = this.BUSobj;
         for(let val of res){
           // 获取应用
-          if(businessMap[val.text]){
-            // 循环生成空数组
-            BUSobj[val.text] = [];
+          if(Apps[val.id]){
             for(let item of val.children ){
               // 基础对象
               if(basicMap[item.text]){
@@ -168,34 +165,27 @@ export default {
                   item.icon = item.icon
                     ? `/dist/${item.icon}`
                     : ''
-                  this.BSarray.push(item);              
+                  this.BasicApps.push(item);              
                 }
               }
               // 业务应用
-              if(businessMap[val.text][item.text]){
-                item.code = businessMap[val.text][item.text]
+              if(Apps[val.id][item.listId]){
                 item.icon = item.icon
                   ? `/dist/${item.icon}`
                   : this.getDefaultIcon();
                 // 归类到相应的小数组
-                BUSobj[val.text].push(item);     
+                if(!this.BusApps[val.text]){
+                  this.$set(this.BusApps, val.text, { appList: [item] })
+                }
+                else {
+                  this.BusApps[val.text].appList.push(item);
+                }  
               }
-            }
-            if(val.text !== '产品'){
-              // 针对应用数组 进行 分类大汇总
-              this.BUSarray.push({ 
-                name: val.text, 
-                appList: BUSobj[val.text]
-              });                  
             }
             this.$loading.hide();     
           }
-        }        
-      }).catch( err => {
-        this.$vux.alert.show({
-          content: '首页加载有误，请尝试刷新'
-        })
-      });
+        }
+      })
       // 获取 头像姓名
       let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
       // 如果头像不存在则指定默认头像

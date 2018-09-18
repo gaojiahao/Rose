@@ -1,6 +1,6 @@
 /* BusKey 映射表 */
 export default {
-  XSDD :'大客户订单' ,
+  SO1 :'大客户订单' ,
   XSCK :'产品销售出库',
   XSBJ : '产品报价',
   CGSQ : '采购申请',
@@ -8,7 +8,7 @@ export default {
   CGRK : '采购入库',
   BDKCDB : '本地库存调拨',
   FYBX : '项目费用报销',
-  SJ :  '商机',
+  OPPT :  '商机',
   KCPD : '库存盘点',
   XMRW: '项目任务',
   XMLX: '项目立项',

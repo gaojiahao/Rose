@@ -35,11 +35,12 @@
     },
     methods: {
       goDetail(item) {
-        let {code} = this.$route.params;
+        let { code } = this.$route.params;
         this.$router.push({
           path: `/detail/${code}`,
           query: {
-            code: item.code
+            code: item.code,
+            name: item.title
           }
         })
       }

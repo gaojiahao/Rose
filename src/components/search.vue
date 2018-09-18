@@ -61,7 +61,7 @@
       searchMat(val) {
         // 如果 输入框没有值 则点击关闭popup
         if (!val) {
-          this.$emit('turnOff', false);
+          this.$emit('turn-off', false);
           return;
         }
         this.$emit("search", {

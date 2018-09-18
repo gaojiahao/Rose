@@ -1,11 +1,11 @@
 <template>
   <!-- 物料popup -->
   <div v-transfer-dom>
-    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow">
+    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
-          <m-search @search='searchList' @turnOff="onHide" :isFill='true'></m-search>
+          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         </div>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
@@ -17,10 +17,6 @@
                 <span class="order_title">编码</span>
                 <span class="order_num">{{item.transCode.replace(/_/g,'')}}</span>
               </div>
-              <!-- 时间 -->
-              <!-- <div class="time">
-                {{item.crtTime | dateFormat}}
-              </div> -->
             </div>
             <!-- 数量，金额 -->
             <div class='show_list'>
@@ -70,8 +66,10 @@
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   import businessMap from '@/home/pages/maps/detail'
+  // 引入映射表
+  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {
-    name: "MatterList",
+    name: "RelatedList",
     props: {
       show: {
         type: Boolean,
@@ -81,9 +79,9 @@
         type : String,
         default : ''
       },
-      filter : {
+      filtersData : {
         type: Array,
-        default : ['transcode']
+        default : []
       }
     },
     components: {
@@ -98,7 +96,7 @@
         srhInpTx: '', // 搜索框内容
         relatedAppList: [], // 物料列表
         limit: 10, // 每页条数
-        page: 1., // 当前页码
+        page: 1, // 当前页码
         hasNext: true, // 是否有下一页
         scrollOptions: { // 滚动配置
           click: true,
@@ -108,27 +106,21 @@
       }
     },
     watch: {
-      // show: {
-      //   handler(val) {
-      //     this.showPop = val;
-      //   }
-      // },
-      filter:{
+      filtersData:{
         handler(val){
-            (async()=>{
-              await this.getListView();
-              await this.getList().then(()=>{
-                this.$HandleLoad.hide();
-                this.showPop = true;
-              });
-            })()
+          (async()=>{
+            await this.getListView();
+            await this.getList().then(()=>{
+              this.$HandleLoad.hide();
+              this.showPop = true;
+            });
+          })()
         }
       }
     },
     methods: {
       // TODO 弹窗展示时调用
       onShow() {
-        console.log('显示了');
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
             // 弹窗展示时刷新滚动，防止无法拖动问题
@@ -137,9 +129,9 @@
         })
       },
       onHide(){
-        this.$emit('input',false)
+        this.showPop = false;
       },
-      //获取相关实例应用的视图
+      // 获取相关实例应用的视图
       getListView(){
         return getListView({listId : this.listId}).then(data=>{
           this.viewId = data[0].id
@@ -148,14 +140,14 @@
       // TODO 获取相关实例列表
       getList() {
         let value = '';
-        this.filter.forEach((item,index)=>{
-          if(index === this.filter.length-1){
+        this.filtersData.forEach((item, index) => {
+          if(index === this.filtersData.length - 1){
             value += item;
             return
           }
-          value += item+','
+          value += item + ','
         })
-        let filter = [{property:"transCode",operator:"in",value:value}];
+        let filter = [{property:"transCode", operator:"in", value:value}];
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -166,7 +158,7 @@
             }
           ];
         }
-        return getList(this.viewId,{
+        return getList(this.viewId, {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -195,18 +187,18 @@
       },
       //跳转详情
       goDetail(item){
-        this.showPop = false;
-        let code = businessMap[item.transCode.split('_')[0]];
-        this.$router.replace({
-          path: `/detail/${code}`,
-          query: {
-            transCode: item.transCode
-          }
-        })
+        console.log(item);
+        // this.showPop = false;
+        // let code = this.listId;
+        // this.$router.push({
+        //   path: `/detail/${code}`,
+        //   query: {
+        //     name: item.transTypeName,
+        //     transCode: item.transCode,
+        //     fromRalted: true
+        //   }
+        // })
       }
-    },
-    created() {
-
     }
   }
 </script>

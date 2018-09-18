@@ -10,13 +10,8 @@ export default function errorHandler(err){
   AlertModule.show({
     content: err,
     onHide(){
-      // 列表数据出现任何错误都不用返回
-      if(location.pathname.indexOf('list') === -1){
-        history.go(-1);
-        Vue.prototype.$loading.hide();
-        Vue.prototype.$HandleLoad.hide();
-      }
-      
+      Vue.prototype.$loading.hide();
+      Vue.prototype.$HandleLoad.hide();
     }
   });
 };

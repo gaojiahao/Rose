@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import businessText from './../../../maps/businessText'
 import platfrom from '@/plugins/platform'
 export default {
   data(){
@@ -35,8 +34,8 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    let code  = businessText[to.params.code];
-    to.meta.title = `新增${code.slice(-4)}`;
+    let { name } = to.query;
+    to.meta.title = `新增${name}`;
     next();
   },
   created(){
@@ -45,8 +44,7 @@ export default {
     if(transCode){
       this.transCode = transCode;
     }
-    let {code} = this.$route.params;
-    document.title = `新增${businessText[code]}`;
+    let { code } = this.$route.params;
     this.currentComponent = require(`components/apply/${code}Form.vue`).default;
   },
   beforeRouteLeave(to, from, next) {

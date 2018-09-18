@@ -23,7 +23,7 @@
         <div class="trade_pop">
           <div class="title">
             <!-- 搜索栏 -->
-            <d-search @search="searchList" @turnOff="onHide" :isFill="true"></d-search>
+            <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
           </div>
           <!-- 往来列表 -->
           <div class="mater_list" ref="dealer">

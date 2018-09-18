@@ -11,7 +11,7 @@
           <div class="trade_pop_title">
             <!--<span>{{title}}</span>-->
             <!--<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>-->
-            <r-search @search="searchList" @turnOff="onHide" :isFill='true'></r-search>
+            <r-search @search="searchList" @turn-off="onHide" :isFill='true'></r-search>
           </div>
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">

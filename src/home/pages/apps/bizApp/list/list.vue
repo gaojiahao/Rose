@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import businessMap from '../../../maps/businessText.js'
+// 引入映射表
+import Apps from '../maps/Apps'
 export default {
   data(){
     return {
@@ -25,23 +26,17 @@ export default {
     if(code){
       this.code = code;
       this.$loading.show();
-      this.currentComponent = require(`components/list/${code}_List.vue`).default;
-    }
-  },
-  watch: {
-    $route: {
-      handler(to, from) {
-      },
+      this.currentComponent = require(`components/list/${Apps[code]}_List.vue`).default;
     }
   },
   beforeRouteEnter (to, from, next) {
-    let code  = businessMap[to.params.code];
+    let { name } = to.query;
     // 合规财务报表的title不需要重定义
-    if(code.includes('合规')){
-      to.meta.title = code;
+    if(name.includes('合规')){
+      to.meta.title = name;
       next();
     }
-    to.meta.title = code + '列表';
+    to.meta.title = name + '列表';
     next();
   },
   activated() {
@@ -58,7 +53,7 @@ export default {
           this.$refs.list.reloadData();
         }
         this.code = code;
-        this.currentComponent = require(`components/list/${code}_List.vue`).default;
+        this.currentComponent = require(`components/list/${Apps[code]}_List.vue`).default;
       }
       this.$route.meta.reload = false;
     }

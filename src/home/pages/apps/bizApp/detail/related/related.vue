@@ -20,15 +20,15 @@
         </div>
       </div>
     </div>
-    <pop-related-list :show='showPop' :listId='listId' :filter='filtersData' v-model='showPop' ref='relatedList'></pop-related-list>
+    <pop-related-list :show='showPop' :listId='listId' :filtersData='filtersData' v-model='showPop' ref='relatedList'></pop-related-list>
   </div>
   
 </template>
 
 <script>
 import PopRelatedList from 'components/Popup/PopRelatedList'
-import {getAppExampleDetails} from 'service/detailService.js'
-import businessMap from '@/home/pages/maps/businessApply.js'
+import {getAppExampleDetails} from 'service/detailService'
+import Apps from '../../maps/Apps'
 export default {
   data(){
     return{
@@ -46,9 +46,9 @@ export default {
   methods:{
     //显示相关实例的pop
     getRelatedData(item){
-      if(item.itemCount>0){
+      if(item.itemCount > 0){
         this.listId = item.listId;
-        item.content.forEach(val=>{
+        item.content.forEach( val => {
           this.filtersData.push(val.transCode);
         })
         this.$HandleLoad.show();
@@ -59,10 +59,9 @@ export default {
        return getAppExampleDetails({
         transCode :this.transCode,
         listId :this.listId
-      }).then(data=>{
-        let relatedApply = data.relevantItems;
-        relatedApply.forEach(item=>{
-          if(businessMap[item.listName]){
+      }).then( ({ relevantItems: relatedApply }) => {
+        relatedApply.forEach( item => {
+          if(Apps[item.listId]){
            this.RelatedAppList.push(item);
           }
         })
@@ -76,6 +75,10 @@ export default {
     this.getAppExampleDetails().then(()=>{
       this.$loading.hide();
     });
+  },
+  beforeRouteEnter (to, from, next) {
+    console.log(from);
+    next();
   }
 
 }
