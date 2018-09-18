@@ -33,7 +33,7 @@
   position: relative;
   box-sizing: border-box;
   background: #F9F9F9;
-  height: calc(100% - .4rem - 44px);
+  height: calc(100% - .4rem);
 
   .scroll-wrapper {
     padding-bottom: .3rem !important;
@@ -141,7 +141,9 @@
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
   .flow_list_wrapper {
-    height: 100%;
+    // height: 100%;
+    height: calc(100% - 0.44rem);
+
   }
   .flow {
     .flow_top {

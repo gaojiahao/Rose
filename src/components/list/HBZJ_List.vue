@@ -48,7 +48,9 @@
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
-          <r-scroll class="flow_list_wrapper" ref="flowListWrapper">
+          <r-scroll class="flow_list_wrapper" ref="flowListWrapper"
+                    :options="FlowScrollOptions" :has-next="FlowHasNext"
+                    :no-data="!FlowHasNext && !flowData.length" @on-pulling-up="onPullingUpFlow">
             <div class="flow">
               <div class='flow_top'>
                 <div class="title">流水详情</div>
@@ -127,11 +129,11 @@
                 </div>                 
               </div>
             </div>
-            <div class="btn" v-if='flowData.length>=3'>
+            <!-- <div class="btn" v-if='flowData.length>=3'>
               <span class="cfm_btn" @click="flowShow = false">关闭</span>
-            </div>
+            </div> -->
           </r-scroll>
-          <div class="btn when_less" v-if='flowData.length < 3'>
+          <div class="btn when_less">
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
           </div>
           
@@ -157,9 +159,7 @@
       
     },
     mixins: [listCommon],
-    methods: {     
-
-      
+    methods: {       
     },
     created(){
 

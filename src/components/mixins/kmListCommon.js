@@ -7,12 +7,21 @@ import RScroll from 'components/RScroll'
 export default {
   data() {
     return {
-      page: 1,
+      //列表scroll参数
+      page: 1, 
       limit: 20,
       hasNext: true,
       scrollOptions: {
         click: true,
         pullDownRefresh: true,
+        pullUpLoad: true,
+      },
+      //流水scroll
+      flowPage: 1, 
+      flowLimit: 20,
+      FlowHasNext: true,
+      FlowScrollOptions: {
+        click: true,
         pullUpLoad: true,
       },
       listView: [], //列表视图
@@ -30,6 +39,7 @@ export default {
       count: 0,
       total:null, //列表数据总量
       applyCode : '' ,
+      requestData : {},//请求流水数据的参数
     }
   },
   directives: { TransferDom },
@@ -75,6 +85,8 @@ export default {
     },
     //显示流水详情
     async getFlow(item){
+      this.flowData = [];
+      this.flowPage = 1;
       //工作流锁定余额标不查询流水
       if(item.qtyLocked>=0){
         return;
@@ -86,31 +98,51 @@ export default {
         row[item1.field] = item[item1.field];
 
       })
-      let requestData = {
+      this.requestData = {
         view_id: 'obj_water_1',
         active_type: 'water',
         row :JSON.stringify(row)
       }
       //流水列表字段
-      await getView({...requestData,view_scope: 'model'}).then( data =>{
+      await getView({...this.requestData,view_scope: 'model'}).then( data =>{
         this.flowField = data.model;
       }).catch( err => {
         // 关闭笼罩层
         this.$HandleLoad.hide();
       });
       //流水列表数据
-      await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
-        data.forEach(item=>{
-          item.showList = false;
-        })
-        this.flowData = data;
+      // await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
+      //   data.forEach(item=>{
+      //     item.showList = false;
+      //   })
+      //   this.flowData = data;
 
-      })
+      // })
+      await this.getFlowData();
       this.$HandleLoad.hide();
       this.flowShow = true;
       this.$nextTick(() => {
         this.$refs.flowListWrapper.scrollTo(0, 0);
         this.$refs.flowListWrapper.refresh();
+      })
+    },
+    //获取流水列表数据
+    getFlowData(){
+      return getView({
+        ...this.requestData,
+        view_scope: 'data',
+        page: this.flowPage,
+        start: (this.flowPage-1)*this.flowLimit,
+        limit: this.flowLimit
+      }).then(({data=[],total=0})=>{
+        this.FlowHasNext = total > (this.flowPage - 1) * this.flowLimit + data.length;
+        data.forEach(item=>{
+          item.showList = false;
+        })
+        this.flowData = this.FlowHasNext ===1 ? data : this.flowData.concat(data);
+        this.$nextTick(() => {
+          this.$refs.flowListWrapper.finishPullUp();
+        })
       })
     },
     //获取列表展示字段
@@ -192,6 +224,11 @@ export default {
       this.page = 1;
       this.getData(true);
     },
+    //流水scroll上拉加载
+    onPullingUpFlow(){
+      this.flowPage++;
+      this.getFlowData()        
+    },  
     //获取上次存储的列表总数量
     getSession(){
       return new Promise(resolve=>{
