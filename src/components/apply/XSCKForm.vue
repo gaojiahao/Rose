@@ -5,24 +5,7 @@
         <!-- 经办主体 -->
         <!-- <pop-entity-list :value="entity" v-model="entity"></pop-entity-list> -->
         <!-- 用户地址和基本信息-->
-        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-          <div v-if='dealerInfo'>
-            <div class="user_info">
-              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
-            </div>
-            <div class="cp_info">
-              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-              <p class="cp_ads">
-                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-            </div>
-          </div>
-          <div v-else>
-            <div class="title">客户列表</div>
-            <div class="mode">请选择客户</div>
-          </div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-        </div>
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
 
         <!-- 仓库-->
         <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
@@ -110,7 +93,7 @@
                               <div class="mater_price">
                                 ￥{{item.price | numberComma}}
                               </div>
-                              <r-number :num="item.tdQty" :max="item.qtyStockBal" 
+                              <r-number :num="item.tdQty" :max="item.qtyStockBal"
                               :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                             </div>
                           </div>
@@ -134,9 +117,6 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <!-- 客户popup -->
-          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'></pop-dealer-list>
           <!-- 订单popup -->
           <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" ref="order"></pop-order-list>
@@ -353,7 +333,7 @@
                   let delIndex = delArr.findIndex(item=>item.inventoryCode === OItem.inventoryCode);
                   if(delIndex >= 0){
                     this.$refs.order.delSelItem(delArr[delIndex]);
-                    delArr.splice(delIndex,1); 
+                    delArr.splice(delIndex,1);
                   }
                   if(!delArr.length){
                     delete this.orderList[OItem.transCode];

@@ -3,25 +3,7 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <!-- 用户地址和基本信息-->
-        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-          <div class="no-selected" v-if="!dealerInfo">
-            <div class="title">客户列表</div>
-            <div class="mode">请选择客户</div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-          </div>
-          <div v-else>
-            <div class="user_info">
-              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
-            </div>
-            <div class="cp_info">
-              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-              <p class="cp_ads">
-                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-            </div>
-            <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
-          </div>
-        </div>
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
                            v-model="drDealerPaymentTerm"></pop-single-select>
@@ -125,10 +107,7 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
-          <!-- 往来popup -->
-          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                           @sel-dealer="selDealer" @closePop='showDealerPop = !showDealerPop'
-                           ref="dealer"></pop-dealer-list>
+
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" ref="matter"></pop-matter-list>
@@ -367,7 +346,7 @@
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
               dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
-              dealerDebitContactInformation: this.dealerInfo.mobilePhone || '',
+              dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '',
               order: {
                 dealerDebit: this.dealerInfo.dealerCode || '',
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户',

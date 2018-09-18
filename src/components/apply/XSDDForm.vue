@@ -3,24 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
-        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-          <div v-if='dealerInfo.dealerName'>
-            <div class="user_info">
-              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
-            </div>
-            <div class="cp_info">
-              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-              <p class="cp_ads">
-                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-            </div>
-          </div>
-          <div v-else>
-            <div class="title">客户列表</div>
-            <div class="mode">请选择客户</div>
-          </div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-        </div>
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                           v-model="dealer.drDealerPaymentTerm"></pop-single-select>
@@ -68,7 +51,7 @@
                         </div>
                         <!-- 物料规格 -->
                         <div class="ForInline" style="display:inline-block">
-                          <div class="mater_spec">  
+                          <div class="mater_spec">
                             <span class="title">规格</span>
                             <span class="num">{{item.specification || '无'}}</span>
                           </div>
@@ -76,7 +59,7 @@
                       </div>
                     </div>
                     <!-- 物料属性和单位 -->
-                    <div class="mater_more">                     
+                    <div class="mater_more">
                         <span class="processing">属性: {{item.processing}}</span>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
@@ -109,10 +92,6 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
-          <!-- 客户popup -->
-          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                          @sel-dealer="selDealer">
-          </pop-dealer-list  ref="matter">
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop"
                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>

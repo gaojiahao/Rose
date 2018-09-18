@@ -3,24 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
-        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-          <div v-if='dealerInfo.dealerCode'>
-            <div class="user_info">
-              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
-            </div>
-            <div class="cp_info">
-              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-              <p class="cp_ads">
-                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-            </div>
-          </div>
-          <div v-else>
-            <div class="title">供应商列表</div>
-            <div class="mode">请选择供应商</div>
-          </div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-        </div>
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                           v-model="dealer.drDealerPaymentTerm"></pop-single-select>
@@ -108,10 +91,6 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
-          <!-- 供应商popup -->
-          <pop-dealer-list :show="showDealerPop" v-model="showDealerPop" @closePop='showDealerPop = !showDealerPop'
-                          @sel-dealer="selDealer" dealer-label-name="供应商">
-          </pop-dealer-list  ref="matter">
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
                            get-list-method="getInventory7501" ref="matter"></pop-matter-list>
