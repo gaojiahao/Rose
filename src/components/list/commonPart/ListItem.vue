@@ -16,12 +16,16 @@
       </div>
     </div>
     <div class="warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
-      <div v-if="item.outWareHouseName">
+      <!-- 出库 -->
+      <template v-if="item.outWareHouseName">
         <i class="iconfont icon--"></i><span>出库 - {{item.outWareHouseName}}</span>
-      </div>
-      <div v-if="item.inWareHouseName">
-        <i class="iconfont icon--"></i><span>入库 - {{item.inWareHouseName}}</span>
-      </div>
+      </template>
+      <!-- 出库和入库同时存在时展示竖线 -->
+      <span v-if="item.inWareHouseName && item.outWareHouseName">|</span>
+      <!-- 入库，本地库存调拨不展示前面的入库文字 -->
+      <template v-if="item.inWareHouseName">
+        <i class="iconfont icon--"></i><span>{{!item.transCode.includes('STCK') ? '入库 - ' : ''}}{{item.inWareHouseName}}</span>
+      </template>
     </div>
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
