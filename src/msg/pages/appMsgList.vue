@@ -55,13 +55,17 @@
 </template>
 
 <script>
+// 请求引入
+import { isMyflow } from 'service/detailService'
+import { getAllMsgList } from 'service/msgService'
+import { getWorkFlow } from 'service/detailService'
+// 组件引入
 import search from 'components/search'
-import {getAllMsgList} from 'service/msgService.js'
-import {getWorkFlow} from 'service/detailService.js'
-import {isMyflow} from 'service/detailService'
-import businessMap from '@/home/pages/maps/detail.js'
 import RScroll from 'components/RScroll'
-import { format } from 'url';
+import { format } from 'url'
+// 映射表 引入
+import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+import businessMap from '@/home/pages/maps/detail'
 export default {
   data(){
     return{
@@ -83,8 +87,10 @@ export default {
     search, RScroll, 
   },
   methods:{
-    goDetail(item,index){
-      let code = businessMap[item.businessKey.split('_')[0]] ;
+    goDetail(item, index){
+      // 获取 listID
+      let { listId, title } = item;
+      // 高亮 点击过的模块
       item.visited = true;
       this.$set(this.listData, index, {...item});
       let start = Date.now();
@@ -96,16 +102,17 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${code}`;
+              path = `/fillform/${Apps[code]}`;
             } else {
-              path = `/detail/${code}`;
+              path = `/detail/${listId}`;
             }
           } else {
-            path = `/detail/${code}`;
+            path = `/detail/${listId}`;
           }
           this.$router.push({
             path,
             query: {
+              name: title,
               transCode : item.businessKey
             }
           })

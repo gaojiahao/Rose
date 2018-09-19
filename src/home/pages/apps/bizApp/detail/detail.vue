@@ -28,15 +28,9 @@
     watch:{
       $route:{
         handler(to, from){
-          console.log('即将返回：', to);
-          console.log('上个页面：', from);
           let { code } = to.params;
           let { name } = this.$route.query;
-          let { fromRalted } = from.query;
-          // if(fromRalted){
-          //   this.$router.back(-1);
-          //   return;
-          // }          
+          let { fromRalted } = from.query;     
           let fromCode = from.params.code || '';
           try {
             // 从相关实例进入另一个详情

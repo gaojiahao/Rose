@@ -75,12 +75,7 @@ export default {
     this.getAppExampleDetails().then(()=>{
       this.$loading.hide();
     });
-  },
-  beforeRouteEnter (to, from, next) {
-    console.log(from);
-    next();
   }
-
 }
 </script>
 

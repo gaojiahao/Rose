@@ -187,17 +187,16 @@
       },
       //跳转详情
       goDetail(item){
-        console.log(item);
-        // this.showPop = false;
-        // let code = this.listId;
-        // this.$router.push({
-        //   path: `/detail/${code}`,
-        //   query: {
-        //     name: item.transTypeName,
-        //     transCode: item.transCode,
-        //     fromRalted: true
-        //   }
-        // })
+        this.showPop = false;
+        let code = this.listId;
+        this.$router.push({
+          path: `/detail/${code}`,
+          query: {
+            name: item.transTypeName,
+            transCode: item.transCode,
+            fromRalted: true
+          }
+        })
       }
     }
   }

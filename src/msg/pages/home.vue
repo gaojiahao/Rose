@@ -7,7 +7,7 @@
         </div>
         <div class="msg_list" v-else>
           <div class="msg"
-              @click="goMsglist(value,i)"
+              @click="goMsglist(value, i)"
               v-for='(value, i) in listData'
               :key='i'>
             <div class='each_msg' :class="{visited: value.visited}">
@@ -27,10 +27,8 @@
                 您收到{{value.list.length>1 ? '多' : '一'}}条新的消息
               </div>
             </div>
-            
           </div>
         </div>
-
       </div>
     </template>
     <router-view></router-view>
@@ -40,7 +38,7 @@
 // vux组件引入
 import { Badge } from 'vux'
 // 映射表 引入
-import businessMap from './maps/businessApp'
+import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 // 请求 引入
 import { getMsgList } from 'service/msgService'
 // 组件 引入
@@ -79,14 +77,13 @@ export default {
             ? `/dist/${item.icon}`
             : this.getDefaultImg();
           // 只针对已经移动化的应用做消息的显示
-          let key = item.businessKey.split('_')[0];
-          if(businessMap[key]){
-            if (!this.listData[businessMap[key]]) {
+          if(Apps[item.listId]){
+            if (!this.listData[item.title]) {
               // 以 <应用名称> 进行分类
-              this.$set(this.listData, businessMap[key], {list:[item]})
+              this.$set(this.listData, item.title, {list:[item]})
             }
             else{
-              this.listData[businessMap[key]].list.push(item);
+              this.listData[item.title].list.push(item);
             }
           }
         })
@@ -98,20 +95,16 @@ export default {
       })
     },
     // 前往应用消息列表
-    goMsglist(item,i){
-      let key =  item.list[0].businessKey.split('_')[0];
+    goMsglist(item, name){
+      // 高亮点击的应用
       item.visited = true;
-      this.$set(this.listData,i,{...item});
+      this.$set(this.listData, name, {...item});
        // 等待动画结束后跳转
       setTimeout(() => {
         this.$router.push({
-          path :'/msglist',
-          query : {
-            name : businessMap[key]
-          }
+          path :'/msglist', query : { name }
         })
       },200);
-     
     }
   },
   filters:{
