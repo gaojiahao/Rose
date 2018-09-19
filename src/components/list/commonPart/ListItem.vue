@@ -10,9 +10,17 @@
       <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
     </div>
     <!-- 往来信息 -->
-    <div class="dealer_part" v-show='item.dealerName'>
+    <div class="dealer_part" v-if='item.dealerName'>
       <div class="dealer_name vux-1px-t">
         <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
+      </div>
+    </div>
+    <div class="warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
+      <div v-if="item.outWareHouseName">
+        <i class="iconfont icon--"></i><span>出库 - {{item.outWareHouseName}}</span>
+      </div>
+      <div v-if="item.inWareHouseName">
+        <i class="iconfont icon--"></i><span>入库 - {{item.inWareHouseName}}</span>
       </div>
     </div>
     <!-- 物料图片和名称 -->
@@ -187,8 +195,7 @@
 
     }
   }
-  // 往来
-  .dealer_part {
+  %detailItem {
     width: 100%;
     color: #757575;
     padding: 0 .1rem;
@@ -198,10 +205,20 @@
       font-size: .14rem;
       margin-right: .02rem;
     }
+  }
+  // 往来
+  .dealer_part {
+    @extend %detailItem;
     .dealer_name {
       padding: .04rem 0 .02rem;
     }
   }
+
+  /* 仓库 */
+  .warehouse {
+    @extend %detailItem;
+  }
+
   /* 物料 */
   .duty_matter {
     display: block;
