@@ -272,7 +272,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryName',
+              property: this.filterProperty,
             },
           ];
         }
@@ -294,7 +294,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryName',
+              property: this.filterProperty,
             },
           ];
         }
@@ -315,7 +315,7 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'inventoryName',
+              property: this.filterProperty,
             },
           ];
         }
