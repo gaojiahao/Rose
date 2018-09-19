@@ -342,7 +342,7 @@
       }
       requestPromise.push(this.getNature().then(data => {
         let [defaultSelect = {}] = data;
-        this.inventory.processing = defaultSelect.name
+        this.inventory.processing = this.$route.query.matterType ? this.$route.query.matterType : defaultSelect.name;
       }));
       requestPromise.push(this.getMeasure());
       requestPromise.push(this.getBaseInfoData());

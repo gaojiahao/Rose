@@ -428,10 +428,11 @@ export default {
           if(this.$route.query.pickVal){
             this.dealer.dealerLabelName = this.$route.query.pickVal;
             this.pickerStatus = false;
-          }else{
-            this.dealer.dealerLabelName = defaultSelect.name;
+          }else{//新增往来，默认选中地址栏中的往来类型
+            this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : defaultSelect.name;           
           }
         });
+        
       //获取当前用户信息
       getBaseInfoDataBase().then(data => {
         this.baseinfo = {

@@ -46,6 +46,7 @@ export default {
       dealerList : [],
       srhInpTx : '',
       activeIndex :0,
+      tabItem : '全部',//选中的tab
       dealerClassfiy :[],
       uniqueId:"7f01c808-d338-4711-8c99-319337078cc1",
       page : 1,
@@ -73,6 +74,7 @@ export default {
       this.$refs.bScroll.resetPullDown();
     },
     tabClick(item,index){
+      this.tabItem = item.title;
       this.activeIndex = index;
       this.uniqueId  = item.uniqueId;
       this.resetCondition();
@@ -95,11 +97,19 @@ export default {
       this.$set(this.dealerList, index, {...item});
       setTimeout(() => {
         this.clickVisited = false;
+        let query =  {
+          transCode: item.transCode
+        }
+        //新增往来，根据tab默认选中往来类型
+        if(!item.transCode && path === '/adress/edit_ads' && this.tabItem !== '全部'){
+          query.dealerType = this.tabItem;
+        }
         this.$router.push({
           path,
-          query: {
-            transCode: item.transCode
-          }
+          // query: {
+          //   transCode: item.transCode
+          // }
+          query
         });
       }, 200);
     },

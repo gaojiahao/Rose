@@ -120,7 +120,15 @@
     },
     methods: {
       goEditAds() {
-        this.$router.push('/materlist/addMater');
+        let queryObj = {
+          path:'/materlist/addMater'
+        };
+        if(this.activeTab.length){
+          queryObj.query = {
+            matterType : this.activeTab
+          }
+        }
+        this.$router.push(queryObj);
       },
       // TODO 获取默认图片
       getDefaultImg(item) {

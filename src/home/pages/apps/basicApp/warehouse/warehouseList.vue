@@ -100,11 +100,16 @@ export default {
       this.$set(this.warehouseList, index, {...item});
       setTimeout(() => {
         this.clickVisited = false;
+        let query = {
+          transCode: item.transCode
+        }
+        //新增仓库，根据tab默认选中仓库类型
+        if(!item.transCode && path === '/warehouse/edit_warehouse' && this.tabSelect !== '全部'){
+          query.warehouseType = this.tabSelect;
+        }
         this.$router.push({
           path,
-          query: {
-            transCode: item.transCode
-          }
+          query
         });
       }, 200);
     },

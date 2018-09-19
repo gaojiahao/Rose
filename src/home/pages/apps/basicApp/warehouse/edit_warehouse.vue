@@ -157,9 +157,7 @@
             item.value = item.name;
           });
           this.AccountRelType = tableContent;
-          if (this.warehouse.warehouseType === '') {
-            this.warehouse.warehouseType = tableContent[0].name
-          }
+          this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : tableContent[0].name;
           this.$loading.hide();
         })
       },
