@@ -44,7 +44,7 @@
           </div>
         </div>
       </r-scroll>
-      
+
       <!-- 展开状态 -->
       <div v-transfer-dom>
         <popup v-model="flowShow" position="bottom" height="80%">
@@ -58,13 +58,13 @@
               <div class="flow_list">
                 <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
                   <!--展开状态-->
-                  
+
                   <div class="duty_top">
                     <!-- 编码 -->
                     <div class='transCode'>
                       <span class="order_title">编码</span>
-                      <span class="order_num">{{Fitem.transCode.replace(/_/g,'')}}</span>
-                    </div>   
+                      <span class="order_num">{{Fitem.transCode}}</span>
+                    </div>
                     <!-- 时间 -->
                     <div class="time">
                       {{Fitem.calcTime | dateFormat}}
@@ -81,32 +81,32 @@
                       <!-- 借方金额 -->
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.drAmnt>0">
-                          <span class="symbol" >借方金额: </span> 
+                          <span class="symbol" >借方金额: </span>
                           <span class="number_incre">+ {{Fitem.drAmnt}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.drAmnt<0">
-                          <span class="symbol">借方金额: </span> 
+                          <span class="symbol">借方金额: </span>
                           <span class="number_redu">- {{Fitem.drAmnt}}</span>
                         </div>
                         <div class="num_part" v-else>
-                          <span class="symbol">借方金额: </span> 
+                          <span class="symbol">借方金额: </span>
                           <span>0</span>
-                        </div>                    
+                        </div>
                       </div>
                       <!-- 贷方金额 -->
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.crAmnt>0">
-                          <span class="symbol">贷方金额: </span> 
+                          <span class="symbol">贷方金额: </span>
                           <span class="number_incre">+ {{Fitem.crAmnt}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.crAmnt<0">
-                          <span class="symbol">贷方金额: </span> 
+                          <span class="symbol">贷方金额: </span>
                           <span class="number_redu">- {{Fitem.crAmnt}}</span>
                         </div>
                         <div class="num_part" v-else>
-                          <span class="symbol">贷方金额: </span> 
+                          <span class="symbol">贷方金额: </span>
                           <span>0</span>
-                        </div>                    
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -122,11 +122,11 @@
                       <!-- <span class="number_incre" v-if="Fitem.amntBalance>0">￥{{Fitem.amountBalance}}</span>
                       <span class="number_redu" v-else-if="Fitem.amntBalance<0">￥{{Fitem.amountBalance}}</span>
                       <span v-else>￥{{Fitem.amountBalance}}</span> -->
-                    </div>                
+                    </div>
                   </div>
                 </div>
                 <div>
-                </div>                 
+                </div>
               </div>
             </div>
             <!-- <div class="btn" v-if='flowData.length>=3'>
@@ -136,7 +136,7 @@
           <div class="btn when_less">
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
           </div>
-          
+
         </popup>
       </div>
     </div>
@@ -156,10 +156,10 @@
       }
     },
     components:{
-      
+
     },
     mixins: [listCommon],
-    methods: {       
+    methods: {
     },
     created(){
 
