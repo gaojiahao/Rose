@@ -13,7 +13,6 @@
 </template>
 
 <script>
-  import businessText from '@/home/pages/maps/businessText'
   import Apps from '../maps/Apps'
   import Bscroll from 'better-scroll'
   export default {

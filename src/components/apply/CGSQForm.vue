@@ -72,7 +72,7 @@
                 <!-- 物料输入内容 -->
                 <div class="userInp_mode">
                   <group>
-                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
+                    <x-input type="number" title="估计单价" text-align='right' placeholder='请填写'
                              @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
                   </group>
                   <group>

@@ -8,7 +8,6 @@
         <div class="info_title vux-1px-b"><span class="iconfont icon-xiangmu"></span>项目信息</div>
         <div class="project_content">
           <form-cell cellTitle="名称" :cellContent="projectApproval.projectName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle="类型" :cellContent="projectApproval.projectType"></form-cell>
           <form-cell cellTitle="经理" :cellContent="projectApproval.projectManager"></form-cell>
           <form-cell cellTitle="说明" :cellContent="projectApproval.comment || '无'"></form-cell>
           <form-cell cellTitle="预期开始日期" :cellContent="projectApproval.expectStartDate | timeSplit"></form-cell>

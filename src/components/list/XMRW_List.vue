@@ -79,17 +79,22 @@
         if (this.clickVisited) {
           return
         }
+        // 交易号、应用名称等
+        let { transCode } = item;
+        let { code } = this.$route.params;
+        let { name } = this.$route.query;
+        // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
         this.$set(this.listData, index, {...item});
-        let {code} = this.$route.params;
         // 等待动画结束后跳转
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
             path: `/detail/${code}`,
             query: {
-              transCode: item.transCode
+              name,
+              transCode
             }
           })
         }, 200)
