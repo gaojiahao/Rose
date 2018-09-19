@@ -66,10 +66,10 @@
           }, {
             name: '任务类型',
             value: 'taskType',
-          }, /*{
+          }, {
             name: '项目名称',
             value: 'projectName_project',
-          }, */
+          },
         ],
       }
     },

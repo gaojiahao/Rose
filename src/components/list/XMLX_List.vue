@@ -28,7 +28,7 @@
               <div>
                 {{item.projectName_project}}
               </div>
-              
+
             </div>
             <div class="content_step vux-1px-b">
               <div>
@@ -76,13 +76,10 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          },/* {
-            name: '项目类型',
-            value: 'projectType_project',
           }, {
             name: '项目名称',
             value: 'projectName_project',
-          }, */
+          },
         ],
       }
     },
@@ -164,7 +161,7 @@
 
   .xmlx-list-container {
     .list_wrapper {
-      height: calc(100% - .4rem);
+      height: calc(100% - 1.2rem);
     }
     .project_name {
       padding: 0 .1rem;

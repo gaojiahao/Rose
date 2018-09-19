@@ -81,7 +81,7 @@
                     <!-- 实例编码 -->
                     <div class='transCode'>
                       <span class="order_title">编码</span>
-                      <span class="order_num">{{Fitem.transCode.replace(/_/g,'')}}</span>
+                      <span class="order_num">{{Fitem.transCode}}</span>
                     </div>
                     <!-- 时间 -->
                     <div class="time">
