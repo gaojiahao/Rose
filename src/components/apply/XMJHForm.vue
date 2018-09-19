@@ -18,7 +18,7 @@
                           @on-change=" typeTask($event,item) "></popup-picker>
             <datetime title="截止日期" v-model='item.deadline'>
               <template slot="title">
-                <span class='required'>截止日期</span>
+                <span class='required'>计划截止日期</span>
               </template>
             </datetime>
             <x-input title="计划工时" type="number" v-model.number="item.planTime" text-align='right'

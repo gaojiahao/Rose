@@ -12,35 +12,34 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class='each_duty' v-for='(item,index) in listData' :key='index' @click="getFlow(item)">
-          <!-- 仓库名称 仓库编码 -->
-          <div class="duty_top">
-              <!-- 表单状态 及 编码 -->
+          <!-- 存货顶部信息栏 -->
+          <div class="duty_top vux-1px-b">
               <div class="warehouse_info">
-                <!-- <span class="warehouse warehouse_code">{{item.warehouseRelType}}</span> -->
-                <!-- 状态 -->
-                <span class="warehouse warehouse_name">
-                  <!-- 仓库编码 -->
-                  {{item.warehouseName}}
-                </span>
-                <!-- 编码 -->
+                <!-- 仓库名称 -->
+                <span class="warehouse warehouse_name">{{item.warehouseName}}</span>
+                <!-- 仓库编码 -->
                 <span class="warehouse warehouse_code">{{item.whCode}}</span>
               </div>
               <!-- 数量余额 -->
               <div class="mater_code" v-if="item.qtyBalance >= 0">
-                <span class="title">数量剩余</span>
+                <span class="title">数量余额</span>
                 <span class="num">{{item.qtyBalance}}</span>
               </div>
               <div class="mater_code" v-if="item.qtyLocked >= 0">
-                <span class="title">数量剩余</span>
+                <span class="title">数量余额</span>
                 <span class="num">{{item.qtyLocked}}</span>
               </div>
           </div>
           <!-- 物料 -->
           <div class='matter'>
+            <div class="matter_code" v-if="item.matCode">
+              <span class="iconfont icon-bianma"></span>
+              <span>物料编码：{{item.matCode}}</span>
+            </div>
             <div class='matter_name'>
               {{item.inventoryName}}<span class="type">[{{item.invProcessing}}]</span>
             </div>
-            <div class="mater_days" >
+            <div class="mater_days" v-if="item.accountAge || item.libraryAge || item.nearKeepingDays">
               <span class="days" v-if="item.accountAge >= 0">账龄天数 {{item.accountAge}}</span>
               <span class="days" v-if="item.libraryAge >= 0">库龄天数 {{item.libraryAge}}</span>
               <span class="days" v-if="item.nearKeepingDays >= 0">保质剩余天数 {{item.nearKeepingDays}}</span>
@@ -54,7 +53,7 @@
             </div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance !== ''">
-              <span class="symbol">余额: ￥</span>{{item.amountBalance}}
+              <span class="symbol">金额余额: ￥</span>{{item.amountBalance}}
             </div>
           </div>
         </div>

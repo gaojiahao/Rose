@@ -26,7 +26,7 @@
               <form-cell cellTitle='任务名称' :cellContent="item.taskName" :showTopBorder=false></form-cell>
               <form-cell cellTitle='任务类型' :cellContent="item.taskType"></form-cell>
               <form-cell cellTitle='计划工时' :cellContent="item.planTime"></form-cell>
-              <form-cell cellTitle='截止日期' :cellContent="item.deadline | timeSplit"></form-cell>
+              <form-cell cellTitle='计划截止日期' :cellContent="item.deadline | timeSplit"></form-cell>
               <form-cell cellTitle='任务说明' :cellContent="item.comment"></form-cell>
           </div>
         </div>

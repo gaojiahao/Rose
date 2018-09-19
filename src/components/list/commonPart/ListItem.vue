@@ -15,17 +15,20 @@
         <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
       </div>
     </div>
-    <div class="warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
-      <!-- 出库 -->
-      <template v-if="item.outWareHouseName">
-        <i class="iconfont icon--"></i><span>出库 - {{item.outWareHouseName}}</span>
-      </template>
-      <!-- 出库和入库同时存在时展示竖线 -->
-      <span v-if="item.inWareHouseName && item.outWareHouseName">|</span>
-      <!-- 入库，本地库存调拨不展示前面的入库文字 -->
-      <template v-if="item.inWareHouseName">
-        <i class="iconfont icon--"></i><span>{{!item.transCode.includes('STCK') ? '入库 - ' : ''}}{{item.inWareHouseName}}</span>
-      </template>
+    <div class="dealer_part warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
+      <div :class="{'vux-1px-t dealer_name': !item.dealerName }">
+        <!-- 出库 -->
+        <template v-if="item.outWareHouseName">
+          <i class="iconfont icon--"></i><span>出库 - {{item.outWareHouseName}}</span>
+        </template>
+        <!-- 出库和入库同时存在时展示竖线 -->
+        <span class="division-line" v-if="item.inWareHouseName && item.outWareHouseName">|</span>
+        <!-- 入库，本地库存调拨不展示前面的入库文字 -->
+        <template v-if="item.inWareHouseName">
+          <i class="iconfont icon--"></i><span>{{!item.transCode.includes('STCK') ? '入库 - ' : ''}}{{item.inWareHouseName}}</span>
+        </template>      
+      </div>
+
     </div>
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
@@ -132,8 +135,10 @@
 </script>
 
 <style scoped lang="scss">
-  @import '~@/scss/color';
-
+@import '~@/scss/color';
+.division-line {
+  margin: 0 .02rem;
+}
 .list_item {
   width: 95%;
   position: relative;
