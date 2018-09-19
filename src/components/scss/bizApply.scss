@@ -40,7 +40,7 @@
   }
   .title {
     color: #757575;
-    
+
     font-size: .12rem;
 
   }
@@ -51,7 +51,7 @@
   .required{
     color: #5077aa;
     font-weight: bold;
-  
+
   }
   .r_arrow {
     top: 50%;
@@ -80,7 +80,7 @@
       font-weight: bold;
     }
     .cp_ads {
-      
+
       color: #757575;
     }
     .user_tel {
@@ -101,7 +101,7 @@
     display: flex;
     justify-content: space-between;
     color: #757575;
-    
+
     font-size: .12rem;
   }
   .tips {
@@ -174,7 +174,7 @@
           // 每个物料的索引
           .whiNum {
             color: #fff;
-            
+
             padding: 0 .02rem;
             font-size: .1rem;
             display: inline-block;
@@ -201,7 +201,7 @@
               .title {
                 color: #fff;
                 background: #3f72af;
-                
+
                 border-top-left-radius: .12rem;
                 border-bottom-left-radius: .12rem;
               }
@@ -267,8 +267,8 @@
            .mater_color{
             margin-right: 0;
            }
-          }       
-          
+          }
+
         }
         //物料价格，数量
         .mater_other {
@@ -331,7 +331,7 @@
           fill: #ea5455;
 
         }
-        
+
       }
       // 下划线
       .vux-1px-b:after {
@@ -426,7 +426,7 @@
         font-size: .14rem;
       }
     }
-    .taxAmount {
+    .taxAmount, .total-num {
       color: #757575;
       font-size: .1rem;
       display: inline-block;

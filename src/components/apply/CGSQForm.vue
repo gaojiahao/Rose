@@ -106,7 +106,10 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t" v-if="!matterModifyClass">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
+        <span class="total_price">
+          <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
+        </span>
+        <span class="total-num">[数量: {{totalNum}}]</span>
       </span>
       <!-- <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
       <span class="count_btn" @click="submitOrder">提交</span>
@@ -135,7 +138,7 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 // 方法引入
 import {toFixed} from '@/plugins/calc'
-import {accMul} from '@/home/pages/maps/decimalsAdd'
+import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
 export default {
   directives: {
@@ -163,6 +166,15 @@ export default {
         processing: '成品,商品,服务,原料,半成品'
       }
     }
+  },
+  computed: {
+    totalNum() {
+      let total = 0;
+      this.matterList.forEach(item => {
+        total = accAdd(total, item.tdQty);
+      });
+      return Number(total);
+    },
   },
   mixins: [common],
   watch:{
