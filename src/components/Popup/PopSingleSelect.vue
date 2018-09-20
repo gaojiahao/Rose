@@ -1,8 +1,12 @@
 <template>
   <div class="pop-single-container" @click="showPop = !showPop">
-    <p class="title">{{title}}</p>
-    <p class="mode">{{selected}}</p>
-    <span class="iconfont icon-gengduo"></span>
+    <div class='pop_info'>
+      <div class="title">{{title}}</div>
+      <div class="mode">
+        <span class="mode-content">{{selected}}</span>
+        <span class="iconfont icon-yemashenglvehao"></span>
+        </div>
+    </div>   
     <!-- 结算popup -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="70%" class="trade_pop_part">
@@ -82,26 +86,47 @@
   // 结算方式
   .pop-single-container {
     position: relative;
-    margin: 10px auto;
-    padding: .06rem .08rem;
-    width: 95%;
+    // margin: 10px auto;
+    // padding: .06rem .08rem;
+    // width: 95%;
+    width: 100%;
+    background: #fff;
+    padding: 0.08rem 0.1rem;
     box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
+    // box-shadow: 0 0 8px #e8e8e8;
+    .pop_info{
+      display: flex;
+      // padding-right: 0.2rem;
+      justify-content: space-between;
+    }
+    .icon-yemashenglvehao,
     .icon-gengduo {
-      top: 50%;
-      right: .1rem;
-      font-size: .24rem;
-      position: absolute;
-      transform: translate(0, -50%);
+      // top: 50%;
+      // right: .1rem;
+      // right: 0.04rem;
+      font-size: .2rem;
+      color: #757575;
+      margin-bottom: -.04rem;
+      // position: absolute;
+      // transform: translate(0, -50%);
     }
     .title {
-      color: #757575;
+      // color: #757575;
       
-      font-size: .12rem;
+      // font-size: .12rem;
     }
     .mode {
       color: #111;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      .mode-content {
+        margin-right: .04rem;
+      }
+      span {
+        display: inline-block;
+      }
+
     }
   }
 

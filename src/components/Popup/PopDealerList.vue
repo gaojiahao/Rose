@@ -1,15 +1,17 @@
 <template>
   <div class="pop-dealer-list" @click="itemClick">
-    <div v-if="dealerInfo.dealerCode">
-      <div class="user_info">
-        <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
-      </div>
-      <div class="cp_info">
-        <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-        <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-        <p class="cp_ads">
-          {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-      </div>
+    <div v-if="dealerInfo.dealerCode" class='dealer_info'>
+      <div class='user_content'>
+        <div class="user_info">
+          <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
+        </div>
+        <div class="cp_info">
+          <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
+          <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
+          <p class="cp_ads">
+            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+        </div>
+      </div>  
     </div>
     <div v-else>
       <div class="title">{{dealerLabelName}}列表</div>
@@ -252,10 +254,14 @@
 <style scoped lang="scss">
   .pop-dealer-list {
     position: relative;
-    margin: 10px auto;
-    padding: .06rem .4rem .06rem .08rem;
-    width: 95%;
-    box-shadow: 0 0 8px #e8e8e8;
+    // margin: 10px auto;
+    // padding: .06rem .4rem .06rem .08rem;
+    // width: 95%;
+    width: 100%;
+    padding: 0.06rem  0.1rem;
+    background: #fff;
+    margin-bottom:0.1rem;
+    // box-shadow: 0 0 8px #e8e8e8;
     box-sizing: border-box;
 
     .title {
@@ -274,7 +280,22 @@
       position: absolute;
       transform: translate(0, -50%);
     }
-
+    // .dealer_info{
+    //   padding-left:0.35rem;
+    // }
+    .user_content{
+      width: calc(100% - 0.2rem);
+    }
+    .user_logo{
+      position: absolute;
+      left:0.1rem;
+      top:0.08rem;
+      img{
+        width: 0.3rem;
+        height: 0.3rem;
+      }
+      
+    }
     .user_info {
       color: #111;
       font-size: .2rem;
