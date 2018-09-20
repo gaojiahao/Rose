@@ -19,9 +19,19 @@ import RELATED from '../pages/apps/bizApp/detail/related/related'
 
 // ------- >仪表视图 <-------
 import DASHBOARD from '../pages/apps/bizApp/dashboard/dashboard'
+
+//
+import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
+
 export default [
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
+  {
+    path: '/commentList',
+    name: 'COMMENTLIST',
+    component: COMMENTLIST,
+    meta: { title: '评论' }
+  },
   {
     path: '/dashboard',
     name: 'DASHBOARD',
@@ -40,7 +50,7 @@ export default [
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
-  
+
   {
     path:'/fillform/:code',
     name:'FILLFORM',

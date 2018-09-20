@@ -1,12 +1,22 @@
 <template>
   <div class="pages">
-    <div class="pages" ref='detail'>
+    <div class="detail-container" ref='detail'>
       <component
         :is='currentComponent'
         @change='modifyRoute'
         @refresh-scroll="refresh"
         ref="detailComponent">
       </component>
+    </div>
+    <div class="detail-comment-container">
+      <x-icon type="ios-arrow-left" size="30" @click.native.stop="back"></x-icon>
+      <ul class="operations">
+        <li class="operation" @click="goDiscuss">
+          <i class="iconfont icon-xiaoxi">
+            <sup class="comment-count">{{commentCount || ''}}</sup>
+          </i>
+        </li>
+      </ul>
     </div>
   </div>
 
@@ -15,6 +25,8 @@
 <script>
   import Apps from '../maps/Apps'
   import Bscroll from 'better-scroll'
+  import {getCommentList} from 'service/commentService'
+
   export default {
     data() {
       return {
@@ -22,6 +34,7 @@
         transCode: '',
         submitSuccess: false,
         detailScroll: null,
+        commentCount: 0,
       }
     },
     watch:{
@@ -29,7 +42,7 @@
         handler(to, from){
           let { code } = to.params;
           let { name } = this.$route.query;
-          let { fromRalted } = from.query;     
+          let { fromRalted } = from.query;
           let fromCode = from.params.code || '';
           try {
             // 从相关实例进入另一个详情
@@ -54,7 +67,7 @@
             this.detailScroll = new Bscroll(this.$refs.detail, {
               click: true,
             })
-          })
+          });
           document.title = `${name}详情`;
         }
       }
@@ -67,11 +80,32 @@
       // TODO 刷新better-scroll
       refresh() {
         this.detailScroll.refresh();
-      }
+      },
+      // TODO 底部评论返回按钮事件
+      back() {
+        this.$router.go(-1);
+      },
+      // TODO 跳转到评论页面
+      goDiscuss() {
+        this.$router.push({
+          path: '/commentList',
+          query: {
+            transCode: this.transCode
+          }
+        })
+      },
+      // TODO 请求评论列表
+      getCommentList() {
+        return getCommentList({
+          relationKey: this.transCode
+        }).then(({dataCount = 0}) => {
+          this.commentCount = dataCount;
+        })
+      },
     },
     beforeRouteEnter(to, from, next) {
       let { name = '' } = to.query;
-      if(name.includes('表')){
+      if (name.includes('表')){
         to.meta.title = name;
         next();
       }
@@ -81,7 +115,10 @@
     created() {
       this.$loading.show();
       let {code = ''} = this.$route.params;
+      let {transCode} = this.$route.query;
+      this.transCode = transCode;
       try {
+        this.getCommentList();
         this.currentComponent = require(`components/detail/${Apps[code]}Form.vue`).default;
       } catch (e) {
         this.$vux.alert.show({
@@ -119,5 +156,26 @@
   }
   .pages {
     background: #F4F4F4;
+    .detail-container {
+      height: calc(100% - .54rem);
+      overflow: hidden;
+    }
+    .detail-comment-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 .1rem;
+      height: .54rem;
+      .iconfont {
+        color: #757575;
+        font-size: .25rem;
+      }
+      /* 评论总数 */
+      .comment-count {
+        position: relative;
+        top: -.05rem;
+        font-size: .14rem;
+      }
+    }
   }
 </style>
