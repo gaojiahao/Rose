@@ -8,8 +8,8 @@
         ref="detailComponent">
       </component>
     </div>
-    <div class="detail-comment-container">
-      <x-icon type="ios-arrow-left" size="30" @click.native.stop="back"></x-icon>
+    <div class="detail-comment-container vux-1px-t">
+      <x-icon class="left-arrow" type="ios-arrow-left" size="24" @click.native.stop="back"></x-icon>
       <ul class="operations">
         <li class="operation" @click="goDiscuss">
           <i class="iconfont icon-xiaoxi">
@@ -149,6 +149,9 @@
 </script>
 
 <style lang='scss' scoped>
+  .vux-1px-t:before {
+    border-color: #e8e8e8;
+  }
   .apply_detail {
     width: 100%;
     height: 100%;
@@ -157,7 +160,7 @@
   .pages {
     background: #F4F4F4;
     .detail-container {
-      height: calc(100% - .54rem);
+      height: calc(100% - .48rem);
       overflow: hidden;
     }
     .detail-comment-container {
@@ -165,7 +168,11 @@
       justify-content: space-between;
       align-items: center;
       padding: 0 .1rem;
-      height: .54rem;
+      height: .48rem;
+      background: #fff;
+      .left-arrow {
+        fill: #757575;
+      }
       .iconfont {
         color: #757575;
         font-size: .25rem;
