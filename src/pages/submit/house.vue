@@ -349,8 +349,8 @@
           moveReason: zq.varchar3, // 新增/搬家原因
           costBU: gs.varchar4 && gs.varchar4.value,// 费用所属事业部
           costDepartment: gs.varchar5 && gs.varchar5.value,// 费用所属部门
-          review: jsonData.review,
-          review2: jsonData.review2,
+          review: jsonData.review || jsonData.$review,
+          review2: jsonData.review2 || jsonData.$review2,
         };
         this.baseinfo = baseinfo;
 

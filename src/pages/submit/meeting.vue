@@ -364,8 +364,8 @@
           end: sj.datetime2, // 止于
           costBU: sygs.varchar6 && sygs.varchar6.value,// 费用所属事业部
           costDepartment: sygs.varchar7 && sygs.varchar7.value,// 费用所属部门
-          review: jsonData.review,
-          review2: jsonData.review2,
+          review: jsonData.review || jsonData.$review,
+          review2: jsonData.review2 || jsonData.$review2,
         };
         this.baseinfo = baseinfo;
 

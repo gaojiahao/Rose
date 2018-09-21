@@ -244,8 +244,6 @@
       },
       // TODO 处理总部展示数据
       headquartersHandler(val = '', val2 = '') {
-        let {userId, area, role} = this.handlerData;
-        let promises = [];
         this.opList = [
           {
             title: '部门主管',
@@ -259,41 +257,11 @@
             value: '',
           },
         ];
-        // 获取部门主管
-        promises.push(createService.getApprovalUserByAgent({
-          userId: userId,
-          group: area,
-          grouRole: role,
-        }));
-        // 获取副总裁
-        promises.push(createService.getApprovalUserByAgent({
-          userId: userId,
-          group: area,
-          grouRole: '副总裁',
-        }));
-        return Promise.all(promises).then(([data, data2]) => {
-          let dept = [];
-          let vicePresident = [];
-          data.tableContent && data.tableContent.forEach(item => {
-            item.CName && dept.push(item.CName || '');
-          });
-          data2.tableContent && data2.tableContent.forEach(item => {
-            item.comName && vicePresident.push(item.comName || '');
-          });
-          this.opList[0].options = dept;
-          this.opList[0].value = val || dept[0] || '';
-          this.opList[0].datas = data.tableContent;
 
-          this.opList[1].options = vicePresident;
-          this.opList[1].value = val2 || vicePresident[0] || '';
-          this.opList[1].datas = data2.tableContent;
-        }).catch(e => {
-          this.showToast(e.message);
-        });
+        return this.requestOp(val, val2);
       },
       // TODO 处理事业部展示数据
       handlerBusiness(val = '', val2 = '') {
-        let {userId, area, role} = this.handlerData;
         let promises = [];
         this.opList = [
           {
@@ -308,33 +276,32 @@
             value: '',
           },
         ];
-        let groupId = this.jsonData.baseinfo.handlerAreaName.selection.data.userGroupId;
-        // 获取常委
-        promises.push(createService.getApprovalUserByAgent({
+        return this.requestOp(val, val2);
+      },
+      // TODO 获取常委、分管副总、部门主管和副总裁
+      requestOp(val = '', val2 = '') {
+        let {userId} = this.handlerData;
+        return createService.getLeaders({
           userId: userId,
-          group: area,
-          grouRole: '常委',
-        }));
-        // 获取副总裁
-        promises.push(createService.getGroupPrinicalInfo({
-          groupId
-        }));
-        return Promise.all(promises).then(([data, data2]) => {
-          let committee = [];
-          let vicePresident = [];
-          data.tableContent && data.tableContent.forEach(item => {
-            item.CName && committee.push(item.CName || '');
+        }).then(({tableContent = []}) => {
+          let [first = {}] = tableContent;
+          let datas = [];
+          let cOptions = [];
+          let comOptions = [];
+          tableContent.forEach(item => {
+            datas.push(item);
+            cOptions.push(item.CName);
+            comOptions.push(item.comName);
           });
-          data2.tableContent && data2.tableContent.forEach(item => {
-            item.NICKNAME && vicePresident.push(item.NICKNAME || '');
-          });
-          this.opList[0].options = committee;
-          this.opList[0].value = val || committee[0] || '';
-          this.opList[0].datas = data.tableContent;
+          cOptions = [...new Set(cOptions)];
+          comOptions = [...new Set(comOptions)];
+          this.opList[0].options = cOptions;
+          this.opList[0].value = val || cOptions[0] || '';
+          this.opList[0].datas = [...datas];
 
-          this.opList[1].options = vicePresident;
-          this.opList[1].value = val2 || vicePresident[0] || '';
-          this.opList[1].datas = data2.tableContent;
+          this.opList[1].options = comOptions;
+          this.opList[1].value = val2 || comOptions[0] || '';
+          this.opList[1].datas = [...datas];
         }).catch(e => {
           this.showToast(e.message);
         });
@@ -393,7 +360,7 @@
               }
             });
             second.datas.forEach(item => {
-              if (item.NICKNAME === second.value) {
+              if (item.comName === second.value) {
                 vicePresident2 = {...item};
               }
             });
@@ -406,7 +373,7 @@
                 $review2: {
                   reviewer: this.assembleOpData({}),
                   deputy: this.assembleOpData(committee, committee.CName, committee.CId),
-                  fzc: this.assembleOpData(vicePresident2, vicePresident2.NICKNAME, vicePresident2.PRINCIPAL),
+                  fzc: this.assembleOpData(vicePresident2, vicePresident2.comName, vicePresident2.comId),
                   '$r2Textfield-1206-inputEl': this.jsonData.baseinfo.handlerAreaName.selection.data.userGroupId
                 }
               },
@@ -415,7 +382,7 @@
                 '副总ID': null,
                 '省长ID': null,
                 '常委ID': committee.CId,
-                '副总裁ID': vicePresident2.PRINCIPAL
+                '副总裁ID': vicePresident2.comId
               }
             };
             break;

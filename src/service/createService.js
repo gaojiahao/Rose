@@ -264,6 +264,19 @@ let createService = {
         limit: 10000,
       }
     });
+  },
+  // TODO 获取常委、分管副总、部门主管和副总裁
+  getLeaders(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getAutomaticReviewer',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+        ...data,
+      }
+    });
   }
 };
 
