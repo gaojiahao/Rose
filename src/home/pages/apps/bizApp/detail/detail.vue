@@ -25,7 +25,7 @@
 <script>
   import Apps from '../maps/Apps'
   import Bscroll from 'better-scroll'
-  import {getCommentList} from 'service/commentService'
+  import {getPCCommentList} from 'service/commentService'
 
   export default {
     data() {
@@ -96,7 +96,7 @@
       },
       // TODO 请求评论列表
       getCommentList() {
-        return getCommentList({
+        return getPCCommentList({
           relationKey: this.transCode
         }).then(({dataCount = 0}) => {
           this.commentCount = dataCount;

@@ -54,22 +54,20 @@
       // TODO 获取评论列表
       getCommentList() {
         return getCommentList({
-          relationKey: this.transCode,
+          transCode: this.transCode,
           page: this.page,
           limit: this.limit,
-        }).then(({dataCount = 0, success = true, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            item.allReply = [];
-            if (item.childCommentNum) {
-              getReply({
-                parentId: item.id
-              }).then(({tableContent}) => {
-                item.allReply = tableContent;
-              })
-            }
+        }).then(({allCommentNum = 0, comment = []}) => {
+          this.hasNext = allCommentNum > (this.page - 1) * this.limit + comment.length;
+          comment.forEach(item => {
+            item.allReply && item.allReply.forEach((rItem, index, arr) => {
+              let matched = item.allReply.find(mItem => mItem.ID === rItem.PARENT_ID);
+              if (matched) {
+                rItem.CONTENT = `@${matched.creatorName}: ${rItem.CONTENT}`;
+              }
+            });
           });
-          this.commentList = this.page === 1 ? tableContent : [...this.commentList, ...tableContent];
+          this.commentList = this.page === 1 ? comment : [...this.commentList, ...comment];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           });
@@ -77,14 +75,18 @@
       },
       // TODO 回复
       onReply(item) {
-        this.parentId = item.id;
+        this.parentId = item.ID;
         this.placeholder = `回复${item.creatorName}:`;
         this.$refs.commentValue.focus();
       },
       // TODO 点赞成功
       onPraiseSuccess(item) {
-        item.isPraise = true;
+        item.isPraise = false;
         item.praiseNum++;
+      },
+      // TODO 标签过滤
+      tagFilter(val) {
+        return val.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       },
       // TODO 评论
       saveComment() {
@@ -99,7 +101,7 @@
           return
         }
         return saveComment({
-          content: this.comment,
+          content: this.tagFilter(this.comment),// 标签过滤
           parentId: this.parentId,
           relationKey: this.transCode,
         }).then(({success = true, message = ''}) => {
@@ -119,6 +121,7 @@
       commentFocusIn() {
         this.focusInput = true;
       },
+      // TODO 评论框失去焦点
       commentFocusOut() {
         this.focusInput = false;
       }

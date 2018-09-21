@@ -1,8 +1,8 @@
 /* 评论相关接口 */
 import $axios from '../plugins/ajax';
 
-// TODO 获取评论列表
-export let getCommentList = (data = {}) => {
+// TODO 获取评论列表(PC)
+export let getPCCommentList = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/comment/getCommentByRelationKey',
     data: {
@@ -10,6 +10,18 @@ export let getCommentList = (data = {}) => {
       page: 1,
       limit: 10,
       total: 0,
+      ...data,
+    }
+  })
+};
+
+// TODO 获取评论列表
+export let getCommentList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getMobileCommentByTransCode',
+    data: {
+      page: 1,
+      limit: 10,
       ...data,
     }
   })
@@ -53,7 +65,7 @@ export let savePraise = (commentId = '') => {
 };
 
 export default {
-  getCommentList,
+  getCommentList: getPCCommentList,
   saveComment,
   savePraise,
 }
