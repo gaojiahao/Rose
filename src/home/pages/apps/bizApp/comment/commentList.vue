@@ -84,6 +84,10 @@
         item.isPraise = false;
         item.praiseNum++;
       },
+      // TODO 标签过滤
+      tagFilter(val) {
+        return val.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      },
       // TODO 评论
       saveComment() {
         if (!this.comment) {
@@ -96,10 +100,8 @@
           });
           return
         }
-        // 标签过滤
-        this.comment = this.comment.replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return saveComment({
-          content: this.comment,
+          content: this.tagFilter(this.comment),// 标签过滤
           parentId: this.parentId,
           relationKey: this.transCode,
         }).then(({success = true, message = ''}) => {
