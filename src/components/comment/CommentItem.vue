@@ -8,16 +8,17 @@
       </div>
       <div class="header-right" @click.stop="savePraise">
         <!-- isPraise: 是否能点赞 -->
-        <i class="iconfont icon-L2" :class="{praise: !item.isPraise}"></i><span>{{item.praiseNum}}</span>
+        <span class="praise-num" v-if="item.praiseNum">{{item.praiseNum}}</span>
+        <i class="iconfont icon-L2" :class="{praise: !item.isPraise}"></i>
       </div>
     </header>
-    <div class="comment" v-html="item.CONTENT"></div>
-    <div class="comment-reply">
-      <slot name="reply"></slot>
-    </div>
+    <div class="comment" v-html="changeImgPath()"></div>
     <div class="comment-image" v-if="item.commentAttachments">
       <img class="comment-image-item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
            @click.stop="scaleImg(img)" :key="iIndex" v-if="img.TYPE === 'image'"/>
+    </div>
+    <div class="comment-reply" v-if="this.$slots.reply">
+      <slot name="reply"></slot>
     </div>
     <!-- 全屏展示图片 -->
     <div class="scale-image-mask" @click.stop="hideScaleImage" @touchmove.prevent=""
@@ -65,7 +66,7 @@
           if (success) {
             this.$emit('on-praise-success', this.item);
           }
-        })
+        });
       },
       // TODO 放大图片
       scaleImg(img) {
@@ -76,7 +77,11 @@
       hideScaleImage() {
         this.scaleImgSrc = '';
         this.showScaleImg = false;
-      }
+      },
+      // TODO 替换表情图片地址
+      changeImgPath() {
+        return this.item.CONTENT.replace(/src="resources/g, 'src="/dist/resources');
+      },
     },
     filters: {
       // TODO 处理时间
@@ -119,14 +124,17 @@
     .header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     .header-left {
       display: flex;
       align-items: center;
     }
     .header-right {
-      .iconfont {
+      font-size: 0;
+      .praise-num {
         margin-right: .05rem;
+        font-size: .16rem;
       }
       .icon-L2 {
         &.praise {
@@ -150,6 +158,7 @@
     /* 时间 */
     .time {
       color: #757575;
+      font-size: .14rem;
     }
 
     /* 评论内容 */
@@ -162,7 +171,7 @@
     .comment-reply {
       padding-left: $avatarSize + .1rem;
       .comment-item {
-        padding: 0;
+        padding: .1rem 0;
       }
     }
 
@@ -171,8 +180,8 @@
       padding-left: $avatarSize + .1rem;
       .comment-image-item {
         margin-right: .1rem;
-        width: .7rem;
-        height: .7rem;
+        width: .6rem;
+        height: .6rem;
       }
     }
   }
