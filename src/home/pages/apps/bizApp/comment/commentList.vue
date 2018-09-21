@@ -96,6 +96,8 @@
           });
           return
         }
+        // 标签过滤
+        this.comment = this.comment.replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return saveComment({
           content: this.comment,
           parentId: this.parentId,

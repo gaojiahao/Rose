@@ -15,6 +15,15 @@
     <div class="comment-reply">
       <slot name="reply"></slot>
     </div>
+    <div class="comment-image" v-if="item.commentAttachments">
+      <img class="comment-image-item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
+           @click.stop="scaleImg(img)" :key="iIndex" v-if="img.TYPE === 'image'"/>
+    </div>
+    <!-- 全屏展示图片 -->
+    <div class="scale-image-mask" @click.stop="hideScaleImage" @touchmove.prevent=""
+         v-if="item.commentAttachments" v-show="showScaleImg" v-transfer-dom>
+      <div class="scale-image" :style="{'background-image': `url(${scaleImgSrc})`}"></div>
+    </div>
   </div>
 </template>
 
@@ -32,7 +41,10 @@
       }
     },
     data() {
-      return {}
+      return {
+        showScaleImg: false,
+        scaleImgSrc: ''
+      }
     },
     methods: {
       // TODO 获取默认用户图片
@@ -55,6 +67,16 @@
           }
         })
       },
+      // TODO 放大图片
+      scaleImg(img) {
+        this.scaleImgSrc = img.ATTACHMENT;
+        this.showScaleImg = true;
+      },
+      // TODO 隐藏放大的图片
+      hideScaleImage() {
+        this.scaleImgSrc = '';
+        this.showScaleImg = false;
+      }
     },
     filters: {
       // TODO 处理时间
@@ -142,6 +164,36 @@
       .comment-item {
         padding: 0;
       }
+    }
+
+    /* 上传的图片 */
+    .comment-image {
+      padding-left: $avatarSize + .1rem;
+      .comment-image-item {
+        margin-right: .1rem;
+        width: .7rem;
+        height: .7rem;
+      }
+    }
+  }
+
+  /* 放大的图片 */
+  .scale-image-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .8);
+    .scale-image {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      padding-top: 100%;
+      transform: translateY(-50%);
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
     }
   }
 </style>
