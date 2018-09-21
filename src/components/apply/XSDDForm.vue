@@ -14,7 +14,7 @@
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
-            <div @click="showMaterielPop = !showMaterielPop">
+            <div @click="getMatter"  class='no_matter'>
               <div class="title">物料列表</div>
               <div class="tips">请选择物料</div>
               <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
@@ -29,7 +29,7 @@
             </div>
             <div class="mater_list">
               <div class="each_mater vux-1px-b"  :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
-                <div class="each_mater_wrapper"  @click="modifyMatter(item,index)">
+                <div class="each_mater_wrapper">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
@@ -60,31 +60,30 @@
                     </div>
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
-                        <span class="processing">属性: {{item.processing}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                        <span class='mater_color' >税率: {{item.taxRate || 0.16}}
-                        </span>
-                    </div>
-                    <div class="mater_more">
-                      <span  @click="getDate(item)">预计交货日：<span>{{item.promDeliTime || "无"}} </span></span>
+                        <span class="processing">属性：{{item.processing}}</span>
+                        <span class='unit'>单位：{{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                        <span>税率：{{item.taxRate || 0.16}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
-                      <div class='mater_price' @click="modifyPrice(item)">
+                      <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
-                        <!-- <span class='iconfont icon-mingxi1' style='font-size:0.11rem;color:#ccc;color:#3f72af;'></span> -->
                       </div>
+                      <span class='iconfont icon-bianji' @click="modifyMatter(item,index)"></span>
                       <!-- <div class='mater_num'>
                         <span class='handle' @click.stop="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
                         <input class='num' type='number' v-model.number='item.tdQty' :blur='checkAmt(item)'/>
                         <span class='handle plus' @click.stop='plusNum(item,index)'>+</span>
                       </div>                       -->
                     </div>
+                    <div class="mater_more" v-if="item.promDeliTime">
+                      <span style="color:rgb(249, 175, 137);">预计交货日 {{item.promDeliTime}}</span>
+                    </div>
                   </div>
-                  <x-icon class="icon-gengduo" type="ios-arrow-right" size="20" ></x-icon>
                 </div>
-                <div class='delete_icon' v-if='matterModifyClass' @click.stop="delClick(item,index)">
+               
+                <div class='delete_icon' v-if='matterModifyClass' @click="delClick(item,index)">
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>
@@ -104,11 +103,11 @@
                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
        
         <!--备注-->
-        <div class='comment'>
-          <x-textarea title="备注" v-model="biComment"></x-textarea>
+        <div class='comment' :class="{no_margin : !matterList.length,'vux-1px-t' : !matterList.length}">
+          <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
         </div>
       </div>
     </div>
@@ -124,7 +123,7 @@
         </span>
         <span class="taxAmount">[含税: ￥{{taxAmount | numberComma(3)}}]</span>
       </span>
-      <span class="count_btn" @click="submitOrder">提交订单</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" v-else>
@@ -236,21 +235,18 @@ import {toFixed} from '@/plugins/calc'
       goSetAds() {
         this.$router.push({path: '/adress'});
       },
+      //选中的客户
+      selDealer(val) {
+        this.dealerInfo = JSON.parse(val)[0];
+        this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
+        this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+        this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
+        this.getMatPrice();
+      },
       //选择结算方式
       getPayment(item, i) {
         this.DealerPaymentTerm = item;
         this.paymentIndex = i;
-
-      },
-      modifyMatter(item,index){
-        this.matter = JSON.parse(JSON.stringify(item));
-        this.showMatterPop = true;
-        this.modifyIndex = index;
-      },
-      selConfirm(val){
-        let modMatter = JSON.parse(val);
-        this.$set(this.matterList,this.modifyIndex,modMatter);
-        this.showMatterPop = false;
       },
       submitPayment() {
         this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
@@ -265,14 +261,26 @@ import {toFixed} from '@/plugins/calc'
         this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
         this.showLogPop = false;
       },
-      //选中的客户
-      selDealer(val) {
-        console.log(val);
-        this.dealerInfo = JSON.parse(val)[0];
-        this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
-        this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
-        this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        this.getMatPrice();
+      //显示物料修改的pop
+      modifyMatter(item,index){
+        this.matter = JSON.parse(JSON.stringify(item));
+        this.showMatterPop = true;
+        this.modifyIndex = index;
+      },
+      //更新修改后的物料信息
+      selConfirm(val){
+        let modMatter = JSON.parse(val);
+        this.$set(this.matterList,this.modifyIndex,modMatter);
+      },
+      //选择物料，显示物料pop
+      getMatter(){
+        if(!this.dealerInfo.dealerCode){
+          this.$vux.alert.show({
+            content: '请选择客户'
+          })
+          return
+        }
+        this.showMaterielPop = ! this.showMaterielPop;
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -399,7 +407,7 @@ import {toFixed} from '@/plugins/calc'
                   taxRate : taxRate, //税金
                   taxAmount :taxAmount, // 税金
                   tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
-                  promDeliTime: null, //预期交货日
+                  promDeliTime: item.promDeliTime || null, //预期交货日
                   comment: ''                //说明
                 })
               })
@@ -518,218 +526,16 @@ import {toFixed} from '@/plugins/calc'
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
-  .vux-1px-b:after{
-  border-color: #e8e8e8;
-}
-  .icon-gengduo {
-    top: 50%;
-    // right: .1rem;
-    right: 0.04rem;
-    font-size: .24rem;
-    position: absolute;
-    transform: translate(0, -50%);
-  }
-  //物料编辑的pop
-  .edit_matter{
-   background: #f8f8f8;
-    .pop_title{
-      background: #fff;
-      padding: 0.06rem 0;
-      text-align: center;
-      font-size:0.18rem;
-    }
-  }
-  .confirm_btn{
-    background: #fff;
-    padding: 0.1rem 0;
-    .confirm{
-      width:80%;
-      border-radius: 0.2rem;
-      background: #5077aa;
-      height: 0.44rem;
-      line-height: 0.44rem;
-      text-align: center;
-      color:#fff;
-      margin:0 auto;
-    }
-  }
-  
-  
-  .matter_info{
-    padding: .06rem .08rem;
-    width: 100%;
-    box-sizing: border-box;
-    background: #fff;
-    margin-bottom: 0.06rem;
-    font-size:0.14rem;
-    // 物料图片
-    .mater_img {
-      width: .75rem;
-      height: .75rem;
-      display: inline-block;
-      margin-top: .04rem;
-      img {
-        width: 100%;
-        max-height: 100%;
-      }
-    }
-    // 物料主体
-    .mater_main {
-      width: 2.6rem;
-      margin-left: .1rem;
-      display: inline-block;
-      box-sizing: border-box;
-      // 物料名称
-      .mater_name {
-        color: #111;
-        // overflow: hidden;
-        font-size: .14rem;
-        font-weight: bold;
-        // max-height: .46rem;
-        // display: -webkit-box;
-        // -webkit-line-clamp: 2;
-        margin-bottom: .02rem;
-        // text-overflow: ellipsis;
-        // -webkit-box-orient: vertical;
-        // 每个物料的索引
-        .whiNum {
-          color: #fff;
-
-          padding: 0 .02rem;
-          font-size: .1rem;
-          display: inline-block;
-          background: #ea5455;
-          vertical-align: middle;
-          margin: -.01rem .04rem 0 0;
-        }
-      }
-      // 物料信息
-      .mater_info {
-        color: #757575;
-        font-size: .12rem;
-        // 有颜色包裹的
-        .withColor {
-          // 物料编码
-          .mater_code {
-            display: flex;
-            .title,
-            .num {
-              font-size: .1rem;
-              padding: 0 .04rem;
-              display: inline-block;
-            }
-            .title {
-              color: #fff;
-              background: #3f72af;
-
-              border-top-left-radius: .12rem;
-              border-bottom-left-radius: .12rem;
-            }
-            .num {
-              color: #111;
-              max-width: .9rem;
-              overflow: hidden;
-              white-space: nowrap;
-              background: #dbe2ef;
-              text-overflow: ellipsis;
-              border-top-right-radius: .12rem;
-              border-bottom-right-radius: .12rem;
-            }
-          }
-          // 规格
-          .mater_spec {
-            @extend .mater_code;
-            margin-left: .1rem;
-            .title {
-              color: #fff;
-              background: #537791;
-
-            }
-            .num {
-              color: #fff;
-              max-width: .6rem;
-              overflow: hidden;
-              white-space: nowrap;
-              background: #ff7f50;
-              text-overflow: ellipsis;
-            }
-          }
-        }
-        // 没颜色包裹的
-        .withoutColor {
-          // 物料分类
-          .mater_classify {
-            font-size: .1rem;
-            margin-top: .04rem;
-          }
-          // 物料颜色 材质
-          .mater_material {
-            font-size: .1rem;
-            // margin-top: .1rem;
-            .unit,
-            .color {
-              margin-right: .06rem;
-            }
-          }
-        }
-      }
-      //物料单价，属性，颜色
-      .mater_more{
-        margin-top: .02rem;
-        color: #757575;
-        font-size: 0.1rem;
-        span{
-          display: inline-block;
-          margin-right: 0.04rem;
-          .mater_color{
-          margin-right: 0;
-          }
-        }
-
-      }
-    }
-    .each_info{
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     padding: 0.1rem 0.15rem;
-     font-size:0.14rem;
-     .matter_val{
-       color:#999;
-     }
-     
-    }
-    .vux-no-group-title{
-      margin-top:0;
-    }
-    /deep/ .weui-cells{
-      margin-top:0;
-      .weui-cell{
-        font-size: 0.14rem;
-        &:before{
-          left:0;
-          border-color:#e8e8e8;
-        }
-      }
-      &:before{
-        border-top:none;
-        
-      }
-      &:after{
-        border-bottom:none;
-      }
-    }
-  }
-  .matter{
-    display: flex;
-    padding: 0.1rem;
+  .vux-1px-b:after,
+  .vux-1px-t:before{
+    border-color: #e8e8e8;
   }
   .basicPart{
     background: #f8f8f8;
   }
   .comment{
     margin-top: 0.1rem;
-    padding: .06rem .08rem;
+    padding: .06rem .1rem;
     width: 100%;
     box-sizing: border-box;
     background: #fff;
@@ -737,22 +543,38 @@ import {toFixed} from '@/plugins/calc'
       padding: 0;
     }
   }
+  .no_margin{
+    margin-top:0;
+  }
   .materiel_list{
     margin-top: 0.1rem;
-    padding: .06rem .08rem;
+    padding: .06rem .1rem;
     width: 100%;
     box-sizing: border-box;
     box-shadow: 0;
     background: #fff;
-   
-  }
-  .fill_info{
-    /deep/ .weui-cells{
-      .weui-cell{
-        padding: 10px 15px;  
-        font-size: 0.14rem;      
+    .no_matter{
+      display: flex;
+      justify-content: space-between;
+      padding: 0.04rem 0.12rem 0.04rem 0;
+      .title{
+        font-size:0.16rem;
+        color:#111;
       }
+      .r_arrow{
+        fill:#757575;
+      }
+      
     }
+    .icon-bianji{
+      // top: 60%;
+      // right: 0.04rem;
+      // position: absolute;
+      // transform: translate(0, -50%);
+      color:#757575;
+      // margin-left:0.05rem;
+    }
+   
   }
   
 </style>

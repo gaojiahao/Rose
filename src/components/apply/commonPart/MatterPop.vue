@@ -1,9 +1,8 @@
 <template>
   <div v-transfer-dom>
-    <popup v-model="show" height="69%">
+    <popup v-model="show" height="57%" @on-show="onShow" @on-hide="onHide">
       <r-scroll class="matter_pop" :options="scrollOptions"  ref="bScroll">
         <div class='edit_matter'>
-          <div class='pop_title'>编辑已选物料</div>
           <div class='matter_info mg_auto'>
             <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
             <div class='mater_main'>
@@ -111,6 +110,21 @@ export default {
 
   },
   methods:{
+    // TODO 弹窗展示时调用
+    onShow() {
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          // 弹窗展示时刷新滚动，防止无法拖动问题
+          this.$refs.bScroll.refresh();
+          this.$refs.bScroll.scrollTo(0, 0);
+        }
+      })
+    },
+    // TODO 弹窗隐藏时调用
+    onHide() {
+      this.$emit('input', false);
+    },
+    //确认修改
     confirm(){
       this.$emit('sel-confirm',JSON.stringify(this.modifyMatter))
       this.show = false;
