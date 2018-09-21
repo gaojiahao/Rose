@@ -2,15 +2,16 @@
   <div class="comment-item" @click.stop="reply">
     <header class="header">
       <div class="header-left">
-        <img class="avatar" :src="item.photo || require('assets/ava01.png')">
+        <img class="avatar" :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg">
         <span class="creator-name">{{item.creatorName}}</span>
-        <span class="time">{{item.crtTime | filterTime}}</span>
+        <span class="time">{{item.CRT_TIME | filterTime}}</span>
       </div>
       <div class="header-right" @click.stop="savePraise">
-        <i class="iconfont" :class="item.isPraise ? 'icon--' : 'icon-yusuan2'"></i><span>{{item.praiseNum}}</span>
+        <!-- isPraise: 是否能点赞 -->
+        <i class="iconfont icon-L2" :class="{praise: !item.isPraise}"></i><span>{{item.praiseNum}}</span>
       </div>
     </header>
-    <div class="comment" v-html="item.content"></div>
+    <div class="comment" v-html="item.CONTENT"></div>
     <div class="comment-reply">
       <slot name="reply"></slot>
     </div>
@@ -21,7 +22,7 @@
   import {savePraise} from 'service/commentService'
 
   export default {
-    name: "CommentDetail",
+    name: "CommentItem",
     props: {
       item: {
         type: Object,
@@ -34,21 +35,23 @@
       return {}
     },
     methods: {
+      // TODO 获取默认用户图片
+      getDefaultImg(e) {
+        e.target.src = require('assets/ava01.png');
+      },
       // TODO 抛出回复事件
       reply() {
         this.$emit('on-reply', this.item);
       },
       // TODO 点赞
       savePraise() {
-        if (this.item.isPraise) {
+        // 已点过赞，不允许点击
+        if (!this.item.isPraise) {
           return
         }
-        return savePraise(this.item.id).then((success = true, message) => {
+        return savePraise(this.item.ID).then((success = true, message) => {
           if (success) {
             this.$emit('on-praise-success', this.item);
-            this.$vux.alert.show({
-              content: '点赞成功'
-            });
           }
         })
       },
@@ -102,6 +105,11 @@
     .header-right {
       .iconfont {
         margin-right: .05rem;
+      }
+      .icon-L2 {
+        &.praise {
+          color: #c93d1b;
+        }
       }
     }
     /* 评论者头像 */
