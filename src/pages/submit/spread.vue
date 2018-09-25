@@ -4,6 +4,7 @@
       市场宣传
     </h1>
     <div class="s_main">
+      <base-info :default-value="baseinfo" ref="baseinfo"></base-info>
       <div class="s_main_part" v-for="(item, index) in xp_list" :key='index'>
         <group title="请填写项目名称">
             <x-input
@@ -69,22 +70,24 @@
 
 <script>
 import { Cell, Group, XInput, PopupPicker, XTextarea, numberComma } from "vux";
+import BaseInfo from './../components/BaseInfo'
 import spreadService from "../../service/spreadService";
 import createService from "../../service/createService";
+
 export default {
   components: {
     Cell,
     Group,
     XInput,
     PopupPicker,
-    XTextarea
+    XTextarea,
+    BaseInfo,
   },
   filters: {
     numberComma
   },
   data() {
     return {
-      baseInfo: "",
       formData: true,
       formDataNew:'',
       xp_list: [
@@ -106,6 +109,7 @@ export default {
       ], // 宣品 填写内容
       searchInfo: false,
       attachment: [],
+      baseinfo: {},
     };
   },
   methods: {
@@ -217,6 +221,7 @@ export default {
       this.xp_list.pop();
     },
     goflow() {
+      let baseinfo = this.$refs.baseinfo.getFormData();
       let formDataNew = {
           "listId": "cefa61bb-8a2c-48f5-819b-011e0cf4fb6c",
           "referenceId": this.guid(),
@@ -226,20 +231,14 @@ export default {
             "effectiveTime": "",
             "transCode": "KFSCPCGRK",
             "statusText": "",
-            "creatorName": this.baseInfo.nickname,
             "crtTime": this.getNowFormatDate(),
-            "modifer": "",
             "modTime": this.getNowFormatDate(),
-            "handler": this.baseInfo.userId,
             "transType": "tspcchin",
-            "handlerUnit":this.baseInfo.groupNameID,
-            "handlerRole": this.baseInfo.roleID,
             "id":this.guid(),
-            "creator": "",
-            "handlerArea":this.baseInfo.areaID,
             "status": "",
             "comment": "", //备注
-            "fj": this.attachment
+            "fj": this.attachment,
+            ...baseinfo
           },
           "transDetailUncalc": this.attachment,
           "$comment": {
@@ -414,16 +413,11 @@ export default {
   },
   mounted() {
     let sessionKey = `${this.$route.query.list}-FORMDATA`;
-    //基本信息
-    spreadService.getBaseInfo().then(res => {
-      this.baseInfo = res;
-    }).catch(c => {
-      console.log(c);
-    });
     //回显
     if (sessionStorage.getItem(sessionKey)) {
       this.formDataNew = JSON.parse(sessionStorage.getItem(sessionKey));
       this.attachment = this.formDataNew.baseinfo.fj;
+      this.baseinfo = this.formDataNew.baseinfo;
       let dataSet = this.formDataNew.transDetailUncalc;
       this.cacheData(dataSet);
       this.listDefault();
@@ -432,6 +426,7 @@ export default {
       createService.getJsonData(this.$route.query.transCode).then(res => {
         this.formDataNew = JSON.parse(res.tableContent[0].json_data);
         this.attachment = this.formDataNew.baseinfo.fj;
+        this.baseinfo = this.formDataNew.baseinfo;
         this.cacheData(this.formDataNew.transDetailUncalc);
         this.listDefault();
         this.formData = false;
@@ -439,6 +434,9 @@ export default {
         console.log(c);
       });
     } else {
+      this.$nextTick(() => {
+        this.$refs.baseinfo.init();
+      });
       this.listDefault();
     }
   },

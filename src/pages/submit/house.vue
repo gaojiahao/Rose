@@ -5,6 +5,7 @@
     </h1>
     <div v-show="showPage">
       <div class="h_main">
+        <base-info :default-value="baseinfo" ref="baseinfo"></base-info>
         <div class="h_main_part">
           <group title="请选择地点类型">
             <popup-picker title="地点类型" :data="h_type" v-model="type_value" @on-change="officeChange"></popup-picker>
@@ -40,6 +41,7 @@
   import {Cell, Group, XInput, Datetime, PopupPicker, numberComma, PopupRadio} from 'vux'
   import createService from './../../service/createService'
   import CascadePickers from './../components/CascadePickers'
+  import BaseInfo from './../components/BaseInfo'
   import common from './../mixins/common'
 
   export default {
@@ -51,6 +53,7 @@
       PopupPicker,
       CascadePickers,
       PopupRadio,
+      BaseInfo,
     },
     data() {
       return {
@@ -199,6 +202,7 @@
           jsonData.$review = this.formData.review;
           jsonData.$review2 = this.formData.review2;
         }
+        let bseinfo = this.$refs.baseinfo.getFormData();
         jsonData.baseinfo = {
           id: this.guid(),
           transType2: '房屋立项申请',
@@ -211,6 +215,7 @@
           comment: '',
           fj: [],
           ...this.baseinfo,
+          ...bseinfo,
         };
         // 日期
         jsonData['baseinfoExt#zq'] = {
@@ -397,6 +402,10 @@
       }
 
       this.$nextTick(() => {
+        // 回写时不请求
+        if (!formData && !this.transCode) {
+          requestPromises.push(this.$refs.baseinfo.init());
+        }
         requestPromises.push(this.getProvinceList());
         requestPromises.push(this.$refs.cascadePickers.init());
         Promise.all(requestPromises).then(data => {

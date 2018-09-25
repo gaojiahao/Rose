@@ -253,6 +253,32 @@ let createService = {
       }
     });
   },
+  // TODO 获取经办人经办部门
+  getUnits(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getUnitsByUserId',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+        ...data,
+      }
+    });
+  },
+  // TODO 获取经办人经办角色
+  getRoles(data = {}) {
+    return $axios.ajax({
+      url: '/H_roleplay-si/ds/getRolesByUserId',
+      data: {
+        _dc: Date.now(),
+        page: 1,
+        start: 0,
+        limit: 10000,
+        ...data,
+      }
+    });
+  },
   // TODO 房屋立项申请获取省份列表
   getProvinceForWarehouse(data = {}) {
     return $axios.ajax({

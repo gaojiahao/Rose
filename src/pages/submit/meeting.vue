@@ -3,6 +3,7 @@
     <h1 class="m_title">会议立项</h1>
     <div v-show="showPage">
       <div class="m_main">
+        <base-info :default-value="baseinfo" ref="baseinfo"></base-info>
         <div class="m_main_part">
           <group title="请填写会议安排明细">
             <datetime v-model="formData.begin" format="YYYY-MM-DD" title="开始日期"></datetime>
@@ -37,6 +38,7 @@
   import createService from './../../service/createService'
   import {Cell, Group, XInput, Datetime, XTextarea, PopupPicker, numberComma} from 'vux'
   import CascadePickers from './../components/CascadePickers'
+  import BaseInfo from './../components/BaseInfo'
   import common from './../mixins/common'
 
   export default {
@@ -47,7 +49,8 @@
       Datetime,
       XTextarea,
       PopupPicker,
-      CascadePickers
+      CascadePickers,
+      BaseInfo,
     },
     data() {
       return {
@@ -220,6 +223,7 @@
           jsonData.$review = this.formData.review;
           jsonData.$review2 = this.formData.review2;
         }
+        let bseinfo = this.$refs.baseinfo.getFormData();
         jsonData.baseinfo = {
           id: this.guid(),
           transType2: '会务立项申请',
@@ -232,6 +236,7 @@
           comment: '',
           fj: [],
           ...this.baseinfo,
+          ...bseinfo,
         };
         // 日期
         jsonData['baseinfoExt#sj'] = {
@@ -425,6 +430,10 @@
       }
 
       this.$nextTick(() => {
+        // 回写时不请求
+        if (!formData && !this.transCode) {
+          requestPromises.push(this.$refs.baseinfo.init());
+        }
         requestPromises.push(this.getProvinceList());
         requestPromises.push(this.$refs.cascadePickers.init());
         Promise.all(requestPromises).then(data => {

@@ -20,7 +20,7 @@
           <flow orientation="vertical" style="height:300px;float:left;padding:10px 20px">
             <flow-state state="1" :title="handlerData.nickname" is-done></flow-state>
             <flow-line tip="进行中" tip-direction='right'></flow-line>
-            <flow-state state="2" :title="handlerData.area === '总部' ?  '部门主管' : '常委'"></flow-state>
+            <flow-state state="2" :title="area === '总部' ?  '部门主管' : '常委'"></flow-state>
             <flow-line></flow-line>
             <flow-state state="3" title="副总"></flow-state>
             <flow-line></flow-line>
@@ -66,6 +66,7 @@
         opList: [], // 审批人列表
         handlerData: {},
         submitSuccess: false,
+        area: '', // 经办人当前所属区域
       };
     },
     mixins: [common],
@@ -89,7 +90,7 @@
         };
         let wfPara = {};
         let submitMethod = 'saveAndStartWfOld';
-        let area = this.handlerData.area;
+        let area = this.area;
         // 校验数据
         this.opList.every(item => {
           if (!item.value) {
@@ -178,48 +179,13 @@
           }
         }
       },
-      // TODO 初始化基本信息
-      getBaseInfo() {
-        return createService.getBaseInfoData().then((data = {}) => {
-          let {nickname = '', userId = '', area = '', areaID = '', groupName = '', groupNameID = '', position = '', roleID = ''} = data;
-          this.currentUser = data;
-          return createService.getCurrentUser(nickname).then(({tableContent = []}) => {
-            let [handlerData = {}] = tableContent;
-
-            this.jsonData.baseinfo = {
-              ...this.jsonData.baseinfo,
-              creatorName: nickname,
-              creator: '',
-              modifer: '',
-              handler: userId,
-              handlerArea: areaID,
-              handlerUnit: groupNameID,
-              handlerRole: roleID,
-              handlerName: {
-                text: nickname,
-                value: nickname,
-                selection: {
-                  data: {
-                    id: '',
-                    ...handlerData
-                  }
-                }
-              },
-              handlerAreaName: this.assembleData(areaID, area),
-              handlerUnitName: this.assembleData(groupNameID, groupName),
-              handlerRoleName: this.assembleData(roleID, position),
-            };
-            this.handlerData = handlerData;
-          });
-        });
-      },
       // TODO 还原常委、副总裁
       restoreOpList() {
         let review = {...this.jsonData.$review};
         let review2 = {...this.jsonData.$review2};
         let val = '';
         let val2 = '';
-        switch (this.handlerData.area) {
+        switch (this.area) {
           case '总部':
             val = review.reviewer.text; // 部门主管
             val2 = review.deputy.text; // 副总
@@ -233,8 +199,7 @@
       },
       // TODO 处理部门主管、常委、副总的展示
       opHandler(val, val2) {
-        let {area} = this.handlerData;
-        switch (area) {
+        switch (this.area) {
           // 总部展示部门主管和分管总裁
           case '总部':
             return this.headquartersHandler(val, val2);
@@ -307,14 +272,14 @@
         });
       },
       // TODO 获取审批者参数
-      getOpParams(area) {
+      getOpParams() {
         let idObj = {
           reviewer: {},
           wfPara: {}
         };
         let [first = {}, second = {}] = [...this.opList];
 
-        switch (area) {
+        switch (this.area) {
           case '总部':
             let dept = {};
             let vicePresident = {};
@@ -408,22 +373,21 @@
       // 修改时有创建时间，使用原来的创建时间
       this.jsonData.baseinfo.crtTime = jsonData.baseinfo.crtTime ? this.changeDate(jsonData.baseinfo.crtTime, true) : now;
       this.jsonData.baseinfo.modTime = now;
+      // 经办人信息
+      this.handlerData = {...this.jsonData.baseinfo.handlerName.selection.data};
+      this.area = this.jsonData.baseinfo.handlerAreaName.value;
       if (this.taskId) {
         this.hasSelected = true;
-        this.handlerData = {...this.jsonData.baseinfo.handlerName.selection.data};
         this.restoreOpList();
         return
       }
       this.showLoading = true;
       this.getProcess();
-      this.getBaseInfo().then(data => {
-        this.opHandler().then(() => {
-          this.showLoading = false;
-        })
-      });
+      this.opHandler().then(() => {
+        this.showLoading = false;
+      })
     }
   }
-  ;
 </script>
 
 <style lang='scss'>
