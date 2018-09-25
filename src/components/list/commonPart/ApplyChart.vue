@@ -1,31 +1,30 @@
 <template>
   <div class='chart'>
     <div class='filter_time vux-1px-b'>
-      <div class='current_time vux-1px-r'>{{currentDate}}</div>
+      <div class='current_time vux-1px-r'>{{defaultTips}}</div>
       <div class='time_pop' @click="dateShow = !dateShow">
-        <span class="tips">时间筛选</span>
-        <x-icon type="ios-arrow-down" size="14"></x-icon>
+        <span class="tips">日期筛选</span>
+        <x-icon :class="{'arrow-up': dateShow}" type="ios-arrow-down" size="14"></x-icon>    
       </div>
       <div class='date vux-1px-b' v-show='dateShow'>
         <div class='choose_date'>
           <div class='start_date'>
             <span class='date_title'>起始日期</span>
             <span class='date_value vux-1px' @click="getStart">
-              {{startDate}}
-            </span>
+              {{timeFilter.startDate}}
+              </span>
           </div>
           <div class='end_date'>
             <span class='date_title'>截止日期</span>
             <span class='date_value vux-1px-t' @click="getEnd">
-              {{EndDate}}
+              {{timeFilter.EndDate}}
             </span>
           </div>
         </div>
-        <div class='time_sel_btn' @click="confirm">
-          <span class="reset">重置</span>
-          <span class="confirm">确认</span>
+        <div class='time_sel_btn'>
+          <span class="reset" @click="resetData">重置</span>
+          <span class="confirm" @click="confirm">确认</span>
         </div>
-        
       </div>
     </div>
     <div class='business_amount vux-1px-b'>
@@ -40,15 +39,13 @@
     </div>
     <!--业务量排名-->
     <div class='list_rank vux-1px-t'>
-      <div class='list_title'>
-        业务员业绩排行榜（前三）
-      </div>
+      <div class='list_title'>业务员业绩排行榜（前三）</div>
       <div class='each_staff vux-1px-b' v-for="(item, index) in staffRank" :key='index'>
         <div class="staff_name">
           <span class="rank_num">No.{{index + 1}}</span>
           <span>{{item.handlerName}} {{item.handlerRoleName}} {{item.handlerUnitName}}</span>
         </div>
-        <div>￥{{item.total | toFixed}}</div>
+        <div>￥{{item.total | toFixed | numberComma}}</div>
       </div>
     </div>
     <!--产品销量排名柱状图-->
@@ -70,7 +67,7 @@ require('echarts/lib/component/tooltip');
 require('echarts/lib/component/title');
 require('echarts/lib/component/legend');
 //处理图标上字符串过长换行
-let handle = (params,symbol,num)=>{
+let handle = (params, symbol, num)=>{
   let newParamsName = "";// 最终拼接成的字符串 
   var paramsNameNumber = params.length;// 实际标签的个数 
   var provideNumber = num;// 每行能显示的字的个数 
@@ -101,7 +98,7 @@ let handle = (params,symbol,num)=>{
   return newParamsName  
 }
 // vux组件引入
-import { dateFormat,Countup } from 'vux'
+import { Countup, dateFormat, numberComma } from 'vux'
 // 请求 引入
 import { getDashboard } from 'service/listService'
 // 插件引入
@@ -129,8 +126,7 @@ export default {
             fontSize: 12
           },
           formatter:(params)=>{
-            // let tip =  handle(params.data.name, '<br/>', 0);
-            return `${params.data.name}<br/>销售额：￥${params.value} (${params.percent}%)`
+            return `${params.data.name}<br/>销售额：￥${numberComma(params.value)} (${params.percent}%)`
           },
         },
         color: ['#07689f','#a2d5f2','#ff7e67','#abedd8','#283c63','#bad7df'],
@@ -140,15 +136,14 @@ export default {
             type: 'pie',
             radius : '40%',             // 饼图半径
             center: ['50%', '38%'],     // 饼图位置
+            
             data:[],
             label:{
-              // show: false,              
               fontSize: 12,
-              
               formatter :(params) => {
                let name = handle(params.data.name, '\n', 6);
                 return name  
-              },             
+              }          
             },
             labelLine: {
               // smooth: true,
@@ -156,101 +151,82 @@ export default {
           }
         ]
       },
-      barOption: {                      // 柱状图参数
-        title: {
-            text: '产品销售排名',
-            x:'center'
-        },
-        tooltip: {},
-        xAxis: {
-            axisLabel:{
-              formatter:(value,index)=>{
-                let name = handle(value,'\n',3);
-                return name
-              }
-            },
-            data: ['2018年俄罗斯FIFA世界杯普通金属纪念币-第三系列','草莓奶油冰淇淋蛋糕','五国金砖纪念套装','抹茶蛋糕卷','电脑'],
-            axisTick: {
-              show : false
-            },
-            
-        },
-        itemStyle:{ 
-          color:'#5077aa',           
-        },
-        yAxis: {
-          
-        },
-        grid:{
-          height:'60%',
-          left:'15%',
-        },
-        series: [{
-            name: '销量',
-            type: 'bar',
-            data: [115, 95, 80, 64, 50],
-            barWidth : 30,
-            label:{
-              show: true,
-              position:'top',
-              
-            }
-        }]
-      },
-      currentDate: '',                  // 当前时间
+      timeFilter: {
+        startDate: '请选择',             // 起始日期
+        EndDate: '请选择',               // 截止日期
+      },      
       staffRank: [],                    // 业务员销售排名(前三)
-      startDate: '请选择',               // 默认文字
-      EndDate: '请选择',                 // 默认文字
+      defaultTips: '',                  // 默认提示文字
+      isReset: false,                   // 是否重置
       dateShow: false,                  // 是否显示时间筛选栏
       businessAmount: 0,                // 金额合计
-
     }
   },
-  filters: {
-    toFixed
-  },
-  components:{
-    Countup
-  },
+  filters: { toFixed, numberComma },
+  components:{ Countup },
   methods:{
+    // 起始日期
     getStart(){
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
-        onConfirm:(val)=>{
-          console.log(val);
-          this.startDate = val;
+        value: this.timeFilter.startDate,
+        endDate: this.preDate,
+        onConfirm: (val) => {
+          this.timeFilter.startDate = val;
         },
       })
     },
+    // 截止日期
     getEnd(){
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
+        value: this.timeFilter.EndDate,
+        endDate: this.toDay,
         onConfirm:(val)=>{
-          this.EndDate = val;
+          this.timeFilter.EndDate = val;
         },
       })
     },
+    // 重置时间筛选
+    resetData(){
+      this.timeFilter = { startDate: '请选择', EndDate: '请选择', };
+    },
+    // 时间筛选确定
     confirm(){
-      if(this.startDate !== '请选择' && this.EndDate !== '请选择'){
-        this.currentDate = `${this.startDate} ~ ${this.EndDate}`;
+      // 两个时间都选择了
+      if(this.timeFilter.startDate !== '请选择' && this.timeFilter.EndDate !== '请选择'){
+        this.defaultTips = `${this.timeFilter.startDate} ~ ${this.timeFilter.EndDate}`;
+      }
+      // 只选择了截止时间
+      else if(this.timeFilter.EndDate !== '请选择'){
+        this.defaultTips = `截止至 ${this.timeFilter.EndDate}`;
+      }
+      // 只选择了起始日期
+      else if(this.timeFilter.startDate !== '请选择'){
+        this.defaultTips = `${this.timeFilter.startDate} ~ ${this.toDay} [今日]`;
       } 
+      // 都没选择
+      else {
+        this.defaultTips = `截止至 ${this.toDay}`
+      }
+      // 关闭时间筛选
       this.dateShow = false;
+      // 添加时间筛选条件
       let timeFilter = {
-        startData: this.startDate,
-        endData: this.EndDate
+        startData: this.timeFilter.startDate === '请选择' ? '' : this.timeFilter.startDate,
+        endData: this.timeFilter.EndDate === '请选择' ? '' : this.timeFilter.EndDate
       }
       this.dashboardData(timeFilter);
     },
     dashboardData(data = {}){
-      this.$loading.show();
+      // this.$HandleLoad.show();
       return getDashboard(data).then((
-        { total = 0, dealerPie, productSalesRanking: pdRank , salesmanRanking: staffRank }) => {
+        { total = 0, dealerPie, productSalesRanking: pdRank, salesmanRanking: staffRank }) => {
           // 初始化
           let PieChart = echarts.init(document.getElementById('pie')),
                 dealerRank = [];
-                
           // 业务员业绩排名
           this.staffRank = staffRank;
           // 修改数据
@@ -267,23 +243,16 @@ export default {
           this.$set(this.pieOption.series[0], 'data', dealerRank);
           this.$set(this.pieOption.legend, 'data', dealerRank);
           PieChart.setOption(this.pieOption);
-          this.$loading.hide();
+          // this.$HandleLoad.hide();
       })
     }
   },
   created(){
-    // let PieChart = echarts.init(document.getElementById('pie'));
-    // let BarCahrt = echarts.init(document.getElementById('bar'));
-
-    this.currentDate = dateFormat(new Date(),'YYYY-MM-DD');
-    // getDashboard();
+    this.toDay = dateFormat(new Date(),'YYYY-MM-DD');
+    this.preDate = dateFormat(new Date(new Date().getTime() - 24*60*60*1000), 'YYYY-MM-DD');
+    this.defaultTips = `截止至 ${this.toDay}`;    
     this.dashboardData();
-  },
-  mounted(){
-    // BarCahrt.setOption(this.barOption);
-
   }
-
 }
 </script>
 
@@ -305,21 +274,29 @@ export default {
   }
   .filter_time {
     display: flex;
+    height: .4rem;
+    font-size: .14rem;
+    font-weight: bold;
     align-items: center;
-    height:0.4rem;
     .current_time {
       flex:1;
       text-align: center;
     }
     .time_pop {
-      // width: 1rem;
-      padding: 0 .1rem;
       display: flex;
+      padding: 0 .1rem;
       align-items: center;
       justify-content: center;
       .tips {
-        font-weight: bold;
+        margin-right: .04rem;
       }
+      /* 倒三角 */
+      .vux-x-icon-ios-arrow-down {
+        transition: transform 200ms linear;
+        &.arrow-up {
+          transform: rotate(-180deg);
+        }
+      }    
     }
     //选择时间弹出框
     .date{
@@ -331,26 +308,21 @@ export default {
       z-index:50;
       box-shadow: 0 2px 10px #e8e8e8;
       .choose_date{
-        // padding: .04rem 0 0;
         display: flex;
         text-align: center;
         
-        // justify-content: space-around;
-        .start_date,
-        .end_date{
+        .end_date,
+        .start_date {
           flex: 1;
           display: flex;
           flex-direction: column;
-          margin-top: .05rem;
           .date_title {
-            // padding: .1rem 0;
+            padding: .1rem 0;
             font-weight: bold;
-            // margin-bottom: .05rem;
           }
           .date_value {
             padding: .1rem;
-            // display: block;
-            border-radius: .12rem;
+            color: #757575;
           }
         }
       }

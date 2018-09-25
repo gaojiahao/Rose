@@ -4,7 +4,7 @@
       <div class="title">{{title}}</div>
       <div class="mode">
         <span class="mode-content">{{selected}}</span>
-        <span class="iconfont icon-yemashenglvehao"></span>
+        <span class="iconfont icon-shenglve"></span>
         </div>
     </div>   
     <!-- 结算popup -->
@@ -85,35 +85,25 @@
 <style scoped lang="scss">
   // 结算方式
   .pop-single-container {
+    width: 95%;
+    margin: 0 auto;
     position: relative;
-    // margin: 10px auto;
-    // padding: .06rem .08rem;
-    // width: 95%;
-    width: 100%;
     background: #fff;
-    padding: 0.08rem 0.1rem;
     box-sizing: border-box;
-    // box-shadow: 0 0 8px #e8e8e8;
+    padding: .02rem .1rem;
     .pop_info{
       display: flex;
-      // padding-right: 0.2rem;
+      font-size: .14rem;
+      align-items: center;
       justify-content: space-between;
+      .title {
+        color: #757575;
+      }
     }
-    .icon-yemashenglvehao,
+    .icon-shenglve,
     .icon-gengduo {
-      // top: 50%;
-      // right: .1rem;
-      // right: 0.04rem;
       font-size: .2rem;
-      color: #757575;
-      margin-bottom: -.04rem;
-      // position: absolute;
-      // transform: translate(0, -50%);
-    }
-    .title {
-      // color: #757575;
-      
-      // font-size: .12rem;
+      color: #707070;
     }
     .mode {
       color: #111;
@@ -121,12 +111,8 @@
       display: flex;
       align-items: center;
       .mode-content {
-        margin-right: .04rem;
+        margin-right: .06rem;
       }
-      span {
-        display: inline-block;
-      }
-
     }
   }
 

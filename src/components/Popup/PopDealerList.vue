@@ -1,15 +1,24 @@
 <template>
-  <div class="pop-dealer-list" @click="itemClick">
-    <div v-if="dealerInfo.dealerCode" class='dealer_info'>
-      <div class='user_content'>
-        <div class="user_info">
-          <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
+  <div class="pop_dealer_list" @click="itemClick">
+    <div v-if="dealerInfo.dealerCode" class='dealer-info'>
+      <div class='user-content'>
+        <div class="user-info">
+          <div class="user-name">
+            <span class="user-tips">{{dealerInfo.dealerLabelName}}</span>
+            <span>{{dealerInfo.dealerName}}</span>
+          </div>
+          <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
         </div>
-        <div class="cp_info">
-          <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-          <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-          <p class="cp_ads">
-            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
+        <div class="cp-info">
+          <div>
+            <span class="user-tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
+          </div>
+          <div>
+            <span class="iconfont icon-icon-test"></span>
+            <span class="cp-ads">
+              {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
+            </span>
+          </div>
         </div>
       </div>  
     </div>
@@ -17,7 +26,8 @@
       <div class="title">{{dealerLabelName}}列表</div>
       <div class="mode">请选择{{dealerLabelName}}</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <span class="iconfont icon-youjiantou r-arrow"></span>          
+
 
     <!-- 往来popup -->
     <div v-transfer-dom>
@@ -56,9 +66,9 @@
                 <!-- icon -->
                 <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
               </div>
-              <load-more tip="加载中" v-show="hasNext"></load-more>
+              <load-more tip="加载中" v-show="hasNext" slot="loadmore"></load-more>
               <!-- 当没有数据的时候 显示提醒文字 -->
-              <div class="when_null" v-show="!dealerList.length && !hasNext">
+              <div class="when-null" v-show="!dealerList.length && !hasNext" slot="loadmore">
                 <div class="title">抱歉，没有找到您搜索的内容</div>
                 <ul class="tips">
                   <li>
@@ -252,64 +262,69 @@
 </script>
 
 <style scoped lang="scss">
-  .pop-dealer-list {
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
+  .pop_dealer_list {
+    width: 95%;
+    margin: .1rem auto;
     position: relative;
-    // margin: 10px auto;
-    // padding: .06rem .4rem .06rem .08rem;
-    // width: 95%;
-    width: 100%;
-    padding: 0.06rem  0.1rem;
     background: #fff;
     margin-bottom:0.1rem;
-    // box-shadow: 0 0 8px #e8e8e8;
     box-sizing: border-box;
-
+    padding: .06rem  .1rem;
     .title {
       color: #757575;
       font-size: .12rem;
     }
-
     .mode {
       color: #111;
       font-weight: 500;
     }
-
-    .r_arrow {
+    .r-arrow {
       top: 50%;
-      right: .04rem;
+      right: 1%;
+      font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
     }
-    // .dealer_info{
-    //   padding-left:0.35rem;
-    // }
-    .user_content{
-      width: calc(100% - 0.2rem);
+    .user-content {
+      padding-right: .1rem;
+      .user-info {
+        font-size: 0;
+        color: #111;
+        font-weight: 500;
+        padding-bottom: .06rem;
+        .user-name {
+          max-width: 2rem;
+          overflow: hidden;
+          font-size: .16rem;
+          white-space: nowrap;
+          display: inline-block;
+          vertical-align: middle;
+          text-overflow: ellipsis;
+        }
+        .user-tips {
+          color: #FFF;
+          font-size: .1rem;
+          padding: 0 .06rem;
+          border-radius: .3rem;
+          background: #5077aa;
+          vertical-align: text-bottom;
+        }        
+        .user-tel {
+          font-size: .16rem;
+          font-weight: bold;
+          font-family: Helvetica;
+          vertical-align: bottom;
+        }    
+      }    
     }
-    .user_logo{
-      position: absolute;
-      left:0.1rem;
-      top:0.08rem;
-      img{
-        width: 0.3rem;
-        height: 0.3rem;
-      }
-      
-    }
-    .user_info {
+
+    .cp-info {
       color: #111;
-      font-size: .2rem;
-      font-weight: 500;
-      .user_name {
-        margin-right: .08rem;
-      }
-    }
-    .cp_info {
-      color: #111;
-      .user_tel {
-        margin-right: .04rem;
-      }
-      .cp_ads {
+
+      .cp-ads {
         color: #757575;
       }
     }
@@ -342,13 +357,12 @@
           overflow: hidden;
           box-sizing: border-box;
           // 当没有数据时
-          .when_null {
+          .when-null {
             left: 50%;
             width: 3rem;
-            position: absolute;
+            margin: 0 auto;
             color: #757575;
             font-weight: bold;
-            transform: translate(-50%, 0);
             // 提醒文字
             .title {
               font-size: .2rem;
@@ -359,7 +373,6 @@
                 list-style: square;
                 margin-top: .1rem;
               }
-
               font-size: .14rem;
               .addNew {
                 color: #fff;
@@ -369,7 +382,6 @@
                 border-radius: .04rem;
               }
             }
-
           }
         }
         // 每个往来
