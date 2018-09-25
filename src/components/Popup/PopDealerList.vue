@@ -10,15 +10,13 @@
           <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
         </div>
         <div class="cp-info">
-          <div>
+          <!-- <div>
             <span class="user-tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-          </div>
-          <div>
-            <span class="iconfont icon-icon-test"></span>
-            <span class="cp-ads">
-              {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
-            </span>
-          </div>
+          </div> -->
+          <span class="iconfont icon-icon-test"></span>
+          <span class="cp-ads">
+            {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
+          </span>
         </div>
       </div>  
     </div>
@@ -294,16 +292,6 @@
         font-size: 0;
         color: #111;
         font-weight: 500;
-        padding-bottom: .06rem;
-        .user-name {
-          max-width: 2rem;
-          overflow: hidden;
-          font-size: .16rem;
-          white-space: nowrap;
-          display: inline-block;
-          vertical-align: middle;
-          text-overflow: ellipsis;
-        }
         .user-tips {
           color: #FFF;
           font-size: .1rem;
@@ -311,20 +299,35 @@
           border-radius: .3rem;
           background: #5077aa;
           vertical-align: text-bottom;
+        }  
+        .user-name {
+          max-width: 2rem;
+          overflow: hidden;
+          font-size: .16rem;
+          white-space: nowrap;
+          margin-right: .04rem;
+          display: inline-block;
+          vertical-align: middle;
+          text-overflow: ellipsis;
         }        
         .user-tel {
           font-size: .16rem;
           font-weight: bold;
+          display: inline-block;
           font-family: Helvetica;
-          vertical-align: bottom;
+          vertical-align: middle;
+          margin-bottom: -.02rem;
         }    
       }    
     }
 
     .cp-info {
       color: #111;
-
+      .icon-icon-test {
+        font-size: .1rem;
+      }
       .cp-ads {
+        font-size: .14rem;
         color: #757575;
       }
     }

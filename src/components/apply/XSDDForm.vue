@@ -14,10 +14,10 @@
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
-            <div @click="getMatter"  class='no_matter'>
+            <div @click="getMatter" class='no-matter'>
               <div class="title">物料列表</div>
               <div class="tips">请选择物料</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -28,7 +28,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b"  :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
+              <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
                 <div class="each_mater_wrapper">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -39,7 +39,7 @@
                       {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
-                    <div class="mater_info" style='width:2.6rem;'>
+                    <div class="mater_info">
                       <!-- 物料编码、规格 -->
                       <div class="withColor">
                         <!-- 物料编码 -->
@@ -59,27 +59,22 @@
                       </div>
                     </div>
                     <!-- 物料属性和单位 -->
-                    <div class="mater_more">
+                    <!-- <div class="mater_more">
                         <span class="processing">属性：{{item.processing}}</span>
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span>税率：{{item.taxRate || 0.16}}</span>
-                    </div>
+                    </div> -->
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other'>
+                    <!-- <div class='mater_other'>
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                       </div>
                       <span class='iconfont icon-bianji' @click="modifyMatter(item,index)"></span>
-                      <!-- <div class='mater_num'>
-                        <span class='handle' @click.stop="subNum(item,index)" :class='{disabled : item.tdQty<=1}'>-</span>
-                        <input class='num' type='number' v-model.number='item.tdQty' :blur='checkAmt(item)'/>
-                        <span class='handle plus' @click.stop='plusNum(item,index)'>+</span>
-                      </div>                       -->
-                    </div>
-                    <div class="mater_more" v-if="item.promDeliTime">
+                    </div> -->
+                    <!-- <div class="mater_more" v-if="item.promDeliTime">
                       <span style="color:rgb(249, 175, 137);">预计交货日 {{item.promDeliTime}}</span>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                
@@ -534,47 +529,48 @@ import {toFixed} from '@/plugins/calc'
     background: #f8f8f8;
   }
   .comment{
-    margin-top: 0.1rem;
-    padding: .06rem .1rem;
-    width: 100%;
-    box-sizing: border-box;
+    width: 95%;
+    margin: 0 auto;
     background: #fff;
+    // margin-top: .1rem;
+    padding: .06rem .1rem;
+    box-sizing: border-box;
+    
     .weui-cell{
       padding: 0;
     }
   }
   .no_margin{
-    margin-top:0;
+    margin-top: 0;
   }
-  .materiel_list{
-    margin-top: 0.1rem;
-    padding: .06rem .1rem;
-    width: 100%;
-    box-sizing: border-box;
-    box-shadow: 0;
-    background: #fff;
-    .no_matter{
-      display: flex;
-      justify-content: space-between;
-      padding: 0.04rem 0.12rem 0.04rem 0;
-      .title{
-        font-size:0.16rem;
-        color:#111;
-      }
-      .r_arrow{
-        fill:#757575;
-      }
+  // .materiel_list{
+  //   width: 95%;
+  //   background: #fff;
+  //   margin: .1rem auto 0;
+  //   padding: .06rem .1rem;
+  //   box-sizing: border-box;
+  //   .no_matter{
+  //     display: flex;
+  //     justify-content: space-between;
+  //     padding: .04rem .12rem .04rem 0;
+  //     .title{
+  //       font-size:0.16rem;
+  //       color:#111;
+  //     }
+  //     .r_arrow{
+  //       fill:#757575;
+  //     }
       
-    }
-    .icon-bianji{
-      // top: 60%;
-      // right: 0.04rem;
-      // position: absolute;
-      // transform: translate(0, -50%);
-      color:#757575;
-      // margin-left:0.05rem;
-    }
+  //   }
+  //   .icon-bianji{
+  //     // top: 60%;
+  //     // right: 0.04rem;
+  //     // position: absolute;
+  //     // transform: translate(0, -50%);
+  //     color:#757575;
+  //     // margin-left:0.05rem;
+  //   }
    
-  }
+  // }
   
 </style>

@@ -63,12 +63,13 @@
                       </div>
                     </div>
                   </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
+
 
                 </div>
+                <div class='delete_icon' v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                </div>                
                 <!-- 物料输入内容 -->
                 <div class="userInp_mode">
                   <group>
