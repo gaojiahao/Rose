@@ -65,7 +65,7 @@
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
                         <span>税率：{{item.taxRate}}</span>
-                        <span v-show="item.promDeliTime">预交交货日：{{item.promDeliTime}}</span>
+                        <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
@@ -76,33 +76,12 @@
                         <span class='iconfont icon-bianji1'></span>
                       </div>
                     </div>
-                    <!-- 物料属性和单位 -->
-                    <!-- <div class='mater_more'>
-                        <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                    </div> -->
-                    <!-- 余额-->
-                    <!-- <div class='mater_more'>
-                        <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                    </div> -->
                   </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass' @click="delClick(index,item)">
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>
-                <!-- 物料输入内容 -->
-                <!-- <div class="userInp_mode">
-                  <group>
-                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
-                  </group>
-                  <group>
-                    <x-input type="number" title="数量" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
-                  </group>
-                </div> -->
               </div>
             </div>
           </template>

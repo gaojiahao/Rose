@@ -20,16 +20,15 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
+              <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
                 <div class="each_mater_wrapper" @click="delClick(index,item)">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
-                  <div class="mater_main">
+                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
                     <!-- 物料名称 -->
                     <div class="mater_name">
                       {{item.inventoryName}}
-                      <span class="symbol">[{{item.processing}}]</span>
                     </div>
                     <!-- 物料基本信息 -->
                     <div class="mater_info">
@@ -52,7 +51,23 @@
                       </div>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_others'>
+                    <div class="mater_more">
+                        <span class="processing">属性：{{item.processing}}</span>
+                        <span class='unit'>单位：{{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                        <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
+                        <span v-show="item.promDeliTime">期望交货日：{{item.promDeliTime}}</span>
+                    </div>
+                    <!-- 物料数量和价格 -->
+                    <div class='mater_other'>
+                      <div class='mater_price'>
+                        <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
+                      </div>
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
+                      </div>
+                    </div>
+                    <!-- <div class='mater_others'>
                       <div class="mater_type">
                         <span>大类: {{item.inventoryType || "无" }}</span>
                         <span>子类: {{item.inventorySubclass}}</span>
@@ -61,7 +76,7 @@
                         <span class='unit'>计量单位: {{item.measureUnit || "无"}}</span>
                         <span class='color'>颜色: {{item.inventoryColor || "无"}}</span>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
 
 
@@ -71,7 +86,7 @@
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>                
                 <!-- 物料输入内容 -->
-                <div class="userInp_mode">
+                <!-- <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="估计单价" text-align='right' placeholder='请填写'
                              @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
@@ -80,7 +95,7 @@
                     <x-input type="number" title="数量" text-align='right' placeholder='请填写'
                              @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
                   </group>
-                </div>
+                </div> -->
               </div>
             </div>
           </template>
@@ -97,11 +112,12 @@
                           :default-value="matterList" :params="matterParams"
                           ref="matter"></pop-matter-list>
         </div>
-        <!-- 申请说明 -->
-        <!--<div class="materiel_list mg_auto box_sd">
-          <div class="title">备注</div>
-          <textarea class='comment' v-model="formData.biComment" placeholder="请输入"></textarea>
-        </div>-->
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <!--备注-->
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
+        </div>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -129,7 +145,7 @@
 
 <script>
 // vux插件引入
-import {Swipeout, SwipeoutItem, SwipeoutButton,TransferDom,Group,XInput} from 'vux'
+import {Group,XInput,XTextarea} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import {getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc} from 'service/commonService'
@@ -137,16 +153,13 @@ import {getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc} from 'se
 import common from 'components/mixins/applyCommon'
 // 组件引入
 import PopMatterList from 'components/Popup/PopMatterList'
+import PopMatter from './commonPart/MatterPop'
 // 方法引入
-import {toFixed} from '@/plugins/calc'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-
+import {toFixed} from '@/plugins/calc'
 export default {
-  directives: {
-    TransferDom
-  },
   components:{
-    Swipeout, SwipeoutItem, SwipeoutButton, PopMatterList,Group,XInput
+   PopMatterList,XTextarea,Group,XInput,PopMatter
   },
   data(){
     return{
@@ -176,6 +189,14 @@ export default {
       });
       return Number(total);
     },
+    tdAmount() {
+      let total = 0;
+      this.matterList.forEach(item => {
+       total = accAdd(total, accMul(item.tdQty, item.price))
+      });
+      return parseFloat(total.toFixed(2));
+      // return parseFloat(accAdd(this.totalAmount, this.taxAmount).toFixed(2))
+    }
   },
   mixins: [common],
   watch:{
@@ -199,9 +220,10 @@ export default {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
         } else {
-          item.tdQty = '';
-          item.price = '';
+          item.tdQty = 1;
+          item.price = 90;
         }
+        item.promDeliTime = '';
       })
       this.numMap = {};
       this.matterList = sels;
@@ -415,6 +437,9 @@ export default {
 
 <style lang='scss' scoped>
 @import './../scss/bizApply';
+.basicPart{
+  background: #f8f8f8;
+}
 .pages {
   /deep/ .vux-no-group-title{
     margin-top:0;

@@ -1,74 +1,95 @@
 <template>
   <div v-transfer-dom>
-    <popup v-model="show" height="80%" @on-show="onShow" @on-hide="onHide">
-      <r-scroll class="matter_pop" :options="scrollOptions"  ref="bScroll">
-        <div class='edit_matter'>
-          <div class='matter_info mg_auto'>
-            <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
-            <div class='mater_main'>
-              <div class="mater_name">
-                {{modifyMatter.inventoryName}}
-              </div>
-              <!-- 物料基本信息 -->
-              <div class="mater_info" style='width:2.6rem;'>
-                <!-- 物料编码、规格 -->
-                <div class="withColor">
-                  <!-- 物料编码 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_code">
-                      <span class="title">编码</span>
-                      <span class="num">{{modifyMatter.inventoryCode}}</span>
-                    </div>
+    <popup v-model="show" :height="modifyMatter.taxRate ? '80%' : '60%'" @on-show="onShow" @on-hide="onHide">
+      <div class='edit_matter'>
+        <div class='matter_info mg_auto'>
+          <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
+          <div class='mater_main'>
+            <div class="mater_name">
+              {{modifyMatter.inventoryName}}
+            </div>
+            <!-- 物料基本信息 -->
+            <div class="mater_info" style='width:2.6rem;'>
+              <!-- 物料编码、规格 -->
+              <div class="withColor">
+                <!-- 物料编码 -->
+                <div class="ForInline" style="display:inline-block">
+                  <div class="mater_code">
+                    <span class="title">编码s</span>
+                    <span class="num">{{modifyMatter.inventoryCode}}</span>
                   </div>
-                  <!-- 物料规格 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_spec">
-                      <span class="title">规格</span>
-                      <span class="num">{{modifyMatter.specification || '无'}}</span>
-                    </div>
+                </div>
+                <!-- 物料规格 -->
+                <div class="ForInline" style="display:inline-block">
+                  <div class="mater_spec">
+                    <span class="title">规格</span>
+                    <span class="num">{{modifyMatter.specification || '无'}}</span>
                   </div>
                 </div>
               </div>
-              <!-- 物料属性和单位 -->
-              <div class="mater_more">
-                  <span class="processing">属性: {{modifyMatter.processing}}</span>
-                  <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
-                  <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || '无'}}</span>
-              </div>
-              <div class="mater_more">
-                  <span>大类: {{modifyMatter.inventoryType}}</span>
-                  <span>子类: {{modifyMatter.inventorySubclass}}</span>
-              </div>
             </div>
-          </div>
-          <group class='mg_auto'>
-           <div v-show="modifyMatter.tdQty">
-             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)"></x-input>
-           </div>
-            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)"></x-input>
-            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)"></x-input>
-            <datetime title="预计交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
-          </group>
-          <div class='mg_auto' v-show="modifyMatter.taxRate">
-            <div class='each_info vux-1px-b'>
-              <label>金额</label>
-              <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
+            <!-- 物料属性和单位 -->
+            <div class="mater_more">
+                <span class="processing">属性: {{modifyMatter.processing}}</span>
+                <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
+                <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || '无'}}</span>
             </div>
-            <div class='each_info vux-1px-b'>
-              <label>税金</label>
-              <div class='matter_val'>￥{{modifyMatter.taxAmount}}</div>
+            <div class="mater_more">
+                <span>大类: {{modifyMatter.inventoryType}}</span>
+                <span>子类: {{modifyMatter.inventorySubclass}}</span>
             </div>
-            <div class='each_info'>
-              <label>价税小计</label>
-              <div class='matter_val'>￥{{modifyMatter.tdAmount}}</div>
-            </div>
-
           </div>
         </div>
-      </r-scroll>
+        <group class='mg_auto'>
+          <slot name="modify" :modifyMatter="modifyMatter">
+            <div v-show="modifyMatter.tdQty !== undefined">
+              <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+                @on-blur="checkAmt(modifyMatter)">
+              </x-input>
+            </div> 
+            <div v-show="modifyMatter.price !== undefined">
+              <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)"></x-input>
+            </div>
+            <div v-show="modifyMatter.taxRate !== undefined">
+              <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+                @on-blur="checkAmt(modifyMatter)">
+              </x-input>
+            </div>
+            <datetime :title="modifyMatter.taxRate ? '预期交货日' : '期望交货日'" v-model="modifyMatter.promDeliTime" 
+                      placeholder="请选择" v-show="modifyMatter.promDeliTime !== undefined"></datetime>
+            <div class="price_type vux-1px-t" v-show="modifyMatter.priceType !== undefined" @click="showPrice = !showPrice">
+              <div class="current_type">
+                <label>价格类型</label>
+                <div class='matter_val'>{{modifyMatter.priceType}}
+                  <x-icon  type="ios-arrow-down" :class="{'arrow-up': showPrice}" size="14"></x-icon>
+                </div>
+              </div>
+              <div class="r-dropdown-list" v-show="showPrice">
+                <div class="r-dropdown-item" :class="{'vux-1px-b': index !== priceTypeList.length - 1}" v-for="(item, index) in priceTypeList"
+                    @click.stop="dropItemClick(item)" :key="index">
+                  <span :class='{ active : currentType === item}'>{{item}}</span>
+                </div>
+              </div>
+            </div>
+            
+          </slot>
+        </group>
+        <div class='mg_auto' v-if="modifyMatter.taxRate">
+          <div class='each_info vux-1px-b'>
+            <label>金额</label>
+            <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
+          </div>
+          <div class='each_info vux-1px-b'>
+            <label>税金</label>
+            <div class='matter_val'>￥{{modifyMatter.taxAmount}}</div>
+          </div>
+          <div class='each_info'>
+            <label>价税小计</label>
+            <div class='matter_val'>￥{{modifyMatter.tdAmount}}</div>
+          </div>
+        </div>
+      </div>
       <div class='confirm_btn' @click="confirm">
         <div class='confirm'>确认</div>
       </div>
@@ -80,7 +101,6 @@
 // vux组件引入
 import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
 //组件引入
-import RScroll from 'components/RScroll'
 import {toFixed} from '@/plugins/calc'
 export default {
   props:{
@@ -96,18 +116,14 @@ export default {
     }
   },
   components: {
-      Popup,Group,Cell,Datetime,XInput,RScroll,PopupPicker 
+      Popup,Group,Cell,Datetime,XInput,
     },
   data(){
     return{
       show: false,
-      scrollOptions:{
-        click:true,
-        tap:true
-    
-      },
-      priceTypeList: [['渠道价', '零售价']],
-      priceType: ['渠道价'],
+      priceTypeList: ['渠道价', '零售价'],
+      showPrice : false,
+      currentType : '渠道价'
     }
    
   },
@@ -133,6 +149,8 @@ export default {
     // TODO 弹窗隐藏时调用
     onHide() {
       this.$emit('input', false);
+      this.showPrice = false;
+      this.currentType = '渠道价'
     },
     onChange(modifyMatter,e){
       modifyMatter.priceType = e[0];
@@ -166,6 +184,11 @@ export default {
         item.taxRate = Math.abs(toFixed(taxRate));
       }
     },
+    dropItemClick(item) {
+      this.currentType = item;
+      this.modifyMatter.priceType = item;
+      this.showPrice = false;
+    },
 
   }
 
@@ -173,7 +196,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .vux-1px-b:after{
+  .vux-1px-b:after,.vux-1px-t:before{
     border-color: #e8e8e8;
   }
   .matter_pop{
@@ -194,8 +217,10 @@ export default {
     }
     /deep/ .weui-cells{
       margin-top:0;
+      overflow: visible;
       .weui-cell{
         font-size: 0.14rem;
+        
         &:before{
           left:0;
           border-color:#e8e8e8;
@@ -211,16 +236,32 @@ export default {
     }
   }
   .each_info{
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     padding: 0.1rem 0.15rem;
-     font-size:0.14rem;
-     .matter_val{
-       color:#999;
-     }
-     
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.1rem 0.15rem;
+    font-size:0.14rem;
+    .matter_val{
+      color:#999;
     }
+    
+  }
+  //价格类型
+  .price_type{
+    padding: 0.1rem 0.15rem;
+    font-size:0.14rem;
+    position: relative;
+    overflow: visible;
+    .current_type{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .matter_val{
+        color:#999;
+      }
+    }
+    
+  }
   //物料编辑的pop
   .edit_matter{
    background: #f8f8f8;
@@ -250,6 +291,7 @@ export default {
       text-align: center;
       color:#fff;
       margin:0 auto;
+      box-shadow: 0 2px 5px #5077aa;
     }
   }
   //物料信息
@@ -384,5 +426,47 @@ export default {
     }
     
   }
+  /* 列表容器 */
+    .r-dropdown-list {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      z-index: 999;
+      width:1rem;
+      border-bottom-left-radius: .08rem;
+      border-bottom-right-radius: .08rem;
+      background-color: #fff;
+      box-shadow: 0 2px 10px #e8e8e8;
+      box-sizing: border-box;
+    }
+    /* 列表项 */
+    .r-dropdown-item {
+      position: relative;
+      line-height: .4rem;
+      font-size: .16rem;
+      text-align: right;
+      span{
+        display: inline-block;
+        width:100%;
+        box-sizing: border-box;
+        padding: 0 .1rem;
+      }
+      .active{
+        background: #e8e8e8;
+      }
+      .weui_icon_success-no-circle {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+    }
+    /* 倒三角 */
+    .vux-x-icon-ios-arrow-down {
+      transition: transform 200ms linear;
+      &.arrow-up {
+        transform: rotate(-180deg);
+      }
+    }
 </style>
 

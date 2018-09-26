@@ -64,7 +64,7 @@
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span>税率：{{item.taxRate || 0.16}}</span>
-                        <span v-show="item.promDeliTime">预交交货日：{{item.promDeliTime}}</span>
+                        <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>

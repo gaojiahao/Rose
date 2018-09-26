@@ -9,12 +9,17 @@
                            v-model="drDealerPaymentTerm"></pop-single-select>
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
-                           v-model="formData.drDealerLogisticsTerms"></pop-single-select>
+                           v-model="formData.drDealerLogisticsTerms">
+        </pop-single-select>
         <!-- 有效期至 -->
-        <div class="or_ads mg_auto box_sd" @click="clickDateSelect">
-          <p class="title">有效期至</p>
-          <p class="mode">{{this.formData.validUntil || '请选择有效期'}}</p>
-          <span class="iconfont icon-gengduo"></span>
+        <div class="mg_auto no_top" >
+          <div class="valid_until" @click="clickDateSelect">
+            <div class="title">有效期至</div>
+            <div class="mode">
+              <span class="mode_content">{{formData.validUntil || '请选择有效期'}}</span>
+              <span class="iconfont icon-shenglve"></span>
+            </div>
+          </div>
         </div>
         <!-- 物料列表 -->
         <div class="materiel_list mg_auto box_sd">
@@ -34,16 +39,15 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList"
+              <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList"
                    :key='index'>
                 <div class="each_mater_wrapper" @click="delClick(index,item)">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
-                  <div class="mater_main">
+                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
                     <!-- 物料名称 -->
                     <div class="mater_name">
-                      <!-- <span class="whiNum">No.{{index + 1}}</span> -->
                       {{item.inventoryName}}
                     </div>
                     <!-- 物料基本信息 -->
@@ -65,20 +69,21 @@
                           </div>
                         </div>
                       </div>
-                      <!-- 物料分类、材质 -->
-                      <div class="withoutColor">
-                        <!-- 物料分类 -->
-                        <div class="mater_classify">
-                          <span class="type">属性: {{item.processing}}</span>
-                          <span class="father">大类: {{item.inventoryType || '无'}}</span>
-                          <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
-                        </div>
-                        <!-- 物料材质等 -->
-                        <div class="mater_material">
-                          <span class="unit">单位: {{item.measureUnit}}</span>
-                          <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                          <span class="spec">材质: {{item.material || '无'}}</span>
-                        </div>
+                    </div>
+                    <!-- 物料属性和单位 -->
+                    <div class="mater_more">
+                        <span class="processing">属性：{{item.processing}}</span>
+                        <span class='unit'>单位：{{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                        <span class='mater_color' v-show="item.priceType">价格类型：{{item.priceType}}</span>
+                    </div>
+                    <!-- 物料数量和价格 -->
+                    <div class='mater_other'>
+                      <div class='mater_price'>
+                        <span class="symbol">￥</span>{{item.price}}
+                      </div>
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
                       </div>
                     </div>
                   </div>
@@ -88,14 +93,14 @@
                   </div>
                 </div>
                 <!-- 物料输入内容 -->
-                <div class="userInp_mode">
+                <!-- <div class="userInp_mode">
                   <group>
                     <x-input type="number" title="单价" text-align='right' placeholder='请填写'
                              @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
                   </group>
                   <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true"
                             v-model="item.priceType"></r-picker>
-                </div>
+                </div> -->
               </div>
             </div>
           </template>
@@ -111,6 +116,12 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" ref="matter"></pop-matter-list>
+        </div>
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <!--备注-->
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
         </div>
       </div>
     </div>
@@ -134,7 +145,7 @@
 
 <script>
   // vux组件引入
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, dateFormat,} from 'vux'
+  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, dateFormat,XTextarea} from 'vux'
   // 请求 引入
   import {resolve} from 'url';
   import {getSOList} from 'service/detailService'
@@ -147,13 +158,13 @@
   import PopMatterList from 'components/Popup/PopMatterList'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
-
+  import PopMatter from './commonPart/MatterPop'
   export default {
     mixins: [ApplyCommon],
     components: {
-      Icon, Cell, Group, XInput, RPicker, InputBox,
-      Swipeout, SwipeoutItem, SwipeoutButton,
-      PopMatterList, PopDealerList, PopSingleSelect
+      Icon, Cell, Group, XInput, RPicker, InputBox,XTextarea,
+      PopMatterList, PopDealerList, PopSingleSelect,
+      PopMatter
     },
     data() {
       return {
@@ -276,7 +287,7 @@
         let sels = JSON.parse(val);
         sels.forEach(item => {
           let defaultValue = this.priceMap[item.inventoryCode] || {};
-          item.price = defaultValue.price || '';
+          item.price = defaultValue.price || '0';
           item.priceType = defaultValue.priceType || '渠道价';
         });
         this.priceMap = {};
@@ -474,6 +485,7 @@
   @import './../scss/bizApply';
 
   .xsbj-apply-container {
+    background: #f8f8f8;
     /deep/ .weui-cells {
       font-size: .14rem;
       margin-top: unset;
@@ -484,6 +496,36 @@
     /deep/ .picker {
       padding-left: .07rem;
       font-size: .14rem;
+    }
+  }
+  //有效期
+  .no_top{
+    margin-top:0;
+    margin-bottom: 0.1rem;
+  }
+  .valid_until{
+    background: #fff;
+    box-sizing: border-box;
+    padding: .02rem .1rem;
+    display: flex;
+    font-size: .14rem;
+    align-items: center;
+    justify-content: space-between; 
+    .title{
+      color:#757575;
+    }
+    .mode{
+      color: #111;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      .mode_content{
+        margin-right: .06rem;
+      }
+      .icon-shenglve{
+        font-size: .2rem;
+        color: #707070;
+      }
     }
   }
 </style>

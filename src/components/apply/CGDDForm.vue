@@ -25,7 +25,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
+              <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key='index'>
                 <div class="each_mater_wrapper" @click="delClick(index,item)">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -63,7 +63,7 @@
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
                         <span>税率：{{item.taxRate || 0.16}}</span>
-                        <span v-show="item.promDeliTime">预交交货日：{{item.promDeliTime}}</span>
+                        <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
