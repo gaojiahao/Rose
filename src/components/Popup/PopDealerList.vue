@@ -301,7 +301,7 @@
           vertical-align: text-bottom;
         }  
         .user-name {
-          max-width: 2rem;
+          max-width: 2.2rem;
           overflow: hidden;
           font-size: .16rem;
           white-space: nowrap;

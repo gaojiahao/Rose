@@ -59,22 +59,21 @@
                       </div>
                     </div>
                     <!-- 物料属性和单位 -->
-                    <!-- <div class="mater_more">
+                    <div class="mater_more">
                         <span class="processing">属性：{{item.processing}}</span>
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span>税率：{{item.taxRate || 0.16}}</span>
-                    </div> -->
+                    </div>
                     <!-- 物料数量和价格 -->
-                    <!-- <div class='mater_other'>
+                    <div class='mater_other'>
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                       </div>
-                      <span class='iconfont icon-bianji' @click="modifyMatter(item,index)"></span>
-                    </div> -->
-                    <!-- <div class="mater_more" v-if="item.promDeliTime">
-                      <span style="color:rgb(249, 175, 137);">预计交货日 {{item.promDeliTime}}</span>
-                    </div> -->
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)">
+                        <span class='iconfont icon-bianji1'></span>
+                      </div>
+                    </div>
                   </div>
                 </div>
                
@@ -543,34 +542,11 @@ import {toFixed} from '@/plugins/calc'
   .no_margin{
     margin-top: 0;
   }
-  // .materiel_list{
-  //   width: 95%;
-  //   background: #fff;
-  //   margin: .1rem auto 0;
-  //   padding: .06rem .1rem;
-  //   box-sizing: border-box;
-  //   .no_matter{
-  //     display: flex;
-  //     justify-content: space-between;
-  //     padding: .04rem .12rem .04rem 0;
-  //     .title{
-  //       font-size:0.16rem;
-  //       color:#111;
-  //     }
-  //     .r_arrow{
-  //       fill:#757575;
-  //     }
-      
-  //   }
-  //   .icon-bianji{
-  //     // top: 60%;
-  //     // right: 0.04rem;
-  //     // position: absolute;
-  //     // transform: translate(0, -50%);
-  //     color:#757575;
-  //     // margin-left:0.05rem;
-  //   }
-   
-  // }
+  .materiel_list 
+    .mater_list 
+      .each_mater_wrapper 
+        .mater_main {
+          padding-right: .38rem;
+        }
   
 </style>
