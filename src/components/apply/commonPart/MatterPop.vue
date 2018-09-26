@@ -1,6 +1,6 @@
 <template>
   <div v-transfer-dom>
-    <popup v-model="show" height="57%" @on-show="onShow" @on-hide="onHide">
+    <popup v-model="show" height="80%" @on-show="onShow" @on-hide="onHide">
       <r-scroll class="matter_pop" :options="scrollOptions"  ref="bScroll">
         <div class='edit_matter'>
           <div class='matter_info mg_auto'>
@@ -150,6 +150,7 @@ export default {
   .matter_pop{
     width: 100%;
     overflow: hidden;
+    background: #F8F8F8;
     box-sizing: border-box;
     height: calc(100% - .64rem);
   }
