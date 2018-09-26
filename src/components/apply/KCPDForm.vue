@@ -24,7 +24,7 @@
             </div>
             <div class="mater_list">
               <div class="each_mater" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key="index">
-                <div class="each_mater_wrapper" @click="delClick(index,item)">
+                <div class="each_mater_wrapper">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
@@ -54,32 +54,27 @@
                       </div>
                     </div>
                     <!--单位，属性，颜色-->
-                    <div class="mater_more">                     
+                    <div class="mater_more">
                         <span class="processing">属性: {{item.processing}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                     </div>
-                    <div class="mater_more">                     
+                    <div class="mater_more">
                         <span class="symbol">账存数量: {{item.qtyBal}}</span>
+                        <span class="symbol">盘点数量: {{item.tdQty}}</span>
+                    </div>
+                    <div class="mater_more">
+                        <span class="symbol">差异数量: {{item.differenceNum}}</span>
+                    </div>
+                    <!-- 编辑图标 -->
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)">
+                      <span class='iconfont icon-bianji1'></span>
                     </div>
                   </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
                 </div>
-                 <!-- 物料输入内容 -->
-                <div class="userInp_mode">
-                  <group>
-                    <x-input type="number" title="盘点数量" text-align='right' placeholder='请填写'
-                              @on-change="getNum(item)"
-                             @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
-                  </group>
-                  <group>
-                    <cell title="差异数量" text-align='right' placeholder='请填写'
-                    :value="item.differenceNum"
-                    :class='{high_light : item.tdQty - item.qtyBal !== 0}'></cell>
-                  </group>
+                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>
               </div>
             </div>
@@ -96,6 +91,16 @@
                            :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
                            ref="matter"></pop-matter-list>
         </div>
+
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="盘点数量" type="number" v-model='modifyMatter.tdQty' text-align="right"></x-input>
+            <cell title="差异数量" text-align='right' placeholder='请填写'
+                  :value="modifyMatter.differenceNum"
+                  :class='{high_light : modifyMatter.differenceNum !== 0}'></cell>
+          </template>
+        </pop-matter>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -116,24 +121,24 @@
 
 <script>
 // vux插件引入
-import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from 'vux'
+import {Icon, Cell, Group, XInput,} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
 // mixins 引入
 import ApplyCommon from './../mixins/applyCommon'
 // 组件引入
-import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
+import PopMatter from 'components/apply/commonPart/MatterPop'
+
 // 方法引入
 import {accSub} from '@/home/pages/maps/decimalsAdd'
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput,
-    Swipeout, SwipeoutItem, SwipeoutButton,
-    PopMatterList, PopWarehouseList, RNumber
+    PopMatterList, PopWarehouseList, PopMatter
   },
   data() {
     return {
@@ -149,6 +154,9 @@ export default {
       warehouseParams: {
         whCode: '',
       },
+      matter:{},
+      showMatterPop :false,
+      modifyIndex:null,
     }
   },
   watch: {
@@ -162,13 +170,15 @@ export default {
         };
         this.$emit('sel-data', data)
       }
-    }
+    },
+    matter:{
+      handler(val) {
+        val.differenceNum = accSub(val.tdQty, val.qtyBal);
+      },
+      deep:true
+    },
   },
   methods: {
-    //计算库存差异
-    getNum(item){
-      item.differenceNum = accSub(item.tdQty,item.qtyBal);
-    },
     // 滑动删除
     delClick(index, sItem) {
       let arr = this.selItems;
@@ -227,11 +237,23 @@ export default {
       };
       this.matterList = [];
     },
+    // TODO 显示物料修改的pop
+    modifyMatter(item, index) {
+      this.matter = JSON.parse(JSON.stringify(item));
+      this.showMatterPop = true;
+      this.modifyIndex = index;
+    },
+    // TODO 更新修改后的物料信息
+    selConfirm(val) {
+      let modMatter = JSON.parse(val);
+      this.$set(this.matterList, this.modifyIndex, modMatter);
+    },
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
-        item.tdQty = this.numMap[item.inventoryCode] ||'';
+        item.tdQty = this.numMap[item.inventoryCode] || 1;
+        item.differenceNum = accSub(item.tdQty, item.qtyBal);
       });
       this.numMap = {};
       this.matterList = [...sels];
@@ -430,15 +452,22 @@ export default {
 
     }
   }
+
   .pages {
-  /deep/ .vux-no-group-title{
-    margin-top:0;
-  }
+    .basicPart{
+      background: #f8f8f8;
+    }
+    /deep/ .vux-no-group-title {
+      margin-top: 0;
+    }
     /deep/ .weui-cells {
       font-size: .14rem;
       &:before {
         border-top: none;
       }
     }
+  }
+  .materiel_list .mater_list .each_mater_wrapper .mater_main {
+    padding-right: .38rem;
   }
 </style>

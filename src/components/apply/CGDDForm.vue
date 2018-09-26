@@ -30,7 +30,7 @@
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
-                  <div class="mater_main">
+                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
                     <!-- 物料名称 -->
                     <div class="mater_name">
                       {{item.inventoryName}}
@@ -56,32 +56,30 @@
                       </div>
                     </div>
                     <!-- 物料属性，单位 -->
-                    <div class='mater_more'>
-                      <span class='processing'>属性: {{item.processing}}</span>
-                      <span class='measureUnit'>计量单位: {{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                    <!-- 物料属性和单位 -->
+                    <div class="mater_more">
+                        <span class="processing">属性：{{item.processing}}</span>
+                        <span class='unit'>单位：{{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                        <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
+                        <span>税率：{{item.taxRate || 0.16}}</span>
+                        <span v-show="item.promDeliTime">预交交货日：{{item.promDeliTime}}</span>
                     </div>
-                    <div class='mater_more'>
-                      <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
+                    <!-- 物料数量和价格 -->
+                    <div class='mater_other'>
+                      <div class='mater_price'>
+                        <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
+                      </div>
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
+                      </div>
                     </div>
                   </div>
-
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>                
-                <!-- 物料输入内容 -->
-                <div class="userInp_mode">
-                  <group>
-                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
-                  </group>
-                  <group>
-                    <x-input type="number" title="数量" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
-                  </group>
-                </div>
               </div>
             </div>
           </template>
@@ -95,7 +93,13 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
                            get-list-method="getInventory7501" ref="matter"></pop-matter-list>
+          </div>
         </div>
+         <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <!--备注-->
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -120,7 +124,7 @@
 
 <script>
 // vux插件引入
-import {Popup, Swipeout, SwipeoutItem, SwipeoutButton,TransferDom,Group,XInput} from 'vux'
+import {XTextarea} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc } from 'service/commonService'
@@ -130,14 +134,12 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
+import PopMatter from './commonPart/MatterPop'
 // 方法引入
-import {toFixed} from '@/plugins/calc'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 export default {
-  directives: { TransferDom },
   components:{
-    Popup, Swipeout, SwipeoutItem,
-    SwipeoutButton,PopMatterList,PopDealerList,PopSingleSelect,Group,XInput
+    PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea
   },
   data(){
     return{
@@ -163,7 +165,6 @@ export default {
   mixins: [common],
   watch:{
     matterList(val){
-      console.log(val.length);
       if(val.length){
         let data = {
           CGDD_DATA:{
@@ -218,9 +219,11 @@ export default {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
         } else {
-          item.tdQty = '';
-          item.price = '';
+          item.tdQty = 1;
+          item.price = 90;
         }
+        item.taxRate = this.taxRate;
+        item.promDeliTime = ''
       })
       this.numMap = {};
       this.matterList = sels;
@@ -317,7 +320,7 @@ export default {
             warn = '数量不能为空';
             return false
           }
-          let taxRate = item.taxRate || this.taxRate;
+          let taxRate = item.taxRate;
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
           // 设置提交参数
           dataSet.push({
@@ -333,7 +336,7 @@ export default {
             taxRate : taxRate, //税金
             taxAmount :taxAmount, // 税金
             tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
-            promDeliTime : null, //预期交货日
+            promDeliTime : item.promDeliTime, //预期交货日
             comment : ''                //说明
           });
           return true
@@ -463,6 +466,9 @@ export default {
 
 <style lang='scss' scoped>
 @import './../scss/bizApply';
+.basicPart{
+  background: #f8f8f8;
+}
 .pages {
   /deep/ .vux-no-group-title{
     margin-top:0;
