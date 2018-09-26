@@ -4,7 +4,7 @@
       <div class='user-content'>
         <div class="user-info">
           <div class="user-name">
-            <span class="user-tips">{{dealerInfo.dealerLabelName}}</span>
+            <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
             <span>{{dealerInfo.dealerName}}</span>
           </div>
           <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
@@ -22,7 +22,7 @@
     </div>
     <div v-else>
       <div class="title">{{dealerLabelName}}列表</div>
-      <div class="mode">请选择{{dealerLabelName}}</div>
+      <div class="mode required">请选择{{dealerLabelName}}</div>
     </div>
     <span class="iconfont icon-youjiantou r-arrow"></span>          
 
@@ -260,6 +260,10 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~@/scss/color.scss';
+  .required {
+    color: $required;
+  }
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
@@ -276,7 +280,7 @@
       font-size: .12rem;
     }
     .mode {
-      color: #111;
+      // color: #111;
       font-weight: 500;
     }
     .r-arrow {
