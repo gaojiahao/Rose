@@ -1,6 +1,6 @@
 <template>
   <div class="pages">
-    <div class="detail-container" ref='detail'>
+    <div class="detail-container" :class="{'has-comment': hasComment}" ref='detail'>
       <component
         :is='currentComponent'
         @change='modifyRoute'
@@ -8,7 +8,7 @@
         ref="detailComponent">
       </component>
     </div>
-    <div class="detail-comment-container vux-1px-t">
+    <div class="detail-comment-container vux-1px-t" v-if="hasComment">
       <x-icon class="left-arrow" type="ios-arrow-left" size="24" @click.native.stop="back"></x-icon>
       <ul class="operations">
         <li class="operation" @click="goDiscuss">
@@ -35,6 +35,7 @@
         submitSuccess: false,
         detailScroll: null,
         commentCount: 0,
+        hasComment: true, // 是否展示底部评论栏
       }
     },
     watch:{
@@ -115,7 +116,8 @@
     created() {
       this.$loading.show();
       let {code = ''} = this.$route.params;
-      let {transCode} = this.$route.query;
+      let {transCode = ''} = this.$route.query;
+      this.hasComment = !!transCode;
       this.transCode = transCode;
       try {
         this.getCommentList();
@@ -160,8 +162,11 @@
   .pages {
     background: #F4F4F4;
     .detail-container {
-      height: calc(100% - .48rem);
+      height: 100%;
       overflow: hidden;
+      &.has-comment {
+        height: calc(100% - .48rem);
+      }
     }
     .detail-comment-container {
       display: flex;
