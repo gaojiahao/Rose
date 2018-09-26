@@ -9,7 +9,7 @@
         <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
 
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
@@ -27,7 +27,7 @@
             </div>
             <div class="mater_list">
               <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key="index">
-                <div class="each_mater_wrapper" @click="delClick(index,item)">
+                <div class="each_mater_wrapper">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
@@ -57,7 +57,7 @@
                       </div>
                     </div>
                     <!--单位，属性，颜色-->
-                    <div class="mater_more">                     
+                    <div class="mater_more">
                         <span class="processing">属性: {{item.processing}}</span>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
@@ -66,14 +66,19 @@
                     <div class="mater_other">
                       <span class="matter-remain">
                         <span class="symbol">库存数量: </span>{{item.qtyBal}}
+                        <span class="symbol">调拨数量: </span>{{item.tdQty}}
                       </span>
-                      <r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>
+                      <!--<r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>-->
+                    </div>
+                    <!-- 编辑图标 -->
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)">
+                      <span class='iconfont icon-bianji1'></span>
                     </div>
                   </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
+                </div>
+                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>
               </div>
             </div>
@@ -91,6 +96,13 @@
                            :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
                            ref="matter"></pop-matter-list>
         </div>
+
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="调拨数量" type="number" v-model='modifyMatter.tdQty' text-align="right"></x-input>
+          </template>
+        </pop-matter>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -122,12 +134,14 @@ import ApplyCommon from './../mixins/applyCommon'
 import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
+import PopMatter from 'components/apply/commonPart/MatterPop'
+
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput,
     RNumber, Swipeout, SwipeoutItem, SwipeoutButton,
-    PopMatterList, PopWarehouseList,
+    PopMatterList, PopWarehouseList, PopMatter,
   },
   data() {
     return {
@@ -144,6 +158,9 @@ export default {
       warehouseParams: {
         whCode: '',
       },
+      matter:{},
+      showMatterPop :false,
+      modifyIndex:null,
     }
   },
   watch: {
@@ -158,18 +175,10 @@ export default {
         };
         this.$emit('sel-data', data)
       }
-    }
+    },
   },
   methods: {
     // TODO 滑动删除
-    // delClick(item, index) {
-    //   let arr = this.matterList;
-    //   arr.splice(index, 1);
-    //   // 删除输入过的价格
-    //   delete this.numMap[item.inventoryCode];
-    //   this.$refs.matter.delSelItem(item);
-    // },
-    // 滑动删除
     delClick(index, sItem) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
@@ -231,6 +240,17 @@ export default {
     // TODO 选中入库仓库
     selWarehouseIn(val) {
       this.warehouseIn = JSON.parse(val);
+    },
+    // TODO 显示物料修改的pop
+    modifyMatter(item, index) {
+      this.matter = JSON.parse(JSON.stringify(item));
+      this.showMatterPop = true;
+      this.modifyIndex = index;
+    },
+    // TODO 更新修改后的物料信息
+    selConfirm(val) {
+      let modMatter = JSON.parse(val);
+      this.$set(this.matterList, this.modifyIndex, modMatter);
     },
     // TODO 选中物料项
     selMatter(val) {
@@ -429,6 +449,9 @@ export default {
   @import './../scss/bizApply';
 
   .bdkcdb-apply-container {
+    .basicPart{
+      background: #f8f8f8;
+    }
     .matter-remain {
       color: #5077aa;
       font-size: .16rem;
@@ -437,5 +460,9 @@ export default {
         color: #757575;
       }
     }
+  }
+
+  .materiel_list .mater_list .each_mater_wrapper .mater_main {
+    padding-right: .38rem;
   }
 </style>

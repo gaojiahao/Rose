@@ -19,7 +19,7 @@
         <!-- 项目 -->
         <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
@@ -41,71 +41,69 @@
                   <span class="order_title">所属订单</span>
                   <span class="order_num">{{key.replace(/_/g,'')}}</span>
                 </div>
-                <!-- <swipeout v-for="(item, index) in oItem" :key="index">
-                  <swipeout-item>
-                    <div slot="right-menu">
-                      <swipeout-button @click.native="delClick(index,item, key)" type="warn">删除</swipeout-button>
-                    </div> -->
-                    <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                      <div class="each_mater_wrapper" @click="delClick(index,item, key)">
-                        <div class="order-matter">
-                          <div class="mater_img">
-                            <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                          </div>
-                          <div class="mater_main">
-                            <!-- 物料名称 -->
-                            <div class="mater_name">
-                              {{item.inventoryName}}
-                            </div>
-                            <!-- 物料基本信息 -->
-                            <div class="mater_info">
-                              <!-- 物料编码、规格 -->
-                              <div class="withColor">
-                                <!-- 物料编码 -->
-                                <div class="ForInline" style="display:inline-block">
-                                  <div class="mater_code">
-                                    <span class="title">编码</span>
-                                    <span class="num">{{item.inventoryCode}}</span>
-                                  </div>
-                                </div>
-                                <!-- 物料规格 -->
-                                <div class="ForInline" style="display:inline-block">
-                                  <div class="mater_spec">
-                                    <span class="title">规格</span>
-                                    <span class="num">{{item.specification || '无'}}</span>
-                                  </div>
-                                </div>
-                                <!-- <div class="matter-remain">库存: {{item.qtyStockBal}}</div> -->
+                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                  <div class="each_mater_wrapper">
+                    <div class="order-matter">
+                      <div class="mater_img">
+                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                      </div>
+                      <div class="mater_main">
+                        <!-- 物料名称 -->
+                        <div class="mater_name">
+                          {{item.inventoryName}}
+                        </div>
+                        <!-- 物料基本信息 -->
+                        <div class="mater_info">
+                          <!-- 物料编码、规格 -->
+                          <div class="withColor">
+                            <!-- 物料编码 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_code">
+                                <span class="title">编码</span>
+                                <span class="num">{{item.inventoryCode}}</span>
                               </div>
                             </div>
-                             <!-- 物料属性和单位 -->
-                            <div class='mater_more'>
-                              <span class='unit'>属性: {{item.processing}}</span>
-                              <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                              <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                            </div>
-                            <!-- 库存 -->
-                            <div class='mater_more'>
-                              <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
-                            </div>
-                            <!-- 物料数量和价格 -->
-                            <div class="mater_other">
-                              <div class="mater_price">
-                                ￥{{item.price | numberComma}}
+                            <!-- 物料规格 -->
+                            <div class="ForInline" style="display:inline-block">
+                              <div class="mater_spec">
+                                <span class="title">规格</span>
+                                <span class="num">{{item.specification || '无'}}</span>
                               </div>
-                              <r-number :num="item.tdQty" :max="item.qtyStockBal"
-                              :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                             </div>
+                            <!-- <div class="matter-remain">库存: {{item.qtyStockBal}}</div> -->
                           </div>
-                          <div class='delete_icon' v-if='matterModifyClass'>
-                            <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                            <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                        </div>
+                        <!-- 物料属性和单位 -->
+                        <div class='mater_more'>
+                          <span class='unit'>属性: {{item.processing}}</span>
+                          <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                          <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                          <span>税率：{{item.taxRate || taxRate}}</span>
+                        </div>
+                        <!-- 库存 -->
+                        <div class='mater_more'>
+                          <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
+                        </div>
+                        <!-- 物料数量和价格 -->
+                        <div class="mater_other">
+                          <div class="mater_price">
+                            <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                           </div>
+                          <!--<r-number :num="item.tdQty" :max="item.qtyStockBal"
+                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>-->
+                        </div>
+                        <!-- 编辑图标 -->
+                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
+                          <span class='iconfont icon-bianji1'></span>
                         </div>
                       </div>
                     </div>
-                  <!-- </swipeout-item>
-                </swipeout> -->
+                  </div>
+                  <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
+                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                  </div>
+                </div>
               </div>
             </div>
           </template>
@@ -121,6 +119,9 @@
           <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" ref="order"></pop-order-list>
         </div>
+
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -164,6 +165,7 @@
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
   import PopEntityList from 'components/Popup/PopEntityList'
+  import PopMatter from 'components/apply/commonPart/MatterPop'
   // 公共方法
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
@@ -177,7 +179,7 @@
       XInput, RAction, RNumber, Swipeout,
       PopOrderList, SwipeoutItem, PopDealerList,
       SwipeoutButton, PopSingleSelect, PopWarehouseList,
-      PopSodlProjectList, PopEntityList,
+      PopSodlProjectList, PopEntityList, PopMatter,
     },
     data() {
       return {
@@ -210,6 +212,10 @@
         project: {}, // 项目
         entity: {}, // 经办主体
         tmpItems : {},//选中的订单
+        matter:{},
+        showMatterPop: false,
+        modifyIndex: null,
+        modifyKey: null,
       }
     },
     watch: {
@@ -226,8 +232,15 @@
           }
           this.$emit('sel-data', data)
         }
-      }
-
+      },
+      matter:{
+        handler(val){
+          val.noTaxAmount = accMul(val.price,val.tdQty);
+          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
+          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
+        },
+        deep:true
+      },
     },
     methods: {
       // TODO 选中的客户
@@ -252,19 +265,39 @@
         this.orderList = {};
         this.$refs.order.clearSel();
       },
+      // TODO 显示物料修改的pop
+      modifyMatter(item, index, key) {
+        this.matter = JSON.parse(JSON.stringify(item));
+        this.showMatterPop = true;
+        this.modifyIndex = index;
+        this.modifyKey = key;
+      },
+      // TODO 更新修改后的物料信息
+      selConfirm(val) {
+        let modMatter = JSON.parse(val);
+        this.$set(this.matterList, this.modifyIndex, modMatter);
+      },
+      // TODO 选择物料，显示物料pop
+      getMatter() {
+        if (!this.dealerInfo.dealerCode) {
+          this.$vux.alert.show({
+            content: '请选择客户'
+          })
+          return
+        }
+        this.showMaterielPop = !this.showMaterielPop;
+      },
       // TODO 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          if (this.numMap[key]) {
-            item.tdQty = this.numMap[key].tdQty;
-            item.price = this.numMap[key].price;
-          } else {
-            item.tdQty = 1;
-            item.price = 0;
-          }
+          let {tdQty = 1, price = 0, taxRate = this.taxRate, promDeliTime = ''} = this.numMap[key] || {};
+          item.tdQty = tdQty;
+          item.price = price;
+          item.taxRate = taxRate;
+          item.promDeliTime = promDeliTime;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -580,6 +613,9 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
+  .basicPart{
+    background: #f8f8f8;
+  }
   // 所属订单
   .order_code {
     display: flex;
@@ -599,5 +635,8 @@
 
   .materiel_list .mater_list .each_mater_wrapper {
     flex-direction: column;
+  }
+  .materiel_list .mater_list .each_mater_wrapper .mater_main {
+    padding-right: .38rem;
   }
 </style>

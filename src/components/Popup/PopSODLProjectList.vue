@@ -9,7 +9,7 @@
     <div v-else>
       <div class="mode">请选择项目名称</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <i class="iconfont icon-youjiantou r-arrow"></i>
 
     <!-- 项目弹窗 -->
     <div v-transfer-dom>
@@ -167,11 +167,11 @@
 <style scoped lang="scss">
   .pop-sodl-project-list {
     position: relative;
-    margin: 10px auto;
-    padding: .06rem .4rem .06rem .08rem;
+    margin: .1rem auto;
+    padding: .06rem .1rem;
     width: 95%;
-    box-shadow: 0 0 8px #e8e8e8;
     box-sizing: border-box;
+    background: #fff;
     .title {
       color: #757575;
 
@@ -186,6 +186,14 @@
     .mode {
       color: #111;
       font-weight: 500;
+    }
+    /* 右箭头 */
+    .r-arrow {
+      top: 50%;
+      right: 1%;
+      font-weight: bold;
+      position: absolute;
+      transform: translate(0, -50%);
     }
   }
 

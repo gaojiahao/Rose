@@ -1,5 +1,5 @@
 <template>
-  <div class="or_ads mg_auto box_sd" @click="warehouseClick">
+  <div class="pop-warehouse-container" @click="warehouseClick">
     <!-- 仓库信息 -->
     <div v-if="selItems.warehouseName">
       <div class="title">{{title}}</div>
@@ -7,17 +7,18 @@
         <span class="user_name">{{selItems.warehouseName}}</span>
         <span class="user_tel">{{selItems.warehouseType}}</span>
       </div>
-      <div class="cp_info">
-        <p class="cp_name"></p>
-        <p class="cp_ads">
-          {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}</p>
+      <div class="cp_info" v-if="!noAddress">
+        <i class="iconfont icon-icon-test"></i>
+        <span class="cp_ads">
+          {{selItems.warehouseProvince}}{{selItems.warehouseCity}}{{selItems.warehouseDistrict}}{{selItems.warehouseAddress}}
+        </span>
       </div>
     </div>
     <div v-else>
       <div class="title">{{title}}</div>
       <div class="mode">请选择仓库</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
+    <i class="iconfont icon-youjiantou r-arrow" v-show="!disabled"></i>
 
     <!-- 仓库popup -->
     <div v-transfer-dom v-if="!disabled">
@@ -58,10 +59,11 @@
               <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
             <!-- 加载中、没有更多的提示 -->
-            <load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)" slot="loadmore"></load-more>
+            <load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)"
+                       slot="loadmore"></load-more>
             <!-- 当没有数据的时候 显示提醒文字 -->
             <div class="when_null_conteiner" slot="loadmore" v-show="showAddWarehouse">
-              <div class="when_null" >
+              <div class="when_null">
                 <div class="title">抱歉，没有找到您搜索的内容</div>
                 <ul class="tips">
                   <li>
@@ -109,7 +111,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch,LoadMore,
+      Icon, Popup, RScroll, DSearch, LoadMore,
     },
     data() {
       return {
@@ -134,6 +136,10 @@
           tip = '暂无数据'
         }
         return tip;
+      },
+      noAddress() {
+        let {warehouseProvince = '', warehouseCity = '', warehouseDistrict = '', warehouseAddress = ''} = this.selItems;
+        return !warehouseProvince && !warehouseCity && !warehouseDistrict && !warehouseAddress
       }
     },
     watch: {
@@ -262,67 +268,53 @@
 </script>
 
 <style scoped lang="scss">
-  // 居中
-  .mg_auto {
-    width: 95%;
-    margin: 10px auto;
-  }
-
-  // 阴影
-  .box_sd {
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
-  }
-
-  // 地址栏
-  .or_ads {
+  .pop-warehouse-container {
     position: relative;
-    padding: .06rem .4rem .06rem .08rem;
-    .icon-gengduo {
-      top: 50%;
-      right: .1rem;
-      font-size: .24rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
+    margin: .1rem auto;
+    padding: .06rem .1rem;
+    width: 95%;
+    box-sizing: border-box;
+    background: #fff;
     .title {
       color: #757575;
-
       font-size: .12rem;
     }
     .mode {
       color: #111;
       font-weight: 500;
     }
-    .r_arrow {
+    /* 右箭头 */
+    .r-arrow {
       top: 50%;
-      right: .04rem;
+      right: 1%;
+      font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
     }
     // 用户信息
     .user_info {
       color: #111;
-      font-size: .2rem;
+      font-size: 0;
       font-weight: 500;
       // 用户姓名
       .user_name {
         margin-right: .08rem;
+        font-size: .16rem;
       }
       // 用户电话
       .user_tel {
         font-family: sans-serif, -apple-system-font;
+        font-size: .16rem;
       }
     }
-    // 公司信息
+    // 仓库信息
     .cp_info {
-      .cp_name {
-        color: #111;
-        font-weight: 500;
+      .icon-icon-test {
+        font-size: .1rem;
       }
       .cp_ads {
-
         color: #757575;
+        font-size: .14rem;
       }
     }
   }
