@@ -2,15 +2,13 @@
   <div class="pop-salesman-list-container">
     <div class="SJForm_cell" @click="itemClick">
       <div>{{title}}</div>
-      <div class="value">{{currentValue}}</div>
+      <div class="value">{{currentValue || '请选择'}}</div>
     </div>
     <!-- 销售人员、渠道popup -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
           <div class="trade_pop_title">
-            <!--<span>{{title}}</span>-->
-            <!--<x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>-->
             <r-search @search="searchList" @turn-off="onHide" :isFill='true'></r-search>
           </div>
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
@@ -182,8 +180,7 @@
       transform: scaleY(0.5);
     }
     .value {
-      padding-right: 13px;
-      color: #999;
+      color: #757575;
     }
   }
 

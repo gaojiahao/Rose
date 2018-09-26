@@ -65,7 +65,6 @@ import RScroll from 'components/RScroll'
 import { format } from 'url'
 // 映射表 引入
 import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-import businessMap from '@/home/pages/maps/detail'
 export default {
   data(){
     return{

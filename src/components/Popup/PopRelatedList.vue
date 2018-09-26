@@ -65,7 +65,6 @@
   import {getListView} from 'service/detailService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
-  import businessMap from '@/home/pages/maps/detail'
   // 引入映射表
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {

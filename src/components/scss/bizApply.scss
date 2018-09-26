@@ -1,3 +1,15 @@
+/deep/ > .weui-cells {
+  font-size: .16rem;
+  .vux-tap-active {
+    .vux-label {
+      color: #5077aa;
+      font-weight: bold;
+    }
+  }
+  &:after {
+    border-bottom: none;
+  }
+}
 // 居中
 .mg_auto {
   width: 95%;
@@ -16,6 +28,7 @@
   z-index: 1;
   overflow: hidden;
   position: relative;
+  background: #F8F8F8;
   height: calc(100% - .44rem);
   -webkit-overflow-scrolling: touch;
   .fill_wrapper{
@@ -29,7 +42,9 @@
 
 // 地址栏
 .or_ads {
+  background: #FFF;
   position: relative;
+  box-sizing: border-box;
   padding: .06rem .4rem .06rem .08rem;
   .icon-gengduo {
     top: 50%;
