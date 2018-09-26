@@ -488,6 +488,7 @@ import {toFixed} from '@/plugins/calc'
             dealerMobilePhone :formData.dealerDebitContactInformation,
             dealerCode: formData.order.dealerDebit,
             dealerSubclass: formData.order.drAccountSub,
+            dealerLabelName: formData.order.drDealerLabel,
             dealerName: formData.order.dealerName_dealerDebit,
             province: formData.order.province_dealerDebit,
             city: formData.order.city_dealerDebit,
