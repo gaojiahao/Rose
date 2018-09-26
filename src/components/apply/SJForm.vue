@@ -3,26 +3,11 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 选择客户-->
-        <div class="or_ads mg_auto box_sd" @click="showDealerPop = !showDealerPop">
-          <div v-if='dealerInfo.dealerName'>
-            <div class="user_info">
-              <span class="user_name">{{dealerInfo.dealerName || ''}}</span>
-            </div>
-            <div class="cp_info">
-              <span class="user_tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-              <span class="user_tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-              <p class="cp_ads">
-                {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}</p>
-            </div>
-          </div>
-          <div v-else>
-            <div class="title">客户列表</div>
-            <div class="mode required">请选择客户</div>
-          </div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
-        </div>
+        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
+                         @sel-dealer="selDealer" :dealerLabelName="'客户'">
+        </pop-dealer-list>
         <!-- 商机明细 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <div class="mater_list">
             <div class="each_mater">
               <div class="userInp_mode">
@@ -62,9 +47,7 @@
           </div>
         </div>
         <!-- 客户popup -->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                         @sel-dealer="selDealer" :dealerLabelName="'客户'">
-        </pop-dealer-list>
+
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t'>
@@ -296,6 +279,7 @@
         margin-top: 0.08rem;
       }
       /deep/ > .weui-cells {
+        font-size: .16rem;
         .vux-tap-active {
           .vux-label {
             color: #5077aa;

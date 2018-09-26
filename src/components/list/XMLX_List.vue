@@ -20,22 +20,19 @@
           </div>
           <!-- 项目名称 -->
           <div class="project_name">
-            <div class="major_content">
+            <div class="major_content vux-1px-b">
               <div class="status_part">
                 <span class="iconfont icon-503020"></span>
                 <span class="status_name">{{item.projectType_project}}</span>
               </div>
-              <div>
-                {{item.projectName_project}}
-              </div>
-
-            </div>
-            <div class="content_step vux-1px-b">
-              <div>
-                {{item.projectManager_project}}<span class="symbol">[项目经理]</span>
-              </div>
-              <div>
-                利润率: {{item.budgetProfitMargin_project | percent}}
+              <div>{{item.projectName_project}}</div>
+              <div class="content_step">
+                <div>
+                  {{item.projectManager_project}}<span class="symbol">[项目经理]</span>
+                </div>
+                <div>
+                  利润率: {{item.budgetProfitMargin_project | percent}}
+                </div>
               </div>
             </div>
           </div>
@@ -175,7 +172,7 @@
       display: flex;
       font-size: .12rem;
       align-items: center;
-      padding: .02rem 0 .04rem;
+      // padding: .02rem 0 .04rem;
       justify-content: space-between;
       color:#7d7d7d;
     }
