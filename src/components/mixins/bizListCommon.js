@@ -165,10 +165,15 @@ export default {
           item.statusClass = 'duty_done_c';
           item.statusName = '已生效';
           break;
+        case '草稿':
+          item.statusClass = 'duty_fall_c';
+          item.statusName = '草稿';
+          break;
         case '已失效':
           item.statusClass = 'duty_fall_c';
           item.statusName = '已失效';
           break;
+        
       }
     },
     // TODO 获取默认图片
