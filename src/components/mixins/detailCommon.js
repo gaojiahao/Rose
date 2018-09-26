@@ -116,6 +116,10 @@ export default {
           this.workFlowInfo[newkey] = 'doing_work';
           this.workFlowInfo[cokey] = 'doing_code';
           break;
+        case '草稿':
+          newkey = 'dyClass';
+          this.workFlowInfo[newkey] = 'invalid_work';
+          break;
         case '已失效':
           newkey = 'dyClass';
           this.workFlowInfo[newkey] = 'invalid_work';

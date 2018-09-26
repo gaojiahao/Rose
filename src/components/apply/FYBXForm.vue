@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!--项目信息-->
-        <div class="or_ads mg_auto box_sd" @click="showProjectPop = !showProjectPop">
+        <div class="or_ads mg_auto" @click="showProjectPop = !showProjectPop">
           <div class="title">项目名称</div>
           <div v-if='projectName'>
             <div class="cp_info">
@@ -16,7 +16,7 @@
           <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
         </div>
         <!-- 费用列表 -->
-        <div class="materiel_list mg_auto box_sd" v-for="(item, index) in CostList" :key='index'>
+        <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
           <group :title='`费用明细${index+1}`' class='costGroup'>
             <cell title="费用名称" v-model='item.COST_NAME' is-link @click.native="getCost(index,item)">
               <template slot="title">

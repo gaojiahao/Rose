@@ -11,7 +11,7 @@
 
 <script>
   import {commitTask} from 'service/commonService'
-
+  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {
     name: "RAction",
     props: {
@@ -79,7 +79,7 @@
               callback: () => {
                 let {code} = this.$route.params;
                 this.$router.replace({
-                  path: `/fillform/${code}`,
+                  path: `/fillform/${Apps[code]}`,
                   query: {
                     transCode: this.code
                   }

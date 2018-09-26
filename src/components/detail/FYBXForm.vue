@@ -22,7 +22,7 @@
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
               <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
-              <form-cell cellTitle='申请金额' :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='申请金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
           </div>
         </div>
