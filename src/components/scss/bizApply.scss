@@ -1,7 +1,10 @@
 // 居中
 .mg_auto {
+  // width: 95%;
+  // margin: 10px auto;
   width: 95%;
-  margin: 10px auto;
+    // position: relative;
+    margin: .1rem auto 0;
 }
 .symbol {
   font-size: .1rem;
@@ -342,6 +345,9 @@
           }
         }
       }
+      .has_padding {
+        padding-right: .38rem;
+      }
       // 下划线
       .vux-1px-b:after {
         border-bottom: 1px solid #e8e8e8;
@@ -488,7 +494,21 @@
 .vux-1px-t:before {
   border-top: 1px solid #e8e8e8;
 }
-
+.comment{
+  width: 95%;
+  margin: 0 auto;
+  background: #fff;
+  // margin-top: .1rem;
+  padding: .06rem .1rem;
+  box-sizing: border-box;
+  
+  .weui-cell{
+    padding: 0;
+  }
+}
+.no_margin{
+  margin-top: 0;
+}
 // 确定
 .btn {
   left: 0;

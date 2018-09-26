@@ -33,7 +33,7 @@
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
-                  <div class="mater_main">
+                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
                     <!-- 物料名称 -->
                     <div class="mater_name">
                       {{item.inventoryName}}
@@ -64,19 +64,19 @@
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span>税率：{{item.taxRate || 0.16}}</span>
+                        <span v-show="item.promDeliTime">预交交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                       </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)">
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
                         <span class='iconfont icon-bianji1'></span>
                       </div>
                     </div>
                   </div>
                 </div>
-               
                 <div class='delete_icon' v-if='matterModifyClass' @click="delClick(item,index)">
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -100,7 +100,7 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
        
         <!--备注-->
-        <div class='comment' :class="{no_margin : !matterList.length,'vux-1px-t' : !matterList.length}">
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
         </div>
       </div>
@@ -146,7 +146,6 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from './commonPart/MatterPop'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-import {toFixed} from '@/plugins/calc'
   export default {
     directives: {
       TransferDom
@@ -188,7 +187,6 @@ import {toFixed} from '@/plugins/calc'
     mixins: [common],
     filters: {
       numberComma,
-      toFixed,
     },
     watch:{
       matterList:{
@@ -203,14 +201,6 @@ import {toFixed} from '@/plugins/calc'
         },
         deep:true
         
-      },
-      matter:{
-        handler(val){          
-            val.noTaxAmount = accMul(val.price,val.tdQty);
-            val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-            val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);         
-        },
-        deep:true
       },
       dealerInfo(val){
         if(this.matterList.length){
@@ -545,8 +535,9 @@ import {toFixed} from '@/plugins/calc'
   .materiel_list 
     .mater_list 
       .each_mater_wrapper 
-        .mater_main {
+        .has_padding {
           padding-right: .38rem;
         }
+  
   
 </style>

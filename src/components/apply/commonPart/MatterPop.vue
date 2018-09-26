@@ -42,12 +42,17 @@
             </div>
           </div>
           <group class='mg_auto'>
-            <x-input title="数量" type="number"  v-model='modifyMatter.tdQty' text-align="right"></x-input>
-            <x-input title="单价" type="number"  v-model='modifyMatter.price' text-align="right"></x-input>
-            <x-input title="税率" type="number"  v-model='modifyMatter.taxRate' text-align="right"></x-input>
+           <div v-show="modifyMatter.tdQty">
+             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)"></x-input>
+           </div>
+            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)"></x-input>
+            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)"></x-input>
             <datetime title="预计交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
           </group>
-          <div class='mg_auto'>
+          <div class='mg_auto' v-show="modifyMatter.taxRate">
             <div class='each_info vux-1px-b'>
               <label>金额</label>
               <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
@@ -57,7 +62,7 @@
               <div class='matter_val'>￥{{modifyMatter.taxAmount}}</div>
             </div>
             <div class='each_info'>
-              <label>金额</label>
+              <label>价税小计</label>
               <div class='matter_val'>￥{{modifyMatter.tdAmount}}</div>
             </div>
 
@@ -73,8 +78,10 @@
 
 <script>
 // vux组件引入
-import {Popup, TransferDom,Group,Cell,Datetime,XInput} from 'vux'
+import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
+//组件引入
 import RScroll from 'components/RScroll'
+import {toFixed} from '@/plugins/calc'
 export default {
   props:{
     modifyMatter:{
@@ -89,15 +96,18 @@ export default {
     }
   },
   components: {
-      Popup,Group,Cell,Datetime,XInput,RScroll
+      Popup,Group,Cell,Datetime,XInput,RScroll,PopupPicker 
     },
   data(){
     return{
       show: false,
       scrollOptions:{
         click:true,
+        tap:true
     
-      }
+      },
+      priceTypeList: [['渠道价', '零售价']],
+      priceType: ['渠道价'],
     }
    
   },
@@ -124,6 +134,9 @@ export default {
     onHide() {
       this.$emit('input', false);
     },
+    onChange(modifyMatter,e){
+      modifyMatter.priceType = e[0];
+    },
     //确认修改
     confirm(){
       this.$emit('sel-confirm',JSON.stringify(this.modifyMatter))
@@ -136,6 +149,22 @@ export default {
         item.inventoryPic = url;
       }
       return url
+    },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let { price, tdQty,taxRate} = item;
+      // 金额
+      if (price) {
+        item.price = Math.abs(toFixed(price));
+      }
+      // 数量
+      if(tdQty){
+        item.tdQty = Math.abs(toFixed(tdQty));
+      }
+      //税率
+      if(taxRate){
+        item.taxRate = Math.abs(toFixed(taxRate));
+      }
     },
 
   }

@@ -25,6 +25,9 @@ export default {
       },
       matterModifyClass : false,
       selItems : [], //选中的要删除的物料
+      matter:{}, //选中要编辑的物料
+      showMatterPop :false, //编辑物料的pop
+      modifyIndex:null, //选中编辑物料的pop
     }
   },
   computed: {
@@ -32,26 +35,53 @@ export default {
     totalAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        total = accAdd(total, accMul(item.tdQty, item.price));
+        item.noTax = accMul(item.tdQty, item.price);
+        total = accAdd(total, item.noTax);
       });
       return Number(total);
     },
     // 税金
     taxAmount() {
-      return (accMul(this.totalAmount, this.taxRate)).toFixed(2)
+      let total = 0;
+      this.matterList.forEach(item => {
+        total = accAdd(total, accMul(item.noTax, item.taxRate)).toFixed(2);
+      });
+      return total;
     },
     tdAmount() {
-      return parseFloat(accAdd(this.totalAmount, this.taxAmount).toFixed(2))
+      return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+    },
+  },
+  watch:{
+    //修改的物料
+    matter:{
+      handler(val){          
+          val.noTaxAmount = accMul(val.price,val.tdQty).toFixed(2);
+          val.taxAmount = accMul(val.noTaxAmount,val.taxRate).toFixed(2);
+          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);         
+      },
+      deep:true
     }
   },
   filters: {
     numberComma,
   },
   methods: {
-    //展开可删除装填
+    //展开可删除状态
     showDelete(){
       this.matterModifyClass = ! this.matterModifyClass;
       this.selItems = [];
+    },
+    //显示物料修改的pop
+    modifyMatter(item,index){
+      this.matter = JSON.parse(JSON.stringify(item));
+      this.showMatterPop = true;
+      this.modifyIndex = index;
+    },
+    //更新修改后的物料信息
+    selConfirm(val){
+      let modMatter = JSON.parse(val);
+      this.$set(this.matterList,this.modifyIndex,modMatter);
     },
     //获取listId
     getListId(transCode) {
