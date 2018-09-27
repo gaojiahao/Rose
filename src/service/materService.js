@@ -105,10 +105,22 @@ export let getCKTHCKList =  ( data = {})=>{
     data
   })
 }
-// TODO 获取需求调减物料列表
-export let getXQTJList = (data = {}) => {
+
+// TODO 获取物料列表(需求调减/加工订单)
+export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
   return $axios.ajax({
-    url: '/H_roleplay-si/ds/getDemandAdjustment',
+    url: `/H_roleplay-si/ds/${method}`,
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
+// TODO 获取需求调减物料列表
+export let getJGDDBom = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getInProcessingOrderBom',
     data: {
       _dc: Date.now(),
       ...data

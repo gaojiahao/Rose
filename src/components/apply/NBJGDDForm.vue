@@ -65,8 +65,11 @@
                         </div>
                         <!-- 库存 -->
                         <div class='mater_more'>
-                          <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                          <span class='qty'>减少数量: {{item.tdQty}}</span>
+                          <span class="qty" v-show="item.qtyBal">待下单余额: {{item.qtyBal}}</span>
+                          <span class="qty">本次下单: {{item.tdQty}}</span>
+                        </div>
+                        <div class='mater_more'>
+                          <span class="qty" v-show="item.shippingTime">成品计划验收日期: {{item.shippingTime}}</span>
                         </div>
                         <!-- 编辑图标 -->
                         <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
@@ -74,6 +77,16 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                  <div class="bom-container" v-if="item.boms && item.boms.length">
+                    <div class="title">原料</div>
+                    <template v-for="(bom, bIndex) in item.boms">
+                      <form-cell cellTitle="原料编码" :cellContent="bom.inventoryCode"
+                                 :style="{'margin-top': bIndex > 0 ? '.1rem' : '0'}"></form-cell>
+                      <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
+                      <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
+                      <form-cell cellTitle="领料需求" :cellContent="bom.tdQty"></form-cell>
+                    </template>
                   </div>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -92,15 +105,17 @@
           </div>
           <!-- 订单popup -->
           <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
-                               :default-value="orderList" ref="order"></pop-order-xqtj-list>
+                               :default-value="orderList" list-method="getInProcessingOrder"
+                               ref="order"></pop-order-xqtj-list>
         </div>
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop'>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="减少数量" type="number" v-model='modifyMatter.tdQty' text-align="right"></x-input>
-            <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+            <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"></x-input>
+            <datetime title="成品计划验收日期" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
+            <cell title="待下单余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
       </div>
@@ -125,27 +140,31 @@
 <script>
   // vux组件引入
   import {
-    Icon, Cell, Group, XInput,
+    Icon, Cell, Group, XInput, Datetime,
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
+  import {getJGDDBom} from 'service/materService'
   import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
+  import FormCell from 'components/detail/commonPart/FormCell'
+  // 公共方法
+  import {accMul} from '@/home/pages/maps/decimalsAdd'
 
   export default {
     name: 'ApplyWLXQTJForm',
     mixins: [applyCommon],
     components: {
-      Icon, Cell, Group,
-      XInput, PopMatter, PopOrderXqtjList,
+      Icon, Cell, Group, XInput,
+      PopMatter, PopOrderXqtjList, Datetime, FormCell
     },
     data() {
       return {
-        listId: '7532f8ea-caf3-4fc4-97f6-b5aad7bcf6a0',
+        listId: '65ceb5a6-a120-11e8-862a-005056a136d0',
         orderList: {},                                  // 订单列表
         showOrderPop: false,                         // 是否显示物料的popup
         formData: {
@@ -177,6 +196,9 @@
     watch: {
       matter: {
         handler(val) {
+          val.boms && val.boms.forEach(item => {
+            item.tdQty = accMul(val.tdQty, item.qty)
+          });
         },
         deep: true
       },
@@ -200,11 +222,18 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = 1} = this.numMap[key] || {};
+          let {tdQty = item.qtyBal, shippingTime = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
+          item.shippingTime = shippingTime;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
+          getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
+            tableContent.forEach(bom => {
+              bom.tdQty = accMul(item.tdQty, bom.qty)
+            });
+            this.$set(item, 'boms', tableContent);
+          });
           orderList[item.transCode].push(item);
         });
         this.numMap = {};
@@ -281,6 +310,7 @@
             // 存储已输入的价格
             this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
               tdQty: item.tdQty,
+              shippingTime: item.shippingTime
             };
           }
         }
@@ -315,18 +345,35 @@
             // 组装dataSet
             for (let items of Object.values(this.orderList)) {
               for (let item of items) {
-                let oItem = {
-                  transMatchedCode: item.transCode, // 交易号
-                  outPutMatCode: item.inventoryCode, // 输出物料
-                  inventoryType_outPutMatCode: item.inventoryType,
-                  thenQtyBal: item.qtyBal, // 余额
-                  tdQty: item.tdQty, // 减少数量
-                  subjectCode: item.calcRelCode,
-                  comment: item.comment || '', // 说明
-                };
-                if (this.transCode) {
-                  oItem.tdId = item.tdId || '';
+                let boms = [];
+                for (let bom of item.boms) {
+                  boms.push({
+                    transMatchedCode: item.transCode,
+                    tdQty: accMul(item.tdQty, bom.qty), // 领料需求
+                    orderCode: item.orderCode,
+                    bomSpecificLoss: bom.specificLoss,
+                    tdProcessing: bom.processing,
+                    inventoryName: bom.inventoryName,
+                    transObjCode: bom.inventoryCode,
+                    measureUnit: bom.measureUnit,
+                    bomType: bom.bomType,
+                    bomQty: bom.qty,
+                  })
                 }
+                let oItem = {
+                  tdId: item.tdId || null,
+                  transMatchedCode: item.transCode, // 交易号
+                  orderCode: item.orderCode,
+                  transObjCode: item.inventoryCode, // 输出物料
+                  inventoryName_transObjCode: item.inventoryName,
+                  tdProcessing: item.processing,
+                  measureUnit_transObjCode: item.measureUnit,
+                  thenQtyBal: item.qtyBal, // 余额
+                  shippingTime: item.shippingTime,
+                  tdQty: item.tdQty, // 下单数量
+                  comment: item.comment || '', // 说明
+                  boms
+                };
                 dataSet.push(oItem);
               }
             }
@@ -334,7 +381,7 @@
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
               handlerEntity: this.entity.dealerName,
-              outPut: {
+              order: {
                 dataSet
               }
             };
@@ -386,19 +433,18 @@
           }
           let orderList = {};
           // 获取合计
-          let {outPut} = formData;
-          let {dataSet = []} = outPut;
+          let {order} = formData;
+          let {dataSet = []} = order;
           for (let item of dataSet) {
             item = {
               ...item,
               transCode: item.transMatchedCode,
               qtyBal: item.thenQtyBal,
-              inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_outPutMatCode,
-              inventoryCode: item.outPutMatCode,
-              specification: item.specification_outPutMatCode,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.transObjCode,
+              specification: item.specification_transObjCode,
               processing: item.tdProcessing,
-              calcRelCode: item.subjectCode,
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
