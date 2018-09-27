@@ -49,9 +49,18 @@ export let getJobList = (data = {}) => {
   })
 }
 
+// 获取 公司列表
+export let getCompany = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getCompanyList',
+    data
+  })
+}
+
 export default {
   getList,
   getSellOrderList,
   getBusinessList,
-  getDashboard
+  getDashboard,
+  getCompany
 }
