@@ -25,7 +25,16 @@ export let getSalesOrderList = (data = {}) => {
     }
   })
 };
-
+//获取弹出框的物料订单列表
+export let getMaterOrderList = (data = {})=>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getInvRequirePlan',
+    data:{
+      _dc: Date.now(),
+      ...data
+    }
+  })
+}
 // TODO 获取商机订单列表
 export let getBusinessList = (data = {}) => {
   return $axios.ajax({
