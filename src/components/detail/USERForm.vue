@@ -1,9 +1,12 @@
 <template>
   <div class="detail_wrapper user-detail-container">
     <div class="basicPart">
+      <div class="user-photo-container">
+        <img class="avatar" :src="userData.photo" alt="头像" @error="getDefaultImg">
+      </div>
       <!-- 任务信息 -->
       <div class="user-info">
-        <div class="info-title vux-1px-b"><i class="iconfont icon-renwu"></i>用户信息</div>
+        <div class="info-title vux-1px-b">用户信息</div>
         <div class="project_content">
           <form-cell cellTitle="工号" :cellContent="userData.userCode" :showTopBorder="false"></form-cell>
           <form-cell cellTitle="姓名" :cellContent="userData.nickname"></form-cell>
@@ -41,15 +44,11 @@
       }
     },
     methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
+      // TODO 获取默认图片
+      getDefaultImg() {
+        this.userData.photo = require('assets/ava01.png')
       },
-      // 获取详情
+      // TODO 获取详情
       loadPage(transCode = '') {
         this.$loading.show();
         return getUserDetail(this.colId).then(({tableContent = []}) => {
@@ -61,6 +60,9 @@
           data.status = status[data.status] || '停用';
           data.userType = userTypes[data.userType];
           this.userData = data;
+          if (!data.photo) {
+            this.getDefaultImg();
+          }
           this.$loading.hide();
         })
       },
@@ -75,6 +77,16 @@
 
 <style scoped lang="scss">
   .user-detail-container {
+    .user-photo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 2rem;
+      .avatar {
+        width: 1.2rem;
+        height: 1.2rem;
+      }
+    }
     .user-info {
       margin-bottom: .1rem;
       padding: 0 .1rem;

@@ -52,5 +52,13 @@ export let addUser = (data = {}) => {
   })
 };
 
+// TODO 修改账号
+export let updateUser = (data = {}) => {
+  return $axios.post({
+    url: '/H_roleplay-si/userInfo/updateUser',
+    data
+  })
+};
+
 export default {}
 

@@ -120,7 +120,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.groupId === sItem.groupId;
+        return this.selItems.groupCode === sItem.groupCode;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {

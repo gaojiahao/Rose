@@ -13,9 +13,10 @@
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">{{item.userCode}}</p>
-            <p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>
+            <!--<p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>-->
           </div>
           <div class="duty-item">
+            <img class="avatar" :src="item.photo" alt="头像" @error="getDefaultImg(item)">
             {{item.nickname}}
           </div>
           <div class="order_count">
@@ -23,6 +24,7 @@
               {{item.creator}}<span style="fontSize:.1rem;" v-if="item.creator">[创建人]</span>
             </div>
           </div>
+          <i class="iconfont icon-bianji" @click.stop="goUserEdit(item, index)"></i>
         </div>
       </r-scroll>
     </div>
@@ -35,6 +37,8 @@
 <script>
   import {getAllUsers} from 'service/userService'
   import listCommon from './../mixins/bizListCommon'
+  // 映射表引入
+  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
   export default {
     name: 'USER_List',
@@ -55,13 +59,21 @@
     },
     mixins: [listCommon],
     methods: {
-      goDetail(item, index) {
+      // TODO 获取默认图片
+      getDefaultImg(item) {
+        let url = require('assets/ava01.png');
+        if (item) {
+          item.photo = url;
+        }
+        return url;
+      },
+      // TODO 页面跳转
+      pathChange(item, index, path) {
         if (this.clickVisited) {
           return
         }
         // 交易号、应用名称等
-        let {transCode} = item;
-        let {code} = this.$route.params;
+        let {colId} = item;
         let {name} = this.$route.query;
         // 高亮 点击过的数据
         this.clickVisited = true;
@@ -71,13 +83,23 @@
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
-            path: `/detail/${code}`,
+            path,
             query: {
               name,
-              colId: item.colId
+              colId
             }
           })
         }, 200)
+      },
+      // TODO 跳转到详情
+      goDetail(item, index) {
+        let {code} = this.$route.params;
+        this.pathChange(item, index, `/detail/${code}`);
+      },
+      // TODO 跳转到编辑
+      goUserEdit(item, index) {
+        let {code} = this.$route.params;
+        this.pathChange(item, index, `/fillform/${Apps[code]}`);
       },
       // TODO 获取用户列表
       getList(noReset = false) {
@@ -101,6 +123,11 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.$emit('input', false);
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          tableContent.forEach(item => {
+            if (!item.photo) {
+              item.photo = this.getDefaultImg();
+            }
+          });
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {
             this.$nextTick(() => {
@@ -125,10 +152,29 @@
     .list_wrapper {
       height: calc(100% - 1.2rem);
     }
+    .each_duty {
+      padding-right: .35rem;
+      box-sizing: border-box;
+      .icon-bianji {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: .35rem;
+        text-align: center;
+        font-size: .24rem;
+        transform: translateY(-50%);
+      }
+    }
     .duty-item {
+      display: flex;
+      align-items: center;
       padding: 0 .1rem;
-      height: .24rem;
       line-height: .24rem;
+      .avatar {
+        margin-right: .1rem;
+        width: .6rem;
+        height: .6rem;
+      }
     }
   }
 </style>

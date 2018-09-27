@@ -1,46 +1,43 @@
 <template>
   <div class='childPage'>
-    <div class='content' ref="fill">
-      <div class="wrapper">
-        <div class='mater_baseinfo vux-1px-b'>
-          <div class='mater_property'>
-            <div class='each_property vux-1px-b'>
-              <label class="required">工号:</label>
-              <input type='text' :readonly="codeReadOnly" v-model.trim="userData.userCode" class='property_val'
-                     :class='{readonly : codeReadOnly}' @blur="checkUserCode"/>
-            </div>
-            <div class='each_property'>
-              <label class="required">姓名:</label>
-              <input type='text' v-model.trim="userData.nickname" class='property_val'/>
-            </div>
+    <r-scroll class="content">
+      <div class='mater_baseinfo vux-1px-b'>
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b'>
+            <label class="required">工号:</label>
+            <input type='text' :readonly="codeReadOnly" v-model.trim="userData.userCode" class='property_val'
+                   :class='{readonly : codeReadOnly}' @blur="checkUserCode"/>
           </div>
-          <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
+          <div class='each_property'>
+            <label class="required">姓名:</label>
+            <input type='text' v-model.trim="userData.nickname" class='property_val'/>
+          </div>
         </div>
-        <r-picker title="性别:" :data="genderList" :value="userData.gender" v-model="userData.gender"
-                  @on-change="genderChange"></r-picker>
-        <div class='each_property vux-1px-b'>
-          <label class="required">手机:</label>
-          <input type='number' v-model.trim="userData.mobile" class='property_val' @blur="checkMobile"/>
-        </div>
-        <div class='each_property vux-1px-b'>
-          <label>座机:</label>
-          <input type='text' v-model.trim="userData.officePhone" class='property_val' @blur="checkPhone"/>
-        </div>
-        <div class='each_property vux-1px-b'>
-          <label>邮箱:</label>
-          <input type='text' v-model.trim="userData.email" class='property_val'/>
-        </div>
-        <r-picker title="类型:" :data="userTypeList" :value="userData.userType" v-model="userData.userType"
-                  @on-change="userTypeChange"></r-picker>
-        <div class='each_property vux-1px-b' @click="getDate" v-show="showDate">
-          <label class="required">账户有效期:</label>
-          <div class='property_val'>{{userData.termOfValidity}}</div>
-        </div>
-        <r-picker title="状态:" :data="statusList" :value="userData.status"
-                  v-model="userData.status"></r-picker>
-        <pop-company-list @sel-item="selCompany"></pop-company-list>
+        <upload-image :src="userData.photo" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-    </div>
+      <r-picker title="性别:" :data="genderList" :value="userData.gender" v-model="userData.gender"></r-picker>
+      <div class='each_property vux-1px-b'>
+        <label class="required">手机:</label>
+        <input type='number' v-model.trim="userData.mobile" class='property_val' @blur="checkMobile"/>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>座机:</label>
+        <input type='text' v-model.trim="userData.officePhone" class='property_val' @blur="checkPhone"/>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>邮箱:</label>
+        <input type='text' v-model.trim="userData.email" class='property_val' @blur="checkEmail"/>
+      </div>
+      <r-picker title="类型:" :data="userTypeList" :value="userData.userType" v-model="userData.userType"
+                @on-change="userTypeChange"></r-picker>
+      <div class='each_property vux-1px-b' @click="getDate" v-show="showDate">
+        <label class="required">账户有效期:</label>
+        <div class='property_val'>{{userData.termOfValidity}}</div>
+      </div>
+      <r-picker title="状态:" :data="statusList" :value="userData.status"
+                v-model="userData.status"></r-picker>
+      <pop-company-list :default-value="company" @sel-item="selCompany"></pop-company-list>
+    </r-scroll>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">提交</div>
     </div>
@@ -51,16 +48,15 @@
   import {Picker, Popup, Group} from 'vux';
   import RPicker from 'components/RPicker';
   import common from 'mixins/common';
-  import ApplyCommon from './../mixins/applyCommon';
-  import {validateCode, addUser} from 'service/userService';
+  import {validateCode, addUser, updateUser, getUserDetail} from 'service/userService';
   import UploadImage from 'components/UploadImage'
   import PopCompanyList from 'components/Popup/PopCompanyList'
+  import RScroll from 'components/RScroll'
 
   export default {
     name: 'ApplyUserForm',
     data() {
       return {
-        MatPic: '', // 图片地址
         genderList: [
           {
             name: '男',
@@ -102,9 +98,7 @@
             key: 2,
           },
         ], // 状态列表
-        picShow: false, // 是否展示图片
         codeReadOnly: false, // 物料编码是否只读
-
         userData: {
           email: '',
           entityId: '',
@@ -120,12 +114,15 @@
           userType: '长期有效',
         },
         showDate: false, // 是否展示账户有效期
-        PhoneWarn: false,
-        MobileWarn: false,
-        userCodeWarn: false,
+        PhoneWarn: false, // 座机是否校验成功
+        MobileWarn: false, // 手机是否校验成功
+        EmailWarn: false, // 邮箱是否检验成功
+        userCodeWarn: false, // 工号是否校验成功
+        colId: '',
+        company: {}, // 默认的公司
       }
     },
-    mixins: [ApplyCommon, common],
+    mixins: [common],
     components: {
       Picker,
       Popup,
@@ -133,15 +130,12 @@
       RPicker,
       UploadImage,
       PopCompanyList,
+      RScroll,
     },
     methods: {
       // TODO 上传图片成功触发
       onUpload(val) {
-        this.userData.photo = val.src;
-      },
-      // TODO 性别切换
-      genderChange(val) {
-
+        this.userData.photo = `/H_roleplay-si/ds/download?width=128&height=128&url=${val.src}`;
       },
       // TODO 类型切换
       userTypeChange(val) {
@@ -160,13 +154,13 @@
           requiredMap.termOfValidity = '账户有效期';
         }
         requiredMap.entityName = '公司';
-        for (let key in this.inventory) {
+        for (let key in this.userData) {
           if (typeof(this.userData[key]) === 'string' && this.userData[key].indexOf(' ') >= 0) {
             this.userData[key] = this.userData[key].replace(/\s/g, '');
           }
         }
         let submitData = {...this.userData};
-        let operation = addUser;
+        let operation = !this.colId ? addUser : updateUser;
         let warn = '';
         if (this.userCodeWarn) {
           warn = '工号已存在';
@@ -179,7 +173,10 @@
           return true;
         });
         if (!warn && this.PhoneWarn) {
-          warn = '座机格式不正确'
+          warn = '座机格式不正确';
+        }
+        if (!warn && this.EmailWarn) {
+          warn = '邮箱格式不正确';
         }
         if (warn) {
           this.$vux.alert.show({
@@ -200,13 +197,30 @@
             submitData.userType = userTypeMatched.key;
             submitData.status = statusMatched.key;
             console.log(submitData)
-            this.saveData(operation, submitData);
+            operation(submitData).then(data => {
+              this.$HandleLoad.hide();
+              let {success = true, message = '提交失败'} = data;
+              if (success) {
+                message = '提交成功';
+                this.$emit('change', true);
+              }
+              this.$vux.alert.show({
+                content: message,
+                onHide: () => {
+                  if (success) {
+                    this.$router.go(-1);
+                  }
+                }
+              });
+            }).catch(e => {
+              this.$HandleLoad.hide();
+            })
           }
         });
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.MatPic = require('assets/wl_default02.png');
+        this.userData.photo = require('assets/wl_default02.png');
       },
       // TODO 选中公司
       selCompany(sel) {
@@ -235,7 +249,7 @@
       },
       // TODO 校验手机号
       checkMobile() {
-        let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        let reg = /^[1][34578][0-9]{9}$/;
         if (this.userData.mobile.length > 0 && !reg.test(this.userData.mobile)) {
           this.MobileWarn = true;
           return
@@ -251,16 +265,56 @@
               content: '工号已存在',
             });
           }
+        }).catch(e => {
+          this.userCodeWarn = true;
+        })
+      },
+      // TODO 校验邮箱
+      checkEmail() {
+        let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+        if (this.userData.email.length > 0 && !reg.test(this.userData.email)) {
+          this.EmailWarn = true;
+          return
+        }
+        this.EmailWarn = false;
+      },
+      // TODO 获取用户数据
+      getFormData() {
+        return getUserDetail(this.colId).then(({tableContent = []}) => {
+          let [data = {}] = tableContent;
+          let genders = ['女', '男'];
+          let status = ['', '使用中', '未使用', '草稿'];
+          let userTypes = ['临时账户', '长期有效'];
+          data.gender = genders[data.gender] || '未知';
+          data.status = status[data.status] || '停用';
+          data.userType = userTypes[data.userType];
+          if (data.userType === '临时账户') {
+            this.showDate = true;
+          }
+          this.company = {
+            groupCode: data.entityId,
+            groupName: data.entityName,
+          };
+          this.userData = {
+            ...this.userData,
+            ...data
+          };
+          this.$loading.hide();
         })
       },
     },
     created() {
       this.$loading.show();
-      let {transCode = ''} = this.$route.query;
+      let {colId = ''} = this.$route.query;
       let requestPromise = [];
+      if (colId) {
+        this.colId = colId;
+        this.codeReadOnly = true;
+        requestPromise.push(this.getFormData());
+      }
       Promise.all(requestPromise).then(() => {
         this.$loading.hide();
-      })
+      });
     },
   }
 </script>
