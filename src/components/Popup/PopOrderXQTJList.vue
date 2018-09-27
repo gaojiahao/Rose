@@ -57,7 +57,7 @@
                       <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
                     <div>
-                      <span v-show="item.qtyStockBal">库存: {{item.qtyStockBal}}</span>
+                      <span>余额: {{item.qtyBal}}</span>
                     </div>
                   </div>
                 </div>
@@ -81,7 +81,8 @@
 <script>
   import {Icon, Popup} from 'vux'
   import RScroll from 'components/RScroll'
-  import {getSalesOrderList,getMaterOrderList} from 'service/listService'
+  import {getSalesOrderList} from 'service/listService'
+  import {getXQTJList} from 'service/materService'
   import RSearch from 'components/search'
 
   export default {
@@ -91,26 +92,12 @@
         type: Boolean,
         default: false
       },
-      // 请求列表的参数
-      params: {
-        type: Object,
-        default() {
-          return {
-            dealerCode: '',
-            whCode: '',
-          }
-        }
-      },
       defaultValue: {
         type: Object,
         default() {
           return {}
         }
       },
-      isMaterOrder:{
-        type : Boolean,
-        default : false
-      }
     },
     components: {
       Icon, Popup, RScroll, RSearch,
@@ -150,12 +137,6 @@
           this.showPop = val;
         }
       },
-      params: {
-        handler() {
-          this.resetCondition();
-          this.getList();
-        }
-      },
       defaultValue: {
         handler(val) {
           this.setDefaultValue();
@@ -182,7 +163,7 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if ( !this.isMaterOrder && !sItem.qtyStockBal) {
+        if (!sItem.qtyBal) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
@@ -226,17 +207,7 @@
               property: this.filterProperty,
             }];
         }
-        let requestMethods = getSalesOrderList;
-        let submitData = {
-          ...this.params,
-        }
-        //物料订单
-        if(this.isMaterOrder){
-          requestMethods = getMaterOrderList;
-          submitData = {};
-        }
-        return requestMethods({
-          ...submitData,
+        return getXQTJList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

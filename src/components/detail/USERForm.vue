@@ -29,7 +29,7 @@
 
 <script>
   // 请求 引入
-  import {getUserDetail} from 'service/userService'
+  import {getUserDetail} from 'service/Directorys/userService'
   import FormCell from 'components/detail/commonPart/FormCell'
 
   export default {

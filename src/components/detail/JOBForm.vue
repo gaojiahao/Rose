@@ -27,7 +27,7 @@
   </div>
 </template>
 <script>
-  import {getJobList} from 'service/listService.js'
+  import {getJobList} from 'service/Directorys/jobService'
   export default {
     data() {
       return {

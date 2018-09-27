@@ -99,6 +99,18 @@ export let getMatList = ( data = {})=>{
     data
   })
 }
+
+// TODO 获取需求调减物料列表
+export let getXQTJList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getDemandAdjustment',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 export default {
   save,
   update,

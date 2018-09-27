@@ -2,22 +2,6 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <!-- 经办主体 -->
-        <!-- <pop-entity-list :value="entity" v-model="entity"></pop-entity-list> -->
-        <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
-
-        <!-- 仓库-->
-        <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
-
-        <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
-                           v-model="drDealerPaymentTerm"></pop-single-select>
-        <!-- 物流条款 -->
-        <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
-                           v-model="formData.drDealerLogisticsTerms"></pop-single-select>
-        <!-- 项目 -->
-        <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -116,7 +100,7 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
           <!-- 订单popup -->
-          <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
+          <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder" :is-mater-order="true"
                           :default-value="orderList" ref="order"></pop-order-list>
         </div>
 
@@ -275,7 +259,7 @@
       // TODO 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
-        this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
+        this.$set(this.matterList, this.modifyIndex, modMatter);
       },
       // TODO 选择物料，显示物料pop
       getMatter() {
@@ -389,9 +373,7 @@
             // 存储已输入的价格
             this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
               tdQty: item.tdQty,
-              price: item.price,
-              taxRate: item.taxRate,
-              promDeliTime: item.promDeliTime,
+              price: item.price
             };
           }
         }

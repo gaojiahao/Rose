@@ -22,6 +22,70 @@
     margin-top: .04rem;
   }
 }
+// 通讯录基本属性
+.client_ads {
+  position: relative;
+  padding: .06rem .4rem .06rem .08rem;
+  transition: background-color 200ms linear;
+  &.visited {
+    background-color: $list_visited;
+  }
+  // 编辑
+  .icon-bianji {
+    right: 0;
+    top: 50%;
+    width: .35rem;
+    display: block;
+    font-size: .24rem;
+    text-align: center;
+    position: absolute;
+    transform: translate(0, -50%);
+  }
+  // 用户信息
+  .user_info {
+    color: #5077aa;
+    font-size: .14rem;
+    // font-weight: bold;
+    // 用户姓名
+    .user_name {
+      margin-right: .08rem;
+    }
+    .user_phone {
+      margin-right: .04rem;
+    }
+    // 用户电话
+    .user_tel {
+      font-family: sans-serif, -apple-system-font;
+    }
+  }
+  // 公司信息
+  .cp_info {
+    font-size: .14rem;
+    .cp_name {
+      color: #111;
+      font-weight: bold;
+    }
+    .cp_label{
+      span{
+        padding :0.02rem;
+        background: #3f72af;
+        color:#fff;
+      }
+    }
+    .cp_ads {
+
+      color: #757575;
+    }
+  }
+  .edit_part {
+    top: 0;
+    right: 0;
+    width: .3rem;
+    height: 100%;
+    position: absolute;
+    background: #4F90F9;
+  }
+}
 
 .list_wrapper {
   position: relative;
