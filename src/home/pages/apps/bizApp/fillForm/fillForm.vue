@@ -36,6 +36,9 @@ export default {
   beforeRouteEnter (to, from, next) {
     let { name } = to.query;
     to.meta.title = `新增${name}`;
+    if(to.query.id){
+      to.meta.title = `编辑${name}`;
+    }
     next();
   },
   created(){
