@@ -59,9 +59,11 @@ export let getListView = (data = {})=>{
         data
     })
 }
+
+
 export default{
     isMyflow,
     getSOList,
     currentUser,
-    getWorkFlow
+    getWorkFlow,
 }

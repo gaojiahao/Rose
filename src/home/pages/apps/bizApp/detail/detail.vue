@@ -160,7 +160,7 @@
     overflow: hidden;
   }
   .pages {
-    background: #F4F4F4;
+    // background: #F4F4F4;
     .detail-container {
       height: 100%;
       overflow: hidden;

@@ -15,59 +15,32 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index"
+        <div class="client_ads vux-1px-b" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index"
              @click='goDetail(item, index)'>
-             {{item.groupName}}
-          <!-- 订单编号, 时间 -->
-          <!-- <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
-          </div> -->
-          <!-- 项目名称 -->
-          <!-- <div class="project_name">
-            <div class="major_content vux-1px-b">
-              <div class="status_part">
-                <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType_project}}</span>
+            <div class="cp_info user_info">
+              <div class="cp_name">
+                <span>{{item.groupName}}</span>
+                <span>(简称: {{item.groupShortName}})</span>
               </div>
-              <div>{{item.projectName_project}}</div>
-              <div class="content_step">
-                <div>
-                  {{item.projectManager_project}}<span class="symbol">[项目经理]</span>
-                </div>
-                <div>
-                  利润率: {{item.budgetProfitMargin_project | percent}}
-                </div>
-              </div>
+              <p class="cp_ads">{{item.companyType}}</p>
             </div>
-          </div> -->
-          <!-- 项目立项经办人 -->
-          <!-- <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-            </div>
-            <div class="money_part">
-              <span class="num">收入:</span>
-              <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.budgetIncome_project | toFixed | numberComma}}
-              </span>
-            </div>
-          </div> -->
+            <span class="iconfont icon-bianji" @click.stop="EditCompany(item, index)"></span>
         </div>      
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t" v-if="!chartShow">
+    <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>  
   </div>
 </template>
 
 <script>
+// 接口引入
+import { getCompany } from 'service/Directorys/companyService'
+// mixin引入
 import listCommon from './../mixins/bizListCommon'
-import { getCompany } from 'service/listService'
+// 映射表引入
+import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 export default {
   mixins: [listCommon],
   data(){
@@ -86,20 +59,19 @@ export default {
     }
   },
   methods: {
-    ///tab切换
+    // tab切换
     tabClick(item, index) {
       this.activeIndex = index;
       this.activeTab = item.status;
       this.resetCondition();
       this.getList();
-    },      
-    goDetail(item, index) {
+    },
+    RouterChange(item, index, path){
       if (this.clickVisited) {
         return
       }
       // 交易号、应用名称等
-      let { transCode } = item;
-      let { code } = this.$route.params;
+      let { groupId } = item;
       let { name } = this.$route.query;
       // 高亮 点击过的数据
       this.clickVisited = true;
@@ -109,16 +81,31 @@ export default {
       setTimeout(() => {
         this.clickVisited = false;
         this.$router.push({
-          path: `/detail/${code}`,
+          path,
           query: {
             name,
-            transCode
+            groupId
           }
         })
       }, 200)
     },
+    // 编辑
+    EditCompany(item, index){
+      let { code } = this.$route.params;
+      this.RouterChange(item, index, `/fillForm/${Apps[code]}`);
+    },
+    // 前往详情
+    goDetail(item, index) {
+      let { code } = this.$route.params;
+      this.RouterChange(item, index, `/detail/${code}`);
+    },
     getList(noReset = false) {
       let filter = [];
+      // 按时间排序
+      let sort = [{ 
+        property: "crtTime",
+        direction: "DESC"
+      }]
       if (this.activeTab) {
         filter = [{
           operator: "in",     //模糊查询like，精确查询eq
@@ -140,6 +127,7 @@ export default {
         limit: this.limit,
         page: this.page,
         start: (this.page - 1) * this.limit,
+        sort: JSON.stringify(sort),
         filter: JSON.stringify(filter)
       }).then(({dataCount = 0, tableContent = []}) => {
         this.$emit('input', false);
