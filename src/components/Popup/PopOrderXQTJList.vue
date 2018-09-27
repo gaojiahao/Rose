@@ -44,6 +44,7 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
+                    <div v-if="item.orderCode">订单号: {{item.orderCode}}</div>
                     <!-- 物料分类 -->
                     <div class="mater_classify">
                       <span class="type">属性: {{item.processing}}</span>
@@ -98,6 +99,10 @@
           return {}
         }
       },
+      listMethod: {
+        type: String,
+        default: 'getDemandAdjustment'
+      }
     },
     components: {
       Icon, Popup, RScroll, RSearch,
@@ -163,9 +168,9 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if (!sItem.qtyBal) {
+        if (this.listMethod === 'getInProcessingOrder' && !sItem.orderCode) {
           this.$vux.alert.show({
-            content: '当前订单库存为0，请选择其他订单'
+            content: '当前订单号不存在，不可选择'
           });
           return
         }
@@ -212,7 +217,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
+        }, this.listMethod).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
