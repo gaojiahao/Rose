@@ -54,7 +54,7 @@
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
   import {getList} from 'service/commonService'
-  import {getCompanyList} from 'service/userService'
+  import {getCompanyList} from 'service/Directorys/userService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
 

@@ -48,7 +48,7 @@
   import {Picker, Popup, Group} from 'vux';
   import RPicker from 'components/RPicker';
   import common from 'mixins/common';
-  import {validateCode, addUser, updateUser, getUserDetail} from 'service/userService';
+  import {validateCode, addUser, updateUser, getUserDetail} from 'service/Directorys/userService';
   import UploadImage from 'components/UploadImage'
   import PopCompanyList from 'components/Popup/PopCompanyList'
   import RScroll from 'components/RScroll'

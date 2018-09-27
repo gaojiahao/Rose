@@ -34,7 +34,7 @@
 
 <script>
   import listCommon from './../mixins/bizListCommon'
-  import {getJobList} from 'service/listService.js'
+  import {getJobList} from 'service//Directorys/jobService'
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {
     data() {

@@ -19,8 +19,7 @@
   </div>
 </template>
 <script>
-import { save,update } from 'service/jobService.js';
-import {getJobList} from 'service/listService.js'
+import { save, update, getJobList } from 'service/Directorys/jobService';
 import RPicker from 'components/RPicker';
 export default {
   data() {

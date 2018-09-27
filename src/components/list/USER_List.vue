@@ -42,7 +42,7 @@
 </template>
 
 <script>
-  import {getAllUsers} from 'service/userService'
+  import {getAllUsers} from 'service/Directorys/userService'
   import listCommon from './../mixins/bizListCommon'
   // 映射表引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'

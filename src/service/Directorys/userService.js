@@ -1,4 +1,4 @@
-import $axios from '../plugins/ajax';
+import $axios from 'plugins/ajax';
 
 // TODO 获取用户列表
 export let getAllUsers = (data = {}) => {
