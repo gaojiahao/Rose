@@ -14,6 +14,7 @@ export default {
   '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',         // *采购申请*
   'dd4d228d-fc01-4038-bf17-df54d8d06eb9': 'CGDD',         // *采购订单*
   '1c5896d8-1500-4569-b0c5-6b596d03fb9b': 'CGRK',         // *采购入库*
+  '482b7468-06eb-40c7-842a-f7ea6edb1c37': 'CGTHCK',       // *采购退货出库*        
   '1400': 'CH',                                           // *存货*
   'edf7b34b-8916-410f-801f-2db7e97efbde': 'KCPD' ,        // *库存盘点*
   '4d9a7f8f-9a88-47b6-a1f4-3faed6423615': 'BDKCDB',       // *本地库存调拨*

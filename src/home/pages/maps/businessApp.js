@@ -41,6 +41,7 @@ export default {
     '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',       // *采购申请*
     'dd4d228d-fc01-4038-bf17-df54d8d06eb9': 'CGDD',       // *采购订单*
     '1c5896d8-1500-4569-b0c5-6b596d03fb9b': 'CGRK',       // *采购入库*
+    '482b7468-06eb-40c7-842a-f7ea6edb1c37': 'CGTHCK'      // *采购退货出库 *
   },
 
   // < 库存类应用 >
