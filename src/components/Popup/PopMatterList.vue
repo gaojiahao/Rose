@@ -86,6 +86,7 @@
     getObjInventoryByProcessing,
     getInventory7501,
     getInventory7502,
+    getCKTHCKList
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -320,6 +321,27 @@
           ];
         }
         return getInventory7502({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // TODO 获取物料列表(采购退货出库)
+      getCKTHCKList() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getCKTHCKList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

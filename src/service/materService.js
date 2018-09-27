@@ -59,7 +59,6 @@ export let getCost = (data = {}) => {
   })
 
 }
-
 // TODO 获取物料Pop列表
 export let getObjInventoryByProcessing = (data = {}) => {
   return $axios.ajax({
@@ -99,7 +98,13 @@ export let getMatList = ( data = {})=>{
     data
   })
 }
-
+//获取采购退货出库的物料
+export let getCKTHCKList =  ( data = {})=>{
+  return $axios.ajax({
+    url:'/H_roleplay-si/ds/getPurchaseReturn',
+    data
+  })
+}
 // TODO 获取需求调减物料列表
 export let getXQTJList = (data = {}) => {
   return $axios.ajax({
@@ -110,7 +115,6 @@ export let getXQTJList = (data = {}) => {
     }
   })
 };
-
 export default {
   save,
   update,
