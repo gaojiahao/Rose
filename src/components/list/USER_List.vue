@@ -4,6 +4,13 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
+        <div class="filter_part">
+          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
+                      @on-item-click="tabClick(item, index)">{{item.name}}
+            </tab-item>
+          </tab>
+        </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -44,8 +51,12 @@
     name: 'USER_List',
     data() {
       return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2192,
+        listStatus: [
+          {name: '全部', status: ''},
+          {name: '使用中', status: 1},
+          {name: '未使用', status: 2},
+          {name: '停用', status: -1},
+        ],
         filterList: [ // 过滤列表
           {
             name: '工号',
@@ -105,11 +116,19 @@
       getList(noReset = false) {
         let filter = [];
 
+        if (this.activeTab) {
+          filter.push({
+            operator: 'in',
+            value: this.activeTab,
+            property: 'status'
+          })
+        }
+
         if (this.serachVal) {
           filter = [
             ...filter,
             {
-              operator: "like",
+              operator: 'like',
               value: this.serachVal,
               property: this.filterProperty,
             },
@@ -150,7 +169,7 @@
 
   .user-list-container {
     .list_wrapper {
-      height: calc(100% - 1.2rem);
+      height: calc(100% - 1.68rem);
     }
     .each_duty {
       padding-right: .35rem;
