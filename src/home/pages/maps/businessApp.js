@@ -21,6 +21,7 @@ export default {
 
   // < 产品类应用 >
   'a32759e8-a3ad-47a6-a030-f33daea8b433': {
+    'b30f4d3e-b23d-11e8-96a5-005056a136d0': 'CPXQ'
     // 'WL': 'e4b5c110-bfed-4fb2-80d5-7b2cc8946777'          // *物料*
   },
 

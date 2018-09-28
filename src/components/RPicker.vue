@@ -149,12 +149,12 @@
     }
     /* 模式3样式 */
     &.r-picker-3 {
-      position: relative;
-      margin: 10px auto;
-      padding: .06rem .2rem .08rem .06rem;
       width: 95%;
+      margin: 10px auto;
+      position: relative;
+      background: #fff;
       box-sizing: border-box;
-      box-shadow: 0 0 8px #e8e8e8;
+      padding: .06rem .2rem .08rem .06rem;
       .title {
         color: #757575;
         

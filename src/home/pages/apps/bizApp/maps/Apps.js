@@ -3,6 +3,7 @@ export default {
   '000004': 'COMPANY',                                    // *公司*
   '000001': 'USER',                                       // *用户*
   '000003': 'JOB',                                        // *职位*
+  'b30f4d3e-b23d-11e8-96a5-005056a136d0': 'CPXQ',    // 产品需求
   '4099b5aa-1468-4b81-85a5-75079e291977': 'BHDD',         // *备货订单*
   '867e0b4f-548f-4e08-873a-1b8e54333630': 'WLXQJH',       // *物料需求计划*
   '7532f8ea-caf3-4fc4-97f6-b5aad7bcf6a0': 'WLXQTJ',       // *物料需求调减*
@@ -14,7 +15,7 @@ export default {
   '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',         // *采购申请*
   'dd4d228d-fc01-4038-bf17-df54d8d06eb9': 'CGDD',         // *采购订单*
   '1c5896d8-1500-4569-b0c5-6b596d03fb9b': 'CGRK',         // *采购入库*
-  '482b7468-06eb-40c7-842a-f7ea6edb1c37': 'CGTHCK',       // *采购退货出库*        
+  '482b7468-06eb-40c7-842a-f7ea6edb1c37': 'CGTHCK',       // *采购退货出库*
   '1400': 'CH',                                           // *存货*
   'edf7b34b-8916-410f-801f-2db7e97efbde': 'KCPD' ,        // *库存盘点*
   '4d9a7f8f-9a88-47b6-a1f4-3faed6423615': 'BDKCDB',       // *本地库存调拨*
@@ -24,6 +25,5 @@ export default {
   '000100': 'HGCW',                                       // *合规财务报表*
   '630a9b96-f257-48b6-b0bc-fd64c455d92b': 'XMLX',         // *项目立项*
   '0281f8eb-f1d2-415c-b566-756fc749ccb3': 'XMJH',         // *项目计划*
-  'ee4ff0a1-c612-419d-afd7-471913d57a2a': 'XMRW'          // *项目任务*
-
+  'ee4ff0a1-c612-419d-afd7-471913d57a2a': 'XMRW',          // *项目任务*
 }
