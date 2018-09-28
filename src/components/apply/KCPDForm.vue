@@ -93,7 +93,7 @@
         </div>
 
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="盘点数量" type="number" v-model='modifyMatter.tdQty' text-align="right"></x-input>
             <cell title="差异数量" text-align='right' placeholder='请填写'

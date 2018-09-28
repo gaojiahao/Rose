@@ -109,7 +109,7 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop'>
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkQty(modifyMatter)"></x-input>
