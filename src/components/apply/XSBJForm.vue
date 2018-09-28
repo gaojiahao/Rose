@@ -152,7 +152,7 @@
 
 <script>
   // vux组件引入
-  import {Icon,XInput,XTextarea} from 'vux'
+  import { Icon, XInput, XTextarea, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
@@ -458,7 +458,7 @@
             creator: formData.creator,
             biComment: formData.biComment,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
-            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD') ,
           };
           this.drDealerPaymentTerm = order.drDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;

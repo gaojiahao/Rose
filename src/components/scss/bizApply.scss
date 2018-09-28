@@ -234,16 +234,11 @@
   background: #FFF;
   box-sizing: border-box;
   padding: .06rem .08rem;
-  .no-matter {
-    // background: #FFF;
-    // padding: .06rem .08rem;
-  }
   .title {
     display: flex;
-    justify-content: space-between;
     color: #757575;
-
     font-size: .12rem;
+    justify-content: space-between;
   }
   .tips {
     color: #111;
@@ -253,6 +248,7 @@
   .r_arrow {
     top: 50%;
     right: .04rem;
+    font-weight: bold;
     position: absolute;
     transform: translate(0, -50%);
   }

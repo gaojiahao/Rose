@@ -6,13 +6,13 @@
         <pop-warehouse-list title="仓库名称" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
 
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
               <div class="tips">请选择物料</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -61,9 +61,9 @@
                     </div>
                     <div class="mater_more">
                         <span class="symbol">账存数量: {{item.qtyBal}}</span>
-                        <span class="symbol">盘点数量: {{item.tdQty}}</span>
                     </div>
                     <div class="mater_more">
+                        <span class="symbol">盘点数量: {{item.tdQty}}</span>
                         <span class="symbol">差异数量: {{item.differenceNum}}</span>
                     </div>
                     <!-- 编辑图标 -->
@@ -252,7 +252,7 @@ export default {
     selMatter(val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
-        item.tdQty = this.numMap[item.inventoryCode] || 1;
+        item.tdQty = this.numMap[item.inventoryCode] || 0;
         item.differenceNum = accSub(item.tdQty, item.qtyBal);
       });
       this.numMap = {};
