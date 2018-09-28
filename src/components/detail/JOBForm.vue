@@ -1,5 +1,5 @@
 <template>
-  <div class='pages '>
+  <div class='pages'>
     <div class='detail_content'>
       <div class='each_property vux-1px-b'>
         <label>职位名称:</label>
@@ -96,60 +96,7 @@
   }
 </script>
 <style lang="scss" scoped>
-  .vux-1px-l:before,
-  .vux-1px-b:after {
-    border-color: #e8e8e8;
-  }
-  .detail_content {
-    height: 100%;
-    overflow-y: auto;
-    background-color: #fff;
-    div {
-      border: none;
-      outline: none;
-    }
-    .each_property {
-      min-height: .5rem;
-      padding: 0.05rem 0.08rem;
-      position: relative;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        height:0.2rem;
-        line-height: 0.2rem;
-      }
-      .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
-      }
-    }
-  }
-  // 确定
-  .btn {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 10%;
-    position: fixed;
-    background: #fff;
-    .cfm_btn {
-      top: 50%;
-      left: 50%;
-      width: 2.8rem;
-      color: #fff;
-      height: .44rem;
-      line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #5077aa;
-    }
-  }
-
+@import './../scss/bizDetail';
 </style>
 
 
