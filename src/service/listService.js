@@ -51,7 +51,18 @@ export let getDashboard = (data = {}) => {
   })
 }
 
-
+// TODO 获取被授权团队列表
+export let getAuthorizedList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getAllGroup',
+    data: {
+      _dc: Date.now(),
+      page: 1,
+      start: 0,
+      limit: 10000,
+    }
+  })
+};
 
 export default {
   getList,

@@ -165,6 +165,7 @@
       .bom-container {
         background-color: #f8f8f8;
         .title {
+          padding: .06rem 0;
           background-color: #fff;
         }
       }

@@ -30,6 +30,16 @@ export let submitAndCalc = (data = {}) => {
   })
 };
 
+// TODO 修改(没有工作流)
+export let updateAndCalc = (data = {}) => {
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/formAPI/updateAndCalc',
+    data: data
+  })
+};
+
 export let commitTask = (data = {}) => {
   return $axios.ajax({
     type: 'POST',
