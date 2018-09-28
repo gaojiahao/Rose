@@ -10,7 +10,7 @@
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
@@ -128,9 +128,7 @@
 
 <script>
 // vux插件引入
-import {
-  XTextarea
-} from 'vux'
+import {XTextarea} from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
 import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,submitAndCalc} from 'service/commonService'

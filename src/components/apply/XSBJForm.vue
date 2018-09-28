@@ -22,7 +22,7 @@
           </div>
         </div>
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
@@ -135,7 +135,6 @@
     </div>
     <!-- 底部确认栏 -->
     <div class='btn-no-amt vux-1px-t' v-if="!matterModifyClass">
-      <!-- <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div> -->
       <div class="btn-item" @click="save">提交</div>
     </div>
     <!-- 底部删除确认栏 -->
@@ -153,16 +152,14 @@
 
 <script>
   // vux组件引入
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, dateFormat,XTextarea} from 'vux'
+  import {Icon,XInput,XTextarea} from 'vux'
   // 请求 引入
-  import {resolve} from 'url';
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from './../mixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
-  import InputBox from 'components/Xinput'
   import PopMatterList from 'components/Popup/PopMatterList'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
@@ -170,7 +167,7 @@
   export default {
     mixins: [ApplyCommon],
     components: {
-      Icon, Cell, Group, XInput, RPicker, InputBox,XTextarea,
+      Icon, XInput, RPicker,XTextarea,
       PopMatterList, PopDealerList, PopSingleSelect,
       PopMatter
     },

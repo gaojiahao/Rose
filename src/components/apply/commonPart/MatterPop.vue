@@ -15,7 +15,7 @@
                 <!-- 物料编码 -->
                 <div class="ForInline" style="display:inline-block">
                   <div class="mater_code">
-                    <span class="title">编码s</span>
+                    <span class="title">编码</span>
                     <span class="num">{{modifyMatter.inventoryCode}}</span>
                   </div>
                 </div>

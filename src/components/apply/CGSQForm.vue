@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
@@ -67,19 +67,7 @@
                         <span class='iconfont icon-bianji1'></span>
                       </div>
                     </div>
-                    <!-- <div class='mater_others'>
-                      <div class="mater_type">
-                        <span>大类: {{item.inventoryType || "无" }}</span>
-                        <span>子类: {{item.inventorySubclass}}</span>
-                      </div>
-                      <div class='mater_price'>
-                        <span class='unit'>计量单位: {{item.measureUnit || "无"}}</span>
-                        <span class='color'>颜色: {{item.inventoryColor || "无"}}</span>
-                      </div>
-                    </div> -->
                   </div>
-
-
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>

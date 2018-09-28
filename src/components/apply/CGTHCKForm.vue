@@ -10,7 +10,7 @@
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
@@ -142,9 +142,7 @@
 
 <script>
 // vux插件引入
-import {
-  XTextarea,XInput
-} from 'vux'
+import {XTextarea,XInput} from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
 import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,submitAndCalc} from 'service/commonService'
@@ -160,7 +158,6 @@ import PopMatter from './commonPart/MatterPop'
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 export default {
-  name: 'ApplyCGRKForm',
   mixins: [applyCommon],
   components: {
     XTextarea,XInput,
@@ -240,11 +237,6 @@ export default {
     selDealer(val) {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
-      // this.matterParams = {
-      //   ...this.matterParams,
-      //   dealerCode: sel.dealerCode
-      // };
-      // this.matterList = [];
     },
     // TODO 选中仓库
     selWarehouse(val) {

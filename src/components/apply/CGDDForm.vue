@@ -8,7 +8,7 @@
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                           v-model="dealer.drDealerPaymentTerm"></pop-single-select>
         <!-- 物料列表 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
