@@ -58,12 +58,7 @@
                         </div>
                         <!-- 物料属性和单位 -->
                         <div class='mater_more'>
-                          <span>属性: {{item.processing}}</span>
                           <span>单位: {{item.measureUnit}}</span>
-                          <span>颜色: {{item.inventoryColor || "无"}}</span>
-                        </div>
-                        <!-- 库存 -->
-                        <div class='mater_more'>
                           <span>待下单余额: {{item.qtyBal}}</span>
                         </div>
                         <div class="mater_other">
@@ -116,7 +111,8 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop'>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"></x-input>
+            <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                     @on-blur="checkQty(modifyMatter)"></x-input>
             <datetime title="成品计划验收日期" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
             <cell title="待下单余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
@@ -469,6 +465,19 @@
           this.$loading.hide();
         })
       },
+      // TODO 数量校验
+      checkQty(item) {
+        if (!item.tdQty) {
+          item.tdQty = 1;
+          return
+        }
+        // 取正数
+        item.tdQty = Math.abs(item.tdQty);
+        //取最大数
+        if (item.tdQty > item.qtyBal) {
+          item.tdQty = item.qtyBal;
+        }
+      }
     },
     created() {
     }
