@@ -30,7 +30,8 @@
               <span class="order_num">{{key.replace(/_/g,'')}}</span>
             </div>
             <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index"></matter-item>
+              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index" :isReturnMatter="true">
+              </matter-item>
             </div>
           </div>
         </div>
@@ -128,12 +129,11 @@ export default {
           item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
           item.tdAmount = accAdd(item.noTaxAmount,item.taxAmount);
           this.count = accAdd(this.count,item.tdAmount)
-          // this.count += item.tdAmount *100;
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
             : this.getDefaultImg();
           item.inventoryName_transObjCode = item.inventoryName_outPutMatCode;
-          item.transObjCode = item.inventoryCode_outPutMatCode;
+          item.transObjCode = item.outPutMatCode;
           if (!orderList[item.transMatchedCode]) {
             orderList[item.transMatchedCode] = [];
           }

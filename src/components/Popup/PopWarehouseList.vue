@@ -16,7 +16,7 @@
     </div>
     <div v-else>
       <div class="title">{{title}}</div>
-      <div class="mode">请选择仓库</div>
+      <div class="mode" :class='{required : isRequired}'>请选择仓库</div>
     </div>
     <i class="iconfont icon-youjiantou r-arrow" v-show="!disabled"></i>
 
@@ -107,6 +107,11 @@
       disabled: {
         type: Boolean,
         default: false
+      },
+      //是否必选
+      isRequired : {
+        type : Boolean,
+        default : false,
       }
     },
     directives: {TransferDom},
@@ -268,6 +273,10 @@
 </script>
 
 <style scoped lang="scss">
+@import '~@/scss/color.scss';
+.required {
+    color: $required;
+  }
   .pop-warehouse-container {
     position: relative;
     margin: .1rem auto;
@@ -280,7 +289,6 @@
       font-size: .12rem;
     }
     .mode {
-      color: #111;
       font-weight: 500;
     }
     /* 右箭头 */
@@ -318,7 +326,6 @@
       }
     }
   }
-
   // 弹出层
   .trade_pop_part {
     background: #fff;

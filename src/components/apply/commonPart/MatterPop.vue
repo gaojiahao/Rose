@@ -42,42 +42,23 @@
         </div>
         <group class='mg_auto'>
           <slot name="modify" :modifyMatter="modifyMatter">
-            <div v-show="modifyMatter.tdQty !== undefined">
-              <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
-                @on-blur="checkAmt(modifyMatter)">
-              </x-input>
-            </div> 
-            <div v-show="modifyMatter.price !== undefined">
-              <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)"></x-input>
-            </div>
-            <div v-show="modifyMatter.taxRate !== undefined">
-              <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
-                @on-blur="checkAmt(modifyMatter)">
-              </x-input>
-            </div>
-            <datetime :title="modifyMatter.taxRate ? '预期交货日' : '期望交货日'" v-model="modifyMatter.promDeliTime" 
-                      placeholder="请选择" v-show="modifyMatter.promDeliTime !== undefined"></datetime>
-            <div class="price_type vux-1px-t" v-show="modifyMatter.priceType !== undefined" @click="showPrice = !showPrice">
-              <div class="current_type">
-                <label>价格类型</label>
-                <div class='matter_val'>{{modifyMatter.priceType}}
-                  <x-icon  type="ios-arrow-down" :class="{'arrow-up': showPrice}" size="14"></x-icon>
-                </div>
-              </div>
-              <div class="r-dropdown-list" v-show="showPrice">
-                <div class="r-dropdown-item" :class="{'vux-1px-b': index !== priceTypeList.length - 1}" v-for="(item, index) in priceTypeList"
-                    @click.stop="dropItemClick(item)" :key="index">
-                  <span :class='{ active : currentType === item}'>{{item}}</span>
-                </div>
-              </div>
-            </div>
-            
+            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)">
+            </x-input>
+            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+            @on-blur="checkAmt(modifyMatter)"></x-input>
+            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)">
+            </x-input>
+            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" 
+                      placeholder="请选择" ></datetime>
           </slot>
         </group>
         <div class='mg_auto' v-if="modifyMatter.taxRate">
           <div class='each_info vux-1px-b'>
-            <label>金额</label>
+            <slot name="modifyTitle">
+              <label>金额</label>
+            </slot>
             <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
           </div>
           <div class='each_info vux-1px-b'>
@@ -113,7 +94,8 @@ export default {
     showPop:{
       type:Boolean,
       default : false
-    }
+    },
+
   },
   components: {
       Popup,Group,Cell,Datetime,XInput,
@@ -121,11 +103,7 @@ export default {
   data(){
     return{
       show: false,
-      priceTypeList: ['渠道价', '零售价'],
-      showPrice : false,
-      currentType : '渠道价'
-    }
-   
+    }   
   },
   watch:{
     showPop: {
@@ -133,7 +111,6 @@ export default {
         this.show = val;
       }
     },
-
   },
   methods:{
     // TODO 弹窗展示时调用
@@ -151,9 +128,6 @@ export default {
       this.$emit('input', false);
       this.showPrice = false;
       this.currentType = '渠道价'
-    },
-    onChange(modifyMatter,e){
-      modifyMatter.priceType = e[0];
     },
     //确认修改
     confirm(){
@@ -183,11 +157,6 @@ export default {
       if(taxRate){
         item.taxRate = Math.abs(toFixed(taxRate));
       }
-    },
-    dropItemClick(item) {
-      this.currentType = item;
-      this.modifyMatter.priceType = item;
-      this.showPrice = false;
     },
 
   }

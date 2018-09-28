@@ -25,8 +25,14 @@
         <!-- 物料数量和价格 -->
         <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
           <div class='mater_num' v-if='item.tdQty'>
-            <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-            <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+            <span v-if="isReturnMatter">
+              <span class="num">退货单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span class='num'>退货数量: {{item.tdQty | toFixed}}</span>
+            </span>
+            <span v-else>
+              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+            </span>
             <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
           </div>
           <div class='mater_other' v-if="item.priceType || item.priceType === ''">
@@ -61,6 +67,11 @@
         default() {
           return {}
         }
+      },
+      //是否退货
+      isReturnMatter : {
+        type : Boolean,
+        default : false
       }
     },
     data() {

@@ -85,22 +85,10 @@
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>                
-                <!-- 物料输入内容 -->
-                <!-- <div class="userInp_mode">
-                  <group>
-                    <x-input type="number" title="估计单价" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
-                  </group>
-                  <group>
-                    <x-input type="number" title="数量" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.tdQty"></x-input>
-                  </group>
-                </div> -->
               </div>
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="matterList.length && !isResubmit" @click="addMatter">新增更多物料</div> -->
           <div class="handle_part" v-if="matterList.length">
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
               @click="stopOrder" >终止提交</span>
@@ -113,7 +101,18 @@
                           ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)">
+            </x-input>
+            <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)"></x-input>
+            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" 
+                      placeholder="请选择" ></datetime>
+            <cell title="估计金额" :value="'￥' + modifyMatter.noTaxAmount"></cell>
+          </template>
+        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
@@ -128,7 +127,6 @@
         </span>
         <span class="total-num">[数量: {{totalNum}}]</span>
       </span>
-      <!-- <span class="count_btn stop" @click="stopOrder" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span> -->
       <span class="count_btn" @click="submitOrder">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
@@ -145,7 +143,7 @@
 
 <script>
 // vux插件引入
-import {Group,XInput,XTextarea} from 'vux'
+import {Group,XInput,XTextarea,Datetime,Cell} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import {getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc} from 'service/commonService'
@@ -159,7 +157,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 export default {
   components:{
-   PopMatterList,XTextarea,Group,XInput,PopMatter
+   PopMatterList,XTextarea,Group,XInput,PopMatter,Datetime,Cell
   },
   data(){
     return{
@@ -195,7 +193,6 @@ export default {
        total = accAdd(total, accMul(item.tdQty, item.price))
       });
       return parseFloat(total.toFixed(2));
-      // return parseFloat(accAdd(this.totalAmount, this.taxAmount).toFixed(2))
     }
   },
   mixins: [common],

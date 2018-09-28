@@ -92,33 +92,41 @@
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
                 </div>
-                <!-- 物料输入内容 -->
-                <!-- <div class="userInp_mode">
-                  <group>
-                    <x-input type="number" title="单价" text-align='right' placeholder='请填写'
-                             @on-blur="checkAmt(item)" v-model.number="item.price"></x-input>
-                  </group>
-                  <r-picker title="价格类型" :data="priceTypeList" :mode="'2'" :show-arrow="true"
-                            v-model="item.priceType"></r-picker>
-                </div> -->
               </div>
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div> -->
           <div class="handle_part" v-if="matterList.length">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
-
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+          <template slot="modify" slot-scope="{modifyMatter}">
+               <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+                        @on-blur="checkAmt(modifyMatter)"></x-input>
+              <div class="price_type vux-1px-t" @click="showPrice = !showPrice">
+                <div class="current_type">
+                  <label>价格类型</label>
+                  <div class='matter_val'>{{modifyMatter.priceType}}
+                    <x-icon  type="ios-arrow-down" :class="{'arrow-up': showPrice}" size="14"></x-icon>
+                  </div>
+                </div>
+                <div class="r-dropdown-list" v-show="showPrice">
+                  <div class="r-dropdown-item" :class="{'vux-1px-b': index !== priceTypeList.length - 1}" v-for="(item, index) in priceTypeList"
+                      @click.stop="dropItemClick(item)" :key="index">
+                    <span :class='{ active : currentType === item}'>{{item}}</span>
+                  </div>
+                </div>
+              </div>
+          </template>
+        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
@@ -184,11 +192,8 @@
         priceMap: {},
         showDealerPop: false,
         priceTypeList: ['渠道价', '零售价'],
-        inputOptions: {
-          title: '单价',
-          type: 'number',
-          placeholder: '请填写'
-        },
+        currentType : '渠道价',
+        showPrice:false,
       }
     },
     watch: {
@@ -226,6 +231,12 @@
       }
     },
     methods: {
+      //选择价格类型
+      dropItemClick(item) {
+        this.currentType = item;
+        this.matter.priceType = item;
+        this.showPrice = false;
+      },
       // 滑动删除
       delClick(index, sItem) {
         let arr = this.selItems;
@@ -528,4 +539,62 @@
       }
     }
   }
+  //价格类型
+  .price_type{
+    padding: 0.1rem 0.15rem;
+    font-size:0.14rem;
+    position: relative;
+    overflow: visible;
+    .current_type{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .matter_val{
+        color:#999;
+      }
+    }
+    
+  }
+  /* 列表容器 */
+    .r-dropdown-list {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      z-index: 999;
+      width:1rem;
+      border-bottom-left-radius: .08rem;
+      border-bottom-right-radius: .08rem;
+      background-color: #fff;
+      box-shadow: 0 2px 10px #e8e8e8;
+      box-sizing: border-box;
+    }
+    /* 列表项 */
+    .r-dropdown-item {
+      position: relative;
+      line-height: .4rem;
+      font-size: .16rem;
+      text-align: right;
+      span{
+        display: inline-block;
+        width:100%;
+        box-sizing: border-box;
+        padding: 0 .1rem;
+      }
+      .active{
+        background: #e8e8e8;
+      }
+      .weui_icon_success-no-circle {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+    }
+    /* 倒三角 */
+    .vux-x-icon-ios-arrow-down {
+      transition: transform 200ms linear;
+      &.arrow-up {
+        transform: rotate(-180deg);
+      }
+    }
 </style>

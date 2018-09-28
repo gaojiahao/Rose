@@ -5,7 +5,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 仓库-->
-        <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
+        <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>
@@ -98,7 +98,21 @@
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="退货数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)">
+            </x-input>
+            <x-input title="退货单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+            @on-blur="checkAmt(modifyMatter)"></x-input>
+            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)">
+            </x-input>
+          </template>
+          <template slot="modifyTitle">
+            <label>退货金额</label>
+          </template>
+        </pop-matter>
        
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -129,7 +143,7 @@
 <script>
 // vux插件引入
 import {
-  XTextarea
+  XTextarea,XInput
 } from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
@@ -145,12 +159,11 @@ import PopMatter from './commonPart/MatterPop'
 // 公共方法
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
-
 export default {
   name: 'ApplyCGRKForm',
   mixins: [applyCommon],
   components: {
-    XTextarea,
+    XTextarea,XInput,
     PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter
   },
   data() {
