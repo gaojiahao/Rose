@@ -29,5 +29,9 @@ export default {
   PPLN : '项目计划',
   PTSK : '项目任务',
   TRAN : '本地库存调拨',
-  STCK :'库存盘点'
+  STCK :'库存盘点',
+  BSKO:'旺季备货订单',
+  IPPO : '内部加工订单',
+  PLAD : '需求调减',
+  PORT : '采购退货入库'
 }

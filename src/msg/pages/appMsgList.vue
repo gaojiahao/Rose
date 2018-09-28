@@ -158,7 +158,7 @@ export default {
         }).then(({total = 0, tasks = [], success = true}) => {
           tasks.forEach(item => {           
             item.status = "待处理"
-            item.transCode = item.businessKey.replace(/_/g,'');
+            item.transCode = item.businessKey;
           });
           this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
           this.listData = this.page === 1 ? tasks : [...this.listData, ...tasks];
