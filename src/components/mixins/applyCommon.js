@@ -4,7 +4,7 @@ import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
-
+import platfrom from '@/plugins/platform/index'
 export default {
   data() {
     return {
@@ -28,6 +28,8 @@ export default {
       matter:{}, //选中要编辑的物料
       showMatterPop :false, //编辑物料的pop
       modifyIndex:null, //选中编辑物料的pop
+      clientHeight : document.documentElement.clientHeight,
+      btnIsHide : false,
     }
   },
   computed: {
@@ -244,5 +246,20 @@ export default {
         click: true
       })
     })
+    //解决android键盘收起input没有失去焦点，底部按钮遮挡输入框
+    if(platfrom.isAndroid){
+      window.onresize= ()=>{
+        if(this.clientHeight>document.documentElement.clientHeight) {
+          //底部按钮隐藏
+            this.btnIsHide  = true;
+        }else{
+            this.btnIsHide = false;
+            if(document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+              document.activeElement.blur();
+            }
+        }
+      }
+    }
+    
   }
 }

@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-      <div class='confirm_btn' :class="{'btn_hide' : btnIsHide}" @click="confirm">
+      <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm">
         <div class='confirm'>确认</div>
       </div>
     </popup>
@@ -83,7 +83,6 @@
 import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
 //组件引入
 import {toFixed} from '@/plugins/calc'
- import platfrom from '@/plugins/platform/index'
 export default {
   props:{
     modifyMatter:{
@@ -96,15 +95,17 @@ export default {
       type:Boolean,
       default : false
     },
+    btnIsHide :{
+      type : Boolean,
+      default : false
+    }
   },
   components: {
       Popup,Group,Cell,Datetime,XInput,
     },
   data(){
     return{
-      show: false,
-      btnIsHide : false,
-      clientHeight : document.documentElement.clientHeight,
+      show: false
     }   
   },
   watch:{
@@ -163,19 +164,6 @@ export default {
     },
 
   },
-  mounted(){
-    // 安卓的输入框会挡住input输入的解决办法
-    if(platfrom.isAndroid){
-      window.onresize= ()=>{
-        if(this.clientHeight>document.documentElement.clientHeight) {
-          //底部按钮隐藏
-            this.btnIsHide  = true;
-        }else{
-            this.btnIsHide = false;
-        }
-      }
-    }
-  }
 
 }
 </script>

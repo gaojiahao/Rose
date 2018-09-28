@@ -96,14 +96,15 @@
           </div>
         </div>
          <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="!matterModifyClass">
+    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num">
         <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
         <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
@@ -111,7 +112,7 @@
       <span class="count_btn" @click="submitOrder">提交订单</span>
     </div>
     <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" v-else>
+    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
       <div class='count_num all_checked' @click="checkAll">
         <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
         <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>

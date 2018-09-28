@@ -32,7 +32,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn vux-1px-t'>
+    <div class='btn vux-1px-t' :class="{btn_hide : btnIsHide}">
       <div class="cfm_btn" @click="save">提交</div>
     </div>
   </div>

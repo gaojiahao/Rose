@@ -50,7 +50,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t">
+    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}">
       <span class="count_num">
         <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
       </span>

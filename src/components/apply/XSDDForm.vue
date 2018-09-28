@@ -97,7 +97,7 @@
                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
        
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -106,7 +106,7 @@
       </div>
     </div>
     <!-- 底部提交确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="!matterModifyClass">
+    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num"
           :class="{nine_up : tdAmount.length  > 8 ,
           ten_up : tdAmount.length  > 9,
@@ -120,7 +120,7 @@
       <span class="count_btn" @click="submitOrder">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" v-else>
+    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
       <div class='count_num all_checked' @click="checkAll">
         <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
         <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>

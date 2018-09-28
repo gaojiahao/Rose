@@ -107,7 +107,7 @@
                            :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
                <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
                         @on-blur="checkAmt(modifyMatter)"></x-input>
@@ -134,11 +134,11 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t' v-if="!matterModifyClass">
+    <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <div class="btn-item" @click="save">提交</div>
     </div>
     <!-- 底部删除确认栏 -->
-    <div class="count_mode vux-1px-t delete_mode" v-else>
+    <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
       <div class='count_num all_checked' @click="checkAll">
         <x-icon type="ios-circle-outline" size="20" class='outline'
                 v-show="selItems.length !== matterList.length"></x-icon>
