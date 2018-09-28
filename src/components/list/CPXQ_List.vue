@@ -1,16 +1,16 @@
 <template>
-  <div class="pages user-list-container" ref='list'>
+  <div class="pages cpxq-list-container" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
-        <div class="filter_part">
+        <!--<div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>
-        </div>
+        </div>-->
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -170,9 +170,10 @@
 <style lang='scss' scoped>
   @import './../scss/bizList';
 
-  .user-list-container {
+  .cpxq-list-container {
     .list_wrapper {
-      height: calc(100% - 1.68rem);
+      /*height: calc(100% - 1.68rem);*/
+      height: calc(100% - 1.2rem);
     }
     .each_duty {
       padding-right: .35rem;
