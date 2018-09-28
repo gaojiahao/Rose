@@ -1,5 +1,5 @@
 <template>
-  <div class="detail_wrapper kcpd-detail-container">
+  <div class="detail_content kcpd-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
       <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>

@@ -76,7 +76,9 @@
 </script>
 
 <style scoped lang="scss">
+  @import './../scss/bizDetail';
   .user-detail-container {
+    background: #fff;
     .user-photo-container {
       display: flex;
       justify-content: center;

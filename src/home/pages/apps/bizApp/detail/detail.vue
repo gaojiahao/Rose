@@ -164,7 +164,7 @@
     .detail-container {
       height: 100%;
       overflow: hidden;
-      background: #FFF;
+      // background: #FFF;
       &.has-comment {
         height: calc(100% - .48rem);
       }
