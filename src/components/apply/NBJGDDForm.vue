@@ -474,11 +474,6 @@
 
 <style lang='scss' scoped>
   @import './../scss/bizApply';
-
-  .basicPart {
-    background: #f8f8f8;
-  }
-
   // 所属订单
   .order_code {
     display: flex;

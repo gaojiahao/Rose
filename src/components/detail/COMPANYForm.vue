@@ -113,6 +113,7 @@ export default {
 .detail_content {
   height: 100%;
   overflow-y: auto;
+  
   div {
     border: none;
     outline: none;
