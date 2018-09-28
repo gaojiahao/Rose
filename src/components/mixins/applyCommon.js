@@ -197,7 +197,7 @@ export default {
           noCount: 1,
         }).then(({tableContent = []}) => {
           let [lastest = {}] = tableContent; // 取第一个价格
-          item.price = lastest.price || item.price;
+          item.price = lastest.price || 0;
         })
       });
     },

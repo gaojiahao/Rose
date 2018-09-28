@@ -275,7 +275,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
             item.price = this.numMap[item.inventoryCode].price;
           } else {
             item.tdQty = 1;
-            item.price = 90;
+            item.price = 0;
           }
           item.taxRate = this.taxRate;
           item.promDeliTime = ''

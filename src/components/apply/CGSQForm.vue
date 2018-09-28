@@ -206,7 +206,7 @@ export default {
           item.price = this.numMap[item.inventoryCode].price;
         } else {
           item.tdQty = 1;
-          item.price = 90;
+          item.price = 0;
         }
         item.promDeliTime = '';
       })
@@ -261,19 +261,6 @@ export default {
           this.matterModifyClass = false;
         }
       })
-
-    },
-    //数量--
-    subNum(item,i){
-      if(item.tdQty === 1) return
-      item.tdQty--;
-      this.$set(this.matterList, i, item);
-    },
-    //数量++
-    plusNum(item,i){
-      let oldNum = item.tdQty;
-      item.tdQty++;
-      this.$set(this.matterList, i, item);
 
     },
     // TODO 新增更多物料
