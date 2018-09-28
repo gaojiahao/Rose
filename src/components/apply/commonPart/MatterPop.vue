@@ -95,7 +95,6 @@ export default {
       type:Boolean,
       default : false
     },
-
   },
   components: {
       Popup,Group,Cell,Datetime,XInput,
@@ -168,12 +167,9 @@ export default {
   .vux-1px-b:after,.vux-1px-t:before{
     border-color: #e8e8e8;
   }
-  .matter_pop{
-    width: 100%;
-    overflow: hidden;
+  .vux-popup-dialog{
     background: #F8F8F8;
-    box-sizing: border-box;
-    height: calc(100% - .64rem);
+
   }
   .mg_auto{
     padding: 0 .08rem;
@@ -215,25 +211,8 @@ export default {
     }
     
   }
-  //价格类型
-  .price_type{
-    padding: 0.1rem 0.15rem;
-    font-size:0.14rem;
-    position: relative;
-    overflow: visible;
-    .current_type{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .matter_val{
-        color:#999;
-      }
-    }
-    
-  }
   //物料编辑的pop
   .edit_matter{
-   background: #f8f8f8;
    position: relative;
     .pop_title{
       background: #fff;
@@ -287,26 +266,9 @@ export default {
       // 物料名称
       .mater_name {
         color: #111;
-        // overflow: hidden;
         font-size: .14rem;
         font-weight: bold;
-        // max-height: .46rem;
-        // display: -webkit-box;
-        // -webkit-line-clamp: 2;
         margin-bottom: .02rem;
-        // text-overflow: ellipsis;
-        // -webkit-box-orient: vertical;
-        // 每个物料的索引
-        .whiNum {
-          color: #fff;
-
-          padding: 0 .02rem;
-          font-size: .1rem;
-          display: inline-block;
-          background: #ea5455;
-          vertical-align: middle;
-          margin: -.01rem .04rem 0 0;
-        }
       }
       // 物料信息
       .mater_info {
@@ -395,47 +357,5 @@ export default {
     }
     
   }
-  /* 列表容器 */
-    .r-dropdown-list {
-      position: absolute;
-      right: 0;
-      top: 100%;
-      z-index: 999;
-      width:1rem;
-      border-bottom-left-radius: .08rem;
-      border-bottom-right-radius: .08rem;
-      background-color: #fff;
-      box-shadow: 0 2px 10px #e8e8e8;
-      box-sizing: border-box;
-    }
-    /* 列表项 */
-    .r-dropdown-item {
-      position: relative;
-      line-height: .4rem;
-      font-size: .16rem;
-      text-align: right;
-      span{
-        display: inline-block;
-        width:100%;
-        box-sizing: border-box;
-        padding: 0 .1rem;
-      }
-      .active{
-        background: #e8e8e8;
-      }
-      .weui_icon_success-no-circle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-      }
-    }
-    /* 倒三角 */
-    .vux-x-icon-ios-arrow-down {
-      transition: transform 200ms linear;
-      &.arrow-up {
-        transform: rotate(-180deg);
-      }
-    }
 </style>
 
