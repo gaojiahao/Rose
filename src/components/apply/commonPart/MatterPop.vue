@@ -1,6 +1,6 @@
 <template>
   <div v-transfer-dom>
-    <popup v-model="show" :height="modifyMatter.taxRate ? '80%' : '60%'" @on-show="onShow" @on-hide="onHide">
+    <popup v-model="show" height="80%" @on-show="onShow" @on-hide="onHide">
       <div class='edit_matter'>
         <div class='matter_info mg_auto'>
           <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-      <div class='confirm_btn' @click="confirm">
+      <div class='confirm_btn' :class="{'btn_hide' : btnIsHide}" @click="confirm">
         <div class='confirm'>确认</div>
       </div>
     </popup>
@@ -83,6 +83,7 @@
 import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
 //组件引入
 import {toFixed} from '@/plugins/calc'
+ import platfrom from '@/plugins/platform/index'
 export default {
   props:{
     modifyMatter:{
@@ -102,6 +103,8 @@ export default {
   data(){
     return{
       show: false,
+      btnIsHide : false,
+      clientHeight : document.documentElement.clientHeight,
     }   
   },
   watch:{
@@ -120,6 +123,7 @@ export default {
           this.$refs.bScroll.refresh();
           this.$refs.bScroll.scrollTo(0, 0);
         }
+        this.clientHeight = document.documentElement.clientHeight;
       })
     },
     // TODO 弹窗隐藏时调用
@@ -158,6 +162,19 @@ export default {
       }
     },
 
+  },
+  mounted(){
+    // 安卓的输入框会挡住input输入的解决办法
+    if(platfrom.isAndroid){
+      window.onresize= ()=>{
+        if(this.clientHeight>document.documentElement.clientHeight) {
+          //底部按钮隐藏
+            this.btnIsHide  = true;
+        }else{
+            this.btnIsHide = false;
+        }
+      }
+    }
   }
 
 }
@@ -241,6 +258,9 @@ export default {
       margin:0 auto;
       box-shadow: 0 2px 5px #5077aa;
     }
+  }
+  .btn_hide{
+    display: none;
   }
   //物料信息
   .matter_info{
