@@ -59,6 +59,9 @@
           }, {
             name: '标题',
             value: 'demandTitle',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
           },
         ],
       }
