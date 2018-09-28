@@ -1,16 +1,16 @@
 <template>
-  <div class="pages user-list-container" ref='list'>
+  <div class="pages cpxq-list-container" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
-        <div class="filter_part">
+        <!--<div class="filter_part">
           <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>
-        </div>
+        </div>-->
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -19,16 +19,15 @@
              @click='goDetail(item, index)'>
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
-            <p class="duty_code">{{item.userCode}}</p>
+            <p class="duty_code">{{item.transCode}}</p>
             <!--<p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>-->
           </div>
           <div class="duty-item">
-            <img class="avatar" :src="item.photo" alt="头像" @error="getDefaultImg(item)">
-            {{item.nickname}}
+            {{item.demandTitle}}
           </div>
           <div class="order_count">
-            <div class="handle_man">
-              {{item.creator}}<span style="fontSize:.1rem;" v-if="item.creator">[创建人]</span>
+            <div class="handle_man" v-if="item.handlerName">
+              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
           </div>
           <i class="iconfont icon-bianji" @click.stop="goUserEdit(item, index)"></i>
@@ -43,48 +42,39 @@
 
 <script>
   import {getAllUsers} from 'service/Directorys/userService'
+  import {getList} from 'service/commonService'
   import listCommon from './../mixins/bizListCommon'
   // 映射表引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
   export default {
-    name: 'USER_List',
+    name: 'CPXQ_List',
     data() {
       return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '使用中', status: 1},
-          {name: '未使用', status: 2},
-          {name: '停用', status: -1},
-        ],
+        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
         filterList: [ // 过滤列表
           {
-            name: '工号',
-            value: 'userCode',
+            name: '交易号',
+            value: 'transCode',
           }, {
-            name: '姓名',
-            value: 'nickname',
+            name: '标题',
+            value: 'demandTitle',
+          }, {
+            name: '经办人',
+            value: 'handlerName',
           },
         ],
       }
     },
     mixins: [listCommon],
     methods: {
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/ava01.png');
-        if (item) {
-          item.photo = url;
-        }
-        return url;
-      },
       // TODO 页面跳转
       pathChange(item, index, path) {
         if (this.clickVisited) {
           return
         }
         // 交易号、应用名称等
-        let {colId} = item;
+        let {transCode} = item;
         let {name} = this.$route.query;
         // 高亮 点击过的数据
         this.clickVisited = true;
@@ -97,7 +87,7 @@
             path,
             query: {
               name,
-              colId
+              transCode
             }
           })
         }, 200)
@@ -134,19 +124,17 @@
             },
           ];
         }
-        return getAllUsers({
+        return getList(2335, {
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.$emit('input', false);
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
-            if (!item.photo) {
-              item.photo = this.getDefaultImg();
-            }
+            this.setStatus(item);
           });
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {
             this.$nextTick(() => {
@@ -185,9 +173,10 @@
 <style lang='scss' scoped>
   @import './../scss/bizList';
 
-  .user-list-container {
+  .cpxq-list-container {
     .list_wrapper {
-      height: calc(100% - 1.68rem);
+      /*height: calc(100% - 1.68rem);*/
+      height: calc(100% - 1.2rem);
     }
     .each_duty {
       padding-right: .35rem;
@@ -207,11 +196,6 @@
       align-items: center;
       padding: 0 .1rem;
       line-height: .24rem;
-      .avatar {
-        margin-right: .1rem;
-        width: .6rem;
-        height: .6rem;
-      }
     }
   }
 </style>
