@@ -386,19 +386,15 @@ export default {
 
 <style lang='scss' scoped>
 @import './../scss/bizApply';
-.basicPart{
-  background: #f8f8f8;
-}
-.mater_other {
-  .current_num{
-    color: #5077aa;
-    font-size: .16rem;
-    font-weight: bold;
-    span{
-      color: #757575;
-      font-size: .1rem;
+  .mater_other {
+    .current_num{
+      color: #5077aa;
+      font-size: .16rem;
+      font-weight: bold;
+      span{
+        color: #757575;
+        font-size: .1rem;
+      }
     }
   }
-  
-}
 </style>

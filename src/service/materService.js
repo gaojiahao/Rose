@@ -117,7 +117,7 @@ export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
   })
 };
 
-// TODO 获取需求调减物料列表
+// TODO 获取加工订单Bom
 export let getJGDDBom = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getInProcessingOrderBom',

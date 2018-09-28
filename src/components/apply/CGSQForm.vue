@@ -434,9 +434,7 @@ export default {
 
 <style lang='scss' scoped>
 @import './../scss/bizApply';
-.basicPart{
-  background: #f8f8f8;
-}
+
 .pages {
   /deep/ .vux-no-group-title{
     margin-top:0;

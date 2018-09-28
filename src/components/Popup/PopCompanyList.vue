@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-company-container" @click="itemClick">
+  <div class="pop-company-container vux-1px-b" @click="itemClick">
     <!-- 仓库信息 -->
     <div v-if="selItems.groupName">
       <div class="title">公司</div>

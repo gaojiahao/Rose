@@ -19,7 +19,7 @@
           <div class="each_mater"
                v-for="(oItem, key) in orderList" :key='key'>
             <div class="order_code">
-              <span class="order_title">所属订单</span>
+              <span class="order_title">计划号</span>
               <span class="order_num">{{key.replace(/_/g,'')}}</span>
             </div>
             <div class="order_matter">
@@ -28,19 +28,25 @@
                   <!-- 调拨数量 -->
                   <div class="mater_other" slot="other" slot-scope="{item}">
                     <div class="mater_num">
-                    <span class="num">
-                      本次下单: {{item.tdQty | toFixed}}
-                    </span>
+                      <span class="num">
+                        本次下单: {{item.tdQty | toFixed}}
+                      </span>
                       <span class="units">
-                      [待下单余额: {{item.thenQtyBal | toFixed}}]
-                    </span>
+                        [待下单余额: {{item.thenQtyBal | toFixed}}]
+                      </span>
+                    </div>
+                    <div class="mater_num">
+                      <span class="num">
+                        成品计划验收日期: {{item.shippingTime}}
+                      </span>
                     </div>
                   </div>
                 </matter-item>
                 <div class="bom-container" v-if="item.boms && item.boms.length">
                   <div class="title">原料</div>
                   <template v-for="(bom, bIndex) in item.boms">
-                    <form-cell cellTitle="原料编码" :cellContent="bom.transObjCode" :style="{'margin-top': bIndex > 0 ? '.1rem' : '0'}"></form-cell>
+                    <form-cell cellTitle="原料编码" :cellContent="bom.transObjCode"
+                               :style="{'margin-top': bIndex > 0 ? '.05rem' : '0'}"></form-cell>
                     <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
                     <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
                     <form-cell cellTitle="领料需求" :cellContent="bom.tdQty"></form-cell>
@@ -62,6 +68,7 @@
   import {getSOList} from 'service/detailService'
   // mixins 引入
   import detailCommon from 'components/mixins/detailCommon'
+  import common from 'mixins/common'
   //公共方法引入
   // 组件 引入
   import RAction from 'components/RAction'
@@ -78,7 +85,7 @@
         basicInfo: {},//存放基本信息
       }
     },
-    mixins: [detailCommon],
+    mixins: [detailCommon, common],
     components: {
       workFlow, RAction, MatterItem,
     },
@@ -115,6 +122,7 @@
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
+            item.shippingTime = this.changeDate(item.shippingTime);
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
@@ -133,7 +141,7 @@
   @import './../scss/bizDetail';
 
   .nbjdgg-detail-container {
-    // 所属订单
+    // 计划号
     .order_code {
       display: flex;
       color: #fff;
@@ -162,6 +170,18 @@
       }
       .each_cell {
         background-color: #fff;
+      }
+    }
+    .mater_other {
+      .mater_num {
+        .num {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+          .symbol {
+            color: #757575;
+          }
+        }
       }
     }
   }

@@ -449,9 +449,6 @@ export default {
   @import './../scss/bizApply';
 
   .bdkcdb-apply-container {
-    .basicPart{
-      background: #f8f8f8;
-    }
     .matter-remain {
       color: #5077aa;
       font-size: .16rem;

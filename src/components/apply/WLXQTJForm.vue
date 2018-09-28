@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages wlxqtj-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 物料列表 -->
@@ -22,7 +22,7 @@
             <div class="mater_list">
               <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属订单</span>
+                  <span class="order_title">计划号</span>
                   <span class="order_num">{{key.replace(/_/g,'')}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -58,15 +58,19 @@
                         </div>
                         <!-- 物料属性和单位 -->
                         <div class='mater_more'>
-                          <span class='unit'>属性: {{item.processing}}</span>
-                          <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                          <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                          <span>税率：{{item.taxRate || taxRate}}</span>
+                          <span>属性: {{item.processing}}</span>
+                          <span>单位: {{item.measureUnit}}</span>
+                          <span>颜色: {{item.inventoryColor || "无"}}</span>
                         </div>
                         <!-- 库存 -->
                         <div class='mater_more'>
-                          <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                          <span class='qty'>减少数量: {{item.tdQty}}</span>
+                          <span>大类: {{item.inventoryType}}</span>
+                          <span>余额: {{item.qtyBal}}</span>
+                        </div>
+                        <div class="mater_other">
+                          <span class="matter-remain">
+                            <span class="symbol">减少数量: </span>{{item.tdQty}}
+                          </span>
                         </div>
                         <!-- 编辑图标 -->
                         <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
@@ -396,7 +400,9 @@
               inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_outPutMatCode,
               inventoryCode: item.outPutMatCode,
+              inventoryType: item.inventoryType_outPutMatCode,
               specification: item.specification_outPutMatCode,
+              measureUnit: item.measureUnit_outPutMatCode,
               processing: item.tdProcessing,
               calcRelCode: item.subjectCode,
             };
@@ -429,32 +435,40 @@
 <style lang='scss' scoped>
   @import './../scss/bizApply';
 
-  .basicPart {
-    background: #f8f8f8;
-  }
-
-  // 所属订单
-  .order_code {
-    display: flex;
-    color: #fff;
-    font-size: .12rem;
-    > span {
-      display: inline-block;
-      padding: 0 .04rem;
+  .wlxqtj-apply-container {
+    .basicPart {
+      height: 90%;
     }
-    .order_title {
-      background: #455d7a;
+    // 计划号
+    .order_code {
+      display: flex;
+      color: #fff;
+      font-size: .12rem;
+      > span {
+        display: inline-block;
+        padding: 0 .04rem;
+      }
+      .order_title {
+        background: #455d7a;
+      }
+      .order_num {
+        background: #c93d1b;
+      }
     }
-    .order_num {
-      background: #c93d1b;
+    .mater_list .each_mater_wrapper {
+      flex-direction: column;
     }
-  }
 
-  .materiel_list .mater_list .each_mater_wrapper {
-    flex-direction: column;
-  }
-
-  .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    padding-right: .38rem;
+    .mater_list .each_mater_wrapper .mater_main {
+      padding-right: .38rem;
+    }
+    .matter-remain {
+      color: #5077aa;
+      font-size: .16rem;
+      font-weight: bold;
+      .symbol {
+        color: #757575;
+      }
+    }
   }
 </style>

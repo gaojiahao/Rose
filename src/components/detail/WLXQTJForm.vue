@@ -19,7 +19,7 @@
           <div class="each_mater"
                v-for="(oItem, key) in orderList" :key='key'>
             <div class="order_code">
-              <span class="order_title">所属订单</span>
+              <span class="order_title">计划号</span>
               <span class="order_num">{{key.replace(/_/g,'')}}</span>
             </div>
             <div class="order_matter">
@@ -124,7 +124,7 @@
   @import './../scss/bizDetail';
 
   .wlxqtj-detail-container {
-    // 所属订单
+    // 计划号
     .order_code {
       display: flex;
       color: #fff;
@@ -145,6 +145,18 @@
     }
     .order_matter {
       margin-top: .04rem;
+    }
+    .mater_other {
+      .mater_num {
+        .num {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+          .symbol {
+            color: #757575;
+          }
+        }
+      }
     }
   }
 
