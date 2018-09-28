@@ -515,9 +515,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   .vux-1px-t:before{
     border-color: #e8e8e8;
   }
-  .basicPart{
-    background: #f8f8f8;
-  }
+
   .comment{
     width: 95%;
     margin: 0 auto;

@@ -454,9 +454,6 @@ export default {
   }
 
   .pages {
-    .basicPart{
-      background: #f8f8f8;
-    }
     /deep/ .vux-no-group-title {
       margin-top: 0;
     }

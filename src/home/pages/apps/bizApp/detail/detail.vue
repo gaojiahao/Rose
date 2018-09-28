@@ -160,10 +160,11 @@
     overflow: hidden;
   }
   .pages {
-    // background: #F4F4F4;
+    background: #F8F8F8;
     .detail-container {
       height: 100%;
       overflow: hidden;
+      background: #FFF;
       &.has-comment {
         height: calc(100% - .48rem);
       }
