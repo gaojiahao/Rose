@@ -5,11 +5,13 @@
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class='required'>公司名称:</label>
-            <input type='text' v-model="newCompanyInfo.groupName" class='property_val'/>
+            <input type='text' @blur='checkGroupName'
+            v-model="newCompanyInfo.groupName" class='property_val'/>
           </div>
           <div class='each_property required' >
             <label class='required'>公司简称:</label>
-            <input type='text' v-model="newCompanyInfo.groupShortName" class='property_val'/>
+            <input type='text' @blur='checkShortName'
+            v-model="newCompanyInfo.groupShortName" class='property_val'/>
           </div>
         </div>
         <upload-image :src="newCompanyInfo.groupPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
@@ -35,13 +37,15 @@
 import RPicker from 'components/RPicker'
 import UploadImage from 'components/UploadImage'
 // 请求引入
-import { save, update, CompanyInfo } from 'service/Directorys/companyService' 
+import { save, update, checkValue, CompanyInfo } from 'service/Directorys/companyService' 
 export default {
   components: { RPicker, UploadImage },
   data(){
     return{
       MatPic: '',
-      groupId:'',
+      groupId: '',
+      isNameExist: false,
+      isShortNameExist: false,
       CompanyType: [
         '有限责任公司', '股份有限公司', '集团公司', 
         '有限合伙', '普通合伙', '个人独资', 
@@ -70,9 +74,48 @@ export default {
     getDefaultImg(){
       this.newCompanyInfo.groupPic = require('assets/contact_default02.png');
     },
+    // 监测公司名称是否存在
+    checkGroupName(){
+      checkValue('groupName', this.newCompanyInfo.groupName).then(({ result }) => {
+        this.isNameExist = false;
+        if(result){
+          this.isNameExist = true;
+          this.$vux.alert.show({
+            content: '【公司名称】已存在，请替换别的名称'
+          })
+        }
+      })
+    },
+    // 监测公司简称是否存在
+    checkShortName(){
+      checkValue('groupShortName', this.newCompanyInfo.groupShortName).then(({ result }) => {
+        this.isShortNameExist = false;
+        if(result){
+          this.isShortNameExist = true;
+          this.$vux.alert.show({
+            content: '【公司简称】已存在，请替换别的简称'
+          })
+        }
+      })    
+    },
     // 保存提交 或 编辑提交
     submit(){
-      let newCompanyInfo = [{...this.newCompanyInfo}];
+      // 保存接口 或 编辑接口
+      let RequestMethod = !this.groupId ? save : update;
+      let newCompanyInfo = [];
+      if(RequestMethod === save){
+        newCompanyInfo = [{...this.newCompanyInfo}];
+      }
+      else {
+        newCompanyInfo = [{
+          status: this.newCompanyInfo.status,
+          groupId: this.newCompanyInfo.groupId,
+          groupPic: this.newCompanyInfo.groupPic,
+          groupName: this.newCompanyInfo.groupName,
+          companyType: this.newCompanyInfo.companyType,
+          groupShortName: this.newCompanyInfo.groupShortName
+        }]
+      }
       this.$vux.confirm.show({
         content: '确定提交吗？',
         onConfirm: ()=> {
@@ -90,12 +133,11 @@ export default {
               newCompanyInfo[0].status = 3;
               break;
           }
-          save(newCompanyInfo).then(data => {
-            let {groupId} = data[0];
-            if(groupId){
+          RequestMethod(newCompanyInfo).then(data => {
+            if(data[0] && data[0].groupId || data.success){
               this.$emit('change', true);
               this.$vux.alert.show({
-                content: '提交成功',
+                content: data.success ? '编辑成功': '提交成功',
                 onHide: ()=> {
                   this.$router.go(-1);
                 }
@@ -124,8 +166,14 @@ export default {
           message: '【公司类型】',
         },
       ];
-      validateMap.every(item => {
-        if (this.newCompanyInfo[item.key] === '') {
+      if(this.isNameExist){
+        warn = '【公司名称】已存在，请替换别的名称'
+      }
+      else if(this.isShortNameExist){
+        warn = '【公司简称】已存在，请替换别的简称'
+      }
+      !warn && validateMap.every(item => {
+        if (!this.newCompanyInfo[item.key]) {
           warn = `${item.message}不能为空`;
           return false
         }
@@ -150,6 +198,9 @@ export default {
               break;
             case 2:
               item.status = '未使用';
+              break;
+            case 3:
+              item.status = '草稿';
               break;
             case -1: 
               item.status = '停用';
