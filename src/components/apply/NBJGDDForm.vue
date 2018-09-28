@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages nbjgdd-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 物料列表 -->
@@ -22,7 +22,7 @@
             <div class="mater_list">
               <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属订单</span>
+                  <span class="order_title">计划号</span>
                   <span class="order_num">{{key.replace(/_/g,'')}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -58,18 +58,21 @@
                         </div>
                         <!-- 物料属性和单位 -->
                         <div class='mater_more'>
-                          <span class='unit'>属性: {{item.processing}}</span>
-                          <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                          <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                          <span>税率：{{item.taxRate || taxRate}}</span>
+                          <span>属性: {{item.processing}}</span>
+                          <span>单位: {{item.measureUnit}}</span>
+                          <span>颜色: {{item.inventoryColor || "无"}}</span>
                         </div>
                         <!-- 库存 -->
                         <div class='mater_more'>
-                          <span class="qty" v-show="item.qtyBal">待下单余额: {{item.qtyBal}}</span>
-                          <span class="qty">本次下单: {{item.tdQty}}</span>
+                          <span>待下单余额: {{item.qtyBal}}</span>
                         </div>
-                        <div class='mater_more'>
-                          <span class="qty" v-show="item.shippingTime">成品计划验收日期: {{item.shippingTime}}</span>
+                        <div class="mater_other">
+                          <div class="matter-remain">
+                            <span class="symbol">成品计划验收日期: </span>{{item.shippingTime || '无'}}
+                          </div>
+                          <div class="matter-remain">
+                            <span class="symbol">本次下单: </span>{{item.tdQty}}
+                          </div>
                         </div>
                         <!-- 编辑图标 -->
                         <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
@@ -475,32 +478,45 @@
 <style lang='scss' scoped>
   @import './../scss/bizApply';
 
-  .basicPart {
-    background: #f8f8f8;
-  }
-
-  // 所属订单
-  .order_code {
-    display: flex;
-    color: #fff;
-    font-size: .12rem;
-    > span {
-      display: inline-block;
-      padding: 0 .04rem;
+  .nbjgdd-apply-container {
+    .basicPart {
+      height: 90%;
     }
-    .order_title {
-      background: #455d7a;
+    // 计划号
+    .order_code {
+      display: flex;
+      color: #fff;
+      font-size: .12rem;
+      > span {
+        display: inline-block;
+        padding: 0 .04rem;
+      }
+      .order_title {
+        background: #455d7a;
+      }
+      .order_num {
+        background: #c93d1b;
+      }
     }
-    .order_num {
-      background: #c93d1b;
+
+    .mater_list .each_mater_wrapper {
+      flex-direction: column;
     }
-  }
 
-  .materiel_list .mater_list .each_mater_wrapper {
-    flex-direction: column;
-  }
-
-  .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    padding-right: .38rem;
+    .mater_list .each_mater_wrapper .mater_main {
+      padding-right: .38rem;
+    }
+    .mater_list .each_mater_wrapper .mater_main .mater_other {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .matter-remain {
+      color: #5077aa;
+      font-size: .16rem;
+      font-weight: bold;
+      .symbol {
+        color: #757575;
+      }
+    }
   }
 </style>
