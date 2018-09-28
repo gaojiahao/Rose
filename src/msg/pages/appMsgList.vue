@@ -101,7 +101,7 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${Apps[code]}`;
+              path = `/fillform/${Apps[listId]}`;
             } else {
               path = `/detail/${listId}`;
             }
