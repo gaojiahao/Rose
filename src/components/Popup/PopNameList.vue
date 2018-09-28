@@ -198,11 +198,11 @@
 
 <style scoped lang="scss">
   .pop-name-list-container {
+    width: 95%;
     position: relative;
     margin: 10px auto;
+    background: #fff;
     padding: .06rem .08rem;
-    width: 95%;
-    box-shadow: 0 0 8px #e8e8e8;
     box-sizing: border-box;
     .title {
       color: #757575;
