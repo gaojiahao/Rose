@@ -44,11 +44,12 @@
           let { code } = to.params;
           let { name } = this.$route.query;
           let { fromRalted } = from.query;
+          let {file} = from.query;
           let fromCode = from.params.code || '';
           try {
             // 从相关实例进入另一个详情
             if (to.name === 'DETAIL') {
-              this.currentComponent = require(`components/detail/${Apps[code]}Form.vue`).default;
+              this.currentComponent = require(`components/detail/${file}/${Apps[code]}Form.vue`).default;
               // 如果进入的应用与当前应用相同，需要调用该方法请求数据
               if (fromCode === code) {
                 this.$nextTick(() => {
@@ -117,11 +118,12 @@
       this.$loading.show();
       let {code = ''} = this.$route.params;
       let {transCode = ''} = this.$route.query;
+      let {file} = this.$route.query;
       this.hasComment = !!transCode;
       this.transCode = transCode;
       try {
         this.getCommentList();
-        this.currentComponent = require(`components/detail/${Apps[code]}Form.vue`).default;
+        this.currentComponent = require(`components/detail/${file}/${Apps[code]}Form.vue`).default;
       } catch (e) {
         this.$vux.alert.show({
           content: '抱歉，无法支持该应用的查看',

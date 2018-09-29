@@ -1,0 +1,191 @@
+<template>
+  <div class="detail_wrapper xsbj-detail-container">
+    <div class="basicPart" v-if='orderInfo'>
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>   
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                :no-status="orderInfo.biStatus"></work-flow> 
+      <!-- 往来联系部分 交易基本信息-->
+      <contact-part :contact-info="contactInfo" :payment="false" :logistics="false"></contact-part>
+      <div class="form_content">
+        <div class="form_title">
+          <span class="iconfont icon-mingxi1"></span>
+          <span>商机信息</span>
+        </div>
+        <div class="main_content">
+          <form-cell cellTitle='标题' :cellContent="orderInfo.opportunityTitle"></form-cell>
+          <form-cell cellTitle='内容' :cellContent="orderInfo.comment || '无'"></form-cell>
+          <form-cell cellTitle='当前所在阶段' :cellContent="orderInfo.currentStage"></form-cell>
+          <form-cell cellTitle='有效期至' :cellContent="orderInfo.validUntil"></form-cell>
+          <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
+          <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>
+        </div>
+        <div class="price_cell vux-1px-t">
+          <span class="price_title">预期销售额:</span>
+          <span class="num">
+            <span class="symbol">￥</span><span>{{orderInfo.tdAmount | numberComma(3) || 0}}</span>
+          </span>
+        </div>
+      </div>
+      <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                @on-submit-success="submitSuccessCallback"></r-action>
+    </div>
+  </div>
+</template>
+
+<script>
+// vux组件引入
+import { Cell, Group,dateFormat } from 'vux'
+// 请求 引入
+import { getSOList } from 'service/detailService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件 引入
+import { toFixed } from '@/plugins/calc'
+import RAction from 'components/RAction'
+import workFlow from 'components/workFlow'
+import contactPart from 'components/detail/commonPart/ContactPart'
+
+
+export default {
+  data() {
+    return {
+      count: 0,          // 金额合计
+      orderInfo: {},      // 表单内容
+      contactInfo: {},
+      formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5'
+    }
+  },
+  mixins: [detailCommon],
+  components: {
+    Cell, Group, RAction, workFlow, contactPart
+  },
+  methods: {
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(data => {
+        // http200时提示报错信息
+        if (data.success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+            onHide: () => {
+              this.$router.back();
+            }
+          });
+          return;
+        }
+        // 获取合计
+        // let {dataSet} = data.formData.order;
+        this.count = this.count / 100;
+        data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
+        data.formData.tdAmount = toFixed(data.formData.tdAmount);
+        this.orderInfo = data.formData;
+        this.getcontactInfo();
+        this.workFlowInfoHandler();
+      })
+    },
+    // TODO 生成contactInfo对象
+    getcontactInfo(key = 'order') {
+      let orderInfo = this.orderInfo;
+      this.contactInfo = {
+        creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
+        dealerName: orderInfo.dealerName_dealerDebit, // 公司名
+        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerCode: orderInfo.dealerDebit, // 客户编码
+        dealerLabelName: orderInfo.drDealerLabel, // 关系标签
+        province: orderInfo.province_dealerDebit, // 省份
+        city: orderInfo.city_dealerDebit, // 城市
+        county: orderInfo.county_dealerDebit, // 地区
+        address: orderInfo.address_dealerDebit, // 详细地址
+        payment: orderInfo.drDealerPaymentTerm, // 付款方式
+        validUntil : orderInfo.validUntil, //有效期
+        logistics : orderInfo.drDealerLogisticsTerms,//物流条件
+
+      };
+    }
+  }
+}
+</script>
+
+<style lang='scss' scoped>
+  @import './../../scss/bizDetail';
+  .xsbj-detail-container{
+    /deep/ .weui-cells {
+      margin-top: 0;
+      font-size: .16rem;
+      &:before {
+        border-top: none;
+      }
+      &:after {
+        border-bottom: none;
+      }
+      .weui-cell {
+        padding: 10px 0;
+        &:before {
+          left: 0;
+        }
+      }
+    }
+  }
+  .xsbj-detail-container {
+    .price_type {
+      margin-top: .04rem;
+      color: #757575;
+      font-size: .12rem;
+    }
+  }
+  .materiel_list {
+    .title {
+      padding-bottom: .06rem;
+      .iconfont {
+        font-size: .14rem;
+        margin-left: .03rem;
+      }
+    }
+    .mater_list {
+      .each_mater {
+        padding: unset;
+        .each_mater_wrapper
+          .mater_main {
+            width: 100%;
+            max-width: inherit;
+            margin-left: inherit;
+            .mater_title {
+              font-size: .18rem;
+            }
+            .mater_other {
+              margin-top: -.04rem;
+            }
+            .mater_spec {
+              margin-right: .04rem;
+              .content {
+                font-size: .12rem;
+              }
+            }
+            .mater_reimb {
+              margin-top: .04rem;
+            }
+          }
+      }
+
+    }
+  }
+
+        
+  .materiel_list
+    .mater_list
+      .each_mater
+        .each_mater_wrapper
+          .mater_main
+            .mater_info
+              .withColor
+                .mater_code
+                  .num {
+                    border-top-right-radius: .08rem;
+                  }
+</style>

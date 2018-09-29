@@ -65,6 +65,7 @@ export default {
       let { transCode } = item;
       let { code } = this.$route.params;
       let { name } = this.$route.query;
+      let {file} = this.$route.query
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
@@ -90,7 +91,8 @@ export default {
             path,
             query: {
               name,
-              transCode
+              transCode,
+              file
             }
           })
         };
@@ -113,10 +115,12 @@ export default {
     goEdit() {
       let { code } = this.$route.params;
       let { name } = this.$route.query;
+      let { file } = this.$route.query;
       this.$router.push({
         path: `/fillform/${Apps[code]}`,
         query: {
-          name
+          name,
+          file
         }
       })
     },

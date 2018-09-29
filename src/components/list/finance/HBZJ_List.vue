@@ -1,0 +1,180 @@
+<template>
+  <div class="pages" ref='list'>
+    <div class='content'>
+      <div class="list_top">
+        <!-- 搜索栏 -->
+        <searchIcon @search='searchList'></searchIcon>
+        <div class="filter_part">
+          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+            <tab-item v-for="(item, index) in listView" :key="index" :selected="index === activeIndex"
+                      @on-item-click="tabClick(item, index)">{{item.view_name}}
+            </tab-item>
+          </tab>
+        </div>
+      </div>
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+                :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
+                ref="bScroll">
+        <div class='each_duty' v-for='(item,index) in listData' :key='index' @click="getFlow(item)">
+          <div class="duty_top">
+              <div class="warehouse_info">
+                <span class="warehouse warehouse_name">
+                  <!-- 账户编码 -->
+                  账户编码
+                </span>
+                <!-- 编码 -->
+                <span class="warehouse warehouse_code">{{item.cashCode}}</span>
+              </div>
+          </div>
+          <!-- 资金账户名称 -->
+          <div class='matter'>
+            <div class='matter_name'>
+              {{item.fundName}}
+            </div>
+          </div>
+          <div class='duty_btm vux-1px-t'>
+            <!-- 开户银行 -->
+            <div class="ware_type">
+              {{item.bank || '暂无银行信息'}}
+            </div>
+            <!-- 余额 -->
+            <div class="balance" v-if="item.amountBalance !== ''">
+              <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma(3)}}
+            </div>
+          </div>
+        </div>
+      </r-scroll>
+
+      <!-- 展开状态 -->
+      <div v-transfer-dom>
+        <popup v-model="flowShow" position="bottom" height="80%">
+          <r-scroll class="flow_list_wrapper" ref="flowListWrapper"
+                    :options="FlowScrollOptions" :has-next="FlowHasNext"
+                    :no-data="!FlowHasNext && !flowData.length" @on-pulling-up="onPullingUpFlow">
+            <div class="flow">
+              <div class='flow_top'>
+                <div class="title">流水详情</div>
+              </div>
+              <div class="flow_list">
+                <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
+                  <!--展开状态-->
+
+                  <div class="duty_top">
+                    <!-- 编码 -->
+                    <div class='transCode'>
+                      <span class="order_title">编码</span>
+                      <span class="order_num">{{Fitem.transCode}}</span>
+                    </div>
+                    <!-- 时间 -->
+                    <div class="time">
+                      {{Fitem.calcTime | dateFormat}}
+                    </div>
+                  </div>
+
+                  <!-- 金额 -->
+                  <div class='show_list'>
+                    <!-- 应用名称 -->
+                    <div class="app_name">
+                      {{Fitem.appTitle}}<span class="symbol">[应用]</span>
+                    </div>
+                    <div class="num_info">
+                      <!-- 借方金额 -->
+                      <div class="amount_money">
+                        <div class="num_part" v-if="Fitem.drAmnt>0">
+                          <span class="symbol" >借方金额: </span>
+                          <span class="number_incre">+ {{Fitem.drAmnt}}</span>
+                        </div>
+                        <div class="num_part" v-else-if="Fitem.drAmnt<0">
+                          <span class="symbol">借方金额: </span>
+                          <span class="number_redu">- {{Fitem.drAmnt}}</span>
+                        </div>
+                        <div class="num_part" v-else>
+                          <span class="symbol">借方金额: </span>
+                          <span>0</span>
+                        </div>
+                      </div>
+                      <!-- 贷方金额 -->
+                      <div class="amount_money">
+                        <div class="num_part" v-if="Fitem.crAmnt>0">
+                          <span class="symbol">贷方金额: </span>
+                          <span class="number_incre">+ {{Fitem.crAmnt}}</span>
+                        </div>
+                        <div class="num_part" v-else-if="Fitem.crAmnt<0">
+                          <span class="symbol">贷方金额: </span>
+                          <span class="number_redu">- {{Fitem.crAmnt}}</span>
+                        </div>
+                        <div class="num_part" v-else>
+                          <span class="symbol">贷方金额: </span>
+                          <span>0</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 金额余额 -->
+                  <div class="summary_part vux-1px-t">
+                    <div class="number">
+                    </div>
+                    <div class="price HBZJ_total">
+                      <span class="symbol">当前余额:</span>
+                      <span :class="{increase: Fitem.amountBalance > 0,reduce: Fitem.amountBalance < 0}">
+                        ￥{{Fitem.amountBalance}}
+                      </span>
+                      <!-- <span class="number_incre" v-if="Fitem.amntBalance>0">￥{{Fitem.amountBalance}}</span>
+                      <span class="number_redu" v-else-if="Fitem.amntBalance<0">￥{{Fitem.amountBalance}}</span>
+                      <span v-else>￥{{Fitem.amountBalance}}</span> -->
+                    </div>
+                  </div>
+                </div>
+                <div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="btn" v-if='flowData.length>=3'>
+              <span class="cfm_btn" @click="flowShow = false">关闭</span>
+            </div> -->
+          </r-scroll>
+          <div class="btn when_less">
+            <span class="cfm_btn" @click="flowShow = false">关闭</span>
+          </div>
+
+        </popup>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import listCommon from 'pageMixins/kmListCommon'
+  export default {
+    data() {
+      return {
+        uniqueId : 1000,
+        showContent : false,
+        filterArr: [
+            {"operator":"like","value":"","property":"cashCode"}
+        ],
+      }
+    },
+    components:{
+
+    },
+    mixins: [listCommon],
+    methods: {
+    },
+    created(){
+
+    }
+  }
+</script>
+
+<style lang='scss' scoped>
+  @import './../../scss/SUB/subList';
+  .HBZJ_total{
+      .number_incre{
+          color: #c93d1b;
+      }
+      .number_redu{
+          color: #53d397;
+      }
+  }
+</style>

@@ -25,8 +25,9 @@ export default {
     let code = this.$route.params.code;
     if(code){
       this.code = code;
+      let file = this.$route.query.file;
       this.$loading.show();
-      this.currentComponent = require(`components/list/${Apps[code]}_List.vue`).default;
+      this.currentComponent = require(`components/list/${file}/${Apps[code]}_List.vue`).default;
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -46,6 +47,7 @@ export default {
     });
     if (reload) {
       let code = this.$route.params.code;
+      let file = this.$route.query.file
       this.$loading.show();
       if (code) {
         // 在提交页面提交成功时进入该判断
@@ -53,7 +55,7 @@ export default {
           this.$refs.list.reloadData();
         }
         this.code = code;
-        this.currentComponent = require(`components/list/${Apps[code]}_List.vue`).default;
+        this.currentComponent = require(`components/list/${file}/${Apps[code]}_List.vue`).default;
       }
       this.$route.meta.reload = false;
     }
