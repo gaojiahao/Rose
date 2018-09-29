@@ -44,7 +44,15 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
-                    <div v-if="item.orderCode">订单号: {{item.orderCode}}</div>
+                    <div v-if="item.orderCode">
+                      <i class="iconfont icon-dingdan1"></i>
+                      <span>{{item.orderCode}}</span>
+                    </div>
+                    <!-- 仓库 -->
+                    <div v-if="item.warehouseName">
+                      <i class="iconfont icon--"></i>
+                      <span>{{item.warehouseName}}</span>
+                    </div>
                     <!-- 物料分类 -->
                     <div class="mater_classify">
                       <span class="type">属性: {{item.processing}}</span>
@@ -168,7 +176,8 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if (this.listMethod === 'getInProcessingOrder' && !sItem.orderCode) {
+        let validateMap = ['getInProcessingOrder', 'getInProcessingStorage'];
+        if (validateMap.includes(this.listMethod) && !sItem.orderCode) {
           this.$vux.alert.show({
             content: '当前订单号不存在，不可选择'
           });

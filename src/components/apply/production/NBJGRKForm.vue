@@ -117,7 +117,8 @@
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"></x-input>
-            <!--<pop-warehouse-nbjgrk-list @on-show="showWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>-->
+            <pop-warehouse-nbjgrk-list :default-value="tmpWarehouse"
+                                       @on-show="showWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>
             <cell title="待验收余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
@@ -154,7 +155,7 @@
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
-  // import PopWarehouseNbjgrkList from 'components/Popup/PopWarehouseNBJDRKList'
+  import PopWarehouseNbjgrkList from 'components/Popup/PopWarehouseNBJDRKList'
   import FormCell from 'components/detail/commonPart/FormCell'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
@@ -165,8 +166,7 @@
     components: {
       Icon, Cell, Group, XInput,
       PopMatter, PopOrderXqtjList, Datetime,
-      FormCell,
-      // PopWarehouseNbjgrkList
+      FormCell, PopWarehouseNbjgrkList
     },
     data() {
       return {
@@ -208,6 +208,10 @@
       // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
+        this.tmpWarehouse = {
+          warehouseName: item.warehouseName,
+          warehouseCode: item.warehouseCode,
+        };
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
@@ -215,6 +219,10 @@
       // TODO 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
+        modMatter = {
+          ...modMatter,
+          ...this.tmpWarehouse,
+        };
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
       // TODO 选中物料项
@@ -322,6 +330,25 @@
         let warn = '';
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
+        }
+        if (!warn) {
+          for (let value of Object.values(this.orderList)) {
+            for (let vItem of value) {
+              for (let item of vItem.boms) {
+                // 校验数量
+                if (item.qtyStock < item.tdQty) {
+                  warn = '可用余额不能少于本次扣料，请重新输入入库数量';
+                  break;
+                }
+              }
+              if (warn) {
+                break;
+              }
+            }
+            if (warn) {
+              break;
+            }
+          }
         }
         if (warn) {
           this.$vux.alert.show({
@@ -480,7 +507,7 @@
         this.tmpWarehouse = {
           warehouseName: item.warehouseName,
           warehouseCode: item.warehouseCode,
-        } ;
+        };
         this.showMatterPop = true;
       },
     },
