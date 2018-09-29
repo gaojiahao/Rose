@@ -312,7 +312,6 @@
           // 每个物料的索引
           .whiNum {
             color: #fff;
-
             padding: 0 .02rem;
             font-size: .1rem;
             display: inline-block;
@@ -320,7 +319,16 @@
             vertical-align: middle;
             margin: -.01rem .04rem 0 0;
           }
+     
         }
+        .mater_num {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+          .diff_num {
+            color: #ea5455;
+          }            
+        }   
         // 物料信息
         .mater_info {
           color: #757575;
@@ -425,38 +433,7 @@
               color: #757575;
             }
           }
-          .mater_num {
-            display: flex;
-            // justify-content: flex-start;
-            input {
-              border: none;
-              outline: none;
-            }
-            .handle {
-              display: inline-block;
-              width: 0.2rem;
-              height: 0.2rem;
-              text-align: center;
-              line-height: 0.2rem;
-              font-size: .18rem;
-            }
-            .disabled {
-              color: #eee;
-            }
-            .plus {
-              vertical-align: middle;
-              margin-top: -.01rem;
-            }
-            .num {
-              width: 0.4rem;
-              height: 0.2rem;
-              background: #e8e8e8;
-              text-align: center;
-              line-height: 0.2rem;
-              font-size: 0.12rem;
-              border-radius: 0 !important;
-            }
-          }
+
         }
         // 物料的补充填写按钮
         .edit-part {

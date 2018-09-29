@@ -55,16 +55,21 @@
                     </div>
                     <!--单位，属性，颜色-->
                     <div class="mater_more">
-                        <span class="processing">属性: {{item.processing}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
+                      <span class="processing">属性: {{item.processing}}</span>
+                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class='unit'>单位: {{item.measureUnit}}</span>
                     </div>
                     <div class="mater_more">
-                        <span class="symbol">账存数量: {{item.qtyBal}}</span>
+                      <span class="symbol">账存数量: {{item.qtyBal}}</span>
                     </div>
-                    <div class="mater_more">
-                        <span class="symbol">盘点数量: {{item.tdQty}}</span>
-                        <span class="symbol">差异数量: {{item.differenceNum}}</span>
+
+                    <!-- <div class="mater_more">
+                      <span class="symbol">盘点数量: {{item.tdQty}}</span>
+                      <span class="symbol">差异数量: {{item.differenceNum}}</span>
+                    </div> -->
+                    <div class='mater_num'>
+                      盘点数量: <span class="num">{{item.tdQty}}</span>
+                      差异数量: <span class="diff_num">{{item.differenceNum}}</span>
                     </div>
                     <!-- 编辑图标 -->
                     <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)">
