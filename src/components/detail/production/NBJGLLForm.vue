@@ -24,15 +24,15 @@
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_left">
             <span class="units">
-              属性: {{item.tdProcessing}}
+              计量单位: {{item.measureUnit_outPutMatCode}}
             </span>
             <span class="units">
-              计量单位: {{item.measureUnit_outPutMatCode}}
+              待领料: {{item.thenQtyBal}}
             </span>
           </div>
           <div class="mater_num">
             <span class="num">
-              调拨数量: {{item.tdQty | toFixed}}
+              本次领料: {{item.tdQty | toFixed}}
             </span>
             <span class="units">
               [库存数量: {{item.thenQtyStock | toFixed}}]

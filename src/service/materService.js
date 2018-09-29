@@ -105,7 +105,6 @@ export let getCKTHCKList =  ( data = {})=>{
     data
   })
 }
-
 // TODO 获取物料列表(需求调减/加工订单)
 export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
   return $axios.ajax({

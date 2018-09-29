@@ -20,7 +20,7 @@
                v-for="(oItem, key) in orderList" :key='key'>
             <div class="order_code">
               <span class="order_title">加工订单号</span>
-              <span class="order_num">{{key.replace(/_/g,'')}}</span>
+              <span class="order_num">{{key}}</span>
             </div>
             <div class="order_matter">
               <template v-for="(item, index) in oItem">

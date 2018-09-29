@@ -15,7 +15,7 @@
               <!-- 实例编码 -->
               <div class='transCode'>
                 <span class="order_title">编码</span>
-                <span class="order_num">{{item.transCode.replace(/_/g,'')}}</span>
+                <span class="order_num">{{item.transCode}}</span>
               </div>
             </div>
             <!-- 数量，金额 -->

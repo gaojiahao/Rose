@@ -56,8 +56,10 @@
                       <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
                       <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
-                    <div>
-                      <span v-show="item.qtyStockBal">库存: {{item.qtyStockBal}}</span>
+                    <div  class="mater_material">
+                      <span v-show="item.qtyStockBal !== '' ">库存: {{item.qtyStockBal}}</span>
+                      <span v-show="item.qtyBal !== ''">待领料余额：{{item.qtyBal}}</span>
+                      <span v-show="item.qtyStock !== ''">可用库存 ：{{item.qtyStock}}</span>
                     </div>
                   </div>
                 </div>
@@ -81,7 +83,7 @@
 <script>
   import {Icon, Popup} from 'vux'
   import RScroll from 'components/RScroll'
-  import {getSalesOrderList,getMaterOrderList} from 'service/listService'
+  import {getSalesOrderList,getMaterOrderList,getNBJGLLOrderList} from 'service/listService'
   import RSearch from 'components/search'
 
   export default {
@@ -108,6 +110,10 @@
         }
       },
       isMaterOrder:{
+        type : Boolean,
+        default : false
+      },
+      isMaterProccing:{
         type : Boolean,
         default : false
       }
@@ -182,7 +188,7 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if ( !this.isMaterOrder && !sItem.qtyStockBal) {
+        if ( !this.isMaterOrder && !sItem.qtyStockBal && !this.isMaterProccing) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
@@ -235,6 +241,10 @@
           requestMethods = getMaterOrderList;
           submitData = {};
         }
+        //加工物料
+        if(this.isMaterProccing){
+          requestMethods = getNBJGLLOrderList;
+        }    
         return requestMethods({
           ...submitData,
           limit: this.limit,
