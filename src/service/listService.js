@@ -42,7 +42,13 @@ export let getBusinessList = (data = {}) => {
     data
   })
 };
-
+//获取内部加工领料订单
+export let getNBJGLLOrderList = ( data = {})=>{
+  return $axios.ajax({
+    url:'/H_roleplay-si/ds/getProcessingPicking',
+    data
+  })
+}
 // 获取 仪表视图
 export let getDashboard = (data = {}) => {
   return $axios.ajax({
