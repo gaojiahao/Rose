@@ -253,7 +253,7 @@
 <style scoped lang="scss">
   .upload-image-container {
     position: relative;
-    z-index: 1;
+    // z-index: 1;
     width: 1.2rem;
     height: 1.2rem;
     > .label {

@@ -63,10 +63,10 @@
         font-size:0.18rem;
       }
       .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
         width:100%;
+        display: block;
+        font-size: .16rem;
+        line-height: .24rem;
       }
       //只读
       .readonly{
@@ -145,22 +145,26 @@
   }
   .mater_baseinfo {
     display: flex;
-    align-items: flex-end;
+    // align-items: flex-end;
     .mater_property {
-      flex: 1;
+      flex: 2;
     }
     .mater_pic {
+      flex: 1;
+      z-index: 99;
       .add_icon {
+        width: 100%;
+        height: 100%;
         position: relative;
-        z-index: 99;
+        // z-index: 99;
         label {
           display: block;
-          width: 1.2rem;
-          height: 1.2rem;
+          width: 100%;
+          height: 100%;
         }
         .upload {
-          width: 1.2rem;
-          height: 1.2rem;
+          width: 100%;
+          height: 100%;
           position: absolute;
           left: 0;
           top: 0;
@@ -176,7 +180,6 @@
         }
 
       }
-
       .pic {
         width: 1.2rem;
         height: 1.2rem;
@@ -185,8 +188,8 @@
     }
   }
   .each_property {
-    min-height: .5rem;
-    padding: 0.05rem 0.08rem;
+    // min-height: .5rem;
+    padding: .05rem .08rem;
     position: relative;
     label {
       color: #6d6d6d;
@@ -197,8 +200,8 @@
     }
     .property_val {
       display: block;
-      font-size: 0.16rem;
-      line-height: 0.24rem;
+      font-size: .16rem;
+      line-height: .24rem;
     }
     .picker {
       display: flex;
