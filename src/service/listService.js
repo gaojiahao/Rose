@@ -64,6 +64,17 @@ export let getAuthorizedList = (data = {}) => {
   })
 };
 
+// TODO 获取内部加工入库的仓库列表
+export let getWarehouseNBJGRK = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjWarehouse',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
   getList,
   getSellOrderList,
