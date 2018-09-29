@@ -67,7 +67,7 @@ import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup,PopupP
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
 // mixins 引入
-import ApplyCommon from './../mixins/applyCommon'
+import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import PopCostList from 'components/Popup/PopCostList'
 import PopProjectList from 'components/Popup/PopProjectList'

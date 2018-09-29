@@ -56,7 +56,7 @@
 </template>
 
 <script>
-  import listCommon from './../mixins/bizListCommon'
+  import listCommon from 'pageMixins/bizListCommon'
   import {getSellOrderList} from 'service/listService'
   export default {
     data() {

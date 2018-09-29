@@ -35,7 +35,7 @@
     getProjectPlanProjectName
   } from 'service/projectService'
   // mixins 引入
-  import ApplyCommon from './../mixins/applyCommon'
+  import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
 

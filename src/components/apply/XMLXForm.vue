@@ -73,7 +73,7 @@
   import {saveProjectApproval, findProjectApproval} from 'service/projectService'
   import {getDictByType, getDictByValue} from 'service/commonService'
   // mixins 引入
-  import ApplyCommon from './../mixins/applyCommon'
+  import ApplyCommon from 'pageMixins/applyCommon'
   import common from '@/mixins/common'
   // 组件 引入
   import RPicker from 'components/RPicker'

@@ -43,7 +43,7 @@
 <script>
   import {getAllUsers} from 'service/Directorys/userService'
   import {getList} from 'service/commonService'
-  import listCommon from './../mixins/bizListCommon'
+  import listCommon from 'pageMixins/bizListCommon'
   // 映射表引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 

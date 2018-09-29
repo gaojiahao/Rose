@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import listCommon from './../mixins/bizListCommon'
+  import listCommon from 'pageMixins/bizListCommon'
   import {getSellOrderList} from 'service/listService'
   import ApplyChart from 'components/list/commonPart/ApplyChart'
   export default {

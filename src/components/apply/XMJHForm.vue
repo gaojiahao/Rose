@@ -52,7 +52,7 @@
   // 请求 引入
   import {saveProjectPlan} from 'service/projectService'
   // mixins 引入
-  import ApplyCommon from './../mixins/applyCommon'
+  import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
   // 方法引入

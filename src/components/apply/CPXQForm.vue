@@ -55,7 +55,7 @@
   import {getAuthorizedList} from 'service/listService'
   import {getSOList} from 'service/detailService'
   // mixins 引入
-  import ApplyCommon from './../mixins/applyCommon'
+  import ApplyCommon from 'pageMixins/applyCommon'
 
   export default {
     name: 'ApplyCPXQForm',

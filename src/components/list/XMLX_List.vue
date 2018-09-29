@@ -59,7 +59,7 @@
 
 <script>
   import {getList} from 'service/commonService'
-  import listCommon from './../mixins/bizListCommon'
+  import listCommon from 'pageMixins/bizListCommon'
   // 方法引入
   import {accMul} from '@/home/pages/maps/decimalsAdd'
   export default {

@@ -33,7 +33,7 @@
 </template>
 
 <script>
-  import listCommon from './../mixins/bizListCommon'
+  import listCommon from 'pageMixins/bizListCommon'
   import {getJobList} from 'service//Directorys/jobService'
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {

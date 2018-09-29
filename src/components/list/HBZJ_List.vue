@@ -144,7 +144,7 @@
 </template>
 
 <script>
-  import listCommon from './../mixins/kmListCommon'
+  import listCommon from 'pageMixins/kmListCommon'
   export default {
     data() {
       return {

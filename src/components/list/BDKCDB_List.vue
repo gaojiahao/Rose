@@ -27,7 +27,7 @@
 <script>
   import {getSellOrderList} from 'service/listService'
   import {getList} from 'service/commonService'
-  import listCommon from './../mixins/bizListCommon'
+  import listCommon from 'pageMixins/bizListCommon'
 
   export default {
     data() {

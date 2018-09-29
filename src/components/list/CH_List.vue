@@ -155,7 +155,7 @@
 </template>
 
 <script>
-  import listCommon from './../mixins/kmListCommon'
+  import listCommon from 'pageMixins/kmListCommon'
   import TabItem from 'components/tab'
   export default {
     data() {

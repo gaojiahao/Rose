@@ -131,7 +131,7 @@ import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton,} from
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
 // minxins 引入
-import ApplyCommon from './../mixins/applyCommon'
+import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'

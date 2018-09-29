@@ -157,7 +157,7 @@
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
   // mixins 引入
-  import ApplyCommon from './../mixins/applyCommon'
+  import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
   import PopMatterList from 'components/Popup/PopMatterList'
