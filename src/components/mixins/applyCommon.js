@@ -46,6 +46,7 @@ export default {
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
+        item.noTax = accMul(item.tdQty, item.price);
         total = accAdd(total, accMul(item.noTax, item.taxRate)).toFixed(2);
       });
       return total;
