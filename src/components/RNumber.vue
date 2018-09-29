@@ -100,8 +100,9 @@
       color: #eee;
     }
     .plus {
-      vertical-align: middle;
+      font-weight: 500;
       margin-top: -.01rem;
+      vertical-align: middle;
     }
     .num {
       width: 0.4rem;

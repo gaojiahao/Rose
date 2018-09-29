@@ -69,13 +69,18 @@
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
+                        <span class="symbol">￥</span>{{item.price}}
                       </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
+                      <div>
+                        <r-number :num="item.tdQty"
+                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                       </div>
+
                     </div>
-                  </div>
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                      <span class='iconfont icon-bianji1'></span>
+                    </div>                  
+                    </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass' @click="delClick(item,index)">
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -140,6 +145,7 @@ import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from '
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
+import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
@@ -151,7 +157,9 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
       TransferDom
     },
     components: {
-      Popup, PopMatterList, PopDealerList, PopSingleSelect,Group,Cell,Datetime,XInput,XTextarea ,PopMatter
+      Popup, PopMatterList, PopDealerList, 
+      PopSingleSelect, Group, Cell, Datetime,
+      XInput, XTextarea, PopMatter, RNumber
     },
     data() {
       return {
