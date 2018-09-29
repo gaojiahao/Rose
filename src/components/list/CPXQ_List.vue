@@ -20,7 +20,7 @@
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
             <p class="duty_code">{{item.transCode}}</p>
-            <!--<p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>-->
+            <p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
           <div class="duty-item">
             {{item.demandTitle}}
@@ -29,8 +29,8 @@
             <div class="handle_man" v-if="item.handlerName">
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
+            <div class="order-count-item">{{item.authorizedTeam}}</div>
           </div>
-          <i class="iconfont icon-bianji" @click.stop="goUserEdit(item, index)"></i>
         </div>
       </r-scroll>
     </div>
@@ -179,23 +179,16 @@
       height: calc(100% - 1.2rem);
     }
     .each_duty {
-      padding-right: .35rem;
       box-sizing: border-box;
-      .icon-bianji {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        width: .35rem;
-        text-align: center;
-        font-size: .24rem;
-        transform: translateY(-50%);
-      }
     }
     .duty-item {
       display: flex;
       align-items: center;
       padding: 0 .1rem;
       line-height: .24rem;
+    }
+    .order-count-item {
+      color: #7D7D7D;
     }
   }
 </style>

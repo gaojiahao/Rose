@@ -70,7 +70,6 @@
                                 <span class="num">{{item.specification || '无'}}</span>
                               </div>
                             </div>
-                            <!-- <div class="matter-remain">库存: {{item.qtyStockBal}}</div> -->
                           </div>
                         </div>
                         <!-- 物料属性和单位 -->
@@ -89,8 +88,6 @@
                           <div class="mater_price">
                             <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                           </div>
-                          <!--<r-number :num="item.tdQty" :max="item.qtyStockBal"
-                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>-->
                         </div>
                         <!-- 编辑图标 -->
                         <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
@@ -121,7 +118,8 @@
         </div>
 
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
+                    :btn-is-hide="btnIsHide"></pop-matter>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -133,10 +131,11 @@
       <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
       <span class="count_btn" @click="submitOrder">提交</span>
     </div>
-     <!-- 底部删除确认栏 -->
+    <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
       <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
+        <x-icon type="ios-circle-outline" size="20" class='outline'
+                v-show="selItems.length !== matterList.length"></x-icon>
         <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
         全选
       </div>
@@ -153,7 +152,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask,submitAndCalc} from 'service/commonService'
+  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -211,8 +210,8 @@
         matterList: [], // 物料列表，用于计算金额、请求单价
         project: {}, // 项目
         entity: {}, // 经办主体
-        tmpItems : {},//选中的订单
-        matter:{},
+        tmpItems: {},//选中的订单
+        matter: {},
         showMatterPop: false,
         modifyIndex: null,
         modifyKey: null,
@@ -232,14 +231,6 @@
           }
           this.$emit('sel-data', data)
         }
-      },
-      matter:{
-        handler(val){
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
-        },
-        deep:true
       },
     },
     methods: {
@@ -275,6 +266,14 @@
       // TODO 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
+        this.matterList.every((item, index) => {
+          // 修改matterList，触发合计金额计算
+          if (modMatter.transCode === item.transCode && modMatter.inventoryCode === item.inventoryCode) {
+            this.$set(this.matterList, index, modMatter);
+            return false
+          }
+          return true
+        });
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
       // TODO 选择物料，显示物料pop
@@ -326,7 +325,7 @@
       //   this.$refs.order.delSelItem(item);
       // },
       // 滑动删除
-      delClick(index, sItem,key) {
+      delClick(index, sItem, key) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
         //若存在重复的 则清除
@@ -341,34 +340,34 @@
         return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
       },
       //全选
-      checkAll(){
-        if(this.selItems.length === this.matterList.length){
+      checkAll() {
+        if (this.selItems.length === this.matterList.length) {
           this.selItems = [];
           return
         }
         this.selItems = JSON.parse(JSON.stringify(this.matterList));
       },
       //删除选中的
-      deleteCheckd(){
+      deleteCheckd() {
         this.$vux.confirm.show({
           content: '确认删除?',
           // 确定回调
           onConfirm: () => {
             let newArr = [];
             let keys = Object.keys(this.orderList);
-            keys.forEach(item=>{
+            keys.forEach(item => {
               newArr = newArr.concat(this.orderList[item]);
             })
-            this.selItems.forEach(SItem=>{
-              newArr.forEach(OItem=>{
-                if(OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode){
+            this.selItems.forEach(SItem => {
+              newArr.forEach(OItem => {
+                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
                   let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item=>item.inventoryCode === OItem.inventoryCode);
-                  if(delIndex >= 0){
+                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                  if (delIndex >= 0) {
                     this.$refs.order.delSelItem(delArr[delIndex]);
-                    delArr.splice(delIndex,1);
+                    delArr.splice(delIndex, 1);
                   }
-                  if(!delArr.length){
+                  if (!delArr.length) {
                     delete this.orderList[OItem.transCode];
                   }
 
@@ -508,7 +507,7 @@
             if (!this.transCode) {
               delete submitData.biReferenceId
             }
-            if(!this.processCode.length){ //无工作流
+            if (!this.processCode.length) { //无工作流
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -636,6 +635,7 @@
   .materiel_list .mater_list .each_mater_wrapper {
     flex-direction: column;
   }
+
   .materiel_list .mater_list .each_mater_wrapper .mater_main {
     padding-right: .38rem;
   }

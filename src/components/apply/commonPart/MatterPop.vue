@@ -42,15 +42,15 @@
         </div>
         <group class='mg_auto'>
           <slot name="modify" :modifyMatter="modifyMatter">
-            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               @on-blur="checkAmt(modifyMatter)">
             </x-input>
-            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
             @on-blur="checkAmt(modifyMatter)"></x-input>
-            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
               @on-blur="checkAmt(modifyMatter)">
             </x-input>
-            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" 
+            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime"
                       placeholder="请选择" ></datetime>
           </slot>
         </group>
@@ -106,7 +106,7 @@ export default {
   data(){
     return{
       show: false
-    }   
+    }
   },
   watch:{
     showPop: {
@@ -148,17 +148,24 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
-      let { price, tdQty,taxRate} = item;
+      let {price, tdQty, taxRate, qtyBal, qtyStockBal} = item;
       // 金额
       if (price) {
         item.price = Math.abs(toFixed(price));
       }
+      console.log(qtyStockBal)
       // 数量
-      if(tdQty){
+      if (tdQty) {
         item.tdQty = Math.abs(toFixed(tdQty));
+        // qtyStockBal为销售出库的库存，数量不允许大于余额
+        if (!qtyStockBal && qtyBal && tdQty > qtyBal) {
+          item.tdQty = qtyBal;
+        } else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
+          item.tdQty = qtyStockBal;
+        }
       }
       //税率
-      if(taxRate){
+      if (taxRate) {
         item.taxRate = Math.abs(toFixed(taxRate));
       }
     },
@@ -190,7 +197,7 @@ export default {
       overflow: visible;
       .weui-cell{
         font-size: 0.14rem;
-        
+
         &:before{
           left:0;
           border-color:#e8e8e8;
@@ -198,7 +205,7 @@ export default {
       }
       &:before{
         border-top:none;
-        
+
       }
       &:after{
         border-bottom:none;
@@ -214,7 +221,7 @@ export default {
     .matter_val{
       color:#999;
     }
-    
+
   }
   //物料编辑的pop
   .edit_matter{
@@ -363,7 +370,7 @@ export default {
 
       }
     }
-    
+
   }
 </style>
 

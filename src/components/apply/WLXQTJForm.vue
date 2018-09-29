@@ -99,7 +99,7 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkQty(modifyMatter)"></x-input>
+                     @on-blur="checkAmt(modifyMatter)"></x-input>
             <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
@@ -422,19 +422,6 @@
           this.$loading.hide();
         })
       },
-      // TODO 数量校验
-      checkQty(item) {
-        if (!item.tdQty) {
-          item.tdQty = 1;
-          return
-        }
-        // 取正数
-        item.tdQty = Math.abs(item.tdQty);
-        //取最大数
-        if (item.tdQty > item.qtyBal) {
-          item.tdQty = item.qtyBal;
-        }
-      }
     },
     created() {
     }

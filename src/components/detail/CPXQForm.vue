@@ -11,7 +11,10 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <div class="product">
-        <div class="title">需求信息</div>
+        <div class="title">
+          <span>需求信息</span>
+          <i class="iconfont icon-bianji" @click="goEdit"></i>
+        </div>
         <form-cell cellTitle="标题" :cellContent="orderInfo.demandTitle"></form-cell>
         <form-cell cellTitle="描述" :cellContent="orderInfo.demandDescribe"></form-cell>
         <form-cell cellTitle="大类" :cellContent="orderInfo.demandType"></form-cell>
@@ -40,6 +43,8 @@
   import RAction from 'components/RAction'
   import contactPart from 'components/detail/commonPart/ContactPart'
   import MatterList from 'components/detail/commonPart/MatterList'
+  // 映射表引入
+  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 
   export default {
     data() {
@@ -82,6 +87,19 @@
           this.workFlowInfoHandler();
         })
       },
+      // TODO 跳转到编辑页面
+      goEdit() {
+        // 交易号、应用名称等
+        let {code} = this.$route.params;
+        let {name} = this.$route.query;
+        this.$router.push({
+          path: `/fillform/${Apps[code]}`,
+          query: {
+            name,
+            transCode: this.transCode
+          }
+        })
+      },
     }
   }
 </script>
@@ -97,9 +115,15 @@
       background-color: #fff;
       box-sizing: border-box;
       .title {
-        padding: .06rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         font-size: .16rem;
         font-weight: bold;
+      }
+      .icon-bianji {
+        font-size: .24rem;
+        font-weight: normal;
       }
     }
   }

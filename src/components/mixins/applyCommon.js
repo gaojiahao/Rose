@@ -58,10 +58,10 @@ export default {
   watch:{
     //修改的物料
     matter:{
-      handler(val){          
+      handler(val){
           val.noTaxAmount = accMul(val.price,val.tdQty).toFixed(2);
           val.taxAmount = accMul(val.noTaxAmount,val.taxRate).toFixed(2);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);         
+          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);
       },
       deep:true
     }
@@ -210,14 +210,20 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
-      let { price, tdQty } = item;
+      let { price, tdQty, qtyBal, qtyStockBal } = item;
       // 金额
       if (price) {
         item.price = Math.abs(toFixed(price));
       }
       // 数量
-      if(tdQty){
+      if (tdQty) {
         item.tdQty = Math.abs(toFixed(tdQty));
+        // qtyStockBal为销售出库的库存，数量不允许大于余额
+        if (!qtyStockBal && qtyBal && tdQty > qtyBal) {
+          item.tdQty = qtyBal;
+        } else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
+          item.tdQty = qtyStockBal;
+        }
       }
     },
   },
@@ -261,6 +267,6 @@ export default {
         }
       }
     }
-    
+
   }
 }
