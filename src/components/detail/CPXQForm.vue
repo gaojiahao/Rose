@@ -23,6 +23,7 @@
         <form-cell cellTitle="流程状态" :cellContent="orderInfo.processStatus"></form-cell>
         <form-cell cellTitle="按期信息指数" :cellContent="orderInfo.timeConfidenceIndex"></form-cell>
         <form-cell cellTitle="被授权团队" :cellContent="orderInfo.authorizedTeam"></form-cell>
+        <form-cell cellTitle="版本" :cellContent="orderInfo.demandVersion"></form-cell>
       </div>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"

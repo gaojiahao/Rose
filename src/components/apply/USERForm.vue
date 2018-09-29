@@ -189,6 +189,7 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
+            this.$HandleLoad.show();
             let genederMatched = this.genderList.find(item => item.value === submitData.gender);
             let userTypeMatched = this.userTypeList.find(item => item.value === submitData.userType);
             let statusMatched = this.statusList.find(item => item.value === submitData.status);
