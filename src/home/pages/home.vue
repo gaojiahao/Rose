@@ -11,7 +11,7 @@
             </div>
             <div>
               <div class='current_entity' @click="showDrop = !showDrop">
-                <span>{{currentEntity}}</span>
+                <span class="entity-name">{{currentEntity}}</span>
                 <x-icon v-if="entityList.length > 1" type="ios-arrow-down" :class="{'arrow-up': showDrop}" size="14"></x-icon>
               </div>
               <ul class="r-dropdown-list" v-show="showDrop">
@@ -252,6 +252,14 @@ export default {
     .current_entity {
       display: flex;
       align-items: center;
+      .entity-name {
+        display: block;
+        max-width: 1.8rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+      }
     }
   }
 }

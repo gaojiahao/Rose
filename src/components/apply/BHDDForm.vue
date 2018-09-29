@@ -61,10 +61,10 @@
                       <div class='current_num'>
                         <span>数量：</span>{{item.tdQty}}
                       </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
-                      </div>
                     </div>
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                      <span class='iconfont icon-bianji1'></span>
+                    </div>   
                   </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass'>

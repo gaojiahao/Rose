@@ -82,10 +82,10 @@
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
-                      </div>
                     </div>
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                      <span class='iconfont icon-bianji1'></span>
+                    </div>    
                   </div>
                   <div class='delete_icon' v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>

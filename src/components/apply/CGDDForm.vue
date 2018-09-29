@@ -68,12 +68,17 @@
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
+                        <span class="symbol">￥</span>{{item.price}}
                       </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
+                      <div>
+                        <r-number :num="item.tdQty"
+                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                       </div>
+
                     </div>
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                      <span class='iconfont icon-bianji1'></span>
+                    </div> 
                   </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass'>
@@ -136,11 +141,12 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from './commonPart/MatterPop'
+import RNumber from 'components/RNumber'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 export default {
   components:{
-    PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea
+    PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea,RNumber
   },
   data(){
     return{

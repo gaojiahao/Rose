@@ -37,6 +37,7 @@
             <div class="mater_more">
                 <span>大类: {{modifyMatter.inventoryType}}</span>
                 <span>子类: {{modifyMatter.inventorySubclass}}</span>
+                <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
             </div>
           </div>
         </div>

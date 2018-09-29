@@ -80,7 +80,7 @@
                     <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>                  
-                    </div>
+                  </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass' @click="delClick(item,index)">
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>

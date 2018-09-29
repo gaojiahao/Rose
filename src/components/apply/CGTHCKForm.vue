@@ -70,12 +70,16 @@
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
+                        <span class="symbol">￥</span>{{item.price}}
                       </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
+                      <div>
+                        <r-number :num="item.tdQty"
+                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                       </div>
                     </div>
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
+                      <span class='iconfont icon-bianji1'></span>
+                    </div> 
                   </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass' @click="delClick(index,item)">
@@ -154,13 +158,14 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from './commonPart/MatterPop'
+import RNumber from 'components/RNumber'
 // 公共方法
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 export default {
   mixins: [applyCommon],
   components: {
-    XTextarea,XInput,
+    XTextarea,XInput,RNumber,
     PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter
   },
   data() {
