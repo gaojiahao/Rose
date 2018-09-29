@@ -19,17 +19,24 @@
              @click='goDetail(item, index)'>
           <!-- 订单编号, 时间 -->
           <div class="duty_top">
-            <p class="duty_code">{{item.transCode}}</p>
+            <p class="duty_code">
+              {{item.transCode}}
+              <span class="duty_crt_man" :class="item.statusClass">{{item.processStatus}}</span>
+            </p>
             <p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
-          <div class="duty-item">
-            {{item.demandTitle}}
+          <div class="duty_content">
+            <div class="content_title">{{item.demandTitle}}</div>
+            <div class="content_step vux-1px-b">
+              <div>规划: {{item.demandPlan}}</div>
+              <div>信心指数: {{item.timeConfidenceIndex}}</div>
+            </div>
           </div>
           <div class="order_count">
             <div class="handle_man" v-if="item.handlerName">
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
-            <div class="order-count-item">{{item.authorizedTeam}}</div>
+            <div class="handle_man">{{item.authorizedTeam}}</div>
           </div>
         </div>
       </r-scroll>
@@ -54,14 +61,14 @@
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
         filterList: [ // 过滤列表
           {
+            name: '经办人',
+            value: 'handlerName',
+          },{
             name: '交易号',
             value: 'transCode',
           }, {
             name: '标题',
             value: 'demandTitle',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
           },
         ],
       }
@@ -102,10 +109,18 @@
         let {code} = this.$route.params;
         this.pathChange(item, index, `/fillform/${Apps[code]}`);
       },
+      // 状态区分
+      setStatus(item) {
+        if(item.processStatus.includes('未启动')){
+          item.statusClass = 'duty_fall_c';
+        }
+        else if(item.processStatus.includes('交付完成')){
+          item.statusClass = 'duty_done_c';
+        }
+      },      
       // TODO 获取用户列表
       getList(noReset = false) {
         let filter = [];
-
         if (this.activeTab) {
           filter.push({
             operator: 'in',
@@ -113,7 +128,6 @@
             property: 'status'
           })
         }
-
         if (this.serachVal) {
           filter = [
             ...filter,
@@ -164,31 +178,15 @@
           this.resetScroll();
         })
       }
-    },
-    created() {
     }
   }
 </script>
 
 <style lang='scss' scoped>
   @import './../scss/bizList';
-
   .cpxq-list-container {
     .list_wrapper {
-      /*height: calc(100% - 1.68rem);*/
       height: calc(100% - 1.2rem);
-    }
-    .each_duty {
-      box-sizing: border-box;
-    }
-    .duty-item {
-      display: flex;
-      align-items: center;
-      padding: 0 .1rem;
-      line-height: .24rem;
-    }
-    .order-count-item {
-      color: #7D7D7D;
-    }
+    } 
   }
 </style>

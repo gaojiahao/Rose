@@ -151,28 +151,4 @@
 
 <style lang='scss' scoped>
   @import "../scss/bizList.scss";
-  .duty_content{
-    width: 100%;
-    color: #7d7d7d;
-    padding: .02rem .1rem;
-    box-sizing: border-box;
-    .content_title {
-      color: #111;
-      font-size: .18rem;
-    }
-    .content_step {
-      display: flex;
-      font-size: .12rem;
-      align-items: center;
-      padding: .02rem 0 .04rem;
-      justify-content: space-between;
-    }
-  }
-  .duty_steps {
-    padding: .02rem;
-    font-size: .12rem;
-    // margin-right: -.02rem;
-    // position: absolute;
-    // right: 0;
-  }
 </style>

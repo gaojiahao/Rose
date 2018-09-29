@@ -12,8 +12,14 @@
                  :no-status="orderInfo.biStatus"></work-flow>
       <div class="product">
         <div class="title">
-          <span>需求信息</span>
-          <i class="iconfont icon-bianji" @click="goEdit"></i>
+          <div>
+            <span class="iconfont icon-mingxi1"></span>
+            <span>需求信息</span>
+          </div>
+          <div @click="goEdit">
+            <i class="iconfont icon-bianji1"></i>
+            <span>编辑</span>
+          </div>
         </div>
         <form-cell cellTitle="标题" :cellContent="orderInfo.demandTitle"></form-cell>
         <form-cell cellTitle="描述" :cellContent="orderInfo.demandDescribe"></form-cell>
@@ -119,11 +125,15 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: .04rem 0;
         font-size: .16rem;
         font-weight: bold;
+        .icon-mingxi1 {
+          font-size: .14rem;
+        }
       }
-      .icon-bianji {
-        font-size: .24rem;
+      .icon-bianji1 {
+        font-size: .14rem;
         font-weight: normal;
       }
     }
