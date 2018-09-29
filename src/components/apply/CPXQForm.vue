@@ -31,6 +31,8 @@
                   v-model="formData.timeConfidenceIndex" required></r-picker>
         <r-picker title="被授权团队:" :data="authorizedList" :value="formData.authorizedTeam"
                   v-model="formData.authorizedTeam"></r-picker>
+        <r-picker title="版本:" :data="versionList" :value="formData.demandVersion"
+                  v-model="formData.demandVersion"></r-picker>
       </div>
     </div>
     <div class='btn vux-1px-t'>
@@ -65,6 +67,7 @@
         statusList: [],
         confidenceList: [],
         authorizedList: [],
+        versionList: [],
         formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',
         formData: {
           biId: '',
@@ -76,6 +79,7 @@
           processStatus: '', // 流程状态
           timeConfidenceIndex: '', // 按期信息指数
           authorizedTeam: '', // 被授权团队
+          demandVersion: '', // 版本
           biComment: '', // 备注
         },
         hasDefault: false,
@@ -123,6 +127,7 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
+            this.$HandleLoad.show();
             let operation = submitAndCalc;
             let submitData = {
               listId: this.listId,
@@ -226,6 +231,7 @@
         promises.push(this.getDictByType('bigType', 'typeList'));
         promises.push(this.getDictByType('processStatus', 'statusList'));
         promises.push(this.getDictByType('timeConfidenceIndex', 'confidenceList'));
+        promises.push(this.getDictByType('demandVersion', 'versionList'));
         promises.push(this.getAuthorizedList());
         return Promise.all(promises);
       },
