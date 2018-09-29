@@ -127,6 +127,18 @@ export let getJGDDBom = (data = {}) => {
     }
   })
 };
+
+// TODO 获取加工入库Bom
+export let getJGRKBom = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getBomByPInvCode',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 export default {
   save,
   update,

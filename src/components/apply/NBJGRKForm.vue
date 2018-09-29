@@ -22,7 +22,7 @@
             <div class="mater_list">
               <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">计划号</span>
+                  <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key.replace(/_/g,'')}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -59,14 +59,15 @@
                         <!-- 物料属性和单位 -->
                         <div class='mater_more'>
                           <span>单位: {{item.measureUnit}}</span>
-                          <span>待下单余额: {{item.qtyBal}}</span>
+                          <span>待验收余额: {{item.qtyBal}}</span>
                         </div>
                         <div class="mater_other">
-                          <div class="matter-remain">
-                            <span class="symbol">成品计划验收日期: </span>{{item.shippingTime || '无'}}
+                          <div class="matter-remain" v-if="item.warehouseName">
+                            <i class="iconfont icon--"></i>
+                            <span>{{item.warehouseName}}</span>
                           </div>
                           <div class="matter-remain">
-                            <span class="symbol">本次下单: </span>{{item.tdQty}}
+                            <span class="symbol">本次完工入库: </span>{{item.tdQty}}
                           </div>
                         </div>
                         <!-- 编辑图标 -->
@@ -83,7 +84,10 @@
                                  :style="{'margin-top': bIndex > 0 ? '.05rem' : '0'}"></form-cell>
                       <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
                       <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
-                      <form-cell cellTitle="领料需求" :cellContent="bom.tdQty"></form-cell>
+                      <form-cell cellTitle="扣料仓库" :cellContent="bom.warehouseName"></form-cell>
+                      <form-cell cellTitle="扣料仓库编码" :cellContent="bom.warehouseCode"></form-cell>
+                      <form-cell cellTitle="可用余额" :cellContent="`${bom.qtyStock}`"></form-cell>
+                      <form-cell cellTitle="本次扣料" :cellContent="`${bom.tdQty}`"></form-cell>
                     </template>
                   </div>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
@@ -103,7 +107,7 @@
           </div>
           <!-- 订单popup -->
           <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
-                               :default-value="orderList" list-method="getInProcessingOrder"
+                               :default-value="orderList" list-method="getInProcessingStorage"
                                ref="order"></pop-order-xqtj-list>
         </div>
 
@@ -111,10 +115,10 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+            <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"></x-input>
-            <datetime title="成品计划验收日期" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
-            <cell title="待下单余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+            <!--<pop-warehouse-nbjgrk-list @on-show="showWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>-->
+            <cell title="待验收余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
       </div>
@@ -143,13 +147,14 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {getJGDDBom} from 'service/materService'
+  import {getJGRKBom} from 'service/materService'
   import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
+  // import PopWarehouseNbjgrkList from 'components/Popup/PopWarehouseNBJDRKList'
   import FormCell from 'components/detail/commonPart/FormCell'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
@@ -159,20 +164,23 @@
     mixins: [applyCommon],
     components: {
       Icon, Cell, Group, XInput,
-      PopMatter, PopOrderXqtjList, Datetime, FormCell
+      PopMatter, PopOrderXqtjList, Datetime,
+      FormCell,
+      // PopWarehouseNbjgrkList
     },
     data() {
       return {
-        listId: '65ceb5a6-a120-11e8-862a-005056a136d0',
+        listId: '5e8d89f1-49a5-4089-9c1a-44dc2ce0ae4b',
         orderList: {},                                  // 订单列表
         showOrderPop: false,                         // 是否显示物料的popup
         formData: {
           biComment: '' //备注
         },
         submitSuccess: false, // 是否提交成功
+        warehouse: null, // 选中仓库属性
         numMap: {}, // 用于记录订单物料的数量和价格
         transCode: '',
-        formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
+        formViewUniqueId: '82784823-ded5-4a58-a746-d32514f7d26f', // 修改时的UniqueId
         biReferenceId: '',
         actions: [],
         taskId: '',
@@ -183,6 +191,7 @@
         showMatterPop: false,
         modifyIndex: null,
         modifyKey: null,
+        tmpWarehouse: {},
       }
     },
     watch: {
@@ -214,13 +223,13 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = item.qtyBal, shippingTime = ''} = this.numMap[key] || {};
+          let {tdQty = 1, shippingTime = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.shippingTime = shippingTime;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
-          getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
+          getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
               bom.tdQty = accMul(item.tdQty, bom.qty)
             });
@@ -330,7 +339,7 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'IPPO',
+                businessKey: 'IPPI',
                 createdBy: ''
               }
             };
@@ -343,11 +352,14 @@
                     transMatchedCode: item.transCode,
                     tdQty: accMul(item.tdQty, bom.qty), // 领料需求
                     orderCode: item.orderCode,
+                    thenQtyStock: bom.qtyStock,
                     bomSpecificLoss: bom.specificLoss,
                     tdProcessing: bom.processing,
+                    containerCodeOut: bom.warehouseCode,
                     inventoryName: bom.inventoryName,
                     transObjCode: bom.inventoryCode,
                     measureUnit: bom.measureUnit,
+                    warehouseName_containerCodeOut: bom.warehouseName,
                     bomType: bom.bomType,
                     bomQty: bom.qty,
                   })
@@ -361,8 +373,9 @@
                   tdProcessing: item.processing,
                   measureUnit_transObjCode: item.measureUnit,
                   thenQtyBal: item.qtyBal, // 余额
-                  shippingTime: item.shippingTime,
                   tdQty: item.tdQty, // 下单数量
+                  warehouseName_containerCode: item.warehouseName,
+                  containerCode: item.warehouseCode,
                   comment: item.comment || '', // 说明
                   boms
                 };
@@ -373,7 +386,7 @@
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
               handlerEntity: this.entity.dealerName,
-              order: {
+              inPut: {
                 dataSet
               }
             };
@@ -458,6 +471,18 @@
           this.$loading.hide();
         })
       },
+      // TODO 展示仓库弹窗
+      showWarehouse() {
+        this.showMatterPop = false;
+      },
+      // TODO 选中仓库
+      selWarehouse(item) {
+        this.tmpWarehouse = {
+          warehouseName: item.warehouseName,
+          warehouseCode: item.warehouseCode,
+        } ;
+        this.showMatterPop = true;
+      },
     },
     created() {
     }
@@ -471,7 +496,7 @@
     .basicPart {
       height: 90%;
     }
-    // 计划号
+    // 加工订单号
     .order_code {
       display: flex;
       color: #fff;
@@ -503,7 +528,7 @@
       color: #5077aa;
       font-size: .16rem;
       font-weight: bold;
-      .symbol {
+      .symbol, .icon-- {
         color: #757575;
       }
     }
