@@ -20,23 +20,23 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
-                  v-for="(oItem, key,index) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key,index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
-                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                <div :class="{'mater_delete' : matterModifyClass , 'vux-1px-b' : !item.boms.length}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
                     <template slot-scope="{item}" slot="info">
                       <div class='matter-more'>
                         <span>单位: {{item.measureUnit}}</span>
                         <span>待验收余额: {{item.qtyBal}}</span>
+                        <span>仓库: {{item.warehouseName}}</span>
                       </div>
                       <div class="mater_other">
-                        <div class="matter-remain" v-if="item.warehouseName">
+                        <!-- <div class="matter-remain" v-if="item.warehouseName">
                           <span class="symbol">仓库: </span>{{item.warehouseName}}
-                        </div>
+                        </div> -->
                         <div class="matter-remain">
                           <span class="symbol">本次完工入库: </span>{{item.tdQty}}
                         </div>
@@ -66,7 +66,7 @@
                         <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
                         <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
                       </div>
-                    </div>
+                  </div>
                   </div>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -77,7 +77,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part vux-1px-t" v-if="Object.keys(orderList).length && !matterModifyClass">
+          <div class="handle_part" v-if="Object.keys(orderList).length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -88,7 +88,6 @@
                                :default-value="orderList" list-method="getInProcessingStorage"
                                ref="order"></pop-order-xqtj-list>
         </div>
-
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
@@ -521,11 +520,10 @@
         background: #c93d1b;
       }
     }
-
     .matter-remain {
       color: #111;
       font-size: .14rem;
-      font-weight: bold;
+      // font-weight: bold;
       .symbol {
         color: #757575;
       }
