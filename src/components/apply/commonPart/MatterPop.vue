@@ -105,7 +105,8 @@ export default {
       type : Boolean,
       default : false
     },
-    isCheckstock :{
+    //校验数量是否大于库存
+    isCheckStock :{
       type : Boolean,
       default : true
     }
@@ -165,7 +166,7 @@ export default {
         item.price = Math.abs(toFixed(price));
       }
       // 数量
-      if (tdQty && isCheckstock) {
+      if (tdQty && this.isCheckStock) {
         item.tdQty = Math.abs(toFixed(tdQty));
         // qtyStockBal为销售出库的库存，数量不允许大于余额
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {

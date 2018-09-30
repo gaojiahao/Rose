@@ -26,42 +26,16 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }" 
-                  v-for="(item, index) in matterList" :key="index">
-                <div class="each_mater_wrapper" @click="delClick(index,item)">
-                  <div class="mater_img">
-                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                  </div>
-                  <div class="mater_main">
-                    <!-- 物料名称 -->
-                    <div class="mater_name">
-                      {{item.inventoryName}}
-                    </div>
-                    <!-- 物料基本信息 -->
-                    <div class="mater_info">
-                      <!-- 物料编码、规格 -->
-                      <div class="withColor">
-                        <!-- 物料编码 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_code">
-                            <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode}}</span>
-                          </div>
-                        </div>
-                        <!-- 物料规格 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_spec">
-                            <span class="title">规格</span>
-                            <span class="num">{{item.specification || '无'}}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
+                   v-for="(item, index) in matterList" :key="index">
+                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
+                             @click.native="delClick(index, item)">
+                  <template slot-scope="{item}" slot="info">
                     <!--单位，属性，颜色-->
                     <div class="mater_more">
-                        <span class="processing">属性: {{item.processing}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class="processing">属性: {{item.processing}}</span>
+                      <span class='unit'>单位: {{item.measureUnit}}</span>
+                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class="mater_other">
@@ -69,18 +43,13 @@
                         <span class="symbol">库存数量: </span>{{item.qtyBal}}
                         <span class="symbol">调拨数量: </span>{{item.tdQty}}
                       </span>
-                      <!--<r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>-->
                     </div>
-                    <!-- 编辑图标 -->
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
-                </div>               
+                  </template>
+                </matter-item>
+                <div class='delete_icon '@click="delClick(index, item)" v-show='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                </div>
               </div>
             </div>
           </template>
@@ -137,6 +106,7 @@ import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import MatterItem from 'components/apply/commonPart/MatterItem'
 
 export default {
   mixins: [ApplyCommon],
@@ -144,6 +114,7 @@ export default {
     Icon, Cell, Group, XInput,
     RNumber, Swipeout, SwipeoutItem, SwipeoutButton,
     PopMatterList, PopWarehouseList, PopMatter,
+    MatterItem,
   },
   data() {
     return {

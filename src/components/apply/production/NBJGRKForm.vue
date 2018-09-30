@@ -25,10 +25,11 @@
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
-                <div :class="{'mater_delete' : matterModifyClass , 'vux-1px-b' : !item.boms.length}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
+                               @click.native="delClick(index,item, key)">
                     <template slot-scope="{item}" slot="info">
-                      <div class='matter-more'>
+                      <div class='mater_more'>
                         <span>单位: {{item.measureUnit}}</span>
                         <span>待验收余额: {{item.qtyBal}}</span>
                         <span>仓库: {{item.warehouseName}}</span>

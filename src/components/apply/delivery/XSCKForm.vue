@@ -42,17 +42,17 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
-                      <div class='matter-more'>
+                      <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
                         <span class='unit'>计量单位: {{item.measureUnit}}</span>
                         <span>税率：{{item.taxRate || taxRate}}</span>
                       </div>
                       <!-- 库存 -->
-                      <div class='matter-more'>
+                      <div class='mater_more'>
                         <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
