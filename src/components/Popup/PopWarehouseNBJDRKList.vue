@@ -151,6 +151,7 @@
       // TODO 弹窗隐藏时调用
       onHide() {
         this.showPop = false;
+        this.$emit('on-hide');
       },
       clearList() {
         this.srhInpTx = '';
@@ -273,6 +274,7 @@
     width: 100%;
     box-sizing: border-box;
     background: #fff;
+    font-size: .14rem;
     .pop-warehouse-nbjgrk-wrapper {
       display: flex;
       justify-content: space-between;
@@ -324,6 +326,7 @@
   // 弹出层
   .trade_pop_part {
     background: #fff;
+    z-index: 502;
     .trade_pop {
       padding: 0 .08rem;
       height: 100%;

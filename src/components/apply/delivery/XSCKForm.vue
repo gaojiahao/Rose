@@ -42,60 +42,27 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <div class="each_mater_wrapper">
-                    <div class="order-matter">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                    <template slot-scope="{item}" slot="info">
+                      <!-- 物料属性和单位 -->
+                      <div class='matter-more'>
+                        <span class='unit'>属性: {{item.processing}}</span>
+                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                        <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                        <span>税率：{{item.taxRate || taxRate}}</span>
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 物料属性和单位 -->
-                        <div class='mater_more'>
-                          <span class='unit'>属性: {{item.processing}}</span>
-                          <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                          <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                          <span>税率：{{item.taxRate || taxRate}}</span>
-                        </div>
-                        <!-- 库存 -->
-                        <div class='mater_more'>
-                          <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
-                        </div>
-                        <!-- 物料数量和价格 -->
-                        <div class="mater_other">
-                          <div class="mater_price">
-                            <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
-                          </div>
-                        </div>
-                        <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
-                          <span class='iconfont icon-bianji1'></span>
+                      <!-- 库存 -->
+                      <div class='matter-more'>
+                        <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
+                      </div>
+                      <!-- 物料数量和价格 -->
+                      <div class="mater_other">
+                        <div class="mater_price">
+                          <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </template>
+                  </matter-item>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -165,6 +132,7 @@
   import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
   import PopEntityList from 'components/Popup/PopEntityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
+  import MatterItem from 'components/apply/commonPart/MatterItem'
   // 公共方法
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
@@ -179,6 +147,7 @@
       PopOrderList, SwipeoutItem, PopDealerList,
       SwipeoutButton, PopSingleSelect, PopWarehouseList,
       PopSodlProjectList, PopEntityList, PopMatter,
+      MatterItem,
     },
     data() {
       return {
