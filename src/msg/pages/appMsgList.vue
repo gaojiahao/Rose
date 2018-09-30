@@ -65,6 +65,7 @@ import RScroll from 'components/RScroll'
 import { format } from 'url'
 // 映射表 引入
 import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+import businessKey from './maps/businessApp.js'
 export default {
   data(){
     return{
@@ -93,6 +94,7 @@ export default {
       item.visited = true;
       this.$set(this.listData, index, {...item});
       let start = Date.now();
+      let file = businessKey[item.listId];
       const TRANSITION_TIME = 200; // 动画时间
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
@@ -112,7 +114,8 @@ export default {
             path,
             query: {
               name: title,
-              transCode : item.businessKey
+              transCode : item.businessKey,
+              file
             }
           })
         };
