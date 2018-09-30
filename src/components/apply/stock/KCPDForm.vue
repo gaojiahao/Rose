@@ -25,35 +25,9 @@
             <div class="mater_list">
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                    v-for="(item, index) in matterList" :key="index">
-                <div class="each_mater_wrapper" @click="delClick(index,item)">
-                  <div class="mater_img">
-                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                  </div>
-                  <div class="mater_main">
-                    <!-- 物料名称 -->
-                    <div class="mater_name">
-                      {{item.inventoryName}}
-                    </div>
-                    <!-- 物料基本信息 -->
-                    <div class="mater_info">
-                      <!-- 物料编码、规格 -->
-                      <div class="withColor">
-                        <!-- 物料编码 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_code">
-                            <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode}}</span>
-                          </div>
-                        </div>
-                        <!-- 物料规格 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_spec">
-                            <span class="title">规格</span>
-                            <span class="num">{{item.specification || '无'}}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
+                             @click.native="delClick(index, item)">
+                  <template slot-scope="{item}" slot="info">
                     <!--单位，属性，颜色-->
                     <div class="mater_more">
                       <span class="processing">属性: {{item.processing}}</span>
@@ -63,25 +37,16 @@
                     <div class="mater_more">
                       <span class="symbol">账存数量: {{item.qtyBal}}</span>
                     </div>
-
-                    <!-- <div class="mater_more">
-                      <span class="symbol">盘点数量: {{item.tdQty}}</span>
-                      <span class="symbol">差异数量: {{item.differenceNum}}</span>
-                    </div> -->
                     <div class='mater_num'>
                       盘点数量: <span class="num">{{item.tdQty}}</span>
                       差异数量: <span class="diff_num">{{item.differenceNum}}</span>
                     </div>
-                    <!-- 编辑图标 -->
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
-                </div>   
+                  </template>
+                </matter-item>
+                <div class='delete_icon' @click="delClick(index, item)" v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                </div>
               </div>
             </div>
           </template>
@@ -139,6 +104,7 @@ import ApplyCommon from 'pageMixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import MatterItem from 'components/apply/commonPart/MatterItem'
 
 // 方法引入
 import {accSub} from '@/home/pages/maps/decimalsAdd'
@@ -146,7 +112,8 @@ export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput,
-    PopMatterList, PopWarehouseList, PopMatter
+    PopMatterList, PopWarehouseList, PopMatter,
+    MatterItem,
   },
   data() {
     return {

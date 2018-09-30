@@ -27,10 +27,11 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
+                               @click.native="delClick(index,item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
-                      <div class='matter-more'>
+                      <div class='mater_more'>
                         <span>大类: {{item.inventoryType}}</span>
                         <span>单位: {{item.measureUnit}}</span>
                         <span>余额: {{item.qtyBal}}</span>
@@ -42,7 +43,7 @@
                       </div>
                     </template>
                   </matter-item>
-                  <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
+                  <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
