@@ -25,21 +25,18 @@
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
-                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                <div :class="{'mater_delete' : matterModifyClass, 'vux-1px-b': !item.boms.length}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index,item, key)">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
-                        <span>单位: {{item.measureUnit}}</span>
-                        <span>待验收余额: {{item.qtyBal}}</span>
-                        <span>仓库: {{item.warehouseName}}</span>
+                        <span>仓库: {{item.warehouseName || '暂未指定'}}</span>
                       </div>
                       <div class="mater_other">
-                        <!-- <div class="matter-remain" v-if="item.warehouseName">
-                          <span class="symbol">仓库: </span>{{item.warehouseName}}
-                        </div> -->
                         <div class="matter-remain">
-                          <span class="symbol">本次完工入库: </span>{{item.tdQty}}
+                          <span>本次完工入库: {{item.tdQty}}{{item.measureUnit}}</span>
+                          <span class="symbol">[余额: {{item.qtyBal}}]</span>
+                          
                         </div>
                       </div>
                     </template>
@@ -499,74 +496,9 @@
     .matter-remain {
       color: #111;
       font-size: .14rem;
-      // font-weight: bold;
+      font-weight: bold;
       .symbol {
         color: #757575;
-      }
-    }
-    /* 原料 */
-    .bom-container {
-      width: 100%;
-      .title {
-        padding-bottom: .02rem;
-      }
-      .each-bom-part {
-        width: 100%;
-        display: flex;
-        padding: .06rem 0;
-        align-items: center;
-        box-sizing: border-box;
-        .main-info-part {
-          flex: 2;
-          .main-top {
-            font-size: 0;
-            display: flex;
-            align-items: center;
-            padding-bottom: .02rem;
-            .content-title {
-              color: #005792;
-              font-size: .1rem;
-              font-weight: bold;
-            }
-            .side-bar {
-              height: .1rem;
-              margin: 0 .04rem;
-              display: inline-block;
-            }
-            .content-info {
-              @extend .content-title;
-            }
-          }
-          .main-content {
-            .content-unit {
-              color: #757575;
-              font-size: .1rem;
-              word-break: break-all;
-              .icon-bianma {
-                font-size: .1rem;
-              }
-            }
-            .content-name {
-              font-size: .12rem;
-              font-weight: bold;
-              word-break: break-all;
-            }
-          }
-        }
-        .number-part {
-          flex: 1;
-          display: flex;
-          font-size: .1rem;
-          text-align: right;
-          flex-direction: column;
-          .main-number {
-            font-size: .12rem;
-            font-weight: bold;
-          }
-          .number-unit {
-            color: #757575;
-          }
-        }
       }
     }
   }
