@@ -27,56 +27,22 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <div class="each_mater_wrapper">
-                    <div class="order-matter">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                    <template slot-scope="{item}" slot="info">
+                      <div class='matter-more'>
+                        <span>单位: {{item.measureUnit}}</span>
+                        <span>待下单余额: {{item.qtyBal}}</span>
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName}}
+                      <div class="mater_other">
+                        <div class="matter-remain">
+                          <span class="symbol">成品计划验收日期: </span>{{item.shippingTime || '无'}}
                         </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 物料属性和单位 -->
-                        <div class='mater_more'>
-                          <span>单位: {{item.measureUnit}}</span>
-                          <span>待下单余额: {{item.qtyBal}}</span>
-                        </div>
-                        <div class="mater_other">
-                          <div class="matter-remain">
-                            <span class="symbol">成品计划验收日期: </span>{{item.shippingTime || '无'}}
-                          </div>
-                          <div class="matter-remain">
-                            <span class="symbol">本次下单: </span>{{item.tdQty}}
-                          </div>
-                        </div>
-                        <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
-                          <span class='iconfont icon-bianji1'></span>
+                        <div class="matter-remain">
+                          <span class="symbol">本次下单: </span>{{item.tdQty}}
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </template>
+                  </matter-item>
                   <div class="bom-container" v-if="item.boms && item.boms.length">
                     <div class="title">原料</div>
                     <template v-for="(bom, bIndex) in item.boms">
@@ -152,6 +118,7 @@
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
   import FormCell from 'components/detail/commonPart/FormCell'
+  import MatterItem from 'components/apply/commonPart/MatterItem'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
 
@@ -160,7 +127,8 @@
     mixins: [applyCommon],
     components: {
       Icon, Cell, Group, XInput,
-      PopMatter, PopOrderXqtjList, Datetime, FormCell
+      PopMatter, PopOrderXqtjList, Datetime,
+      FormCell, MatterItem,
     },
     data() {
       return {

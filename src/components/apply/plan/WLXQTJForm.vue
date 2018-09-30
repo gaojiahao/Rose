@@ -27,54 +27,21 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <div class="each_mater_wrapper">
-                    <div class="order-matter">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                    <template slot-scope="{item}" slot="info">
+                      <!-- 物料属性和单位 -->
+                      <div class='matter-more'>
+                        <span>大类: {{item.inventoryType}}</span>
+                        <span>单位: {{item.measureUnit}}</span>
+                        <span>余额: {{item.qtyBal}}</span>
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 物料属性和单位 -->
-                        <div class='mater_more'>
-                          <span>大类: {{item.inventoryType}}</span>
-                          <span>单位: {{item.measureUnit}}</span>
-                          <span>余额: {{item.qtyBal}}</span>
-                        </div>
-                        <div class="mater_other">
+                      <div class="mater_other">
                           <span class="matter-remain">
                             <span class="symbol">减少数量: </span>{{item.tdQty}}
                           </span>
-                        </div>
-                        <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
-                          <span class='iconfont icon-bianji1'></span>
-                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </template>
+                  </matter-item>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -136,6 +103,7 @@
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
+  import MatterItem from 'components/apply/commonPart/MatterItem'
 
   export default {
     name: 'ApplyWLXQTJForm',
@@ -143,6 +111,7 @@
     components: {
       Icon, Cell, Group,
       XInput, PopMatter, PopOrderXqtjList,
+      MatterItem,
     },
     data() {
       return {

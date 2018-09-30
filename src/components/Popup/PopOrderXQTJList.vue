@@ -8,10 +8,14 @@
           <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
         </div>
         <!-- 物料列表 -->
-        <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
+        <r-scroll class="order-list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
+          <div class="order-item" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item,index)">
+            <div class="order-top">
+              <span class="order-top-item" v-if="item.orderCode">订单号: {{item.orderCode}}</span>
+              <span class="order-top-item" v-if="item.warehouseName">仓库: {{item.warehouseName}}</span>
+            </div>
             <div class="order-code">{{item.transCode}}</div>
             <div class="order-matter">
               <div class="mater_img">
@@ -44,15 +48,6 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
-                    <div v-if="item.orderCode">
-                      <i class="iconfont icon-dingdan1"></i>
-                      <span>{{item.orderCode}}</span>
-                    </div>
-                    <!-- 仓库 -->
-                    <div v-if="item.warehouseName">
-                      <i class="iconfont icon--"></i>
-                      <span>{{item.warehouseName}}</span>
-                    </div>
                     <!-- 物料分类 -->
                     <div class="mater_classify">
                       <span class="type">属性: {{item.processing}}</span>
@@ -373,29 +368,32 @@
       .vux-1px:before {
         border-radius: 40px;
       }
-      // 物料列表
-      .mater_list {
+      // 订单列表
+      .order-list {
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
         height: calc(100% - .38rem);
+        /* 仓库/订单号 */
+        .order-top {
+          display: flex;
+          justify-content: space-between;
+          color: #757575;
+          font-size: .14rem;
+        }
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;
         }
         // 每个物料
-        .each_mater {
+        .order-item {
           position: relative;
           display: flex;
           flex-direction: column;
-          padding: 0.08rem;
           margin-bottom: .2rem;
+          padding: 0.08rem;
+          box-shadow: 0 0 8px #e8e8e8;
           box-sizing: border-box;
-          // 阴影
-          &.box_sd {
-            box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
-          }
           .order-code {
             font-size: .14rem;
           }
