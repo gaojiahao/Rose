@@ -44,31 +44,7 @@
                       </div>
                     </template>
                   </matter-item>
-                  <div class="bom-container" v-if="item.boms && item.boms.length">
-                    <div class="title vux-1px-b">原料</div>
-                    <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in item.boms">
-                      <div class="main-info-part">
-                        <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">
-                          <span class="content-title" v-if="bom.warehouseName">{{bom.warehouseName}}</span>
-                          <span class="side-bar vux-1px-r" v-if="bom.warehouseName"></span>
-                          <span class="content-info" v-if="bom.warehouseCode">{{bom.warehouseCode}}</span>
-                        </div>
-                        <div class="main-content">
-                          <div class="content-unit">
-                            <span class="iconfont icon-bianma"></span>
-                            <span>原料编码：{{item.inventoryCode}}</span>
-                          </div>
-                          <div class="content-name">
-                            {{bom.inventoryName}}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="number-part">
-                        <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
-                        <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
-                      </div>
-                  </div>
-                  </div>
+                  <bom-list :boms="item.boms"></bom-list>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -136,6 +112,7 @@
   import PopWarehouseNbjgrkList from 'components/Popup/PopWarehouseNBJDRKList'
   import FormCell from 'components/detail/commonPart/FormCell'
   import MatterItem from 'components/apply/commonPart/MatterItem'
+  import BomList from 'components/detail/commonPart/BomList'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
 
@@ -146,6 +123,7 @@
       Icon, Cell, Group, XInput,
       PopMatter, PopOrderXqtjList, Datetime,
       FormCell, PopWarehouseNbjgrkList, MatterItem,
+      BomList,
     },
     data() {
       return {
@@ -210,9 +188,10 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = 1, shippingTime = ''} = this.numMap[key] || {};
+          let {tdQty = 1, warehouseName = item.warehouseName, warehouseCode = item.warehouseCode} = this.numMap[key] || {};
           item.tdQty = tdQty;
-          item.shippingTime = shippingTime;
+          item.warehouseName = warehouseName;
+          item.warehouseCode = warehouseCode;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -289,17 +268,13 @@
             this.matterModifyClass = false;
           }
         })
-
       },
       // TODO 新增更多订单
       addOrder() {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
-              tdQty: item.tdQty,
-              shippingTime: item.shippingTime
-            };
+            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
           }
         }
         this.showOrderPop = !this.showOrderPop;

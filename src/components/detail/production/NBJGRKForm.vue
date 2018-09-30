@@ -24,7 +24,7 @@
             </div>
             <div class="order_matter">
               <template v-for="(item, index) in oItem">
-                <matter-item class="vux-1px-b" :item="item">
+                <matter-item :class="{'vux-1px-b': item.bom}" :item="item">
                   <!-- 调拨数量 -->
                   <div class="mater_other" slot="other" slot-scope="{item}">
                     <div class="mater_num">
@@ -41,19 +41,7 @@
                     </div>
                   </div>
                 </matter-item>
-                <div class="bom-container" v-if="item.boms && item.boms.length">
-                  <div class="title">原料</div>
-                  <template v-for="(bom, bIndex) in item.boms">
-                    <form-cell cellTitle="原料编码" :cellContent="bom.transObjCode"
-                               :style="{'margin-top': bIndex > 0 ? '.05rem' : '0'}"></form-cell>
-                    <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
-                    <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
-                    <form-cell cellTitle="扣料仓库" :cellContent="bom.warehouseName_containerCodeOut"></form-cell>
-                    <form-cell cellTitle="扣料仓库编码" :cellContent="bom.containerCodeOut"></form-cell>
-                    <form-cell cellTitle="可用余额" :cellContent="`${bom.thenQtyStock}`"></form-cell>
-                    <form-cell cellTitle="本次扣料" :cellContent="`${bom.tdQty}`"></form-cell>
-                  </template>
-                </div>
+                <bom-list :boms="item.boms"></bom-list>
               </template>
             </div>
           </div>
@@ -72,10 +60,12 @@
   import detailCommon from 'components/mixins/detailCommon'
   import common from 'mixins/common'
   //公共方法引入
+  import {accMul} from '@/home/pages/maps/decimalsAdd'
   // 组件 引入
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
   import MatterItem from 'components/detail/commonPart/MatterItem'
+  import BomList from 'components/detail/commonPart/BomList'
 
   export default {
     data() {
@@ -89,7 +79,7 @@
     },
     mixins: [detailCommon, common],
     components: {
-      workFlow, RAction, MatterItem,
+      workFlow, RAction, MatterItem, BomList,
     },
     methods: {
       //选择默认图片
@@ -124,6 +114,15 @@
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
+            if (item.boms) {
+              for (let bom of item.boms) {
+                bom.warehouseName = bom.warehouseName_containerCodeOut;
+                bom.warehouseCode = bom.containerCodeOut;
+                bom.qtyStock = bom.thenQtyStock;
+                // 接口返回的tdQty有误，自己手动计算
+                bom.tdQty = accMul(bom.bomQty, item.tdQty);
+              }
+            }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
@@ -163,13 +162,6 @@
     }
     .order_matter {
       margin-top: .04rem;
-      .bom-container {
-        background-color: #f8f8f8;
-        .title {
-          padding: .06rem 0;
-          background-color: #fff;
-        }
-      }
       .each_cell {
         background-color: #fff;
       }
