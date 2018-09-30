@@ -26,54 +26,22 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <div class="each_mater_wrapper">
-                    <div class="order-matter">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)">
+                    <template slot-scope="{item}" slot="info">
+                      <div class='matter-more'>
+                        <span>单位: {{item.measureUnit}}</span>
+                        <span>待验收余额: {{item.qtyBal}}</span>
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 物料属性和单位 -->
-                        <div class='mater_more'>
-                          <span>单位: {{item.measureUnit}}</span>
-                          <span>待验收余额: {{item.qtyBal}}</span>
-                        </div>
-                        <div class="mater_more"  v-if="item.warehouseName">
-                          仓库: {{item.warehouseName}}
+                      <div class="mater_other">
+                        <div class="matter-remain" v-if="item.warehouseName">
+                          <span class="symbol">仓库: </span>{{item.warehouseName}}
                         </div>
                         <div class="matter-remain">
-                          本次完工入库: {{item.tdQty}}
-                        </div>                        
-                        <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
-                          <span class='iconfont icon-bianji1'></span>
+                          <span class="symbol">本次完工入库: </span>{{item.tdQty}}
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </template>
+                  </matter-item>
                   <div class="bom-container" v-if="item.boms && item.boms.length">
                     <div class="title vux-1px-b">原料</div>
                     <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in item.boms">
@@ -99,7 +67,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
+                  <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
@@ -127,7 +95,7 @@
             <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"></x-input>
             <pop-warehouse-nbjgrk-list :default-value="tmpWarehouse"
-                                       @on-show="showWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>
+                                       @on-hide="hideWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>
             <cell title="待验收余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
@@ -166,6 +134,7 @@
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
   import PopWarehouseNbjgrkList from 'components/Popup/PopWarehouseNBJDRKList'
   import FormCell from 'components/detail/commonPart/FormCell'
+  import MatterItem from 'components/apply/commonPart/MatterItem'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
 
@@ -175,7 +144,7 @@
     components: {
       Icon, Cell, Group, XInput,
       PopMatter, PopOrderXqtjList, Datetime,
-      FormCell, PopWarehouseNbjgrkList
+      FormCell, PopWarehouseNbjgrkList, MatterItem,
     },
     data() {
       return {
@@ -511,13 +480,16 @@
       showWarehouse() {
         this.showMatterPop = false;
       },
+      // TODO 仓库弹窗隐藏
+      hideWarehouse() {
+        this.showMatterPop = true;
+      },
       // TODO 选中仓库
       selWarehouse(item) {
         this.tmpWarehouse = {
           warehouseName: item.warehouseName,
           warehouseCode: item.warehouseCode,
         };
-        this.showMatterPop = true;
       },
     },
     created() {
@@ -549,22 +521,11 @@
       }
     }
 
-    .mater_list .each_mater_wrapper {
-      flex-direction: column;
-    }
-
-    .mater_list .each_mater_wrapper .mater_main {
-      padding-right: .38rem;
-    }
-    .mater_list .each_mater_wrapper .mater_main .mater_other {
-      flex-direction: column;
-      align-items: flex-start;
-    }
     .matter-remain {
       color: #111;
       font-size: .14rem;
       font-weight: bold;
-      .symbol, .icon-- {
+      .symbol {
         color: #757575;
       }
     }
