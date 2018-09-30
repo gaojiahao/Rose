@@ -210,7 +210,7 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
-      let { price, tdQty, qtyBal, qtyStockBal } = item;
+      let { price, tdQty, qtyBal, qtyStockBal , qtyStock} = item;
       // 金额
       if (price) {
         item.price = Math.abs(toFixed(price));
@@ -218,11 +218,18 @@ export default {
       // 数量
       if (tdQty) {
         item.tdQty = Math.abs(toFixed(tdQty));
+        let warn = '';
         // qtyStockBal为销售出库的库存，数量不允许大于余额
-        if (!qtyStockBal && qtyBal && tdQty > qtyBal) {
+        if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;
         } else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
           item.tdQty = qtyStockBal;
+        }
+        //qtyStock为物料领料，数量不允许大于库存
+        else if(qtyStock && tdQty > qtyStock){
+          console.log(qtyStock);
+          warn = '待领料数量不允许大于库存'
+          item.tdQty = qtyStock;
         }
       }
     },

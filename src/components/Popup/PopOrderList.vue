@@ -56,11 +56,14 @@
                       <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
                       <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
-                    <div  class="mater_material">
-                      <span v-show="item.qtyStockBal !== '' ">库存: {{item.qtyStockBal}}</span>
-                      <span v-show="item.qtyBal !== ''">待领料余额：{{item.qtyBal}}</span>
-                      <span v-show="item.qtyStock !== ''">可用库存 ：{{item.qtyStock}}</span>
-                    </div>
+                    <slot name="materInfo" :item="item">
+                      <!--默认展示的子弹-->
+                      <div  class="mater_material">
+                        <span>待交付数量:{{item.qtyBal}}</span>
+                        <span>库存: {{item.qtyStockBal}}</span>
+                      </div>
+                    </slot>
+                    
                   </div>
                 </div>
               </div>
@@ -188,7 +191,7 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if ( !this.isMaterOrder && !sItem.qtyStockBal && !this.isMaterProccing) {
+        if ( !this.isMaterOrder && (sItem.qtyStockBal===0 || sItem.qtyStock === 0 )) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
@@ -529,6 +532,9 @@
                   .unit,
                   .color {
                     margin-right: .06rem;
+                  }
+                  span{
+                     margin-right: .06rem;
                   }
                 }
               }

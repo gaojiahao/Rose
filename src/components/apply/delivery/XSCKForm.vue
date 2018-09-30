@@ -36,7 +36,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
+              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}" v-for="(oItem, key,index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">所属订单</span>
                   <span class="order_num">{{key}}</span>
@@ -81,7 +81,7 @@
                         </div>
                         <!-- 库存 -->
                         <div class='mater_more'>
-                          <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
+                          <span class='qty' v-show="item.qtyStockBal">库存: {{item.qtyStockBal}}</span>
                         </div>
                         <!-- 物料数量和价格 -->
                         <div class="mater_other">
@@ -90,7 +90,7 @@
                           </div>
                         </div>
                         <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
+                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)" v-show="!matterModifyClass">
                           <span class='iconfont icon-bianji1'></span>
                         </div>
                       </div>
@@ -105,8 +105,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="Object.keys(orderList).length" @click="addOrder">新增更多订单</div> -->
-          <div class="handle_part" v-if="Object.keys(orderList).length">
+          <div class="handle_part vux-1px-t" v-if="Object.keys(orderList).length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -119,7 +118,11 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
-                    :btn-is-hide="btnIsHide"></pop-matter>
+                    :btn-is-hide="btnIsHide">
+          <template slot="materStock" slot-scope="{modifyMatter}">
+            <span>可用库存:{{modifyMatter.qtyStockBal}}</span>
+          </template>
+        </pop-matter>
       </div>
     </div>
     <!-- 底部确认栏 -->

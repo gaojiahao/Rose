@@ -27,7 +27,8 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key="index">
+              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}" 
+                    v-for="(item, index) in matterList" :key="index">
                 <div class="each_mater_wrapper" >
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -81,14 +82,6 @@
                     <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div> 
-                    <!-- <div class='mater_other'>
-                      <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
-                      </div>
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                        <span class='iconfont icon-bianji1'></span>
-                      </div>
-                    </div> -->
                   </div>
                 </div>
                 <div class='delete_icon' v-if='matterModifyClass' @click="delClick(index,item)">
@@ -99,7 +92,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="matterList.length">
+          <div class="handle_part vux-1px-t" v-if="matterList.length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>

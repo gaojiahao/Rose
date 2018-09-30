@@ -37,7 +37,12 @@
             <div class="mater_more">
                 <span>大类: {{modifyMatter.inventoryType}}</span>
                 <span>子类: {{modifyMatter.inventorySubclass}}</span>
-                <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
+            </div>
+            <div class="mater_more">
+              <!--物料库存-->
+              <slot name="materStock" :modifyMatter="modifyMatter">
+                  <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
+              </slot>
             </div>
           </div>
         </div>
@@ -99,6 +104,10 @@ export default {
     btnIsHide :{
       type : Boolean,
       default : false
+    },
+    isCheckstock :{
+      type : Boolean,
+      default : true
     }
   },
   components: {
@@ -149,20 +158,25 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
-      let {price, tdQty, taxRate, qtyBal, qtyStockBal} = item;
+      console.log(item)
+      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock} = item;
       // 金额
       if (price) {
         item.price = Math.abs(toFixed(price));
       }
-      console.log(qtyStockBal)
       // 数量
-      if (tdQty) {
+      if (tdQty && isCheckstock) {
         item.tdQty = Math.abs(toFixed(tdQty));
         // qtyStockBal为销售出库的库存，数量不允许大于余额
-        if (!qtyStockBal && qtyBal && tdQty > qtyBal) {
+        if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;
         } else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
           item.tdQty = qtyStockBal;
+        }
+        //qtyStock为物料领料，数量不允许大于库存
+        else if(qtyStock && tdQty > qtyStock){
+          console.log(qtyStock);
+          item.tdQty = qtyStock;
         }
       }
       //税率

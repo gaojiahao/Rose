@@ -272,7 +272,7 @@
       padding-left: 0.3rem;
     }
     .each_mater_wrapper {
-      position: relative;
+      // position: relative;
       display: flex;
       .order-code {
         font-size: .14rem;
@@ -467,9 +467,9 @@
     .delete_icon{
       height: 20px;
       position: absolute;
-      top:40%;
+      top:50%;
       left: 0;
-      transform: translateY(-40%);
+      transform: translateY(-50%);
       .checked{
         fill: #ea5455;
 
@@ -492,7 +492,7 @@
     width: 100%;
     text-align: center;
     position: relative;
-    margin-top: .14rem;
+    padding-top: .14rem;
     .add_more {
       display: inline-block;
     }

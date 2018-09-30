@@ -1,5 +1,5 @@
 <template>
-  <div class="pages bdkcdb-apply-container">
+  <div class="pages nbjgll-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 出库仓库-->
@@ -24,7 +24,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
+              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}" v-for="(oItem, key,index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
@@ -64,6 +64,7 @@
                         <div class='mater_more'>
                           <span>单位: {{item.measureUnit}}</span>
                           <span>待领料: {{item.qtyBal}}</span>
+                          <span>可用库存: {{item.qtyStock}}</span>
                         </div>
                         <div class="mater_other">
                           <div class="matter-remain" v-if="item.warehouseName">
@@ -75,7 +76,7 @@
                           </div>
                         </div>
                         <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
+                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)" v-show="!matterModifyClass">
                           <span class='iconfont icon-bianji1'></span>
                         </div>
                       </div>
@@ -90,7 +91,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="Object.keys(orderList).length">
+          <div class="handle_part vux-1px-t" v-if="Object.keys(orderList).length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -99,14 +100,26 @@
           <!-- 订单popup -->
           <pop-order-list :show="showOrderPop" :params="warehouseParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" list-method="getInProcessingStorage" :is-mater-proccing="true"
-                               ref="order"></pop-order-list>
+                               ref="order">
+            <template slot="materInfo" slot-scope="{item}">
+              <div  class="mater_material">
+                <span>待领料:{{item.qtyBal}}</span>
+                <span>可用库存: {{item.qtyStock}}</span>
+              </div>  
+            </template>
+          </pop-order-list>
         </div>
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide">
+          <template slot="materStock" slot-scope="{modifyMatter}">
+            <span>可用库存:{{modifyMatter.qtyStock}}</span>
+          </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次领料" type="number" v-model='modifyMatter.tdQty' text-align="right"
+            <cell title="可用库存" :value="modifyMatter.qtyStock"></cell>
+            <cell title="待领料" :value="modifyMatter.qtyBal"></cell>
+            <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"></x-input>
           </template>
         </pop-matter>
@@ -272,8 +285,6 @@ export default {
     // TODO 更新修改后的物料信息
     selConfirm(val) {
       let modMatter = JSON.parse(val);
-      console.log(modMatter);
-      console.log(this.modifyKey)
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
     // TODO 选中物料项
@@ -487,17 +498,6 @@ export default {
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply';
-
-  .bdkcdb-apply-container {
-    .matter-remain {
-      color: #5077aa;
-      font-size: .16rem;
-      font-weight: bold;
-      .symbol {
-        color: #757575;
-      }
-    }
-  }
   // 所属订单
   .order_code {
     display: flex;
@@ -516,5 +516,12 @@ export default {
   }
   .materiel_list .mater_list .each_mater_wrapper .mater_main {
     padding-right: .38rem;
+  }
+  //插槽里面物料信息
+  .mater_material {
+    font-size: .1rem;
+    span{
+        margin-right: .06rem;
+    }
   }
 </style>

@@ -20,7 +20,8 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
+              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
+                v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">计划号</span>
                   <span class="order_num">{{key}}</span>
@@ -83,7 +84,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="Object.keys(orderList).length">
+          <div class="handle_part vux-1px-t" v-if="Object.keys(orderList).length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -98,9 +99,9 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
+            <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
             <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"></x-input>
-            <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
       </div>

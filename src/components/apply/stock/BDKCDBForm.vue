@@ -26,8 +26,9 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" :class="{mater_delete : matterModifyClass}" v-for="(item, index) in matterList" :key="index">
-                <div class="each_mater_wrapper">
+              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }" 
+                  v-for="(item, index) in matterList" :key="index">
+                <div class="each_mater_wrapper" @click="delClick(index,item)">
                   <div class="mater_img">
                     <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
                   </div>
@@ -71,21 +72,20 @@
                       <!--<r-number :num="item.tdQty" :max="item.qtyBal" v-model="item.tdQty"></r-number>-->
                     </div>
                     <!-- 编辑图标 -->
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)">
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
                     </div>
                   </div>
-                </div>
-                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>
+                  <div class='delete_icon' v-if='matterModifyClass'>
+                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                  </div>
+                </div>               
               </div>
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <!-- <div class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</div> -->
-          <div class="handle_part" v-if="matterList.length">
+          <div class="handle_part vux-1px-t" v-if="matterList.length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if="this.actions.includes('stop')">或</span>
