@@ -22,7 +22,6 @@
                  @click.stop="selThis(item,index)">
               <div class="pop-list-main ">
                 <div class="pop-list-info">
-                  <!--联系人电话 -->
                   <div class="withColor">
                     <div class="ForInline name" style="display:inline-block">
                       <span>{{item.warehouseName}}</span>
@@ -45,23 +44,6 @@
               <!-- icon -->
               <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
             </div>
-            <!-- 加载中、没有更多的提示 -->
-            <!--<load-more :show-loading="hasNext" :tip="tip" v-show="!showAddWarehouse && (hasNext || !listData.length)"
-                       slot="loadmore"></load-more>-->
-            <!-- 当没有数据的时候 显示提醒文字 -->
-            <!--<div class="when_null_conteiner" slot="loadmore" v-show="showAddWarehouse">
-              <div class="when_null">
-                <div class="title">抱歉，没有找到您搜索的内容</div>
-                <ul class="tips">
-                  <li>
-                    不用担心，您马上可以进行 <span class="addNew" @click="addWarehouse">新增仓库</span>
-                  </li>
-                  <li>
-                    或者检查“输入内容”是否正确
-                  </li>
-                </ul>
-              </div>
-            </div>-->
           </r-scroll>
         </div>
       </popup>

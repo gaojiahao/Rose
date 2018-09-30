@@ -25,7 +25,7 @@
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
-                <div :class="{'mater_delete' : matterModifyClass, 'vux-1px-b': !item.boms.length}" v-for="(item, index) in oItem" :key="index">
+                <div :class="{'mater_delete' : matterModifyClass, 'vux-1px-b': item.boms && !item.boms.length}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index,item, key)">
                     <template slot-scope="{item}" slot="info">
