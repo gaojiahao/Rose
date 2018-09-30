@@ -21,7 +21,7 @@
             </div>
             <div class="mater_list">
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
-                  v-for="(oItem, key,index) in orderList" :key="key">
+                   v-for="(oItem, key,index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">计划号</span>
                   <span class="order_num">{{key}}</span>
@@ -44,16 +44,13 @@
                       </div>
                     </template>
                   </matter-item>
-                  <div class="bom-container" v-if="item.boms && item.boms.length">
-                    <div class="title">原料</div>
-                    <template v-for="(bom, bIndex) in item.boms">
-                      <form-cell cellTitle="原料编码" :cellContent="bom.inventoryCode"
-                                 :style="{'margin-top': bIndex > 0 ? '.05rem' : '0'}"></form-cell>
-                      <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
-                      <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
-                      <form-cell cellTitle="领料需求" :cellContent="bom.tdQty"></form-cell>
+                  <bom-list :boms="item.boms">
+                    <template slot-scope="{bom}" slot="number">
+                      <div class="number-part">
+                        <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                      </div>
                     </template>
-                  </div>
+                  </bom-list>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -120,6 +117,7 @@
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
   import FormCell from 'components/detail/commonPart/FormCell'
   import MatterItem from 'components/apply/commonPart/MatterItem'
+  import BomList from 'components/detail/commonPart/BomList'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
 
@@ -129,7 +127,7 @@
     components: {
       Icon, Cell, Group, XInput,
       PopMatter, PopOrderXqtjList, Datetime,
-      FormCell, MatterItem,
+      FormCell, MatterItem, BomList,
     },
     data() {
       return {
@@ -270,10 +268,7 @@
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
-              tdQty: item.tdQty,
-              shippingTime: item.shippingTime
-            };
+            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
           }
         }
         this.showOrderPop = !this.showOrderPop;
@@ -475,16 +470,6 @@
       font-weight: bold;
       .symbol {
         color: #757575;
-      }
-    }
-    /* 原料 */
-    .bom-container {
-      background-color: #f8f8f8;
-      .title {
-        background-color: #fff;
-      }
-      .each_cell {
-        background-color: #fff;
       }
     }
   }

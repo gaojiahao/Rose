@@ -42,16 +42,13 @@
                     </div>
                   </div>
                 </matter-item>
-                <div class="bom-container" v-if="item.boms && item.boms.length">
-                  <div class="title">原料</div>
-                  <template v-for="(bom, bIndex) in item.boms">
-                    <form-cell cellTitle="原料编码" :cellContent="bom.transObjCode"
-                               :style="{'margin-top': bIndex > 0 ? '.05rem' : '0'}"></form-cell>
-                    <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
-                    <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
-                    <form-cell cellTitle="领料需求" :cellContent="bom.tdQty"></form-cell>
+                <bom-list :boms="item.boms">
+                  <template slot-scope="{bom}" slot="number">
+                    <div class="number-part">
+                      <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                    </div>
                   </template>
-                </div>
+                </bom-list>
               </template>
             </div>
           </div>
@@ -74,6 +71,7 @@
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
   import MatterItem from 'components/detail/commonPart/MatterItem'
+  import BomList from 'components/detail/commonPart/BomList'
 
   export default {
     data() {
@@ -87,7 +85,7 @@
     },
     mixins: [detailCommon, common],
     components: {
-      workFlow, RAction, MatterItem,
+      workFlow, RAction, MatterItem, BomList,
     },
     methods: {
       //选择默认图片
@@ -123,6 +121,11 @@
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
             item.shippingTime = this.changeDate(item.shippingTime);
+            if (item.boms) {
+              for (let bom of item.boms) {
+                bom.inventoryCode = bom.transObjCode;
+              }
+            }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
@@ -162,13 +165,6 @@
     }
     .order_matter {
       margin-top: .04rem;
-      .bom-container {
-        background-color: #f8f8f8;
-        .title {
-          padding: .06rem 0;
-          background-color: #fff;
-        }
-      }
       .each_cell {
         background-color: #fff;
       }
