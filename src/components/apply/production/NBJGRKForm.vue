@@ -20,7 +20,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater vux-1px-b" v-for="(oItem, key) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
@@ -61,15 +61,12 @@
                           <span>单位: {{item.measureUnit}}</span>
                           <span>待验收余额: {{item.qtyBal}}</span>
                         </div>
-                        <div class="mater_other">
-                          <div class="matter-remain" v-if="item.warehouseName">
-                            <i class="iconfont icon--"></i>
-                            <span>{{item.warehouseName}}</span>
-                          </div>
-                          <div class="matter-remain">
-                            <span class="symbol">本次完工入库: </span>{{item.tdQty}}
-                          </div>
+                        <div class="mater_more"  v-if="item.warehouseName">
+                          仓库: {{item.warehouseName}}
                         </div>
+                        <div class="matter-remain">
+                          本次完工入库: {{item.tdQty}}
+                        </div>                        
                         <!-- 编辑图标 -->
                         <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
                           <span class='iconfont icon-bianji1'></span>
@@ -78,17 +75,29 @@
                     </div>
                   </div>
                   <div class="bom-container" v-if="item.boms && item.boms.length">
-                    <div class="title">原料</div>
-                    <template v-for="(bom, bIndex) in item.boms">
-                      <form-cell cellTitle="原料编码" :cellContent="bom.inventoryCode"
-                                 :style="{'margin-top': bIndex > 0 ? '.05rem' : '0'}"></form-cell>
-                      <form-cell cellTitle="原料名称" :cellContent="bom.inventoryName"></form-cell>
-                      <form-cell cellTitle="计量单位" :cellContent="bom.measureUnit"></form-cell>
-                      <form-cell cellTitle="扣料仓库" :cellContent="bom.warehouseName"></form-cell>
-                      <form-cell cellTitle="扣料仓库编码" :cellContent="bom.warehouseCode"></form-cell>
-                      <form-cell cellTitle="可用余额" :cellContent="`${bom.qtyStock}`"></form-cell>
-                      <form-cell cellTitle="本次扣料" :cellContent="`${bom.tdQty}`"></form-cell>
-                    </template>
+                    <div class="title vux-1px-b">原料</div>
+                    <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in item.boms">
+                      <div class="main-info-part">
+                        <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">
+                          <span class="content-title" v-if="bom.warehouseName">{{bom.warehouseName}}</span>
+                          <span class="side-bar vux-1px-r" v-if="bom.warehouseName"></span>
+                          <span class="content-info" v-if="bom.warehouseCode">{{bom.warehouseCode}}</span>
+                        </div>
+                        <div class="main-content">
+                          <div class="content-unit">
+                            <span class="iconfont icon-bianma"></span>
+                            <span>原料编码：{{item.inventoryCode}}</span>
+                          </div>
+                          <div class="content-name">
+                            {{bom.inventoryName}}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="number-part">
+                        <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                        <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
+                      </div>
+                    </div>
                   </div>
                   <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -552,8 +561,8 @@
       align-items: flex-start;
     }
     .matter-remain {
-      color: #5077aa;
-      font-size: .16rem;
+      color: #111;
+      font-size: .14rem;
       font-weight: bold;
       .symbol, .icon-- {
         color: #757575;
@@ -561,12 +570,67 @@
     }
     /* 原料 */
     .bom-container {
-      background-color: #f8f8f8;
+      width: 100%;
       .title {
-        background-color: #fff;
+        padding-bottom: .02rem;
       }
-      .each_cell {
-        background-color: #fff;
+      .each-bom-part {
+        width: 100%;
+        display: flex;
+        padding: .06rem 0;
+        align-items: center;
+        box-sizing: border-box;
+        .main-info-part {
+          flex: 2;
+          .main-top {
+            font-size: 0;
+            display: flex;
+            align-items: center;
+            padding-bottom: .02rem;
+            .content-title {
+              color: #005792;
+              font-size: .1rem;
+              font-weight: bold;
+            }
+            .side-bar {
+              height: .1rem;
+              margin: 0 .04rem;
+              display: inline-block;
+            }
+            .content-info {
+              @extend .content-title;
+            }
+          }
+          .main-content {
+            .content-unit {
+              color: #757575;
+              font-size: .1rem;
+              word-break: break-all;
+              .icon-bianma {
+                font-size: .1rem;
+              }
+            }
+            .content-name {
+              font-size: .12rem;
+              font-weight: bold;
+              word-break: break-all;
+            }
+          }
+        }
+        .number-part {
+          flex: 1;
+          display: flex;
+          font-size: .1rem;
+          text-align: right;
+          flex-direction: column;
+          .main-number {
+            font-size: .12rem;
+            font-weight: bold;
+          }
+          .number-unit {
+            color: #757575;
+          }
+        }
       }
     }
   }
