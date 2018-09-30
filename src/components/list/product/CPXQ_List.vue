@@ -82,7 +82,7 @@
         }
         // 交易号、应用名称等
         let {transCode} = item;
-        let {name} = this.$route.query;
+        let {name,file} = this.$route.query;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
@@ -94,7 +94,8 @@
             path,
             query: {
               name,
-              transCode
+              transCode,
+              file
             }
           })
         }, 200)
