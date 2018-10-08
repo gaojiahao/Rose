@@ -24,22 +24,19 @@
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
-          <div class="project_name"  v-if="item.projectName">
-            <div class="major_content vux-1px-b">
-              <div class="status_part">
-                <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType}}</span>
-              </div>
-              {{item.projectName}}
+          <div class="dealer_part vux-1px-b" v-if='item.dealerName'>
+            <div class="dealer_name">
+              {{item.dealerName}}
+              <!-- <span class="iconfont icon-kehu1"></span>{{item.dealerName}} -->
             </div>
           </div>
           <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[报销人]</span>
+              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
-              <span class="num">共{{item.itmes.length}}个报销:</span>
+              <span class="num">共{{item.itmes.length}}个开票:</span>
               <span class="money">
                 <span style="fontSize:.1rem;">￥</span>{{item.count | numberComma(3)}}
               </span>
@@ -66,7 +63,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2236,
+        listViewID: 2309,
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -75,8 +72,8 @@
             name: '经办人',
             value: 'handlerName',
           }, {
-            name: '项目名称',
-            value: 'projectName',
+            name: '客户名称',
+            value: 'dealerName',
           },
         ],
       }
@@ -94,4 +91,21 @@
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
+  .dealer_part{
+    width: 100%;
+    // color: #757575;
+    padding: 0 .1rem;
+    // font-size: .14rem;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    .dealer_name{
+      padding: .04rem 0;
+      font-weight: bold;
+
+      .iconfont{
+        // font-size: .14rem;
+        margin-right: .02rem;
+      }
+    }
+}
 </style>
