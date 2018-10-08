@@ -26,13 +26,14 @@
           </div>
           <div class="dealer_part vux-1px-b" v-if='item.dealerName'>
             <div class="dealer_name">
-              <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
+              {{item.dealerName}}
+              <!-- <span class="iconfont icon-kehu1"></span>{{item.dealerName}} -->
             </div>
           </div>
           <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[报销人]</span>
+              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
               <span class="num">共{{item.itmes.length}}个开票:</span>
@@ -71,8 +72,8 @@
             name: '经办人',
             value: 'handlerName',
           }, {
-            name: '项目名称',
-            value: 'projectName',
+            name: '客户名称',
+            value: 'dealerName',
           },
         ],
       }
@@ -92,13 +93,15 @@
   @import "./../../scss/bizList.scss";
   .dealer_part{
     width: 100%;
-    color: #757575;
+    // color: #757575;
     padding: 0 .1rem;
-    font-size: .14rem;
+    // font-size: .14rem;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     .dealer_name{
-      padding: .04rem 0 .02rem;
+      padding: .04rem 0;
+      font-weight: bold;
+
       .iconfont{
         // font-size: .14rem;
         margin-right: .02rem;
