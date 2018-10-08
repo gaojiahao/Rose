@@ -36,7 +36,6 @@
                         <div class="matter-remain">
                           <span>本次完工入库: {{item.tdQty}}{{item.measureUnit}}</span>
                           <span class="symbol">[余额: {{item.qtyBal}}]</span>
-                          
                         </div>
                       </div>
                     </template>

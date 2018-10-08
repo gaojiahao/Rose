@@ -20,8 +20,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
-                   v-for="(oItem, key,index) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key,index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">计划号</span>
                   <span class="order_num">{{key}}</span>
@@ -34,12 +33,12 @@
                         <span>单位: {{item.measureUnit}}</span>
                         <span>待下单余额: {{item.qtyBal}}</span>
                       </div>
+                      <div class="mater_more">
+                        <span>成品计划验收日期: </span>{{item.shippingTime || '无'}}</span>
+                      </div>
                       <div class="mater_other">
                         <div class="matter-remain">
-                          <span class="symbol">成品计划验收日期: </span>{{item.shippingTime || '无'}}
-                        </div>
-                        <div class="matter-remain">
-                          <span class="symbol">本次下单: </span>{{item.tdQty}}
+                          本次下单: {{item.tdQty}}
                         </div>
                       </div>
                     </template>
@@ -60,7 +59,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part vux-1px-b" v-if="Object.keys(orderList).length && !matterModifyClass">
+          <div class="handle_part" v-if="Object.keys(orderList).length && !matterModifyClass">
             <span class="add_more stop" v-if="this.actions.includes('stop')"
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -157,7 +156,8 @@
       matter: {
         handler(val) {
           val.boms && val.boms.forEach(item => {
-            item.tdQty = accMul(val.tdQty, item.qty)
+            // 监听领料需求变化
+            item.tdQty = accMul(val.tdQty, item.qty, (1 + item.specificLoss))
           });
         },
         deep: true
@@ -190,7 +190,7 @@
           }
           getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
-              bom.tdQty = accMul(item.tdQty, bom.qty)
+              bom.tdQty = accMul(item.tdQty, bom.qty, (1 + bom.specificLoss));
             });
             this.$set(item, 'boms', tableContent);
           });
@@ -306,7 +306,7 @@
                 for (let bom of item.boms) {
                   boms.push({
                     transMatchedCode: item.transCode,
-                    tdQty: accMul(item.tdQty, bom.qty), // 领料需求
+                    tdQty: bom.qty,                     // 领料需求
                     orderCode: item.orderCode,
                     bomSpecificLoss: bom.specificLoss,
                     tdProcessing: bom.processing,
@@ -464,8 +464,8 @@
       align-items: flex-start;
     }
     .matter-remain {
-      color: #5077aa;
-      font-size: .16rem;
+      color: #111;
+      font-size: .14rem;
       font-weight: bold;
       .symbol {
         color: #757575;

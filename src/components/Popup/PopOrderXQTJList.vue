@@ -11,12 +11,12 @@
         <r-scroll class="order-list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="order-item" v-for="(item, index) in listData" :key='index'
-               @click.stop="selThis(item,index)">
+               @click.stop="selThis(item, index)">
+            <div class="order-code">{{item.transCode}}</div>
             <div class="order-top">
               <span class="order-top-item" v-if="item.orderCode">订单号: {{item.orderCode}}</span>
               <span class="order-top-item" v-if="item.warehouseName">仓库: {{item.warehouseName}}</span>
-            </div>
-            <div class="order-code">{{item.transCode}}</div>
+            </div>            
             <div class="order-matter">
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -24,7 +24,6 @@
               <div class="mater_main ">
                 <!-- 物料名称 -->
                 <div class="mater_name">
-                  <!-- <span class="whiNum">No.{{index + 1}}</span> -->
                   {{item.inventoryName}}
                 </div>
                 <!-- 物料基本信息 -->
@@ -167,7 +166,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode) !== -1;
+        return this.tmpItems.findIndex(item => item.colId === sItem.colId) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
@@ -179,7 +178,7 @@
           return
         }
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
+        let delIndex = arr.findIndex(item => item.colId === sItem.colId);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -376,10 +375,8 @@
         height: calc(100% - .38rem);
         /* 仓库/订单号 */
         .order-top {
-          display: flex;
-          justify-content: space-between;
           color: #757575;
-          font-size: .14rem;
+          font-size: .12rem;
         }
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
@@ -396,6 +393,7 @@
           box-sizing: border-box;
           .order-code {
             font-size: .14rem;
+            font-weight: bold;
           }
           .order-matter {
             display: flex;
