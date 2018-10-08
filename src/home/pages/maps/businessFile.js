@@ -27,5 +27,7 @@ export default {
   '7218d31d-88f4-45bc-82c2-6d4a1c766821': 'finance',
 
   // < 项目类应用 >
-  '26d75e08-2c82-4e1a-ad51-b788b026428a': 'project'
+  '26d75e08-2c82-4e1a-ad51-b788b026428a': 'project',
+  // <发票类应用>
+  '752bfc20-9cbf-4552-b2a4-77b2c46eb2d1' : 'invoice'
 }
