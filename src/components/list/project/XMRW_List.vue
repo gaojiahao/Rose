@@ -80,10 +80,9 @@
           return
         }
         // 交易号、应用名称等
-        let { transCode } = item;
-        let { code } = this.$route.params;
-        let { name } = this.$route.query;
-        let {file} = this.$route.query;
+        let { transCode } = item,
+            { name } = this.$route.query,
+            { fileId, listId } = this.$route.params;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
@@ -92,18 +91,13 @@
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
-            path: `/detail/${code}`,
-            query: {
-              name,
-              transCode,
-              file
-            }
+            path: `/detail/${fileId}/${listId}`,
+            query: { name, transCode }
           })
         }, 200)
       },
       getList(noReset = false) {
         let filter = [];
-
         if (this.serachVal) {
           filter = [
             ...filter,
@@ -114,7 +108,6 @@
             },
           ];
         }
-
         return getList(2326, {
           limit: this.limit,
           page: this.page,
@@ -136,9 +129,7 @@
         }).catch(e => {
           this.resetScroll();
         })
-      },
-    },
-    created() {
+      }
     }
   }
 </script>

@@ -20,10 +20,6 @@
           <!-- 项目 -->
           <div class="project_name">
             <div class="major_content vux-1px-b">
-              <!-- <div class="status_part">
-                <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType_project}}</span>
-              </div> -->
               {{item.projectName}}
             </div>
           </div>
@@ -72,10 +68,9 @@
           return
         }
         // 交易号、应用名称等
-        let { transCode } = item;
-        let { code } = this.$route.params;
-        let { name } = this.$route.query;
-        let {file} = this.$route.query;
+        let { transCode } = item,
+            { name } = this.$route.query,
+            { fileId, listId } = this.$route.params;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
@@ -84,29 +79,22 @@
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
-            path: `/detail/${code}`,
-            query: {
-              name,
-              transCode,
-              file
-            }
+            path: `/detail/${fileId}/${listId}`,
+            query: { name, transCode }
           })
         }, 200)
       },
       getList(noReset = false) {
         let filter = [];
-
         if (this.serachVal) {
           filter = [
             {
               operator: 'like',
               value: this.serachVal,
               property: this.filterProperty,
-              // link: 'or',
             }
           ]
         }
-
         return getProjectPlanList({
           listViewID: this.listViewID,
           limit: this.limit,
@@ -130,15 +118,12 @@
           this.resetScroll();
         })
       },
-    },
-    created() {
     }
   }
 </script>
 
 <style lang='scss' scoped>
   @import './../../scss/bizList';
-
   .xsbj-list-conatiner {
     .list_wrapper {
       height: calc(100% - .4rem);

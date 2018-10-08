@@ -4,7 +4,7 @@
       <p class="vux-1px-b">相关实例</p>
     </div>
     <div class="relevant_list">
-      <div class="each_app vux-1px-b" v-for='(item,index) in RelatedAppList' :key="index" @click="getRelatedData(item)">
+      <div class="each_app vux-1px-b" v-for='(item, index) in RelatedAppList' :key="index" @click="getRelatedData(item)">
         <div class="app_info">
           <div class="title">业务应用</div>
           <div class="app_name">
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <pop-related-list :show='showPop' :listId='listId' :filtersData='filtersData' v-model='showPop' ref='relatedList'></pop-related-list>
+    <pop-related-list :show='showPop' :idInfo='idInfo' :filtersData='filtersData' v-model='showPop' ref='relatedList'></pop-related-list>
   </div>
   
 </template>
@@ -35,6 +35,7 @@ export default {
       showPop : false,
       listId : '',
       transCode : '',
+      idInfo: {},                     // 当中包括 fileId(文件夹(应用分类)id) listId(应用id)
       filtersData : [],
       RelatedAppList :[],
       activeIndex : -1,
@@ -47,7 +48,10 @@ export default {
     //显示相关实例的pop
     getRelatedData(item){
       if(item.itemCount > 0){
-        this.listId = item.listId;
+        this.idInfo = {
+          fileId: item.id,
+          listId: item.listId
+        }
         item.content.forEach( val => {
           this.filtersData.push(val.transCode);
         })
@@ -56,7 +60,7 @@ export default {
     },
     //TODO 获取相关实例
     getAppExampleDetails(){
-       return getAppExampleDetails({
+      return getAppExampleDetails({
         transCode :this.transCode,
         listId :this.listId
       }).then( ({ relevantItems: relatedApply }) => {

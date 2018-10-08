@@ -369,7 +369,6 @@
               delete submitData.wfPara;
               delete submitData.biReferenceId;
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         })

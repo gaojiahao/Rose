@@ -2,7 +2,7 @@ import axios from 'axios';
 import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
-import {corpid, corpsecret, agentid, redirect_uri} from '@/plugins/ajax/conf'
+import {corpid, secret, agentid, redirect_uri} from '@/plugins/ajax/conf'
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 const RFD_TOKEN_KEY = 'roleplay-token';
@@ -97,7 +97,9 @@ let tokenService = {
           data: {
             loginModel: 1,
             password: '123456',
-            userCode: '043'
+            userCode: 'rfd9527'
+            // userCode: '026'
+
           }
         };
 
@@ -131,7 +133,7 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${corpsecret}`).then((res) => {
+      axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',

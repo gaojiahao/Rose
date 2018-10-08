@@ -11,6 +11,9 @@
 
 <script>
 import platfrom from '@/plugins/platform'
+// 引入映射表
+import Apps from '@/home/pages/maps/businessApp'
+import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   data(){
     return {
@@ -47,9 +50,8 @@ export default {
     if(transCode){
       this.transCode = transCode;
     }
-    let { code } = this.$route.params;
-    let { file } = this.$route.query;
-    this.currentComponent = require(`components/apply/${file}/${code}Form.vue`).default;
+    let { fileId, listId } = this.$route.params;
+    this.currentComponent = require(`components/apply/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;

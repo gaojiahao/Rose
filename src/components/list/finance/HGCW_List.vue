@@ -35,9 +35,9 @@
     },
     methods: {
       goDetail(item) {
-        let { code } = this.$route.params;
+        let { fileId, listId } = this.$route.params;
         this.$router.push({
-          path: `/detail/${code}`,
+          path: `/detail/${fileId}/${listId}`,
           query: {
             code: item.code,
             name: item.title

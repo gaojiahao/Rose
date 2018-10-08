@@ -40,7 +40,7 @@ import { getMsgList } from 'service/msgService.js'
 // 映射表引入
 import basicMap from './maps/basic'
 import Apps from './maps/businessApp'
-import AppsFile from './maps/businessFile.js'
+import AppsFile from './maps/businessFile'
 // 组件引入
 import busApp from 'components/home/busAppList'        // 业务应用
 import basicApp from 'components/home/basicApp'        // 基础应用
@@ -67,8 +67,8 @@ export default {
       this.$router.push({ path : `${basicMap[item]}`})
     },
     // 前往列表
-    goList(code, name, file){
-      this.$router.push({ path: `/list/${code}`, query: { name ,file } })
+    goList(listId, name, file){
+      this.$router.push({ path: `/list/${file}/${listId}`, query: { name }})
     },
     // 设置默认图片
     getDefaultIcon(app){
@@ -182,7 +182,8 @@ export default {
                   this.BusApps[val.text].appList.push(item);
                 }  
               }
-              item.file = AppsFile[val.id];
+              // 获取 应用类型ID 对应相应文件夹
+              item.fileID = val.id;
             }
             this.$loading.hide();     
           }

@@ -39,8 +39,6 @@
 import { getCompany } from 'service/Directorys/companyService'
 // mixin引入
 import listCommon from 'pageMixins/bizListCommon'
-// 映射表引入
-import Apps from '@/home/pages/apps/bizApp/maps/Apps'
 export default {
   mixins: [listCommon],
   data(){
@@ -71,9 +69,8 @@ export default {
         return
       }
       // 交易号、应用名称等
-      let { groupId } = item;
-      let { name } = this.$route.query;
-      let {file} = this.$route.query;
+      let { groupId } = item,
+          { name } = this.$route.query;
       // 高亮 点击过的数据
       this.clickVisited = true;
       item.visited = true;
@@ -82,24 +79,19 @@ export default {
       setTimeout(() => {
         this.clickVisited = false;
         this.$router.push({
-          path,
-          query: {
-            name,
-            groupId,
-            file
-          }
+          path, query: { name, groupId }
         })
       }, 200)
     },
     // 编辑
     EditCompany(item, index){
-      let { code } = this.$route.params;
-      this.RouterChange(item, index, `/fillForm/${Apps[code]}`);
+      let { fileId, listId } = this.$route.params;
+      this.RouterChange(item, index, `/fillForm/${fileId}/${listId}`);
     },
     // 前往详情
     goDetail(item, index) {
-      let { code } = this.$route.params;
-      this.RouterChange(item, index, `/detail/${code}`);
+      let { fileId, listId } = this.$route.params;
+      this.RouterChange(item, index, `/detail/${fileId}/${listId}`);
     },
     getList(noReset = false) {
       let filter = [];

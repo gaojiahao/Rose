@@ -60,145 +60,148 @@
 </template>
 
 <script>
-  import {Icon, Popup,dateFormat} from 'vux'
-  import {getList} from 'service/commonService'
-  import {getListView} from 'service/detailService'
-  import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
-  // 引入映射表
-  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-  export default {
-    name: "RelatedList",
-    props: {
-      show: {
-        type: Boolean,
-        default: false
-      },
-      listId:{
-        type : String,
-        default : ''
-      },
-      filtersData : {
-        type: Array,
-        default : []
-      }
+import {Icon, Popup,dateFormat} from 'vux'
+import {getList} from 'service/commonService'
+import {getListView} from 'service/detailService'
+import RScroll from 'components/RScroll'
+import MSearch from 'components/search'
+// 引入映射表
+// import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+// 引入映射表 (不可移除)
+import Apps from '@/home/pages/maps/businessApp'
+import AppsFile from '@/home/pages/maps/businessFile'
+export default {
+  name: "RelatedList",
+  props: {
+    show: {
+      type: Boolean,
+      default: false
     },
-    components: {
-      Icon, Popup, RScroll, MSearch
+    idInfo:{
+      type : Object,
+      default : {}
     },
-    filters:{
-      dateFormat
-    },
-    data() {
-      return {
-        showPop: false,
-        srhInpTx: '', // 搜索框内容
-        relatedAppList: [], // 物料列表
-        limit: 10, // 每页条数
-        page: 1, // 当前页码
-        hasNext: true, // 是否有下一页
-        scrollOptions: { // 滚动配置
-          click: true,
-          pullUpLoad: true,
-        },
-        viewId :'',
-      }
-    },
-    watch: {
-      filtersData:{
-        handler(val){
-          (async()=>{
-            await this.getListView();
-            await this.getList().then(()=>{
-              this.$HandleLoad.hide();
-              this.showPop = true;
-            });
-          })()
-        }
-      }
-    },
-    methods: {
-      // TODO 弹窗展示时调用
-      onShow() {
-        this.$nextTick(() => {
-          if (this.$refs.bScroll) {
-            // 弹窗展示时刷新滚动，防止无法拖动问题
-            this.$refs.bScroll.refresh();
-          }
-        })
+    filtersData : {
+      type: Array,
+      default : []
+    }
+  },
+  components: {
+    Icon, Popup, RScroll, MSearch
+  },
+  filters:{
+    dateFormat
+  },
+  data() {
+    return {
+      showPop: false,
+      srhInpTx: '', // 搜索框内容
+      relatedAppList: [], // 物料列表
+      limit: 10, // 每页条数
+      page: 1, // 当前页码
+      hasNext: true, // 是否有下一页
+      scrollOptions: { // 滚动配置
+        click: true,
+        pullUpLoad: true,
       },
-      onHide(){
-        this.showPop = false;
-      },
-      // 获取相关实例应用的视图
-      getListView(){
-        return getListView({listId : this.listId}).then(data=>{
-          this.viewId = data[0].id
-        })
-      },
-      // TODO 获取相关实例列表
-      getList() {
-        let value = '';
-        this.filtersData.forEach((item, index) => {
-          if(index === this.filtersData.length - 1){
-            value += item;
-            return
-          }
-          value += item + ','
-        })
-        let filter = [{property:"transCode", operator:"in", value:value}];
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'transCode'
-            }
-          ];
-        }
-        return getList(this.viewId, {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.relatedAppList = this.page === 1 ? tableContent : [...this.relatedAppList, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
-        });
-      },
-      // TODO 搜索列表
-      searchList({val = ''}) {
-        this.srhInpTx = val;
-        this.relatedAppList = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
-        this.getList()
-      },
-      // TODO 上拉加载
-      onPullingUp() {
-        this.page++;
-        this.getList()
-      },
-      //跳转详情
-      goDetail(item){
-        this.showPop = false;
-        let code = this.listId;
-        this.$router.push({
-          path: `/detail/${code}`,
-          query: {
-            name: item.transTypeName,
-            transCode: item.transCode,
-            fromRalted: true
-          }
-        })
+      viewId :'',
+    }
+  },
+  watch: {
+    filtersData:{
+      handler(val){
+        (async()=>{
+          await this.getListView();
+          await this.getList().then(()=>{
+            this.$HandleLoad.hide();
+            this.showPop = true;
+          });
+        })()
       }
     }
+  },
+  methods: {
+    // TODO 弹窗展示时调用
+    onShow() {
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          // 弹窗展示时刷新滚动，防止无法拖动问题
+          this.$refs.bScroll.refresh();
+        }
+      })
+    },
+    onHide(){
+      this.showPop = false;
+    },
+    // 获取相关实例应用的视图
+    getListView(){
+      return getListView({listId : this.idInfo.listId}).then(data=>{
+        this.viewId = data[0].id
+      })
+    },
+    // TODO 获取相关实例列表
+    getList() {
+      let value = '';
+      this.filtersData.forEach((item, index) => {
+        if(index === this.filtersData.length - 1){
+          value += item;
+          return
+        }
+        value += item + ','
+      })
+      let filter = [{property:"transCode", operator:"in", value:value}];
+      if (this.srhInpTx) {
+        filter = [
+          ...filter,
+          {
+            operator: 'like',
+            value: this.srhInpTx,
+            property: 'transCode'
+          }
+        ];
+      }
+      return getList(this.viewId, {
+        limit: this.limit,
+        page: this.page,
+        start: (this.page - 1) * this.limit,
+        filter: JSON.stringify(filter),
+      }).then(({dataCount = 0, tableContent = []}) => {
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        this.relatedAppList = this.page === 1 ? tableContent : [...this.relatedAppList, ...tableContent];
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullUp();
+        })
+      });
+    },
+    // TODO 搜索列表
+    searchList({val = ''}) {
+      this.srhInpTx = val;
+      this.relatedAppList = [];
+      this.page = 1;
+      this.hasNext = true;
+      this.$refs.bScroll.scrollTo(0, 0);
+      this.getList()
+    },
+    // TODO 上拉加载
+    onPullingUp() {
+      this.page++;
+      this.getList()
+    },
+    //跳转详情
+    goDetail(item){
+      this.showPop = false;
+      let { fileId, listId } = this.idInfo;
+      this.$router.push({
+        path: `/detail/${fileId}/${listId}`,
+        query: {
+          name: item.transTypeName,
+          transCode: item.transCode,
+          fromRalted: true
+        }
+      })
+    }
   }
+}
 </script>
 
 <style scoped lang="scss">

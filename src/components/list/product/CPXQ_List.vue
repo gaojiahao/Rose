@@ -81,34 +81,31 @@
           return
         }
         // 交易号、应用名称等
-        let {transCode} = item;
-        let {name,file} = this.$route.query;
+        let { transCode } = item,
+            { name } = this.$route.query,
+            { fileId, listId } = this.$route.params;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
         this.$set(this.listData, index, {...item});
+        // 新的路由地址
+        let newPath = `${path}/${fileId}/${listId}`;
         // 等待动画结束后跳转
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
-            path,
-            query: {
-              name,
-              transCode,
-              file
-            }
+            path: newPath,
+            query: { name, transCode }
           })
         }, 200)
       },
       // TODO 跳转到详情
       goDetail(item, index) {
-        let {code} = this.$route.params;
-        this.pathChange(item, index, `/detail/${code}`);
+        this.pathChange(item, index, `/detail`);
       },
       // TODO 跳转到编辑
       goUserEdit(item, index) {
-        let {code} = this.$route.params;
-        this.pathChange(item, index, `/fillform/${Apps[code]}`);
+        this.pathChange(item, index, `/fillform`);
       },
       // 状态区分
       setStatus(item) {

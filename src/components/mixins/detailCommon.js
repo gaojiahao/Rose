@@ -4,7 +4,7 @@ import {numberComma} from 'vux'
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import FormCell from 'components/detail/commonPart/FormCell'
 // 映射表 引入
-import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
@@ -194,7 +194,8 @@ export default {
       }).then(data => {
         let relatedApply = data.relevantItems;
         relatedApply.forEach(item => {
-          if (Apps[item.listId]) {
+          let { fileId, listId } = this.$route.params;
+          if (Apps[fileId][listId]) {
             if (item.itemCount > 0) {
               this.HasValRealted = true;
             }

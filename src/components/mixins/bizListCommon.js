@@ -7,8 +7,9 @@ import ListItem from 'components/list/commonPart/ListItem'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
 import {toFixed} from '@/plugins/calc'
-// 映射表引入
-import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+// 引入映射表 (不可移除)
+import Apps from '@/home/pages/maps/businessApp'
+import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   props: {
     refreshRequest: {
@@ -62,10 +63,9 @@ export default {
         return
       }
       // 交易号、应用名称等
-      let { transCode } = item;
-      let { code } = this.$route.params;
-      let { name } = this.$route.query;
-      let {file} = this.$route.query
+      let { transCode } = item,
+          { name } = this.$route.query,
+          { fileId, listId } = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
@@ -80,20 +80,15 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${Apps[code]}`;
+              path = `/fillform/${fileId}/${listId}`;
             } else {
-              path = `/detail/${code}`;
+              path = `/detail/${fileId}/${listId}`;
             }
           } else {
-            path = `/detail/${code}`;
+            path = `/detail/${fileId}/${listId}`;
           }
           this.$router.push({
-            path,
-            query: {
-              name,
-              transCode,
-              file
-            }
+            path, query: { name, transCode }
           })
         };
         let calcTime = Date.now() - start;
@@ -113,15 +108,11 @@ export default {
       })
     },
     goEdit() {
-      let { code } = this.$route.params;
-      let { name } = this.$route.query;
-      let { file } = this.$route.query;
+      let { name } = this.$route.query,
+          { fileId, listId } = this.$route.params;
       this.$router.push({
-        path: `/fillform/${Apps[code]}`,
-        query: {
-          name,
-          file
-        }
+        path: `/fillform/${fileId}/${listId}`,
+        query: { name }
       })
     },
     // TODO 重置列表条件
@@ -255,19 +246,6 @@ export default {
           item.count = 0;
           item.itmes.forEach(mitem => {
             item.count = toFixed(accAdd(item.count, mitem.tdAmount));
-            // if (this.noTaxRate) {
-            //   // 不含税
-            //   let amount = accMul(mitem.price, mitem.tdQty);
-            //   item.count = toFixed(accAdd(item.count, amount));
-            // } else {
-            //   // 含税
-            //   if (mitem.tdQty > 0 && mitem.price > 0) {
-            //     mitem.noTaxAmount = accMul(mitem.price, mitem.tdQty);
-            //     mitem.taxAmount = accMul(mitem.noTaxAmount, 0.16);
-            //     mitem.tdAmount = accAdd(mitem.noTaxAmount, mitem.taxAmount);
-            //   }
-            //   item.count = toFixed(accAdd(item.count, mitem.tdAmount));
-            // }
           });
 
           // 如果为搜索物料，将匹配的物料放在前面

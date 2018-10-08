@@ -45,20 +45,20 @@ export default [
     meta:{title:'相关实例'}
   },
   {
-    path:'/list/:code',
+    path:'/list/:fileId/:listId',
     name:'LIST',
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
 
   {
-    path:'/fillform/:code',
+    path:'/fillform/:fileId/:listId',
     name:'FILLFORM',
     component:FILLFORM,
     meta:{ title:'填写新内容' }
   },
   {
-    path:'/detail/:code',
+    path:'/detail/:fileId/:listId',
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情' }

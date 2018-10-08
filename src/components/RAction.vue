@@ -11,7 +11,7 @@
 
 <script>
   import {commitTask} from 'service/commonService'
-  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
+  // import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {
     name: "RAction",
     props: {
@@ -40,17 +40,12 @@
       reject() {
         this.$vux.confirm.prompt('', {
           title: '审批意见',
-          // closeOnConfirm: false,
           onConfirm: (value) => {
-            // if (!value) {
-            //   return false;
-            // }
             this.commitTask({
               result: 0,
               successMsg: '拒绝成功',
               value
             });
-            // this.$vux.confirm.hide();
           }
         });
       },
@@ -77,12 +72,10 @@
               successMsg: '撤回成功',
               value,
               callback: () => {
-                let {code} = this.$route.params;
+                let { fileId, listId } = this.$route.params;
                 this.$router.replace({
-                  path: `/fillform/${Apps[code]}`,
-                  query: {
-                    transCode: this.code
-                  }
+                  path: `/fillform/${fileId}/${listId}`,
+                  query: { transCode: this.code }
                 });
               }
             });
@@ -92,7 +85,6 @@
       // TODO 审批
       commitTask({result, value, successMsg, callback}) {
         this.$HandleLoad.show();
-        // this.$event.$emit('detail-show-loading', true);
         let submitData = {
           taskId: this.taskId,
           taskData: JSON.stringify({
@@ -103,7 +95,6 @@
         };
         return commitTask(submitData).then(data => {
           this.$HandleLoad.hide();
-          // this.$event.$emit('detail-show-loading', false);
           let {success = false, message = '提交失败'} = data;
           let actionMap = {0: 'reject', 1: 'agree', 2: 'revoke'};
           if (success) {
@@ -126,11 +117,8 @@
           });
         }).catch(e => {
           this.$HandleLoad.hide();
-          // this.$event.$emit('detail-show-loading', false);
         });
-      },
-    },
-    created() {
+      }
     }
   }
 </script>

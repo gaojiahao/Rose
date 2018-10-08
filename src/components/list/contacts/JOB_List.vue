@@ -33,165 +33,154 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
-  import {getJobList} from 'service//Directorys/jobService'
-  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-  export default {
-    data() {
-      return {
-        listStatus: [
-          {name: '全部', status: ''},
-          {name: '管理类', status: 'M'},
-          {name: '营销类', status: 'Y'},
-          {name: '技术类', status: 'J'},
-          {name: '专业类', status: 'Z'},
-          {name: '操作类', status: 'C'},
-        ],
-        biStatus:'',
-        filterList: [ // 过滤列表
-          {
-            name: '职位名称',
-            value: 'name',
-          }
-        ],
+import listCommon from 'pageMixins/bizListCommon'
+import {getJobList} from 'service//Directorys/jobService'
+export default {
+  data() {
+    return {
+      listStatus: [
+        {name: '全部', status: ''},
+        {name: '管理类', status: 'M'},
+        {name: '营销类', status: 'Y'},
+        {name: '技术类', status: 'J'},
+        {name: '专业类', status: 'Z'},
+        {name: '操作类', status: 'C'},
+      ],
+      biStatus:'',
+      filterList: [ // 过滤列表
+        {
+          name: '职位名称',
+          value: 'name',
+        }
+      ],
+    }
+  },
+  mixins: [listCommon],
+  methods:{
+    //获取销售订单数据
+    getList(noReset = false) {
+      let filter = [];
+      if(this.activeTab.length){
+        filter = [{operator: "in", value: this.activeTab, property: "type"}];
       }
-    },
-    mixins: [listCommon],
-    methods:{
-      //获取销售订单数据
-      getList(noReset = false) {
-        // this.activeTab = item.status;
-        let filter = [];
+      if(this.serachVal){
+        filter = [
+          ...filter,
+          {
+            operator: "like",
+            value: this.serachVal,
+            property: this.filterProperty,
+          },
+        ];
         if(this.activeTab.length){
-          filter = [{operator: "in", value: this.activeTab, property: "type"}];
+          filter[0].attendedOperation = "and";
         }
-        if(this.serachVal){
-          filter = [
-            ...filter,
-            {
-              operator: "like",
-              value: this.serachVal,
-              property: this.filterProperty,
-            },
-          ];
-          if(this.activeTab.length){
-            filter[0].attendedOperation = "and";
+      }
+      return getJobList({
+        limit: this.limit,
+        page: this.page,
+        start: (this.page - 1) * this.limit,
+        filter: JSON.stringify(filter),
+        sort: JSON.stringify([{ property:"crtTime", direction:"DESC" }])
+      }).then(({dataCount = 0, tableContent = []}) => {
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        tableContent.forEach(item => {
+          this.setStatus(item);
+          switch (item.type) {
+            case 'Y':
+              item.changeType = '营销类';
+              break;
+            case 'Z':
+              item.changeType = '专业类';
+              break;
+            case 'J':
+              item.changeType = '技术类';
+              break;
+            case 'C':
+              item.changeType = '操作类';
+              break;
+            case 'M':
+              item.changeType = '管理类';
+              break;
+            
           }
+          switch (item.status) {
+            case 1:
+              item.changeStatus = '使用中';
+              item.borderClass = "using"
+              break;
+            case 2:
+              item.changeStatus = '未使用';
+              item.borderClass = "no_use"
+              break;
+            case 3:
+              item.changeStatus = '草稿';
+              item.borderClass = "draft"
+              break;
+            case -1:
+              item.changeStatus = '停用';
+              item.borderClass = "stop_use"
+              break;
+          }
+        });
+        this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
         }
-        return getJobList({
-          limit: this.limit,
-          page: this.page,
-          start : (this.page-1)*this.limit,
-          filter: JSON.stringify(filter),
-          sort:JSON.stringify([{property:"crtTime",direction:"DESC"}])
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            this.setStatus(item);
-            switch (item.type) {
-              case 'Y':
-                item.changeType = '营销类';
-                break;
-              case 'Z':
-                item.changeType = '专业类';
-                break;
-              case 'J':
-                item.changeType = '技术类';
-                break;
-              case 'C':
-                item.changeType = '操作类';
-                break;
-              case 'M':
-                item.changeType = '管理类';
-                break;
-              
-            }
-            switch (item.status) {
-              case 1:
-                item.changeStatus = '使用中';
-                item.borderClass = "using"
-                break;
-              case 2:
-                item.changeStatus = '未使用';
-                item.borderClass = "no_use"
-                break;
-              case 3:
-                item.changeStatus = '草稿';
-                item.borderClass = "draft"
-                break;
-              case -1:
-                item.changeStatus = '停用';
-                item.borderClass = "stop_use"
-                break;
-            }
-          });
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
+        //判断最近有无新增数据
+        let text = '';
+        if(noReset && this.activeIndex === 0){
+          if(this.total){
+            text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
+            this.$vux.toast.show({
+              text: text,
+              position:'top',
+              width:'50%',
+              type:"text",
+              time : 700
             })
           }
-          //判断最近有无新增数据
-          //console.log(this.dataCount);
-          let text = '';
-          if(noReset && this.activeIndex ===0){
-            if(this.total){
-              text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
-              this.$vux.toast.show({
-                text: text,
-                position:'top',
-                width:'50%',
-                type:"text",
-                time : 700
-              })
-            }
-          }
-          //列表总数据缓存
-          if(this.activeIndex == 0 && this.page ===1){
-            sessionStorage.setItem(this.applyCode,dataCount);
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      goNextPage(item, index, path) {
-        if (this.clickVisited) {
-          return
         }
-        // 交易号、应用名称等
-        let { code } = this.$route.params;
-        let { name } = this.$route.query;
-        let {file} = this.$route.query;
-        // 高亮点击的列表
-        this.clickVisited = true;
-        item.visited = true;
-        this.$set(this.listData, index, {...item});
-        let newPath = `${path}/${code}`;
-        if(path === '/fillform'){
-          newPath = `${path}/${Apps[code]}`
+        //列表总数据缓存
+        if(this.activeIndex === 0 && this.page === 1){
+          sessionStorage.setItem(this.applyCode,dataCount);
         }
-        setTimeout(() => {
-          this.clickVisited = false;
-          this.$router.push({
-            path : newPath,
-            query : {
-              name,
-              id : item.id,
-              file
-            }
-          });
-        }, 200);
-
-      },
-      goDetail(item, index) {
-        this.goNextPage(item,index,'/detail')
-      },
-      goEditJob(item, index) {
-        this.goNextPage(item,index,"/fillform")
+        this.$loading.hide();
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    goNextPage(item, index, path) {
+      if (this.clickVisited) {
+        return
       }
+      // 交易号、应用名称等
+      let { name } = this.$route.query,
+          { fileId, listId } = this.$route.params;
+      // 高亮点击的列表
+      this.clickVisited = true;
+      item.visited = true;
+      this.$set(this.listData, index, {...item});
+      // 新的路由地址
+      let newPath = `${path}/${fileId}/${listId}`;
+      setTimeout(() => {
+        this.clickVisited = false;
+        this.$router.push({
+          path : newPath,
+          query : { name, id: item.id }
+        });
+      }, 200);
+    },
+    goDetail(item, index) {
+      this.goNextPage(item, index, '/detail')
+    },
+    goEditJob(item, index) {
+      this.goNextPage(item, index, '/fillform')
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -15,7 +15,7 @@
       <div class="app_list defalut_bg mg_auto">
         <!-- 单个app -->
         <div class="each_app"
-          @click='goList(app.listId, app.text,app.file)'
+          @click='goList(app.listId, app.text, app.fileID)'
           v-for="(app, index) of item.appList" :key='index'>
           <div class="app_img">
             <img :src='app.icon' @error="getDefaultIcon(app)">

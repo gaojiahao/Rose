@@ -84,9 +84,11 @@
           return
         }
         // 交易号、应用名称等
-        let {colId} = item;
-        let {name} = this.$route.query;
-        let {file} = this.$route.query;
+        let { colId } = item,
+            { name } = this.$route.query,
+            { fileId, listId } = this.$route.params;
+        // 新的路由地址
+        let newPath = `${path}/${fileId}/${listId}`;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
@@ -95,29 +97,22 @@
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
-            path,
-            query: {
-              name,
-              colId,
-              file
-            }
+            path: newPath,
+            query: { name, colId }
           })
         }, 200)
       },
       // TODO 跳转到详情
       goDetail(item, index) {
-        let {code} = this.$route.params;
-        this.pathChange(item, index, `/detail/${code}`);
+        this.pathChange(item, index, `/detail`);
       },
       // TODO 跳转到编辑
       goUserEdit(item, index) {
-        let {code} = this.$route.params;
-        this.pathChange(item, index, `/fillform/${Apps[code]}`);
+        this.pathChange(item, index, `/fillform`);
       },
       // TODO 获取用户列表
       getList(noReset = false) {
         let filter = [];
-
         if (this.activeTab) {
           filter.push({
             operator: 'in',
@@ -178,8 +173,6 @@
           this.resetScroll();
         })
       }
-    },
-    created() {
     }
   }
 </script>

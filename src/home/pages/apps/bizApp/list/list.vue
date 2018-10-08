@@ -12,22 +12,26 @@
 
 <script>
 // 引入映射表
-import Apps from '../maps/Apps'
+import Apps from '@/home/pages/maps/businessApp'
+import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   data(){
     return {
+      fileId :'',
       currentComponent : '',
-      code :'',
       isrefresh : false,
     }
   },
   created(){
-    let code = this.$route.params.code;
-    if(code){
-      this.code = code;
-      let file = this.$route.query.file;
+    /*
+    * AppsFile[fileId] => 应用类型文件夹
+    * Apps[fileId][listId] => 应用名称.vue 
+    */    
+    let { fileId, listId } = this.$route.params;
+    if(fileId){
+      this.fileId = fileId;
       this.$loading.show();
-      this.currentComponent = require(`components/list/${file}/${Apps[code]}_List.vue`).default;
+      this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -46,16 +50,15 @@ export default {
       this.$refs.list.changeVisitedStatus && this.$refs.list.changeVisitedStatus();
     });
     if (reload) {
-      let code = this.$route.params.code;
-      let file = this.$route.query.file
+      let { fileId, listId } = this.$route.params;
       this.$loading.show();
-      if (code) {
+      if (fileId) {
         // 在提交页面提交成功时进入该判断
-        if (this.code === code && this.currentComponent) {
+        if (this.fileId === fileId && this.currentComponent) {
           this.$refs.list.reloadData();
         }
-        this.code = code;
-        this.currentComponent = require(`components/list/${file}/${Apps[code]}_List.vue`).default;
+        this.fileId = fileId;
+        this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
       }
       this.$route.meta.reload = false;
     }
