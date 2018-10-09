@@ -32,17 +32,18 @@
       </div>
       <div class="each_time">
         <span class="title">创建时间：</span>
-        <span class="content">{{orderInfo.crtTime}}</span>
+        <span class="content">{{orderInfo.crtTime | dateFormat }}</span>
       </div>
       <div class="each_time" v-if="orderInfo.effectiveTime">
         <span class="title">生效时间：</span>
-        <span class="content">{{orderInfo.effectiveTime}}</span>
+        <span class="content">{{orderInfo.effectiveTime | dateFormat}}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { dateFormat } from 'vux'
   export default {
     name: "BasicInfo",
     props: {
@@ -58,6 +59,9 @@
           return {}
         }
       }
+    },
+    filters: {
+      dateFormat
     }
   }
 </script>

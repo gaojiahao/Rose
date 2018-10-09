@@ -18,11 +18,18 @@
       <r-picker title="仓库类型:" :data="AccountRelType" :value="warehouse.warehouseType"
                 @on-change="warehouseTypeChange" v-model="warehouse.warehouseType" :required='true'>
       </r-picker>
-      <r-picker :title="`${typeSubMap[typeSub].title}:`" :data="typeSubMap[typeSub].list"
-                :value="typeSubMap[typeSub].value"
-                v-model="typeSubMap[typeSub].value"  v-show="typeSubMap[typeSub].title">
-      </r-picker>
+      <div class='each_property vux-1px-b' @click="showPop = true">
+        <label>{{typeSubMap[typeSub].title}}</label>
+        <div class='picker'>
+            <span class='mater_nature'>{{typeSubMap[typeSub].value}}</span>
+            <span class='iconfont icon-gengduo'></span>
+        </div>
+      </div>
     </div>
+    <!--员工，组织，客户等的pop-->
+    <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
+                        :defaultValue="typeSubMap[typeSub].value" @sel-group="selGroup" @list-search="getTypeSubList">
+    </pop-warelabe-list>
     <div class='vux-1px-t btn '>
       <div class="cfm_btn" @click="save" v-html="this.$route.query.add?'保存并使用':'提交'"></div>
     </div>
@@ -36,12 +43,13 @@
   import RPicker from 'components/RPicker';
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
-
+  import PopWarelabeList from 'components/Popup/PopWarelabelList'
   export default {
     data() {
       return {
         transCode: '',
         picShow: false,
+        showPop : false,
         imgFileObj: {}, // 上传的图片对象
         biReferenceId: '',
         MatPic: '', // 图片地址
@@ -141,6 +149,7 @@
       XAddress,
       Icon,
       UploadImage,
+      PopWarelabeList
     },
     methods: {
       // TODO 上传图片成功触发
@@ -285,12 +294,13 @@
         }
         this.submit()
       },
+      selGroup(val){
+        this.typeSubMap[this.typeSub].value = val;
+      },
       warehouseTypeChange(val) {
         // 清空之前的选中值
-        console.log('触发了')
         this.typeSubMap[this.typeSub].value = '';
         this.typeSubMap[this.typeSub].list = [];
-        // this.typeSubMap[this.typeSub].code = '';
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
         if(this.typeSub === 'noMatched') {
           return
@@ -298,16 +308,22 @@
         this.getTypeSubList();
       },
       // TODO 获取仓库类型关联子项下拉列表
-      getTypeSubList() {
-        let currentTypeSub = this.typeSubMap[this.typeSub]; // 当前仓库类型关联子项对象
-        if (!!currentTypeSub.list.length) {
-          this.typeSubMap[this.typeSub].value = currentTypeSub.list[0].value;
-          return
+      getTypeSubList(val) {
+        let filter = [];
+        if(val){
+          filter = [
+            {
+              operator: 'like',
+              value: val,
+              property: 'GROUP_NAME'
+            }
+          ];
         }
+        let currentTypeSub = this.typeSubMap[this.typeSub]; // 当前仓库类型关联子项对象
         switch (this.typeSub) {
           // 请求组织列表
           case 'group':
-            return getDepartMentWage().then(({tableContent = []}) => {
+            return getDepartMentWage({filter: JSON.stringify(filter)}).then(({tableContent = []}) => {
               tableContent.forEach(item => {
                 item.name = item.GROUP_NAME;
                 item.value = item.GROUP_NAME;
@@ -317,17 +333,19 @@
                 }
               });
               this.typeSubMap[this.typeSub].list = tableContent;
-              // if (currentTypeSub.code === '') {
-              //   this.typeSubMap[this.typeSub].value = tableContent[0].value;
-              // }
+              this.typeSubMap[this.typeSub].code = '';
             });
           // 请求员工、客户、加工商、渠道商列表
           case 'staff':
           case 'customer':
           case 'processors':
           case 'channel':
+            if(val){
+              filter[0].property = 'dealerName';
+            }
             return getObjDealerByLabelName({
-              dealerLabelName: currentTypeSub.dealerLabelName
+              dealerLabelName: currentTypeSub.dealerLabelName,
+              filter: JSON.stringify(filter)
             }).then(({tableContent = []}) => {
               tableContent.forEach(item => {
                 item.name = item.dealerName;
@@ -337,10 +355,8 @@
                   this.typeSubMap[this.typeSub].value = item.value;
                 }
               });
+              this.typeSubMap[this.typeSub].code = '';
               this.typeSubMap[this.typeSub].list = tableContent;
-              // if (currentTypeSub.code === '') {
-              //   this.typeSubMap[this.typeSub].value = tableContent[0].value;
-              // }
             });
           default:
             break;
