@@ -1,10 +1,9 @@
 <template>
   <div class="pages sj-apply-container">
-    <div class="basicPart" ref='fill'>
+    <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 选择客户-->
-        <pop-dealer-list :show="showDealerPop" v-model="showDealerPop"
-                         @sel-dealer="selDealer" :dealerLabelName="'客户'">
+        <pop-dealer-list :defaultValue="dealerInfo" @sel-dealer="selDealer">
         </pop-dealer-list>
         <!-- 商机明细 -->
         <div class="materiel_list">
@@ -30,10 +29,10 @@
                     </template>
                   </x-input>
                   <!-- 当前阶段 -->
-                  <popup-radio title="当前所在阶段" :options="stageOptions" v-model="formData.currentStage">
+                  <popup-radio title="当前所在阶段" placeholder='请选择所在阶段' :options="stageOptions" v-model="formData.currentStage">
                   </popup-radio>
                   <!-- 有效期 -->
-                  <datetime v-model="formData.validUntil" title="有效期至"></datetime>
+                  <datetime v-model="formData.validUntil" placeholder='请选择日期' title="有效期至"></datetime>
                   <!-- 销售人员popup, 销售渠道popup -->
                   <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
                                      v-model="formData.salesPerson"></pop-salesman-list>
@@ -41,13 +40,12 @@
                                      v-model="formData.salesChannels"></pop-salesman-list>
 
                   <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
+                  <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
               </div>
             </div>
           </div>
         </div>
-        <!-- 客户popup -->
-
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}">
@@ -244,7 +242,6 @@
           };
           this.biReferenceId = formData.biReferenceId;
           this.$loading.hide();
-          // this.$emit('input', false);
         })
       },
       // TODO 检查金额

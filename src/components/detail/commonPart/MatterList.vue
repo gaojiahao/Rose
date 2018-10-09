@@ -50,6 +50,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.vux-1px-t:before {
+  border-color: #e8e8e8;
+}
 // 物料列表
 .materiel_ct_list {
   position: relative;

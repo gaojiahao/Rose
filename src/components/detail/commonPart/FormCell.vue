@@ -30,6 +30,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+
 .each_cell {
   font-size: .14rem;
   padding: .08rem 0;
