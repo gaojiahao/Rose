@@ -69,7 +69,7 @@
           <template slot="modify" slot-scope="{modifyMatter}">
             <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
             <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"></x-input>
+                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
           </template>
         </pop-matter>
       </div>
@@ -171,7 +171,7 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = 1} = this.numMap[key] || {};
+          let {tdQty = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];

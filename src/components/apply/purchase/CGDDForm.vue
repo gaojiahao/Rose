@@ -226,11 +226,12 @@ export default {
         if (this.numMap[item.inventoryCode]) {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
-        } else {
-          item.tdQty = 1;
-          item.price = 0;
+        } 
+        else {
+          item.tdQty = '';
+          item.price = '';
         }
-        item.taxRate = this.taxRate;
+        item.taxRate = '';
         item.promDeliTime = ''
       })
       this.numMap = {};

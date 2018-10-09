@@ -37,8 +37,11 @@ export default {
     totalAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        item.noTax = accMul(item.tdQty, item.price);
-        total = accAdd(total, item.noTax);
+        if(item.tdQty || item.price || item.taxRate){
+          item.noTax = accMul(item.tdQty, item.price);
+          total = accAdd(total, item.noTax);
+        }
+        
       });
       return Number(total);
     },
@@ -46,8 +49,10 @@ export default {
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        item.noTax = accMul(item.tdQty, item.price);
-        total = accAdd(total, accMul(item.noTax, item.taxRate)).toFixed(2);
+        if(item.tdQty || item.price || item.taxRate){
+          item.noTax = accMul(item.tdQty, item.price);
+          total = accAdd(total, accMul(item.noTax, item.taxRate)).toFixed(2);
+        }
       });
       return total;
     },
@@ -58,10 +63,18 @@ export default {
   watch:{
     //修改的物料
     matter:{
-      handler(val){
-          val.noTaxAmount = accMul(val.price,val.tdQty).toFixed(2);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate).toFixed(2);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);
+      handler(val){ 
+        if(!val.price || !val.tdQty){
+          val.noTaxAmount = 0;
+          val.taxAmount = 0;
+          val.tdAmount = 0;
+          return
+        }
+        val.noTaxAmount = accMul(val.price,val.tdQty).toFixed(2);
+        val.taxAmount = accMul(val.noTaxAmount,val.taxRate).toFixed(2);
+        val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);  
+        
+        
       },
       deep:true
     }
@@ -198,7 +211,7 @@ export default {
           noCount: 1,
         }).then(({tableContent = []}) => {
           let [lastest = {}] = tableContent; // 取第一个价格
-          item.price = lastest.price || 0;
+          item.price = lastest.price;
         })
       });
     },
@@ -233,6 +246,9 @@ export default {
         }
       }
     },
+    getFocus(e){
+      event.currentTarget.select();
+    }
   },
   created() {
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');

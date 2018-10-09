@@ -87,7 +87,7 @@
             <cell title="可用库存" :value="modifyMatter.qtyStock"></cell>
             <cell title="待领料" :value="modifyMatter.qtyBal"></cell>
             <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"></x-input>
+                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
           </template>
         </pop-matter>
       </div>
@@ -261,7 +261,7 @@ export default {
       let orderList = {};
       sels.forEach(item => {
         let key = `${item.transCode}_${item.inventoryCode}`;
-        let {tdQty = 1, shippingTime = ''} = this.numMap[key] || {};
+        let {tdQty = '', shippingTime = ''} = this.numMap[key] || {};
         item.tdQty = tdQty;
         item.shippingTime = shippingTime;
         if (!orderList[item.transCode]) {

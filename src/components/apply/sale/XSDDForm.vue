@@ -187,7 +187,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
           biComment: '' //备注
         },
         numMap: {}, // 用于记录订单物料的数量和价格
-        taxRate: 0.16, // 税率
+        // taxRate: 0.16, // 税率
         matter:{},
         showMatterPop :false,
         modifyIndex:null,
@@ -282,11 +282,12 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
           if (this.numMap[item.inventoryCode]) {
             item.tdQty = this.numMap[item.inventoryCode].tdQty;
             item.price = this.numMap[item.inventoryCode].price;
-          } else {
-            item.tdQty = 1;
-            item.price = 0;
-          }
-          item.taxRate = this.taxRate;
+          } 
+          // else {
+          //   item.tdQty = 1;
+          //   item.price = 0;
+          // }
+          // item.taxRate = this.taxRate;
           item.promDeliTime = ''
         })
         this.numMap = {};

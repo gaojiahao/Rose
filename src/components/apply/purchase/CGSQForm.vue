@@ -98,10 +98,10 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)">
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
             </x-input>
             <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)"></x-input>
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" 
                       placeholder="请选择" ></datetime>
             <cell title="估计金额" :value="'￥' + modifyMatter.noTaxAmount"></cell>
@@ -185,7 +185,7 @@ export default {
     tdAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-       total = accAdd(total, accMul(item.tdQty, item.price))
+        total = accAdd(total, accMul(item.tdQty, item.price))
       });
       return parseFloat(total.toFixed(2));
     }
@@ -211,9 +211,10 @@ export default {
         if (this.numMap[item.inventoryCode]) {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
-        } else {
-          item.tdQty = 1;
-          item.price = 0;
+        } 
+        else {
+          item.tdQty = '';
+          item.price = '';
         }
         item.promDeliTime = '';
       })

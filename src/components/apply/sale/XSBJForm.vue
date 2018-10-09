@@ -109,7 +109,7 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
                <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
-                        @on-blur="checkAmt(modifyMatter)"></x-input>
+                        @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
               <div class="price_type vux-1px-t" @click="showPrice = !showPrice">
                 <div class="current_type">
                   <label>价格类型</label>
@@ -294,7 +294,7 @@
         let sels = JSON.parse(val);
         sels.forEach(item => {
           let defaultValue = this.priceMap[item.inventoryCode] || {};
-          item.price = defaultValue.price || '0';
+          item.price = defaultValue.price;
           item.priceType = defaultValue.priceType || '渠道价';
         });
         this.priceMap = {};

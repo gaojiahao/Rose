@@ -49,12 +49,12 @@
         <group class='mg_auto'>
           <slot name="modify" :modifyMatter="modifyMatter">
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-              @on-blur="checkAmt(modifyMatter)">
+              placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
             </x-input>
             <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
-            @on-blur="checkAmt(modifyMatter)"></x-input>
+            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
             <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-              @on-blur="checkAmt(modifyMatter)">
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
             </x-input>
             <datetime title="预期交货日" v-model="modifyMatter.promDeliTime"
                       placeholder="请选择" ></datetime>
@@ -185,6 +185,9 @@ export default {
         item.taxRate = Math.abs(toFixed(taxRate));
       }
     },
+    getFocus(e){
+      event.currentTarget.select();
+    }
 
   },
 

@@ -66,7 +66,7 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"></x-input>
+                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <pop-warehouse-nbjgrk-list :default-value="tmpWarehouse"
                                        @on-hide="hideWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>
             <cell title="待验收余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
@@ -184,7 +184,7 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = 1, warehouseName = item.warehouseName, warehouseCode = item.warehouseCode} = this.numMap[key] || {};
+          let {tdQty = '', warehouseName = item.warehouseName, warehouseCode = item.warehouseCode} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.warehouseName = warehouseName;
           item.warehouseCode = warehouseCode;

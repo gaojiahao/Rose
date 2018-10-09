@@ -264,7 +264,7 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = 1, price = 0, taxRate = this.taxRate, promDeliTime = ''} = this.numMap[key] || {};
+          let {tdQty = '', price ='', taxRate = '', promDeliTime = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;

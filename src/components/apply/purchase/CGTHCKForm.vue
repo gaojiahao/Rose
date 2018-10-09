@@ -106,12 +106,12 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="退货数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)">
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
             </x-input>
             <x-input title="退货单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
-            @on-blur="checkAmt(modifyMatter)"></x-input>
+            @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)">
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
             </x-input>
           </template>
           <template slot="modifyTitle">
@@ -260,11 +260,12 @@ export default {
         if (this.numMap[item.inventoryCode]) {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
-        } else {
-          item.tdQty = 1;
-          item.price = 0;
+        } 
+        else {
+          item.tdQty = '';
+          item.price = '';
         }
-        item.taxRate = this.taxRate;
+        item.taxRate = '';
       });
       this.numMap = {};
       this.matterList = sels;
