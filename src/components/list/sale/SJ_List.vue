@@ -72,10 +72,7 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, /*{
-            name: '往来名称',
-            value: 'dealerName_dealerDebit',
-          },*/ {
+          }, {
             name: '商机标题',
             value: 'opportunityTitle',
           },
@@ -87,8 +84,8 @@
       //获取销售订单数据
       getList(noReset = false) {
         let filter = [];
-        if(this.biStatus.length){
-          filter = [{operator: "in", value: this.biStatus, property: "biStatus"}];
+        if(this.activeTab){
+          filter = [{operator: "in", value: this.activeTab, property: "biStatus"}];
         }
         if(this.serachVal){
           filter = [
@@ -99,18 +96,16 @@
               property: this.filterProperty,
             },
           ];
-          if(this.biStatus.length){
+          if(this.activeTab){
             filter[0].attendedOperation = "and";
           }
         }
         return getList(this.listViewID,{
           limit: this.limit,
           page: this.page,
-          start : (this.page-1)*this.limit,
+          start : (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-
-          // this.$emit('input',false);
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
             this.setStatus(item);
