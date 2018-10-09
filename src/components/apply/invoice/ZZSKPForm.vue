@@ -5,7 +5,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!--发票信息-->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list">
           <div class="title">发票信息</div>
           <group class="SJ_group" @group-title-margin-top="0">
             <x-input title="票号" v-model="invoiceInfo.ticketNumber" text-align="right">
@@ -28,7 +28,7 @@
           </group>
         </div>
         <!-- 任务计划列表 -->
-        <div class="materiel_list mg_auto box_sd" v-for="(item,index) in invoiceList" :key="index">
+        <div class="materiel_list" v-for="(item,index) in invoiceList" :key="index">
           <div class="title">开票明细</div>
           <group class='costGroup' @group-title-margin-top="0">
             <cell title="实例编码" v-model='item.transMatchedCode' is-link @click.native="getCost(index,item)">

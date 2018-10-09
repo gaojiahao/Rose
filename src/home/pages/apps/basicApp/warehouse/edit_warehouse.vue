@@ -20,7 +20,7 @@
       </r-picker>
       <r-picker :title="`${typeSubMap[typeSub].title}:`" :data="typeSubMap[typeSub].list"
                 :value="typeSubMap[typeSub].value"
-                v-model="typeSubMap[typeSub].value" :required='true' v-show="typeSubMap[typeSub].title">
+                v-model="typeSubMap[typeSub].value"  v-show="typeSubMap[typeSub].title">
       </r-picker>
     </div>
     <div class='vux-1px-t btn '>
@@ -125,7 +125,8 @@
           '渠道商仓': 'channel',
           '个人仓': 'staff',
           '一般部门仓': 'group',
-        }
+        },
+        currentGroup:'',
       }
     },
     directives: {
@@ -182,7 +183,7 @@
             let code = this.warehouse[item.key];
             if (code) {
               item.code = code;
-              this.warehouse[item.key] = null;
+              // this.warehouse[item.key] = null;
               break;
             }
           }
@@ -286,8 +287,10 @@
       },
       warehouseTypeChange(val) {
         // 清空之前的选中值
+        console.log('触发了')
         this.typeSubMap[this.typeSub].value = '';
-        this.typeSubMap[this.typeSub].code = '';
+        this.typeSubMap[this.typeSub].list = [];
+        // this.typeSubMap[this.typeSub].code = '';
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
         if(this.typeSub === 'noMatched') {
           return
@@ -314,9 +317,9 @@
                 }
               });
               this.typeSubMap[this.typeSub].list = tableContent;
-              if (currentTypeSub.code === '') {
-                this.typeSubMap[this.typeSub].value = tableContent[0].value;
-              }
+              // if (currentTypeSub.code === '') {
+              //   this.typeSubMap[this.typeSub].value = tableContent[0].value;
+              // }
             });
           // 请求员工、客户、加工商、渠道商列表
           case 'staff':
@@ -335,9 +338,9 @@
                 }
               });
               this.typeSubMap[this.typeSub].list = tableContent;
-              if (currentTypeSub.code === '') {
-                this.typeSubMap[this.typeSub].value = tableContent[0].value;
-              }
+              // if (currentTypeSub.code === '') {
+              //   this.typeSubMap[this.typeSub].value = tableContent[0].value;
+              // }
             });
           default:
             break;

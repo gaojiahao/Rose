@@ -132,34 +132,4 @@ export default {
     font-size: .14rem;
     margin-right: .04rem;
   }
-  // 项目信息
-.project_ct_info {
-  width: 100%;
-  padding: 0 .1rem;
-  background: #FFF;
-  margin-bottom: .1rem;
-  box-sizing: border-box;
-  .info_title {
-    padding: .06rem 0;
-    font-size: .16rem;
-    font-weight: bold;
-    .iconfont {
-      font-weight: normal;
-      margin-right: .03rem;
-    }
-  }
-  .info_content {
-    padding: .06rem 0;
-    .each_info {
-     font-size: .14rem;
-      padding: .08rem 0;
-      .title {
-        font-weight: bold;
-      }
-      .content {
-        
-      }
-    }
-  }
-}
 </style>
