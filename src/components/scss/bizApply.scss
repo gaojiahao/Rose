@@ -272,7 +272,7 @@
       padding-left: 0.3rem;
     }
     .each_mater_wrapper {
-      // position: relative;
+      position: relative;
       display: flex;
       .order-code {
         font-size: .14rem;
@@ -280,6 +280,7 @@
       .order-matter {
         display: flex;
         margin-top: .1rem;
+        // position: relative;
       }
       // 物料图片
       .mater_img {
