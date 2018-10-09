@@ -104,7 +104,7 @@
   .matter_item {
     display: flex;
     position: relative;
-    padding: .04rem 0;
+    padding: .08rem 0;
     box-sizing: border-box;
     // 物料图片
     .mater_img {

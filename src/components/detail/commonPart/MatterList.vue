@@ -70,7 +70,7 @@
       margin-bottom: .04rem;
       // 订单底下的物料
       .order_matter {
-        margin-top: .04rem;
+        // margin-top: .04rem;
       }
       // 物料图片
       .mater_img {
