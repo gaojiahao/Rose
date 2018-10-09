@@ -29,6 +29,10 @@
           return []
         }
       },
+      name:{
+        type : String,
+        default :''
+      }
     },
     data() {
       return {
@@ -75,7 +79,7 @@
                 let { fileId, listId } = this.$route.params;
                 this.$router.replace({
                   path: `/fillform/${fileId}/${listId}`,
-                  query: { transCode: this.code }
+                  query: { transCode: this.code ,name : this.name},
                 });
               }
             });
