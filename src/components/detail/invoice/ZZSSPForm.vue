@@ -36,8 +36,8 @@
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
               <form-cell cellTitle='实例编码' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
-              <form-cell cellTitle='待开票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
-              <form-cell cellTitle='本次开票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='待收票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
+              <form-cell cellTitle='本次收票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
               <!-- <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell> -->
           </div>
         </div>
