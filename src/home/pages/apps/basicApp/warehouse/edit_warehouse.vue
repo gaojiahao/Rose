@@ -157,7 +157,10 @@
             item.value = item.name;
           });
           this.AccountRelType = tableContent;
-          this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : tableContent[0].name;
+          //新增是默认选中对应的关系标签
+          if(!this.$route.query.transCode){
+            this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : tableContent[0].name;
+          }
           this.$loading.hide();
         })
       },
