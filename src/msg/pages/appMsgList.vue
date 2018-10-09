@@ -62,10 +62,7 @@ import { getWorkFlow } from 'service/detailService'
 // 组件引入
 import search from 'components/search'
 import RScroll from 'components/RScroll'
-import { format } from 'url'
-// 映射表 引入
-import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-import businessKey from './maps/businessApp.js'
+
 export default {
   data(){
     return{
@@ -94,7 +91,6 @@ export default {
       item.visited = true;
       this.$set(this.listData, index, {...item});
       let start = Date.now();
-      let file = businessKey[item.listId];
       const TRANSITION_TIME = 200; // 动画时间
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
@@ -103,19 +99,18 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${Apps[listId]}`;
+              path = `/fillform/${item.typeID}/${item.listId}`;
             } else {
-              path = `/detail/${listId}`;
+              path = `/detail/${item.typeID}/${item.listId}`;
             }
           } else {
-            path = `/detail/${listId}`;
+            path = `/detail/${item.typeID}/${item.listId}`;
           }
           this.$router.push({
             path,
             query: {
               name: title,
               transCode : item.businessKey,
-              file
             }
           })
         };
