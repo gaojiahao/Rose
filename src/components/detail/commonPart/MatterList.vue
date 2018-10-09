@@ -16,30 +16,37 @@
       <matter-item :item="item" :class="{'vux-1px-b' : index !== matterList.length - 1}"
                    v-for="(item, index) in matterList" :key='index'></matter-item>
     </div>
+    <div class="comment-part">
+      <form-cell cellTitle='备注' :cellContent="orderRemarks || '无'"></form-cell>
+    </div>
   </div>
 </template>
 
 <script>
-  import MatterItem from 'components/detail/commonPart/MatterItem'
-  import {numberComma} from 'vux'
-  import {toFixed} from '@/plugins/calc'
-
-  export default {
-    name: 'MatterList',
-    props: {
-      matterList: {
-        type: Array,
-        default: []
-      }
+import {numberComma} from 'vux'
+import {toFixed} from '@/plugins/calc'
+import FormCell from 'components/detail/commonPart/FormCell'
+import MatterItem from 'components/detail/commonPart/MatterItem'
+export default {
+  name: 'MatterList',
+  props: {
+    matterList: {
+      type: Array,
+      default: []
     },
-    components: {
-      MatterItem,
-    },
-    filters: {
-      numberComma,
-      toFixed,
-    },
-  }
+    orderRemarks: {
+      type: String,
+      default: '无'
+    }
+  },
+  components: {
+    FormCell, MatterItem
+  },
+  filters: {
+    numberComma,
+    toFixed,
+  },
+}
 </script>
 
 <style scoped lang="scss">
@@ -48,6 +55,12 @@
   position: relative;
   background: #FFF;
   padding: .06rem .08rem;
+  // .comment-part {
+  //   width: 100%;
+  //   background: #fff;
+  //   margin-bottom: .1rem;
+  //   padding: .06rem .08rem;
+  // }
   .title {
     color: #111;
     font-weight: bold;

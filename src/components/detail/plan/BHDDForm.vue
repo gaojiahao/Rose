@@ -10,15 +10,15 @@
         <!-- 工作流 -->
         <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>              
-        <!-- 往来联系部分 交易基本信息-->
-        <!-- <contact-part :contact-info="contactInfo" ></contact-part>                -->
         <!-- 物料列表 -->
-        <matter-list :matter-list="orderInfo.order.dataSet">
+        <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment">
           <div class='mater_other' slot="matterOther" slot-scope="{item}">
             <div class='mater_left'>
               <span class="units">
                 计量单位: {{item.measureUnit_transObjCode}}
               </span>
+            </div>
+            <div class="mater_num">
               <span class='num'>数量: {{item.tdQty}}</span>
             </div>
           </div>
@@ -128,6 +128,13 @@ export default {
         font-size: .1rem;
         .units {
           margin-right: .04rem;
+        }
+      }
+      .mater_num {
+        .num {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
         }
       }
     }

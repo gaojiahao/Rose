@@ -32,14 +32,14 @@
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
                       <div class='mater_more'>
-                        <span>大类: {{item.inventoryType}}</span>
+                        <span>大类: {{item.inventoryType || '无'}}</span>
                         <span>单位: {{item.measureUnit}}</span>
                         <span>余额: {{item.qtyBal}}</span>
                       </div>
                       <div class="mater_other">
-                          <span class="matter-remain">
-                            <span class="symbol">减少数量: </span>{{item.tdQty}}
-                          </span>
+                        <span class="matter-remain">
+                          减少数量: {{item.tdQty}}
+                        </span>
                       </div>
                     </template>
                   </matter-item>
@@ -430,8 +430,8 @@
       padding-right: .38rem;
     }
     .matter-remain {
-      color: #5077aa;
-      font-size: .16rem;
+      color: #111;
+      font-size: .14rem;
       font-weight: bold;
       .symbol {
         color: #757575;

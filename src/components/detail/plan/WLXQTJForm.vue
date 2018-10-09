@@ -23,7 +23,7 @@
               <span class="order_num">{{key}}</span>
             </div>
             <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index">
+              <matter-item :class="{'vux-1px-b' : index !== oItem.length - 1}" :item="item" v-for="(item, index) in oItem" :key="index">
                 <!-- 调拨数量 -->
                 <div class="mater_other" slot="other" slot-scope="{item}">
                   <div class="mater_num">

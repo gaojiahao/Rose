@@ -60,7 +60,7 @@
                     <!-- 物料数量和价格 -->
                     <div class='mater_other'>
                       <div class='current_num'>
-                        <span>数量：</span>{{item.tdQty}}
+                        数量：{{item.tdQty}}
                       </div>
                     </div>
                     <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
@@ -389,8 +389,8 @@ export default {
 @import './../../scss/bizApply';
   .mater_other {
     .current_num{
-      color: #5077aa;
-      font-size: .16rem;
+      color: #111;
+      font-size: .14rem;
       font-weight: bold;
       span{
         color: #757575;

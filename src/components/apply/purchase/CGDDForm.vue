@@ -217,7 +217,7 @@ export default {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
         this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
-        // this.getMatPrice();
+        this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // TODO 选中物料项
     selMatter(val) {
