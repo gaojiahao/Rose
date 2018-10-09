@@ -4,9 +4,9 @@
  */
 
 export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
-export const secret = 'z3a2Yz1B_RxeTD2WBkMDmqD49xp8qykhY96A1ZdxeMQ'; // 应用凭证
-export const agentid = '1000037'; // 企业应用的id
-export const redirect_uri = 'https%3a%2f%2frefordom.roletask.com%2fHermes'; // 首页路径
+export const secret = '5DdrQJT9GlFvmBR87a7Df7dTqBskPlPDUnjKi_YZbOg';    // 'roletask'路塔 应用凭证
+export const agentid = '1000036'; // 企业应用的id
+export const redirect_uri = 'https%3a%2f%2fterui.roletask.com%2fHermes'; // 首页路径
 
 export default {
   corpid,

@@ -71,7 +71,7 @@
 <script>
   // vux组件引入
   import {
-    Cell, Group, XInput,
+    Cell, Group, XInput,dateFormat,
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
@@ -120,10 +120,25 @@
         seletedIndex :0,
         seletedInvoice : [],
         formData: {},
-        formDataComment: '',//备注
-        projectName: '', // 项目名称
       }
     },
+    watch:{
+      invoiceList:{
+        handler(val){
+          let data = {
+            ZZSSP_DATA : {
+              invoice : {
+                dealer : this.dealerInfo,
+                invoiceInfo : this.invoiceInfo,
+                list : this.invoiceList
+              }
+            }
+          }
+          this.$emit('sel-data',data);
+        },
+        deep:true
+      }
+    },  
     methods: {
       //选中的客户
       selDealer(val) {
@@ -286,6 +301,18 @@
             creator: formData.creator,
             modifer: formData.modifer,
             biComment :formData.biComment,
+            handlerEntity : formData.handlerEntity,
+          }
+          //客户信息
+          this.dealerInfo = {
+            ...this.dealerInfo,
+            dealerName : formData.order.dealerName_dealerCodeCredit,
+            dealerCode : formData.order.dealerCodeCredit,
+            province : formData.order.province_dealerCodeCredit,
+            city : formData.order.city_dealerCodeCredit,
+            county : formData.order.county_dealerCodeCredit,
+            address : formData.order.address_dealerCodeCredit,
+            dealerMobilePhone : formData.order.dealerMobilePhone_dealerCodeCredit
 
           }
           //发票列表明细
@@ -300,24 +327,29 @@
             }
             this.invoiceList.push(obj);
           })
+          //发票信息
           this.invoiceInfo = {
             ...this.invoiceInfo,
             ticketNumber: formData.ticketNumber,//票号
-            invoiceType: formData.invoiceGetType,//发票类型
+            invoiceType: formData.invoiceType,//发票类型
             invoiceAmount: formData.invoiceAmount,//发票金额
-            invoiceDate: formData.invoiceDate,//发票日期
+            invoiceDate: dateFormat(formData.invoiceDate, 'YYYY-MM-DD'),//发票日期
             invoiceContent: formData.invoiceContent,//发票内容
 
           }
+          this.invoiceGetType.push(formData.invoiceType);
+          this.dealerParams.dealerCode = formData.order.dealerCodeCredit;
           this.$loading.hide();
           // this.$emit('input', false);
         })
       }
     },
     created() {
-      let data = sessionStorage.getItem('ZZSKP_DATA');
+      let data = sessionStorage.getItem('ZZSSP_DATA');
       if(data){
-        this.invoiceList = JSON.parse(data).cost
+        this.invoiceList = JSON.parse(data).invoice.list;
+        this.dealerInfo = JSON.parse(data).invoice.dealer;
+        this.invoiceInfo = JSON.parse(data).invoice.invoiceInfo;
       }
     },
   }

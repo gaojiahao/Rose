@@ -76,13 +76,13 @@
                           </div>
                         </div>
                         <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)" v-show="!matterModifyClass">
+                        <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)" v-show="!matterModifyClass">
                           <span class='iconfont icon-bianji1'></span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
+                  <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
@@ -481,6 +481,7 @@ export default {
         };
         this.biReferenceId = formData.biReferenceId;
         this.matterList = matterList;
+        this.orderList = orderList;
         this.$loading.hide();
       })
     },
@@ -492,7 +493,7 @@ export default {
       this.warehouseOut = JSON.parse(data).warehouseOut;
       this.warehouseIn = JSON.parse(data).warehouseIn;
     }
-  },
+  }
 }
 </script>
 

@@ -39,76 +39,73 @@
 </template>
 
 <script>
-  // vux 组件引入
-  import {dateFormat} from 'vux'
-  // 请求 引入
-  import {getSOList} from 'service/detailService'
-  // mixins 引入
-  import detailCommon from 'components/mixins/detailCommon'
-  // 组件 引入
-  import workFlow from 'components/workFlow'
-  import RAction from 'components/RAction'
-  import contactPart from 'components/detail/commonPart/ContactPart'
-  import MatterList from 'components/detail/commonPart/MatterList'
-  // 映射表引入
-  import Apps from '@/home/pages/apps/bizApp/maps/Apps'
-
-  export default {
-    data() {
-      return {
-        orderInfo: {},      // 表单内容
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
-        contactInfo: {}, // 客户、付款方式、物流条款的值
-      }
-    },
-    mixins: [detailCommon],
-    components: {
-      workFlow, RAction, contactPart, MatterList
-    },
-    methods: {
-      //选择默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // 获取详情
-      getOrderList(transCode = '') {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode
-        }).then(({success = true, formData = {}}) => {
-          // http200时提示报错信息
-          if (success === false) {
-            this.$vux.alert.show({
-              content: '抱歉，数据有误，暂无法查看',
-              onHide: () => {
-                this.$router.back();
-              }
-            });
-            return;
-          }
-          this.orderInfo = formData;
-          this.workFlowInfoHandler();
-        })
-      },
-      // TODO 跳转到编辑页面
-      goEdit() {
-        // 交易号、应用名称等
-        let {code} = this.$route.params;
-        let {name} = this.$route.query;
-        this.$router.push({
-          path: `/fillform/${Apps[code]}`,
-          query: {
-            name,
-            transCode: this.transCode
-          }
-        })
-      },
+// vux 组件引入
+import {dateFormat} from 'vux'
+// 请求 引入
+import {getSOList} from 'service/detailService'
+// mixins 引入
+import detailCommon from 'components/mixins/detailCommon'
+// 组件 引入
+import workFlow from 'components/workFlow'
+import RAction from 'components/RAction'
+import contactPart from 'components/detail/commonPart/ContactPart'
+import MatterList from 'components/detail/commonPart/MatterList'
+export default {
+  data() {
+    return {
+      orderInfo: {},      // 表单内容
+      formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
+      contactInfo: {}, // 客户、付款方式、物流条款的值
     }
+  },
+  mixins: [detailCommon],
+  components: {
+    workFlow, RAction, contactPart, MatterList
+  },
+  methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl_default02.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // 获取详情
+    getOrderList(transCode = '') {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode
+      }).then(({success = true, formData = {}}) => {
+        // http200时提示报错信息
+        if (success === false) {
+          this.$vux.alert.show({
+            content: '抱歉，数据有误，暂无法查看',
+            onHide: () => {
+              this.$router.back();
+            }
+          });
+          return;
+        }
+        this.orderInfo = formData;
+        this.workFlowInfoHandler();
+      })
+    },
+    // TODO 跳转到编辑页面
+    goEdit() {
+      // 交易号、应用名称等
+      let { fileId, listId } = this.$route.params,
+          { name } = this.$route.query;
+      this.$router.push({
+        path: `/fillform/${fileId}/${listId}`,
+        query: {
+          name, 
+          transCode: this.transCode
+        }
+      })
+    },
   }
+}
 </script>
 
 <style lang='scss' scoped>

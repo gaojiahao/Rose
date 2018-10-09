@@ -1,4 +1,6 @@
 import axios from 'axios';
+import $axios from '../plugins/ajax'
+import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
 import {corpid, secret, agentid, redirect_uri} from '@/plugins/ajax/conf'
 
@@ -95,8 +97,8 @@ let tokenService = {
           data: {
             loginModel: 1,
             password: '123456',
-            userCode: 'rfd9527'
-            // userCode: '026'
+            // userCode: 'rfd9527'
+            userCode: '026'
 
           }
         };
