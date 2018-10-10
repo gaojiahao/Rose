@@ -104,7 +104,7 @@ import ApplyCommon from 'pageMixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-import MatterItem from 'components/apply/commonPart/MatterItem'
+
 
 // 方法引入
 import {accSub} from '@/home/pages/maps/decimalsAdd'
@@ -112,8 +112,7 @@ export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput,
-    PopMatterList, PopWarehouseList, PopMatter,
-    MatterItem,
+    PopMatterList, PopWarehouseList, PopMatter
   },
   data() {
     return {

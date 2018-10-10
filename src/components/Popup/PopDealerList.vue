@@ -10,9 +10,6 @@
           <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
         </div>
         <div class="cp-info">
-          <!-- <div>
-            <span class="user-tel" v-if="dealerInfo.dealerPhone">{{dealerInfo.dealerPhone}}</span>
-          </div> -->
           <span class="iconfont icon-icon-test"></span>
           <span class="cp-ads">
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}

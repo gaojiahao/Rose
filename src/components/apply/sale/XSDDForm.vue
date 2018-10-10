@@ -123,7 +123,7 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-import MatterItem from 'components/apply/commonPart/MatterItem'
+
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   export default {
@@ -133,7 +133,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
     components: {
       Popup, PopMatterList, PopDealerList, 
       PopSingleSelect, Group, Cell, Datetime,
-      XInput, XTextarea, PopMatter, RNumber,MatterItem
+      XInput, XTextarea, PopMatter, RNumber
     },
     data() {
       return {

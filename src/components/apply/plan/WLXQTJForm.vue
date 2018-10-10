@@ -104,15 +104,14 @@
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
-  import MatterItem from 'components/apply/commonPart/MatterItem'
+  
 
   export default {
     name: 'ApplyWLXQTJForm',
     mixins: [applyCommon],
     components: {
       Icon, Cell, Group,
-      XInput, PopMatter, PopOrderXqtjList,
-      MatterItem,
+      XInput, PopMatter, PopOrderXqtjList
     },
     data() {
       return {

@@ -135,7 +135,7 @@
   import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
   import PopEntityList from 'components/Popup/PopEntityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  import MatterItem from 'components/apply/commonPart/MatterItem'
+  
   // 公共方法
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
@@ -149,8 +149,7 @@
       XInput, RAction, RNumber, Swipeout,
       PopOrderList, SwipeoutItem, PopDealerList,
       SwipeoutButton, PopSingleSelect, PopWarehouseList,
-      PopSodlProjectList, PopEntityList, PopMatter,
-      MatterItem,
+      PopSodlProjectList, PopEntityList, PopMatter
     },
     data() {
       return {

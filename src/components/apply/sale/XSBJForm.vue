@@ -135,13 +135,13 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  import MatterItem from 'components/apply/commonPart/MatterItem'
+  
   export default {
     mixins: [ApplyCommon],
     components: {
       Icon, XInput, RPicker,XTextarea,
       PopMatterList, PopDealerList, PopSingleSelect,
-      PopMatter,MatterItem
+      PopMatter
     },
     data() {
       return {

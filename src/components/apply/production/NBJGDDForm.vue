@@ -115,7 +115,7 @@
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
   import FormCell from 'components/detail/commonPart/FormCell'
-  import MatterItem from 'components/apply/commonPart/MatterItem'
+  
   import BomList from 'components/detail/commonPart/BomList'
   // 公共方法
   import {accMul} from '@/home/pages/maps/decimalsAdd'
@@ -126,7 +126,7 @@
     components: {
       Icon, Cell, Group, XInput,
       PopMatter, PopOrderXqtjList, Datetime,
-      FormCell, MatterItem, BomList,
+      FormCell, BomList
     },
     data() {
       return {

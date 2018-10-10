@@ -5,32 +5,34 @@ import Bscroll from 'better-scroll'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 import platfrom from '@/plugins/platform/index'
+import MatterItem from 'components/apply/commonPart/MatterItem'
 export default {
   data() {
     return {
-      uniqueId: '',
-      isResubmit: false,
-      biComment: '',
-      biReferenceId: '',
-      transCode: '',
       taskId: '',
-      btnInfo: {}, //操作按钮信息
-      comment: '',//审批意见
+      comment: '',                                // 审批意见
+      uniqueId: '',
+      biComment: '',                              // 备注
+      transCode: '',
+      processCode: '',                            // 流程编码，用于新建的工作流
+      biReferenceId: '',
       formViewUniqueId: '',
-      fillBscroll: null,
+      matter:{},                                  // 选中要编辑的物料
+      entity: {},                                 // 公司主体 ID
+      btnInfo: {},                                // 操作按钮信息
       actions: [],
-      processCode: '', // 流程编码，用于新建的工作流
-      entity: {
-        dealerName: '中国特瑞'
-      },
-      matterModifyClass : false,
-      selItems : [], //选中的要删除的物料
-      matter:{}, //选中要编辑的物料
-      showMatterPop :false, //编辑物料的pop
-      modifyIndex:null, //选中编辑物料的pop
-      clientHeight : document.documentElement.clientHeight,
+      selItems : [],                              // 选中的要删除的物料
+      modifyIndex:null,                           // 选中编辑物料的pop
+      fillBscroll: null,
       btnIsHide : false,
+      isResubmit: false,
+      showMatterPop :false,                       // 编辑物料的pop
+      matterModifyClass : false,
+      clientHeight : document.documentElement.clientHeight,
     }
+  },
+  components: {
+    MatterItem
   },
   computed: {
     // 合计金额
@@ -73,8 +75,6 @@ export default {
         val.noTaxAmount = accMul(val.price,val.tdQty).toFixed(2);
         val.taxAmount = accMul(val.noTaxAmount,val.taxRate).toFixed(2);
         val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);  
-        
-        
       },
       deep:true
     }
