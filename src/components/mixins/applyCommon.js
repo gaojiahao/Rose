@@ -39,11 +39,10 @@ export default {
     totalAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        if(item.tdQty || item.price || item.taxRate){
-          item.noTax = accMul(item.tdQty, item.price);
-          total = accAdd(total, item.noTax);
-        }
-        
+        let price = item.price || 0,
+            tdQty = item.tdQty || 0;
+        item.noTax = accMul(tdQty,price);
+        total = accAdd(total, item.noTax);
       });
       return Number(total);
     },
@@ -51,10 +50,12 @@ export default {
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        if(item.tdQty || item.price || item.taxRate){
-          item.noTax = accMul(item.tdQty, item.price);
-          total = accAdd(total, accMul(item.noTax, item.taxRate)).toFixed(2);
-        }
+        let price = item.price || 0,
+            tdQty = item.tdQty || 0,
+            taxRate = item.taxRate || 0; 
+        item.noTax = accMul(tdQty,price);
+        total = accAdd(total, accMul(item.noTax,taxRate)).toFixed(2);
+        
       });
       return total;
     },
@@ -66,14 +67,11 @@ export default {
     //修改的物料
     matter:{
       handler(val){ 
-        if(!val.price || !val.tdQty){
-          val.noTaxAmount = 0;
-          val.taxAmount = 0;
-          val.tdAmount = 0;
-          return
-        }
-        val.noTaxAmount = accMul(val.price,val.tdQty).toFixed(2);
-        val.taxAmount = accMul(val.noTaxAmount,val.taxRate).toFixed(2);
+        let price = val.price || 0,
+            tdQty = val.tdQty || 0,
+            taxRate = val.taxRate || 0;
+        val.noTaxAmount = accMul(price,tdQty).toFixed(2);
+        val.taxAmount = accMul(val.noTaxAmount,taxRate).toFixed(2);
         val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);  
       },
       deep:true

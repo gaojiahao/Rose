@@ -431,6 +431,12 @@
         align-items: center;
         position: relative;
         justify-content: space-between;
+        //内容可编辑提示
+        .edit_tips{
+          font-weight: bold;
+          font-size:0.12rem;
+          color: #111;
+        }
         .mater_price {
           color: #ea5455;
           font-weight: bold;
@@ -448,7 +454,6 @@
             // }
           }
         }
-
       }
       // 物料的补充填写按钮
       .edit-part {
