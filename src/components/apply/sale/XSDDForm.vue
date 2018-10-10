@@ -30,62 +30,34 @@
             <div class="mater_list">
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}" 
                   v-for="(item, index) in matterList" :key='index'>
-                <div class="each_mater_wrapper" @click="delClick(item,index)">
-                  <div class="mater_img">
-                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                  </div>
-                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
-                    <!-- 物料名称 -->
-                    <div class="mater_name">
-                      {{item.inventoryName}}
-                    </div>
-                    <!-- 物料基本信息 -->
-                    <div class="mater_info">
-                      <!-- 物料编码、规格 -->
-                      <div class="withColor">
-                        <!-- 物料编码 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_code">
-                            <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode}}</span>
-                          </div>
-                        </div>
-                        <!-- 物料规格 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_spec">
-                            <span class="title">规格</span>
-                            <span class="num">{{item.specification || '无'}}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass">
+                  <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                         <span class="processing">属性：{{item.processing}}</span>
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
-                        <span>税率：{{item.taxRate || 0.16}}</span>
+                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                         <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other'>
+                    <div class='mater_other' v-if="item.price && item.tdQty">                      
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
                       <div>
                         <r-number :num="item.tdQty"
                                   :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>
-
+                      </div>                     
                     </div>
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>                  
-                  </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>
+                    <div class='mater_other' v-else>
+                      <div class="edit_tips" >点击右侧可编辑</div>
+                    </div>
+                  </template>
+                </matter-item>
+                <div class='delete_icon' @click="delClick(item,index)" v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>
               </div>
             </div>
@@ -103,8 +75,8 @@
                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
-       
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
@@ -151,6 +123,7 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import MatterItem from 'components/apply/commonPart/MatterItem'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   export default {
@@ -160,7 +133,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
     components: {
       Popup, PopMatterList, PopDealerList, 
       PopSingleSelect, Group, Cell, Datetime,
-      XInput, XTextarea, PopMatter, RNumber
+      XInput, XTextarea, PopMatter, RNumber,MatterItem
     },
     data() {
       return {
@@ -254,17 +227,6 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
         this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
         this.showLogPop = false;
       },
-      //显示物料修改的pop
-      modifyMatter(item,index){
-        this.matter = JSON.parse(JSON.stringify(item));
-        this.showMatterPop = true;
-        this.modifyIndex = index;
-      },
-      //更新修改后的物料信息
-      selConfirm(val){
-        let modMatter = JSON.parse(val);
-        this.$set(this.matterList,this.modifyIndex,modMatter);
-      },
       //选择物料，显示物料pop
       getMatter(){
         if(!this.dealerInfo.dealerCode){
@@ -283,11 +245,11 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
             item.tdQty = this.numMap[item.inventoryCode].tdQty;
             item.price = this.numMap[item.inventoryCode].price;
           } 
-          // else {
-          //   item.tdQty = 1;
-          //   item.price = 0;
-          // }
-          // item.taxRate = this.taxRate;
+          else {
+            item.tdQty = '';
+            item.price = '';
+          }
+          item.taxRate = '';
           item.promDeliTime = ''
         })
         this.numMap = {};
