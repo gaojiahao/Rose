@@ -60,7 +60,7 @@
                       placeholder="请选择" ></datetime>
           </slot>
         </group>
-        <div class='mg_auto' v-if="modifyMatter.taxRate">
+        <div class='mg_auto' v-show="isShowAmount">
           <div class='each_info vux-1px-b'>
             <slot name="modifyTitle">
               <label>金额</label>
@@ -101,6 +101,7 @@ export default {
       type:Boolean,
       default : false
     },
+    //底部按钮是否隐藏
     btnIsHide :{
       type : Boolean,
       default : false
@@ -109,6 +110,11 @@ export default {
     isCheckStock :{
       type : Boolean,
       default : true
+    },
+    //是否展示金额，税金，价税小计
+    isShowAmount : {
+      type : Boolean,
+      default :true
     }
   },
   components: {
@@ -159,7 +165,6 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
-      console.log(item)
       let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock} = item;
       // 金额
       if (price) {
@@ -185,6 +190,7 @@ export default {
         item.taxRate = Math.abs(toFixed(taxRate));
       }
     },
+    //输入框获取焦点时内容选中
     getFocus(e){
       event.currentTarget.select();
     }

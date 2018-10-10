@@ -36,9 +36,14 @@
                         <span>单位: {{item.measureUnit}}</span>
                         <span>余额: {{item.qtyBal}}</span>
                       </div>
-                      <div class="mater_other">
+                      <div class="mater_other" v-if="item.tdQty">
                         <span class="matter-remain">
                           减少数量: {{item.tdQty}}
+                        </span>
+                      </div>
+                      <div class="mater_other" @click="modifyMatter(item,index, key)" v-else>
+                        <span class="edit_tips">
+                          点击编辑
                         </span>
                       </div>
                     </template>
@@ -65,7 +70,7 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide">
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
             <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
