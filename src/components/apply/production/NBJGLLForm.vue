@@ -122,13 +122,12 @@ import RNumber from 'components/RNumber'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopOrderList from 'components/Popup/PopOrderList'
-import MatterItem from 'components/apply/commonPart/MatterItem'
+
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput,
-    RNumber,
-    PopOrderList, PopWarehouseList, PopMatter,MatterItem
+    RNumber, PopOrderList, PopWarehouseList, PopMatter
   },
   data() {
     return {

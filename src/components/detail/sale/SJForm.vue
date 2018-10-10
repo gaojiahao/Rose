@@ -20,6 +20,7 @@
           <form-cell cellTitle='有效期至' :cellContent="orderInfo.validUntil"></form-cell>
           <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
           <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>
+          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
         </div>
         <div class="price_cell vux-1px-t">
           <span class="price_title">预期销售额:</span>

@@ -106,15 +106,14 @@ import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-import MatterItem from 'components/apply/commonPart/MatterItem'
+
 
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput,
     RNumber, Swipeout, SwipeoutItem, SwipeoutButton,
-    PopMatterList, PopWarehouseList, PopMatter,
-    MatterItem,
+    PopMatterList, PopWarehouseList, PopMatter
   },
   data() {
     return {
