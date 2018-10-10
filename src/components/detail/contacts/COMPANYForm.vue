@@ -85,20 +85,10 @@ export default {
       }
       this.$loading.show();
       return CompanyInfo(groupId).then( data => {
-        for(let item of data){
-          switch (item.status){
-            case 1:
-              item.status = '使用中';
-              break;
-            case 2:
-              item.status = '未使用';
-              break;
-            case -1: 
-              item.status = '停用';
-              break;
-          }
-          this.CompanyInfo = item;
-        }
+        let [info = {}] = data;
+        let status = ['', '使用中', '未使用', '草稿'];
+        info.status = status[info.status] || '停用';
+        this.CompanyInfo = info;
         this.$loading.hide();
       })    
     }
