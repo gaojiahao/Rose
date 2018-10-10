@@ -55,8 +55,13 @@
                         <div class='mater_price' v-if="item.price">
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
-                        <div class="edit_tips" v-else>点击右侧可编辑</div>
+                        <!-- <div class="edit_tips" v-else>点击右侧可编辑</div> -->
                       </div>
+                  </template>
+                  <template slot="edit" slot-scope="{item}">
+                    <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
+                      <div class="edit_tips" >点击编辑</div>
+                    </div>
                   </template>
                 </matter-item>
                 <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>

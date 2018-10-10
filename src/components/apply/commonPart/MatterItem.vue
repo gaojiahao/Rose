@@ -30,6 +30,11 @@
           <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
         </div>
       </slot>
+      <slot name="edit" :item="item">
+        <div class='mater_other' @click="modifyMatter" v-if="(!item.price || !item.tdQty) && !showDelete">
+          <div class="edit_tips" >点击编辑</div>
+        </div>
+      </slot>  
       <!-- 编辑图标 -->
       <div class="edit-part vux-1px-l" @click="modifyMatter" v-if="!noEdit" v-show="!showDelete">
         <span class='iconfont icon-bianji1'></span>
@@ -176,6 +181,35 @@
           margin-right: 0;
         }
       }
+    }
+    //可编辑提示
+    .mater_other {
+        display: flex;
+        margin-top: .03rem;
+        align-items: center;
+        position: relative;
+        justify-content: space-between;
+        //内容可编辑提示
+        .edit_tips{
+          font-weight: bold;
+          font-size:0.12rem;
+          color: #111;
+        }
+        .mater_price {
+          color: #ea5455;
+          font-weight: bold;
+          font-size: .16rem;
+          line-height: .2rem;
+          display: inline-block;
+        }
+        .matter-remain {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+          .symbol {
+            color: #757575;
+          }
+        }
     }
     // 物料的补充填写按钮
     .edit-part {

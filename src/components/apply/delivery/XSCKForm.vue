@@ -42,21 +42,22 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
+                              @click.native="delClick(index,item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
                       <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
                         <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                        <span>税率：{{item.taxRate || taxRate}}</span>
+                        <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
                       </div>
                       <!-- 库存 -->
                       <div class='mater_more'>
                         <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
-                      <div class="mater_other">
+                      <div class="mater_other" v-show="item.price && item.tdQty">
                         <div class="mater_price">
                           <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                         </div>
@@ -263,7 +264,7 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = '', price ='', taxRate = '', promDeliTime = ''} = this.numMap[key] || {};
+          let {tdQty = '', price ='', taxRate = 0.16, promDeliTime = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
@@ -344,6 +345,12 @@
 
                 }
 
+              })
+              this.matterList.forEach((item,index)=>{
+                if(item.inventoryCode === SItem.inventoryCode){
+                 this.matterList.splice(index,1);
+                 index--;
+                }
               })
             })
             this.selItems = [];

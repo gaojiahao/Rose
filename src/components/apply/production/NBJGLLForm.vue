@@ -30,7 +30,8 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
+                              @click.native="delClick(index, item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
                       <div class='mater_more'>
@@ -43,10 +44,15 @@
                             <i class="iconfont icon--"></i>
                             <span>{{item.warehouseName}}</span>
                           </div>
-                          <div class="matter-remain">
+                          <div class="matter-remain" v-if="item.tdQty">
                             <span class="symbol">本次领料: </span>{{item.tdQty}}
                           </div>
                         </div>
+                    </template>
+                    <template slot="edit" slot-scope="{item}">
+                      <div class='mater_other' @click="modifyMatter(item,index, key)" v-if="!item.tdQty && !matterModifyClass">
+                        <div class="edit_tips" >点击编辑</div>
+                      </div>
                     </template>
                   </matter-item>
                   <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
@@ -79,7 +85,7 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
-                    :btn-is-hide="btnIsHide">
+                    :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="materStock" slot-scope="{modifyMatter}">
             <span>可用库存:{{modifyMatter.qtyStock}}</span>
           </template>
@@ -159,6 +165,25 @@ export default {
       },
       deep: true
     },
+    //离开时保存数据
+    orderList: {
+      handler(val){
+        let arr = Object.keys(val);
+        if(arr.length){
+            let data = {
+              NBJGLL_DATA:{
+                matter : val,
+                warehouseOut : this.warehouseOut,
+                warehouseIn : this.warehouseIn
+
+              }
+            }
+            this.$emit('sel-data',data)
+        }
+
+      }
+
+    }
   },
   methods: {
     // TODO 滑动删除
@@ -454,11 +479,12 @@ export default {
     },
   },
   created() {
-    let data = sessionStorage.getItem('KCDB_DATA');
+    let data = sessionStorage.getItem('NBJGLL_DATA');
     if (data) {
-      this.matterList = JSON.parse(data).matter;
+      this.orderList = JSON.parse(data).matter;
       this.warehouseOut = JSON.parse(data).warehouseOut;
       this.warehouseIn = JSON.parse(data).warehouseIn;
+      this.warehouseParams.whCode = this.warehouseOut.warehouseCode;
     }
   }
 }

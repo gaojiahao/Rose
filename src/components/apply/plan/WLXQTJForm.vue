@@ -36,12 +36,14 @@
                         <span>单位: {{item.measureUnit}}</span>
                         <span>余额: {{item.qtyBal}}</span>
                       </div>
-                      <div class="mater_other" v-if="item.tdQty">
+                      <div class="mater_other" v-show="item.tdQty">
                         <span class="matter-remain">
                           减少数量: {{item.tdQty}}
                         </span>
                       </div>
-                      <div class="mater_other" @click="modifyMatter(item,index, key)" v-else>
+                    </template>
+                    <template slot="edit" slot-scope="{item}">
+                      <div class="mater_other" @click="modifyMatter(item,index, key)" v-show="!item.tdQty && !matterModifyClass">
                         <span class="edit_tips">
                           点击编辑
                         </span>

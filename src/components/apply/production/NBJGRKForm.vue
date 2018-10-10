@@ -32,11 +32,16 @@
                       <div class='mater_more'>
                         <span>仓库: {{item.warehouseName || '暂未指定'}}</span>
                       </div>
-                      <div class="mater_other">
+                      <div class="mater_other" v-if="item.tdQty">
                         <div class="matter-remain">
                           <span>本次完工入库: {{item.tdQty}}{{item.measureUnit}}</span>
                           <span class="symbol">[余额: {{item.qtyBal}}]</span>
                         </div>
+                      </div>
+                    </template>
+                    <template slot="edit" slot-scope="{item}">
+                      <div class='mater_other' @click="modifyMatter(item,index, key)" v-if="!item.tdQty && !matterModifyClass">
+                        <div class="edit_tips" >点击编辑</div>
                       </div>
                     </template>
                   </matter-item>
@@ -63,7 +68,7 @@
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide">
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
@@ -489,14 +494,6 @@
       }
       .order_num {
         background: #c93d1b;
-      }
-    }
-    .matter-remain {
-      color: #111;
-      font-size: .14rem;
-      font-weight: bold;
-      .symbol {
-        color: #757575;
       }
     }
   }

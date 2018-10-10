@@ -38,11 +38,16 @@
                       <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class="mater_other">
+                    <div class="mater_other" v-show="item.tdQty">
                       <span class="matter-remain">
                         <span class="symbol">库存数量: </span>{{item.qtyBal}}
                         <span class="symbol">调拨数量: </span>{{item.tdQty}}
                       </span>
+                    </div>
+                  </template>
+                  <template slot="edit" slot-scope="{item}">
+                    <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.tdQty && !matterModifyClass">
+                      <div class="edit_tips" >点击编辑</div>
                     </div>
                   </template>
                 </matter-item>
@@ -68,10 +73,10 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
-                    :btn-is-hide="btnIsHide">
+                    :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="调拨数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"></x-input>
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
           </template>
         </pop-matter>
       </div>
@@ -228,7 +233,7 @@ export default {
     selMatter(val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
-        item.tdQty = this.numMap[item.inventoryCode] || 1
+        item.tdQty = this.numMap[item.inventoryCode] || ""
       });
       this.numMap = {};
       this.matterList = [...sels];

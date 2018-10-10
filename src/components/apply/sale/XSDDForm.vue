@@ -51,9 +51,6 @@
                                   :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                       </div>                     
                     </div>
-                    <div class='mater_other' v-else>
-                      <div class="edit_tips" >点击右侧可编辑</div>
-                    </div>
                   </template>
                 </matter-item>
                 <div class='delete_icon' @click="delClick(item,index)" v-if='matterModifyClass'>
@@ -250,7 +247,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
             item.tdQty = '';
             item.price = '';
           }
-          item.taxRate = '';
+          item.taxRate = 0.16;
           item.promDeliTime = ''
         })
         this.numMap = {};

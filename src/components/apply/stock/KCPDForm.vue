@@ -37,9 +37,14 @@
                     <div class="mater_more">
                       <span class="symbol">账存数量: {{item.qtyBal}}</span>
                     </div>
-                    <div class='mater_num'>
+                    <div class='mater_num' v-show="item.tdQty">
                       盘点数量: <span class="num">{{item.tdQty}}</span>
                       差异数量: <span class="diff_num">{{item.differenceNum}}</span>
+                    </div>
+                  </template>
+                  <template slot="edit" slot-scope="{item}">
+                    <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.tdQty && !matterModifyClass">
+                      <div class="edit_tips" >点击编辑</div>
                     </div>
                   </template>
                 </matter-item>
@@ -65,10 +70,10 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
-                    :btn-is-hide="btnIsHide">
+                    :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="盘点数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"></x-input>
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
             <cell title="差异数量" text-align='right' placeholder='请填写'
                   :value="modifyMatter.differenceNum"
                   :class='{high_light : modifyMatter.differenceNum !== 0}'></cell>

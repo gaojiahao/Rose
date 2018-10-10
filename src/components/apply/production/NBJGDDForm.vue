@@ -33,13 +33,18 @@
                         <span>单位: {{item.measureUnit}}</span>
                         <span>待下单余额: {{item.qtyBal}}</span>
                       </div>
-                      <div class="mater_more">
-                        <span>成品计划验收日期: </span>{{item.shippingTime || '无'}}</span>
+                      <div class="mater_more" v-show="item.shippingTime">
+                        <span>成品计划验收日期:{{item.shippingTime}}</span>
                       </div>
-                      <div class="mater_other">
+                      <div class="mater_other" v-if="item.tdQty">
                         <div class="matter-remain">
                           本次下单: {{item.tdQty}}
                         </div>
+                      </div>
+                    </template>
+                    <template slot="edit" slot-scope="{item}">
+                      <div class='mater_other' @click="modifyMatter(item,index, key)" v-if="!item.tdQty && !matterModifyClass">
+                        <div class="edit_tips" >点击编辑</div>
                       </div>
                     </template>
                   </matter-item>
@@ -73,7 +78,7 @@
 
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide">
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
@@ -182,7 +187,7 @@
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = item.qtyBal, shippingTime = ''} = this.numMap[key] || {};
+          let {tdQty = '', shippingTime = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.shippingTime = shippingTime;
           if (!orderList[item.transCode]) {

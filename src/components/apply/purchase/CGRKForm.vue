@@ -29,62 +29,31 @@
             <div class="mater_list">
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}" 
                     v-for="(item, index) in matterList" :key="index">
-                <div class="each_mater_wrapper" >
-                  <div class="mater_img">
-                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                  </div>
-                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
-                    <!-- 物料名称 -->
-                    <div class="mater_name">
-                      {{item.inventoryName}}
-                    </div>
-                    <!-- 物料基本信息 -->
-                    <div class="mater_info">
-                      <!-- 物料编码、规格 -->
-                      <div class="withColor">
-                        <!-- 物料编码 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_code">
-                            <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode}}</span>
-                          </div>
-                        </div>
-                        <!-- 物料规格 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_spec">
-                            <span class="title">规格</span>
-                            <span class="num">{{item.specification || '无'}}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
+                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
+                            @click.native="delClick(index,item)">
+                  <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                         <span class="processing">属性：{{item.processing}}</span>
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                        <span>税率：{{item.taxRate}}</span>
+                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                         <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other'>
+                    <div class='mater_other' v-if="item.price && item.tdQty">                      
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
                       <div>
                         <r-number :num="item.tdQty"
                                   :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>
-
+                      </div>                     
                     </div>
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div> 
-                  </div>
-                </div>
-                <div class='delete_icon' v-if='matterModifyClass' @click="delClick(index,item)">
+                  </template>
+                </matter-item>
+                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                 </div>
@@ -254,7 +223,7 @@ export default {
           item.tdQty = '';
           item.price = '';
         }
-        item.taxRate = '';
+        item.taxRate = 0.16;
         item.promDeliTime = ''
       });
       this.numMap = {};

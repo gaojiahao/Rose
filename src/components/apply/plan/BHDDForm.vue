@@ -22,56 +22,32 @@
             <div class="mater_list">
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                   v-for="(item, index) in matterList" :key='index'>
-                <div class="each_mater_wrapper"  @click="delClick(index,item)">
-                  <div class="mater_img">
-                    <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-                  </div>
-                  <div class="mater_main" :class="{has_padding : !matterModifyClass}">
-                    <!-- 物料名称 -->
-                    <div class="mater_name">
-                      {{item.inventoryName}}
-                    </div>
-                    <!-- 物料基本信息 -->
-                    <div class="mater_info">
-                      <!-- 物料编码、规格 -->
-                      <div class="withColor">
-                        <!-- 物料编码 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_code">
-                            <span class="title">编码</span>
-                            <span class="num">{{item.inventoryCode}}</span>
-                          </div>
-                        </div>
-                        <!-- 物料规格 -->
-                        <div class="ForInline" style="display:inline-block">
-                          <div class="mater_spec">
-                            <span class="title">规格</span>
-                            <span class="num">{{item.specification || '无'}}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- 物料数量和价格 -->
+                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
+                            @click.native="delClick(index,item)">
+                  <template slot="info" slot-scope="{item}">
+                    <!-- 物料属性和单位 -->
                     <div class="mater_more">
                         <span class="processing">属性：{{item.processing}}</span>
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other'>
+                    <div class='mater_other' v-if="item.tdQty">                      
                       <div class='current_num'>
                         数量：{{item.tdQty}}
-                      </div>
+                      </div>                  
                     </div>
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>   
-                  </div>
-                  <div class='delete_icon' v-if='matterModifyClass'>
-                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>   
-                </div>             
+                  </template>
+                  <template slot="edit" slot-scope="{item}">
+                    <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.tdQty && !matterModifyClass">
+                      <div class="edit_tips" >点击编辑</div>
+                    </div>
+                  </template>
+                </matter-item>
+                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
+                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                </div>          
               </div>
             </div>
           </template>
@@ -88,7 +64,8 @@
                           ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
@@ -187,7 +164,6 @@ export default {
           item.tdQty = '';
           item.price = '';
         }
-        item.promDeliTime = '';
       })
       this.numMap = {};
       this.matterList = sels;
