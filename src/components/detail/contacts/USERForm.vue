@@ -1,30 +1,35 @@
 <template>
   <div class="detail_wrapper user-detail-container">
-    <div class="basicPart">
-      <div class="user-photo-container">
-        <img class="avatar" :src="userData.photo" alt="头像" @error="getDefaultImg">
+    <div class="basicPart" ref="detail">
+      <div class="user-info-container">
+        <div class="user-info">
+          <img class="avatar" :src="userData.photo" alt="头像" @error="getDefaultImg">
+          <span class="user-name">{{userData.nickname}}</span>
+          <div class="user-status-part">
+            <span class="user-status" :class="userData.statusClass">{{userData.status}}</span>
+            <span class="user-type" :class="userData.typeClass">{{userData.userType}}</span>
+          </div>
+        </div>
       </div>
-      <!-- 任务信息 -->
-      <div class="user-info">
-        <div class="info-title vux-1px-b">用户信息</div>
-        <div class="project_content">
-          <form-cell cellTitle="工号" :cellContent="userData.userCode" :showTopBorder="false"></form-cell>
-          <form-cell cellTitle="姓名" :cellContent="userData.nickname"></form-cell>
-          <form-cell cellTitle="性别" :cellContent="userData.gender"></form-cell>
+      <div class="user-info-part">
+        <div class="user-info-list">
+          <form-cell cellTitle="公司" :cellContent="userData.entityName" :showTopBorder="false"></form-cell>
+          <form-cell cellTitle="工号" :cellContent="userData.userCode"></form-cell>
           <form-cell cellTitle="手机" :cellContent="userData.mobile"></form-cell>
           <form-cell cellTitle="座机" :cellContent="userData.officePhone"></form-cell>
           <form-cell cellTitle="邮箱" :cellContent="userData.email"></form-cell>
-          <form-cell cellTitle="类型" :cellContent="userData.userType"></form-cell>
-          <form-cell cellTitle="状态" :cellContent="userData.status"></form-cell>
-          <form-cell cellTitle="公司" :cellContent="userData.entityName"></form-cell>
-          <form-cell cellTitle="创建者" :cellContent="userData.creatorName"></form-cell>
+        </div>
+        <div class="user-info-list">
+          <form-cell cellTitle="创建者" :cellContent="userData.creatorName" :showTopBorder="false"></form-cell>
           <form-cell cellTitle="创建时间" :cellContent="userData.crtTime"></form-cell>
           <form-cell cellTitle="修改者" :cellContent="userData.modifierName"></form-cell>
           <form-cell cellTitle="修改时间" :cellContent="userData.modTime"></form-cell>
         </div>
       </div>
+      <div class="edit-btn" @click.stop="goEdit">编辑</div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -45,27 +50,43 @@
     },
     methods: {
       // TODO 获取默认图片
-      getDefaultImg() {
-        this.userData.photo = require('assets/ava01.png')
+      getDefaultImg(gender) {
+        this.userData.photo = gender === '男' 
+          ? require('assets/ava03.png')
+          : require('assets/ava04.png')
       },
       // TODO 获取详情
       loadPage(transCode = '') {
         this.$loading.show();
         return getUserDetail(this.colId).then(({tableContent = []}) => {
           let [data = {}] = tableContent;
-          let genders = ['女', '男'];
-          let status = ['', '使用中', '未使用', '草稿'];
-          let userTypes = ['临时账户', '长期有效'];
+          let genders = ['女', '男'],
+              userTypes = ['临时账户', '长期有效'],
+              typeClass = ['shortTerm', 'longTerm'],
+              status = ['', '使用中', '未使用', '草稿'],
+              statusClass = ['', 'inUse', 'unUse'];
+          // 性别、状态等
           data.gender = genders[data.gender] || '未知';
+          data.statusClass = statusClass[data.status];          
           data.status = status[data.status] || '停用';
+          data.typeClass = typeClass[data.userType];          
           data.userType = userTypes[data.userType];
           this.userData = data;
           if (!data.photo) {
-            this.getDefaultImg();
+            this.getDefaultImg(data.gender);
           }
           this.$loading.hide();
         })
       },
+      // 编辑
+      goEdit(){
+        let { name } = this.$route.query,
+            { fileId, listId } = this.$route.params;
+        this.$router.push({
+          path: `/fillForm/${fileId}/${listId}`,
+          query: { name, colId: this.colId }
+        })
+      }
     },
     created() {
       let {colId = ''} = this.$route.query;
@@ -76,30 +97,80 @@
 </script>
 
 <style scoped lang="scss">
-  @import './../../scss/bizDetail';
-  .user-detail-container {
-    background: #fff;
-    .user-photo-container {
+@import './../../scss/bizDetail';
+.user-detail-container {
+  .user-info-container {
+    display: flex;
+    height: 1.6rem;
+    line-height: .24rem;
+    background: #FFF;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    .user-info {
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 2rem;
+      flex-direction: column;
       .avatar {
-        width: 1.2rem;
-        height: 1.2rem;
+        width: .8rem;
+        height: .8rem;
+        margin: .1rem 0;
+        border-radius: 50%;
+      }
+      .user-name {
+        font-size: .18rem;
+        font-weight: bold;
+      } 
+      .user-status-part {
+        font-size: 0;
+        .user-status,
+        .user-type {
+          font-size: .12rem;
+          font-weight: bold;
+          border-radius: .1rem;
+          padding: .01rem .04rem;
+        }
+        .user-status {
+          color: #FFF;
+          background: #474a56;
+          margin: 0 .08rem;
+          &.inUse {
+            background: #53d397;
+          }
+          &.unUse {
+            background: #c7b198;
+          }
+        }
+        .user-type {
+          &.shortTerm {
+            color: #FFF;
+            background: #5c636e;
+          }
+          &.longTerm {
+            color: #333;
+            background: #b1cbfa;
+          }
+        }
       }
     }
-    .user-info {
-      margin-bottom: .1rem;
-      padding: 0 .1rem;
-      width: 100%;
-      background: #FFF;
-      box-sizing: border-box;
-    }
-    .info-title {
-      padding: .06rem 0;
-      font-size: .16rem;
-      font-weight: bold;
-    }
   }
+  .user-info-list {
+    width: 100%;
+    padding: 0 .1rem;
+    margin-top: .1rem;
+    background: #FFF;
+    box-sizing: border-box;
+  }
+  .edit-btn {
+    width: 100%;
+    height: .4rem;
+    color: #4F90F9;
+    line-height: .4rem;
+    margin-top: .1rem;
+    font-size: .16rem;
+    font-weight: bold;
+    text-align: center;
+    background: #FFF;
+  }
+}
 </style>

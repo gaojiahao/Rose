@@ -39,7 +39,7 @@
       <pop-company-list :default-value="company" @sel-item="selCompany"></pop-company-list>
     </r-scroll>
     <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">提交</div>
+      <div class="cfm_btn" @click="save">{{ this.colId ? '保存':'提交'}}</div>
     </div>
   </div>
 </template>
