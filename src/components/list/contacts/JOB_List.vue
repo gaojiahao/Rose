@@ -69,7 +69,7 @@ export default {
           {
             operator: "like",
             value: this.serachVal,
-            property: this.filterProperty,
+            property: 'name',
           },
         ];
         if(this.activeTab.length){
