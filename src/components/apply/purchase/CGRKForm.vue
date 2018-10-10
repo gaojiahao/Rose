@@ -206,6 +206,7 @@ export default {
         ...this.matterParams,
         dealerCode: sel.dealerCode
       };
+      this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
       this.matterList = [];
     },
     // TODO 选中仓库

@@ -214,6 +214,7 @@
           ...this.orderParams,
           dealerCode: sel.dealerCode
         };
+        this.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         this.orderList = {};
         this.$refs.order.clearSel();
         this.getMatPrice();

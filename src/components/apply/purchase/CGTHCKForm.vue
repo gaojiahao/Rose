@@ -212,6 +212,7 @@ export default {
     selDealer(val) {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
+      this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // TODO 选中仓库
     selWarehouse(val) {
