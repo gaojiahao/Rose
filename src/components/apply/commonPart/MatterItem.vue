@@ -3,7 +3,7 @@
     <div class="mater_img">
       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
     </div>
-    <div class="mater_main" :class="{'no-edit': noEdit, 'show-delete': showDelete}">
+    <div class="mater_main" :class="{'show-delete': showDelete}">
       <!-- 物料名称 -->
       <div class="mater_name">
         {{item.inventoryName}}
@@ -36,7 +36,7 @@
         </div>
       </slot>  
       <!-- 编辑图标 -->
-      <div class="edit-part vux-1px-l" @click="modifyMatter" v-if="!noEdit" v-show="!showDelete">
+      <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="!showDelete">
         <span class='iconfont icon-bianji1'></span>
       </div>
     </div>
