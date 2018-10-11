@@ -117,7 +117,7 @@
 import {Popup,TransferDom,Group,Cell,numberComma,Datetime,XInput,XTextarea  } from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask,submitAndCalc} from 'service/commonService'
+import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
@@ -144,14 +144,14 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
         matterList: [],                                  // 物料列表
         paymentIndex: 0,
         logisticsIndex: 0,
-        DealerPaymentTerm: '现付',                        //结算方式
-        DealerLogisticsTerms: '上门',                      //物流方式
+        DealerPaymentTerm: '现付',                       //结算方式
+        DealerLogisticsTerms: '上门',                    //物流方式
         deliveryDate: '',                               // 预计交付日
-        assistUnit: '请选择',                           // 辅助计量显示值
-        assistUnitList: ['A', 'B', 'C'],               // 辅助计量列表
-        transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
-        showDealerPop: false,                          // 是否显示客户的popup
+        assistUnit: '请选择',                            // 辅助计量显示值
+        assistUnitList: ['A', 'B', 'C'],                // 辅助计量列表
+        transMode: [],                                  // 结算方式
+        logisticsTerm: [],                              // 物流条款
+        showDealerPop: false,                           // 是否显示客户的popup
         showLogPop: false,                              // 是否显示物流条款的popup
         showTransPop: false,                            // 是否显示结算方式的popup
         showMaterielPop: false,                         // 是否显示物料的popup
@@ -200,10 +200,6 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
       }
     },
     methods: {
-      // 选择地址
-      goSetAds() {
-        this.$router.push({path: '/adress'});
-      },
       //选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
@@ -212,24 +208,18 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         this.getMatPrice();
       },
-      //选择结算方式
-      getPayment(item, i) {
-        this.DealerPaymentTerm = item;
-        this.paymentIndex = i;
+      // 获取 结算方式
+      getPaymentTerm(){
+        return getDictByType('paymentTerm').then(({ tableContent }) => {
+          this.transMode = tableContent;
+        })
       },
-      submitPayment() {
-        this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
-        this.showTransPop = false;
-      },
-      //选择物流方式
-      getLogistics(item, i) {
-        this.DealerLogisticsTerms = item;
-        this.logisticsIndex = i;
-      },
-      submitLogistics() {
-        this.dealer.drDealerLogisticsTerms = this.DealerLogisticsTerms;
-        this.showLogPop = false;
-      },
+      // 获取 物流条款
+      getLogisticsTerms(){
+        return getDictByType('dealerLogisticsTerms').then(({ tableContent }) => {
+          this.logisticsTerm = tableContent;
+        })
+      },      
       //选择物料，显示物料pop
       getMatter(){
         if(!this.dealerInfo.dealerCode){
@@ -307,17 +297,6 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
           }
         })
 
-      },
-      // 数量减少
-      subNum(item, i) {
-        if(item.tdQty === 1) return;
-        item.tdQty--;
-        this.$set(this.matterList, i, item);
-      },
-      // 数量增加
-      plusNum(item, i) {
-        item.tdQty++;
-        this.$set(this.matterList, i, item);
       },
       // TODO 新增更多物料
       addMatter() {

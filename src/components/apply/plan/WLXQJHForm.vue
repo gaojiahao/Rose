@@ -206,7 +206,7 @@
       orderList(val) {
         let arr = Object.keys(val);
         if (arr.length) {
-          console.log(val);
+          
           let data = {
             XSCK_DATA: {
               orderList: this.orderList,

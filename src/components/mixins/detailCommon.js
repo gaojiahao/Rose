@@ -180,7 +180,7 @@ export default {
     },
     // TODO 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {
-      console.log(val);
+      
       let type = JSON.parse(val).type;
       if (type !== 'revoke') {
         this.$emit('change', true);

@@ -124,7 +124,7 @@
 import {XTextarea,XInput} from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
-import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,submitAndCalc} from 'service/commonService'
+import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc} from 'service/commonService'
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
@@ -213,6 +213,12 @@ export default {
     }
   },
   methods: {
+    // 获取 结算方式
+    getPaymentTerm(){
+      return getDictByType('paymentTerm').then(({ tableContent }) => {
+        this.transMode = tableContent;
+      })
+    }, 
     // TODO 选中的供应商
     selDealer(val) {
       let [sel] = JSON.parse(val);

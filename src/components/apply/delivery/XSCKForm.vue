@@ -128,7 +128,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, submitAndCalc} from 'service/commonService'
+  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -198,7 +198,7 @@
       orderList(val) {
         let arr = Object.keys(val);
         if (arr.length) {
-          console.log(val);
+          
           let data = {
             XSCK_DATA: {
               orderList: this.orderList,
@@ -211,6 +211,18 @@
       },
     },
     methods: {
+      // 获取 结算方式
+      getPaymentTerm(){
+        return getDictByType('paymentTerm').then(({ tableContent }) => {
+          this.transMode = tableContent;
+        })
+      },
+      // 获取 物流条款
+      getLogisticsTerms(){
+        return getDictByType('dealerLogisticsTerms').then(({ tableContent }) => {
+          this.logisticsTerm = tableContent;
+        })
+      },
       // TODO 选中的客户
       selDealer(val) {
         let [sel] = JSON.parse(val);

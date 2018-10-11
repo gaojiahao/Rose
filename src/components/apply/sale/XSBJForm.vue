@@ -5,8 +5,8 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
-            v-model="drDealerPaymentTerm"></pop-single-select>
+        <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
+            v-model="dealerInfo.paymentTerm"></pop-single-select>
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
                            v-model="formData.drDealerLogisticsTerms">
@@ -158,10 +158,11 @@
         matterList: [],                               // 物料列表
         showMaterielPop: false,                       // 是否显示物料的popup
         transCode: '',
-        dealerInfo: null,
-        transMode: [],                                // 结算方式
-        logisticsTerm: [],                            // 物流条款
-        drDealerPaymentTerm: '现付',                   // 结算方式
+        dealerInfo: {
+          paymentTerm: '现付'                          // 结算方式
+        },
+        transMode: [],                                // 结算方式 数组
+        logisticsTerm: [],                            // 物流条款 数组
         formData: {
           biComment: '',
           drDealerLogisticsTerms: '上门',              // 物流条款
@@ -282,6 +283,7 @@
       selDealer(val) {
         let [sels] = JSON.parse(val);
         this.dealerInfo = sels;
+        
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -362,7 +364,7 @@
               order: {
                 dealerDebit: this.dealerInfo.dealerCode || '',
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
-                drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
+                drDealerPaymentTerm: this.dealerInfo.paymentTerm || '现付',
                 dataSet
               }
             };
@@ -441,6 +443,7 @@
             dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
             dealerCode: order.dealerDebit || '', // 客户编码
             dealerLabelName: order.drDealerLabel || '客户', // 关系标签
+            paymentTerm: order.drDealerPaymentTerm || '现付',
             province: order.province_dealerDebit || '', // 省份
             city: order.city_dealerDebit || '', // 城市
             county: order.county_dealerDebit || '', // 地区
@@ -453,7 +456,6 @@
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD') ,
           };
-          this.drDealerPaymentTerm = order.drDealerPaymentTerm;
           this.biReferenceId = formData.biReferenceId;
           this.matterList = matterList;
           this.$loading.hide();

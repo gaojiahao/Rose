@@ -108,7 +108,7 @@
 import {XTextarea} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import { getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc } from 'service/commonService'
+import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
@@ -126,13 +126,13 @@ export default {
   data(){
     return{
       listId : 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
-      matterList:[],                                  // 物料列表
+      matterList:[],                                    // 物料列表
       paymentIndex : 0,
       DealerPaymentTerm : '现付',                        //结算方式
-      transMode:['现付','预付','账期','票据'],          // 结算方式
-      showDealerPop : false,                          // 是否显示供应商的popup
-      showTransPop:false,                            // 是否显示结算方式的popup
-      showMaterielPop:false,                         // 是否显示物料的popup
+      transMode:[],                                     // 结算方式
+      showDealerPop : false,                            // 是否显示供应商的popup
+      showTransPop:false,                               // 是否显示结算方式的popup
+      showMaterielPop:false,                            // 是否显示物料的popup
       dealerInfo : {},
       formData : {},
       dealer : {
@@ -172,20 +172,12 @@ export default {
     }
   },
   methods:{
-    // 选择地址
-    goSetAds(){
-      this.$router.push({ path:'/adress'});
-    },
-    //选择结算方式
-    getPayment(item,i){
-      this.DealerPaymentTerm = item;
-      this.paymentIndex = i;
-
-    },
-    submitPayment(){
-      this.dealer.drDealerPaymentTerm = this.DealerPaymentTerm;
-      this.showTransPop = false;
-    },
+    // 获取 结算方式
+    getPaymentTerm(){
+      return getDictByType('paymentTerm').then(({ tableContent }) => {
+        this.transMode = tableContent;
+      })
+    },    
     //选中的供应商
     selDealer(val){
         this.dealerInfo = JSON.parse(val)[0];
@@ -210,7 +202,6 @@ export default {
       })
       this.numMap = {};
       this.matterList = sels;
-      // this.getMatPrice();
     },
     //选择默认图片
     getDefaultImg(item) {
@@ -260,17 +251,6 @@ export default {
         }
       })
 
-    },
-    //数量--
-    subNum(item,i){
-     if(item.tdQty === 1) return
-      item.tdQty--;
-      this.$set(this.matterList, i, item);
-    },
-    //数量++
-    plusNum(item,i){
-      item.tdQty++;
-      this.$set(this.matterList, i, item);
     },
     //新增物料
     addMatter() {
@@ -362,7 +342,6 @@ export default {
             }),
             wfPara: JSON.stringify(wfPara)
           }
-          //console.log(submitData);
           //重新提交
           if(this.isResubmit){
             operation = saveAndCommitTask

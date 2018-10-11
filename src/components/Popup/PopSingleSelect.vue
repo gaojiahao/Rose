@@ -15,10 +15,10 @@
             <x-icon class="close_icon" type="ios-close-empty" size="30" @click="showPop = !showPop"></x-icon>
           </div>
           <span class="each_mode"
-                :class="{choiced : item===tmp}"
+                :class="{choiced : item.name === tmp}"
                 v-for="(item, index) in data"
                 :key="index"
-                @click="selItem(item,index)">{{item}}</span>
+                @click="selItem(item.name, index)">{{item.name}}</span>
         </div>
         <div class="cfm_btn" @click="confirm">确定</div>
       </popup>
@@ -135,7 +135,7 @@
         }
       }
       .each_mode {
-        margin-right: .1rem;
+        margin: 0 .1rem .1rem 0;
         display: inline-block;
         padding: .04rem .2rem;
         border: 1px solid #C7C7C7;

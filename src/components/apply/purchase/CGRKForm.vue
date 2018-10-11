@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 仓库-->
         <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 结算方式 -->
@@ -112,7 +112,7 @@
 import {XTextarea} from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
-import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask,submitAndCalc} from 'service/commonService'
+import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc} from 'service/commonService'
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
@@ -203,6 +203,12 @@ export default {
     }
   },
   methods: {
+    // 获取 结算方式
+    getPaymentTerm(){
+      return getDictByType('paymentTerm').then(({ tableContent }) => {
+        this.transMode = tableContent;
+      })
+    },  
     // TODO 选中的供应商
     selDealer(val) {
       let [sel] = JSON.parse(val);
@@ -212,7 +218,6 @@ export default {
         dealerCode: sel.dealerCode
       };
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
-      this.matterList = [];
     },
     // TODO 选中仓库
     selWarehouse(val) {
@@ -420,7 +425,6 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       })
