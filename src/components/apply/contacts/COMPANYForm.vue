@@ -27,7 +27,7 @@
       </r-picker>
     </div>
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save" v-html="this.$route.query.groupId?'保存并使用':'提交'"></div>
+      <div class="cfm_btn" @click="save">{{groupId? '保存':'提交'}}</div>
     </div>
   </div>
 </template>

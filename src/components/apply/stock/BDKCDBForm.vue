@@ -47,7 +47,7 @@
                   </template>
                   <template slot="edit" slot-scope="{item}">
                     <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.tdQty && !matterModifyClass">
-                      <div class="edit_tips" >点击编辑</div>
+                      <div class="edit-tips" >点击进行填写</div>
                     </div>
                   </template>
                 </matter-item>

@@ -32,7 +32,7 @@
       </slot>
       <slot name="edit" :item="item">
         <div class='mater_other' @click="modifyMatter" v-if="(!item.price || !item.tdQty) && !showDelete">
-          <div class="edit_tips" >点击编辑</div>
+          <div class="edit-tips">点击进行填写</div>
         </div>
       </slot>  
       <!-- 编辑图标 -->
@@ -184,32 +184,38 @@
     }
     //可编辑提示
     .mater_other {
-        display: flex;
-        margin-top: .03rem;
-        align-items: center;
-        position: relative;
-        justify-content: space-between;
-        //内容可编辑提示
-        .edit_tips{
-          font-weight: bold;
-          font-size:0.12rem;
-          color: #111;
-        }
-        .mater_price {
-          color: #ea5455;
-          font-weight: bold;
-          font-size: .16rem;
-          line-height: .2rem;
-          display: inline-block;
-        }
-        .matter-remain {
-          color: #111;
+      display: flex;
+      margin-top: .03rem;
+      align-items: center;
+      position: relative;
+      justify-content: space-between;
+      //内容可编辑提示
+      .edit-tips{
+        font-size: 0;
+        color: #454545;
+        font-weight: bold;
+        .icon-tianxie {
           font-size: .14rem;
-          font-weight: bold;
-          .symbol {
-            color: #757575;
-          }
         }
+        .tips-word {
+          font-size: .14rem;
+        }
+      }
+      .mater_price {
+        color: #ea5455;
+        font-weight: bold;
+        font-size: .16rem;
+        line-height: .2rem;
+        display: inline-block;
+      }
+      .matter-remain {
+        color: #111;
+        font-size: .14rem;
+        font-weight: bold;
+        .symbol {
+          color: #757575;
+        }
+      }
     }
     // 物料的补充填写按钮
     .edit-part {
