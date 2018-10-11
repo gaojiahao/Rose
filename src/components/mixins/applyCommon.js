@@ -247,6 +247,7 @@ export default {
         }
       }
     },
+    //输入框获取焦点，内容选中
     getFocus(e){
       event.currentTarget.select();
     }

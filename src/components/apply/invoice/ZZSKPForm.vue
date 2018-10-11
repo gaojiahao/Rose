@@ -8,19 +8,19 @@
         <div class="materiel_list">
           <div class="title">发票信息</div>
           <group class="SJ_group" @group-title-margin-top="0">
-            <x-input title="票号" v-model="invoiceInfo.ticketNumber" text-align="right">
+            <x-input title="票号" v-model="invoiceInfo.ticketNumber" text-align="right" placeholder="请填写" @on-focus="getFocus($event)">
               <template slot="label">
                 <span class='required'>票号</span>
               </template>
             </x-input>
             <popup-picker title="发票类型" :data="invoiceType" v-model="invoiceGetType"
-                          @on-change=" typeTask($event) " text-align="right">
+                          @on-change=" typeTask($event) " text-align="right" placeholder="请选择">
               <template slot="title">
                 <span class='required'>发票类型</span>
               </template>
             </popup-picker>
-            <x-input title="发票金额" v-model="invoiceInfo.invoiceAmount" text-align="right"></x-input>
-            <datetime title="发票日期" v-model='invoiceInfo.invoiceDate' text-align="right">
+            <x-input title="发票金额" v-model="invoiceInfo.invoiceAmount" text-align="right" placeholder="请填写" @on-focus="getFocus($event)"></x-input>
+            <datetime title="发票日期" v-model='invoiceInfo.invoiceDate' text-align="right" placeholder="请选择">
               <template slot="title">
                 <span class='required'>发票日期</span>
               </template>
@@ -31,15 +31,15 @@
         <div class="materiel_list" v-for="(item,index) in invoiceList" :key="index">
           <div class="title">开票明细</div>
           <group class='costGroup' @group-title-margin-top="0">
-            <cell title="实例编码" v-model='item.transMatchedCode' is-link @click.native="getCost(index,item)">
+            <cell title="实例编码" v-model='item.transMatchedCode' is-link @click.native="getCost(index,item)" placeholder="请选择">
               <template slot="title">
                 <span class='required'>实例编码
                 </span>
               </template>
             </cell>
             <cell title="待开票金额" v-model='item.thenAmntBal'></cell>
-            <x-input title="本次开票金额" text-align='right' placeholder='请填写'
-                     @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
+            <x-input title="本次开票金额" text-align='right' placeholder='请填写' type='number' v-model.number='item.tdAmount'
+                     @on-blur="checkAmt(item)" @on-focus="getFocus($event)" >
               <template slot="label">
                 <span class='required'>本次开票金额
                 </span>
@@ -113,7 +113,7 @@
             comment: "" ,//说明
             thenAmntBal: "",//代开票金额
             tdAmount : '' ,//本次开票金额
-            transMatchedCode: "",//实例编码
+            transMatchedCode: "请选择",//实例编码
             
           }
         ],

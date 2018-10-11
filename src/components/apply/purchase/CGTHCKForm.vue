@@ -51,6 +51,11 @@
                       </div>                     
                     </div>
                   </template>
+                  <template slot="editPart" slot-scope="{item}">
+                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
+                      <span class='iconfont icon-bianji1'></span>
+                    </div>
+                  </template>
                 </matter-item>
                 <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>

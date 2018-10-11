@@ -36,9 +36,11 @@
         </div>
       </slot>  
       <!-- 编辑图标 -->
-      <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="!showDelete">
-        <span class='iconfont icon-bianji1'></span>
-      </div>
+      <slot name="editPart" :item="item">
+        <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="(item.price || item.tdQty) &&!showDelete">
+          <span class='iconfont icon-bianji1'></span>
+        </div>
+      </slot>
     </div>
   </div>
 </template>
@@ -191,7 +193,7 @@
       justify-content: space-between;
       //内容可编辑提示
       .edit-tips{
-        font-size: 0;
+        font-size: 0.12rem;
         color: #454545;
         font-weight: bold;
         .icon-tianxie {
