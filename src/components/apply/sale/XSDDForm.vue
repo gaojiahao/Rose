@@ -316,39 +316,56 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
             content: '请选择客户信息'
           })
         }
-        else if (this.matterList.length === 0) {
+        else if (!this.matterList.length) {
           this.$vux.alert.show({
             content: '请选择物料'
           })
         }
         else {
+          let warn = '',
+              dataSet = [];
+          this.matterList.every(item=>{
+            if(!item.tdQty){
+              warn = "请填写数量";
+              return false
+            }
+            if(!item.price){
+              warn = "请输入单价";
+              return false;
+            }
+            let taxRate = item.taxRate || this.taxRate;
+            let taxAmount = accMul(item.price, item.tdQty, taxRate);
+            let obj = {
+              tdId: item.tdId || '',
+              inventoryName_transObjCode: item.inventoryName , //物料名称
+              transObjCode: item.inventoryCode , //物料编码
+              assMeasureUnit: item.assMeasureUnit || '个',    //辅助计量
+              assMeasureScale: item.assMeasureScale || null,  //与主计量单位倍数
+              tdProcessing : item.processing ,//加工属性
+              tdQty: item.tdQty,     //数量
+              assistQty: item.assistQty || 0,        //辅计数量
+              price: item.price, //单价
+              taxRate : taxRate, //税金
+              taxAmount :taxAmount, // 税金
+              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
+              promDeliTime: item.promDeliTime || null, //预期交货日
+              comment: ''                //说明
+            }
+            dataSet.push(obj)
+            return true
+          })
+          if(warn){
+            this.$vux.alert.show({
+              content: warn
+            })
+            return
+          }
           this.$vux.confirm.show({
             content: '确认提交?',
             // 确定回调
             onConfirm: () => {
               this.$HandleLoad.show();
-              let dataSet = [];
               let operation = saveAndStartWf;//默认有工作流
-              this.matterList.map(item => {
-                let taxRate = item.taxRate || this.taxRate;
-                let taxAmount = accMul(item.price, item.tdQty, taxRate);
-                dataSet.push({
-                  tdId: item.tdId || '',
-                  inventoryName_transObjCode: item.inventoryName , //物料名称
-                  transObjCode: item.inventoryCode , //物料编码
-                  assMeasureUnit: item.assMeasureUnit || '个',    //辅助计量
-                  assMeasureScale: item.assMeasureScale || null,  //与主计量单位倍数
-                  tdProcessing : item.processing ,//加工属性
-                  tdQty: item.tdQty,     //数量
-                  assistQty: item.assistQty || 0,        //辅计数量
-                  price: item.price, //单价
-                  taxRate : taxRate, //税金
-                  taxAmount :taxAmount, // 税金
-                  tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
-                  promDeliTime: item.promDeliTime || null, //预期交货日
-                  comment: ''                //说明
-                })
-              })
               let wfPara = {
                 [this.processCode]: {businessKey: "SO", createdBy: ""}
               }

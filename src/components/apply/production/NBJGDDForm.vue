@@ -44,7 +44,7 @@
                     </template>
                     <template slot="edit" slot-scope="{item}">
                       <div class='mater_other' @click="modifyMatter(item,index, key)" v-if="!item.tdQty && !matterModifyClass">
-                        <div class="edit-tips" >点击编辑</div>
+                        <div class="edit-tips" >点击进行填写</div>
                       </div>
                     </template>
                   </matter-item>
@@ -284,8 +284,55 @@
       // TODO 提价订单
       submitOrder() {
         let warn = '';
+        let dataSet = [];
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
+        }
+        // 检验，组装dataSet
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            if(!item.tdQty){
+              warn = '请填写减少数量'
+              break
+            }
+            let boms = [];
+            for (let bom of item.boms) {
+              let obj = {
+                tdId : bom.tdId || null,
+                transMatchedCode: item.transCode,
+                tdQty: bom.qty || bom.tdQty,                     // 领料需求
+                orderCode: item.orderCode,
+                bomSpecificLoss: bom.specificLoss || bom.bomSpecificLoss,
+                tdProcessing: bom.processing || bom.tdProcessing,
+                inventoryName: bom.inventoryName,
+                transObjCode: bom.inventoryCode || bom.transObjCode,
+                measureUnit: bom.measureUnit,
+                bomType: bom.bomType,
+                bomQty: bom.qty || bom.bomQty,
+                specification : bom.specification,
+                parentId : bom.parentId  || null
+              }
+              if(this.transCode){
+                delete obj.orderCode;
+              }
+              boms.push(obj);
+            }
+            let oItem = {
+              tdId: item.tdId || null,
+              transMatchedCode: item.transCode, // 交易号
+              orderCode: item.orderCode,
+              transObjCode: item.inventoryCode, // 输出物料
+              inventoryName_transObjCode: item.inventoryName,
+              tdProcessing: item.processing,
+              measureUnit_transObjCode: item.measureUnit,
+              thenQtyBal: item.qtyBal, // 余额
+              shippingTime: item.shippingTime,
+              tdQty: item.tdQty, // 下单数量
+              comment: item.comment || '', // 说明
+              boms
+            };
+            dataSet.push(oItem);
+          }
         }
         if (warn) {
           this.$vux.alert.show({
@@ -298,7 +345,6 @@
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            let dataSet = [];
             let operation = saveAndStartWf;
             let formData = {};
             let wfPara = {
@@ -307,48 +353,6 @@
                 createdBy: ''
               }
             };
-            // 组装dataSet
-            for (let items of Object.values(this.orderList)) {
-              for (let item of items) {
-                let boms = [];
-                for (let bom of item.boms) {
-                  let obj = {
-                    tdId : bom.tdId || null,
-                    transMatchedCode: item.transCode,
-                    tdQty: bom.qty || bom.tdQty,                     // 领料需求
-                    orderCode: item.orderCode,
-                    bomSpecificLoss: bom.specificLoss || bom.bomSpecificLoss,
-                    tdProcessing: bom.processing || bom.tdProcessing,
-                    inventoryName: bom.inventoryName,
-                    transObjCode: bom.inventoryCode || bom.transObjCode,
-                    measureUnit: bom.measureUnit,
-                    bomType: bom.bomType,
-                    bomQty: bom.qty || bom.bomQty,
-                    specification : bom.specification,
-                    parentId : bom.parentId  || null
-                  }
-                  if(this.transCode){
-                    delete obj.orderCode;
-                  }
-                  boms.push(obj);
-                }
-                let oItem = {
-                  tdId: item.tdId || null,
-                  transMatchedCode: item.transCode, // 交易号
-                  orderCode: item.orderCode,
-                  transObjCode: item.inventoryCode, // 输出物料
-                  inventoryName_transObjCode: item.inventoryName,
-                  tdProcessing: item.processing,
-                  measureUnit_transObjCode: item.measureUnit,
-                  thenQtyBal: item.qtyBal, // 余额
-                  shippingTime: item.shippingTime,
-                  tdQty: item.tdQty, // 下单数量
-                  comment: item.comment || '', // 说明
-                  boms
-                };
-                dataSet.push(oItem);
-              }
-            }
             formData = {
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',

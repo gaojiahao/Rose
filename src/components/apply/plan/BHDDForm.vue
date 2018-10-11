@@ -243,10 +243,10 @@ export default {
           //   warn = '单价不能为空';
           //   return false
           // }
-          // if (!item.tdQty) {
-          //   warn = '数量不能为空';
-          //   return false
-          // }
+          if (!item.tdQty) {
+            warn = '数量不能为空';
+            return false
+          }
           // 设置提交参数
           dataSet.push({
             tdId : item.tdId || '',

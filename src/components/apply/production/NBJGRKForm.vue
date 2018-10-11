@@ -292,6 +292,10 @@
         if (!warn) {
           for (let value of Object.values(this.orderList)) {
             for (let vItem of value) {
+              if(!vItem.tdQty){
+                warn = '请填写本次入库数量'
+                break;
+              }
               for (let item of vItem.boms) {
                 // 校验数量
                 if (item.qtyStock < item.tdQty) {

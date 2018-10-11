@@ -58,11 +58,21 @@
                         <span class='qty'>待交付数量: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
-                      <div class="mater_other" v-show="item.price && item.tdQty">
+                      <div class='mater_other' v-if="item.price && item.tdQty">                      
+                        <div class='mater_price'>
+                          <span class="symbol">￥</span>{{item.price}}
+                        </div>
+                        <div>
+                          <r-number :num="item.tdQty" :max="item.qtyStockBal"
+                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                        </div>                     
+                      </div>
+                      <!-- 物料数量和价格 -->
+                      <!-- <div class="mater_other" v-show="item.price && item.tdQty">
                         <div class="mater_price">
                           <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
                         </div>
-                      </div>
+                      </div> -->
                     </template>
                     <template slot="editPart" slot-scope="{item}">
                       <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
@@ -398,6 +408,7 @@
       // TODO 提价订单
       submitOrder() {
         let warn = '';
+        let dataSet = [];
         let validateMap = [
           {
             key: 'dealerInfo',
@@ -418,6 +429,44 @@
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
         }
+        // 组装dataSet
+          for (let items of Object.values(this.orderList)) {
+            for (let item of items) {
+              if(!item.tdQty){
+                warn = '请填写数量'
+                break
+              }
+              if(!item.price){
+                warn = '请填写单价'
+                break
+              }
+              let taxRate = item.taxRate || this.taxRate;
+              let taxAmount = accMul(item.price, item.tdQty, taxRate);
+              let oItem = {
+                transMatchedCode: item.transCode, // 明细被核销交易号
+                orderCode: item.transCode, // 销售订单号（明细）
+                outPutMatCode: item.inventoryCode, // 输出物料
+                orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
+                assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
+                assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
+                tdQty: item.tdQty, // 明细发生数
+                assistQty: item.assistQty || 0, // 辅计数量（明细）
+                thenQtyStock: item.qtyStockBal, // 当时可用库存
+                thenQtyBal: item.qtyBal, // 待交付数量
+                tdProcessing: item.processing, //加工属性
+                price: item.price, // 明细单价
+                taxRate: taxRate, // 税率
+                taxAmount: taxAmount, // 税金
+                tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
+                promDeliTime: item.promDeliTime || '', // 承诺交付时间
+                comment: item.comment || '', // 说明
+              };
+              if (this.transCode) {
+                oItem.tdId = item.tdId || '';
+              }
+              dataSet.push(oItem);
+            }
+          }
         if (warn) {
           this.$vux.alert.show({
             content: warn
@@ -429,7 +478,6 @@
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            let dataSet = [];
             let operation = saveAndStartWf;
             let formData = {};
             let wfPara = {
@@ -438,36 +486,6 @@
                 createdBy: ''
               }
             };
-            // 组装dataSet
-            for (let items of Object.values(this.orderList)) {
-              for (let item of items) {
-                let taxRate = item.taxRate || this.taxRate;
-                let taxAmount = accMul(item.price, item.tdQty, taxRate);
-                let oItem = {
-                  transMatchedCode: item.transCode, // 明细被核销交易号
-                  orderCode: item.transCode, // 销售订单号（明细）
-                  outPutMatCode: item.inventoryCode, // 输出物料
-                  orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
-                  assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-                  assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
-                  tdQty: item.tdQty, // 明细发生数
-                  assistQty: item.assistQty || 0, // 辅计数量（明细）
-                  thenQtyStock: item.qtyStockBal, // 当时可用库存
-                  thenQtyBal: item.qtyBal, // 待交付数量
-                  tdProcessing: item.processing, //加工属性
-                  price: item.price, // 明细单价
-                  taxRate: taxRate, // 税率
-                  taxAmount: taxAmount, // 税金
-                  tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
-                  promDeliTime: item.promDeliTime || '', // 承诺交付时间
-                  comment: item.comment || '', // 说明
-                };
-                if (this.transCode) {
-                  oItem.tdId = item.tdId || '';
-                }
-                dataSet.push(oItem);
-              }
-            }
             formData = {
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',

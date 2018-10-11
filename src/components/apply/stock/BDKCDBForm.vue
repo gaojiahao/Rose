@@ -273,6 +273,10 @@ export default {
         warn = '请选择物料';
       }
       this.matterList.every(item => {
+        if(!item.tdQty){
+          warn = '请填写调拨数量'
+          return false
+        }
         let mItem = {
           transObjCode: item.inventoryCode,
           tdProcessing: item.processing,

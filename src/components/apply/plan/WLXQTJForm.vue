@@ -269,8 +269,31 @@
       // TODO 提价订单
       submitOrder() {
         let warn = '';
+        let dataSet = [];
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
+        }
+        // 组装dataSet
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            if(!item.tdQty){
+              warn = '请填写数量'
+              break;
+            }
+            let oItem = {
+              transMatchedCode: item.transCode, // 交易号
+              outPutMatCode: item.inventoryCode, // 输出物料
+              inventoryType_outPutMatCode: item.inventoryType,
+              thenQtyBal: item.qtyBal, // 余额
+              tdQty: item.tdQty, // 减少数量
+              subjectCode: item.calcRelCode,
+              comment: item.comment || '', // 说明
+            };
+            if (this.transCode) {
+              oItem.tdId = item.tdId || '';
+            }
+            dataSet.push(oItem)
+          }
         }
         if (warn) {
           this.$vux.alert.show({
@@ -283,7 +306,6 @@
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            let dataSet = [];
             let operation = saveAndStartWf;
             let formData = {};
             let wfPara = {
@@ -292,24 +314,6 @@
                 createdBy: ''
               }
             };
-            // 组装dataSet
-            for (let items of Object.values(this.orderList)) {
-              for (let item of items) {
-                let oItem = {
-                  transMatchedCode: item.transCode, // 交易号
-                  outPutMatCode: item.inventoryCode, // 输出物料
-                  inventoryType_outPutMatCode: item.inventoryType,
-                  thenQtyBal: item.qtyBal, // 余额
-                  tdQty: item.tdQty, // 减少数量
-                  subjectCode: item.calcRelCode,
-                  comment: item.comment || '', // 说明
-                };
-                if (this.transCode) {
-                  oItem.tdId = item.tdId || '';
-                }
-                dataSet.push(oItem);
-              }
-            }
             formData = {
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',

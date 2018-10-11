@@ -269,6 +269,10 @@ export default {
         warn = '请选择物料';
       }
       this.matterList.every(item => {
+        if(!item.tdQty){
+          warn = '请填写盘点数量'
+          return false
+        }
         let mItem = {
           transObjCode: item.inventoryCode, // 物料编码
           thenQtyStock: item.qtyBal, // 可用库存
