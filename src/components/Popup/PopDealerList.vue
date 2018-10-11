@@ -11,7 +11,8 @@
         </div>
         <div class="cp-info">
           <span class="iconfont icon-icon-test"></span>
-          <span class="cp-ads">
+          <span class="cp-ads" v-if="noAddress">暂无</span>
+          <span class="cp-ads" v-else>
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
           </span>
         </div>
@@ -22,8 +23,6 @@
       <div class="mode required">请选择{{dealerLabelName}}</div>
     </div>
     <span class="iconfont icon-youjiantou r-arrow"></span>          
-
-
     <!-- 往来popup -->
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -101,6 +100,12 @@
         default() {
           return {}
         }
+      }
+    },
+    computed: {
+      noAddress() {
+        let {province = '', city = '', county = '', address = ''} = this.defaultValue;
+        return !province && !city && !county && !address;
       }
     },
     directives: {TransferDom},

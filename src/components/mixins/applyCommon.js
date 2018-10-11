@@ -261,7 +261,9 @@ export default {
     (async () => {
       this.getBaseInfoData();
       this.getProcess();
-      this.initRequest && await this.initRequest(); // 提交页面不共用的数据请求
+      this.initRequest && await this.initRequest();   // 提交页面 不共用的数据 请求
+      this.getPaymentTerm && await this.getPaymentTerm();   // 提交页面 结算方式 请求
+      this.getLogisticsTerms && await this.getLogisticsTerms(); //提交页面 物流条款 请求
       if (transCode) {
         this.isResubmit = true;
         this.transCode = transCode;

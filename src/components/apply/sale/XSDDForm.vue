@@ -67,7 +67,7 @@
           </template>
           
           <!-- 新增更多 按钮 -->
-          <div class="handle_part vux-1px-t" v-if="matterList.length && !matterModifyClass">
+          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>

@@ -359,7 +359,7 @@
           }
           // 备注
           .remark {
-            max-width: 2.6rem;
+            max-width: 2rem;
             overflow: hidden;
             font-size: .1rem;
             color: #454545;
