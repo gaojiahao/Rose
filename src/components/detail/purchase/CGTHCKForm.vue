@@ -43,7 +43,7 @@
       <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                @on-submit-success="submitSuccessCallback"></r-action>      
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>      
     </div>
   </div>
 </template>

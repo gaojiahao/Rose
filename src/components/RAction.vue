@@ -79,7 +79,7 @@
                 let { fileId, listId } = this.$route.params;
                 this.$router.replace({
                   path: `/fillform/${fileId}/${listId}`,
-                  query: { transCode: this.code ,name : this.name},
+                  query: { transCode: this.code, name: this.name},
                 });
               }
             });

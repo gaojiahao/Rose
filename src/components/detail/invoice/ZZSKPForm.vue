@@ -45,7 +45,8 @@
         <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
       </div>               
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" :name="$route.query.name" @on-submit-success="submitSuccessCallback" ></r-action>   
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback" ></r-action>   
     </div>
   </div>
 </template>

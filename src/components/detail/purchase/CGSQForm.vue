@@ -15,7 +15,8 @@
       <!-- 金额合计栏 -->
       <price-total :count="count" noAmt noTaxAmt></price-total>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" @on-submit-success="submitSuccessCallback"></r-action>
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>

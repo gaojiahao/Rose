@@ -134,22 +134,22 @@
       color: #757575;
       font-size: .1rem;
       .title {
+        color: #fff;
         padding: 0 .04rem;
+        background: #3f72af;
         border-top-left-radius: .12rem;
         border-bottom-left-radius: .12rem;
-        color: #fff;
-        background: #3f72af;
       }
       .num {
-        max-width: .65rem;
-        padding: 0 .04rem;
-        border-top-right-radius: .12rem;
-        border-bottom-right-radius: .12rem;
-        background: #dbe2ef;
         color: #111;
         overflow: hidden;
+        max-width: .65rem;
+        padding: 0 .04rem;
         white-space: nowrap;
+        background: #dbe2ef;
         text-overflow: ellipsis;
+        border-top-right-radius: .12rem;
+        border-bottom-right-radius: .12rem;
       }
       // 物料编码、规格
       .matter-info-item {
