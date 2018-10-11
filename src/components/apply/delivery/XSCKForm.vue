@@ -54,7 +54,8 @@
                       </div>
                       <!-- 库存 -->
                       <div class='mater_more'>
-                        <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
+                        <span class='qty'>可用库存: {{item.qtyStockBal}}</span>
+                        <span class='qty'>待交付数量: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class="mater_other" v-show="item.price && item.tdQty">
@@ -163,21 +164,21 @@
       return {
         listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
         orderList: {},                                  // 订单列表
-        transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
-        showDealerPop: false,                          // 是否显示客户的popup
-        showOrderPop: false,                         // 是否显示物料的popup
-        dealerInfo: null, // 客户客户信息
-        drDealerPaymentTerm: '现付',  //结算方式
+        transMode: [],                                  // 结算方式
+        logisticsTerm: [],                              // 物流条款
+        showDealerPop: false,                           // 是否显示客户的popup
+        showOrderPop: false,                            // 是否显示物料的popup
+        dealerInfo: null,                               // 客户客户信息
+        drDealerPaymentTerm: '现付',                     // 结算方式
         formData: {
-          drDealerLogisticsTerms: '上门', //物流条件
-          biComment: '' //备注
+          drDealerLogisticsTerms: '上门',                // 物流条件
+          biComment: ''                                 // 备注
         },
-        submitSuccess: false, // 是否提交成功
-        warehouse: null, // 选中仓库属性
-        taxRate: 0.16, // 税率
-        numMap: {}, // 用于记录订单物料的数量和价格
-        orderParams: { // 订单列表查询参数
+        submitSuccess: false,                           // 是否提交成功
+        warehouse: null,                                // 选中仓库属性
+        taxRate: 0.16,                                  // 税率
+        numMap: {},                                     // 用于记录订单物料的数量和价格
+        orderParams: {                                  // 订单列表查询参数
           dealerCode: '',
           whCode: '',
         },
