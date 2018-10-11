@@ -43,8 +43,8 @@
                       </div>
                     </template>
                     <template slot="edit" slot-scope="{item}">
-                      <div class='mater_other' @click="modifyMatter(item,index, key)" v-if="!item.tdQty && !matterModifyClass">
-                        <div class="edit-tips" >点击进行填写</div>
+                      <div class='mater_other' @click="modifyMatter(item, index, key)" v-if="!item.tdQty && !matterModifyClass">
+                        <div class="edit-tips">点击进行填写</div>
                       </div>
                     </template>
                   </matter-item>
@@ -141,6 +141,7 @@
         listId: '65ceb5a6-a120-11e8-862a-005056a136d0',
         orderList: {},                                  // 订单列表
         showOrderPop: false,                         // 是否显示物料的popup
+        allBoms: [],
         formData: {
           biComment: '' //备注
         },
@@ -188,6 +189,8 @@
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
+        let allBoms = [];
+        let tmpArr = [];
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
           let {tdQty = '', shippingTime = ''} = this.numMap[key] || {};
@@ -201,9 +204,21 @@
               bom.tdQty = accMul(item.tdQty, bom.qty, (1 + bom.specificLoss));
             });
             this.$set(item, 'boms', tableContent);
+            allBoms = [...allBoms, ...tableContent];
+            // for(let each of allBoms){
+            //   let name = `${each.inventoryName}_${each.inventoryCode}`;
+            //   if(!tmpArr[name]){
+            //     tmpArr[name] = each;
+            //   }
+            //   else {
+            //     tmpArr[name].qty += each.qty;
+            //   }
+            // }
           });
           orderList[item.transCode].push(item);
+
         });
+        
         this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
