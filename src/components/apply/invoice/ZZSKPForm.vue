@@ -31,7 +31,7 @@
         <div class="materiel_list" v-for="(item,index) in invoiceList" :key="index">
           <div class="title">开票明细</div>
           <group class='costGroup' @group-title-margin-top="0">
-            <cell title="实例编码" v-model='item.transMatchedCode' is-link @click.native="getCost(index,item)" placeholder="请选择">
+            <cell title="实例编码" v-model='item.transMatchedCode' is-link @click.native="getCost(index,item)">
               <template slot="title">
                 <span class='required'>实例编码
                 </span>
@@ -45,7 +45,7 @@
                 </span>
               </template>
             </x-input>
-            <x-input type="text" title="说明" text-align='right' placeholder='请填写'v-model="item.comment"></x-input>
+            <x-input type="text" title="说明" text-align='right' placeholder="请填写" @on-focus="getFocus($event)" v-model="item.comment"></x-input>
           </group>
         </div>
         <!-- 新增 -->
@@ -167,7 +167,7 @@
           comment: "" ,//说明
           thenAmntBal: "",//代开票金额
           tdAmount : '' ,//本次开票金额
-          transMatchedCode: "",//实例编码
+          transMatchedCode: "请选择",//实例编码
         })
       },
       //删除明细
