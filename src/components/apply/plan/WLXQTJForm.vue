@@ -44,8 +44,8 @@
                     </template>
                     <template slot="edit" slot-scope="{item}">
                       <div class="mater_other" @click="modifyMatter(item,index, key)" v-show="!item.tdQty && !matterModifyClass">
-                        <span class="edit_tips">
-                          点击编辑
+                        <span class="edit-tips">
+                          点击进行填写
                         </span>
                       </div>
                     </template>

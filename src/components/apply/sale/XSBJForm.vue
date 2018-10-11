@@ -55,12 +55,14 @@
                         <div class='mater_price' v-if="item.price">
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
-                        <!-- <div class="edit_tips" v-else>点击右侧可编辑</div> -->
                       </div>
                   </template>
                   <template slot="edit" slot-scope="{item}">
                     <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
-                      <div class="edit_tips" >点击编辑</div>
+                      <div class="edit-tips">
+                        <span class="iconfont icon-tianxie"></span>
+                        <span class="tips-word">点击进入填写</span>
+                      </div>
                     </div>
                   </template>
                 </matter-item>

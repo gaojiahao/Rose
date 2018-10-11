@@ -433,10 +433,18 @@
         position: relative;
         justify-content: space-between;
         //内容可编辑提示
-        .edit_tips{
-          font-weight: bold;
-          font-size:0.12rem;
-          color: #111;
+        .edit-tips{
+          // // font-size: 0;
+          // display: flex;
+          // color: #454545;
+          // // font-weight: bold;
+          // align-items: center;
+          // // .icon-tianxie {
+          // //   font-size: .14rem;
+          // // }
+          // // .tips-word {
+          // //   font-size: .14rem;
+          // // }
         }
         .mater_price {
           color: #ea5455;
@@ -497,7 +505,6 @@
     width: 100%;
     text-align: center;
     position: relative;
-    padding-top: .14rem;
     .add_more {
       display: inline-block;
     }
