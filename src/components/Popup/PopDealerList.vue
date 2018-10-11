@@ -304,7 +304,7 @@
           padding: 0 .06rem;
           border-radius: .3rem;
           background: #5077aa;
-          vertical-align: text-bottom;
+          vertical-align: middle;
         }  
         .user-name {
           max-width: 2.2rem;
