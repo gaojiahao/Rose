@@ -15,8 +15,8 @@
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="mater_name">{{item.transCode}}</div>
-              <div class="no_invoiced" v-if="getCostList === 'getVATBilling'">代开票金额：{{item.amntBal}}</div>
-              <div class="no_invoiced" v-else>代收票金额：{{item.amntBal}}</div>
+              <div class="no_invoiced" v-if="getCostList === 'getVATBilling'">代开票金额：￥{{item.amntBal}}</div>
+              <div class="no_invoiced" v-else>代收票金额：￥{{item.amntBal}}</div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -134,7 +134,7 @@ import { sep } from 'path';
         let warn = ''
         this.selItems.every(item=>{
           if(sItem.transCode === item.transMatchedCode){
-            warn = '已经选择过';
+            warn = '该实例编码已选择，请选择其他';
             return false;
 
           }

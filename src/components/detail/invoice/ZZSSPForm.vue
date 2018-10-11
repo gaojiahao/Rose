@@ -18,15 +18,14 @@
         </div>
         <div class="form_content" style="margin-bottom:0.1rem;">
           <div class="main_content" >
-            <form-cell cellTitle='票号' :cellContent="orderInfo.ticketNumber" :showTopBorder=false></form-cell>
-            <form-cell cellTitle='发票类型' :cellContent="orderInfo.invoiceType" ></form-cell>
-            <form-cell cellTitle='发票金额' :cellContent="orderInfo.invoiceAmount | toFixed | numberComma(3)" ></form-cell>
-            <form-cell cellTitle='发票日期' :cellContent="orderInfo.invoiceDate" ></form-cell>
-            <form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" ></form-cell>  
+            <form-cell cellTitle='票号' :cellContent="orderInfo.ticketNumber" textRight></form-cell>
+            <form-cell cellTitle='发票类型' :cellContent="orderInfo.invoiceType" textRight></form-cell>
+            <form-cell cellTitle='发票金额' showSymbol :cellContent="orderInfo.invoiceAmount | toFixed | numberComma(3)" textRight></form-cell>
+            <form-cell cellTitle='发票日期' :cellContent="orderInfo.invoiceDate" textRight></form-cell>
+            <form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>  
           </div>
         </div>
       </div> 
-      <!-- 物料列表 -->
       <div class="form_part">
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">开票列表</span>
@@ -35,18 +34,15 @@
             :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
-              <form-cell cellTitle='实例编码' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
-              <form-cell cellTitle='待收票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)"></form-cell>
-              <form-cell cellTitle='本次收票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
-              <!-- <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell> -->
+            <form-cell cellTitle='实例编码' :cellContent="item.transMatchedCode" textRight></form-cell>
+            <form-cell cellTitle='待收票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)" textRight></form-cell>
+            <form-cell cellTitle='本次收票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)" textRight></form-cell>
           </div>
         </div>
       </div>
       <div class="price_cell vux-1px-t">
-        <div>
-          <span class='title'>合计:</span>
-          <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-        </div>
+        <span class='title'>合计:</span>
+        <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
       </div>               
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>   

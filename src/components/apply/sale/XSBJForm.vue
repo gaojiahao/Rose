@@ -5,10 +5,11 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode"
-            v-model="dealerInfo && dealerInfo.paymentTerm || drDealerPaymentTerm"></pop-single-select>
+        <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
+            v-model="drDealerPaymentTerm"></pop-single-select>
         <!-- 物流条款 -->
-        <pop-single-select title="物流条款" :data="logisticsTerm" v-model="formData.drDealerLogisticsTerms">
+        <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
+                           v-model="formData.drDealerLogisticsTerms">
         </pop-single-select>
         <!-- 有效期至 --> 
         <div class="mg_auto no_top" >
@@ -134,7 +135,7 @@
   import { Icon, XInput, XTextarea, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
@@ -154,16 +155,16 @@
     data() {
       return {
         listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
-        matterList: [],  // 物料列表
-        showMaterielPop: false, // 是否显示物料的popup
+        matterList: [],                               // 物料列表
+        showMaterielPop: false,                       // 是否显示物料的popup
         transCode: '',
         dealerInfo: null,
-        transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
-        drDealerPaymentTerm: '现付',  //结算方式
+        transMode: [],                                // 结算方式
+        logisticsTerm: [],                            // 物流条款
+        drDealerPaymentTerm: '现付',                   // 结算方式
         formData: {
           biComment: '',
-          drDealerLogisticsTerms: '上门', // 物流条款
+          drDealerLogisticsTerms: '上门',              // 物流条款
           validUntil: '', // 有效期
         },
         priceMap: {},
@@ -208,6 +209,18 @@
       }
     },
     methods: {
+      // 获取 结算方式
+      getPaymentTerm(){
+        return getDictByType('paymentTerm').then(({ tableContent }) => {
+          this.transMode = tableContent;
+        })
+      },
+      // 获取 物流条款
+      getLogisticsTerms(){
+        return getDictByType('dealerLogisticsTerms').then(({ tableContent }) => {
+          this.logisticsTerm = tableContent;
+        })
+      },
       //选择价格类型
       dropItemClick(item) {
         this.currentType = item;
@@ -465,7 +478,7 @@
         this.matterList = JSON.parse(data).matter;
         this.dealerInfo = JSON.parse(data).dealer;
       }
-    },
+    }
   }
 </script>
 
