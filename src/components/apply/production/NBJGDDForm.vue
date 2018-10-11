@@ -309,8 +309,8 @@
               for (let item of items) {
                 let boms = [];
                 for (let bom of item.boms) {
-                  boms.push({
-                    tdId : item.tdId || null,
+                  let obj = {
+                    tdId : bom.tdId || null,
                     transMatchedCode: item.transCode,
                     tdQty: bom.qty || bom.tdQty,                     // 领料需求
                     orderCode: item.orderCode,
@@ -322,10 +322,12 @@
                     bomType: bom.bomType,
                     bomQty: bom.qty || bom.bomQty,
                     specification : bom.specification,
-                  })
-                  if(this.transCode){
-                    delete boms.orderCode
+                    parentId : bom.parentId  || null
                   }
+                  if(this.transCode){
+                    delete obj.orderCode;
+                  }
+                  boms.push(obj);
                 }
                 let oItem = {
                   tdId: item.tdId || null,
