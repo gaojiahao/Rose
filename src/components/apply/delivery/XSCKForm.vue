@@ -88,7 +88,10 @@
           <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" ref="order"></pop-order-list>
         </div>
-
+         <!--备注-->
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide">
@@ -123,8 +126,7 @@
 <script>
   // vux组件引入
   import {
-    Icon, Cell, Popup, Group, XInput,
-    Swipeout, SwipeoutItem, SwipeoutButton, TransferDom,
+    Icon, Cell, Popup, Group, XInput,XTextarea,TransferDom,
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
@@ -151,10 +153,10 @@
     mixins: [applyCommon],
     directives: {TransferDom},
     components: {
-      Icon, Cell, Popup, Group,
-      XInput, RAction, RNumber, Swipeout,
-      PopOrderList, SwipeoutItem, PopDealerList,
-      SwipeoutButton, PopSingleSelect, PopWarehouseList,
+      Icon, Cell, Popup, Group,XTextarea,
+      XInput, RAction, RNumber,
+      PopOrderList, PopDealerList,
+     PopSingleSelect, PopWarehouseList,
       PopSodlProjectList, PopEntityList, PopMatter
     },
     data() {

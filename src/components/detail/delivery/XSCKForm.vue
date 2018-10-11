@@ -34,6 +34,9 @@
             </div>
           </div>
         </div>
+        <div class="comment-part">
+          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        </div>
       </div>
       <!-- 金额合计 -->
       <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
@@ -59,6 +62,7 @@ import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
 import ProjectPart from 'components/detail/commonPart/Project'
 import MatterItem from 'components/detail/commonPart/MatterItem'
+import FormCell from 'components/detail/commonPart/FormCell'
 
 export default {
   data() {
@@ -92,7 +96,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,contactPart,PriceTotal,WarehouseContent,ProjectPart,MatterItem,
+    workFlow, RAction, PopWarehouseList,contactPart,PriceTotal,WarehouseContent,ProjectPart,MatterItem,FormCell
   },
   methods: {
     //选择默认图片

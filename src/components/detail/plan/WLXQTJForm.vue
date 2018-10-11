@@ -39,6 +39,9 @@
             </div>
           </div>
         </div>
+        <div class="comment-part">
+           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        </div>
       </div>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -56,7 +59,7 @@
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
   import MatterItem from 'components/detail/commonPart/MatterItem'
-
+  import FormCell from 'components/detail/commonPart/FormCell'
   export default {
     data() {
       return {
@@ -69,7 +72,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, MatterItem,
+      workFlow, RAction, MatterItem,FormCell
     },
     methods: {
       //选择默认图片

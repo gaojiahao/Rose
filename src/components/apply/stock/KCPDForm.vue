@@ -67,7 +67,10 @@
                            :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
                            ref="matter"></pop-matter-list>
         </div>
-
+        <!--备注-->
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
@@ -99,7 +102,7 @@
 
 <script>
 // vux插件引入
-import {Icon, Cell, Group, XInput,} from 'vux'
+import {Icon, Cell, Group, XInput,XTextarea} from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
@@ -116,7 +119,7 @@ import {accSub} from '@/home/pages/maps/decimalsAdd'
 export default {
   mixins: [ApplyCommon],
   components: {
-    Icon, Cell, Group, XInput,
+    Icon, Cell, Group, XInput,XTextarea,
     PopMatterList, PopWarehouseList, PopMatter
   },
   data() {
