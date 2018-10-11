@@ -51,7 +51,7 @@
                   <bom-list :boms="item.boms">
                     <template slot-scope="{bom}" slot="number">
                       <div class="number-part">
-                        <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                        <span class="main-number">领料需求: {{bom.qty || bom.tdQty}}{{bom.measureUnit}}</span>
                       </div>
                     </template>
                   </bom-list>
@@ -310,17 +310,22 @@
                 let boms = [];
                 for (let bom of item.boms) {
                   boms.push({
+                    tdId : item.tdId || null,
                     transMatchedCode: item.transCode,
-                    tdQty: bom.qty,                     // 领料需求
+                    tdQty: bom.qty || bom.tdQty,                     // 领料需求
                     orderCode: item.orderCode,
-                    bomSpecificLoss: bom.specificLoss,
-                    tdProcessing: bom.processing,
+                    bomSpecificLoss: bom.specificLoss || bom.bomSpecificLoss,
+                    tdProcessing: bom.processing || bom.tdProcessing,
                     inventoryName: bom.inventoryName,
-                    transObjCode: bom.inventoryCode,
+                    transObjCode: bom.inventoryCode || bom.transObjCode,
                     measureUnit: bom.measureUnit,
                     bomType: bom.bomType,
-                    bomQty: bom.qty,
+                    bomQty: bom.qty || bom.bomQty,
+                    specification : bom.specification,
                   })
+                  if(this.transCode){
+                    delete boms.orderCode
+                  }
                 }
                 let oItem = {
                   tdId: item.tdId || null,
