@@ -36,7 +36,7 @@
                 v-model="inventory.measureUnit"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
-      <div class="cfm_btn" @click="save">提交</div>
+      <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
     </div>
   </div>
 </template>

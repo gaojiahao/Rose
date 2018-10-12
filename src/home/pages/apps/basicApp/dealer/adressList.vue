@@ -320,11 +320,10 @@ export default {
     }
   }
   .app_main {
-    position: relative;
-    margin-top: .08rem;
-    height: calc(100% - .52rem - 44px);
     overflow: hidden;
+    position: relative;
     box-sizing: border-box;
+    height: calc(100% - .88rem);
     .pullDownRefresh {
       display: block;
       margin: 0 auto;

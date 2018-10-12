@@ -31,7 +31,7 @@
                         :defaultValue="typeSubMap[typeSub].value" @sel-group="selGroup" @list-search="getTypeSubList">
     </pop-warelabe-list>
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save" v-html="this.$route.query.add?'保存并使用':'提交'"></div>
+      <div class="cfm_btn" @click="save">{{this.transCode ? '保存' : '提交'}}</div>
     </div>
   </div>
 </template>
@@ -247,7 +247,9 @@
             operation(submitData).then((data = {}) => {
               let {success = false, message = '提交失败'} = data;
               if (success) {
-                message = '仓库提交成功';
+                message = operation === update
+                            ? '保存成功'
+                            : '提交成功';
                 this.submitSuccess = true;
                 if (!this.transCode && `${this.$route.query.add}` === '1') {
                   sessionStorage.setItem('EDIT_WAREHOUSE_TRANSCODE', JSON.stringify({transCode: data.transCode}));
@@ -366,7 +368,6 @@
     beforeRouteLeave(to, from, next) {
       let {path} = to;
       // 新建物料，修改列表页的meta值
-      console.log(this.submitSuccess);
       if (this.submitSuccess && path === '/warehouse') {
         to.meta.reload = true;
       }
@@ -388,8 +389,7 @@
       getBaseInfoDataBase().then(data => {
         this.baseinfo = {
           ...this.baseinfo,
-          ...data,
-          // activeTime: this.changeDate(new Date(), true),
+          ...data
         }
       });
       this.getwarehouse();

@@ -73,7 +73,9 @@
     </div>
     <!--提交按钮-->
     <div class='vux-1px-t btn '>
-      <div class="cfm_btn" @click="save" :class='{disabled : disabledSubmit}' v-html="this.$route.query.add?'保存并使用':'提交'"></div>
+      <div class="cfm_btn" @click="save" :class='{disabled : disabledSubmit}'>
+        {{this.transCode ? '保存':'提交'}}
+      </div>
     </div>
   </div>
 </template>
