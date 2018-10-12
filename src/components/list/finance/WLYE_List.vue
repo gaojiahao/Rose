@@ -4,9 +4,9 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search="searchList"></searchIcon>
-        <!-- <div class="filter_part">
+        <div class="filter_part">
           <tab-item :tabVal='listView' @tab-click="tabClick"></tab-item>
-        </div> -->
+        </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -143,13 +143,10 @@
         ],
       }
     },
-    mixins: [listCommon],
-    methods: {
-
+    components:{
+      TabItem
     },
-    created() {
-
-    }
+    mixins: [listCommon],
   }
 </script>
 
