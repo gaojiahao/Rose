@@ -16,7 +16,7 @@
         <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
       </div>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.inPut.dataSet"></matter-list>
+      <matter-list :matter-list="orderInfo.inPut.dataSet" :order-remarks="orderInfo.biComment"></matter-list>
       <!-- 金额明细 -->
       <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
       <!-- 审批操作 -->

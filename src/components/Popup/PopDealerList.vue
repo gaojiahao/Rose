@@ -20,7 +20,7 @@
     </div>
     <div v-else>
       <div class="title">{{dealerLabelName}}列表</div>
-      <div class="mode required">请选择{{dealerLabelName}}</div>
+      <div class="required">请选择{{dealerLabelName}}</div>
     </div>
     <span class="iconfont icon-youjiantou r-arrow"></span>          
     <!-- 往来popup -->
@@ -265,6 +265,7 @@
   @import '~@/scss/color.scss';
   .required {
     color: $required;
+    font-weight: bold;
   }
   .vux-1px-b:after {
     border-color: #e8e8e8;

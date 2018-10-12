@@ -13,7 +13,7 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" validUntil></contact-part>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.order.dataSet">
+      <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment">
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_left">

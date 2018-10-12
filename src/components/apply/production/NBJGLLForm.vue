@@ -3,17 +3,17 @@
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 出库仓库-->
-        <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
+        <pop-warehouse-list isRequired title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
         <!-- 入库仓库-->
-        <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
+        <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
               <div class="title">订单列表</div>
-              <div class="tips">请选择订单</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <div class="required">请选择订单</div>
+              <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -36,18 +36,18 @@
                       <!-- 物料属性和单位 -->
                       <div class='mater_more'>
                         <span>单位: {{item.measureUnit}}</span>
-                          <span>待领料: {{item.qtyBal}}</span>
-                          <span>可用库存: {{item.qtyStock}}</span>
+                        <span>待领料: {{item.qtyBal}}</span>
+                        <span>可用库存: {{item.qtyStock}}</span>
                       </div>
                       <div class="mater_other">
-                          <div class="matter-remain" v-if="item.warehouseName">
-                            <i class="iconfont icon--"></i>
-                            <span>{{item.warehouseName}}</span>
-                          </div>
-                          <div class="matter-remain" v-if="item.tdQty">
-                            <span class="symbol">本次领料: </span>{{item.tdQty}}
-                          </div>
+                        <div class="matter-remain" v-if="item.warehouseName">
+                          <i class="iconfont icon--"></i>
+                          <span>{{item.warehouseName}}</span>
                         </div>
+                        <div class="matter-remain" v-if="item.tdQty">
+                          <span class="symbol">本次领料: </span>{{item.tdQty}}
+                        </div>
+                      </div>
                     </template>
                     <template slot="edit" slot-scope="{item}">
                       <div class='mater_other' @click="modifyMatter(item,index, key)" v-if="!item.tdQty && !matterModifyClass">
@@ -70,15 +70,15 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <!-- 订单popup -->
+          <!-- 物料popup -->
           <pop-order-list :show="showOrderPop" :params="warehouseParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" list-method="getInProcessingStorage" :is-mater-proccing="true"
-                               ref="order">
+                          ref="order">
             <template slot="materInfo" slot-scope="{item}">
-              <div  class="mater_material">
+              <div class="mater_material">
                 <span>待领料:{{item.qtyBal}}</span>
                 <span>可用库存: {{item.qtyStock}}</span>
-              </div>  
+              </div>
             </template>
           </pop-order-list>
         </div>
@@ -89,14 +89,11 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
-          <template slot="materStock" slot-scope="{modifyMatter}">
-            <span>可用库存:{{modifyMatter.qtyStock}}</span>
-          </template>
           <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <cell title="可用库存" :value="modifyMatter.qtyStock"></cell>
             <cell title="待领料" :value="modifyMatter.qtyBal"></cell>
-            <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
           </template>
         </pop-matter>
       </div>
@@ -431,7 +428,6 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       })

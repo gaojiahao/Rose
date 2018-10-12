@@ -11,7 +11,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.order.dataSet"></matter-list>
+      <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment"></matter-list>
       <!-- 金额合计栏 -->
       <price-total :count="count" noAmt noTaxAmt></price-total>
       <!-- 审批操作 -->

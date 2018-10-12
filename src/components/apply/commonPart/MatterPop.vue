@@ -39,10 +39,7 @@
                 <span>子类: {{modifyMatter.inventorySubclass}}</span>
             </div>
             <div class="mater_more">
-              <!--物料库存-->
-              <slot name="materStock" :modifyMatter="modifyMatter">
-                  <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
-              </slot>
+              <slot name="materStock" :modifyMatter="modifyMatter"></slot>
             </div>
           </div>
         </div>

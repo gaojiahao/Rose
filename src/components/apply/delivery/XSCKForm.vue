@@ -6,26 +6,22 @@
         <!-- <pop-entity-list :value="entity" v-model="entity"></pop-entity-list> -->
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
-
-        <!-- 仓库-->
-        <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
-
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
                            v-model="drDealerPaymentTerm"></pop-single-select>
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
                            v-model="formData.drDealerLogisticsTerms"></pop-single-select>
-        <!-- 项目 -->
-        <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
+        <!-- 仓库-->
+        <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
               <div class="title">订单列表</div>
-              <div class="tips">请选择订单</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <div class="required">请选择订单</div>
+              <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -67,12 +63,6 @@
                                     :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                         </div>                     
                       </div>
-                      <!-- 物料数量和价格 -->
-                      <!-- <div class="mater_other" v-show="item.price && item.tdQty">
-                        <div class="mater_price">
-                          <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
-                        </div>
-                      </div> -->
                     </template>
                     <template slot="editPart" slot-scope="{item}">
                       <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
@@ -95,10 +85,12 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <!-- 订单popup -->
+          <!-- 物料popup -->
           <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" ref="order"></pop-order-list>
         </div>
+        <!-- 项目 -->
+        <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
          <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -318,15 +310,6 @@
         }
         return url
       },
-      // TODO 滑动删除
-      // delClick(index, item, key) {
-      //   let arr = this.orderList[key];
-      //   arr.splice(index, 1);
-      //   if (!arr.length) {
-      //     delete this.orderList[key];
-      //   }
-      //   this.$refs.order.delSelItem(item);
-      // },
       // 滑动删除
       delClick(index, sItem, key) {
         let arr = this.selItems;
@@ -494,11 +477,12 @@
               containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 仓库管理员
               handlerEntity: this.entity.dealerName,
               outPut: {
-                dealerDebit: this.dealerInfo.dealerCode, // 客户编码
-                drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 客户页签
-                containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
-                drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
-                project: this.project.projectName,//项目
+                dealerDebit: this.dealerInfo.dealerCode,                     // 客户编码
+                drDealerLabel: this.dealerInfo.dealerLabelName || '客户',     // 客户页签
+                containerCodeOut: this.warehouse.warehouseCode,              // 仓库编码
+                drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',      // 结算方式
+                project: this.project.projectName,                           // 项目
+                departmentName: this.formData.handlerUnitName,               // 人员所属部门
                 dataSet
               }
             };
@@ -529,7 +513,6 @@
               delete submitData.wfPara;
               delete submitData.biReferenceId;
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         })
@@ -614,7 +597,6 @@
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
           this.$loading.hide();
-          // this.$emit('input', false);
         })
       },
     },

@@ -13,7 +13,7 @@
         <!-- 往来联系部分 交易基本信息-->
         <contact-part :contact-info="contactInfo" ></contact-part>               
         <!-- 物料列表 -->
-        <matter-list :matter-list='orderInfo.order.dataSet'></matter-list> 
+        <matter-list :matter-list='orderInfo.order.dataSet' :order-remarks="orderInfo.biComment"></matter-list> 
         <!-- 金额明细 -->
         <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>     
         <!-- 审批操作 -->

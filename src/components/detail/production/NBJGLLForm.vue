@@ -19,7 +19,7 @@
         <warehouse-content :warehouse="warehouseIn"></warehouse-content>
       </div>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.outPut.dataSet">
+      <matter-list :matter-list="orderInfo.outPut.dataSet" :order-remarks="orderInfo.biComment">
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_left">

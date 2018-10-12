@@ -24,7 +24,7 @@
             </div>
             <div class="order_matter">
               <template v-for="(item, index) in oItem">
-                <matter-item class="vux-1px-b" :item="item">
+                <matter-item :item="item">
                   <!-- 调拨数量 -->
                   <div class="mater_other" slot="other" slot-scope="{item}">
                     <div class="mater_num">
@@ -36,7 +36,7 @@
                       </span>
                     </div>
                     <div class="mater_num">
-                      <span class="num">
+                      <span class="num" v-if="item.shippingTime">
                         成品计划验收日期: {{item.shippingTime}}
                       </span>
                     </div>

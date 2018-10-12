@@ -4,19 +4,19 @@
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
-        <!-- 仓库-->
-        <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>
+        <!-- 仓库-->
+        <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
-              <div class="tips">请选择物料</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <div class="required">请选择物料</div>
+              <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->

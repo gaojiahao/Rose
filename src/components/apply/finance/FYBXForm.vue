@@ -13,7 +13,7 @@
           <div v-else>
             <div class="mode required">请选择项目名称</div>
           </div>
-          <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+          <i class="iconfont icon-youjiantou r_arrow"></i>
         </div>
         <!-- 费用列表 -->
         <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
@@ -33,6 +33,11 @@
               </template>
             </x-input>
             <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'v-model="item.reson"></x-input>
+          </group>
+        </div>
+        <div class="materiel_list">
+          <group title="其他信息" class="costGroup">
+            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
           </group>
         </div>
         <!-- 新增更多 按钮 -->
@@ -62,7 +67,9 @@
 
 <script>
 // vux插件引入
-import { Cell ,Group,XInput, Swipeout, SwipeoutItem, SwipeoutButton,Popup,PopupPicker } from 'vux'
+import { Cell ,Group,XInput, Swipeout, 
+         SwipeoutItem, SwipeoutButton, 
+         Popup, XTextarea, PopupPicker } from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
@@ -79,7 +86,7 @@ export default {
   mixins: [ApplyCommon],
   components: {
     Cell, Group, Popup,
-    XInput, Swipeout, SwipeoutItem,
+    XInput, Swipeout, SwipeoutItem, XTextarea,
     SwipeoutButton, PopCostList, PopupPicker ,PopProjectList
   },
   data() {
@@ -200,7 +207,7 @@ export default {
         });
         return true
       });
-      if (!this.projectName.length) {
+      if (!this.projectName) {
         warn = '请选择项目';
       }
       if (warn) {

@@ -16,7 +16,7 @@
           <template v-if="!matterList.length">
             <div @click="getMatter" class='no-matter'>
               <div class="title">物料列表</div>
-              <div class="tips">请选择物料</div>
+              <div class="required">请选择物料</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
@@ -82,7 +82,7 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
-          <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
       </div>
     </div>
@@ -160,7 +160,6 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
         dealer: {
           drDealerPaymentTerm: '现付',  //结算方式
           drDealerLogisticsTerms: '上门', //物流条件
-          biComment: '' //备注
         },
         numMap: {}, // 用于记录订单物料的数量和价格
         // taxRate: 0.16, // 税率
@@ -379,9 +378,11 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
                   comment: ""
                 }
               }
+              let test = {...this.formData};
+              console.log(test);
               let submitData = {
                 listId: this.listId,
-                biComment: this.biComment,
+                biComment: this.formData.biComment,
                 formData: JSON.stringify({
                   ...this.formData,
                   ...this.dealer,
@@ -441,7 +442,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
             handlerUnitName: formData.handlerUnitName,
             creator: formData.creator,
             modifer: formData.modifer,
-
+            biComment: formData.biComment
           }
           //客户信息展示
           this.dealerInfo = {
@@ -462,11 +463,8 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
             dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话
             drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
-            biComment: formData.biComment //备注
           },
-          // this.matterList = data.formData.order.dataSet;
           this.$loading.hide();
-            // this.$emit('input', false);
         })
       }
     },

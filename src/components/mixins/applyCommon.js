@@ -229,21 +229,19 @@ export default {
       // 数量
       if (tdQty) {
         item.tdQty = Math.abs(toFixed(tdQty));
-        let warn = '';
         // qtyStockBal为销售出库的库存，数量不允许大于余额qtyBalqtyStock
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;
-        } else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
+        } 
+        else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
           item.tdQty = qtyStockBal;
-        }
-        else if(qtyBal && tdQty > qtyBal){
-          item.tdQty = qtyBal;
         }
         //qtyStock为物料领料，数量不允许大于库存
         else if(qtyStock && tdQty > qtyStock){
-          console.log(qtyStock);
-          warn = '待领料数量不允许大于库存'
           item.tdQty = qtyStock;
+        }        
+        else if(qtyBal && tdQty > qtyBal){
+          item.tdQty = qtyBal;
         }
       }
     },

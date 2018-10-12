@@ -15,7 +15,7 @@
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
               <div class="tips">请选择物料</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->

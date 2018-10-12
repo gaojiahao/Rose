@@ -27,8 +27,8 @@
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
-              <div class="tips">请选择物料</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <div class="required">请选择物料</div>
+              <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -61,8 +61,7 @@
                   <template slot="edit" slot-scope="{item}">
                     <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
                       <div class="edit-tips">
-                        <span class="iconfont icon-tianxie"></span>
-                        <span class="tips-word">点击进入填写</span>
+                        <span class="tips-word">填写</span>
                       </div>
                     </div>
                   </template>
@@ -109,7 +108,7 @@
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
-          <x-textarea v-model="biComment" placeholder="备注"></x-textarea>
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
       </div>
     </div>

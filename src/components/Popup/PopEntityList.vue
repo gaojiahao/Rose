@@ -9,7 +9,7 @@
     <div v-else>
       <div class="mode">请选择经办主体</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+    <i class="iconfont icon-youjiantou r_arrow"></i>
 
     <!-- 经办主体弹窗 -->
     <div v-transfer-dom>

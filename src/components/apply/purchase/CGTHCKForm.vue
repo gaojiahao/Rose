@@ -5,7 +5,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 仓库-->
-        <pop-warehouse-list :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
+        <pop-warehouse-list title="出库仓库" :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>
@@ -15,8 +15,8 @@
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
-              <div class="tips">请选择物料</div>
-              <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+              <div class="required">请选择物料</div>
+              <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
@@ -34,11 +34,13 @@
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
-                        <span class="processing">属性：{{item.processing}}</span>
-                        <span class='unit'>单位：{{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
-                        <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
+                      <span class="processing">属性：{{item.processing}}</span>
+                      <span class='unit'>单位：{{item.measureUnit}}</span>
+                      <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                    </div>
+                    <div class="mater_more">
+                      <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
+                      <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">                      

@@ -3,7 +3,7 @@
     <template v-if="!selItems.PROJECT_NAME">
       <div class="title required">项目计划</div>
       <div class="mode">请选择项目</div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="20"></x-icon>
+      <i class="iconfont icon-youjiantou r_arrow"></i>
     </template>
     <template v-else>
       <div class="user_info">
