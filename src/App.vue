@@ -37,14 +37,7 @@
       Badge
     },
     created(){
-      // getMsgList().then( data => {
-      //   if(data.dataCount > 99){
-      //     this.newsNumber = '99+';
-      //     return
-      //   }
-      //   this.newsNumber = data.dataCount;
-      // })
-      this.$event.$on('badgeNum',(val)=>{
+      this.$event.$on('badgeNum', (val) => {
         this.newsNumber = val;
       })
     },

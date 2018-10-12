@@ -1,4 +1,5 @@
 import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
+import { getPCCommentList } from 'service/commentService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -180,7 +181,6 @@ export default {
     },
     // TODO 同意、拒绝、撤回成功时的回调
     submitSuccessCallback(val) {
-      
       let type = JSON.parse(val).type;
       if (type !== 'revoke') {
         this.$emit('change', true);
@@ -203,6 +203,15 @@ export default {
         })
       })
     },
+    // 请求评论列表
+    getCommentList() {
+      return getPCCommentList({
+        relationKey: this.transCode
+      }).then(({dataCount = 0}) => {
+        // 跨组件传值
+        this.$event.$emit('commentCount', dataCount);
+      })
+    },
     async loadPage() {
       let {transCode} = this.$route.query;
       if (!transCode) {
@@ -221,6 +230,7 @@ export default {
       await this.getAppExampleDetails();
       // 获取表单表单详情
       await this.getOrderList(transCode);
+      await this.getCommentList();
       this.$loading.hide();
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');

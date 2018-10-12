@@ -28,13 +28,11 @@ import Apps from '@/home/pages/maps/businessApp'
 import AppsFile from '@/home/pages/maps/businessFile'
 // 插件引入
 import Bscroll from 'better-scroll'
-// 组件引入
-import { getPCCommentList } from 'service/commentService'
 export default {
   data() {
     return {
-      currentComponent: '',
       transCode: '',
+      currentComponent: '',
       submitSuccess: false,
       detailScroll: null,
       commentCount: 0,
@@ -124,8 +122,11 @@ export default {
     this.hasComment = !!transCode;
     this.transCode = transCode;
     try {
-      this.getCommentList();
       this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
+      // 监听详情页传回来的 ‘评论’
+      this.$event.$on('commentCount', (val) => {
+        this.commentCount = val;
+      })
     } catch (e) {
       console.log(e);
       this.$vux.alert.show({
@@ -140,7 +141,6 @@ export default {
         click: true,
       })
     })
-
   },
   beforeRouteLeave(to, from, next) {
     let { path } = to;
@@ -150,6 +150,10 @@ export default {
       to.meta.reload = true;
     }
     next();
+  },
+  beforeDestroy(){
+    // 销毁监听
+    this.$event.$off('commentCount');
   }
 
 }
