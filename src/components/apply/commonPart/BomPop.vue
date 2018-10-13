@@ -3,13 +3,35 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
-          <div class="each_bom" v-for="(item,index) in bomInfo.boms" :ikey="index" v-if="bomInfo.boms">
-            <group class='mg_auto' label-width="4em">
-              <cell title="原料名称" v-model="item.inventoryName" text-align="right"></cell>
-              <cell title="原料编码" v-model="item.inventoryCode" text-align="right"></cell>
-              <cell title="领料需求" v-model="item.tdQty" text-align="right"></cell>
-              <x-input title="损耗率" type="number" v-model.number="item.specificLoss" text-align="right" @on-blur="modifyBom(item)"></x-input>
-            </group>
+          <div class="bom-container" v-if="bomInfo.boms && bomInfo.boms.length">
+            <div class="title vux-1px-b">原料</div>
+            <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in bomInfo.boms" :key="bIndex">
+              <div class="main-info-part">
+                <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">
+                  <span class="content-title" v-if="bom.warehouseName">{{bom.warehouseName}}</span>
+                  <span class="side-bar vux-1px-r" v-if="bom.warehouseName"></span>
+                  <span class="content-info" v-if="bom.warehouseCode">{{bom.warehouseCode}}</span>
+                </div>
+                <div class="main-content">
+                  <div class="content-unit">
+                    <span class="iconfont icon-bianma"></span>
+                    <span>原料编码：{{bom.inventoryCode}}</span>
+                  </div>
+                  <div class="content-name">
+                    {{bom.inventoryName}}
+                  </div>
+                </div>
+              </div>
+              <div class="edit_info">
+                <slot :bom="bom" name="number">
+                  <div class="number-part">
+                    <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                    <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
+                  </div>
+                </slot>
+                <div class="specific_loss" @click="modifyBom(bom)">损耗率：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
+              </div>
+            </div>
           </div>
         </r-scroll>
       </div>
@@ -47,13 +69,17 @@ export default {
       type : Boolean,
       default : false
     },
+    isComputeLoss : {
+      type : Boolean,
+      default : true
+    }
   },
   data(){
     return{
       scrollOptions: { // 滚动配置
         click: true,
       },
-      showPop :false
+      showPop :false,
     }  
   },
   components:{Popup,Group,Cell,XInput,RScroll},
@@ -80,13 +106,26 @@ export default {
     },
     //确认修改
     confirm(){
-      this.$emit('bom-confirm',JSON.stringify(this.bomInfo))
+      if(this.isComputeLoss){
+        this.bomInfo.boms.forEach(item=>{
+          let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
+          item.tdQty = Math.abs(toFixed(tdQty))
+        })
+      }      
+      this.$emit('bom-confirm',JSON.stringify(this.currentBom))
       this.showPop = false;
     },
     modifyBom(item){
-      item.specificLoss = Math.abs(toFixed(item.specificLoss));
-      item.tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
-
+      this.$vux.confirm.prompt(item.specificLoss, {
+        title: '损耗率',
+        onConfirm: (val)=> {
+          item.specificLoss = Math.abs(toFixed(val));
+        }
+      })
+    },
+    //输入框获取焦点，内容选中
+    getFocus(e){
+      event.currentTarget.select();
     }
   }
 
@@ -97,46 +136,96 @@ export default {
 .trade_pop_part {
     background: #f8f8f8;
     .trade_pop {
-      padding: 0 .08rem;
       height: calc(100% - .44rem);
       .mater_list {
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
         height: calc(100% - .38rem);
-        //重置vux样式
-        .mg_auto{
-          padding: 0 .08rem;
+        .bom-container {
           width: 100%;
-          box-sizing: border-box;
           background: #fff;
-          margin-bottom: 0.06rem;
-          .vux-no-group-title{
-            margin-top:0;
+          .title {
+            padding: .03rem 0;
+            color: #111;
+            font-weight: bold;
+            font-size: .24rem;
+            text-align: center;
           }
-          /deep/ .weui-cells{
-            margin-top:0;
-            overflow: visible;
-            .weui-cell{
-              font-size: 0.14rem;
-
-              &:before{
-                left:0;
-                border-color:#e8e8e8;
+          .each-bom-part {
+            width: 100%;
+            display: flex;
+            padding: .06rem 0.08rem;
+            align-items: center;
+            box-sizing: border-box;
+            .main-info-part {
+              flex: 2;
+              .main-top {
+                font-size: 0;
+                display: flex;
+                align-items: center;
+                padding-bottom: .02rem;
+                .content-title {
+                  color: #005792;
+                  font-size: .1rem;
+                  font-weight: bold;
+                }
+                .side-bar {
+                  height: .1rem;
+                  margin: 0 .04rem;
+                  display: inline-block;
+                }
+                .content-info {
+                  @extend .content-title;
+                }
+              }
+              .main-content {
+                .content-unit {
+                  color: #757575;
+                  font-size: .1rem;
+                  word-break: break-all;
+                  .icon-bianma {
+                    font-size: .1rem;
+                  }
+                }
+                .content-name {
+                  font-size: .12rem;
+                  font-weight: bold;
+                  word-break: break-all;
+                }
               }
             }
-            &:before{
-              border-top:none;
+            .edit_info{
+              flex: 1;
+              .number-part {
+                display: flex;
+                font-size: .1rem;
+                text-align: right;
+                flex-direction: column;
+                .main-number {
+                  font-size: .12rem;
+                  font-weight: bold;
+                }
+                .number-unit {
+                  color: #757575;
+                }
+              }
+              .specific_loss{
+                font-size: .12rem;
+                font-weight: bold;
+                text-align: right;
+                .icon-bianji1{
+                  font-size: 0.12rem;
+                  font-weight: normal;
+                }
+              }
 
             }
-            &:after{
-              border-bottom:none;
-            }
+            
           }
-        }
-        .each_bom{
-          background: #fff;
-          margin-bottom: 0.1rem;
+          .vux-1px-b:after {
+            border-bottom: 1px solid #e8e8e8;
+          }
         }
       }
     }
