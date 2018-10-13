@@ -49,17 +49,13 @@
     methods: {
       // TODO 数量减一
       subNum() {
-        if (this.currentNum === 1) {
-          return
-        }
+        if (this.currentNum === 1) return;
         this.currentNum--;
         this.$emit('input', this.currentNum);
       },
       // TODO 数量加一
       plusNum() {
-        if (this.max && this.max === this.num) {
-          return
-        }
+        if (this.max && this.max === this.num) return;
         this.currentNum++;
         this.$emit('input', this.currentNum);
       },
@@ -69,7 +65,6 @@
         if (this.max && val > this.max) {
           val = this.max;
         }
-
         this.currentNum = this.checkNum(val);
         e.target.value = this.currentNum;
         this.$emit('input', this.currentNum);
@@ -98,11 +93,6 @@
     }
     .disabled {
       color: #eee;
-    }
-    .plus {
-      font-weight: 500;
-      margin-top: -.01rem;
-      vertical-align: middle;
     }
     .num {
       width: 0.4rem;
