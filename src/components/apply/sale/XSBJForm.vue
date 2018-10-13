@@ -157,14 +157,12 @@
         matterList: [],                               // 物料列表
         showMaterielPop: false,                       // 是否显示物料的popup
         transCode: '',
-        dealerInfo: {
-          paymentTerm: '现付'                          // 结算方式
-        },
+        dealerInfo: {},
         transMode: [],                                // 结算方式 数组
         logisticsTerm: [],                            // 物流条款 数组
         formData: {
           biComment: '',
-          drDealerLogisticsTerms: '上门',              // 物流条款
+          drDealerLogisticsTerms: '',              // 物流条款
           validUntil: '', // 有效期
         },
         priceMap: {},
@@ -282,7 +280,6 @@
       selDealer(val) {
         let [sels] = JSON.parse(val);
         this.dealerInfo = sels;
-        
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -310,19 +307,20 @@
         let validateMap = [
           {
             key: 'dealerInfo',
-            message: '往来信息'
+            message: '客户'
           },
+          {
+            key: 'matterList',
+            message: '物料'
+          }
         ];
         validateMap.every(item => {
-          if (!this[item.key]) {
+          if (!Object.values(this[item.key]).length) {
             warn = `请选择${item.message}`;
             return false
           }
           return true
         });
-        if (!warn && !this.matterList.length) {
-          warn = '请选择物料';
-        }
         this.matterList.every(item => {
           if (!item.price) {
             warn = '请输入单价';

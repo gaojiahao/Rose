@@ -141,31 +141,18 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
     data() {
       return {
         listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
-        matterList: [],                                  // 物料列表
-        paymentIndex: 0,
-        logisticsIndex: 0,
-        DealerPaymentTerm: '现付',                       //结算方式
-        DealerLogisticsTerms: '上门',                    //物流方式
-        deliveryDate: '',                               // 预计交付日
-        assistUnit: '请选择',                            // 辅助计量显示值
-        assistUnitList: ['A', 'B', 'C'],                // 辅助计量列表
-        transMode: [],                                  // 结算方式
-        logisticsTerm: [],                              // 物流条款
-        showDealerPop: false,                           // 是否显示客户的popup
-        showLogPop: false,                              // 是否显示物流条款的popup
-        showTransPop: false,                            // 是否显示结算方式的popup
+        matterList: [],                                 // 物料列表
+        transMode: [],                                  // 结算方式 数组
+        logisticsTerm: [],                              // 物流条款 数组
         showMaterielPop: false,                         // 是否显示物料的popup
         dealerInfo: {},
         formData: {},
         dealer: {
-          drDealerPaymentTerm: '现付',  //结算方式
-          drDealerLogisticsTerms: '上门', //物流条件
+          drDealerPaymentTerm: '',  //结算方式
+          drDealerLogisticsTerms: '', //物流条件
         },
         numMap: {}, // 用于记录订单物料的数量和价格
-        // taxRate: 0.16, // 税率
-        matter:{},
         showMatterPop :false,
-        modifyIndex:null,
       }
     },
     mixins: [common],
@@ -312,7 +299,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
       submitOrder() {
         if (!this.dealerInfo.dealerName) {
           this.$vux.alert.show({
-            content: '请选择客户信息'
+            content: '请选择客户'
           })
         }
         else if (!this.matterList.length) {
@@ -389,7 +376,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
                   handlerEntity: this.entity.dealerName,
                   order: {
                     dealerDebit: this.dealerInfo.dealerCode,
-                    drDealerLabel: this.dealerInfo.dealerLabelName || '渠道商',
+                    drDealerLabel: this.dealerInfo.dealerLabelName,
                     drDealerPaymentTerm : this.dealer.drDealerPaymentTerm,
                     dataSet
                   }

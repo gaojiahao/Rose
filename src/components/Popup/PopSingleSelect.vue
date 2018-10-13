@@ -3,7 +3,7 @@
     <div class='pop_info'>
       <div class="title">{{title}}</div>
       <div class="mode">
-        <span class="mode-content">{{selected}}</span>
+        <span class="mode-content">{{selected || '请选择'}}</span>
         <span class="iconfont icon-shenglve"></span>
         </div>
     </div>   

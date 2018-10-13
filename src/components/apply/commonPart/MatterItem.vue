@@ -31,13 +31,13 @@
         </div>
       </slot>
       <slot name="edit" :item="item">
-        <div class='mater_other' @click="modifyMatter" v-if="(!item.price || !item.tdQty) && !showDelete">
+        <div class='mater_other' @click="modifyMatter" v-if="showEdit && !showDelete">
           <div class="edit-tips">点击进行填写</div>
         </div>
       </slot>  
       <!-- 编辑图标 -->
       <slot name="editPart" :item="item">
-        <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="(item.price || item.tdQty) &&!showDelete">
+        <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="showEdit && !showDelete">
           <span class='iconfont icon-bianji1'></span>
         </div>
       </slot>
@@ -60,12 +60,18 @@
         default() {
           return {}
         }
-      },
-      // 是否展示编辑图标
-      noEdit: {
-        type: Boolean,
-        default: false
-      },
+      }
+    },
+    computed: {
+      showEdit(){
+        // 存在 价格、数量 输入
+        if(this.item.price && this.item.tdQty){
+          return this.item.price && this.item.tdQty
+        }
+        else if(this.item.price || this.item.tdQty){
+          return !!this.item.price || !!this.item.tdQty
+        }
+      }
     },
     data() {
       return {}
@@ -126,6 +132,7 @@
       color: #111;
       font-size: .14rem;
       font-weight: bold;
+      word-break: break-all;
       margin-bottom: .02rem;
     }
     // 物料信息

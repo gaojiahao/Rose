@@ -562,22 +562,6 @@
     .basicPart {
       height: 90%;
     }
-    // 计划号
-    .order_code {
-      display: flex;
-      color: #fff;
-      font-size: .12rem;
-      > span {
-        display: inline-block;
-        padding: 0 .04rem;
-      }
-      .order_title {
-        background: #455d7a;
-      }
-      .order_num {
-        background: #c93d1b;
-      }
-    }
     .check_bom{
       text-align: center;
       font-size: 0.14rem;

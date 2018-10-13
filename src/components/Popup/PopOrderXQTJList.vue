@@ -12,7 +12,10 @@
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="order-item" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item, index)">
-            <div class="order-code">{{item.transCode}}</div>
+            <div class="order-code">
+              <span class="order-title">计划号</span>
+              <span class="order-num">{{item.transCode}}</span>
+            </div>
             <div class="order-top">
               <span class="order-top-item" v-if="item.orderCode">订单号: {{item.orderCode}}</span>
               <span class="order-top-item" v-if="item.warehouseName">仓库: {{item.warehouseName}}</span>
@@ -55,13 +58,10 @@
                     </div>
                     <!-- 物料材质等 -->
                     <div class="mater_material">
-                      <span class="unit">单位: {{item.measureUnit}}</span>
                       <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
                       <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
-                    <div>
-                      <span>余额: {{item.qtyBal}}</span>
-                    </div>
+                    <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
                   </div>
                 </div>
               </div>
@@ -392,8 +392,19 @@
           box-shadow: 0 0 8px #e8e8e8;
           box-sizing: border-box;
           .order-code {
-            font-size: .14rem;
-            font-weight: bold;
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            span {
+              display: inline-block;
+              padding: 0 .04rem;
+            }
+            .order-title {
+              background: #455d7a;
+            }
+            .order-num {
+              background: #c93d1b;
+            }          
           }
           .order-matter {
             display: flex;
@@ -501,6 +512,12 @@
                   .color {
                     margin-right: .06rem;
                   }
+                }
+                // 余额
+                .mater-balance {
+                  font-size: .14rem;
+                  font-weight: bold;
+                  color: #454545;
                 }
               }
             }
