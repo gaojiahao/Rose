@@ -27,7 +27,7 @@
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item, key)">
+                               @click.native="delClick(index,item, key)" class="vux-1px-b">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
                         <span>单位: {{item.measureUnit}}</span>
@@ -260,7 +260,7 @@
         let orderList = {};
         this.DuplicateBoms = []      
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
+          let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
           let {tdQty = '', shippingTime = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.shippingTime = shippingTime;
@@ -369,7 +369,7 @@
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
+            this.numMap[`${item.transCode}_${item.orderCode}_${item.inventoryCode}`] = {...item};
           }
         }
         this.showOrderPop = !this.showOrderPop;

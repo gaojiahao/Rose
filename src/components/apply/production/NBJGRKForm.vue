@@ -27,7 +27,7 @@
                 </div>
                 <div :class="{'mater_delete' : matterModifyClass, 'vux-1px-b': item.boms && !item.boms.length}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item, key)">
+                               @click.native="delClick(index,item, key)" class="vux-1px-b">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
                         <span>仓库: {{item.warehouseName || '暂未指定'}}</span>
@@ -47,7 +47,7 @@
                       </div>
                     </template>
                   </matter-item>
-                  <bom-list :boms="item.boms"></bom-list>
+                  <!-- <bom-list :boms="item.boms"></bom-list> -->
                   <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -264,7 +264,7 @@
         let orderList = {};
         this.DuplicateBoms = [];
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
+          let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
           let {tdQty = '', warehouseName = item.warehouseName, warehouseCode = item.warehouseCode} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.warehouseName = warehouseName;
@@ -371,7 +371,7 @@
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
+            this.numMap[`${item.transCode}_${item.orderCode}_${item.inventoryCode}`] = {...item};
           }
         }
         this.showOrderPop = !this.showOrderPop;

@@ -1,7 +1,7 @@
 <template>
   <div class="bom-container" v-if="boms && boms.length">
     <div class="title vux-1px-b">原料</div>
-    <div class="each-bom-part vux-1px-b" v-for="(bom, bIndex) in boms" :key="bIndex">
+    <div class="each-bom-part" :class="{'vux-1px-b' : bIndex<boms.length-1}"v-for="(bom, bIndex) in boms" :key="bIndex">
       <div class="main-info-part">
         <div class="main-top" v-if="bom.warehouseName || bom.warehouseCode">
           <span class="content-title" v-if="bom.warehouseName">{{bom.warehouseName}}</span>
