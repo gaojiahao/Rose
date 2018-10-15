@@ -25,9 +25,9 @@
                   <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
-                <div :class="{'mater_delete' : matterModifyClass, 'vux-1px-b': item.boms && !item.boms.length}" v-for="(item, index) in oItem" :key="index">
+                <div :class="{'mater_delete' : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item, key)" class="vux-1px-b">
+                               @click.native="delClick(index,item, key)" :class="{'vux-1px-b' : index < oItem.length-1}">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
                         <span>仓库: {{item.warehouseName || '暂未指定'}}</span>
@@ -519,9 +519,17 @@
           }
           let orderList = {};
           // 获取合计
-          let {order} = formData;
-          let {dataSet = []} = order;
+          let {inPut} = formData;
+          let {dataSet = []} = inPut;
           for (let item of dataSet) {
+            //bom合计
+            item.boms.forEach(item=>{
+              item.inventoryCode = item.transObjCode;
+              item.warehouseName = item.warehouseName_containerCodeOut;
+              item.warehouseCode = item.containerCodeOut;
+              this.DuplicateBoms.push(item)
+            })
+            // this.DuplicateBoms = [...this.DuplicateBoms,...item.boms]
             item = {
               ...item,
               transCode: item.transMatchedCode,
@@ -531,6 +539,7 @@
               inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
               processing: item.tdProcessing,
+              warehouseName : item.warehouseName_containerCode
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];

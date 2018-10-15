@@ -27,7 +27,7 @@
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item, key)" class="vux-1px-b">
+                               @click.native="delClick(index,item, key)" :class="{'vux-1px-b' : index < oItem.length-1 }">
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
                         <span>单位: {{item.measureUnit}}</span>
@@ -504,6 +504,11 @@
           let {order} = formData;
           let {dataSet = []} = order;
           for (let item of dataSet) {
+            //bom合计
+            item.boms.forEach(item=>{
+              item.inventoryCode = item.transObjCode;
+            })
+            this.DuplicateBoms = [...this.DuplicateBoms,...item.boms]
             item = {
               ...item,
               transCode: item.transMatchedCode,
