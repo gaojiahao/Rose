@@ -95,7 +95,7 @@
           </template>
         </pop-matter>
         <!--原料bom列表-->
-        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" class="bom_pop">
+        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" class="bom_pop" :btn-is-hide="btnIsHide">
           <template slot-scope="{bom}" slot="number">
             <div class="number-part">
               <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
@@ -188,23 +188,6 @@
           });
         },
         deep: true
-      },
-      DuplicateBoms:{
-        handler(val){
-          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode; 
-          var getNew = old => old.reduce((acc, cur) => {
-              let hasItem = acc.some(e => {
-                let temp = isEqual(e, cur); 
-                if (temp){
-                  e.tdQty = accAdd(e.tdQty, cur.tdQty);
-                }             
-                return temp; 
-              });
-              if (!hasItem) acc.push(cur)
-              return acc; 
-          }, []);
-          this.UniqueBom = getNew(val); 
-        }
       }
     },
     methods: {
@@ -258,6 +241,7 @@
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
+        let promises = [];
         this.DuplicateBoms = []      
         sels.forEach(item => {
           let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
@@ -268,7 +252,7 @@
             orderList[item.transCode] = [];
           }
           console.log(item.tdQty);
-          getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
+          promises.push(getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
               let tdQty = accMul(item.tdQty, bom.qty, (1 + bom.specificLoss));
               bom.tdQty = Math.abs(toFixed(tdQty))
@@ -277,9 +261,26 @@
             this.$set(item, 'boms', tableContent);
             let data = JSON.parse(JSON.stringify(tableContent));
             this.DuplicateBoms = [...this.DuplicateBoms, ...data];         
-          });
+          }));
           orderList[item.transCode].push(item);
         });
+        Promise.all(promises).then(data => {
+          //对合计的bom进行去重合并
+          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode; 
+          var getNew = old => old.reduce((acc, cur) => {
+              let hasItem = acc.some(e => {
+                let temp = isEqual(e, cur); 
+                if (temp){
+                  e.tdQty = accAdd(e.tdQty, cur.tdQty);
+                }             
+                return temp; 
+              });
+              if (!hasItem) acc.push(cur)
+              return acc; 
+          }, []);
+          this.UniqueBom = getNew(this.DuplicateBoms); 
+
+        })
         this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
@@ -507,8 +508,9 @@
             //bom合计
             item.boms.forEach(item=>{
               item.inventoryCode = item.transObjCode;
+              item.specificLoss = item.bomSpecificLoss
             })
-            this.DuplicateBoms = [...this.DuplicateBoms,...item.boms]
+            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             item = {
               ...item,
               transCode: item.transMatchedCode,

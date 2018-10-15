@@ -94,7 +94,7 @@
           </template>
         </pop-matter>
          <!--原料bom列表-->
-        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" :is-compute-loss="false"></bom-pop>
+        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" :is-compute-loss="false" :btn-is-hide="btnIsHide"></bom-pop>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -262,6 +262,7 @@
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
+        let promises = [];
         this.DuplicateBoms = [];
         sels.forEach(item => {
           let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
@@ -272,7 +273,7 @@
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
-          getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
+          promises.push(getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
               let tdQty = accMul(item.tdQty, bom.qty);
               bom.tdQty = Math.abs(toFixed(tdQty))
@@ -281,9 +282,26 @@
             this.$set(item, 'boms', tableContent);
             let data = JSON.parse(JSON.stringify(tableContent));
             this.DuplicateBoms = [...this.DuplicateBoms, ...data]; 
-          });
+          }));
           orderList[item.transCode].push(item);
         });
+        Promise.all(promises).then(data => {
+          //对合计的bom进行去重合并
+          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode; 
+          var getNew = old => old.reduce((acc, cur) => {
+              let hasItem = acc.some(e => {
+                let temp = isEqual(e, cur); 
+                if (temp){
+                  e.tdQty = accAdd(e.tdQty, cur.tdQty);
+                }             
+                return temp; 
+              });
+              if (!hasItem) acc.push(cur)
+              return acc; 
+          }, []);
+          this.UniqueBom = getNew(this.DuplicateBoms); 
+
+        })
         this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
@@ -527,9 +545,9 @@
               item.inventoryCode = item.transObjCode;
               item.warehouseName = item.warehouseName_containerCodeOut;
               item.warehouseCode = item.containerCodeOut;
-              this.DuplicateBoms.push(item)
+              item.specificLoss = item.bomSpecificLoss
             })
-            // this.DuplicateBoms = [...this.DuplicateBoms,...item.boms]
+            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             item = {
               ...item,
               transCode: item.transMatchedCode,

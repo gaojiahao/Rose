@@ -36,7 +36,7 @@
         </r-scroll>
       </div>
       <!-- 底部栏 -->
-      <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm">
+      <div class='confirm_btn' :class="{'btn_hide' : btnIsHide}" @click="confirm">
         <div class='confirm'>确认</div>
       </div>
     </popup>

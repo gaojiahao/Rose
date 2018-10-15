@@ -31,7 +31,7 @@
         </div>
       </slot>
       <slot name="edit" :item="item">
-        <div class='mater_other' @click="modifyMatter" v-if="showEdit && !showDelete">
+        <div class='mater_other' @click="modifyMatter" v-if="hideEdit && !showDelete">
           <div class="edit-tips">点击进行填写</div>
         </div>
       </slot>  
@@ -65,11 +65,14 @@
     computed: {
       showEdit(){
         // 存在 价格、数量 输入
-        if(this.item.price && this.item.tdQty){
-          return this.item.price && this.item.tdQty
+        if(this.item.price || this.item.tdQty){
+          return this.item.price || this.item.tdQty
         }
-        else if(this.item.price || this.item.tdQty){
-          return !!this.item.price || !!this.item.tdQty
+      },
+      hideEdit(){
+        // 存在 价格、数量 输入
+        if(!this.item.price || !this.item.tdQty){
+          return !this.item.price || !this.item.tdQty
         }
       }
     },
