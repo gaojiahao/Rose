@@ -105,14 +105,8 @@ export default {
       this.$emit('input', false);
     },
     //确认修改
-    confirm(){
-      if(this.isComputeLoss){
-        this.bomInfo.boms.forEach(item=>{
-          let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
-          item.tdQty = Math.abs(toFixed(tdQty))
-        })
-      }      
-      this.$emit('bom-confirm',JSON.stringify(this.currentBom))
+    confirm(){   
+      this.$emit('bom-confirm',JSON.stringify(this.bomInfo))
       this.showPop = false;
     },
     modifyBom(item){
@@ -120,6 +114,11 @@ export default {
         title: '损耗率',
         onConfirm: (val)=> {
           item.specificLoss = Math.abs(toFixed(val));
+          if(this.isComputeLoss){
+            let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
+            item.tdQty = Math.abs(toFixed(tdQty))
+        
+          }   
         }
       })
     },

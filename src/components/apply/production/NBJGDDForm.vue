@@ -95,7 +95,7 @@
           </template>
         </pop-matter>
         <!--原料bom列表-->
-        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow">
+        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" class="bom_pop">
           <template slot-scope="{bom}" slot="number">
             <div class="number-part">
               <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
@@ -586,7 +586,9 @@
       .symbol {
         color: #757575;
       }
-    }
+    }   
+  }
+  .bom_pop{
     .number-part {
       display: flex;
       font-size: .1rem;
@@ -595,6 +597,7 @@
       .main-number {
         font-size: .12rem;
         font-weight: bold;
+        //  color: #757575;
       }
       .number-unit {
         color: #757575;
