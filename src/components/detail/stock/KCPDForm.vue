@@ -121,6 +121,7 @@
   @import './../../scss/bizDetail';
 
   .kcpd-detail-container {
+    height: auto;
     .matter_item {
       .mater_other {
         .mater_left {
