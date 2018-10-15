@@ -53,7 +53,7 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getWarehouseNBJGRK} from 'service/listService'
+  import {getWarehouse} from 'service/listService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
 
@@ -173,7 +173,7 @@
               // attendedOperation: 'or'
             }];
         }
-        return getWarehouseNBJGRK({
+        return getWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

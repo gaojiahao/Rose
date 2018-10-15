@@ -84,7 +84,7 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getList} from 'service/commonService'
+  import {getWarehouse} from 'service/listService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
 
@@ -203,7 +203,7 @@
               // attendedOperation: 'or'
             }];
         }
-        return getList(2129, {
+        return getWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
