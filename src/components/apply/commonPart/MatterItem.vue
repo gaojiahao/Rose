@@ -3,7 +3,7 @@
     <div class="mater_img">
       <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
     </div>
-    <div class="mater_main" :class="{'show-delete': !item.tdQty}">
+    <div class="mater_main" :class="{'show-delete': showDelete}">
       <!-- 物料名称 -->
       <div class="mater_name">
         {{item.inventoryName}}

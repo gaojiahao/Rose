@@ -449,19 +449,20 @@
                 let boms = [];
                 for (let bom of item.boms) {
                   boms.push({
+                    tdId : bom.tdId || null,
                     transMatchedCode: item.transCode,
-                    tdQty: accMul(item.tdQty, bom.qty), // 领料需求
+                    tdQty:item.tdQty, // 领料需求
                     orderCode: item.orderCode,
                     thenQtyStock: bom.qtyStock,
                     bomSpecificLoss: bom.specificLoss,
-                    tdProcessing: bom.processing,
+                    tdProcessing: bom.processing || bom.tdProcessing,
                     containerCodeOut: bom.warehouseCode,
                     inventoryName: bom.inventoryName,
                     transObjCode: bom.inventoryCode,
                     measureUnit: bom.measureUnit,
                     warehouseName_containerCodeOut: bom.warehouseName,
                     bomType: bom.bomType,
-                    bomQty: bom.qty,
+                    bomQty: bom.qty || bom.bomQty,
                   })
                 }
                 let oItem = {
@@ -557,7 +558,8 @@
               inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
               processing: item.tdProcessing,
-              warehouseName : item.warehouseName_containerCode
+              warehouseName : item.warehouseName_containerCode,
+              warehouseCode : item.containerCode
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
