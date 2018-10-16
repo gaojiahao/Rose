@@ -34,6 +34,8 @@
       </div>
       <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
                 v-model="inventory.measureUnit"></r-picker>
+      <r-picker title="物料状态:" :data="statusList" :value="inventoryStatus" 
+                v-model="inventoryStatus"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
@@ -62,6 +64,7 @@
         matBigList: [], // 材料大类列表
         matSmlList: [], // 材料子类列表
         measureList: [], // 主计量单位列表
+        statusList :[],//物料状态
         picShow: false, // 是否展示图片
         baseinfo: {
           handler: '', // 经办人ID
@@ -88,7 +91,7 @@
           keepingDays: 1, // 保质期天数
           safeStock: 1, // 安全库存
           nearKeepingDays: 1, // 临保天数
-          inventoryStatus: 1, // 物料状态
+          inventoryStatus: '', // 物料状态
           inventoryPic: '',
           comment: '', // 物料说明
           technicsCode :'' //工艺路线
@@ -101,6 +104,7 @@
         imgFile: null,
         codeReadOnly: false, // 物料编码是否只读
         submitSuccess: false, // 是否提交成功
+        inventoryStatus :'使用中'
       }
     },
     directives: {
@@ -139,6 +143,17 @@
           this.inventory.inventorySubclass = defaultSelect.name;
         });
       },
+      getStatus(){
+        return getDictByType('objStatus').then(data => {
+          //仓库分类无值，请求
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.name;
+            item.value = item.name;
+          });
+          this.statusList = tableContent;
+        })
+      },
       // TODO 提交/修改物料
       save() {
         let requiredMap = {
@@ -151,6 +166,23 @@
           if(typeof(this.inventory[key]) === 'string' && this.inventory[key].indexOf(' ')>=0){
             this.inventory[key] = this.inventory[key].replace(/\s/g,'');
           }
+        }
+        switch (this.inventoryStatus) {
+          case '使用中':
+            this.inventory.inventoryStatus = 1;
+            break;
+          case '未使用':
+            this.inventory.inventoryStatus = 2;
+            break;
+          case '草稿':
+            this.inventory.inventoryStatus = 0;
+            break;
+          case '停用':
+            this.inventory.inventoryStatus = -1;
+            break;
+        }
+        if(this.inventory.status){
+          delete this.inventory.status
         }
         let submitData = {
           listId: this.listId,
@@ -215,6 +247,20 @@
         return findData(this.transCode).then(({formData = {}, attachment = []}) => {
           let {baseinfo = {}, inventory = {}, invMoreUnit = [], invNetWeight = []} = formData;
           this.hasDefault = true;
+          switch (inventory.inventoryStatus) {
+            case 1:
+              this.inventoryStatus = '使用中';
+              break;
+            case 2:
+              this.inventoryStatus = '未使用';
+              break;
+            case 0:
+              this.inventoryStatus = '草稿';
+              break;
+            case -1:
+              this.inventoryStatus = '停用';
+              break;
+          }
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.inventory = {...this.inventory, ...inventory,};
           this.invMoreUnit = invMoreUnit;
@@ -332,6 +378,7 @@
           await this.getBig();
           requestPromise.push(this.getSml());
           requestPromise.push(this.getMeasure());
+          requestPromise.push(this.getStatus());
           this.hasDefault = false;
           this.codeReadOnly = true;
           Promise.all(requestPromise).then(() => {
@@ -346,6 +393,7 @@
       }));
       requestPromise.push(this.getMeasure());
       requestPromise.push(this.getBaseInfoData());
+      requestPromise.push(this.getStatus());
       Promise.all(requestPromise).then(() => {
         this.$loading.hide();
       })

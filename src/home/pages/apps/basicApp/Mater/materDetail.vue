@@ -69,6 +69,10 @@
             <p class="title">单位:</p>
             <p class="content">{{inventory.measureUnit}}</p>
           </div>
+          <div class="child">
+            <p class="title">物料状态:</p>
+            <p class="content">{{inventory.inventoryStatus}}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -104,6 +108,20 @@
       // TODO 获取物料详情
       findData() {
         return findData(this.transCode).then(({formData}) => {
+          switch (formData.inventory.inventoryStatus) {
+            case 1:
+              formData.inventory.inventoryStatus = '使用中';
+              break;
+            case 2:
+              formData.inventory.inventoryStatus = '未使用';
+              break;
+            case 0:
+              formData.inventory.inventoryStatus = '草稿';
+              break;
+            case -1:
+              formData.inventory.inventoryStatus = '停用';
+              break;
+          }
           this.inventory = formData.inventory;
           let { inventoryPic, inventoryCode, specification } = this.inventory;
           // 获取规格和编码的字符串总长度

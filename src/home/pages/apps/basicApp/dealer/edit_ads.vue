@@ -49,6 +49,8 @@
         <input type='text' v-model="dealer.dealerMail" class='property_val' @blur='checkEmail'/>
         <icon type="warn" class='warn' v-if='EmailWarn'></icon>
       </div>
+      <r-picker title="往来状态:" :data="statusList" :value="dealerStatus" 
+                v-model="dealerStatus"></r-picker>
     </div>
     <!--往来类型的列表-->
     <div v-transfer-dom>
@@ -81,7 +83,7 @@
 </template>
 <script>
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data,Icon } from 'vux';
-import { getBaseInfoDataBase } from 'service/commonService.js';
+import { getBaseInfoDataBase,getDictByType } from 'service/commonService.js';
 import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
@@ -130,10 +132,12 @@ export default {
         paymentTerm: '',  //结算方式
         dealerLogisticsTerms: '', //物流条款
         pamentDays: '',  //账期天数
-        dealerStatus: '1', //往来状态
+        dealerStatus: '', //往来状态
         comment: '',  //往来说明
         dealerPic : '',
       },
+      statusList: [],
+      dealerStatus: '使用中',
       submitSuccess: false, // 是否提交成功
       scrollOptions : {
         click : true
@@ -194,6 +198,17 @@ export default {
           name :item
         }
         this.dealerType.push(obj);
+      })
+    },
+    getStatus(){
+      return getDictByType('objStatus').then(data => {
+        //仓库分类无值，请求
+        let {tableContent} = data;
+        tableContent && tableContent.forEach(item => {
+          item.originValue = item.name;
+          item.value = item.name;
+        });
+        this.statusList = tableContent;
       })
     },
     onShow() {
@@ -264,6 +279,20 @@ export default {
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         let {baseinfo = {}, dealer = {}} = formData;
+        switch (dealer.dealerStatus) {
+            case '1':
+              this.dealerStatus = '使用中';
+              break;
+            case '2':
+              this.dealerStatus = '未使用';
+              break;
+            case '0':
+              this.dealerStatus = '草稿';
+              break;
+            case '-1':
+              this.dealerStatus = '停用';
+              break;
+          }
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.dealer = {...this.dealer, ...dealer,};
         if (this.dealer.dealerPic.length>0) {
@@ -311,6 +340,23 @@ export default {
         content: '确认保存?',
         // 确定回调
         onConfirm: () => {
+          switch (this.dealerStatus) {
+            case '使用中':
+              this.dealer.dealerStatus = '1';
+              break;
+            case '未使用':
+              this.dealer.dealerStatus = '2';
+              break;
+            case '草稿':
+              this.dealer.dealerStatus = '0';
+              break;
+            case '停用':
+              this.dealer.dealerStatus = '-1';
+              break;
+          }
+          if(this.dealer.status){
+            delete this.dealer.status
+          }
           let submitData = {
             listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
             formData: {
@@ -418,6 +464,7 @@ export default {
     if(query.transCode){
       this.transCode = query.transCode;
       this.findData();
+      this.getStatus();
       this.getDealer().then(()=>{
         this.$loading.hide();
       });
@@ -434,7 +481,6 @@ export default {
             this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : defaultSelect.name;           
           }
         });
-        
       //获取当前用户信息
       getBaseInfoDataBase().then(data => {
         this.baseinfo = {
@@ -443,6 +489,7 @@ export default {
           activeTime: this.changeDate(new Date(), true),
         }
       });
+      this.getStatus();
     }
   },
   beforeRouteEnter (to, from, next) {

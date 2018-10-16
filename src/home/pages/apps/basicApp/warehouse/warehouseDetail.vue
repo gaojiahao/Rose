@@ -27,6 +27,10 @@
         <label>{{typeSubMap[typeSub].title}}:</label>
         <div class='property_val'>{{typeSubMap[typeSub].value}}</div>
       </div>
+      <div class='each_property vux-1px-b'>
+        <label>仓库状态:</label>
+        <div class='property_val'>{{warehouse.warehouseStatus}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -109,6 +113,20 @@ import { setTimeout } from 'timers';
       findData() {
         return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
           let {baseinfo = {}, warehouse = {}} = formData;
+          switch (warehouse.warehouseStatus) {
+            case 1:
+              warehouse.warehouseStatus = '使用中';
+              break;
+            case 2:
+              warehouse.warehouseStatus = '未使用';
+              break;
+            case 0:
+              warehouse.warehouseStatus = '草稿';
+              break;
+            case -1:
+              warehouse.warehouseStatus = '停用';
+              break;
+          }
           this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.warehouse = {...this.warehouse, ...warehouse,};

@@ -36,7 +36,7 @@
           <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[报销人]</span>
+              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
             <div class="money_part">
               <span class="num">共{{item.itmes.length}}个报销:</span>

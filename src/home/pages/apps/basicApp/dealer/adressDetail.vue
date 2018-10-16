@@ -45,6 +45,10 @@
         <label>电子邮件:</label>
         <div class='property_val'>{{dealer.dealerMail}}</div>
       </div>
+      <div class='each_property vux-1px-b'>
+        <label>往来状态:</label>
+        <div class='property_val'>{{dealer.dealerStatus}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -65,6 +69,20 @@
       findData() {
         return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
           let {baseinfo = {}, dealer = {}} = formData;
+          switch (dealer.dealerStatus) {
+            case "1":
+              dealer.dealerStatus = '使用中';
+              break;
+            case '2':
+              dealer.dealerStatus = '未使用';
+              break;
+            case '0':
+              dealer.dealerStatus = '草稿';
+              break;
+            case '-1':
+              dealer.dealerStatus = '停用';
+              break;
+          }
           this.hasDefault = true;
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.dealer = {...this.dealer, ...dealer,};

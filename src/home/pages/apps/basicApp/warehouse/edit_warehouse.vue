@@ -25,6 +25,8 @@
             <span class='iconfont icon-gengduo'></span>
         </div>
       </div>
+      <r-picker title="仓库状态:" :data="statusType" :value="warehouseStatus"
+                 v-model="warehouseStatus"></r-picker>
     </div>
     <!--员工，组织，客户等的pop-->
     <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
@@ -44,6 +46,7 @@
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
   import PopWarelabeList from 'components/Popup/PopWarelabelList'
+import warehouseDetailVue from './warehouseDetail.vue';
   export default {
     data() {
       return {
@@ -70,7 +73,7 @@
           warehouseCity: '', // 市
           warehouseDistrict: '', // 区
           warehouseAddress: '', // 地址
-          warehouseStatus: '1', //仓库状态
+          warehouseStatus: '', //仓库状态
         },
         submitSuccess: false, // 是否提交成功
         typeSubMap: { // 仓库类型相关二级列表
@@ -135,6 +138,8 @@
           '一般部门仓': 'group',
         },
         currentGroup:'',
+        statusType:[],//仓库状态列表
+        warehouseStatus : '使用中'
       }
     },
     directives: {
@@ -174,10 +179,36 @@
           this.$loading.hide();
         })
       },
+      //获取仓库状态
+      getStatus(){
+        return getDictByType('objStatus').then(data => {
+          //仓库分类无值，请求
+          let {tableContent} = data;
+          tableContent && tableContent.forEach(item => {
+            item.originValue = item.name;
+            item.value = item.name;
+          });
+          this.statusType = tableContent;
+        })
+      },
       //查询仓库信息
       findData() {
         return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
           let {baseinfo = {}, warehouse = {}} = formData;
+          switch (warehouse.warehouseStatus) {
+            case 1:
+              this.warehouseStatus = '使用中';
+              break;
+            case 2:
+              this.warehouseStatus = '未使用';
+              break;
+            case 0:
+              this.warehouseStatus = '草稿';
+              break;
+            case -1:
+              this.warehouseStatus = '停用';
+              break;
+          }
           this.baseinfo = baseinfo;
           this.warehouse = warehouse;
           this.biReferenceId = this.warehouse.referenceId;
@@ -224,6 +255,23 @@
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
+            switch (this.warehouseStatus) {
+              case '使用中':
+                this.warehouse.warehouseStatus = 1;
+                break;
+              case '未使用':
+                this.warehouse.warehouseStatus = 2;
+                break;
+              case '草稿':
+                this.warehouse.warehouseStatus = 0;
+                break;
+              case '停用':
+                this.warehouse.warehouseStatus = -1;
+                break;
+            }
+            if(this.warehouse.status){
+              delete this.warehouse.status;
+            }
             let operation = save;
             let submitData = {
               listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
@@ -381,6 +429,7 @@
         (async () => {
           await this.findData();
           await this.getwarehouse();
+          this.getStatus();
           this.hasDefault = false;
         })();
         return
@@ -393,6 +442,7 @@
         }
       });
       this.getwarehouse();
+      this.getStatus();
     },
     beforeRouteEnter (to, from, next) {
       // 修改title
