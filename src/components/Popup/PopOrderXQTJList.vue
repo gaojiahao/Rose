@@ -19,7 +19,7 @@
             <div class="order-top">
               <span class="order-top-item" v-if="item.orderCode">订单号: {{item.orderCode}}</span>
               <span class="order-top-item" v-if="item.warehouseName">仓库: {{item.warehouseName}}</span>
-            </div>            
+            </div>
             <div class="order-matter">
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
@@ -89,7 +89,7 @@
   import RSearch from 'components/search'
 
   export default {
-    name: "PopOrderList",
+    name: "PopOrderXQTJList",
     props: {
       show: {
         type: Boolean,
@@ -164,9 +164,23 @@
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          let isSameOrderCode = true;
+          let isSameColId = true;
+          if (item.orderCode) {
+            isSameOrderCode = item.orderCode === sItem.orderCode;
+          }
+          if (item.colId) {
+            isSameColId = item.colId === sItem.colId;
+          }
+          return isSameOrderCode && isSameColId && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.colId === sItem.colId) !== -1;
+        return this.findIndex(this.tmpItems, sItem) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
@@ -178,7 +192,7 @@
           return
         }
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.colId === sItem.colId);
+        let delIndex = this.findIndex(arr, sItem);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -253,7 +267,7 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode && item.inventoryCode === dItem.inventoryCode);
+        let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }
@@ -404,7 +418,7 @@
             }
             .order-num {
               background: #c93d1b;
-            }          
+            }
           }
           .order-matter {
             display: flex;
