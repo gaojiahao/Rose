@@ -29,7 +29,7 @@
                     <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
                   </div>
                 </slot>
-                <div class="specific_loss" @click="modifyBom(bom)">损耗率：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
+                <div class="specific_loss" @click="modifyBom(bom)">{{specificLossText}}：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
               </div>
             </div>
           </div>
@@ -72,6 +72,10 @@ export default {
     isComputeLoss : {
       type : Boolean,
       default : true
+    },
+    specificLossText:{
+      type : String,
+      default : '损耗率'
     }
   },
   data(){
@@ -111,14 +115,16 @@ export default {
     },
     modifyBom(item){
       this.$vux.confirm.prompt(item.specificLoss, {
-        title: '损耗率',
+        title: this.specificLossText,
         onConfirm: (val)=> {
-          item.specificLoss = Math.abs(toFixed(val));
-          if(this.isComputeLoss){
-            let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
-            item.tdQty = Math.abs(toFixed(tdQty))
-        
-          }   
+          if(val){
+            item.specificLoss = Math.abs(toFixed(val));
+            if(this.isComputeLoss){
+              let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
+              item.tdQty = Math.abs(toFixed(tdQty))
+            }  
+          }
+           
         }
       })
     },

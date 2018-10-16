@@ -94,7 +94,8 @@
           </template>
         </pop-matter>
          <!--原料bom列表-->
-        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" :is-compute-loss="false" :btn-is-hide="btnIsHide"></bom-pop>
+        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" 
+                :is-compute-loss="false" :btn-is-hide="btnIsHide" :specific-loss-text="'单位损耗率'"></bom-pop>
       </div>
     </div>
     <!-- 底部确认栏 -->
