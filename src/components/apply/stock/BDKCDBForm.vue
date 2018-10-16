@@ -380,6 +380,7 @@ export default {
             inventoryCode: item.inventoryCode_transObjCode,
             specification: item.specification_transObjCode,
             measureUnit: item.measureUnit_transObjCode,
+            processing: item.tdProcessing,
           };
           matterList.push(item);
         }
