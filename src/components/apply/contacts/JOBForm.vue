@@ -5,7 +5,7 @@
         <label class='required'>职位名称:</label>
         <input type='text' v-model="jobInfo.name" class='property_val'/>
       </div>   
-      <r-picker title="职位类型类型:" :data="jobType" :value="jobInfo.type"
+      <r-picker title="职位类型:" :data="jobType" :value="jobInfo.type"
                 v-model="jobInfo.type" :required='true'>
       </r-picker>
       <r-picker title="使用状态:" :data="jobStatus" :value="jobInfo.status"
@@ -13,7 +13,7 @@
       </r-picker>
     </div>
     <!--提交按钮-->
-    <div class='vux-1px-t btn '>
+    <div class='vux-1px-t btn' :class="{'btn_hide' : btnIsHide}">
       <div class="cfm_btn" @click="save"  v-html="this.$route.query.id?'保存':'提交'"></div>
     </div>
   </div>
@@ -21,6 +21,7 @@
 <script>
 import { save, update, getJobList } from 'service/Directorys/jobService';
 import RPicker from 'components/RPicker';
+import common from 'mixins/common';
 export default {
   data() {
     return {
@@ -46,6 +47,7 @@ export default {
     }
   },
   components: { RPicker,},
+  mixins: [common],
   methods: {
     //提交
     submit(){

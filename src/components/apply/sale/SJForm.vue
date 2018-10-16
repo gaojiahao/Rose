@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}">
+    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
       <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
       <div class="btn-item" @click="submitOrder">提交</div>
     </div>

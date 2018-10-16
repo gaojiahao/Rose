@@ -85,7 +85,7 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t' v-if="!matterModifyClass">
+    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}" v-if="!matterModifyClass">
       <div class="btn-item" @click="submitOrder">提交</div>
     </div>
     <!-- 底部删除确认栏 -->

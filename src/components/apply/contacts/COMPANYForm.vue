@@ -26,7 +26,7 @@
                 v-model="newCompanyInfo.status">
       </r-picker>
     </div>
-    <div class='vux-1px-t btn '>
+    <div class='vux-1px-t btn' :class="{'btn_hide' : btnIsHide}">
       <div class="cfm_btn" @click="save">{{groupId? '保存':'提交'}}</div>
     </div>
   </div>
@@ -36,6 +36,7 @@
 // 组件引入
 import RPicker from 'components/RPicker'
 import UploadImage from 'components/UploadImage'
+import common from 'mixins/common';
 // 请求引入
 import { save, update, checkValue, CompanyInfo } from 'service/Directorys/companyService' 
 export default {
@@ -65,6 +66,7 @@ export default {
       }
     }
   },
+  mixins: [common],
   methods: {
     // 上传图片
     onUpload(val){
@@ -76,6 +78,9 @@ export default {
     },
     // 监测公司名称是否存在
     checkGroupName(){
+      if(!this.newCompanyInfo.groupName){
+        return 
+      }
       checkValue('groupName', this.newCompanyInfo.groupName).then(({ result }) => {
         this.isNameExist = false;
         if(result){
@@ -88,6 +93,9 @@ export default {
     },
     // 监测公司简称是否存在
     checkShortName(){
+      if(!this.newCompanyInfo.groupShortName){
+        return 
+      }
       checkValue('groupShortName', this.newCompanyInfo.groupShortName).then(({ result }) => {
         this.isShortNameExist = false;
         if(result){

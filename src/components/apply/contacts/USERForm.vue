@@ -38,7 +38,7 @@
                 v-model="userData.status"></r-picker>
       <pop-company-list :default-value="company" @sel-item="selCompany"></pop-company-list>
     </r-scroll>
-    <div class='btn vux-1px-t'>
+    <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
       <div class="cfm_btn" @click="save">{{ this.colId ? '保存':'提交'}}</div>
     </div>
   </div>
@@ -322,4 +322,8 @@
 
 <style lang="scss" scoped>
 @import './../../scss/bizApply';
+.childPage{
+  width: 100%;
+  height: 100%;
+}
 </style>

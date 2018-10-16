@@ -35,7 +35,7 @@
                   v-model="formData.demandVersion"></r-picker>
       </div>
     </div>
-    <div class='btn vux-1px-t'>
+    <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
       <div class="cfm_btn" @click="save">提交</div>
     </div>
   </div>
@@ -314,6 +314,9 @@
       border-radius: .4rem;
       transform: translate(-50%, -50%);
       box-shadow: 0 2px 5px #5077aa;
+    }
+    &.btn_hide{
+      display: none;
     }
   }
 </style>

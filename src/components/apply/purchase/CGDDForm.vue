@@ -89,7 +89,7 @@
         <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
         <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
       </span>
-      <span class="count_btn" @click="submitOrder">提交订单</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
