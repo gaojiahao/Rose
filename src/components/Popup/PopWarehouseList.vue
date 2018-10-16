@@ -211,6 +211,9 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          tableContent.forEach(item => {
+            item.warehouseCity = item.warehouseCity || item.wareHouseCity;
+          });
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           //获取缓存
           if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {

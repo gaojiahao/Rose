@@ -341,7 +341,7 @@ export default {
             outPutMatCode: item.inventoryCode, // 输出物料
             tdProcessing: item.processing, //加工属性
             thenQtyBal: item.qtyBal, // 待交付数量
-            thenQtyStock: item.qtyStockBal, // 当时可用库存
+            thenQtyStock: item.qtyStock, // 当时可用库存
             tdQty: item.tdQty, // 明细发生数
             comment: item.comment || '', // 说明
           };
@@ -362,33 +362,14 @@ export default {
         // 确定回调
         onConfirm: () => {
           this.$HandleLoad.show();
-          // let dataSet = [];
           let operation = saveAndStartWf;
           let formData = {};
           let wfPara = {
             [this.processCode]: {
-              businessKey: 'IPPI',
+              businessKey: 'PREQ',
               createdBy: ''
             }
           };
-          // 组装dataSet
-          // for (let items of Object.values(this.orderList)) {
-          //   for (let item of items) {
-          //     let oItem = {
-          //       transMatchedCode: item.transCode, // 明细被核销交易号
-          //       outPutMatCode: item.inventoryCode, // 输出物料
-          //       tdProcessing: item.processing, //加工属性
-          //       thenQtyBal: item.qtyBal, // 待交付数量
-          //       thenQtyStock: item.qtyStockBal, // 当时可用库存
-          //       tdQty: item.tdQty, // 明细发生数
-          //       comment: item.comment || '', // 说明
-          //     };
-          //     if (this.transCode) {
-          //       oItem.tdId = item.tdId || '';
-          //     }
-          //     dataSet.push(oItem);
-          //   }
-          // }
           formData = {
             ...this.formData,
             modifer: this.transCode ? this.formData.handler : '',
@@ -456,7 +437,7 @@ export default {
             ...item,
             transCode: item.transMatchedCode,
             qtyBal: item.thenQtyBal,
-            qtyStockBal: item.thenQtyStock,
+            qtyStock: item.thenQtyStock,
             inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
             inventoryName: item.inventoryName_outPutMatCode,
             inventoryCode: item.outPutMatCode,

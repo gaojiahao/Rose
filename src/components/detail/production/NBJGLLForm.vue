@@ -105,6 +105,7 @@
           for (let val of dataSet) {
             val.inventoryName_transObjCode = val.inventoryName_outPutMatCode;
             val.transObjCode = val.outPutMatCode;
+            val.specification = val.specification_outPutMatCode;
             val.inventoryPic = val.inventoryPic_outPutMatCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_outPutMatCode}&width=400&height=400`
               : this.getDefaultImg();
