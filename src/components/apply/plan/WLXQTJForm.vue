@@ -114,7 +114,7 @@
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
-  
+
 
   export default {
     name: 'ApplyWLXQTJForm',
@@ -179,7 +179,7 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
+          let key = `${item.transCode}_${item.colId}_${item.inventoryCode}`;
           let {tdQty = ''} = this.numMap[key] || {};
           item.tdQty = tdQty;
           if (!orderList[item.transCode]) {
@@ -199,10 +199,20 @@
         }
         return url
       },
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          let isSameColId = true;
+          if (item.colId) {
+            isSameColId = item.colId === sItem.colId;
+          }
+          return isSameColId && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
       // TODO 滑动删除
       delClick(index, sItem, key) {
         let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        let delIndex = this.findIndex(arr, sItem);
         //若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -212,7 +222,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+        return this.findIndex(this.selItems, sItem) !== -1;
       },
       //全选
       checkAll() {
@@ -235,9 +245,13 @@
             });
             this.selItems.forEach(SItem => {
               newArr.forEach(OItem => {
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                let isSameColId = true;
+                if (SItem.colId) {
+                  isSameColId = OItem.colId === SItem.colId;
+                }
+                if (isSameColId && SItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
                   let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                  let delIndex = this.findIndex(delArr, OItem);
                   if (delIndex >= 0) {
                     this.$refs.order.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
@@ -259,7 +273,7 @@
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
+            this.numMap[`${item.transCode}_${item.colId}_${item.inventoryCode}`] = {
               tdQty: item.tdQty,
             };
           }

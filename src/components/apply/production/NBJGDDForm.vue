@@ -135,7 +135,7 @@
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
-  import FormCell from 'components/detail/commonPart/FormCell' 
+  import FormCell from 'components/detail/commonPart/FormCell'
   import BomList from 'components/detail/commonPart/BomList'
   import BomPop from 'components/apply/commonPart/BomPop'
   // 公共方法
@@ -234,7 +234,7 @@
               })
               return true
             }
-          })         
+          })
         })
       },
       // TODO 选中物料项
@@ -242,7 +242,7 @@
         let sels = JSON.parse(val);
         let orderList = {};
         let promises = [];
-        this.DuplicateBoms = []      
+        this.DuplicateBoms = []
         sels.forEach(item => {
           let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
           let {tdQty = '', shippingTime = ''} = this.numMap[key] || {};
@@ -256,29 +256,29 @@
             tableContent.forEach(bom => {
               let tdQty = accMul(item.tdQty, bom.qty, (1 + bom.specificLoss));
               bom.tdQty = Math.abs(toFixed(tdQty))
-              
-            }); 
+
+            });
             this.$set(item, 'boms', tableContent);
             let data = JSON.parse(JSON.stringify(tableContent));
-            this.DuplicateBoms = [...this.DuplicateBoms, ...data];         
+            this.DuplicateBoms = [...this.DuplicateBoms, ...data];
           }));
           orderList[item.transCode].push(item);
         });
         Promise.all(promises).then(data => {
           //对合计的bom进行去重合并
-          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode; 
+          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
           var getNew = old => old.reduce((acc, cur) => {
               let hasItem = acc.some(e => {
-                let temp = isEqual(e, cur); 
+                let temp = isEqual(e, cur);
                 if (temp){
                   e.tdQty = accAdd(e.tdQty, cur.tdQty);
-                }             
-                return temp; 
+                }
+                return temp;
               });
               if (!hasItem) acc.push(cur)
-              return acc; 
+              return acc;
           }, []);
-          this.UniqueBom = getNew(this.DuplicateBoms); 
+          this.UniqueBom = getNew(this.DuplicateBoms);
 
         })
         this.numMap = {};
@@ -293,10 +293,16 @@
         }
         return url
       },
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
       // TODO 滑动删除
       delClick(index, sItem, key) {
         let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        let delIndex = this.findIndex(arr, sItem);
         //若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -306,7 +312,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+        return this.findIndex(this.selItems, sItem) !== -1;
       },
       //全选
       checkAll() {
@@ -330,9 +336,9 @@
             //删除orderList
             this.selItems.forEach(SItem => {
               newArr.forEach(OItem => {
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                if (OItem.orderCode === SItem.orderCode && OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
                   let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                  let delIndex = this.findIndex(delArr, OItem);
                   if (delIndex >= 0) {
                     this.$refs.order.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
@@ -354,7 +360,7 @@
                       this.UniqueBom.splice(index,1)
                     }
                     return false
-                  }    
+                  }
                 })
                 return true
               })
@@ -574,7 +580,7 @@
         background: #c93d1b;
       }
     }
-    
+
     .mater_list .each_mater_wrapper {
       flex-direction: column;
     }
@@ -593,7 +599,7 @@
       .symbol {
         color: #757575;
       }
-    }   
+    }
   }
   .bom_pop{
     .number-part {
