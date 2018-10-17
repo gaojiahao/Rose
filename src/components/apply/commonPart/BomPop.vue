@@ -1,7 +1,7 @@
 <template>
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-      <div class="trade_pop">
+      <div class="trade_pop" :class="{'no_btn': !isEdit}">
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
           <div class="bom-container" v-if="bomInfo.boms && bomInfo.boms.length">
             <div class="title vux-1px-b">原料</div>
@@ -29,14 +29,14 @@
                     <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
                   </div>
                 </slot>
-                <div class="specific_loss" @click="modifyBom(bom)">{{specificLossText}}：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
+                <div class="specific_loss" @click="modifyBom(bom)" v-show="isEdit">{{specificLossText}}：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
               </div>
             </div>
           </div>
         </r-scroll>
       </div>
       <!-- 底部栏 -->
-      <div class='confirm_btn' :class="{'btn_hide' : btnIsHide}" @click="confirm">
+      <div class='confirm_btn' :class="{'btn_hide' : btnIsHide}" @click="confirm" v-show="isEdit">
         <div class='confirm'>确认</div>
       </div>
     </popup>
@@ -69,7 +69,8 @@ export default {
       type : Boolean,
       default : false
     },
-    isComputeLoss : {
+    //是否编辑损耗率
+    isEdit : {
       type : Boolean,
       default : true
     },
@@ -119,10 +120,9 @@ export default {
         onConfirm: (val)=> {
           if(val){
             item.specificLoss = Math.abs(toFixed(val));
-            if(this.isComputeLoss){
-              let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
-              item.tdQty = Math.abs(toFixed(tdQty))
-            }  
+            let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
+            item.tdQty = Math.abs(toFixed(tdQty))
+             
           }
            
         }
@@ -142,6 +142,9 @@ export default {
     background: #f8f8f8;
     .trade_pop {
       height: calc(100% - .44rem);
+      &.no_btn{
+        height: calc(100% - 0.1rem);
+      }
       .mater_list {
         width: 100%;
         overflow: hidden;
