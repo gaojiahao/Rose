@@ -5,6 +5,7 @@ import FastClick from 'fastclick'
 import router from './router'
 import App from './App'
 import {querystring, AlertPlugin, LoadingPlugin, ConfirmPlugin} from 'vux'
+import adapation from './common/adapation'
 
 Vue.use(AlertPlugin);
 Vue.use(LoadingPlugin);

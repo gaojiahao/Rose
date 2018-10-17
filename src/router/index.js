@@ -9,6 +9,8 @@ import reportsOp from '@/components/reports_op'
 import reports from '@/components/reports'
 import help from '@/components/help'
 import reportsSummary from '@/components/reports_summary'
+import achievement from '@/components/achievement'
+import achievementDetail from '@/components/achievementDetail'
 
 Vue.use(Router)
 
@@ -89,6 +91,23 @@ export default new Router({
       ],
       meta: {
         title: '查看报表'
+      }
+    },
+    {
+      path: '/achievement',
+      name: 'achievement',
+      component: achievement,
+      meta: {
+        title: '销售业绩汇总',
+        keepAlive: true,
+      }
+    },
+    {
+      path: '/achievementDetail',
+      name: 'achievementDetail',
+      component: achievementDetail,
+      meta: {
+        title: '销售业绩详情'
       }
     },
     {

@@ -39,6 +39,13 @@
         >查看报表
         </x-button>
 
+        <x-button
+          class="each_select"
+          :gradients="['#B99763', '#E7D0A2']"
+          @click.native="goAchievement"
+        >销售业绩查看
+        </x-button>
+
       </div>
 
       <h2 class="tech_bottom">
@@ -94,6 +101,10 @@
        */
       goRP() {
         this.$router.push({path: '/reportsOp'})
+      },
+      // TODO 查看销售业绩
+      goAchievement() {
+        this.$router.push({path: '/achievement'})
       }
     },
     beforeCreate() {
