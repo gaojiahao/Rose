@@ -15,8 +15,8 @@
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="mater_name">{{item.transCode}}</div>
-              <div class="no_invoiced" v-if="getCostList === 'getVATBilling'">代开票金额：￥{{item.amntBal}}</div>
-              <div class="no_invoiced" v-else>代收票金额：￥{{item.amntBal}}</div>
+              <div class="no_invoiced" v-if="getCostList === 'getVATBilling'">待开票金额：￥{{item.amntBal}}</div>
+              <div class="no_invoiced" v-else>待收票金额：￥{{item.amntBal}}</div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
