@@ -94,8 +94,8 @@
           </template>
         </pop-matter>
          <!--原料bom列表-->
-        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow" 
-                :is-compute-loss="false" :btn-is-hide="btnIsHide" :specific-loss-text="'单位损耗率'"></bom-pop>
+        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow"
+                 :btn-is-hide="btnIsHide" :specific-loss-text="'单位损耗率'"></bom-pop>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -167,7 +167,7 @@
         matter: {},
         showMatterPop: false,
         tmpWarehouse: {},
-         DuplicateBoms: [],//有重复项的bom
+        DuplicateBoms: [],//有重复项的bom
         UniqueBom:[],//无重复项的bom
         modifyIndex: null, //修改物料数量或bom损耗率时，物料的index
         modifyKey: null,//修改物料数量或bom损耗率时，物料的key
@@ -180,7 +180,8 @@
       matter: {
         handler(val) {
           val.boms && val.boms.forEach(item => {
-            let tdQty = accMul(val.tdQty, item.qty);
+            // 监听领料需求变化
+            let tdQty = accMul(val.tdQty, item.qty, (1 + item.specificLoss));
             item.tdQty = Math.abs(toFixed(tdQty))
           });
         },
@@ -458,7 +459,7 @@
                   boms.push({
                     tdId : bom.tdId || null,
                     transMatchedCode: item.transCode,
-                    tdQty:item.tdQty, // 领料需求
+                    tdQty:bom.tdQty, // 领料需求
                     orderCode: item.orderCode,
                     thenQtyStock: bom.qtyStock,
                     bomSpecificLoss: bom.specificLoss,
