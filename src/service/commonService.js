@@ -113,7 +113,7 @@ export let getBaseInfoData = () => {
       let [unit = {}] = tableContent;
       return unit
     })
-    $axios.ajax({
+    await $axios.ajax({
       url: '/H_roleplay-si/ds/getRoleByUserId',
       data: {
         userId: userId,
