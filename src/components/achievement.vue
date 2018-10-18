@@ -88,17 +88,18 @@
       // TODO 查询列表
       getList() {
         let filter = [
-          {
-            operator: "eq",     //模糊查询like，精确查询eq
-            property: 'saleOwner',
-            value: this.userCode
-          }
+          // {
+          //   operator: "eq",     //模糊查询like，精确查询eq
+          //   property: 'saleOwner',
+          //   value: this.userCode
+          // }
         ];
         let params = {
           page: this.page,
           start: (this.page - 1) * this.limit,
           limit: this.limit,
-          noCount :1
+          noCount :1,
+          refresh : true
         };
         if (this.serachVal) {
           filter = [

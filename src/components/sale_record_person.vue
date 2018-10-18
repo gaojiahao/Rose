@@ -1,6 +1,6 @@
 <template>
   <div class="pages sale-record-container">
-    <r-search :filterList="filterList" @search='searchList'></r-search>
+    <!-- <r-search :filterList="filterList" @search='searchList'></r-search> -->
     <!-- <person-info></person-info> -->
     <div class="filters vux-1px-b">
       <div class="sort-amt vux-1px-r" :class="{asc: sort === 'asc'}" @click="sortByAmt">
@@ -98,11 +98,11 @@
     },
     methods: {
       // TODO 获取当前用户信息
-      // getUser() {
-      //   return tokenService.getUser().then(data => {
-      //     this.userInfo = data;
-      //   })
-      // },
+      getUser() {
+        return tokenService.getUser().then(data => {
+          this.userInfo = data;
+        })
+      },
       //查看订单
       goList(){
         this.$router.push({
@@ -289,7 +289,7 @@
       left: 0;
       bottom: 0;
       width: 100%;
-      height: .6rem;
+      height: .8rem;
       position: absolute;
       background: #fff;
     .cfn_btn{

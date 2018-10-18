@@ -43,7 +43,6 @@
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="goAchievement"
-          v-if="showLookSales"
         >销售业绩查看
         </x-button>
 

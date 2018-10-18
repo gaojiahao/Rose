@@ -50,7 +50,7 @@
     padding: .06rem .1rem .06rem .2rem;
     background-color: #fff;
     .iconfont {
-      top: .09rem;
+      top: .1rem;
       left: -.01rem;
       font-size: .14rem;
       position: absolute;
@@ -61,7 +61,7 @@
       display: inline-block;
       width: .14rem;
       height: .2rem;
-      background: url(./../../assets/warehouse.jpg) no-repeat center;
+      background: url(./../../assets/warehouse.png) no-repeat center;
     }
     &:last-of-type{
       .iconfont{

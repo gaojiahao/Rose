@@ -83,7 +83,7 @@
       padding: 0 .1rem .06rem .2rem;
     }
     .iconfont {
-      top: .02rem;
+      top: .05rem;
       left: .05rem;
       font-size: .16rem;
       position: absolute;
@@ -92,7 +92,7 @@
       display: inline-block;
       width: .14rem;
       height: .2rem;
-      background: url(./../../assets/dealer.jpg) no-repeat center;
+      background: url(./../../assets/dealer.png) no-repeat center;
     }
     // 公司信息
     .cp_name {

@@ -1,15 +1,15 @@
 <template>
   <div class="list_item" :class="{visited: item.visited}">
     <!-- 订单 时期 -->
-    <div class="duty_name">
+    <!-- <div class="duty_name">
       
         {{item.TRANS_NAME}}
-    </div>
+    </div> -->
     <div class="duty_top">
       <p class="duty_code">
-        {{item.TRANS_CODE}}
+        {{item.TRANS_CODE}}<span style="font-size:0.12rem;">[{{item.TRANS_NAME}}]</span>
       </p>
-      <p class="duty_time">{{item.EFFECTIVE_TIME | dateFormat('YYYY-MM-DD')}}</p>
+      <p class="duty_time">{{'2018-05-02' | dateFormat('YYYY-MM-DD')}}</p>
     </div>
     <!-- 往来信息 -->
     <div class="dealer_part" v-if='item.DEALER_ABBREVIATION'>
@@ -231,14 +231,16 @@
         display: inline-block;
         width: .14rem;
         height: .2rem;
-        background: url(./../../assets/dealer.jpg) no-repeat center;
+        background: url(./../../assets/dealer.png) no-repeat center;
         vertical-align: top;
+        position: relative;
+        top: 0.01rem;
       }
       .icon-- {
         display: inline-block;
         width: .14rem;
         height: .2rem;
-        background: url(./../../assets/warehouse.jpg) no-repeat center;
+        background: url(./../../assets/warehouse.png) no-repeat center;
         vertical-align: top;
       }
     }

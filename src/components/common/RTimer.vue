@@ -3,7 +3,7 @@
     <!--<div class='current_time vux-1px-r'>{{defaultTips}}</div>-->
     <div class='time_pop' @click="dateShow = !dateShow">
       <!--<span class="tips">日期筛选</span>-->
-      <span class="tips">{{defaultTips}}</span>
+      <span class="tips" :class="{'has_date':defaultTips !== '日期筛选'}">{{defaultTips}}</span>
       <x-icon :class="{'arrow-up': dateShow}" type="ios-arrow-down" size="14"></x-icon>
     </div>
     <div class='date vux-1px-b' v-show='dateShow'>
@@ -80,7 +80,7 @@
       confirm() {
         // 两个时间都选择了
         if (this.timeFilter.startDate !== '请选择' && this.timeFilter.EndDate !== '请选择') {
-          this.defaultTips = `${this.timeFilter.startDate} ~ ${this.timeFilter.EndDate}`;
+          this.defaultTips = `${this.timeFilter.startDate}~${this.timeFilter.EndDate}`;
         }
         // 只选择了截止时间
         else if (this.timeFilter.EndDate !== '请选择') {
@@ -88,7 +88,7 @@
         }
         // 只选择了起始日期
         else if (this.timeFilter.startDate !== '请选择') {
-          this.defaultTips = `${this.timeFilter.startDate} ~ ${this.toDay} [今日]`;
+          this.defaultTips = `${this.timeFilter.startDate}~${this.toDay} [今日]`;
         }
         // 都没选择
         else {
@@ -121,7 +121,7 @@
     width: 50%;
     height: 40px;
     font-size: 14px;
-    font-weight: bold;
+    // font-weight: bold;
     justify-content: center;
     align-items: center;
     .current_time {
@@ -134,8 +134,12 @@
       align-items: center;
       justify-content: center;
       .tips {
-        margin-right: .04rem;
-        font-size: 0.12rem;
+        // margin-right: .04rem;
+        // font-size: 0.12rem;
+        &.has_date{
+          font-size: 0.12rem;
+          font-weight: bold;
+        }
       }
       /* 倒三角 */
       .vux-x-icon-ios-arrow-down {

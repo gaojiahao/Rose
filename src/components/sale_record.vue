@@ -21,8 +21,7 @@
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
       <p class='amount'>
-        ￥
-        <countup :end-val=businessAmount :duration="1" :decimals="decimals"></countup>
+        ￥<countup :end-val=businessAmount :duration="1" :decimals="decimals"></countup>
       </p>
     </div>
 
@@ -284,6 +283,13 @@
 <style lang="less" scoped>
   @import "~vux/src/styles/1px.less";
   @import "~vux/src/styles/center.less";
+  .vux-1px-t:before,
+  .vux-1px-b:after,
+  .vux-1px-t:before,
+  .vux-1px-tb:before,
+  .vux-1px-tb:after {
+    border-color: #e8e8e8;
+  }
 
   .sale-record-container {
     background-color: #fff;
