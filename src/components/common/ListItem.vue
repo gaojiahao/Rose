@@ -1,10 +1,13 @@
 <template>
   <div class="list_item" :class="{visited: item.visited}">
     <!-- 订单 时期 -->
+    <div class="duty_name">
+      
+        {{item.TRANS_NAME}}
+    </div>
     <div class="duty_top">
       <p class="duty_code">
-        {{item.TRANS_CODE}}<span style="font-size:0.1rem;">[{{item.TRANS_NAME}}]</span>
-        <!--<span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>-->
+        {{item.TRANS_CODE}}
       </p>
       <p class="duty_time">{{item.EFFECTIVE_TIME | dateFormat('YYYY-MM-DD')}}</p>
     </div>
@@ -141,10 +144,21 @@
     &.visited {
       background-color: $list_visited;
     }
+    .duty_name{
+      height: .24rem;
+      line-height: .24rem;
+      padding: 0 .1rem;
+      font-size: 0.15rem;
+      color: #7D7D7D;
+    }
     .duty_top {
       height: .24rem;
       line-height: .24rem;
-      padding: .04rem .1rem;
+      padding: .01rem .1rem;
+      .duty_name{
+        font-size: .15rem;
+        color: #7D7D7D;
+      }
       .duty_code { //任务编码
         float: left;
         font-size: .15rem;

@@ -48,6 +48,7 @@
           // pullDownRefresh: true,
           pullUpLoad: true,
         },
+        userCode:''
       }
     },
     watch: {
@@ -86,23 +87,31 @@
       },
       // TODO 查询列表
       getList() {
-        let filter = [];
+        let filter = [
+          {
+            operator: "eq",     //模糊查询like，精确查询eq
+            property: 'saleOwner',
+            value: this.userCode
+          }
+        ];
         let params = {
           page: this.page,
           start: (this.page - 1) * this.limit,
           limit: this.limit,
+          noCount :1
         };
         if (this.serachVal) {
           filter = [
             ...filter,
             {
+              attendedOperation : 'and',
               operator: "like",     //模糊查询like，精确查询eq
               property: this.filterProperty,
               value: this.serachVal
             }
           ];
-          params.filter = JSON.stringify(filter);
         }
+        params.filter = JSON.stringify(filter);
         return getSalesList(params).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
@@ -135,6 +144,9 @@
       }
     },
     created() {
+      if(this.$route.query.userCode){
+        this.userCode = this.$route.query.userCode
+      }
       this.getList();
     },
     activated() {

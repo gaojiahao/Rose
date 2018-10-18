@@ -25,69 +25,29 @@
         <!-- 物料数量和价格 -->
         <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
           <div class='mater_num'>
-            <span class="num">类型: {{item.inventoryTypeName || '无'}}</span>
-            <span class='num'>子类: {{item.inventorySubName || '无'}}</span>
-            <span class='num'>材质: {{item.MATERIAL || '无'}}</span>
+            <!-- <span class="num">类型: {{item.inventoryTypeName || '无'}}</span>
+            <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>   -->
+            <!-- <span class='num'>子类: {{item.inventorySubName || '无'}}</span> -->
+            <!-- <span class='num'>材质: {{item.MATERIAL || '无'}}</span> -->
           </div>
-          <div class='mater_num'>
+          <!-- <div class='mater_num'>
             <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>   
             <span class='num'>金标重: {{item.AU_STANDARD_WEIGHT || '无'}}</span>
             <span class='num'>银标重: {{item.AG_STANDARD_WEIGHT || '无'}}</span>
             <span class='num'>件标重: {{item.PIECES_STANDARD_WEIGHT || '无'}}</span>
-          </div>
+          </div> -->
           <div class='mater_num'>
+            <span class='num'>销售单价：{{item['销售单价'] | toFixed |numberComma(3)}}</span>
             <span class='num'>出库数量: {{item.QTY || '无'}}</span>
-            <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span>
+            <!-- <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span> -->
           </div>
-          <div class='mater_other'>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['标准供货单价'] | toFixed |numberComma(3)}}
-              <span class="num">[标准供货单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['供货单价'] || item['供货单价'] === 0">
-              <span class="symbol">￥</span>{{item['供货单价'] | toFixed |numberComma(3)}}
-              <span class="num">[供货单价]</span>
-            </div>
-          </div>
-          <div class='mater_other'>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['供货金额'] | toFixed |numberComma(3)}}
-              <span class="num">[供货金额]</span>
-            </div>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['标准零售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[标准零售单价]</span>
-            </div>
-          </div>
-          <div class='mater_other'>
-            <div class='mater_price' v-if="item['零售单价'] || item['零售单价'] === 0">
-              <span class="symbol">￥</span>{{item['零售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[零售单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['零售金额'] || item['零售金额'] === 0">
-              <span class="symbol">￥</span>{{item['零售金额'] | toFixed |numberComma(3)}}
-              <span class="num">[零售金额]</span>
-            </div>
-          </div>
-          <div class='mater_other'>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['销售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[销售单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['销售金额'] || item['销售金额'] === 0">
-              <span class="symbol">￥</span>{{item['销售金额'] | toFixed |numberComma(3)}}
-              <span class="num">[销售金额]</span>
-            </div>
-          </div>
-          <div class='mater_other'>
-            <div class='mater_price' v-if="item['销项税额'] || item['销项税额'] === 0">
-              <span class="symbol">￥</span>{{item['销项税额'] | toFixed |numberComma(3)}}
-              <span class="num">[销项税额]</span>
-            </div>
-            <div class='mater_price' v-if="item['税价合计'] || item['税价合计'] === 0">
-              <span class="symbol">￥</span>{{item['税价合计'] | toFixed |numberComma(3)}}
-              <span class="num">[税价合计]</span>
-            </div>
+          <div class='mater_price'>
+
+            <span><span class="symbol">￥</span>{{item['价税合计'] || 0 | toFixed |numberComma(3) }}</span>
+            <span class="num"
+                  :style="{display:(item['价税合计'] && item['价税合计'].toString().length >= 6 ? 'block' : '')}">
+              [销售金额: ￥{{item['销售单价'] | toFixed | numberComma(3)}} + 销项税额: ￥{{item['销项税额'] | toFixed | numberComma(3)}}]
+            </span>
           </div>
           <!-- <div class='mater_other'>
             <div class='mater_price'>

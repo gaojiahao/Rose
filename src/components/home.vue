@@ -104,7 +104,7 @@
       },
       // TODO 查看销售业绩
       goAchievement() {
-        this.$router.push({path: '/saleRecord'})
+        this.$router.push({path: '/entry'})
       }
     },
     beforeCreate() {

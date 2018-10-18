@@ -1,9 +1,9 @@
 <template>
   <div class="pages sale-record-container">
-    <!--<r-search :filterList="filterList" @search='searchList'></r-search>-->
-    <person-info></person-info>
+    <r-search :filterList="filterList" @search='searchList'></r-search>
+    <!-- <person-info></person-info> -->
     <div class="filters vux-1px-b">
-      <div class="sort-amt vux-1px-r" :class="{asc: sort === 'asc'}" @click="sortByAmt">
+      <div class="sort-amt" :class="{asc: sort === 'asc'}" @click="sortByAmt">
         <span>金额</span>
         <x-icon type="ios-arrow-thin-down" size="20"></x-icon>
       </div>
@@ -28,7 +28,9 @@
         </div>
       </div>
     </r-scroll>
-
+    <div class='btn'  @click="goList">
+      <div class='cfn_btn'>查看订单</div>
+    </div>
     <!-- <loading :show='spinner'></loading> -->
   </div>
 </template>
@@ -38,7 +40,6 @@
     Tab,
     TabItem,
     Divider,
-    SwiperItem,
     FormPreview,
     numberComma,
     CellFormPreview,
@@ -58,7 +59,6 @@
       TabItem,
       Divider,
       loading,
-      SwiperItem,
       FormPreview,
       CellFormPreview,
       Countup,
@@ -99,6 +99,16 @@
         return tokenService.getUser().then(data => {
           this.userInfo = data;
         })
+      },
+      //查看订单
+      goList(){
+        this.$router.push({
+          path:'/achievement',
+          query:{
+            userCode : this.userInfo.userCode
+          }
+        }
+        )
       },
       // TODO 获取请求参数
       getParams() {
@@ -264,6 +274,33 @@
 
         }
       }
+    }
+    .btn{
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: .6rem;
+      position: absolute;
+      background: #fff;
+    .cfn_btn{
+      top: 50%;
+      left: 50%;
+      width: 2.8rem;
+      color: #fff;
+      // color: #5077aa;
+      height: .44rem;
+      line-height: .44rem;
+      position: absolute;
+      text-align: center;
+      background: #5077aa;
+      // border:1px solid #5077aa;
+      border-radius: .4rem;
+      // border-color:  #5077aa;
+      transform: translate(-50%, -50%);
+      font-size: 0.16rem;
+      // box-shadow: 0 2px 5px #5077aa;
+    }
+      
     }
   }
 </style>

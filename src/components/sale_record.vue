@@ -31,10 +31,11 @@
               @on-pulling-up="onPullingUp" ref="bScroll">
       <div class='sale_rank' v-show="activeIndex === 0">
         <!-- <div class='title'>销售业绩排行</div> -->
-        <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
+        <div v-for="(item,index) in listData" class='each_saleman vux-1px-b' @click="goList(item)">
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.saleOwnerN || item.saleOwner}} {{item.HANDLER_UNIT_NAME}}</span>
           <span class='saleman_amount'>￥{{item.totalAmount}}</span>
+          <x-icon type="ios-arrow-right" size="20" class='arrow_right'></x-icon>
         </div>
       </div>
       <div class='sale_rank' v-show="activeIndex === 1">
@@ -97,7 +98,7 @@
         rankList: ['按业务员', '按产品'],
         filterList: [ // 过滤列表
           {
-            name: '经办人',
+            name: '姓名',
             value: 'saleOwnerN',
           }, {
             name: '部门',
@@ -122,6 +123,14 @@
       numberComma
     },
     methods: {
+      goList(item){
+        this.$router.push({
+          path:'/achievement',
+          query : {
+            userCode: item.saleOwner
+          }
+        })
+      },
       tabClick(index) {
         if (this.activeIndex === index) {
           return
@@ -333,7 +342,11 @@
       .each_saleman {
         line-height: 0.3rem;
         display: flex;
+        align-items: center;
         padding: 0.07rem;
+        .arrow_right{
+          margin-left:0.05rem;
+        }
         .sort {
           width: 0.3rem;
         }

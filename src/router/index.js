@@ -13,7 +13,7 @@ import achievement from '@/components/achievement'
 import achievementDetail from '@/components/achievementDetail'
 import saleRecord from '@/components/sale_record'
 import saleRecordPerson from '@/components/sale_record_person'
-
+import AchievementEnrty from '@//components/achievementEntry'
 Vue.use(Router)
 
 export default new Router({
@@ -93,6 +93,15 @@ export default new Router({
       ],
       meta: {
         title: '查看报表'
+      }
+    },
+    {
+      path: '/entry',
+      name: 'AchievementEnrty',
+      component: AchievementEnrty,
+      meta: {
+        title: '销售业绩',
+        keepAlive: true,
       }
     },
     {
