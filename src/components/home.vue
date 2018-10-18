@@ -43,6 +43,7 @@
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="goAchievement"
+          v-if="showLookSales"
         >销售业绩查看
         </x-button>
 
@@ -76,7 +77,8 @@
       return {
         showLookReport: false, // 是否展示查看报表按钮
         showLoading: false,
-        username:'' //用户名称
+        username:'', //用户名称
+        showLookSales: false, // 是否展示销售业绩查看
       }
     },
     methods: {
@@ -138,13 +140,15 @@
         });
 
         await tokenService.getUser().then(data => {
+          let {userCode = ''} = data;
+          this.showLookSales = userCode === '0414' || userCode === '1204' || userCode === '1207' || userCode === '1129';
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
             bank: data.homeBank || '',         //银行
             region: data.homeProvince || '',   //省份地区
             dept: data.area || '',             //事业部
             groupName: data.groupName || '',    //部门
             captain: data.bmName || '',        //队长（暂无）
-            userCode:data.userCode || '',      //工号
+            userCode: data.userCode || '',      //工号
           }))
         }).catch(err => {
           this.$vux.alert.show({
