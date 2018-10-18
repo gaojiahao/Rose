@@ -1,14 +1,11 @@
 <template>
   <div class='filter_time vux-1px-b'>
-    <div class='current_time vux-1px-r'>{{defaultTips}}</div>
+    <!--<div class='current_time vux-1px-r'>{{defaultTips}}</div>-->
     <div class='time_pop' @click="dateShow = !dateShow">
-      <span class="tips">日期筛选</span>
+      <!--<span class="tips">日期筛选</span>-->
+      <span class="tips">{{defaultTips}}</span>
       <x-icon :class="{'arrow-up': dateShow}" type="ios-arrow-down" size="14"></x-icon>
     </div>
-    <!--<div class='time_pop vux-1px-l' @click="dateShow = !dateShow">
-      <span class="tips">部门筛选</span>
-      <x-icon :class="{'arrow-up': dateShow}" type="ios-arrow-down" size="14"></x-icon>
-    </div>-->
     <div class='date vux-1px-b' v-show='dateShow'>
       <div class='choose_date'>
         <div class='start_date'>
@@ -95,7 +92,8 @@
         }
         // 都没选择
         else {
-          this.defaultTips = `截止至 ${this.toDay}`
+          // this.defaultTips = `截止至 ${this.toDay}`
+          this.defaultTips = '日期筛选'
         }
         // 关闭时间筛选
         this.dateShow = false;
@@ -110,7 +108,8 @@
     created() {
       this.toDay = dateFormat(new Date(), 'YYYY-MM-DD');
       this.preDate = dateFormat(new Date(new Date().getTime() - 24 * 60 * 60 * 1000), 'YYYY-MM-DD');
-      this.defaultTips = `截止至 ${this.toDay}`;
+      // this.defaultTips = `截止至 ${this.toDay}`;
+      this.defaultTips = '日期筛选';
     }
   }
 </script>
@@ -119,16 +118,17 @@
   .filter_time {
     background: #fff;
     display: flex;
+    width: 50%;
     height: 40px;
     font-size: 14px;
     font-weight: bold;
+    justify-content: center;
     align-items: center;
     .current_time {
       flex: 1;
       text-align: center;
     }
     .time_pop {
-      width: 50%;
       display: flex;
       padding: 0 10px;
       align-items: center;
@@ -147,10 +147,11 @@
     //选择时间弹出框
     .date {
       background: #fff;
-      width: 100%;
+      width: 200%;
       box-sizing: border-box;
       position: absolute;
       top: 0.4rem;
+      right: 0;
       z-index: 50;
       box-shadow: 0 2px 10px #e8e8e8;
       .choose_date {

@@ -1,16 +1,7 @@
 <template>
   <div class="pages sale-record-container">
-    <r-search :filterList="filterList" @search='searchList'></r-search>
-    <tab :line-width=2 active-color='#B99763'>
-      <tab-item class="vux-center"
-                :selected="activeIndex === index"
-                v-for="(item, index) in rankList"
-                @click.native="tabClick(index)"
-                :key="index"
-      >
-        {{item}}
-      </tab-item>
-    </tab>
+    <!--<r-search :filterList="filterList" @search='searchList'></r-search>-->
+    <person-info></person-info>
     <div class="filters vux-1px-b">
       <div class="sort-amt vux-1px-r" :class="{asc: sort === 'asc'}" @click="sortByAmt">
         <span>金额</span>
@@ -29,20 +20,11 @@
     <!--销售排名-->
     <r-scroll :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !listData.length"
               @on-pulling-up="onPullingUp" ref="bScroll">
-      <div class='sale_rank' v-show="activeIndex === 0">
-        <!-- <div class='title'>销售业绩排行</div> -->
-        <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
-          <span class='sort'>{{index+1}}</span>
-          <span class='saleman_name'>{{item.saleOwnerN || item.saleOwner}} {{item.HANDLER_UNIT_NAME}}</span>
-          <span class='saleman_amount'>￥{{item.totalAmount}}</span>
-        </div>
-      </div>
-      <div class='sale_rank' v-show="activeIndex === 1">
-        <!-- <div class='title'>销售业绩排行</div> -->
+      <div class='sale_rank'>
         <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.INVENTORY_NAME}}</span>
-          <span class='saleman_amount'>￥{{item.totalAMOUNT}}</span>
+          <span class='saleman_amount'>￥{{item['价税总计']}}</span>
         </div>
       </div>
     </r-scroll>
@@ -62,12 +44,13 @@
     CellFormPreview,
     Countup, dateFormat
   } from "vux";
+  import tokenService from './../service/tokenService'
   import myReportService from "../service/myReportService";
-  import {accAdd} from './maps/decimalsAdd.js'
   import loading from "./loading";
   import RSearch from './common/RSearch'
   import RTimer from './common/RTimer'
   import RScroll from './common/RScroll'
+  import PersonInfo from './common/PersonInfo'
 
   export default {
     components: {
@@ -82,28 +65,16 @@
       RSearch,
       RTimer,
       RScroll,
+      PersonInfo,
     },
     data() {
       return {
-        remark: "",
         spinner: false,
         timeFilter: {},
-        staffRank: [],                    // 业务员销售排名(前三)
         isReset: false,                   // 是否重置
         businessAmount: 0,                // 金额合计
-        allSaleReport: [],
-        allProductReport: [],
-        activeIndex: 0,
-        rankList: ['按业务员', '按产品'],
-        filterList: [ // 过滤列表
-          {
-            name: '经办人',
-            value: 'saleOwnerN',
-          }, {
-            name: '部门',
-            value: 'HANDLER_UNIT_NAME'
-          },
-        ],
+        activeIndex: 1,
+        filterList: [],
         serachVal: '',
         filterProperty: '',
         hasNext: true,
@@ -116,38 +87,28 @@
         limit: 20,
         listData: [],
         sort: 'desc',
+        userInfo: {},
       };
     },
     filters: {
       numberComma
     },
     methods: {
-      tabClick(index) {
-        if (this.activeIndex === index) {
-          return
-        }
-        let filterLists = [
-          [{
-            name: '经办人',
-            value: 'saleOwnerN',
-          }, {
-            name: '部门',
-            value: 'HANDLER_UNIT_NAME'
-          }],
-          [{
-            name: '存货名称',
-            value: 'INVENTORY_NAME',
-          }]
-        ];
-        this.sort = 'desc';
-        this.activeIndex = index;
-        this.filterList = filterLists[this.activeIndex];
-        this.resetCondition();
-        this.getList();
+      // TODO 获取当前用户信息
+      getUser() {
+        return tokenService.getUser().then(data => {
+          this.userInfo = data;
+        })
       },
       // TODO 获取请求参数
       getParams() {
-        let filter = [];
+        let filter = [
+          {
+            property: 'saleOwner',
+            operator: 'like',					//模糊查询like，精确查询eq
+            value: this.userInfo.userCode
+          }
+        ];
         if (this.serachVal) {
           filter = [
             {
@@ -166,61 +127,27 @@
           filter: JSON.stringify(filter),
         }
       },
-      getReport() {
-        return myReportService.allSaleReport(this.getParams()).then(({total = 0, salesman = [], allTotalAmount = 0}) => {
-          this.hasNext = total > (this.page - 1) * this.limit + salesman.length;
-          this.businessAmount = allTotalAmount;
-          // this.allSaleReport = salesman;
-          this.listData = [...this.listData, ...salesman];
-          this.$nextTick(() => {
-            this.resetScroll();
-          })
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message
-          })
-        });
-      },
-      getProduct() {
-        return myReportService.allProductReport(this.getParams()).then(({total = 0, product = [], allTotalAmount = 0}) => {
-          this.hasNext = total > (this.page - 1) * this.limit + product.length;
-          this.businessAmount = allTotalAmount;
-          // this.allProductReport = product;
-          this.listData = [...this.listData, ...product];
-          this.$nextTick(() => {
-            this.resetScroll();
-          })
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message
-          })
-        });
-      },
       // TODO 请求列表
       getList() {
-        switch (this.activeIndex) {
-          case 0:
-            this.getReport();
-            break;
-          case 1:
-            this.getProduct();
-            break;
-          default:
-            break;
-        }
+        return myReportService.allSaleReport(this.getParams()).then(({total = 0, salesman = [], allTotalAmount = 0}) => {
+          // 防止出现工号相同、名字不同的
+          let performance = salesman.reduce((performance, item) => {
+            return [...performance, ...item.performance];
+          }, []);
+          this.hasNext = total > (this.page - 1) * this.limit + performance.length;
+          this.businessAmount = allTotalAmount;
+          this.listData = [...this.listData, ...performance];
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
+        }).catch(e => {
+          this.$vux.alert.show({
+            content: e.message
+          })
+        });
       },
       // TODO 重置列表条件
       resetCondition() {
-        switch (this.activeIndex) {
-          case 0:
-            this.allSaleReport = [];
-            break;
-          case 1:
-            this.allProductReport = [];
-            break;
-          default:
-            break;
-        }
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
@@ -261,30 +188,21 @@
     },
     created() {
       this.spinner = true;
-      this.getList();
+      this.getUser().then(() => {
+        this.getList();
+      });
     }
   };
 </script>
 
 <style lang="less" scoped>
   @import "~vux/src/styles/1px.less";
-  @import "~vux/src/styles/center.less";
 
   .sale-record-container {
     background-color: #fff;
     overflow: hidden;
     .search {
       margin-top: .1rem;
-    }
-    .tab-item-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      &.asc {
-        .vux-x-icon-ios-arrow-thin-down {
-          transform: rotate(-180deg);
-        }
-      }
     }
     .filters {
       display: flex;
@@ -302,7 +220,7 @@
       }
     }
     .scroll-container {
-      height: ~'calc(100% - 2.2rem)';
+      height: ~'calc(100% - 2.36rem)';
       overflow: hidden;
     }
     .business_amount {

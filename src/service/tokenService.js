@@ -130,8 +130,26 @@ let tokenService = {
   },
   // TODO 获取用户信息
   getUser() {
-    return $axios.ajax({
-      url: '/trans/getModelData?refresh=true&shengName=&bankName=&sybName=&dsCode=getUserDetails'
+    return new Promise((resolve, reject) => {
+      const USER_INFO = 'RFD_CURRENT_USER_INFO';
+      let currentUser = sessionStorage.getItem(USER_INFO);
+      // 处理当前用户数据，默认取第一个
+      let handleCurrentUser = (data = {}) => {
+        for (let [key, value] of Object.entries(data)) {
+          data[key] = value && value.split(',')[0];
+        }
+        return data
+      };
+      if (currentUser) {
+        resolve(handleCurrentUser(JSON.parse(currentUser)));
+        return
+      }
+      $axios.ajax({
+        url: '/trans/getModelData?refresh=true&dsCode=getUserDetails',
+      }).then((data = {}) => {
+        sessionStorage.setItem(USER_INFO, JSON.stringify(data));
+        resolve(handleCurrentUser(data));
+      })
     });
   },
   // TODO 判断是否为总裁
