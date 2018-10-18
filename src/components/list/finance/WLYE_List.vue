@@ -25,7 +25,7 @@
             </div>
             <!-- 数量余额 -->
             <div class="mater_code" v-if="item.accountAge !== undefined">
-              <span class="title">帐龄天数</span>
+              <span class="title">账龄天数</span>
               <span class="num">{{item.accountAge}}</span>
             </div>
           </div>
