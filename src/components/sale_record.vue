@@ -7,7 +7,11 @@
                 v-for="(item, index) in rankList"
                 @click.native="tabClick(index)"
                 :key="index"
-      >{{item}}
+      >
+        <div class="tab-item-wrapper" :class="{asc: sort === 'asc'}">
+          <span>{{item}}</span>
+          <x-icon type="ios-arrow-thin-down" size="20" v-show="activeIndex === index"></x-icon>
+        </div>
       </tab-item>
     </tab>
     <r-timer @on-select="changeDate"></r-timer>
@@ -40,8 +44,6 @@
       </div>
     </r-scroll>
 
-    <div class="my_info_part">
-    </div>
     <!-- <loading :show='spinner'></loading> -->
   </div>
 </template>
@@ -110,6 +112,7 @@
         page: 1,
         limit: 20,
         listData: [],
+        sort: 'desc',
       };
     },
     filters: {
@@ -118,6 +121,9 @@
     methods: {
       tabClick(index) {
         if (this.activeIndex === index) {
+          this.sort = this.sort === 'asc' ? 'desc' : 'asc';
+          this.resetCondition();
+          this.getList();
           return
         }
         let filterLists = [
@@ -133,6 +139,7 @@
             value: 'INVENTORY_NAME',
           }]
         ];
+        this.sort = 'desc';
         this.activeIndex = index;
         this.filterList = filterLists[this.activeIndex];
         this.resetCondition();
@@ -154,6 +161,7 @@
         return {
           page: this.page,
           limit: this.limit,
+          sort: this.sort,
           ...this.timeFilter,
           filter: JSON.stringify(filter),
         }
@@ -167,7 +175,11 @@
           this.$nextTick(() => {
             this.resetScroll();
           })
-        })
+        }).catch(e => {
+          this.$vux.alert.show({
+            content: e.message
+          })
+        });
       },
       getProduct() {
         return myReportService.allProductReport(this.getParams()).then(({total = 0, product = [], allTotalAmount = 0}) => {
@@ -178,7 +190,11 @@
           this.$nextTick(() => {
             this.resetScroll();
           })
-        })
+        }).catch(e => {
+          this.$vux.alert.show({
+            content: e.message
+          })
+        });
       },
       // TODO 请求列表
       getList() {
@@ -253,6 +269,16 @@
     overflow: hidden;
     .search {
       margin-top: .1rem;
+    }
+    .tab-item-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &.asc {
+        .vux-x-icon-ios-arrow-thin-down {
+          transform: rotate(-180deg);
+        }
+      }
     }
     .scroll-container {
       height: ~'calc(100% - 2.2rem)';

@@ -103,7 +103,7 @@
         let timeFilter = {
           startDate: this.timeFilter.startDate === '请选择' ? '' : this.timeFilter.startDate,
           endDate: this.timeFilter.EndDate === '请选择' ? '' : this.timeFilter.EndDate
-        }
+        };
         this.$emit('on-select', timeFilter);
       },
     },
@@ -111,7 +111,6 @@
       this.toDay = dateFormat(new Date(), 'YYYY-MM-DD');
       this.preDate = dateFormat(new Date(new Date().getTime() - 24 * 60 * 60 * 1000), 'YYYY-MM-DD');
       this.defaultTips = `截止至 ${this.toDay}`;
-      this.timeFilter.EndDate = this.toDay;
     }
   }
 </script>
