@@ -101,7 +101,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           limit: this.limit,
-          filter: JSON.stringify(filter),
+          // filter: JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
@@ -150,6 +150,7 @@
     width: 100%;
     height: 100%;
     background-color: #fff;
+    overflow: hidden;
     .scroll-container {
       height: calc(100% - .3rem);
     }
