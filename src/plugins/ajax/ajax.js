@@ -38,7 +38,20 @@ let Rxports = {
         if (opts.type && opts.type.toUpperCase() === 'POST') {
           params.data = opts.data || {}
         } else {
-          params.params = opts.data || {}
+          // params.params = opts.data || {}
+          if (typeof opts.data === 'object') {
+            let query = [];
+            for (let [key, value] of Object.entries(opts.data)) {
+              query.push(`${key}=${value}`)
+            }
+            if (params.url.indexOf('?') === -1) {
+              // url上没有?
+              params.url = encodeURI(`${params.url}?${query.join('&')}`)
+            } else {
+              // url上有?，给其拼上&
+              params.url = encodeURI(`${params.url}&${query.join('&')}`)
+            }
+          }
         }
 
         axios(params).then(function (res) {

@@ -56,7 +56,12 @@
     <!-- 金额合计 -->
     <div class="order_count">
       <div class="handle_man">
-        {{item.saleOwnerN || item.saleOwner}}<span style="fontSize:.1rem;">[经办人]</span>
+        <template v-if="item.saleOwnerN">
+          {{item.saleOwnerN}}<span style="fontSize:.1rem;">[经办人]</span>
+        </template>
+        <template v-else>
+          {{item.saleOwner}}<span style="fontSize:.1rem;">[账号]</span>
+        </template>
       </div>
       <div class="money_part" v-if="!noCount">
         <span class="num">合计:</span>

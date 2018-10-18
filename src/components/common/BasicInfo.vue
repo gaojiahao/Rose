@@ -13,7 +13,7 @@
     <div class="handle_info vux-1px-b">
       <div class="each_handle s_size_name">
         <span class="title">经办人：</span>
-        <span class="content">{{basicInfo.saleOwnerN}}</span>
+        <span class="content">{{basicInfo.saleOwnerN || '无'}}</span>
       </div>
       <div class="each_handle s_size_name">
         <span class="title">经办角色：</span>
@@ -65,12 +65,6 @@
           return {}
         }
       },
-      basicInfo: {
-        type: Object,
-        default() {
-          return {}
-        }
-      }
     },
     filters: {
       dateFormat

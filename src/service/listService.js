@@ -6,7 +6,7 @@ export let getSalesList = (data = {}) => {
     data: {
       id: 388,
       _dc: Date.now(),
-      summary: JSON.stringify([]),
+      // summary: JSON.stringify([]),
       ...data
     }
   })

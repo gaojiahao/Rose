@@ -93,6 +93,9 @@
             <div class='mater_price'>
               <span class="symbol">￥</span>{{item['每克销售单价'] | toFixed |numberComma(3)}}
               <span class="num">[每克销售单价]</span>
+            <div class='mater_price' v-for="amt in amtList" v-if="item[amt] || item[amt] === 0">
+              <span class="symbol">￥</span>{{item[amt] | toFixed |numberComma(3)}}
+              <span class="num">[{{amt}}]</span>
             </div>
           </div> -->
         </div>
@@ -121,7 +124,9 @@
       }
     },
     data() {
-      return {}
+      return {
+        amtList: ['标准供货单价', '供货单价', '供货金额', '标准零售单价', '零售单价', '零售金额', '销售单价', '销售金额', '销项税额', '税价合计', '每克销售单价'],
+      }
     },
     filters: {
       numberComma,
