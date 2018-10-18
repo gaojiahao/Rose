@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import saleRepotService from "../service/saleRepotService";
+import saleRepotService from "service/saleRepotService";
 import {
   Cell,
   Alert,

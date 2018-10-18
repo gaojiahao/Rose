@@ -1,19 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import option from '@/components/option'
-import Home from '@/components/home'
-import saleReport from '@/components/sale_report'
-import myRecord from '@/components/my_record'
-import count from '@/components/count'
-import reportsOp from '@/components/reports_op'
-import reports from '@/components/reports'
-import help from '@/components/help'
-import reportsSummary from '@/components/reports_summary'
-import achievement from '@/components/achievement'
-import achievementDetail from '@/components/achievementDetail'
-import saleRecord from '@/components/sale_record'
-import saleRecordPerson from '@/components/sale_record_person'
-import AchievementEnrty from '@//components/achievementEntry'
+import option from 'views/option'
+import Home from 'views/home'
+import saleReport from 'views/sale_report'
+import myRecord from 'views/my_record'
+import count from 'views/count'
+import reportsOp from 'views/reports_op'
+import reports from 'views/reports'
+import help from 'views/help'
+import reportsSummary from 'views/reports_summary'
+import achievement from 'views/achievement/achievement'
+import achievementDetail from 'views/achievement/achievementDetail'
+import saleRecord from 'views/achievement/sale_record'
+import saleRecordPerson from 'views/achievement/sale_record_person'
+import AchievementEnrty from 'views/achievement/achievementEntry'
 Vue.use(Router)
 
 export default new Router({
@@ -101,7 +101,6 @@ export default new Router({
       component: AchievementEnrty,
       meta: {
         title: '销售业绩',
-        keepAlive: true,
       }
     },
     {
@@ -110,7 +109,6 @@ export default new Router({
       component: saleRecord,
       meta: {
         title: '销售业绩汇总',
-        keepAlive: true,
       }
     },
     {
@@ -119,7 +117,6 @@ export default new Router({
       component: saleRecordPerson,
       meta: {
         title: '销售个人业绩汇总',
-        keepAlive: true,
       }
     },
     {
@@ -128,7 +125,6 @@ export default new Router({
       component: achievement,
       meta: {
         title: '销售业绩列表',
-        keepAlive: true,
       }
     },
     {

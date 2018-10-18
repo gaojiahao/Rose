@@ -25,7 +25,7 @@
 </template>
 
 <script>
-  import optionService from '../service/optionService'
+  import optionService from 'service/optionService'
   import {Group, XButton, PopupPicker, XInput, Cell} from 'vux'
 
   const ROSE_OPTION_KEY = 'ROSE_OPTION'

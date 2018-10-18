@@ -15,10 +15,10 @@
 </template>
 
 <script>
-  import optionService from '../service/optionService'
-  import saleReportService from '../service/saleRepotService'
+  import optionService from 'service/optionService'
+  import saleReportService from 'service/saleRepotService'
   import {Group, XButton, PopupPicker} from 'vux'
-  import Loading from './loading'
+  import Loading from 'components/common/loading'
 
   const FILTER_OPTION = 'ROSE_FILER_OPTION'; // 存储筛选配置的key
   const PROJ_LIST = 'ROSE_PROJ_LIST'; // 存储项目列表的key

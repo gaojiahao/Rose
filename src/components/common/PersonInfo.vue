@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import tokenService from './../../service/tokenService'
+  import tokenService from 'service/tokenService'
 
   export default {
     name: "PersonInfo",

@@ -10,11 +10,11 @@
 </template>
 
 <script>
-  import RScroll from './common/RScroll'
-  import ListItem from './common/ListItem'
-  import RSearch from './common/RSearch'
-  import {toFixed, accAdd} from '@/plugins/calc'
-  import {getSalesList} from './../service/listService'
+  import RScroll from 'components/common/RScroll'
+  import ListItem from 'components/common/ListItem'
+  import RSearch from 'components/common/RSearch'
+  import {toFixed, accAdd} from 'plugins/calc'
+  import {getSalesList} from 'service/listService'
 
   export default {
     name: "achievement",

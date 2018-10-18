@@ -1,6 +1,6 @@
 // 请求 引入
-import optionService from "../service/optionService";
-import saleRepotService from "../service/saleRepotService";
+import optionService from "service/optionService";
+import saleRepotService from "service/saleRepotService";
 // 插件引入
 import { Cell, Alert, Group, XInput, XButton,
   Confirm, Selector, PopupPicker, numberComma} from "vux";

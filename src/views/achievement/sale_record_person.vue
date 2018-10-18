@@ -46,13 +46,13 @@
     CellFormPreview,
     Countup, dateFormat
   } from "vux";
-  import tokenService from './../service/tokenService'
-  import myReportService from "../service/myReportService";
-  import loading from "./loading";
-  import RSearch from './common/RSearch'
-  import RTimer from './common/RTimer'
-  import RScroll from './common/RScroll'
-  import PersonInfo from './common/PersonInfo'
+  import tokenService from 'service/tokenService'
+  import myReportService from "service/myReportService";
+  import loading from "components/common/loading";
+  import RSearch from 'components/common/RSearch'
+  import RTimer from 'components/common/RTimer'
+  import RScroll from 'components/common/RScroll'
+  import PersonInfo from 'components/common/PersonInfo'
 
   export default {
     components: {
@@ -210,7 +210,7 @@
 </script>
 
 <style lang="less" scoped>
-  @import "~vux/src/styles/1px.less";
+  @import "../../../node_modules/vux/src/styles/1px.less";
   .vux-1px-t:before,
   .vux-1px-b:after,
   .vux-1px-t:before,

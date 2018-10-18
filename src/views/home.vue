@@ -62,9 +62,10 @@
 
 <script>
   import {XButton, Confirm, querystring} from 'vux'
-  import tokenService from '../service/tokenService'
-  import Loading from './loading'
+  import tokenService from 'service/tokenService'
+  import Loading from 'components/common/loading'
 
+  const ROSE_OPTION_KEY = 'ROSE_OPTION';
   const ROSE_LOGIN_CODE = 'ROSE_CODE';
   export default {
     components: {
@@ -138,9 +139,18 @@
           })
         });
 
-        await tokenService.getUser().then(data => {
-          let {userCode = ''} = data;
+        await tokenService.getUser().then(userInfo => {
+          let {completeData = {}, userCode = ''} = userInfo;
+          console.log(completeData)
           this.showLookSales = userCode === '0414' || userCode === '1204' || userCode === '1207' || userCode === '1129';
+          localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
+            bank: completeData.homeBank || '',         //银行
+            region: completeData.homeProvince || '',   //省份地区
+            dept: completeData.area || '',             //事业部
+            groupName: completeData.groupName || '',    //部门
+            captain: completeData.bmName || '',        //队长（暂无）
+            userCode: completeData.userCode || '',      //工号
+          }))
         }).catch(err => {
           this.$vux.alert.show({
             content: err.message

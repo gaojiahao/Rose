@@ -63,12 +63,12 @@
     CellFormPreview,
     Countup, dateFormat
   } from "vux";
-  import myReportService from "../service/myReportService";
-  import {accAdd} from './maps/decimalsAdd.js'
-  import loading from "./loading";
-  import RSearch from './common/RSearch'
-  import RTimer from './common/RTimer'
-  import RScroll from './common/RScroll'
+  import myReportService from "service/myReportService";
+  import {accAdd} from 'plugins/calc'
+  import loading from "components/common/loading";
+  import RSearch from 'components/common/RSearch'
+  import RTimer from 'components/common/RTimer'
+  import RScroll from 'components/common/RScroll'
 
   export default {
     components: {
@@ -282,8 +282,8 @@
 </script>
 
 <style lang="less" scoped>
-  @import "~vux/src/styles/1px.less";
-  @import "~vux/src/styles/center.less";
+  @import "../../../node_modules/vux/src/styles/1px.less";
+  @import "../../../node_modules/vux/src/styles/center.less";
 
   .sale-record-container {
     background-color: #fff;
