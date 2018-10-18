@@ -65,7 +65,6 @@
   import tokenService from '../service/tokenService'
   import Loading from './loading'
 
-  const ROSE_OPTION_KEY = 'ROSE_OPTION';
   const ROSE_LOGIN_CODE = 'ROSE_CODE';
   export default {
     components: {
@@ -142,14 +141,6 @@
         await tokenService.getUser().then(data => {
           let {userCode = ''} = data;
           this.showLookSales = userCode === '0414' || userCode === '1204' || userCode === '1207' || userCode === '1129';
-          localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
-            bank: data.homeBank || '',         //银行
-            region: data.homeProvince || '',   //省份地区
-            dept: data.area || '',             //事业部
-            groupName: data.groupName || '',    //部门
-            captain: data.bmName || '',        //队长（暂无）
-            userCode: data.userCode || '',      //工号
-          }))
         }).catch(err => {
           this.$vux.alert.show({
             content: err.message

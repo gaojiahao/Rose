@@ -132,9 +132,18 @@ let tokenService = {
   getUser() {
     return new Promise((resolve, reject) => {
       const USER_INFO = 'RFD_CURRENT_USER_INFO';
+      const ROSE_OPTION_KEY = 'ROSE_OPTION';
       let currentUser = sessionStorage.getItem(USER_INFO);
       // 处理当前用户数据，默认取第一个
       let handleCurrentUser = (data = {}) => {
+        localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
+          bank: data.homeBank || '',         //银行
+          region: data.homeProvince || '',   //省份地区
+          dept: data.area || '',             //事业部
+          groupName: data.groupName || '',    //部门
+          captain: data.bmName || '',        //队长（暂无）
+          userCode: data.userCode || '',      //工号
+        }))
         for (let [key, value] of Object.entries(data)) {
           data[key] = value && value.split(',')[0];
         }
