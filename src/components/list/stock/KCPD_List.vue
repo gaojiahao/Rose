@@ -58,10 +58,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizList';
-
-  .bdkcdb-list-conatiner {
-    .list_wrapper {
-      height: calc(100% - .4rem);
-    }
-  }
 </style>

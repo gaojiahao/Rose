@@ -278,6 +278,7 @@ export default {
           thenQtyStock: item.qtyBal, // 可用库存
           tdQty: item.tdQty, // 盘点数量
           differenceNum: item.differenceNum || 0,
+          tdProcessing: item.processing,  // 物料加工属性
           assistQty: item.assistQty || 0, // 辅计数量（明细）
           assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
           assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
