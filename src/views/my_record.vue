@@ -50,9 +50,9 @@ import {
   numberComma,
   CellFormPreview
 } from "vux";
-import myReportService from "../service/myReportService";
+import myReportService from "service/myReportService";
 import { setTimeout } from "timers";
-import loading from "./loading";
+import loading from "components/common/loading";
 const list = () => ["本日", "本周", "本月", "本年"];
 export default {
   components: {

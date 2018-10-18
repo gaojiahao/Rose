@@ -142,7 +142,7 @@
 
 <script>
 // mixin引入
-import saleCommon from '../mixins/saleCommon'
+import saleCommon from 'mixins/saleCommon'
 export default {
   name: 'help-Report',
   mixins : [saleCommon],
@@ -348,7 +348,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-  @import './scss/common.scss';
+  @import '~@/components/scss/common.scss';
   .captain-container {
     top: 170px;
   }

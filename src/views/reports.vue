@@ -77,11 +77,11 @@
     PopupPicker,
     CellFormPreview,
   } from 'vux'
-  import reportService from '../service/reportService'
-  import saleReportService from '../service/saleRepotService'
-  import Loading from './loading'
+  import reportService from 'service/reportService'
+  import saleReportService from 'service/saleRepotService'
+  import Loading from 'components/common/loading'
   import BScroll from 'better-scroll'
-  import dateMixin from './../mixins/date'
+  import dateMixin from 'mixins/date'
 
   const PROJ_LIST = 'ROSE_PROJ_LIST';
   const DATE_SELECTED = 'ROSE_DATE_SELECTED';

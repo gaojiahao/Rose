@@ -61,13 +61,13 @@
 </template>
 
 <script>
-  import BasicInfo from './common/BasicInfo'
-  import ContactPart from './common/ContactPart'
-  import WarehouseContent from './common/WarehouseContent'
-  import MatterItem from './common/MatterItem'
-  import FormCell from './common/FormCell'
+  import BasicInfo from 'components/common/BasicInfo'
+  import ContactPart from 'components/common/ContactPart'
+  import WarehouseContent from 'components/common/WarehouseContent'
+  import MatterItem from 'components/common/MatterItem'
+  import FormCell from 'components/common/FormCell'
   import {numberComma} from 'vux'
-  import {toFixed} from '@/plugins/calc'
+  import {toFixed} from 'plugins/calc'
   export default {
     name: "achievementDetail",
     components: {

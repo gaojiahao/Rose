@@ -1,6 +1,6 @@
 import axios from 'axios';
-import $axios from '../plugins/ajax'
-import conf from "../plugins/ajax/conf";
+import $axios from 'plugins/ajax'
+import conf from "plugins/ajax/conf";
 import {querystring} from 'vux'
 import {corpid, corpsecret, agentid, redirect_uri} from '@/plugins/ajax/conf'
 
@@ -135,8 +135,11 @@ let tokenService = {
       let currentUser = sessionStorage.getItem(USER_INFO);
       // 处理当前用户数据，默认取第一个
       let handleCurrentUser = (data = {}) => {
+        data.completeData = {...data};
         for (let [key, value] of Object.entries(data)) {
-          data[key] = value && value.split(',')[0];
+          if (key !== 'completeData') {
+            data[key] = value && value.split(',')[0];
+          }
         }
         return data
       };

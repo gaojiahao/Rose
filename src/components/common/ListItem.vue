@@ -79,7 +79,7 @@
 
 <script>
   import {numberComma, dateFormat} from 'vux'
-  import {toFixed} from '@/plugins/calc'
+  import {toFixed} from 'plugins/calc'
 
   export default {
     name: "ListItem",

@@ -17,7 +17,7 @@
 
 <script>
   import {Icon} from "vux";
-  import RDropdown from './RDropdown'
+  import RDropdown from 'components/common/RDropdown'
 
   export default {
     name: 'RSearch',
