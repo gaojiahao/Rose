@@ -73,7 +73,8 @@
           <bom-list :boms="UniqueBom">
             <template slot-scope="{bom}" slot="number">
               <div class="number-part">
-                <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                <span class="number-unit">可用余额: {{bom.qtyStock || bom.thenQtyStock}}</span>
               </div>
             </template>
           </bom-list>
