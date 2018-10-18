@@ -1,7 +1,7 @@
 <template>
   <div class="pages sale-record-container">
     <r-search :filterList="filterList" @search='searchList'></r-search>
-    <tab :line-width=2 active-color='#B99763'>
+    <tab :line-width=2 active-color='#111'>
       <tab-item class="vux-center"
                 :selected="activeIndex === index"
                 v-for="(item, index) in rankList"
@@ -22,7 +22,7 @@
       <p>销售额</p>
       <p class='amount'>
         ￥
-        <countup :end-val=businessAmount :duration="1" :decimals="2"></countup>
+        <countup :end-val=businessAmount :duration="1" :decimals="decimals"></countup>
       </p>
     </div>
 
@@ -35,7 +35,7 @@
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.saleOwnerN || item.saleOwner}} {{item.HANDLER_UNIT_NAME}}</span>
           <span class='saleman_amount'>￥{{item.totalAmount}}</span>
-          <x-icon type="ios-arrow-right" size="20" class='arrow_right'></x-icon>
+          <x-icon type="ios-arrow-right" size="18" ></x-icon>
         </div>
       </div>
       <div class='sale_rank' v-show="activeIndex === 1">
@@ -117,6 +117,7 @@
         limit: 20,
         listData: [],
         sort: 'desc',
+        decimals: 1,
       };
     },
     filters: {
@@ -178,6 +179,10 @@
       getReport() {
         return myReportService.allSaleReport(this.getParams()).then(({total = 0, salesman = [], allTotalAmount = 0}) => {
           this.hasNext = total > (this.page - 1) * this.limit + salesman.length;
+          let dec = `${allTotalAmount}`.split('.');
+          if(dec.length > 1) {
+            this.decimals = dec[1].length;
+          }
           this.businessAmount = allTotalAmount;
           // this.allSaleReport = salesman;
           this.listData = [...this.listData, ...salesman];
@@ -356,6 +361,7 @@
         .saleman_amount {
           flex: 1.5;
           text-align: right;
+          margin-right: 0.05rem;
 
         }
       }

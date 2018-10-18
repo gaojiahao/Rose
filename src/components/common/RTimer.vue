@@ -130,11 +130,12 @@
     }
     .time_pop {
       display: flex;
-      padding: 0 10px;
+      padding: 0 0.08rem;
       align-items: center;
       justify-content: center;
       .tips {
-        margin-right: 4px;
+        margin-right: .04rem;
+        font-size: 0.12rem;
       }
       /* 倒三角 */
       .vux-x-icon-ios-arrow-down {

@@ -3,7 +3,7 @@
     <r-search :filterList="filterList" @search='searchList'></r-search>
     <!-- <person-info></person-info> -->
     <div class="filters vux-1px-b">
-      <div class="sort-amt" :class="{asc: sort === 'asc'}" @click="sortByAmt">
+      <div class="sort-amt vux-1px-r" :class="{asc: sort === 'asc'}" @click="sortByAmt">
         <span>金额</span>
         <x-icon type="ios-arrow-thin-down" size="20"></x-icon>
       </div>
@@ -21,6 +21,7 @@
     <r-scroll :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !listData.length"
               @on-pulling-up="onPullingUp" ref="bScroll">
       <div class='sale_rank'>
+        <div class='title'>产品销售排行榜</div>
         <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.INVENTORY_NAME}}</span>
@@ -28,7 +29,7 @@
         </div>
       </div>
     </r-scroll>
-    <div class='btn'  @click="goList">
+    <div class='btn vux-1px-t'  @click="goList">
       <div class='cfn_btn'>查看订单</div>
     </div>
     <!-- <loading :show='spinner'></loading> -->
@@ -87,7 +88,9 @@
         limit: 20,
         listData: [],
         sort: 'desc',
-        userInfo: {},
+        userInfo: {
+          userCode : 'admin'
+        },
       };
     },
     filters: {
@@ -95,11 +98,11 @@
     },
     methods: {
       // TODO 获取当前用户信息
-      getUser() {
-        return tokenService.getUser().then(data => {
-          this.userInfo = data;
-        })
-      },
+      // getUser() {
+      //   return tokenService.getUser().then(data => {
+      //     this.userInfo = data;
+      //   })
+      // },
       //查看订单
       goList(){
         this.$router.push({
@@ -198,16 +201,23 @@
     },
     created() {
       this.spinner = true;
-      this.getUser().then(() => {
-        this.getList();
-      });
+      this.getList();
+      // this.getUser().then(() => {
+      //   this.getList();
+      // });
     }
   };
 </script>
 
 <style lang="less" scoped>
   @import "~vux/src/styles/1px.less";
-
+  .vux-1px-t:before,
+  .vux-1px-b:after,
+  .vux-1px-t:before,
+  .vux-1px-tb:before,
+  .vux-1px-tb:after {
+    border-color: #e8e8e8;
+  }
   .sale-record-container {
     background-color: #fff;
     overflow: hidden;
@@ -252,7 +262,7 @@
         text-align: center;
         font-size: 0.18rem;
         font-weight: bold;
-        padding: 0.03rem 0;
+        padding: 0.05rem 0;
       }
       span {
         font-size: 0.16rem;
@@ -298,7 +308,7 @@
       // border-color:  #5077aa;
       transform: translate(-50%, -50%);
       font-size: 0.16rem;
-      // box-shadow: 0 2px 5px #5077aa;
+      box-shadow: 0 2px 5px #5077aa;
     }
       
     }

@@ -3,3 +3,10 @@ $required: #5077aa;
 
 /* 列表项点击后表示选中的颜色 */
 $list_visited: #e8e8e8;
+.vux-1px-t:before,
+.vux-1px-b:after,
+.vux-1px-t:before,
+.vux-1px-tb:before,
+.vux-1px-tb:after {
+  border-color: #e8e8e8;
+}
