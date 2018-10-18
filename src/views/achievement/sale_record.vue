@@ -281,7 +281,6 @@
 </script>
 
 <style lang="less" scoped>
-<<<<<<< HEAD:src/components/sale_record.vue
   @import "~vux/src/styles/1px.less";
   @import "~vux/src/styles/center.less";
   .vux-1px-t:before,
@@ -291,10 +290,6 @@
   .vux-1px-tb:after {
     border-color: #e8e8e8;
   }
-=======
-  @import "../../../node_modules/vux/src/styles/1px.less";
-  @import "../../../node_modules/vux/src/styles/center.less";
->>>>>>> 0335ca9dbf76e2c3a3af0f9eee4f3a5424ade904:src/views/achievement/sale_record.vue
 
   .sale-record-container {
     background-color: #fff;
