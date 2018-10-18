@@ -2,7 +2,7 @@
   <div class="achievement-container">
     <r-search :filterList="filterList" @search='searchList'></r-search>
     <r-scroll :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !listData.length"
-              @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown" ref="bScroll">
+              @on-pulling-up="onPullingUp" ref="bScroll">
       <list-item :item="item" v-for="(item, index) in listData" :key="index"
                  @click.native="goDetail(item, index)"></list-item>
     </r-scroll>
@@ -87,6 +87,11 @@
       // TODO 查询列表
       getList() {
         let filter = [];
+        let params = {
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          limit: this.limit,
+        };
         if (this.serachVal) {
           filter = [
             ...filter,
@@ -96,13 +101,9 @@
               value: this.serachVal
             }
           ];
+          params.filter = JSON.stringify(filter);
         }
-        return getSalesList({
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          limit: this.limit,
-          filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
+        return getSalesList(params).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           this.$nextTick(() => {
@@ -138,7 +139,9 @@
     },
     activated() {
       if (this.$route.meta.reload) {
+        this.resetCondition();
         this.getList();
+        this.$route.meta.reload = false;
       }
     }
   }
@@ -150,8 +153,12 @@
     width: 100%;
     height: 100%;
     background-color: #fff;
+    overflow: hidden;
+    .search {
+      margin-top: .1rem;
+    }
     .scroll-container {
-      height: calc(100% - .3rem);
+      height: calc(100% - .4rem);
     }
   }
 </style>

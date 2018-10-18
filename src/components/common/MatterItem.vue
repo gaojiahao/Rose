@@ -36,49 +36,9 @@
             <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span>
           </div>
           <div class='mater_other'>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['标准供货单价'] | toFixed |numberComma(3)}}
-              <span class="num">[标准供货单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['供货单价'] || item['供货单价'] === 0">
-              <span class="symbol">￥</span>{{item['供货单价'] | toFixed |numberComma(3)}}
-              <span class="num">[供货单价]</span>
-            </div>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['供货金额'] | toFixed |numberComma(3)}}
-              <span class="num">[供货金额]</span>
-            </div>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['标准零售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[标准零售单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['零售单价'] || item['零售单价'] === 0">
-              <span class="symbol">￥</span>{{item['零售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[零售单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['零售金额'] || item['零售金额'] === 0">
-              <span class="symbol">￥</span>{{item['零售金额'] | toFixed |numberComma(3)}}
-              <span class="num">[零售金额]</span>
-            </div>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['销售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[销售单价]</span>
-            </div>
-            <div class='mater_price' v-if="item['销售金额'] || item['销售金额'] === 0">
-              <span class="symbol">￥</span>{{item['销售金额'] | toFixed |numberComma(3)}}
-              <span class="num">[销售金额]</span>
-            </div>
-            <div class='mater_price' v-if="item['销项税额'] || item['销项税额'] === 0">
-              <span class="symbol">￥</span>{{item['销项税额'] | toFixed |numberComma(3)}}
-              <span class="num">[销项税额]</span>
-            </div>
-            <div class='mater_price' v-if="item['税价合计'] || item['税价合计'] === 0">
-              <span class="symbol">￥</span>{{item['税价合计'] | toFixed |numberComma(3)}}
-              <span class="num">[税价合计]</span>
-            </div>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['每克销售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[每克销售单价]</span>
+            <div class='mater_price' v-for="amt in amtList" v-if="item[amt] || item[amt] === 0">
+              <span class="symbol">￥</span>{{item[amt] | toFixed |numberComma(3)}}
+              <span class="num">[{{amt}}]</span>
             </div>
           </div>
         </div>
@@ -107,7 +67,9 @@
       }
     },
     data() {
-      return {}
+      return {
+        amtList: ['标准供货单价', '供货单价', '供货金额', '标准零售单价', '零售单价', '零售金额', '销售单价', '销售金额', '销项税额', '税价合计', '每克销售单价'],
+      }
     },
     filters: {
       numberComma,
