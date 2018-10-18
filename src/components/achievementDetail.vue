@@ -1,6 +1,8 @@
 <template>
   <div class="achievement-detail-container">
     <basic-info :basicInfo="dataInfo"></basic-info>
+    <contact-part :contactInfo="dataInfo"></contact-part>
+    <warehouse-content :warehouse="dataInfo"></warehouse-content>
     <div class="info-container">
       <div class="title">核算单元</div>
       <div class="info-item"></div>
@@ -8,9 +10,6 @@
       <form-cell title="核算归属单元" :content="dataInfo.BUSINESS_UNIT"></form-cell>
       <form-cell title="核算归属省份" :content="dataInfo.BUSINESS_PROVINCE"></form-cell>
     </div>
-    <contact-part :contactInfo="dataInfo"></contact-part>
-    <warehouse-content :warehouse="dataInfo"></warehouse-content>
-
     <!-- 物料列表 -->
     <div class="info-container">
       <div class="title">
@@ -18,7 +17,6 @@
       </div>
       <matter-item class="vux-1px-b" :item="dataInfo"></matter-item>
     </div>
-
     <div class="info-container">
       <div class="title">其它</div>
       <form-cell title="故事题材" :content="dataInfo['故事题材']"></form-cell>
@@ -26,7 +24,7 @@
       <form-cell title="是否开票" :content="dataInfo['是否开票']"></form-cell>
       <form-cell title="开票号" :content="dataInfo['开票号']"></form-cell>
       <form-cell title="出库备注" :content="dataInfo.COMMENT"></form-cell>
-      <form-cell title="类别" :content="dataInfo['类别']"></form-cell>
+      <!-- <form-cell title="类别" :content="dataInfo['类别']"></form-cell> -->
     </div>
   </div>
 </template>

@@ -3,7 +3,7 @@
     <!-- 订单 时期 -->
     <div class="duty_top">
       <p class="duty_code">
-        {{item.TRANS_CODE}}
+        {{item.TRANS_CODE}}<span style="font-size:0.1rem;">[{{item.TRANS_NAME}}]</span>
         <!--<span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>-->
       </p>
       <p class="duty_time">{{item.EFFECTIVE_TIME | dateFormat('YYYY-MM-DD')}}</p>
@@ -56,10 +56,10 @@
     <!-- 金额合计 -->
     <div class="order_count">
       <div class="handle_man">
-        {{item.saleOwnerN}}<span style="fontSize:.1rem;">[经办人]</span>
+        {{item.saleOwnerN || item.saleOwner}}<span style="fontSize:.1rem;">[经办人]</span>
       </div>
       <div class="money_part" v-if="!noCount">
-        <span class="num">销项税额:</span>
+        <span class="num">合计:</span>
         <span class="money">
           <!--<span class="symbol" v-if="item.itmes[0].taxAmount">[含税]</span>-->
           <span class="symbol">￥</span>{{item['销项税额'] | toFixed | numberComma(3)}}
