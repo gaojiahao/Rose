@@ -11,7 +11,7 @@
       <form-cell title="核算归属省份" :content="dataInfo.BUSINESS_PROVINCE"></form-cell>
     </div>
     <!-- 物料列表 -->
-    <div class="info-container">
+    <div class="info-container matter-container">
       <div class="title">
         <span class="iconfont icon-Shape"></span>存货
       </div>
@@ -48,6 +48,13 @@
         </div>       
       </div>
     </div> -->
+    <div class="amt-container">
+      <div class="amt-item vux-1px-b" v-for="(item, index) in amtList" :key="index"
+           v-if="dataInfo[item.value] || dataInfo[item.value] === 0">
+        <div class="title">{{item.name}}</div>
+        <div class="content">{{item.unit}}{{dataInfo[item.value]}}</div>
+      </div>
+    </div>
     <div class="info-container">
       <!-- <div class="title">其它</div> -->
       <!-- <form-cell title="故事题材" :content="dataInfo['故事题材']"></form-cell>
@@ -68,6 +75,7 @@
   import FormCell from 'components/common/FormCell'
   import {numberComma} from 'vux'
   import {toFixed} from 'plugins/calc'
+
   export default {
     name: "achievementDetail",
     components: {
@@ -80,6 +88,44 @@
     data() {
       return {
         item: {},
+        amtList: [
+          {
+            name: '材质',
+            value: 'MATERIAL',
+          }, {
+            name: '标准供货单价',
+            value: '标准供货单价',
+            unit: '￥',
+          }, {
+            name: '供货单价',
+            value: '供货单价',
+            unit: '￥',
+          }, {
+            name: '供货金额',
+            value: '供货金额',
+            unit: '￥',
+          }, {
+            name: '标准零售单价',
+            value: '标准零售单价',
+            unit: '￥',
+          }, {
+            name: '零售单价',
+            value: '零售单价',
+            unit: '￥',
+          }, {
+            name: '零售金额',
+            value: '零售金额',
+            unit: '￥',
+          }, {
+            name: '税价合计',
+            value: '税价合计',
+            unit: '￥',
+          }, {
+            name: '每克销售单价',
+            value: '每克销售单价',
+            unit: '￥',
+          },
+        ],
       }
     },
     filters: {
@@ -99,74 +145,91 @@
     width: 100%;
     height: 100%;
     .info-container {
-      margin-top: .1rem;
-      padding: .06rem .08rem;
+      padding: .06rem .2rem;
       background-color: #fff;
+      &.matter-container {
+        padding: .06rem .08rem;
+      }
       .title {
         color: #111;
         font-weight: bold;
         font-size: .16rem;
       }
-      .info_name{
+      .info_name {
         font-size: .12rem;
         font-weight: bold;
         word-break: break-all;
         // display: flex;
         // justify-content: space-between;
-        .each_info{
+        .each_info {
           display: flex;
           padding: .06rem 0;
           align-items: center;
           .main-content {
-          .content-unit {
-            flex: 2;
-            color: #757575;
-            font-size: .1rem;
-            word-break: break-all;
-            .icon-bianma {
+            .content-unit {
+              flex: 2;
+              color: #757575;
               font-size: .1rem;
+              word-break: break-all;
+              .icon-bianma {
+                font-size: .1rem;
+              }
+            }
+            .content-name {
+              font-size: .12rem;
+              font-weight: bold;
+              word-break: break-all;
             }
           }
-          .content-name {
-            font-size: .12rem;
-            font-weight: bold;
-            word-break: break-all;
+          .number-part {
+            flex: 1;
+            display: flex;
+            font-size: .1rem;
+            text-align: right;
+            flex-direction: column;
+            .main-number {
+              font-size: .12rem;
+              font-weight: bold;
+            }
+            .number-unit {
+              color: #757575;
+            }
           }
-        }
-        .number-part {
-          flex: 1;
-          display: flex;
-          font-size: .1rem;
-          text-align: right;
-          flex-direction: column;
-          .main-number {
-            font-size: .12rem;
-            font-weight: bold;
-          }
-          .number-unit {
-            color: #757575;
-          }
-        }
 
         }
-       
-        span{
+
+        span {
           display: block;
         }
-        .standard_info{
+        .standard_info {
           color: #757575;
           font-size: .1rem;
           word-break: break-all;
         }
-        
+
       }
-      .each_property{
+      .each_property {
         color: #757575;
         font-size: .1rem;
         word-break: break-all;
         display: flex;
         justify-content: space-between;
 
+      }
+    }
+    .amt-container {
+      background-color: #fff;
+      .amt-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: .08rem .1rem;
+        font-size: .12rem;
+        font-weight: bold;
+        word-break: break-all;
+        &:last-child {
+          padding-bottom: .1rem;
+        }
       }
     }
   }

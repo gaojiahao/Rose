@@ -25,21 +25,20 @@
         <!-- 物料数量和价格 -->
         <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
           <div class='mater_num'>
-            <!-- <span class="num">类型: {{item.inventoryTypeName || '无'}}</span>
-            <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>   -->
-            <!-- <span class='num'>子类: {{item.inventorySubName || '无'}}</span> -->
+            <span class="num">类型: {{item.inventoryTypeName || '无'}}</span>
+            <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>
+            <span class='num'>子类: {{item.inventorySubName || '无'}}</span>
             <!-- <span class='num'>材质: {{item.MATERIAL || '无'}}</span> -->
           </div>
-          <!-- <div class='mater_num'>
-            <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>   
+          <div class='mater_num'>
             <span class='num'>金标重: {{item.AU_STANDARD_WEIGHT || '无'}}</span>
             <span class='num'>银标重: {{item.AG_STANDARD_WEIGHT || '无'}}</span>
             <span class='num'>件标重: {{item.PIECES_STANDARD_WEIGHT || '无'}}</span>
-          </div> -->
+          </div>
           <div class='mater_num'>
             <span class='num'>销售单价：{{item['销售单价'] | toFixed |numberComma(3)}}</span>
             <span class='num'>出库数量: {{item.QTY || '无'}}</span>
-            <!-- <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span> -->
+            <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span>
           </div>
           <div class='mater_price'>
 

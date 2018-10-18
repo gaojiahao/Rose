@@ -73,7 +73,6 @@
 <style scoped lang="scss">
   .contacts_part {
     margin-top: .1rem;
-    margin-bottom: .1rem;
     /*padding: .06rem .1rem 0;*/
     width: 100%;
     background: #fff;
