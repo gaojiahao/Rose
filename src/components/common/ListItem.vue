@@ -7,7 +7,7 @@
     </div> -->
     <div class="duty_top">
       <p class="duty_code">
-        {{item.TRANS_CODE}}<span style="font-size:0.12rem;">[{{item.TRANS_NAME}}]</span>
+        {{item.TRANS_CODE}}<span style="font-size:0.1rem;">[{{item.TRANS_NAME}}]</span>
       </p>
       <p class="duty_time">{{'2018-05-02' | dateFormat('YYYY-MM-DD')}}</p>
     </div>

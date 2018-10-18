@@ -3,7 +3,7 @@
     <basic-info :basicInfo="dataInfo"></basic-info>
     <contact-part :contactInfo="dataInfo"></contact-part>
     <warehouse-content :warehouse="dataInfo"></warehouse-content>
-    <div class="info-container">
+    <div class="info-container vux-1px-t">
       <div class="title">核算单元</div>
       <div class="info-item"></div>
       <form-cell title="归属银行" :content="dataInfo.HEADQUARTER"></form-cell>
@@ -144,6 +144,13 @@
   .achievement-detail-container {
     width: 100%;
     height: 100%;
+    .vux-1px-t:before,
+    .vux-1px-b:after,
+    .vux-1px-t:before,
+    .vux-1px-tb:before,
+    .vux-1px-tb:after {
+      border-color: #e8e8e8;
+    }
     .info-container {
       padding: .06rem .2rem;
       background-color: #fff;
