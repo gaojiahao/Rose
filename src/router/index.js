@@ -12,6 +12,7 @@ import reportsSummary from '@/components/reports_summary'
 import achievement from '@/components/achievement'
 import achievementDetail from '@/components/achievementDetail'
 import saleRecord from '@/components/sale_record'
+import saleRecordPerson from '@/components/sale_record_person'
 
 Vue.use(Router)
 
@@ -100,6 +101,15 @@ export default new Router({
       component: saleRecord,
       meta: {
         title: '销售业绩汇总',
+        keepAlive: true,
+      }
+    },
+    {
+      path: '/saleRecordPerson',
+      name: 'saleRecordPerson',
+      component: saleRecordPerson,
+      meta: {
+        title: '销售个人业绩汇总',
         keepAlive: true,
       }
     },
