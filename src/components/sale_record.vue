@@ -105,7 +105,7 @@
             value: 'HANDLER_UNIT_NAME'
           },
         ],
-        serachVal: '',
+        searchVal: '',
         filterProperty: '',
         hasNext: true,
         scrollOptions: {
@@ -138,7 +138,7 @@
         }
         let filterLists = [
           [{
-            name: '经办人',
+            name: '姓名',
             value: 'saleOwnerN',
           }, {
             name: '部门',
@@ -149,6 +149,7 @@
             value: 'INVENTORY_NAME',
           }]
         ];
+        this.searchVal = '';
         this.sort = 'desc';
         this.activeIndex = index;
         this.filterList = filterLists[this.activeIndex];
@@ -158,13 +159,13 @@
       // TODO 获取请求参数
       getParams() {
         let filter = [];
-        if (this.serachVal) {
+        if (this.searchVal) {
           filter = [
             {
               // attendedOperation: 'or',		//与and，or或
               property: this.filterProperty,
               operator: 'like',					//模糊查询like，精确查询eq
-              value: this.serachVal
+              value: this.searchVal
             }
           ]
         }
@@ -245,7 +246,7 @@
       },
       // TODO 搜索
       searchList({val = '', property = ''}) {
-        this.serachVal = val;
+        this.searchVal = val;
         this.filterProperty = property;
         this.resetCondition();
         this.getList();
