@@ -54,6 +54,7 @@
   // 方法引入
   import {toFixed} from '@/plugins/calc'
 
+  const DRAFT_KEY = 'XMRW_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -222,8 +223,27 @@
           this.projectTask.actualTime = Math.abs(toFixed(val, 1));
         }
       },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择项目
+        if (!this.projectTask.projectName) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            projectTask: this.projectTask
+          }
+        };
+      },
     },
     created() {
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if(data){
+        let draft = JSON.parse(data);
+        this.projectTask = draft.projectTask;
+        this.getTaskList();
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
       this.getProjectList();
     },
   }

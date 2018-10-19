@@ -114,7 +114,7 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 
-
+const DRAFT_KEY = 'BDKCDB_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -140,20 +140,6 @@ export default {
       showMatterPop :false,
       modifyIndex:null,
     }
-  },
-  watch: {
-    matterList(val) {
-      if (val.length) {
-        let data = {
-          KCDB_DATA: {
-            matter: this.matterList,
-            warehouseOut: this.warehouseOut,
-            warehouseIn: this.warehouseIn
-          }
-        };
-        this.$emit('sel-data', data)
-      }
-    },
   },
   methods: {
     // TODO 滑动删除
@@ -416,13 +402,33 @@ export default {
         this.$loading.hide();
       })
     },
+    // TODO 保存草稿数据
+    hasDraftData() {
+      if (!this.matterList.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          matter: this.matterList,
+          warehouseOut: this.warehouseOut,
+          warehouseIn: this.warehouseIn,
+          formData: this.formData,
+        }
+      };
+    },
   },
   created() {
-    let data = sessionStorage.getItem('KCDB_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
-      this.matterList = JSON.parse(data).matter;
-      this.warehouseOut = JSON.parse(data).warehouseOut;
-      this.warehouseIn = JSON.parse(data).warehouseIn;
+      let draft = JSON.parse(data);
+      this.matterList = draft.matter;
+      this.warehouseOut = draft.warehouseOut;
+      this.warehouseIn = draft.warehouseIn;
+      this.formData = draft.formData;
+      this.warehouseParams = {
+        whCode: this.warehouseOut.warehouseCode,
+      };
+      sessionStorage.removeItem(DRAFT_KEY);
     }
   },
 }

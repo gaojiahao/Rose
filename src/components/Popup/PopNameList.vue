@@ -77,7 +77,14 @@
 
   export default {
     name: "PopNameList",
-    props: {},
+    props: {
+      defaultValue: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
+    },
     directives: {TransferDom},
     components: {
       Icon, Popup, DSearch, LoadMore, RScroll,
@@ -103,6 +110,9 @@
         handler(val) {
           this.showPop = val;
         }
+      },
+      defaultValue(val) {
+        this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
       },
     },
     methods: {
@@ -191,6 +201,7 @@
       }
     },
     created() {
+      this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
       this.getDealer();
     },
   }

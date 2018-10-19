@@ -92,6 +92,8 @@
   // 方法引入
   import {toFixed} from '@/plugins/calc'
   import {accAdd} from '@/home/pages/maps/decimalsAdd'
+
+  const DRAFT_KEY = 'ZZSSP_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -120,7 +122,7 @@
             thenAmntBal: "",//代收票金额
             tdAmount : '' ,//本次收票金额
             transMatchedCode: "请选择",//实例编码
-            
+
           }
         ],
         showInvoicePop : false,
@@ -152,23 +154,6 @@
         return thenAmntBal
       }
     },
-    watch:{
-      invoiceList:{
-        handler(val){
-          let data = {
-            ZZSSP_DATA : {
-              invoice : {
-                dealer : this.dealerInfo,
-                invoiceInfo : this.invoiceInfo,
-                list : this.invoiceList
-              }
-            }
-          }
-          this.$emit('sel-data',data);
-        },
-        deep:true
-      }
-    },  
     methods: {
       //选中的客户
       selDealer(val) {
@@ -199,9 +184,9 @@
       },
       //删除明细
       deleteInvoice(val){
-       
+
           this.invoiceList.pop();
-        
+
       },
       // TODO 选中费用
       selInvoice(val) {
@@ -284,7 +269,7 @@
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
                 order: {
-                  crDealerLabel: '供应商',                               
+                  crDealerLabel: '供应商',
                   dealerCodeCredit : this.dealerInfo.dealerCode,
                   dataSet : this.invoiceList
                 },
@@ -353,7 +338,7 @@
               tdAmount : item.tdAmount ,//本次开票金额
               transMatchedCode: item.transMatchedCode,//实例编码
               tdId : item.tdId,
-              
+
             }
             this.invoiceList.push(obj);
           })
@@ -372,14 +357,34 @@
           this.$loading.hide();
           // this.$emit('input', false);
         })
-      }
+      },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择供应商
+        if (!Object.values(this.dealerInfo).length) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            invoice: {
+              dealer: this.dealerInfo,
+              invoiceInfo: this.invoiceInfo,
+              list: this.invoiceList
+            }
+          }
+        };
+      },
     },
     created() {
       let data = sessionStorage.getItem('ZZSSP_DATA');
       if(data){
-        this.invoiceList = JSON.parse(data).invoice.list;
-        this.dealerInfo = JSON.parse(data).invoice.dealer;
-        this.invoiceInfo = JSON.parse(data).invoice.invoiceInfo;
+        let draft = JSON.parse(data);
+        this.invoiceList = draft.invoice.list;
+        this.dealerInfo = draft.invoice.dealer;
+        this.invoiceInfo = draft.invoice.invoiceInfo;
+        this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
+        this.invoiceGetType.push(this.invoiceInfo.invoiceType);
+        sessionStorage.removeItem(DRAFT_KEY);
       }
     },
   }

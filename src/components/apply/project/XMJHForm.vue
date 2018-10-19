@@ -3,7 +3,7 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <!-- 项目计划基本信息-->
-        <pop-name-list @sel-item="selProject"></pop-name-list>
+        <pop-name-list @sel-item="selProject" :default-value="project"></pop-name-list>
 
         <!-- 任务计划列表 -->
         <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
@@ -58,6 +58,7 @@
   // 方法引入
   import {toFixed} from '@/plugins/calc'
 
+  const DRAFT_KEY = 'XMJH_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -80,6 +81,7 @@
         formData: {},
         formDataComment: '',//备注
         projectName: '', // 项目名称
+        project: {}, // 项目计划默认值
       }
     },
     methods: {
@@ -102,6 +104,7 @@
       selProject(val) {
         let sel = JSON.parse(val);
         this.projectName = sel.PROJECT_NAME;
+        this.project = sel;
       },
       // TODO 提交
       save() {
@@ -174,9 +177,35 @@
           item.planTime = Math.abs(toFixed(item.planTime, 1));
         }
       },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择项目
+        if (!this.projectName) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            project: this.project,
+            projectPlan: this.projectPlan
+          }
+        };
+      },
     },
     created() {
       let plan = JSON.stringify(this.planModel);
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if (data) {
+        let draft = JSON.parse(data);
+        this.project = draft.project;
+        this.projectName = this.project.PROJECT_NAME;
+        this.projectPlan = draft.projectPlan;
+        this.projectPlan.forEach((item, index) => {
+          this.projectType.push([]);
+          this.projectType[index].push(item.taskType);
+        });
+        sessionStorage.removeItem(DRAFT_KEY);
+        return
+      }
       this.projectPlan.push(JSON.parse(plan));
       this.projectType.push([]);
     },
