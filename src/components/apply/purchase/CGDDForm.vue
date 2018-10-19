@@ -119,6 +119,8 @@ import PopMatter from 'components/apply/commonPart/MatterPop'
 import RNumber from 'components/RNumber'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+const DRAFT_KEY = 'CGDD_DATA';
+
 export default {
   components:{
     PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea,RNumber
@@ -134,7 +136,9 @@ export default {
       showTransPop:false,                               // 是否显示结算方式的popup
       showMaterielPop:false,                            // 是否显示物料的popup
       dealerInfo : {},
-      formData : {},
+      formData : {
+        biComment : '',//备注
+      },
       dealer : {
         drDealerPaymentTerm : '现付',  //结算方式
         drDealerLogisticsTerms :'上门', //物流条件
@@ -144,32 +148,6 @@ export default {
     }
   },
   mixins: [common],
-  watch:{
-    matterList(val){
-      if(val.length){
-        let data = {
-          CGDD_DATA:{
-            matter : this.matterList,
-            dealer : this.dealerInfo
-          }
-
-        }
-        this.$emit('sel-data',data)
-      }
-    },
-    dealerInfo(val){
-      if(this.matterList.length){
-        let data = {
-          CGDD_DATA:{
-            matter : this.matterList,
-            dealer : this.dealerInfo
-          }
-
-        }
-        this.$emit('sel-data',data)
-      }
-    }
-  },
   methods:{
     // 获取 结算方式
     getPaymentTerm(){
@@ -411,13 +389,30 @@ export default {
           },
           this.$loading.hide();
       })
-    }
+    },
+    // TODO 是否保存草稿
+    hasDraftData() {
+      if (!this.matterList.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          matter : this.matterList,
+          dealerInfo : this.dealerInfo,
+          formData: this.formData,
+          dealer : this.dealer
+        }
+      };
+    },
   },
   created(){
-    let data = sessionStorage.getItem('CGDD_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if(data){
       this.matterList = JSON.parse(data).matter;
-      this.dealerInfo = JSON.parse(data).dealer
+      this.dealerInfo = JSON.parse(data).dealerInfo;
+      this.dealer = JSON.parse(data).dealer;
+      this.formData = JSON.parse(data).formData;
+      sessionStorage.removeItem(DRAFT_KEY);
     }
 
   },

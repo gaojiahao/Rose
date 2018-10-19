@@ -126,6 +126,8 @@ import RNumber from 'components/RNumber'
 // 方法引入
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
+const DRAFT_KEY = 'CGSQ_DATA';
+
 export default {
   components:{
    PopMatterList,XTextarea,Group,XInput,PopMatter,Datetime,Cell,RNumber
@@ -167,18 +169,6 @@ export default {
     }
   },
   mixins: [common],
-  watch:{
-    matterList(val){
-      let data = {
-        CGSQ_DATA:{
-          matter : this.matterList,
-        }
-      }
-      this.$emit('sel-data',data)
-
-    }
-
-  },
   methods:{
     // TODO 选中物料项
     selMatter(val) {
@@ -380,12 +370,26 @@ export default {
         }
         this.$loading.hide();
       })
-    }
+    },
+    // TODO 是否保存草稿
+    hasDraftData() {
+      if (!this.matterList.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          matter : this.matterList,
+          formData : this.formData
+        }
+      };
+    },
   },
   created(){
-    let data = sessionStorage.getItem('CGSQ_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if(data){
       this.matterList = JSON.parse(data).matter;
+      this.formData = JSON.parse(data).formData;
+      sessionStorage.removeItem(DRAFT_KEY);
     }
   },
 }

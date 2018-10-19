@@ -143,7 +143,7 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  
+  const DRAFT_KEY = 'XSBJ_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -170,40 +170,6 @@
         priceTypeList: ['渠道价', '零售价'],
         currentType : '渠道价',
         showPrice:false,
-      }
-    },
-    watch: {
-      matterList: {
-        handler(val) {
-          let data;
-          for (let i = 0; i < val.length; i++) {
-            if (val[i].price) {
-              data = {
-                XSBJ_DATA: {
-                  matter: this.matterList,
-                  dealer: this.dealerInfo,
-                }
-              };
-              break;
-            }
-          }
-          if (data) {
-            this.$emit('sel-data', data)
-          }
-        },
-        deep: true
-      },
-      dealerInfo(val) {
-        if (this.matterList.length) {
-          let data = {
-            XSBJ_DATA: {
-              matter: this.matterList,
-              dealer: this.dealerInfo,
-            }
-          };
-          this.$emit('sel-data', data)
-        }
-
       }
     },
     methods: {
@@ -470,12 +436,27 @@
           }
         })
       },
+      // TODO 是否保存草稿
+      hasDraftData() {
+        if (!this.matterList.length) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            matter: this.matterList,
+            dealer: this.dealerInfo,
+            formData :this.formData
+          }
+        };
+      },
     },
     created() {
-      let data = sessionStorage.getItem('XSBJ_DATA');
+      let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.matterList = JSON.parse(data).matter;
         this.dealerInfo = JSON.parse(data).dealer;
+        this.formData = JSON.parse(data).formData;
+        sessionStorage.removeItem(DRAFT_KEY)
       }
     }
   }

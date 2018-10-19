@@ -56,7 +56,7 @@
   import {getSOList} from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
-
+  const DRAFT_KEY = 'CPXQ_DATA';
   export default {
     name: 'ApplyCPXQForm',
     data() {
@@ -235,8 +235,25 @@
         promises.push(this.getAuthorizedList());
         return Promise.all(promises);
       },
+      // TODO 是否保存草稿
+      hasDraftData() {
+        let formData = this.formData;
+        if (formData.demandTitle || formData.demandDescribe || formData.demandType || formData.processStatus || formData.timeConfidenceIndex) {
+          return {
+            [DRAFT_KEY]: {
+              formData: this.formData,
+            }
+          };
+        }
+        
+      },
     },
     created() {
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if(data){
+        this.formData = JSON.parse(data).formData;
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     },
   }
 </script>

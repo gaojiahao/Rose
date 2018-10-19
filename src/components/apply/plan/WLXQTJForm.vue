@@ -114,7 +114,7 @@
   // 组件引入
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
-
+  const DRAFT_KEY = 'XQTJ_DATA';
 
   export default {
     name: 'ApplyWLXQTJForm',
@@ -153,13 +153,6 @@
         modifyIndex: null,
         modifyKey: null,
       }
-    },
-    watch: {
-      matter: {
-        handler(val) {
-        },
-        deep: true
-      },
     },
     methods: {
       // TODO 显示物料修改的pop
@@ -420,8 +413,26 @@
           this.$loading.hide();
         })
       },
+      // TODO 是否保存草稿
+      hasDraftData() {
+        if (!Object.values(this.orderList).length) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            orderList : this.orderList,
+            formData : this.formData
+          }
+        };
+      },
     },
     created() {
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if(data){
+        this.orderList = JSON.parse(data).orderList;
+        this.formData = JSON.parse(data).formData;
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     }
   }
 </script>

@@ -73,7 +73,7 @@
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
-
+  const DRAFT_KEY = 'SJ_DATA';
   export default {
     directives: {TransferDom},
     filters: {numberComma},
@@ -108,18 +108,6 @@
       }
     },
     mixins: [common],
-    watch: {
-      formData(val) {
-        if (val.opportunityTitle) {
-          let data = {
-            SJ_DATA: {
-              formData: this.formData
-            }
-          };
-          this.$emit('sel-data', data)
-        }
-      }
-    },
     methods: {
       //选中的客户
       selDealer(val) {
@@ -250,11 +238,27 @@
           this.formData.tdAmount = Math.abs(toFixed(val));
         }
       },
+      // TODO 是否保存草稿
+    hasDraftData() {
+      let formData = this.formData;
+      if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.currentStage) {
+        return {
+          [DRAFT_KEY]: {
+            formData,
+            dealerInfo : this.dealerInfo
+          }
+        };
+        
+      }
+      
+    },
     },
     created() {
-      let data = sessionStorage.getItem('SJ_DATA');
+      let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.formData = JSON.parse(data).formData;
+        this.dealerInfo = JSON.parse(data).dealerInfo;
+        sessionStorage.removeItem(DRAFT_KEY)
       }
     }
   }

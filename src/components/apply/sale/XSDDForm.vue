@@ -113,22 +113,23 @@
 </template>
 
 <script>
-// vux组件引入
-import {Popup,TransferDom,Group,Cell,numberComma,Datetime,XInput,XTextarea  } from 'vux'
-// 请求 引入
-import {getSOList} from 'service/detailService'
-import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
-// mixins 引入
-import common from 'components/mixins/applyCommon'
-// 组件引入
-import RNumber from 'components/RNumber'
-import PopMatterList from 'components/Popup/PopMatterList'
-import PopDealerList from 'components/Popup/PopDealerList'
-import PopSingleSelect from 'components/Popup/PopSingleSelect'
-import PopMatter from 'components/apply/commonPart/MatterPop'
+  // vux组件引入
+  import {Popup,TransferDom,Group,Cell,numberComma,Datetime,XInput,XTextarea  } from 'vux'
+  // 请求 引入
+  import {getSOList} from 'service/detailService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
+  // mixins 引入
+  import common from 'components/mixins/applyCommon'
+  // 组件引入
+  import RNumber from 'components/RNumber'
+  import PopMatterList from 'components/Popup/PopMatterList'
+  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopSingleSelect from 'components/Popup/PopSingleSelect'
+  import PopMatter from 'components/apply/commonPart/MatterPop'
+  // 方法引入
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  const DRAFT_KEY = 'XSDD_DATA';
 
-// 方法引入
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   export default {
     directives: {
       TransferDom
@@ -146,7 +147,9 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
         logisticsTerm: [],                              // 物流条款 数组
         showMaterielPop: false,                         // 是否显示物料的popup
         dealerInfo: {},
-        formData: {},
+        formData: {
+          biComment :''
+        },
         dealer: {
           drDealerPaymentTerm: '',  //结算方式
           drDealerLogisticsTerms: '', //物流条件
@@ -158,32 +161,6 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
     mixins: [common],
     filters: {
       numberComma,
-    },
-    watch:{
-      matterList:{
-        handler(val){
-          let data = {
-            XSDD_DATA:{
-              matter : this.matterList,
-              dealer : this.dealerInfo
-            }
-          }
-          this.$emit('sel-data',data)
-        },
-        deep:true
-        
-      },
-      dealerInfo(val){
-        if(this.matterList.length){
-          let data = {
-            XSDD_DATA:{
-              matter : this.matterList,
-              dealer : this.dealerInfo
-            }
-          }
-          this.$emit('sel-data',data)
-        }
-      }
     },
     methods: {
       //选中的客户
@@ -398,8 +375,8 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
         }
       },
       //获取订单信息用于重新提交
-     getFormData() {
-       return getSOList({
+      getFormData() {
+        return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
         }).then((data) => {
@@ -453,13 +430,30 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
           },
           this.$loading.hide();
         })
-      }
+      },
+      // TODO 是否保存草稿
+      hasDraftData() {
+        if (!this.matterList.length) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            matter : this.matterList,
+            dealerInfo : this.dealerInfo,
+            dealer : this.dealer,
+            formData : this.formData
+          }
+        };
+      },
     },
     created(){
-      let data = sessionStorage.getItem('XSDD_DATA');
+      let data = sessionStorage.getItem(DRAFT_KEY);
       if(data){
         this.matterList = JSON.parse(data).matter;
-        this.dealerInfo = JSON.parse(data).dealer;
+        this.dealerInfo = JSON.parse(data).dealerInfo;
+        this.dealer = JSON.parse(data).dealer;
+        this.formData = JSON.parse(data).formData;
+        sessionStorage.removeItem(DRAFT_KEY);
       }
     }
   }
