@@ -141,7 +141,7 @@
 
         await tokenService.getUser().then(userInfo => {
           let {completeData = {}, userCode = ''} = userInfo;
-          let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125'];
+          let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125', '2025'];
           this.showLookSales = allowList.includes(userCode);
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
             bank: completeData.homeBank || '',         //银行
