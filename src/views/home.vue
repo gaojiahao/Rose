@@ -1,12 +1,12 @@
 <template>
   <div>
     <div id="app">
-         
+
       <div class="cp_title">
         销售预报
-        <span class="username" v-if="username">欢迎,{{username}}</span>   
+        <span class="username" v-if="username">欢迎,{{username}}</span>
       </div>
-      
+
 
       <div class="select_part" v-if="username">
 
@@ -43,6 +43,7 @@
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="goAchievement"
+          v-if="showLookSales"
         >销售业绩查看
         </x-button>
 
@@ -76,7 +77,7 @@
       return {
         showLookReport: false, // 是否展示查看报表按钮
         showLoading: false,
-        username:'', //用户名称
+        username: '', //用户名称
         showLookSales: false, // 是否展示销售业绩查看
       }
     },
@@ -122,7 +123,7 @@
       (async () => {
         this.showLoading = true;
         await tokenService.getToken().catch(err => {
-          
+
           this.$vux.alert.show({
             content: err.message
           })
@@ -132,7 +133,7 @@
           if (`${data.statu}` === '1') { // statu为1则为总裁
             this.showLookReport = true
           }
-        }).catch(err=>{
+        }).catch(err => {
           this.$vux.alert.show({
             content: err.message
           })
@@ -140,8 +141,8 @@
 
         await tokenService.getUser().then(userInfo => {
           let {completeData = {}, userCode = ''} = userInfo;
-          console.log(completeData)
-          this.showLookSales = userCode === '0414' || userCode === '1204' || userCode === '1207' || userCode === '1129';
+          let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125'];
+          this.showLookSales = allowList.includes(userCode);
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
             bank: completeData.homeBank || '',         //银行
             region: completeData.homeProvince || '',   //省份地区

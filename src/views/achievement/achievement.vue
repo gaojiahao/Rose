@@ -88,18 +88,18 @@
       // TODO 查询列表
       getList() {
         let filter = [
-          // {
-          //   operator: "eq",     //模糊查询like，精确查询eq
-          //   property: 'saleOwner',
-          //   value: this.userCode
-          // }
+          {
+            operator: "eq",     //模糊查询like，精确查询eq
+            property: 'saleOwner',
+            value: this.userCode
+          }
         ];
         let params = {
           page: this.page,
           start: (this.page - 1) * this.limit,
           limit: this.limit,
-          noCount :1,
-          refresh : true
+          // noCount :1,
+          // refresh : true
         };
         if (this.serachVal) {
           filter = [
@@ -119,6 +119,10 @@
           this.$nextTick(() => {
             this.resetScroll();
           })
+        }).catch(e => {
+          this.$vux.alert.show({
+            content: e.message
+          });
         })
       },
       // TODO 重置下拉刷新、上拉加载的状态

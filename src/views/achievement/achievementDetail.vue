@@ -3,7 +3,7 @@
     <basic-info :basicInfo="dataInfo"></basic-info>
     <contact-part :contactInfo="dataInfo"></contact-part>
     <warehouse-content :warehouse="dataInfo"></warehouse-content>
-    <div class="info-container vux-1px-t">
+    <div class="info-container accounting-container vux-1px-t">
       <div class="title">核算单元</div>
       <div class="info-item"></div>
       <form-cell title="归属银行" :content="dataInfo.HEADQUARTER"></form-cell>
@@ -55,7 +55,7 @@
         <div class="content">{{item.unit}}{{dataInfo[item.value]}}</div>
       </div>
     </div>
-    <div class="info-container">
+    <div class="info-container other-container">
       <!-- <div class="title">其它</div> -->
       <!-- <form-cell title="故事题材" :content="dataInfo['故事题材']"></form-cell>
       <form-cell title="总行名称" :content="dataInfo['总行名称']"></form-cell>
@@ -152,10 +152,16 @@
       border-color: #e8e8e8;
     }
     .info-container {
-      padding: .06rem .2rem;
+      padding: .06rem .08rem;
       background-color: #fff;
+      &.accounting-container {
+        padding: .06rem .2rem;
+      }
       &.matter-container {
-        padding: .06rem .08rem;
+        margin-top: .1rem;
+      }
+      &.other-container {
+        margin-top: .1rem;
       }
       .title {
         color: #111;
@@ -234,9 +240,6 @@
         font-size: .12rem;
         font-weight: bold;
         word-break: break-all;
-        &:last-child {
-          padding-bottom: .1rem;
-        }
       }
     }
   }

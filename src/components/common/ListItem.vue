@@ -205,7 +205,7 @@
       //任务创建时间
       .duty_time {
         float: right;
-        font-size: .15rem;
+        font-size: .12rem;
         color: #7D7D7D;
 
       }
