@@ -75,7 +75,7 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="盘点数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
+            <x-input title="盘点数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
             <cell title="差异数量" text-align='right' placeholder='请填写'
                   :value="modifyMatter.differenceNum"
@@ -113,9 +113,9 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 
-
 // 方法引入
 import {accSub} from '@/home/pages/maps/decimalsAdd'
+import {toFixed} from '@/plugins/calc'
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -401,6 +401,14 @@ export default {
         this.matterList = matterList;
         this.$loading.hide();
       })
+    },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let {tdQty = 0} = item;
+      if(typeof tdQty !== 'number') {
+        tdQty = 0;
+      }
+      item.tdQty = Math.abs(toFixed(tdQty));
     },
   },
   created() {

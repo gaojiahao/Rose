@@ -245,16 +245,18 @@
         this.DuplicateBoms = []
         sels.forEach(item => {
           let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
-          let {tdQty = '', shippingTime = ''} = this.numMap[key] || {};
+          let {tdQty = '', shippingTime = '', boms = []} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.shippingTime = shippingTime;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
-          console.log(item.tdQty);
           promises.push(getJGDDBom({parentInvCode: item.inventoryCode}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
-              let tdQty = accMul(item.tdQty, bom.qty, (1 + bom.specificLoss));
+              let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
+              let {specificLoss = bom.specificLoss} = matchedBom;
+              let tdQty = accMul(item.tdQty, bom.qty, (1 + specificLoss));
+              bom.specificLoss = specificLoss;
               bom.tdQty = Math.abs(toFixed(tdQty))
 
             });
@@ -266,20 +268,7 @@
         });
         Promise.all(promises).then(data => {
           //对合计的bom进行去重合并
-          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
-          var getNew = old => old.reduce((acc, cur) => {
-              let hasItem = acc.some(e => {
-                let temp = isEqual(e, cur);
-                if (temp){
-                  e.tdQty = accAdd(e.tdQty, cur.tdQty);
-                }
-                return temp;
-              });
-              if (!hasItem) acc.push(cur)
-              return acc;
-          }, []);
-          this.UniqueBom = getNew(this.DuplicateBoms);
-
+          this.mergeBomList();
         })
         this.numMap = {};
         this.matterList = sels;
@@ -542,10 +531,28 @@
           this.entity = {
             dealerName: formData.handlerEntity
           };
+          this.mergeBomList();
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
           this.$loading.hide();
         })
+      },
+      // TODO 合并bom列表
+      mergeBomList() {
+        //对合计的bom进行去重合并
+        let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
+        let getNew = old => old.reduce((acc, cur) => {
+          let hasItem = acc.some(e => {
+            let temp = isEqual(e, cur);
+            if (temp){
+              e.tdQty = accAdd(e.tdQty, cur.tdQty);
+            }
+            return temp;
+          });
+          if (!hasItem) acc.push(cur);
+          return acc;
+        }, []);
+        this.UniqueBom = getNew(this.DuplicateBoms);
       },
     },
     created() {
