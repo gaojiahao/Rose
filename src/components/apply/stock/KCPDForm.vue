@@ -116,6 +116,8 @@ import PopMatter from 'components/apply/commonPart/MatterPop'
 // 方法引入
 import {accSub} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
+
+const DRAFT_KEY = 'KCPD_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -142,17 +144,6 @@ export default {
     }
   },
   watch: {
-    matterList(val) {
-      if (val.length) {
-        let data = {
-          KCPD_DATA: {
-            matter: this.matterList,
-            warehouseIn: this.warehouseIn
-          }
-        };
-        this.$emit('sel-data', data)
-      }
-    },
     matter:{
       handler(val) {
         val.differenceNum = accSub(val.tdQty, val.qtyBal);
@@ -410,12 +401,31 @@ export default {
       }
       item.tdQty = Math.abs(toFixed(tdQty));
     },
+    // TODO 是否保存草稿
+    hasDraftData() {
+      if (!this.matterList.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          matter: this.matterList,
+          warehouseIn: this.warehouseIn,
+          formData: this.formData,
+        }
+      };
+    },
   },
   created() {
-    let data = sessionStorage.getItem('KCPD_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
-      this.matterList = JSON.parse(data).matter;
-      this.warehouseIn = JSON.parse(data).warehouseIn
+      let draft = JSON.parse(data);
+      this.matterList = draft.matter;
+      this.warehouseIn = draft.warehouseIn;
+      this.formData = draft.formData;
+      this.warehouseParams = {
+        whCode: this.warehouseIn.warehouseCode,
+      };
+      sessionStorage.removeItem(DRAFT_KEY);
     }
   },
 }

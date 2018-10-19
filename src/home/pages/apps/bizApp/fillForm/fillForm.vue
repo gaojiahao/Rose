@@ -3,7 +3,8 @@
     <component
       :is='currentComponent'
       @sel-data='selData'
-      @change='modifyRoute'>
+      @change='modifyRoute'
+      ref="fillPage">
     </component>
   </div>
 
@@ -54,6 +55,9 @@ export default {
     this.currentComponent = require(`components/apply/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
   },
   beforeRouteLeave(to, from, next) {
+    if (this.$refs.fillPage.hasDraftData) {
+      this.saveData = this.$refs.fillPage.hasDraftData() || {};
+    }
     let {path} = to;
     let keys = Object.keys(this.saveData)[0];
     // 新建物料，修改列表页的meta值
@@ -61,7 +65,7 @@ export default {
       to.meta.reload = true;
       if(keys){
         sessionStorage.removeItem(keys)
-      }     
+      }
     }
     //删除缓存的往来信息
     if(to.name === "LIST"){
