@@ -337,7 +337,7 @@ export default {
         }
       }
       this.$vux.confirm.show({
-        content: '确认保存?',
+        content: '确认提交?',
         // 确定回调
         onConfirm: () => {
           switch (this.dealerStatus) {
@@ -364,12 +364,12 @@ export default {
               dealer: this.dealer
             }
           };
-          if(this.transCode.length > 0){
+          if(this.transCode){
             dealerService.update(submitData).then( data => {
               if(data.success){
                 this.submitSuccess = true;
                 this.$vux.alert.show({
-                  content: data.message,
+                  content: '修改成功',
                   onHide: () => {
                     this.$router.go(-1);
                   }
@@ -381,10 +381,6 @@ export default {
                 })
               }
 
-            }).catch(e=>{
-              this.$vux.alert.show({
-                content: e.message,
-              })
             })
           }
           else{
@@ -392,7 +388,7 @@ export default {
               if(data.success){
                 this.submitSuccess  = true;
                 this.$vux.alert.show({
-                  content:data.message,
+                  content:'提交成功',
                   onHide:()=>{
                     if(this.$route.query.add === 1){
                       let dealer = [this.dealer];
@@ -407,10 +403,6 @@ export default {
                   content:data.message
                 })
               }
-            }).catch(e=>{
-              this.$vux.alert.show({
-                content: e.message,
-              })
             })
           }
 

@@ -202,7 +202,7 @@
               this.$HandleLoad.hide();
               let {success = true, message = '提交失败'} = data;
               if (success) {
-                message = '提交成功';
+                message = operation === addUser ? '提交成功' : '修改成功';
                 this.$emit('change', true);
               }
               this.$vux.alert.show({

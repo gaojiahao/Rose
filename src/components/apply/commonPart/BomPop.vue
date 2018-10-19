@@ -1,7 +1,7 @@
 <template>
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-      <div class="trade_pop" :class="{'no_btn': !isEdit}">
+      <div class="trade_pop">
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
           <div class="bom-container" v-if="bomInfo.boms && bomInfo.boms.length">
             <div class="title vux-1px-b">原料</div>
@@ -36,8 +36,11 @@
         </r-scroll>
       </div>
       <!-- 底部栏 -->
-      <div class='confirm_btn' :class="{'btn_hide' : btnIsHide}" @click="confirm" v-show="isEdit">
-        <div class='confirm'>确认</div>
+      <div class='confirm_btn' @click="confirm" v-if="isEdit">
+        <div class='confirm'>{{btnNext}}</div>
+      </div>
+      <div class='confirm_btn' @click="closePop" v-else>
+        <div class='confirm'>关闭</div>
       </div>
     </popup>
   </div>
@@ -85,6 +88,7 @@ export default {
         click: true,
       },
       showPop :false,
+      btnNext : '返回'
     }  
   },
   components:{Popup,Group,Cell,XInput,RScroll},
@@ -104,6 +108,7 @@ export default {
           this.$refs.bScroll.refresh();
         }
       })
+      this.btnNext = '返回'
     },
     // TODO 弹窗隐藏时调用
     onHide() {
@@ -111,7 +116,9 @@ export default {
     },
     //确认修改
     confirm(){   
-      this.$emit('bom-confirm',JSON.stringify(this.bomInfo))
+      if(this.btnNext === '确认'){
+        this.$emit('bom-confirm',JSON.stringify(this.bomInfo))
+      }
       this.showPop = false;
     },
     modifyBom(item){
@@ -121,7 +128,8 @@ export default {
           if(val){
             item.specificLoss = Math.abs(toFixed(val));
             let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
-            item.tdQty = Math.abs(toFixed(tdQty))
+            item.tdQty = Math.abs(toFixed(tdQty));
+            this.btnNext = '确认'
              
           }
            
@@ -131,6 +139,9 @@ export default {
     //输入框获取焦点，内容选中
     getFocus(e){
       event.currentTarget.select();
+    },
+    closePop(){
+      this.showPop = false;
     }
   }
 
@@ -141,7 +152,7 @@ export default {
 .trade_pop_part {
     background: #f8f8f8;
     .trade_pop {
-      height: calc(100% - .44rem);
+      height: calc(100% - .64rem);
       &.no_btn{
         height: calc(100% - 0.1rem);
       }
@@ -257,9 +268,6 @@ export default {
         margin:0 auto;
         box-shadow: 0 2px 5px #5077aa;
       }
-    }
-    .btn_hide{
-      display: none;
     }
 }
 

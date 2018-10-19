@@ -62,9 +62,15 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
-      <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
-      <div class="btn-item" @click="submitOrder">提交</div>
+    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}">
+      <span class="count_num">
+        <span class="total_price">
+          <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
+        </span>
+        <!-- <span class="total-num">[代开票金额: {{thenAmntBal}}]</span> -->
+      </span>
+      <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
+      <span class="count_btn" @click="submitOrder">提交</span>
     </div>
   </div>
 </template>
@@ -76,16 +82,16 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
- import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
- import {getSOList} from 'service/detailService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {getSOList} from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
- import PopDealerList from 'components/Popup/PopDealerList'
- import PopInvoiceList from 'components/Popup/PopInvoiceList'
+  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopInvoiceList from 'components/Popup/PopInvoiceList'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
-
+  import {accAdd} from '@/home/pages/maps/decimalsAdd'
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -121,9 +127,32 @@
         showInvoicePop : false,
         seletedIndex :0,
         seletedInvoice : [],
-        formData: {},
+        formData: {
+          biComment : ''
+        },
         formDataComment: '',//备注
         projectName: '', // 项目名称
+      }
+    },
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let Amount = 0;
+        this.invoiceList.forEach(item => {
+          if (item.tdAmount) {
+            Amount = accAdd(Amount, item.tdAmount);
+          }
+        });
+        return Amount;
+      },
+      thenAmntBal(){
+        let thenAmntBal = 0;
+        this.invoiceList.forEach(item => {
+          if (item.tdAmount) {
+            thenAmntBal = accAdd(thenAmntBal , item.thenAmntBal)
+          }
+        });
+        return thenAmntBal
       }
     },
     watch:{
@@ -148,6 +177,15 @@
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
+        this.invoiceList  = [
+          {
+            comment: "" ,//说明
+            thenAmntBal: "",//代开票金额
+            tdAmount : '' ,//本次开票金额
+            transMatchedCode: "请选择",//实例编码
+            
+          }
+        ];
       },
       //发票类型选择
       typeTask(e) {

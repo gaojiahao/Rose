@@ -125,7 +125,7 @@ export default {
         }]
       }
       this.$vux.confirm.show({
-        content: '确定提交吗？',
+        content: '确定提交？',
         onConfirm: ()=> {
           switch(newCompanyInfo[0].status){
             case '停用':
@@ -145,7 +145,7 @@ export default {
             if(data[0] && data[0].groupId || data.success){
               this.$emit('change', true);
               this.$vux.alert.show({
-                content: data.success ? '编辑成功': '提交成功',
+                content: data.success ? '修改成功': '提交成功',
                 onHide: ()=> {
                   this.$router.go(-1);
                 }

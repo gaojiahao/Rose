@@ -296,7 +296,7 @@ import warehouseDetailVue from './warehouseDetail.vue';
               let {success = false, message = '提交失败'} = data;
               if (success) {
                 message = operation === update
-                            ? '保存成功'
+                            ? '修改成功'
                             : '提交成功';
                 this.submitSuccess = true;
                 if (!this.transCode && `${this.$route.query.add}` === '1') {

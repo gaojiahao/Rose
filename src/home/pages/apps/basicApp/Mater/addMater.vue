@@ -225,7 +225,9 @@
               this.$loading.hide();
               let {success = false, message = '提交失败'} = data;
               if (success) {
-                message = '物料提交成功';
+                message = operation === update
+                            ? '修改成功'
+                            : '提交成功';
                 this.submitSuccess = true;
               }
               this.$vux.alert.show({

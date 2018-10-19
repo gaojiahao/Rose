@@ -57,7 +57,7 @@ export default {
         }
       }
       this.$vux.confirm.show({
-        content: '确认保存?',
+        content: '确认提交?',
         // 确定回调
         onConfirm: () => {
           //转化职位类型
@@ -106,7 +106,7 @@ export default {
               if(data.success){
                 this.$emit('change', true);
                 this.$vux.alert.show({
-                  content: data.message,
+                  content: '修改成功',
                   onHide: () => {
                     this.$router.go(-1);
                   }

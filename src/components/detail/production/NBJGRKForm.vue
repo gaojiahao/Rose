@@ -162,7 +162,7 @@
                 bom.warehouseCode = bom.containerCodeOut;
                 bom.qtyStock = bom.thenQtyStock;
                 // 接口返回的tdQty有误，自己手动计算
-                bom.tdQty = accMul(bom.bomQty, item.tdQty);
+                bom.tdQty = accMul(bom.bomQty, item.tdQty,(1+bom.bomSpecificLoss));
               }
             }
             this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
