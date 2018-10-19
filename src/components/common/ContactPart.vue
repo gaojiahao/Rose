@@ -73,7 +73,7 @@
 <style scoped lang="scss">
   .contacts_part {
     margin-top: .1rem;
-    /*padding: .06rem .1rem 0;*/
+    padding: .06rem .1rem 0;
     width: 100%;
     background: #fff;
     box-sizing: border-box;
@@ -82,16 +82,10 @@
       padding: 0 .1rem .06rem .2rem;
     }
     .iconfont {
-      top: .05rem;
-      left: .05rem;
+      top: .02rem;
+      left: -.01rem;
       font-size: .16rem;
       position: absolute;
-    }
-    .icon-kehu1 {
-      display: inline-block;
-      width: .14rem;
-      height: .2rem;
-      background: url(./../../assets/dealer.png) no-repeat center;
     }
     // 公司信息
     .cp_name {

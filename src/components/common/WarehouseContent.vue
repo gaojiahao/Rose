@@ -47,7 +47,7 @@
 <style scoped lang="scss">
   .main_content {
     position: relative;
-    padding: .06rem .1rem .06rem .2rem;
+    padding: .06rem .2rem .06rem .3rem;
     background-color: #fff;
     .iconfont {
       top: .1rem;
@@ -57,21 +57,9 @@
       font-weight: bold;
     }
     .icon-- {
-      left: .05rem;
-      display: inline-block;
-      width: .14rem;
-      height: .2rem;
-      background: url(./../../assets/warehouse.png) no-repeat center;
-    }
-    &:last-of-type{
-      .iconfont{
-        top: .07rem;
-        font-size: .15rem;
-      }
-      .icon-- {
-        top: .08rem;
-        font-size: .16rem;
-      }
+      top: .08rem;
+      left: .1rem;
+      font-size: .16rem;
     }
     // 仓库名称
     .warehouse_name {

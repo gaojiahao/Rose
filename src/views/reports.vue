@@ -8,7 +8,7 @@
       <div class="each-select " @click="dateClick">
         <div>
           <span class="each-select-name">{{dateSelected.name}}</span>
-          <i class="iconfont title_right" :class="showDate?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
+          <i class="iconfont title_right icon-f11-copy" :class="{'rotate': showDate}"></i>
         </div>
         <group class="date-list-container" v-show="showDate">
           <cell :title="item.name" v-for="(item, index) in dateList" :key="index"
@@ -19,7 +19,7 @@
         <div>
           <span class="each-select-name"
                 :class="{'is-selected': objName !== A_PROJ_NAME}">{{objName | nameFilter}}</span>
-          <i class="iconfont title_right" :class="showProj?'icon-xiaosanjiaoup':'icon-xiaosanjiaodown'"></i>
+          <i class="iconfont title_right icon-f11-copy" :class="{'rotate': showProj}"></i>
         </div>
         <group class="proj-list-container" v-show="showProj">
           <cell :title="item" v-for="(item, index) in projList" :key="index"
@@ -52,10 +52,10 @@
     </div>
     <div class="page-controler">
       <span class="each-page" @click="pagePrev" :class="{disabled: page === 1}"><i
-        class="iconfont icon-jiantou-copy"></i></span>
+        class="iconfont icon-zuojiantou"></i></span>
       <span class="each-page page-num">{{curPage}}</span>
       <span class="each-page" @click="pageNext" :class="{disabled: isDisabled}"><i
-        class="iconfont icon-jiantou"></i></span>
+        class="iconfont icon-youjiantou"></i></span>
     </div>
     <loading :show="showLoading"></loading>
   </div>
@@ -450,6 +450,9 @@
       font-size: 14px;
       color: #fff;
       font-weight: 200;
+      .rotate {
+        transform: rotate(-180deg);
+      }
     }
     .title_right {
       position: absolute;

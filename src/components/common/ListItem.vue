@@ -227,22 +227,6 @@
       .dealer_name {
         padding: .04rem 0 .02rem;
       }
-      .icon-kehu1 {
-        display: inline-block;
-        width: .14rem;
-        height: .2rem;
-        background: url(./../../assets/dealer.png) no-repeat center;
-        vertical-align: top;
-        position: relative;
-        top: 0.01rem;
-      }
-      .icon-- {
-        display: inline-block;
-        width: .14rem;
-        height: .2rem;
-        background: url(./../../assets/warehouse.png) no-repeat center;
-        vertical-align: top;
-      }
     }
 
     /* 仓库 */

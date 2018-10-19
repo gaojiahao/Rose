@@ -155,7 +155,7 @@
       padding: .06rem .08rem;
       background-color: #fff;
       &.accounting-container {
-        padding: .06rem .2rem;
+        padding: .06rem .3rem;
       }
       &.matter-container {
         margin-top: .1rem;

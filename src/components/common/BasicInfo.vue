@@ -86,14 +86,6 @@
       padding: .04rem 0;
       align-items: center;
       justify-content: space-between;
-      .icon-dingdan1 {
-        position: relative;
-        top: .05rem;
-        display: inline-block;
-        width: .14rem;
-        height: .2rem;
-        background: url(./../../assets/transCode.jpg) no-repeat center;
-      }
       // 表单状态
       .work_status {
         color: #fff;

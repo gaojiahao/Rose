@@ -2,10 +2,10 @@
   <!-- 分页组件 -->
   <div class="page-controler">
       <span class="each-page" @click="pagePrev" :class="{disabled: disabledPrev}"><i
-        class="iconfont icon-jiantou-copy"></i></span>
+        class="iconfont icon-zuojiantou"></i></span>
     <span class="each-page page-num">{{page}}</span>
     <span class="each-page" @click="pageNext" :class="{disabled: disabledNext}"><i
-      class="iconfont icon-jiantou"></i></span>
+      class="iconfont icon-youjiantou"></i></span>
   </div>
 </template>
 
