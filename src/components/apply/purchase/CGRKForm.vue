@@ -48,7 +48,7 @@
                       </div>
                       <div>
                         <r-number :num="item.tdQty"
-                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                                  :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBal"></r-number>
                       </div>                     
                     </div>
                   </template>
@@ -125,6 +125,8 @@ import RNumber from 'components/RNumber'
 // 公共方法
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
+import { join } from 'path';
+const DRAFT_KEY = 'CGRK_DATA';
 
 export default {
   name: 'ApplyCGRKForm',
@@ -161,45 +163,6 @@ export default {
       matterParams: { // 物料列表的请求参数
         dealerCode: ''
       }
-    }
-  },
-  watch: {
-    matterList(val) {
-      let data = {
-        CGRK_DATA: {
-          matter: this.matterList,
-          dealer: this.dealerInfo,
-          warehouse: this.warehouse
-        }
-      }
-      this.$emit('sel-data', data)
-
-    },
-    dealerInfo(val) {
-      if (this.matterList.length) {
-        let data = {
-          CGRK_DATA: {
-            matter: this.matterList,
-            dealer: this.dealerInfo,
-            warehouse: this.warehouse
-          }
-        }
-        this.$emit('sel-data', data)
-      }
-
-    },
-    warehouse(val) {
-      if (this.matterList.length) {
-        let data = {
-          CGRK_DATA: {
-            matter: this.matterList,
-            dealer: this.dealerInfo,
-            warehouse: this.warehouse
-          }
-        }
-        this.$emit('sel-data', data)
-      }
-
     }
   },
   methods: {
@@ -496,14 +459,31 @@ export default {
         this.matterList = dataSet;
         this.$loading.hide();
       })
-    }
+    },
+    // TODO 是否保存草稿
+    hasDraftData() {
+      if (!this.matterList.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          matter: this.matterList,
+          dealer: this.dealerInfo,
+          warehouse: this.warehouse,
+          formData : this.formData
+        }
+      };
+    },
   },
   created() {
-    let data = sessionStorage.getItem('CGRK_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       this.matterList = JSON.parse(data).matter;
       this.dealerInfo = JSON.parse(data).dealer;
       this.warehouse = JSON.parse(data).warehouse;
+      this.formData = JSON.parse(data).formData;
+      this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
+      sessionStorage.removeItem(DRAFT_KEY);
 
     }
   },
