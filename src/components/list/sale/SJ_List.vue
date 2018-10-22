@@ -28,7 +28,7 @@
           <div class="duty_content">
             <div class="content_title">{{item.opportunityTitle}}</div>
             <div class="content_step vux-1px-b">
-              <div>{{item.currentStage}}</div>
+              <div>{{item.biProcessStatus || '暂无流程状态'}}</div>
               <div>{{item.dealerName || item.dealerName_dealerDebit}}</div>
             </div>
           </div>

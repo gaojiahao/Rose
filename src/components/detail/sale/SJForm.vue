@@ -16,7 +16,7 @@
         <div class="main_content">
           <form-cell cellTitle='标题' :cellContent="orderInfo.opportunityTitle"></form-cell>
           <form-cell cellTitle='内容' :cellContent="orderInfo.comment || '无'"></form-cell>
-          <form-cell cellTitle='当前所在阶段' :cellContent="orderInfo.currentStage"></form-cell>
+          <form-cell cellTitle='流程状态' :cellContent="orderInfo.biProcessStatus || '暂无'"></form-cell>
           <form-cell cellTitle='有效期至' :cellContent="orderInfo.validUntil"></form-cell>
           <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
           <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>

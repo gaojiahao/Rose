@@ -168,6 +168,19 @@ export let getDictByType = (type = '', data = {}) => {
   })
 };
 
+// 获取流程状态
+export let getProcessStatus = (listId) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProcessStatus',
+    data: {
+      listId,
+      page: 1,
+      start: 0,
+      limit: 10000, 
+    }
+  })
+}
+
 // TODO 获取材料大类、材料子类
 export let getDictByValue = (value = '', data = {}) => {
   return $axios.ajax({
@@ -209,14 +222,15 @@ export let getObjDealerByLabelName = (data = {}) => {
 };
 
 export default {
-  saveAndStartWf,
-  saveAndCommitTask,
-  submitAndCalc,
-  getBaseInfoData,
   getList,
   upload,
-  getDictByType,
-  getDictByValue,
   getProcess,
-  getObjDealerByLabelName,
+  getDictByType,
+  submitAndCalc,
+  getDictByValue,
+  saveAndStartWf,
+  getBaseInfoData,
+  saveAndCommitTask,
+  getProcessStatus,
+  getObjDealerByLabelName
 }
