@@ -11,7 +11,6 @@
 
 <script>
   import {commitTask} from 'service/commonService'
-  // import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   export default {
     name: "RAction",
     props: {
@@ -114,7 +113,7 @@
                 if (callback) {
                   callback();
                 } else {
-                  this.$router.go(-1);
+                  this.$router.go(0);
                 }
               }
             }
