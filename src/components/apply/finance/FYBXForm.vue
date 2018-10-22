@@ -24,7 +24,12 @@
                 </span>
               </template>
             </cell>
-            <!-- <popup-picker title="费用科目" :data="item.expSubjectList" v-model="item.expSubject"></popup-picker> -->
+            <popup-picker title="费用科目" :data="expSubjectList" v-model="item.expSubject">
+              <template slot="title">
+                <span class='required'>费用科目
+                </span>
+              </template>
+            </popup-picker>
             <x-input title="金额" text-align='right' placeholder='请填写'
                      @on-blur="checkAmt(item)" type='number' v-model.number='item.price'>
               <template slot="label">
@@ -100,13 +105,14 @@ export default {
         {
           COST_NAME : '', //费用名称
           COST_CODE : '', //费用编码
-          expSubject : '', //费用科目
+          expSubject : [], //费用科目
           COST_TYPE : '', //费用类型
           price :'', //报销金额
           reson : '', // 报销事由
           comment :''
         }
       ],
+      expSubjectList:[],
       selectedCost:[],
       costIndex : 0,
       transCode: '',
@@ -153,10 +159,11 @@ export default {
     },
     // TODO 点击增加费用
     addCost() {
+      this.expSubjectList = [];
       this.CostList.push({
         COST_NAME : '', //费用名称
         COST_CODE : '', //费用编码
-        expSubject : '', //费用科目
+        expSubject : [], //费用科目
         price :'', //报销金额
         reson : '', // 报销事由
         comment : ''
@@ -171,8 +178,10 @@ export default {
       let sels = val;
       this.CostList[this.costIndex].COST_NAME = sels.COST_NAME;
       this.CostList[this.costIndex].COST_CODE = sels.COST_CODE;
-      this.CostList[this.costIndex].expSubject = sels.COST_SUB_SUBJECTS.split(',')[0];
+      this.CostList[this.costIndex].expSubject = [];
+      this.CostList[this.costIndex].expSubject[0] = sels.COST_SUB_SUBJECTS.split(',')[0];
       this.CostList[this.costIndex].COST_TYPE = sels.COST_TYPE;
+      this.expSubjectList = [sels.COST_SUB_SUBJECTS.split(',')];
     },
     // TODO 选中项目
     selProject(val){
@@ -199,7 +208,7 @@ export default {
           tdId : item.tdId || '',
           costName_expCode: item.COST_NAME, //费用名称
           expCode: item.COST_CODE, //费用编码
-          expSubject: item.expSubject , //费用科目
+          expSubject: item.expSubject[0] , //费用科目
           costType_expCode: item.COST_TYPE || null, //费用类型
           tdAmount: item.price, //报销金额
           expCause : item.reson, // 报销事由
