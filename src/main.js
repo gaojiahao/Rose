@@ -6,6 +6,7 @@ import router from './router'
 import App from './App'
 import {querystring, AlertPlugin, LoadingPlugin, ConfirmPlugin, DatetimePlugin} from 'vux'
 import adapation from './common/adapation'
+require('es6-promise').polyfill();
 
 Vue.use(AlertPlugin);
 Vue.use(LoadingPlugin);
