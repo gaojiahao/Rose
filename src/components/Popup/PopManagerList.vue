@@ -1,5 +1,5 @@
 <template>
-  <div class="or_ads mg_auto box_sd" @click="warehouseClick">
+  <div class="or_ads mg_auto" @click="warehouseClick">
     <!-- 仓库信息 -->
     <div v-if="selItems.dealerName">
       <div class="title">{{title}}</div>
@@ -9,10 +9,10 @@
       </div>
     </div>
     <div v-else>
-      <div class="title required">{{title}}</div>
-      <div class="mode">请选择</div>
+      <div class="title">{{title}}信息</div>
+      <div class="mode required">请选择工人</div>
     </div>
-    <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
+    <span class="iconfont icon-youjiantou r_arrow"></span>
 
     <!-- 项目经理pop -->
     <div v-transfer-dom v-if="!disabled">
@@ -273,7 +273,7 @@
     // 用户信息
     .user_info {
       color: #111;
-      font-size: .18rem;
+      font-size: .16rem;
       font-weight: 500;
       // 用户姓名
       .user_name {

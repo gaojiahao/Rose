@@ -1,7 +1,7 @@
 <template>
-  <div class="pop_dealer_list" @click="itemClick">
-    <div v-if="dealerInfo.dealerCode" class='dealer-info'>
-      <div class='user-content'>
+  <div class="pop_dealer_list">
+    <div class='dealer-info' @click="showDealerPop = !showDealerPop">
+      <div class='user-content' :class="{'whenSel': contactList.length}" v-if="dealerInfo.dealerCode">
         <div class="user-info">
           <div class="user-name">
             <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
@@ -16,16 +16,32 @@
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
           </span>
         </div>
-      </div>  
+      </div>
+      <div class='user-content' v-else>
+        <div class="title">{{dealerLabelName}}列表</div>
+        <div class="required">请选择{{dealerLabelName}}</div>
+      </div>
+      <span class="iconfont icon-youjiantou r-arrow"></span>          
     </div>
-    <div v-else>
-      <div class="title">{{dealerLabelName}}列表</div>
-      <div class="required">请选择{{dealerLabelName}}</div>
-    </div>
-    <span class="iconfont icon-youjiantou r-arrow"></span>          
-    <!-- 往来popup -->
+    <div v-if="contactList.length" class="contact-content vux-1px-t" @click="showContactPop = !showContactPop">
+      <div class="selected-mode" v-if="contactInfo.dealerCode">
+        <div>
+          <span class="contact-tips">联系人</span>
+          <span>{{contactInfo.dealerName}}</span>
+          <span>{{contactInfo.dealerMobilePhone}}</span>
+        </div>
+        <span class="iconfont icon-Face-ID"></span>
+      </div>
+      <div class="default-mode" v-else>
+        <div class="mode-title">
+          <span>请选择联系人</span>
+          <span class="iconfont icon-FaceID"></span>
+        </div>   
+      </div>
+    </div>    
+    <!-- 往来 Popup -->
     <div v-transfer-dom>
-      <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+      <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
           <div class="title">
             <!-- 搜索栏 -->
@@ -35,7 +51,7 @@
           <div class="mater_list" ref="dealer">
             <div class="mater_list_wrapper">
               <div class="each_mater box_sd" v-for="(item, index) in dealerList" :key="index"
-                   @click.stop="selThis(item,index)">
+                   @click.stop="selDealer(item,index)">
                 <div class="mater_main ">
                   <div class="mater_info">
                     <!--联系人电话 -->
@@ -78,6 +94,45 @@
         </div>
       </popup>
     </div>
+    <!-- 联系人 Popup -->
+    <div v-transfer-dom>
+      <popup v-model="showContactPop" height="80%" class="trade_pop_part">
+        <div class="trade_pop">
+          <!-- 往来列表 -->
+          <div class="mater_list" ref="dealer">
+            <div class="mater_list_wrapper">
+              <div class="each-people box_sd" v-for="(item, index) in contactList" :key="index"
+                   @click.stop="selContact(item, index)">
+                <div class="mater_main ">
+                  <div class="mater_info">
+                    <!--联系人电话 -->
+                    <div class="withColor">
+                      <div class="ForInline " style="display:inline-block">
+                        <span class='dealer'>{{item.dealerName}}</span>
+                      </div>
+                    </div>
+                    <div class="withColor" v-if="item.dealerMobilePhone || item.dealerPhone">
+                      <div class="ForInline name" style="display:inline-block">
+                        <span style="marginRight:.04rem;"
+                              v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
+                        <span v-if="item.dealerPhone">{{item.dealerPhone}}</span>
+                      </div>
+                    </div>
+                    <!-- 地址 -->
+                    <div class="withoutColor">
+                      <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- icon -->
+                <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+              </div>
+              <load-more tip="加载中" v-show="hasNext" slot="loadmore"></load-more>
+            </div>
+          </div>
+        </div>
+      </popup>
+    </div>
   </div>
 </template>
 
@@ -114,15 +169,18 @@
     },
     data() {
       return {
-        showPop: false,
-        srhInpTx: '', // 搜索框内容
-        selItems: [], // 哪些被选中了
-        dealerList: [],
-        bScroll: null,
+        page: 1,
         limit: 10,
-        page: 1.,
         hasNext: true,
-        dealerInfo: {},
+        showDealerPop: false,
+        showContactPop: false,
+        srhInpTx: '',           // 搜索框内容
+        bScroll: null,
+        dealerInfo: {},         // 往来信息
+        contactInfo: {},        // 联系人信息
+        selItems: [],           // 哪些被选中了
+        dealerList: [],
+        contactList: [],        // 联系人列表
       }
     },
     watch: {
@@ -145,19 +203,27 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.showPop = false;
+        this.showDealerPop = false;
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         return this.selItems.findIndex(item => item.dealerCode === sItem.dealerCode) !== -1;
       },
       // TODO 选择往来
-      selThis(sItem, sIndex) {
-        this.showPop = false;
+      selDealer(sItem, sIndex) {
+        this.showDealerPop = false;
         this.selItems = [sItem];
         this.dealerInfo = Object.freeze({...sItem});
         sessionStorage.setItem('DEALERLIST_SELITEMS', JSON.stringify(this.selItems));
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
+        this.getContact();  // 获取联系人
+      },
+      // 选择联系人
+      selContact(item, index){
+        this.showContactPop = false;
+        this.selItems = [item];
+        this.contactInfo = Object.freeze({...item});
+        this.$emit('sel-contact', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
@@ -173,13 +239,6 @@
         if (this.srhInpTx) {
           filter = [
             ...filter,
-            // 搜索 往来名称 或  编码
-            // {
-            //   operator: 'like',
-            //   value: this.srhInpTx,
-            //   property: 'dealerCode',
-            //   attendedOperation: 'or'
-            // },
             {
               operator: 'like',
               value: this.srhInpTx,
@@ -218,6 +277,26 @@
         })
 
       },
+      // 获取联系人列表
+      getContact(){
+        dealerService.getContactList({
+          dealerCode: this.dealerInfo.dealerCode,
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+        }).then(({ dataCount, tableContent }) => {
+          this.contactInfo = {};
+          this.contactList = tableContent;
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.$nextTick(() => {
+            this.bScroll.refresh();
+            if (!this.hasNext) {
+              return
+            }
+            this.bScroll.finishPullUp();
+          })        
+        })
+      },
       // TODO 搜索往来
       searchList({val = ''}) {
         this.srhInpTx = val;
@@ -251,7 +330,7 @@
         this.$router.push({path: '/adress/edit_ads', query: {add: 1, pickVal: pickVal}})
       },
       itemClick() {
-        this.showPop = true;
+        this.showDealerPop = true;
       }
     },
     created() {
@@ -263,6 +342,9 @@
 
 <style scoped lang="scss">
   @import '~@/scss/color.scss';
+  .vux-1px-t:before {
+    border-color: #e8e8e8;
+  }
   .required {
     color: $required;
     font-weight: bold;
@@ -273,7 +355,6 @@
   .pop_dealer_list {
     width: 95%;
     margin: .1rem auto;
-    position: relative;
     background: #fff;
     margin-bottom:0.1rem;
     box-sizing: border-box;
@@ -283,49 +364,79 @@
       font-size: .12rem;
     }
     .mode {
-      // color: #111;
       font-weight: 500;
     }
     .r-arrow {
       top: 50%;
-      right: 1%;
+      right: -1%;
       font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
     }
-    .user-content {
-      padding-right: .1rem;
-      .user-info {
-        font-size: 0;
-        color: #111;
-        font-weight: 500;
-        .user-tips {
+    .dealer-info {
+      position: relative;
+      .user-content {
+        .user-info {
+          font-size: 0;
+          color: #111;
+          font-weight: 500;
+          .user-tips {
+            color: #FFF;
+            font-size: .1rem;
+            padding: 0 .06rem;
+            border-radius: .3rem;
+            background: #5077aa;
+            vertical-align: middle;
+          }  
+          .user-name {
+            max-width: 2.2rem;
+            overflow: hidden;
+            font-size: .16rem;
+            white-space: nowrap;
+            margin-right: .04rem;
+            display: inline-block;
+            vertical-align: middle;
+            text-overflow: ellipsis;
+          }        
+          .user-tel {
+            font-size: .16rem;
+            font-weight: bold;
+            display: inline-block;
+            font-family: Helvetica;
+            vertical-align: middle;
+            margin-bottom: -.02rem;
+          }    
+        }
+        &.whenSel {
+          padding-bottom: .06rem;
+        }
+      }
+    }
+    .contact-content {
+      padding-top: .06rem;
+      .default-mode {
+        .mode-title {
+          display: flex;
+          color: #757575;
+          font-size: .14rem;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+      .selected-mode {
+        display: flex;
+        font-size: .16rem;
+        align-items: center;
+        justify-content: space-between;
+        .contact-tips {
           color: #FFF;
           font-size: .1rem;
           padding: 0 .06rem;
           border-radius: .3rem;
           background: #5077aa;
           vertical-align: middle;
-        }  
-        .user-name {
-          max-width: 2.2rem;
-          overflow: hidden;
-          font-size: .16rem;
-          white-space: nowrap;
-          margin-right: .04rem;
-          display: inline-block;
-          vertical-align: middle;
-          text-overflow: ellipsis;
-        }        
-        .user-tel {
-          font-size: .16rem;
-          font-weight: bold;
-          display: inline-block;
-          font-family: Helvetica;
-          vertical-align: middle;
-          margin-bottom: -.02rem;
-        }    
-      }    
+        }
+      }
     }
 
     .cp-info {
@@ -396,9 +507,9 @@
         }
         // 每个往来
         .each_mater {
-          position: relative;
           display: flex;
           padding: 0.08rem;
+          position: relative;
           margin-bottom: .2rem;
           box-sizing: border-box;
           // 阴影
@@ -441,6 +552,10 @@
           .isSelIcon {
             fill: #5077aa;
           }
+        }
+        .each-people {
+          @extend .each_mater;
+          margin: .2rem 0;
         }
       }
     }

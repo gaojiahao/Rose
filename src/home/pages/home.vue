@@ -60,7 +60,7 @@ export default {
       selItem : {}
     }
   },
-  components:{ busApp, basicApp,Icon},
+  components:{ busApp, basicApp, Icon},
   methods:{
     // 基础应用
     goBasic(item){
@@ -145,7 +145,7 @@ export default {
           if(Apps[val.id]){
             for(let item of val.children ){
               // 基础对象
-              if(basicMap[item.text]){
+              if(basicMap[item.listId]){
                 if(item.transName){
                   // 动态添加对应的背景底色
                   switch(item.text){

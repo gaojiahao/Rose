@@ -3,12 +3,12 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                           v-model="dealer.drDealerPaymentTerm"></pop-single-select> 
         <!-- 物流条款 -->
-       <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
+        <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
                           v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -142,20 +142,16 @@
     data() {
       return {
         listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
-        matterList: [],                                 // 物料列表
-        transMode: [],                                  // 结算方式 数组
-        logisticsTerm: [],                              // 物流条款 数组
-        showMaterielPop: false,                         // 是否显示物料的popup
-        dealerInfo: {},
-        formData: {
-          biComment :''
-        },
-        dealer: {
-          drDealerPaymentTerm: '',  //结算方式
-          drDealerLogisticsTerms: '', //物流条件
-        },
-        numMap: {}, // 用于记录订单物料的数量和价格
         showMatterPop :false,
+        showMaterielPop: false,                         // 是否显示物料的popup
+        transMode: [],                                  // 结算方式 数组
+        matterList: [],                                 // 物料列表
+        logisticsTerm: [],                              // 物流条款 数组
+        dealer: {},
+        numMap: {},                                     // 用于记录订单物料的数量和价格
+        contact: {},
+        formData: {},
+        dealerInfo: {},
       }
     },
     mixins: [common],
@@ -166,10 +162,15 @@
       //选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        this.dealer.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
-        this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        this.getMatPrice();
+        this.getMatPrice(); // 获取物料价格
+      },
+      selContact(val){
+        this.contact = JSON.parse(val)[0];
+        // 联系人
+        this.dealer.dealerDebitContactPersonName = this.contact.dealerName || '';
+        // 联系人电话
+        this.dealer.dealerDebitContactInformation = this.contact.dealerMobilePhone;
       },
       // 获取 结算方式
       getPaymentTerm(){
@@ -342,8 +343,6 @@
                   comment: ""
                 }
               }
-              let test = {...this.formData};
-              console.log(test);
               let submitData = {
                 listId: this.listId,
                 biComment: this.formData.biComment,

@@ -2,7 +2,7 @@
   <div class="basic_part defalut_bg">
       <div class="basic_list">
         <div class="indval_app"
-            @click="goBasic(item.text)"
+            @click="goBasic(item.listId)"
             v-for='(item, index) of BasicApps'
             :key='index'
             :style="{ 
