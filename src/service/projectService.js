@@ -165,4 +165,15 @@ export let getSalesOutStockProject = (data = {}) => {
   })
 };
 
+// TODO 查询项目对应的实际、预算、差额
+export let findConclusion = (projectName) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/projectConclusion/findConclusion',
+    data: {
+      _dc: Date.now(),
+      projectName
+    }
+  })
+};
+
 export default {}

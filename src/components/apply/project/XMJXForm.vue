@@ -3,7 +3,7 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <!-- 项目-->
-        <pop-name-list @sel-item="selProject"></pop-name-list>
+        <pop-name-list @sel-item="selProject" :default-value="projectApproval"></pop-name-list>
         <!-- 实际情况 -->
         <div class="or_ads mg_auto box_sd">
           <p class="title">实际情况</p>
@@ -16,6 +16,30 @@
             </datetime>
           </group>
         </div>
+        <!-- 资金明细 -->
+        <!--<div class="" v-show="projectConclusion.length">-->
+        <div class="or_ads mg_auto box_sd project-amt" v-show="projectConclusion.length">
+          <p class="title">资金明细</p>
+          <div class="project_content" :class="{'vux-1px-b': index !== projectConclusion.length - 1}"
+               v-for="(item, index) in projectConclusion">
+            <form-cell :cellTitle="`实际${item.conclusionName}`" showSymbol textRight
+                       :cellContent="numberComma(item.actual)" :showTopBorder="false"></form-cell>
+            <form-cell :cellTitle="`预算${item.conclusionName}`" showSymbol textRight
+                       :cellContent="numberComma(item.budget)" :showTopBorder="false"></form-cell>
+            <form-cell :cellTitle="`差额${item.conclusionName}`" showSymbol textRight
+                       :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
+          </div>
+        </div>
+        <!-- 资金明细 -->
+        <!--<div class="or_ads mg_auto box_sd" v-show="projectConclusion.length">
+          <div :class="{'vux-1px-b': index !== projectConclusion.length - 1}"
+               v-for="(item, index) in projectConclusion">
+            <div class="amt-title"><span class="iconfont icon-yusuan2"></span>{{item.conclusionName}}</div>
+            <form-cell cellTitle="实际" showSymbol textRight :cellContent="numberComma(item.actual)"></form-cell>
+            <form-cell cellTitle="预算" showSymbol textRight :cellContent="numberComma(item.budget)"></form-cell>
+            <form-cell cellTitle="差额" showSymbol textRight :cellContent="numberComma(item.difference)"></form-cell>
+          </div>
+        </div>-->
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -27,23 +51,26 @@
 
 <script>
   // vux组件引入
-  import {Cell, Group, XInput, Datetime, dateFormat,} from 'vux'
+  import {Cell, Group, XInput, Datetime, dateFormat, numberComma,} from 'vux'
   // 请求 引入
   import {
     saveProjectConclusion, findProjectConclusion,
     updateProjectConclusion, getProjectTodoTask,
-    getProjectPlanProjectName
+    findConclusion,
   } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
+  import FormCell from 'components/detail/commonPart/FormCell'
 
+  const DRAFT_KEY = 'XMJX_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
       Cell, Group,
       XInput, Datetime, PopNameList,
+      FormCell,
     },
     data() {
       return {
@@ -58,16 +85,11 @@
             biComment: ''
           },
         },
-        projectConclusion: [{
-          conclusionName: '收入', // 名称
-          actual: 1500, // 实际
-          budget: 1000, // 预算
-          difference: 500 // 差额
-        }],
+        projectConclusion: [],
         projectTime: {
           actualStartTime: '', // 实际开始日期,
           actualCompleteTime: '',// 实际完成日期
-        }
+        },
       }
     },
     methods: {
@@ -112,15 +134,28 @@
               modifer: this.formData.handler,
             };
             let operation = saveProjectConclusion;
+            let projectConclusion = this.projectConclusion.map(item => {
+              return {
+                conclusionName: item.conclusionName,
+                actual: item.actual,
+                budget: item.budget,
+                difference: item.difference,
+              }
+            });
             let submitData = {
               listId: this.listId,
               formData: {
                 handlerEntity: this.entity.dealerName,
                 ...this.jsonData,
                 projectApproval: {
-                  projectName: this.projectApproval.PROJECT_NAME
+                  projectName: this.projectApproval.PROJECT_NAME,
+                  projectType: this.projectApproval.PROJECT_TYPE,
+                  comment: this.projectApproval.COMMENT,
+                  projectManager: this.projectApproval.PROJECT_MANAGER,
+                  expectStartDate: this.projectApproval.EXPECT_START_DATE,
+                  expectEndDate: this.projectApproval.EXPECT_END_DATE,
                 },
-                projectConclusion: this.projectConclusion,
+                projectConclusion: projectConclusion,
                 projectTime: this.projectTime
               },
             };
@@ -146,14 +181,48 @@
       // TODO 项目切换
       selProject(val = '{}') {
         this.projectApproval = JSON.parse(val);
+        findConclusion(this.projectApproval.PROJECT_NAME).then(({data = []}) => {
+          this.projectConclusion = data;
+        })
       },
       // TODO 获取详情
       getFormData() {
         return findProjectConclusion(this.transCode).then(({formData = {}}) => {
         })
       },
+      // TODO 使用千分符
+      numberComma(val) {
+        if (!val && val !== 0) {
+          return '无';
+        }
+        return numberComma(val);
+      },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择订单
+        if (!this.projectApproval.PROJECT_NAME) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            projectApproval: this.projectApproval,
+            jsonData: this.jsonData,
+            projectConclusion: this.projectConclusion,
+            projectTime: this.projectTime,
+          }
+        };
+      },
     },
     created() {
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if (data) {
+        let draft = JSON.parse(data);
+        this.projectApproval = draft.projectApproval;
+        this.jsonData = draft.jsonData;
+        this.projectConclusion = draft.projectConclusion;
+        this.projectTime = draft.projectTime;
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     },
   }
 </script>
@@ -164,6 +233,20 @@
   .xmjx-apply-container {
     .or_ads {
       padding: .06rem .08rem;
+    }
+    .project-amt {
+      .project_content {
+        padding: .05rem 0;
+      }
+      .each_cell {
+        padding: 0;
+      }
+    }
+    .amt-title {
+      padding: .1rem 0;
+    }
+    .vux-1px-b:after {
+      border-top: 1px solid #e8e8e8;
     }
     /deep/ .weui-cells {
       margin-top: 0;
