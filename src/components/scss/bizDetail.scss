@@ -531,6 +531,9 @@
   position: relative;
   background: #FFF;
   // padding-top: .06rem;
+  &.has_margin{
+    margin-top:0.1rem;
+  }
   .form_title {
     color: #111;
     font-weight: bold;
@@ -539,6 +542,7 @@
     .iconfont {
       font-size: .14rem;
     }
+    
   }
   .main_content {
     padding: 0 .1rem;
