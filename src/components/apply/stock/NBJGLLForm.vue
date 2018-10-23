@@ -129,6 +129,7 @@ import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopOrderList from 'components/Popup/PopOrderList'
 
+const DRAFT_KEY = 'NBJGLL_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -165,25 +166,6 @@ export default {
       },
       deep: true
     },
-    //离开时保存数据
-    orderList: {
-      handler(val){
-        let arr = Object.keys(val);
-        if(arr.length){
-            let data = {
-              NBJGLL_DATA:{
-                matter : val,
-                warehouseOut : this.warehouseOut,
-                warehouseIn : this.warehouseIn
-
-              }
-            }
-            this.$emit('sel-data',data)
-        }
-
-      }
-
-    }
   },
   methods: {
     // TODO 滑动删除
@@ -447,6 +429,7 @@ export default {
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
+          matterList.push(item);
           orderList[item.transCode].push(item);
         }
         // 入库
@@ -483,13 +466,39 @@ export default {
         this.$loading.hide();
       })
     },
+    // TODO 组装matterList数据
+    assembMatterList() {
+      for (let matters of Object.values(this.orderList)) {
+        for (let item of matters) {
+          this.matterList.push(item);
+        }
+      }
+    },
+    // TODO 保存草稿数据
+    hasDraftData() {
+      // 是否选择订单
+      if (!Object.values(this.orderList).length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          orderList : this.orderList,
+          warehouseOut : this.warehouseOut,
+          warehouseIn : this.warehouseIn,
+          formData: this.formData,
+        }
+      };
+    },
   },
   created() {
-    let data = sessionStorage.getItem('NBJGLL_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
-      this.orderList = JSON.parse(data).matter;
-      this.warehouseOut = JSON.parse(data).warehouseOut;
-      this.warehouseIn = JSON.parse(data).warehouseIn;
+      let draft = JSON.parse(data);
+      this.orderList = draft.orderList;
+      this.assembMatterList();
+      this.formData = draft.formData;
+      this.warehouseOut = draft.warehouseOut;
+      this.warehouseIn = draft.warehouseIn;
       this.warehouseParams.whCode = this.warehouseOut.warehouseCode;
     }
   }

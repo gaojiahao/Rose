@@ -141,6 +141,8 @@
   // 公共方法
   import {accMul,accAdd,accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
+
+  const DRAFT_KEY = 'NBJGDD_DATA';
   export default {
     name: 'ApplyWLXQTJForm',
     mixins: [applyCommon],
@@ -554,8 +556,31 @@
         }, []);
         this.UniqueBom = getNew(this.DuplicateBoms);
       },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择订单
+        if (!Object.values(this.orderList).length) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            orderList: this.orderList,
+            formData: this.formData,
+            DuplicateBoms: this.DuplicateBoms,
+          }
+        };
+      },
     },
     created() {
+      let data = sessionStorage.getItem(DRAFT_KEY);
+      if (data) {
+        let draft = JSON.parse(data);
+        this.orderList = draft.orderList;
+        this.formData = draft.formData;
+        this.DuplicateBoms = draft.DuplicateBoms;
+        this.mergeBomList();
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
     }
   }
 </script>
