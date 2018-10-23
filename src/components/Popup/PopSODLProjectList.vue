@@ -159,6 +159,9 @@
       }
     },
     created() {
+      this.selItems = {
+        ...this.value,
+      };
       this.getProjectLsit();
     }
   }

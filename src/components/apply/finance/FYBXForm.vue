@@ -51,7 +51,8 @@
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        ref="matter"></pop-cost-list>
         <!--项目的popup-->
-        <pop-project-list :show='showProjectPop' v-model='showProjectPop' @sel-project='selProject'></pop-project-list>
+        <pop-project-list :show='showProjectPop' :default-value="defaultProject" v-model='showProjectPop'
+                          @sel-project='selProject'></pop-project-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -67,8 +68,8 @@
 
 <script>
 // vux插件引入
-import { Cell ,Group,XInput, Swipeout, 
-         SwipeoutItem, SwipeoutButton, 
+import { Cell ,Group,XInput, Swipeout,
+         SwipeoutItem, SwipeoutButton,
          Popup, XTextarea, PopupPicker } from 'vux'
 // 请求 引入
 import {getSOList} from 'service/detailService'
@@ -82,6 +83,7 @@ import PopProjectList from 'components/Popup/PopProjectList'
 import {accAdd} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 
+const DRAFT_KEY = 'FYBX_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
@@ -117,6 +119,7 @@ export default {
       showPop: false,
       tmp: '',
       taxRate: 0, // 税率
+      defaultProject: [],
     }
   },
   computed: {
@@ -129,20 +132,6 @@ export default {
         }
       });
       return total;
-    }
-  },
-  watch:{
-    CostList:{
-      handler(val){
-        let data = {
-          FXBX_DATA : {
-            cost : val
-          }
-        }
-        this.$emit('sel-data',data);
-
-      },
-      deep:true
     }
   },
   methods: {
@@ -245,7 +234,7 @@ export default {
               modifer: this.transCode ? this.formData.handler : '',
               order: {
                 crDealerLabel: '员工',
-                project : this.projectName,                                     
+                project : this.projectName,
                 dealerCodeCredit : this.formData.userCode,
                 departmentName: this.formData.handlerUnitName,
                 dataSet
@@ -306,12 +295,31 @@ export default {
           this.$loading.hide();
           // this.$emit('input', false);
         })
+      },
+    // TODO 保存草稿数据
+    hasDraftData() {
+      // 是否选择项目
+      if (!this.projectName) {
+        return false
       }
+      return {
+        [DRAFT_KEY]: {
+          cost: this.CostList,
+          formData: this.formData,
+          projectName: this.projectName,
+        }
+      };
+    },
   },
   created() {
-    let data = sessionStorage.getItem('FXBX_DATA');
+    let data = sessionStorage.getItem(DRAFT_KEY);
     if(data){
-      this.CostList = JSON.parse(data).cost
+      let draft = JSON.parse(data);
+      this.CostList = draft.cost;
+      this.formData = draft.formData;
+      this.projectName = draft.projectName;
+      this.defaultProject = [{PROJECT_NAME: this.projectName}];
+      sessionStorage.removeItem(DRAFT_KEY);
     }
   },
 }

@@ -79,6 +79,7 @@
   import RPicker from 'components/RPicker'
   import PopManagerList from 'components/Popup/PopManagerList'
 
+  const DRAFT_KEY = 'XMLX_DATA';
   export default {
     mixins: [ApplyCommon, common],
     components: {
@@ -259,10 +260,36 @@
       },
       // TODO 初始化页面的数据
       initRequest() {
+        let data = sessionStorage.getItem(DRAFT_KEY);
         let promises = [];
+        if (data) {
+          let draft = JSON.parse(data);
+          this.ProjectApproval = draft.ProjectApproval;
+          this.defaultManager = {
+            dealerName: this.ProjectApproval.projectManager,
+            dealerMobilePhone: this.ProjectApproval.phoneNumber,
+          };
+          this.getBigType().then(() => {
+            this.getType();
+          });
+          sessionStorage.removeItem(DRAFT_KEY);
+          return
+        }
         promises.push(this.getBigType());
         return Promise.all(promises);
-      }
+      },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择项目经理
+        if (!this.ProjectApproval.projectManager) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            ProjectApproval: this.ProjectApproval,
+          }
+        };
+      },
     },
     created() {
     },

@@ -37,7 +37,7 @@
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
-    name: "MatterList",
+    name: "PopProjectList",
     props: {
       show: {
         type: Boolean,
@@ -76,7 +76,10 @@
           this.showPop = val;
         }
       },
-
+      defaultValue(){
+        this.selItems = [...this.defaultValue];
+        this.tmpItems = [...this.defaultValue];
+      }
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -153,6 +156,8 @@
       },
     },
     created() {
+      this.selItems = [...this.defaultValue];
+      this.tmpItems = [...this.defaultValue];
       this.getProjectLsit();
     }
   }
