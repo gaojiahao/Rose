@@ -4,22 +4,40 @@
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
-          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
+          <!-- 搜索栏 -->
+          <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !projectList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in projectList" :key='index'
-               @click.stop="selThis(item,index)">
-            <div class="mater_main ">
-              <!-- 物料名称 -->
-              <div class="project_name">
-                {{item.PROJECT_NAME}}
+                  :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
+                  ref="bScroll">
+          <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
+               @click.stop="selThis(item, index)">
+            <div class="work-main">
+              <div class="work_top">
+                <span class="code_name">工单任务号</span>
+                <span class="work_code">{{item.transCode}}</span>
               </div>
-              <!-- 物料基本信息 -->
-              <div class="project_type">
-                {{item.PROJECT_TYPE}}
+              <div class="work_mid vux-1px-b">
+                <div class="product_name">
+                  {{item.inventoryName}}<span class="symbol">[成品]</span>
+                </div>
+                <div class="product_unit">
+                  <span class="each_unit">成品编码: {{item.matCode}}</span>
+                </div>
+              </div>
+              <div class="work_btm">
+                <div class="procedure_name">
+                  <span>{{item.procedureName}}</span>
+                  <span class="symbol">[工序编码: {{item.proPointCode}}]</span>
+                </div>
+                <div class="procedure_name">
+                  <span>{{item.technicsName}}</span>
+                  <span class="symbol">[工艺路线编码: {{item.proFlowCode}}]</span>
+                </div>
+                <div class="procedure_unit">
+                  <span class="each_unit">加工订单号: {{item.processCode}}</span>
+                </div>
               </div>
             </div>
             <!-- icon -->
@@ -32,12 +50,13 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore} from 'vux'
- import {getProjectList} from 'service/projectService.js'
+  import {Icon, Popup, LoadMore, dateFormat} from 'vux'
+  import {getWorkGDBLLList} from 'service/Product/gdService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
+
   export default {
-    name: "PopProjectList",
+    name: "PopWorkGDBLLList",
     props: {
       show: {
         type: Boolean,
@@ -52,21 +71,38 @@
       },
     },
     components: {
-      Icon, Popup, LoadMore, RScroll,MSearch
+      Icon, Popup, LoadMore, RScroll, MSearch
+    },
+    filters: {
+      dateFormat
     },
     data() {
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: {}, // 哪些被选中了
-        projectList: [],
+        workList: [],
         limit: 10,
-        page: 1.,
+        page: 1,
         hasNext: true,
         scrollOptions: {
           click: true,
           pullUpLoad: true,
         },
+        filterList: [
+          {
+            name: '成品名称',
+            value: 'inventoryName',
+          }, {
+            name: '成品编码',
+            value: 'matCode',
+          },
+          {
+            name: '工序名称',
+            value: 'procedureName'
+          }
+        ],
+        filterProperty: ''
       }
     },
     watch: {
@@ -75,9 +111,12 @@
           this.showPop = val;
         }
       },
-      defaultValue(){
-        this.selItems = {...this.defaultValue};
-      }
+      defaultValue: {
+        handler(val) {
+          // 默认值改变，重新赋值
+          this.setDefaultValue();
+        }
+      },
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -95,64 +134,76 @@
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
-        return sItem.PROJECT_NAME === this.selItems.PROJECT_NAME;
+        return sItem.transCode === this.selItems.transCode;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = {...sItem};
-        this.$emit('sel-project',this.selItems);
+        this.$emit('sel-work', this.selItems);
+      },
+      // TODO 设置默认值
+      setDefaultValue() {
+        this.selItems = {...this.defaultValue};
       },
       // TODO 获取物料列表
-      getProjectLsit() {
+      getWorkOrderTask() {
         let filter = [];
-
         if (this.srhInpTx) {
           filter = [
             ...filter,
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'PROJECT_NAME'
+              property: this.filterProperty
             },
           ];
         }
-        return getProjectList({
+        return getWorkGDBLLList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.projectList = this.page === 1 ? tableContent : [...this.projectList, ...tableContent];
+          this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
         });
       },
       // TODO 搜索物料
-      searchList({val = ''}) {
+      searchList({val = '', property = ''}) {
         this.srhInpTx = val;
-        this.projectList = [];
+        this.filterProperty = property;
+        this.workList = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
-        this.getProjectLsit();
+        this.getWorkOrderTask();
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this.getProjectLsit();
+        this.getWorkOrderTask();
       },
     },
     created() {
-      this.selItems = {...this.defaultValue};
-      this.getProjectLsit();
+      this.setDefaultValue();
+      this.getWorkOrderTask();
     }
   }
 </script>
 
 <style scoped lang="scss">
+  .vux-1px-b:after {
+    border-color: #e8e8e8;
+  }
+
+  .symbol {
+    font-size: .1rem;
+  }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;
@@ -243,56 +294,61 @@
           padding: .14rem .04rem 0 .3rem;
         }
         // 每个物料
-        .each_mater {
+        .each-work {
+          padding: .08rem;
           position: relative;
-          display: flex;
-          padding: 0.08rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
+          .work_top {
+            font-size: 0;
+            .code_name,
+            .work_code {
+              color: #FFF;
+              font-size: .12rem;
+              padding: .02rem .04rem;
+            }
+            .code_name {
+              background: #455d7a;
+            }
+            .work_code {
+              background: #c93d1b
+            }
+          }
+          .work_mid {
+            font-size: 0;
+            padding: .04rem 0;
+            .product_name {
+              color: #111;
+              font-size: .16rem;
+              font-weight: bold;
+            }
+            .product_unit {
+              .each_unit {
+                color: #757575;
+                font-size: .12rem;
+                margin-right: .04rem;
+              }
+            }
+          }
+          .work_btm {
+            font-size: 0;
+            padding-top: .02rem;
+            .procedure_name {
+              font-size: .16rem;
+              font-weight: bold;
+            }
+            .procedure_unit {
+              color: #757575;
+              font-size: .12rem;
+              .each_unit {
+                margin-right: .04rem;
+              }
+            }
+          }
           // 阴影
           &.box_sd {
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
-          }
-          // 物料图片
-          .mater_img {
-            display: inline-block;
-            width: .75rem;
-            height: .75rem;
-            img {
-              width: 100%;
-              max-height: 100%;
-            }
-          }
-          // 物料主体
-          .mater_main {
-            flex: 1;
-            padding-left: .1rem;
-            box-sizing: border-box;
-            display: inline-block;
-            // 物料名称
-            .project_name {
-              overflow: hidden;
-              color: #5077aa;
-              font-size: .14rem;
-              font-weight: bold;
-              max-height: .46rem;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              text-overflow: ellipsis;
-              -webkit-box-orient: vertical;
-            }
-            // 物料信息
-            .project_type {
-              color: #111;
-              font-weight: bold;
-              color: #757575;
-              font-size: .14rem;
-            }
-          }
-          // 下划线
-          .vux-1px-b:after {
-            border-bottom: 1px solid #e8e8e8;
           }
           // 选择icon
           .selIcon,

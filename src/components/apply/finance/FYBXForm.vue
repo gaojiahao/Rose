@@ -125,7 +125,7 @@ export default {
       showPop: false,
       tmp: '',
       taxRate: 0, // 税率
-      defaultProject: [],
+      defaultProject: {},
     }
   },
   computed: {
@@ -327,7 +327,7 @@ export default {
       this.CostList = draft.cost;
       this.formData = draft.formData;
       this.projectName = draft.projectName;
-      this.defaultProject = [{PROJECT_NAME: this.projectName}];
+      this.defaultProject = {PROJECT_NAME: this.projectName};
       sessionStorage.removeItem(DRAFT_KEY);
     }
   },

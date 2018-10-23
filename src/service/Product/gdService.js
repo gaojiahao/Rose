@@ -22,7 +22,21 @@ export let getWorkCheckList = (data = {}) => {
     data
   })
 }
+
+// TODO 获取工单补领料工单列表
+export let getWorkGDBLLList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getWorkReplenishment',
+    data: {
+      _dc: Date.now(),
+      refresh: true,
+      ...data,
+    }
+  })
+}
+
 export default {
   getObjFacility,
-  getWorkOrderTask
+  getWorkOrderTask,
+  getWorkGDBLLList,
 }
