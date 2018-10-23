@@ -130,7 +130,7 @@ export default {
       numMap: {},
       taxRate: 0, // 税率
       matterParams: {
-        processing: '半成品,成品,商品,服务'
+        processing: '半成品'
       }
     }
   },
