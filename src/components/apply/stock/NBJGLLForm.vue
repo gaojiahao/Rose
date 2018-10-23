@@ -500,6 +500,7 @@ export default {
       this.warehouseOut = draft.warehouseOut;
       this.warehouseIn = draft.warehouseIn;
       this.warehouseParams.whCode = this.warehouseOut.warehouseCode;
+      sessionStorage.removeItem(DRAFT_KEY);
     }
   }
 }
