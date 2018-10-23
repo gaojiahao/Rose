@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages nbjgdd-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 物料列表 -->
@@ -8,7 +8,7 @@
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
               <div class="title">订单列表</div>
-              <div class="tips">请选择订单</div>
+              <div class="required">请选择订单</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
@@ -20,71 +20,42 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater"  :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}" 
-                  v-for="(oItem, key,index) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key,index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属订单</span>
+                  <span class="order_title">加工订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
-                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <div class="each_mater_wrapper">
-                    <div class="order-matter">
-                      <div class="mater_img">
-                        <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                <div :class="{'mater_delete' : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
+                               @click.native="delClick(index,item, key)"
+                               :class="{'vux-1px-b' : index < oItem.length-1}">
+                    <template slot-scope="{item}" slot="info">
+                      <div class='mater_more'>
+                        <span v-if="item.promDeliTime">承诺交付日期: {{item.promDeliTime | dateFormat('YYYY-MM-DD')}}</span>
                       </div>
-                      <div class="mater_main">
-                        <!-- 物料名称 -->
-                        <div class="mater_name">
-                          {{item.inventoryName}}
-                        </div>
-                        <!-- 物料基本信息 -->
-                        <div class="mater_info">
-                          <!-- 物料编码、规格 -->
-                          <div class="withColor">
-                            <!-- 物料编码 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_code">
-                                <span class="title">编码</span>
-                                <span class="num">{{item.inventoryCode}}</span>
-                              </div>
-                            </div>
-                            <!-- 物料规格 -->
-                            <div class="ForInline" style="display:inline-block">
-                              <div class="mater_spec">
-                                <span class="title">规格</span>
-                                <span class="num">{{item.specification || '无'}}</span>
-                              </div>
-                            </div>
-                            <!-- <div class="matter-remain">库存: {{item.qtyStockBal}}</div> -->
-                          </div>
-                        </div>
-                        <!-- 物料属性和单位 -->
-                        <div class='mater_more'>
-                          <span class='unit'>属性: {{item.processing}}</span>
-                          <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                          <span class='unit'>计量单位: {{item.measureUnit}}</span>
-                          <span>税率：{{item.taxRate || taxRate}}</span>
-                        </div>
-                        <!-- 库存 -->
-                        <div class='mater_more'>
-                          <span class='qty' v-show="item.qtyBal">库存: {{item.qtyBal}}</span>
-                        </div>
-                        <!-- 物料数量和价格 -->
-                        <div class="mater_other">
-                          <div class="mater_price">
-                            <span class="symbol">￥</span>{{item.price}}*{{item.tdQty}}
-                          </div>
-                          <!--<r-number :num="item.tdQty" :max="item.qtyStockBal"
-                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>-->
-                        </div>
-                        <!-- 编辑图标 -->
-                        <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)">
-                          <span class='iconfont icon-bianji1'></span>
-                        </div>
+                      <div class="mater_more" v-show="item.shippingTime">
+                        <span>主计划截止验收日:{{item.shippingTime}}</span>
+                        <!--<span>待计划余额:{{item.qtyBal}}</span>-->
+                        <!--<span>库存计划:{{item.lockQty}}</span>-->
                       </div>
-                    </div>
-                  </div>
-                  <div class='delete_icon' @click="delClick(index,item, key)" v-if='matterModifyClass'>
+                      <div class="mater_other" v-if="item.tdQty">
+                        <div class="matter-remain">
+                          <span>待计划余额: {{item.qtyBal}}</span>
+                          <span>库存计划: {{item.lockQty}}</span>
+                          <span>加工计划: {{item.processQty}}</span>
+                        </div>
+                        <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
+                      </div>
+                    </template>
+                    <template slot="edit" slot-scope="{item}">
+                      <div class='mater_other' v-if="!item.tdQty && !matterModifyClass">
+                        <div class="edit-tips" @click="modifyMatter(item,index, key)">点击进行填写</div>
+                        <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
+                      </div>
+                    </template>
+                  </matter-item>
+                  <!-- <bom-list :boms="item.boms"></bom-list> -->
+                  <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
@@ -100,27 +71,66 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
           <!-- 订单popup -->
-          <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder" :is-mater-order="true"
-                          :default-value="orderList" ref="order"></pop-order-list>
+          <pop-order-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
+                          :default-value="orderList" ref="order" is-mater-order>
+            <template slot="materInfo" slot-scope="{item}">
+              <div class="mater_material">
+                <span>余额:{{item.qtyBal}}</span>
+              </div>
+            </template>
+          </pop-order-list>
         </div>
-
+        <!-- bom合计-->
+        <div class="materiel_list" v-show="UniqueBom.length">
+          <bom-list :boms="UniqueBom">
+            <template slot-scope="{bom}" slot="number">
+              <div class="number-part">
+                <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                <span class="number-unit">可用余额: {{bom.qtyStock || bom.thenQtyStock}}</span>
+              </div>
+            </template>
+          </bom-list>
+        </div>
+        <!--备注-->
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="待计划余额" type="number" v-model.number='modifyMatter.qtyBal' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+            <x-input title="库存计划" type="number" v-model.number='modifyMatter.lockQty' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+            <x-input title="加工计划" type="number" v-model.number='modifyMatter.processQty' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+            <datetime title="主计划截止验收日" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
+          </template>
+        </pop-matter>
+        <!--原料bom列表-->
+        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow"
+                 :btn-is-hide="btnIsHide" :specific-loss-text="'单位损耗率'">
+          <template slot="number" slot-scope="{bom}">
+            <div class="number-part">
+              <span class="main-number">原料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+              <span class="number-unit">库存余额: {{bom.qtyStock}}</span>
+            </div>
+            <div class="specific_loss" @click="modifyBomLockQty(bom)">原料库存计划: {{bom.lockQty}}<span
+              class="iconfont icon-bianji1"></span></div>
+          </template>
+        </bom-pop>
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" v-if="!matterModifyClass">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma}}
-        <span class="taxAmount">[含税: ￥{{taxAmount | numberComma}}]</span>
-      </span>
-      <!-- <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span> -->
-      <span class="count_btn" @click="submitOrder">提交</span>
+    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}" v-if="!matterModifyClass">
+      <div class="btn-item" @click="submitOrder">提交</div>
     </div>
-     <!-- 底部删除确认栏 -->
+    <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" v-else>
       <div class='count_num all_checked' @click="checkAll">
-        <x-icon type="ios-circle-outline" size="20" class='outline' v-show="selItems.length !== matterList.length"></x-icon>
+        <x-icon type="ios-circle-outline" size="20" class='outline'
+                v-show="selItems.length !== matterList.length"></x-icon>
         <x-icon type="ios-checkmark" size="20" class="checked" v-show="selItems.length === matterList.length"></x-icon>
         全选
       </div>
@@ -132,122 +142,88 @@
 <script>
   // vux组件引入
   import {
-    Icon, Cell, Popup, Group, XInput,
-    Swipeout, SwipeoutItem, SwipeoutButton, TransferDom,
+    Icon, Cell, Group, XInput, Datetime, XTextarea, dateFormat,
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {commitTask, saveAndStartWf, getBaseInfoData, saveAndCommitTask,submitAndCalc} from 'service/commonService'
+  import {getJGRKBom} from 'service/materService'
+  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
-  import RAction from 'components/RAction'
-  import RNumber from 'components/RNumber'
-  import PopDealerList from 'components/Popup/PopDealerList'
-  import PopOrderList from 'components/Popup/PopOrderList'
-  import PopSingleSelect from 'components/Popup/PopSingleSelect'
-  import PopWarehouseList from 'components/Popup/PopWarehouseList'
-  import PopSodlProjectList from 'components/Popup/PopSODLProjectList'
-  import PopEntityList from 'components/Popup/PopEntityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
+  import PopOrderList from 'components/Popup/PopOrderList'
+  import FormCell from 'components/detail/commonPart/FormCell'
+  import BomList from 'components/detail/commonPart/BomList'
+  import BomPop from 'components/apply/commonPart/BomPop'
   // 公共方法
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+  import {accMul, accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
+  const DRAFT_KEY = 'WLXQJH_DATA';
   export default {
-    name: 'ApplyXSCKForm',
+    name: 'ApplyWLXQJHForm',
     mixins: [applyCommon],
-    directives: {TransferDom},
     components: {
-      Icon, Cell, Popup, Group,
-      XInput, RAction, RNumber, Swipeout,
-      PopOrderList, SwipeoutItem, PopDealerList,
-      SwipeoutButton, PopSingleSelect, PopWarehouseList,
-      PopSodlProjectList, PopEntityList, PopMatter,
+      Icon, Cell, Group, XInput, XTextarea,
+      PopMatter, PopOrderList, Datetime,
+      FormCell, BomList, BomPop
     },
     data() {
       return {
-        listId: 'a1e8592f-63c2-4a31-ba22-9d654484db1d',
+        listId: '867e0b4f-548f-4e08-873a-1b8e54333630',
         orderList: {},                                  // 订单列表
-        transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-        logisticsTerm: ['上门', '自提', '离岸', '到港'],      // 物流条款
-        showDealerPop: false,                          // 是否显示客户的popup
         showOrderPop: false,                         // 是否显示物料的popup
-        dealerInfo: null, // 客户客户信息
-        drDealerPaymentTerm: '现付',  //结算方式
         formData: {
-          drDealerLogisticsTerms: '上门', //物流条件
           biComment: '' //备注
         },
         submitSuccess: false, // 是否提交成功
-        warehouse: null, // 选中仓库属性
-        taxRate: 0.16, // 税率
         numMap: {}, // 用于记录订单物料的数量和价格
-        orderParams: { // 订单列表查询参数
-          dealerCode: '',
-          whCode: '',
-        },
         transCode: '',
-        formViewUniqueId: '346ede09-ac6a-489a-9242-f385932a4443', // 修改时的UniqueId
+        formViewUniqueId: '82784823-ded5-4a58-a746-d32514f7d26f', // 修改时的UniqueId
         biReferenceId: '',
         actions: [],
         taskId: '',
         matterList: [], // 物料列表，用于计算金额、请求单价
-        project: {}, // 项目
         entity: {}, // 经办主体
-        tmpItems : {},//选中的订单
-        matter:{},
+        tmpItems: {},//选中的订单
+        matter: {},
         showMatterPop: false,
-        modifyIndex: null,
-        modifyKey: null,
+        DuplicateBoms: [],//有重复项的bom
+        UniqueBom: [],//无重复项的bom
+        modifyIndex: null, //修改物料数量或bom损耗率时，物料的index
+        modifyKey: null,//修改物料数量或bom损耗率时，物料的key
+        bomPopShow: false,
+        bom: {},//修改的bom
+        modifyBomTdqty: [], //修改前bom
       }
     },
     watch: {
-      orderList(val) {
-        let arr = Object.keys(val);
-        if (arr.length) {
-          
-          let data = {
-            XSCK_DATA: {
-              orderList: this.orderList,
-              warehouse: this.warehouse,
-              dealer: this.dealerInfo
-            }
-          }
-          this.$emit('sel-data', data)
-        }
-      },
-      matter:{
-        handler(val){
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
+      matter: {
+        handler(val) {
+          val.boms && val.boms.forEach(item => {
+            // 监听领料需求变化
+            let tdQty = accMul(val.processQty, item.qty, (1 + item.specificLoss));
+            item.tdQty = Math.abs(toFixed(tdQty))
+          });
         },
-        deep:true
+        deep: true
       },
     },
     methods: {
-      // TODO 选中的客户
-      selDealer(val) {
-        let [sel] = JSON.parse(val);
-        this.dealerInfo = sel;
-        this.orderParams = {
-          ...this.orderParams,
-          dealerCode: sel.dealerCode
-        };
-        this.orderList = {};
-        this.$refs.order.clearSel();
-        this.getMatPrice();
+      //查看原料
+      checkBom(item, index, key) {
+        this.bom = item;
+        this.modifyIndex = index;
+        this.modifyKey = key;
+        this.bomPopShow = true;
+        this.modifyBomTdqty = JSON.parse(JSON.stringify(item.boms))
       },
-      // TODO 选中仓库
-      selWarehouse(val) {
-        this.warehouse = JSON.parse(val);
-        this.orderParams = {
-          ...this.orderParams,
-          whCode: this.warehouse.warehouseCode
-        };
-        this.orderList = {};
-        this.$refs.order.clearSel();
+      //修改原料的损耗率
+      bomConfirm(val) {
+        let matter = JSON.parse(val);
+        this.$set(this.orderList[this.modifyKey], this.modifyIndex, matter);
+        this.reBuildArr(matter);
       },
       // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
@@ -255,42 +231,77 @@
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
+        this.modifyBomTdqty = [...item.boms]
       },
       // TODO 更新修改后的物料信息
       selConfirm(val) {
         let modMatter = JSON.parse(val);
-        this.$set(this.matterList, this.modifyIndex, modMatter);
-      },
-      // TODO 选择物料，显示物料pop
-      getMatter() {
-        if (!this.dealerInfo.dealerCode) {
-          this.$vux.alert.show({
-            content: '请选择客户'
-          })
-          return
+        if (!modMatter.processQty) {
+          modMatter.tdQty = '';
+        } else {
+          modMatter.tdQty = accAdd(modMatter.lockQty, modMatter.processQty);
         }
-        this.showMaterielPop = !this.showMaterielPop;
+        modMatter = {
+          ...modMatter,
+        };
+        this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
+        this.reBuildArr(modMatter);
+      },
+      reBuildArr(matter) {
+        let BomArr = matter.boms;
+        //修改数量时，bom数量加上修改后减去修改前的差值
+        this.modifyBomTdqty.forEach(item => {
+          BomArr.forEach(BItem => {
+            if (BItem.inventoryCode === item.inventoryCode) {
+              BItem.newTdqty = accSub(BItem.tdQty, item.tdQty);
+              this.UniqueBom.forEach(AItem => {
+                if (BItem.inventoryCode === AItem.inventoryCode) {
+                  AItem.tdQty = accAdd(AItem.tdQty, BItem.newTdqty);
+                  return false
+                }
+              })
+              return true
+            }
+          })
+        })
       },
       // TODO 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
+        let promises = [];
+        this.DuplicateBoms = [];
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = 1, price = 0, taxRate = this.taxRate, promDeliTime = ''} = this.numMap[key] || {};
+          let {tdQty = '', processQty = '', lockQty = item.qtyBal, boms = []} = this.numMap[key] || {};
           item.tdQty = tdQty;
-          item.price = price;
-          item.taxRate = taxRate;
-          item.promDeliTime = promDeliTime;
+          item.processQty = processQty;
+          item.lockQty = lockQty;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
+          promises.push(getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
+            tableContent.forEach(bom => {
+              let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
+              let {specificLoss = bom.specificLoss, lockQty = 0} = matchedBom;
+              let tdQty = accMul(item.processQty, bom.qty, (1 + specificLoss));
+              bom.lockQty = lockQty;
+              bom.specificLoss = specificLoss;
+              bom.tdQty = Math.abs(toFixed(tdQty))
+            });
+            this.$set(item, 'boms', tableContent);
+            let data = JSON.parse(JSON.stringify(tableContent));
+            this.DuplicateBoms = [...this.DuplicateBoms, ...data];
+          }));
           orderList[item.transCode].push(item);
+        });
+        Promise.all(promises).then(data => {
+          // 合并bom
+          this.mergeBomList();
         });
         this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
-        this.getMatPrice();
       },
       // TODO 选择默认图片
       getDefaultImg(item) {
@@ -300,19 +311,16 @@
         }
         return url
       },
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
       // TODO 滑动删除
-      // delClick(index, item, key) {
-      //   let arr = this.orderList[key];
-      //   arr.splice(index, 1);
-      //   if (!arr.length) {
-      //     delete this.orderList[key];
-      //   }
-      //   this.$refs.order.delSelItem(item);
-      // },
-      // 滑动删除
-      delClick(index, sItem,key) {
+      delClick(index, sItem, key) {
         let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        let delIndex = this.findIndex(arr, sItem);
         //若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -322,59 +330,69 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+        return this.findIndex(this.selItems, sItem) !== -1;
       },
       //全选
-      checkAll(){
-        if(this.selItems.length === this.matterList.length){
+      checkAll() {
+        if (this.selItems.length === this.matterList.length) {
           this.selItems = [];
           return
         }
         this.selItems = JSON.parse(JSON.stringify(this.matterList));
       },
       //删除选中的
-      deleteCheckd(){
+      deleteCheckd() {
         this.$vux.confirm.show({
           content: '确认删除?',
           // 确定回调
           onConfirm: () => {
             let newArr = [];
             let keys = Object.keys(this.orderList);
-            keys.forEach(item=>{
+            keys.forEach(item => {
               newArr = newArr.concat(this.orderList[item]);
-            })
-            this.selItems.forEach(SItem=>{
-              newArr.forEach(OItem=>{
-                if(OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode){
+            });
+            this.selItems.forEach(SItem => {
+              newArr.forEach(OItem => {
+                if (OItem.orderCode === SItem.orderCode && OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
                   let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item=>item.inventoryCode === OItem.inventoryCode);
-                  if(delIndex >= 0){
+                  let delIndex = this.findIndex(delArr, OItem);
+                  if (delIndex >= 0) {
                     this.$refs.order.delSelItem(delArr[delIndex]);
-                    delArr.splice(delIndex,1);
+                    delArr.splice(delIndex, 1);
                   }
-                  if(!delArr.length){
+                  if (!delArr.length) {
                     delete this.orderList[OItem.transCode];
                   }
-
                 }
-
+              })
+            });
+            //删除bom
+            this.selItems.forEach(item => {
+              item.boms.forEach(BItem => {
+                this.UniqueBom.forEach((AItem, index) => {
+                  if (BItem.inventoryCode === AItem.inventoryCode) {
+                    let tdQty = accSub(AItem.tdQty, BItem.tdQty)
+                    AItem.tdQty = toFixed(tdQty);
+                    if (AItem.tdQty <= 0) {
+                      this.UniqueBom.splice(index, 1)
+                    }
+                    return false
+                  }
+                })
+                return true
               })
             })
             this.selItems = [];
             this.matterModifyClass = false;
           }
         })
-
       },
       // TODO 新增更多订单
       addOrder() {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
-              tdQty: item.tdQty,
-              price: item.price
-            };
+            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
           }
         }
         this.showOrderPop = !this.showOrderPop;
@@ -382,25 +400,31 @@
       // TODO 提价订单
       submitOrder() {
         let warn = '';
-        let validateMap = [
-          {
-            key: 'dealerInfo',
-            message: '客户信息'
-          },
-          {
-            key: 'warehouse',
-            message: '仓库'
-          },
-        ];
-        validateMap.every(item => {
-          if (!this[item.key]) {
-            warn = `请选择${item.message}`;
-            return false
-          }
-          return true
-        });
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
+        }
+        if (!warn) {
+          for (let value of Object.values(this.orderList)) {
+            for (let vItem of value) {
+              if (!vItem.tdQty) {
+                warn = '请填写本次入库数量'
+                break;
+              }
+              for (let item of vItem.boms) {
+                // 校验数量
+                if (item.qtyStock < item.tdQty) {
+                  warn = '可用余额不能少于本次扣料，请重新输入入库数量';
+                  break;
+                }
+              }
+              if (warn) {
+                break;
+              }
+            }
+            if (warn) {
+              break;
+            }
+          }
         }
         if (warn) {
           this.$vux.alert.show({
@@ -418,53 +442,63 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'SODL',
+                businessKey: 'IPPI',
                 createdBy: ''
               }
             };
             // 组装dataSet
             for (let items of Object.values(this.orderList)) {
               for (let item of items) {
-                let taxRate = item.taxRate || this.taxRate;
-                let taxAmount = accMul(item.price, item.tdQty, taxRate);
-                let oItem = {
-                  transMatchedCode: item.transCode, // 明细被核销交易号
-                  orderCode: item.transCode, // 销售订单号（明细）
-                  outPutMatCode: item.inventoryCode, // 输出物料
-                  orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
-                  assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-                  assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
-                  tdQty: item.tdQty, // 明细发生数
-                  assistQty: item.assistQty || 0, // 辅计数量（明细）
-                  thenQtyStock: item.qtyStockBal, // 当时可用库存
-                  thenQtyBal: item.qtyBal, // 待交付数量
-                  tdProcessing: item.processing, //加工属性
-                  price: item.price, // 明细单价
-                  taxRate: taxRate, // 税率
-                  taxAmount: taxAmount, // 税金
-                  tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
-                  promDeliTime: item.promDeliTime || '', // 承诺交付时间
-                  comment: item.comment || '', // 说明
-                };
-                if (this.transCode) {
-                  oItem.tdId = item.tdId || '';
+                let boms = [];
+                for (let bom of item.boms) {
+                  boms.push({
+                    transMatchedCode: item.transCode,
+                    tdQty: bom.tdQty, // 原料采购计划
+                    lockQty: bom.lockQty, // 原料库存计划
+                    demandQty: bom.qty, // 原料需求
+                    thenQtyStock: bom.qtyStock,
+                    bomSpecificLoss: bom.specificLoss,
+                    inventoryType: bom.inventoryType,
+                    tdProcessing: bom.processing || bom.tdProcessing,
+                    containerCodeOut: bom.warehouseCode,
+                    material: bom.material,
+                    inventoryName: bom.inventoryName,
+                    specification: bom.specification,
+                    transObjCode: bom.inventoryCode,
+                    measureUnit: bom.measureUnit,
+                    bomType: bom.bomType,
+                    bomQty: bom.qty || bom.bomQty,
+                    shippingTime: bom.shippingTime,
+                  })
                 }
+                let oItem = {
+                  tdId: item.tdId || null,
+                  transMatchedCode: item.transCode,
+                  transObjCode: item.inventoryCode,
+                  inventoryName_transObjCode: item.inventoryName,
+                  tdProcessing: item.processing,
+                  containerCodeOut: item.warehouseCode,
+                  measureUnit_transObjCode: item.measureUnit,
+                  thenQtyBal: item.qtyBal,
+                  promDeliTime: item.promDeliTime,
+                  thenQtyStock: item.qtyStock,
+                  lockQty: item.lockQty,
+                  processQty: item.processQty,
+                  tdQty: item.tdQty,
+                  leadTime: item.comment || null,
+                  shippingTime: item.shippingTime || null,
+                  comment: item.comment || null,
+                  boms
+                };
                 dataSet.push(oItem);
               }
             }
             formData = {
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
-              dealerDebitContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
-              dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
-              containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 仓库管理员
               handlerEntity: this.entity.dealerName,
-              outPut: {
-                dealerDebit: this.dealerInfo.dealerCode, // 客户编码
-                drDealerLabel: this.dealerInfo.dealerLabelName || '客户', // 客户页签
-                containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
-                drDealerPaymentTerm: this.drDealerPaymentTerm || '现付',
-                project: this.project.projectName,//项目
+              // biProcessStatus: this.currentStage,
+              inPut: {
                 dataSet
               }
             };
@@ -473,7 +507,7 @@
               operation = saveAndCommitTask;
               wfPara = {
                 businessKey: this.transCode,
-                createdBy: this.formData.handler,
+                createdBy: formData.creator || formData.handler,
                 transCode: this.transCode,
                 result: 3,
                 taskId: this.taskId,
@@ -490,7 +524,7 @@
             if (!this.transCode) {
               delete submitData.biReferenceId
             }
-            if(!this.processCode.length){ //无工作流
+            if (!this.processCode.length) { //无工作流
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -516,19 +550,25 @@
           }
           let orderList = {};
           // 获取合计
-          let {outPut} = formData;
-          let {dataSet = []} = outPut;
+          let {inPut} = formData;
+          let {dataSet = []} = inPut;
           for (let item of dataSet) {
+            //bom合计
+            item.boms.forEach(bom => {
+              bom.inventoryCode = bom.transObjCode;
+              bom.specificLoss = bom.bomSpecificLoss;
+              bom.qty = bom.bomQty;
+            })
+            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             item = {
               ...item,
               transCode: item.transMatchedCode,
               qtyBal: item.thenQtyBal,
-              qtyStockBal: item.thenQtyStock,
-              inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_outPutMatCode,
-              inventoryCode: item.outPutMatCode,
-              specification: item.specification_outPutMatCode,
-              processing: item.tdProcessing
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.transObjCode,
+              specification: item.specification_transObjCode,
+              processing: item.tdProcessing,
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
@@ -536,60 +576,81 @@
             orderList[item.transCode].push(item);
           }
           this.matterList = dataSet;
-          // 客户信息
-          this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName, // 客户名
-            dealerName: outPut.dealerName_dealerDebit, // 公司名
-            dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
-            dealerCode: outPut.dealerDebit, // 客户编码
-            dealerLabelName: outPut.drDealerLabel, // 关系标签
-            province: outPut.province_dealerDebit, // 省份
-            city: outPut.city_dealerDebit, // 城市
-            county: outPut.county_dealerDebit, // 地区
-            address: outPut.address_dealerDebit, // 详细地址
-          };
-          // 仓库信息
-          this.warehouse = {
-            warehouseCode: outPut.containerCodeOut,
-            warehouseName: outPut.warehouseName_containerCodeOut,
-            warehouseType: outPut.warehouseType_containerCodeOut,
-            warehouseProvince: outPut.warehouseProvince_containerCodeOut,
-            warehouseCity: outPut.warehouseCity_containerCodeOut,
-            warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
-            warehouseAddress: outPut.warehouseAddress_containerCodeOut,
-            containerOutWarehouseManager: formData.containerOutWarehouseManager, // 仓库管理员
-          };
-          // 订单请求参数
-          this.orderParams = {
-            dealerCode: this.dealerInfo.dealerCode,
-            whCode: this.warehouse.warehouseCode,
-          };
           this.formData = {
             ...this.formData,
             creator: formData.creator,
             biComment: formData.biComment,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
           };
-          this.drDealerPaymentTerm = outPut.drDealerPaymentTerm;
           this.entity = {
             dealerName: formData.handlerEntity
           };
-          this.project = {
-            projectName: outPut.project
-          };
+          this.mergeBomList();
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
           this.$loading.hide();
-          // this.$emit('input', false);
+        })
+      },
+      // TODO 合并bom列表
+      mergeBomList() {
+        //对合计的bom进行去重合并
+        let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
+        let getNew = old => old.reduce((acc, cur) => {
+          let hasItem = acc.some(e => {
+            let temp = isEqual(e, cur);
+            if (temp) {
+              e.tdQty = accAdd(e.tdQty, cur.tdQty);
+            }
+            return temp;
+          });
+          if (!hasItem) acc.push(cur);
+          return acc;
+        }, []);
+        this.UniqueBom = getNew(this.DuplicateBoms);
+      },
+      // TODO 保存草稿数据
+      hasDraftData() {
+        // 是否选择订单
+        if (!Object.values(this.orderList).length) {
+          return false
+        }
+        return {
+          [DRAFT_KEY]: {
+            orderList: this.orderList,
+            formData: this.formData,
+            DuplicateBoms: this.DuplicateBoms,
+          }
+        };
+      },
+      // TODO
+      checkAmt() {
+      },
+      // TODO 修改原料库存计划
+      modifyBomLockQty(bom) {
+        this.$vux.confirm.prompt(bom.lockQty, {
+          title: '原料库存计划',
+          onConfirm: (val) => {
+            if (val) {
+              bom.lockQty = Math.abs(toFixed(val));
+              let tdQty = accMul(this.bom.processQty, bom.qty, (1 + bom.specificLoss));
+              bom.tdQty = Math.abs(toFixed(tdQty));
+            }
+          }
         })
       },
     },
+    filters: {
+      dateFormat,
+    },
     created() {
-      let data = sessionStorage.getItem('XSCK_DATA');
+      let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
-        this.orderList = JSON.parse(data).orderList;
-        this.warehouse = JSON.parse(data).warehouse;
-        this.dealerInfo = JSON.parse(data).dealer;
+        let draft = JSON.parse(data);
+        this.orderList = draft.orderList;
+        this.formData = draft.formData;
+        this.DuplicateBoms = draft.DuplicateBoms;
+        this.mergeBomList();
+        sessionStorage.removeItem(DRAFT_KEY);
       }
     }
   }
@@ -597,27 +658,51 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-  // 所属订单
-  .order_code {
-    display: flex;
-    color: #fff;
-    font-size: .12rem;
-    > span {
-      display: inline-block;
-      padding: 0 .04rem;
+
+  .nbjgdd-apply-container {
+    .basicPart {
+      height: 90%;
     }
-    .order_title {
-      background: #455d7a;
-    }
-    .order_num {
-      background: #c93d1b;
+    // 加工订单号
+    .order_code {
+      display: flex;
+      color: #fff;
+      font-size: .12rem;
+      > span {
+        display: inline-block;
+        padding: 0 .04rem;
+      }
+      .order_title {
+        background: #455d7a;
+      }
+      .order_num {
+        background: #c93d1b;
+      }
     }
   }
 
-  .materiel_list .mater_list .each_mater_wrapper {
-    flex-direction: column;
-  }
-  .materiel_list .mater_list .each_mater_wrapper .mater_main {
-    padding-right: .38rem;
+  .bom-container {
+    .number-part {
+      display: flex;
+      font-size: .1rem;
+      text-align: right;
+      flex-direction: column;
+      .main-number {
+        font-size: .12rem;
+        font-weight: bold;
+      }
+      .number-unit {
+        color: #757575;
+      }
+    }
+    .specific_loss {
+      font-size: .12rem;
+      font-weight: bold;
+      text-align: right;
+      .icon-bianji1 {
+        font-size: 0.12rem;
+        font-weight: normal;
+      }
+    }
   }
 </style>
