@@ -10,7 +10,7 @@
         <r-picker title="项目子类" :data="subclassList" mode="3" placeholder="请选择项目子类"
                   v-model="ProjectApproval.projectSubclass"></r-picker>
         <!-- 项目立项明细 -->
-        <div class="materiel_list mg_auto box_sd">
+        <div class="materiel_list mg_auto">
           <div class="title">项目立项明细</div>
           <group @group-title-margin-top="0">
             <x-input title="项目名称" v-model="ProjectApproval.projectName" text-align='right' placeholder='请填写'>

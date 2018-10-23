@@ -1,36 +1,36 @@
 import $axios from '../plugins/ajax';
 
 const dealerService = {
-    //获取id
+    // 获取id
     getId(id){
         return $axios.ajax({
-            url:`/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
+            url: `/H_roleplay-si/ds/list/getListViewById?uniqueId=${id}`
         })
     },
-    //获取所有往来列表
+    // 获取所有往来列表
     getDealerList(id,data){
         return $axios.ajax({
-            url:`/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
+            url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${id}`,
             data
         })
     },
-    //获取订单往来客户列表
+    // 获取订单往来客户列表
     getOrderDealerList(data){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getObjDealerByLabelName',
+            url: '/H_roleplay-si/ds/getObjDealerByLabelName',
             data
         })
     },
-    //获取往来分类
+    // 获取往来分类
     getDealerClassfiy(){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/list/getListViews?listId=c0375170-d537-4f23-8ed0-a79cf75f5b04'
+            url: '/H_roleplay-si/ds/list/getListViews?listId=c0375170-d537-4f23-8ed0-a79cf75f5b04'
         })
     },
-    //获取往来关系标签
+    // 获取往来关系标签
     getDictByType(){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getDictByType',
+            url: '/H_roleplay-si/ds/getDictByType',
             data:{
                 type: 'dealerRelLabel',
                 page: 1,
@@ -39,10 +39,10 @@ const dealerService = {
             }
         })
     },
-    //获取往来大类
+    // 获取往来大类
     getDictByValue(value){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getDictByValue',
+            url: '/H_roleplay-si/ds/getDictByValue',
             data:{
                 value: value,
                 page: 1,
@@ -51,30 +51,37 @@ const dealerService = {
             }
         })
     },
-    //保存往来
+    // 保存往来
     save(data){
         return $axios.post({
-            url:'/H_roleplay-si/dealer/save',
+            url: '/H_roleplay-si/dealer/save',
             data
         })
     },
-    //修改往来
+    // 修改往来
     update(data){
         return $axios.post({
-            url:'/H_roleplay-si/dealer/update',
+            url: '/H_roleplay-si/dealer/update',
             data
         })
     },
-    //查询往来信息
+    // 查询往来信息
     getDealerInfo(code){
         return $axios.ajax({
-            url:`/H_roleplay-si/dealer/findData?transCode=${code}`
+            url: `/H_roleplay-si/dealer/findData?transCode=${code}`
         })
     },
-    //获取新增应用中的往来
+    // 获取新增应用中的往来
     getAppdealer(data){
         return $axios.ajax({
-            url:'/H_roleplay-si/ds/getObjDealerByLabelName',
+            url: '/H_roleplay-si/ds/getObjDealerByLabelName',
+            data
+        })
+    },
+    // 获取联系人
+    getContactList(data){
+        return $axios.ajax({
+            url: '/H_roleplay-si/ds/getObjDealerContact',
             data
         })
     }

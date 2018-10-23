@@ -1,4 +1,4 @@
-import {commitTask, getBaseInfoData, getProcess,submitAndCalc} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess, getProcessStatus} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
@@ -21,7 +21,8 @@ export default {
       entity: {},                                 // 公司主体 ID
       btnInfo: {},                                // 操作按钮信息
       actions: [],
-      selItems : [],                              // 选中的要删除的物料
+      selItems: [],                               // 选中的要删除的物料
+      currentStage: [],                           // 流程状态 
       modifyIndex:null,                           // 选中编辑物料的pop
       fillBscroll: null,
       btnIsHide : false,
@@ -219,6 +220,16 @@ export default {
         this.processCode = data.processCode || '';
       })
     },
+    // 获取流程状态
+    getProcessStatus() {
+      return getProcessStatus(this.listId).then( ({ tableContent }) => {
+        for(let val of tableContent){
+          val['value'] = val.fieldVlaue;
+          val['key'] = val.fieldVlaue;
+        }
+        this.currentStage = tableContent;
+      })
+    },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
       let { price, tdQty, qtyBal, qtyStockBal , qtyStock} = item;
@@ -257,8 +268,9 @@ export default {
     }
     let {transCode} = this.$route.query;
     (async () => {
-      this.getBaseInfoData();
       this.getProcess();
+      this.getBaseInfoData();
+      this.getProcessStatus();  // 获取流程状态
       this.initRequest && await this.initRequest();   // 提交页面 不共用的数据 请求
       this.getPaymentTerm && await this.getPaymentTerm();   // 提交页面 结算方式 请求
       this.getLogisticsTerms && await this.getLogisticsTerms(); //提交页面 物流条款 请求

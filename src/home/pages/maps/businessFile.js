@@ -11,6 +11,7 @@ export default {
 
   // < 产品类应用 >
   'a32759e8-a3ad-47a6-a030-f33daea8b433': 'product',
+
   // < 销售类应用 >
   '43b07f14-4ae5-4804-a80e-ef06ce26fb0b': 'sale',
 
@@ -25,9 +26,12 @@ export default {
 
   // < 财务类应用 >
   '7218d31d-88f4-45bc-82c2-6d4a1c766821': 'finance',
+  // <财务会计类科目>
+  'f3d819ee-8f77-47d0-81f1-e986841e51eb': 'finance',
 
   // < 项目类应用 >
   '26d75e08-2c82-4e1a-ad51-b788b026428a': 'project',
+
   // <发票类应用>
   '752bfc20-9cbf-4552-b2a4-77b2c46eb2d1' : 'invoice'
 }

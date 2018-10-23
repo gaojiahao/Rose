@@ -21,7 +21,7 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.processStatus}}</span>
+              <span class="duty_crt_man" :class="item.statusClass">{{item.biProcessStatus}}</span>
             </p>
             <p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>
           </div>
@@ -142,10 +142,10 @@
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input', false);
-          tableContent.forEach(item => {
-            this.setStatus(item);
-          });
+          // this.$emit('input', false);
+          // tableContent.forEach(item => {
+          //   this.setStatus(item);
+          // });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {

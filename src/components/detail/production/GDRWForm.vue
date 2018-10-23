@@ -6,27 +6,30 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow> 
-      <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="contactInfo" :payment="false" :logistics="false"></contact-part>
       <div class="form_content">
         <div class="form_title">
           <span class="iconfont icon-mingxi1"></span>
-          <span>商机信息</span>
+          <span>工单信息</span>
         </div>
         <div class="main_content">
-          <form-cell cellTitle='标题' :cellContent="orderInfo.opportunityTitle"></form-cell>
-          <form-cell cellTitle='内容' :cellContent="orderInfo.comment || '无'"></form-cell>
-          <form-cell cellTitle='流程状态' :cellContent="orderInfo.biProcessStatus || '暂无'"></form-cell>
-          <form-cell cellTitle='有效期至' :cellContent="orderInfo.validUntil"></form-cell>
-          <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
-          <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+          <form-cell cellTitle='工序名称' :cellContent="workInfo.procedureName_proPointCode"></form-cell>
+          <form-cell cellTitle='工序编码' :cellContent="workInfo.proPointCode"></form-cell>
+          <form-cell cellTitle='工序待验收' :cellContent="workInfo.thenQtyStock"></form-cell>
+          <form-cell cellTitle='工序可派工' :cellContent="workInfo.thenQtyBal"></form-cell>
+          <form-cell cellTitle='派工数量' :cellContent="workInfo.tdQty"></form-cell>
+          <form-cell cellTitle='工人' :cellContent="workInfo.dealerName_dealerDebit"></form-cell>
+          <form-cell cellTitle='设施' :cellContent="workInfo.facilityName_facilityObjCode || '无'"></form-cell>
         </div>
-        <div class="price_cell vux-1px-t">
-          <span class="price_title">预期销售额:</span>
-          <span class="num">
-            <span class="symbol">￥</span><span>{{orderInfo.tdAmount | numberComma(3) || 0}}</span>
-          </span>
+      </div>
+      <div class="form_content" style="marginTop: .1rem">
+        <div class="form_title">
+          <span class="iconfont icon-mingxi1"></span>
+          <span>加工订单信息</span>
+        </div>
+        <div class="main_content">
+          <form-cell cellTitle='加工订单号' :cellContent="workInfo.processCode"></form-cell>
+          <form-cell cellTitle='成品名称' :cellContent="workInfo.inventoryName_transObjCode"></form-cell>
+          <form-cell cellTitle='订单加工数' :cellContent="workInfo.processProQty"></form-cell>
         </div>
       </div>
       <!-- 审批操作 -->
@@ -53,10 +56,9 @@ import contactPart from 'components/detail/commonPart/ContactPart'
 export default {
   data() {
     return {
-      count: 0,          // 金额合计
+      workInfo: {},       // 工单内容
       orderInfo: {},      // 表单内容
-      contactInfo: {},
-      formViewUniqueId: '5446fc51-1d16-489a-ab2b-6b2292bb7be5'
+      formViewUniqueId: 'c5acfe84-3478-431b-bb18-93809e19cb62'
     }
   },
   mixins: [detailCommon],
@@ -80,35 +82,12 @@ export default {
           });
           return;
         }
-        // 获取合计
-        // let {dataSet} = data.formData.order;
-        this.count = this.count / 100;
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
-        data.formData.tdAmount = toFixed(data.formData.tdAmount);
         this.orderInfo = data.formData;
-        this.getcontactInfo();
+        this.workInfo = data.formData.order.dataSet[0];
         this.workFlowInfoHandler();
       })
     },
-    // TODO 生成contactInfo对象
-    getcontactInfo(key = 'order') {
-      let orderInfo = this.orderInfo;
-      this.contactInfo = {
-        creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
-        dealerName: orderInfo.dealerName_dealerDebit, // 公司名
-        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
-        dealerCode: orderInfo.dealerDebit, // 客户编码
-        dealerLabelName: orderInfo.drDealerLabel, // 关系标签
-        province: orderInfo.province_dealerDebit, // 省份
-        city: orderInfo.city_dealerDebit, // 城市
-        county: orderInfo.county_dealerDebit, // 地区
-        address: orderInfo.address_dealerDebit, // 详细地址
-        payment: orderInfo.drDealerPaymentTerm, // 付款方式
-        validUntil : orderInfo.validUntil, //有效期
-        logistics : orderInfo.drDealerLogisticsTerms,//物流条件
-
-      };
-    }
   }
 }
 </script>

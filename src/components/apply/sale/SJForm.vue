@@ -3,7 +3,7 @@
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 选择客户-->
-        <pop-dealer-list :defaultValue="dealerInfo" @sel-dealer="selDealer">
+        <pop-dealer-list :defaultValue="dealerInfo" @sel-dealer="selDealer" @sel-contact="selContact" >
         </pop-dealer-list>
         <!-- 商机明细 -->
         <div class="materiel_list">
@@ -29,7 +29,7 @@
                     </template>
                   </x-input>
                   <!-- 当前阶段 -->
-                  <popup-radio title="当前所在阶段" placeholder='请选择所在阶段' :options="stageOptions" v-model="formData.currentStage">
+                  <popup-radio title="流程状态" placeholder='请选择' :options="currentStage" v-model="formData.biProcessStatus">
                   </popup-radio>
                   <!-- 有效期 -->
                   <datetime v-model="formData.validUntil" placeholder='请选择日期' title="有效期至"></datetime>
@@ -65,7 +65,7 @@
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入
@@ -96,14 +96,13 @@
           opportunityTitle: '',
           comment: '',
           tdAmount: '',
-          currentStage: '',//与PC端一致
+          biProcessStatus: '',//与PC端一致
           validUntil: '',
           salesPerson: '', // 销售人员
           salesChannels: '', // 销售渠道
           categoryLabels: '',
           biComment: ''
         },
-        stageOptions: ['初步交流(10%)', '需求沟通(30%)', '商务沟通(50%)', '签约交款(100%)', '签约失败(0%)'],
         biReferenceId: '',
       }
     },
@@ -117,6 +116,13 @@
         this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
+      selContact(val){
+        let contact = JSON.parse(val)[0];
+        // 联系人
+        this.formData.dealerDebitContactPersonName = contact.dealerName || '';
+        // 联系人电话
+        this.formData.dealerDebitContactInformation = contact.dealerMobilePhone || '';
+      },
       // TODO 提交
       submitOrder() {
         let warn = '';
@@ -127,10 +133,11 @@
           }, {
             key: 'tdAmount',
             message: '请填写预期销售额'
-          }, {
-            key: 'currentStage',
-            message: '请选择所在阶段'
-          },
+          }, 
+          // {
+          //   key: 'biProcessStatus',
+          //   message: '请选择流程状态'
+          // },
         ];
         if (JSON.stringify(this.dealerInfo) == '{}') {
           warn = '请选择客户';
@@ -178,7 +185,7 @@
                 }
               }),
             };
-            if (this.transCode) {
+            if (this.isResubmit) {
               operation = saveAndCommitTask;
               submitData.biReferenceId = this.biReferenceId;
               submitData.wfPara = JSON.stringify({
@@ -190,7 +197,13 @@
                 comment: ''
               });
             }
-            this.saveData(operation, submitData);
+          //无工作流
+          if(!this.processCode.length){
+            operation = submitAndCalc;
+            delete submitData.wfPara;
+            delete submitData.biReferenceId;
+          }
+          this.saveData(operation, submitData);
           }
         });
       },
@@ -241,7 +254,7 @@
       // TODO 是否保存草稿
     hasDraftData() {
       let formData = this.formData;
-      if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.currentStage) {
+      if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.biProcessStatus) {
         return {
           [DRAFT_KEY]: {
             formData,
