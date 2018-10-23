@@ -38,6 +38,10 @@
         <span class="title">生效时间：</span>
         <span class="content">{{orderInfo.effectiveTime | dateFormat}}</span>
       </div>
+      <div class="each_time">
+        <span class="title">流程状态：</span>
+        <span class="content">{{orderInfo.biProcessStatus || '无'}}</span>
+      </div>
     </div>
   </div>
 </template>

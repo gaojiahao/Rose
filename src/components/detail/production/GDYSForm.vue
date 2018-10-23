@@ -12,13 +12,13 @@
           <span>工单信息</span>
         </div>
         <div class="main_content">
+          <form-cell cellTitle='工单任务号' :cellContent="workInfo.transMatchedCode"></form-cell>
           <form-cell cellTitle='工序名称' :cellContent="workInfo.procedureName_proPointCode"></form-cell>
           <form-cell cellTitle='工序编码' :cellContent="workInfo.proPointCode"></form-cell>
-          <form-cell cellTitle='工序待验收' :cellContent="workInfo.thenQtyStock"></form-cell>
-          <form-cell cellTitle='工序可派工' :cellContent="workInfo.thenQtyBal"></form-cell>
-          <form-cell cellTitle='派工数量' :cellContent="workInfo.tdQty"></form-cell>
-          <form-cell cellTitle='工人' :cellContent="workInfo.dealerName_dealerDebit"></form-cell>
-          <form-cell cellTitle='设施' :cellContent="workInfo.facilityName_facilityObjCode || '无'"></form-cell>
+          <form-cell cellTitle='可验收余额' :cellContent="workInfo.thenQtyBal"></form-cell>
+          <form-cell cellTitle='本次验收' :cellContent="workInfo.tdQty"></form-cell>
+          <form-cell cellTitle='后置工序' :cellContent="workInfo.procedureName_rearProPointCode"></form-cell>
+          <form-cell cellTitle='验收员' :cellContent="workInfo.dealerName_dealerDebit"></form-cell>
         </div>
       </div>
       <div class="form_content has_margin">
@@ -29,7 +29,6 @@
         <div class="main_content">
           <form-cell cellTitle='加工订单号' :cellContent="workInfo.processCode"></form-cell>
           <form-cell cellTitle='成品名称' :cellContent="workInfo.inventoryName_transObjCode"></form-cell>
-          <form-cell cellTitle='订单加工数' :cellContent="workInfo.processProQty"></form-cell>
           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
         </div>
       </div>
@@ -82,7 +81,6 @@ export default {
           });
           return;
         }
-        data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
         this.workInfo = data.formData.order.dataSet[0];
         this.workFlowInfoHandler();

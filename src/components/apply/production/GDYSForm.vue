@@ -2,38 +2,29 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
-                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <div class="title">工序信息</div>
           <group class='costGroup' group-title-margin-top="0">
-            <cell isLink title='工序名称' v-model="workInfo.procedureName || '请选择'" @click.native="showWorkPop = !showWorkPop" ></cell>
-            <cell title='工序编码' v-model="workInfo.proPointCode" :disabled="!workInfo.proPointCode"></cell>
-            <cell title='工序待验收' v-model="workInfo.thenQtyStock" :disabled="!workInfo.thenQtyStock"></cell>
-            <cell title='工序可派工' v-model="workInfo.thenQtyBal" :disabled="!workInfo.thenQtyBal"></cell>
-            <x-input title="派工数量" type="number" text-align="right" v-model.number="workInfo.tdQty"  :disabled='!workInfo.thenQtyBal'  
-                    :placeholder="workInfo.thenQtyBal ? '请填写':''" @on-focus="getFocus($event)" @on-blur='checkAmt(workInfo)'>
+            <cell isLink title='工单任务号' v-model="workInfo.transCode || '请选择'" @click.native="showWorkPop = !showWorkPop" ></cell>
+            <cell title='工序名称' v-model="workInfo.procedureName" :disabled="!workInfo.procedureName"></cell>
+            <cell title='可验收余额' v-model="workInfo.qtyBal" :disabled="!workInfo.qtyBal"></cell>
+            <x-input title="本次验收" type="number" v-model.number="workInfo.tdQty" :disabled='!workInfo.qtyBal' text-align="right" 
+                    :placeholder="workInfo.qtyBal ? '请填写':''"  @on-focus="getFocus($event)" @on-blur="checkAmt(workInfo)">
               <template slot="label">
-                <span class='required'>派工数量
+                <span class='required'>本次验收
                 </span>
               </template>
             </x-input>
+            <cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>
           </group>
           <!-- 物料popup -->
-          <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
-                          @sel-work="selWork" ref="matter"></pop-work-list>
+          <pop-work-check-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
+                          @sel-work="selWork" ref="matter"></pop-work-check-list>
         </div>
-        <pop-manager-list title='工人' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
-        <pop-facility-list  @sel-item="selFacility" :defaultValue="defaultFacility"></pop-facility-list>
-        <div class="materiel_list">
-          <div class="title">加工订单信息</div>
-          <group class='costGroup' group-title-margin-top="0">
-            <cell title='加工订单号' v-model="workInfo.processCode" :disabled="!workInfo.processCode"></cell>
-            <cell title='成品名称' v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName"></cell>
-            <cell title='加工订单数量' v-model="workInfo.processProQty" :disabled="!workInfo.processProQty"></cell>
-          </group>
-        </div>
+        <pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
+                  v-model="biProcessStatus"></r-picker>
         <!--备注-->
         <div class='comment vux-1px-t'>
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -60,32 +51,29 @@ import { saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonS
 import Applycommon from 'components/mixins/applyCommon'
 // 组件引入
 import PopManagerList from 'components/Popup/PopManagerList'
-import PopWorkList from 'components/Popup/workList/PopWorkList'
-import PopFacilityList from 'components/Popup/workList/PopFacilityList'
+import PopWorkCheckList from 'components/Popup/workList/PopWorkCheckList'
 import RPicker from 'components/RPicker'
-const DRAFT_KEY = 'GDRW_DATA';
-
+const DRAFT_KEY = 'GDYS_DATA';
 export default {
   directives: {
     TransferDom
   },
   components: {
-    Popup, PopWorkList,
+    Popup, PopWorkCheckList,
     Group, Cell, Datetime,
-    XInput, XTextarea, PopManagerList,RPicker,PopFacilityList
+    XInput, XTextarea, PopManagerList,RPicker
   },
   data() {
     return {
-      listId: '2372f734-93c1-11e8-85db-005056a136d0',
+      listId: 'f9f1e0cb-7edf-43aa-b2f2-527e2525b96e',
       showWorkPop: false,                             // 是否显示物料的popup
-      showFacilityPop :false,                         // 是否显示设备的popup
+      dealer: {},
       formData: {
-        biComment : '',                               //备注
-        biProcessStatus :''                           //流程状态
+        biComment : '',//备注
       },
       workInfo: {},                                    // 工序信息
       defaultManager: {},
-      defaultFacility : {}
+      biProcessStatus : '',//流程状态
     }
   },
   mixins: [Applycommon],
@@ -102,21 +90,13 @@ export default {
       this.defaultManager = JSON.parse(val);
       // 员工 工号
       this.workInfo.dealerDebit = this.defaultManager.dealerCode;
-      // 类型
-      this.workInfo.drDealerLabel = this.defaultManager.dealerLabelName;
     },
-    //选择设备
-    selFacility(val){
-      this.defaultFacility = val;
-      this.workInfo.facilityObjCode  = this.defaultFacility.facilityCode;
-      this.workInfo.facilityTypebase_facilityObjCode  = this.defaultFacility.facilityType;
-    },
-    //校验数量
+    //检验本次验收数量
     checkAmt(item){
-      let {tdQty, thenQtyBal} = item;
-      if (tdQty) {
-        if(tdQty > thenQtyBal){
-          item.tdQty = thenQtyBal;
+      let { tdQty, qtyBal} = item;
+      if(tdQty){
+        if(tdQty > qtyBal){
+          item.tdQty = qtyBal;
         }
       }
     },
@@ -124,12 +104,12 @@ export default {
     submitOrder() {
       let warn = '',
           dataSet = [];
-      if(!this.workInfo.colId){
+      if(!this.workInfo.transCode){
         warn = '请选择工序'
       }
       let checkData = [
-        { key: 'tdQty', msg: '请填写派工数量'},
-        { key: 'dealerDebit', msg: '请选择工人'}
+        { key: 'tdQty', msg: '请填写验收数量'},
+        { key: 'dealerDebit', msg: '请选择验收者'}
       ]
       if(!warn){
         checkData.every(item => {
@@ -147,18 +127,15 @@ export default {
         return
       }
       let obj = {
-        proPointCode: this.workInfo.proPointCode,
-        thenQtyStock: this.workInfo.thenQtyStock,
-        thenQtyBal: this.workInfo.thenQtyBal,
-        tdQty: this.workInfo.tdQty,
-        dealerDebit: this.workInfo.dealerDebit,
-        drDealerLabel: this.workInfo.drDealerLabel,
+        transMatchedCode : this.workInfo.transCode,//工单任务号
+        proPointCode: this.workInfo.proPointCode,//工序编码
+        thenQtyBal: this.workInfo.qtyBal,//可验收余额
+        tdQty: this.workInfo.tdQty,//本次验收
+        rearProPointCode : this.workInfo.rearProPointCode,//后置工序编码
+        dealerDebit: this.workInfo.dealerDebit,//验收人
         proFlowCode: this.workInfo.proFlowCode || '',
-        facilityObjCode: this.workInfo.facilityObjCode || '', //设备编码
-        facilityTypebase_facilityObjCode: this.workInfo.facilityTypebase_facilityObjCode || '',
-        processCode: this.workInfo.processCode,
-        transObjCode: this.workInfo.inventoryCode,
-        processProQty: this.workInfo.processProQty
+        transObjCode: this.workInfo.matCode, //物料编码
+        processCode: this.workInfo.processCode,//加工订单编码
       }
       // 赋值
       dataSet.push(obj);
@@ -169,7 +146,7 @@ export default {
           this.$HandleLoad.show();
           let operation = saveAndStartWf;//默认有工作流
           let wfPara = {
-            [this.processCode]: {businessKey: "WTSK", createdBy: ""}
+            [this.processCode]: {businessKey: "WTAC", createdBy: ""}
           }
           if (this.isResubmit) {
             wfPara = {
@@ -187,6 +164,7 @@ export default {
             formData: JSON.stringify({
               ...this.formData,
               handlerEntity: this.entity.dealerName,
+              biProcessStatus : this.biProcessStatus || null,//流程状态
               order: {
                 dataSet
               }
@@ -208,14 +186,14 @@ export default {
     },
     // TODO 是否保存草稿
     hasDraftData() {
-      if (!this.workInfo.proPointCode) {
+      if (!this.workInfo.transCode) {
         return false
       }
       return {
         [DRAFT_KEY]: {
           workInfo : this.workInfo,
-          formData : this.formData,
-          defaultManager : this.defaultManager
+          defaultManager : this.defaultManager,
+          formData : this.formData
         }
       };
     },

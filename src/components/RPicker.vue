@@ -1,5 +1,5 @@
 <template>
-  <div class='r-picker vux-1px-b' :class="{'r-picker-2': mode === '2', 'r-picker-3': mode === '3'}" @click='showStatus'>
+  <div class='r-picker ' :class="{'r-picker-2': mode === '2', 'r-picker-3': mode === '3','vux-1px-b' : hasBorder}" @click='showStatus'>
     <template v-if="mode === '1' || mode === '2'">
       <label :class='{ required : required}'>{{title}}</label>
       <div class='picker'>
@@ -80,6 +80,12 @@
       placeholder: {
         type: String,
         default: '请选择'
+      },
+      //是否有下边框
+      hasBorder:{
+        type : Boolean,
+        default : true
+
       }
     },
     data() {

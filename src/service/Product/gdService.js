@@ -15,7 +15,13 @@ export let getObjFacility = (data = {}) => {
     data
   })
 }
-
+//获取工单验收工单列表
+export let getWorkCheckList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getWorkCheck',
+    data
+  })
+}
 export default {
   getObjFacility,
   getWorkOrderTask

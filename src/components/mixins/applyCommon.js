@@ -225,7 +225,7 @@ export default {
       return getProcessStatus(this.listId).then( ({ tableContent }) => {
         for(let val of tableContent){
           val['value'] = val.fieldVlaue;
-          val['key'] = val.fieldVlaue;
+          val['name'] = val.fieldVlaue;
         }
         this.currentStage = tableContent;
       })

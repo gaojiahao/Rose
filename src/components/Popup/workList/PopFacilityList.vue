@@ -1,19 +1,18 @@
 <template>
-  <div class="or_ads mg_auto" @click="warehouseClick">
-    <!-- 仓库信息 -->
-    <div v-if="selItems.dealerName">
-      <div class="title">{{title}}</div>
+  <div class="pop-company-container" @click="itemClick">
+    <!-- 设备信息 -->
+    <div v-if="selItems.facilityName">
+      <div class="title">设备</div>
       <div class="user_info">
-        <span class="user_name">{{selItems.dealerName}}</span>
-        <span class="user_tel">{{selItems.dealerMobilePhone}}</span>
+        <span class="user_name">{{selItems.facilityName}}</span>
       </div>
     </div>
     <div v-else>
-      <div class="title">{{title}}信息</div>
-      <div class="mode required">请选择{{title}}</div>
+      <div class="title">设备</div>
+      <div class="mode">请选择设备</div>
     </div>
-    <span class="iconfont icon-youjiantou r_arrow"></span>
-    <!-- 项目经理pop -->
+    <i class="iconfont icon-youjiantou r-arrow" v-show="!disabled"></i>
+    <!-- 设备popup -->
     <div v-transfer-dom v-if="!disabled">
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
@@ -21,7 +20,7 @@
             <!-- 搜索栏 -->
             <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
           </div>
-          <!-- 经理列表 -->
+          <!-- 设备列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
@@ -31,20 +30,13 @@
                   <!--联系人电话 -->
                   <div class="withColor">
                     <div class="ForInline name" style="display:inline-block">
-                      <span>{{item.dealerName}}</span>
-                    </div>
-                    <div class="ForInline name" style="display:inline-block">
-                      <span></span>
+                      <span>{{item.facilityName}}</span>
                     </div>
                   </div>
-                  <div class="withColor" v-if="item.dealerMobilePhone">
+                  <div class="withColor" v-if="item.facilityType">
                     <div class="ForInline " style="display:inline-block">
-                      <span class='creator'>{{item.dealerMobilePhone}}</span>
+                      <span class='creator'>{{item.facilityType}}</span>
                     </div>
-                  </div>
-                  <!-- 地址 -->
-                  <div class="withoutColor">
-                    <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
                   </div>
                 </div>
               </div>
@@ -60,18 +52,13 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getObjDealerByLabelName} from 'service/commonService'
+  import { getObjFacility} from 'service/Product/gdService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
 
   export default {
-    name: "PopManagerList",
+    name: "PopCompanyList",
     props: {
-      // 标题
-      title: {
-        type: String,
-        default: '项目经理'
-      },
       // 默认值
       defaultValue: {
         type: Object,
@@ -87,7 +74,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, RScroll, DSearch,LoadMore,
+      Icon, Popup, RScroll, DSearch, LoadMore,
     },
     data() {
       return {
@@ -102,15 +89,6 @@
           click: true,
           pullUpLoad: true,
         },
-      }
-    },
-    computed: {
-      tip() {
-        let tip = '加载中';
-        if (!this.hasNext) {
-          tip = '暂无数据'
-        }
-        return tip;
       }
     },
     watch: {
@@ -140,21 +118,14 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.selItems.dealerName === sItem.dealerName;
+        return this.selItems.facilityName === sItem.facilityName;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
         this.selItems = sItem;
-        this.$emit('sel-item', JSON.stringify(this.selItems));
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
+        console.log(this.selItems);
+        this.$emit('sel-item', this.selItems);
       },
       // TODO 获取仓库列表
       getList() {
@@ -165,18 +136,18 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'dealerName',
+              property: 'facilityName',
             }];
         }
-        return getObjDealerByLabelName({
+        return getObjFacility({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          dealerLabelName: '员工',
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          //获取缓存
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
@@ -200,21 +171,12 @@
         this.selItems = this.defaultValue ? {...this.defaultValue} : {};
       },
       // TODO 点击仓库
-      warehouseClick() {
+      itemClick() {
         if (this.disabled) {
           return
         }
         this.showPop = !this.showPop;
       },
-      //新增仓库
-      addWarehouse() {
-        this.$router.push({
-          path: '/warehouse/edit_warehouse',
-          query: {
-            add: 1
-          }
-        })
-      }
     },
     created() {
       this.setDefaultValue();
@@ -227,72 +189,57 @@
 </script>
 
 <style scoped lang="scss">
-  // 居中
-  .mg_auto {
-    width: 95%;
-    margin: 10px auto;
-  }
-
-  // 阴影
-  .box_sd {
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
-  }
-
-  // 地址栏
-  .or_ads {
+  .pop-company-container {
     position: relative;
-    padding: .06rem .4rem .06rem .08rem;
-    .icon-gengduo {
-      top: 50%;
-      right: .1rem;
-      font-size: .24rem;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
+    padding: .06rem .1rem;
+    width: 95%;
+    margin : 0 auto;
+    box-sizing: border-box;
+    background: #fff;
     .title {
       color: #757575;
-
       font-size: .12rem;
+      &.required {
+        color: #5077aa;
+        font-weight: bold;
+      }
     }
     .mode {
       color: #111;
       font-weight: 500;
     }
-    .required{
-      color: #5077aa;
-      font-weight: bold;
-    }
-    .r_arrow {
+    /* 右箭头 */
+    .r-arrow {
       top: 50%;
-      right: .04rem;
+      right: 1%;
+      font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
     }
     // 用户信息
     .user_info {
       color: #111;
-      font-size: .16rem;
+      font-size: 0;
       font-weight: 500;
       // 用户姓名
       .user_name {
-        margin-right: .02rem;
+        margin-right: .08rem;
+        font-size: .16rem;
       }
       // 用户电话
       .user_tel {
-        font-size: .14rem;
         font-family: sans-serif, -apple-system-font;
+        font-size: .16rem;
       }
     }
-    // 公司信息
+    // 仓库信息
     .cp_info {
-      .cp_name {
-        color: #111;
-        font-weight: 500;
+      .icon-icon-test {
+        font-size: .1rem;
       }
       .cp_ads {
-
         color: #757575;
+        font-size: .14rem;
       }
     }
   }
