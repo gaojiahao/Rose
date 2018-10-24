@@ -6,7 +6,7 @@
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
-                          v-model="dealer.drDealerPaymentTerm"></pop-single-select> 
+                          v-model="dealer.drDealerPaymentTerm"></pop-single-select>
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
                           v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
@@ -28,7 +28,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}" 
+              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                   v-for="(item, index) in matterList" :key='index'>
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
                             @click.native="delClick(item,index)">
@@ -42,14 +42,14 @@
                         <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other' v-if="item.price && item.tdQty">                      
+                    <div class='mater_other' v-if="item.price && item.tdQty">
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
                       <div>
                         <r-number :num="item.tdQty"
                                   :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>                     
+                      </div>
                     </div>
                   </template>
                   <template slot="editPart" slot-scope="{item}">
@@ -65,7 +65,7 @@
               </div>
             </div>
           </template>
-          
+
           <!-- 新增更多 按钮 -->
           <div class="handle_part" v-if="matterList.length && !matterModifyClass">
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
@@ -78,8 +78,8 @@
                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true"></pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -135,7 +135,7 @@
       TransferDom
     },
     components: {
-      Popup, PopMatterList, PopDealerList, 
+      Popup, PopMatterList, PopDealerList,
       PopSingleSelect, Group, Cell, Datetime,
       XInput, XTextarea, PopMatter, RNumber
     },
@@ -183,7 +183,7 @@
         return getDictByType('dealerLogisticsTerms').then(({ tableContent }) => {
           this.logisticsTerm = tableContent;
         })
-      },      
+      },
       //选择物料，显示物料pop
       getMatter(){
         if(!this.dealerInfo.dealerCode){
@@ -198,17 +198,12 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          if (this.numMap[item.inventoryCode]) {
-            item.tdQty = this.numMap[item.inventoryCode].tdQty;
-            item.price = this.numMap[item.inventoryCode].price;
-          } 
-          else {
-            item.tdQty = '';
-            item.price = '';
-          }
-          item.taxRate = 0.16;
-          item.promDeliTime = ''
-        })
+          let {tdQty = '', price = '', taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
+          item.tdQty = tdQty;
+          item.price = price;
+          item.taxRate = taxRate;
+          item.promDeliTime = promDeliTime;
+        });
         this.numMap = {};
         this.matterList = sels;
         this.getMatPrice();
@@ -266,10 +261,7 @@
       addMatter() {
         for (let item of this.matterList) {
           // 存储已输入的价格
-          this.numMap[item.inventoryCode] = {
-            tdQty: item.tdQty,
-            price: item.price
-          };
+          this.numMap[item.inventoryCode] = {...item};
         }
         this.showMaterielPop = !this.showMaterielPop;
       },
@@ -472,7 +464,7 @@
     // margin-top: .1rem;
     padding: .06rem .1rem;
     box-sizing: border-box;
-    
+
     .weui-cell{
       padding: 0;
     }
@@ -480,12 +472,12 @@
   .no_margin{
     margin-top: 0;
   }
-  .materiel_list 
-    .mater_list 
-      .each_mater_wrapper 
+  .materiel_list
+    .mater_list
+      .each_mater_wrapper
         .has_padding {
           padding-right: .38rem;
         }
-  
-  
+
+
 </style>

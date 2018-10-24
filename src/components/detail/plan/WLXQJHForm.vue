@@ -1,6 +1,6 @@
 <template>
-  <div class="detail_wrapper nbjdgg-detail-container">
-    <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+  <div class="detail_wrapper wlxqjh-detail-container">
+    <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
       <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
@@ -19,37 +19,32 @@
           <div class="each_mater"
                v-for="(oItem, key) in orderList" :key='key'>
             <div class="order_code">
-              <span class="order_title">计划号</span>
+              <span class="order_title">加工订单号</span>
               <span class="order_num">{{key}}</span>
             </div>
             <div class="order_matter">
               <template v-for="(item, index) in oItem">
-                <matter-item :item="item" :class="{'vux-1px-b' : index < oItem.length-1}">
+                <matter-item :class="{'vux-1px-b': item.bom}" :item="item">
                   <!-- 调拨数量 -->
                   <div class="mater_other" slot="other" slot-scope="{item}">
+                    <div class="mater_left">
+                      <span class="num" v-if="item.promDeliTime">承诺交付日期: {{item.promDeliTime}}</span>
+                      <span class="num" v-if="item.shippingTime">主计划截止验收日: {{item.shippingTime}}</span>
+                    </div>
+                    <div class="mater_num">
+                      <span class="num">库存计划: {{item.lockQty | toFixed}}</span>
+                    </div>
+                    <div class="mater_num">
+                      <span class="num">待计划余额: {{item.thenQtyBal | toFixed}}</span>
+                    </div>
                     <div class="mater_num">
                       <span class="num">
-                        本次下单: {{item.tdQty | toFixed}}
-                      </span>
-                      <span class="units">
-                        [待下单余额: {{item.thenQtyBal | toFixed}}]
+                        加工计划: {{item.processQty | toFixed}}
                       </span>
                       <span class='get_bom' @click="checkBom(item)">查看原料</span>
                     </div>
-                    <div class="mater_num">
-                      <span class="num" v-if="item.shippingTime">
-                        主计划完工入库日: {{item.shippingTime}}
-                      </span>
-                    </div>
                   </div>
                 </matter-item>
-                <!-- <bom-list :boms="item.boms">
-                  <template slot-scope="{bom}" slot="number">
-                    <div class="number-part">
-                      <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
-                    </div>
-                  </template>
-                </bom-list> -->
               </template>
             </div>
           </div>
@@ -57,23 +52,23 @@
       </div>
       <!-- bom合计 -->
       <div class="bom_list">
-        <bom-list :boms="UniqueBom">
-          <template slot-scope="{bom}" slot="number">
-            <div class="number-part">
-              <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
-            </div>
-          </template>
-        </bom-list>
+        <bom-list :boms="UniqueBom"></bom-list>
       </div>
       <div class="comment-part">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
       <!--原料bom列表-->
       <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
-        <template slot-scope="{bom}" slot="number">
+        <template slot="bom-left" slot-scope="{bom}">
+          <div class="shipping-time" v-if="bom.shippingTime">采购交货日期: {{bom.shippingTime}}</div>
+        </template>
+        <template slot="number" slot-scope="{bom}">
           <div class="number-part">
-            <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+            <span class="main-number">原料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+            <span class="number-unit">库存余额: {{bom.qtyStock}}</span>
           </div>
+          <div class="specific_loss">原料库存计划: {{bom.lockQty}}</div>
+          <div class="specific_loss">单位损耗率：{{bom.bomSpecificLoss}}</div>
         </template>
       </bom-pop>
       <!-- 审批操作 -->
@@ -89,7 +84,7 @@
   import detailCommon from 'components/mixins/detailCommon'
   import common from 'mixins/common'
   //公共方法引入
-  import {accMul,accAdd,accSub} from '@/home/pages/maps/decimalsAdd'
+  import {accMul, accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
   // 组件 引入
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
@@ -97,6 +92,7 @@
   import BomList from 'components/detail/commonPart/BomList'
   import FormCell from 'components/detail/commonPart/FormCell'
   import BomPop from 'components/apply/commonPart/BomPop'
+
   export default {
     data() {
       return {
@@ -105,23 +101,37 @@
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         orderList: {}, // 物料列表
         basicInfo: {},//存放基本信息
-        DuplicateBoms:[],//有重复项的bom
-        UniqueBom:[],//合并去重后的bom
-        bomPopShow :false,//bom展示
-        bom:{}//bomPop中要展示的bom
-
+        DuplicateBoms: [],//有重复项的bom
+        UniqueBom: [],//合并去重后的bom
+        bomPopShow: false,//bom展示
+        bom: {}//bomPop中要展示的bom
       }
     },
     mixins: [detailCommon, common],
     components: {
-      workFlow, RAction, MatterItem, BomList,FormCell,BomPop
+      workFlow, RAction, MatterItem, BomList, FormCell, BomPop
+    },
+    watch: {
+      DuplicateBoms: {
+        handler(val) {
+          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
+          var getNew = old => old.reduce((acc, cur) => {
+            let hasItem = acc.some(e => {
+              let temp = isEqual(e, cur);
+              if (temp) {
+                e.tdQty = accAdd(e.tdQty, cur.tdQty);
+              }
+              return temp;
+            });
+            if (!hasItem) acc.push(cur)
+            return acc;
+          }, []);
+          this.UniqueBom = getNew(this.DuplicateBoms);
+        }
+      }
+
     },
     methods: {
-      //查看原料
-      checkBom(item){
-        this.bom = item;
-        this.bomPopShow = true;
-      },
       //选择默认图片
       getDefaultImg(item) {
         let url = require('assets/wl_default02.png');
@@ -129,6 +139,11 @@
           item.inventoryPic = url;
         }
         return url
+      },
+      //查看原料
+      checkBom(item) {
+        this.bom = item;
+        this.bomPopShow = true;
       },
       // 获取详情
       getOrderList(transCode = '') {
@@ -149,48 +164,33 @@
           let orderList = {};
           let {order = {}} = formData;
           // 获取合计
-          let {dataSet} = formData.order;
+          let {dataSet} = formData.inPut;
           for (let item of dataSet) {
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
-            item.shippingTime = this.changeDate(item.shippingTime);
             if (item.boms) {
               for (let bom of item.boms) {
                 bom.inventoryCode = bom.transObjCode;
+                bom.warehouseName = bom.warehouseName_containerCodeOut;
+                bom.warehouseCode = bom.containerCodeOut;
+                bom.qtyStock = bom.thenQtyStock;
+                // 接口返回的tdQty有误，自己手动计算
+                // bom.tdQty = accMul(bom.bomQty, item.tdQty, (1 + bom.bomSpecificLoss));
+                bom.tdQty = accSub(accMul(item.processQty, bom.bomQty, (1 + bom.bomSpecificLoss)), bom.lockQty);
               }
             }
-            if (item.boms) {
-              this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
-            }
+            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
             orderList[item.transMatchedCode].push(item);
           }
-          this.mergeBomList();
           this.orderList = orderList;
           this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
-      },
-      // TODO 合并bom列表
-      mergeBomList() {
-        //对合计的bom进行去重合并
-        let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
-        let getNew = old => old.reduce((acc, cur) => {
-          let hasItem = acc.some(e => {
-            let temp = isEqual(e, cur);
-            if (temp){
-              e.tdQty = accAdd(e.tdQty, cur.tdQty);
-            }
-            return temp;
-          });
-          if (!hasItem) acc.push(cur);
-          return acc;
-        }, []);
-        this.UniqueBom = getNew(this.DuplicateBoms);
-      },
+      }
     }
   }
 </script>
@@ -198,8 +198,8 @@
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
 
-  .nbjdgg-detail-container {
-    // 计划号
+  .wlxqjh-detail-container {
+    // 加工订单号
     .order_code {
       display: flex;
       color: #fff;
@@ -235,25 +235,30 @@
           }
         }
       }
+      .mater_left {
+        color: #757575;
+        font-size: .12rem;
+      }
     }
     //bom合计
-    .bom_list{
+    .bom_list {
       position: relative;
       background: #FFF;
       padding: .06rem .08rem;
-      margin-top:0.1rem;
+      margin-top: 0.1rem;
     }
-    .comment-part{
+    .comment-part {
       background: #fff;
       padding: .06rem .08rem;
     }
-    .get_bom{
+    .get_bom {
       margin-left: 0.2rem;
       font-size: 0.12rem;
       font-weight: bold;
     }
   }
-  .bom_pop{
+
+  .bom_pop {
     .number-part {
       display: flex;
       font-size: .1rem;
@@ -266,6 +271,19 @@
       }
       .number-unit {
         color: #757575;
+      }
+    }
+    .shipping-time {
+      font-size: .12rem;
+      font-weight: bold;
+    }
+    .specific_loss {
+      font-size: .12rem;
+      font-weight: bold;
+      text-align: right;
+      .icon-bianji1 {
+        font-size: 0.12rem;
+        font-weight: normal;
       }
     }
   }

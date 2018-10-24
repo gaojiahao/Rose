@@ -63,7 +63,7 @@
                         <span>库存: {{item.qtyStockBal}}</span>
                       </div>
                     </slot>
-                    
+
                   </div>
                 </div>
               </div>
@@ -191,7 +191,7 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        if ( !this.isMaterOrder && (sItem.qtyStockBal===0 || sItem.qtyStock === 0 )) {
+        if ( (!this.isMaterOrder && (sItem.qtyStockBal===0 || sItem.qtyStock === 0 )) || (this.isMaterOrder && sItem.qtyStock === 0)) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
@@ -247,7 +247,7 @@
         //加工物料
         if(this.isMaterProccing){
           requestMethods = getNBJGLLOrderList;
-        }    
+        }
         return requestMethods({
           ...submitData,
           limit: this.limit,

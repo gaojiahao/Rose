@@ -25,7 +25,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{'vux-1px-b' : index < matterList.length - 1}" 
+              <div class="each_mater" :class="{'vux-1px-b' : index < matterList.length - 1}"
                   v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">单号</span>
@@ -42,28 +42,28 @@
                           <span class='unit'>单位：{{item.measureUnit}}</span>
                           <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                         </div>
-                        <div>
+                        <div v-show="item.shippingTime">
                           <span>主计划采购入库日: {{item.shippingTime}}</span>
                         </div>
                           <!-- <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
                           <span v-show="item.taxRate">税率：{{item.taxRate}}</span> -->
                           <!-- <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span> -->
                       </div>
-                      
+
                       <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">                      
+                      <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <div>
                           <r-number :num="item.tdQty"
                                     :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                        </div>                     
+                        </div>
                       </div>
                     </template>
                     <template slot="editPart" slot-scope="{item}">
-                      <div class="edit-part vux-1px-l" 
-                           @click="modifyMatter(item, index, key)" 
+                      <div class="edit-part vux-1px-l"
+                           @click="modifyMatter(item, index, key)"
                            v-show="(item.price && item.tdQty) &&!matterModifyClass">
                         <span class='iconfont icon-bianji1'></span>
                       </div>
@@ -72,7 +72,7 @@
                   <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>        
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,7 +90,7 @@
           </div>
         </div>
          <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false"></pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -119,7 +119,7 @@
 
 <script>
 // vux插件引入
-import {XTextarea} from 'vux'
+import {XTextarea, dateFormat} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
@@ -147,7 +147,7 @@ export default {
       dealer : {},                                      // 往来信息
       orderList: {},                                    // 物料需求计划订单列表
       formData : {},                                    // 表单提交内容
-      dealerInfo : {},                                  
+      dealerInfo : {},
       transMode:[],                                     // 结算方式
       matterList:[],                                    // 物料列表
       showTransPop:false,                               // 是否显示结算方式的popup
@@ -162,7 +162,7 @@ export default {
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
-    },    
+    },
     //选中的供应商
     selDealer(val){
         this.dealerInfo = JSON.parse(val)[0];
@@ -175,16 +175,13 @@ export default {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.map(item => {
-        if (this.numMap[item.inventoryCode]) {
-          item.tdQty = this.numMap[item.inventoryCode].tdQty;
-          item.price = this.numMap[item.inventoryCode].price;
-        } 
-        else {
-          item.tdQty = '';
-          item.price = '';
-        }
-        item.taxRate = 0.16;
-        item.promDeliTime = '';
+        let key = `${item.transCode}_${item.inventoryCode}`;
+        let defaultShippingTime = item.shippingTime ? dateFormat(item.shippingTime, 'YYYY-MM-DD') : '';
+        let {tdQty = '', price = '', taxRate = 0.16, shippingTime = defaultShippingTime} = this.numMap[key] || {};
+        item.tdQty = tdQty;
+        item.price = price;
+        item.taxRate = taxRate;
+        item.shippingTime = shippingTime;
         if (!orderList[item.transCode]) {
           orderList[item.transCode] = [];
         }
@@ -200,7 +197,7 @@ export default {
       this.showMatterPop = true;
       this.modifyIndex = index;
       this.modifyKey = key;
-    },    
+    },
     // 物料修改确定
     selConfirm(val) {
       let modMatter = JSON.parse(val);
@@ -267,10 +264,7 @@ export default {
     addMatter() {
         for (let item of this.matterList) {
           // 存储已输入的价格
-          this.numMap[item.inventoryCode] = {
-            tdQty: item.tdQty,
-            price: item.price
-          };
+          this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
         }
         this.showMaterielPop = !this.showMaterielPop;
       },

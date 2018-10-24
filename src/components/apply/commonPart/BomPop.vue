@@ -21,6 +21,7 @@
                     {{bom.inventoryName}}
                   </div>
                 </div>
+                <slot :bom="bom" name="bom-left"></slot>
               </div>
               <div class="edit_info">
                 <slot :bom="bom" name="number">
@@ -29,7 +30,7 @@
                     <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
                   </div>
                 </slot>
-                <div class="specific_loss" @click="modifyBom(bom)" v-show="isEdit">{{specificLossText}}：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
+                <div class="specific_loss" @click="modifyBom(bom)" v-show="isEdit && !noSpecificLoss">{{specificLossText}}：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
               </div>
             </div>
           </div>
@@ -80,6 +81,11 @@ export default {
     specificLossText:{
       type : String,
       default : '损耗率'
+    },
+    // 不展示损耗率
+    noSpecificLoss: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -89,7 +95,7 @@ export default {
       },
       showPop :false,
       btnNext : '返回'
-    }  
+    }
   },
   components:{Popup,Group,Cell,XInput,RScroll},
   watch: {
@@ -115,7 +121,7 @@ export default {
       this.$emit('input', false);
     },
     //确认修改
-    confirm(){   
+    confirm(){
       if(this.btnNext === '确认'){
         this.$emit('bom-confirm',JSON.stringify(this.bomInfo))
       }
@@ -130,9 +136,7 @@ export default {
             let tdQty = accMul(this.bomInfo.tdQty, item.qty, (1 + item.specificLoss));
             item.tdQty = Math.abs(toFixed(tdQty));
             this.btnNext = '确认'
-             
           }
-           
         }
       })
     },
@@ -142,7 +146,11 @@ export default {
     },
     closePop(){
       this.showPop = false;
-    }
+    },
+    // TODO 修改按钮文案
+    changeToConfirm() {
+      this.btnNext = '确认';
+    },
   }
 
 }
@@ -240,7 +248,7 @@ export default {
               }
 
             }
-            
+
           }
           .vux-1px-b:after {
             border-bottom: 1px solid #e8e8e8;
