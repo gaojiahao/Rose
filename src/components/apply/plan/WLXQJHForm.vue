@@ -32,17 +32,16 @@
                     <template slot-scope="{item}" slot="info">
                       <div class='mater_more'>
                         <span v-if="item.promDeliTime">承诺交付日期: {{item.promDeliTime | dateFormat('YYYY-MM-DD')}}</span>
+                        <span>库存: {{item.qtyStock}}</span>
                       </div>
-                      <div class="mater_more" v-show="item.shippingTime">
+                      <div class="mater_more" v-show="item.tdQty && item.shippingTime">
                         <span>主计划截止验收日:{{item.shippingTime}}</span>
-                        <!--<span>待计划余额:{{item.qtyBal}}</span>-->
-                        <!--<span>库存计划:{{item.lockQty}}</span>-->
                       </div>
                       <div class="mater_other" v-if="item.tdQty">
                         <div class="matter-remain">
-                          <span>待计划余额: {{item.qtyBal}}</span>
-                          <span>库存计划: {{item.lockQty}}</span>
-                          <span>加工计划: {{item.processQty}}</span>
+                          <div>待计划余额: {{item.qtyBal}}</div>
+                          <div>库存计划: {{item.lockQty}}</div>
+                          <div>加工计划: {{item.processQty}}</div>
                         </div>
                         <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
                       </div>
@@ -75,7 +74,8 @@
                           :default-value="orderList" ref="order" is-mater-order>
             <template slot="materInfo" slot-scope="{item}">
               <div class="mater_material">
-                <span>余额:{{item.qtyBal}}</span>
+                <span class="matter-info-item">库存:{{item.qtyStock}}</span>
+                <span class="matter-info-item">余额:{{item.qtyBal}}</span>
               </div>
             </template>
           </pop-order-list>
@@ -100,24 +100,34 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="待计划余额" type="number" v-model.number='modifyMatter.qtyBal' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+                     @on-blur="checkQtyBal(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <x-input title="库存计划" type="number" v-model.number='modifyMatter.lockQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+                     @on-blur="checklockQty(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <x-input title="加工计划" type="number" v-model.number='modifyMatter.processQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+                     @on-blur="checkprocessQty(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
             <datetime title="主计划截止验收日" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
+            <cell title="库存" text-align='right' :value="modifyMatter.qtyStock"></cell>
           </template>
         </pop-matter>
         <!--原料bom列表-->
         <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow"
-                 :btn-is-hide="btnIsHide" :specific-loss-text="'单位损耗率'">
+                 :btn-is-hide="btnIsHide" :no-specific-loss="true" ref="bomPop">
+          <template slot="bom-left" slot-scope="{bom}">
+            <div class="shipping-time" @click="modifyBomDate(bom)">
+              采购交货日期: {{bom.shippingTime}}<span class="iconfont icon-bianji1"></span>
+            </div>
+          </template>
           <template slot="number" slot-scope="{bom}">
             <div class="number-part">
               <span class="main-number">原料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
               <span class="number-unit">库存余额: {{bom.qtyStock}}</span>
             </div>
-            <div class="specific_loss" @click="modifyBomLockQty(bom)">原料库存计划: {{bom.lockQty}}<span
-              class="iconfont icon-bianji1"></span></div>
+            <div class="specific_loss" @click="modifyBomLockQty(bom)">
+              原料库存计划: {{bom.lockQty}}<span class="iconfont icon-bianji1"></span>
+            </div>
+            <div class="specific_loss">
+              单位损耗率：{{bom.specificLoss}}<!--<span class="iconfont icon-bianji1"></span>-->
+            </div>
           </template>
         </bom-pop>
       </div>
@@ -201,10 +211,10 @@
     watch: {
       matter: {
         handler(val) {
-          val.boms && val.boms.forEach(item => {
+          val.boms && val.boms.forEach(bom => {
             // 监听领料需求变化
-            let tdQty = accMul(val.processQty, item.qty, (1 + item.specificLoss));
-            item.tdQty = Math.abs(toFixed(tdQty))
+            let tdQty = this.calcBom(val.processQty, bom);
+            bom.tdQty = Math.abs(toFixed(tdQty))
           });
         },
         deep: true
@@ -273,20 +283,24 @@
         this.DuplicateBoms = [];
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = '', processQty = '', lockQty = item.qtyBal, boms = []} = this.numMap[key] || {};
+          // 若有承诺交付日期，则主计划截止验收日默认取交付日期三天前的时间
+          let defaultShippingTime = item.promDeliTime ? dateFormat(new Date(item.promDeliTime) - 3 * 24 * 3600 * 1000, 'YYYY-MM-DD') : '';
+          let {tdQty = '', processQty = '', lockQty = item.qtyBal, shippingTime = defaultShippingTime, boms = []} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.processQty = processQty;
           item.lockQty = lockQty;
+          item.shippingTime = shippingTime;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
           promises.push(getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
               let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
-              let {specificLoss = bom.specificLoss, lockQty = 0} = matchedBom;
-              let tdQty = accMul(item.processQty, bom.qty, (1 + specificLoss));
-              bom.lockQty = lockQty;
+              let {specificLoss = bom.specificLoss, lockQty = 0, shippingTime = defaultShippingTime} = matchedBom;
               bom.specificLoss = specificLoss;
+              bom.lockQty = lockQty;
+              bom.shippingTime = shippingTime;
+              let tdQty = this.calcBom(item.processQty, bom);
               bom.tdQty = Math.abs(toFixed(tdQty))
             });
             this.$set(item, 'boms', tableContent);
@@ -497,7 +511,7 @@
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
               handlerEntity: this.entity.dealerName,
-              // biProcessStatus: this.currentStage,
+              biProcessStatus: this.currentStage,
               inPut: {
                 dataSet
               }
@@ -622,8 +636,35 @@
           }
         };
       },
-      // TODO
-      checkAmt() {
+      // TODO 检查待计划余额数量
+      checkQtyBal(item) {
+        let {qtyBal, qtyStock} = item;
+        qtyBal = Math.abs(toFixed(qtyBal));
+        // 待计划余额不能超过库存
+        if (qtyBal > qtyStock) {
+          qtyBal = qtyStock;
+        }
+        item.qtyBal = qtyStock;
+      },
+      // TODO 检查库存计划数量
+      checklockQty(item) {
+        let {qtyBal, lockQty, processQty} = item;
+        lockQty = Math.abs(toFixed(lockQty));
+        // 当库存计划 + 加工计划 > 待计划余额时，库存计划取待计划余额和加工计划的差值
+        if (accAdd(lockQty, processQty) > qtyBal) {
+          lockQty = accSub(qtyBal, processQty);
+        }
+        item.lockQty = lockQty;
+      },
+      // TODO 检查加工计划数量
+      checkprocessQty(item) {
+        let {qtyBal, lockQty, processQty} = item;
+        processQty = Math.abs(toFixed(processQty));
+        // 当库存计划 + 加工计划 > 待计划余额时，加工计划取待计划余额和库存计划的差值
+        if (accAdd(lockQty, processQty) > qtyBal) {
+          processQty = accSub(qtyBal, lockQty);
+        }
+        item.processQty = processQty;
       },
       // TODO 修改原料库存计划
       modifyBomLockQty(bom) {
@@ -631,12 +672,43 @@
           title: '原料库存计划',
           onConfirm: (val) => {
             if (val) {
+              this.$refs.bomPop.changeToConfirm();
               bom.lockQty = Math.abs(toFixed(val));
-              let tdQty = accMul(this.bom.processQty, bom.qty, (1 + bom.specificLoss));
+              let tdQty = this.calcBom(this.bom.processQty, bom);
               bom.tdQty = Math.abs(toFixed(tdQty));
             }
           }
         })
+      },
+      // 修改单位损耗率
+      modifyBomSpecificLoss(bom) {
+        this.$vux.confirm.prompt(item.specificLoss, {
+          title: '单位损耗率',
+          onConfirm: (val) => {
+            if (val) {
+              this.$refs.bomPop.changeToConfirm();
+              bom.specificLoss = Math.abs(toFixed(val));
+              let tdQty = this.calcBom(this.bom.processQty, bom);
+              bom.tdQty = Math.abs(toFixed(tdQty));
+            }
+          }
+        })
+      },
+      // TODO 修改采购交货日期
+      modifyBomDate(bom) {
+        this.$vux.datetime.show({
+          cancelText: '取消',
+          confirmText: '确定',
+          value: bom.shippingTime,
+          onConfirm: (val) => {
+            this.$refs.bomPop.changeToConfirm();
+            bom.shippingTime = val;
+          },
+        });
+      },
+      // TODO 计算bom的值
+      calcBom(qty, bom) {
+        return accSub(accMul(qty, bom.qty, (1 + bom.specificLoss)), bom.lockQty);
       },
     },
     filters: {
@@ -695,6 +767,10 @@
         color: #757575;
       }
     }
+    .shipping-time {
+      font-size: .12rem;
+      font-weight: bold;
+    }
     .specific_loss {
       font-size: .12rem;
       font-weight: bold;
@@ -702,6 +778,20 @@
       .icon-bianji1 {
         font-size: 0.12rem;
         font-weight: normal;
+      }
+    }
+  }
+
+  /* 订单弹窗 */
+  .trade_pop_part {
+    .mater_material {
+      font-size: 0;
+      .matter-info-item {
+        margin-right: .06rem;
+        font-size: .12rem;
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
   }
