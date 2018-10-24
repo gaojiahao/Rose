@@ -53,7 +53,7 @@
             <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
               @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
             </x-input>
-            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime"
+            <datetime v-if="showDateTime" title="预期交货日" v-model="modifyMatter.promDeliTime"
                       placeholder="请选择" ></datetime>
           </slot>
         </group>
@@ -88,35 +88,36 @@ import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
 import {toFixed} from '@/plugins/calc'
 export default {
   props:{
-    modifyMatter:{
-      type:Object,
+    modifyMatter:{    // 进行修改的单个物料信息
+      type: Object,
       default() {
-          return {}
-        }
+        return {}
+      }
     },
-    showPop:{
-      type:Boolean,
-      default : false
+    showDateTime: {   // 是否展示时间选择栏
+      type: Boolean,
+      default: false
     },
-    //底部按钮是否隐藏
-    btnIsHide :{
-      type : Boolean,
-      default : false
+    showPop: {
+      type: Boolean,
+      default: false
     },
-    //校验数量是否大于库存
-    isCheckStock :{
+    btnIsHide: {      // 底部按钮是否隐藏
+      type: Boolean,
+      default: false
+    },
+    isCheckStock :{   // 校验数量是否大于库存
       type : Boolean,
       default : true
     },
-    //是否展示金额，税金，价税小计
-    isShowAmount : {
+    isShowAmount : {  // 是否展示金额，税金，价税小计
       type : Boolean,
       default :true
     }
   },
   components: {
       Popup,Group,Cell,Datetime,XInput,
-    },
+  },
   data(){
     return{
       show: false

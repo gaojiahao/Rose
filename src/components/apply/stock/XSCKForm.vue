@@ -33,14 +33,14 @@
             </div>
             <div class="mater_list">
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
-                   v-for="(oItem, key,index) in orderList" :key="key">
+                   v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">所属订单</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item, key)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
+                               @click.native="delClick(index, item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
                       <div class='mater_more'>
@@ -66,7 +66,7 @@
                       </div>
                     </template>
                     <template slot="editPart" slot-scope="{item}">
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)"
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)"
                            v-show="(item.price && item.tdQty) &&!matterModifyClass">
                         <span class='iconfont icon-bianji1'></span>
                       </div>
@@ -98,8 +98,8 @@
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
-                    :btn-is-hide="btnIsHide">
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" 
+                    @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="materStock" slot-scope="{modifyMatter}">
             <span>可用库存:{{modifyMatter.qtyStockBal}}</span>
           </template>

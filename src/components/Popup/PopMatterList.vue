@@ -11,58 +11,64 @@
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
-               @click.stop="selThis(item,index)">
-            <div class="mater_img">
-              <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
-            </div>
-            <div class="mater_main ">
-              <!-- 物料名称 -->
-              <div class="mater_name">
-                <span class="whiNum">No.{{index + 1}}</span>
-                {{item.inventoryName}}
+               @click.stop="selThis(item, index)">
+              <div class="order-code" v-if="item.transCode">
+                <span class="order-title">单号</span>
+                <span class="order-num">{{item.transCode}}</span>
               </div>
-              <!-- 物料基本信息 -->
-              <div class="mater_info">
-                <!-- 物料编码、规格 -->
-                <div class="withColor">
-                  <!-- 物料编码 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_code">
-                      <span class="title">编码</span>
-                      <span class="num">{{item.inventoryCode}}</span>
-                    </div>
+              <div class="order-matter">
+                <div class="mater_img">
+                  <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+                </div>
+                <div class="mater_main ">
+                  <!-- 物料名称 -->
+                  <div class="mater_name">
+                    <span class="whiNum">No.{{index + 1}}</span>
+                    {{item.inventoryName}}
                   </div>
-                  <!-- 物料规格 -->
-                  <div class="ForInline" style="display:inline-block">
-                    <div class="mater_spec">
-                      <span class="title">规格</span>
-                      <span class="num">{{item.specification || '无'}}</span>
+                  <!-- 物料基本信息 -->
+                  <div class="mater_info">
+                    <!-- 物料编码、规格 -->
+                    <div class="withColor">
+                      <!-- 物料编码 -->
+                      <div class="ForInline" style="display:inline-block">
+                        <div class="mater_code">
+                          <span class="title">编码</span>
+                          <span class="num">{{item.inventoryCode}}</span>
+                        </div>
+                      </div>
+                      <!-- 物料规格 -->
+                      <div class="ForInline" style="display:inline-block">
+                        <div class="mater_spec">
+                          <span class="title">规格</span>
+                          <span class="num">{{item.specification || '无'}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- 物料分类、材质 -->
+                    <div class="withoutColor">
+                      <!-- 物料分类 -->
+                      <div class="mater_classify">
+                        <span class="type">属性: {{item.processing}}</span>
+                        <span class="father">大类: {{item.inventoryType || '无'}}</span>
+                        <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                      </div>
+
+                      <!-- 物料材质等 -->
+                      <div class="mater_material">
+                        <span class="unit">单位: {{item.measureUnit}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
+                      </div>
+
+                      <!-- 库存 -->
+                      <div class="mater_material" v-if="item.qtyBal !== undefined">
+                        <span class="spec">余额: {{item.qtyBal}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <!-- 物料分类、材质 -->
-                <div class="withoutColor">
-                  <!-- 物料分类 -->
-                  <div class="mater_classify">
-                    <span class="type">属性: {{item.processing}}</span>
-                    <span class="father">大类: {{item.inventoryType || '无'}}</span>
-                    <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
-                  </div>
-
-                  <!-- 物料材质等 -->
-                  <div class="mater_material">
-                    <span class="unit">单位: {{item.measureUnit}}</span>
-                    <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                    <span class="spec">材质: {{item.material || '无'}}</span>
-                  </div>
-
-                  <!-- 库存 -->
-                  <div class="mater_material" v-if="item.qtyBal !== undefined">
-                    <span class="spec">余额: {{item.qtyBal}}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </div>        
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -462,7 +468,7 @@
         // 每个物料
         .each_mater {
           position: relative;
-          display: flex;
+          // display: flex;
           padding: 0.08rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
@@ -470,6 +476,25 @@
           &.box_sd {
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
+          }
+          .order-code {
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            span {
+              display: inline-block;
+              padding: 0 .04rem;
+            }
+            .order-title {
+              background: #455d7a;
+            }
+            .order-num {
+              background: #c93d1b;
+            }
+          }
+          .order-matter {
+            display: flex;
+            margin-top: .1rem;
           }
           // 物料图片
           .mater_img {
