@@ -9,6 +9,7 @@
 
 <script>
   import {toFixed} from '@/plugins/calc'
+  import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
 
   export default {
     name: "RNumber",
@@ -49,14 +50,14 @@
     methods: {
       // TODO 数量减一
       subNum() {
-        if (this.currentNum === 1) return;
-        this.currentNum--;
+        if (this.currentNum <= 1) return;
+        this.currentNum = parseFloat(accSub(this.currentNum, 1));
         this.$emit('input', this.currentNum);
       },
       // TODO 数量加一
       plusNum() {
         if (this.max && this.max === this.num) return;
-        this.currentNum++;
+        this.currentNum = parseFloat(accAdd(this.currentNum, 1));
         this.$emit('input', this.currentNum);
       },
       // TODO 数量自定义

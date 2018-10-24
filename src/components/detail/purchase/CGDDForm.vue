@@ -13,12 +13,33 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" :logistics="false"></contact-part>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderInfo.order.dataSet' :order-remarks="orderInfo.biComment"></matter-list> 
+      <matter-list :matter-list='orderInfo.order.dataSet' :order-remarks="orderInfo.biComment">
+        <template slot="matterOther" slot-scope="{item}">
+          <div class='mater_other'>
+            <div class='mater_num'>
+              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            </div>
+            <div class="mater_num" v-if="item.promDeliTime">
+              <span class='num'>主计划采购入库日: {{item.promDeliTime}}</span>
+            </div>
+            <div class='mater_price'>
+              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+              <span class="num"
+                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
+                    v-if="item.taxRate">
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                </span>
+            </div>
+          </div>
+        </template>
+      </matter-list>
       <!-- 金额明细 -->
       <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>          
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>

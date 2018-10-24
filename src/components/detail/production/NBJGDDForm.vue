@@ -38,7 +38,7 @@
                     </div>
                     <div class="mater_num">
                       <span class="num" v-if="item.shippingTime">
-                        成品计划验收日期: {{item.shippingTime}}
+                        主计划完工入库日: {{item.shippingTime}}
                       </span>
                     </div>
                   </div>
@@ -116,26 +116,6 @@
     components: {
       workFlow, RAction, MatterItem, BomList,FormCell,BomPop
     },
-    watch:{
-      DuplicateBoms:{
-        handler(val){
-          var isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
-          var getNew = old => old.reduce((acc, cur) => {
-              let hasItem = acc.some(e => {
-                let temp = isEqual(e, cur);
-                if (temp){
-                  e.tdQty = accAdd(e.tdQty, cur.tdQty);
-                }
-                return temp;
-              });
-              if (!hasItem) acc.push(cur)
-              return acc;
-          }, []);
-          this.UniqueBom = getNew(this.DuplicateBoms);
-        }
-      }
-
-    },
     methods: {
       //查看原料
       checkBom(item){
@@ -180,17 +160,37 @@
                 bom.inventoryCode = bom.transObjCode;
               }
             }
-            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            if (item.boms) {
+              this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            }
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
             orderList[item.transMatchedCode].push(item);
           }
+          this.mergeBomList();
           this.orderList = orderList;
           this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
-      }
+      },
+      // TODO 合并bom列表
+      mergeBomList() {
+        //对合计的bom进行去重合并
+        let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
+        let getNew = old => old.reduce((acc, cur) => {
+          let hasItem = acc.some(e => {
+            let temp = isEqual(e, cur);
+            if (temp){
+              e.tdQty = accAdd(e.tdQty, cur.tdQty);
+            }
+            return temp;
+          });
+          if (!hasItem) acc.push(cur);
+          return acc;
+        }, []);
+        this.UniqueBom = getNew(this.DuplicateBoms);
+      },
     }
   }
 </script>

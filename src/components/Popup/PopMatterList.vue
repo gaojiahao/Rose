@@ -68,7 +68,7 @@
                     </div>
                   </div>
                 </div>
-              </div>        
+              </div>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -187,14 +187,24 @@
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          let isSameTransCode = true;
+          if (item.transCode) {
+            isSameTransCode = item.transCode === sItem.transCode;
+          }
+          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.tmpItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+        return this.findIndex(this.tmpItems, sItem) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
         let arr = this.tmpItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+        let delIndex = this.findIndex(arr, sItem);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -254,7 +264,7 @@
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.selItems.findIndex(item => item.inventoryCode === dItem.inventoryCode);
+        let delIndex = this.findIndex(this.selItems, dItem);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }

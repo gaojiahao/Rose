@@ -90,7 +90,7 @@
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次下单" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-            <datetime title="成品计划验收日期" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
+            <datetime title="主计划完工入库日" v-model="modifyMatter.shippingTime" placeholder="请选择"></datetime>
             <cell title="待下单余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
@@ -503,11 +503,13 @@
           let {dataSet = []} = order;
           for (let item of dataSet) {
             //bom合计
-            item.boms.forEach(item=>{
+            item.boms.forEach(item => {
               item.inventoryCode = item.transObjCode;
               item.specificLoss = item.bomSpecificLoss
-            })
-            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            });
+            if (item.boms) {
+              this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            }
             item = {
               ...item,
               transCode: item.transMatchedCode,
