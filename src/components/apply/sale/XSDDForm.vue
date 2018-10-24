@@ -79,7 +79,11 @@
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true"></pop-matter>
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
+          <template slot="date" slot-scope="{modifyMatter}">
+            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择" ></datetime>
+          </template>
+        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>

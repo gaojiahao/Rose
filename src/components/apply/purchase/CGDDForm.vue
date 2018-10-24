@@ -91,7 +91,13 @@
         </div>
          <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false"></pop-matter>
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
+          <template slot="date" slot-scope="{modifyMatter}">
+             <datetime  title="主计划采购入库日" v-model="modifyMatter.shippingTime"
+                      placeholder="请选择" ></datetime>
+          </template>
+         
+        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -119,7 +125,7 @@
 
 <script>
 // vux插件引入
-import {XTextarea, dateFormat} from 'vux'
+import {XTextarea, dateFormat,Datetime} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
@@ -137,7 +143,7 @@ const DRAFT_KEY = 'CGDD_DATA';
 
 export default {
   components:{
-    PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea,RNumber
+    PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea,RNumber,Datetime
   },
   data(){
     return{

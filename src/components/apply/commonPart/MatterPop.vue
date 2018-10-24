@@ -53,8 +53,12 @@
             <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
               @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
             </x-input>
-            <datetime v-if="showDateTime" title="预期交货日" v-model="modifyMatter.promDeliTime"
-                      placeholder="请选择" ></datetime>
+            <slot name="date" :modifyMatter="modifyMatter">
+              <!-- <datetime v-if="showDateTime" :title="dateText" v-model="modifyMatter.promDeliTime"
+                      placeholder="请选择" ></datetime> -->
+
+            </slot>
+            
           </slot>
         </group>
         <div class='mg_auto' v-show="isShowAmount">
@@ -113,6 +117,10 @@ export default {
     isShowAmount : {  // 是否展示金额，税金，价税小计
       type : Boolean,
       default :true
+    },
+    dateText:{
+      type : String,
+      default : '预期交货日'
     }
   },
   components: {
