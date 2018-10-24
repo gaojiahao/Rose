@@ -52,6 +52,7 @@ export default {
           value: 'dealerName',
         },
       ],
+      sort:[]
     }
   },
   components: {
@@ -227,6 +228,7 @@ export default {
         page: this.page,
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
+        sort : JSON.stringify(this.sort)
       }).then(({total = 0, orders = []}) => {
         // this.$emit('input',false);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;

@@ -1,78 +1,53 @@
 <template>
   <div class="childPage">
     <div class="main_content">
-      <!-- 大标题 -->
-      <div class="big_title">
-        <p class="vux-1px-b">基本信息</p>
-      </div>
       <!-- 物料图片展示区域 -->
-      <div class="d_top box_sd">
-        <div class="top_img">
-          <img :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
-        </div>
+      <div class="d_top">
         <div class="mater_info">
-          <!-- 物料编码、规格 -->
-            <!-- 当物料编码字节超过13个时 加载新的class -->
-          <div class="withColor" 
-               :class="{'whenEleven' : contentLength >= 13 }">
-            <div class="justMid">
-              <!-- 物料规格 -->
-              <div class="ForInline">
-                <div class="mater_spec">
-                  <span class="title">规格</span>
-                  <span class="num">{{inventory.specification || '无'}}</span>
-                </div>
-              </div>
-              <!-- 物料编码 -->
-              <div class="ForInline">
-                <div class="mater_code">
-                  <span class="title">编码</span>
-                  <span class="num">{{inventory.inventoryCode}}</span>
-                </div>
-              </div>
-            </div>
+          <img class="avatar" :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
+          <span class="mater_name">{{inventory.inventoryName}}</span>          
+          <div class="mater_status_part">
+            <span class="mater_code" >{{inventory.inventoryCode}}</span>
+            <span class="mater_status" :class="inventory.statusClass">{{inventory.status}}</span>
           </div>
-          <!-- 物料名称 -->
-          <div class="mater_name">
-            {{inventory.inventoryName}}
-          </div>
+          
         </div>
       </div>
       <!-- 物料基本信息展示区域 -->
       <div class="d_main">
-        <div class="d_classify vux-1px-b">
-          <div class="father">
-            <p class="title">物料大类:</p>
-            <p class="content">{{inventory.inventoryType || '无'}}</p>
-          </div>
-          <div class="child">
-            <p class="title">物料子类:</p>
-            <p class="content">{{inventory.inventorySubclass || '无'}}</p>
-          </div>
+        <div class='title vux-1px-b'>
+          基本信息
         </div>
-        <div class="d_material vux-1px-b">
-          <div class="father">
-            <p class="title">加工属性:</p>
-            <p class="content">{{inventory.processing}}</p>
-          </div>
-          <div class="child">
-            <p class="title">材质:</p>
-            <p class="content">{{inventory.material || '无'}}</p>
-          </div>
+        <div class='content'>
+          <form-cell cellTitle="物料大类" :cellContent="inventory.inventoryType" :showTopBorder="false"></form-cell>
+          <form-cell cellTitle="物料子类" :cellContent="inventory.inventoryType" ></form-cell>
+          <form-cell cellTitle="规格" :cellContent="inventory.specification" ></form-cell>
+          <form-cell cellTitle="加工属性" :cellContent="inventory.processing" ></form-cell>
+          <form-cell cellTitle="材质" :cellContent="inventory.material" ></form-cell>
+          <form-cell cellTitle="颜色" :cellContent="inventory.inventoryColor" ></form-cell>
+          <form-cell cellTitle="单位" :cellContent="inventory.measureUnit" ></form-cell>
         </div>
-        <div class="d_material vux-1px-b">
-          <div class="father">
-            <p class="title">颜色:</p>
-            <p class="content">{{inventory.inventoryColor || '无'}}</p>
-          </div>
-          <div class="child">
-            <p class="title">单位:</p>
-            <p class="content">{{inventory.measureUnit}}</p>
-          </div>
-          <div class="child">
-            <p class="title">物料状态:</p>
-            <p class="content">{{inventory.inventoryStatus}}</p>
-          </div>
+      </div>
+      <!-- 辅助计量单位-->
+      <div class="d_main" v-show="invMoreUnit.length">
+        <div class='title vux-1px-b'>
+          辅助计量单位
+        </div>
+        <div class='content' :class="{'show_border' : index>0}" v-for="(item,index) in invMoreUnit" :key="index">
+          <form-cell cellTitle='辅助计量单位' :cellContent="item.invSubUnitName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle='单位倍数' :cellContent="item.invSubUnitMulti" ></form-cell>
+          <form-cell cellTitle='辅计说明' :cellContent="item.comment"></form-cell>
+        </div>
+      </div>
+      <div class="d_main" v-show="invNetWeight.length">
+        <div class='title vux-1px-b'>
+          净含量
+        </div>
+        <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invNetWeight" :key="index">
+          <form-cell cellTitle='净含量名称' :cellContent="item.invCompName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle='计量单位' :cellContent="item.invCompUnit" ></form-cell>
+          <form-cell cellTitle='净含量数量' :cellContent="item.invCompQty" ></form-cell>
+          <form-cell cellTitle='净含量说明说明' :cellContent="item.comment" ></form-cell>
         </div>
       </div>
     </div>
@@ -86,14 +61,19 @@
 <script>
   import {AlertModule} from 'vux';
   import {findData} from 'service/materService'
+  import FormCell from 'components/detail/commonPart/FormCell'
   export default {
     name: 'materDetail',
     data() {
       return {
         transCode: '',
         inventory: {},
-        contentLength: ''
+        invMoreUnit: [],
+        invNetWeight: [],
       }
+    },
+    components: {
+      FormCell,
     },
     methods: {
       // TODO 跳转到修改页面
@@ -108,21 +88,14 @@
       // TODO 获取物料详情
       findData() {
         return findData(this.transCode).then(({formData}) => {
-          switch (formData.inventory.inventoryStatus) {
-            case 1:
-              formData.inventory.inventoryStatus = '使用中';
-              break;
-            case 2:
-              formData.inventory.inventoryStatus = '未使用';
-              break;
-            case 0:
-              formData.inventory.inventoryStatus = '草稿';
-              break;
-            case -1:
-              formData.inventory.inventoryStatus = '停用';
-              break;
-          }
+           let {inventory = {}} = formData;
+          let status = ['', '使用中', '未使用', '草稿'],
+              statusClass = ['', 'inUse', 'unUse'];
+          inventory.statusClass = statusClass[inventory.status];          
+          inventory.status = status[inventory.status] || '停用';
           this.inventory = formData.inventory;
+          this.invNetWeight = formData.invNetWeight;
+          this.invMoreUnit = formData.invMoreUnit;
           let { inventoryPic, inventoryCode, specification } = this.inventory;
           // 获取规格和编码的字符串总长度
           this.contentLength = inventoryCode.length + specification.length;
@@ -156,17 +129,11 @@
 
 <style lang='scss' scoped>
   .main_content {
+    background-color: #f8f8f8;
     overflow: auto;
     height: calc(100% - 10%);
     -webkit-overflow-scrolling: touch;
   }
-
-  // 阴影
-  .box_sd {
-    box-sizing: border-box;
-    box-shadow: 0 0 8px #e8e8e8;
-  }
-
   // 下划线
   .vux-1px-b:after {
     border-color: #e8e8e8;
@@ -176,172 +143,83 @@
   .vux-1px-r:after {
     border-color: #e8e8e8;
   }
-
-  .big_title {
-    width: 95%;
-    color: #111;
-    margin: 0 auto;
-    padding: .04rem;
-    font-size: .3rem;
-    font-weight: 300;
-    box-sizing: border-box;
-  }
-
   // 顶部
   .d_top {
-    width: 90%;
-    margin: .1rem auto 0;
-    padding: .2rem 0 .04rem;
-    // 物料图片
-    .top_img {
-      width: 1.2rem;
-      height: 1.2rem;
-      margin: 0 auto;
-      img {
-        width: 100%;
-        max-height: 100%;
+    display: flex;
+    height: 1.6rem;
+    line-height: .24rem;
+    background: #FFF;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    .mater_info{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      .avatar {
+        width: .8rem;
+        height: .8rem;
+        margin: .1rem 0;
       }
-    }
-    // 物料信息
-    .mater_info {
-      width: 100%;
-      // 有颜色包裹的
-      .withColor {
-        width: 100%;
-        height: .24rem;
-        position: relative;
-        .ForInline {
-          display: inline-block;
-        }
-        // 居中
-        .justMid {
-          left: 50%;
-          position: absolute;
-          transform: translate(-50%, 0);
-        }
-        // 物料编码
-        .mater_code {
-          display: flex;
-          .title,
-          .num {
-            font-size: .1rem;
-            display: inline-block;
-            padding: .01rem .04rem;
-          }
-          .title {
-            color: #fff;
-            background: #3f72af;
-          }
-          .num {
-            color: #111;
-            max-width: .9rem;
-            overflow: hidden;
-            white-space: nowrap;
-            background: #dbe2ef;
-            text-overflow: ellipsis;
-            box-sizing: border-box;
-          }
-        }
-        // 规格
-        .mater_spec {
-          @extend .mater_code;
-          .num {
-            color: #fff;
-            max-width: .6rem;
-            background: #ff7f50;
-          }
-        }
-      }
-      // 当编码的字节超过11个时
-      .whenEleven {
-        width: 100%;
-        height: .52rem;
-        position: relative;
-        .ForInline {
-          display: block;
-        }
-        //居中
-        .justMid {
-          left: 50%;
-          width: 100%;
-          display: flex;
-          position: absolute;
-          align-items: center;
-          flex-direction: column;
-          transform: translate(-50%, 0);
-        }
-        // 物料编码
-        .mater_code {
-          margin-top: .04rem;
-          .title {
-            color: #fff;
-            background: #537791;
-          }
-          .num {
-            color: #111;
-            max-width: none;
-            overflow: inherit;
-            white-space: inherit;
-            background: #dbe2ef;
-            text-overflow: inherit;
-            box-sizing: inherit;
-          }
-        }
-        // 规格
-        .mater_spec {
-          @extend .mater_code;
-          margin-left: 0;
-          .num {
-            color: #fff;
-            background: #ff7f50;
-          }
-        }
-      }
-      // 物料名称
       .mater_name {
-        width: 100%;
-        color: #111;
-        padding: 0 .4rem;
-        overflow: hidden;
-        font-size: .14rem;
+        font-size: .18rem;
         font-weight: bold;
-        text-align: center;
-        max-height: .46rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        box-sizing: border-box;
-        text-overflow: ellipsis;
-        -webkit-box-orient: vertical;
+      } 
+      .mater_status_part {
+        font-size: 0;
+        .mater_status,
+        .mater_code {
+          font-size: .12rem;
+          font-weight: bold;
+          border-radius: .1rem;
+          padding: .01rem .04rem;
+        }
+        .mater_status {
+          color: #FFF;
+          background: #474a56;
+          margin: 0 .08rem;
+          &.inUse {
+            background: #53d397;
+          }
+          &.unUse {
+            background: #c7b198;
+          }
+        }
+        .mater_code {
+          color: #333;
+          background: #b1cbfa;
+          &.shortTerm {
+            color: #FFF;
+            background: #5c636e;
+          }
+          &.longTerm {
+            
+          }
+        }
       }
     }
+    
   }
 
   // 中部
   .d_main {
-    width: 90%;
-    margin: 0 auto .1rem;
-    .d_classify {
-      display: flex;
-      padding: 0.1rem 0;
-      // height: .6rem;
-      // line-height: .6rem;
-      .father,
-      .child {
-        flex: 1;
-        text-align: center;
-      }
-      .title {
-        font-size: .12rem;
-        color: #757575;
-      }
-      .content {
-        font-weight: bold;
-        font-size: .14rem;
+    margin-top:0.1rem;
+    background: #fff;
+    padding: 0 0.1rem;
+    .title{
+      color: #111;
+      background: #fff;
+      font-size: .16rem;
+      padding: .06rem 0;
+      font-weight: bold;
+    }
+    .content{
+      
+      &.show_border{
+        border-bottom: .03rem solid #e8e8e8;
       }
     }
-    .d_material {
-      @extend .d_classify;
-    }
+    
   }
 
   // 相关应用
