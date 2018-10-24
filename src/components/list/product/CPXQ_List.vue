@@ -140,6 +140,7 @@
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
+          sort: JSON.stringify([{property:"transCode",direction:"DESC"}]),
           filter: JSON.stringify(filter)
         }).then(({dataCount = 0, tableContent = []}) => {
           this.$emit('input', false);
