@@ -2,40 +2,79 @@
   <div class='childPage'>
     <div class='content'>
       <div class='mater_baseinfo vux-1px-b'>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class="required">物料编码:</label>
-            <input type='text' :readonly="codeReadOnly" v-model.trim="inventory.inventoryCode" class='property_val' :class='{readonly : codeReadOnly}'/>
-          </div>
-          <div class='each_property'>
-            <label class="required">物料名称:</label>
-            <input type='text' v-model.trim="inventory.inventoryName" class='property_val'/>
-          </div>
-        </div>
+        <group class="mater_property" gutter="0">
+          <x-input title="物料编码" text-align='right' placeholder='请填写' :readonly="codeReadOnly"
+                   :class='{readonly : codeReadOnly}' v-model.trim='inventory.inventoryCode'>
+            <template slot="label">
+              <span class="required">物料编码</span>
+            </template>
+          </x-input>
+          <x-input title="物料名称" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryName'>
+            <template slot="label">
+              <span class='required'>物料名称</span>
+            </template>
+          </x-input>
+        </group>
         <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <r-picker title="加工属性:" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
-                :required="true" @on-change="natureChange"></r-picker>
-      <r-picker title="材料大类:" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
-                @on-change="bigChange"></r-picker>
-      <r-picker title="材料子类:" :data="matSmlList" :value="inventory.inventorySubclass"
-                v-model="inventory.inventorySubclass"></r-picker>
-      <div class='each_property vux-1px-b'>
-        <label>型号规格:</label>
-        <input type='text' v-model.trim="inventory.specification" class='property_val'/>
+      <group gutter="0">
+        <r-picker title="加工属性" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
+                  :required="true" mode="4" @on-change="natureChange"></r-picker>
+        <r-picker title="材料大类" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
+                  mode="4" @on-change="bigChange"></r-picker>
+        <r-picker title="材料子类" :data="matSmlList" :value="inventory.inventorySubclass"
+                  mode="4" v-model="inventory.inventorySubclass"></r-picker>
+        <x-input title="型号规格" text-align='right' placeholder='请填写' v-model.trim='inventory.specification'></x-input>
+        <x-input title="颜色" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryColor'></x-input>
+        <x-input title="主材质" text-align='right' placeholder='请填写' v-model.trim='inventory.material'></x-input>
+        <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
+                  mode="4" v-model="inventory.measureUnit" has-border-top></r-picker>
+        <r-picker title="物料状态:" :data="statusList" :value="inventoryStatus"
+                  mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
+      </group>
+      <!-- 辅助计量 -->
+      <group class="duplicate-item" title="辅助计量">
+        <template v-for="item in invMoreUnit">
+          <r-picker title="辅助计量单位" :data="measureList" :value="item.invSubUnitName"
+                    mode="4" :has-border="false" v-model="item.invSubUnitName" required></r-picker>
+          <x-input title="单位倍数" type="number" text-align='right' placeholder='请填写' v-model='item.invSubUnitMulti'>
+            <template slot="label">
+              <span class="required">单位倍数</span>
+            </template>
+          </x-input>
+          <x-input title="辅计说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
+        </template>
+      </group>
+      <div class="add_more">
+        您还需要添加新的辅助计量?请点击
+        <span class='add' @click="addMoreUnit">新增</span>
+        <em v-show="invMoreUnit.length>1">或</em>
+        <span class='delete' @click="deleteMoreUnit" v-show="invMoreUnit.length>1">删除</span>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>颜色:</label>
-        <input type='text' v-model.trim="inventory.inventoryColor" class='property_val'/>
+      <!-- 净含量 -->
+      <group class="duplicate-item" title="净含量">
+        <template v-for="item in invNetWeight">
+          <x-input title="净含量名称" text-align='right' placeholder='请填写' v-model='item.invCompName'>
+            <template slot="label">
+              <span class="required">净含量名称</span>
+            </template>
+          </x-input>
+          <r-picker title="计量单位" :data="measureList" :value="item.invCompUnit"
+                    mode="4" :has-border="false" v-model="item.invCompUnit" has-border-top required></r-picker>
+          <x-input title="净含量数量" type="number" text-align='right' placeholder='请填写' v-model='item.invCompQty'>
+            <template slot="label">
+              <span class="required">净含量数量</span>
+            </template>
+          </x-input>
+          <x-input title="净含量说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
+        </template>
+      </group>
+      <div class="add_more">
+        您还需要添加新的净含量?请点击
+        <span class='add' @click="addNetWeight">新增</span>
+        <em v-show="invNetWeight.length>1">或</em>
+        <span class='delete' @click="deleteNetWeight" v-show="invNetWeight.length>1">删除</span>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>主材质:</label>
-        <input type='text' v-model.trim="inventory.material" class='property_val'/>
-      </div>
-      <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
-                v-model="inventory.measureUnit"></r-picker>
-      <r-picker title="物料状态:" :data="statusList" :value="inventoryStatus" 
-                v-model="inventoryStatus"></r-picker>
     </div>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
@@ -43,7 +82,7 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Picker, Popup, Group} from 'vux';
+  import {TransferDom, Popup, Group, XInput, PopupPicker,} from 'vux';
   import RPicker from 'components/RPicker';
   import common from 'mixins/common'
   import {
@@ -64,7 +103,7 @@
         matBigList: [], // 材料大类列表
         matSmlList: [], // 材料子类列表
         measureList: [], // 主计量单位列表
-        statusList :[],//物料状态
+        statusList: [],//物料状态
         picShow: false, // 是否展示图片
         baseinfo: {
           handler: '', // 经办人ID
@@ -94,17 +133,32 @@
           inventoryStatus: '', // 物料状态
           inventoryPic: '',
           comment: '', // 物料说明
-          technicsCode :'' //工艺路线
+          technicsCode: '' //工艺路线
         },
-        invMoreUnit: [],
-        invNetWeight: [],
+        invMoreUnit: [{
+          invSubUnitName: '', // 辅助计量单位
+          invSubUnitMulti: '', // 单位倍数
+          comment: '', // 辅计说明
+        }], // 辅助计量
+        invNetWeight: [{
+          invCompName: '', // 净含量名称
+          invCompUnit: '', // 计量单位
+          invCompQty: '', // 净含量数量
+          comment: '', // 净含量说明
+        }], // 净含量
         transCode: '',
         hasDefault: false, // 判断是否为回写
         imgFileObj: {}, // 上传的图片对象
         imgFile: null,
         codeReadOnly: false, // 物料编码是否只读
         submitSuccess: false, // 是否提交成功
-        inventoryStatus :'使用中'
+        processing: [], // 加工属性
+        inventoryType: [], // 材料大类
+        inventorySubclass: [], // 材料子类
+        measureUnit: [], // 主计量单位
+        inventoryStatus: '', // 物料状态
+        inventoryTypeDisabled: false,
+        inventorySubclassDisabled: false,
       }
     },
     directives: {
@@ -112,15 +166,16 @@
     },
     mixins: [common],
     components: {
-      Picker,
       Popup,
       Group,
       RPicker,
       UploadImage,
+      XInput,
+      PopupPicker
     },
     methods: {
       // TODO 上传图片成功触发
-      onUpload(val){
+      onUpload(val) {
         this.inventory.inventoryPic = val.src;
       },
       // TODO 加工属性切换
@@ -143,7 +198,7 @@
           this.inventory.inventorySubclass = defaultSelect.name;
         });
       },
-      getStatus(){
+      getStatus() {
         return getDictByType('objStatus').then(data => {
           //仓库分类无值，请求
           let {tableContent} = data;
@@ -162,9 +217,9 @@
           processing: '加工属性',
           measureUnit: '主计量单位',
         };
-        for(let key in this.inventory){
-          if(typeof(this.inventory[key]) === 'string' && this.inventory[key].indexOf(' ')>=0){
-            this.inventory[key] = this.inventory[key].replace(/\s/g,'');
+        for (let key in this.inventory) {
+          if (typeof(this.inventory[key]) === 'string' && this.inventory[key].indexOf(' ') >= 0) {
+            this.inventory[key] = this.inventory[key].replace(/\s/g, '');
           }
         }
         switch (this.inventoryStatus) {
@@ -181,7 +236,7 @@
             this.inventory.inventoryStatus = -1;
             break;
         }
-        if(this.inventory.status){
+        if (this.inventory.status) {
           delete this.inventory.status
         }
         let submitData = {
@@ -204,6 +259,36 @@
           }
           return true;
         });
+        // 校验辅助计量
+        if (!warn) {
+          let validateMap = [
+            {
+              key: 'invSubUnitName',
+              message: '辅助计量单位'
+            }, {
+              key: 'invSubUnitMulti',
+              message: '单位倍数'
+            },
+          ];
+          warn = this.validateData(this.invMoreUnit, validateMap);
+        }
+        // 校验净含量
+        if (!warn) {
+          let validateMap = [
+            {
+              key: 'invCompName',
+              message: '净含量名称'
+            }, {
+              key: 'invCompUnit',
+              message: '净含量计量单位'
+            }, {
+              key: 'invCompQty',
+              message: '净含量数量'
+            },
+          ];
+          warn = this.validateData(this.invNetWeight, validateMap);
+        }
+
         if (warn) {
           this.$vux.alert.show({
             content: warn,
@@ -215,6 +300,7 @@
         if (this.transCode) {
           operation = update;
         }
+        console.log(submitData)
 
         this.$vux.confirm.show({
           content: '确认提交?',
@@ -226,8 +312,8 @@
               let {success = false, message = '提交失败'} = data;
               if (success) {
                 message = operation === update
-                            ? '修改成功'
-                            : '提交成功';
+                  ? '修改成功'
+                  : '提交成功';
                 this.submitSuccess = true;
               }
               this.$vux.alert.show({
@@ -304,6 +390,7 @@
             item.originValue = item.value;
             item.value = item.name;
           });
+          this.inventoryTypeDisabled = !tableContent.length;
           this.matBigList = tableContent;
           return tableContent
         }).catch(e => {
@@ -322,6 +409,7 @@
             item.originValue = item.value;
             item.value = item.name;
           });
+          this.inventorySubclassDisabled = !tableContent.length;
           this.matSmlList = tableContent;
           return tableContent
         }).catch(e => {
@@ -357,6 +445,46 @@
       // TODO 获取默认图片
       getDefaultImg() {
         this.MatPic = require('assets/wl_default02.png');
+      },
+      // TODO 新增辅助计量
+      addMoreUnit() {
+        this.invMoreUnit.push({
+          invSubUnitName: '', // 辅助计量单位
+          invSubUnitMulti: '', // 单位倍数
+          comment: '', // 辅计说明
+        })
+      },
+      // TODO 删除辅助计量
+      deleteMoreUnit() {
+        this.invMoreUnit.pop();
+      },
+      // TODO 新增净含量
+      addNetWeight() {
+        this.invNetWeight.push({
+          invCompName: '', // 净含量名称
+          invCompUnit: '', // 计量单位
+          invCompQty: '', // 净含量数量
+          comment: '', // 净含量说明
+        })
+      },
+      // TODO 删除净含量
+      deleteNetWeight() {
+        this.invNetWeight.pop();
+      },
+      // TODO 校验数据
+      validateData(arr, validateMap) {
+        let warn = '';
+        arr.every(item => {
+          validateMap.every(vItem => {
+            if (!item[vItem.key]) {
+              warn = `${vItem.message}不能为空`;
+              return false
+            }
+            return true
+          });
+          return !!warn
+        });
+        return warn;
       },
     },
     beforeRouteLeave(to, from, next) {
@@ -400,10 +528,10 @@
         this.$loading.hide();
       })
     },
-    beforeRouteEnter (to, from, next) {
+    beforeRouteEnter(to, from, next) {
       // 修改title
       to.meta.title = '新增物料';
-      if(to.query.transCode){
+      if (to.query.transCode) {
         to.meta.title = '编辑物料';
       }
       next()
@@ -415,6 +543,7 @@
     background: #fff;
     z-index: 10;
   }
+
   .vux-1px-b:after, .vux-1px-l:before {
     border-color: #e8e8e8;
     color: #e8e8e8;
@@ -422,6 +551,7 @@
 
   .content {
     height: 90%;
+    /*background-color: #F8F8F8;*/
     overflow-y: auto;
     input {
       border: none;
@@ -433,6 +563,18 @@
       .mater_property {
         flex: 1;
       }
+    }
+    /* 上传图片容器 */
+    .upload-image-container {
+      width: 1rem;
+      height: 1rem;
+    }
+    .readonly {
+      color: #999;
+    }
+    .required {
+      color: #5077aa;
+      font-weight: bold;
     }
     .each_property {
       padding: 0.05rem 0.08rem;
@@ -452,8 +594,51 @@
         font-size: 0.16rem;
         line-height: 0.24rem;
       }
-      .readonly{
-        color:#999;
+      .readonly {
+        color: #999;
+      }
+    }
+    /* 重复项 */
+    .duplicate-item {
+      background-color: #fff;
+      /deep/ .weui-cells__title {
+        /*padding-left: 0;*/
+        font-size: .12rem;
+      }
+      /deep/ .weui-cell__hd {
+        font-size: .16rem;
+      }
+      /deep/ .weui-cells {
+        &:before, &:after {
+          display: none;
+        }
+      }
+      /deep/ .weui-cell {
+        &:before {
+          display: block;
+        }
+      }
+    }
+    .add_more {
+      width: 100%;
+      text-align: center;
+      font-size: 0.12rem;
+      padding: 0.1rem 0;
+      color: #757575;
+      span {
+        margin: 0 5px;
+        color: #fff;
+        padding: .01rem .06rem;
+        border-radius: .12rem;
+      }
+      .add {
+        background: #5077aa;
+      }
+      .delete {
+        background: red;
+      }
+      em {
+        font-style: normal;
       }
     }
   }

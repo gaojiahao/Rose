@@ -1,5 +1,7 @@
 <template>
-  <div class='r-picker ' :class="{'r-picker-2': mode === '2', 'r-picker-3': mode === '3','vux-1px-b' : hasBorder}" @click='showStatus'>
+  <div class='r-picker '
+       :class="{'r-picker-2': mode === '2', 'r-picker-3': mode === '3', 'r-picker-4': mode === '4','vux-1px-b' : hasBorder,'vux-1px-t': hasBorderTop}"
+       @click='showStatus'>
     <template v-if="mode === '1' || mode === '2'">
       <label :class='{ required : required}'>{{title}}</label>
       <div class='picker'>
@@ -13,6 +15,11 @@
     <template v-else-if="mode === '3'">
       <div class="title" :class="{required : required}">{{title}}</div>
       <div class="mode">{{showValue || placeholder}}</div>
+      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
+    </template>
+    <template v-else-if="mode === '4'">
+      <div class="title" :class="{required : required}">{{title}}</div>
+      <div class="mode">{{showValue}}</div>
       <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
     </template>
     <div v-transfer-dom>
@@ -82,11 +89,16 @@
         default: '请选择'
       },
       //是否有下边框
-      hasBorder:{
-        type : Boolean,
-        default : true
+      hasBorder: {
+        type: Boolean,
+        default: true
+      },
+      // 是否有上边框
+      hasBorderTop: {
+        type: Boolean,
+        default: false
 
-      }
+      },
     },
     data() {
       return {
@@ -163,16 +175,40 @@
       padding: .06rem .2rem .08rem .06rem;
       .title {
         color: #757575;
-        
+
         font-size: .12rem;
       }
       .mode {
         color: #111;
         font-weight: 500;
       }
-      .required{
+      .required {
         color: #5077aa;
         font-weight: bold;
+      }
+      .r_arrow {
+        top: 50%;
+        right: .04rem;
+        position: absolute;
+        transform: translate(0, -50%);
+      }
+    }
+    /* 模式4 */
+    &.r-picker-4 {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      padding: .1rem .25rem .1rem .15rem;
+      width: 100%;
+      box-sizing: border-box;
+      &.vux-1px-t:before {
+        left: .15rem;
+      }
+      .title {
+        font-size: .16rem;
+      }
+      .mode {
+        color: #999;
       }
       .r_arrow {
         top: 50%;
