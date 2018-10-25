@@ -85,8 +85,8 @@
           <bom-list :boms="UniqueBom">
             <template slot-scope="{bom}" slot="number">
               <div class="number-part">
-                <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
-                <span class="number-unit">可用余额: {{bom.qtyStock || bom.thenQtyStock}}</span>
+                <span class="main-number">原料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                <span class="number-unit">库存余额: {{bom.qtyStock || bom.thenQtyStock}}</span>
               </div>
             </template>
           </bom-list>
@@ -251,9 +251,6 @@
         } else {
           modMatter.tdQty = accAdd(modMatter.lockQty, modMatter.processQty);
         }
-        modMatter = {
-          ...modMatter,
-        };
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
         this.reBuildArr(modMatter);
       },
@@ -297,7 +294,7 @@
             tableContent.forEach(bom => {
               let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
               let {specificLoss = bom.specificLoss, lockQty = 0, shippingTime = defaultShippingTime} = matchedBom;
-              bom.specificLoss = specificLoss;
+              bom.specificLoss = parseFloat(specificLoss);
               bom.lockQty = lockQty;
               bom.shippingTime = shippingTime;
               let tdQty = this.calcBom(item.processQty, bom);
@@ -644,7 +641,7 @@
         if (qtyBal > qtyStock) {
           qtyBal = qtyStock;
         }
-        item.qtyBal = qtyStock;
+        item.qtyBal = qtyBal;
       },
       // TODO 检查库存计划数量
       checklockQty(item) {
@@ -708,6 +705,7 @@
       },
       // TODO 计算bom的值
       calcBom(qty, bom) {
+        // 加工计划数量 * bom消耗的原料 * (1 + 损耗率) - 原料库存计划
         return accSub(accMul(qty, bom.qty, (1 + bom.specificLoss)), bom.lockQty);
       },
     },

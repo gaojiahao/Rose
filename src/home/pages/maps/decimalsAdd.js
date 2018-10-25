@@ -37,7 +37,11 @@ export function accMul(...args) {
   let total = 1;
   try {
     for (let item of args) {
-      item = `${item}`;
+      // 不存在则不进行计算
+      if (item === undefined || isNaN(item)) {
+        continue
+      }
+      item = `${Number(item)}`;
       let iArr = item.split('.');
       if (iArr.length > 1) {
         m += item.split('.')[1].length;
