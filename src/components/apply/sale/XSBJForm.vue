@@ -11,7 +11,7 @@
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
                            v-model="formData.drDealerLogisticsTerms">
         </pop-single-select>
-        <!-- 有效期至 --> 
+        <!-- 有效期至 -->
         <div class="mg_auto no_top" >
           <div class="valid_until" @click="clickDateSelect">
             <div class="title">有效期至</div>
@@ -39,7 +39,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }" 
+              <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                   v-for="(item, index) in matterList" :key='index'>
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
                               @click.native="delClick(index,item)">
@@ -85,10 +85,10 @@
                            :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-               <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+               <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
                         @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
               <div class="price_type vux-1px-t" @click="showPrice = !showPrice">
                 <div class="current_type">
@@ -110,6 +110,7 @@
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -143,13 +144,14 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
+  import UploadFile from 'components/upload/UploadFile'
   const DRAFT_KEY = 'XSBJ_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
       Icon, XInput, RPicker,XTextarea,
       PopMatterList, PopDealerList, PopSingleSelect,
-      PopMatter
+      PopMatter, UploadFile
     },
     data() {
       return {
@@ -361,6 +363,9 @@
               delete submitData.wfPara;
               delete submitData.biReferenceId;
             }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
             this.saveData(operation, submitData);
           }
         });
@@ -491,7 +496,7 @@
     display: flex;
     font-size: .14rem;
     align-items: center;
-    justify-content: space-between; 
+    justify-content: space-between;
     .title{
       color:#757575;
     }
@@ -523,7 +528,7 @@
         color:#999;
       }
     }
-    
+
   }
   /* 列表容器 */
     .r-dropdown-list {

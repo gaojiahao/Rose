@@ -34,6 +34,7 @@
           </div>
         </div>
       </matter-list>
+      <upload-file :default-value="attachment" no-upload></upload-file>
 
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -54,6 +55,7 @@ import workFlow from 'components/workFlow'
 import RAction from 'components/RAction'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import MatterList from 'components/detail/commonPart/MatterList'
+import UploadFile from 'components/upload/UploadFile'
 
 export default {
   data() {
@@ -61,11 +63,12 @@ export default {
       orderInfo: {},      // 表单内容
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
       contactInfo: {}, // 客户、付款方式、物流条款的值
+      attachment: [],
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, contactPart, MatterList
+    workFlow, RAction, contactPart, MatterList, UploadFile,
   },
   methods: {
     //选择默认图片
@@ -81,7 +84,7 @@ export default {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode
-      }).then(({success = true, formData = {}}) => {
+      }).then(({success = true, formData = {}, attachment = []}) => {
         // http200时提示报错信息
         if (success === false) {
           this.$vux.alert.show({
@@ -100,6 +103,7 @@ export default {
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
+        this.attachment = attachment;
         formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = formData;
         this.getcontactInfo();

@@ -22,7 +22,7 @@ export default {
       btnInfo: {},                                // 操作按钮信息
       actions: [],
       selItems: [],                               // 选中的要删除的物料
-      currentStage: [],                           // 流程状态 
+      currentStage: [],                           // 流程状态
       modifyIndex:null,                           // 选中编辑物料的pop
       fillBscroll: null,
       btnIsHide : false,
@@ -53,10 +53,10 @@ export default {
       this.matterList.forEach(item => {
         let price = item.price || 0,
             tdQty = item.tdQty || 0,
-            taxRate = item.taxRate || 0; 
+            taxRate = item.taxRate || 0;
         item.noTax = accMul(tdQty,price);
         total = accAdd(total, accMul(item.noTax,taxRate)).toFixed(2);
-        
+
       });
       return total;
     },
@@ -67,13 +67,13 @@ export default {
   watch:{
     //修改的物料
     matter:{
-      handler(val){ 
+      handler(val){
         let price = val.price || 0,
             tdQty = val.tdQty || 0,
             taxRate = val.taxRate || 0;
         val.noTaxAmount = accMul(price,tdQty).toFixed(2);
         val.taxAmount = accMul(val.noTaxAmount,taxRate).toFixed(2);
-        val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);  
+        val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);
       },
       deep:true
     }
@@ -243,14 +243,14 @@ export default {
         // qtyStockBal为销售出库的库存，数量不允许大于余额qtyBalqtyStock
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;
-        } 
+        }
         else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
           item.tdQty = qtyStockBal;
         }
         //qtyStock为物料领料，数量不允许大于库存
         else if(qtyStock && tdQty > qtyStock){
           item.tdQty = qtyStock;
-        }        
+        }
         else if(qtyBal && tdQty > qtyBal){
           item.tdQty = qtyBal;
         }
@@ -259,7 +259,11 @@ export default {
     //输入框获取焦点，内容选中
     getFocus(e){
       event.currentTarget.select();
-    }
+    },
+    // TODO 上传文件成功
+    onUploadFile({biReferenceId}){
+      this.biReferenceId = biReferenceId;
+    },
   },
   created() {
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
