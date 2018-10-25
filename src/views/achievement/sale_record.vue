@@ -21,7 +21,8 @@
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
       <p class='amount'>
-        ￥<countup :end-val=businessAmount :duration="1" :decimals="decimals"></countup>
+        ￥
+        <countup :end-val=businessAmount :duration="1" :decimals="decimals"></countup>
       </p>
     </div>
 
@@ -34,7 +35,7 @@
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.saleOwnerN || item.saleOwner}} {{item.HANDLER_UNIT_NAME}}</span>
           <span class='saleman_amount'>￥{{item.totalAmount}}</span>
-          <x-icon type="ios-arrow-right" size="18" ></x-icon>
+          <x-icon type="ios-arrow-right" size="18"></x-icon>
         </div>
       </div>
       <div class='sale_rank' v-show="activeIndex === 1">
@@ -42,7 +43,7 @@
         <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.INVENTORY_NAME}}</span>
-          <span class='saleman_amount'>￥{{item.totalAMOUNT}}</span>
+          <span class='saleman_amount'>￥{{item.productTotalAmount}}</span>
         </div>
       </div>
     </r-scroll>
@@ -117,16 +118,17 @@
         listData: [],
         sort: 'desc',
         decimals: 1,
+        sortProperty: 'totalAmount',
       };
     },
     filters: {
       numberComma
     },
     methods: {
-      goList(item){
+      goList(item) {
         this.$router.push({
-          path:'/achievement',
-          query : {
+          path: '/achievement',
+          query: {
             userCode: item.saleOwner
           }
         })
@@ -148,16 +150,24 @@
             value: 'INVENTORY_NAME',
           }]
         ];
+        let propertyLists = ['totalAmount', 'productTotalAmount'];
         this.searchVal = '';
         this.sort = 'desc';
         this.activeIndex = index;
         this.filterList = filterLists[this.activeIndex];
+        this.sortProperty = propertyLists[this.activeIndex];
         this.resetCondition();
         this.getList();
       },
       // TODO 获取请求参数
       getParams() {
         let filter = [];
+        let sort = [
+          {
+            property: this.sortProperty,
+            direction: this.sort,
+          }
+        ];
         if (this.searchVal) {
           filter = [
             {
@@ -171,7 +181,7 @@
         return {
           page: this.page,
           limit: this.limit,
-          sort: this.sort,
+          sort: JSON.stringify(sort),
           ...this.timeFilter,
           filter: JSON.stringify(filter),
         }
@@ -180,7 +190,7 @@
         return myReportService.allSaleReport(this.getParams()).then(({total = 0, salesman = [], allTotalAmount = 0}) => {
           this.hasNext = total > (this.page - 1) * this.limit + salesman.length;
           let dec = `${allTotalAmount}`.split('.');
-          if(dec.length > 1) {
+          if (dec.length > 1) {
             this.decimals = dec[1].length;
           }
           this.businessAmount = allTotalAmount;
@@ -283,6 +293,7 @@
 <style lang="less" scoped>
   @import "~vux/src/styles/1px.less";
   @import "~vux/src/styles/center.less";
+
   .vux-1px-t:before,
   .vux-1px-b:after,
   .vux-1px-t:before,
@@ -356,8 +367,8 @@
         display: flex;
         align-items: center;
         padding: 0.07rem;
-        .arrow_right{
-          margin-left:0.05rem;
+        .arrow_right {
+          margin-left: 0.05rem;
         }
         .sort {
           width: 0.3rem;

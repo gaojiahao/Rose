@@ -25,7 +25,7 @@
         <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.INVENTORY_NAME}}</span>
-          <span class='saleman_amount'>￥{{item['价税总计']}}</span>
+          <span class='saleman_amount'>￥{{item.totalAmount}}</span>
         </div>
       </div>
     </r-scroll>
@@ -91,6 +91,7 @@
         userInfo: {
           userCode : 'admin'
         },
+        sortProperty: 'totalAmount',
       };
     },
     filters: {
@@ -122,8 +123,15 @@
             value: this.userInfo.userCode
           }
         ];
+        let sort = [
+          {
+            property: this.sortProperty,
+            direction: this.sort,
+          }
+        ];
         if (this.serachVal) {
           filter = [
+            ...filter,
             {
               // attendedOperation: 'or',		//与and，or或
               property: this.filterProperty,
@@ -135,7 +143,7 @@
         return {
           page: this.page,
           limit: this.limit,
-          sort: this.sort,
+          sort: JSON.stringify(sort),
           ...this.timeFilter,
           filter: JSON.stringify(filter),
         }

@@ -40,6 +40,9 @@
             <span class='num'>出库数量: {{item.QTY || '无'}}</span>
             <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span>
           </div>
+          <div class='mater_num'>
+            <span class='num'>分配数量: {{item.gsQty || '无'}}</span>
+          </div>
           <div class='mater_price'>
 
             <span><span class="symbol">￥</span>{{item['价税合计'] || 0 | toFixed |numberComma(3) }}</span>

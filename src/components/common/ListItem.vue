@@ -41,7 +41,7 @@
                 <span class="symbol">￥</span>{{item['销售单价'] | toFixed}}
               </p>
               <p class="mater_count" v-if="!noQty">
-                <span class="symbol">x</span>{{item.QTY | toFixed}}
+                <span class="symbol">x</span>{{(item.gsQty || 0) | toFixed}}
               </p>
             </div>
           </div>
@@ -70,7 +70,7 @@
         <span class="num">合计:</span>
         <span class="money">
           <!--<span class="symbol" v-if="item.itmes[0].taxAmount">[含税]</span>-->
-          <span class="symbol">￥</span>{{item['销项税额'] | toFixed | numberComma(3)}}
+          <span class="symbol">￥</span>{{item['价税合计'] | toFixed | numberComma(3)}}
         </span>
       </div>
     </div>
