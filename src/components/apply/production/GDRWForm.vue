@@ -72,7 +72,8 @@ export default {
   components: {
     Popup, PopWorkList,
     Group, Cell, Datetime,
-    XInput, XTextarea, PopManagerList,RPicker,PopFacilityList
+    XInput, XTextarea, PopManagerList, 
+    RPicker, PopFacilityList
   },
   data() {
     return {

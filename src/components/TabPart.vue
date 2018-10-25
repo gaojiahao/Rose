@@ -2,18 +2,18 @@
 <template>
   <div class='filter_part'>
     <div class='sort_part vux-1px-b'>
-      <div class='each_sort' v-for="(SItem,SIndex) in sortList" :key="SIndex" @click="sortClick(SItem)">
+      <div class='each_sort' v-for="(SItem, SIndex) in sortList" :key="SIndex" @click="sortClick(SItem)">
         <span class='sort_name'>{{SItem.name}}</span>
         <span class='arrow'>
-          <span class='iconfont icon-shangsanjiao arrow_up' v-show="!SItem.Updirection"></span>
-          <span class='iconfont icon-shangsanjiao-copy arrow_up active' v-show="SItem.Updirection"></span>
-          <span class='iconfont icon-xiasanjiao1 arrow_down' v-show="!SItem.Downdirection"></span>
-          <span class='iconfont icon-sort-up-copy-copy arrow_down active' v-show="SItem.Downdirection"></span>
+          <span class='iconfont arrow_up' 
+          :class="[SItem.Updirection ? 'icon-shangsanjiao-copy' : 'icon-shangsanjiao']"></span>
+          <span class='iconfont arrow_down' 
+          :class="[SItem.Downdirection ? 'icon-sort-up-copy-copy' : 'icon-xiasanjiao1']"></span>
         </span>  
       </div>
     </div>
     <div class="tab_part vux-1px-b">
-      <div class='each_tab' v-for="(TItem,TIndex) in tab" :key="TIndex" @click="switchTab(TItem,TIndex)">
+      <div class='each_tab' v-for="(TItem, TIndex) in tab" :key="TIndex" @click="switchTab(TItem,TIndex)">
         <span :class="{'active' : TIndex === activeTabIndex}">{{TItem.name}}</span>
       </div>
     </div>    
@@ -36,14 +36,12 @@
         type: Array,
         default() {
           return [
-            {name:'交易号', key:'transCode',Updirection:false,Downdirection:false},
-            {name:'修改时间',key:'modTime',Updirection:false,Downdirection:false},
-            {name:'客户名称',key:'modTime',Updirection:false,Downdirection:false},
-            {name:'流程状态',key:'modTime',Updirection:false,Downdirection:false}
+            { name: '交易号', key: 'transCode', Updirection: false, Downdirection: false },
+            { name: '修改时间', key: 'modTime', Updirection: false, Downdirection: false },
+            { name: '客户名称', key: 'modTime', Updirection: false, Downdirection: false },
+            { name: '流程状态', key: 'modTime', Updirection: false, Downdirection: false }
           ]
         }
-        
-        
       }
     },
     methods: {
@@ -53,7 +51,7 @@
         this.$emit('tab-click', item)
       },
       //排序
-      sortClick(item){
+      sortClick(item, index){
         if(!item.Updirection && !item.Downdirection){
           item.Updirection = true;
         }
@@ -65,15 +63,8 @@
           property : item.key,
           direction : item.Updirection ? 'ASC' : 'DESC'
         }
-        this.$emit('sort-click',obj)
-
+        this.$emit('sort-click', obj);
       }
-    },
-    watch: {
-      
-    },
-    created() {
-      
     }
   }
 </script>
@@ -90,16 +81,14 @@
       display: flex;
       align-items: center;
       .each_sort{
-        width:25%;
-        padding-right:0.1rem; 
-        font-size:0.14rem;
-        text-align: center;
+        flex: 1;
+        display: flex;
+        font-size: .14rem;
         box-sizing: border-box;
+        justify-content: center;
         .arrow{
-          // display: inline-block;
           height: 100%;
           position: relative;
-          
           .iconfont{
             font-size:0.1rem;
             color:#757575;
@@ -108,12 +97,12 @@
             }
           }
           .arrow_up{
+            top: 0;
             position: absolute;
-            top:0rem;
           }
           .arrow_down{
+            top: .06rem;
             position: absolute;
-            top:0.06rem;
           }
         }
       }
