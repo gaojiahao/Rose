@@ -2,14 +2,20 @@
 <template>
   <div class='filter_part'>
     <div class='sort_part vux-1px-b'>
-      <div class='each_sort' v-for="(SItem,SIndex) in sortList" :key="SIndex" @click="sortClick(SItem)">
-        <span class='sort_name'>{{SItem.name}}</span>
-        <span class='arrow'>
-          <span class='iconfont icon-shangsanjiao arrow_up' v-show="!SItem.Updirection"></span>
-          <span class='iconfont icon-shangsanjiao-copy arrow_up active' v-show="SItem.Updirection"></span>
-          <span class='iconfont icon-xiasanjiao1 arrow_down' v-show="!SItem.Downdirection"></span>
-          <span class='iconfont icon-sort-up-copy-copy arrow_down active' v-show="SItem.Downdirection"></span>
-        </span>  
+      <div class='each_sort' v-for="(SItem,SIndex) in sortList" :key="SIndex" @click="sortClick(SItem,SIndex)">
+        <div class='sort_name'>{{SItem.name}}
+          <div class='arrow'>
+            <span class='iconfont icon-shangsanjiao arrow_up' v-show="!SItem.Updirection"></span>
+            <span class='iconfont icon-shangsanjiao-copy arrow_up active' v-show="SItem.Updirection"></span>
+            <span class='iconfont icon-xiasanjiao1 arrow_down' v-show="!SItem.Downdirection"></span>
+            <span class='iconfont icon-sort-up-copy-copy arrow_down active' v-show="SItem.Downdirection"></span>
+          </div>
+            
+          
+        </div>
+        <!-- <span class='arrow'>
+          
+        </span>   -->
       </div>
     </div>
     <div class="tab_part vux-1px-b">
@@ -53,17 +59,26 @@
         this.$emit('tab-click', item)
       },
       //排序
-      sortClick(item){
-        if(!item.Updirection && !item.Downdirection){
-          item.Updirection = true;
-        }
-        else{
-          item.Updirection = !item.Updirection;
-          item.Downdirection = !item.Downdirection;
-        }
+      sortClick(val,i){
+        this.sortList.forEach((item,index)=>{
+          if(index === i){
+            if(!item.Updirection && !item.Downdirection){
+              item.Updirection = true;
+            }
+            else{
+              item.Updirection = !item.Updirection;
+              item.Downdirection = !item.Downdirection;
+            }
+          }
+          else{
+            item.Updirection = false;
+            item.Downdirection = false;
+          }
+        })
+        
         let obj = {
-          property : item.key,
-          direction : item.Updirection ? 'ASC' : 'DESC'
+          property : val.key,
+          direction : val.Updirection ? 'ASC' : 'DESC'
         }
         this.$emit('sort-click',obj)
 
@@ -83,37 +98,51 @@
     border-color: #e8e8e8;
   }
   .filter_part{
-    // padding: 0 0.2rem;
     color:#757575;
     .sort_part{
       padding: 0.1rem 0.15rem 0.1rem 0.05rem;
       display: flex;
-      align-items: center;
+      height: 0.24rem;
+      line-height: 0.24rem;
+      // align-items: center;
       .each_sort{
-        width:25%;
-        padding-right:0.1rem; 
+        flex: 1;
+        padding: 0 0.05rem; 
         font-size:0.14rem;
         text-align: center;
         box-sizing: border-box;
-        .arrow{
-          // display: inline-block;
-          height: 100%;
+        .sort_name{
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          box-sizing: border-box;
           position: relative;
-          
+          display: inline-block;
+          max-width: 100%;
+          padding-right: 0.08rem;
+          .arrow{
+            display: inline-block;
+            
+          }
           .iconfont{
             font-size:0.1rem;
             color:#757575;
+            // height: 50%;
             &.active{
               color: #5077aa;
             }
           }
           .arrow_up{
             position: absolute;
-            top:0rem;
+            right: 0;
+            top:-8%;
+            // transform: translateY(-1%)
           }
           .arrow_down{
             position: absolute;
-            top:0.06rem;
+            top:15%;
+            right: 0;
+            
           }
         }
       }
