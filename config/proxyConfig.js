@@ -1,5 +1,6 @@
-let target = 'http://cpacn2012.3322.org:5858/'   //172
+// let target = 'http://cpacn2012.3322.org:1175/'   //172
 // let target = 'http://cpacn2012.3322.org:5959/'   //173
+let target = 'https://7senses.roletask.com'
 
 module.exports = {
     proxy: {

@@ -1,6 +1,10 @@
 <template>
   <div class='r-picker '
-       :class="{'r-picker-2': mode === '2', 'r-picker-3': mode === '3', 'r-picker-4': mode === '4','vux-1px-b' : hasBorder,'vux-1px-t': hasBorderTop}"
+       :class="{'r-picker-2': mode === '2', 
+        'r-picker-3': mode === '3', 
+        'r-picker-4': mode === '4', 
+        'vux-1px-b' : hasBorder, 
+        'vux-1px-t': hasBorderTop }"
        @click='showStatus'>
     <template v-if="mode === '1' || mode === '2'">
       <label :class='{ required : required}'>{{title}}</label>
@@ -172,7 +176,7 @@
       position: relative;
       background: #fff;
       box-sizing: border-box;
-      padding: .06rem .2rem .08rem .06rem;
+      padding: .06rem .1rem;
       .title {
         color: #757575;
 

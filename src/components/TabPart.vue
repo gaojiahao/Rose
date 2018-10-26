@@ -2,24 +2,18 @@
 <template>
   <div class='filter_part'>
     <div class='sort_part vux-1px-b'>
-      <div class='each_sort' v-for="(SItem,SIndex) in sortList" :key="SIndex" @click="sortClick(SItem,SIndex)">
-        <div class='sort_name'>{{SItem.name}}
-          <div class='arrow'>
-            <span class='iconfont icon-shangsanjiao arrow_up' v-show="!SItem.Updirection"></span>
-            <span class='iconfont icon-shangsanjiao-copy arrow_up active' v-show="SItem.Updirection"></span>
-            <span class='iconfont icon-xiasanjiao1 arrow_down' v-show="!SItem.Downdirection"></span>
-            <span class='iconfont icon-sort-up-copy-copy arrow_down active' v-show="SItem.Downdirection"></span>
-          </div>
-            
-          
-        </div>
-        <!-- <span class='arrow'>
-          
-        </span>   -->
+      <div class='each_sort' v-for="(SItem, SIndex) in sortList" :key="SIndex" @click="sortClick(SItem,SIndex)">
+        <span class='sort_name'>{{SItem.name}}</span>
+        <span class='arrow'>
+          <span class='iconfont arrow_up' 
+          :class="[SItem.Updirection ? 'icon-shangsanjiao-copy' : 'icon-shangsanjiao',{'active' : SItem.Updirection}]"></span>
+          <span class='iconfont arrow_down' 
+          :class="[SItem.Downdirection ? 'icon-sort-up-copy-copy' : 'icon-xiasanjiao1',{'active' : SItem.Downdirection}]"></span>
+        </span>  
       </div>
     </div>
     <div class="tab_part vux-1px-b">
-      <div class='each_tab' v-for="(TItem,TIndex) in tab" :key="TIndex" @click="switchTab(TItem,TIndex)">
+      <div class='each_tab' v-for="(TItem, TIndex) in tab" :key="TIndex" @click="switchTab(TItem,TIndex)">
         <span :class="{'active' : TIndex === activeTabIndex}">{{TItem.name}}</span>
       </div>
     </div>    
@@ -42,14 +36,12 @@
         type: Array,
         default() {
           return [
-            {name:'交易号', key:'transCode',Updirection:false,Downdirection:false},
-            {name:'修改时间',key:'modTime',Updirection:false,Downdirection:false},
-            {name:'客户名称',key:'modTime',Updirection:false,Downdirection:false},
-            {name:'流程状态',key:'modTime',Updirection:false,Downdirection:false}
+            { name: '交易号', key: 'transCode', Updirection: false, Downdirection: false },
+            { name: '修改时间', key: 'modTime', Updirection: false, Downdirection: false },
+            { name: '客户名称', key: 'modTime', Updirection: false, Downdirection: false },
+            { name: '流程状态', key: 'modTime', Updirection: false, Downdirection: false }
           ]
         }
-        
-        
       }
     },
     methods: {
@@ -80,15 +72,8 @@
           property : val.key,
           direction : val.Updirection ? 'ASC' : 'DESC'
         }
-        this.$emit('sort-click',obj)
-
+        this.$emit('sort-click', obj);
       }
-    },
-    watch: {
-      
-    },
-    created() {
-      
     }
   }
 </script>
@@ -107,23 +92,13 @@
       // align-items: center;
       .each_sort{
         flex: 1;
-        padding: 0 0.05rem; 
-        font-size:0.14rem;
-        text-align: center;
+        display: flex;
+        font-size: .14rem;
         box-sizing: border-box;
-        .sort_name{
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          box-sizing: border-box;
+        justify-content: center;
+        .arrow{
+          height: 100%;
           position: relative;
-          display: inline-block;
-          max-width: 100%;
-          padding-right: 0.08rem;
-          .arrow{
-            display: inline-block;
-            
-          }
           .iconfont{
             font-size:0.1rem;
             color:#757575;
@@ -133,16 +108,12 @@
             }
           }
           .arrow_up{
+            top: -0.02rem;
             position: absolute;
-            right: 0;
-            top:-8%;
-            // transform: translateY(-1%)
           }
           .arrow_down{
+            top: .04rem;
             position: absolute;
-            top:15%;
-            right: 0;
-            
           }
         }
       }

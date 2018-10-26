@@ -2,6 +2,8 @@
   <div class="pages sj-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 选择客户-->
         <pop-dealer-list :defaultValue="dealerInfo" @sel-dealer="selDealer" @sel-contact="selContact" >
         </pop-dealer-list>
@@ -29,8 +31,8 @@
                     </template>
                   </x-input>
                   <!-- 当前阶段 -->
-                  <popup-radio title="流程状态" placeholder='请选择' :options="currentStage" v-model="formData.biProcessStatus">
-                  </popup-radio>
+                  <!-- <popup-radio title="流程状态" placeholder='请选择' :options="currentStage" v-model="formData.biProcessStatus">
+                  </popup-radio> -->
                   <!-- 有效期 -->
                   <datetime v-model="formData.validUntil" placeholder='请选择日期' title="有效期至"></datetime>
                   <!-- 销售人员popup, 销售渠道popup -->
@@ -69,6 +71,7 @@
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入
+  import RPicker from 'components/RPicker'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   // 方法引入
@@ -79,7 +82,8 @@
     filters: {numberComma},
     components: {
       Cell, Popup, Group, XInput,
-      Datetime, XTextarea, PopupRadio, PopDealerList, PopSalesmanList
+      Datetime, XTextarea, PopupRadio, 
+      RPicker, PopDealerList, PopSalesmanList
     },
     data() {
       return {
