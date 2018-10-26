@@ -595,6 +595,10 @@ export default {
 
       }
     }
+    .upload-image-container {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
   }
 
   // 提交

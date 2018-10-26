@@ -65,6 +65,7 @@
       justify-content: center;
       &.active {
         color: #5077aa;
+        font-weight: bold;
       }
       .arrow {
         height: 100%;

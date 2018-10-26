@@ -545,6 +545,10 @@ import warehouseDetailVue from './warehouseDetail.vue';
 
       }
     }
+    .upload-image-container {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
   }
 
   .edit_r_picker {

@@ -254,30 +254,38 @@
   .upload-image-container {
     position: relative;
     // z-index: 1;
-    width: 1.2rem;
-    height: 1.2rem;
+    // width: 100rem;
+    // height: 1.2rem;
+    width:100%;
+    height: 100%;
     > .label {
       display: block;
       width: 100%;
       height: 100%;
     }
     .upload {
+      background: #fff;
       width: 100%;
       height: 100%;
       position: absolute;
       left: 0;
       top: 0;
       z-index: -999;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      align-content: center;
       %blockCenter {
-        display: block;
-        text-align: center;
+        // display: block;
+        // text-align: center;
       }
       .add_text {
-        @extend %blockCenter;
+        // @extend %blockCenter;
       }
       .iconfont {
-        @extend %blockCenter;
-        margin-top: 0.24rem;
+        // @extend %blockCenter;
+        // margin-top: 0.24rem;
         font-size: 0.24rem;
       }
     }

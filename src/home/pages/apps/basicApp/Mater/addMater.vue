@@ -1,81 +1,84 @@
 <template>
   <div class='childPage'>
-    <div class='content'>
-      <div class='mater_baseinfo vux-1px-b'>
-        <group class="mater_property" gutter="0">
-          <x-input title="物料编码" text-align='right' placeholder='请填写' :readonly="codeReadOnly"
-                   :class='{readonly : codeReadOnly}' v-model.trim='inventory.inventoryCode'>
-            <template slot="label">
-              <span class="required">物料编码</span>
-            </template>
-          </x-input>
-          <x-input title="物料名称" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryName'>
-            <template slot="label">
-              <span class='required'>物料名称</span>
-            </template>
-          </x-input>
+    <r-scroll :options="scrollOptions" class='content'>
+      <div>
+        <div class='mater_baseinfo vux-1px-b'>
+          <group class="mater_property
+          " gutter="0">
+            <x-input title="物料编码" text-align='right' placeholder='请填写' :readonly="codeReadOnly"
+                    :class='{readonly : codeReadOnly}' v-model.trim='inventory.inventoryCode'>
+              <template slot="label">
+                <span class="required">物料编码</span>
+              </template>
+            </x-input>
+            <x-input title="物料名称" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryName'>
+              <template slot="label">
+                <span class='required'>物料名称</span>
+              </template>
+            </x-input>
+          </group>
+          <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
+        </div>
+        <group gutter="0">
+          <r-picker title="加工属性" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
+                    :required="true" mode="4" @on-change="natureChange"></r-picker>
+          <r-picker title="材料大类" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
+                    mode="4" @on-change="bigChange"></r-picker>
+          <r-picker title="材料子类" :data="matSmlList" :value="inventory.inventorySubclass" :has-border="false"
+                    mode="4" v-model="inventory.inventorySubclass"></r-picker>
+          <x-input title="型号规格" text-align='right' placeholder='请填写' v-model.trim='inventory.specification'></x-input>
+          <x-input title="颜色" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryColor'></x-input>
+          <x-input title="主材质" text-align='right' placeholder='请填写' v-model.trim='inventory.material'></x-input>
+          <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
+                    mode="4" v-model="inventory.measureUnit" has-border-top></r-picker>
+          <r-picker title="物料状态:" :data="statusList" :value="inventoryStatus"
+                    mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
         </group>
-        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
+        <!-- 辅助计量 -->
+        <group class="duplicate-item" title="辅助计量单位">
+          <div v-for="(item,index) in invMoreUnit" :class="{'has_border': index < invMoreUnit.length-1}" :key="index">
+            <r-picker class="vux-1px-t"title="辅助计量单位" :data="measureList" :value="item.invSubUnitName"
+                      mode="4" :has-border="false" v-model="item.invSubUnitName" required></r-picker>
+            <x-input title="单位倍数" type="number" text-align='right' placeholder='请填写' v-model='item.invSubUnitMulti' @on-blur="checkAmt(item)">
+              <template slot="label">
+                <span class="required">单位倍数</span>
+              </template>
+            </x-input>
+            <x-input title="辅计说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
+          </div>
+        </group>
+        <div class="add_more">
+          您还需要添加新的辅助计量?请点击
+          <span class='add' @click="addMoreUnit">新增</span>
+          <em v-show="invMoreUnit.length>1">或</em>
+          <span class='delete' @click="deleteMoreUnit" v-show="invMoreUnit.length>1">删除</span>
+        </div>
+        <!-- 净含量 -->
+        <group class="duplicate-item" title="净含量">
+          <div v-for="(item,index) in invNetWeight" :class="{'has_border': index < invNetWeight.length-1}" :key="index">
+            <x-input title="净含量名称" text-align='right' placeholder='请填写' v-model='item.invCompName'>
+              <template slot="label">
+                <span class="required">净含量名称</span>
+              </template>
+            </x-input>
+            <r-picker title="计量单位" :data="measureList" :value="item.invCompUnit"
+                      mode="4" :has-border="false" v-model="item.invCompUnit" has-border-top required></r-picker>
+            <x-input title="净含量数量" type="number" text-align='right' placeholder='请填写' v-model='item.invCompQty' @on-blur="checkAmt(item)">
+              <template slot="label">
+                <span class="required">净含量数量</span>
+              </template>
+            </x-input>
+            <x-input title="净含量说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
+          </div>
+        </group>
+        <div class="add_more">
+          您还需要添加新的净含量?请点击
+          <span class='add' @click="addNetWeight">新增</span>
+          <em v-show="invNetWeight.length>1">或</em>
+          <span class='delete' @click="deleteNetWeight" v-show="invNetWeight.length>1">删除</span>
+        </div>
       </div>
-      <group gutter="0">
-        <r-picker title="加工属性" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
-                  :required="true" mode="4" @on-change="natureChange"></r-picker>
-        <r-picker title="材料大类" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
-                  mode="4" @on-change="bigChange"></r-picker>
-        <r-picker title="材料子类" :data="matSmlList" :value="inventory.inventorySubclass"
-                  mode="4" v-model="inventory.inventorySubclass"></r-picker>
-        <x-input title="型号规格" text-align='right' placeholder='请填写' v-model.trim='inventory.specification'></x-input>
-        <x-input title="颜色" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryColor'></x-input>
-        <x-input title="主材质" text-align='right' placeholder='请填写' v-model.trim='inventory.material'></x-input>
-        <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
-                  mode="4" v-model="inventory.measureUnit" has-border-top></r-picker>
-        <r-picker title="物料状态:" :data="statusList" :value="inventoryStatus"
-                  mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
-      </group>
-      <!-- 辅助计量 -->
-      <group class="duplicate-item" title="辅助计量">
-        <template v-for="item in invMoreUnit">
-          <r-picker title="辅助计量单位" :data="measureList" :value="item.invSubUnitName"
-                    mode="4" :has-border="false" v-model="item.invSubUnitName" required></r-picker>
-          <x-input title="单位倍数" type="number" text-align='right' placeholder='请填写' v-model='item.invSubUnitMulti'>
-            <template slot="label">
-              <span class="required">单位倍数</span>
-            </template>
-          </x-input>
-          <x-input title="辅计说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
-        </template>
-      </group>
-      <div class="add_more">
-        您还需要添加新的辅助计量?请点击
-        <span class='add' @click="addMoreUnit">新增</span>
-        <em v-show="invMoreUnit.length>1">或</em>
-        <span class='delete' @click="deleteMoreUnit" v-show="invMoreUnit.length>1">删除</span>
-      </div>
-      <!-- 净含量 -->
-      <group class="duplicate-item" title="净含量">
-        <template v-for="item in invNetWeight">
-          <x-input title="净含量名称" text-align='right' placeholder='请填写' v-model='item.invCompName'>
-            <template slot="label">
-              <span class="required">净含量名称</span>
-            </template>
-          </x-input>
-          <r-picker title="计量单位" :data="measureList" :value="item.invCompUnit"
-                    mode="4" :has-border="false" v-model="item.invCompUnit" has-border-top required></r-picker>
-          <x-input title="净含量数量" type="number" text-align='right' placeholder='请填写' v-model='item.invCompQty'>
-            <template slot="label">
-              <span class="required">净含量数量</span>
-            </template>
-          </x-input>
-          <x-input title="净含量说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
-        </template>
-      </group>
-      <div class="add_more">
-        您还需要添加新的净含量?请点击
-        <span class='add' @click="addNetWeight">新增</span>
-        <em v-show="invNetWeight.length>1">或</em>
-        <span class='delete' @click="deleteNetWeight" v-show="invNetWeight.length>1">删除</span>
-      </div>
-    </div>
+    </r-scroll>
     <div class='btn vux-1px-t'>
       <div class="cfm_btn" @click="save">{{this.transCode? '保存':'提交'}}</div>
     </div>
@@ -92,7 +95,8 @@
   } from 'service/materService';
   import {getBaseInfoDataBase, getDictByType, getDictByValue,} from 'service/commonService';
   import UploadImage from 'components/UploadImage'
-
+  import RScroll from 'components/RScroll'
+  import {toFixed} from '@/plugins/calc'
   export default {
     data() {
       return {
@@ -159,6 +163,9 @@
         inventoryStatus: '', // 物料状态
         inventoryTypeDisabled: false,
         inventorySubclassDisabled: false,
+        scrollOptions : {
+          click : true
+        },
       }
     },
     directives: {
@@ -171,11 +178,12 @@
       RPicker,
       UploadImage,
       XInput,
-      PopupPicker
+      PopupPicker,RScroll
     },
     methods: {
       // TODO 上传图片成功触发
       onUpload(val) {
+        console.log(val);
         this.inventory.inventoryPic = val.src;
       },
       // TODO 加工属性切换
@@ -208,6 +216,16 @@
           });
           this.statusList = tableContent;
         })
+      },
+      checkAmt(item){
+        let { invSubUnitMulti,invCompQty} = item;
+        // 金额
+        if (invSubUnitMulti) {
+          item.invSubUnitMulti = Math.abs(toFixed(invSubUnitMulti));
+        }
+        else if(invCompQty){
+          item.invCompQty = Math.abs(toFixed(invCompQty));
+        }
       },
       // TODO 提交/修改物料
       save() {
@@ -544,15 +562,41 @@
     z-index: 10;
   }
 
-  .vux-1px-b:after, .vux-1px-l:before {
+  .vux-1px-b:after, 
+  .vux-1px-l:before ,
+  .vux-1px-t:before,{
     border-color: #e8e8e8;
     color: #e8e8e8;
+    left:0.1rem;
+  }
+  .vux-1px-l:before{
+    left:0;
   }
 
   .content {
     height: 90%;
-    /*background-color: #F8F8F8;*/
-    overflow-y: auto;
+    background-color: #f8f8f8;
+    overflow: hidden;
+    position: relative;
+    // overflow-y: auto;
+    /deep/ .weui-cells {
+      // margin-top: 0;
+      font-size: .16rem;
+      &:before {
+        border-top: none;
+      }
+      &:after {
+        border-bottom: none;
+      }
+      .weui-cell {
+        padding: 0.1rem;
+        &:before {
+          // left: 0;
+          border-color: #e8e8e8;
+          left:0.1rem;
+        }
+      }
+    }  
     input {
       border: none;
       outline: none;
@@ -567,7 +611,8 @@
     /* 上传图片容器 */
     .upload-image-container {
       width: 1rem;
-      height: 1rem;
+      // height: 100%;
+      height: 0.86rem;
     }
     .readonly {
       color: #999;
@@ -600,19 +645,24 @@
     }
     /* 重复项 */
     .duplicate-item {
+      margin-top:0.1rem;
       background-color: #fff;
+      overflow: hidden;
+      .has_border{
+        border-bottom: .03rem solid #e8e8e8;
+      }
       /deep/ .weui-cells__title {
         /*padding-left: 0;*/
         font-size: .12rem;
       }
-      /deep/ .weui-cell__hd {
-        font-size: .16rem;
-      }
-      /deep/ .weui-cells {
-        &:before, &:after {
-          display: none;
-        }
-      }
+      // /deep/ .weui-cell__hd {
+      //   font-size: .16rem;
+      // }
+      // /deep/ .weui-cells {
+      //   &:before, &:after {
+      //     display: none;
+      //   }
+      // }
       /deep/ .weui-cell {
         &:before {
           display: block;

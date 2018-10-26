@@ -24,7 +24,7 @@
     <template v-else-if="mode === '4'">
       <div class="title" :class="{required : required}">{{title}}</div>
       <div class="mode">{{showValue}}</div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
+      <x-icon class="r_arrow" type="ios-arrow-right" size="16" v-show="!disabled"></x-icon>
     </template>
     <div v-transfer-dom>
       <popup id="trade_pop_part" v-model="show">
@@ -202,11 +202,11 @@
       position: relative;
       display: flex;
       justify-content: space-between;
-      padding: .1rem .25rem .1rem .15rem;
+      padding: .1rem .2rem .1rem .1rem;
       width: 100%;
       box-sizing: border-box;
       &.vux-1px-t:before {
-        left: .15rem;
+        left: .1rem;
       }
       .title {
         font-size: .16rem;
@@ -219,6 +219,7 @@
         right: .04rem;
         position: absolute;
         transform: translate(0, -50%);
+        fill : #999;
       }
     }
     label {

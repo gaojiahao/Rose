@@ -12,7 +12,11 @@
         </template>
       </div>
       <div class="upload-file-item" v-if="!noUpload">
-        <label class="upload-file-add" :for="id" @click.stop="">上传</label>
+        
+        <label class="upload-file-add" :for="id" @click.stop="">
+          <span class="iconfont icon-icon"></span>
+          <span class="add_text">增加图片</span>
+        </label>
         <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/>
       </div>
     </div>
@@ -330,12 +334,20 @@
     }
     .upload-file-add {
       display: flex;
+      background: #f8f8f8;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       width: .8rem;
       height: .8rem;
-      border: 1px solid #ccc;
+      // border: 1px solid #ccc;
       box-sizing: border-box;
+      .iconfont{
+        font-size: 0.2rem;
+      }
+      .add_text{
+        font-size: 0.12rem;
+      }
     }
   }
 </style>

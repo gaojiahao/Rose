@@ -2,6 +2,8 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
