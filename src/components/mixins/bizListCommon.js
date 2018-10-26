@@ -5,11 +5,14 @@ import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 import ListItem from 'components/list/commonPart/ListItem'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import RSort from 'components/list/commonPart/RSort'
+import RTab from 'components/list/commonPart/RTab'
 
 import {toFixed} from '@/plugins/calc'
 // 引入映射表 (不可移除)
 import Apps from '@/home/pages/maps/businessApp'
 import AppsFile from '@/home/pages/maps/businessFile'
+
 export default {
   props: {
     refreshRequest: {
@@ -52,11 +55,12 @@ export default {
           value: 'dealerName',
         },
       ],
-      sort:[]
+      sort: []
     }
   },
   components: {
     Tab, Icon, TabItem, searchIcon, RScroll, ListItem,
+    RSort, RTab,
   },
   methods: {
     goDetail(item, index) {
@@ -64,9 +68,9 @@ export default {
         return
       }
       // 交易号、应用名称等
-      let { transCode } = item,
-          { name } = this.$route.query,
-          { fileId, listId } = this.$route.params;
+      let {transCode} = item,
+        {name} = this.$route.query,
+        {fileId, listId} = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
@@ -89,7 +93,7 @@ export default {
             path = `/detail/${fileId}/${listId}`;
           }
           this.$router.push({
-            path, query: { name, transCode }
+            path, query: {name, transCode}
           })
         };
         let calcTime = Date.now() - start;
@@ -109,11 +113,11 @@ export default {
       })
     },
     goEdit() {
-      let { name } = this.$route.query,
-          { fileId, listId } = this.$route.params;
+      let {name} = this.$route.query,
+        {fileId, listId} = this.$route.params;
       this.$router.push({
         path: `/fillform/${fileId}/${listId}`,
-        query: { name }
+        query: {name}
       })
     },
     // TODO 重置列表条件
@@ -158,7 +162,7 @@ export default {
           item.statusClass = 'duty_fall_c';
           item.statusName = '已失效';
           break;
-        
+
       }
     },
     // TODO 获取默认图片
@@ -228,7 +232,7 @@ export default {
         page: this.page,
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
-        sort : JSON.stringify(this.sort)
+        sort: JSON.stringify(this.sort)
       }).then(({total = 0, orders = []}) => {
         // this.$emit('input',false);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
@@ -319,6 +323,19 @@ export default {
         });
       }, 200)
       this.listData = tmp;
+    },
+    // TODO 排序
+    onSortList(val) {
+      this.sort = val.property ? [val] : [];
+      this.resetCondition();
+      this.getList();
+    },
+    // TODO tab切换
+    onTabClick({status = '', index = 0}) {
+      this.activeIndex = index;
+      this.activeTab = status;
+      this.resetCondition();
+      this.getList();
     },
   },
   filters: {

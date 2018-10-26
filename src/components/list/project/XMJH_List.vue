@@ -4,6 +4,9 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
+        <div class="filter_part">
+          <r-sort @on-sort="onSortList"></r-sort>
+        </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -100,7 +103,8 @@
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
+          sort: JSON.stringify(this.sort),
         }).then(({dataCount = 0, tableContent = []}) => {
           this.$emit('input', false);
           tableContent.forEach(item => {
@@ -126,7 +130,7 @@
   @import './../../scss/bizList';
   .xsbj-list-conatiner {
     .list_wrapper {
-      height: calc(100% - .4rem);
+      height: calc(100% - 1.64rem);
     }
   }
 </style>

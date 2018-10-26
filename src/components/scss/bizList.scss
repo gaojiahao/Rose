@@ -20,6 +20,7 @@
   // 过滤
   .filter_part {
     margin-top: .04rem;
+    color:#757575;
   }
 }
 // 通讯录基本属性
@@ -92,6 +93,9 @@
   height: calc(100% - .52rem - 1.15rem);
   overflow: hidden;
   box-sizing: border-box;
+  &.has-sort {
+    height: calc(100% - 2.12rem);
+  }
   .each_duty {
     width: 95%;
     color: #111;
@@ -193,7 +197,7 @@
         padding: .02rem 0 .04rem;
         justify-content: space-between;
       }
-    }    
+    }
     // 项目名称
     .project_name {
       width: 100%;
@@ -211,7 +215,7 @@
         font-weight: bold;
         // padding-bottom: .04rem;
         padding: .04rem 0;
-      }    
+      }
     }
   }
   /* 物料 */

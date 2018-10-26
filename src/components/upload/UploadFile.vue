@@ -3,7 +3,7 @@
     <p class="title">附件</p>
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
-        <template v-if="judgeFileType(item.attr1)">
+        <template v-if="judgeFileType(item.attr1) === 'image'">
           <!--{{item.attr1}}-->
           <img class="img" :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
@@ -21,7 +21,6 @@
 
 <script>
   import {upload,} from 'service/commonService';
-  import RScroll from 'components/RScroll'
   import Exif from 'exif-js'
 
   export default {
@@ -44,15 +43,8 @@
         default: false
       }
     },
-    components: {
-      RScroll,
-    },
     data() {
       return {
-        scrollOptions: {
-          scrollX: true,
-          scrollY: false,
-        },
         files: [],
         file: null,
         biReferenceId: '',
@@ -273,10 +265,35 @@
         this.biReferenceId = first.referenceId;
       },
       // TODO 判断图片类型
-      judgeFileType(item) {
-        if (/\.[png]/g.test(item)) {
-          return 'image'
-        }
+      judgeFileType(url) {
+        let type = 'other';
+        let typeList = [
+          {
+            reg: /\.(png|jpg|jpeg|gif|bmp|)$/gi,
+            type: 'image'
+          }, {
+            reg: /\.xlxs$/gi,
+            type: 'excel'
+          }, {
+            reg: /\.(doc|docx)$/gi,
+            type: 'doc'
+          }, {
+            reg: /\.(ppt|pptx)$/gi,
+            type: 'ppt'
+          }, {
+            reg: /\.txt$/gi,
+            type: 'txt'
+          },
+        ];
+        typeList.every(item => {
+          if (item.reg.test(url)) {
+            type = item.type;
+            return false
+          }
+          return true
+        });
+        console.log(type);
+        return type
       }
     },
     created() {

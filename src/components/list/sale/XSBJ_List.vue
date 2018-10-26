@@ -4,16 +4,18 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
-        <tab-part @tab-click="tabClick" @sort-click="sortClick"></tab-part>
-        <!-- <div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+        <!--<tab-part @tab-click="tabClick" @sort-click="sortClick"></tab-part>-->
+         <div class="filter_part">
+          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
-          </tab>
-        </div> -->
+          </tab>-->
+           <r-sort @on-sort="onSortList"></r-sort>
+           <r-tab @on-click="onTabClick"></r-tab>
+        </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noQty noCount></list-item>
