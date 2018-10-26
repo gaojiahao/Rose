@@ -1,13 +1,11 @@
 <template>
   <div class="pages sale-record-container">
-    <!-- <r-search :filterList="filterList" @search='searchList'></r-search> -->
-    <!-- <person-info></person-info> -->
     <div class="filters vux-1px-b">
-      <div class="sort-amt vux-1px-r" :class="{asc: sort === 'asc'}" @click="sortByAmt">
+      <div class="sort-amt" :class="{asc: sort === 'asc'}" @click="sortByAmt">
         <span>金额</span>
-        <x-icon type="ios-arrow-thin-down" size="20"></x-icon>
+        <span class='iconfont icon-jiang-copy'></span>
       </div>
-      <r-timer @on-select="changeDate"></r-timer>
+      <r-timer class="filter_time" @on-select="changeDate" :width-scale="200"></r-timer>
     </div>
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
@@ -89,7 +87,7 @@
         listData: [],
         sort: 'desc',
         userInfo: {
-          userCode : 'admin'
+          userCode : ''
         },
         sortProperty: 'totalAmount',
       };
@@ -129,17 +127,6 @@
             direction: this.sort,
           }
         ];
-        if (this.serachVal) {
-          filter = [
-            ...filter,
-            {
-              // attendedOperation: 'or',		//与and，or或
-              property: this.filterProperty,
-              operator: 'like',					//模糊查询like，精确查询eq
-              value: this.serachVal
-            }
-          ]
-        }
         return {
           page: this.page,
           limit: this.limit,
@@ -209,10 +196,10 @@
     },
     created() {
       this.spinner = true;
-      this.getList();
-      // this.getUser().then(() => {
-      //   this.getList();
-      // });
+      // this.getList();
+      this.getUser().then(() => {
+        this.getList();
+      });
     }
   };
 </script>
@@ -239,12 +226,24 @@
         width: 50%;
         justify-content: center;
         align-items: center;
-        font-size: 14px;
+        font-size: 0.14rem;
+        font-weight: bold;
+        .iconfont{
+          font-size: 0.11rem;
+          display: inline-block;
+          font-weight: bold;
+        }
         &.asc {
+          .icon-jiang-copy{
+            transform: rotate(-180deg);
+          }
           .vux-x-icon-ios-arrow-thin-down {
             transform: rotate(-180deg);
           }
         }
+      }
+      .filter_time{
+        width:50%;
       }
     }
     .scroll-container {
@@ -284,7 +283,7 @@
           width: 0.3rem;
         }
         .saleman_name {
-          flex: 1.5;
+          flex: 2.5;
         }
         .saleman_amount {
           flex: 1.5;

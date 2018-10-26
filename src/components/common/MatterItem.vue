@@ -26,40 +26,28 @@
         <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
           <div class='mater_num'>
             <span class="num">类型: {{item.inventoryTypeName || '无'}}</span>
-            <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>
-            <span class='num'>子类: {{item.inventorySubName || '无'}}</span>
-            <!-- <span class='num'>材质: {{item.MATERIAL || '无'}}</span> -->
+            <span class='num'>材质: {{item.MATERIAL || '无'}}</span>
+            <span class='num'>单位: {{item.MEASURE_UNIT || '无'}}</span>            
           </div>
           <div class='mater_num'>
-            <span class='num'>金标重: {{item.AU_STANDARD_WEIGHT || '无'}}</span>
-            <span class='num'>银标重: {{item.AG_STANDARD_WEIGHT || '无'}}</span>
-            <span class='num'>件标重: {{item.PIECES_STANDARD_WEIGHT || '无'}}</span>
-          </div>
-          <div class='mater_num'>
-            <span class='num'>销售单价：{{item['销售单价'] | toFixed |numberComma(3)}}</span>
             <span class='num'>出库数量: {{item.QTY || '无'}}</span>
             <span class='num'>出库重量: {{item['出库重量'] || '无'}}</span>
           </div>
-          <div class='mater_num'>
-            <span class='num'>分配数量: {{item.gsQty || '无'}}</span>
-          </div>
           <div class='mater_price'>
-
-            <span><span class="symbol">￥</span>{{item['价税合计'] || 0 | toFixed |numberComma(3) }}</span>
+            <!-- <span><span class="symbol">￥</span>{{item['价税合计'] || 0 | toFixed |numberComma(3) }}</span>
             <span class="num"
                   :style="{display:(item['价税合计'] && item['价税合计'].toString().length >= 6 ? 'block' : '')}">
               [销售金额: ￥{{item['销售单价'] | toFixed | numberComma(3)}} + 销项税额: ￥{{item['销项税额'] | toFixed | numberComma(3)}}]
+            </span> -->
+            
+            <span><span class="symbol">￥</span>{{item.gsAmount || 0 | toFixed |numberComma(3) }}</span>
+            <span class="Qty">
+              [分配数量: <span class="symbol">{{item.gsQty| toFixed | numberComma(3)}}</span>]
             </span>
+            <!-- <span class="num">
+              [价税合计: ￥{{item['价税合计'] | toFixed | numberComma(3)}}]
+            </span> -->
           </div>
-          <!-- <div class='mater_other'>
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item['每克销售单价'] | toFixed |numberComma(3)}}
-              <span class="num">[每克销售单价]</span>
-            <div class='mater_price' v-for="amt in amtList" v-if="item[amt] || item[amt] === 0">
-              <span class="symbol">￥</span>{{item[amt] | toFixed |numberComma(3)}}
-              <span class="num">[{{amt}}]</span>
-            </div>
-          </div> -->
         </div>
       </slot>
     </div>
@@ -216,6 +204,15 @@
           font-size: .1rem;
           color: #757575;
         }
+        .Qty{
+          font-size: .12rem;
+          color: #111;
+          .symbol{
+            // color: #ea5455;
+            font-weight: bold;
+          }
+
+        }
       }
       // 单价 数量 税率 等
       .mater_num {
@@ -223,6 +220,14 @@
         font-size: 0.1rem;
         .num {
           margin-right: 0.04rem;
+        }
+        .qty{
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+        }
+        .symbol{
+          color: #ea5455;
         }
       }
     }

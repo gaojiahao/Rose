@@ -30,9 +30,6 @@
         listData: [],
         filterList: [ // 过滤列表
           {
-            name: '经办人',
-            value: 'saleOwnerN',
-          }, {
             name: '存货名称',
             value: 'INVENTORY_NAME',
           }, {
@@ -45,7 +42,6 @@
         filterProperty: '',
         scrollOptions: {
           click: true,
-          // pullDownRefresh: true,
           pullUpLoad: true,
         },
         userCode:''
@@ -127,7 +123,7 @@
       },
       // TODO 重置下拉刷新、上拉加载的状态
       resetScroll() {
-        this.$refs.bScroll.finishPullDown();
+        // this.$refs.bScroll.finishPullDown();
         this.$refs.bScroll.finishPullUp();
       },
       // TODO 上拉加载

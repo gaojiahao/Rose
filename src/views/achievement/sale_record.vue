@@ -1,7 +1,7 @@
 <template>
   <div class="pages sale-record-container">
     <r-search :filterList="filterList" @search='searchList'></r-search>
-    <tab :line-width=2 active-color='#111'>
+    <!-- <tab :line-width=2 active-color='#111'>
       <tab-item class="vux-center"
                 :selected="activeIndex === index"
                 v-for="(item, index) in rankList"
@@ -10,14 +10,22 @@
       >
         {{item}}
       </tab-item>
-    </tab>
-    <div class="filters vux-1px-b">
+    </tab> -->
+    <div class="tab vux-1px-b">
+      <div class='each_tab' :class="{active : activeIndex === index ,asc: sort === 'asc'}" v-for="(item,index) in rankList" 
+          :key="index" @click="tabClick(index)">
+        <span>{{item}}</span>
+        <span class='iconfont icon-jiang-copy'></span>
+      </div>
+      <r-timer class='time_filter' @on-select="changeDate"></r-timer>
+    </div>
+    <!-- <div class="filters">
       <div class="sort-amt vux-1px-r" :class="{asc: sort === 'asc'}" @click="sortByAmt">
         <span>金额</span>
         <x-icon type="ios-arrow-thin-down" size="20"></x-icon>
       </div>
-      <r-timer @on-select="changeDate"></r-timer>
-    </div>
+      <r-timer @on-select="changeDate" :dateShow="showTimer" v-model="showTimer"></r-timer>
+    </div> -->
     <div class='business_amount vux-1px-b'>
       <p>销售额</p>
       <p class='amount'>
@@ -30,7 +38,6 @@
     <r-scroll :options="scrollOptions" :has-next="hasNext" :no-data="!hasNext && !listData.length"
               @on-pulling-up="onPullingUp" ref="bScroll">
       <div class='sale_rank' v-show="activeIndex === 0">
-        <!-- <div class='title'>销售业绩排行</div> -->
         <div v-for="(item,index) in listData" class='each_saleman vux-1px-b' @click="goList(item)">
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.saleOwnerN || item.saleOwner}} {{item.HANDLER_UNIT_NAME}}</span>
@@ -39,7 +46,6 @@
         </div>
       </div>
       <div class='sale_rank' v-show="activeIndex === 1">
-        <!-- <div class='title'>销售业绩排行</div> -->
         <div v-for="(item,index) in listData" class='each_saleman vux-1px-b'>
           <span class='sort'>{{index+1}}</span>
           <span class='saleman_name'>{{item.INVENTORY_NAME}}</span>
@@ -95,7 +101,7 @@
         allSaleReport: [],
         allProductReport: [],
         activeIndex: 0,
-        rankList: ['按业务员', '按产品'],
+        rankList: ['业务员', '产品'],
         filterList: [ // 过滤列表
           {
             name: '姓名',
@@ -119,6 +125,8 @@
         sort: 'desc',
         decimals: 1,
         sortProperty: 'totalAmount',
+        showTimer : false,
+        timeText : '日期筛选'
       };
     },
     filters: {
@@ -134,9 +142,13 @@
         })
       },
       tabClick(index) {
-        if (this.activeIndex === index) {
-          return
+        if (this.activeIndex === index) {//排序
+          this.sort = this.sort === 'asc' ? 'desc' : 'asc';
         }
+        else{
+          this.sort = 'desc';
+        }
+       
         let filterLists = [
           [{
             name: '姓名',
@@ -151,8 +163,7 @@
           }]
         ];
         let propertyLists = ['totalAmount', 'productTotalAmount'];
-        this.searchVal = '';
-        this.sort = 'desc';
+        this.searchVal = '';       
         this.activeIndex = index;
         this.filterList = filterLists[this.activeIndex];
         this.sortProperty = propertyLists[this.activeIndex];
@@ -262,14 +273,17 @@
       },
       // TODO 修改时间
       changeDate(time) {
+        this.timeText = `${time.startDate}~${time.endDate}`
         this.timeFilter = time;
         this.resetCondition();
         this.getList();
       },
       // TODO 重置下拉刷新、上拉加载的状态
       resetScroll() {
-        this.$refs.bScroll.finishPullDown();
-        this.$refs.bScroll.finishPullUp();
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullDown();
+          this.$refs.bScroll.finishPullUp();
+        })
       },
       // TODO 上拉加载
       onPullingUp() {
@@ -313,9 +327,47 @@
       justify-content: center;
       align-items: center;
       &.asc {
-        .vux-x-icon-ios-arrow-thin-down {
+        .iconfont {
           transform: rotate(-180deg);
         }
+      }
+    }
+    .tab{
+      height: 0.4rem;
+      display: flex;
+      text-align: center;
+      align-items: center;
+      position: relative;
+      .each_tab{
+        flex: 1;
+        font-size:0.14rem;
+        font-weight: bold;
+        display: flex;
+        width: 50%;
+        justify-content: center;
+        align-items: center;
+        .iconfont{
+        font-size:0.11rem;
+         display: inline-block;
+        }
+        .icon-shaixuan{
+          font-size:0.12rem;
+        }
+        &.active{
+          color:#5077aa;  
+        }
+        &.asc {
+          .icon-jiang-copy{
+            transform: rotate(-180deg);
+          }
+        }
+        &.has_time{
+          font-weight: normal;
+          font-size:0.12rem;
+        }
+      }
+      .time_filter{
+        flex: 1;
       }
     }
     .filters {
@@ -334,7 +386,7 @@
       }
     }
     .scroll-container {
-      height: ~'calc(100% - 2.2rem)';
+      height: ~'calc(100% - 1.36rem)';
       overflow: hidden;
     }
     .business_amount {

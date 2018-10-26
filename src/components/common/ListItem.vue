@@ -32,14 +32,16 @@
               <div class="matter_name">{{item.INVENTORY_NAME}}</div>
               <div class="matter_units">
                 <span>编码: {{item.TRANS_OBJ_CODE}}</span>
-                <span>规格: {{item.SPECIFICATION || '无'}}</span>
+                
               </div>
-              <div class="matter_units">单位: {{item.MEASURE_UNIT}}</div>
+             
+              <div class="matter_units"> 
+                <span>规格: {{item.SPECIFICATION || '无'}}</span> 
+                <span>单位: {{item.MEASURE_UNIT}}</span>
+              </div>
             </div>
             <div class="matter_price_part">
-              <p class="price_num" v-if="!noPrice">
-                <span class="symbol">￥</span>{{item['销售单价'] | toFixed}}
-              </p>
+              <!--分配数量-->
               <p class="mater_count" v-if="!noQty">
                 <span class="symbol">x</span>{{(item.gsQty || 0) | toFixed}}
               </p>
@@ -60,17 +62,16 @@
     <div class="order_count">
       <div class="handle_man">
         <template v-if="item.saleOwnerN">
-          {{item.saleOwnerN}}<span style="fontSize:.1rem;">[经办人]</span>
+          {{item.saleOwnerN}}<span style="fontSize:.1rem;">[归属人]</span>
         </template>
         <template v-else>
           {{item.saleOwner}}<span style="fontSize:.1rem;">[账号]</span>
         </template>
       </div>
-      <div class="money_part" v-if="!noCount">
+      <div class="money_part">
         <span class="num">合计:</span>
         <span class="money">
-          <!--<span class="symbol" v-if="item.itmes[0].taxAmount">[含税]</span>-->
-          <span class="symbol">￥</span>{{item['价税合计'] | toFixed | numberComma(3)}}
+          <span class="symbol">￥</span>{{item.gsAmount | toFixed | numberComma(3)}}
         </span>
       </div>
     </div>
@@ -89,11 +90,6 @@
         default() {
           return {}
         }
-      },
-      // 不展示合计
-      noCount: {
-        type: Boolean,
-        default: false
       },
       // 不展示金额
       noPrice: {
@@ -281,6 +277,9 @@
               .matter_units {
                 font-size: .1rem;
                 color: #7D7D7D;
+                span{
+                  margin-right: 0.05rem;
+                }
               }
             }
             .matter_price_part {

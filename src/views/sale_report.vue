@@ -177,6 +177,11 @@ export default {
         })
         return;
       }
+      //获取当前时间
+      let date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth()+1,
+          day = date.getDate();
       // 提交表单内容
       let jsonData = {
         listId: "4bda3e47-a088-4749-a988-ebb07cfb00e4",
@@ -193,6 +198,9 @@ export default {
           varchar8: member,
           varchar9: comments,
           varchar12:userCode, //工号
+          integer1: year,     //年 
+          integer2:month,     //月
+          integer3:day        //日
         },
         transDetailUncalc: [
           { id: this.guid(),

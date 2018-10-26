@@ -15,44 +15,19 @@
       <div class="title">
         <span class="iconfont icon-Shape"></span>存货
       </div>
-      <matter-item class="vux-1px-b" :item="dataInfo"></matter-item>
+      <matter-item class="":item="dataInfo"></matter-item>
+      <div class="get_more" :class="{'arrow_up': showMore}" @click="showMore = !showMore">
+        <span>查看更多</span>
+        <x-icon type="ios-arrow-down" size="18"></x-icon>
+      </div>
     </div>
     <!--物料不重要的信息-->
-    <!-- <div class="info-container">
-      <div class='info_name'>
-        <div class='each_info vux-1px-b'>
-          <div class="main-content">
-            <div class="content-unit">
-              <span class="symbol" v-if="dataInfo['标准供货单价'] || dataInfo['标准供货单价'] === 0">标准供货单价：￥ {{dataInfo['标准供货单价'] | toFixed |numberComma(3)}}</span>
-            </div>
-            <div class="content-name">
-              <span class="symbol" v-if="dataInfo['供货单价'] || dataInfo['供货单价'] === 0">供货单价 ：￥{{dataInfo['供货单价'] | toFixed |numberComma(3)}}</span>
-            </div>
-          </div>
-          <div class="number-part">
-            <span class="main-number" v-if="dataInfo['供货金额'] || dataInfo['供货金额'] === 0">供货金额：￥{{dataInfo['供货金额'] | toFixed |numberComma(3)}}</span>
-          </div>
-        </div>  
-        <div class='each_info'>
-          <div class="main-content">
-            <div class="content-unit">
-              <span class="symbol" v-if="dataInfo['标准零售单价'] || dataInfo['标准零售单价'] === 0">标准零售单价 ：￥{{dataInfo['标准零售单价'] | toFixed |numberComma(3)}}</span>
-            </div>
-            <div class="content-name">
-              <span class="symbol" v-if="dataInfo['零售单价'] || dataInfo['零售单价'] === 0">零售单价：￥{{dataInfo['零售单价'] | toFixed |numberComma(3)}} </span>         
-            </div>
-          </div>
-          <div class="number-part">
-            <span class="main-number" v-if="dataInfo['零售金额'] || dataInfo['零售金额'] === 0">零售金额 ：￥{{dataInfo['零售金额'] | toFixed |numberComma(3)}}</span> 
-          </div>
-        </div>       
-      </div>
-    </div> -->
-    <div class="amt-container">
-      <div class="amt-item vux-1px-b" v-for="(item, index) in amtList" :key="index"
+    <div class="amt-container vux-1px-t" v-show="showMore">
+      <div class="amt-item" :class="{'text_right' : index%2 !== 0}"v-for="(item, index) in amtList" :key="index"
            v-if="dataInfo[item.value] || dataInfo[item.value] === 0">
-        <div class="title">{{item.name}}</div>
-        <div class="content">{{item.unit}}{{dataInfo[item.value]}}</div>
+        <!-- <div class="title">{{item.name}}</div>
+        <div class="content">{{item.unit}}{{dataInfo[item.value]}}</div> -->
+        {{item.name}}：{{item.unit}}{{dataInfo[item.value]}}
       </div>
     </div>
     <div class="info-container other-container">
@@ -90,9 +65,31 @@
         item: {},
         amtList: [
           {
-            name: '材质',
-            value: 'MATERIAL',
-          }, {
+            name:'子类',
+            value : 'inventorySubName',
+
+          },
+          {
+            name:'金标重',
+            value : 'AU_STANDARD_WEIGHT',
+
+          },
+          {
+            name:'银标重',
+            value : 'AG_STANDARD_WEIGHT',
+
+          },
+          {
+            name:'件标重',
+            value : 'PIECES_STANDARD_WEIGHT',
+
+          },
+          {
+            name:'出库重量',
+            value : '出库重量',
+
+          },
+           {
             name: '标准供货单价',
             value: '标准供货单价',
             unit: '￥',
@@ -116,16 +113,29 @@
             name: '零售金额',
             value: '零售金额',
             unit: '￥',
-          }, {
-            name: '税价合计',
-            value: '税价合计',
-            unit: '￥',
-          }, {
-            name: '每克销售单价',
-            value: '每克销售单价',
+          }, 
+          {
+            name: '销售单价',
+            value: '销售单价',
             unit: '￥',
           },
+          {
+            name: '销售金额',
+            value: '销售金额',
+            unit: '￥',
+          },
+          {
+            name: '销项税额',
+            value: '销项税额',
+            unit: '￥',
+          },
+          {
+            name: '价税合计',
+            value: '价税合计',
+            unit: '￥',
+          }
         ],
+        showMore : false,//显示其余信息
       }
     },
     filters: {
@@ -229,17 +239,42 @@
         justify-content: space-between;
 
       }
+      .get_more{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #757575;
+        &.arrow_up{
+          .vux-x-icon-ios-arrow-down{
+            transform: rotate(-180deg);
+          }
+        }
+      }
     }
     .amt-container {
       background-color: #fff;
-      .amt-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: .08rem .1rem;
-        font-size: .12rem;
-        font-weight: bold;
-        word-break: break-all;
+      padding: 0 0.1rem;
+      // .amt-item {
+      //   display: flex;
+      //   justify-content: space-between;
+      //   align-items: center;
+      //   padding: .05rem .1rem;
+      //   font-size: .12rem;
+      //   font-weight: bold;
+      //   word-break: break-all;
+      // }
+      .amt-item{
+        display: inline-block;
+        width: 50%;
+        box-sizing: border-box;
+        padding: 0.05rem 0;
+        text-align: left;
+        font-size:0.12rem;
+        font-weight: 600;
+        color:#757575;
+        &.text_right{
+          text-align: right;
+        }
       }
     }
   }

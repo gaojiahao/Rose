@@ -4,9 +4,10 @@
     <div class='time_pop' @click="dateShow = !dateShow">
       <!--<span class="tips">日期筛选</span>-->
       <span class="tips" :class="{'has_date':defaultTips !== '日期筛选'}">{{defaultTips}}</span>
-      <x-icon :class="{'arrow-up': dateShow}" type="ios-arrow-down" size="14"></x-icon>
+      <span class='iconfont icon-shaixuan'></span>
+      <!-- <x-icon :class="{'arrow-up': dateShow}" type="ios-arrow-down" size="14"></x-icon> -->
     </div>
-    <div class='date vux-1px-b' v-show='dateShow'>
+    <div class='date vux-1px-b' v-show='dateShow' :style="{width: widthScale + '%'}">
       <div class='choose_date'>
         <div class='start_date'>
           <span class='date_title'>起始日期</span>
@@ -34,7 +35,12 @@
 
   export default {
     name: "RTimer",
-    props: {},
+    props: {
+      widthScale:{
+        type : Number,
+        default : 300
+      }
+    },
     data() {
       return {
         toDay: '',
@@ -118,12 +124,12 @@
   .filter_time {
     background: #fff;
     display: flex;
-    width: 50%;
-    height: 40px;
-    font-size: 14px;
-    // font-weight: bold;
+    width: 100%;
+    // height: 40px;
+    font-size: 0.14rem;
     justify-content: center;
     align-items: center;
+    //  overflow: hidden;
     .current_time {
       flex: 1;
       text-align: center;
@@ -131,15 +137,24 @@
     .time_pop {
       display: flex;
       padding: 0 0.08rem;
+      width:100%;
+      box-sizing: border-box;
+      overflow: hidden;
       align-items: center;
       justify-content: center;
       .tips {
-        // margin-right: .04rem;
-        // font-size: 0.12rem;
+        height: 0.4rem;
+        line-height: 0.4rem;
+        font-weight: bold;
         &.has_date{
-          font-size: 0.12rem;
-          font-weight: bold;
-        }
+          font-size: 0.1rem;
+          font-weight: normal;
+          margin-right: 0.02rem;
+        }     
+      }
+      .iconfont{
+        font-size: 0.11rem;
+        font-weight: bold;
       }
       /* 倒三角 */
       .vux-x-icon-ios-arrow-down {
@@ -152,9 +167,9 @@
     //选择时间弹出框
     .date {
       background: #fff;
-      width: 200%;
       box-sizing: border-box;
       position: absolute;
+      width:300%;
       top: 0.4rem;
       right: 0;
       z-index: 50;
