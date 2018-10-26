@@ -2,6 +2,8 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
@@ -125,6 +127,7 @@
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
+  import RPicker from 'components/RPicker'
   import RNumber from 'components/RNumber'
   import PopMatterList from 'components/Popup/PopMatterList'
   import PopDealerList from 'components/Popup/PopDealerList'
@@ -141,7 +144,7 @@
     components: {
       Popup, PopMatterList, PopDealerList,
       PopSingleSelect, Group, Cell, Datetime,
-      XInput, XTextarea, PopMatter, RNumber
+      XInput, XTextarea, PopMatter, RNumber,RPicker
     },
     data() {
       return {

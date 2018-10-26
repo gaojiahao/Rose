@@ -2,6 +2,8 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -106,13 +108,14 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 // 方法引入
+import RPicker from 'components/RPicker'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 const DRAFT_KEY = 'BHDD_DATA';
 
 export default {
   components:{
-   PopMatterList,XTextarea,Group,XInput,PopMatter
+   PopMatterList,XTextarea,Group,XInput,PopMatter,RPicker
   },
   data(){
     return{
