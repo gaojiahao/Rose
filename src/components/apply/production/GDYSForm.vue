@@ -24,11 +24,12 @@
         </div>
         <pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
-                  v-model="biProcessStatus"></r-picker>
+                  v-model="biProcessStatus" :hasBorder = "false"></r-picker>
         <!--备注-->
         <div class='comment vux-1px-t'>
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
     <!-- 底部提交确认栏 -->
@@ -179,6 +180,9 @@ export default {
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
+          }
+          if (this.biReferenceId) {
+            submitData.biReferenceId = this.biReferenceId
           }
           this.saveData(operation, submitData);
         }

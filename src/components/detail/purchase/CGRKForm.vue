@@ -1,20 +1,18 @@
 <template>
-  <div class="detail_wrapper xsck-detail-container">
-    <div class="basicPart" v-if='orderInfo && orderInfo.outPut'>
+  <div class="detail_wrapper">
+    <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
       <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
       </div>
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目 -->
-      <project-part :project-info="orderInfo.outPut"></project-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
-      <!-- 用户地址和基本信息-->
+        <!-- 往来联系部分 交易基本信息-->
       <div class='contacts_part'>
-        <contact-part :contact-info="dealerInfo" :hasClass='false' :logistics="false" :payment="false"></contact-part>
+        <contact-part :contact-info="dealerInfo" :hasClass="false" :logistics="false"></contact-part>
         <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
       </div>
       <!-- 物料列表 -->
@@ -30,8 +28,7 @@
               <span class="order_num">{{key}}</span>
             </div>
             <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index" :isReturnMatter="true">
-              </matter-item>
+              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index"></matter-item>
             </div>
           </div>
         </div>
@@ -39,21 +36,22 @@
           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
         </div>
       </div>
-      <!-- 金额合计 -->
+      <!-- <matter-list :matter-list="orderInfo.inPut.dataSet" :order-remarks="orderInfo.biComment"></matter-list> -->
+      <!-- 金额明细 -->
       <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>      
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
+
 <script>
 // 请求 引入
 import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
-//公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
@@ -61,26 +59,27 @@ import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
-import ProjectPart from 'components/detail/commonPart/Project'
+import MatterList from 'components/detail/commonPart/MatterList'
 import MatterItem from 'components/detail/commonPart/MatterItem'
 import FormCell from 'components/detail/commonPart/FormCell'
+//公共方法引入
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
-      count: 0,          // 金额合计
+      count: 0,           // 金额合计
+      comment: '',        // 审批备注
       orderInfo: {},      // 表单内容
-      formViewUniqueId: '',
+      warehouse: {},      // 入库仓库
+      formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856',
       orderList: {}, // 物料列表
-      warehouse: {},
-      dealerInfo: {}, // 客户信息
-      basicInfo :{},//存放基本信息
     }
   },
   computed:{
     // 合计金额
     noTaxAmount() {
       let total = 0;
-      this.orderInfo.outPut.dataSet.forEach(item => {
+      this.orderInfo.inPut.dataSet.forEach(item => {
         total = accAdd(total, item.noTaxAmount);
       });
       return total;
@@ -88,7 +87,7 @@ export default {
     // 税金
     taxAmount() {
       let total = 0;
-      this.orderInfo.outPut.dataSet.forEach(item => {
+      this.orderInfo.inPut.dataSet.forEach(item => {
         total = accAdd(total, item.taxAmount);
       });
       return total;
@@ -96,7 +95,7 @@ export default {
   },
   mixins: [detailCommon],
   components: {
-    workFlow, RAction, PopWarehouseList,contactPart,PriceTotal,WarehouseContent,ProjectPart,MatterItem,FormCell
+    workFlow, RAction, PopWarehouseList,PriceTotal,contactPart,WarehouseContent,MatterList,MatterItem,FormCell
   },
   methods: {
     //选择默认图片
@@ -112,7 +111,7 @@ export default {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode
-      }).then(({success = true, formData = {}}) => {
+      }).then(({success = true, formData = {},attachment = []}) => {
         // http200时提示报错信息
         if (success === false) {
           this.$vux.alert.show({
@@ -124,9 +123,10 @@ export default {
           return;
         }
         let orderList = {};
-        let {outPut = {}} = formData;
+        let {inPut = {}} = formData;
+        this.attachment = attachment;
         // 获取合计
-        let {dataSet} = formData.outPut;
+        let {dataSet} = formData.inPut;
         for (let item of dataSet) {
           item.noTaxAmount = accMul(item.price,item.tdQty);
           item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
@@ -135,51 +135,47 @@ export default {
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
             : this.getDefaultImg();
-          item.inventoryName_transObjCode = item.inventoryName_outPutMatCode;
-          item.transObjCode = item.outPutMatCode;
+          item.transObjCode = item.inventoryCode_outPutMatCode;
           if (!orderList[item.transMatchedCode]) {
             orderList[item.transMatchedCode] = [];
           }
           orderList[item.transMatchedCode].push(item);
         }
-        // this.count = (this.count/100).toFixed(2);
         this.orderList = orderList;
         this.dealerInfo = {
-          creatorName: formData.dealerDebitContactPersonName, // 客户名
-          dealerName: outPut.dealerName_dealerDebit, // 公司名
-          dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
-          dealerCode: outPut.dealerDebit, // 客户编码
-          dealerLabelName: outPut.drDealerLabel, // 关系标签
-          province: outPut.province_dealerDebit, // 省份
-          city: outPut.city_dealerDebit, // 城市
-          county: outPut.county_dealerDebit, // 地区
-          address: outPut.address_dealerDebit, // 详细地址
-          payment: outPut.drDealerPaymentTerm, // 付款方式
-          logistics: formData.drDealerLogisticsTerms,//物流方式
+          creatorName: formData.dealerCreditContactPersonName, // 客户名
+          dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+          dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+          dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
+          dealerLabelName: inPut.crDealerLabel, // 关系标签
+          province: inPut.province_dealerCodeCredit, // 省份
+          city: inPut.city_dealerCodeCredit, // 城市
+          county: inPut.county_dealerCodeCredit, // 地区
+          address: inPut.address_dealerCodeCredit, // 详细地址
+          payment :  inPut.crDealerPaymentTerm,//结算方式
         };
+        // 入库
         this.warehouse = {
-          warehouseCode: outPut.containerCodeOut,
-          warehouseName: outPut.warehouseName_containerCodeOut,
-          warehouseType: outPut.warehouseType_containerCodeOut,
-          warehouseProvince: outPut.warehouseProvince_containerCodeOut,
-          warehouseCity: outPut.warehouseCity_containerCodeOut,
-          warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
-          warehouseAddress: outPut.warehouseAddress_containerCodeOut,
+          warehouseCode: inPut.containerCode,
+          warehouseName: inPut.warehouseName_containerCode,
+          warehouseType: inPut.warehouseType_containerCode,
+          warehouseProvince: inPut.warehouseProvince_containerCode,
+          warehouseCity: inPut.warehouseCity_containerCode,
+          warehouseDistrict: inPut.warehouseDistrict_containerCode,
+          warehouseAddress: inPut.warehouseAddress_containerCode,
+          containerInWarehouseManager: inPut.containerInWarehouseManager,
         };
         this.orderInfo = formData;
         this.workFlowInfoHandler();
       })
-    }
+    },
   }
 }
 </script>
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
-  .xsck-detail-container {
-    // 所属订单
-    .order_code {
+  .order_code {
       display: flex;
       color: #fff;
       font-size: .12rem;
@@ -200,7 +196,6 @@ export default {
     .order_matter {
       margin-top: .04rem;
     }
-  }
   .contacts_part {
     margin-bottom: .1rem;
     padding: .06rem .1rem 0;
@@ -209,3 +204,4 @@ export default {
     box-sizing: border-box;
   }
 </style>
+

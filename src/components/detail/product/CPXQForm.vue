@@ -31,6 +31,7 @@
         <form-cell cellTitle="被授权团队" :cellContent="orderInfo.authorizedTeam"></form-cell>
         <form-cell cellTitle="版本" :cellContent="orderInfo.demandVersion"></form-cell>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -56,6 +57,11 @@ export default {
       orderInfo: {},      // 表单内容
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
       contactInfo: {}, // 客户、付款方式、物流条款的值
+      uploadStyle: {
+        width: '100%',
+        padding :'0.06rem 0.1rem'
+
+      }
     }
   },
   mixins: [detailCommon],
@@ -76,7 +82,7 @@ export default {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode
-      }).then(({success = true, formData = {}}) => {
+      }).then(({success = true, formData = {}, attachment = []}) => {
         // http200时提示报错信息
         if (success === false) {
           this.$vux.alert.show({
@@ -87,6 +93,7 @@ export default {
           });
           return;
         }
+        this.attachment = attachment;
         this.orderInfo = formData;
         this.workFlowInfoHandler();
       })

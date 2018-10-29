@@ -56,7 +56,7 @@
         </div>
       </div>
       <!-- bom合计 -->
-      <div class="bom_list">
+      <div class="bom_list" v-show="UniqueBom.length">
         <bom-list :boms="UniqueBom">
           <template slot-scope="{bom}" slot="number">
             <div class="number-part">
@@ -76,6 +76,7 @@
           </div>
         </template>
       </bom-pop>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -135,7 +136,7 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(({success = true, formData = {}}) => {
+        }).then(({success = true, formData = {},attachment = []}) => {
           // http200时提示报错信息
           if (success === false) {
             this.$vux.alert.show({
@@ -148,6 +149,7 @@
           }
           let orderList = {};
           let {order = {}} = formData;
+          this.attachment = attachment;
           // 获取合计
           let {dataSet} = formData.order;
           for (let item of dataSet) {

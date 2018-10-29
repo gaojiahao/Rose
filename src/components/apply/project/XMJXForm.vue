@@ -5,7 +5,7 @@
         <!-- 项目-->
         <pop-name-list @sel-item="selProject" :default-value="projectApproval"></pop-name-list>
         <!-- 实际情况 -->
-        <div class="or_ads mg_auto box_sd">
+        <div class="or_ads mg_auto">
           <p class="title">实际情况</p>
           <group>
             <datetime title="实际开始日期" v-model="projectTime.actualStartTime">
@@ -18,7 +18,7 @@
         </div>
         <!-- 资金明细 -->
         <!--<div class="" v-show="projectConclusion.length">-->
-        <div class="or_ads mg_auto box_sd project-amt" v-show="projectConclusion.length">
+        <div class="or_ads mg_auto project-amt" v-show="projectConclusion.length">
           <p class="title">资金明细</p>
           <div class="project_content" :class="{'vux-1px-b': index !== projectConclusion.length - 1}"
                v-for="(item, index) in projectConclusion">
@@ -30,6 +30,7 @@
                        :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
           </div>
         </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
         <!-- 资金明细 -->
         <!--<div class="or_ads mg_auto box_sd" v-show="projectConclusion.length">
           <div :class="{'vux-1px-b': index !== projectConclusion.length - 1}"

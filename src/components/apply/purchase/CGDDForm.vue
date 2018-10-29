@@ -78,7 +78,7 @@
             </div>
           </template>
           <!-- 新增更多 按钮 -->
-          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
+          <div class="handle_part" v-show="matterList.length && !matterModifyClass">
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
               @click="stopOrder" >终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
@@ -87,7 +87,7 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
                            get-list-method="getInventory7501" ref="matter"></pop-matter-list>
-          </div>
+          
         </div>
          <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
@@ -99,8 +99,10 @@
          
         </pop-matter>
         <!--备注-->
-        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -364,6 +366,9 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
+          if (this.biReferenceId) {
+            submitData.biReferenceId = this.biReferenceId
+          }
           this.saveData(operation,submitData);
         }
       })
@@ -378,6 +383,7 @@ export default {
         this.biComment = data.biComment;
         this.biReferenceId = data.biReferenceId;
         let {formData} = data;
+        this.attachment = data.attachment
         formData.order.dataSet.map(item=>{
           item = {
             ...item,

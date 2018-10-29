@@ -57,6 +57,7 @@
       <div class="comment-part">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!--原料bom列表-->
       <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
         <template slot="bom-left" slot-scope="{bom}">
@@ -150,7 +151,7 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(({success = true, formData = {}}) => {
+        }).then(({success = true, formData = {},attachment = []}) => {
           // http200时提示报错信息
           if (success === false) {
             this.$vux.alert.show({
@@ -163,6 +164,7 @@
           }
           let orderList = {};
           let {order = {}} = formData;
+          this.attachment = attachment;
           // 获取合计
           let {dataSet} = formData.inPut;
           for (let item of dataSet) {

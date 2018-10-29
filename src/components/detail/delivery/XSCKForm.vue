@@ -40,6 +40,8 @@
       </div>
       <!-- 金额合计 -->
       <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" 
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>      
@@ -112,7 +114,7 @@ export default {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode
-      }).then(({success = true, formData = {}}) => {
+      }).then(({success = true, formData = {},attachment = []}) => {
         // http200时提示报错信息
         if (success === false) {
           this.$vux.alert.show({
@@ -125,6 +127,7 @@ export default {
         }
         let orderList = {};
         let {outPut = {}} = formData;
+        this.attachment = attachment;
         // 获取合计
         let {dataSet} = formData.outPut;
         for (let item of dataSet) {

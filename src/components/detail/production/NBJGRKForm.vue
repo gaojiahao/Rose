@@ -58,6 +58,7 @@
       <!--原料bom列表-->
       <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
       </bom-pop>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -136,7 +137,7 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(({success = true, formData = {}}) => {
+        }).then(({success = true, formData = {},attachment = []}) => {
           // http200时提示报错信息
           if (success === false) {
             this.$vux.alert.show({
@@ -149,6 +150,7 @@
           }
           let orderList = {};
           let {order = {}} = formData;
+          this.attachment = attachment;
           // 获取合计
           let {dataSet} = formData.inPut;
           for (let item of dataSet) {

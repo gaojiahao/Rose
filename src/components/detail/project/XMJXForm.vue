@@ -30,6 +30,8 @@
                      :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+
     </div>
   </div>
 </template>
@@ -62,8 +64,9 @@
     methods: {
       // 获取详情
       getOrderList(transCode = '') {
-        return findProjectConclusion(transCode).then(({formData = {}}) => {
+        return findProjectConclusion(transCode).then(({formData = {},attachment = []}) => {
           this.comment = formData.comment;
+          this.attachment = attachment;
           this.projectApproval = formData.projectApproval;
           this.projectTime = formData.projectTime;
           this.projectConclusion = formData.projectConclusion;

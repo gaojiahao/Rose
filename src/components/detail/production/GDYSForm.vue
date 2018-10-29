@@ -32,6 +32,7 @@
           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment"></form-cell>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -81,6 +82,7 @@ export default {
           });
           return;
         }
+        this.attachment = data.attachment;
         this.orderInfo = data.formData;
         this.workInfo = data.formData.order.dataSet[0];
         this.workFlowInfoHandler();

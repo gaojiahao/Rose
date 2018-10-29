@@ -40,11 +40,6 @@
             <x-input type="text" title="报销事由" text-align='right' placeholder='请填写'v-model="item.reson"></x-input>
           </group>
         </div>
-        <div class="materiel_list">
-          <group title="其他信息" class="costGroup">
-            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
-          </group>
-        </div>
         <!-- 新增更多 按钮 -->
         <div class="add_more">
           您还需要添加新的报销?请点击
@@ -52,6 +47,12 @@
           <em v-show="CostList.length>1">或</em>
           <span class='delete' @click="deleteCost"  v-show="CostList.length>1">删除</span>
         </div>
+        <div class="materiel_list">
+          <group title="其他信息" class="costGroup">
+            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+          </group>
+        </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!-- 费用popup -->
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                        ref="matter"></pop-cost-list>
@@ -262,6 +263,9 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
+          if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
           this.saveData(operation, submitData);
         }
       });
@@ -272,6 +276,7 @@ export default {
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
         }).then((data) => {
+          this.attachment = data.attachment;
           this.listId = data.listId;
           console.log(data);
           this.biComment = data.biComment;

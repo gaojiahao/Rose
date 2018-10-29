@@ -6,7 +6,7 @@
         <pop-name-list @sel-item="selProject" :default-value="project"></pop-name-list>
 
         <!-- 任务计划列表 -->
-        <div class="materiel_list mg_auto box_sd" v-for="(item,index) in projectPlan" :key="index">
+        <div class="materiel_list mg_auto" v-for="(item,index) in projectPlan" :key="index">
           <div class="title">任务计划</div>
           <group class="SJ_group" @group-title-margin-top="0">
             <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'>
@@ -26,6 +26,7 @@
             <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
           </group>
         </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
         <!-- 新增 -->
         <div class="XMJH_add">
           <div>您还需要添加新的计划? 请点击

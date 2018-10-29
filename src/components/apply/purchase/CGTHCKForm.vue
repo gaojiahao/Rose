@@ -3,12 +3,12 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
+        <!-- 仓库-->
+        <pop-warehouse-list title="出库仓库" :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>
-        <!-- 仓库-->
-        <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -28,18 +28,19 @@
             </div>
             <div class="mater_list">
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}" 
-                    v-for="(item, index) in matterList" :key="index">
+                v-for="(item, index) in matterList" :key="index" >
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
                             @click.native="delClick(index,item)">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
-                        <span class="processing">属性：{{item.processing}}</span>
-                        <span class='unit'>单位：{{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
-                        <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                        <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
+                      <span class="processing">属性：{{item.processing}}</span>
+                      <span class='unit'>单位：{{item.measureUnit}}</span>
+                      <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                    </div>
+                    <div class="mater_more">
+                      <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
+                      <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">                      
@@ -48,7 +49,7 @@
                       </div>
                       <div>
                         <r-number :num="item.tdQty"
-                                  :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBal"></r-number>
+                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                       </div>                     
                     </div>
                   </template>
@@ -74,17 +75,31 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" get-list-method="getInventory7502" :params="matterParams"
+                           :default-value="matterList" get-list-method="getCKTHCKList" :params="matterParams"
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide"></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="退货数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+            </x-input>
+            <x-input title="退货单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+            @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+            </x-input>
+          </template>
+          <template slot="modifyTitle">
+            <label>退货金额</label>
+          </template>
+        </pop-matter>
        
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -109,7 +124,7 @@
 
 <script>
 // vux插件引入
-import {XTextarea} from 'vux'
+import {XTextarea,XInput} from 'vux'
 // 请求 引入
 import {getSOList,} from 'service/detailService'
 import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc} from 'service/commonService'
@@ -125,19 +140,17 @@ import RNumber from 'components/RNumber'
 // 公共方法
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
-import { join } from 'path';
-const DRAFT_KEY = 'CGRK_DATA';
+const DRAFT_KEY = 'CGTHCK_DATA';
 
 export default {
-  name: 'ApplyCGRKForm',
   mixins: [applyCommon],
   components: {
-    XTextarea,
-    PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter,RNumber
+    XTextarea,XInput,RNumber,
+    PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter
   },
   data() {
     return {
-      listId: '1c5896d8-1500-4569-b0c5-6b596d03fb9b',
+      listId: '482b7468-06eb-40c7-842a-f7ea6edb1c37',
       srhInpTx: '',                                   // 搜索框内容
       matterList: [],                                  // 订单列表
       DealerPaymentTerm: '现付',                        //结算方式
@@ -161,7 +174,7 @@ export default {
       taskId: '',
       showMaterielPop: false,
       matterParams: { // 物料列表的请求参数
-        dealerCode: ''
+        whCode: ''
       }
     }
   },
@@ -171,20 +184,21 @@ export default {
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
-    },  
+    }, 
     // TODO 选中的供应商
     selDealer(val) {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
-      this.matterParams = {
-        ...this.matterParams,
-        dealerCode: sel.dealerCode
-      };
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // TODO 选中仓库
     selWarehouse(val) {
       this.warehouse = JSON.parse(val);
+      this.matterParams = {
+        ...this.matterParams,
+        whCode: this.warehouse.warehouseCode
+      };
+      this.matterList = []
     },
     // TODO 选中物料项
     selMatter(val) {
@@ -193,12 +207,12 @@ export default {
         if (this.numMap[item.inventoryCode]) {
           item.tdQty = this.numMap[item.inventoryCode].tdQty;
           item.price = this.numMap[item.inventoryCode].price;
-        } else {
+        } 
+        else {
           item.tdQty = '';
           item.price = '';
         }
         item.taxRate = 0.16;
-        item.promDeliTime = ''
       });
       this.numMap = {};
       this.matterList = sels;
@@ -302,18 +316,19 @@ export default {
           let taxRate = item.taxRate || this.taxRate;
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
           let oItem = {
-            transObjCode: item.inventoryCode, // 物料编码
+            transMatchedCode : item.transCode,//实例编码
+            inventoryName_outPutMatCode: item.inventoryName,// 物料名称
+            outPutMatCode: item.inventoryCode, // 物料编码
+            tdProcessing: item.processing, //加工属性
             assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
             assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
+            assistQty: item.assistQty || 0, // 辅计数量（明细）
             tdQty: item.tdQty, // 明细发生数
             thenQtyBal: item.thenQtyBal || 0, //余额
-            tdProcessing: item.processing, //加工属性
-            assistQty: item.assistQty || 0, // 辅计数量（明细）
             price: item.price, // 明细单价
             taxRate: taxRate, // 税率
             taxAmount: taxAmount, // 税金
             tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
-            promDeliTime: item.promDeliTime , // 承诺交付时间
             comment: item.comment || '', // 说明
           };
           if (this.transCode) {
@@ -350,12 +365,12 @@ export default {
             modifer: this.transCode ? this.formData.handler : '',
             dealerCreditContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
             dealerCreditContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
-            containerInWarehouseManager: this.warehouse.containerInWarehouseManager || null,
-            inPut: {
-              dealerCodeCredit: this.dealerInfo.dealerCode, // 供应商编码
-              crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
-              containerCode: this.warehouse.warehouseCode, // 仓库编码
-              crDealerPaymentTerm: this.crDealerPaymentTerm,
+            containerOutWarehouseManager: this.warehouse.containerInWarehouseManager || null,
+            outPut: {
+              dealerDebit: this.dealerInfo.dealerCode, // 供应商编码
+              drDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
+              containerCodeOut: this.warehouse.warehouseCode, // 仓库编码
+              drDealerPaymentTerm: this.crDealerPaymentTerm,
               dataSet
             }
           };
@@ -388,6 +403,10 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
+          if (this.biReferenceId) {
+            submitData.biReferenceId = this.biReferenceId
+          }
+          console.log(submitData)
           this.saveData(operation, submitData);
         }
       })
@@ -398,7 +417,7 @@ export default {
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
       }).then(data => {
-        let {success = true, formData = {}} = data;
+        let {success = true, formData = {},attachment = []} = data;
         // http200时提示报错信息
         if (!success) {
           this.$vux.alert.show({
@@ -406,6 +425,7 @@ export default {
           });
           return;
         }
+        this.attachment = attachment;
         // 获取合计
         let {inPut, dealerDebit} = formData;
         let {dataSet = []} = inPut;
@@ -492,7 +512,9 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-  
+  .basicPart{
+    background: #f8f8f8;
+  }
   .pages {
   /deep/ .vux-no-group-title{
     margin-top:0;

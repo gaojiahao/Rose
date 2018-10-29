@@ -31,6 +31,8 @@
           </div>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+
     </div>
   </div>
 </template>
@@ -63,9 +65,10 @@ export default {
   methods: {
     // 获取详情
     getOrderList(transCode = '') {
-      return findProjectPlan(transCode).then(({formData = {}}) => {
+      return findProjectPlan(transCode).then(({formData = {},attachment = []}) => {
         this.projectPlan = formData.projectPlan;
         this.comment = formData.comment;
+        this.attachment = attachment;
         this.projectApproval = formData.projectApproval;
         this.orderInfo = {
           ...formData.baseinfo,

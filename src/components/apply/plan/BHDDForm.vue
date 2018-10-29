@@ -78,6 +78,7 @@
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -134,7 +135,7 @@ export default {
       taxRate: 0, // 税率
       matterParams: {
         processing: '半成品'
-      }
+      },
     }
   },
   mixins: [common],
@@ -301,6 +302,9 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
+          if (this.biReferenceId) {
+            submitData.biReferenceId = this.biReferenceId
+          }
           this.saveData(operation,submitData);
         }
       })
@@ -343,6 +347,7 @@ export default {
           biId: formData.biId,
           biComment: formData.biComment,
         }
+        this.attachment = data.attachment;
         this.$loading.hide();
       })
     },

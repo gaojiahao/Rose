@@ -6,6 +6,7 @@ import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 import platfrom from '@/plugins/platform/index'
 import MatterItem from 'components/apply/commonPart/MatterItem'
+import UploadFile from 'components/upload/UploadFile'
 export default {
   data() {
     return {
@@ -30,10 +31,11 @@ export default {
       showMatterPop :false,                       // 编辑物料的pop
       matterModifyClass : false,
       clientHeight : document.documentElement.clientHeight,
+      attachment : []
     }
   },
   components: {
-    MatterItem
+    MatterItem,UploadFile
   },
   computed: {
     // 合计金额

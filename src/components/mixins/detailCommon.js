@@ -4,6 +4,8 @@ import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import FormCell from 'components/detail/commonPart/FormCell'
+import UploadFile from 'components/upload/UploadFile'
+
 // 映射表 引入
 import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
@@ -12,7 +14,7 @@ import {toFixed} from '@/plugins/calc'
 
 export default {
   components: {
-    FormCell, BasicInfo
+    FormCell, BasicInfo,UploadFile
   },
   data() {
     return {
@@ -41,7 +43,8 @@ export default {
         fontSize : '0.16rem',
         fontWeight : 'bold',
         color : '#111'
-      }
+      },
+      attachment: [],
     }
   },
   computed: {

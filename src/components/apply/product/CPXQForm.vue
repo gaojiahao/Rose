@@ -33,6 +33,7 @@
                   v-model="formData.authorizedTeam"></r-picker>
         <r-picker title="版本:" :data="versionList" :value="formData.demandVersion"
                   v-model="formData.demandVersion"></r-picker>
+        <upload-file @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -84,6 +85,11 @@
         },
         hasDefault: false,
         biReferenceId: '',
+        uploadStyle : {
+          width : '100%',
+          padding : '0.05rem 0.08rem',
+          margin : '0 auto'
+        }
       }
     },
     mixins: [ApplyCommon],
@@ -141,6 +147,9 @@
             if (this.transCode) {
               operation = updateAndCalc;
               submitData.biReferenceId = this.biReferenceId;
+            }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
             }
             this.saveData(operation, submitData);
           }

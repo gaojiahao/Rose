@@ -36,7 +36,8 @@
           <span class='title'>合计:</span>
           <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
         </div>
-      </div>             
+      </div> 
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>        
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" 
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>   
@@ -86,6 +87,7 @@ export default {
           });
           return;
         }
+        this.attachment = attachment;
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let val of dataSet) {

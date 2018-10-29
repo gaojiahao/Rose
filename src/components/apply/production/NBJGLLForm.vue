@@ -86,6 +86,7 @@
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
@@ -391,6 +392,9 @@ export default {
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
+          if (this.biReferenceId) {
+            submitData.biReferenceId = this.biReferenceId
+          }
           this.saveData(operation, submitData);
         }
       })
@@ -401,7 +405,7 @@ export default {
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
       }).then(data => {
-        let {success = true, formData = {}} = data;
+        let {success = true, formData = {},attachment = []} = data;
         // http200时提示报错信息
         if (!success) {
           this.$vux.alert.show({
@@ -409,6 +413,7 @@ export default {
           });
           return;
         }
+        this.attachment = attachment;
         let matterList = [];
         let orderList = {};
           // 获取合计

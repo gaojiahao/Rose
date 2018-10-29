@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-file-container" :style="containStyle">
+  <div class="upload-file-container" :style="containStyle" v-if="(noUpload && defaultValue.length) || !noUpload">
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">

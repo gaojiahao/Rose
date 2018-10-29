@@ -37,6 +37,8 @@
         </matter-list>
         <!-- 金额明细 -->
         <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
+        <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+
         <!-- 审批操作 -->
         <r-action :code="transCode" :task-id="taskId" :actions="actions"
                   :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -107,6 +109,7 @@ export default {
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
+        this.attachment = data.attachment;
         this.orderInfo = data.formData;
         this.getcontactInfo()
         this.workFlowInfoHandler();

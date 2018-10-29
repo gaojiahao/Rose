@@ -5,9 +5,9 @@
         <pop-manager-list @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
         <!-- 项目类型-->
         <r-picker title="项目大类" :data="typeList" mode="3" placeholder="请选择项目大类"
-                  @on-change="projectBigChange"
+                  @on-change="projectBigChange" :has-border="false"
                   v-model="ProjectApproval.projectType" :required="ProjectApproval.projectType === ''"></r-picker>
-        <r-picker title="项目子类" :data="subclassList" mode="3" placeholder="请选择项目子类"
+        <r-picker title="项目子类" :data="subclassList" mode="3" placeholder="请选择项目子类" :has-border="false"
                   v-model="ProjectApproval.projectSubclass"></r-picker>
         <!-- 项目立项明细 -->
         <div class="materiel_list mg_auto">
@@ -54,6 +54,7 @@
             <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
           </group>
         </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->

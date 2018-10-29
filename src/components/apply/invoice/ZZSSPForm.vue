@@ -56,6 +56,7 @@
             <span @click="deleteInvoice" v-if="invoiceList.length>1"> 删除</span>
           </div>
         </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!--开票列表-->
         <pop-invoice-list :show="showInvoicePop" v-model="showInvoicePop" @sel-matter="selInvoice" :defaultValue='seletedInvoice'
                         :params="dealerParams"  :getListMethod="false" ref="matter"></pop-invoice-list>
@@ -295,6 +296,9 @@
               delete submitData.wfPara;
               delete submitData.biReferenceId;
             }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
             this.saveData(operation, submitData);
           }
         });
@@ -305,6 +309,7 @@
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
         }).then((data) => {
+          this.attachment = data.attachment;
           this.listId = data.listId;
           this.biComment = data.biComment;
           this.biReferenceId = data.biReferenceId;

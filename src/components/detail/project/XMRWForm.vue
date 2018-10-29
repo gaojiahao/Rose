@@ -17,6 +17,8 @@
           <form-cell cellTitle="实际工时" :cellContent="projectTask.actualTime"></form-cell>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+
     </div>
   </div>
 </template>
@@ -55,9 +57,10 @@ export default {
     },
     // 获取详情
     getOrderList(transCode = '') {
-      return findProjectTask(transCode).then(({formData = {}}) => {
+      return findProjectTask(transCode).then(({formData = {},attachment = []}) => {
         let projectTask = formData.projectTask || {};
         this.jsonData = formData;
+        this.attachment = attachment;
         this.projectTask = {
           ...projectTask,
           deadline: this.changeDate(projectTask.deadline),

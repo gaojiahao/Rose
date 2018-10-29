@@ -40,6 +40,7 @@
           </div>
         </div>
       </matter-list>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -102,6 +103,7 @@
           }
           let {outPut = {}} = data.formData;
           let {dataSet} = outPut;
+          this.attachment = data.attachment;
           for (let val of dataSet) {
             val.inventoryName_transObjCode = val.inventoryName_outPutMatCode;
             val.transObjCode = val.outPutMatCode;

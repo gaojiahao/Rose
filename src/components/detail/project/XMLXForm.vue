@@ -28,6 +28,8 @@
           <form-cell cellTitle="利润率" textRight :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+
     </div>
   </div>
 </template>
@@ -61,8 +63,9 @@
     methods: {
       // 获取详情
       getOrderList(transCode = '') {
-        return findProjectApproval(transCode).then(({formData = {}}) => {
+        return findProjectApproval(transCode).then(({formData = {},attachment = []}) => {
           this.approval = formData.approval;
+          this.attachment = attachment;
           this.comment = formData.comment;
           this.orderInfo = {
             ...formData.baseinfo,

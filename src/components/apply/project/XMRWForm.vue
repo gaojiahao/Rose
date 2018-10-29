@@ -4,12 +4,12 @@
       <div class="fill_wrapper">
         <!-- 项目-->
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
-                  @on-change="projectChange" v-model="projectTask.projectName" required></r-picker>
+                  @on-change="projectChange" v-model="projectTask.projectName" required :has-border="false"></r-picker>
         <!-- 任务 -->
         <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
-                  @on-change="taskChange" v-model="projectTask.taskName" required></r-picker>
+                  @on-change="taskChange" v-model="projectTask.taskName" required :has-border="false"></r-picker>
         <!-- 任务详情 -->
-        <div class="or_ads mg_auto box_sd" v-show="projectTask.taskName">
+        <div class="or_ads mg_auto " v-show="projectTask.taskName">
           <p class="title">任务详情</p>
           <group>
             <cell title="任务类型" :value="projectTask.taskType"></cell>
@@ -19,7 +19,7 @@
           </group>
         </div>
         <!-- 实际情况 -->
-        <div class="or_ads mg_auto box_sd">
+        <div class="or_ads mg_auto">
           <p class="title">实际情况</p>
           <group>
             <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime">
@@ -29,6 +29,7 @@
                      @on-blur="checkTime" v-model.number="projectTask.actualTime"></x-input>
           </group>
         </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->

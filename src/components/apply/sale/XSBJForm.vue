@@ -112,7 +112,7 @@
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
-        <upload-file @on-upload="onUploadFile"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -378,7 +378,7 @@
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
         }).then(data => {
-          let {success = true, formData = {}} = data;
+          let {success = true, formData = {},attachment = []} = data;
           // http200时提示报错信息
           if (!success) {
             this.$vux.alert.show({
@@ -387,6 +387,7 @@
             return;
           }
           let matterList = [];
+          this.attachment = attachment;
           // 获取合计
           let {order} = formData;
           let {dataSet = []} = order;

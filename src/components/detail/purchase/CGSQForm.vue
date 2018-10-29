@@ -14,6 +14,7 @@
       <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment"></matter-list>
       <!-- 金额合计栏 -->
       <price-total :count="count" noAmt noTaxAmt></price-total>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" 
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -73,6 +74,7 @@ export default {
         }
         // 获取合计
         let {dataSet} = data.formData.order;
+        this.attachment = data.attachment;
         dataSet.forEach(item=>{
           item.tdAmount = accMul(item.tdQty,item.price)
           this.count = accAdd(this.count,item.tdAmount);

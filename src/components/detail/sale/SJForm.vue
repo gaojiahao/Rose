@@ -29,6 +29,7 @@
           </span>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -81,6 +82,7 @@ export default {
           return;
         }
         // 获取合计
+        this.attachment = data.attachment;
         // let {dataSet} = data.formData.order;
         this.count = this.count / 100;
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');

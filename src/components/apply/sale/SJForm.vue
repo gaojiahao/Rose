@@ -48,6 +48,7 @@
             </div>
           </div>
         </div>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -207,6 +208,9 @@
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
+          if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
           this.saveData(operation, submitData);
           }
         });
@@ -217,7 +221,7 @@
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
         }).then(data => {
-          let {success = true, formData = {}} = data;
+          let {success = true, formData = {},attachment = []} = data;
           // http200时提示报错信息
           if (!success) {
             this.$vux.alert.show({
@@ -226,6 +230,7 @@
             return;
           }
           let matterList = [];
+          this.attachment = attachment;
           // 获取合计
           let {order} = formData;
           // 客户信息

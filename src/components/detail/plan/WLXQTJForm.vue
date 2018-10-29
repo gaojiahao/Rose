@@ -43,6 +43,7 @@
            <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
         </div>
       </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -88,7 +89,7 @@
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode
-        }).then(({success = true, formData = {}}) => {
+        }).then(({success = true, formData = {},attachment = []}) => {
           // http200时提示报错信息
           if (success === false) {
             this.$vux.alert.show({
@@ -101,6 +102,7 @@
           }
           let orderList = {};
           let {outPut = {}} = formData;
+          this.attachment = attachment;
           // 获取合计
           let {dataSet} = formData.outPut;
           for (let item of dataSet) {
