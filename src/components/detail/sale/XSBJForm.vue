@@ -34,7 +34,7 @@
           </div>
         </div>
       </matter-list>
-      <upload-file :default-value="attachment" no-upload></upload-file>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
 
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"

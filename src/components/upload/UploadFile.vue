@@ -1,6 +1,6 @@
 <template>
-  <div class="upload-file-container">
-    <p class="title">附件</p>
+  <div class="upload-file-container" :style="containStyle">
+    <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" :key="index">
         <template v-if="judgeFileType(item.attr1) === 'image'">
@@ -14,8 +14,8 @@
       <div class="upload-file-item" v-if="!noUpload">
         
         <label class="upload-file-add" :for="id" @click.stop="">
-          <span class="iconfont icon-icon"></span>
-          <span class="add_text">增加图片</span>
+          <span class="iconfont icon-fujian"></span>
+          <!-- <span class="add_text">增加图片</span> -->
         </label>
         <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/>
       </div>
@@ -45,6 +45,19 @@
       noUpload: {
         type: Boolean,
         default: false
+      },
+      containStyle: {//容器样式
+        type : Object,
+        default(){
+          return {}
+        }
+      },
+      titleStyle: {//标题样式
+        type : Object,
+        default(){
+          return {}
+        }
+
       }
     },
     data() {
@@ -52,7 +65,7 @@
         files: [],
         file: null,
         biReferenceId: '',
-        showLoading: false,
+        showLoading: false
       }
     },
     watch: {
@@ -60,7 +73,7 @@
         handler() {
           this.setDefault();
         }
-      }
+      },
     },
     methods: {
       uploadFile(e) {
@@ -319,11 +332,13 @@
     }
     .upload-file-list {
       display: flex;
+      padding: 0.05rem 0;
     }
     .upload-file-item {
       display: inline-block;
-      width: .8rem;
-      height: .8rem;
+      margin-right: 0.08rem;
+      width: .6rem;
+      height: .6rem;
       .img {
         width: 100%;
         height: 100%;
@@ -333,17 +348,24 @@
       display: none;
     }
     .upload-file-add {
-      display: flex;
-      background: #f8f8f8;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: .8rem;
-      height: .8rem;
-      // border: 1px solid #ccc;
+      // display: flex;
+      // background: #f8f8f8;
+      // flex-direction: column;
+      // justify-content: center;
+      // align-items: center;
+      display: block;
+      width: .6rem;
+      height: .6rem;
+      border: 1px solid #ccc;
       box-sizing: border-box;
+      border-radius: 0.05rem;
+      text-align: center;
+      // line-height: 0.6rem;
       .iconfont{
-        font-size: 0.2rem;
+        display: inline-block;
+        font-size: 0.25rem;
+        color: #c5c5c5;
+        padding-top: 0.05rem;
       }
       .add_text{
         font-size: 0.12rem;

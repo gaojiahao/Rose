@@ -33,6 +33,15 @@ export default {
       noOperation: true, // 是否审批过
       HasValRealted: false,//相关实例是否有值为0
       orderInfo: {}, // 表单内容
+      uploadStyle: { //附件容器样式
+        width :'100%',
+        padding : '0.06rem 0.08rem'
+      },
+      uploadTitleStyle: {
+        fontSize : '0.16rem',
+        fontWeight : 'bold',
+        color : '#111'
+      }
     }
   },
   computed: {

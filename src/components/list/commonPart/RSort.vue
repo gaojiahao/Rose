@@ -24,7 +24,7 @@
             {name: '综合', key: ''},
             {name: '交易号', key: 'transCode'},
             {name: '修改时间', key: 'modTime'},
-            {name: '流程状态', key: 'status'}
+            {name: '流程状态', key: 'processSort'}
           ]
         }
       }
