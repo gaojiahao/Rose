@@ -2,8 +2,8 @@
   <div class="upload-file-container" :style="containStyle" v-if="(noUpload && defaultValue.length) || !noUpload">
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
-      <div class="upload-file-item" v-for="(item, index) in files" :key="index">
-        <template v-if="judgeFileType(item.attr1) === 'image'">
+      <div class="upload-file-item" v-for="(item, index) in files" @click="preview(item)" :key="index">
+        <template v-if="item.iconType === 'image'">
           <!--{{item.attr1}}-->
           <img class="img" :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
@@ -12,7 +12,7 @@
         </template>
       </div>
       <div class="upload-file-item" v-if="!noUpload">
-        
+
         <label class="upload-file-add" :for="id" @click.stop="">
           <span class="iconfont icon-fujian"></span>
           <!-- <span class="add_text">增加图片</span> -->
@@ -47,14 +47,14 @@
         default: false
       },
       containStyle: {//容器样式
-        type : Object,
-        default(){
+        type: Object,
+        default() {
           return {}
         }
       },
       titleStyle: {//标题样式
-        type : Object,
-        default(){
+        type: Object,
+        default() {
           return {}
         }
 
@@ -145,6 +145,7 @@
         }).then(res => {
           let {success = false, message = '上传失败', data} = res;
           let [detail = {}] = data;
+          detail.iconType = this.judgeFileType(detail.attr1);
           this.files.push(detail);
           if (!this.biReferenceId) {
             this.biReferenceId = detail.biReferenceId;
@@ -277,8 +278,15 @@
       },
       // TODO 设置默认值
       setDefault() {
+        let files = [];
         let [first = {}] = this.defaultValue;
-        this.files = JSON.parse(JSON.stringify(this.defaultValue));
+        files = this.defaultValue.map(item => {
+          return {
+            ...item,
+            iconType: this.judgeFileType(item.attr1),
+          }
+        });
+        this.files = files;
         this.biReferenceId = first.referenceId;
       },
       // TODO 判断图片类型
@@ -289,11 +297,11 @@
             reg: /\.(png|jpg|jpeg|gif|bmp|)$/gi,
             type: 'image'
           }, {
-            reg: /\.xlxs$/gi,
+            reg: /\.xlsx$/gi,
             type: 'excel'
           }, {
             reg: /\.(doc|docx)$/gi,
-            type: 'doc'
+            type: 'word'
           }, {
             reg: /\.(ppt|pptx)$/gi,
             type: 'ppt'
@@ -309,8 +317,15 @@
           }
           return true
         });
-        console.log(type);
         return type
+      },
+      // TODO 放大图片预览
+      preview(item) {
+        let imgUrl = `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
+        wx.previewImage({
+          current: '', // 当前显示图片的http链接
+          urls: [] // 需要预览的图片http链接列表
+        });
       }
     },
     created() {
@@ -361,13 +376,13 @@
       border-radius: 0.05rem;
       text-align: center;
       // line-height: 0.6rem;
-      .iconfont{
+      .iconfont {
         display: inline-block;
         font-size: 0.25rem;
         color: #c5c5c5;
         padding-top: 0.05rem;
       }
-      .add_text{
+      .add_text {
         font-size: 0.12rem;
       }
     }
