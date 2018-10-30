@@ -8,10 +8,6 @@ import Swiper from './common/swiper-4.2.2.min.js'
 import { AlertPlugin, ConfirmPlugin, ToastPlugin, TransferDom, DatetimePlugin  } from 'vux'
 import Loading from 'components/loading/pageLoad/loading'
 import HandleLoad from 'components/loading/handleLoad/handleLoading'
-import {register} from 'plugins/wx'
-
-// 注册企业微信js-sdk
-register();
 
 Vue.use(Loading)
 Vue.use(VueRouter)
