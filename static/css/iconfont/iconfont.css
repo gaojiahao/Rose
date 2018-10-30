@@ -1,11 +1,11 @@
 
 @font-face {
   font-family: 'iconfont';  /* project id 667058 */
-  src: url('//at.alicdn.com/t/font_667058_ajns398sapf.eot');
-  src: url('//at.alicdn.com/t/font_667058_ajns398sapf.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_667058_ajns398sapf.woff') format('woff'),
-  url('//at.alicdn.com/t/font_667058_ajns398sapf.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_667058_ajns398sapf.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_667058_h4kgoqexn4e.eot');
+  src: url('//at.alicdn.com/t/font_667058_h4kgoqexn4e.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_667058_h4kgoqexn4e.woff') format('woff'),
+  url('//at.alicdn.com/t/font_667058_h4kgoqexn4e.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_667058_h4kgoqexn4e.svg#iconfont') format('svg');
 }
 
 
@@ -156,4 +156,6 @@
 .icon-sort-up-copy-copy:before { content: "\e612"; }
 
 .icon-fujian:before { content: "\e63b"; }
+
+.icon-huifu:before { content: "\e61b"; }
 

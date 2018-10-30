@@ -23,6 +23,9 @@ import DASHBOARD from '../pages/apps/bizApp/dashboard/dashboard'
 //
 import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
 
+//应用详情
+import APPDETAIL from '../pages/apps/bizApp/appDetail/appDetail.vue'
+
 export default [
   { path: '/home', name: 'HOME', component: HOME,
   meta:{ title:'首页' , keepAlive: true} },
@@ -62,6 +65,12 @@ export default [
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情' }
+  },
+  {
+    path:'/appDetail/:listId',
+    name:'APPDETAIL',
+    component:APPDETAIL,
+    meta:{ title:'应用详情' }
   },
   {
     path:'/adress',
