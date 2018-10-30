@@ -20,14 +20,14 @@
                   <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
                 </li>
               </ul>
-            </div>  
+            </div>
           </div>
         </div>
         <!-- 基础应用部分 -->
         <basic-app :BasicApps='BasicApps' :goBasic='goBasic'></basic-app>
         <!-- 业务应用部分 -->
         <bus-app :BusApps='BusApps' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
-      </div>   
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +37,8 @@ import {Icon} from 'vux'
 // 接口引入
 import homeService from 'service/homeservice'
 import { getMsgList } from 'service/msgService.js'
+import {register} from 'plugins/wx'
+
 // 映射表引入
 import basicMap from './maps/basic'
 import Apps from './maps/businessApp'
@@ -51,8 +53,8 @@ export default {
     return{
       BUSobj: {},
       userInfo:{},         // 用户信息
-      BasicApps : [],        // 基础对象 
-      BusApps: {},        // 业务应用 
+      BasicApps : [],        // 基础对象
+      BusApps: {},        // 业务应用
       homeScroll : null,
       currentEntity :'',//当前主体
       entityList : [] ,//主体列表
@@ -89,8 +91,8 @@ export default {
         newsNumber = data.dataCount;
         this.$event.$emit('badgeNum',newsNumber);
       })
-    }, 
-    //获取当前用户信息 
+    },
+    //获取当前用户信息
     getCurrentUser(){
       return homeService.currentUser().then( data=>{
         this.currentEntity = data.entityName;
@@ -137,6 +139,8 @@ export default {
     (async() => {
       //获取当前用户
       await this.getCurrentUser()
+      // 注册企业微信js-sdk
+      register();
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
@@ -166,7 +170,7 @@ export default {
                   item.icon = item.icon
                     ? `/dist/${item.icon}`
                     : ''
-                  this.BasicApps.push(item);              
+                  this.BasicApps.push(item);
                 }
               }
               // 业务应用
@@ -180,12 +184,12 @@ export default {
                 }
                 else {
                   this.BusApps[val.text].appList.push(item);
-                }  
+                }
               }
               // 获取 应用类型ID 对应相应文件夹
               item.fileID = val.id;
             }
-            this.$loading.hide();     
+            this.$loading.hide();
           }
         }
       })
@@ -205,7 +209,7 @@ export default {
       click:true
     })
   }
-    
+
 }
 </script>
 
