@@ -94,6 +94,7 @@
         flex: 1;
         display: flex;
         font-size: .14rem;
+        align-items: center;
         box-sizing: border-box;
         justify-content: center;
         .arrow{
