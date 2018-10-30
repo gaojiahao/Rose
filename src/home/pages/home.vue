@@ -3,7 +3,7 @@
     <div class="content" ref='home'>
       <div class="wrapper">
         <!-- 用户头像部分 -->
-        <div class="user_part">
+        <!-- <div class="user_part">
           <div class="user_avatar vux-1px-b">
             <div class='user_info'>
               <img :src="userInfo.avatar">
@@ -21,6 +21,21 @@
                 </li>
               </ul>
             </div>  
+          </div>
+        </div> -->
+        <div class="top-part">
+          <div class="top-part-container vux-1px-b">
+            <div class="entity-part">
+              <div class="tips_title">
+                <span>当前主体</span>
+                <span class="change_btn">切换</span>
+              </div>
+              <div class="entity_name when-is-out"
+                    :class="[currentEntity.length > 11 ? 'when-is-out': '']">{{currentEntity}}</div>
+            </div>
+            <div class="user-avatar">
+              <img :src="userInfo.avatar">
+            </div>
           </div>
         </div>
         <!-- 基础应用部分 -->
@@ -60,15 +75,15 @@ export default {
       selItem : {}
     }
   },
-  components:{ busApp, basicApp, Icon},
+  components:{ busApp, basicApp, Icon },
   methods:{
     // 基础应用
     goBasic(item){
-      this.$router.push({ path : `${basicMap[item]}`})
+      this.$router.push({path: `${basicMap[item]}`})
     },
     // 前往列表
     goList(listId, name, file){
-      this.$router.push({ path: `/list/${file}/${listId}`, query: { name }})
+      this.$router.push({path: `/list/${file}/${listId}`, query: { name }})
     },
     // 设置默认图片
     getDefaultIcon(app){
@@ -229,82 +244,99 @@ export default {
   margin: 0 auto;
 }
 // 顶部 用户头像部分
-.user_part {
-  display: flex;
+.top-part {
+  width: 100%;
   padding: 0 .1rem;
   background: #fff;
   box-sizing: border-box;
-  .user_avatar {
-    width: 100%;
+  .top-part-container {
     display: flex;
-    padding: .04rem 0 .02rem;
     align-items: center;
+    padding: .04rem 0 .08rem;
     justify-content: space-between;
-    .user_info{
-      display: flex;
-      align-items: center;
-    }
-    img {
-      width: .35rem;
-      height: .35rem;
-      border-radius: 50%;
-    }
-    .tips {
-      margin-left:.05rem;
-    }
-    .current_entity {
-      display: flex;
-      align-items: center;
-      .entity-name {
-        display: block;
-        max-width: 1.8rem;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
+  }
+  .entity-part {
+    line-height: .24rem;
+    .tips_title {
+      color: #8A8A8A;
+      font-size: .14rem;
+      font-weight: bold;
+      .change_btn {
+        color: #3f72af;
+        font-size: .12rem;
       }
+    }
+    .entity_name {
+      color: #111;
+      width: 2.6rem;
+      height: .24rem;
+      overflow: hidden;
+      font-size: .22rem;
+      font-weight: bold;
+      position: relative;
+      white-space: nowrap;
+      &.when-is-out {
+        &:after {
+          right: 0; 
+          bottom: 0; 
+          content: ""; 
+          height: inherit; 
+          position: absolute; 
+          padding-left: .18rem; 
+          background: linear-gradient(to right, rgba(255,255,255,0), #fff 75%);
+        }
+      }
+    }
+  }
+  .user-avatar {
+    width: .45rem;
+    height: .45rem;
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
     }
   }
 }
 /* 列表容器 */
-    .r-dropdown-list {
-      position: absolute;
-      right: 0;
-      top: 100%;
-      z-index: 100;
-      border-bottom-left-radius: .08rem;
-      border-bottom-right-radius: .08rem;
-      background-color: #fff;
-      box-shadow: 0 2px 10px #e8e8e8;
-      box-sizing: border-box;
-    }
-    /* 列表项 */
-    .r-dropdown-item {
-      position: relative;
-      line-height: .4rem;
-      font-size: .16rem;
-      text-align: right;
-      span{
-        display: inline-block;
-        width:100%;
-        box-sizing: border-box;
-        padding: 0 .1rem;
-      }
-      .active{
-        background: #e8e8e8;
-      }
-      .weui_icon_success-no-circle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-      }
-    }
-    /* 倒三角 */
-    .vux-x-icon-ios-arrow-down {
-      transition: transform 200ms linear;
-      &.arrow-up {
-        transform: rotate(-180deg);
-      }
-    }
+.r-dropdown-list {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+  border-bottom-left-radius: .08rem;
+  border-bottom-right-radius: .08rem;
+  background-color: #fff;
+  box-shadow: 0 2px 10px #e8e8e8;
+  box-sizing: border-box;
+}
+/* 列表项 */
+.r-dropdown-item {
+  position: relative;
+  line-height: .4rem;
+  font-size: .16rem;
+  text-align: right;
+  span{
+    display: inline-block;
+    width:100%;
+    box-sizing: border-box;
+    padding: 0 .1rem;
+  }
+  .active{
+    background: #e8e8e8;
+  }
+  .weui_icon_success-no-circle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+  }
+}
+/* 倒三角 */
+.vux-x-icon-ios-arrow-down {
+  transition: transform 200ms linear;
+  &.arrow-up {
+    transform: rotate(-180deg);
+  }
+}
 </style>
