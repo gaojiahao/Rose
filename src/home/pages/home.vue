@@ -155,7 +155,7 @@ export default {
       //获取当前用户
       await this.getCurrentUser()
       // 注册企业微信js-sdk
-      register();
+      // register();
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
@@ -243,10 +243,6 @@ export default {
     padding-bottom: .1rem;
   }
 }
-.mg_auto {
-  width: 95%;
-  margin: 0 auto;
-}
 // 顶部 用户头像部分
 .top-part {
   width: 100%;
@@ -256,7 +252,7 @@ export default {
   .top-part-container {
     display: flex;
     align-items: center;
-    padding: .04rem 0 .08rem;
+    padding: .04rem 0 .1rem;
     justify-content: space-between;
   }
   .entity-part {
