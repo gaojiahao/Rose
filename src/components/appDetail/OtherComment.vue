@@ -1,5 +1,5 @@
 <template>
-  <div class="other_comment">
+  <div class="other_comment vux-1px-t">
     <div class="title">
       <span>评论</span>
       <span class="more"  @click="goCommentList" v-show="commentList.length">查看更多</span>

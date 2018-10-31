@@ -1,5 +1,5 @@
 <template>
-  <div class="admin_comment vux-1px-b">
+  <div class="admin_comment">
     <div class="title">
       <span>管理员自评</span>
       <span class="more" @click="popupShow = true" v-show="adminCommentList.length">查看更多</span>
@@ -146,7 +146,7 @@ export default {
         listId: this.listId,
         limit: this.limit,
         page: this.page,
-        sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])
+        // sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])s
       }).then(({dataCount = 0, tableContent = []}) =>{
         if(this.page === 1){
           this.latestLog = tableContent[0];
@@ -218,10 +218,9 @@ export default {
     }
     //评论内容
     .comment_content{
-      width:100%;
-      overflow: hidden;
-      margin-left:0.1rem;
       flex: 1;
+      margin-left:0.1rem;
+      overflow: hidden;
       .user_info{
         display: flex;
         justify-content: space-between;
@@ -243,6 +242,16 @@ export default {
         font-size: 0.14rem;
         span{
           // display: block;
+        }
+        .achievement {
+          // p {
+          //   overflow: hidden;
+          //   display: -webkit-box;
+          //   word-break: break-all;
+          //   -webkit-line-clamp: 2;
+          //   text-overflow: ellipsis;
+          //   -webkit-box-orient: vertical;
+          // }
         }
       }
 
@@ -269,6 +278,9 @@ export default {
     }
     //无数据提示
     .no_data{
+      width: 90%;
+      box-sizing: border-box;
+      margin: 0 auto;
       font-size: 0.12rem;
       color: #757575;
       padding: 0.05rem 0;
@@ -291,8 +303,8 @@ export default {
       height: 2rem;
       .swiper-slide{
         width: 90%;
-        margin-right: .05rem;
-        // margin: 0 0.01rem 0 0;
+        // margin: 0 5px;
+        margin: 0 5px;
         background: #f0f1f5;
         border-radius: 0.1rem;  
       }
@@ -309,10 +321,11 @@ export default {
     -webkit-overflow-scrolling: touch;
     .full-flow-container {
       // height: 100%;
-      height: calc(100% - 0.54rem);
+      height: calc(100% - 0.62rem);
+      margin-bottom: .1rem;
       /deep/ .scroll-wrapper {
         overflow: visible;
-        padding-bottom: .01rem;
+        
       }
       .change_list{
         padding: 0 0.1rem;

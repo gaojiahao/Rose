@@ -148,7 +148,7 @@ export default {
       }
       label{
         color: #6d6d6d;
-        font-size: 0.12rem;
+        font-size: 0.14rem;
         display: block;
         // padding-bottom: 0.06rem;
         height: 0.2rem;

@@ -206,7 +206,7 @@ export default {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     .full-flow-container {
-      height: calc(100% - 0.54rem);
+      height: calc(100% - 0.62rem);
       /deep/ .scroll-wrapper {
         overflow: visible;
         padding-bottom: .01rem;
