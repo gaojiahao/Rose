@@ -34,7 +34,8 @@ export default {
       showMatterPop :false,                       // 编辑物料的pop
       matterModifyClass : false,
       clientHeight : document.documentElement.clientHeight,
-      attachment : []
+      attachment : [],
+      relationKey: '',
     }
   },
   components: {
@@ -285,7 +286,7 @@ export default {
     if(data){
       this.entity.dealerName = JSON.parse(data).entityId
     }
-    let {transCode} = this.$route.query;
+    let {transCode, relationKey = ''} = this.$route.query;
     (async () => {
       this.getProcess();
       this.getBaseInfoData();
@@ -299,6 +300,10 @@ export default {
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
         this.getFormData && await this.getFormData();
+      }
+      if (relationKey) {
+        this.relationKey = relationKey;
+        this.getRelationData();
       }
       this.$loading.hide();
     })()

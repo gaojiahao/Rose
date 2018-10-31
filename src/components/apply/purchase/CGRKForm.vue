@@ -47,14 +47,14 @@
                           <span v-show="item.promDeliTime">采购计划到货日：{{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">                      
+                      <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <div>
                           <r-number :num="item.tdQty"
                                     :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBal"></r-number>
-                        </div>                     
+                        </div>
                       </div>
                     </template>
                     <template slot="editPart" slot-scope="{item}">
@@ -86,13 +86,13 @@
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="date" slot-scope="{modifyMatter}">
-            <datetime  title="采购计划到货日" v-model="modifyMatter.promDeliTime" placeholder="请选择" ></datetime>  
+            <datetime  title="采购计划到货日" v-model="modifyMatter.promDeliTime" placeholder="请选择" ></datetime>
           </template>
         </pop-matter>
-       
+
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -191,7 +191,7 @@ export default {
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
-    },  
+    },
     // TODO 选中的供应商
     selDealer(val) {
       let [sel] = JSON.parse(val);
@@ -548,6 +548,65 @@ export default {
         }
       };
     },
+    // TODO 获取关联数据
+    getRelationData() {
+      let {uniqueId} = this.$route.query;
+      return getSOList({
+        formViewUniqueId: uniqueId,
+        transCode: this.relationKey
+      }).then(data => {
+        let {success = true, formData = {},attachment = []} = data;
+        // http200时提示报错信息
+        if (!success) {
+          this.$vux.alert.show({
+            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+          });
+          return;
+        }
+        // this.attachment = attachment;
+        // 获取合计
+        let {order, dealerDebit} = formData;
+        let {dataSet = []} = order;
+        dataSet = dataSet.map(item => {
+          return {
+            ...item,
+            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            inventoryName: item.inventoryName_transObjCode,
+            inventoryCode: item.inventoryCode_transObjCode,
+            specification: item.specification_transObjCode,
+            processing: item.tdProcessing || '商品',
+            measureUnit: item.measureUnit_transObjCode,
+            transCode: this.relationKey,
+            tdQty: '',
+          };
+        });
+
+        //供应商信息展示
+        this.dealerInfo = {
+          creatorName :formData.dealerDebitContactPersonName,
+          dealerMobilePhone :formData.dealerDebitContactInformation,
+          dealerCode: formData.order.dealerDebit,
+          dealerSubclass: formData.order.drAccountSub,
+          dealerName: formData.order.dealerName_dealerDebit,
+          province: formData.order.province_dealerDebit,
+          city: formData.order.city_dealerDebit,
+          county: formData.order.county_dealerDebit,
+          address: formData.order.address_dealerDebit
+        }
+        // 物料请求参数
+        this.matterParams = {
+          dealerCode: this.dealerInfo.dealerCode
+        };
+
+        this.matterList = dataSet;
+        this.orderList = {
+          [this.relationKey]: dataSet,
+        };
+        this.crDealerPaymentTerm = order.drDealerPaymentTerm;
+        this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
+        this.$loading.hide();
+      })
+    },
   },
   created() {
     let data = sessionStorage.getItem(DRAFT_KEY);
@@ -558,7 +617,6 @@ export default {
       this.formData = JSON.parse(data).formData;
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
       sessionStorage.removeItem(DRAFT_KEY);
-
     }
   },
 }
@@ -566,7 +624,7 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizApply';
-  
+
   .pages {
   /deep/ .vux-no-group-title{
     margin-top:0;

@@ -75,7 +75,8 @@ export default {
       this.$router.push({
         path: `/related/${this.listId}`,
         query: {
-          transCode: this.transCode
+          transCode: this.transCode,
+          uniqueId: this.formViewUniqueId,
         }
       })
     },
