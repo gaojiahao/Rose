@@ -49,7 +49,7 @@ export default {
     getRelatedData(item){
       if(item.itemCount > 0){
         this.idInfo = {
-          fileId: item.id,
+          fileId: item.parentNav,
           listId: item.listId
         }
         item.content.forEach( val => {
