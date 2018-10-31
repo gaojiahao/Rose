@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import {getCommentList, getReply, saveComment} from 'service/commentService'
+  import {getCommentList, getPCCommentList , getReply, saveComment} from 'service/commentService'
   import RScroll from 'components/RScroll'
   import CommentItem from 'components/comment/CommentItem'
 
@@ -39,10 +39,12 @@
         hasNext: true,
         page: 1,
         limit: 10,
+        total : 0,
         comment: '',
         parentId: -1,
         focusInput: false,
         placeholder: '添加评论...',
+        listId : ''
       }
     },
     methods: {
@@ -51,13 +53,17 @@
         this.page++;
         this.getCommentList();
       },
-      // TODO 获取评论列表
+      // TODO 获取订单详情评论列表
       getCommentList() {
-        return getCommentList({
+        let data = {
           transCode: this.transCode,
           page: this.page,
           limit: this.limit,
-        }).then(({allCommentNum = 0, comment = []}) => {
+        };
+        if(this.listId){
+          data.transCode = this.listId;
+        }
+        return getCommentList(data).then(({allCommentNum = 0, comment = []}) => {
           this.hasNext = allCommentNum > (this.page - 1) * this.limit + comment.length;
           comment.forEach(item => {
             item.allReply && item.allReply.forEach((rItem, index, arr) => {
@@ -100,11 +106,24 @@
           });
           return
         }
-        return saveComment({
+        //订单详情的评论
+        let submitData = {
           content: this.tagFilter(this.comment),// 标签过滤
           parentId: this.parentId,
           relationKey: this.transCode,
-        }).then(({success = true, message = ''}) => {
+          type: "instance",
+        };
+        //应用详情的评论
+        if(this.listId){
+          submitData = {
+            content: this.tagFilter(this.comment),// 标签过滤
+            parentId: this.parentId,
+            relationKey: this.listId,
+            type: 'list'
+          };
+
+        }
+        return saveComment(submitData).then(({success = true, message = ''}) => {
           if (success) {
             this.comment = '';
             this.parentId = -1;
@@ -127,8 +146,9 @@
       }
     },
     created() {
-      let {transCode} = this.$route.query;
+      let {transCode,listId} = this.$route.query;
       this.transCode = transCode;
+      this.listId = listId;
       this.$loading.show();
       this.getCommentList().then(() => {
         this.$loading.hide();

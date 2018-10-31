@@ -48,7 +48,6 @@ export let saveComment = (data = {}) => {
     data: {
       commentAndReply: false,
       commentAttachments: [],
-      type: "instance",
       ...data,
     }
   })

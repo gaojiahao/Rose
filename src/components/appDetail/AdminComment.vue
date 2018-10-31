@@ -19,11 +19,11 @@
               </div>
               <div class="comment">
                 <div>
-                  <span>改进结果：</span>
+                  <span>改进结果:</span>
                   <span v-html="item.achievement" class="achievement"></span>
                 </div>
                 <div>
-                  <span>改进机会：</span>
+                  <span>改进机会:</span>
                   <span v-html="item.chance" class="chance"></span>
                 </div>
               </div>
@@ -31,6 +31,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="edit_comment" @click="EditAdmin">
+      <span class="iconfont icon-bianji"></span>
+      <span>撰写评论</span>
     </div>
     <!--管理员评论列表-->
     <div v-transfer-dom>
@@ -53,11 +57,11 @@
                 </div>
                 <div class="comment">
                   <div>
-                    <span>改进结果：</span>
+                    <span>改进结果:</span>
                     <span v-html="item.achievement" class="achievement"></span>
                   </div>
                   <div>
-                    <span>改进机会：</span>
+                    <span>改进机会:</span>
                     <span v-html="item.chance" class="chance"></span>
                   </div>
                 </div>
@@ -141,7 +145,8 @@ export default {
       return getAdminCommentList({
         listId: this.listId,
         limit: this.limit,
-        page: this.page
+        page: this.page,
+        sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])
       }).then(({dataCount = 0, tableContent = []}) =>{
         if(this.page === 1){
           this.latestLog = tableContent[0];
@@ -160,6 +165,11 @@ export default {
     },
     closePop(){
       this.popupShow = false;
+    },
+    EditAdmin(){
+      this.$router.push({
+        path:`/appDetail/${this.listId}/addAdminComment`,
+      })
     }
 
   },
@@ -177,7 +187,8 @@ export default {
     this.mySwiper = new Swiper ('.swiper-container', {
       slidesPerView: 'auto',
       observer: true,       //修改swiper自己或子元素时，自动初始化swiper
-      observeParents: true      
+      observeParents: true,
+      centeredSlides: true,      
     })      
 
   },
@@ -241,7 +252,8 @@ export default {
   .admin_comment{
     padding: 0.1rem 0;
     .title{
-      padding-bottom: 0.1rem;
+      width: 90%;
+      margin: 0 auto 0.04rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -251,14 +263,28 @@ export default {
       .more{
         font-size: 0.14rem;
         font-weight: normal;
-        color: #5077aa;
+        color: #3c7bcb;
       }
 
     }
+    //无数据提示
     .no_data{
       font-size: 0.12rem;
       color: #757575;
-      // padding: 0.1rem 0;
+      padding: 0.05rem 0;
+    }
+    //撰写评论
+    .edit_comment{
+      width: 90%;
+      margin : 0.05rem auto 0;
+      color: #3c7bcb;
+      font-size: 0.14rem;
+      display: flex;
+      align-items: center;
+      .iconfont{
+        font-size: 0.14rem;
+        margin-right: 0.03rem;
+      }
     }
     .swiper-container{
       width: 100%;
@@ -266,6 +292,7 @@ export default {
       .swiper-slide{
         width: 90%;
         margin-right: .05rem;
+        // margin: 0 0.01rem 0 0;
         background: #f0f1f5;
         border-radius: 0.1rem;  
       }

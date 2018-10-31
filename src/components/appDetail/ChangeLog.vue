@@ -1,5 +1,5 @@
 <template>
-  <div class="change_log vux-1px-b" v-show="latestLog.VERSION">
+  <div class="change_log vux-1px-b">
     <div class="title" >
       <span>更新日志</span>
       <span class="history" @click="popupShow = true" v-show="changeLogList.length">历史记录</span>
@@ -11,13 +11,18 @@
         <span>{{latestLog.CRT_TIME | handerTime}}</span>
       </div>
       <div class="change_content">
+        <div>{{latestLog.CREATOR_NAME}}&nbsp;&nbsp;耗用时间:{{latestLog.TIME_CONSUMING}}</div>
         <div>更新范围: {{latestLog.CHANGE_RANGE}}</div>
         <div>备注: <span v-html="latestLog.CONTENT"></span></div>
       </div>
     </div>
+    <div class="edit_log" @click="EditLog">
+      <span class="iconfont icon-bianji"></span>
+      <span>撰写日志</span>
+    </div>
     <!--变更历史列表-->
     <div v-transfer-dom>
-      <popup v-model="popupShow" position="bottom" height="100%">
+      <popup v-model="popupShow" position="bottom" height="100%" @on-show="onShow">
         <r-scroll class="full-flow-container" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !changeLogList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
@@ -31,6 +36,7 @@
                 <span>{{item.CRT_TIME | handerTime}}</span>
               </div>
               <div class="change_content">
+                <div>{{item.CREATOR_NAME}}&nbsp;&nbsp;耗用时间:{{item.TIME_CONSUMING}}</div>
                 <div>更新范围: {{item.CHANGE_RANGE}}</div>
                 <div>备注: <span v-html="item.CONTENT"></span></div>
               </div>
@@ -50,7 +56,7 @@
 import {TransferDom, Popup, Group, Icon, XButton,dateFormat} from 'vux'
 import RScroll from 'components/RScroll'
 //请求 引入
-import {getChangeLog} from 'service/appSettingService.js'
+import {getChangeLog,saveLog} from 'service/appSettingService.js'
 export default {
   name:'ChangeLog',
   data(){
@@ -65,8 +71,7 @@ export default {
       scrollOptions: {
         click: true,
         pullUpLoad: true,
-      },
-      
+      },            
     }
   },
   directives: {
@@ -111,8 +116,20 @@ export default {
     },
     closePop(){
       this.popupShow = false;
+    },
+    onShow() {
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          // 弹窗展示时刷新滚动，防止无法拖动问题
+          this.$refs.bScroll.refresh();
+        }
+      })
+    },
+    EditLog(){
+      this.$router.push({
+        path:`/appDetail/${this.listId}/addLog`,
+      })
     }
-
   },
   created(){
     let { listId } = this.$route.params;
@@ -145,6 +162,9 @@ export default {
     }
   }
   .change_log{
+    width: 90%;
+    margin: 0 auto;
+    box-sizing: border-box;
     padding: 0.1rem 0;
     .title{
       display: flex;
@@ -157,17 +177,28 @@ export default {
       .history{
         font-size: 0.14rem;
         font-weight: normal;
-        color: #5077aa;
+        color: #3c7bcb;
       }
     }
     .latest_change{
       @extend .latest_change
     }
     .no_data{
+      padding: 0.05rem 0;
       font-size: 0.12rem;
       color: #757575;
     }
-    
+    .edit_log{
+      margin-top:0.02rem;
+      color: #3c7bcb;
+      font-size: 0.14rem;
+      display: flex;
+      align-items: center;
+      .iconfont{
+        font-size: 0.14rem;
+        margin-right: 0.03rem;
+      }
+    }
   }
   .vux-popup-dialog {
     background: #fff;
@@ -203,6 +234,9 @@ export default {
     }
     // 确定
     .btn {
+      left: 0;
+      bottom: 0;
+      position: fixed;
       width: 100%;
       background: #fff;
       text-align: center;
@@ -227,6 +261,5 @@ export default {
       position: fixed;
     }
   }
- 
 
 </style>

@@ -86,11 +86,27 @@ export let getAdminCommentList = (data={}) => {
     data
   })
 };
+//提交日志
+export let saveLog = (data={}) =>{
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/app/saveLog',
+    data
+  })
+}
+export let saveAssessment = (data={}) =>{
+  return $axios.post({
+    url: '/H_roleplay-si/app/saveAssessment',
+    data
+  })
+}
 export default {
   getAppDetail,
   getChangeLog,
   getAdminCommentList,
-  getPCCommentList
+  getPCCommentList,
+  saveLog
 
 }
 

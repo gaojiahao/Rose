@@ -14,16 +14,17 @@
           </div>
         </div>
         <!--更新日志-->
-        <change-log></change-log>
+        <change-log ref="changeLog"></change-log>
         <!--互动-->
         <div class="interaction">
           <!--管理员自评-->
-          <admin-comment></admin-comment>
+          <admin-comment ref="adminComment"></admin-comment>
           <!--评论-->
-          <othe-comment></othe-comment>
+          <othe-comment ref="comment"></othe-comment>
         </div>
       </r-scroll>
-    </div>    
+    </div>
+    <router-view></router-view>   
   </div>
   
 </template>
@@ -88,6 +89,25 @@ export default {
 
     }
   },
+  watch: {
+    $route: {
+      handler(to, from) {
+        let {meta = {}} = to;
+        if (to.name === 'APPDETAIL') {
+          // 判断是否重新请求页面
+          if (meta.reload) {
+            this.$loading.show();
+            to.meta.reload = false;
+            this.getAppInfo();
+            this.$refs.changeLog.getChangeList();
+            this.$refs.adminComment.getAdminComment();
+            this.$refs.comment.getCommetList();
+            this.$loading.hide();
+          }
+        }
+      },
+    }
+  },
   methods:{
     // 设置默认图片
     getDefaultIcon(app){
@@ -110,9 +130,12 @@ export default {
   created(){
     let { listId } = this.$route.params;
     if(listId){
-      // this.$loading.show();
+      this.$loading.show();
       this.listId = listId;
       this.getAppInfo();
+      setTimeout(()=>{
+        this.$loading.hide();
+      },500)
     }
   },
   
@@ -121,51 +144,60 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.vux-1px-b:after{
-  border-color: #e8e8e8;
-}
-.app_detail{
-  .content{
+  .childPage {
+    position: fixed;
     width: 100%;
     height: 100%;
-    padding: 0 0.1rem;
-    box-sizing: border-box;
-    overflow: hidden;
-    .list_wrapper{
+    bottom:0;
+    z-index: 5;
+    background: #fff;
+  }
+  .vux-1px-b:after{
+    border-color: #e8e8e8;
+  }
+  .app_detail{
+    .content{
+      width: 100%;
       height: 100%;
-    }
-    //应用基本嘻嘻
-    .app_top{
-      color: #111;
-      background: #fff;
-      display: flex;
-      padding: 0.1rem 0;
-      // align-items: center;
-      border-radius: .04rem;
       box-sizing: border-box;
-      .app_icon{
-        width: 0.8rem;
-        height: 0.8rem;
-        img{
-          width:100%;
-          height: 100%;
-          border-radius: 0.15rem;
-        }
+      overflow: hidden;
+      .list_wrapper{
+        height: 100%;
       }
-      .app_info{
-        margin-left: 0.1rem;
-        flex: 1;
-        .app_name{
-          font-size: 0.18rem;
-          font-weight: bold;
+      //应用基本嘻嘻
+      .app_top{
+        width: 90%;
+        margin: 0 auto;
+        box-sizing: border-box;
+        color: #111;
+        background: #fff;
+        display: flex;
+        padding: 0.1rem 0;
+        border-radius: .04rem;
+        box-sizing: border-box;
+        .app_icon{
+          width: 0.8rem;
+          height: 0.8rem;
+          img{
+            width:100%;
+            height: 100%;
+            border-radius: 0.15rem;
+          }
         }
-        .base_style{
-          font-size: 0.12rem;
-          color: #757575;
+        .app_info{
+          margin-left: 0.1rem;
+          flex: 1;
+          .app_name{
+            font-size: 0.18rem;
+            font-weight: bold;
+          }
+          .base_style{
+            font-size: 0.12rem;
+            color: #757575;
+          }
         }
       }
     }
   }
-}
 
 </style>

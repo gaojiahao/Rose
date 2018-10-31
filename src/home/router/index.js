@@ -25,6 +25,8 @@ import COMMENTLIST from '@/home/pages/apps/bizApp/comment/commentList'
 
 //应用详情
 import APPDETAIL from '../pages/apps/bizApp/appDetail/appDetail.vue'
+import ADDLOG from '../pages/apps/bizApp/appDetail/addLog.vue'
+import ADDADMINCOMMENT from '../pages/apps/bizApp/appDetail/addAdminComment.vue'
 
 export default [
   { path: '/home', name: 'HOME', component: HOME,
@@ -70,7 +72,21 @@ export default [
     path:'/appDetail/:listId',
     name:'APPDETAIL',
     component:APPDETAIL,
-    meta:{ title:'应用详情' }
+    meta:{ title:'应用详情' },
+    children:[
+      {
+        path:'addLog',
+        name:'ADDLOG',
+        component:ADDLOG,
+        meta:{ title:'新增日志' }
+      },
+      {
+        path:'addAdminComment',
+        name:'ADDADMINCOMMENT',
+        component:ADDADMINCOMMENT,
+        meta:{ title:'新增管理员评论' }
+      },
+    ]
   },
   {
     path:'/adress',
