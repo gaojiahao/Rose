@@ -7,6 +7,9 @@ import {toFixed} from '@/plugins/calc'
 import platfrom from '@/plugins/platform/index'
 import MatterItem from 'components/apply/commonPart/MatterItem'
 import UploadFile from 'components/upload/UploadFile'
+/* 引入微信相关 */
+import {register} from 'plugins/wx'
+
 export default {
   data() {
     return {
@@ -263,12 +266,22 @@ export default {
       event.currentTarget.select();
     },
     // TODO 上传文件成功
-    onUploadFile({biReferenceId}){
+    onUploadFile({biReferenceId}) {
       this.biReferenceId = biReferenceId;
+    },
+    // TODO 监听返回事件
+    listenBack() {
+      wx.ready(() => {
+        wx.onHistoryBack(() => {
+          return this.onHistoryBack ? this.onHistoryBack() : true;
+        });
+      })
     },
   },
   created() {
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
+    register();
+    this.listenBack();
     if(data){
       this.entity.dealerName = JSON.parse(data).entityId
     }

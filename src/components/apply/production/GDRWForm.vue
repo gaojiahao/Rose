@@ -2,6 +2,7 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
@@ -12,7 +13,7 @@
             <cell title='工序编码' v-model="workInfo.proPointCode" :disabled="!workInfo.proPointCode"></cell>
             <cell title='工序待验收' v-model="workInfo.thenQtyStock" :disabled="!workInfo.thenQtyStock"></cell>
             <cell title='工序可派工' v-model="workInfo.thenQtyBal" :disabled="!workInfo.thenQtyBal"></cell>
-            <x-input title="派工数量" type="number" text-align="right" v-model.number="workInfo.tdQty"  :disabled='!workInfo.thenQtyBal'  
+            <x-input title="派工数量" type="number" text-align="right" v-model.number="workInfo.tdQty"  :disabled='!workInfo.thenQtyBal'
                     :placeholder="workInfo.thenQtyBal ? '请填写':''" @on-focus="getFocus($event)" @on-blur='checkAmt(workInfo)'>
               <template slot="label">
                 <span class='required'>派工数量
@@ -52,7 +53,7 @@
 
 <script>
 // vux组件引入
-import { Popup, TransferDom, Group, 
+import { Popup, TransferDom, Group,
         Cell, numberComma, Datetime,
         XInput, XTextarea } from 'vux'
 // 请求 引入
@@ -64,6 +65,10 @@ import PopManagerList from 'components/Popup/PopManagerList'
 import PopWorkList from 'components/Popup/workList/PopWorkList'
 import PopFacilityList from 'components/Popup/workList/PopFacilityList'
 import RPicker from 'components/RPicker'
+
+/* 引入微信相关 */
+import {scanQRCode} from 'plugins/wx/api'
+
 const DRAFT_KEY = 'GDRW_DATA';
 
 export default {
@@ -73,7 +78,7 @@ export default {
   components: {
     Popup, PopWorkList,
     Group, Cell, Datetime,
-    XInput, XTextarea, PopManagerList, 
+    XInput, XTextarea, PopManagerList,
     RPicker, PopFacilityList
   },
   data() {
@@ -87,14 +92,15 @@ export default {
       },
       workInfo: {},                                    // 工序信息
       defaultManager: {},
-      defaultFacility : {}
+      defaultFacility : {},
+      scanResult: '',
     }
   },
   mixins: [Applycommon],
   filters: {
     numberComma,
   },
-  methods: {    
+  methods: {
     // 选择工序
     selWork(val) {
       this.workInfo = val;
@@ -224,6 +230,20 @@ export default {
         }
       };
     },
+    // TODO 启用企业微信扫一扫
+    scanQRCode() {
+      scanQRCode().then(({result = ''}) => {
+        this.scanResult = result;
+      })
+    },
+    // TODO 判断是否有弹窗需要关闭
+    onHistoryBack() {
+      if (this.showWorkPop) {
+        this.showWorkPop = false;
+        return false
+      }
+      return true
+    },
   },
   created(){
     let data = sessionStorage.getItem(DRAFT_KEY);
@@ -241,6 +261,13 @@ export default {
   @import './../../scss/bizApply';
   @import '~@/scss/color';
   .gdrw-apply-container {
+    .basicPart {
+      height: 90%;
+    }
+    .scan {
+      width: 100%;
+      text-align: center;
+    }
     /deep/ .weui-cells {
       margin-top: 0;
       font-size: .16rem;
@@ -256,7 +283,7 @@ export default {
           left: 0;
         }
       }
-    }  
+    }
   }
-  
+
 </style>

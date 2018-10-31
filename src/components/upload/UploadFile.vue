@@ -321,11 +321,13 @@
       },
       // TODO 放大图片预览
       preview(item) {
-        let imgUrl = `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
-        wx.previewImage({
-          current: '', // 当前显示图片的http链接
-          urls: [] // 需要预览的图片http链接列表
-        });
+        if (item.iconType === 'image') {
+          let imgUrl = `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
+          wx.previewImage({
+            current: imgUrl, // 当前显示图片的http链接
+            urls: [] // 需要预览的图片http链接列表
+          });
+        }
       }
     },
     created() {

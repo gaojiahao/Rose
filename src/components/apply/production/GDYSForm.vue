@@ -2,6 +2,7 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <div class="title">工序信息</div>
@@ -9,7 +10,7 @@
             <cell isLink title='工单任务号' v-model="workInfo.transCode || '请选择'" @click.native="showWorkPop = !showWorkPop" ></cell>
             <cell title='工序名称' v-model="workInfo.procedureName" :disabled="!workInfo.procedureName"></cell>
             <cell title='可验收余额' v-model="workInfo.qtyBal" :disabled="!workInfo.qtyBal"></cell>
-            <x-input title="本次验收" type="number" v-model.number="workInfo.tdQty" :disabled='!workInfo.qtyBal' text-align="right" 
+            <x-input title="本次验收" type="number" v-model.number="workInfo.tdQty" :disabled='!workInfo.qtyBal' text-align="right"
                     :placeholder="workInfo.qtyBal ? '请填写':''"  @on-focus="getFocus($event)" @on-blur="checkAmt(workInfo)">
               <template slot="label">
                 <span class='required'>本次验收
@@ -43,7 +44,7 @@
 
 <script>
 // vux组件引入
-import { Popup, TransferDom, Group, 
+import { Popup, TransferDom, Group,
         Cell, numberComma, Datetime,
         XInput, XTextarea } from 'vux'
 // 请求 引入
@@ -54,6 +55,9 @@ import Applycommon from 'components/mixins/applyCommon'
 import PopManagerList from 'components/Popup/PopManagerList'
 import PopWorkCheckList from 'components/Popup/workList/PopWorkCheckList'
 import RPicker from 'components/RPicker'
+/* 引入微信相关 */
+import {scanQRCode} from 'plugins/wx/api'
+
 const DRAFT_KEY = 'GDYS_DATA';
 export default {
   directives: {
@@ -75,13 +79,14 @@ export default {
       workInfo: {},                                    // 工序信息
       defaultManager: {},
       biProcessStatus : '',//流程状态
+      scanResult: '',
     }
   },
   mixins: [Applycommon],
   filters: {
     numberComma,
   },
-  methods: {    
+  methods: {
     // 选择工序
     selWork(val) {
       this.workInfo = val;
@@ -201,6 +206,12 @@ export default {
         }
       };
     },
+    // TODO 启用企业微信扫一扫
+    scanQRCode() {
+      scanQRCode().then(({result = ''}) => {
+        this.scanResult = result;
+      })
+    }
   },
   created(){
     let data = sessionStorage.getItem(DRAFT_KEY);
@@ -218,6 +229,13 @@ export default {
   @import './../../scss/bizApply';
   @import '~@/scss/color';
   .gdrw-apply-container {
+    .basicPart {
+      height: 90%;
+    }
+    .scan {
+      width: 100%;
+      text-align: center;
+    }
     /deep/ .weui-cells {
       margin-top: 0;
       font-size: .16rem;
@@ -233,7 +251,7 @@ export default {
           left: 0;
         }
       }
-    }  
+    }
   }
-  
+
 </style>
