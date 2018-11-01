@@ -10,18 +10,18 @@
 
       <div class="select_part" v-if="username">
 
-        <x-button
+        <!--<x-button
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="goSP"
         >销售预报提交
-        </x-button>
+        </x-button>-->
 
         <x-button
           class="each_select"
           :gradients="['#B99763', '#E7D0A2']"
           @click.native="gohelp"
-        >销售预报提交（支援）
+        >销售预报提交
         </x-button>
 
         <x-button
