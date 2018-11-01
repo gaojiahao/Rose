@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="btn vux-1px-t" :class="{'btn_hide' : btnIsHide}">
-      <span class="cfm_btn" @click="submitLog">提交</span>
+      <span class="cfm_btn" @click="submit">提交</span>
     </div>
   </div> 
 </template>
@@ -45,17 +45,20 @@ export default {
    
   },
   methods:{
+    //获取时间
     getDate(){
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
-         onConfirm: (val)=> {
+        format: 'YYYY-MM',
+        onConfirm: (val)=> {
           console.log(val);
           this.submitData.date = val;
         },
       })
     },
-    submitLog(){
+    //提交评论
+    submit(){
       let warn = '';
       let validateMap = [
         {
@@ -118,7 +121,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
-    // 新建物料，修改列表页的meta值
+    // 新建评论，修改列表页的meta值
     if (this.submitSuccess && to.name === 'APPDETAIL') {
       to.meta.reload = true;
     }
@@ -132,7 +135,6 @@ export default {
   .vux-1px-b:after,.vux-1px-t:before{
     border-color: #e8e8e8;
   }
-  
   .content{
     height: 90%;
     .each_property{

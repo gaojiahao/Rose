@@ -14,11 +14,11 @@
           </div>
         </div>
         <!--更新日志-->
-        <change-log ref="changeLog"></change-log>
+        <change-log ref="changeLog" :handle="isAppAdmin"></change-log>
         <!--互动-->
         <div class="interaction">
           <!--管理员自评-->
-          <admin-comment ref="adminComment"></admin-comment>
+          <admin-comment ref="adminComment" :handle="isAppAdmin"></admin-comment>
           <!--评论-->
           <othe-comment ref="comment"></othe-comment>
         </div>
@@ -34,6 +34,7 @@
 import {dateFormat} from 'vux'
 //请求 引入
 import {getAppDetail} from 'service/appSettingService.js'
+import homeService from 'service/homeservice'
 //组件引入
 import RScroll from 'components/RScroll'
 import ChangeLog from 'components/appDetail/ChangeLog'
@@ -44,50 +45,20 @@ export default {
     return {
       scrollOptions: {
         click: true,
-        // pullDownRefresh: true,
-        // pullUpLoad: true,
       },
-      listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+      listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
       appInfo:{},//应用信息
       LatestchangeLog: {},
-      adminCommentList : [],
-      commentList : [],
-      mySwiper : null,
+      adminCommentList: [],
+      commentList: [],
+      mySwiper: null,
+      currentUserId: '',
+      isAppAdmin: false, //是否为应用管理员
 
     }
   },
   components:{
     RScroll,ChangeLog,AdminComment,OtheComment
-  },
-  filters:{
-    handerTime(val){
-      let time  = dateFormat(val,'YYYY-MM-DD');
-      return time
-
-    },
-    handleCrt(val){
-      let d1 = val.replace(/\-/g, "/"),
-      date1 = new Date(d1),
-      date2 = new Date(),
-      date = date2 - date1,
-      //计算出小时数
-      hours = parseInt( date / (3600) ),
-      //计算相差分钟数
-      leave2 = date - ( hours * 3600 ) ,       //计算小时数后剩余的毫秒数
-      minutes = Math.floor( leave2 / (60) ),
-      //计算相差秒数
-      leave3 = leave2 - ( minutes * 60 ) ,     //计算分钟数后剩余的毫秒数
-      seconds = Math.round(leave3),
-      backTime;
-      if(hours > 0){
-        backTime = `${hours}小时前`;
-      }
-      else{
-        backTime = minutes === 0 ? '1分钟前' :`${minutes}分钟前`;
-      }
-      return hours < 24 ? backTime : `${val.split(' ')[0]}`;
-
-    }
   },
   watch: {
     $route: {
@@ -126,13 +97,28 @@ export default {
         this.appInfo.modTime = dateFormat(this.appInfo.modTime, 'YYYY-MM-DD')
       })
     },
+    //获取当前用户信息
+    getCurrentUser(){
+      return homeService.currentUser().then( data=>{
+        this.currentUserId = data.userId;
+      })
+    },
   },
   created(){
     let { listId } = this.$route.params;
     if(listId){
       this.$loading.show();
       this.listId = listId;
-      this.getAppInfo();
+      (async()=>{
+        await this.getCurrentUser();
+        await this.getAppInfo().then(data=>{
+          let userId = JSON.stringify(this.currentUserId);
+          if(this.appInfo.administratorId.length && userId === this.appInfo.administratorId){
+            this.isAppAdmin = true;
+          }
+        })
+
+      })()
       setTimeout(()=>{
         this.$loading.hide();
       },500)

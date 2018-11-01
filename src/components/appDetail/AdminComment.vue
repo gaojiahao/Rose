@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="edit_comment" @click="EditAdmin">
+    <div class="edit_comment" @click="EditAdmin" v-if="handle">
       <span class="iconfont icon-bianji"></span>
       <span>撰写评论</span>
     </div>
@@ -87,9 +87,14 @@ import RScroll from 'components/RScroll'
 import {getAdminCommentList} from 'service/appSettingService.js'
 export default {
   name:'ChangeLog',
+  props:{
+    handle: { //是否显示撰写
+      type: Boolean,
+      default : false
+    }
+  },
   data(){
     return {
-      latestLog : {},
       adminCommentList : [],
       listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
       popupShow : false,
@@ -128,7 +133,7 @@ export default {
   },
   filters:{
     handerTime(val){
-      let time  = dateFormat(val,'YYYY-MM-DD');
+      let time  = dateFormat(val,'YYYY-MM');
       return time
     }
   },
@@ -146,11 +151,8 @@ export default {
         listId: this.listId,
         limit: this.limit,
         page: this.page,
-        // sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])s
+        sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])
       }).then(({dataCount = 0, tableContent = []}) =>{
-        if(this.page === 1){
-          this.latestLog = tableContent[0];
-        }
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         this.adminCommentList = this.page === 1 ? tableContent : [...this.adminCommentList, ...tableContent];
         this.$nextTick(() => {
@@ -240,19 +242,6 @@ export default {
         overflow: hidden;
         padding: 0.03rem 0 0rem 0;
         font-size: 0.14rem;
-        span{
-          // display: block;
-        }
-        .achievement {
-          // p {
-          //   overflow: hidden;
-          //   display: -webkit-box;
-          //   word-break: break-all;
-          //   -webkit-line-clamp: 2;
-          //   text-overflow: ellipsis;
-          //   -webkit-box-orient: vertical;
-          // }
-        }
       }
 
     }
@@ -300,10 +289,9 @@ export default {
     }
     .swiper-container{
       width: 100%;
-      height: 2rem;
+      height: 1.8rem;
       .swiper-slide{
         width: 90%;
-        // margin: 0 5px;
         margin: 0 5px;
         background: #f0f1f5;
         border-radius: 0.1rem;  

@@ -11,12 +11,21 @@
         <span>{{latestLog.CRT_TIME | handerTime}}</span>
       </div>
       <div class="change_content">
-        <div>{{latestLog.CREATOR_NAME}}&nbsp;&nbsp;耗用时间:{{latestLog.TIME_CONSUMING}}</div>
-        <div>更新范围: {{latestLog.CHANGE_RANGE}}</div>
-        <div>备注: <span v-html="latestLog.CONTENT"></span></div>
+        <div class="each_change">
+          <span>{{latestLog.CREATOR_NAME}}</span>
+          <span style="margin-left:0.1rem;">耗用时间:{{latestLog.TIME_CONSUMING}}</span>
+        </div>
+        <div class="each_change">
+          <span class="change_title">更新范围: </span>
+          <span class="content">{{latestLog.CHANGE_RANGE}}</span>
+        </div>
+        <div class="each_change">
+          <span class="change_title">备注: </span>
+          <span v-html="latestLog.CONTENT" class="content"></span>
+        </div>
       </div>
     </div>
-    <div class="edit_log" @click="EditLog">
+    <div class="edit_log" @click="EditLog" v-if="handle">
       <span class="iconfont icon-bianji"></span>
       <span>撰写日志</span>
     </div>
@@ -59,6 +68,12 @@ import RScroll from 'components/RScroll'
 import {getChangeLog,saveLog} from 'service/appSettingService.js'
 export default {
   name:'ChangeLog',
+  props:{
+    handle: { //是否显示撰写
+      type: Boolean,
+      default : false
+    }
+  },
   data(){
     return {
       latestLog : {},
@@ -155,10 +170,12 @@ export default {
       align-items: center;
       font-size:0.12rem;
       color:#757575; 
-      padding: 0.05rem 0; 
+      padding: 0.03rem 0; 
     }
     .change_content{
-      font-size: 0.12rem;
+      color: #111;
+      font-size: 0.14rem;
+      line-height: 0.24rem;
     }
   }
   .change_log{
@@ -200,6 +217,7 @@ export default {
       }
     }
   }
+  //更新日子列表pop
   .vux-popup-dialog {
     background: #fff;
     height: 100%;

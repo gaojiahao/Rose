@@ -10,7 +10,7 @@
       </div>
       <div class="each_property vux-1px-b">
         <label>耗时(单位/时):</label>
-        <input type="number" class="property_val" v-model="submitData.spendTime" @focus="getFocus($event)">
+        <input type="number" class="property_val" v-model="submitData.spendTime" @focus="getFocus($event)" @blur="checkVal(submitData)">
       </div>
       <div class="each_property vux-1px-b">
         <label>更新内容:</label>
@@ -51,7 +51,9 @@ import {TransferDom, Popup, Group, Icon, XButton,dateFormat} from 'vux'
 import RScroll from 'components/RScroll'
 //请求 引入
 import {saveLog} from 'service/appSettingService.js'
+//方法引入
 import platfrom from '@/plugins/platform/index'
+import {toFixed} from '@/plugins/calc'
 export default {
   data(){
     return {
@@ -140,6 +142,15 @@ export default {
         this.submitData.scope += item.name
       })
     },
+    //处理数据保留2位小数，取绝对值
+    checkVal(item){
+      let {spendTime} = item;
+      // 金额
+      if (spendTime) {
+        item.spendTime = Math.abs(toFixed(spendTime));
+      }
+    },
+    //提交日志
     submitLog(){
       let warn = '';
       let validateMap = [
@@ -207,7 +218,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     let {path} = to;
-    // 新建物料，修改列表页的meta值
+    // 新增日志，修改列表页的meta值
     if (this.submitSuccess && to.name === 'APPDETAIL') {
       to.meta.reload = true;
     }
