@@ -1,61 +1,103 @@
 <template>
-  <div>
-    <div id="app">
-
-      <div class="cp_title">
+  <div id="app">
+      <!-- <div class="cp_title">
         销售预报
         <span class="username" v-if="username">欢迎,{{username}}</span>
-      </div>
+      </div> -->
+      <template v-if="username">
+        <div class="app-container">
+          <img class="avatar-img" :src="userInfo.avatar" alt="">
+          <div class="avatar-part"
+          :style="{background:`#111 url(${userInfo.avatar}) center -80px /cover no-repeat`}"></div>
+          <div class="dashboard-container-part">
+            <div class="place-holder"></div>
+            <div class="top-part">
+              <div>
+                <div class="date-part">
+                  <span>{{Today}}</span> 
+                  <span>,距离月底还有29天</span>
+                </div>
+                <div class="tips-title">
+                  <p>本月目标 600套</p>
+                </div>
+              </div>
+              <div class="user-info-container">
+                <div class="user-avatar">
+                  <img :src="userInfo.avatar">
+                </div>
+                <div class="user-info">
+                  <div class="user-name">欢迎, {{username}}</div>
+                  <div class="user-from">
+                    <span class="each-form-msg">{{userInfo.bank}}</span>
+                    <span class="each-form-msg">{{userInfo.region}}</span>
+                  </div>
+                </div> 
+              </div>
+            </div>
+            <div class="dashboard-part">
+              <div class="each-dashboard when-today">
+                <div class="dashboard_title">当天完成</div>
+                <div class="dashboard_count">100</div>
+              </div>
+              <div class="each-dashboard when-month">
+                <div class="dashboard_title">当月完成</div>
+                <div class="dashboard_count">100</div>
+              </div>
+              <div class="each-dashboard least-num">
+                <div class="dashboard_title">距离完成</div>
+                <div class="dashboard_count">100</div>
+              </div>
+            </div>
+            <div class="place-holder"></div>
+          </div>
+          <div class="main-container-part">
+            <div class="tips-title">操作选择</div>
+            <div class="select-part">
+              <!-- <x-button
+                class="each_select"
+                :gradients="['#B99763', '#E7D0A2']"
+                @click.native="goSP"
+              >销售预报提交
+              </x-button>
+              <x-button 
+                class="each_select" 
+                :gradients="['#B99763', '#E7D0A2']" 
+                @click.native="gohelp"> 
+                销售预报提交
+              </x-button>
+              <x-button
+                class="each_select"
+                :gradients="['#B99763', '#E7D0A2']"
+                @click.native="goMR">
+                个人业绩查看
+              </x-button>
+              <x-button
+                class="each_select"
+                :gradients="['#B99763', '#E7D0A2']"
+                @click.native="goRP"
+                v-if="showLookReport">
+                查看报表
+              </x-button>
+              <x-button
+                class="each_select"
+                :gradients="['#B99763', '#E7D0A2']"
+                @click.native="goAchievement"
+                v-if="showLookSales">
+                销售业绩查看
+              </x-button> -->
+              <div class="each-select" @click.stop="gohelp">销售预报提交</div>
+              <div class="each-select" @click.stop="goMR">个人业绩查看</div>
+              <div class="each-select" @click.stop="goRP">查看报表</div>
+              <div class="each-select" @click.stop="goAchievement">销售业绩查看</div>
 
-
-      <div class="select_part" v-if="username">
-
-        <!--<x-button
-          class="each_select"
-          :gradients="['#B99763', '#E7D0A2']"
-          @click.native="goSP"
-        >销售预报提交
-        </x-button>-->
-
-        <x-button
-          class="each_select"
-          :gradients="['#B99763', '#E7D0A2']"
-          @click.native="gohelp"
-        >销售预报提交
-        </x-button>
-
-        <x-button
-          class="each_select"
-          :gradients="['#B99763', '#E7D0A2']"
-          @click.native="goMR"
-        >个人业绩查看
-        </x-button>
-
-        <x-button
-          class="each_select"
-          :gradients="['#B99763', '#E7D0A2']"
-          @click.native="goRP"
-          v-if="showLookReport"
-        >查看报表
-        </x-button>
-
-        <x-button
-          class="each_select"
-          :gradients="['#B99763', '#E7D0A2']"
-          @click.native="goAchievement"
-          v-if="showLookSales"
-        >销售业绩查看
-        </x-button>
-
-      </div>
-
-      <h2 class="tech_bottom">
-        Powered by <span class="cp_name">Refordom</span>
-      </h2>
-
-    </div>
+            </div>
+            <h2 class="tech_bottom">
+              Powered by <span class="cp_name">Refordom</span>
+            </h2>
+          </div>
+        </div>
+      </template>
     <loading :show="showLoading"></loading>
-    <!--<router-view></router-view>-->
   </div>
 
 </template>
@@ -64,7 +106,6 @@
   import {XButton, Confirm, querystring} from 'vux'
   import tokenService from 'service/tokenService'
   import Loading from 'components/common/loading'
-
   const ROSE_OPTION_KEY = 'ROSE_OPTION';
   const ROSE_LOGIN_CODE = 'ROSE_CODE';
   export default {
@@ -75,38 +116,40 @@
     },
     data() {
       return {
-        showLookReport: false, // 是否展示查看报表按钮
+        Today: '',                  // 当前日期
+        username: '',               //用户名称
+        userInfo: {},
         showLoading: false,
-        username: '', //用户名称
-        showLookSales: false, // 是否展示销售业绩查看
+        showLookSales: false,       // 是否展示销售业绩查看
+        showLookReport: false,      // 是否展示查看报表按钮
       }
     },
     methods: {
-      /*
-       * 销售预报
-       */
+      // 销售预报
       goSP() {
         this.$router.push({path: '/saleReport'})
       },
-      //支援
+      // 支援
       gohelp() {
         this.$router.push({path: '/help'})
       },
-      /*
-       * 个人业绩
-       */
+      // 个人业绩
       goMR() {
         this.$router.push({path: '/myRecord'})
       },
-      /*
-       * 查看报表
-       */
+      // 查看报表
       goRP() {
         this.$router.push({path: '/reportsOp'})
       },
       // TODO 查看销售业绩
       goAchievement() {
         this.$router.push({path: '/entry'})
+      },
+      getToday(){
+        let now = new Date();
+        let whichDay = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+        let Today = `${(now.getMonth()+1)}月${now.getDate()}号 ${whichDay[now.getDay()]}`;
+        this.Today = Today;
       }
     },
     beforeCreate() {
@@ -123,7 +166,6 @@
       (async () => {
         this.showLoading = true;
         await tokenService.getToken().catch(err => {
-
           this.$vux.alert.show({
             content: err.message
           })
@@ -138,11 +180,28 @@
             content: err.message
           })
         });
-
         await tokenService.getUser().then(userInfo => {
+          // 获取当前时间
+          this.getToday();
           let {completeData = {}, userCode = ''} = userInfo;
           let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125', '2025'];
           this.showLookSales = allowList.includes(userCode);
+          // 获取 头像姓名
+          let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
+          // 如果头像不存在则指定默认头像
+          if(!avatar){
+            // let url = require('assets/ava03.png')
+            // let url = require('assets/avatar.png')
+            let url = require('assets/io.jpg')
+            avatar = url;
+          };
+          this.userInfo = { 
+            name, 
+            avatar,
+            bank: completeData.homeBank || '',         //银行
+            region: completeData.homeProvince || '',   //省份地区
+            dept: completeData.area || '',             //事业部
+          };
           localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
             bank: completeData.homeBank || '',         //银行
             region: completeData.homeProvince || '',   //省份地区
@@ -162,7 +221,168 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang='scss'>
+  .app-container {
+    background: #F5F5F5;
+    padding-top: 1.4rem;
+  }
+  .avatar-part {
+    top: -5px;
+    width: 100%;
+    height: 1.8rem;
+    filter: blur(4px);
+    position: absolute;
+    // background: #111 url('../assets/avatar.png') center -80px /cover no-repeat;
+  }
+  .avatar-img {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1.4rem;
+    position: absolute;
+  }
+  .dashboard-container-part {
+    width: 100%;
+    position: relative;
+    background: #FFF;
+    box-sizing: border-box;
+    padding: .26rem .1rem .16rem;
+    .place-holder {
+      left: 0;
+      top: -10px;
+      z-index: 10;
+      width: 100%;
+      height: .12rem;
+      position: absolute;
+      background: #FFF;
+      border-top-left-radius: .1rem;
+      border-top-right-radius: .1rem;
+    }
+    .user-info-container {
+      top: -40px;
+      left: 20px;
+      z-index: 20;
+      color: #FFF;
+      display: flex;
+      font-size: .14rem;
+      position: absolute;
+      align-items: center;
+      .user-avatar {
+        width: .6rem;
+        height: .6rem;
+        img {
+          width: 100%;
+          border-radius: 50%;
+        }
+      }
+      .user-info {
+        margin-left: .1rem;
+        .user-name {
+          font-size: .16rem;
+          font-weight: bold;
+          margin-bottom: .06rem;
+        }
+        .user-from {
+          font-size: .12rem;
+          .each-form-msg {
+            border-radius: .12rem;
+            background: #5077aa;
+            box-shadow: 0 2px 2px #5077aa;
+            padding: .01rem .04rem;
+          }
+          .each-form-msg + .each-form-msg {
+            margin-left: .04rem;
+          }
+        }
+      }
+
+    }
+    .top-part {
+      display: flex;
+      align-items: center;
+      margin-bottom: .1rem;
+      justify-content: space-between;
+      .tips-title {
+        color: #111;
+        font-size: .26rem;
+        font-weight: bold;
+        line-height: .32rem;
+      }
+    }
+    .date-part {
+      color: #8A8A8E;
+      font-size: .14rem;
+      font-weight: bold;
+    }
+    .dashboard-part {
+      display: flex;
+      .each-dashboard {
+        flex: 1;
+        color: #FFF;
+        font-weight: bold;
+        line-height: .2rem;
+        margin-right: .1rem; 
+        border-radius: .08rem;
+        padding: .06rem .04rem;
+        &.when-today {
+          $bgColor: #2366FF;
+          background: $bgColor;
+          box-shadow: 0 2px 5px $bgColor;
+        }
+        &.when-month {
+          $bgColor: #00C5C3;
+          background: $bgColor;
+          box-shadow: 0 2px 5px $bgColor;
+        }
+        &.least-num {
+          margin-right: unset;
+          $bgColor: #D2AD6B;;
+          background: $bgColor;
+          box-shadow: 0 2px 5px $bgColor;
+        }
+
+      }
+        
+    }
+  }
+  .main-container-part {
+    width: 100%;
+    height: 2rem;
+    padding: 0 .1rem;    
+    margin-top: .1rem;
+    position: relative;
+    background: #FFF;
+    box-sizing: border-box;
+    .tips-title {
+      width: 100%;
+      font-size: .2rem;
+      font-weight: bold;
+      margin-bottom: .2rem;
+    }
+    /* 选项框 */
+    .select-part {
+      // top: 50%;
+      // left: 50%;
+      // width: 95%;
+      // width: 100%;
+      // position: absolute;
+      // transform: translate(-50%, -50%);
+      .each-select {
+        width: 100%;
+        color: #FFF;
+        height: .42rem;
+        font-size: .18rem;
+        text-align: center;
+        line-height: .42rem;
+        border-radius: .08rem;
+        box-shadow: 0 2px 5px #B99763;
+        background: linear-gradient(to right, #B99763, #E7D0A2);
+      }
+      .each-select + .each-select {
+        margin-top: .2rem;
+      }
+    }
+  }
   .username {
     line-height: initial;
     font-size: 16px;
@@ -183,7 +403,6 @@
     color: #CFCFCF;
     position: relative;
   }
-
   /* 技术支持公司名  */
   .tech_bottom {
     width: 100%;
@@ -194,19 +413,7 @@
     color: #CDCED3;
     font-weight: 200;
   }
-
   .cp_name {
     color: dodgerblue;
-  }
-
-  /* 选项框 */
-  .select_part {
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
   }
 </style>
