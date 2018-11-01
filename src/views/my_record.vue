@@ -135,7 +135,7 @@
             this.list1.push({
               label: item.objName,
               // value: "￥" + numberComma(item.amount, 3) + " " + "(" + item.qty + "件/套" + ")",
-              value: `￥${numberComma(item.amount, 3)} (${item.qty}件折合${item.coverNum || 0}套)`,
+              value: `￥${numberComma(item.amount, 3)} (${item.qty}件折合${toFixed(item.coverNum || 0)}套)`,
             });
           } else if (item.objType == "A") {
             this.list2Total = item.amount;

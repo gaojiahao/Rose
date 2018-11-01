@@ -136,7 +136,6 @@
         //从缓存中拿到上个页面提交的数据
         let jsonData = JSON.parse(this.childInfo.jsonData);
         let {transDetailUncalc, baseinfoExt = {}} = jsonData;
-        console.log(baseinfoExt)
 
         for (let i = 0; i < transDetailUncalc.length; i++) {
           if (
@@ -146,7 +145,8 @@
             //项目类产品明细
             this.list1.push({
               label: transDetailUncalc[i].transObjCode,
-              value: `${transDetailUncalc[i].qty}件/套`
+              // value: `${transDetailUncalc[i].qty}件/套`
+              value: `${transDetailUncalc[i].qty}件折合${transDetailUncalc[i].num1}套`
             });
             // 最终合计 数量
             list4_num += transDetailUncalc[i].qty == '' ? 0 : transDetailUncalc[i].qty;
