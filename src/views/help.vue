@@ -97,7 +97,7 @@
                    @on-blur="checkAmt('hotelAmt')"></x-input>
           <x-input title="其他" v-model.number="otherAmt" text-align="right" placeholder="请输入其他金额"
                    @on-blur="checkAmt('otherAmt')"></x-input>
-          <cell class="each_part" title="合计" :value="totalCost" value-align="right"></cell>
+          <cell class="each_part" title="合计" :value="totalCost | numberComma" value-align="right"></cell>
           <cell class="each_part" title="费用销量比" :value="costVolumeRatio" value-align="right"></cell>
         </group>
 
