@@ -145,16 +145,16 @@
                 value: '',
               }, {
                 label: '住宿费',
-                value: item.hotelCost ? `￥${numberComma(toFixed(item.hotelCost))}` : '无',
+                value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.hotelCost)))}` : '无',
               }, {
                 label: '交通费',
-                value: item.hotelCost ? `￥${numberComma(toFixed(item.trafficCost))}` : '无',
+                value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.trafficCost)))}` : '无',
               }, {
                 label: '其他费用',
-                value: item.elseCost ? `￥${numberComma(toFixed(item.elseCost))}` : '无',
+                value: item.elseCost ? `￥${numberComma(toFixed(Number(item.elseCost)))}` : '无',
               }, {
                 label: '合计',
-                value: item.hotelAndElseCost ? `￥${numberComma(toFixed(item.hotelAndElseCost))}` : '无',
+                value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
               }, {
                 label: '费用销售比',
                 // value: item.costSalesRatio || '无',
