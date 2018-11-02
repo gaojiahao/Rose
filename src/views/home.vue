@@ -55,8 +55,8 @@
             <div class="select-part">
               <div class="each-select" @click.stop="gohelp">销售预报提交</div>
               <div class="each-select" @click.stop="goMR">个人业绩查看</div>
-              <div class="each-select" @click.stop="goRP">查看报表</div>
-              <div class="each-select" @click.stop="goAchievement">销售业绩查看</div>
+              <div class="each-select" @click.stop="goRP" v-if="showLookReport">查看报表</div>
+              <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
             </div>
             <h2 class="tech_bottom">
               Powered by <span class="cp_name">Refordom</span>
