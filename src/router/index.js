@@ -50,7 +50,7 @@ export default new Router({
       name: 'help',
       component: help,
       meta: {
-        title: '支援预报提交'
+        title: '预报提交'
       }
     },
     {
