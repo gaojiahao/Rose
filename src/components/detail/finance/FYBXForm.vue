@@ -87,7 +87,7 @@ export default {
           });
           return;
         }
-        this.attachment = attachment;
+        this.attachment = data.attachment;
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let val of dataSet) {
