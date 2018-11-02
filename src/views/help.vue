@@ -181,7 +181,7 @@
               return false;
             }
             this[item.key].every(item => {
-              if (item.value !== '无' && !item.qty) {
+              if (item.value !== '无' && !item.qty && item.qty !== 0) {
                 tips = '请填写产品数量';
                 return false
               }
