@@ -12,7 +12,7 @@ let tokenService = {
    */
   clean() {
     window.sessionStorage.removeItem(TOKEN_KEY);
-  },
+  },  
   /**
    * 获取token或者用户ID，默认获取token
    */
@@ -81,19 +81,23 @@ let tokenService = {
           },
           data: {
             loginModel: 1,
-            password: 'stark',
-            userCode: 'rfd9527'
+            password: '123456',
+            userCode: '2236'
+            // password: 'stark',
+            // userCode: 'rfd9527'
           }
         };
-
         axios(params).then((res) => {
           let data = res.data;
           this.clean();
+          // this.getSuperior().then(({ tableCount }) => {
+          //   console.log(tableCount);
+          // })
           this.setToken({
-            token: data.token || '',
-            entityId: data.entityId || '',
-            avatar: data.avatar || '',
-            name: data.name
+          token: data.token || '',
+          entityId: data.entityId || '',
+          avatar: data.avatar || '',
+          name: data.name
           });
           resolve(data[key])
         }).catch(function (error) {
@@ -116,6 +120,9 @@ let tokenService = {
       axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${corpsecret}`).then((res) => {
         let data = res.data;
         this.clean();
+        // this.getSuperior().then(({ tableCount }) => {
+        //   console.log(tableCount);
+        // })
         this.setToken({
           token: data.token || '',
           entityId: data.entityId || '',

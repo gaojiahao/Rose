@@ -6,22 +6,22 @@
       </div> -->
       <template v-if="username">
         <div class="app-container">
-          <img class="avatar-img" :src="userInfo.avatar" alt="">
-          <div class="avatar-part"
-          :style="{background:`#111 url(${userInfo.avatar}) center -80px /cover no-repeat`}"></div>
+          <!-- <img class="avatar-img" :src="userInfo.avatar" alt=""> -->
+          <div class="avatar-part"></div>
           <div class="dashboard-container-part">
             <div class="place-holder"></div>
             <div class="top-part">
               <div>
                 <div class="date-part">
-                  <span>{{Today}}</span> 
-                  <span>,距离月底还有29天</span>
+                  <span>{{Today}},</span> 
+                  <span>距离月底还有28天</span>
                 </div>
                 <div class="tips-title">
-                  <p>本月目标 600套</p>
+                  <!-- <p>本月目标 600套</p> -->
+                  <p>{{username}}, 距离完成 {{100 - ProductCount.monthCoverNum || 0}}</p>
                 </div>
               </div>
-              <div class="user-info-container">
+              <!-- <div class="user-info-container">
                 <div class="user-avatar">
                   <img :src="userInfo.avatar">
                 </div>
@@ -32,20 +32,20 @@
                     <span class="each-form-msg">{{userInfo.region}}</span>
                   </div>
                 </div> 
-              </div>
+              </div> -->
             </div>
             <div class="dashboard-part">
-              <div class="each-dashboard when-today">
-                <div class="dashboard_title">当天完成</div>
+              <div class="each-dashboard least-num">
+                <div class="dashboard_title">本月目标</div>
                 <div class="dashboard_count">100</div>
+              </div>
+              <div class="each-dashboard when-today">
+                <div class="dashboard_title">当日完成</div>
+                <div class="dashboard_count">{{ProductCount.todayCoverNum || 0}}</div>
               </div>
               <div class="each-dashboard when-month">
                 <div class="dashboard_title">当月完成</div>
-                <div class="dashboard_count">100</div>
-              </div>
-              <div class="each-dashboard least-num">
-                <div class="dashboard_title">距离完成</div>
-                <div class="dashboard_count">100</div>
+                <div class="dashboard_count">{{ProductCount.monthCoverNum || 0}}</div>
               </div>
             </div>
             <div class="place-holder"></div>
@@ -53,43 +53,10 @@
           <div class="main-container-part">
             <div class="tips-title">操作选择</div>
             <div class="select-part">
-              <!-- <x-button
-                class="each_select"
-                :gradients="['#B99763', '#E7D0A2']"
-                @click.native="goSP"
-              >销售预报提交
-              </x-button>
-              <x-button 
-                class="each_select" 
-                :gradients="['#B99763', '#E7D0A2']" 
-                @click.native="gohelp"> 
-                销售预报提交
-              </x-button>
-              <x-button
-                class="each_select"
-                :gradients="['#B99763', '#E7D0A2']"
-                @click.native="goMR">
-                个人业绩查看
-              </x-button>
-              <x-button
-                class="each_select"
-                :gradients="['#B99763', '#E7D0A2']"
-                @click.native="goRP"
-                v-if="showLookReport">
-                查看报表
-              </x-button>
-              <x-button
-                class="each_select"
-                :gradients="['#B99763', '#E7D0A2']"
-                @click.native="goAchievement"
-                v-if="showLookSales">
-                销售业绩查看
-              </x-button> -->
               <div class="each-select" @click.stop="gohelp">销售预报提交</div>
               <div class="each-select" @click.stop="goMR">个人业绩查看</div>
               <div class="each-select" @click.stop="goRP">查看报表</div>
               <div class="each-select" @click.stop="goAchievement">销售业绩查看</div>
-
             </div>
             <h2 class="tech_bottom">
               Powered by <span class="cp_name">Refordom</span>
@@ -105,6 +72,7 @@
 <script>
   import {XButton, Confirm, querystring} from 'vux'
   import tokenService from 'service/tokenService'
+  import { getProductCount } from 'service/homeService'
   import Loading from 'components/common/loading'
   const ROSE_OPTION_KEY = 'ROSE_OPTION';
   const ROSE_LOGIN_CODE = 'ROSE_CODE';
@@ -117,8 +85,9 @@
     data() {
       return {
         Today: '',                  // 当前日期
-        username: '',               //用户名称
+        username: '',               // 用户名称
         userInfo: {},
+        ProductCount: {},           // 用户项目类产品提交数量
         showLoading: false,
         showLookSales: false,       // 是否展示销售业绩查看
         showLookReport: false,      // 是否展示查看报表按钮
@@ -131,7 +100,11 @@
       },
       // 支援
       gohelp() {
-        this.$router.push({path: '/help'})
+        this.$router.push({path: '/help',
+          query: {
+            monthCoverNum: this.ProductCount.monthCoverNum
+          }
+        })
       },
       // 个人业绩
       goMR() {
@@ -190,9 +163,9 @@
           let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
           // 如果头像不存在则指定默认头像
           if(!avatar){
-            // let url = require('assets/ava03.png')
+            let url = require('assets/ava03.png')
             // let url = require('assets/avatar.png')
-            let url = require('assets/io.jpg')
+            // let url = require('assets/io.jpg')
             avatar = url;
           };
           this.userInfo = { 
@@ -215,6 +188,17 @@
             content: err.message
           })
         });
+        // await tokenService.getSuperior().then(({ tableContent }) => {
+        //   console.log(tableContent);
+        // })
+        await getProductCount().then(({ tableContent }) => {
+          let [ Count ={} ] = tableContent;
+          this.ProductCount = Count; 
+        }).catch(err => {
+          this.$vux.alert.show({
+            content: err.message
+          })
+        });
         this.showLoading = false;
       })()
     }
@@ -222,17 +206,21 @@
 </script>
 
 <style scoped lang='scss'>
+  #app {
+    // background: #F5F5F5;
+  }
   .app-container {
+    padding-top: 2rem;
     background: #F5F5F5;
-    padding-top: 1.4rem;
+
   }
   .avatar-part {
-    top: -5px;
+    top: 0;
     width: 100%;
-    height: 1.8rem;
-    filter: blur(4px);
+    height: 2rem;
+    // filter: blur(1px);
     position: absolute;
-    // background: #111 url('../assets/avatar.png') center -80px /cover no-repeat;
+    background: #111 url('../assets/bg01.jpeg') top / cover no-repeat;
   }
   .avatar-img {
     top: 0;
@@ -246,7 +234,7 @@
     position: relative;
     background: #FFF;
     box-sizing: border-box;
-    padding: .26rem .1rem .16rem;
+    padding: 0 .1rem .04rem;
     .place-holder {
       left: 0;
       top: -10px;
@@ -320,34 +308,44 @@
         flex: 1;
         color: #FFF;
         font-weight: bold;
-        line-height: .2rem;
-        margin-right: .1rem; 
+        line-height: .22rem;
         border-radius: .08rem;
         padding: .06rem .04rem;
+        .dashboard_title {
+          font-size: .12rem;
+        }
+        .dashboard_count {
+          font-size: .22rem;
+        }
         &.when-today {
-          $bgColor: #2366FF;
-          background: $bgColor;
-          box-shadow: 0 2px 5px $bgColor;
+          // $bgColor: #2366FF;
+          $bgColor: #111;
+          color: $bgColor;
+          // background: $bgColor;
+          // box-shadow: 0 2px 5px $bgColor;
         }
         &.when-month {
-          $bgColor: #00C5C3;
-          background: $bgColor;
-          box-shadow: 0 2px 5px $bgColor;
+          // $bgColor: #00C5C3;
+          $bgColor: #111;
+          color: $bgColor;
+          // background: $bgColor;
+          // box-shadow: 0 2px 5px $bgColor;
         }
         &.least-num {
-          margin-right: unset;
-          $bgColor: #D2AD6B;;
-          background: $bgColor;
-          box-shadow: 0 2px 5px $bgColor;
+          // margin-right: unset;
+          $bgColor: #D2AD6B;
+          color: $bgColor;
+          // background: $bgColor;
+          // box-shadow: 0 2px 5px $bgColor;
         }
-
       }
-        
+      .each-dashboard  + .each-dashboard  {
+        margin-left: .1rem;
+      }
     }
   }
   .main-container-part {
     width: 100%;
-    height: 2rem;
     padding: 0 .1rem;    
     margin-top: .1rem;
     position: relative;
@@ -357,29 +355,24 @@
       width: 100%;
       font-size: .2rem;
       font-weight: bold;
-      margin-bottom: .2rem;
+      margin-bottom: .1rem;
     }
     /* 选项框 */
     .select-part {
-      // top: 50%;
-      // left: 50%;
-      // width: 95%;
-      // width: 100%;
-      // position: absolute;
-      // transform: translate(-50%, -50%);
       .each-select {
         width: 100%;
-        color: #FFF;
         height: .42rem;
+        color: #EDE4A3;
         font-size: .18rem;
+        font-weight: bold;
         text-align: center;
         line-height: .42rem;
-        border-radius: .08rem;
-        box-shadow: 0 2px 5px #B99763;
-        background: linear-gradient(to right, #B99763, #E7D0A2);
+        border-radius: .06rem;
+        background: #D7030F;
+        // background: #000;
       }
       .each-select + .each-select {
-        margin-top: .2rem;
+        margin-top: .15rem;
       }
     }
   }
