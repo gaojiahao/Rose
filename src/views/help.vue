@@ -325,7 +325,7 @@
       this.getBank();
     },
     beforeRouteLeave(to, from, next) {
-      if (!this.arr[0].value.length || to.name == "Count") next();
+      if (!this.arr.length || to.name == "Count") next();
       else {
         this.$vux.confirm.show({
           title: "温馨提示",
