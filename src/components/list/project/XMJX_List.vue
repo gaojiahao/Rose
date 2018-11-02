@@ -29,9 +29,9 @@
             <div class="major_content vux-1px-b">
               <div class="status_part">
                 <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType_project}}</span>
+                <span class="status_name">{{item.projectType}}</span>
               </div>
-              {{item.projectName_project}}
+              {{item.projectName}}
             </div>
           </div>
           <!-- 金额合计 -->
@@ -69,6 +69,7 @@
             value: 'projectName_project',
           }, */
         ],
+        listViewID: 2331,
       }
     },
     mixins: [listCommon],
@@ -94,45 +95,45 @@
           })
         }, 200)
       },
-      getList(noReset = false) {
-        let filter = [];
-        if (this.serachVal) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'transCode',
-              attendedOperation: 'or'
-            }, {
-              operator: 'like',
-              value: this.serachVal,
-              property: 'handlerName',
-            },
-          ];
-        }
-        return getList(2331, {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          sort: JSON.stringify(this.sort),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input', false);
-          tableContent.forEach(item => {
-            this.setStatus(item);
-          });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-        }).catch(e => {
-          this.resetScroll();
-        })
-      }
+      // getList(noReset = false) {
+      //   let filter = [];
+      //   if (this.serachVal) {
+      //     filter = [
+      //       ...filter,
+      //       {
+      //         operator: 'like',
+      //         value: this.serachVal,
+      //         property: 'transCode',
+      //         attendedOperation: 'or'
+      //       }, {
+      //         operator: 'like',
+      //         value: this.serachVal,
+      //         property: 'handlerName',
+      //       },
+      //     ];
+      //   }
+      //   return getList(2331, {
+      //     limit: this.limit,
+      //     page: this.page,
+      //     start: (this.page - 1) * this.limit,
+      //     filter: JSON.stringify(filter),
+      //     sort: JSON.stringify(this.sort),
+      //   }).then(({dataCount = 0, tableContent = []}) => {
+      //     this.$emit('input', false);
+      //     tableContent.forEach(item => {
+      //       this.setStatus(item);
+      //     });
+      //     this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+      //     this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+      //     if (!noReset) {
+      //       this.$nextTick(() => {
+      //         this.resetScroll();
+      //       })
+      //     }
+      //   }).catch(e => {
+      //     this.resetScroll();
+      //   })
+      // }
     }
   }
 </script>

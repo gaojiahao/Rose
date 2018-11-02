@@ -14,7 +14,7 @@
                 <div class="related_num">实例数量：<span>{{item.itemCount}}</span></div>
               </div> 
             </div>
-            <div @click="goRelation(item)" class="create_order">创建并关联</div>
+            <div @click="goRelation(item)" class="create_order" v-show="item.isrelated">创建并关联</div>
           </div>
           <div class="related_list">
             <div class="related_item vux-1px-b" v-for="(rItem, rIndex) in item.relatedList" @click="goDetail(item, rItem)"
@@ -39,7 +39,7 @@
   import {getList} from 'service/commonService'
   import {getListView} from 'service/detailService'
   import Apps from '../../maps/Apps'
-
+  import relatedKey from './../../maps/related.js'
   export default {
     data() {
       return {
@@ -47,6 +47,7 @@
         transCode: '',
         RelatedAppList: [],
         swiper: null,
+        taskType : '',
       }
     },
     methods: {
@@ -58,6 +59,11 @@
         }).then(({relevantItems: relatedApply}) => {
           relatedApply.forEach(item => {
             if (Apps[item.listId]) {
+              //判断是否存在关联并创建关系
+              item.isrelated = false;
+              if(relatedKey[this.taskType] && relatedKey[this.taskType][item.listId]){
+                item.isrelated = true;
+              }
               let defaultFilter = item.content.map(cItem => {
                 return cItem.transCode
               }).join(',');
@@ -128,6 +134,9 @@
       this.$loading.show();
       this.listId = this.$route.params.listId;
       this.transCode = this.$route.query.transCode;
+      if(this.transCode){
+        this.taskType = this.transCode.split('_')[0]
+      }      
       (async () => {
         await this.getAppExampleDetails();
         let promises = [];

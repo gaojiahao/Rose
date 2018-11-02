@@ -57,7 +57,7 @@
   import {
     saveProjectConclusion, findProjectConclusion,
     updateProjectConclusion, getProjectTodoTask,
-    findConclusion,
+    findConclusion,findProjectApproval
   } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
@@ -213,6 +213,32 @@
           }
         };
       },
+      // TODO 获取关联数据
+      getRelationData() {
+        return findProjectApproval(this.relationKey).then(({formData = {},attachment = []}) => {
+          let data = JSON.parse(JSON.stringify(formData.approval));
+          this.projectApproval = {
+            BUDGET_CAPITAL: data.budgetCapital,
+            BUDGET_COST: data.budgetCost,
+            BUDGET_INCOME: data.budgetIncome,
+            BUDGET_PROFIT: data.budgetProfit,
+            BUDGET_PROFIT_MARGIN: data.budgetProfitMargin,
+            COMMENT: data.comment,
+            EXPECT_END_DATE: data.expectEndDate,
+            EXPECT_START_DATE: data.expectStartDate,
+            ID: data.projectApprovalId,
+            PHONE_NUMBER: data.phoneNumber,
+            PROJECT_MANAGER: data.projectManager,
+            PROJECT_NAME: data.projectName,
+            PROJECT_STATUS: data.projectStatus,
+            PROJECT_SUBCLASS: data.projectSubclass,
+            PROJECT_TYPE: data.projectType,
+            REFERENCE_ID: data.referenceId
+          }
+          this.selProject(JSON.stringify(this.projectApproval));
+        })
+
+      }
     },
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);

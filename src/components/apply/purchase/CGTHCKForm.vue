@@ -39,7 +39,7 @@
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                     </div>
                     <div class="mater_more">
-                      <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
+                      <span class='qty' v-show="item.qtyBal">可退货数量: {{item.qtyBal}}</span>
                       <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
@@ -80,6 +80,9 @@
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <span v-show="modifyMatter.qtyBal">可退货数量: {{modifyMatter.qtyBal}}</span>
+          </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="退货数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
@@ -493,6 +496,65 @@ export default {
           formData : this.formData
         }
       };
+    },
+     // TODO 获取关联数据
+    getRelationData() {
+      let {uniqueId} = this.$route.query;
+      return getSOList({
+        formViewUniqueId: uniqueId,
+        transCode: this.relationKey
+      }).then(data => {
+        let {success = true, formData = {},attachment = []} = data;
+        // http200时提示报错信息
+        if (!success) {
+          this.$vux.alert.show({
+            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+          });
+          return;
+        }
+        // 获取合计
+        let {inPut} = formData;
+        let {dataSet = []} = inPut;
+        dataSet = dataSet.map(item => {
+          return {
+            ...item,
+            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            inventoryName: item.inventoryName_transObjCode,
+            inventoryCode: item.inventoryCode_transObjCode,
+            specification: item.specification_transObjCode,
+            processing: item.tdProcessing || '商品',
+            measureUnit: item.measureUnit_transObjCode,
+            transCode: this.relationKey,
+            qtyBal: item.tdQty,
+            tdQty: '',
+
+          };
+        });
+        // 供应商信息
+        this.dealerInfo = {
+          creatorName: formData.dealerCreditContactPersonName, // 客户名
+          dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+          dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+          dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
+          dealerLabelName: inPut.crDealerLabel, // 关系标签
+          province: inPut.province_dealerCodeCredit, // 省份
+          city: inPut.city_dealerCodeCredit, // 城市
+          county: inPut.county_dealerCodeCredit, // 地区
+          address: inPut.address_dealerCodeCredit, // 详细地址
+        };
+        // 物料请求参数
+        this.matterParams = {
+          dealerCode: this.dealerInfo.dealerCode
+        };
+
+        this.matterList = dataSet;
+        this.orderList = {
+          [this.relationKey]: dataSet,
+        };
+        // this.crDealerPaymentTerm = order.drDealerPaymentTerm;
+        this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
+        this.$loading.hide();       
+      })
     },
   },
   created() {

@@ -18,10 +18,10 @@
         <p class="cp_name" v-if="selItems.COMMENT">
           {{selItems.COMMENT}}<span class="symbol"> [项目说明]</span>
         </p>
-        <p class="cp_ads">预期开始日期：{{selItems.EXPECT_START_DATE}}</p>
-        <p class="cp_ads">预期截止日期：{{selItems.EXPECT_END_DATE}}</p>
+        <p class="cp_ads">预期开始日期：{{selItems.EXPECT_START_DATE | handlerDate}}</p>
+        <p class="cp_ads">预期截止日期：{{selItems.EXPECT_END_DATE | handlerDate}}</p>
       </div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="30"></x-icon>
+      <x-icon class="r_arrow" type="ios-arrow-right" size="30" v-show="isChoice"></x-icon>
     </template>
     <!-- 项目计划popup -->
     <div v-transfer-dom>
@@ -52,8 +52,8 @@
                       {{item.COMMENT}}<span class="symbol"> [项目说明]</span>
                     </div>
                     <div class="mater_time">
-                      <div>预期开始日期：{{item.EXPECT_START_DATE}}</div>
-                      <div>预期截止日期：{{item.EXPECT_END_DATE}}</div>
+                      <div>预期开始日期：{{item.EXPECT_START_DATE | handlerDate}}</div>
+                      <div>预期截止日期：{{item.EXPECT_END_DATE | handlerDate}}</div>
                     </div>
                   </div>
                 </div>
@@ -103,6 +103,7 @@
           click: true,
           pullUpLoad: true,
         },
+        isChoice: true,//是否显示右箭头
       }
     },
     watch: {
@@ -114,6 +115,11 @@
       defaultValue(val) {
         this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
       },
+    },
+    filters:{
+      handlerDate(val){
+        return val.split(' ')[0]
+      }
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -167,10 +173,10 @@
         }
         getProjectApproval(params).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          for (let i = 0; i < tableContent.length; i++) {
-            tableContent[i].EXPECT_START_DATE = tableContent[i].EXPECT_START_DATE.split(' ')[0];
-            tableContent[i].EXPECT_END_DATE = tableContent[i].EXPECT_END_DATE.split(' ')[0];
-          }
+          // for (let i = 0; i < tableContent.length; i++) {
+          //   tableContent[i].EXPECT_START_DATE = tableContent[i].EXPECT_START_DATE.split(' ')[0];
+          //   tableContent[i].EXPECT_END_DATE = tableContent[i].EXPECT_END_DATE.split(' ')[0];
+          // }
           this.dealerList = this.page === 1 ? tableContent : [...this.dealerList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
@@ -202,6 +208,9 @@
     },
     created() {
       this.selItems = JSON.parse(JSON.stringify(this.defaultValue));
+      if(this.$route.query.relationKey){
+        this.isChoice = false;
+      }
       this.getDealer();
     },
   }

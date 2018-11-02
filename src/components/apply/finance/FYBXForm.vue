@@ -80,6 +80,7 @@ import { Cell ,Group,XInput, Swipeout,
 // 请求 引入
 import {getSOList} from 'service/detailService'
 import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+import {findProjectApproval} from 'service/projectService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
@@ -324,6 +325,16 @@ export default {
         }
       };
     },
+    // TODO 获取关联数据
+    getRelationData() {
+      return findProjectApproval(this.relationKey).then(({formData = {},attachment = []}) => {
+        this.projectName = formData.approval.projectName;
+        this.defaultProject = {
+          PROJECT_NAME: this.projectName
+        }
+      })
+
+    }
   },
   created() {
     let data = sessionStorage.getItem(DRAFT_KEY);

@@ -46,7 +46,7 @@
   import {
     saveProjectTask, findProjectTask,
     updateProjectTask, getProjectTodoTask,
-    getProjectPlanProjectName
+    getProjectPlanProjectName,findProjectPlan
   } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
@@ -167,6 +167,9 @@
       },
       // TODO 切换任务
       taskChange(val) {
+        if(this.relationKey){
+          return false;
+        }
         let [sel = {}] = this.taskList.filter(item => {
           return item.value === val;
         });
@@ -181,6 +184,9 @@
       },
       // TODO 项目切换
       projectChange(val) {
+        if(this.relationKey){
+          return false;
+        }
         this.projectTask = {
           ...this.projectTask,
           taskName: '', // 任务名称
@@ -236,6 +242,21 @@
           }
         };
       },
+      // TODO 获取关联数据
+      getRelationData() {
+        return findProjectPlan(this.relationKey).then(({formData = {},attachment = []}) => {
+          let plan =  formData.projectPlan[0];
+          this.projectTask = {
+            ...this.projectTask,
+            projectName: formData.projectApproval.projectName, // 项目名称
+            taskName: plan.taskName, // 任务名称
+            taskType: plan.taskType, // 任务类型
+            comment: plan.comment, // 任务说明,
+            deadline: dateFormat(plan.deadline, 'YYYY-MM-DD'), // 截止时间
+            planTime: plan.planTime, // 计划工时
+          }
+        })
+      }
     },
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);

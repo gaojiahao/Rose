@@ -35,8 +35,12 @@
                 <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || '无'}}</span>
             </div>
             <div class="mater_more">
-                <span>大类: {{modifyMatter.inventoryType}}</span>
-                <span>子类: {{modifyMatter.inventorySubclass}}</span>
+                <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
+                <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
+                <slot name="qtyBal" :modifyMatter="modifyMatter">
+                  <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
+                </slot>
+                
             </div>
             <div class="mater_more">
               <slot name="materStock" :modifyMatter="modifyMatter"></slot>

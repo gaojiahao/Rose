@@ -209,9 +209,10 @@ export default {
         relatedApply.forEach(item => {
           let { fileId, listId } = this.$route.params;
           if (Apps[fileId][listId]) {
-            if (item.itemCount > 0) {
-              this.HasValRealted = true;
-            }
+            this.HasValRealted = true;
+            // if (item.itemCount > 0) {
+            //   this.HasValRealted = true;
+            // }
           }
         })
       })

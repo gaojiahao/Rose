@@ -43,8 +43,10 @@
                           <span class='unit'>单位：{{item.measureUnit}}</span>
                           <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                           <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                          <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                          <span v-show="item.promDeliTime">采购计划到货日：{{item.promDeliTime}}</span>
+                      </div>
+                      <div class="mater_more">
+                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
+                        <span v-show="item.promDeliTime">采购计划到货日：{{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -216,6 +218,7 @@ export default {
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
+      console.log(sels);
       let orderList = {};
       sels.forEach(item => {
         let key = `${item.transCode}_${item.inventoryCode}`;
@@ -577,7 +580,9 @@ export default {
             processing: item.tdProcessing || '商品',
             measureUnit: item.measureUnit_transObjCode,
             transCode: this.relationKey,
+            qtyBal: item.tdQty,
             tdQty: '',
+
           };
         });
 
@@ -604,7 +609,7 @@ export default {
         };
         this.crDealerPaymentTerm = order.drDealerPaymentTerm;
         this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
-        this.$loading.hide();
+        this.$loading.hide();       
       })
     },
   },
@@ -618,6 +623,7 @@ export default {
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
       sessionStorage.removeItem(DRAFT_KEY);
     }
+    
   },
 }
 </script>
