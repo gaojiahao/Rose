@@ -5,17 +5,17 @@
         <group label-align='left' title="请选择所属的地区">
           <popup-picker
             class="each_part"
-            title="所属地区"
-            placeholder="请选择省份"
-            :data='areaList'
-            v-model="areaValue"
-            :columns="1"></popup-picker>
-          <popup-picker
-            class="each_part"
             title="所属银行"
             placeholder="请选择银行"
             :data='bankList'
             v-model="bankValue"
+            :columns="1"></popup-picker>
+          <popup-picker
+            class="each_part"
+            title="所属地区"
+            placeholder="请选择省份"
+            :data='areaList'
+            v-model="areaValue"
             :columns="1"></popup-picker>
           <!--排长、团长、司令-->
           <!--<x-input

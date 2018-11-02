@@ -11,16 +11,16 @@
         {{item}}
       </tab-item>
     </tab>
+    <div class="my-info-total">
+      <span>销量套数</span>
+      <span>{{totalCoverNum}}/套</span>
+    </div>
+    <div class="my-info-total">
+      <span>费用销售比</span>
+      <span>{{costSalesRatio}}</span>
+    </div>
     <div class="my_info_part">
       <divider>项目类产品</divider>
-      <div class="my-info-total">
-        <span>销量套数:</span>
-        <span>{{totalCoverNum}}</span>
-      </div>
-      <div class="my-info-total">
-        <span>费用销售比:</span>
-        <span>{{costSalesRatio}}</span>
-      </div>
       <form-preview
         class="project_part"
         header-label="销量金额"
@@ -196,9 +196,12 @@
   .pages {
     .my-info-total {
       display: flex;
-      justify-content: space-between;
-      padding: 5px 15px;
+      font-size: 18px;
+      margin-top: 10px;
+      color: #999999;
+      padding: 10px 15px;
       background-color: #fff;
+      justify-content: space-between;
     }
   }
 
