@@ -135,7 +135,7 @@
             this.list1.push({
               label: item.objName,
               // value: "￥" + numberComma(item.amount, 3) + " " + "(" + item.qty + "件/套" + ")",
-              value: `￥${numberComma(item.amount, 3)} (${item.qty}件折合${toFixed(item.coverNum || 0)}套)`,
+              value: `￥${numberComma(item.amount, 3)} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
             });
           } else if (item.objType == "A") {
             this.list2Total = item.amount;
@@ -146,6 +146,9 @@
               }, {
                 label: '住宿费',
                 value: item.hotelCost ? `￥${numberComma(toFixed(item.hotelCost))}` : '无',
+              }, {
+                label: '交通费',
+                value: item.hotelCost ? `￥${numberComma(toFixed(item.trafficCost))}` : '无',
               }, {
                 label: '其他费用',
                 value: item.elseCost ? `￥${numberComma(toFixed(item.elseCost))}` : '无',

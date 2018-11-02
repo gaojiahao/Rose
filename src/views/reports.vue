@@ -203,7 +203,7 @@
                 first = [
                   {
                     label: '项目类产品',
-                    value: `${data.quantity || 0}件折合${toFixed(data.coverNum || 0)}套`
+                    value: `${data.quantity || 0}件/折合${toFixed(data.coverNum || 0)}套`
                   }, {
                     label: '项目类金额',
                     value: `￥${numberComma(data.amount || 0)}`
@@ -228,7 +228,7 @@
               ];
               this.reportList.push({
                 name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件折合${toFixed(data.coverNum || 0)}套` : `￥${numberComma(data.aProduct || 0)}`,
+                sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件/折合${toFixed(data.coverNum || 0)}套` : `￥${numberComma(data.aProduct || 0)}`,
                 showContent: false,
                 detail: detail
               })

@@ -95,6 +95,8 @@
         <group title="费用明细">
           <x-input title="住宿费" v-model.number="hotelAmt" text-align="right" placeholder="请输入住宿费"
                    @on-blur="checkAmt('hotelAmt')"></x-input>
+          <x-input title="交通费" v-model.number="trafficAmt" text-align="right" placeholder="请输入住宿费"
+                   @on-blur="checkAmt('trafficAmt')"></x-input>
           <x-input title="其他" v-model.number="otherAmt" text-align="right" placeholder="请输入其他金额"
                    @on-blur="checkAmt('otherAmt')"></x-input>
           <cell class="each_part" title="合计" :value="totalCost | numberComma" value-align="right"></cell>
@@ -153,6 +155,7 @@
           {key: 'Aclass', msg: 'A类产品销售金额'},
           {key: 'Bclass', msg: 'B类产品销售金额'},
           {key: 'hotelAmt', msg: '住宿金额'},
+          {key: 'trafficAmt', msg: '交通费'},
           {key: 'otherAmt', msg: '其他金额'},
           {key: 'arr', msg: '项目产品'},
         ];
@@ -206,6 +209,7 @@
             double7: this.hotelAmt, // 住宿费用
             double8: this.otherAmt, // 其他费用
             double9: this.totalCost, // 费用合计(住宿费+其他费用)
+            double10: this.trafficAmt, // 交通费
           },
           transDetailUncalc: [{
             id: this.guid(),
@@ -286,6 +290,7 @@
             saleReportArr: this.arr,
             comments: this.comments,
             hotelAmt: this.hotelAmt,
+            trafficAmt: this.trafficAmt,
             otherAmt: this.otherAmt,
             time: new Date().getTime()
           })

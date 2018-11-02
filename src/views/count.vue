@@ -146,7 +146,7 @@
             //项目类产品明细
             this.list1.push({
               label: item.transObjCode,
-              value: `${item.qty || 0}件折合${item.num1 || 0}套`
+              value: `${item.qty || 0}件/折合${item.num1 || 0}套`
             });
             // 最终合计 数量
             list4_num = accAdd(list4_num, Number(item.qty || 0));
@@ -175,19 +175,22 @@
         this.list4 = [
           {
             label: "合计数量",
-            value: `${list4_num}件折合${totalNum1}套`
+            value: `${list4_num}件/折合${totalNum1}套`
           }
         ];
         this.listSalesAmt = [
           {
             label: '住宿费',
-            value: numberComma(baseinfoExt.double7),
+            value: `￥${numberComma(baseinfoExt.double7)}`,
+          }, {
+            label: '交通费',
+            value: `￥${numberComma(baseinfoExt.double10)}`,
           }, {
             label: '其他费用',
-            value: numberComma(baseinfoExt.double8),
+            value: `￥${numberComma(baseinfoExt.double8)}`,
           }, {
             label: '合计',
-            value: numberComma(baseinfoExt.double9),
+            value: `￥${numberComma(baseinfoExt.double9)}`,
           }, {
             label: '费用销量比',
             value: baseinfoExt.varchar13,

@@ -37,6 +37,7 @@ export default {
       helpCaptain: "",                  // 所属队长
       peopleList: [],                    // 人员选择栏
       hotelAmt: '', // 住宿费
+      trafficAmt: '', // 交通费
       otherAmt: '', // 其他费用
     };
   },
@@ -52,7 +53,7 @@ export default {
     },
     // 费用合计
     totalCost() {
-      return accAdd(Number(this.hotelAmt), Number(this.otherAmt))
+      return accAdd(accAdd(Number(this.hotelAmt), Number(this.otherAmt)), Number(this.trafficAmt));
     },
   },
   watch: {
@@ -270,14 +271,13 @@ export default {
     },
     // TODO 项目类产品切换
     projectChange(item, index) {
-      console.log(item)
       let matched = this.list.find(lItem => lItem.value === item.value[0]);
-      console.log(matched)
       this.$set(this.arr, index, {
         ...item,
         num5: matched.num5,
         amount: matched.amount,
         num1: accMul(matched.num5, item.qty),
+        taxAmount: matched.taxAmount,
       });
     },
     // TODO 校验金额
