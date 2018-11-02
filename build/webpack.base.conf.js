@@ -32,6 +32,7 @@ let webpackConfig = {
       'plugins': resolve('src/plugins'),
       'views': resolve('src/views'),
       'mixins': resolve('src/mixins'),
+      'assets': resolve('src/assets')
     }
   },
   module: {
