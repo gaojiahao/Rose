@@ -65,21 +65,23 @@
           </li>
         </ul>-->
 
-        <group label-align='left' :title="index>0?'':'请选择对应的产品'" v-for="( item ,index ) in arr" :key="index">
-          <popup-picker class="each_part" title="项目类产品" placeholder="请选择产品" :data="list" :value="item.value"
-                        @on-change="projectChange(item, index)" v-model="item.value" :columns="1"
-                        show-name></popup-picker>
+        <group title="请选择对应的产品" v-if="!arr.length">
+          <cell class="each_part" title="项目类产品" :value=" '请选择产品'" value-align="right" @click.native="clickProject"
+                is-link></cell>
+        </group>
+        <group label-align='left' :title="index > 0?'':'请选择对应的产品'" v-for="( item ,index ) in arr" :key="index" v-else>
+          <cell class="each_part" title="项目类产品" :value="item.value" value-align="right"></cell>
           <cell class="each_part" title="单价"
                 :value="'￥'+item.amount | numberComma" value-align="right"
                 v-if="item.value.length>0"></cell>
           <!-- 数量输入 -->
           <x-input title="数量" v-model.number="item.qty" text-align="right" placeholder="请输入数量"
-                   v-if="item.value[0]!=='无'"></x-input>
+                   v-if="item.value !== '无'"></x-input>
           <cell class="each_part" title="套数" :value="item.num1" value-align="right"
                 v-if="item.value.length>0"></cell>
         </group>
 
-        <p class="caution_part" v-if='arr[0].value.length!=0'>
+        <p class="caution_part" v-if='arr.length !== 0'>
           您还需要添加新的项目？请点击 <span class="plus_tx" @click="createNew">新增</span>
           <span v-if="arr.length>1">
             <span>或</span>
@@ -95,8 +97,10 @@
         <group title="费用明细">
           <x-input title="住宿费" v-model.number="hotelAmt" text-align="right" placeholder="请输入住宿费"
                    @on-blur="checkAmt('hotelAmt')"></x-input>
-          <x-input title="交通费" v-model.number="trafficAmt" text-align="right" placeholder="请输入住宿费"
+          <x-input title="市内交通费" v-model.number="trafficAmt" text-align="right" placeholder="请输入市内交通费"
                    @on-blur="checkAmt('trafficAmt')"></x-input>
+          <x-input title="长途交通费" v-model.number="lTrafficAmt" text-align="right" placeholder="请输入长途交通费"
+                   @on-blur="checkAmt('lTrafficAmt')"></x-input>
           <x-input title="其他" v-model.number="otherAmt" text-align="right" placeholder="请输入其他金额"
                    @on-blur="checkAmt('otherAmt')"></x-input>
           <cell class="each_part" title="合计" :value="totalCost | numberComma" value-align="right"></cell>
@@ -107,6 +111,8 @@
           <x-input title="备注" text-align="right" placeholder="非必填 如有需要请填写" v-model="comments"></x-input>
         </group>
       </div>
+      <popup-project-list :show="showProjectPopup" :default-value="arr"
+                          @on-sel="selProject" v-model="showProjectPopup" ref="projectPopup"></popup-project-list>
       <x-button id="count_button" :gradients="btnStatus==true?['#B99763', '#E7D0A2']:['#ddd','#ddd']"
                 @click.native="goCount">
         进入合计
@@ -152,16 +158,17 @@
           // {key: 'helpCaptain', msg: '所属队长'},
           // {key: 'governor', msg: '省长信息'},
           // {key: 'member', msg: '常委信息'},
+          {key: 'arr', msg: '项目产品'},
           {key: 'Aclass', msg: 'A类产品销售金额'},
           {key: 'Bclass', msg: 'B类产品销售金额'},
           {key: 'hotelAmt', msg: '住宿金额'},
-          {key: 'trafficAmt', msg: '交通费'},
+          {key: 'trafficAmt', msg: '市内交通费'},
+          {key: 'lTrafficAmt', msg: '长途交通费'},
           {key: 'otherAmt', msg: '其他金额'},
-          {key: 'arr', msg: '项目产品'},
         ];
         tipArr.every(item => {
           if (!this[item.key] && this[item.key] !== 0) {
-            tips = `请填写${item.msg}`
+            tips = `请填写${item.msg}`;
             return;
           }
           else if (item.key === 'areaValue' && !this[item.key].length || this[item.key][0] === '空' || item.key === 'bankValue' && !this[item.key].length) {
@@ -169,22 +176,25 @@
             return;
           }
           else if (item.key === 'arr') {
-            for (let inx in this[item.key]) {
-              if (!this[item.key][inx].value.length) {
-                tips = `请选择${item.msg}`;
-              }
-              else if (this[item.key][inx].value[0] !== '无' && !this[item.key][inx].qty && this[item.key][inx].qty !== 0) {
-                tips = '请填写产品数量';
-              }
+            if (!this.arr.length) {
+              tips = `请选择${item.msg}`;
+              return false;
             }
-            return;
+            this[item.key].every(item => {
+              if (item.value !== '无' && !item.qty) {
+                tips = '请填写产品数量';
+                return false
+              }
+              return false
+            });
+            return !tips;
           }
           return true;
         })
         if (tips) {
           this.$vux.alert.show({
             content: tips
-          })
+          });
           return;
         }
         // 表单提交信息
@@ -194,13 +204,13 @@
           baseinfoExt: {
             id: this.guid(),
             varchar1: ROSE_OPTION.dept,         // 区域(事业部) (业务自带信息)
-            varchar2: this.helpCaptain,             // 支援队长
+            varchar2: this.monthCoverNum,             // 支援队长
             varchar3: this.areaValue[0],        // 支援地区(省份)
             varchar4: this.bankValue[0],        // 支援银行
             varchar5: ROSE_OPTION.groupName,    // 部门(业务自带信息)
             varchar6: '否',                     // 区分是否为支援
-            varchar7: governor,                 // 省长
-            varchar8: member,                   // 常委
+            varchar7: governor,                 // 省长   连长
+            varchar8: member,                   // 常委   团长
             varchar9: comments,                 // 备注
             varchar10: ROSE_OPTION.region,      // 省份(业务自带信息)
             varchar11: ROSE_OPTION.bank,        // 银行(业务自带信息)
@@ -209,7 +219,8 @@
             double7: this.hotelAmt, // 住宿费用
             double8: this.otherAmt, // 其他费用
             double9: this.totalCost, // 费用合计(住宿费+其他费用)
-            double10: this.trafficAmt, // 交通费
+            double10: this.trafficAmt, // 市内交通费
+            double11: this.lTrafficAmt, // 市内交通费
           },
           transDetailUncalc: [{
             id: this.guid(),
@@ -234,13 +245,13 @@
           let item = this.arr[i];
           jsonData.transDetailUncalc.push({
             id: this.guid(),
-            transObjCode: item.value[0] === "无" ? "无" : item.value[0], //项目类产品名称
+            transObjCode: item.value, //项目类产品名称
             containerCode: "项目类产品", //类型
-            qty: item.value[0] === "无" ? "" : item.qty,
-            taxAmount: item.value[0] === "无" ? "" : Number(item.taxAmount),
+            qty: item.qty,
+            taxAmount: item.taxAmount,
             amount: item.qty * item.amount, //总金额
             fgCode: "",
-            num1: item.value[0] === "无" ? "" : Number(item.num1), // 套数
+            num1: item.num1, // 套数
           });
         }
         let totalInfo = {
@@ -291,6 +302,7 @@
             comments: this.comments,
             hotelAmt: this.hotelAmt,
             trafficAmt: this.trafficAmt,
+            lTrafficAmt: this.lTrafficAmt,
             otherAmt: this.otherAmt,
             time: new Date().getTime()
           })
@@ -298,11 +310,15 @@
       }
     },
     created() {
+      let {monthCoverNum = ''} = this.$route.query;
+      this.monthCoverNum = monthCoverNum;
       // 缓存
       const basicInfo = JSON.parse(localStorage.getItem(BASIC_INFO_KEY)) || '';
       const formInfo = JSON.parse(localStorage.getItem(FORM_INFO_KEY)) || '';
       // 用户填写表单内容
       this.echoStorage(basicInfo, formInfo);
+      // 获取连长、团长
+      this.getSuperior();
       // 支援地区
       this.getArea();
       // 支援银行
@@ -317,6 +333,7 @@
           confirmText: "确认",
           cancelText: "取消",
           onCancel: () => {
+            localStorage.removeItem(BASIC_INFO_KEY);
             localStorage.removeItem(FORM_INFO_KEY);
             next();
           },

@@ -6,6 +6,7 @@ import {
   Cell, Alert, Group, XInput, XButton,
   Confirm, Selector, PopupPicker, numberComma
 } from "vux";
+import PopupProjectList from 'components/popup/PopupProjectList'
 
 // 方法引入
 import {toFixed, accAdd, accMul} from 'plugins/calc'
@@ -13,7 +14,8 @@ import {toFixed, accAdd, accMul} from 'plugins/calc'
 export default {
   components: {
     Cell, Alert, Group, XInput,
-    Confirm, XButton, Selector, PopupPicker
+    Confirm, XButton, Selector, PopupPicker,
+    PopupProjectList,
   },
   data() {
     return {
@@ -22,11 +24,7 @@ export default {
       captainShow: false,               // 是否弹出 队长选择框 
       governorShow: false,              // 是否弹出 省长选择框 
       committeeShow: false,             // 是否弹出 常委选择框 
-      arr: [{
-        value: [],
-        qty: '',
-        num5: 0, // 系数
-      }],    // 选中的 项目类产品
+      arr: [],    // 选中的 项目类产品
       list: [{name: "无", value: "无", parent: "0", amount: 0, num5: 0}],     // 项目类产品
       Aclass: "",                       // A类产品 输入金额
       Bclass: "",                       // B类产品 输入金额
@@ -37,8 +35,11 @@ export default {
       helpCaptain: "",                  // 所属队长
       peopleList: [],                    // 人员选择栏
       hotelAmt: '', // 住宿费
-      trafficAmt: '', // 交通费
+      trafficAmt: '', // 市内交通费
+      lTrafficAmt: '', // 长途交通费
       otherAmt: '', // 其他费用
+      showProjectPopup: false, // 是否展示项目类产品的选项
+      monthCoverNum: '',
     };
   },
   computed: {
@@ -53,7 +54,9 @@ export default {
     },
     // 费用合计
     totalCost() {
-      return accAdd(accAdd(Number(this.hotelAmt), Number(this.otherAmt)), Number(this.trafficAmt));
+      let first = accAdd(Number(this.hotelAmt), Number(this.otherAmt));
+      let second = accAdd(this.trafficAmt, this.lTrafficAmt);
+      return accAdd(first, second);
     },
   },
   watch: {
@@ -181,14 +184,17 @@ export default {
     },
     // 添加新数据
     createNew() {
-      this.arr.push({value: [], qty: '', num5: 0});
+      // this.arr.push({value: [], qty: '', num5: 0});
+      console.log('11')
+      this.showProjectPopup = true;
     },
     // 删除新数据
     deleteNew() {
       if (this.arr.length === 1) {
         this.arr = [{value: [], qty: '', num5: 0}];
       } else {
-        this.arr.splice(this.arr.length - 1, 1);
+        let deleteItem = this.arr.pop();
+        this.$refs.projectPopup.delSelItem(deleteItem);
       }
     },
     // 随机ID
@@ -210,22 +216,6 @@ export default {
             title: "提示",
             content: "每日提交截止时间为20:00"
           });
-        }
-      });
-    },
-    // 获取 项目类产品
-    listData() {
-      saleRepotService.saleRepotList().then(({tableContent}) => {
-        for (let [key, val] of Object.entries(tableContent)) {
-          this.list.push({
-            name: val["trans_detail_uncalc.transObjCode"],
-            // value: `${val["trans_detail_uncalc.transObjCode"]}_${key}_${val["trans_detail_uncalc.qty"]}_${val["trans_detail_uncalc.price"]}`,
-            value: `${val["trans_detail_uncalc.transObjCode"]}`,
-            // parent: '0',
-            taxAmount: val["trans_detail_uncalc.qty"],
-            amount: val["trans_detail_uncalc.price"],
-            num5: val['trans_detail_uncalc.num5'] || 0,
-          })
         }
       });
     },
@@ -252,7 +242,7 @@ export default {
     // 回显表单内容
     echoStorage(basicSrg = {}, formSrc = {}) {
       let {member, governor, captain} = basicSrg;
-      let {Aclass, Bclass, comments, saleReportArr, hotelAmt, otherAmt} = formSrc;
+      let {Aclass, Bclass, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt} = formSrc;
       if (basicSrg) {
         this.member = member;
         this.governor = governor;
@@ -267,6 +257,8 @@ export default {
         this.comments = comments;
         this.hotelAmt = hotelAmt;
         this.otherAmt = otherAmt;
+        this.trafficAmt = trafficAmt;
+        this.lTrafficAmt = lTrafficAmt;
       }
     },
     // TODO 项目类产品切换
@@ -284,10 +276,25 @@ export default {
     checkAmt(key = '') {
       this[key] = toFixed(Math.abs(Number(this[key])));
     },
+    // TODO 选中项目类产品
+    selProject(sels) {
+      console.log(sels)
+      this.arr = sels;
+    },
+    // TODO 点击项目名称
+    clickProject() {
+      this.showProjectPopup = true;
+    },
+    // TODO 获取连长、团长
+    getSuperior() {
+      return saleRepotService.getSuperior().then(({tableContent = []}) => {
+        let [companyCommander = {}, group = {}] = tableContent;
+        this.governor = companyCommander.nickname || ''; // 连长
+        this.member = group.nickname || ''; // 团长
+      })
+    }
   },
   mounted() {
-    // 获取项目类产品
-    this.listData();
     //提交时间是否超过20点
     this.isTwoZero();
   }

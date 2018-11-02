@@ -13,6 +13,14 @@
     </tab>
     <div class="my_info_part">
       <divider>项目类产品</divider>
+      <div class="my-info-total">
+        <span>销量套数:</span>
+        <span>{{totalCoverNum}}</span>
+      </div>
+      <div class="my-info-total">
+        <span>费用销售比:</span>
+        <span>{{costSalesRatio}}</span>
+      </div>
       <form-preview
         class="project_part"
         header-label="销量金额"
@@ -27,6 +35,7 @@
         :header-value="'￥'+list2Total | numberComma"
         :body-items="list2">
       </form-preview>
+
       <divider>B类产品</divider>
       <form-preview
         class="project_part"
@@ -78,7 +87,9 @@
         list2Total: 0,
         list3Total: 0,
         remark: "",
-        spinner: false
+        spinner: false,
+        totalCoverNum: 0, // 销量套数
+        costSalesRatio: '', // 费用销售比
       };
     },
     filters: {
@@ -137,6 +148,7 @@
               // value: "￥" + numberComma(item.amount, 3) + " " + "(" + item.qty + "件/套" + ")",
               value: `￥${numberComma(item.amount, 3)} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
             });
+            this.totalCoverNum = accAdd(this.totalCoverNum, item.coverNum);
           } else if (item.objType == "A") {
             this.list2Total = item.amount;
             this.list2 = [
@@ -147,20 +159,20 @@
                 label: '住宿费',
                 value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.hotelCost)))}` : '无',
               }, {
-                label: '交通费',
-                value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.trafficCost)))}` : '无',
+                label: '市内交通费',
+                value: item.cityTrafficCost ? `￥${numberComma(toFixed(Number(item.cityTrafficCost)))}` : '无',
+              }, {
+                label: '长途交通费',
+                value: item.longCityTrafficCost ? `￥${numberComma(toFixed(Number(item.longCityTrafficCost)))}` : '无',
               }, {
                 label: '其他费用',
                 value: item.elseCost ? `￥${numberComma(toFixed(Number(item.elseCost)))}` : '无',
               }, {
                 label: '合计',
                 value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
-              }, {
-                label: '费用销售比',
-                // value: item.costSalesRatio || '无',
-                value: `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%`,
               },
             ]
+            this.costSalesRatio = `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%`;
           } else if (item.objType == "B") {
             this.list3Total = item.amount;
           }
@@ -178,6 +190,15 @@
 <style lang="less" scoped>
   @import "~vux/src/styles/1px.less";
   @import "~vux/src/styles/center.less";
+
+  .pages {
+    .my-info-total {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 15px;
+      background-color: #fff;
+    }
+  }
 
   .tab-swiper {
     background-color: #fff;

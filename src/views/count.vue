@@ -111,6 +111,7 @@
                   onHide() {
                     that.$router.replace("/Home");
                     localStorage.removeItem("saleReportInfo");
+                    localStorage.removeItem("HELP_BASIC_INFO");
                     localStorage.removeItem("HELP_FORM_INFO");
                     localStorage.removeItem("SALE_FORM_INFO");
                   }
@@ -183,8 +184,11 @@
             label: '住宿费',
             value: `￥${numberComma(baseinfoExt.double7)}`,
           }, {
-            label: '交通费',
+            label: '市内交通费',
             value: `￥${numberComma(baseinfoExt.double10)}`,
+          }, {
+            label: '长途交通费',
+            value: `￥${numberComma(baseinfoExt.double11)}`,
           }, {
             label: '其他费用',
             value: `￥${numberComma(baseinfoExt.double8)}`,
