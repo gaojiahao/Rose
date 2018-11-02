@@ -97,6 +97,8 @@
     },
     methods: {
       mylist(tab) {
+        this.totalCoverNum = 0;
+        this.costSalesRatio = '';
         if (tab == 0) {
           this.listpanl(this.remark.days);
         } else if (tab == 1) {
