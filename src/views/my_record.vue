@@ -145,17 +145,17 @@
                 value: '',
               }, {
                 label: '住宿费',
-                value: item.hotelCost || '无',
+                value: item.hotelCost ? `￥${numberComma(toFixed(item.hotelCost))}` : '无',
               }, {
                 label: '其他费用',
-                value: item.elseCost || '无',
+                value: item.elseCost ? `￥${numberComma(toFixed(item.elseCost))}` : '无',
               }, {
                 label: '合计',
-                value: item.hotelAndElseCost || '无',
+                value: item.hotelAndElseCost ? `￥${numberComma(toFixed(item.hotelAndElseCost))}` : '无',
               }, {
                 label: '费用销售比',
                 // value: item.costSalesRatio || '无',
-                value: `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%` || '无',
+                value: `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%`,
               },
             ]
           } else if (item.objType == "B") {

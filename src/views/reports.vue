@@ -82,6 +82,8 @@
   import Loading from 'components/common/loading'
   import BScroll from 'better-scroll'
   import dateMixin from 'mixins/date'
+  // 方法引入
+  import {toFixed, accAdd, accMul} from 'plugins/calc'
 
   const PROJ_LIST = 'ROSE_PROJ_LIST';
   const DATE_SELECTED = 'ROSE_DATE_SELECTED';
@@ -183,17 +185,34 @@
             this.reportList = [];
             // 数据组装
             repData.items && repData.items.forEach((data, index) => {
+              let first = [];
+              if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
+                first = [
+                  {
+                    label: 'A类产品',
+                    value: `￥${numberComma(data.aProduct || 0)}`
+                  }, {
+                    label: '费用合计',
+                    value: `￥${numberComma(toFixed(data.hotelAndElseCost) || 0)}`
+                  }, {
+                    label: '费用销量比',
+                    value: `${toFixed(accMul(data.hotelAndElseCost / data.aProduct, 100))}%`
+                  },
+                ];
+              } else {
+                first = [
+                  {
+                    label: '项目类产品',
+                    value: `${data.quantity || 0}件折合${toFixed(data.coverNum || 0)}套`
+                  }, {
+                    label: '项目类金额',
+                    value: `￥${numberComma(data.amount || 0)}`
+                  }
+                ];
+              }
               let detail = [
+                ...first,
                 {
-                  label: '项目类产品',
-                  value: `${data.quantity || 0}件/套`
-                }, {
-                  label: '项目类金额',
-                  value: `￥${numberComma(data.amount || 0)}`
-                }, {
-                  label: 'A类产品',
-                  value: `￥${numberComma(data.aProduct || 0)}`
-                }, {
                   label: '所属区域',
                   value: data.sybName || ''
                 }, {
@@ -207,15 +226,9 @@
                   value: data.bmName || ''
                 },
               ];
-              if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
-                detail.shift();
-                detail.shift();
-              } else {
-                detail.splice(2, 1); // 去掉A类产品的金额
-              }
               this.reportList.push({
                 name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
-                sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件/套` : `￥${numberComma(data.aProduct || 0)}`,
+                sales: this.objName !== this.A_PROJ_NAME ? `${data.quantity || 0}件折合${toFixed(data.coverNum || 0)}套` : `￥${numberComma(data.aProduct || 0)}`,
                 showContent: false,
                 detail: detail
               })

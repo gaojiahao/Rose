@@ -58,6 +58,8 @@
     querystring,
     CellFormPreview
   } from "vux";
+  // 方法引入
+  import {toFixed, accAdd, accMul} from 'plugins/calc'
 
   export default {
     components: {
@@ -131,46 +133,38 @@
         let total1 = 0, // 项目类产品金额
           total2 = 0, // A类金额
           total3 = 0, // B类金额
-          list4_num = 0; // 最终合计 数量
+          list4_num = 0, // 最终合计 数量
+          totalNum1 = 0; // 最终合计 套数
 
         //从缓存中拿到上个页面提交的数据
         let jsonData = JSON.parse(this.childInfo.jsonData);
         let {transDetailUncalc, baseinfoExt = {}} = jsonData;
 
         for (let i = 0; i < transDetailUncalc.length; i++) {
-          if (
-            transDetailUncalc[i].containerCode === "项目类产品" &&
-            transDetailUncalc[i].transObjCode
-          ) {
+          let item = transDetailUncalc[i];
+          if (item.containerCode === "项目类产品" && item.transObjCode) {
             //项目类产品明细
             this.list1.push({
-              label: transDetailUncalc[i].transObjCode,
-              // value: `${transDetailUncalc[i].qty}件/套`
-              value: `${transDetailUncalc[i].qty}件折合${transDetailUncalc[i].num1}套`
+              label: item.transObjCode,
+              value: `${item.qty || 0}件折合${item.num1 || 0}套`
             });
             // 最终合计 数量
-            list4_num += transDetailUncalc[i].qty == '' ? 0 : transDetailUncalc[i].qty;
-
-            this.list4 = [
-              {
-                label: "合计数量",
-                value: `${list4_num}件/套`
-              }
-            ];
+            list4_num = accAdd(list4_num, Number(item.qty || 0));
+            totalNum1 = accAdd(totalNum1, Number(item.num1 || 0));
             //项目类产品金额汇总
-            total1 += transDetailUncalc[i].amount;
-          } else if (transDetailUncalc[i].containerCode == "A") {
+            total1 = accAdd(total1, item.amount);
+          } else if (item.containerCode == "A") {
             this.list2.push({
-              label: transDetailUncalc[i].transObjCode,
-              value: transDetailUncalc[i].qty
+              label: item.transObjCode,
+              value: item.qty
             });
-            total2 = transDetailUncalc[i].amount;
-          } else if (transDetailUncalc[i].containerCode == "B") {
+            total2 = item.amount;
+          } else if (item.containerCode == "B") {
             this.list3.push({
-              label: transDetailUncalc[i].transObjCode,
-              value: transDetailUncalc[i].qty
+              label: item.transObjCode,
+              value: item.qty
             });
-            total3 = transDetailUncalc[i].amount;
+            total3 = item.amount;
           }
         }
         this.total1 = "￥" + total1;
@@ -178,16 +172,22 @@
         this.total3 = "￥" + total3;
         let num = Number(total2) + Number(total3);
         this.total4 = "￥" + num;
+        this.list4 = [
+          {
+            label: "合计数量",
+            value: `${list4_num}件折合${totalNum1}套`
+          }
+        ];
         this.listSalesAmt = [
           {
             label: '住宿费',
-            value: baseinfoExt.double7,
+            value: numberComma(baseinfoExt.double7),
           }, {
             label: '其他费用',
-            value: baseinfoExt.double8,
+            value: numberComma(baseinfoExt.double8),
           }, {
             label: '合计',
-            value: baseinfoExt.double9,
+            value: numberComma(baseinfoExt.double9),
           }, {
             label: '费用销量比',
             value: baseinfoExt.varchar13,
