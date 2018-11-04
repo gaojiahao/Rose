@@ -17,7 +17,7 @@
     </div>
     <div class="my-info-total">
       <span>费用销售比</span>
-      <span>{{costSalesRatio}}</span>
+      <span>{{costSalesRatio || '0%'}}</span>
     </div>
     <div class="my_info_part">
       <divider>项目类产品</divider>

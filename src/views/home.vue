@@ -1,208 +1,188 @@
 <template>
   <div id="app">
-      <!-- <div class="cp_title">
-        销售预报
-        <span class="username" v-if="username">欢迎,{{username}}</span>
-      </div> -->
-      <template v-if="username">
-        <div class="app-container">
-          <!-- <img class="avatar-img" :src="userInfo.avatar" alt=""> -->
-          <div class="avatar-part"></div>
-          <div class="dashboard-container-part">
-            <div class="place-holder"></div>
-            <div class="top-part">
-              <div>
-                <div class="date-part">
-                  <span>{{Today}},</span> 
-                  <span>距离月底还有28天</span>
-                </div>
-                <div class="tips-title">
-                  <!-- <p>本月目标 600套</p> -->
-                  <p>{{username}}, 距离完成 {{100 - ProductCount.monthCoverNum || 0}}</p>
-                </div>
+    <template v-if="username">
+      <div class="app-container">
+        <div class="avatar-part"></div>
+        <div class="dashboard-container-part">
+          <div class="place-holder"></div>
+          <div class="top-part">
+            <div>
+              <div class="date-part">
+                <span>{{Today}},</span> 
+                <span>距离月底还有28天</span>
               </div>
-              <!-- <div class="user-info-container">
-                <div class="user-avatar">
-                  <img :src="userInfo.avatar">
-                </div>
-                <div class="user-info">
-                  <div class="user-name">欢迎, {{username}}</div>
-                  <div class="user-from">
-                    <span class="each-form-msg">{{userInfo.bank}}</span>
-                    <span class="each-form-msg">{{userInfo.region}}</span>
-                  </div>
-                </div> 
-              </div> -->
-            </div>
-            <div class="dashboard-part">
-              <div class="each-dashboard least-num">
-                <div class="dashboard_title">本月目标</div>
-                <div class="dashboard_count">100</div>
-              </div>
-              <div class="each-dashboard when-today">
-                <div class="dashboard_title">当日完成</div>
-                <div class="dashboard_count">{{ProductCount.todayCoverNum || 0}}</div>
-              </div>
-              <div class="each-dashboard when-month">
-                <div class="dashboard_title">当月完成</div>
-                <div class="dashboard_count">{{ProductCount.monthCoverNum || 0}}</div>
+              <div class="tips-title">
+                <p>{{username}}, 距离完成 {{saleStatus.currMonthTarget - ProductCount.monthCoverNum || toFixed || 0}}</p>
               </div>
             </div>
-            <div class="place-holder"></div>
           </div>
-          <div class="main-container-part">
-            <div class="tips-title">操作选择</div>
-            <div class="select-part">
-              <div class="each-select" @click.stop="gohelp">销售预报提交</div>
-              <div class="each-select" @click.stop="goMR">个人业绩查看</div>
-              <div class="each-select" @click.stop="goRP" v-if="showLookReport">查看报表</div>
-              <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
+          <div class="dashboard-part">
+            <div class="each-dashboard least-num">
+              <div class="dashboard_title">本月目标</div>
+              <div class="dashboard_count">{{saleStatus.currMonthTarget || 0}}</div>
             </div>
-            <h2 class="tech_bottom">
-              Powered by <span class="cp_name">Refordom</span>
-            </h2>
+            <div class="each-dashboard when-today">
+              <div class="dashboard_title">当日完成</div>
+              <div class="dashboard_count">{{ProductCount.todayCoverNum || 0}}</div>
+            </div>
+            <div class="each-dashboard when-month">
+              <div class="dashboard_title">当月完成</div>
+              <div class="dashboard_count">{{ProductCount.monthCoverNum || 0}}</div>
+            </div>
           </div>
+          <div class="place-holder"></div>
         </div>
-      </template>
+        <div class="main-container-part">
+          <div class="tips-title">操作选择</div>
+          <div class="select-part">
+            <div class="each-select" @click.stop="gohelp">销售预报提交</div>
+            <div class="each-select" @click.stop="goMR">个人业绩查看</div>
+            <div class="each-select" @click.stop="goRP" v-if="showLookReport">查看报表</div>
+            <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
+          </div>
+          <h2 class="tech_bottom">
+            Powered by <span class="cp_name">Refordom</span>
+          </h2>
+        </div>
+      </div>
+    </template>
     <loading :show="showLoading"></loading>
   </div>
 
 </template>
 
 <script>
-  import {XButton, Confirm, querystring} from 'vux'
-  import tokenService from 'service/tokenService'
-  import { getProductCount } from 'service/homeService'
-  import Loading from 'components/common/loading'
-  const ROSE_OPTION_KEY = 'ROSE_OPTION';
-  const ROSE_LOGIN_CODE = 'ROSE_CODE';
-  export default {
-    components: {
-      XButton,
-      Confirm,
-      Loading
-    },
-    data() {
-      return {
-        Today: '',                  // 当前日期
-        username: '',               // 用户名称
-        userInfo: {},
-        ProductCount: {},           // 用户项目类产品提交数量
-        showLoading: false,
-        showLookSales: false,       // 是否展示销售业绩查看
-        showLookReport: false,      // 是否展示查看报表按钮
-      }
-    },
-    methods: {
-      // 销售预报
-      goSP() {
-        this.$router.push({path: '/saleReport'})
-      },
-      // 支援
-      gohelp() {
-        this.$router.push({path: '/help',
-          query: {
-            monthCoverNum: this.ProductCount.monthCoverNum
-          }
-        })
-      },
-      // 个人业绩
-      goMR() {
-        this.$router.push({path: '/myRecord'})
-      },
-      // 查看报表
-      goRP() {
-        this.$router.push({path: '/reportsOp'})
-      },
-      // TODO 查看销售业绩
-      goAchievement() {
-        this.$router.push({path: '/entry'})
-      },
-      getToday(){
-        let now = new Date();
-        let whichDay = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
-        let Today = `${(now.getMonth()+1)}月${now.getDate()}号 ${whichDay[now.getDay()]}`;
-        this.Today = Today;
-      }
-    },
-    beforeCreate() {
-      let query = querystring.parse(location.search.slice(1));
-      let code = sessionStorage.getItem(ROSE_LOGIN_CODE);
-      if (query.code) { // 获取到登录的code存储到session
-        sessionStorage.setItem(ROSE_LOGIN_CODE, query.code);
-      }
-      if (process.env.NODE_ENV !== 'development' && !code && !query.code) { // 若不为开发环境，且链接没有code，sessionStorage也没有存储，则认为当前环境为非企业微信环境
-        window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
-      }
-    },
-    created() {
-      (async () => {
-        this.showLoading = true;
-        await tokenService.getToken().catch(err => {
-          this.$vux.alert.show({
-            content: err.message
-          })
-        });
-        await tokenService.isPresident().then(data => {
-          this.username = data.nickname; //拿到当前用户
-          if (`${data.statu}` === '1') { // statu为1则为总裁
-            this.showLookReport = true
-          }
-        }).catch(err => {
-          this.$vux.alert.show({
-            content: err.message
-          })
-        });
-        await tokenService.getUser().then(userInfo => {
-          // 获取当前时间
-          this.getToday();
-          let {completeData = {}, userCode = ''} = userInfo;
-          let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125', '2025'];
-          this.showLookSales = allowList.includes(userCode);
-          // 获取 头像姓名
-          let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
-          // 如果头像不存在则指定默认头像
-          if(!avatar){
-            let url = require('assets/ava03.png')
-            // let url = require('assets/avatar.png')
-            // let url = require('assets/io.jpg')
-            avatar = url;
-          };
-          this.userInfo = { 
-            name, 
-            avatar,
-            bank: completeData.homeBank || '',         //银行
-            region: completeData.homeProvince || '',   //省份地区
-            dept: completeData.area || '',             //事业部
-          };
-          localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
-            bank: completeData.homeBank || '',         //银行
-            region: completeData.homeProvince || '',   //省份地区
-            dept: completeData.area || '',             //事业部
-            groupName: completeData.groupName || '',    //部门
-            captain: completeData.bmName || '',        //队长（暂无）
-            userCode: completeData.userCode || '',      //工号
-          }))
-        }).catch(err => {
-          this.$vux.alert.show({
-            content: err.message
-          })
-        });
-        // await tokenService.getSuperior().then(({ tableContent }) => {
-        //   console.log(tableContent);
-        // })
-        await getProductCount().then(({ tableContent }) => {
-          let [ Count ={} ] = tableContent;
-          this.ProductCount = Count; 
-        }).catch(err => {
-          this.$vux.alert.show({
-            content: err.message
-          })
-        });
-        this.showLoading = false;
-      })()
+import {XButton, Confirm, querystring} from 'vux'
+import tokenService from 'service/tokenService'
+import { getProductCount, getCurrMonthStatus } from 'service/homeService'
+import Loading from 'components/common/loading'
+const ROSE_OPTION_KEY = 'ROSE_OPTION'
+const ROSE_LOGIN_CODE = 'ROSE_CODE'
+// 方法引入
+import { toFixed } from 'plugins/calc'
+export default {
+  components: {
+    XButton,
+    Confirm,
+    Loading
+  },
+  filters: {
+    toFixed
+  },
+  data() {
+    return {
+      Today: '',                  // 当前日期
+      username: '',               // 用户名称
+      userInfo: {},
+      saleStatus: {},             // 业务员销售情况
+      ProductCount: {},           // 用户项目类产品提交数量
+      showLoading: false,
+      showLookSales: false,       // 是否展示销售业绩查看
+      showLookReport: false,      // 是否展示查看报表按钮
     }
+  },
+  methods: {
+    // 销售预报
+    goSP() {
+      this.$router.push({path: '/saleReport'})
+    },
+    // 支援
+    gohelp() {
+      this.$router.push({path: '/help',
+        query: {
+          monthCoverNum: this.ProductCount.monthCoverNum
+        }
+      })
+    },
+    // 个人业绩
+    goMR() {
+      this.$router.push({path: '/myRecord'})
+    },
+    // 查看报表
+    goRP() {
+      this.$router.push({path: '/reportsOp'})
+    },
+    // TODO 查看销售业绩
+    goAchievement() {
+      this.$router.push({path: '/entry'})
+    },
+    getToday(){
+      let now = new Date();
+      let whichDay = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+      let Today = `${(now.getMonth()+1)}月${now.getDate()}号 ${whichDay[now.getDay()]}`;
+      this.Today = Today;
+    }
+  },
+  beforeCreate() {
+    let query = querystring.parse(location.search.slice(1));
+    let code = sessionStorage.getItem(ROSE_LOGIN_CODE);
+    if (query.code) { // 获取到登录的code存储到session
+      sessionStorage.setItem(ROSE_LOGIN_CODE, query.code);
+    }
+    if (process.env.NODE_ENV !== 'development' && !code && !query.code) { // 若不为开发环境，且链接没有code，sessionStorage也没有存储，则认为当前环境为非企业微信环境
+      window.location.replace('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5311bd8608c14d98&redirect_uri=https%3a%2f%2fwww.gofuit.com%2fRose&response_type=code&scope=SCOPE&agentid=1000004&state=1#wechat_redirect')
+    }
+  },
+  created() {
+    (async () => {
+      this.showLoading = true;
+      await tokenService.getToken().catch(err => {
+        this.$vux.alert.show({
+          content: err.message
+        })
+      });
+      await tokenService.isPresident().then(data => {
+        this.username = data.nickname; //拿到当前用户
+        if (`${data.statu}` === '1') { // statu为1则为总裁
+          this.showLookReport = true
+        }
+      }).catch(err => {
+        this.$vux.alert.show({
+          content: err.message
+        })
+      });
+      await tokenService.getUser().then(userInfo => {
+        // 获取当前时间
+        this.getToday();
+        let {completeData = {}, userCode = ''} = userInfo;
+        let allowList = ['0414', '1204', '1207', '1129', 'rfd9527', 'rfd125', '2025'];
+        this.showLookSales = allowList.includes(userCode);
+        this.userInfo = {
+          bank: completeData.homeBank || '',         //银行
+          region: completeData.homeProvince || '',   //省份地区
+          dept: completeData.area || '',             //事业部
+        };
+        localStorage.setItem(ROSE_OPTION_KEY, JSON.stringify({
+          bank: completeData.homeBank || '',         //银行
+          region: completeData.homeProvince || '',   //省份地区
+          dept: completeData.area || '',             //事业部
+          groupName: completeData.groupName || '',    //部门
+          captain: completeData.bmName || '',        //队长（暂无）
+          userCode: completeData.userCode || '',      //工号
+        }))
+      }).catch(err => {
+        this.$vux.alert.show({
+          content: err.message
+        })
+      });
+      await getCurrMonthStatus().then( ({ differ, currMonthTarget }) => {
+        this.saleStatus = {
+          differ,                   // 距离目标还差多少
+          currMonthTarget           // 每个月的目标
+        }
+      })
+      await getProductCount().then(({ tableContent }) => {
+        let [ Count = {} ] = tableContent;
+        this.ProductCount = Count; 
+      }).catch(err => {
+        this.$vux.alert.show({
+          content: err.message
+        })
+      });
+      this.showLoading = false;
+    })()
   }
+}
 </script>
 
 <style scoped lang='scss'>
