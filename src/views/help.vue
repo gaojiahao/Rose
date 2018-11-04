@@ -17,54 +17,7 @@
             :data='areaList'
             v-model="areaValue"
             :columns="1"></popup-picker>
-          <!--排长、团长、司令-->
-          <!--<x-input
-            title="所属队长"
-            text-align="right"
-            v-model.trim="helpCaptain"
-            @on-change="captainSelect"
-            @on-focus="captainFocus"
-            placeholder="请输入队长"
-            ref="captainChooise"
-            class="helpCaptain"></x-input>
-          <x-input
-            title="所属省长"
-            text-align="right"
-            v-model.trim="governor"
-            @on-change="provalUserByAgent('省长',$event)"
-            @on-focus='provinceReset'
-            placeholder="请输入省长"
-            ref="provinceChooise"
-            class="helpCaptain"></x-input>
-          <x-input
-            title="所属常委"
-            text-align="right"
-            v-model.trim="member"
-            @on-change="memberUser('常委',$event)"
-            @on-focus='memberUserReset'
-            placeholder="请输入常委"
-            ref="memberChooise"
-            class="helpCaptain"></x-input>-->
         </group>
-        <!-- 队长选择框 -->
-        <!--<ul class="captain-container" v-if="captainShow">
-          <li class='vux-1px-b' v-for="(item, index) in peopleList" :key="index"
-              @click="getNickname(item.nickname)">{{item.nickname}}
-          </li>
-        </ul>-->
-        <!-- 省长选择框 -->
-        <!--<ul class="governor-container" v-if="governorShow">
-          <li class='vux-1px-b' v-for="(item, index) in peopleList" :key="index"
-              @click="getProvalUser(item.nickname)">{{item.nickname}}
-          </li>
-        </ul>-->
-        <!-- 常委选择框 -->
-        <!--<ul class="commit-container" v-if="committeeShow">
-          <li class='vux-1px-b' v-for="(item, index) in peopleList" :key="index"
-              @click="getMemberUser(item.nickname)">{{item.nickname}}
-          </li>
-        </ul>-->
-
         <group title="请选择对应的产品" v-if="!arr.length">
           <cell class="each_part" title="项目类产品" :value=" '请选择产品'" value-align="right" @click.native="clickProject"
                 is-link></cell>
@@ -77,7 +30,7 @@
           <!-- 数量输入 -->
           <x-input title="数量" v-model.number="item.qty" text-align="right" placeholder="请输入数量"
                    v-if="item.value !== '无'"></x-input>
-          <cell class="each_part" title="套数" :value="item.num1" value-align="right"
+          <cell class="each_part" title="套数" :value="item.num1 || 0" value-align="right"
                 v-if="item.value.length>0"></cell>
         </group>
 

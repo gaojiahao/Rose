@@ -9,10 +9,10 @@
             <div>
               <div class="date-part">
                 <span>{{Today}},</span> 
-                <span>距离月底还有28天</span>
+                <span>距离月底还有{{DaysInMonth}}天</span>
               </div>
               <div class="tips-title">
-                <p>{{username}}, 距离完成 {{saleStatus.currMonthTarget - ProductCount.monthCoverNum || toFixed || 0}}</p>
+                <p>{{username}}, 距离完成 {{saleStatus.currMonthTarget - ProductCount.monthCoverNum || 0 | toFixed}}</p>
               </div>
             </div>
           </div>
@@ -73,6 +73,7 @@ export default {
     return {
       Today: '',                  // 当前日期
       username: '',               // 用户名称
+      DaysInMonth: '',            // 月天数
       userInfo: {},
       saleStatus: {},             // 业务员销售情况
       ProductCount: {},           // 用户项目类产品提交数量
@@ -108,8 +109,13 @@ export default {
     },
     getToday(){
       let now = new Date();
+      let date = now.getDate();
       let whichDay = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
       let Today = `${(now.getMonth()+1)}月${now.getDate()}号 ${whichDay[now.getDay()]}`;
+      // 获取月天数
+      now.setMonth(now.getMonth()+1);
+      now.setDate(0);
+      this.DaysInMonth = now.getDate() - date;
       this.Today = Today;
     }
   },

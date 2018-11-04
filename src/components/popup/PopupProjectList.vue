@@ -12,7 +12,12 @@
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item, index)">
-            <div>{{item.name}}</div>
+            <div class="matter_name vux-1px-b">
+              <span class="matter_simple">名称</span>
+              {{item.name}}
+            </div>
+            <div class="matter_unit" v-if="item.amount">单价: ￥{{item.amount}}</div>
+            <div class="matter_unit" v-if="item.num5">系数: {{item.num5}}</div>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -236,14 +241,31 @@
         // 每个物料
         .each_mater {
           position: relative;
-          // display: flex;
-          padding: 0.08rem;
+          padding: .08rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
+          .matter_name {
+            font-size: .16rem;
+            font-weight: bold;
+            padding-bottom: .04rem;
+            
+            .matter_simple {
+              font-size: .1rem;
+              color: #EDE4A3;
+              background: #D7030F;
+              border-radius: .12rem;
+              padding: .01rem .06rem;
+              vertical-align: middle;
+            }
+          }
+          .matter_unit {
+            color: #757575;
+            font-size: .14rem;
+          }
           // 阴影
           &.box_sd {
             box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
+            box-shadow: 0 0 5px #e8e8e8;
           }
           // 下划线
           .vux-1px-b:after {
@@ -258,7 +280,7 @@
             transform: translate(0, -50%);
           }
           .isSelIcon {
-            fill: #5077aa;
+            fill: #D7030F;
           }
         }
       }
