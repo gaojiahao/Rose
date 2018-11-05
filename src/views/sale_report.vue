@@ -197,10 +197,10 @@ export default {
           varchar7: governor,
           varchar8: member,
           varchar9: comments,
-          varchar12:userCode, //工号
+          varchar12: userCode, //工号
           integer1: year,     //年 
-          integer2:month,     //月
-          integer3:day        //日
+          integer2: month,     //月
+          integer3: day        //日
         },
         transDetailUncalc: [
           { id: this.guid(),

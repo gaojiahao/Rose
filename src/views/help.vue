@@ -78,228 +78,240 @@
 </template>
 
 <script>
-  // mixin引入
-  import saleCommon from 'mixins/saleCommon'
-
-  const BASIC_INFO_KEY = 'HELP_BASIC_INFO';
-  const FORM_INFO_KEY = 'HELP_FORM_INFO';
-  export default {
-    name: 'help-Report',
-    mixins: [saleCommon],
-    data() {
-      return {
-        areaList: [],
-        bankList: [],
-        areaValue: [],
-        bankValue: [],
-      };
-    },
-    methods: {
-      //提交
-      goCount() {
-        if (!this.btnStatus) return;
-        const ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
-        //获取缓存信息
-        let governor = this.governor,
+// mixin引入
+import saleCommon from 'mixins/saleCommon'
+// 方法引入
+import {toFixed, accAdd, accMul} from 'plugins/calc'
+const BASIC_INFO_KEY = 'HELP_BASIC_INFO';
+const FORM_INFO_KEY = 'HELP_FORM_INFO';
+export default {
+  name: 'help-Report',
+  mixins: [saleCommon],
+  data() {
+    return {
+      areaList: [],
+      bankList: [],
+      areaValue: [],
+      bankValue: [],
+    };
+  },
+  methods: {
+    //提交
+    goCount() {
+      if (!this.btnStatus) return;
+      const ROSE_OPTION = JSON.parse(localStorage.getItem("ROSE_OPTION"));  //业务员原有的个人信息
+      //获取缓存信息
+      let governor = this.governor,
           member = this.member,
           comments = this.comments;
-        // 声明提示文字
-        let tips = '';
-        let tipArr = [
-          {key: 'areaValue', msg: '所属地区'},
-          {key: 'bankValue', msg: '所属银行'},
-          // {key: 'helpCaptain', msg: '所属队长'},
-          // {key: 'governor', msg: '省长信息'},
-          // {key: 'member', msg: '常委信息'},
-          {key: 'arr', msg: '项目产品'},
-          {key: 'Aclass', msg: 'A类产品销售金额'},
-          {key: 'Bclass', msg: 'B类产品销售金额'},
-          {key: 'hotelAmt', msg: '住宿金额'},
-          {key: 'trafficAmt', msg: '市内交通费'},
-          {key: 'lTrafficAmt', msg: '长途交通费'},
-          {key: 'otherAmt', msg: '其他金额'},
-        ];
-        tipArr.every(item => {
-          if (!this[item.key] && this[item.key] !== 0) {
-            tips = `请填写${item.msg}`;
-            return;
-          }
-          else if (item.key === 'areaValue' && !this[item.key].length || this[item.key][0] === '空' || item.key === 'bankValue' && !this[item.key].length) {
-            tips = `请选择${item.msg}`;
-            return;
-          }
-          else if (item.key === 'arr') {
-            if (!this.arr.length) {
-              tips = `请选择${item.msg}`;
-              return false;
-            }
-            this[item.key].every(item => {
-              if (item.value !== '无' && !item.qty && item.qty !== 0) {
-                tips = '请填写产品数量';
-                return false
-              }
-              return false
-            });
-            return !tips;
-          }
-          return true;
-        })
-        if (tips) {
-          this.$vux.alert.show({
-            content: tips
-          });
+      //获取当前时间
+      let date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth()+1,
+          day = date.getDate();
+      // 声明提示文字
+      let tips = '';
+      let tipArr = [
+        {key: 'areaValue', msg: '所属地区'},
+        {key: 'bankValue', msg: '所属银行'},
+        // {key: 'helpCaptain', msg: '所属队长'},
+        // {key: 'governor', msg: '省长信息'},
+        // {key: 'member', msg: '常委信息'},
+        {key: 'arr', msg: '项目产品'},
+        {key: 'Aclass', msg: 'A类产品销售金额'},
+        {key: 'Bclass', msg: 'B类产品销售金额'},
+        {key: 'hotelAmt', msg: '住宿金额'},
+        {key: 'trafficAmt', msg: '市内交通费'},
+        {key: 'lTrafficAmt', msg: '长途交通费'},
+        {key: 'otherAmt', msg: '其他金额'},
+      ];
+      tipArr.every(item => {
+        if (!this[item.key] && this[item.key] !== 0) {
+          tips = `请填写${item.msg}`;
           return;
         }
-        // 表单提交信息
-        let jsonData = {
-          listId: "4bda3e47-a088-4749-a988-ebb07cfb00e4",
-          referenceId: this.guid(),
-          baseinfoExt: {
-            id: this.guid(),
-            varchar1: ROSE_OPTION.dept,         // 区域(事业部) (业务自带信息)
-            varchar2: this.monthCoverNum,             // 支援队长
-            varchar3: this.areaValue[0],        // 支援地区(省份)
-            varchar4: this.bankValue[0],        // 支援银行
-            varchar5: ROSE_OPTION.groupName,    // 部门(业务自带信息)
-            varchar6: '否',                     // 区分是否为支援
-            varchar7: governor,                 // 省长   连长
-            varchar8: member,                   // 常委   团长
-            varchar9: comments,                 // 备注
-            varchar10: ROSE_OPTION.region,      // 省份(业务自带信息)
-            varchar11: ROSE_OPTION.bank,        // 银行(业务自带信息)
-            varchar12: ROSE_OPTION.userCode,     // 工号
-            varchar13: this.costVolumeRatio,   // 费用销量比
-            double7: this.hotelAmt, // 住宿费用
-            double8: this.otherAmt, // 其他费用
-            double9: this.totalCost, // 费用合计(住宿费+其他费用)
-            double10: this.trafficAmt, // 市内交通费
-            double11: this.lTrafficAmt, // 市内交通费
-          },
-          transDetailUncalc: [{
-            id: this.guid(),
-            transObjCode: "A类产品", //项目类产品名称
-            containerCode: "A", //类型
-            qty: "",
-            amount: Number(this.Aclass), //总金额
-            fgCode: ""
-          }, {
-            id: this.guid(),
-            transObjCode: "B类产品", //项目类产品名称
-            containerCode: "B", //类型
-            qty: "",
-            amount: Number(this.Bclass), //总金额
-            fgCode: ""
-          }
-          ],
-          transCode: "XHXSDD"
-        };
-        // 项目类产品
-        for (let i = 0; i < this.arr.length; i++) {
-          let item = this.arr[i];
-          jsonData.transDetailUncalc.push({
-            id: this.guid(),
-            transObjCode: item.value, //项目类产品名称
-            containerCode: "项目类产品", //类型
-            qty: item.qty,
-            taxAmount: item.taxAmount,
-            amount: item.qty * item.amount, //总金额
-            fgCode: "",
-            num1: item.num1, // 套数
-          });
+        else if (item.key === 'areaValue' && !this[item.key].length || this[item.key][0] === '空' || item.key === 'bankValue' && !this[item.key].length) {
+          tips = `请选择${item.msg}`;
+          return;
         }
-        let totalInfo = {
-          isMobile: true,
-          conn: 20000,
-          list: "trans_form_data",
-          transCode: "XHXSDD",
-          jsonData: JSON.stringify(jsonData)
-        };
-        this.totalInfo = totalInfo;
-        // 提交表单内容 缓存
-        localStorage.setItem(
-          "saleReportInfo",
-          JSON.stringify({
-            saleReportRemark: totalInfo,
-            time: new Date().getTime()
-          })
-        );
-        // 缓存 表单用户填写信息
-        this.recordForm();
-        // 缓存 支援地区模块
-        this.recordBasic();
-
-        this.$router.push({path: "/count"});
-      },
-      // TODO 缓存所属的地区
-      recordBasic() {
-        // 缓存 支援地区模块
-        localStorage.setItem(
-          [BASIC_INFO_KEY],
-          JSON.stringify({
-            // member: this.member,
-            // governor: this.governor,
-            // captain: this.helpCaptain,
-            bank: this.bankValue[0],
-            areaValue: this.areaValue[0],
-          })
-        );
-      },
-      // TODO 缓存表单信息
-      recordForm() {
-        localStorage.setItem(
-          [FORM_INFO_KEY],
-          JSON.stringify({
-            Aclass: this.Aclass,
-            Bclass: this.Bclass,
-            saleReportArr: this.arr,
-            comments: this.comments,
-            hotelAmt: this.hotelAmt,
-            trafficAmt: this.trafficAmt,
-            lTrafficAmt: this.lTrafficAmt,
-            otherAmt: this.otherAmt,
-            time: new Date().getTime()
-          })
-        );
-      }
-    },
-    created() {
-      let {monthCoverNum = ''} = this.$route.query;
-      this.monthCoverNum = monthCoverNum;
-      // 缓存
-      const basicInfo = JSON.parse(localStorage.getItem(BASIC_INFO_KEY)) || '';
-      const formInfo = JSON.parse(localStorage.getItem(FORM_INFO_KEY)) || '';
-      // 用户填写表单内容
-      this.echoStorage(basicInfo, formInfo);
-      // 获取连长、团长
-      this.getSuperior();
-      // 支援地区
-      this.getArea();
-      // 支援银行
-      this.getBank();
-    },
-    beforeRouteLeave(to, from, next) {
-      if (!this.arr.length || to.name == "Count") next();
-      else {
-        this.$vux.confirm.show({
-          title: "温馨提示",
-          content: "要保存数据吗？",
-          confirmText: "确认",
-          cancelText: "取消",
-          onCancel: () => {
-            localStorage.removeItem(BASIC_INFO_KEY);
-            localStorage.removeItem(FORM_INFO_KEY);
-            next();
-          },
-          onConfirm: () => {
-            this.recordForm();
-            //缓存支援地区模块
-            this.recordBasic();
-            next();
+        else if (item.key === 'arr') {
+          if (!this.arr.length) {
+            tips = `请选择${item.msg}`;
+            return false;
           }
+          this[item.key].every(item => {
+            if (item.value !== '无' && !item.qty && item.qty !== 0) {
+              tips = '请填写产品数量';
+              return false
+            }
+            return false
+          });
+          return !tips;
+        }
+        return true;
+      })
+      if (tips) {
+        this.$vux.alert.show({
+          content: tips
+        });
+        return;
+      }
+      // 表单提交信息
+      let jsonData = {
+        listId: "4bda3e47-a088-4749-a988-ebb07cfb00e4",
+        referenceId: this.guid(),
+        baseinfoExt: {
+          id: this.guid(),
+          varchar1: ROSE_OPTION.dept,         // 区域(事业部) (业务自带信息)
+          varchar2: this.monthCoverNum,       // （套）合计
+          varchar3: this.areaValue[0],        // 支援地区(省份)
+          varchar4: this.bankValue[0],        // 支援银行
+          varchar5: ROSE_OPTION.groupName,    // 部门(业务自带信息)
+          varchar6: '否',                     // 区分是否为支援
+          varchar7: governor,                 // 连长（原省长）   
+          varchar8: member,                   // 团长（原常委）   
+          varchar9: comments,                 // 备注
+          varchar10: ROSE_OPTION.region,      // 省份(业务自带信息)
+          varchar11: ROSE_OPTION.bank,        // 银行(业务自带信息)
+          varchar12: ROSE_OPTION.userCode,    // 工号
+          varchar13: this.costVolumeRatio,    // 费用销量比
+          double7: this.hotelAmt, // 住宿费用
+          double8: this.otherAmt, // 其他费用
+          double9: this.totalCost, // 费用合计(住宿费+其他费用)
+          double10: this.trafficAmt, // 市内交通费
+          double11: this.lTrafficAmt, // 市内交通费
+          integer1: year,     //年 
+          integer2: month,     //月
+          integer3: day        //日
+        },
+        transDetailUncalc: [{
+          id: this.guid(),
+          transObjCode: "A类产品", //项目类产品名称
+          containerCode: "A", //类型
+          qty: "",
+          amount: Number(this.Aclass), //总金额
+          fgCode: ""
+        }, {
+          id: this.guid(),
+          transObjCode: "B类产品", //项目类产品名称
+          containerCode: "B", //类型
+          qty: "",
+          amount: Number(this.Bclass), //总金额
+          fgCode: ""
+        }
+        ],
+        transCode: "XHXSDD"
+      };
+      // 项目类产品
+      for (let i = 0; i < this.arr.length; i++) {
+        let item = this.arr[i];
+        // 月销量的累加
+        toFixed(jsonData.baseinfoExt.varchar2 += item.num1);
+        // 新增项目类产品
+        jsonData.transDetailUncalc.push({
+          id: this.guid(),
+          transObjCode: item.value, //项目类产品名称
+          containerCode: "项目类产品", //类型
+          qty: item.qty,
+          taxAmount: item.taxAmount,
+          amount: item.qty * item.amount, //总金额
+          fgCode: "",
+          num1: item.num1, // 套数
         });
       }
+      let totalInfo = {
+        isMobile: true,
+        conn: 20000,
+        list: "trans_form_data",
+        transCode: "XHXSDD",
+        jsonData: JSON.stringify(jsonData)
+      };
+      this.totalInfo = totalInfo;
+      // 提交表单内容 缓存
+      localStorage.setItem(
+        "saleReportInfo",
+        JSON.stringify({
+          saleReportRemark: totalInfo,
+          time: new Date().getTime()
+        })
+      );
+      // 缓存 表单用户填写信息
+      this.recordForm();
+      // 缓存 支援地区模块
+      this.recordBasic();
+
+      this.$router.push({path: "/count"});
+    },
+    // TODO 缓存所属的地区
+    recordBasic() {
+      // 缓存 支援地区模块
+      localStorage.setItem(
+        [BASIC_INFO_KEY],
+        JSON.stringify({
+          // member: this.member,
+          // governor: this.governor,
+          // captain: this.helpCaptain,
+          bank: this.bankValue[0],
+          areaValue: this.areaValue[0],
+        })
+      );
+    },
+    // TODO 缓存表单信息
+    recordForm() {
+      localStorage.setItem(
+        [FORM_INFO_KEY],
+        JSON.stringify({
+          Aclass: this.Aclass,
+          Bclass: this.Bclass,
+          saleReportArr: this.arr,
+          comments: this.comments,
+          hotelAmt: this.hotelAmt,
+          trafficAmt: this.trafficAmt,
+          lTrafficAmt: this.lTrafficAmt,
+          otherAmt: this.otherAmt,
+          time: new Date().getTime()
+        })
+      );
     }
-  };
+  },
+  created() {
+    let {monthCoverNum = ''} = this.$route.query;
+    this.monthCoverNum = monthCoverNum;
+    // 缓存
+    const basicInfo = JSON.parse(localStorage.getItem(BASIC_INFO_KEY)) || '';
+    const formInfo = JSON.parse(localStorage.getItem(FORM_INFO_KEY)) || '';
+    // 用户填写表单内容
+    this.echoStorage(basicInfo, formInfo);
+    // 获取连长、团长
+    this.getSuperior();
+    // 支援地区
+    this.getArea();
+    // 支援银行
+    this.getBank();
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.arr.length || to.name == "Count") next();
+    else {
+      this.$vux.confirm.show({
+        title: "温馨提示",
+        content: "要保存数据吗？",
+        confirmText: "确认",
+        cancelText: "取消",
+        onCancel: () => {
+          localStorage.removeItem(BASIC_INFO_KEY);
+          localStorage.removeItem(FORM_INFO_KEY);
+          next();
+        },
+        onConfirm: () => {
+          this.recordForm();
+          //缓存支援地区模块
+          this.recordBasic();
+          next();
+        }
+      });
+    }
+  }
+};
 </script>
 
 <style lang='scss' scoped>

@@ -184,8 +184,6 @@ export default {
     },
     // 添加新数据
     createNew() {
-      // this.arr.push({value: [], qty: '', num5: 0});
-      console.log('11')
       this.showProjectPopup = true;
     },
     // 删除新数据
@@ -278,7 +276,6 @@ export default {
     },
     // TODO 选中项目类产品
     selProject(sels) {
-      console.log(sels)
       this.arr = sels;
     },
     // TODO 点击项目名称

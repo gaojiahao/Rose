@@ -12,7 +12,7 @@
                 <span>距离月底还有{{DaysInMonth}}天</span>
               </div>
               <div class="tips-title">
-                <p>{{username}}, 距离完成 {{saleStatus.currMonthTarget - ProductCount.monthCoverNum || 0 | toFixed}}</p>
+                <p>{{username}}, 距离完成 {{saleStatus.differ || 0 | toFixed}}</p>
               </div>
             </div>
           </div>
@@ -41,7 +41,10 @@
             <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
           </div>
           <h2 class="tech_bottom">
-            Powered by <span class="cp_name">Refordom</span>
+            <div>v2.0.1</div>
+            <div>
+              Powered by <span class="cp_name">Refordom</span>
+            </div>
           </h2>
         </div>
       </div>
