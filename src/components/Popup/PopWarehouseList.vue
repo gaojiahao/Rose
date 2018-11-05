@@ -112,7 +112,14 @@
       isRequired : {
         type : Boolean,
         default : false,
-      }
+      },
+      // 列表请求过滤参数
+      filterParams: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
     },
     directives: {TransferDom},
     components: {
@@ -192,7 +199,7 @@
       },
       // TODO 获取仓库列表
       getList() {
-        let filter = [];
+        let filter = this.filterParams;
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -201,7 +208,8 @@
               value: this.srhInpTx,
               property: 'warehouseName',
               // attendedOperation: 'or'
-            }];
+            },
+          ];
         }
         return getWarehouse({
           limit: this.limit,

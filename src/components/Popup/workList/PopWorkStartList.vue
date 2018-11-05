@@ -10,41 +10,42 @@
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
+                  ref="bScroll">
           <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
               <div class="work_top">
-                <span class="code_name">工单任务号</span>
-                <span class="work_code">{{item.transCode}}</span>
+                <span class="code_name">物料编码</span>
+                <span class="work_code">{{item.inventoryCode}}</span>
               </div>
               <div class="work_mid vux-1px-b">
                 <div class="product_name">
-                  {{item.inventoryName}}<span class="symbol">[{{item.processing}}]</span>
-                </div>
-                <div class="product_unit">
-                  <span class="each_unit">成品编码: {{item.matCode}}</span>
+                  {{item.inventoryName}}
                 </div>
               </div>
-              <div class="work_btm">
+              <div class="work_btm vux-1px-b">
                 <div class="procedure_name">
                   <span>{{item.procedureName}}</span>
                   <span class="symbol">[工序编码: {{item.proPointCode}}]</span>
                 </div>
                 <div class="procedure_unit">
-                  <span class="each_unit">可验收余额: {{item.qtyBal}}</span>
-                  <span class="each_unit">后置工序: {{item.rearProcedureName}}</span>
+                  <!--<span class="each_unit">工序待验收: {{item.thenQtyStock}}</span>-->
+                  <!--<span class="each_unit">已启动数: {{item.thenLockQty}}</span>-->
+                  <span class="each_unit">工序待启动: {{item.thenQtyBal}}</span>
+                  <span class="each_unit">被派人: {{item.dealerName}}</span>
+                  <span class="each_unit">往来标签: {{item.dealerLabel}}</span>
                 </div>
               </div>
-              <!-- <div class="work_btm">
+              <div class="work_btm">
                 <div class="procedure_name">
-                  <span>{{item.rearProcedureName}}</span>
-                  <span class="symbol">[后置工序编码: {{item.proPointCode}}]</span>
+                  <span>{{item.wareName}}</span>
+                  <span class="symbol">[仓库编码: {{item.whInCode}}]</span>
                 </div>
                 <div class="procedure_unit">
-                  <span class="each_unit">加工订单号: {{item.processCode}}</span>
+                  <span class="each_unit">仓库类型: {{item.wareType}}</span>
+                  <span class="each_unit" v-if="item.wareAddress">仓库地址: {{item.wareAddress}}</span>
                 </div>
-              </div> -->
+              </div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -56,12 +57,13 @@
 </template>
 
 <script>
-import { Icon, Popup, LoadMore, dateFormat } from 'vux'
-import { getObjFacility, getWorkCheckList  } from 'service/Product/gdService'
-import RScroll from 'components/RScroll'
-import MSearch from 'components/search'
+  import {Icon, Popup, LoadMore, dateFormat} from 'vux'
+  import {getWorkStartList} from 'service/Product/gdService'
+  import RScroll from 'components/RScroll'
+  import MSearch from 'components/search'
+
   export default {
-    name: "work-list-pop",
+    name: "PopWorkStartList",
     props: {
       show: {
         type: Boolean,
@@ -94,12 +96,12 @@ import MSearch from 'components/search'
           click: true,
           pullUpLoad: true,
         },
-        filterList:[
+        filterList: [
           {
-            name: '成品名称',
+            name: '物料名称',
             value: 'inventoryName',
           }, {
-            name: '成品编码',
+            name: '物料编码',
             value: 'inventoryCode',
           },
           {
@@ -122,7 +124,6 @@ import MSearch from 'components/search'
           this.setDefaultValue();
         }
       },
-
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -144,8 +145,8 @@ import MSearch from 'components/search'
       // TODO 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
-        this.selItems = [sItem];
-        this.$emit('sel-work', this.selItems[0]);
+        this.selItems = {...sItem};
+        this.$emit('sel-work', this.selItems);
       },
       // TODO 设置默认值
       setDefaultValue() {
@@ -164,7 +165,7 @@ import MSearch from 'components/search'
             },
           ];
         }
-        return getWorkCheckList({
+        return getWorkStartList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -204,9 +205,11 @@ import MSearch from 'components/search'
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
   .symbol {
     font-size: .1rem;
   }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;

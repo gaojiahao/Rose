@@ -19,10 +19,11 @@ export default {
   // <生产类应用>
   'fb200d08-4289-44dc-81e1-1fddec997c5e': {
     '65ceb5a6-a120-11e8-862a-005056a136d0': 'NBJGDD',      // *内部加工订单*
-    '5e8d89f1-49a5-4089-9c1a-44dc2ce0ae4b': 'NBJGRK',      // *内部加工入库*  
+    '5e8d89f1-49a5-4089-9c1a-44dc2ce0ae4b': 'NBJGRK',      // *内部加工入库*
     '762b8df4-2555-4325-884a-355f34355832': 'NBJGLL',      // *内部加工领料*
     '2372f734-93c1-11e8-85db-005056a136d0': 'GDRW',           // *工单任务*
     'f9f1e0cb-7edf-43aa-b2f2-527e2525b96e': 'GDYS',           // *工单验收*
+    'c54b3325-a5c1-4d75-a3c4-c6cf0e988aae': 'GDRWQD',      // 工单任务启动
   },
 
   // < 产品类应用 >
@@ -54,7 +55,7 @@ export default {
   '9e5a7193-f2eb-4b99-9849-8fe6c6ae3713': {
     'edf7b34b-8916-410f-801f-2db7e97efbde': 'KCPD' ,       // *库存盘点*
     '4d9a7f8f-9a88-47b6-a1f4-3faed6423615': 'BDKCDB',      // *本地库存调拨*
-    '6ebcad8b-449c-422a-960f-53ccf98fd4ba': 'GDBLL'        // *工单补领料*  
+    '6ebcad8b-449c-422a-960f-53ccf98fd4ba': 'GDBLL'        // *工单补领料*
 
   },
 
