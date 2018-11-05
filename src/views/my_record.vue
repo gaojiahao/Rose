@@ -174,7 +174,7 @@
                 value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
               },
             ]
-            this.costSalesRatio = `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%`;
+            this.costSalesRatio = Number(item.amount) !== 0 ? `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%` : '∞';
           } else if (item.objType == "B") {
             this.list3Total = item.amount;
           }

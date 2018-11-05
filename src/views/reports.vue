@@ -196,7 +196,7 @@
                     value: `￥${numberComma(toFixed(data.hotelAndElseCost) || 0)}`
                   }, {
                     label: '费用销量比',
-                    value: `${toFixed(accMul(data.hotelAndElseCost / data.aProduct, 100))}%`
+                    value: Number(data.aProduct) !== 0 ? `${toFixed(accMul(data.hotelAndElseCost / data.aProduct, 100))}%` : '∞'
                   },
                 ];
               } else {
