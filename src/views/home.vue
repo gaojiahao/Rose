@@ -13,7 +13,7 @@
               </div>
               <div class="tips-title">
                 <div v-if="saleStatus.differ > 0">{{username}}, 距离完成 {{saleStatus.differ || 0 | toFixed}}</div>
-                <div v-else>
+                <div v-if="ProductCount.monthCoverNum && saleStatus.differ <= 0">
                   <p>{{username}}, 恭喜顺利完成目标</p>
                   <p v-if="saleStatus.differ < 0">目前已超额完成 {{Math.abs(saleStatus.differ) | toFixed}}</p>
                 </div>
