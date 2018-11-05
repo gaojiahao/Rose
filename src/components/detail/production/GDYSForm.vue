@@ -110,12 +110,12 @@ export default {
           });
           return;
         }
-        let {outPut = {}} = formData;
+        let {order = {}, outPut = {}} = formData;
         let {dataSet = []} = outPut;
         this.warehouse = {
-          warehouseName: outPut.warehouseName_containerCode,
-          warehouseType: outPut.warehouseType_containerCode,
-          warehouseAddress: outPut.warehouseAddress_containerCode,
+          warehouseName: order.warehouseName_containerCode,
+          warehouseType: order.warehouseType_containerCode,
+          warehouseAddress: order.warehouseAddress_containerCode,
         };
         // 设置bom列表
         dataSet.forEach(item => {
