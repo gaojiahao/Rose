@@ -219,12 +219,13 @@ export default {
     },
     // 获取区域
     getArea() {
-      optionService.getRegion().then(data => {
-        for (let i = 0; i < data.length; i++) {
+      optionService.getRegion().then(({ tableContent }) => {
+        for(let val of tableContent){
+          val.name = val['trans_detail_uncalc.var1']
           this.areaList.push({
-            name: data[i].name,
-            value: data[i].name
-          });
+            name: val.name,
+            value: val.name
+          })
         }
       });
     },
@@ -262,6 +263,7 @@ export default {
     // TODO 项目类产品切换
     projectChange(item, index) {
       let matched = this.list.find(lItem => lItem.value === item.value[0]);
+      console.log(matched);
       this.$set(this.arr, index, {
         ...item,
         num5: matched.num5,
