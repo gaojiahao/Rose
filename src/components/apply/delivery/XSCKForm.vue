@@ -101,6 +101,9 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" 
                     @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <span>待交付数量:{{modifyMatter.qtyBal}}</span>
+          </template>
           <template slot="materStock" slot-scope="{modifyMatter}">
             <span>可用库存:{{modifyMatter.qtyStockBal}}</span>
           </template>
@@ -284,7 +287,7 @@
           let key = `${item.transCode}_${item.inventoryCode}`;
           let {tdQty = '', price = '', taxRate = 0.16, promDeliTime = dateFormat(item.promDeliTime, 'YYYY-MM-DD')} = this.numMap[key] || {};
           item.tdQty = tdQty;
-          item.price = price;
+          item.price = price || item.quotedPrice;
           item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;
           if (!orderList[item.transCode]) {
@@ -614,6 +617,68 @@
             project: this.project,
           }
         };
+      },
+      // TODO 获取关联数据
+      getRelationData() {
+        let {uniqueId} = this.$route.query;
+        return getSOList({
+          formViewUniqueId: uniqueId,
+          transCode: this.relationKey
+        }).then(data => {
+          let {success = true, formData = {},attachment = []} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          // this.attachment = attachment;
+          // 获取合计
+          let {order} = formData;
+          let {dataSet = []} = order;
+          dataSet = dataSet.map(item => {
+            return {
+              ...item,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.inventoryCode_transObjCode,
+              specification: item.specification_transObjCode,
+              processing: item.tdProcessing || '商品',
+              measureUnit: item.measureUnit_transObjCode,
+              transCode: this.relationKey,
+              qtyBal: item.tdQty,
+              tdQty: '',
+              qtyStockBal: 0,
+
+            };
+          });
+
+          //供应商信息展示
+          this.dealerInfo = {
+            creatorName :formData.dealerDebitContactPersonName,
+            dealerMobilePhone :formData.dealerDebitContactInformation,
+            dealerCode: formData.order.dealerDebit,
+            dealerSubclass: formData.order.drAccountSub,
+            dealerName: formData.order.dealerName_dealerDebit,
+            province: formData.order.province_dealerDebit,
+            city: formData.order.city_dealerDebit,
+            county: formData.order.county_dealerDebit,
+            address: formData.order.address_dealerDebit
+          }
+          // 物料请求参数
+          this.orderParams = {
+            dealerCode: this.dealerInfo.dealerCode
+          };
+
+          this.matterList = dataSet;
+          this.orderList = {
+            [this.relationKey]: dataSet,
+          };
+          this.crDealerPaymentTerm = order.drDealerPaymentTerm;
+          this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
+          this.$loading.hide();       
+        })
       },
     },
     created() {

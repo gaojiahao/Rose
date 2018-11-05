@@ -137,6 +137,17 @@ export let getJGRKBom = (data = {}) => {
     }
   })
 };
+// TODO 获取工单任务派工Bom
+export let getTaskBom = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getBomWorkOrderTask',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+
+}
 
 export default {
   save,

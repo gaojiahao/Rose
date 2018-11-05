@@ -14,7 +14,7 @@
           <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
-              <div class="work_top">
+              <div class="work_top" v-show="item.processCode">
                 <span class="code_name">加工订单号</span>
                 <span class="work_code">{{item.processCode}}</span>
               </div>
@@ -24,7 +24,7 @@
                 </div>
                 <div class="product_unit">
                   <span class="each_unit">成品编码: {{item.inventoryCode}}</span>
-                  <span class="each_unit">加工数量: {{item.processProQty}}</span>
+                  <span class="each_unit" v-show="item.processProQty">加工数量: {{item.processProQty}}</span>
                 </div>
               </div>
               <div class="work_btm">
@@ -33,8 +33,10 @@
                   <span class="symbol">[工序编码: {{item.proPointCode}}]</span>
                 </div>
                 <div class="procedure_unit">
-                  <span class="each_unit">工序待验收: {{item.thenQtyStock}}</span>
+                  <!-- <span class="each_unit">工序待验收: {{item.thenQtyStock}}</span> -->
                   <span class="each_unit">工序可派工: {{item.thenQtyBal}}</span>
+                  <span class="each_unit">派工总数: {{item.productDemandQty}}</span>
+                  <!-- <span class="each_unit">已派工数: {{item.thenLockQty}}</span> -->
                 </div>
               </div>
               <div>

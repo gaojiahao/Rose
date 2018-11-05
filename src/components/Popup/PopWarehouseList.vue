@@ -277,9 +277,6 @@
 
 <style scoped lang="scss">
 @import '~@/scss/color.scss';
-.required {
-    color: $required;
-  }
   .pop-warehouse-container {
     position: relative;
     margin: .1rem auto;
@@ -293,6 +290,9 @@
     }
     .mode {
       font-weight: 500;
+      &.required{
+        font-weight: bold;
+      }
     }
     /* 右箭头 */
     .r-arrow {
@@ -328,6 +328,10 @@
         font-size: .14rem;
       }
     }
+  }
+  .required {
+    color: $required;
+    font-weight: bold;
   }
   // 弹出层
   .trade_pop_part {
