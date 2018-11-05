@@ -114,9 +114,6 @@ export default {
       let tipArr = [
         {key: 'areaValue', msg: '所属地区'},
         {key: 'bankValue', msg: '所属银行'},
-        // {key: 'helpCaptain', msg: '所属队长'},
-        // {key: 'governor', msg: '省长信息'},
-        // {key: 'member', msg: '常委信息'},
         {key: 'arr', msg: '项目产品'},
         {key: 'Aclass', msg: 'A类产品销售金额'},
         {key: 'Bclass', msg: 'B类产品销售金额'},
@@ -203,11 +200,11 @@ export default {
         transCode: "XHXSDD"
       };
       // 项目类产品
-      for (let i = 0; i < this.arr.length; i++) {
-        let item = this.arr[i];
-        // 月销量的累加
-        toFixed(jsonData.baseinfoExt.varchar2 += item.num1);
-        // 新增项目类产品
+      for(let item of this.arr){
+        // 动态增加 月销量“套”合计
+        let newVar2 = toFixed(jsonData.baseinfoExt.varchar2 += Number(item.num1));
+        this.$set(jsonData.baseinfoExt, 'varchar2', newVar2);
+        // 项目类产品
         jsonData.transDetailUncalc.push({
           id: this.guid(),
           transObjCode: item.value, //项目类产品名称
@@ -219,19 +216,18 @@ export default {
           num1: item.num1, // 套数
         });
       }
-      let totalInfo = {
+      this.totalInfo = {
         isMobile: true,
         conn: 20000,
         list: "trans_form_data",
         transCode: "XHXSDD",
         jsonData: JSON.stringify(jsonData)
       };
-      this.totalInfo = totalInfo;
       // 提交表单内容 缓存
       localStorage.setItem(
         "saleReportInfo",
         JSON.stringify({
-          saleReportRemark: totalInfo,
+          saleReportRemark: this.totalInfo,
           time: new Date().getTime()
         })
       );
@@ -239,7 +235,6 @@ export default {
       this.recordForm();
       // 缓存 支援地区模块
       this.recordBasic();
-
       this.$router.push({path: "/count"});
     },
     // TODO 缓存所属的地区
@@ -248,9 +243,6 @@ export default {
       localStorage.setItem(
         [BASIC_INFO_KEY],
         JSON.stringify({
-          // member: this.member,
-          // governor: this.governor,
-          // captain: this.helpCaptain,
           bank: this.bankValue[0],
           areaValue: this.areaValue[0],
         })
@@ -276,7 +268,7 @@ export default {
   },
   created() {
     let {monthCoverNum = ''} = this.$route.query;
-    this.monthCoverNum = monthCoverNum;
+    this.monthCoverNum = Number(monthCoverNum);
     // 缓存
     const basicInfo = JSON.parse(localStorage.getItem(BASIC_INFO_KEY)) || '';
     const formInfo = JSON.parse(localStorage.getItem(FORM_INFO_KEY)) || '';
