@@ -35,8 +35,46 @@ export let getWorkGDBLLList = (data = {}) => {
   })
 }
 
+// TODO 获取工单任务启动工序列表
+export let getWorkStartList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getWorkOrderStart',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+// TODO 获取工单任务启动物料Bom
+export let getBomWorkStart = (code) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getBomWorkOrderStart',
+    data: {
+      _dc: Date.now(),
+      filter: JSON.stringify([{operator: 'in', property: 'parentInvCode', value: code}])
+    }
+  })
+};
+
+// TODO 获取工单验收物料Bom
+export let getBomWorkCheck = ({transCode = '', inventoryCode = ''}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getBomWorkOrderCheck',
+    data: {
+      _dc: Date.now(),
+      filter: JSON.stringify([
+        {operator: 'in', property: 'startCode', value: transCode},
+        {operator: 'in', property: 'parentInvCode', value: inventoryCode},
+      ]),
+    }
+  })
+};
+
 export default {
   getObjFacility,
   getWorkOrderTask,
   getWorkGDBLLList,
+  getWorkStartList,
+  getBomWorkStart,
 }
