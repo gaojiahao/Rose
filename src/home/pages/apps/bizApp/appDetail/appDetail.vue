@@ -26,9 +26,7 @@
     </div>
     <router-view></router-view>   
   </div>
-  
 </template>
-
 <script>
 // vux插件引入
 import {dateFormat} from 'vux'
@@ -46,19 +44,17 @@ export default {
       scrollOptions: {
         click: true,
       },
-      listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
-      appInfo:{},//应用信息
+      appInfo:{},                       // 应用信息
+      commentList: [],
       LatestchangeLog: {},
       adminCommentList: [],
-      commentList: [],
-      mySwiper: null,
+      isAppAdmin: false,                // 是否为应用管理员
       currentUserId: '',
-      isAppAdmin: false, //是否为应用管理员
-
+      listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
     }
   },
   components:{
-    RScroll,ChangeLog,AdminComment,OtheComment
+    RScroll, ChangeLog, AdminComment, OtheComment
   },
   watch: {
     $route: {
@@ -117,15 +113,12 @@ export default {
             this.isAppAdmin = true;
           }
         })
-
       })()
       setTimeout(()=>{
         this.$loading.hide();
-      },500)
+      }, 500)
     }
-  },
-  
-
+  }
 }
 </script>
 
