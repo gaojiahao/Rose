@@ -69,7 +69,7 @@
     },
     computed: {
       regionTitle() {
-        return this.region[0] ? this.region[0].split('-')[1] + '地区' : '报表'
+        return this.region[0] ? this.region[0] + '地区' : '报表'
       }
     },
     methods: {
@@ -79,9 +79,9 @@
           if (this.regionList.length > 0) {
             resolve(this.regionList)
           } else {
-            optionService.getRegion().then(data => {
-              let region = data && data.reduce((arr, item) => {
-                arr.push(item.name);
+            optionService.getRegion().then(({dataCount = 0, tableContent = []}) => {
+              let region = tableContent && tableContent.reduce((arr, item) => {
+                arr.push(item['trans_detail_uncalc.var1']);
                 return arr
               }, ['']);
               this.regionList = region;
@@ -165,6 +165,7 @@
         this.showMore = true;
         this.whichIndex = index;
         if (index === 0) {
+          console.log(value)
           this.region = value;
         } else if (index === 2) {
           this.showMore = false;
