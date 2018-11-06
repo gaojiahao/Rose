@@ -161,8 +161,8 @@ export default {
           id: this.guid(),
           varchar1: ROSE_OPTION.dept,         // 区域 (事业部) (业务自带信息)
           varchar2: this.monthCoverNum,       // （套）合计
-          varchar3: this.areaValue[0],        // 支援地区(省份)
-          varchar4: this.bankValue[0],        // 支援银行
+          varchar3: this.areaValue[0],        // 地区(省份)
+          varchar4: this.bankValue[0],        // 银行
           varchar5: ROSE_OPTION.groupName,    // 部门 (业务自带信息)
           varchar6: '否',                     // 区分是否为支援
           varchar7: governor,                 // 连长（原省长）   

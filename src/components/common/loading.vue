@@ -1,10 +1,9 @@
 <template>
-  <div class="loading-container" v-show="show">
-    <div class="loading-wrapper">
-      <spinner class="loading-animation" type="crescent" size="2em"></spinner>
-    </div>
+  <div class="loadding" v-show="show">
+    <spinner type='ripple' size='50px'></spinner>
   </div>
 </template>
+
 
 <script>
   import {Spinner} from 'vux'
@@ -25,33 +24,22 @@
 </script>
 
 <style lang="scss" scoped>
-  %center {
+  .loadding { //加载动画
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-  }
-
-  .loading-container {
-    position: fixed;
-    top: 0;
     left: 0;
-    z-index: 99;
+    top: 0;
+    bottom: 0;
     width: 100%;
     height: 100%;
-    .loading-wrapper {
-      @extend %center;
-      z-index: 100;
-      width: 3.5em;
-      min-height: 3.5em;
-      background: rgba(17, 17, 17, 0.7);
-      border-radius: 5px;
-      .loading-animation {
-        @extend %center;
-        fill: #fff;
-        stroke: #fff;
-      }
+    background: #fff;
+    z-index: 100;
+    .vux-spinner {
+      top: 50%;
+      left: 50%;
+      position: absolute;
+      fill: #366CAC;
+      stroke: #366CAC;
+      transform: translate(-50%, -50%);
     }
   }
 </style>

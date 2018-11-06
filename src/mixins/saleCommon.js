@@ -221,21 +221,16 @@ export default {
     getArea() {
       optionService.getRegion().then(({ tableContent }) => {
         for(let val of tableContent){
-          val.name = val['trans_detail_uncalc.var1']
-          this.areaList.push({
-            name: val.name,
-            value: val.name
-          })
+          this.areaList.push(val['trans_detail_uncalc.var1'])
         }
       });
     },
     // 获取银行
     getBank() {
       optionService.getBank().then(data => {
-        for (let i = 0; i < data.length; i++) {
-          data[i].value = data[i].name;
+        for(let val of data){
+          this.bankList.push(val['name']);
         }
-        this.bankList = data;
       });
     },
     // 回显表单内容

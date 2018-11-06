@@ -14,7 +14,7 @@
               <div class="tips-title">
                 <div v-if="!saleStatus.currMonthTarget && !saleStatus.differ">欢迎, {{username}}</div>
                 <div v-if="saleStatus.currMonthTarget && saleStatus.differ > 0">{{username}}, 距离完成 {{saleStatus.differ | toFixed}}</div>
-                <div v-if="ProductCount.monthCoverNum && saleStatus.differ <= 0">
+                <div class="when_finished" v-if="ProductCount.monthCoverNum && saleStatus.differ <= 0">
                   <p>{{username}}, 恭喜顺利完成目标</p>
                   <p v-if="saleStatus.differ < 0">目前已超额完成 {{Math.abs(saleStatus.differ) | toFixed}}</p>
                 </div>
@@ -46,7 +46,7 @@
             <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
           </div>
           <h2 class="tech_bottom">
-            <div>v2.0.3</div>
+            <div>v2.0.4</div>
             <div>
               Powered by <span class="cp_name">Refordom</span>
             </div>
@@ -179,7 +179,7 @@ export default {
           content: err.message
         })
       });
-      await getCurrMonthStatus().then( ({ differ, currMonthTarget }) => {
+      await getCurrMonthStatus().then(({ differ, currMonthTarget }) => {
         this.saleStatus = {
           differ,                   // 距离目标还差多少
           currMonthTarget           // 每个月的目标
@@ -200,9 +200,6 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-  #app {
-    // background: #F5F5F5;
-  }
   .app-container {
     padding-top: 2rem;
     background: #F5F5F5;
@@ -212,7 +209,6 @@ export default {
     top: 0;
     width: 100%;
     height: 2rem;
-    // filter: blur(1px);
     position: absolute;
     background: #111 url('../assets/bg01.jpeg') top / cover no-repeat;
   }
@@ -269,8 +265,8 @@ export default {
           .each-form-msg {
             border-radius: .12rem;
             background: #5077aa;
-            box-shadow: 0 2px 2px #5077aa;
             padding: .01rem .04rem;
+            box-shadow: 0 2px 2px #5077aa;
           }
           .each-form-msg + .each-form-msg {
             margin-left: .04rem;
@@ -289,6 +285,9 @@ export default {
         font-size: .26rem;
         font-weight: bold;
         line-height: .32rem;
+        .when_finished {
+          color: #D2AD6B;
+        }      
       }
     }
     .date-part {
@@ -342,7 +341,6 @@ export default {
     width: 100%;
     padding: 0 .1rem;    
     margin-top: .1rem;
-    position: relative;
     background: #FFF;
     box-sizing: border-box;
     .tips-title {
@@ -392,13 +390,14 @@ export default {
   }
   /* 技术支持公司名  */
   .tech_bottom {
-    width: 100%;
-    text-align: center;
-    position: fixed;
+    left: 0;
     bottom: 0;
+    width: 100%;
     font-size: 16px;
     color: #CDCED3;
     font-weight: 200;
+    position: absolute;
+    text-align: center;
   }
   .cp_name {
     color: dodgerblue;
