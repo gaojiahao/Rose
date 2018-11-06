@@ -5,7 +5,7 @@
       <span class="more" @click="popupShow = true" v-show="adminCommentList.length">查看更多</span>
     </div>
     <div class="no_data" v-if="!adminCommentList.length">暂无评论</div>
-    <div class="swiper-container" :class="{'no_swiper' : !adminCommentList.length}">
+    <div class="admin-comment-container swiper-container" :class="{'no_swiper' : !adminCommentList.length}">
       <div class="swiper-wrapper">
         <div class="swiper-slide" v-for="(item,index) in adminCommentList" :key="index" v-if="index < 5">
           <div class="each_comment" >
@@ -95,9 +95,6 @@ export default {
   },
   data(){
     return {
-      adminCommentList : [],
-      listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
-      popupShow : false,
       page : 1,
       limit : 10,
       hasNext: true,
@@ -105,7 +102,10 @@ export default {
         click: true,
         pullUpLoad: true,
       },
-      
+      mySwiper: null,
+      popupShow : false,
+      adminCommentList : [],
+      listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
     }
   },
   directives: {
@@ -186,15 +186,13 @@ export default {
   },
   mounted(){
     let Swiper = this.Swiper;
-    this.mySwiper = new Swiper ('.swiper-container', {
+    this.mySwiper = new Swiper ('.admin-comment-container', {
       slidesPerView: 'auto',
       observer: true,       //修改swiper自己或子元素时，自动初始化swiper
       observeParents: true,
       centeredSlides: true,      
     })      
-
-  },
-
+  }
 }
 </script>
 
