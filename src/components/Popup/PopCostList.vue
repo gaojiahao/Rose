@@ -14,7 +14,7 @@
                @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
-              <div class="mater_name">{{item.COST_NAME}}</div>
+              <div class="mater_name">{{item.costName}}</div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -27,7 +27,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import {getCost} from 'service/materService.js'
+ import {getCost, getCostById} from 'service/materService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
@@ -96,7 +96,7 @@
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.COST_CODE === item.COST_CODE) {
+          if (sItem.costCode === item.costCode) {
             flag = true;
             return false;
           }
@@ -125,11 +125,12 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'COST_NAME'
+              property: 'costName'
             },
           ];
         }
-        return getCost({
+        return getCostById({
+          groupId: 33,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

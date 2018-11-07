@@ -92,7 +92,8 @@
     getObjInventoryByProcessing,
     getInventory7501,
     getInventory7502,
-    getCKTHCKList
+    getCKTHCKList,
+    getKCPDList,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -167,6 +168,7 @@
       },
       params: {
         handler() {
+          this.resetCondition();
           // 参数改变，重新请求接口
           this[this.getListMethod]();
         }
@@ -256,10 +258,7 @@
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
-        this.matterList = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
+        this.resetCondition();
         this[this.getListMethod]();
       },
       // TODO 删除选中项
@@ -365,6 +364,27 @@
           filter: JSON.stringify(filter),
         }).then(this.dataHandler);
       },
+      // TODO 获取物料列表(库存盘点)
+      getKCPDList() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getKCPDList({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
       // TODO 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}){
         tableContent.forEach(item => {
@@ -375,6 +395,13 @@
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullUp();
         })
+      },
+      // TODO 初始化条件
+      resetCondition(){
+        this.matterList = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.$refs.bScroll.scrollTo(0, 0);
       },
     },
     created() {

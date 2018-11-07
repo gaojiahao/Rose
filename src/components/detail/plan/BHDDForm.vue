@@ -1,6 +1,6 @@
 <template>
   <div class="detail_wrapper">
-      <div class="basicPart" v-if='orderInfo && orderInfo.order'>  
+      <div class="basicPart" v-if='orderInfo && orderInfo.order'>
         <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
           <span>其他应用里存在与本条相关联的数据，快去看看</span>
           <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
@@ -9,7 +9,7 @@
         <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
         <!-- 工作流 -->
         <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow>              
+                  :no-status="orderInfo.biStatus"></work-flow>
         <!-- 物料列表 -->
         <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment">
           <div class='mater_other' slot="matterOther" slot-scope="{item}">
@@ -19,14 +19,17 @@
               </span>
             </div>
             <div class="mater_num">
+              <span class='num'>预期完工日: {{item.promDeliTime}}</span>
+            </div>
+            <div class="mater_num">
               <span class='num'>数量: {{item.tdQty}}</span>
             </div>
           </div>
         </matter-list>
         <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
         <!-- 审批操作 -->
-        <r-action :code="transCode" :task-id="taskId" :actions="actions" 
-                  :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>           
+        <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                  :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
       </div>
   </div>
 </template>
