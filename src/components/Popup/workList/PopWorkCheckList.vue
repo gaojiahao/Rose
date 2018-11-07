@@ -10,7 +10,7 @@
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
+                  ref="bScroll">
           <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
@@ -56,10 +56,11 @@
 </template>
 
 <script>
-import { Icon, Popup, LoadMore, dateFormat } from 'vux'
-import { getObjFacility, getWorkCheckList  } from 'service/Product/gdService'
-import RScroll from 'components/RScroll'
-import MSearch from 'components/search'
+  import {Icon, Popup, LoadMore, dateFormat} from 'vux'
+  import {getObjFacility, getWorkCheckList} from 'service/Product/gdService'
+  import RScroll from 'components/RScroll'
+  import MSearch from 'components/search'
+
   export default {
     name: "work-list-pop",
     props: {
@@ -94,7 +95,7 @@ import MSearch from 'components/search'
           click: true,
           pullUpLoad: true,
         },
-        filterList:[
+        filterList: [
           {
             name: '成品名称',
             value: 'inventoryName',
@@ -107,7 +108,9 @@ import MSearch from 'components/search'
             value: 'procedureName'
           }
         ],
-        filterProperty: ''
+        filterProperty: '',
+        inventoryCode: '', // 物料编码
+        proPointCode: '', // 工艺编码
       }
     },
     watch: {
@@ -144,8 +147,8 @@ import MSearch from 'components/search'
       // TODO 选择物料
       selThis(sItem, sIndex) {
         this.showPop = false;
-        this.selItems = [sItem];
-        this.$emit('sel-work', this.selItems[0]);
+        this.selItems = {...sItem};
+        this.$emit('sel-work', this.selItems);
       },
       // TODO 设置默认值
       setDefaultValue() {
@@ -164,12 +167,33 @@ import MSearch from 'components/search'
             },
           ];
         }
+        if (this.inventoryCode) {
+          filter = [
+            ...filter,
+            {
+              operator: 'eq',
+              value: this.inventoryCode,
+              property: 'matCode',
+            },
+            {
+              operator: 'eq',
+              value: this.proPointCode,
+              property: 'proPointCode'
+            },
+          ];
+        }
         return getWorkCheckList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          if (this.inventoryCode) {
+            let matched = tableContent.find(item => item.matCode === this.inventoryCode && item.proPointCode === this.proPointCode);
+            if (matched) {
+              this.selThis(matched);
+            }
+          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
           this.$nextTick(() => {
@@ -194,6 +218,9 @@ import MSearch from 'components/search'
       },
     },
     created() {
+      let {inventoryCode = '', proPointCode = ''} = this.$route.query;
+      this.inventoryCode = inventoryCode;
+      this.proPointCode = proPointCode;
       this.setDefaultValue();
       this.getWorkOrderTask();
     }
@@ -204,9 +231,11 @@ import MSearch from 'components/search'
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
   .symbol {
     font-size: .1rem;
   }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;
