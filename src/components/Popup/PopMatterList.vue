@@ -134,7 +134,7 @@
         selItems: [], // 哪些被选中了
         tmpItems: [], // 临时存储
         matterList: [], // 物料列表
-        limit: 10, // 每页条数
+        limit: 100, // 每页条数
         page: 1., // 当前页码
         hasNext: true, // 是否有下一页
         scrollOptions: { // 滚动配置
@@ -315,6 +315,16 @@
             },
           ];
         }
+        let {relationKey = ''} = this.$route.query;
+        if(relationKey){
+          filter = [
+            {
+              operator: 'eq',
+              value: relationKey,
+              property: 'transCode'
+            }
+          ]
+        }
         return getInventory7501({
           limit: this.limit,
           page: this.page,
@@ -370,6 +380,11 @@
         tableContent.forEach(item => {
           item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
         });
+        let {relationKey = ''} = this.$route.query;
+        if(relationKey){
+          this.selItems = [...tableContent];
+          this.$emit('sel-matter', JSON.stringify(this.selItems));
+        }
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
         this.$nextTick(() => {

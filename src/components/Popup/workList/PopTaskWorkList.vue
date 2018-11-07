@@ -9,7 +9,7 @@
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
-          <div class="each-work box_sd"  v-for='(value, i) in taskWorkList' :key='i'
+          <div class="each-work box_sd"  v-for='(value, i) in taskWorkList' :key='i'  v-if="value.qtyBalance>0"
                @click.stop="selThis(value, i)">
             <div class="work-main">
               <div class="work_mid">

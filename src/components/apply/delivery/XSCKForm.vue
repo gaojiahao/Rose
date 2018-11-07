@@ -636,23 +636,23 @@
           // this.attachment = attachment;
           // 获取合计
           let {order} = formData;
-          let {dataSet = []} = order;
-          dataSet = dataSet.map(item => {
-            return {
-              ...item,
-              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_transObjCode,
-              inventoryCode: item.inventoryCode_transObjCode,
-              specification: item.specification_transObjCode,
-              processing: item.tdProcessing || '商品',
-              measureUnit: item.measureUnit_transObjCode,
-              transCode: this.relationKey,
-              qtyBal: item.tdQty,
-              tdQty: '',
-              qtyStockBal: 0,
+          // let {dataSet = []} = order;
+          // dataSet = dataSet.map(item => {
+          //   return {
+          //     ...item,
+          //     inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+          //     inventoryName: item.inventoryName_transObjCode,
+          //     inventoryCode: item.inventoryCode_transObjCode,
+          //     specification: item.specification_transObjCode,
+          //     processing: item.tdProcessing || '商品',
+          //     measureUnit: item.measureUnit_transObjCode,
+          //     transCode: this.relationKey,
+          //     qtyBal: item.tdQty,
+          //     tdQty: '',
+          //     qtyStockBal: 0,
 
-            };
-          });
+          //   };
+          // });
 
           //供应商信息展示
           this.dealerInfo = {
@@ -671,10 +671,10 @@
             dealerCode: this.dealerInfo.dealerCode
           };
 
-          this.matterList = dataSet;
-          this.orderList = {
-            [this.relationKey]: dataSet,
-          };
+          // this.matterList = dataSet;
+          // this.orderList = {
+          //   [this.relationKey]: dataSet,
+          // };
           this.crDealerPaymentTerm = order.drDealerPaymentTerm;
           this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
           this.$loading.hide();       
