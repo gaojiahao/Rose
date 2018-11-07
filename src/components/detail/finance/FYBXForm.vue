@@ -17,11 +17,13 @@
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">费用列表</span>
         </div>
-        <div class="form_content" 
+        <div class="form_content"
             :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
               <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
+              <form-cell cellTitle='编码' :cellContent="item.expCode"></form-cell>
+              <form-cell cellTitle='科目' :cellContent="item.expSubject"></form-cell>
               <form-cell cellTitle='申请金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
           </div>
@@ -36,11 +38,11 @@
           <span class='title'>合计:</span>
           <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
         </div>
-      </div> 
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>        
+      </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>   
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>

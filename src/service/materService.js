@@ -57,8 +57,16 @@ export let getCost = (data = {}) => {
     url: '/H_roleplay-si/ds/getCostAll',
     data
   })
-
 }
+
+//获取费用(新)
+export let getCostById = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectCostByGroupId',
+    data
+  })
+}
+
 // TODO 获取物料Pop列表
 export let getObjInventoryByProcessing = (data = {}) => {
   return $axios.ajax({
@@ -98,6 +106,18 @@ export let getMatList = ( data = {})=>{
     data
   })
 }
+
+// TODO 获取物料Pop列表(盘点)
+export let getKCPDList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSumInvBalance_KCPD',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 //获取采购退货出库的物料
 export let getCKTHCKList =  ( data = {})=>{
   return $axios.ajax({
