@@ -20,40 +20,47 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{mater_delete : matterModifyClass ,'vux-1px-b' : index < matterList.length-1}" 
-                    v-for="(item, index) in matterList" :key='index'>
-                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                            @click.native="delClick(index,item)">
-                  <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <div class="mater_more">
-                      <span class="processing">属性：{{item.processing}}</span>
-                      <span class='unit'>单位：{{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
-                      <span class='qty' v-show="item.qtyBal">余额: {{item.qtyBal}}</span>
-                      <span v-show="item.promDeliTime">期望交货日：{{item.promDeliTime}}</span>
-                    </div>
-                    <!-- 物料数量和价格 -->
-                    <div class='mater_other' v-if="item.price && item.tdQty">                      
-                      <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}
+              <div class="each_mater" :class="{'vux-1px-b' : index < matterList.length - 1}"
+                  v-for="(oItem, key, index) in orderList" :key="key">
+                <div class="order_code" v-if='oItem.length'>
+                  <span class="order_title">物料需求计划号</span>
+                  <span class="order_num">{{key}}</span>
+                </div>
+                <div :class="{'mater_delete' : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                  <matter-item :item="item" @on-modify="modifyMatter(item,index,key)" :show-delete="matterModifyClass"
+                              @click.native="delClick(index,item)">
+                    <template slot="info" slot-scope="{item}">
+                      <!-- 物料属性和单位 -->
+                      <div class="mater_more">
+                        <span class="processing">属性：{{item.processing}}</span>
+                        <span class='unit'>单位：{{item.measureUnit}}</span>
+                        <span class='qty' >全部需求：{{item.allQty}}</span>
+                        <span class='qty'>已做需求：{{item.qtyed}}</span>
+                        <!-- <span class='qty'>待做需求： {{item.tdQty}}</span> -->
+                        <span v-show="item.promDeliTime">计划需求日期：{{item.promDeliTime}}</span>
                       </div>
-                      <div>
-                        <r-number :num="item.tdQty"
-                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>                     
-                    </div>
-                  </template>
-                  <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>        
+                      <!-- 物料数量和价格 -->
+                      <div class='mater_other' v-if="item.price && item.tdQty">                      
+                        <div class='mater_price'>
+                          <span class="symbol">￥</span>{{item.price}}
+                        </div>
+                        <div>
+                          <r-number :num="item.tdQty"
+                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                        </div>                     
+                      </div>
+                    </template>
+                    <template slot="editPart" slot-scope="{item}">
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index,key)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
+                      </div>
+                    </template>
+                  </matter-item>
+                  <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
+                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                  </div>   
+                </div>     
               </div>
             </div>
           </template>
@@ -66,19 +73,22 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          :default-value="matterList" :params="matterParams"
+                          :default-value="matterList" get-list-method="getPurchaseInNeeds"
                           ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+            <cell title="全部需求" v-model="modifyMatter.allQty" text-align="right"></cell>
+            <cell title="已做需求" v-model="modifyMatter.qtyed" text-align="right"></cell>
+            <x-input title="待做需求" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
             </x-input>
             <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-            <datetime title="期望交货日" v-model="modifyMatter.promDeliTime" 
+            
+            <datetime title="计划需求日期" v-model="modifyMatter.promDeliTime" 
                       placeholder="请选择" ></datetime>
             <cell title="估计金额" :value="'￥' + modifyMatter.noTaxAmount"></cell>
           </template>
@@ -136,6 +146,7 @@ export default {
   data(){
     return{
       listId : '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
+      orderList: {},  
       matterList:[],                                  // 物料列表
       showMaterielPop:false,                         // 是否显示物料的popup
       count : 0 ,   // 总价
@@ -150,7 +161,8 @@ export default {
       taxRate: 0, // 税率
       matterParams: {
         processing: '成品,商品,服务,原料,半成品'
-      }
+      },
+      modifyKey: '',
     }
   },
   computed: {
@@ -174,20 +186,29 @@ export default {
     // TODO 选中物料项
     selMatter(val) {
       let sels = JSON.parse(val);
+      let orderList = {};
       sels.map(item => {
-        if (this.numMap[item.inventoryCode]) {
-          item.tdQty = this.numMap[item.inventoryCode].tdQty;
-          item.price = this.numMap[item.inventoryCode].price;
-        } 
-        else {
-          item.tdQty = '';
-          item.price = '';
+        let key = `${item.transCode}_${item.inventoryCode}`;
+        let defaultPromDeliTime = item.processingStartDate ? item.processingStartDate.split(" ")[0] : '';
+        let {tdQty = item.qtyBalance, price = '',promDeliTime = defaultPromDeliTime} = this.numMap[key] || {};
+        item.tdQty = tdQty;
+        item.price = price;
+        item.promDeliTime = promDeliTime;
+        if (!orderList[item.transCode]) {
+          orderList[item.transCode] = [];
         }
-        item.promDeliTime = '';
+        orderList[item.transCode].push(item);
       })
       this.numMap = {};
       this.matterList = sels;
-      // this.getMatPrice();
+      this.orderList = orderList;
+    },
+    // 显示物料修改的pop
+    modifyMatter(item, index, key) {
+      this.matter = JSON.parse(JSON.stringify(item));
+      this.showMatterPop = true;
+      this.modifyIndex = index;
+      this.modifyKey = key;
     },
     //选择默认图片
     getDefaultImg(item) {
@@ -196,6 +217,19 @@ export default {
         item.inventoryPic = url;
       }
       return url
+    },
+    // 物料修改确定
+    selConfirm(val) {
+      let modMatter = JSON.parse(val);
+      this.matterList.every((item, index) => {
+        // 修改matterList，触发合计金额计算
+        if (modMatter.transCode === item.transCode && modMatter.inventoryCode === item.inventoryCode) {
+          this.$set(this.matterList, index, modMatter);
+          return false
+        }
+        return true
+      });
+      this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
     // 滑动删除
     delClick(index, sItem) {
@@ -223,29 +257,47 @@ export default {
     //删除选中的
     deleteCheckd(){
       this.$vux.confirm.show({
-        content: '确认删除?',
-        // 确定回调
-        onConfirm: () => {
-          this.selItems.forEach(item=>{
-            let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
-            if(index >= 0){
-              this.matterList.splice(index,1);
-            }
-          })
-          this.selItems = [];
-          this.matterModifyClass = false;
-        }
-      })
+          content: '确认删除?',
+          // 确定回调
+          onConfirm: () => {
+            let newArr = [];
+            let keys = Object.keys(this.orderList);
+            keys.forEach(item => {
+              newArr = newArr.concat(this.orderList[item]);
+            })
+            this.selItems.forEach(SItem => {
+              newArr.forEach(OItem => {
+                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                  let delArr = this.orderList[OItem.transCode];
+                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                  if (delIndex >= 0) {
+                    delArr.splice(delIndex, 1);
+                  }
+                  if (!delArr.length) {
+                    delete this.orderList[OItem.transCode];
+                  }
+
+                }
+
+              })
+              this.matterList.forEach((item, index) => {
+                if (item.inventoryCode === SItem.inventoryCode) {
+                  this.matterList.splice(index, 1);
+                  index--;
+                }
+              })
+            })
+            this.selItems = [];
+            this.matterModifyClass = false;
+          }
+        })
 
     },
-    // TODO 新增更多物料
+    //新增物料
     addMatter() {
       for (let item of this.matterList) {
         // 存储已输入的价格
-        this.numMap[item.inventoryCode] = {
-          tdQty: item.tdQty,
-          price: item.price
-        };
+        this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
       }
       this.showMaterielPop = !this.showMaterielPop;
     },
@@ -270,16 +322,19 @@ export default {
           // 设置提交参数
           dataSet.push({
             tdId : item.tdId || '',
-            transObjCode : item.inventoryCode, //物料编码
-            assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
-            assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
-            tdProcessing :item.processing, //加工属性
-            tdQty : item.tdQty,     //数量
-            assistQty : item.assistQty || 0,        //辅计数量
+            transMatchedCode: item.transCode,  // 物料需求计划单号
+            transObjCode: item.inventoryCode, //物料编码
+            tdProcessing: item.processing ,//加工属性
+            assMeasureUnit: item.assMeasureUnit ||'个',    //辅助计量
+            assMeasureScale:item.assMeasureScale || null,  //与主计量单位倍数
+            assistQty: item.assistQty || 0,        //辅计数量
+            productDemandQty: item.allQty, //全部需求
+            thenLockQty: item.qtyed, //已做需求
+            tdQty : item.tdQty,     //待做需求
             price : item.price, //单价
-            promDeliTime : item.promDeliTime || null, //预期交货日
-            comment : item.comment || '',               //申请说明
             tdAmount: accMul(item.price, item.tdQty), // 合计
+            promDeliTime : item.promDeliTime,     //主计划采购入库日
+            comment : ''                //说明
           });
           return true
         })

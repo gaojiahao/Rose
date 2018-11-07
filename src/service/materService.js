@@ -115,7 +115,13 @@ export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
     }
   })
 };
-
+//获取采购申请物料需求计划列表
+export let getPurchaseInNeeds = (data = {})=>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getPurchaseInNeeds',
+    data
+  })
+}
 // TODO 获取加工订单Bom
 export let getJGDDBom = (data = {}) => {
   return $axios.ajax({

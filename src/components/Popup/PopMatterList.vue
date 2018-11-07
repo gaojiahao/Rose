@@ -65,6 +65,9 @@
                       <div class="mater_material" v-if="item.qtyBal !== undefined">
                         <span class="spec">余额: {{item.qtyBal}}</span>
                       </div>
+                      <div class="mater_material" v-if="item.allQty">
+                        <span class="spec">待做需求: {{item.qtyBalance}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -85,14 +88,15 @@
 </template>
 
 <script>
-  import {Icon, Popup,} from 'vux'
+  import {Icon, Popup,dateFormat } from 'vux'
   import {getList} from 'service/commonService'
   import {
     getSumInvBalance,
     getObjInventoryByProcessing,
     getInventory7501,
     getInventory7502,
-    getCKTHCKList
+    getCKTHCKList,
+    getPurchaseInNeeds
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -374,6 +378,44 @@
           ...this.params,
           filter: JSON.stringify(filter),
         }).then(this.dataHandler);
+      },
+      //获取采购申请物料列表
+      getPurchaseInNeeds() {
+        let filter = [];
+        //成品,商品,服务
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getPurchaseInNeeds({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }).then(({dataCount = 0, tableContent = []})=>{
+          tableContent.forEach(item => {
+            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
+            item.inventoryCode = item.matCode;
+            item.inventoryName = item.invName;
+          });
+          let {relationKey = ''} = this.$route.query;
+          if(relationKey){
+            this.selItems = [...tableContent];
+            this.$emit('sel-matter', JSON.stringify(this.selItems));
+          }
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+
+        });
       },
       // TODO 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}){

@@ -40,7 +40,8 @@
                                      v-model="formData.salesPerson"></pop-salesman-list>
                   <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
                                      v-model="formData.salesChannels"></pop-salesman-list>
-
+                  <popup-picker title="分类标签" :data="currentType" v-model="categoryLabels" 
+                                placeholder="请选择" ></popup-picker>
                   <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
@@ -64,11 +65,11 @@
     Cell, Popup, TransferDom,
     Group, XInput, CellBox, Datetime,
     XTextarea, numberComma, dateFormat,
-    PopupRadio, AlertModule
+    PopupRadio, AlertModule,PopupPicker 
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,getDictByType} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入
@@ -82,7 +83,7 @@
     directives: {TransferDom},
     filters: {numberComma},
     components: {
-      Cell, Popup, Group, XInput,
+      Cell, Popup, Group, XInput,PopupPicker,
       Datetime, XTextarea, PopupRadio, 
       RPicker, PopDealerList, PopSalesmanList
     },
@@ -105,10 +106,12 @@
           validUntil: '',
           salesPerson: '', // 销售人员
           salesChannels: '', // 销售渠道
-          categoryLabels: '',
+          categoryLabels: [],
           biComment: ''
         },
         biReferenceId: '',
+        categoryLabels: [],
+        currentType: []
       }
     },
     mixins: [common],
@@ -173,6 +176,7 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
+            this.formData.categoryLabels = this.categoryLabels[0];
             let formData = {
               creator: this.formData.handler,
               ...this.formData,
@@ -209,8 +213,8 @@
             delete submitData.biReferenceId;
           }
           if (this.biReferenceId) {
-              submitData.biReferenceId = this.biReferenceId
-            }
+            submitData.biReferenceId = this.biReferenceId
+          }
           this.saveData(operation, submitData);
           }
         });
@@ -260,20 +264,31 @@
           this.formData.tdAmount = Math.abs(toFixed(val));
         }
       },
+      //获取分类标签
+      getTypeLabel(){
+        getDictByType('categoryLabels').then(({tableContent=[]})=>{
+          let arr = []
+          tableContent.forEach(item=>{
+            arr.push(item.name)
+          })
+          this.currentType.push(arr);
+        })
+
+      },
       // TODO 是否保存草稿
-    hasDraftData() {
-      let formData = this.formData;
-      if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.biProcessStatus) {
-        return {
-          [DRAFT_KEY]: {
-            formData,
-            dealerInfo : this.dealerInfo
-          }
-        };
+      hasDraftData() {
+        let formData = this.formData;
+        if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.biProcessStatus) {
+          return {
+            [DRAFT_KEY]: {
+              formData,
+              dealerInfo : this.dealerInfo
+            }
+          };
+          
+        }
         
-      }
-      
-    },
+      },
     },
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
@@ -282,6 +297,7 @@
         this.dealerInfo = JSON.parse(data).dealerInfo;
         sessionStorage.removeItem(DRAFT_KEY)
       }
+      this.getTypeLabel()
     }
   }
 </script>
@@ -301,7 +317,7 @@
       /deep/ > .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/ > .weui-cells {
+      /deep/> .weui-cells {
         font-size: .16rem;
         .vux-tap-active {
           .vux-label {
@@ -313,6 +329,14 @@
           border-bottom: none;
         }
       }
+      .vux-cell-box{
+        &:before{
+          left: 0;
+        }
+        /deep/ >.weui-cell {
+          padding: 10px 0;
+        }
+      }
     }
     .weui-cell {
       padding: 10px 0;
@@ -321,5 +345,6 @@
         left: 0;
       }
     }
+    
   }
 </style>
