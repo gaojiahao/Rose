@@ -64,7 +64,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" get-list-method="getSumInvBalance" :params="warehouseParams"
+                           :default-value="matterList" get-list-method="getKCPDList" :params="warehouseParams"
                            ref="matter"></pop-matter-list>
         </div>
         <!--备注-->

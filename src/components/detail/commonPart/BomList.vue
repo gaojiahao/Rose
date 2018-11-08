@@ -16,6 +16,8 @@
           <div class="content-name">
             {{bom.inventoryName}}
           </div>
+          <slot name="specification" :bom="bom">
+          </slot>
         </div>
       </div>
       <slot :bom="bom" name="number">

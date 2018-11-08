@@ -165,12 +165,32 @@
             },
           ];
         }
+        if(this.$route.query.inventoryCode){
+          let {inventoryCode,proPointCode} = this.$route.query;
+          filter = [
+            ...filter,
+            {
+              operator: 'eq',
+              value: inventoryCode,
+              property: 'inventoryCode',
+              separator: 'and'
+            },
+            {
+              operator: 'eq',
+              value: proPointCode,
+              property: 'proPointCode'
+            }
+          ]
+        }
         return getWorkStartList({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
+          if(this.$route.query.inventoryCode){
+            this.$emit('sel-work', tableContent[0]);
+          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
           this.$nextTick(() => {

@@ -12,7 +12,13 @@
     <!-- 往来信息 -->
     <div class="dealer_part" v-if='item.dealerName'>
       <div class="dealer_name vux-1px-t">
-        <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
+        <div v-if="!isDealer">
+          <span class="iconfont icon-gongren2" ></span>{{item.dealerName}}
+        </div>
+        <div v-else>
+          <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
+        </div>
+        
       </div>
     </div>
     <div class="dealer_part warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
@@ -112,6 +118,10 @@
         type: Boolean,
         default: false
       },
+      isDealer: {
+        type: Boolean,
+        default: true
+      }
     },
     data() {
       return {}

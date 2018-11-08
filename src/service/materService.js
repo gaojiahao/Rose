@@ -57,8 +57,16 @@ export let getCost = (data = {}) => {
     url: '/H_roleplay-si/ds/getCostAll',
     data
   })
-
 }
+
+//获取费用(新)
+export let getCostById = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectCostByGroupId',
+    data
+  })
+}
+
 // TODO 获取物料Pop列表
 export let getObjInventoryByProcessing = (data = {}) => {
   return $axios.ajax({
@@ -98,6 +106,18 @@ export let getMatList = ( data = {})=>{
     data
   })
 }
+
+// TODO 获取物料Pop列表(盘点)
+export let getKCPDList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSumInvBalance_KCPD',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 //获取采购退货出库的物料
 export let getCKTHCKList =  ( data = {})=>{
   return $axios.ajax({
@@ -115,7 +135,13 @@ export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
     }
   })
 };
-
+//获取采购申请物料需求计划列表
+export let getPurchaseInNeeds = (data = {})=>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getPurchaseInNeeds',
+    data
+  })
+}
 // TODO 获取加工订单Bom
 export let getJGDDBom = (data = {}) => {
   return $axios.ajax({
@@ -137,6 +163,17 @@ export let getJGRKBom = (data = {}) => {
     }
   })
 };
+// TODO 获取工单任务派工Bom
+export let getTaskBom = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getBomWorkOrderTask',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+
+}
 
 export default {
   save,

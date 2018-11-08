@@ -65,6 +65,9 @@
                       <div class="mater_material" v-if="item.qtyBal !== undefined">
                         <span class="spec">余额: {{item.qtyBal}}</span>
                       </div>
+                      <div class="mater_material" v-if="item.allQty">
+                        <span class="spec">待做需求: {{item.qtyBalance}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -85,14 +88,16 @@
 </template>
 
 <script>
-  import {Icon, Popup,} from 'vux'
+  import {Icon, Popup,dateFormat } from 'vux'
   import {getList} from 'service/commonService'
   import {
     getSumInvBalance,
     getObjInventoryByProcessing,
     getInventory7501,
     getInventory7502,
-    getCKTHCKList
+    getCKTHCKList,
+    getPurchaseInNeeds,
+    getKCPDList,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -134,7 +139,7 @@
         selItems: [], // 哪些被选中了
         tmpItems: [], // 临时存储
         matterList: [], // 物料列表
-        limit: 10, // 每页条数
+        limit: 100, // 每页条数
         page: 1., // 当前页码
         hasNext: true, // 是否有下一页
         scrollOptions: { // 滚动配置
@@ -167,6 +172,7 @@
       },
       params: {
         handler() {
+          this.resetCondition();
           // 参数改变，重新请求接口
           this[this.getListMethod]();
         }
@@ -256,10 +262,7 @@
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
-        this.matterList = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
+        this.resetCondition();
         this[this.getListMethod]();
       },
       // TODO 删除选中项
@@ -315,6 +318,16 @@
             },
           ];
         }
+        let {relationKey = ''} = this.$route.query;
+        if(relationKey){
+          filter = [
+            {
+              operator: 'eq',
+              value: relationKey,
+              property: 'transCode'
+            }
+          ]
+        }
         return getInventory7501({
           limit: this.limit,
           page: this.page,
@@ -365,16 +378,86 @@
           filter: JSON.stringify(filter),
         }).then(this.dataHandler);
       },
+      //获取采购申请物料列表
+      getPurchaseInNeeds() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getPurchaseInNeeds({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }).then(({dataCount = 0, tableContent = []})=>{
+          tableContent.forEach(item => {
+            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
+            item.inventoryCode = item.matCode;
+            item.inventoryName = item.invName;
+          });
+          let {relationKey = ''} = this.$route.query;
+          if(relationKey){
+            this.selItems = [...tableContent];
+            this.$emit('sel-matter', JSON.stringify(this.selItems));
+          }
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+
+        });
+      },
+      // TODO 获取物料列表(库存盘点)
+      getKCPDList() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getKCPDList({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
       // TODO 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}){
         tableContent.forEach(item => {
           item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
         });
+        let {relationKey = ''} = this.$route.query;
+        if(relationKey){
+          this.selItems = [...tableContent];
+          this.$emit('sel-matter', JSON.stringify(this.selItems));
+        }
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
         this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullUp();
         })
+      },
+      // TODO 初始化条件
+      resetCondition(){
+        this.matterList = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.$refs.bScroll.scrollTo(0, 0);
       },
     },
     created() {

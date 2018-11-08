@@ -70,7 +70,22 @@ export let getBomWorkCheck = ({transCode = '', inventoryCode = ''}) => {
     }
   })
 };
-
+// TODO 获取工单可派工列表
+export let getTaskWorkList = (data = {})=>{
+  return $axios.ajax({
+    url: '/account-api/account/getView',
+    data: {
+      // calc_rel_code: 7051
+      // view_id: view_94
+      ...data,
+      user_code: 1,
+      view_scope: 'data',
+      page: 1,
+      start: 0,
+      limit: 100
+    }
+  })
+}
 export default {
   getObjFacility,
   getWorkOrderTask,

@@ -131,7 +131,7 @@
         selItems: [], // 哪些被选中了
         tmpItems: [],
         listData: [],
-        limit: 10,
+        limit: 100,
         page: 1.,
         hasNext: true,
         scrollOptions: {
@@ -233,7 +233,8 @@
               operator: 'like',
               value: this.srhInpTx,
               property: this.filterProperty,
-            }];
+            }
+          ];
         }
         let requestMethods = getSalesOrderList;
         let submitData = {
@@ -248,6 +249,15 @@
         if(this.isMaterProccing){
           requestMethods = getNBJGLLOrderList;
         }
+        let {relationKey=''} = this.$route.query;
+        if(relationKey){
+          filter = [{          
+              operator: 'eq',
+              value: relationKey,
+              property: 'transCode'
+            }
+          ]
+        }
         return requestMethods({
           ...submitData,
           limit: this.limit,
@@ -258,6 +268,10 @@
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
           });
+          if(relationKey){
+            this.selItems = [...tableContent];
+            this.$emit('sel-matter', JSON.stringify(this.selItems));
+          }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           this.$nextTick(() => {

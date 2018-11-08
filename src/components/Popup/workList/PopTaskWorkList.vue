@@ -1,63 +1,65 @@
 <template>
   <!-- 物料popup -->
   <div v-transfer-dom>
-    <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+    <popup v-model="showPop" height="100%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
           <!-- 搜索栏 -->
           <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         </div>
         <!-- 费用列表 -->
-        <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
-          <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
-               @click.stop="selThis(item, index)">
+        <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
+          <div class="each-work box_sd"  v-for='(value, i) in taskWorkList' :key='i'  v-if="value.qtyBalance>0"
+               @click.stop="selThis(value, i)">
             <div class="work-main">
-              <div class="work_top" v-show="item.processCode">
-                <span class="code_name">加工订单号</span>
-                <span class="work_code">{{item.processCode}}</span>
-              </div>
-              <div class="work_mid vux-1px-b">
+              <div class="work_mid">
                 <div class="product_name">
-                  {{item.inventoryName}}<span class="symbol">[成品]</span>
+                  {{value.inventoryName}}<span class="symbol">[{{value.invProcessing}}]</span>
                 </div>
                 <div class="product_unit">
-                  <span class="each_unit">成品编码: {{item.inventoryCode}}</span>
-                  <span class="each_unit" v-show="item.processProQty">加工数量: {{item.processProQty}}</span>
+                  <span class="each_unit">工序: {{value.procedureName}}</span>
+                  <span class="each_unit">可{{workType}}: {{value.qtyBalance}}</span>
+                </div>
+                <div class="arrow" @click.stop="value.showDrop = !value.showDrop">
+                  <x-icon type="ios-arrow-down" :class="{'arrow-up': value.showDrop}" size="14"></x-icon>
                 </div>
               </div>
-              <div class="work_btm">
-                <div class="procedure_name">
-                  <span>{{item.procedureName}}</span>
-                  <span class="symbol">[工序编码: {{item.proPointCode}}]</span>
-                </div>
-                <div class="procedure_unit">
-                  <!-- <span class="each_unit">工序待验收: {{item.thenQtyStock}}</span> -->
-                  <span class="each_unit">工序可派工: {{item.thenQtyBal}}</span>
-                  <span class="each_unit">派工总数: {{item.productDemandQty}}</span>
-                  <!-- <span class="each_unit">已派工数: {{item.thenLockQty}}</span> -->
-                </div>
-              </div>
-              <div>
-                <!-- dateFormat('YYYY-MM-DD') -->
-              </div>
-              
+              <ul class="order_list" v-show="value.showDrop">
+                <li v-for="(item,index) in value.list" :key="index" class="each_order vux-1px-b">
+                  <div class="order">
+                    <span class="order_title">加工订单号:</span>
+                    <span class="order_code">{{item.transCode}}</span>
+                  </div>
+                  <div class="work_mid">
+                    <div class="product_unit">
+                      <span class="each_unit">总数: {{item.crQty}}</span>
+                      <span class="each_unit">已{{workType}}: {{item.drQty}}</span>
+                      <span class="each_unit">可{{workType}}: {{item.qtyBalance}}</span>
+                    </div>
+                  </div>
+
+                </li>
+              </ul>
             </div>
             <!-- icon -->
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+            <x-icon class="selIcon" type="ios-circle-outline" size="20" v-show="!value.isStartTask"></x-icon>
+            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="value.isStartTask"></x-icon>
           </div>
         </r-scroll>
+        <div class="btn vux-1px-t">
+          <div class="cfm_btn" @click="btnHandle">{{btnText}}</div>
+        </div>
       </div>
     </popup>
   </div>
 </template>
 
 <script>
-import { Icon, Popup, LoadMore, dateFormat } from 'vux'
-import { getObjFacility, getWorkOrderTask  } from 'service/Product/gdService'
+import { Icon, Popup, LoadMore } from 'vux'
+import { getObjFacility, getWorkOrderTask , getTaskWorkList } from 'service/Product/gdService'
 import RScroll from 'components/RScroll'
 import MSearch from 'components/search'
+import {accAdd} from '@/home/pages/maps/decimalsAdd'
   export default {
     name: "work-list-pop",
     props: {
@@ -65,48 +67,45 @@ import MSearch from 'components/search'
         type: Boolean,
         default: false
       },
-      // 默认值
-      defaultValue: {
+      params: {
         type: Object,
-        default() {
-          return {}
+        default(){
+          return {
+            calc_rel_code: 7051,
+            view_id: 'view_94',
+          }
         }
       },
+      workType: {
+        type: String,
+        default: '派工'
+
+      }
     },
     components: {
       Icon, Popup, LoadMore, RScroll, MSearch
-    },
-    filters: {
-      dateFormat
     },
     data() {
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
-        tmpItems: [],
-        workList: [],
-        limit: 10,
-        page: 1,
-        hasNext: true,
         scrollOptions: {
           click: true,
-          pullUpLoad: true,
         },
+        btnText : '关闭',
         filterList:[
           {
             name: '成品名称',
             value: 'inventoryName',
-          }, {
-            name: '成品编码',
-            value: 'inventoryCode',
           },
           {
             name: '工序名称',
             value: 'procedureName'
           }    
         ],
-        filterProperty: ''
+        filterProperty: '',
+        taskWorkList: {},
       }
     },
     watch: {
@@ -115,13 +114,6 @@ import MSearch from 'components/search'
           this.showPop = val;
         }
       },
-      defaultValue: {
-        handler(val) {
-          // 默认值改变，重新赋值
-          this.setDefaultValue();
-        }
-      },
-
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -134,31 +126,32 @@ import MSearch from 'components/search'
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.colId === item.colId) {
+          if (sItem.matCode === item.matCode && sItem.procedureName === item.procedureName) {
             flag = true;
             return false;
           }
           return true;
         });
+        if(flag){
+          this.btnText = '发起工单任务'
+        }
         return flag;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        this.showPop = false;
-        this.selItems = [sItem];
-        this.$emit('sel-work', this.selItems[0]);
-      },
-      // TODO 设置默认值
-      setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
+        for(let key in this.taskWorkList){
+          let value = this.taskWorkList[key];
+          value.isStartTask = value.matCode === sItem.matCode && value.procedureName === sItem.procedureName ?
+                              !value.isStartTask : false
+        }
+        this.btnText = sItem.isStartTask ? `发起工单${this.workType}`: '关闭';
+        this.selItems = sItem;
       },
       // TODO 获取物料列表
       getWorkOrderTask() {
@@ -173,57 +166,54 @@ import MSearch from 'components/search'
             },
           ];
         }
-        if(this.$route.query.inventoryCode){
-          let {inventoryCode,proPointCode} = this.$route.query;
-          filter = [
-            ...filter,
-            {
-              operator: 'eq',
-              value: inventoryCode,
-              property: 'inventoryCode',
-              separator: 'and'
-            },
-            {
-              operator: 'eq',
-              value: proPointCode,
-              property: 'proPointCode'
-            }
-          ]
-        }
-        return getWorkOrderTask({
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
+        return getTaskWorkList({
+          ...this.params,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          if(this.$route.query.inventoryCode){
-            this.$emit('sel-work', tableContent[0]);
-          }
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
+        }).then(({data = []}) => {
+          data.forEach(item=>{
+            if(!this.taskWorkList[`${item.inventoryName}_${item.procedureName}`]){
+              let obj = {
+                inventoryName: item.inventoryName,
+                invProcessing: item.invProcessing,
+                inventoryPic: `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`,
+                matCode: item.matCode,
+                measureUnit: item.measureUnit,
+                proPointCode: item.proPointCode,
+                procedureName: item.procedureName,
+                qtyBalance: item.qtyBalance,
+                isStartTask : false,
+                showDrop: false,
+                list: [item]
+
+              }
+              this.$set(this.taskWorkList, `${item.inventoryName}_${item.procedureName}`, obj)
+            }
+            else{
+              let qty = this.taskWorkList[`${item.inventoryName}_${item.procedureName}`].qtyBalance;
+              this.taskWorkList[`${item.inventoryName}_${item.procedureName}`].qtyBalance = accAdd( qty,item.qtyBalance);
+              this.taskWorkList[`${item.inventoryName}_${item.procedureName}`].list.push(item);
+            }
+
           })
         });
+        console.log(this.taskWorkList);
       },
       // TODO 搜索物料
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
-        this.workList = [];
-        this.page = 1;
-        this.hasNext = true;
+        this.taskWorkList = {};
         this.$refs.bScroll.scrollTo(0, 0);
         this.getWorkOrderTask();
       },
-      // TODO 上拉加载
-      onPullingUp() {
-        this.page++;
-        this.getWorkOrderTask();
-      },
+      btnHandle(){
+        if(this.btnText !== '关闭'){
+          this.$emit('sel-task',this.selItems)          
+        }
+        this.showPop = false;
+      }
     },
     created() {
-      this.setDefaultValue();
       this.getWorkOrderTask();
     }
   }
@@ -242,6 +232,7 @@ import MSearch from 'components/search'
     .trade_pop {
       padding: 0 .08rem;
       height: 100%;
+      position: relative;
       // 顶部
       .title {
         font-size: .2rem;
@@ -320,14 +311,14 @@ import MSearch from 'components/search'
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: calc(100% - .38rem);
+        height: calc(100% - .38rem - .66rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
           padding: .14rem .04rem 0 .3rem;
         }
         // 每个物料
         .each-work {
-          padding: .08rem;
+          padding: 0 .08rem;
           position: relative;
           margin-bottom: .2rem;
           box-sizing: border-box;
@@ -349,16 +340,33 @@ import MSearch from 'components/search'
           .work_mid {
             font-size: 0;
             padding: .04rem 0;
+            position: relative;
             .product_name {
               color: #111;
-              font-size: .16rem;
+              font-size: .18rem;
               font-weight: bold;
             }
             .product_unit {
               .each_unit {
-                color: #757575;
+                color: #252525;
                 font-size: .12rem;
-                margin-right: .04rem;
+                margin-right: .06rem;
+              }
+            }
+            .arrow{
+              width:0.3rem;
+              height: 100%;;
+              position: absolute;
+              right: -.08rem;
+              top: 0;
+              text-align: center;
+              /* 倒三角 */
+              .vux-x-icon-ios-arrow-down {
+                margin-top:0.2rem;
+                transition: transform 200ms linear;
+                &.arrow-up {
+                  transform: rotate(-180deg);
+                }
               }
             }
           }
@@ -393,32 +401,48 @@ import MSearch from 'components/search'
           .isSelIcon {
             fill: #5077aa;
           }
+          .order_list{
+            padding-left: .24rem;
+            border-top: 1px dashed #e8e8e8;
+            .each_order{
+              padding: 0.05rem 0;
+              list-style: initial;
+              .order{
+                font-size: .14rem;
+                padding: .02rem 0;
+                font-weight: bold;
+              }
+              // .work_code,.code_name{
+              //   color: #111;
+              //   background: #fff;
+              // }
+            }
+          }
         }
       }
-
-    }
-    // 底部栏
-    .count_mode {
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      height: .44rem;
-      position: fixed;
-      line-height: .44rem;
-      background: #fff;
-      .count_num {
-        flex: 2.5;
-        color: #5077aa;
-        font-size: .24rem;
-        padding-left: .1rem;
-      }
-      .count_btn {
-        flex: 1.5;
-        color: #fff;
+      //关闭按钮
+      .btn{
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+        background: #fff;
         text-align: center;
-        background: #5077aa;
+        padding: .1rem 0;
+        .cfm_btn{
+          width: 2.8rem;
+          color: #fff;
+          height: .44rem;
+          line-height: .44rem;
+          text-align: center;
+          background: #5077aa;
+          display: inline-block;
+          border-radius: .4rem;
+          box-shadow: 0 2px 5px #5077aa;
+        }
       }
+      
+
     }
   }
 </style>

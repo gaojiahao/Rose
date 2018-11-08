@@ -23,11 +23,13 @@
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
+    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" :work-type="'启动'"></pop-task-work-list>
   </div>
 </template>
 
 <script>
 import listCommon from 'pageMixins/bizListCommon'
+import PopTaskWorkList from 'components/Popup/workList/PopTaskWorkList'
 export default {
   data() {
     return {
@@ -45,9 +47,35 @@ export default {
           value: 'inventoryName',
         },
       ],
+      popShow: false,
+      requestParams:{
+        calc_rel_code: 8851,
+        view_id: 'view_113',
+      }
     }
   },
-  mixins: [listCommon]
+  components: {
+    PopTaskWorkList
+  },
+  mixins: [listCommon],
+  methods:{
+    goEdit(){
+      this.popShow = true;
+    },
+    selTask(val){
+      console.log(val)
+      let {name} = this.$route.query,
+        {fileId, listId} = this.$route.params;
+      this.$router.push({
+        path: `/fillform/${fileId}/${listId}`,
+        query: {
+          name,
+          inventoryCode: val.matCode,
+          proPointCode: val.proPointCode,
+        }
+      }) 
+    }
+  }
 }
 </script>
 

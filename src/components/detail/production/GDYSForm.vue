@@ -49,9 +49,15 @@
       </div>-->
       <div class="bom_list" v-show="bomList.length">
         <bom-list :boms="bomList">
+          <template slot-scope="{bom}" slot="specification">
+            <div class="content-unit" v-show="bom.specification_outPutMatCode">
+              <span>型号规格：{{bom.specification_outPutMatCode}}</span>
+            </div>
+          </template>
           <template slot-scope="{bom}" slot="number">
             <div class="number-part">
-              <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit}}</span>
+              <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit_outPutMatCode}}</span>
+              <span class="number-unit">bom数量: {{bom.bomQty}}</span>
             </div>
           </template>
         </bom-list>

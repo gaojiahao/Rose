@@ -443,6 +443,10 @@ export default {
         }
       };
     },
+    // TODO 获取关联数据
+    getRelationData() {
+      
+    },
   },
   created(){
     let data = sessionStorage.getItem(DRAFT_KEY);
