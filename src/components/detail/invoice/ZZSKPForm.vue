@@ -20,34 +20,44 @@
           <div class="main_content" >
             <form-cell cellTitle='票号' :cellContent="orderInfo.ticketNumber" textRight></form-cell>
             <form-cell cellTitle='发票类型' :cellContent="orderInfo.invoiceType" textRight></form-cell>
-            <form-cell cellTitle='发票金额' showSymbol :cellContent="orderInfo.invoiceAmount | toFixed | numberComma(3)" textRight></form-cell>
+            <!--<form-cell cellTitle='发票金额' showSymbol :cellContent="orderInfo.invoiceAmount | toFixed | numberComma(3)" textRight></form-cell>-->
             <form-cell cellTitle='发票日期' :cellContent="orderInfo.invoiceDate" textRight></form-cell>
-            <form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>  
+            <!--<form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>  -->
           </div>
         </div>
-      </div> 
+      </div>
       <div class="form_part">
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">开票列表</span>
         </div>
-        <div class="form_content" 
+        <div class="form_content"
             :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
-              <form-cell cellTitle='实例编码' :cellContent="item.transMatchedCode" :showTopBorder=false textRight></form-cell>
-              <form-cell cellTitle='待开票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)" textRight></form-cell>
-              <form-cell cellTitle='本次开票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)" textRight></form-cell>
+              <form-cell cellTitle='出库单' :cellContent="item.transMatchedCode" :showTopBorder=false textRight></form-cell>
+              <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode" textRight></form-cell>
+              <form-cell cellTitle='物料编码' :cellContent="item.inventoryCode_transObjCode" textRight></form-cell>
+              <form-cell cellTitle='待开票数量' :cellContent="item.thenQtyBal" textRight></form-cell>
+              <form-cell cellTitle='单价' :cellContent="item.price | toFixed | numberComma" textRight showSymbol></form-cell>
+              <form-cell cellTitle='本次开票数量' :cellContent="item.tdQty" textRight></form-cell>
+              <form-cell cellTitle='金额' :cellContent="item.noTaxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
+              <form-cell cellTitle='税率' :cellContent="item.taxRate" textRight></form-cell>
+              <form-cell cellTitle='税金' :cellContent="item.taxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
+              <form-cell cellTitle='税价小计' :cellContent="item.tdAmount | toFixed | numberComma" textRight showSymbol></form-cell>
+              <form-cell cellTitle='说明' :cellContent="item.comment" textRight></form-cell>
+              <!--<form-cell cellTitle='待开票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)" textRight></form-cell>-->
+              <!--<form-cell cellTitle='本次开票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)" textRight></form-cell>-->
           </div>
         </div>
       </div>
       <div class="price_cell vux-1px-t">
         <span class='title'>合计:</span>
         <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-      </div>  
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>            
+      </div>
+      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback" ></r-action>   
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback" ></r-action>
     </div>
   </div>
 </template>
