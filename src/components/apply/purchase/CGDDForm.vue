@@ -143,11 +143,12 @@ import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 const DRAFT_KEY = 'CGDD_DATA';
 
 export default {
-  components:{
-    PopMatterList,PopDealerList,PopSingleSelect,PopMatter,XTextarea,RNumber,Datetime
+  components: {
+    XTextarea, RNumber, Datetime,
+    PopMatterList, PopDealerList, PopSingleSelect, PopMatter, 
   },
-  data(){
-    return{
+  data () {
+    return {
       listId: 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
       taxRate: 0.16, // 税率
       numMap: {},
@@ -169,23 +170,23 @@ export default {
   mixins: [common],
   methods: {
     // 获取结算方式
-    getPaymentTerm(){
+    getPaymentTerm () {
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
     },
     // 选中的供应商
-    selDealer(val){
+    selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // 选中联系人
-    selContact(val){
+    selContact (val) {
       this.dealer.dealerDebitContactPersonName = JSON.parse(val)[0].dealerName;
     },
     // TODO 选中物料项
-    selMatter(val) {
+    selMatter (val) {
       let sels = JSON.parse(val);
       sels.map(item => {
         let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
@@ -199,7 +200,7 @@ export default {
       this.matterList = sels;
     },
     // 选择默认图片
-    getDefaultImg(item) {
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
@@ -207,7 +208,7 @@ export default {
         return url
     },
     // 滑动删除
-    delClick(sItem, index) {
+    delClick (sItem, index) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
       // 若存在重复的 则清除
@@ -218,11 +219,11 @@ export default {
       arr.push(sItem);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
     // 全选
-    checkAll() {
+    checkAll () {
       if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
@@ -230,7 +231,7 @@ export default {
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
     // 删除选中的
-    deleteCheckd() {
+    deleteCheckd () {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
@@ -248,7 +249,7 @@ export default {
 
     },
     // TODO 新增更多物料
-    addMatter() {
+    addMatter () {
       for (let item of this.matterList) {
         // 存储已输入的价格
         this.numMap[item.inventoryCode] = {...item};
@@ -256,7 +257,7 @@ export default {
       this.showMaterielPop = !this.showMaterielPop;
     },
     // 提价订单
-    submitOrder(){
+    submitOrder () {
       let warn = '';
       let dataSet = [];
       if (!this.dealerInfo.dealerCode) {
@@ -264,7 +265,7 @@ export default {
       } else if (this.matterList.length === 0) {
         warn = '请选择物料';
       }
-      if(!warn) {
+      if (!warn) {
         // 校验
         this.matterList.every(item => {
           if (!item.price) {
@@ -313,9 +314,14 @@ export default {
           let wfPara = {
             [this.processCode]: {businessKey:"PO",createdBy:""}
           }
-          if(this.isResubmit){
+          if (this.isResubmit) {
             wfPara = {
-              businessKey: this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
+              businessKey: this.transCode,
+              createdBy: this.formData.handler,
+              transCode: this.transCode,
+              result: 3,
+              taskId: this.taskId,
+              comment: ""
             }
           }
           let submitData = {
@@ -335,12 +341,12 @@ export default {
             wfPara: JSON.stringify(wfPara)
           }
           // 重新提交
-          if(this.isResubmit){
+          if (this.isResubmit){
             operation = saveAndCommitTask
             submitData.biReferenceId = this.biReferenceId;
           }
           // 没有工作流
-          if(!this.processCode.length){
+          if (!this.processCode.length){
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
@@ -353,7 +359,7 @@ export default {
       })
     },
     // 获取订单信息用于重新提交
-    async getFormData(){
+    async getFormData () {
       await getSOList({
         formViewUniqueId: this.uniqueId,
         transCode: this.transCode
@@ -409,7 +415,7 @@ export default {
       })
     },
     // TODO 是否保存草稿
-    hasDraftData() {
+    hasDraftData () {
       if (!this.matterList.length) {
         return false
       }
@@ -423,13 +429,13 @@ export default {
       };
     },
     // TODO 获取关联数据
-    getRelationData() {
+    getRelationData () {
       
     },
   },
-  created(){
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
-    if(data){
+    if (data) {
       this.matterList = JSON.parse(data).matter;
       this.dealerInfo = JSON.parse(data).dealerInfo;
       this.dealer = JSON.parse(data).dealer;

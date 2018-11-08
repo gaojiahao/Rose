@@ -5,7 +5,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 选择客户-->
-        <pop-dealer-list :defaultValue="dealerInfo" @sel-dealer="selDealer" @sel-contact="selContact" >
+        <pop-dealer-list :defaultValue="dealerInfo" :defaultContact="contact" @sel-dealer="selDealer" @sel-contact="selContact" >
         </pop-dealer-list>
         <!-- 商机明细 -->
         <div class="materiel_list">
@@ -40,7 +40,7 @@
                                      v-model="formData.salesPerson"></pop-salesman-list>
                   <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
                                      v-model="formData.salesChannels"></pop-salesman-list>
-                  <popup-picker title="分类标签" :data="currentType" v-model="categoryLabels" 
+                  <popup-picker title="分类标签" :data="currentType" v-model="categoryLabels"
                                 placeholder="请选择" ></popup-picker>
                   <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
@@ -65,7 +65,7 @@
     Cell, Popup, TransferDom,
     Group, XInput, CellBox, Datetime,
     XTextarea, numberComma, dateFormat,
-    PopupRadio, AlertModule,PopupPicker 
+    PopupRadio, AlertModule,PopupPicker
   } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
@@ -105,7 +105,8 @@
         },
         biReferenceId: '',
         categoryLabels: [],
-        currentType: []
+        currentType: [],
+        contact: {},
       }
     },
     directives: {TransferDom},
@@ -125,16 +126,16 @@
         this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
-      // 选择联系人
-      selContact (val) {
-        let contact = JSON.parse(val)[0];
+      selContact (val){
+        let contact = {...val};
+        this.contact = contact;
         // 联系人
         this.formData.dealerDebitContactPersonName = contact.dealerName || '';
         // 联系人电话
         this.formData.dealerDebitContactInformation = contact.dealerMobilePhone || '';
       },
       // TODO 提交
-      submitOrder() {
+      submitOrder () {
         let warn = '';
         let validateMap = [
           {
@@ -143,7 +144,7 @@
           }, {
             key: 'tdAmount',
             message: '请填写预期销售额'
-          }, 
+          },
           // {
           //   key: 'biProcessStatus',
           //   message: '请选择流程状态'
@@ -284,17 +285,20 @@
           return {
             [DRAFT_KEY]: {
               formData,
-              dealerInfo : this.dealerInfo
+              dealerInfo : this.dealerInfo,
+              contact: this.contact,
             }
-          };         
-        }       
+          };
+        }
       },
     },
     created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
-        this.formData = JSON.parse(data).formData;
-        this.dealerInfo = JSON.parse(data).dealerInfo;
+        let draft = JSON.parse(data);
+        this.formData = draft.formData;
+        this.dealerInfo = draft.dealerInfo;
+        this.contact = draft.contact;
         sessionStorage.removeItem(DRAFT_KEY)
       }
       this.getTypeLabel()
@@ -345,6 +349,6 @@
         left: 0;
       }
     }
-    
+
   }
 </style>

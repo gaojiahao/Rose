@@ -1,7 +1,7 @@
 <template>
   <div class="pop_dealer_list">
     <div class='dealer-info' @click="showDealerPop = !showDealerPop">
-      <div class='user-content' :class="{'whenSel': contactList.length}" v-if="dealerInfo.dealerCode">
+      <div class='user-content' v-if="dealerInfo.dealerCode">
         <div class="user-info">
           <div class="user-name">
             <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
@@ -21,24 +21,10 @@
         <div class="title">{{dealerLabelName}}列表</div>
         <div class="required">请选择{{dealerLabelName}}</div>
       </div>
-      <span class="iconfont icon-youjiantou r-arrow"></span>          
+      <span class="iconfont icon-youjiantou r-arrow"></span>
     </div>
-    <div v-if="contactList.length" class="contact-content vux-1px-t" @click="showContactPop = !showContactPop">
-      <div class="selected-mode" v-if="contactInfo.dealerCode">
-        <div>
-          <span class="contact-tips">联系人</span>
-          <span>{{contactInfo.dealerName}}</span>
-          <span>{{contactInfo.dealerMobilePhone}}</span>
-        </div>
-        <span class="iconfont icon-Face-ID"></span>
-      </div>
-      <div class="default-mode" v-else>
-        <div class="mode-title">
-          <span>请选择联系人</span>
-          <span class="iconfont icon-FaceID"></span>
-        </div>   
-      </div>
-    </div>    
+    <pop-contact-list :dealer-info="dealerInfo" :default-value="contactInfo"
+                      @sel-contact="selContact"></pop-contact-list>
     <!-- 往来 Popup -->
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -94,56 +80,18 @@
         </div>
       </popup>
     </div>
-    <!-- 联系人 Popup -->
-    <div v-transfer-dom>
-      <popup v-model="showContactPop" height="80%" class="trade_pop_part">
-        <div class="trade_pop">
-          <!-- 往来列表 -->
-          <div class="mater_list" ref="dealer">
-            <div class="mater_list_wrapper">
-              <div class="each-people box_sd" v-for="(item, index) in contactList" :key="index"
-                   @click.stop="selContact(item, index)">
-                <div class="mater_main ">
-                  <div class="mater_info">
-                    <!--联系人电话 -->
-                    <div class="withColor">
-                      <div class="ForInline " style="display:inline-block">
-                        <span class='dealer'>{{item.dealerName}}</span>
-                      </div>
-                    </div>
-                    <div class="withColor" v-if="item.dealerMobilePhone || item.dealerPhone">
-                      <div class="ForInline name" style="display:inline-block">
-                        <span style="marginRight:.04rem;"
-                              v-if="item.dealerMobilePhone">{{item.dealerMobilePhone}}</span>
-                        <span v-if="item.dealerPhone">{{item.dealerPhone}}</span>
-                      </div>
-                    </div>
-                    <!-- 地址 -->
-                    <div class="withoutColor">
-                      <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- icon -->
-                <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
-              </div>
-              <load-more tip="加载中" v-show="hasNext" slot="loadmore"></load-more>
-            </div>
-          </div>
-        </div>
-      </popup>
-    </div>
   </div>
 </template>
 
 <script>
   import {Icon, Popup, LoadMore, AlertModule, TransferDom} from 'vux'
   import DSearch from 'components/search'
-  import dealerService from 'service/dealerService.js'
+  import dealerService from 'service/dealerService'
   import BScroll from 'better-scroll'
+  import PopContactList from 'components/Popup/dealer/PopContactList'
 
   export default {
-    name: "PopDeakerList",
+    name: "PopDealerList",
     props: {
       dealerLabelName: {
         type: String,
@@ -155,7 +103,14 @@
         default() {
           return {}
         }
-      }
+      },
+      // 联系人
+      defaultContact: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     computed: {
       noAddress() {
@@ -165,7 +120,7 @@
     },
     directives: {TransferDom},
     components: {
-      Icon, Popup, DSearch, LoadMore
+      Icon, Popup, DSearch, LoadMore, PopContactList
     },
     data() {
       return {
@@ -173,24 +128,29 @@
         limit: 10,
         hasNext: true,
         showDealerPop: false,
-        showContactPop: false,
         srhInpTx: '',           // 搜索框内容
         bScroll: null,
         dealerInfo: {},         // 往来信息
         contactInfo: {},        // 联系人信息
         selItems: [],           // 哪些被选中了
         dealerList: [],
-        contactList: [],        // 联系人列表
       }
     },
     watch: {
       defaultValue: {
         handler() {
-          this.dealerInfo = Object.freeze({...this.defaultValue});
-          this.selItems = [{...this.defaultValue}]
+          let defaultValue = this.defaultValue;
+          this.dealerInfo = Object.freeze({...defaultValue});
+          this.selItems = [{...defaultValue}]
         },
         immediate: true
-      }
+      },
+      defaultContact: {
+        handler() {
+          this.contactInfo = Object.freeze({...this.defaultContact});
+        },
+        immediate: true
+      },
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -214,24 +174,13 @@
         this.showDealerPop = false;
         this.selItems = [sItem];
         this.dealerInfo = Object.freeze({...sItem});
+        this.contactInfo = {};
         sessionStorage.setItem('DEALERLIST_SELITEMS', JSON.stringify(this.selItems));
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
-        this.getContact();  // 获取联系人
       },
       // 选择联系人
-      selContact(item, index){
-        this.showContactPop = false;
-        this.selItems = [item];
-        this.contactInfo = Object.freeze({...item});
-        this.$emit('sel-contact', JSON.stringify(this.selItems));
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
+      selContact(item) {
+        this.$emit('sel-contact', item);
       },
       // TODO 获取往来列表
       getDealer() {
@@ -246,7 +195,7 @@
             },
           ];
         }
-        dealerService.getAppdealer({
+        return dealerService.getAppdealer({
           dealerLabelName: this.dealerLabelName,
           limit: this.limit,
           page: this.page,
@@ -276,26 +225,6 @@
           })
         })
 
-      },
-      // 获取联系人列表
-      getContact(){
-        dealerService.getContactList({
-          dealerCode: this.dealerInfo.dealerCode,
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-        }).then(({ dataCount, tableContent }) => {
-          this.contactInfo = {};
-          this.contactList = tableContent;
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.$nextTick(() => {
-            this.bScroll.refresh();
-            if (!this.hasNext) {
-              return
-            }
-            this.bScroll.finishPullUp();
-          })        
-        })
       },
       // TODO 搜索往来
       searchList({val = ''}) {
@@ -342,23 +271,27 @@
 
 <style scoped lang="scss">
   @import '~@/scss/color.scss';
+
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }
+
   .required {
     color: $required;
     font-weight: bold;
   }
+
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
   .pop_dealer_list {
     width: 95%;
     margin: .1rem auto;
     background: #fff;
-    margin-bottom:0.1rem;
+    margin-bottom: 0.1rem;
     box-sizing: border-box;
-    padding: .06rem  .1rem;
+    padding: .06rem .1rem;
     .title {
       color: #757575;
       font-size: .12rem;
@@ -387,7 +320,7 @@
             border-radius: .3rem;
             background: #5077aa;
             vertical-align: middle;
-          }  
+          }
           .user-name {
             max-width: 2.2rem;
             overflow: hidden;
@@ -397,7 +330,7 @@
             display: inline-block;
             vertical-align: middle;
             text-overflow: ellipsis;
-          }        
+          }
           .user-tel {
             font-size: .16rem;
             font-weight: bold;
@@ -405,36 +338,7 @@
             font-family: Helvetica;
             vertical-align: middle;
             margin-bottom: -.02rem;
-          }    
-        }
-        &.whenSel {
-          padding-bottom: .06rem;
-        }
-      }
-    }
-    .contact-content {
-      padding-top: .06rem;
-      .default-mode {
-        .mode-title {
-          display: flex;
-          color: #757575;
-          font-size: .14rem;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
-      .selected-mode {
-        display: flex;
-        font-size: .16rem;
-        align-items: center;
-        justify-content: space-between;
-        .contact-tips {
-          color: #FFF;
-          font-size: .1rem;
-          padding: 0 .06rem;
-          border-radius: .3rem;
-          background: #5077aa;
-          vertical-align: middle;
+          }
         }
       }
     }

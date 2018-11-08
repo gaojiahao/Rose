@@ -5,7 +5,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :defaultContact="contact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                            v-model="dealer.drDealerPaymentTerm"></pop-single-select>
@@ -183,7 +183,7 @@
         // this.getMatPrice(); // 获取物料价格
       },
       selContact(val) {
-        this.contact = JSON.parse(val)[0];
+        this.contact = {...val};
         // 联系人
         this.dealer.dealerDebitContactPersonName = this.contact.dealerName || '';
         // 联系人电话
@@ -457,7 +457,8 @@
             matter: this.matterList,
             dealerInfo: this.dealerInfo,
             dealer: this.dealer,
-            formData: this.formData
+            formData: this.formData,
+            contact: this.contact,
           }
         };
       },
@@ -465,10 +466,12 @@
     created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
-        this.matterList = JSON.parse(data).matter;
-        this.dealerInfo = JSON.parse(data).dealerInfo;
-        this.dealer = JSON.parse(data).dealer;
-        this.formData = JSON.parse(data).formData;
+        let draft = JSON.parse(data);
+        this.matterList = draft.matter;
+        this.dealerInfo = draft.dealerInfo;
+        this.dealer = draft.dealer;
+        this.formData = draft.formData;
+        this.contact = draft.contact;
         // 物料列表请求参数
         this.matterParams = {
           drDealerCode: this.dealerInfo.dealerCode,
