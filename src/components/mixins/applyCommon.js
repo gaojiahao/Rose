@@ -200,6 +200,8 @@ export default {
         this.formData = {
           ...this.formData,
           ...data,
+          creator: data.handler,
+          modifer: data.handler,
         };
       })
     },

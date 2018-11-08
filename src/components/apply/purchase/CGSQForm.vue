@@ -5,7 +5,7 @@
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
-          <template v-if="!matterList.length">
+          <template v-if="!Object.keys(orderList).length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
               <div class="required">请选择物料</div>
@@ -76,7 +76,7 @@
                           :default-value="matterList" get-list-method="getPurchaseInNeeds"
                           ref="matter"></pop-matter-list>
         </div>
-        <!--物料编辑pop-->
+        <!-- 物料编辑pop -->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
@@ -123,57 +123,56 @@
 </template>
 
 <script>
-// vux插件引入
-import {Group,XInput,XTextarea,Datetime,Cell} from 'vux'
+// vux插件 引入
+import { Group, XInput, XTextarea, Datetime, Cell } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
-import {getBaseInfoData,saveAndStartWf,saveAndCommitTask,submitAndCalc} from 'service/commonService'
+import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
 // mixins 引入
 import common from 'components/mixins/applyCommon'
-// 组件引入
+// 组件 引入
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import RNumber from 'components/RNumber'
-// 方法引入
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-import {toFixed} from '@/plugins/calc'
+// 方法 引入
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'CGSQ_DATA';
 
 export default {
-  components:{
-   PopMatterList,XTextarea,Group,XInput,PopMatter,Datetime,Cell,RNumber
-  },
-  data(){
-    return{
-      listId : '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
+  data () {
+    return {
+      listId: '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
       orderList: {},  
-      matterList:[],                                  // 物料列表
-      showMaterielPop:false,                         // 是否显示物料的popup
-      count : 0 ,   // 总价
-      formData : {
-        creator : '',
-        modifer : '',
+      matterList: [], // 物料列表
+      showMaterielPop: false, // 是否显示物料的popup
+      formData: {
         biId: '',
-        biComment : ''
+        biComment: ''
       },
-      applyComment : '',
+      applyComment: '',
       numMap: {},
-      taxRate: 0, // 税率
       matterParams: {
         processing: '成品,商品,服务,原料,半成品'
       },
       modifyKey: '',
     }
   },
+  components: {
+    XTextarea, Group, XInput, Datetime, Cell, RNumber,
+    PopMatter,  PopMatterList, 
+  },
   computed: {
-    totalNum() {
+    // 订单物料总数量
+    totalNum () {
       let total = 0;
       this.matterList.forEach(item => {
         total = accAdd(total, item.tdQty);
       });
       return Number(total);
     },
-    tdAmount() {
+    // 订单总金额
+    tdAmount () {
       let total = 0;
       this.matterList.forEach(item => {
         total = accAdd(total, accMul(item.tdQty, item.price))
@@ -182,15 +181,15 @@ export default {
     }
   },
   mixins: [common],
-  methods:{
+  methods: {
     // TODO 选中物料项
-    selMatter(val) {
+    selMatter (val) {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.map(item => {
         let key = `${item.transCode}_${item.inventoryCode}`;
         let defaultPromDeliTime = item.processingStartDate ? item.processingStartDate.split(" ")[0] : '';
-        let {tdQty = item.qtyBalance, price = '',promDeliTime = defaultPromDeliTime} = this.numMap[key] || {};
+        let {tdQty = item.qtyBalance, price = '', promDeliTime = defaultPromDeliTime} = this.numMap[key] || {};
         item.tdQty = tdQty;
         item.price = price;
         item.promDeliTime = promDeliTime;
@@ -204,14 +203,14 @@ export default {
       this.orderList = orderList;
     },
     // 显示物料修改的pop
-    modifyMatter(item, index, key) {
+    modifyMatter (item, index, key) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
       this.modifyKey = key;
     },
-    //选择默认图片
-    getDefaultImg(item) {
+    // 选择默认图片
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
       if (item) {
         item.inventoryPic = url;
@@ -219,7 +218,7 @@ export default {
       return url
     },
     // 物料修改确定
-    selConfirm(val) {
+    selConfirm (val) {
       let modMatter = JSON.parse(val);
       this.matterList.every((item, index) => {
         // 修改matterList，触发合计金额计算
@@ -232,10 +231,10 @@ export default {
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
     // 滑动删除
-    delClick(index, sItem) {
+    delClick (index, sItem) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      //若存在重复的 则清除
+      // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
@@ -243,19 +242,19 @@ export default {
       arr.push(sItem);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
-    //全选
-    checkAll(){
-      if(this.selItems.length === this.matterList.length){
+    // 全选
+    checkAll (){
+      if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
-    //删除选中的
-    deleteCheckd(){
+    // 删除选中的
+    deleteCheckd (){
       this.$vux.confirm.show({
           content: '确认删除?',
           // 确定回调
@@ -276,9 +275,7 @@ export default {
                   if (!delArr.length) {
                     delete this.orderList[OItem.transCode];
                   }
-
                 }
-
               })
               this.matterList.forEach((item, index) => {
                 if (item.inventoryCode === SItem.inventoryCode) {
@@ -291,20 +288,19 @@ export default {
             this.matterModifyClass = false;
           }
         })
-
     },
-    //新增物料
-    addMatter() {
+    // 新增物料
+    addMatter () {
       for (let item of this.matterList) {
         // 存储已输入的价格
         this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
       }
       this.showMaterielPop = !this.showMaterielPop;
     },
-    //提价订单
-    submitOrder(){
-      let warn = '';
-      let dataSet = [];
+    // 提价订单
+    submitOrder (){
+      let warn = '',
+          dataSet = [];
       if (this.matterList.length === 0) {
         warn = '请选择物料';
       }
@@ -321,20 +317,20 @@ export default {
           }
           // 设置提交参数
           dataSet.push({
-            tdId : item.tdId || '',
-            transMatchedCode: item.transCode,  // 物料需求计划单号
-            transObjCode: item.inventoryCode, //物料编码
-            tdProcessing: item.processing ,//加工属性
-            assMeasureUnit: item.assMeasureUnit ||'个',    //辅助计量
-            assMeasureScale:item.assMeasureScale || null,  //与主计量单位倍数
-            assistQty: item.assistQty || 0,        //辅计数量
-            productDemandQty: item.allQty, //全部需求
-            thenLockQty: item.qtyed, //已做需求
-            tdQty : item.tdQty,     //待做需求
-            price : item.price, //单价
+            tdId: item.tdId || '',
+            transMatchedCode: item.transCode, // 物料需求计划单号
+            transObjCode: item.inventoryCode, // 物料编码
+            tdProcessing: item.processing , // 加工属性
+            assMeasureUnit: item.assMeasureUnit ||'个', // 辅助计量
+            assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数
+            assistQty: item.assistQty || 0, // 辅计数量
+            productDemandQty: item.allQty, // 全部需求
+            thenLockQty: item.qtyed, // 已做需求
+            tdQty: item.tdQty, // 待做需求
+            price: item.price, // 单价
             tdAmount: accMul(item.price, item.tdQty), // 合计
-            promDeliTime : item.promDeliTime,     //主计划采购入库日
-            comment : ''                //说明
+            promDeliTime: item.promDeliTime, // 计划需求日期
+            comment : '', // 说明
           });
           return true
         })
@@ -354,14 +350,19 @@ export default {
           let wfPara = {
             [this.processCode]: {businessKey: "PAPP", createdBy: ""}
           }
-          if(this.isResubmit){
+          if (this.isResubmit) {
             wfPara = {
-              businessKey:this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
+              businessKey: this.transCode,
+              createdBy: this.formData.handler,
+              transCode: this.transCode,
+              result: 3,
+              taskId: this.taskId,
+              comment: ""
             }
           }
           let submitData = {
             listId: this.listId,
-            biComment : this.biComment,
+            biComment: this.biComment,
             formData: JSON.stringify({
               ...this.formData,
               handlerEntity: this.entity.dealerName,
@@ -371,14 +372,13 @@ export default {
             }),
             wfPara: JSON.stringify(wfPara)
           }
-          //console.log(submitData);
-          //重新提交
-          if(this.isResubmit){
+          // 重新提交
+          if (this.isResubmit) {
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
           }
-          //无工作流
-          if(!this.processCode.length){
+          // 无工作流
+          if (!this.processCode.length) {
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
@@ -390,11 +390,11 @@ export default {
         }
       })
     },
-    //获取订单信息用于重新提交
-    async getFormData(){
+    // 获取订单信息用于重新提交
+    async getFormData () {
       await getSOList({
-        formViewUniqueId : this.uniqueId,
-        transCode : this.transCode
+        formViewUniqueId: this.uniqueId,
+        transCode: this.transCode
       }).then( (data)=>{
         this.listId = data.listId;
         this.applyComment = data.biComment;
@@ -404,7 +404,7 @@ export default {
         formData.order.dataSet.map(item=>{
           item = {
             ...item,
-            inventoryPic : item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
             inventoryName: item.inventoryName_transObjCode,
             inventoryCode: item.inventoryCode_transObjCode,
             specification: item.specification_transObjCode,
@@ -413,18 +413,22 @@ export default {
             inventoryType: item.inventoryType_transObjCode,
             inventorySubclass: item.inventorySubclass_transObjCode,
           }
+          if (!orderList[item.transCode]) {
+            orderList[item.transCode] = [];
+          }
+          orderList[item.transCode].push(item);
           this.matterList.push(item);
         })
-        //基本信息
+        // 基本信息
         this.formData = {
           handler: formData.handler,
-          handlerName : formData.handlerName,
-          handlerRole : formData.handlerRole,
-          handlerRoleName : formData.handlerRoleName,
-          handlerUnit : formData.handlerUnit,
-          handlerUnitName : formData.handlerUnitName,
-          creator : formData.creator,
-          modifer : formData.modifer,
+          handlerName: formData.handlerName,
+          handlerRole: formData.handlerRole,
+          handlerRoleName: formData.handlerRoleName,
+          handlerUnit: formData.handlerUnit,
+          handlerUnitName: formData.handlerUnitName,
+          creator: formData.creator,
+          modifer: formData.modifer,
           biId: formData.biId,
           biComment: formData.biComment,
         }
@@ -432,22 +436,22 @@ export default {
       })
     },
     // TODO 是否保存草稿
-    hasDraftData() {
-      if (!this.matterList.length) {
+    hasDraftData () {
+      if (!Object.values(this.orderList).length) {
         return false
       }
       return {
         [DRAFT_KEY]: {
-          matter : this.matterList,
-          formData : this.formData
+          orderList: this.orderList,
+          formData: this.formData,
         }
       };
     },
   },
-  created(){
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
-    if(data){
-      this.matterList = JSON.parse(data).matter;
+    if (data) {
+      this.orderList = JSON.parse(data).orderList;
       this.formData = JSON.parse(data).formData;
       sessionStorage.removeItem(DRAFT_KEY);
     }
@@ -460,7 +464,7 @@ export default {
 
 .pages {
   /deep/ .vux-no-group-title{
-    margin-top:0;
+    margin-top: 0;
   }
     /deep/ .weui-cells {
       font-size: .14rem;

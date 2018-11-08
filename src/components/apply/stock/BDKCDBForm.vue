@@ -103,10 +103,10 @@
 
 <script>
 // vux插件引入
-import {Icon, Cell, Group, XInput, XTextarea} from 'vux'
+import { Icon, Cell, Group, XInput, XTextarea } from 'vux'
 // 请求 引入
-import {getSOList} from 'service/detailService'
-import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+import { getSOList } from 'service/detailService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // minxins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
@@ -114,18 +114,18 @@ import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-
 const DRAFT_KEY = 'BDKCDB_DATA';
+
 export default {
   mixins: [ApplyCommon],
   components: {
-    Icon, Cell, Group, XInput,XTextarea,
+    Icon, Cell, Group, XInput, XTextarea,
     RNumber, PopMatterList, PopWarehouseList, PopMatter
   },
   data() {
     return {
       listId: '4d9a7f8f-9a88-47b6-a1f4-3faed6423615',
-      matterList: [],  // 物料列表
+      matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
       transCode: '',
       formData: {
@@ -137,17 +137,17 @@ export default {
       warehouseParams: {
         whCode: '',
       },
-      matter:{},
-      showMatterPop :false,
-      modifyIndex:null,
+      matter: {},
+      showMatterPop: false,
+      modifyIndex: null,
     }
   },
   methods: {
     // TODO 滑动删除
-    delClick(index, sItem) {
+    delClick (index, sItem) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      //若存在重复的 则清除
+      // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
@@ -155,19 +155,19 @@ export default {
       arr.push(sItem);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
-    //全选
-    checkAll(){
-      if(this.selItems.length === this.matterList.length){
+    // 全选
+    checkAll (){
+      if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
-    //删除选中的
-    deleteCheckd(){
+    // 删除选中的
+    deleteCheckd () {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
@@ -184,9 +184,8 @@ export default {
       })
 
     },
-
     // TODO 点击增加更多物料
-    addMatter() {
+    addMatter () {
       this.matterList.forEach(item => {
         // 存储已输入的价格
         this.numMap[item.inventoryCode] = item.tdQty;
@@ -194,7 +193,7 @@ export default {
       this.showMaterielPop = !this.showMaterielPop
     },
     // TODO 选中出库仓库
-    selWarehouseOut(val) {
+    selWarehouseOut (val) {
       this.warehouseOut = JSON.parse(val);
       this.warehouseParams = {
         ...this.warehouseParams,
@@ -203,22 +202,22 @@ export default {
       this.matterList = [];
     },
     // TODO 选中入库仓库
-    selWarehouseIn(val) {
+    selWarehouseIn (val) {
       this.warehouseIn = JSON.parse(val);
     },
     // TODO 显示物料修改的pop
-    modifyMatter(item, index) {
+    modifyMatter (item, index) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
     },
     // TODO 更新修改后的物料信息
-    selConfirm(val) {
+    selConfirm (val) {
       let modMatter = JSON.parse(val);
       this.$set(this.matterList, this.modifyIndex, modMatter);
     },
     // TODO 选中物料项
-    selMatter(val) {
+    selMatter (val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
         item.tdQty = this.numMap[item.inventoryCode] || ""
@@ -227,7 +226,7 @@ export default {
       this.matterList = [...sels];
     },
     // TODO 获取默认图片
-    getDefaultImg(item) {
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
       if (item) {
         item.inventoryPic = url;
@@ -235,9 +234,9 @@ export default {
       return url
     },
     // TODO 提交
-    save() {
-      let warn = '';
-      let dataSet = [];
+    save () {
+      let warn = '',
+          dataSet = [];
       let validateMap = [
         {
           key: 'warehouseOut',
@@ -259,7 +258,7 @@ export default {
         warn = '请选择物料';
       }
       this.matterList.every(item => {
-        if(!item.tdQty){
+        if (!item.tdQty) {
           warn = '请填写调拨数量'
           return false
         }
@@ -328,8 +327,8 @@ export default {
               comment: ''
             });
           }
-          //无工作流
-          if(!this.processCode.length){
+          // 无工作流
+          if (!this.processCode.length) {
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
@@ -337,13 +336,12 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       });
     },
     // TODO 获取详情
-    getFormData() {
+    getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
@@ -408,7 +406,7 @@ export default {
       })
     },
     // TODO 保存草稿数据
-    hasDraftData() {
+    hasDraftData () {
       if (!this.matterList.length) {
         return false
       }
@@ -422,7 +420,7 @@ export default {
       };
     },
   },
-  created() {
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       let draft = JSON.parse(data);

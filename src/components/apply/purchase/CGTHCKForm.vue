@@ -127,10 +127,10 @@
 
 <script>
 // vux插件引入
-import {XTextarea,XInput} from 'vux'
+import { XTextarea, XInput } from 'vux'
 // 请求 引入
-import {getSOList,} from 'service/detailService'
-import {saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc} from 'service/commonService'
+import { getSOList } from 'service/detailService'
+import { saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc } from 'service/commonService'
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
@@ -141,26 +141,21 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import RNumber from 'components/RNumber'
 // 公共方法
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
-import {toFixed} from '@/plugins/calc'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'CGTHCK_DATA';
 
 export default {
-  mixins: [applyCommon],
-  components: {
-    XTextarea,XInput,RNumber,
-    PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter
-  },
-  data() {
+  data () {
     return {
       listId: '482b7468-06eb-40c7-842a-f7ea6edb1c37',
-      srhInpTx: '',                                   // 搜索框内容
-      matterList: [],                                  // 订单列表
-      DealerPaymentTerm: '现付',                        //结算方式
-      transMode: ['现付', '预付', '账期', '票据'],          // 结算方式
-      showDealerPop: false,                          // 是否显示供应商的popup
+      srhInpTx: '', // 搜索框内容
+      matterList: [], // 订单列表
+      DealerPaymentTerm: '现付', // 结算方式
+      transMode: ['现付', '预付', '账期', '票据'], // 结算方式
+      showDealerPop: false, // 是否显示供应商的popup
       dealerInfo: null, // 供应商客户信息
-      crDealerPaymentTerm: '现付',  //结算方式
+      crDealerPaymentTerm: '现付', //结算方式
       formData: {
         biId: '',
         biComment: '' //备注
@@ -181,21 +176,26 @@ export default {
       }
     }
   },
+  components: {
+    XTextarea, XInput, RNumber,
+    PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter
+  },
+  mixins: [applyCommon],
   methods: {
     // 获取 结算方式
-    getPaymentTerm(){
+    getPaymentTerm () {
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
     }, 
     // TODO 选中的供应商
-    selDealer(val) {
+    selDealer (val) {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // TODO 选中仓库
-    selWarehouse(val) {
+    selWarehouse (val) {
       this.warehouse = JSON.parse(val);
       this.matterParams = {
         ...this.matterParams,
@@ -204,7 +204,7 @@ export default {
       this.matterList = []
     },
     // TODO 选中物料项
-    selMatter(val) {
+    selMatter (val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
         if (this.numMap[item.inventoryCode]) {
@@ -221,7 +221,7 @@ export default {
       this.matterList = sels;
     },
     // TODO 选择默认图片
-    getDefaultImg(item) {
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
       if (item) {
         item.inventoryPic = url;
@@ -229,10 +229,10 @@ export default {
       return url
     },
     // 滑动删除
-    delClick(index, sItem) {
+    delClick (index, sItem) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      //若存在重复的 则清除
+      // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
@@ -240,19 +240,19 @@ export default {
       arr.push(sItem);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
-    //全选
-    checkAll(){
-      if(this.selItems.length === this.matterList.length){
+    // 全选
+    checkAll () {
+      if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
-    //删除选中的
-    deleteCheckd(){
+    // 删除选中的
+    deleteCheckd () {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
@@ -270,7 +270,7 @@ export default {
 
     },
     // TODO 新增更多订单
-    addOrder() {
+    addOrder () {
       this.matterList.forEach(item => {
         // 存储已输入的价格
         this.numMap[item.inventoryCode] = {
@@ -281,7 +281,7 @@ export default {
       this.showMaterielPop = !this.showMaterielPop;
     },
     // TODO 提价订单
-    submitOrder() {
+    submitOrder () {
       let warn = '';
       let dataSet = [];
       let validateMap = [
@@ -319,12 +319,12 @@ export default {
           let taxRate = item.taxRate || this.taxRate;
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
           let oItem = {
-            transMatchedCode : item.transCode,//实例编码
-            inventoryName_outPutMatCode: item.inventoryName,// 物料名称
+            transMatchedCode: item.transCode, // 实例编码
+            inventoryName_outPutMatCode: item.inventoryName, // 物料名称
             outPutMatCode: item.inventoryCode, // 物料编码
-            tdProcessing: item.processing, //加工属性
+            tdProcessing: item.processing, // 加工属性
             assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-            assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null,  //与主计量单位倍数
+            assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与主计量单位倍数
             assistQty: item.assistQty || 0, // 辅计数量（明细）
             tdQty: item.tdQty, // 明细发生数
             thenQtyBal: item.thenQtyBal || 0, //余额
@@ -360,7 +360,6 @@ export default {
               createdBy: ''
             }
           };
-
           formData = {
             ...this.formData,
             handlerEntity: this.entity.dealerName,
@@ -396,26 +395,25 @@ export default {
             formData: JSON.stringify(formData),
             wfPara: JSON.stringify(wfPara)
           };
-          //新增
+          // 新增
           if (!this.transCode) {
             delete submitData.biReferenceId
           }
-          //无工作流
-          if(!this.processCode.length){
+          // 无工作流
+          if (!this.processCode.length) {
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
           if (this.biReferenceId) {
-            submitData.biReferenceId = this.biReferenceId
+            submitData.biReferenceId = this.biReferenceId;
           }
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       })
     },
     // TODO 获取详情
-    getFormData() {
+    getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
@@ -439,7 +437,7 @@ export default {
             inventoryName: item.inventoryName_transObjCode,
             inventoryCode: item.transObjCode,
             specification: item.specification_transObjCode,
-            processing : item.tdProcessing,
+            processing: item.tdProcessing,
           };
         });
         // 供应商信息
@@ -484,7 +482,7 @@ export default {
       })
     },
     // TODO 是否保存草稿
-    hasDraftData() {
+    hasDraftData () {
       if (!this.matterList.length) {
         return false
       }
@@ -493,12 +491,12 @@ export default {
           matter: this.matterList,
           dealer: this.dealerInfo,
           warehouse: this.warehouse,
-          formData : this.formData
+          formData: this.formData
         }
       };
     },
      // TODO 获取关联数据
-    getRelationData() {
+    getRelationData () {
       let {uniqueId} = this.$route.query;
       return getSOList({
         formViewUniqueId: uniqueId,
@@ -551,13 +549,12 @@ export default {
         this.orderList = {
           [this.relationKey]: dataSet,
         };
-        // this.crDealerPaymentTerm = order.drDealerPaymentTerm;
         this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
         this.$loading.hide();       
       })
     },
   },
-  created() {
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       this.matterList = JSON.parse(data).matter;
@@ -566,7 +563,6 @@ export default {
       this.formData = JSON.parse(data).formData;
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
       sessionStorage.removeItem(DRAFT_KEY);
-
     }
   },
 }
@@ -579,7 +575,7 @@ export default {
   }
   .pages {
   /deep/ .vux-no-group-title{
-    margin-top:0;
+    margin-top: 0;
   }
     /deep/ .weui-cells {
       font-size: .14rem;

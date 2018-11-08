@@ -103,32 +103,31 @@
 
 <script>
 // vux插件引入
-import {Icon, Cell, Group, XInput,XTextarea} from 'vux'
+import { Icon, Cell, Group, XInput, XTextarea } from 'vux'
 // 请求 引入
-import {getSOList} from 'service/detailService'
-import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+import { getSOList } from 'service/detailService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // mixins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
-
 // 方法引入
-import {accSub} from '@/home/pages/maps/decimalsAdd'
-import {toFixed} from '@/plugins/calc'
-
+import { accSub } from '@/home/pages/maps/decimalsAdd'
+import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'KCPD_DATA';
+
 export default {
   mixins: [ApplyCommon],
   components: {
-    Icon, Cell, Group, XInput,XTextarea,
+    Icon, Cell, Group, XInput, XTextarea,
     PopMatterList, PopWarehouseList, PopMatter
   },
   data() {
     return {
       listId: 'edf7b34b-8916-410f-801f-2db7e97efbde',
-      matterList: [],  // 物料列表
+      matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
       transCode: '',
       formData: {
@@ -145,19 +144,19 @@ export default {
     }
   },
   watch: {
-    matter:{
-      handler(val) {
+    matter: {
+      handler (val) {
         val.differenceNum = accSub(val.tdQty, val.qtyBal);
       },
-      deep:true
+      deep: true
     },
   },
   methods: {
     // 滑动删除
-    delClick(index, sItem) {
+    delClick (index, sItem) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      //若存在重复的 则清除
+      // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
@@ -165,19 +164,19 @@ export default {
       arr.push(sItem);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
-    //全选
-    checkAll(){
-      if(this.selItems.length === this.matterList.length){
+    // 全选
+    checkAll (){
+      if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
-    //删除选中的
-    deleteCheckd(){
+    // 删除选中的
+    deleteCheckd () {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
@@ -195,7 +194,7 @@ export default {
 
     },
     // TODO 点击增加更多物料
-    addMatter() {
+    addMatter () {
       this.matterList.forEach(item => {
         // 存储已输入的价格
         this.numMap[item.inventoryCode] = item.tdQty;
@@ -203,7 +202,7 @@ export default {
       this.showMaterielPop = !this.showMaterielPop
     },
     // TODO 选中入库仓库
-    selWarehouseIn(val) {
+    selWarehouseIn (val) {
       this.warehouseIn = JSON.parse(val);
       this.warehouseParams = {
         ...this.warehouseParams,
@@ -212,18 +211,18 @@ export default {
       this.matterList = [];
     },
     // TODO 显示物料修改的pop
-    modifyMatter(item, index) {
+    modifyMatter (item, index) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
     },
     // TODO 更新修改后的物料信息
-    selConfirm(val) {
+    selConfirm (val) {
       let modMatter = JSON.parse(val);
       this.$set(this.matterList, this.modifyIndex, modMatter);
     },
     // TODO 选中物料项
-    selMatter(val) {
+    selMatter (val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
         item.tdQty = this.numMap[item.inventoryCode] || 0;
@@ -233,7 +232,7 @@ export default {
       this.matterList = [...sels];
     },
     // TODO 获取默认图片
-    getDefaultImg(item) {
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
       if (item) {
         item.inventoryPic = url;
@@ -241,9 +240,9 @@ export default {
       return url
     },
     // TODO 提交
-    save() {
-      let warn = '';
-      let dataSet = [];
+    save () {
+      let warn = '',
+          dataSet = [];
       let validateMap = [
         {
           key: 'warehouseIn',
@@ -270,7 +269,7 @@ export default {
           thenQtyStock: item.qtyBal, // 可用库存
           tdQty: item.tdQty, // 盘点数量
           differenceNum: item.differenceNum || 0,
-          tdProcessing: item.processing,  // 物料加工属性
+          tdProcessing: item.processing, // 物料加工属性
           assistQty: item.assistQty || 0, // 辅计数量（明细）
           assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
           assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
@@ -329,8 +328,8 @@ export default {
               comment: ''
             });
           }
-          //无工作流
-          if(!this.processCode.length){
+          // 无工作流
+          if (!this.processCode.length) {
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
@@ -338,13 +337,12 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          console.log(submitData)
           this.saveData(operation, submitData);
         }
       });
     },
     // TODO 获取详情
-    getFormData() {
+    getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
@@ -399,15 +397,15 @@ export default {
       })
     },
     // TODO 检查金额，取正数、保留两位小数
-    checkAmt(item){
+    checkAmt (item) {
       let {tdQty = 0} = item;
-      if(typeof tdQty !== 'number') {
+      if (typeof tdQty !== 'number') {
         tdQty = 0;
       }
       item.tdQty = Math.abs(toFixed(tdQty));
     },
     // TODO 是否保存草稿
-    hasDraftData() {
+    hasDraftData () {
       if (!this.matterList.length) {
         return false
       }
@@ -420,7 +418,7 @@ export default {
       };
     },
   },
-  created() {
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       let draft = JSON.parse(data);
@@ -453,8 +451,8 @@ export default {
         }
       }
     }
-    .high_light{
-      /deep/ .weui-cell__ft{
+    .high_light {
+      /deep/ .weui-cell__ft {
         color:red;
         font-weight: 700;
 

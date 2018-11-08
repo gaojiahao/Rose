@@ -88,8 +88,8 @@ import { Popup, TransferDom, Group,
         Cell, numberComma, Datetime,
         XInput, XTextarea } from 'vux'
 // 请求 引入
-import { saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
-import {getTaskBom} from 'service/materService'
+import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
+import { getTaskBom } from 'service/materService'
 // mixins 引入
 import Applycommon from 'components/mixins/applyCommon'
 // 组件引入
@@ -101,10 +101,10 @@ import BomList from 'components/detail/commonPart/BomList'
 import RPicker from 'components/RPicker'
 
 /* 引入微信相关 */
-import {scanQRCode} from 'plugins/wx/api'
+import { scanQRCode } from 'plugins/wx/api'
 // 公共方法
-import {accMul,accAdd,accSub} from '@/home/pages/maps/decimalsAdd'
-import {toFixed} from '@/plugins/calc'
+import { accMul, accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
+import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'GDRW_DATA';
 
 export default {
@@ -115,24 +115,24 @@ export default {
     Popup, PopWorkList,
     Group, Cell, Datetime,
     XInput, XTextarea, PopManagerList,
-    RPicker, PopFacilityList,PopWarehouseList,BomList
+    RPicker, PopFacilityList, PopWarehouseList, BomList
   },
   data() {
     return {
       listId: '2372f734-93c1-11e8-85db-005056a136d0',
-      showWorkPop: false,                             // 是否显示物料的popup
-      showFacilityPop :false,                         // 是否显示设备的popup
+      showWorkPop: false, // 是否显示物料的popup
+      showFacilityPop: false, // 是否显示设备的popup
       formData: {
-        biComment : '',                               //备注
-        biProcessStatus :''                           //流程状态
+        biComment: '', //备注
+        biProcessStatus:'', //流程状态
       },
-      workInfo: {},                                    // 工序信息
+      workInfo: {}, // 工序信息
       defaultManager: {},
-      defaultFacility : {},
+      defaultFacility: {},
       scanResult: '',
       warehouse: {}, // 选中仓库属性
-      bomList: [],     //bom列表
-      filter: [        //bom请求参数       
+      bomList: [], //bom列表
+      filter: [ //bom请求参数       
         {
           operator: "in",
           property: "whCode",
@@ -146,15 +146,14 @@ export default {
       ]
     }
   },
-  computed:{
-    tdQty(){
+  computed: {
+    tdQty () {
       return this.workInfo.tdQty
     }
   },
-  watch:{
-    //监听派工数量，重新计算bom数量
-    tdQty(val){
-      console.log(val)
+  watch: {
+    // 监听派工数量，重新计算bom数量
+    tdQty (val) {
       this.bomList.forEach(bom => {
         let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
         bom.tdQty = Math.abs(toFixed(tdQty))
@@ -167,12 +166,12 @@ export default {
   },
   methods: {
     // 选择工序
-    selWork(val) {
+    selWork (val) {
       this.workInfo = val;
       this.filter[1].value = this.workInfo.inventoryCode
       getTaskBom({filter : JSON.stringify(this.filter)}).then(({tableContent = []})=>{
         tableContent.forEach(bom => {
-          if(this.workInfo.tdQty){
+          if (this.workInfo.tdQty) {
             let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
             bom.tdQty = Math.abs(toFixed(tdQty));
           }         
@@ -181,21 +180,21 @@ export default {
       })
     },
     // 选择员工
-    selManager(val) {
+    selManager (val) {
       this.defaultManager = JSON.parse(val);
       // 员工 工号
       this.workInfo.dealerDebit = this.defaultManager.dealerCode;
       // 类型
       this.workInfo.drDealerLabel = this.defaultManager.dealerLabelName;
     },
-    //选择设备
-    selFacility(val){
+    // 选择设备
+    selFacility (val) {
       this.defaultFacility = val;
       this.workInfo.facilityObjCode  = this.defaultFacility.facilityCode;
       this.workInfo.facilityTypebase_facilityObjCode  = this.defaultFacility.facilityType;
     },
-    //校验数量
-    checkAmt(item){
+    // 校验数量
+    checkAmt (item) {
       let {tdQty, thenQtyBal} = item;
       if (tdQty) {
         if(tdQty > thenQtyBal){
@@ -204,12 +203,12 @@ export default {
       }
     },
     // TODO 选中仓库
-    selWarehouse(val) {
+    selWarehouse (val) {
       this.warehouse = JSON.parse(val);
       this.filter[0].value = this.warehouse.warehouseCode;
       getTaskBom({filter : JSON.stringify(this.filter)}).then(({tableContent = []})=>{
         tableContent.forEach(bom => {
-          if(this.workInfo.tdQty){
+          if (this.workInfo.tdQty) {
             let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
             bom.tdQty = Math.abs(toFixed(tdQty));
           }
@@ -217,19 +216,19 @@ export default {
         this.bomList = tableContent;
       })
     },
-    //提价订单
-    submitOrder() {
+    // 提价订单
+    submitOrder () {
       let warn = '',
           orderDataSet = [],
           bomDataSet = [];
-      if(!this.workInfo.procedureName){
+      if (!this.workInfo.procedureName) {
         warn = '请选择工序';
       }
       let checkData = [
         { key: 'tdQty', msg: '请填写派工数量'},
         { key: 'dealerDebit', msg: '请选择工人'},
       ]
-      if(!warn){
+      if (!warn) {
         checkData.every(item => {
           if(!this.workInfo[item.key]){
             warn = item.msg;
@@ -239,10 +238,10 @@ export default {
         })
         
       }
-      if(!warn && !this.warehouse.warehouseCode){
+      if (!warn && !this.warehouse.warehouseCode) {
         warn = '请选择在制仓库';
       }
-      if(warn){
+      if (warn) {
         this.$vux.alert.show({
           content: warn
         })
@@ -255,7 +254,7 @@ export default {
         dealerDebit: this.workInfo.dealerDebit,
         drDealerLabel: this.workInfo.drDealerLabel,
         proFlowCode: this.workInfo.proFlowCode || '',
-        facilityObjCode: this.workInfo.facilityObjCode || '', //设备编码
+        facilityObjCode: this.workInfo.facilityObjCode || '', // 设备编码
         facilityTypebase_facilityObjCode: this.workInfo.facilityTypebase_facilityObjCode || '',
         transObjCode: this.workInfo.inventoryCode,
         processProQty: this.workInfo.processProQty || '',
@@ -280,7 +279,7 @@ export default {
         // 确定回调
         onConfirm: () => {
           this.$HandleLoad.show();
-          let operation = saveAndStartWf;//默认有工作流
+          let operation = saveAndStartWf; // 默认有工作流
           let wfPara = {
             [this.processCode]: {businessKey: "WTSK", createdBy: ""}
           }
@@ -312,11 +311,11 @@ export default {
             }),
             wfPara : JSON.stringify(wfPara)
           }
-          if (this.isResubmit) {//重新提交
+          if (this.isResubmit) { // 重新提交
             operation = saveAndCommitTask;
             submitData.biReferenceId = this.biReferenceId;
           }
-          if(!this.processCode.length){//无工作流
+          if(!this.processCode.length){ // 无工作流
             operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
@@ -329,7 +328,7 @@ export default {
       })
     },
     // TODO 是否保存草稿
-    hasDraftData() {
+    hasDraftData () {
       if (!this.workInfo.proPointCode) {
         return false
       }
@@ -342,13 +341,13 @@ export default {
       };
     },
     // TODO 启用企业微信扫一扫
-    scanQRCode() {
+    scanQRCode () {
       scanQRCode().then(({result = ''}) => {
         this.scanResult = result;
       })
     },
     // TODO 判断是否有弹窗需要关闭
-    onHistoryBack() {
+    onHistoryBack () {
       if (this.showWorkPop) {
         this.showWorkPop = false;
         return false
@@ -356,9 +355,9 @@ export default {
       return true
     },
   },
-  created(){
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
-    if(data){
+    if (data) {
       this.workInfo = JSON.parse(data).workInfo;
       this.defaultManager = JSON.parse(data).defaultManager;
       this.formData = JSON.parse(data).formData;

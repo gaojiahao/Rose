@@ -118,10 +118,10 @@
 
 <script>
 // vux插件引入
-import {Icon, Cell, Group, XInput, XTextarea} from 'vux'
+import { Icon, Cell, Group, XInput, XTextarea } from 'vux'
 // 请求 引入
-import {getSOList} from 'service/detailService'
-import {submitAndCalc, saveAndStartWf, saveAndCommitTask,} from 'service/commonService'
+import { getSOList } from 'service/detailService'
+import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
 // minxins 引入
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
@@ -134,14 +134,14 @@ const DRAFT_KEY = 'NBJGLL_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
-    Icon, Cell, Group, XInput,XTextarea,
+    Icon, Cell, Group, XInput, XTextarea,
     RNumber, PopOrderList, PopWarehouseList, PopMatter
   },
   data() {
     return {
       listId: '762b8df4-2555-4325-884a-355f34355832',
-      orderList: {},                                  // 订单列表
-      matterList: [],  // 物料列表
+      orderList: {}, // 订单列表
+      matterList: [], // 物料列表
       showOrderPop: false, // 是否显示物料的popup
       transCode: '',
       formData: {
@@ -153,14 +153,14 @@ export default {
       warehouseParams: {
         whCode: '',
       },
-      matter:{},
+      matter: {},
       showMatterPop :false,
-      modifyIndex:null,
+      modifyIndex: null,
     }
   },
   watch: {
     matter: {
-      handler(val) {
+      handler (val) {
         val.boms && val.boms.forEach(item => {
           item.tdQty = accMul(val.tdQty, item.qty)
         });
@@ -170,10 +170,10 @@ export default {
   },
   methods: {
     // TODO 滑动删除
-    delClick(index, sItem, key) {
+    delClick (index, sItem, key) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
-      //若存在重复的 则清除
+      // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
@@ -181,19 +181,19 @@ export default {
       arr.push(sItem);
     },
     // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
+    showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
     },
-    //全选
-    checkAll() {
+    // 全选
+    checkAll () {
       if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
         return
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
-    //删除选中的
-    deleteCheckd() {
+    // 删除选中的
+    deleteCheckd () {
       this.$vux.confirm.show({
         content: '确认删除?',
         // 确定回调
@@ -225,7 +225,7 @@ export default {
 
     },
     // TODO 新增更多订单
-    addOrder() {
+    addOrder () {
       for (let items of Object.values(this.orderList)) {
         for (let item of items) {
           // 存储已输入的价格
@@ -238,7 +238,7 @@ export default {
       this.showOrderPop = !this.showOrderPop;
     },
     // TODO 选中出库仓库
-    selWarehouseOut(val) {
+    selWarehouseOut (val) {
       this.warehouseOut = JSON.parse(val);
       this.warehouseParams = {
         ...this.warehouseParams,
@@ -247,23 +247,23 @@ export default {
       this.orderList = {};
     },
     // TODO 选中入库仓库
-    selWarehouseIn(val) {
+    selWarehouseIn (val) {
       this.warehouseIn = JSON.parse(val);
     },
     // TODO 显示物料修改的pop
-    modifyMatter(item, index, key) {
+    modifyMatter (item, index, key) {
       this.matter = JSON.parse(JSON.stringify(item));
       this.showMatterPop = true;
       this.modifyIndex = index;
       this.modifyKey = key;
     },
     // TODO 更新修改后的物料信息
-    selConfirm(val) {
+    selConfirm (val) {
       let modMatter = JSON.parse(val);
       this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
     },
     // TODO 选中物料项
-    selOrder(val) {
+    selOrder (val) {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.forEach(item => {
@@ -281,15 +281,15 @@ export default {
       this.orderList = orderList;
     },
     // TODO 获取默认图片
-    getDefaultImg(item) {
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
       if (item) {
         item.inventoryPic = url;
       }
       return url
     },
-   // TODO 提价订单
-    submitOrder() {
+    // TODO 提价订单
+    submitOrder () {
       let warn = '';
       let dataSet = [];
       let validateMap = [
@@ -322,7 +322,7 @@ export default {
           let oItem = {
             transMatchedCode: item.transCode, // 明细被核销交易号
             outPutMatCode: item.inventoryCode, // 输出物料
-            tdProcessing: item.processing, //加工属性
+            tdProcessing: item.processing, // 加工属性
             thenQtyBal: item.qtyBal, // 待交付数量
             thenQtyStock: item.qtyStock, // 当时可用库存
             tdQty: item.tdQty, // 明细发生数
@@ -387,8 +387,8 @@ export default {
           if (!this.transCode) {
             delete submitData.biReferenceId
           }
-          if (!this.processCode.length) { //无工作流
-            operation = submitAndCalc;
+          if (!this.processCode.length) { // 无工作流
+            operation = submitAndCalc; 
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }
@@ -400,7 +400,7 @@ export default {
       })
     },
     // TODO 获取详情
-    getFormData() {
+    getFormData () {
       return getSOList({
         formViewUniqueId: this.formViewUniqueId,
         transCode: this.transCode
@@ -416,7 +416,7 @@ export default {
         this.attachment = attachment;
         let matterList = [];
         let orderList = {};
-          // 获取合计
+        // 获取合计
         let {outPut} = formData;
         let {dataSet = []} = outPut;
         for (let item of dataSet) {
@@ -472,7 +472,7 @@ export default {
       })
     },
     // TODO 组装matterList数据
-    assembMatterList() {
+    assembMatterList () {
       for (let matters of Object.values(this.orderList)) {
         for (let item of matters) {
           this.matterList.push(item);
@@ -480,7 +480,7 @@ export default {
       }
     },
     // TODO 保存草稿数据
-    hasDraftData() {
+    hasDraftData () {
       // 是否选择订单
       if (!Object.values(this.orderList).length) {
         return false
@@ -495,7 +495,7 @@ export default {
       };
     },
   },
-  created() {
+  created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       let draft = JSON.parse(data);
@@ -535,7 +535,7 @@ export default {
   //插槽里面物料信息
   .mater_material {
     font-size: .1rem;
-    span{
+    span {
         margin-right: .06rem;
     }
   }

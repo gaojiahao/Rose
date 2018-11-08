@@ -71,8 +71,8 @@
     XTextarea, Datetime, dateFormat
   } from 'vux'
   // 请求 引入
-  import {saveProjectApproval, findProjectApproval} from 'service/projectService'
-  import {getDictByType, getDictByValue} from 'service/commonService'
+  import { saveProjectApproval, findProjectApproval } from 'service/projectService'
+  import { getDictByType, getDictByValue } from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   import common from '@/mixins/common'
@@ -93,36 +93,36 @@
         typeList: [], // 项目大类列表
         subclassList: [], // 项目子类列表
         ProjectApproval: {
-          projectName: '', //项目名称
-          projectType: '',//项目类型
-          projectManager: '',//项目经理
-          phoneNumber: '',//手机号
-          expectStartDate: dateFormat(new Date, 'YYYY-MM-DD'),//预期开始日期
-          expectEndDate: dateFormat(new Date, 'YYYY-MM-DD'),//预期截止日期
-          budgetIncome: '',//预算收入
-          budgetCapital: '',//预算成本
-          budgetCost: '',//预算费用
-          budgetProfit: '',//预算利润
-          budgetProfitMargin: '',//预算利润率
-          comment: '', //项目说明
+          projectName: '', // 项目名称
+          projectType: '', // 项目类型
+          projectManager: '', // 项目经理
+          phoneNumber: '', // 手机号
+          expectStartDate: dateFormat(new Date, 'YYYY-MM-DD'), // 预期开始日期
+          expectEndDate: dateFormat(new Date, 'YYYY-MM-DD'), // 预期截止日期
+          budgetIncome: '', // 预算收入
+          budgetCapital: '', // 预算成本
+          budgetCost: '', // 预算费用
+          budgetProfit: '', // 预算利润
+          budgetProfitMargin: '', // 预算利润率
+          comment: '', // 项目说明
           projectSubclass: '', // 项目子类
         },
-        formDataComment: '',//备注
+        formDataComment: '', // 备注
         formData: {},
         defaultManager: {}, // 项目经理的默认值
         hasDefault: false, // 是否为界面回写
       }
     },
     computed: {
-      //利润
-      profit() {
+      // 利润
+      profit () {
         let {budgetIncome = 0, budgetCapital = 0, budgetCost = 0} = this.ProjectApproval;
         let budgetProfit = Number(budgetIncome) - Number(budgetCapital) - Number(budgetCost);
         this.ProjectApproval.budgetProfit = budgetProfit;
         return budgetProfit;
       },
-      //利润率
-      profitMargin() {
+      // 利润率
+      profitMargin () {
         let {budgetIncome = 0, budgetProfit = 1} = this.ProjectApproval;
         let budgetProfitMargin = Math.floor(Number(budgetProfit) / (Number(budgetIncome) || 1) * 10000) / 10000;
         this.ProjectApproval.budgetProfitMargin = budgetProfitMargin;
@@ -131,7 +131,7 @@
     },
     methods: {
       // TODO 提交
-      save() {
+      save () {
         let objArr = [
           {tip: 'projectManager', msg: '项目经理'},
           {tip: 'projectType', msg: '项目大类'},
@@ -194,19 +194,19 @@
         });
       },
       // TODO 选中项目经理
-      selManager(val) {
+      selManager (val) {
         let sel = JSON.parse(val);
         this.ProjectApproval.projectManager = sel.dealerName;
         this.ProjectApproval.phoneNumber = sel.dealerMobilePhone;
       },
       // TODO 检查金额
-      checkAmt(key = '', val) {
+      checkAmt (key = '', val) {
         if (val) {
           this.ProjectApproval[key] = Math.abs(parseInt(val));
         }
       },
       // TODO 获取项目大类
-      getBigType() {
+      getBigType () {
         return getDictByType('projectType').then(({tableContent = []}) => {
           tableContent && tableContent.forEach(item => {
             item.originValue = item.value;
@@ -216,7 +216,7 @@
         });
       },
       // TODO 获取项目子类
-      getType() {
+      getType () {
         let selected = this.typeList.find(item => {
           return item.name === this.ProjectApproval.projectType
         }) || {};
@@ -230,7 +230,7 @@
         });
       },
       // TODO 项目大类切换
-      projectBigChange(val) {
+      projectBigChange (val) {
         this.getType().then(data => {
           if (this.hasDefault) {
             return
@@ -241,7 +241,7 @@
         })
       },
       // TODO 获取显示数据
-      getFormData() {
+      getFormData () {
         return findProjectApproval(this.transCode).then(({formData = {}}) => {
           this.hasDefault = true;
           this.defaultManager = {
@@ -260,7 +260,7 @@
         })
       },
       // TODO 初始化页面的数据
-      initRequest() {
+      initRequest () {
         let data = sessionStorage.getItem(DRAFT_KEY);
         let promises = [];
         if (data) {
@@ -280,7 +280,7 @@
         return Promise.all(promises);
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择项目经理
         if (!this.ProjectApproval.projectManager) {
           return false
@@ -292,7 +292,7 @@
         };
       },
     },
-    created() {
+    created () {
     },
   }
 </script>

@@ -5,7 +5,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 选择客户-->
-        <pop-dealer-list :defaultValue="dealerInfo" @sel-dealer="selDealer" @sel-contact="selContact" >
+        <pop-dealer-list :defaultValue="dealerInfo" :defaultContact="contact" @sel-dealer="selDealer" @sel-contact="selContact" >
         </pop-dealer-list>
         <!-- 商机明细 -->
         <div class="materiel_list">
@@ -40,7 +40,7 @@
                                      v-model="formData.salesPerson"></pop-salesman-list>
                   <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
                                      v-model="formData.salesChannels"></pop-salesman-list>
-                  <popup-picker title="分类标签" :data="currentType" v-model="categoryLabels" 
+                  <popup-picker title="分类标签" :data="currentType" v-model="categoryLabels"
                                 placeholder="请选择" ></popup-picker>
                   <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
@@ -65,11 +65,11 @@
     Cell, Popup, TransferDom,
     Group, XInput, CellBox, Datetime,
     XTextarea, numberComma, dateFormat,
-    PopupRadio, AlertModule,PopupPicker 
+    PopupRadio, AlertModule,PopupPicker
   } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,getDictByType} from 'service/commonService'
+  import { getSOList } from 'service/detailService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入
@@ -77,24 +77,18 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   // 方法引入
-  import {toFixed} from '@/plugins/calc'
+  import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'SJ_DATA';
+
   export default {
-    directives: {TransferDom},
-    filters: {numberComma},
-    components: {
-      Cell, Popup, Group, XInput,PopupPicker,
-      Datetime, XTextarea, PopupRadio, 
-      RPicker, PopDealerList, PopSalesmanList
-    },
-    data() {
+    data () {
       return {
         listId: '32a2c333-02a3-416f-a133-95c7a32da678',
-        showDealerPop: false,                          // 是否显示客户的popup
+        showDealerPop: false, // 是否显示客户的popup
         dealerInfo: {},
         formData: {
           modifer: '',
-          biId: '',//为空
+          biId: '', // 为空
           dealerDebit: '',
           drDealerLabel: '',
           dealerDebitContactPersonName: '',
@@ -102,7 +96,7 @@
           opportunityTitle: '',
           comment: '',
           tdAmount: '',
-          biProcessStatus: '',//与PC端一致
+          biProcessStatus: '', // 与PC端一致
           validUntil: '',
           salesPerson: '', // 销售人员
           salesChannels: '', // 销售渠道
@@ -111,28 +105,37 @@
         },
         biReferenceId: '',
         categoryLabels: [],
-        currentType: []
+        currentType: [],
+        contact: {},
       }
     },
+    directives: {TransferDom},
+    components: {
+      Cell, Popup, Group, XInput, PopupPicker,
+      Datetime, XTextarea, PopupRadio, 
+      RPicker, PopDealerList, PopSalesmanList
+    },
     mixins: [common],
+    filters: {numberComma},
     methods: {
-      //选中的客户
-      selDealer(val) {
+      // 选中的客户
+      selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.formData.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
         this.formData.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
-      selContact(val){
-        let contact = JSON.parse(val)[0];
+      selContact (val){
+        let contact = {...val};
+        this.contact = contact;
         // 联系人
         this.formData.dealerDebitContactPersonName = contact.dealerName || '';
         // 联系人电话
         this.formData.dealerDebitContactInformation = contact.dealerMobilePhone || '';
       },
       // TODO 提交
-      submitOrder() {
+      submitOrder () {
         let warn = '';
         let validateMap = [
           {
@@ -141,7 +144,7 @@
           }, {
             key: 'tdAmount',
             message: '请填写预期销售额'
-          }, 
+          },
           // {
           //   key: 'biProcessStatus',
           //   message: '请选择流程状态'
@@ -206,21 +209,21 @@
                 comment: ''
               });
             }
-          //无工作流
-          if(!this.processCode.length){
-            operation = submitAndCalc;
-            delete submitData.wfPara;
-            delete submitData.biReferenceId;
-          }
-          if (this.biReferenceId) {
-            submitData.biReferenceId = this.biReferenceId
-          }
-          this.saveData(operation, submitData);
+            // 无工作流
+            if (!this.processCode.length) {
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
+            }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
+            this.saveData(operation, submitData);
           }
         });
       },
       // TODO 获取详情
-      getFormData() {
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -259,13 +262,13 @@
         })
       },
       // TODO 检查金额
-      checkAmt(val) {
+      checkAmt (val) {
         if (val) {
           this.formData.tdAmount = Math.abs(toFixed(val));
         }
       },
       //获取分类标签
-      getTypeLabel(){
+      getTypeLabel () {
         getDictByType('categoryLabels').then(({tableContent=[]})=>{
           let arr = []
           tableContent.forEach(item=>{
@@ -276,25 +279,26 @@
 
       },
       // TODO 是否保存草稿
-      hasDraftData() {
+      hasDraftData () {
         let formData = this.formData;
         if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.biProcessStatus) {
           return {
             [DRAFT_KEY]: {
               formData,
-              dealerInfo : this.dealerInfo
+              dealerInfo : this.dealerInfo,
+              contact: this.contact,
             }
           };
-          
         }
-        
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
-        this.formData = JSON.parse(data).formData;
-        this.dealerInfo = JSON.parse(data).dealerInfo;
+        let draft = JSON.parse(data);
+        this.formData = draft.formData;
+        this.dealerInfo = draft.dealerInfo;
+        this.contact = draft.contact;
         sessionStorage.removeItem(DRAFT_KEY)
       }
       this.getTypeLabel()
@@ -329,7 +333,7 @@
           border-bottom: none;
         }
       }
-      .vux-cell-box{
+      .vux-cell-box {
         &:before{
           left: 0;
         }
@@ -345,6 +349,6 @@
         left: 0;
       }
     }
-    
+
   }
 </style>
