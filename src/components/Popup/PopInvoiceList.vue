@@ -9,13 +9,13 @@
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
-                   ref="bScroll">
+                  ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="mater_name">{{item.transCode}}</div>
-              <div class="no_invoiced" v-if="getCostList === 'getVATBilling'">待开票金额：￥{{item.amntBal}}</div>
+              <div class="no_invoiced" v-if="getCostList === 'getManyVATBilling'">待开票金额：￥{{item.amntBal}}</div>
               <div class="no_invoiced" v-else>待收票金额：￥{{item.amntBal}}</div>
             </div>
             <!-- icon -->
@@ -29,10 +29,11 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import {getVATBilling,getVATReceipt} from 'service/invoiceService.js'
+  import {getVATBilling, getVATReceipt, getManyVATBilling} from 'service/invoiceService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
-import { sep } from 'path';
+  import {sep} from 'path';
+
   export default {
     name: "InvoiceList",
     props: {
@@ -61,7 +62,7 @@ import { sep } from 'path';
       },
     },
     components: {
-      Icon, Popup, LoadMore, RScroll,MSearch
+      Icon, Popup, LoadMore, RScroll, MSearch
     },
     data() {
       return {
@@ -77,7 +78,7 @@ import { sep } from 'path';
           click: true,
           pullUpLoad: true,
         },
-        dataCount:0,
+        dataCount: 0,
       }
     },
     watch: {
@@ -97,7 +98,7 @@ import { sep } from 'path';
           // 参数改变，重新请求接口
           this.getCostList();
         },
-        deep:true
+        deep: true
       }
 
     },
@@ -114,7 +115,7 @@ import { sep } from 'path';
       onHide() {
         // this.tmpItems = [...this.selItems];
         this.$emit('input', false);
-        
+
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -132,15 +133,15 @@ import { sep } from 'path';
       selThis(sItem, sIndex) {
         //已经选择过的不允许再选
         let warn = ''
-        this.selItems.every(item=>{
-          if(sItem.transCode === item.transMatchedCode){
+        this.selItems.every(item => {
+          if (sItem.transCode === item.transMatchedCode) {
             warn = '该实例编码已选择，请选择其他';
             return false;
 
           }
           return true
         })
-        if(warn) {
+        if (warn) {
           this.$vux.alert.show({
             content: warn,
           });
@@ -148,7 +149,7 @@ import { sep } from 'path';
         }
         this.showPop = false;
         this.selItems = [sItem];
-        this.$emit('sel-matter',this.selItems[0]);
+        this.$emit('sel-matter', this.selItems[0]);
       },
       // TODO 设置默认值
       setDefaultValue() {
@@ -158,8 +159,8 @@ import { sep } from 'path';
       // TODO 获取物料列表
       getCostList() {
         let filter = [];
-        let operation = getVATBilling;
-        if(!this.getListMethod){
+        let operation = getManyVATBilling;
+        if (!this.getListMethod) {
           operation = getVATReceipt
         }
         if (this.srhInpTx) {
@@ -213,6 +214,7 @@ import { sep } from 'path';
   .symbol {
     font-size: .1rem;
   }
+
   // 弹出层
   .trade_pop_part {
     background: #fff;
@@ -334,7 +336,7 @@ import { sep } from 'path';
               color: #111;
               font-size: .18rem;
             }
-            .no_invoiced{
+            .no_invoiced {
               font-size: 0.12rem;
               color: #757575;
             }
