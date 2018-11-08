@@ -21,8 +21,8 @@
               <span class='num'>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
             </div>
-            <div class="mater_num" v-if="item.promDeliTime">
-              <span class='num'>主计划采购入库日: {{item.promDeliTime}}</span>
+            <div class="mater_num" v-if="item.purchaseDay">
+              <span class='num'>采购需求日期: {{item.purchaseDay}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

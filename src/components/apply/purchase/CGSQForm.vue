@@ -5,7 +5,7 @@
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
-          <template v-if="!matterList.length">
+          <template v-if="!Object.keys(orderList).length">
             <div @click="showMaterielPop = !showMaterielPop">
               <div class="title">物料列表</div>
               <div class="required">请选择物料</div>
@@ -413,6 +413,10 @@ export default {
             inventoryType: item.inventoryType_transObjCode,
             inventorySubclass: item.inventorySubclass_transObjCode,
           }
+          if (!orderList[item.transCode]) {
+            orderList[item.transCode] = [];
+          }
+          orderList[item.transCode].push(item);
           this.matterList.push(item);
         })
         //基本信息
@@ -433,13 +437,13 @@ export default {
     },
     // TODO 是否保存草稿
     hasDraftData() {
-      if (!this.matterList.length) {
+      if (!Object.values(this.orderList).length) {
         return false
       }
       return {
         [DRAFT_KEY]: {
-          matter : this.matterList,
-          formData : this.formData
+          orderList: this.orderList,
+          formData: this.formData,
         }
       };
     },
@@ -447,9 +451,9 @@ export default {
   created(){
     let data = sessionStorage.getItem(DRAFT_KEY);
     if(data){
-      this.matterList = JSON.parse(data).matter;
+      this.orderList = JSON.parse(data).orderList;
       this.formData = JSON.parse(data).formData;
-      sessionStorage.removeItem(DRAFT_KEY);
+      // sessionStorage.removeItem(DRAFT_KEY);
     }
   },
 }

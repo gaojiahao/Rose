@@ -1,19 +1,11 @@
 
 @font-face {
   font-family: 'iconfont';  /* project id 667058 */
-<<<<<<< HEAD
-  src: url('//at.alicdn.com/t/font_667058_6djv4u0h1wm.eot');
-  src: url('//at.alicdn.com/t/font_667058_6djv4u0h1wm.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_667058_6djv4u0h1wm.woff') format('woff'),
-  url('//at.alicdn.com/t/font_667058_6djv4u0h1wm.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_667058_6djv4u0h1wm.svg#iconfont') format('svg');
-=======
   src: url('//at.alicdn.com/t/font_667058_3io2zq38xc2.eot');
   src: url('//at.alicdn.com/t/font_667058_3io2zq38xc2.eot?#iefix') format('embedded-opentype'),
   url('//at.alicdn.com/t/font_667058_3io2zq38xc2.woff') format('woff'),
   url('//at.alicdn.com/t/font_667058_3io2zq38xc2.ttf') format('truetype'),
   url('//at.alicdn.com/t/font_667058_3io2zq38xc2.svg#iconfont') format('svg');
->>>>>>> 4839e8311f0cc1ef0237555ffce2da1bc9347d22
 }
 
 .iconfont {
