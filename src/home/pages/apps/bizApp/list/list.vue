@@ -5,9 +5,7 @@
       :refresh-request='isrefresh'
       ref='list'>
     </component>
-    <router-view></router-view>
   </div>
-
 </template>
 
 <script>
@@ -75,4 +73,13 @@ export default {
 }
 </script>
 
-<style lang='scss'></style>
+<style lang='scss'>
+.fade-enter-active, .fade-leave-active {
+  transition: all .3s ease;
+  z-index: 999;
+}
+.fade-enter, .fade-leave {
+  opacity: 0;
+  transform: translateX(10px);
+}
+</style>

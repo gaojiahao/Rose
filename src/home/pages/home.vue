@@ -2,58 +2,50 @@
   <div class="inPage">
     <div class="content" ref='home'>
       <div class="wrapper">
-        <!-- 用户头像部分 -->
-        <!-- <div class="user_part">
-          <div class="user_avatar vux-1px-b">
-            <div class='user_info'>
-              <img :src="userInfo.avatar">
-              <div class="tips" style="display:inline-block;">欢迎,{{userInfo.name ? userInfo.name : '访问者'}}</div>
-            </div>
-            <div>
-              <div class='current_entity' @click="showDrop = !showDrop">
-                <span class="entity-name">{{currentEntity}}</span>
-                <x-icon v-if="entityList.length > 1" type="ios-arrow-down" :class="{'arrow-up': showDrop}" size="14"></x-icon>
+        <div class="top-part-container">
+          <div class="top-part">
+            <div class="entity-part vux-1px-b">
+              <div class="tips_title">
+                <div>当前主体</div>
+                <div class="entity_name"
+                      :class="[userInfo.entityName && userInfo.entityName.length > 11 ? 'when-is-out': '']">{{userInfo.entityName}}</div>
               </div>
-              <ul class="r-dropdown-list" v-show="showDrop">
-                <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
-                    @click.stop="dropItemClick(item)" :key="index">
+              <div class="tips-fade-part">
+                <transition name='fade'>
+                  <span v-if="!showDrop" key="on" class="iconfont icon-qiehuan1" @click="showDrop = !showDrop"></span>
+                  <span v-else key="off" class="change_btn" @click="showDrop = !showDrop">取消</span>
+                </transition>
+              </div>
+              <transition-group class="r-dropdown-list" name='list' tag='ul'>
+                <li v-show="showDrop" class="r-dropdown-item" :key="index" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
+                    @click.stop="dropItemClick(item)" >
                   <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
                 </li>
-              </ul>
+              </transition-group>
             </div>
-          </div>
-        </div> -->
-        <div class="top-part">
-          <div class="top-part-container vux-1px-b">
-            <div class="entity-part">
-              <div class="tips_title">
-                <span>当前主体</span>
-                <span class="change_btn">切换</span>
+            <div class="user-info-container">
+              <div class="user_avatar">
+                <img :src="userInfo.avatar">
               </div>
-              <div class="entity_name when-is-out"
-                    :class="[currentEntity.length > 11 ? 'when-is-out': '']">{{currentEntity}}</div>
-            </div>
-            <div class="user-avatar">
-              <img :src="userInfo.avatar">
+              <div class="user-info">
+                <p class="user_name">{{userInfo.nickname}}</p>
+                <p class="user_other">@{{userInfo.userCode}}</p>
+              </div>
             </div>
           </div>
         </div>
-        <!-- 基础应用部分 -->
-        <basic-app :BasicApps='BasicApps' :goBasic='goBasic'></basic-app>
-        <!-- 业务应用部分 -->
-        <bus-app :BusApps='BusApps' :goList='goList' :getDefaultIcon='getDefaultIcon'></bus-app>
+        <basic-app :BasicApps='BasicApps' :goBasic='goBasic' :goAppDetail='goAppDetail'></basic-app>
+        <bus-app :BusApps='BusApps' :goList='goList' :goAppDetail='goAppDetail' :getDefaultIcon='getDefaultIcon'></bus-app>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {Icon} from 'vux'
+import {} from 'vux'
 // 接口引入
 import homeService from 'service/homeservice'
 import { getMsgList } from 'service/msgService.js'
-import {register} from 'plugins/wx'
-
 // 映射表引入
 import basicMap from './maps/basic'
 import Apps from './maps/businessApp'
@@ -67,17 +59,16 @@ export default {
   data(){
     return{
       BUSobj: {},
-      userInfo:{},         // 用户信息
-      BasicApps : [],        // 基础对象
-      BusApps: {},        // 业务应用
+      userInfo:{},            // 用户信息
+      BusApps: [],            // 业务应用
+      BasicApps : [],         // 基础对象
       homeScroll : null,
-      currentEntity :'',//当前主体
-      entityList : [] ,//主体列表
+      entityList : [] ,       //主体列表
       showDrop :false,
       selItem : {}
     }
   },
-  components:{ busApp, basicApp, Icon },
+  components:{ busApp, basicApp },
   methods:{
     // 基础应用
     goBasic(item){
@@ -86,6 +77,9 @@ export default {
     // 前往列表
     goList(listId, name, file){
       this.$router.push({path: `/list/${file}/${listId}`, query: { name }})
+    },
+    goAppDetail(listId){
+      this.$router.push({path: `/appDetail/${listId}`})
     },
     // 设置默认图片
     getDefaultIcon(app){
@@ -104,13 +98,20 @@ export default {
           return
         }
         newsNumber = data.dataCount;
-        this.$event.$emit('badgeNum',newsNumber);
+        this.$event.$emit('badgeNum', newsNumber);
       })
     },
     //获取当前用户信息
     getCurrentUser(){
-      return homeService.currentUser().then( data=>{
-        this.currentEntity = data.entityName;
+      return homeService.currentUser().then( data =>{
+        this.userInfo = {
+          photo: data.photo,                      // 头像
+          mobile: data.mobile,                    // 手机号
+          userCode: data.userCode,                // 工号
+          nickname: data.nickname,                // 姓名
+          entityName: data.entityName             // 当前组织
+        }
+        // 获取 公司主体列表
         data.sysGroupList && data.sysGroupList.forEach(item=>{
           if(item.groupType === 'C'){
             this.entityList.push(item);
@@ -124,7 +125,7 @@ export default {
     // TODO 选择单条记录
     dropItemClick(item) {
       this.selItem = {...item};
-      this.currentEntity = item.groupName;
+      this.userInfo.entityName = item.groupName;
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
@@ -154,14 +155,16 @@ export default {
     (async() => {
       //获取当前用户
       await this.getCurrentUser()
-      // 注册企业微信js-sdk
-      // register();
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
         for(let val of res){
           // 获取应用
           if(Apps[val.id]){
+            // console.log(val);
+            // 动态生成数组
+            BUSobj[val.text] = [];
+            // console.log(BUSobj[val.text]);
             for(let item of val.children ){
               // 基础对象
               if(basicMap[item.listId]){
@@ -190,32 +193,47 @@ export default {
               }
               // 业务应用
               if(Apps[val.id][item.listId]){
+                item.fileID = val.id;
                 item.icon = item.icon
                   ? `/dist/${item.icon}`
                   : this.getDefaultIcon();
                 // 归类到相应的小数组
-                if(!this.BusApps[val.text]){
-                  this.$set(this.BusApps, val.text, { appList: [item] })
-                }
-                else {
-                  this.BusApps[val.text].appList.push(item);
-                }
+                BUSobj[val.text].push(item);
+                // if(!this.BusApps[val.text]){
+                //   this.$set(this.BusApps, val.text, { appList: [item] })
+                // }
+                // else {
+                //   this.BusApps[val.text].appList.push(item);
+                // }
               }
               // 获取 应用类型ID 对应相应文件夹
-              item.fileID = val.id;
+              
             }
+            this.BusApps.push({
+              id: val.id,
+              name: val.text,
+              appList: BUSobj[val.text]
+            })
             this.$loading.hide();
           }
         }
       })
       // 获取 头像姓名
-      let { name, avatar } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
+      let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));
       // 如果头像不存在则指定默认头像
       if(!avatar){
-        let url = require('assets/ava03.png')
+        let url = this.userInfo.photo;
+        if(!this.userInfo.photo){
+          url = require('assets/ava03.png');
+        }
         avatar = url;
       };
-      this.userInfo = { name, avatar };
+      this.userInfo = { 
+        ...this.userInfo,
+        name, 
+        avatar, 
+        position 
+      };
       await this.getNews();
     })()
   },
@@ -229,6 +247,29 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: all .3s ease;
+}
+.fade-enter, .fade-leave-active {
+  opacity: 0;
+}
+.fade-enter {
+  transform: translateX(30px);
+}
+.fade-leave-active {
+  transform: translateX(-30px);
+}
+.list-enter-active, .list-leave-active {
+  transition: all .3s ease;
+}
+.list-enter {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
 .inPage {
   background: #F5F5F5;
 }
@@ -244,27 +285,38 @@ export default {
   }
 }
 // 顶部 用户头像部分
-.top-part {
+.top-part-container {
   width: 100%;
   padding: 0 .1rem;
   background: #fff;
   box-sizing: border-box;
-  .top-part-container {
-    display: flex;
-    align-items: center;
-    padding: .04rem 0 .1rem;
-    justify-content: space-between;
+  .top-part {
+    padding-top: .04rem;
   }
   .entity-part {
+    width: 100%;
+    display: flex;
+    position: relative;
     line-height: .24rem;
+    align-items: flex-end;
+    padding-bottom: .1rem;
+    justify-content: space-between;
     .tips_title {
       color: #8A8A8A;
       font-size: .14rem;
       font-weight: bold;
-      .change_btn {
-        color: #3f72af;
-        font-size: .12rem;
-      }
+    }
+    .change_btn {
+      color: #FFF;
+      font-size: .14rem;
+      padding: 0 .04rem;
+      background: #3f72af;
+      border-radius: .18rem;
+    }
+    .icon-qiehuan1 {
+      color: #3f72af;
+      font-size: .24rem;
+      font-weight: bold;
     }
     .entity_name {
       color: #111;
@@ -287,27 +339,49 @@ export default {
         }
       }
     }
+    .tips-fade-part {
+      width: 40px;
+      height: 25px;
+      position: relative;
+      span {
+        right: 0;
+        position: absolute;
+      }
+    }
   }
-  .user-avatar {
-    width: .45rem;
-    height: .45rem;
-    img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
+  .user-info-container {
+    display: flex;
+    align-items: center;
+    padding: .14rem 0 .06rem;
+    .user_avatar {
+      width: .65rem;
+      height: .65rem;
+      margin-right: .1rem;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: .18rem;
+        // border-radius: 50%;
+      }
+    }
+    .user_name {
+      font-size: .18rem;
+      font-weight: bold;
+    }
+    .user_other {
+      color: #757575;
+      font-size: .14rem;
+      // font-weight: bold;
     }
   }
 }
 /* 列表容器 */
 .r-dropdown-list {
-  position: absolute;
-  right: 0;
+  left: 0;
   top: 100%;
+  width: 100%;
   z-index: 100;
-  border-bottom-left-radius: .08rem;
-  border-bottom-right-radius: .08rem;
-  background-color: #fff;
-  box-shadow: 0 2px 10px #e8e8e8;
+  position: absolute;
   box-sizing: border-box;
 }
 /* 列表项 */
@@ -315,28 +389,16 @@ export default {
   position: relative;
   line-height: .4rem;
   font-size: .16rem;
-  text-align: right;
+  background: #FFF;
   span{
-    display: inline-block;
     width:100%;
-    box-sizing: border-box;
     padding: 0 .1rem;
+    background: #F9F9F9;
+    display: inline-block;
+    box-sizing: border-box;
   }
   .active{
     background: #e8e8e8;
-  }
-  .weui_icon_success-no-circle {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-  }
-}
-/* 倒三角 */
-.vux-x-icon-ios-arrow-down {
-  transition: transform 200ms linear;
-  &.arrow-up {
-    transform: rotate(-180deg);
   }
 }
 </style>

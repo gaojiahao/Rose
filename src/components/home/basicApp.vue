@@ -1,8 +1,7 @@
 <template>
   <div class="basic-part defalut_bg">
-      <!-- <div class="basic-title">基础对象</div> -->
       <div class="app-container swiper-container">
-        <div class="basic_list swiper-wrapper">
+        <div class="basic-list swiper-wrapper">
           <div class="indval_app swiper-slide"
               @click="goBasic(item.listId)"
               v-for='(item, index) of BasicApps'
@@ -20,6 +19,7 @@
 </template>
 
 <script>
+let swiper;
 export default {
   props: {
     BasicApps: {
@@ -29,50 +29,47 @@ export default {
     goBasic: {
       type: Function,
       require : true
+    },
+    goAppDetail: {
+      type: Function,
+      require : true
     }
   },
   mounted(){
-    let Swiper = this.Swiper;
+    let HomeSwiper = this.Swiper;
     // 左右滑动
-    new Swiper('.app-container', {
+    swiper = new HomeSwiper('.app-container', {
       direction: 'horizontal',
       slidesPerView: 'auto',
+      spaceBetween: 5,
+      slidesOffsetBefore: 10,
+      slidesOffsetAfter: 10,
       observer: true,           //修改swiper自己或子元素时，自动初始化swiper
       observeParents: true,     //修改swiper的父元素时，自动初始化swiper
     })
   },
   updated(){
-    // let Swiper = this.Swiper;
-    // // 左右滑动
-    // new Swiper('.app-container', {
-    //   direction: 'horizontal',
-    //   slidesPerView: 'auto',
-    //   observer: true,           //修改swiper自己或子元素时，自动初始化swiper
-    //   observeParents: true,     //修改swiper的父元素时，自动初始化swiper
-    // })
+    swiper.update();
   }
 }
 </script>
 
 <style lang='scss' scoped>
-  @import "./../scss/homeCommon.scss";
+@import "./../scss/homeCommon.scss";
 // 基础应用部分
 .basic-part {
   width: 100%;
-  padding: 0 .1rem;
+  // padding: 0 .1rem;
   box-sizing: border-box;
   .basic-title {
     color: #111;
+    font-weight: bold;
     font-size: .18rem;
     padding: .04rem 0;
   }
-  // border-bottom-left-radius: 8rem .5rem;
-  // border-bottom-right-radius: 8rem .5rem;
-  .basic_list {
+  .basic-list {
     width: 100%;
-    // display: flex;
-    // padding: .1rem .04rem .18rem;
-    padding-bottom: .1rem;
+    padding: .08rem 0 .14rem;
     // 单个APP
     .indval_app {
       width: 150px;
@@ -81,7 +78,6 @@ export default {
       font-weight: bold;
       border-radius: .08rem;
       box-sizing: border-box;
-      margin: .1rem .05rem 0 0;
       padding: .04rem .04rem 0;
       .app_img {
         width: .6rem;
