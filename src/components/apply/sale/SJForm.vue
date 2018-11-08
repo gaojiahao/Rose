@@ -68,8 +68,8 @@
     PopupRadio, AlertModule,PopupPicker 
   } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask,getDictByType} from 'service/commonService'
+  import { getSOList } from 'service/detailService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入
@@ -77,24 +77,18 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   // 方法引入
-  import {toFixed} from '@/plugins/calc'
+  import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'SJ_DATA';
+
   export default {
-    directives: {TransferDom},
-    filters: {numberComma},
-    components: {
-      Cell, Popup, Group, XInput,PopupPicker,
-      Datetime, XTextarea, PopupRadio, 
-      RPicker, PopDealerList, PopSalesmanList
-    },
-    data() {
+    data () {
       return {
         listId: '32a2c333-02a3-416f-a133-95c7a32da678',
-        showDealerPop: false,                          // 是否显示客户的popup
+        showDealerPop: false, // 是否显示客户的popup
         dealerInfo: {},
         formData: {
           modifer: '',
-          biId: '',//为空
+          biId: '', // 为空
           dealerDebit: '',
           drDealerLabel: '',
           dealerDebitContactPersonName: '',
@@ -102,7 +96,7 @@
           opportunityTitle: '',
           comment: '',
           tdAmount: '',
-          biProcessStatus: '',//与PC端一致
+          biProcessStatus: '', // 与PC端一致
           validUntil: '',
           salesPerson: '', // 销售人员
           salesChannels: '', // 销售渠道
@@ -114,17 +108,25 @@
         currentType: []
       }
     },
+    directives: {TransferDom},
+    components: {
+      Cell, Popup, Group, XInput, PopupPicker,
+      Datetime, XTextarea, PopupRadio, 
+      RPicker, PopDealerList, PopSalesmanList
+    },
     mixins: [common],
+    filters: {numberComma},
     methods: {
-      //选中的客户
-      selDealer(val) {
+      // 选中的客户
+      selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.formData.dealerDebitContactPersonName = this.dealerInfo.creatorName || '';
         this.formData.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         this.formData.drDealerLabel = this.dealerInfo.dealerLabelName;
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
-      selContact(val){
+      // 选择联系人
+      selContact (val) {
         let contact = JSON.parse(val)[0];
         // 联系人
         this.formData.dealerDebitContactPersonName = contact.dealerName || '';
@@ -206,21 +208,21 @@
                 comment: ''
               });
             }
-          //无工作流
-          if(!this.processCode.length){
-            operation = submitAndCalc;
-            delete submitData.wfPara;
-            delete submitData.biReferenceId;
-          }
-          if (this.biReferenceId) {
-            submitData.biReferenceId = this.biReferenceId
-          }
-          this.saveData(operation, submitData);
+            // 无工作流
+            if (!this.processCode.length) {
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
+            }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
+            this.saveData(operation, submitData);
           }
         });
       },
       // TODO 获取详情
-      getFormData() {
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -259,13 +261,13 @@
         })
       },
       // TODO 检查金额
-      checkAmt(val) {
+      checkAmt (val) {
         if (val) {
           this.formData.tdAmount = Math.abs(toFixed(val));
         }
       },
       //获取分类标签
-      getTypeLabel(){
+      getTypeLabel () {
         getDictByType('categoryLabels').then(({tableContent=[]})=>{
           let arr = []
           tableContent.forEach(item=>{
@@ -276,7 +278,7 @@
 
       },
       // TODO 是否保存草稿
-      hasDraftData() {
+      hasDraftData () {
         let formData = this.formData;
         if (formData.dealerDebit || formData.opportunityTitle ||formData.tdAmount || formData.biProcessStatus) {
           return {
@@ -284,13 +286,11 @@
               formData,
               dealerInfo : this.dealerInfo
             }
-          };
-          
-        }
-        
+          };         
+        }       
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.formData = JSON.parse(data).formData;
@@ -329,7 +329,7 @@
           border-bottom: none;
         }
       }
-      .vux-cell-box{
+      .vux-cell-box {
         &:before{
           left: 0;
         }
