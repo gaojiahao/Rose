@@ -128,9 +128,9 @@
     Icon, Cell, Group, XInput, Datetime,XTextarea
   } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
-  import {getJGDDBom} from 'service/materService'
-  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
+  import { getSOList } from 'service/detailService'
+  import { getJGDDBom } from 'service/materService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -140,8 +140,8 @@
   import BomList from 'components/detail/commonPart/BomList'
   import BomPop from 'components/apply/commonPart/BomPop'
   // 公共方法
-  import {accMul,accAdd,accSub} from '@/home/pages/maps/decimalsAdd'
-  import {toFixed} from '@/plugins/calc'
+  import { accMul,accAdd,accSub } from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
 
   const DRAFT_KEY = 'NBJGDD_DATA';
   export default {
@@ -156,9 +156,9 @@
       return {
         listId: '65ceb5a6-a120-11e8-862a-005056a136d0',
         orderList: {}, // 订单列表
-        showOrderPop: false,// 是否显示物料的popup
-        DuplicateBoms: [],//有重复项的bom
-        UniqueBom:[],//无重复项的bom
+        showOrderPop: false, // 是否显示物料的popup
+        DuplicateBoms: [], // 有重复项的bom
+        UniqueBom: [], // 无重复项的bom
         formData: {
           biComment: '' //备注
         },
@@ -171,19 +171,19 @@
         taskId: '',
         matterList: [], // 物料列表，用于计算金额、请求单价
         entity: {}, // 经办主体
-        selItems:[],//点击选中要删除的物料，用来判断时候选中
-        matter: {},//选来存储要进行编辑的物料
+        selItems:[], // 点击选中要删除的物料，用来判断时候选中
+        matter: {}, // 选来存储要进行编辑的物料
         showMatterPop: false,
-        modifyIndex: null, //修改物料数量或bom损耗率时，物料的index
-        modifyKey: null,//修改物料数量或bom损耗率时，物料的key
+        modifyIndex: null, // 修改物料数量或bom损耗率时，物料的index
+        modifyKey: null, // 修改物料数量或bom损耗率时，物料的key
         bomPopShow: false,
-        bom : {},//修改的bom
-        modifyBomTdqty : [] //修改前bom
+        bom: {}, // 修改的bom
+        modifyBomTdqty : [] // 修改前bom
       }
     },
     watch: {
       matter: {
-        handler(val) {
+        handler (val) {
           val.boms && val.boms.forEach(item => {
             // 监听领料需求变化
             let tdQty = accMul(val.tdQty, item.qty, (1 + item.specificLoss))
@@ -194,22 +194,22 @@
       }
     },
     methods: {
-      //查看原料
-      checkBom(item,index,key){
+      // 查看原料
+      checkBom (item,index,key) {
         this.bom = item;
         this.modifyIndex = index;
         this.modifyKey = key;
         this.bomPopShow = true;
         this.modifyBomTdqty = JSON.parse(JSON.stringify(item.boms))
       },
-      //修改原料的损耗率
-      bomConfirm(val){
+      // 修改原料的损耗率
+      bomConfirm (val) {
         let matter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, matter);
         this.reBuildArr(matter);
       },
       // TODO 显示物料修改的pop
-      modifyMatter(item, index, key) {
+      modifyMatter (item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
@@ -217,20 +217,20 @@
         this.modifyBomTdqty = [...item.boms]
       },
       // TODO 更新修改后的物料信息
-      selConfirm(val) {
+      selConfirm (val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
         this.reBuildArr(modMatter);
       },
-      reBuildArr(matter){
+      reBuildArr (matter) {
         let BomArr = matter.boms;
         //修改数量时，bom数量加上修改后减去修改前的差值
         this.modifyBomTdqty.forEach(item=>{
           BomArr.forEach(BItem=>{
-            if(BItem.inventoryCode === item.inventoryCode){
+            if (BItem.inventoryCode === item.inventoryCode) {
               BItem.newTdqty = accSub(BItem.tdQty, item.tdQty);
               this.UniqueBom.forEach(AItem=>{
-                if(BItem.inventoryCode === AItem.inventoryCode){
+                if (BItem.inventoryCode === AItem.inventoryCode) {
                   AItem.tdQty = accAdd( AItem.tdQty, BItem.newTdqty);
                   return false
                 }
@@ -241,7 +241,7 @@
         })
       },
       // TODO 选中物料项
-      selOrder(val) {
+      selOrder (val) {
         let sels = JSON.parse(val);
         let orderList = {};
         let promises = [];
@@ -270,7 +270,7 @@
           orderList[item.transCode].push(item);
         });
         Promise.all(promises).then(data => {
-          //对合计的bom进行去重合并
+          // 对合计的bom进行去重合并
           this.mergeBomList();
         })
         this.numMap = {};
@@ -278,7 +278,7 @@
         this.orderList = orderList;
       },
       // TODO 选择默认图片
-      getDefaultImg(item) {
+      getDefaultImg (item) {
         let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
@@ -286,13 +286,13 @@
         return url
       },
       // TODO 匹配相同项的索引
-      findIndex(arr, sItem) {
+      findIndex (arr, sItem) {
         return arr.findIndex(item => {
           return item.orderCode === sItem.orderCode && item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode
         });
       },
       // TODO 滑动删除
-      delClick(index, sItem, key) {
+      delClick (index, sItem, key) {
         let arr = this.selItems;
         let delIndex = this.findIndex(arr, sItem);
         //若存在重复的 则清除
@@ -303,11 +303,11 @@
         arr.push(sItem);
       },
       // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
+      showSelIcon (sItem) {
         return this.findIndex(this.selItems, sItem) !== -1;
       },
-      //全选
-      checkAll() {
+      // 全选
+      checkAll () {
         if (this.selItems.length === this.matterList.length) {
           this.selItems = [];
           return
@@ -315,7 +315,7 @@
         this.selItems = JSON.parse(JSON.stringify(this.matterList));
       },
       //删除选中的
-      deleteCheckd() {
+      deleteCheckd () {
         this.$vux.confirm.show({
           content: '确认删除?',
           // 确定回调
@@ -341,14 +341,14 @@
                 }
               })
             });
-            //删除bom
+            // 删除bom
             this.selItems.forEach(item=>{
               item.boms.forEach(BItem=>{
                 this.UniqueBom.forEach((AItem,index)=>{
-                  if(BItem.inventoryCode === AItem.inventoryCode){
+                  if (BItem.inventoryCode === AItem.inventoryCode) {
                     let tdQty = accSub(AItem.tdQty,BItem.tdQty)
                     AItem.tdQty = toFixed(tdQty);
-                    if(AItem.tdQty<=0){
+                    if (AItem.tdQty<=0) {
                       this.UniqueBom.splice(index,1)
                     }
                     return false
@@ -364,7 +364,7 @@
 
       },
       // TODO 新增更多订单
-      addOrder() {
+      addOrder () {
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             // 存储已输入的价格
@@ -374,7 +374,7 @@
         this.showOrderPop = !this.showOrderPop;
       },
       // TODO 提价订单
-      submitOrder() {
+      submitOrder () {
         let warn = '';
         let dataSet = [];
         if (!warn && !Object.keys(this.orderList).length) {
@@ -390,9 +390,9 @@
             let boms = [];
             for (let bom of item.boms) {
               let obj = {
-                tdId : bom.tdId || null,
+                tdId: bom.tdId || null,
                 transMatchedCode: item.transCode,
-                tdQty: bom.tdQty,                     // 领料需求
+                tdQty: bom.tdQty, // 领料需求
                 orderCode: item.orderCode,
                 bomSpecificLoss: bom.specificLoss || bom.bomSpecificLoss,
                 tdProcessing: bom.processing || bom.tdProcessing,
@@ -401,10 +401,10 @@
                 measureUnit: bom.measureUnit,
                 bomType: bom.bomType,
                 bomQty: bom.qty || bom.bomQty,
-                specification : bom.specification,
-                parentId : bom.parentId  || null
+                specification: bom.specification,
+                parentId: bom.parentId  || null
               }
-              if(this.transCode){
+              if (this.transCode) {
                 delete obj.orderCode;
               }
               boms.push(obj);
@@ -475,7 +475,7 @@
             if (!this.transCode) {
               delete submitData.biReferenceId
             }
-            if (!this.processCode.length) { //无工作流
+            if (!this.processCode.length) { // 无工作流
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -488,7 +488,7 @@
         })
       },
       // 获取详情
-      getFormData() {
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -507,7 +507,7 @@
           let {order} = formData;
           let {dataSet = []} = order;
           for (let item of dataSet) {
-            //bom合计
+            // bom合计
             item.boms.forEach(item => {
               item.inventoryCode = item.transObjCode;
               item.specificLoss = item.bomSpecificLoss
@@ -547,13 +547,13 @@
         })
       },
       // TODO 合并bom列表
-      mergeBomList() {
-        //对合计的bom进行去重合并
+      mergeBomList () {
+        // 对合计的bom进行去重合并
         let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
         let getNew = old => old.reduce((acc, cur) => {
           let hasItem = acc.some(e => {
             let temp = isEqual(e, cur);
-            if (temp){
+            if (temp) {
               e.tdQty = accAdd(e.tdQty, cur.tdQty);
             }
             return temp;
@@ -564,7 +564,7 @@
         this.UniqueBom = getNew(this.DuplicateBoms);
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择订单
         if (!Object.values(this.orderList).length) {
           return false
@@ -578,11 +578,11 @@
         };
       },
       // TODO 获取关联数据
-      getRelationData() {
+      getRelationData () {
         
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
@@ -603,7 +603,7 @@
     .basicPart {
       height: 90%;
     }
-    .check_bom{
+    .check_bom {
       text-align: center;
       font-size: 0.14rem;
     }

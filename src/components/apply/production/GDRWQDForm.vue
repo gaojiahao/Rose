@@ -61,8 +61,8 @@
     XInput, XTextarea
   } from 'vux'
   // 请求 引入
-  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
-  import {getBomWorkStart} from 'service/Product/gdService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
+  import { getBomWorkStart } from 'service/Product/gdService'
   // mixins 引入
   import Applycommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -72,10 +72,10 @@
   import RPicker from 'components/RPicker'
   import BomList from 'components/detail/commonPart/BomList'
   /* 引入微信相关 */
-  import {scanQRCode} from 'plugins/wx/api'
+  import { scanQRCode } from 'plugins/wx/api'
   /* 方法引入 */
-  import {toFixed} from '@/plugins/calc'
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
+  import { accMul } from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'GDRWQD_DATA';
   export default {
@@ -91,14 +91,14 @@
     data() {
       return {
         listId: 'c54b3325-a5c1-4d75-a3c4-c6cf0e988aae',
-        showWorkPop: false,                             // 是否显示物料的popup
+        showWorkPop: false, // 是否显示物料的popup
         dealer: {},
         formData: {
-          biComment: '',//备注
+          biComment: '', // 备注
         },
-        workInfo: {},                                    // 工序信息
+        workInfo: {}, // 工序信息
         defaultManager: {},
-        biProcessStatus: '',//流程状态
+        biProcessStatus: '', // 流程状态
         scanResult: '',
         bomList: [],
         facility: {},
@@ -110,7 +110,7 @@
     },
     methods: {
       // 选择工序
-      selWork(val) {
+      selWork (val) {
         val.tdQty = val.thenQtyBal;
         this.workInfo = val;
         getBomWorkStart(this.workInfo.inventoryCode).then(({tableContent = []}) => {
@@ -121,13 +121,13 @@
         })
       },
       // 选择员工
-      selManager(val) {
+      selManager (val) {
         this.defaultManager = JSON.parse(val);
         // 员工 工号
         this.workInfo.dealerDebit = this.defaultManager.dealerCode;
       },
-      //提价订单
-      submitOrder() {
+      // 提价订单
+      submitOrder () {
         let warn = '',
           dataSet = [],
           outPutDataSet = [];
@@ -157,9 +157,9 @@
         let workInfo = this.workInfo;
         // 赋值
         dataSet.push({
-          proPointCode: workInfo.proPointCode,//工序编码
-          thenQtyBal: workInfo.thenQtyBal,// 工序待启动
-          tdQty: workInfo.tdQty,// 启动数量
+          proPointCode: workInfo.proPointCode, // 工序编码
+          thenQtyBal: workInfo.thenQtyBal, // 工序待启动
+          tdQty: workInfo.tdQty, // 启动数量
           dealerDebit: workInfo.dealerCode, // 工人
           drDealerLabel: workInfo.dealerLabel, // 标签
           proFlowCode: workInfo.proFlowCode || '', // 工艺编码
@@ -186,7 +186,7 @@
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            let operation = saveAndStartWf;//默认有工作流
+            let operation = saveAndStartWf; // 默认有工作流
             let wfPara = {
               [this.processCode]: {businessKey: "PGRW", createdBy: ""}
             }
@@ -206,7 +206,7 @@
               formData: JSON.stringify({
                 ...this.formData,
                 handlerEntity: this.entity.dealerName,
-                biProcessStatus: this.biProcessStatus || null,//流程状态
+                biProcessStatus: this.biProcessStatus || null, // 流程状态
                 order: {
                   containerCode: workInfo.whInCode,
                   dataSet,
@@ -218,11 +218,11 @@
               }),
               wfPara: JSON.stringify(wfPara)
             }
-            if (this.isResubmit) {//重新提交
+            if (this.isResubmit) { // 重新提交
               operation = saveAndCommitTask;
               submitData.biReferenceId = this.biReferenceId;
             }
-            if (!this.processCode.length) {//无工作流
+            if (!this.processCode.length) { // 无工作流
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -235,7 +235,7 @@
         })
       },
       // TODO 是否保存草稿
-      hasDraftData() {
+      hasDraftData () {
         if (!this.workInfo.procedureName) {
           return false
         }
@@ -250,17 +250,17 @@
         };
       },
       // TODO 启用企业微信扫一扫
-      scanQRCode() {
+      scanQRCode () {
         scanQRCode().then(({result = ''}) => {
           this.scanResult = result;
         })
       },
       // TODO 选择设施
-      selFacility(item) {
+      selFacility (item) {
         this.facility = item;
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);

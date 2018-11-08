@@ -51,15 +51,15 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import {saveProjectPlan,findProjectApproval} from 'service/projectService'
+  import { saveProjectPlan, findProjectApproval } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
   // 方法引入
-  import {toFixed} from '@/plugins/calc'
-
+  import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XMJH_DATA';
+
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -72,45 +72,45 @@
         projectTypes: [['设计类', '协调类', '执行类']],
         projectType: [],
         planModel: {
-          taskName: '',//任务名称
-          taskType: '',//任务类型
-          comment: '',//备注
-          deadline: '',//截止日期
-          planTime: '',//计划工时
+          taskName: '', // 任务名称
+          taskType: '', // 任务类型
+          comment: '', // 备注
+          deadline: '', // 截止日期
+          planTime: '', // 计划工时
         },
         projectPlan: [],
         formData: {},
-        formDataComment: '',//备注
+        formDataComment: '', // 备注
         projectName: '', // 项目名称
         project: {}, // 项目计划默认值
       }
     },
     methods: {
-      //添加项目计划
-      addPlan() {
+      // 添加项目计划
+      addPlan () {
         let planModel = JSON.stringify(this.planModel);
         this.projectPlan.push(JSON.parse(planModel));
         this.projectType.push([]);
       },
-      //删除项目计划
-      delatePlan() {
+      // 删除项目计划
+      delatePlan () {
         this.projectPlan.pop();
         this.projectType.pop();
       },
-      //任务类型选择
-      typeTask(e, item) {
+      // 任务类型选择
+      typeTask (e, item) {
         item.taskType = e[0];
       },
       // TODO 选中项目计划项
-      selProject(val) {
+      selProject (val) {
         let sel = JSON.parse(val);
         this.projectName = sel.PROJECT_NAME;
         this.project = sel;
       },
       // TODO 提交
-      save() {
+      save () {
         let warn = '';
-        //验证选择项目
+        // 验证选择项目
         if (!this.projectName) {
           warn = '请选择项目';
         }
@@ -118,7 +118,7 @@
           taskName: '任务名称',
           deadline: '截止日期',
         };
-        //验证任务计划
+        // 验证任务计划
         if (!warn) {
           this.projectPlan.every(item => {
             Object.entries(objArr).every(([key, value]) => {
@@ -172,14 +172,13 @@
         });
       },
       // TODO 校验计划工时,保留一位小数
-      checkTime(item) {
-        console.log(item.planTime)
+      checkTime (item) {
         if (item.planTime) {
           item.planTime = Math.abs(toFixed(item.planTime, 1));
         }
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择项目
         if (!this.projectName) {
           return false
@@ -192,7 +191,7 @@
         };
       },
       // TODO 获取关联数据
-      getRelationData() {
+      getRelationData () {
         return findProjectApproval(this.relationKey).then(({formData = {},attachment = []}) => {
           let data = JSON.parse(JSON.stringify(formData.approval));
           this.project = {
@@ -217,7 +216,7 @@
         })
       }
     },
-    created() {
+    created () {
       let plan = JSON.stringify(this.planModel);
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {

@@ -70,7 +70,7 @@
     XInput, XTextarea
   } from 'vux'
   // 请求 引入
-  import {saveAndStartWf, saveAndCommitTask, submitAndCalc} from 'service/commonService'
+  import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
   // mixins 引入
   import Applycommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -78,30 +78,29 @@
   import PopWorkList from 'components/Popup/workList/PopWorkList'
   import PopWorkGdbllList from 'components/Popup/workList/PopWorkGDBLLList'
   import PopProjectList from 'components/Popup/PopProjectList'
-
   const DRAFT_KEY = 'GDBLL_DATA';
+
   export default {
     directives: {
       TransferDom
     },
     components: {
-      Popup, PopWorkList,
-      Group, Cell, Datetime,
-      XInput, XTextarea, PopManagerList,
+      Popup, Group, Cell, Datetime,XInput, XTextarea, 
+      PopWorkList, PopManagerList,
       PopProjectList, PopWorkGdbllList,
     },
-    data() {
+    data () {
       return {
         listId: '6ebcad8b-449c-422a-960f-53ccf98fd4ba',
-        showWorkPop: false,                             // 是否显示物料的popup
-        transMode: [],                                  // 结算方式 数组
-        matterList: [],                                 // 物料列表
+        showWorkPop: false, // 是否显示物料的popup
+        transMode: [], // 结算方式 数组
+        matterList: [], // 物料列表
         dealer: {},
-        numMap: {},                                     // 用于记录订单物料的数量和价格
+        numMap: {}, // 用于记录订单物料的数量和价格
         contact: {},
         formData: {},
         dealerInfo: {},
-        workInfo: {},                                    // 工序信息
+        workInfo: {}, // 工序信息
         defaultManager: {},
         showProjectPop: false,
         project: {},
@@ -114,14 +113,14 @@
     },
     methods: {
       // 选择工序
-      selWork(val) {
+      selWork (val) {
         this.workInfo = {
           tdQty: '',
           ...val,
         };
       },
       // TODO 提交订单
-      submitOrder() {
+      submitOrder () {
         let warn = '',
           dataSet = [];
         if (!this.workInfo.transCode) {
@@ -184,11 +183,11 @@
               }),
               wfPara: JSON.stringify(wfPara)
             }
-            if (this.isResubmit) {//重新提交
+            if (this.isResubmit) { // 重新提交
               operation = saveAndCommitTask;
               submitData.biReferenceId = this.biReferenceId;
             }
-            if (!this.processCode.length) {//无工作流
+            if (!this.processCode.length) { // 无工作流
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -196,18 +195,16 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
-            console.log(operation)
-            console.log(submitData)
             // this.saveData(operation, submitData);
           }
         })
       },
       // TODO 选择项目
-      selProject(sel) {
+      selProject (sel) {
         this.project = {...sel};
       },
       // TODO 是否保存草稿
-      hasDraftData() {
+      hasDraftData () {
         if (!this.workInfo.procedureName) {
           return false
         }
@@ -220,7 +217,7 @@
         };
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);

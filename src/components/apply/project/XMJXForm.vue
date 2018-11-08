@@ -52,7 +52,7 @@
 
 <script>
   // vux组件引入
-  import {Cell, Group, XInput, Datetime, dateFormat, numberComma,} from 'vux'
+  import { Cell, Group, XInput, Datetime, dateFormat, numberComma } from 'vux'
   // 请求 引入
   import {
     saveProjectConclusion, findProjectConclusion,
@@ -64,16 +64,15 @@
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
   import FormCell from 'components/detail/commonPart/FormCell'
-
   const DRAFT_KEY = 'XMJX_DATA';
+
   export default {
     mixins: [ApplyCommon],
     components: {
-      Cell, Group,
-      XInput, Datetime, PopNameList,
-      FormCell,
+      Cell, Group, XInput, Datetime,
+      PopNameList, FormCell,
     },
-    data() {
+    data () {
       return {
         listId: 'b87a513e-99ec-4608-89db-3d6e97ef1432',
         projectList: [], // 项目列表
@@ -95,7 +94,7 @@
     },
     methods: {
       // TODO 提交
-      save() {
+      save () {
         let warn = '';
         let dataSet = [];
         let validateMap = [
@@ -164,12 +163,11 @@
             if (this.transCode) {
               operation = updateProjectConclusion
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         });
       },
-      clickDateSelect() {
+      clickDateSelect () {
         this.$vux.datetime.show({
           confirmText: '确定',
           cancelText: '取消',
@@ -180,26 +178,26 @@
         })
       },
       // TODO 项目切换
-      selProject(val = '{}') {
+      selProject (val = '{}') {
         this.projectApproval = JSON.parse(val);
         findConclusion(this.projectApproval.PROJECT_NAME).then(({data = []}) => {
           this.projectConclusion = data;
         })
       },
       // TODO 获取详情
-      getFormData() {
+      getFormData () {
         return findProjectConclusion(this.transCode).then(({formData = {}}) => {
         })
       },
       // TODO 使用千分符
-      numberComma(val) {
+      numberComma (val) {
         if (!val && val !== 0) {
           return '无';
         }
         return numberComma(val);
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择订单
         if (!this.projectApproval.PROJECT_NAME) {
           return false
@@ -214,7 +212,7 @@
         };
       },
       // TODO 获取关联数据
-      getRelationData() {
+      getRelationData () {
         return findProjectApproval(this.relationKey).then(({formData = {},attachment = []}) => {
           let data = JSON.parse(JSON.stringify(formData.approval));
           this.projectApproval = {
@@ -240,7 +238,7 @@
 
       }
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);

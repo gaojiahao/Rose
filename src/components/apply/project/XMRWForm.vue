@@ -41,29 +41,28 @@
 
 <script>
   // vux组件引入
-  import {Icon, Cell, Group, XInput, Swipeout, SwipeoutItem, SwipeoutButton, Datetime, dateFormat,} from 'vux'
+  import { Icon, Cell, Group, XInput, Datetime, dateFormat } from 'vux'
   // 请求 引入
   import {
     saveProjectTask, findProjectTask,
     updateProjectTask, getProjectTodoTask,
-    getProjectPlanProjectName,findProjectPlan
+    getProjectPlanProjectName, findProjectPlan
   } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
   // 方法引入
-  import {toFixed} from '@/plugins/calc'
+  import { toFixed } from '@/plugins/calc'
 
   const DRAFT_KEY = 'XMRW_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
-      Icon, Cell, Group,
-      XInput, Swipeout, SwipeoutItem,
-      SwipeoutButton, RPicker, Datetime
+      Icon, Cell, Group, XInput, 
+      RPicker, Datetime
     },
-    data() {
+    data () {
       return {
         projectList: [], // 项目列表
         taskList: [], // 任务列表
@@ -88,7 +87,7 @@
     },
     methods: {
       // TODO 提交
-      save() {
+      save () {
         let warn = '';
         let dataSet = [];
         let validateMap = [
@@ -140,12 +139,11 @@
             if (this.transCode) {
               operation = updateProjectTask
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         });
       },
-      clickDateSelect() {
+      clickDateSelect () {
         this.$vux.datetime.show({
           confirmText: '确定',
           cancelText: '取消',
@@ -156,7 +154,7 @@
         })
       },
       // TODO 请求项目列表
-      getProjectList() {
+      getProjectList () {
         return getProjectPlanProjectName().then(({tableContent = []}) => {
           let tmp = [];
           tableContent.forEach(item => {
@@ -166,8 +164,8 @@
         })
       },
       // TODO 切换任务
-      taskChange(val) {
-        if(this.relationKey){
+      taskChange (val) {
+        if (this.relationKey) {
           return false;
         }
         let [sel = {}] = this.taskList.filter(item => {
@@ -183,8 +181,8 @@
         }
       },
       // TODO 项目切换
-      projectChange(val) {
-        if(this.relationKey){
+      projectChange (val) {
+        if (this.relationKey) {
           return false;
         }
         this.projectTask = {
@@ -198,7 +196,7 @@
         this.getTaskList();
       },
       // TODO 获取详情
-      getFormData() {
+      getFormData () {
         return findProjectTask(this.transCode).then(({formData = {}}) => {
           let projectTask = formData.projectTask || {};
           this.jsonData = formData;
@@ -210,7 +208,7 @@
         })
       },
       // TODO 获取任务列表
-      getTaskList() {
+      getTaskList () {
         return getProjectTodoTask({
           projectName: this.projectTask.projectName
         }).then(({tableContent = []}) => {
@@ -224,14 +222,14 @@
         })
       },
       // TODO 校验计划工时,保留一位小数
-      checkTime(item) {
+      checkTime (item) {
         let val = this.projectTask.actualTime;
         if (val) {
           this.projectTask.actualTime = Math.abs(toFixed(val, 1));
         }
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择项目
         if (!this.projectTask.projectName) {
           return false
@@ -243,7 +241,7 @@
         };
       },
       // TODO 获取关联数据
-      getRelationData() {
+      getRelationData () {
         return findProjectPlan(this.relationKey).then(({formData = {},attachment = []}) => {
           let plan =  formData.projectPlan[0];
           this.projectTask = {
@@ -258,7 +256,7 @@
         })
       }
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if(data){
         let draft = JSON.parse(data);

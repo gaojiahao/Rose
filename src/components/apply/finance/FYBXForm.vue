@@ -82,32 +82,31 @@
 <script>
   // vux插件引入
   import {
-    Cell, Group, XInput, Swipeout,
-    SwipeoutItem, SwipeoutButton,
+    Cell, Group, XInput,
     Popup, XTextarea, PopupPicker
   } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
-  import {findProjectApproval} from 'service/projectService'
+  import { getSOList } from 'service/detailService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+  import { findProjectApproval } from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopCostList from 'components/Popup/PopCostList'
   import PopProjectList from 'components/Popup/PopProjectList'
   // 方法引入
-  import {accAdd} from '@/home/pages/maps/decimalsAdd'
-  import {toFixed} from '@/plugins/calc'
+  import { accAdd } from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
 
   const DRAFT_KEY = 'FYBX_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
       Cell, Group, Popup,
-      XInput, Swipeout, SwipeoutItem, XTextarea,
-      SwipeoutButton, PopCostList, PopupPicker, PopProjectList
+      XInput, XTextarea,
+      PopCostList, PopupPicker, PopProjectList
     },
-    data() {
+    data () {
       return {
         listId: 'b61ef324-f261-48d6-9c79-d1b475c24943',
         biComment: '',
@@ -116,11 +115,11 @@
         showProjectPop: false,
         CostList: [ // 费用列表
           {
-            costName: '', //费用名称
-            costCode: '', //费用编码
-            expSubject: [], //费用科目
-            costType: '', //费用类型
-            price: '', //报销金额
+            costName: '', // 费用名称
+            costCode: '', // 费用编码
+            expSubject: [], // 费用科目
+            costType: '', // 费用类型
+            price: '', // 报销金额
             reson: '', // 报销事由
             comment: ''
           }
@@ -132,7 +131,7 @@
         formData: {
           biComment: ''
         },
-        projectName: '',//项目名称
+        projectName: '', // 项目名称
         showPop: false,
         tmp: '',
         taxRate: 0, // 税率
@@ -141,7 +140,7 @@
     },
     computed: {
       // 合计金额
-      totalAmount() {
+      totalAmount () {
         let total = 0;
         this.CostList.forEach(item => {
           if (item.price) {
@@ -152,29 +151,29 @@
       }
     },
     methods: {
-      getCost(index, item) {
+      getCost (index, item) {
         this.showCostPop = true;
         this.costIndex = index;
         this.selectedCost = [item];
       },
       // TODO 点击增加费用
-      addCost() {
+      addCost () {
         this.expSubjectList = [];
         this.CostList.push({
-          costName: '', //费用名称
-          costCode: '', //费用编码
-          expSubject: [], //费用科目
-          price: '', //报销金额
+          costName: '', // 费用名称
+          costCode: '', // 费用编码
+          expSubject: [], // 费用科目
+          price: '', // 报销金额
           reson: '', // 报销事由
           comment: ''
         })
       },
-      //删除费用明细
-      deleteCost() {
+      // 删除费用明细
+      deleteCost () {
         this.CostList.pop();
       },
       // TODO 选中费用
-      selMatter(val) {
+      selMatter (val) {
         let sels = val;
         this.CostList[this.costIndex].costName = sels.costName;
         this.CostList[this.costIndex].costCode = sels.costCode;
@@ -185,11 +184,11 @@
         // this.expSubjectList = [sels.COST_SUB_SUBJECTS.split(',')];
       },
       // TODO 选中项目
-      selProject(val) {
+      selProject (val) {
         this.projectName = val.PROJECT_NAME;
       },
       // TODO 提交
-      submitOrder() {
+      submitOrder () {
         let warn = '';
         let dataSet = [];
         this.CostList.every(item => {
@@ -207,12 +206,12 @@
           // }
           dataSet.push({
             tdId: item.tdId || '',
-            // costName_expCode: item.costName, //费用名称
-            expCode: item.costCode, //费用编码
-            // expSubject: item.expSubject[0], //费用科目
-            expSubject: item.costSubject, //费用科目
-            // costType_expCode: item.costType || null, //费用类型
-            tdAmount: item.price, //报销金额
+            // costName_expCode: item.costName, // 费用名称
+            expCode: item.costCode, // 费用编码
+            // expSubject: item.expSubject[0], // 费用科目
+            expSubject: item.costSubject, // 费用科目
+            // costType_expCode: item.costType || null, // 费用类型
+            tdAmount: item.price, // 报销金额
             expCause: item.reson, // 报销事由
             // comment: item.comment
           });
@@ -264,12 +263,12 @@
               }),
               wfPara: JSON.stringify(wfPara)
             };
-            //重新提交
+            // 重新提交
             if (this.isResubmit) {
               submitData.biReferenceId = this.biReferenceId;
               operation = saveAndCommitTask
             }
-            //无工作流
+            // 无工作流
             if (!this.processCode.length) {
               operation = submitAndCalc;
               delete submitData.wfPara;
@@ -282,8 +281,8 @@
           }
         });
       },
-      //获取订单信息用于重新提交
-      getFormData() {
+      // 获取订单信息用于重新提交
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
@@ -296,7 +295,7 @@
           this.CostList = [];
           let {formData} = data;
           this.projectName = formData.order.project;
-          //基本信息
+          // 基本信息
           this.formData = {
             ...this.formData,
             creator: formData.creator,
@@ -304,14 +303,14 @@
             biComment: formData.biComment,
 
           }
-          //费用明细
+          // 费用明细
           formData.order.dataSet.forEach(item => {
             let obj = {
-              costName: item.costName_expCode, //费用名称
-              costCode: item.expCode, //费用编码
+              costName: item.costName_expCode, // 费用名称
+              costCode: item.expCode, // 费用编码
               costType: item.costType_expCode,
-              expSubject: item.expSubject, //费用科目
-              price: item.tdAmount, //报销金额
+              expSubject: item.expSubject, // 费用科目
+              price: item.tdAmount, // 报销金额
               reson: item.expCause, // 报销事由
               comment: item.comment,
               tdId: item.tdId
@@ -323,7 +322,7 @@
         })
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择项目
         if (!this.projectName) {
           return false
@@ -337,7 +336,7 @@
         };
       },
       // TODO 获取关联数据
-      getRelationData() {
+      getRelationData () {
         return findProjectApproval(this.relationKey).then(({formData = {}, attachment = []}) => {
           this.projectName = formData.approval.projectName;
           this.defaultProject = {
@@ -347,7 +346,7 @@
 
       }
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);

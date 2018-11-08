@@ -53,8 +53,8 @@
     getDictByType,
     getDictByValue
   } from 'service/commonService'
-  import {getAuthorizedList} from 'service/listService'
-  import {getSOList} from 'service/detailService'
+  import { getAuthorizedList } from 'service/listService'
+  import { getSOList } from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   const DRAFT_KEY = 'CPXQ_DATA';
@@ -98,7 +98,7 @@
     },
     methods: {
       // TODO 提交/修改物料
-      save() {
+      save () {
         let requiredMap = {
           demandTitle: '标题',
           demandDescribe: '描述',
@@ -156,7 +156,7 @@
         });
       },
       // TODO 设置规划时间
-      getDate() {
+      getDate () {
         this.$vux.datetime.show({
           confirmText: '确定',
           cancelText: '取消',
@@ -167,7 +167,7 @@
         })
       },
       // TODO 获取用户数据
-      getFormData() {
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -191,7 +191,7 @@
         })
       },
       // TODO 请求大类、流程状态、信心指数列表数据
-      getDictByType(type = 'bigType', key = 'typeList') {
+      getDictByType (type = 'bigType', key = 'typeList') {
         return getDictByType(type).then(({tableContent = []}) => {
           tableContent.forEach(item => {
             item.value = item.name;
@@ -200,7 +200,7 @@
         })
       },
       // TODO 获取子类列表
-      getSubList() {
+      getSubList () {
         let matched = this.typeList.find(item => item.value === this.formData.demandType);
         return getDictByValue(matched.type).then(({tableContent = []}) => {
           tableContent.forEach(item => {
@@ -220,7 +220,7 @@
         })
       },
       // TODO 获取授权团队列表
-      getAuthorizedList() {
+      getAuthorizedList () {
         return getAuthorizedList().then(({tableContent = []}) => {
           tableContent.forEach(item => {
             item.name = item.groupName;
@@ -230,12 +230,12 @@
         })
       },
       // TODO 大类切换
-      typeChange() {
+      typeChange () {
         this.subList = [];
         this.getSubList()
       },
       // TODO 请求picker数据
-      initRequest() {
+      initRequest () {
         let promises = [];
         promises.push(this.getDictByType('bigType', 'typeList'));
         promises.push(this.getDictByType('processStatus', 'statusList'));
@@ -245,7 +245,7 @@
         return Promise.all(promises);
       },
       // TODO 是否保存草稿
-      hasDraftData() {
+      hasDraftData () {
         let formData = this.formData;
         if (formData.demandTitle || formData.demandDescribe || formData.demandType || formData.processStatus || formData.timeConfidenceIndex) {
           return {
@@ -257,9 +257,9 @@
         
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
-      if(data){
+      if (data) {
         this.formData = JSON.parse(data).formData;
         sessionStorage.removeItem(DRAFT_KEY);
       }
@@ -341,7 +341,7 @@
       transform: translate(-50%, -50%);
       box-shadow: 0 2px 5px #5077aa;
     }
-    &.btn_hide{
+    &.btn_hide {
       display: none;
     }
   }

@@ -83,16 +83,16 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
-  import {getSOList} from 'service/detailService'
+  import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
+  import { getSOList } from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopInvoiceList from 'components/Popup/PopInvoiceList'
   // 方法引入
-  import {toFixed} from '@/plugins/calc'
-  import {accAdd} from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
+  import { accAdd } from '@/home/pages/maps/decimalsAdd'
   const DRAFT_KEY = 'ZZSKP_DATA';
   export default {
     mixins: [ApplyCommon],
@@ -103,42 +103,42 @@
     data() {
       return {
         listId: '1aba0d26-a479-47f7-b755-03f5036dee98',
-        dealerInfo: {}, //客户信息
+        dealerInfo: {}, // 客户信息
         invoiceType: [['普通发票', '专用发票']],
         invoiceGetType: [],
         invoiceInfo: {
-          ticketNumber: '',//票号
-          invoiceType: '',//发票类型
-          invoiceAmount: '',//发票金额
-          invoiceDate: '',//发票日期
-          invoiceContent: '',//发票内容
+          ticketNumber: '', // 票号
+          invoiceType: '', // 发票类型
+          invoiceAmount: '', // 发票金额
+          invoiceDate: '', // 发票日期
+          invoiceContent: '', // 发票内容
         },
         invoicePlan: [],
-        dealerParams:{ //
+        dealerParams:{
           dealerCode : ''
         },
-        invoiceList : [
+        invoiceList: [
           {
-            comment: "" ,//说明
-            thenAmntBal: "",//代开票金额
-            tdAmount : '' ,//本次开票金额
-            transMatchedCode: "请选择",//实例编码
+            comment: "" , // 说明
+            thenAmntBal: "", // 代开票金额
+            tdAmount: '' , // 本次开票金额
+            transMatchedCode: "请选择", // 实例编码
 
           }
         ],
-        showInvoicePop : false,
-        seletedIndex :0,
-        seletedInvoice : [],
+        showInvoicePop: false,
+        seletedIndex: 0,
+        seletedInvoice: [],
         formData: {
-          biComment : ''
+          biComment: ''
         },
-        formDataComment: '',//备注
+        formDataComment: '', // 备注
         projectName: '', // 项目名称
       }
     },
     computed: {
       // 合计金额
-      totalAmount() {
+      totalAmount () {
         let Amount = 0;
         this.invoiceList.forEach(item => {
           if (item.tdAmount) {
@@ -147,7 +147,7 @@
         });
         return Amount;
       },
-      thenAmntBal(){
+      thenAmntBal (){
         let thenAmntBal = 0;
         this.invoiceList.forEach(item => {
           if (item.tdAmount) {
@@ -158,26 +158,26 @@
       }
     },
     methods: {
-      //选中的客户
-      selDealer(val) {
+      // 选中的客户
+      selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
-        this.invoiceList  = [
+        this.invoiceList = [
           {
-            comment: "" ,//说明
-            thenAmntBal: "",//代开票金额
-            tdAmount : '' ,//本次开票金额
-            transMatchedCode: "请选择",//实例编码
+            comment: "" , // 说明
+            thenAmntBal: "", // 代开票金额
+            tdAmount: '' , // 本次开票金额
+            transMatchedCode: "请选择", // 实例编码
 
           }
         ];
       },
-      //发票类型选择
-      typeTask(e) {
+      // 发票类型选择
+      typeTask (e) {
         this.invoiceInfo.invoiceType = e[0];
       },
-      //展示实例列表
-      getCost(index,item){
+      // 展示实例列表
+      getCost (index,item) {
         this.showInvoicePop = true;
         this.seletedIndex = index;
         this.seletedInvoice = [];
@@ -186,33 +186,33 @@
         })
       },
       // TODO 点击增加明细
-      addInvoice() {
+      addInvoice () {
         this.invoiceList.push({
-          comment: "" ,//说明
-          thenAmntBal: "",//代开票金额
-          tdAmount : '' ,//本次开票金额
-          transMatchedCode: "请选择",//实例编码
+          comment: "" , // 说明
+          thenAmntBal: "", // 代开票金额
+          tdAmount: '' , // 本次开票金额
+          transMatchedCode: "请选择", // 实例编码
         })
       },
-      //删除明细
-      deleteInvoice(){
+      // 删除明细
+      deleteInvoice () {
         this.invoiceList.pop();
       },
       // TODO 选中费用
-      selInvoice(val) {
+      selInvoice (val) {
         let sels = val;
         this.invoiceList[this.seletedIndex].transMatchedCode = sels.transCode;
         this.invoiceList[this.seletedIndex].thenAmntBal = sels.amntBal;
       },
-      //检验金额
-      checkAmt(item){
-        if(item.tdAmount > item.thenAmntBal){
+      // 检验金额
+      checkAmt (item) {
+        if (item.tdAmount > item.thenAmntBal) {
           item.tdAmount = item.thenAmntBal;
         }
         item.tdAmount = Math.abs(toFixed(item.tdAmount));
       },
       // TODO 提交
-      submitOrder() {
+      submitOrder () {
         let warn = '';
         let dataSet = [];
         if (!this.dealerInfo.dealerCode) {
@@ -223,22 +223,22 @@
           {tip: 'invoiceType', msg: '请选择发票类型'},
           {tip: 'invoiceDate', msg: '请选择发票日期'},
         ];
-        if(!warn){
+        if (!warn) {
           objArr.every(item=>{
-            if(!this.invoiceInfo[item.tip]){
+            if (!this.invoiceInfo[item.tip]) {
               warn = item.msg;
               return false;
             }
             return true
           })
         }
-        if(!warn){
+        if (!warn) {
           this.invoiceList.every(item => {
-            if(!item.transMatchedCode){
+            if (!item.transMatchedCode) {
               warn = '请选择实例';
               return false
             }
-            if(!item.tdAmount){
+            if (!item.tdAmount) {
               warn = '请输入本次开票金额';
               return false
             }
@@ -280,8 +280,8 @@
                 modifer: this.transCode ? this.formData.handler : '',
                 order: {
                   crDealerLabel: '客户',
-                  dealerCodeCredit : this.dealerInfo.dealerCode,
-                  dataSet : this.invoiceList
+                  dealerCodeCredit: this.dealerInfo.dealerCode,
+                  dataSet: this.invoiceList
                 },
                 dealerCreditContactPersonName: null,
                 dealerCreditContactInformation: "",
@@ -294,13 +294,13 @@
               }),
               wfPara: JSON.stringify(wfPara)
             };
-            //重新提交
+            // 重新提交
             if (this.isResubmit) {
               submitData.biReferenceId = this.biReferenceId;
               operation = saveAndCommitTask
             }
-            //无工作流
-            if(!this.processCode.length){
+            // 无工作流
+            if (!this.processCode.length) {
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -312,8 +312,8 @@
           }
         });
       },
-      //获取订单信息用于重新提交
-      getFormData() {
+      // 获取订单信息用于重新提交
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
@@ -324,45 +324,45 @@
           this.biReferenceId = data.biReferenceId;
           this.invoiceList = [];
           let {formData} = data;
-          //基本信息
+          // 基本信息
           this.formData = {
             ...this.formData,
             creator: formData.creator,
             modifer: formData.modifer,
-            biComment :formData.biComment,
+            biComment:formData.biComment,
 
           }
-          //客户信息
+          // 客户信息
           this.dealerInfo = {
             ...this.dealerInfo,
-            dealerName : formData.order.dealerName_dealerCodeCredit,
-            dealerCode : formData.order.dealerCodeCredit,
-            province : formData.order.province_dealerCodeCredit,
-            city : formData.order.city_dealerCodeCredit,
-            county : formData.order.county_dealerCodeCredit,
-            address : formData.order.address_dealerCodeCredit,
-            dealerMobilePhone : formData.order.dealerMobilePhone_dealerCodeCredit
+            dealerName: formData.order.dealerName_dealerCodeCredit,
+            dealerCode: formData.order.dealerCodeCredit,
+            province: formData.order.province_dealerCodeCredit,
+            city: formData.order.city_dealerCodeCredit,
+            county: formData.order.county_dealerCodeCredit,
+            address: formData.order.address_dealerCodeCredit,
+            dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit
 
           }
-          //发票列表明细
+          // 发票列表明细
           formData.order.dataSet.forEach(item=>{
             let obj = {
-              comment: item.comment ,//说明
-              thenAmntBal: item.thenAmntBal,//代开票金额
-              tdAmount : item.tdAmount ,//本次开票金额
-              transMatchedCode: item.transMatchedCode,//实例编码
-              tdId : item.tdId,
+              comment: item.comment , 
+              thenAmntBal: item.thenAmntBal,
+              tdAmount: item.tdAmount ,
+              transMatchedCode: item.transMatchedCode,
+              tdId: item.tdId,
 
             }
             this.invoiceList.push(obj);
           })
           this.invoiceInfo = {
             ...this.invoiceInfo,
-            ticketNumber: formData.ticketNumber,//票号
-            invoiceType: formData.invoiceType,//发票类型
-            invoiceAmount: formData.invoiceAmount,//发票金额
-            invoiceDate: dateFormat(formData.invoiceDate, 'YYYY-MM-DD'),//发票日期
-            invoiceContent: formData.invoiceContent,//发票内容
+            ticketNumber: formData.ticketNumber, // 票号
+            invoiceType: formData.invoiceType, // 发票类型
+            invoiceAmount: formData.invoiceAmount, // 发票金额
+            invoiceDate: dateFormat(formData.invoiceDate, 'YYYY-MM-DD'), // 发票日期
+            invoiceContent: formData.invoiceContent, // 发票内容
 
           }
           this.invoiceGetType.push(formData.invoiceType);
@@ -372,7 +372,7 @@
         })
       },
       // TODO 保存草稿数据
-      hasDraftData() {
+      hasDraftData () {
         // 是否选择客户
         if (!Object.values(this.dealerInfo).length) {
           return false
@@ -388,9 +388,9 @@
         };
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem('ZZSKP_DATA');
-      if(data){
+      if (data) {
         let draft = JSON.parse(data);
         this.invoiceList = draft.invoice.list;
         this.dealerInfo = draft.invoice.dealer;

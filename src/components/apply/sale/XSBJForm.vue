@@ -134,10 +134,10 @@
 
 <script>
   // vux组件引入
-  import { Icon, XInput, XTextarea, dateFormat} from 'vux'
+  import { Icon, XInput, XTextarea, dateFormat } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
-  import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/commonService'
+  import { getSOList } from 'service/detailService'
+  import { submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask } from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
@@ -148,58 +148,59 @@
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import UploadFile from 'components/upload/UploadFile'
   const DRAFT_KEY = 'XSBJ_DATA';
+
   export default {
-    mixins: [ApplyCommon],
-    components: {
-      Icon, XInput, RPicker,XTextarea,
-      PopMatterList, PopDealerList, PopSingleSelect,
-      PopMatter, UploadFile
-    },
     data() {
       return {
         listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
-        matterList: [],                               // 物料列表
-        showMaterielPop: false,                       // 是否显示物料的popup
+        matterList: [], // 物料列表
+        showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
         dealerInfo: {},
-        transMode: [],                                // 结算方式 数组
-        logisticsTerm: [],                            // 物流条款 数组
+        transMode: [], // 结算方式 数组
+        logisticsTerm: [], // 物流条款 数组
         formData: {
           biComment: '',
-          drDealerLogisticsTerms: '',              // 物流条款
+          drDealerLogisticsTerms: '', // 物流条款
           validUntil: '', // 有效期
         },
         priceMap: {},
         showDealerPop: false,
         priceTypeList: ['渠道价', '零售价'],
-        currentType : '渠道价',
-        showPrice:false,
+        currentType: '渠道价',
+        showPrice: false,
       }
     },
+    components: {
+      Icon, XInput, RPicker, XTextarea,
+      PopMatterList, PopDealerList, PopSingleSelect,
+      PopMatter, UploadFile
+    },
+    mixins: [ApplyCommon],
     methods: {
       // 获取 结算方式
-      getPaymentTerm(){
+      getPaymentTerm () {
         return getDictByType('paymentTerm').then(({ tableContent }) => {
           this.transMode = tableContent;
         })
       },
       // 获取 物流条款
-      getLogisticsTerms(){
+      getLogisticsTerms () {
         return getDictByType('dealerLogisticsTerms').then(({ tableContent }) => {
           this.logisticsTerm = tableContent;
         })
       },
-      //选择价格类型
-      dropItemClick(item) {
+      // 选择价格类型
+      dropItemClick (item) {
         this.currentType = item;
         this.matter.priceType = item;
         this.showPrice = false;
       },
       // 滑动删除
-      delClick(index, sItem) {
+      delClick (index, sItem) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-        //若存在重复的 则清除
+        // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
           return;
@@ -207,19 +208,19 @@
         arr.push(sItem);
       },
       // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
+      showSelIcon (sItem) {
         return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
       },
-      //全选
-      checkAll() {
+      // 全选
+      checkAll () {
         if (this.selItems.length === this.matterList.length) {
           this.selItems = [];
           return
         }
         this.selItems = JSON.parse(JSON.stringify(this.matterList));
       },
-      //删除选中的
-      deleteCheckd() {
+      // 删除选中的
+      deleteCheckd () {
         this.$vux.confirm.show({
           content: '确认删除?',
           // 确定回调
@@ -236,7 +237,7 @@
         })
       },
       // TODO 点击增加更多物料
-      addMatter() {
+      addMatter () {
         this.matterList.forEach(item => {
           // 存储已输入的价格
           this.priceMap[item.inventoryCode] = {
@@ -247,12 +248,12 @@
         this.showMaterielPop = !this.showMaterielPop
       },
       // TODO 选中往来项
-      selDealer(val) {
+      selDealer (val) {
         let [sels] = JSON.parse(val);
         this.dealerInfo = sels;
       },
       // TODO 选中物料项
-      selMatter(val) {
+      selMatter (val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
           let defaultValue = this.priceMap[item.inventoryCode] || {};
@@ -263,7 +264,7 @@
         this.matterList = [...sels];
       },
       // TODO 获取默认图片
-      getDefaultImg(item) {
+      getDefaultImg (item) {
         let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
@@ -271,9 +272,9 @@
         return url
       },
       // TODO 提交
-      save() {
-        let warn = '';
-        let dataSet = [];
+      save () {
+        let warn = '',
+            dataSet = [];
         let validateMap = [
           {
             key: 'dealerInfo',
@@ -359,8 +360,8 @@
                 comment: ''
               });
             }
-            //无工作流
-            if(!this.processCode.length){
+            // 无工作流
+            if (!this.processCode.length) {
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
@@ -373,7 +374,7 @@
         });
       },
       // TODO 获取详情
-      getFormData() {
+      getFormData () {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
@@ -434,7 +435,7 @@
         })
       },
       // TODO 展示时间选择器
-      clickDateSelect() {
+      clickDateSelect () {
         this.$vux.datetime.show({
           confirmText: '确定',
           cancelText: '取消',
@@ -445,7 +446,7 @@
         })
       },
       // TODO 是否保存草稿
-      hasDraftData() {
+      hasDraftData () {
         if (!this.matterList.length) {
           return false
         }
@@ -453,12 +454,12 @@
           [DRAFT_KEY]: {
             matter: this.matterList,
             dealer: this.dealerInfo,
-            formData :this.formData
+            formData: this.formData
           }
         };
       },
     },
-    created() {
+    created () {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.matterList = JSON.parse(data).matter;
@@ -488,11 +489,11 @@
     }
   }
   //有效期
-  .no_top{
-    margin-top:0;
+  .no_top {
+    margin-top: 0;
     margin-bottom: 0.1rem;
   }
-  .valid_until{
+  .valid_until {
     background: #fff;
     box-sizing: border-box;
     padding: .02rem .1rem;
@@ -500,34 +501,34 @@
     font-size: .14rem;
     align-items: center;
     justify-content: space-between;
-    .title{
+    .title {
       color:#757575;
     }
-    .mode{
+    .mode {
       color: #111;
       font-weight: 500;
       display: flex;
       align-items: center;
-      .mode_content{
+      .mode_content {
         margin-right: .06rem;
       }
-      .icon-shenglve{
+      .icon-shenglve {
         font-size: .2rem;
         color: #707070;
       }
     }
   }
   //价格类型
-  .price_type{
+  .price_type {
     padding: 0.1rem 0.15rem;
-    font-size:0.14rem;
+    font-size: 0.14rem;
     position: relative;
     overflow: visible;
-    .current_type{
+    .current_type {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      .matter_val{
+      .matter_val {
         color:#999;
       }
     }
@@ -539,7 +540,7 @@
       right: 0;
       top: 100%;
       z-index: 999;
-      width:1rem;
+      width: 1rem;
       border-bottom-left-radius: .08rem;
       border-bottom-right-radius: .08rem;
       background-color: #fff;
@@ -552,13 +553,13 @@
       line-height: .4rem;
       font-size: .16rem;
       text-align: right;
-      span{
+      span {
         display: inline-block;
-        width:100%;
+        width: 100%;
         box-sizing: border-box;
         padding: 0 .1rem;
       }
-      .active{
+      .active {
         background: #e8e8e8;
       }
       .weui_icon_success-no-circle {
