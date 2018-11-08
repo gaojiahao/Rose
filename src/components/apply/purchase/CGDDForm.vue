@@ -126,7 +126,7 @@
 
 <script>
 // vux插件引入
-import {XTextarea, dateFormat,Datetime} from 'vux'
+import { XTextarea, dateFormat, Datetime } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
@@ -139,7 +139,7 @@ import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import RNumber from 'components/RNumber'
 // 方法引入
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 const DRAFT_KEY = 'CGDD_DATA';
 
 export default {
@@ -148,39 +148,39 @@ export default {
   },
   data(){
     return{
-      listId : 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
+      listId: 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
       taxRate: 0.16, // 税率
       numMap: {},
-      dealer: {},                                      // 往来信息
-      formData: {                                     // 表单提交内容
+      dealer: {}, // 往来信息
+      formData: { // 表单提交内容
         creator: '',
         modifer: '',
         biId: '',
         biComment: ''
       },                                    
       dealerInfo: {},
-      transMode:[],                                     // 结算方式
-      matterList:[],                                    // 物料列表
-      showTransPop:false,                               // 是否显示结算方式的popup
-      showMaterielPop:false,                            // 是否显示物料的popup
-      showDealerPop : false,                            // 是否显示供应商的popup
+      transMode: [], // 结算方式
+      matterList: [], // 物料列表
+      showTransPop: false, // 是否显示结算方式的popup
+      showMaterielPop: false, // 是否显示物料的popup
+      showDealerPop: false, // 是否显示供应商的popup
     }
   },
   mixins: [common],
-  methods:{
-    // 获取 结算方式
+  methods: {
+    // 获取结算方式
     getPaymentTerm(){
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
     },
-    //选中的供应商
+    // 选中的供应商
     selDealer(val){
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
-    //选中联系人
+    // 选中联系人
     selContact(val){
       this.dealer.dealerDebitContactPersonName = JSON.parse(val)[0].dealerName;
     },
@@ -198,7 +198,7 @@ export default {
       this.numMap = {};
       this.matterList = sels;
     },
-    //选择默认图片
+    // 选择默认图片
     getDefaultImg(item) {
       let url = require('assets/wl_default02.png');
         if (item) {
@@ -210,7 +210,7 @@ export default {
     delClick(sItem, index) {
       let arr = this.selItems;
       let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-      //若存在重复的 则清除
+      // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
         return;
@@ -221,7 +221,7 @@ export default {
     showSelIcon(sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
-    //全选
+    // 全选
     checkAll() {
       if (this.selItems.length === this.matterList.length) {
         this.selItems = [];
@@ -229,7 +229,7 @@ export default {
       }
       this.selItems = JSON.parse(JSON.stringify(this.matterList));
     },
-    //删除选中的
+    // 删除选中的
     deleteCheckd() {
       this.$vux.confirm.show({
         content: '确认删除?',
@@ -255,7 +255,7 @@ export default {
       }
       this.showMaterielPop = !this.showMaterielPop;
     },
-    //提价订单
+    // 提价订单
     submitOrder(){
       let warn = '';
       let dataSet = [];
@@ -279,21 +279,21 @@ export default {
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
           // 设置提交参数
           dataSet.push({
-            tdId : item.tdId || '',
-            transObjCode : item.inventoryCode, //物料编码
-            tdProcessing : item.processing ,//加工属性
-            assMeasureUnit : item.assMeasureUnit ||'个',    //辅助计量
-            assMeasureScale :item.assMeasureScale || null,  //与主计量单位倍数
-            assistQty : item.assistQty || 0,        //辅计数量
-            thenQtyBal : item.qtyBal || 0,//余额
-            tdQty : item.tdQty,     //数量
-            price : item.price, //单价
-            taxRate : taxRate, //税金
-            taxAmount :taxAmount, // 税金
+            tdId: item.tdId || '',
+            transObjCode: item.inventoryCode, // 物料编码
+            tdProcessing: item.processing ,// 加工属性
+            assMeasureUnit: item.assMeasureUnit ||'个', // 辅助计量
+            assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数
+            assistQty: item.assistQty || 0, // 辅计数量
+            thenQtyBal: item.qtyBal || 0, // 余额
+            tdQty: item.tdQty, // 数量
+            price: item.price, // 单价
+            taxRate: taxRate, // 税金
+            taxAmount: taxAmount, // 税金
             tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
             purchaseDay: item.purchaseDay, //采购需求日期
-            processingStartDate : item.processingStartDate,     //计划需求日期
-            comment : ''                //说明
+            processingStartDate : item.processingStartDate, //计划需求日期
+            comment: '' // 说明
           });
           return true
         })
@@ -311,35 +311,35 @@ export default {
           this.$HandleLoad.show();
           let operation = saveAndStartWf;
           let wfPara = {
-            [this.processCode]:{businessKey:"PO",createdBy:""}
+            [this.processCode]: {businessKey:"PO",createdBy:""}
           }
           if(this.isResubmit){
             wfPara = {
-              businessKey:this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
+              businessKey: this.transCode,createdBy:this.formData.handler,transCode:this.transCode,result:3,taskId:this.taskId,comment:""
             }
           }
           let submitData = {
             listId: this.listId,
-            biComment : this.biComment,
+            biComment: this.biComment,
             formData: JSON.stringify({
               ...this.formData,
               ...this.dealer,
               handlerEntity: this.entity.dealerName,
               order: {
                 dealerDebit: this.dealerInfo.dealerCode,
-                drDealerLabel : this.dealerInfo.dealerLabelName || '',  // 往来关系标签
-                drDealerPaymentTerm : this.dealer.drDealerPaymentTerm,  // 结算方式
+                drDealerLabel: this.dealerInfo.dealerLabelName || '',  // 往来关系标签
+                drDealerPaymentTerm: this.dealer.drDealerPaymentTerm,  // 结算方式
                 dataSet
               },
             }),
             wfPara: JSON.stringify(wfPara)
           }
-          //重新提交
+          // 重新提交
           if(this.isResubmit){
             operation = saveAndCommitTask
             submitData.biReferenceId = this.biReferenceId;
           }
-          //没有工作流
+          // 没有工作流
           if(!this.processCode.length){
             operation = submitAndCalc;
             delete submitData.wfPara;
@@ -348,17 +348,15 @@ export default {
           if (this.biReferenceId) {
             submitData.biReferenceId = this.biReferenceId
           }
-          console.log(submitData);
-          return false;
           this.saveData(operation,submitData);
         }
       })
     },
-    //获取订单信息用于重新提交
+    // 获取订单信息用于重新提交
     async getFormData(){
       await getSOList({
-        formViewUniqueId : this.uniqueId,
-        transCode : this.transCode
+        formViewUniqueId: this.uniqueId,
+        transCode: this.transCode
       }).then( (data)=>{
         this.listId = data.listId;
         this.biComment = data.biComment;
@@ -368,7 +366,7 @@ export default {
         formData.order.dataSet.map(item=>{
           item = {
             ...item,
-            inventoryPic : item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
             inventoryName: item.inventoryName_transObjCode,
             inventoryCode: item.inventoryCode_transObjCode,
             specification: item.specification_transObjCode,
@@ -377,7 +375,7 @@ export default {
           }
           this.matterList.push(item);
         })
-        //基本信息
+        // 基本信息
         this.formData = {
           handler: formData.handler,
           handlerName: formData.handlerName,
@@ -387,12 +385,12 @@ export default {
           handlerUnitName: formData.handlerUnitName,
           creator: formData.creator,
           modifer: formData.modifer,
-          biComment: formData.biComment //备注
+          biComment: formData.biComment // 备注
         }
-        //供应商信息展示
+        // 供应商信息展示
         this.dealerInfo = {
-          creatorName :formData.dealerDebitContactPersonName,
-          dealerMobilePhone :formData.dealerDebitContactInformation,
+          creatorName: formData.dealerDebitContactPersonName,
+          dealerMobilePhone: formData.dealerDebitContactInformation,
           dealerCode: formData.order.dealerDebit,
           dealerSubclass: formData.order.drAccountSub,
           dealerName: formData.order.dealerName_dealerDebit,
@@ -401,10 +399,10 @@ export default {
           county: formData.order.county_dealerDebit,
           address: formData.order.address_dealerDebit
         }
-        //订单信息
+        // 订单信息
         this.dealer = {
-          dealerDebitContactPersonName: formData.dealerDebitContactPersonName, //联系人
-          dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话dealerDebitContactPersonName
+          dealerDebitContactPersonName: formData.dealerDebitContactPersonName, // 联系人
+          dealerDebitContactInformation: formData.dealerDebitContactInformation, // 电话dealerDebitContactPersonName
           drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '', // 结算方式
         },
         this.$loading.hide();
@@ -417,10 +415,10 @@ export default {
       }
       return {
         [DRAFT_KEY]: {
-          matter : this.matterList,
-          dealerInfo : this.dealerInfo,
+          matter: this.matterList,
+          dealerInfo: this.dealerInfo,
           formData: this.formData,
-          dealer : this.dealer
+          dealer: this.dealer
         }
       };
     },
@@ -447,13 +445,13 @@ export default {
 @import './../../scss/bizApply';
 .pages {
   /deep/ .vux-no-group-title{
-    margin-top:0;
+    margin-top: 0;
   }
     /deep/ .weui-cells {
       font-size: .14rem;
       &:before {
         border-top: none;
-        left:0;
+        left: 0;
       }
     }
   }
