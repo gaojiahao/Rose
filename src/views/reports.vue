@@ -189,6 +189,9 @@
               if (this.objName === this.A_PROJ_NAME) { // A类产品不展示项目类数量和金额
                 first = [
                   {
+                    label: '累计折算套数',
+                    value: `${toFixed(data.bmName)}套` || 0
+                  }, {
                     label: 'A类产品',
                     value: `￥${numberComma(data.aProduct || 0)}`
                   }, {
@@ -221,10 +224,7 @@
                 }, {
                   label: '所属地区',
                   value: data.shengName || ''
-                }, {
-                  label: '所属队长',
-                  value: data.bmName || ''
-                },
+                }
               ];
               this.reportList.push({
                 name: `${(index + 1) + (this.page - 1) * PAGE_SIZE}. ${data.creator}`,
