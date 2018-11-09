@@ -22,7 +22,7 @@
             <form-cell cellTitle='发票类型' :cellContent="orderInfo.invoiceType" textRight></form-cell>
             <!--<form-cell cellTitle='发票金额' showSymbol :cellContent="orderInfo.invoiceAmount | toFixed | numberComma(3)" textRight></form-cell>-->
             <form-cell cellTitle='发票日期' :cellContent="orderInfo.invoiceDate" textRight></form-cell>
-            <!--<form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>  -->
+            <form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>
           </div>
         </div>
       </div>

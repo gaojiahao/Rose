@@ -29,7 +29,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
-  import {getVATBilling, getVATReceipt, getManyVATBilling} from 'service/invoiceService.js'
+  import {getVATBilling, getVATReceipt, getManyVATBilling, getManyVATReceipt} from 'service/invoiceService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   import {sep} from 'path';
@@ -161,7 +161,7 @@
         let filter = [];
         let operation = getManyVATBilling;
         if (!this.getListMethod) {
-          operation = getVATReceipt
+          operation = getManyVATReceipt
         }
         if (this.srhInpTx) {
           filter = [

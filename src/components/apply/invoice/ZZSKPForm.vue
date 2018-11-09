@@ -27,6 +27,8 @@
                 <span class='required'>发票日期</span>
               </template>
             </datetime>
+            <x-input title="发票内容" text-align='right' placeholder='请填写' v-model='invoiceInfo.invoiceContent'
+                     @on-focus="getFocus($event)"></x-input>
           </group>
         </div>
         <!-- 任务计划列表 -->
@@ -126,18 +128,31 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
-  import { getSOList } from 'service/detailService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {getSOList} from 'service/detailService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopInvoiceList from 'components/Popup/PopInvoiceList'
   // 方法引入
-  import { toFixed } from '@/plugins/calc'
-  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+  import {toFixed} from '@/plugins/calc'
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'ZZSKP_DATA';
+  // 开票明细项
+  const INVOICE_LIST_ITEM = {
+    transCode: '', //实例编码,
+    inventoryName: '',
+    inventoryCode: '',
+    qtyBal: '',
+    price: '',
+    tdQty: '',
+    taxRate: '',
+    taxAmount: '', // 税金
+    tdAmount: '', // 税价小计
+    comment: "", //说明
+  };
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -146,7 +161,6 @@
     },
     data() {
       return {
-        // listId: '1aba0d26-a479-47f7-b755-03f5036dee98',
         listId: '0cf1a234-04a5-4021-926b-137914878082',
         dealerInfo: {}, //客户信息
         contactInfo: {}, // 联系人信息
@@ -164,20 +178,7 @@
           dealerCode: ''
         },
         taxRate: 0.16,
-        invoiceList: [
-          {
-            transCode: '', //实例编码,
-            inventoryName: '',
-            inventoryCode: '',
-            qtyBal: '',
-            price: '',
-            tdQty: '',
-            taxRate: '',
-            taxAmount: '', // 税金
-            tdAmount: '', // 税价小计
-            comment: "", //说明
-          }
-        ],
+        invoiceList: [{...INVOICE_LIST_ITEM}],
         showInvoicePop: false,
         seletedIndex: 0,
         seletedInvoice: [],
@@ -190,9 +191,15 @@
     },
     computed: {
       // 合计金额
-      totalAmount () {
+      totalAmount() {
         let Amount = 0;
         this.invoiceList.forEach(item => {
+          if (!item.tdQty && item.tdQty !== 0) {
+            item.noTaxAmount = '';
+            item.taxAmount = '';
+            item.tdAmount = '';
+            return
+          }
           item.noTaxAmount = accMul(item.tdQty, item.price);
           item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
           item.tdAmount = accAdd(item.noTaxAmount, item.taxAmount);
@@ -214,34 +221,21 @@
     },
     methods: {
       // 选中的客户
-      selDealer (val) {
+      selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
-        this.invoiceList = [
-          {
-            transCode: '', // 实例编码,
-            inventoryName: '',
-            inventoryCode: '',
-            qtyBal: '',
-            price: '',
-            tdQty: '',
-            taxRate: '',
-            taxAmount: '', // 税金
-            tdAmount: '', // 税价小计
-            comment: "", //说明
-          }
-        ];
+        this.invoiceList = [{...INVOICE_LIST_ITEM}];
       },
       // TODO 选中联系人
-      selContact (item) {
+      selContact(item) {
         this.contactInfo = {...item,}
       },
       // 发票类型选择
-      typeTask (e) {
+      typeTask(e) {
         this.invoiceInfo.invoiceType = e[0];
       },
       // 展示实例列表
-      getCost (index, item) {
+      getCost(index, item) {
         this.showInvoicePop = true;
         this.seletedIndex = index;
         this.seletedInvoice = [];
@@ -250,43 +244,30 @@
         })
       },
       // TODO 点击增加明细
-      addInvoice () {
-        this.invoiceList.push({
-          transCode: '', // 实例编码,
-          inventoryName: '',
-          inventoryCode: '',
-          qtyBal: '',
-          price: '',
-          tdQty: '',
-          taxRate: '',
-          taxAmount: '',
-          tdAmount: '', // 本次开票金额,
-          comment: "", // 说明
-        })
+      addInvoice() {
+        this.invoiceList.push({...INVOICE_LIST_ITEM})
       },
       // 删除明细
-      deleteInvoice () {
+      deleteInvoice() {
         this.invoiceList.pop();
       },
       // TODO 选中费用
-      selInvoice (val) {
-        let sels = val;
-        let currentInvoice = this.invoiceList[this.seletedIndex];
-        this.invoiceList[this.seletedIndex] = {
-          ...currentInvoice,
+      selInvoice(sels) {
+        this.$set(this.invoiceList, this.seletedIndex, {
+          ...this.invoiceList[this.seletedIndex],
           ...sels,
           taxRate: this.taxRate,
-        }
+        });
       },
       // 检验金额
-      checkAmt (item) {
+      checkAmt(item) {
         if (item.tdAmount > item.thenAmntBal) {
           item.tdAmount = item.thenAmntBal;
         }
         item.tdAmount = Math.abs(toFixed(item.tdAmount));
       },
       // TODO 校验数量
-      checkQty (item, index) {
+      checkQty(item, index) {
         if (item.tdQty > item.qtyBal) {
           item.tdQty = item.qtyBal;
         }
@@ -296,7 +277,7 @@
         })
       },
       // TODO 提交
-      submitOrder () {
+      submitOrder() {
         let warn = '';
         let dataSet = [];
         if (!this.dealerInfo.dealerCode) {
@@ -412,7 +393,7 @@
         });
       },
       // 获取订单信息用于重新提交
-      getFormData () {
+      getFormData() {
         return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
@@ -446,17 +427,11 @@
           // 发票列表明细
           formData.order.dataSet.forEach(item => {
             let obj = {
+              ...item,
               transCode: item.transCode, // 实例编码,
               inventoryName: item.inventoryName,
               inventoryCode: item.inventoryCode,
               qtyBal: item.thenQtyBal,
-              price: item.price,
-              tdQty: item.tdQty,
-              taxRate: item.taxRate,
-              taxAmount: item.taxAmount,
-              tdAmount: item.tdAmount, // 本次开票金额,
-              comment: item.comment, // 说明
-              tdId: item.tdId,
             }
             this.invoiceList.push(obj);
           })
@@ -476,7 +451,7 @@
         })
       },
       // TODO 保存草稿数据
-      hasDraftData () {
+      hasDraftData() {
         // 是否选择客户
         if (!Object.values(this.dealerInfo).length) {
           return false
@@ -493,7 +468,7 @@
         };
       },
     },
-    created () {
+    created() {
       let data = sessionStorage.getItem('ZZSKP_DATA');
       if (data) {
         let draft = JSON.parse(data);
