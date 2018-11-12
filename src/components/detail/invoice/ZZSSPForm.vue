@@ -126,7 +126,7 @@ export default {
       let order = orderInfo[key];
       this.contactInfo = {
         dealerName: order.dealerName_dealerCodeCredit, // 公司名
-        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerMobilePhone: orderInfo.dealerCreditContactInformation, // 手机
         dealerCode: order.dealerCodeCredit, // 客户编码
         province: order.province_dealerCodeCreditt, // 省份
         city: order.city_dealerCodeCreditt, // 城市

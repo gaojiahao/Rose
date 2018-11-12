@@ -24,6 +24,17 @@
           <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork"></pop-work-start-list>
         </div>
+        <div class="warehouse or_ads mg_auto" v-show="workInfo.whInCode">
+          <div class="title">仓库</div>
+          <div class="mode">
+            <span class="mode-item">{{workInfo.wareName}}</span>
+            <span class="mode-item">{{workInfo.whInCode}}</span>
+          </div>
+          <div class="cp_info" v-show="workInfo.wareAddress">
+            <i class="iconfont icon-icon-test"></i>
+            <span class="cp_ads">{{workInfo.wareAddress}}</span>
+          </div>
+        </div>
         <!--<pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>-->
         <pop-facility-list @sel-item="selFacility" :default-value="facility"></pop-facility-list>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
@@ -304,6 +315,21 @@
         &:before {
           left: 0;
         }
+      }
+    }
+    .warehouse {
+      .mode {
+        font-size: 0;
+      }
+      .mode-item {
+        margin-right: .1rem;
+        font-size: .16rem;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      .icon-icon-test {
+        font-size: .1rem;
       }
     }
   }
