@@ -41,7 +41,7 @@
         </div>
         <pop-manager-list title='工人' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
         <pop-facility-list  @sel-item="selFacility" :defaultValue="defaultFacility"></pop-facility-list>
-        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
+        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" :filter-params="filterParams" :is-required="true"></pop-warehouse-list>
         <!-- <div class="materiel_list">
           <div class="title">bom信息</div>
           <group class='costGroup' group-title-margin-top="0">
@@ -117,22 +117,22 @@ export default {
     XInput, XTextarea, PopManagerList,
     RPicker, PopFacilityList, PopWarehouseList, BomList
   },
-  data() {
+  data () {
     return {
       listId: '2372f734-93c1-11e8-85db-005056a136d0',
       showWorkPop: false, // 是否显示物料的popup
       showFacilityPop: false, // 是否显示设备的popup
       formData: {
-        biComment: '', //备注
-        biProcessStatus:'', //流程状态
+        biComment: '', // 备注
+        biProcessStatus:'', // 流程状态
       },
       workInfo: {}, // 工序信息
       defaultManager: {},
       defaultFacility: {},
       scanResult: '',
       warehouse: {}, // 选中仓库属性
-      bomList: [], //bom列表
-      filter: [ //bom请求参数       
+      bomList: [], // bom列表
+      filter: [ // bom请求参数       
         {
           operator: "in",
           property: "whCode",
@@ -143,7 +143,8 @@ export default {
           property: "parentInvCode",
           value: ''
         }     
-      ]
+      ],
+      filterParams: [{property: 'warehouseType', operator: 'eq', value: '加工车间仓'}],
     }
   },
   computed: {

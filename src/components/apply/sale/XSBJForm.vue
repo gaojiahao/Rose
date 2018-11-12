@@ -63,7 +63,7 @@
                   <template slot="edit" slot-scope="{item}">
                     <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
                       <div class="edit-tips">
-                        <span class="tips-word">填写</span>
+                        <span class="tips-word">点击进行填写</span>
                       </div>
                     </div>
                   </template>
@@ -257,7 +257,7 @@
         let sels = JSON.parse(val);
         sels.forEach(item => {
           let defaultValue = this.priceMap[item.inventoryCode] || {};
-          item.price = defaultValue.price;
+          item.price = defaultValue.price || '';
           item.priceType = defaultValue.priceType || '渠道价';
         });
         this.priceMap = {};

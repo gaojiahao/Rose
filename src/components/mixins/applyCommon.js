@@ -278,13 +278,48 @@ export default {
         wx.onHistoryBack(() => {
           return this.onHistoryBack ? this.onHistoryBack() : true;
         });
+        wx.onMenuShareAppMessage({
+          title: '哈哈哈', // 分享标题
+          desc: '哈哈哈', // 分享描述
+          link: '', // 分享链接
+          imgUrl: '', // 分享图标
+          success: function () {
+              // 用户确认分享后执行的回调函数
+              alert('转发了')
+          },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+              alert('取消啦啦')
+            }
+        });
       })
     },
+    // 监听触发转发
+    listenShare (){
+      wx.onMenuShareAppMessage({
+          title: '测试', // 分享标题
+          desc: '测试啦啦啦', // 分享描述
+          link: '', // 分享链接
+          imgUrl: '', // 分享图标
+          success: function () {
+              // 用户确认分享后执行的回调函数
+          },
+          cancel: function () {
+              // 用户取消分享后执行的回调函数
+          }
+      });
+    }
   },
   created() {
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
+    // (async () =>{
+    //   await register();
+    //   this.listenShare();
+
+    // })()
     register();
     this.listenBack();
+    
     if(data){
       this.entity.dealerName = JSON.parse(data).entityId
     }

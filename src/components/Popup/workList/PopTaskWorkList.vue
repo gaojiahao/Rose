@@ -32,8 +32,8 @@
                   </div>
                   <div class="work_mid">
                     <div class="product_unit">
-                      <span class="each_unit">总数: {{item.crQty}}</span>
-                      <span class="each_unit">已{{workType}}: {{item.drQty}}</span>
+                      <span class="each_unit">总数: {{item.drQty}}</span>
+                      <span class="each_unit">已{{workType}}: {{item.crQty}}</span>
                       <span class="each_unit">可{{workType}}: {{item.qtyBalance}}</span>
                     </div>
                   </div>

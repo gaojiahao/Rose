@@ -23,7 +23,7 @@
     <div class="btn vux-1px-t">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
-    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask"></pop-task-work-list>
+    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-task-work-list>
   </div>
 </template>
 

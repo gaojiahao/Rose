@@ -25,7 +25,7 @@
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
     <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams"
-                        work-type="验收"></pop-task-work-list>
+                        work-type="验收" ref="taskWork"></pop-task-work-list>
   </div>
 </template>
 

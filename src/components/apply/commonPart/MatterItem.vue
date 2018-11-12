@@ -57,31 +57,31 @@
       // 展示数据
       item: {
         type: Object,
-        default() {
+        default () {
           return {}
         }
       }
     },
     computed: {
-      showEdit(){
+      showEdit () {
         // 存在 价格、数量 输入
         if(this.item.price || this.item.tdQty){
           return this.item.price || this.item.tdQty
         }
       },
-      hideEdit(){
+      hideEdit () {
         // 存在 价格、数量 输入
-        if(!this.item.price || !this.item.tdQty){
-          return !this.item.price || !this.item.tdQty
+        if (this.item.price === '' || this.item.tdQty === '') {
+         return !this.item.price || !this.item.tdQty
         }
       }
     },
-    data() {
+    data () {
       return {}
     },
     methods: {
       // TODO 选择默认图片
-      getDefaultImg(item) {
+      getDefaultImg (item) {
         let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
@@ -89,7 +89,7 @@
         return url
       },
       // TODO 触发编辑事件
-      modifyMatter() {
+      modifyMatter () {
         this.$emit('on-modify', this.item);
       }
     }
@@ -210,7 +210,7 @@
           font-size: .14rem;
         }
         .tips-word {
-          font-size: .14rem;
+          font-size: .12rem;
         }
       }
       .mater_price {

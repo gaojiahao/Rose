@@ -1,14 +1,14 @@
-import {Tab, Icon, TabItem, numberComma, dateFormat,} from 'vux'
-import {getSellOrderList} from 'service/listService'
-import {isMyflow} from 'service/detailService'
+import { Tab, Icon, TabItem, numberComma, dateFormat } from 'vux'
+import { getSellOrderList } from 'service/listService'
+import { isMyflow } from 'service/detailService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 import ListItem from 'components/list/commonPart/ListItem'
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
 
-import {toFixed} from '@/plugins/calc'
+import { toFixed } from '@/plugins/calc'
 // 引入映射表 (不可移除)
 import Apps from '@/home/pages/maps/businessApp'
 import AppsFile from '@/home/pages/maps/businessFile'
@@ -20,7 +20,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       page: 1,
       limit: 20,
@@ -63,7 +63,7 @@ export default {
     RSort, RTab,
   },
   methods: {
-    goDetail(item, index) {
+    goDetail (item, index) {
       if (this.clickVisited) {
         return
       }
@@ -77,7 +77,7 @@ export default {
       this.$set(this.listData, index, {...item});
       let start = Date.now();
       const TRANSITION_TIME = 200; // 动画时间
-      //判断是否是重新提交，如果是，跳转到创建订单页面
+      // 判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode}).then(({tableContent}) => {
         let jump = () => {
           let path = '';
@@ -112,7 +112,7 @@ export default {
         this.$set(this.listData, index, {...item});
       })
     },
-    goEdit() {
+    goEdit () {
       let {name} = this.$route.query,
         {fileId, listId} = this.$route.params;
       this.$router.push({
@@ -121,7 +121,7 @@ export default {
       })
     },
     // TODO 重置列表条件
-    resetCondition() {
+    resetCondition () {
       this.listData = [];
       this.page = 1;
       this.hasNext = true;
@@ -130,21 +130,21 @@ export default {
         this.$refs.bScroll.resetPullDown();
       })
     },
-    ///tab切换
-    tabClick(item, index) {
+    // tab切换
+    tabClick (item, index) {
       this.activeIndex = index;
       this.activeTab = item.status;
       this.resetCondition();
       this.getList();
     },
-    searchList({val = '', property = ''}) {
+    searchList ({val = '', property = ''}) {
       this.serachVal = val;
       this.filterProperty = property;
       this.resetCondition();
       this.getList();
     },
     // TODO 设置状态的class和显示的名称
-    setStatus(item) {
+    setStatus (item) {
       switch (item.biStatus) {
         case '进行中':
           item.statusClass = 'duty_doing_c';
@@ -166,7 +166,7 @@ export default {
       }
     },
     // TODO 获取默认图片
-    getDefaultImg(item) {
+    getDefaultImg (item) {
       let url = require('assets/wl_default02.png');
       if (item) {
         item.inventoryPic = url;
@@ -174,38 +174,43 @@ export default {
       return url
     },
     // TODO 重置下拉刷新、上拉加载的状态
-    resetScroll() {
+    resetScroll () {
       this.$refs.bScroll.finishPullDown();
       this.$refs.bScroll.finishPullUp();
     },
     // TODO 上拉加载
-    onPullingUp() {
+    onPullingUp () {
       this.page++;
       this.getList();
     },
     // TODO 下拉刷新
-    onPullingDown() {
+    onPullingDown () {
       this.page = 1;
       this.getData(true);
     },
-    //重置数据
-    reloadData() {
+    // 重置数据
+    reloadData () {
       this.serachVal = '';
       this.activeTab = '';
       this.activeIndex = 0;
       this.resetCondition();
       // this.getData(false);
       this.onPullingDown();
+      // 工单派工，启动，验收提交成功之后返回列表需要重新请求pop数据
+      let name = this.$route.query.name;
+      if (name === '工单任务派工' || name === '工单任务启动' || name === '工单任务验收') {
+        this.$refs.taskWork.getWorkOrderTask()
+      }
     },
-    //获取上次存储的列表总数量
-    getSession() {
+    // 获取上次存储的列表总数量
+    getSession () {
       return new Promise(resolve => {
         this.total = sessionStorage.getItem(this.applyCode);
         resolve()
       })
     },
-    //获取订单数据
-    getList(noReset = false) {
+    // 获取订单数据
+    getList (noReset = false) {
       let filter = [];
       if (this.activeTab) {
         filter = [{
@@ -275,7 +280,7 @@ export default {
             this.resetScroll();
           })
         }
-        //判断最近有无新增数据
+        // 判断最近有无新增数据
         let text = '';
         if (noReset && this.activeIndex === 0) {
           if (this.total) {
@@ -289,7 +294,7 @@ export default {
             })
           }
         }
-        //列表总数据缓存
+        // 列表总数据缓存
         if (this.activeIndex == 0 && this.page === 1) {
           sessionStorage.setItem(this.applyCode, total);
         }
@@ -297,7 +302,7 @@ export default {
         this.resetScroll();
       })
     },
-    async getData(noReset) {
+    async getData (noReset) {
       await this.getSession();
       if (noReset) {
         await this.getList(true).then(() => {
@@ -315,7 +320,7 @@ export default {
 
     },
     // TODO 修改是否访问的状态
-    changeVisitedStatus() {
+    changeVisitedStatus () {
       let tmp = [...this.listData];
       setTimeout(() => {
         tmp.forEach(item => {
@@ -325,13 +330,13 @@ export default {
       this.listData = tmp;
     },
     // TODO 排序
-    onSortList(val) {
+    onSortList (val) {
       this.sort = val.property ? [val] : [];
       this.resetCondition();
       this.getList();
     },
     // TODO tab切换
-    onTabClick({status = '', index = 0}) {
+    onTabClick ({status = '', index = 0}) {
       this.activeIndex = index;
       this.activeTab = status;
       this.resetCondition();
@@ -340,7 +345,7 @@ export default {
   },
   filters: {
     // TODO 过滤日期
-    filterTime(val) {
+    filterTime (val) {
       if (val) {
         val = dateFormat(val);
         let date = val.split(' ')[0];

@@ -35,11 +35,11 @@
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other' v-if="item.tdQty">
-                      <div class='current_num'>
+                    <div class='mater_other'>
+                      <div class='current_num' v-show="item.tdQty">
                         数量：{{item.tdQty}}
                       </div>
-                      <div class='current_num'>
+                      <div class='current_num' v-show="item.promDeliTime">
                         预期完工日：{{item.promDeliTime}}
                       </div>
                     </div>
@@ -163,10 +163,10 @@
         sels.map(item => {
           if (this.numMap[item.inventoryCode]) {
             item.tdQty = this.numMap[item.inventoryCode].tdQty;
-            item.price = this.numMap[item.inventoryCode].price;
+            // item.price = this.numMap[item.inventoryCode].price;
           } else {
             item.tdQty = '';
-            item.price = '';
+            // item.price = '';
           }
         })
         this.numMap = {};
