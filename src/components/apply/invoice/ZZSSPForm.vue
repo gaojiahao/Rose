@@ -3,7 +3,8 @@
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :dealer-label-name="'供应商'"></pop-dealer-list>
+        <pop-dealer-list :defaultValue="dealerInfo" :dealer-label-name="'供应商'" :default-contact="contactInfo"
+                         @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
         <!--发票信息-->
         <div class="materiel_list">
           <div class="title">发票信息</div>
@@ -19,33 +20,75 @@
                 <span class='required'>发票类型</span>
               </template>
             </popup-picker>
-            <x-input title="发票金额" v-model="invoiceInfo.invoiceAmount" text-align="right" placeholder="请填写" @on-focus="getFocus($event)"></x-input>
             <datetime title="发票日期" v-model='invoiceInfo.invoiceDate' text-align="right" placeholder="请选择">
               <template slot="title">
                 <span class='required'>发票日期</span>
               </template>
             </datetime>
+            <x-input title="发票内容" text-align='right' placeholder='请填写' v-model='invoiceInfo.invoiceContent'
+                     @on-focus="getFocus($event)"></x-input>
           </group>
         </div>
         <!-- 任务计划列表 -->
         <div class="materiel_list" v-for="(item,index) in invoiceList" :key="index">
-          <div class="title">开票明细</div>
+          <div class="title">收票明细</div>
           <group class='costGroup' @group-title-margin-top="0">
-            <cell title="实例编码" v-model='item.transMatchedCode' is-link @click.native="getCost(index,item)">
+            <cell title="入库单" v-model="item.transCode || '请选择'" is-link @click.native="getCost(index,item)">
               <template slot="title">
-                <span class='required'>实例编码
-                </span>
+                <span class='required'>入库单</span>
               </template>
             </cell>
-            <cell title="待收票金额" v-model='item.thenAmntBal'></cell>
-            <x-input title="本次收票金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                     @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
+            <datetime title="入库日期" v-model='item.purchaseDay' text-align="right"
+                      :readonly="!item.transCode" placeholder="请选择"></datetime>
+            <cell title="物料名称" v-model='item.inventoryName'>
+              <template slot="title">
+                <span class='required'>物料名称</span>
+              </template>
+            </cell>
+            <cell title="物料编码" v-model='item.inventoryCode'>
+              <template slot="title">
+                <span class='required'>物料编码</span>
+              </template>
+            </cell>
+            <cell title="待收票数量" v-model='item.qtyBal'>
+              <template slot="title">
+                <span class='required'>待收票数量</span>
+              </template>
+            </cell>
+            <cell title="单价" v-model='item.price'>
+              <template slot="title">
+                <span class='required'>单价</span>
+              </template>
+            </cell>
+            <x-input title="本次收票数量" text-align='right' placeholder='请填写' type='number' v-model.number='item.tdQty'
+                     @on-blur="checkQty(item, index)" @on-focus="getFocus($event)">
               <template slot="label">
-                <span class='required'>本次收票金额
-                </span>
+                <span class='required'>本次收票数量</span>
               </template>
             </x-input>
-            <x-input type="text" title="说明" text-align='right' placeholder='请填写' @on-focus="getFocus($event)" v-model="item.comment"></x-input>
+            <cell title="金额" v-model='item.noTaxAmount'>
+              <template slot="title">
+                <span class='required'>金额</span>
+              </template>
+            </cell>
+            <x-input title="税率" text-align='right' placeholder='请填写' type='number' v-model.number='item.taxRate'
+                     @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>税率</span>
+              </template>
+            </x-input>
+            <cell title="税金" v-model='item.taxAmount'>
+              <template slot="title">
+                <span class='required'>税金</span>
+              </template>
+            </cell>
+            <cell title="税价小计" v-model='item.tdAmount'>
+              <template slot="title">
+                <span class='required'>税价小计</span>
+              </template>
+            </cell>
+            <x-input type="text" title="说明" text-align='right' placeholder="请填写" @on-focus="getFocus($event)"
+                     v-model="item.comment"></x-input>
           </group>
         </div>
         <!-- 新增 -->
@@ -57,7 +100,7 @@
           </div>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
-        <!--开票列表-->
+        <!--收票列表-->
         <pop-invoice-list :show="showInvoicePop" v-model="showInvoicePop" @sel-matter="selInvoice" :defaultValue='seletedInvoice'
                         :params="dealerParams"  :getListMethod="false" ref="matter"></pop-invoice-list>
       </div>
@@ -68,7 +111,7 @@
         <span class="total_price">
           <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
         </span>
-        <!-- <span class="total-num">[代开票金额: {{thenAmntBal}}]</span> -->
+        <!-- <span class="total-num">[代收票金额: {{thenAmntBal}}]</span> -->
       </span>
       <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
       <span class="count_btn" @click="submitOrder">提交</span>
@@ -92,9 +135,22 @@
   import PopInvoiceList from 'components/Popup/PopInvoiceList'
   // 方法引入
   import { toFixed } from '@/plugins/calc'
-  import { accAdd } from '@/home/pages/maps/decimalsAdd'
+  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'ZZSSP_DATA';
+  // 收票明细项
+  const INVOICE_LIST_ITEM = {
+    transCode: '', //实例编码,
+    inventoryName: '',
+    inventoryCode: '',
+    qtyBal: '',
+    price: '',
+    tdQty: '',
+    taxRate: '',
+    taxAmount: '', // 税金
+    tdAmount: '', // 税价小计
+    comment: "", //说明
+  };
   export default {
     mixins: [ApplyCommon],
     components: {
@@ -103,29 +159,22 @@
     },
     data () {
       return {
-        listId: '72b6a187-b61a-4532-9945-21957b24fd09',
+        listId: '1759f423-9f1a-4a67-b68a-86773fe469c8',
         dealerInfo: {}, // 客户信息
+        contactInfo: {}, // 联系人信息
         invoiceType: [['普通发票', '专用发票']],
         invoiceGetType: [],
         invoiceInfo: {
           ticketNumber: '', // 票号
           invoiceType: '', // 发票类型
-          invoiceAmount: '', // 发票金额
           invoiceDate: '', // 发票日期
           invoiceContent: '', // 发票内容
         },
-        dealerParams: { 
+        dealerParams: {
           dealerCode: ''
         },
-        invoiceList: [
-          {
-            comment: "" , // 说明
-            thenAmntBal: "", // 代收票金额
-            tdAmount: '' , // 本次收票金额
-            transMatchedCode: "请选择", // 实例编码
-
-          }
-        ],
+        taxRate: 0.16,
+        invoiceList: [{...INVOICE_LIST_ITEM}],
         showInvoicePop: false,
         seletedIndex: 0,
         seletedInvoice: [],
@@ -139,27 +188,32 @@
       totalAmount () {
         let Amount = 0;
         this.invoiceList.forEach(item => {
+          if (!item.tdQty && item.tdQty !== 0) {
+            item.noTaxAmount = '';
+            item.taxAmount = '';
+            item.tdAmount = '';
+            return
+          }
+          item.noTaxAmount = accMul(item.tdQty, item.price);
+          item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
+          item.tdAmount = accAdd(item.noTaxAmount, item.taxAmount);
           if (item.tdAmount) {
             Amount = accAdd(Amount, item.tdAmount);
           }
         });
         return Amount;
       },
-      thenAmntBal () {
-        let thenAmntBal = 0;
-        this.invoiceList.forEach(item => {
-          if (item.tdAmount) {
-            thenAmntBal = accAdd(thenAmntBal , item.thenAmntBal)
-          }
-        });
-        return thenAmntBal
-      }
     },
     methods: {
       // 选中的客户
       selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
+        this.invoiceList = [{...INVOICE_LIST_ITEM}];
+      },
+      // TODO 选中联系人
+      selContact(item) {
+        this.contactInfo = {...item,}
       },
       // 发票类型选择
       typeTask (e) {
@@ -176,12 +230,7 @@
       },
       // TODO 点击增加明细
       addInvoice () {
-        this.invoiceList.push({
-          comment: "" ,
-          thenAmntBal: "",
-          tdAmount: '' ,
-          transMatchedCode: "请选择",
-        })
+        this.invoiceList.push({...INVOICE_LIST_ITEM})
       },
       // 删除明细
       deleteInvoice (val) {
@@ -190,15 +239,26 @@
       // TODO 选中费用
       selInvoice (val) {
         let sels = val;
-        this.invoiceList[this.seletedIndex].transMatchedCode = sels.transCode;
-        this.invoiceList[this.seletedIndex].thenAmntBal = sels.amntBal;
+        this.$set(this.invoiceList, this.seletedIndex, {
+          ...this.invoiceList[this.seletedIndex],
+          ...sels,
+          taxRate: this.taxRate,
+          tdQty: sels.qtyBal,
+          purchaseDay: dateFormat(sels.calcTime, 'YYYY-MM-DD'),
+        });
       },
-      // 检验金额
-      checkAmt (item){
-        if (item.tdAmount > item.thenAmntBal) {
-          item.tdAmount = item.thenAmntBal;
+      // TODO 校验数量
+      checkQty(item, index) {
+        if (!item.tdQty && item.tdQty !== 0) {
+          return
         }
-        item.tdAmount = Math.abs(toFixed(item.tdAmount));
+        if (item.tdQty > item.qtyBal) {
+          item.tdQty = item.qtyBal;
+        }
+        this.$set(this.invoiceList, index, {
+          ...item,
+          tdQty: Math.abs(toFixed(item.tdQty)),
+        })
       },
       // TODO 提交
       submitOrder () {
@@ -223,14 +283,30 @@
         }
         if (!warn) {
           this.invoiceList.every(item => {
-            if (!item.transMatchedCode) {
-              warn = '请选择实例';
+            if (!item.transCode) {
+              warn = '请选择入库单';
+              return false
+            } else if (!item.tdQty && item.tdQty !== 0) {
+              warn = '请填写本次收票数量';
+              return false
+            } else if (!item.taxRate && item.taxRate !== 0) {
+              warn = '请填写税率';
               return false
             }
-            if (!item.tdAmount) {
-              warn = '请输入本次收票金额';
-              return false
-            }
+            dataSet.push({
+              tdId: item.tdId || '',
+              transMatchedCode: item.transCode, // 实例编码,
+              purchaseDay: item.purchaseDay,
+              transObjCode: item.inventoryCode,
+              thenQtyBal: item.qtyBal,
+              price: item.price,
+              tdQty: item.tdQty,
+              noTaxAmount: item.noTaxAmount,
+              taxRate: item.taxRate,
+              taxAmount: item.taxAmount,
+              tdAmount: item.tdAmount, // 本次开票金额,
+              comment: item.comment, // 说明
+            });
             return true
           });
         }
@@ -270,16 +346,14 @@
                 order: {
                   crDealerLabel: '供应商',
                   dealerCodeCredit: this.dealerInfo.dealerCode,
-                  dataSet: this.invoiceList
+                  dataSet: dataSet,
                 },
-                dealerCreditContactPersonName: null,
-                dealerCreditContactInformation: "",
+                dealerCreditContactPersonName: this.contactInfo.dealerName || null,
+                dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '',
                 invoiceDate: this.invoiceInfo.invoiceDate,
                 ticketNumber: this.invoiceInfo.ticketNumber,
                 invoiceType: this.invoiceInfo.invoiceType,
-                invoiceAmount: this.invoiceInfo.invoiceAmount || 0,
                 invoiceContent: this.invoiceInfo.invoiceContent,
-
               }),
               wfPara: JSON.stringify(wfPara)
             };
@@ -331,17 +405,15 @@
             county: formData.order.county_dealerCodeCredit,
             address: formData.order.address_dealerCodeCredit,
             dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit
-
           }
           // 发票列表明细
           formData.order.dataSet.forEach(item=>{
             let obj = {
-              comment: item.comment ,
-              thenAmntBal: item.thenAmntBal,
-              tdAmount: item.tdAmount ,
-              transMatchedCode: item.transMatchedCode,
-              tdId: item.tdId,
-
+              ...item,
+              transCode: item.transMatchedCode, //实例编码,
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.inventoryCode_transObjCode,
+              qtyBal: item.thenQtyBal,
             }
             this.invoiceList.push(obj);
           })
@@ -350,11 +422,13 @@
             ...this.invoiceInfo,
             ticketNumber: formData.ticketNumber,
             invoiceType: formData.invoiceType,
-            invoiceAmount: formData.invoiceAmount,
             invoiceDate: dateFormat(formData.invoiceDate, 'YYYY-MM-DD'),
             invoiceContent: formData.invoiceContent,
-
-          }
+          };
+          this.contactInfo = {
+            dealerName: formData.dealerCreditContactPersonName,
+            dealerMobilePhone: formData.dealerCreditContactInformation,
+          };
           this.invoiceGetType.push(formData.invoiceType);
           this.dealerParams.dealerCode = formData.order.dealerCodeCredit;
           this.$loading.hide();
@@ -372,7 +446,8 @@
             invoice: {
               dealer: this.dealerInfo,
               invoiceInfo: this.invoiceInfo,
-              list: this.invoiceList
+              list: this.invoiceList,
+              contactInfo: this.contactInfo,
             }
           }
         };
@@ -385,6 +460,7 @@
         this.invoiceList = draft.invoice.list;
         this.dealerInfo = draft.invoice.dealer;
         this.invoiceInfo = draft.invoice.invoiceInfo;
+        this.contactInfo = draft.invoice.contactInfo;
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
         this.invoiceGetType.push(this.invoiceInfo.invoiceType);
         sessionStorage.removeItem(DRAFT_KEY);
