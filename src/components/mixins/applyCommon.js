@@ -275,7 +275,7 @@ export default {
     // TODO 监听返回事件
     listenBack() {
       wx.ready(() => {
-        wx.onHistoryBack(() => {
+        wx.onHistoryBack && wx.onHistoryBack(() => {
           return this.onHistoryBack ? this.onHistoryBack() : true;
         });
       })

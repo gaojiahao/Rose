@@ -325,7 +325,7 @@
           let imgUrl = `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
           wx.previewImage({
             current: imgUrl, // 当前显示图片的http链接
-            urls: [] // 需要预览的图片http链接列表
+            urls: [imgUrl] // 需要预览的图片http链接列表
           });
         }
       }
