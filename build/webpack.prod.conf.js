@@ -3,12 +3,13 @@ const path = require('path')
 const utils = require('./utils')
 const webpack = require('webpack')
 const config = require('../config')
+const Version = new Date().getTime()
 const merge = require('webpack-merge')
+const env = require('../config/prod.env')
 const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const env = require('../config/prod.env')
 
 new webpack.DllReferencePlugin({
   context: __dirname,
@@ -26,8 +27,8 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    filename: utils.assetsPath(`js/[name].[chunkhash].${Version}.js`),
+    chunkFilename: utils.assetsPath(`js/[id].[chunkhash].${Version}.js`)
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
