@@ -1,5 +1,5 @@
 <template>
-  <div class="pages comment-list-container">
+  <div class="pages comment-list-container" :class="{'has-emotion': showEmotion}">
     <r-scroll class="comment-list-wrapper" :options="scrollOptions" :has-next="hasNext"
               :no-data="!hasNext && !commentList.length" @on-pulling-up="onPullingUp" ref="bScroll">
       <comment-item :item="item" v-for="(item, index) in commentList"
@@ -10,23 +10,27 @@
       </comment-item>
     </r-scroll>
     <div class="send-container" :class="{focus: focusInput}">
+      <i class="icon-emotion" @click="showEmotion = !showEmotion" ref="emotionIcon"></i>
       <textarea type="text" class="comment-value" v-model="comment" ref="commentValue" :placeholder="placeholder"
                 @focusin="commentFocusIn" @focusout="commentFocusOut"></textarea>
       <span class="btn-send" @click.stop="saveComment">发送</span>
     </div>
+    <r-emotion :show="showEmotion" @on-select="emotionSelected" ref="emotion"></r-emotion>
   </div>
 </template>
 
 <script>
-  import {getCommentList, getPCCommentList , getReply, saveComment} from 'service/commentService'
+  import {getCommentList, getPCCommentList, getReply, saveComment} from 'service/commentService'
   import RScroll from 'components/RScroll'
   import CommentItem from 'components/comment/CommentItem'
+  import REmotion from 'components/comment/REmotion'
 
   export default {
     name: "comment",
     components: {
       RScroll,
       CommentItem,
+      REmotion,
     },
     data() {
       return {
@@ -39,12 +43,13 @@
         hasNext: true,
         page: 1,
         limit: 10,
-        total : 0,
+        total: 0,
         comment: '',
         parentId: -1,
         focusInput: false,
         placeholder: '添加评论...',
-        listId : ''
+        listId: '',
+        showEmotion: false,
       }
     },
     methods: {
@@ -60,7 +65,7 @@
           page: this.page,
           limit: this.limit,
         };
-        if(this.listId){
+        if (this.listId) {
           data.transCode = this.listId;
         }
         return getCommentList(data).then(({allCommentNum = 0, comment = []}) => {
@@ -114,7 +119,7 @@
           type: "instance",
         };
         //应用详情的评论
-        if(this.listId){
+        if (this.listId) {
           submitData = {
             content: this.tagFilter(this.comment),// 标签过滤
             parentId: this.parentId,
@@ -139,20 +144,38 @@
       // TODO 聚焦评论框
       commentFocusIn() {
         this.focusInput = true;
+        this.showEmotion = false;
       },
       // TODO 评论框失去焦点
       commentFocusOut() {
         this.focusInput = false;
-      }
+      },
+      // TODO 选中表情
+      emotionSelected(val) {
+        this.comment += val;
+      },
+      // TODO 判断点击是否为表情容器内
+      emotionClickOutside(e) {
+        // 若点击不在表情容器内，且不为表情的展示图标，则隐藏表情包
+        if (!this.$refs.emotion.$el.contains(e.target) && !this.$refs.emotionIcon.contains(e.target)) {
+          this.showEmotion = false;
+        }
+      },
     },
     created() {
-      let {transCode,listId} = this.$route.query;
+      let {transCode, listId} = this.$route.query;
       this.transCode = transCode;
       this.listId = listId;
       this.$loading.show();
       this.getCommentList().then(() => {
         this.$loading.hide();
       });
+      this.$nextTick(() => {
+        document.addEventListener('click', this.emotionClickOutside);
+      })
+    },
+    beforeDestroy() {
+      document.removeEventListener('click', this.emotionClickOutside);
     }
   }
 </script>
@@ -160,6 +183,11 @@
 <style scoped lang="scss">
   .comment-list-container {
     background-color: #fff;
+    &.has-emotion {
+      .comment-list-wrapper {
+        height: calc(100% - 2.5rem);
+      }
+    }
     .comment-list-wrapper {
       height: calc(100% - .5rem);
     }
@@ -179,7 +207,7 @@
       }
       .comment-value {
         padding: .05rem .1rem;
-        width: calc(100% - .6rem);
+        width: calc(100% - 1rem);
         height: 100%;
         outline: none;
         border-radius: 0.05rem;
@@ -190,6 +218,16 @@
         box-sizing: border-box;
         -webkit-appearance: none;
         appearance: none;
+      }
+      /* 表情图标 */
+      .icon-emotion {
+        display: inline-block;
+        margin-right: .1rem;
+        width: .3rem;
+        height: .3rem;
+        background: url(~@/assets/emotion.png) no-repeat;
+        background-size: 100% 100%;
+        vertical-align: top;
       }
       /* 发送按钮 */
       .btn-send {

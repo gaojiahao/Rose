@@ -12,7 +12,7 @@
         <i class="iconfont icon-L2" :class="{praise: !item.isPraise}"></i>
       </div>
     </header>
-    <div class="comment" v-html="changeImgPath()"></div>
+    <div class="comment" v-html="handleComment()"></div>
     <div class="comment-image" v-if="item.commentAttachments">
       <img class="comment-image-item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
            @click.stop="scaleImg(img)" :key="iIndex" v-if="img.TYPE === 'image'"/>
@@ -30,6 +30,7 @@
 
 <script>
   import {savePraise} from 'service/commentService'
+  import emotion from '@/home/pages/maps/emotion'
 
   export default {
     name: "CommentItem",
@@ -79,8 +80,18 @@
         this.showScaleImg = false;
       },
       // TODO 替换表情图片地址
-      changeImgPath() {
-        return this.item.CONTENT.replace(/src="resources/g, 'src="/dist/resources');
+      handleComment() {
+        let emotionList = [...emotion];
+        let comment = this.item.CONTENT;
+        let reg = /\[(.+?)\]/g;
+        // 处理PC的表情图片
+        comment = comment.replace(/src="resources/g, 'src="/dist/resources');
+        // 处理移动端的表情图片
+        comment = comment.replace(reg, (word) => {
+          let idx = emotionList.findIndex(item => item === word.replace(/(\[|\])/g, ''));
+          return `<img src="https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${idx}.gif" class="img-emotion"/>`
+        });
+        return comment;
       },
     },
     filters: {
@@ -165,6 +176,11 @@
     .comment {
       padding-left: $avatarSize + .1rem;
       color: #454545;
+      /deep/ .img-emotion {
+        width: .24rem;
+        height: .24rem;
+        vertical-align: top;
+      }
     }
 
     /* 回复内容 */
