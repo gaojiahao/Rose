@@ -1,10 +1,8 @@
 <template>
   <div class="emotion-container vux-1px-t" v-show="show" ref="emotionContainer">
     <div class="emotion-wrapper">
-      <img class="emotion-item" v-for="(item, index) in emotionList"
-           :src="`https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${index}.gif`" :alt="item"
-           @click="emotionClick(item, index)">
-      <!--<emotion class="emotion-item" v-for="(item, index) in emotionList" :key="index">{{item}}</emotion>-->
+      <emotion class="emotion-item" v-for="(item, index) in emotionList" :key="index"
+               @click.native="emotionClick(item, index)">{{item}}</emotion>
     </div>
   </div>
 </template>
