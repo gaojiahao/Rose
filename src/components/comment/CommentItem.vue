@@ -31,6 +31,8 @@
 <script>
   import {savePraise} from 'service/commentService'
   import emotion from '@/home/pages/maps/emotion'
+  import {WechatEmotion as Emotion} from 'vux'
+  import Vue from 'vue'
 
   export default {
     name: "CommentItem",
@@ -42,10 +44,13 @@
         }
       }
     },
+    components: {
+      Emotion,
+    },
     data() {
       return {
         showScaleImg: false,
-        scaleImgSrc: ''
+        scaleImgSrc: '',
       }
     },
     methods: {
@@ -88,8 +93,13 @@
         comment = comment.replace(/src="resources/g, 'src="/dist/resources');
         // 处理移动端的表情图片
         comment = comment.replace(reg, (word) => {
+          // 寻找表情索引
           let idx = emotionList.findIndex(item => item === word.replace(/(\[|\])/g, ''));
-          return `<img src="https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${idx}.gif" class="img-emotion"/>`
+          // 没有匹配项则返回原文字
+          if (idx === -1) {
+            return word
+          }
+          return `<span class="img-emotion" style="background-position: -${24 * idx}px 0;"></span>`
         });
         return comment;
       },
@@ -177,9 +187,11 @@
       padding-left: $avatarSize + .1rem;
       color: #454545;
       /deep/ .img-emotion {
-        width: .24rem;
-        height: .24rem;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
         vertical-align: top;
+        background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
       }
     }
 
