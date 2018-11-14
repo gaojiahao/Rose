@@ -39,5 +39,19 @@ export const scanQRCode = (params = {}) => {
     });
   })
 };
-
+// 分享
+export const shareContent = (shareInfo = {}) => {
+  console.log(shareInfo);
+  return wx.onMenuShareAppMessage({
+    title: shareInfo.title, // 分享标题
+    // desc: shareInfo.desc, // 分享描述
+    imgUrl: shareInfo.imgUrl, // 分享图标
+    success: function () {
+      alert('分享成功！');
+    },
+    cancel: function () {
+      alert('分享失败！');
+    }
+});
+}
 export default {}

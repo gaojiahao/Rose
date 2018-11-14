@@ -3,11 +3,23 @@
  * secret 企微-企业应用secret
  */
 
-// 175 Roletask
+// 测试使用 Roletask
+// export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
+// export const secret = '5DdrQJT9GlFvmBR87a7Df7dTqBskPlPDUnjKi_YZbOg'; // 应用凭证
+// export const agentid = '1000036'; // 企业应用的id
+// 174环境
+// export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1174%2FHermes%2Fhome'; // 首页路径
+// 175环境
+// export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fhome'; // 首页路径
+
+
+
+// 172 Roletask （开发自用）
 export const corpid = 'ww3c1aa17c16e380b7'; // 企业id
-export const secret = '5DdrQJT9GlFvmBR87a7Df7dTqBskPlPDUnjKi_YZbOg'; // 应用凭证
-export const agentid = '1000036'; // 企业应用的id
-export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1175%2FHermes%2Fhome'; // 首页路径
+export const secret = 'E7XH-mR0hJ5R27xFpIxAu8a6isDolgwpcPD3WN3ZIBs'; // 应用凭证
+export const agentid = '1000038'; // 企业应用的id
+export const redirect_uri = 'http%3A%2F%2Fcpacn2012.3322.org%3A1172%2FHermes%2Fhome'; // 首页路径
+
 
 // 七感
 // export const corpid = 'wwa7ec2d7f7c4390a1'; // 企业id
