@@ -4,7 +4,8 @@ import saleRepotService from "service/saleRepotService";
 // 插件引入
 import {
   Cell, Alert, Group, XInput, XButton,
-  Confirm, Selector, PopupPicker, numberComma
+  Confirm, Selector, PopupPicker, numberComma,
+  XSwitch,
 } from "vux";
 import PopupProjectList from 'components/popup/PopupProjectList'
 
@@ -15,7 +16,7 @@ export default {
   components: {
     Cell, Alert, Group, XInput,
     Confirm, XButton, Selector, PopupPicker,
-    PopupProjectList,
+    PopupProjectList, XSwitch,
   },
   data() {
     return {
@@ -40,6 +41,17 @@ export default {
       otherAmt: '', // 其他费用
       showProjectPopup: false, // 是否展示项目类产品的选项
       monthCoverNum: '',
+      baseinfoExt: {
+        varchar2: 0,       // （套）合计
+        varchar14: '', // 今日所在省份
+        varchar15: '', // 渠道
+        varchar16: '是', // 是否有排期
+        varchar17: '', // 排期银行名称
+        varchar18: '', // 网点名称
+        varchar19: '', // 明日所在省份
+        varchar20: '', // 下周所在省份
+        varchar21: '', // 下周银行渠道
+      },
     };
   },
   computed: {
@@ -219,24 +231,30 @@ export default {
     },
     // 获取区域
     getArea() {
-      optionService.getRegion().then(({ tableContent }) => {
-        for(let val of tableContent){
-          this.areaList.push(val['trans_detail_uncalc.var1'])
+      return optionService.getRegion().then(({tableContent}) => {
+        let tmp = [];
+        for (let val of tableContent) {
+          tmp.push(val['trans_detail_uncalc.var1'])
         }
+        this.areaList = tmp;
+        this.areaNextWeekList = ['未知', ...tmp];
       });
     },
     // 获取银行
     getBank() {
-      optionService.getBank().then(data => {
-        for(let val of data){
-          this.bankList.push(val['name']);
+      return optionService.getBank().then(data => {
+        let tmp = [];
+        for (let val of data) {
+          tmp.push(val['name']);
         }
+        this.bankList = tmp;
+        this.bankNextWeekList = ['未知', ...tmp];
       });
     },
     // 回显表单内容
     echoStorage(basicSrg = {}, formSrc = {}) {
       let {member, governor, captain} = basicSrg;
-      let {Aclass, Bclass, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt} = formSrc;
+      let {Aclass, Bclass, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt, baseinfoExt} = formSrc;
       if (basicSrg) {
         this.member = member;
         this.governor = governor;
@@ -253,6 +271,12 @@ export default {
         this.otherAmt = otherAmt;
         this.trafficAmt = trafficAmt;
         this.lTrafficAmt = lTrafficAmt;
+        this.baseinfoExt = baseinfoExt;
+        this.areaToday = [baseinfoExt.varchar14];
+        this.bankToday = [baseinfoExt.varchar15];
+        this.areaTomorrow = [baseinfoExt.varchar19];
+        this.areaNextWeek = [baseinfoExt.varchar20];
+        this.bankNextWeek = [baseinfoExt.varchar21];
       }
     },
     // TODO 项目类产品切换

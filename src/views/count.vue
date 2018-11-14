@@ -117,15 +117,14 @@
                   }
                 });
               }
-            })
-              .catch(data => {
-                if (data.success == false) {
-                  that.$vux.alert.show({
-                    title: "提示",
-                    content: data.message
-                  });
-                }
-              });
+            }).catch(data => {
+              if (data.success == false) {
+                that.$vux.alert.show({
+                  title: "提示",
+                  content: data.message
+                });
+              }
+            });
           }
         });
       },
@@ -215,6 +214,7 @@
   .mescroll {
     width: 100%;
     padding-bottom: 50px;
+    background-color: #f5f5f5;
   }
 
   /* 提交订单按钮  */
