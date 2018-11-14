@@ -30,7 +30,7 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属订单</span>
+                  <span class="order_title">采购订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -608,7 +608,7 @@ export default {
         };
         this.crDealerPaymentTerm = order.drDealerPaymentTerm;
         this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
-        this.$loading.hide();       
+        this.$loading.hide();
       })
     },
   },
@@ -622,7 +622,7 @@ export default {
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
       sessionStorage.removeItem(DRAFT_KEY);
     }
-    
+
   },
 }
 </script>

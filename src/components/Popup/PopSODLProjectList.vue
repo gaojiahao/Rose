@@ -1,10 +1,9 @@
 <template>
   <div class="pop-sodl-project-list" @click="itemClick">
     <div class="title">项目名称</div>
-    <div v-if='selItems.projectName'>
-      <div class="cp_info">
-        <p class="cp_name">{{selItems.projectName}}</p>
-      </div>
+    <div class="project-info" v-if='selItems.projectName'>
+      <span class="project-name">{{selItems.projectName}}</span>
+      <span class="project-type">{{selItems.projectType}}</span>
     </div>
     <div v-else>
       <div class="mode">请选择项目名称</div>
@@ -180,12 +179,6 @@
 
       font-size: .12rem;
     }
-    .r_arrow {
-      position: absolute;
-      top: 50%;
-      right: .04rem;
-      transform: translate(0, -50%);
-    }
     .mode {
       color: #111;
       font-weight: 500;
@@ -197,6 +190,16 @@
       font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
+    }
+    .project-info {
+      font-size: 0;
+      .project-name {
+        margin-right: .08rem;
+        font-size: .16rem;
+      }
+      .project-type {
+        font-size: .16rem;
+      }
     }
   }
 
