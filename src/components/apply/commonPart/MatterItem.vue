@@ -34,7 +34,7 @@
         <div class='mater_other' @click="modifyMatter" v-if="hideEdit && !showDelete">
           <div class="edit-tips">点击进行填写</div>
         </div>
-      </slot>  
+      </slot>
       <!-- 编辑图标 -->
       <slot name="editPart" :item="item">
         <div class="edit-part vux-1px-l" @click="modifyMatter" v-show="showEdit && !showDelete">
@@ -117,7 +117,7 @@
     .mater_main {
       display: inline-block;
       margin-left: .1rem;
-      padding-right: .38rem;
+      /*padding-right: .38rem;*/
       width: 2.6rem;
       box-sizing: border-box;
       &.no-edit {

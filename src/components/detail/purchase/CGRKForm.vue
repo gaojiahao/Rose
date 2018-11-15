@@ -28,7 +28,31 @@
               <span class="order_num">{{key}}</span>
             </div>
             <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index"></matter-item>
+              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index">
+                <template slot-scope="{item}" slot="other">
+                  <div class='mater_num'>
+                    <!--<span class="num" v-if="item.promDeliTime">采购计划到货日: {{item.promDeliTime}}</span>-->
+                    <span class="num" v-if="item.productionDate">生产日期: {{item.productionDate}}</span>
+                    <span class="num" v-if="item.validUntil">有效日期: {{item.validUntil}}</span>
+                  </div>
+                  <div class='mater_num'>
+                    <!--<span v-if="item.keepingDays_transObjCode || item.keepingDays_transObjCode === 0">保质期天数: {{item.keepingDays_transObjCode}}</span>-->
+                  </div>
+                  <div class='mater_num'>
+                    <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+                    <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+                    <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+                  </div>
+                  <div class='mater_price'>
+                    <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+                    <span class="num"
+                          :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
+                          v-if="item.taxRate">
+                      [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                    </span>
+                  </div>
+                </template>
+              </matter-item>
             </div>
           </div>
         </div>
@@ -135,7 +159,6 @@ export default {
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
             : this.getDefaultImg();
-          item.transObjCode = item.inventoryCode_outPutMatCode;
           if (!orderList[item.transMatchedCode]) {
             orderList[item.transMatchedCode] = [];
           }
@@ -175,27 +198,58 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
+
   .order_code {
-      display: flex;
-      color: #fff;
+    display: flex;
+    color: #fff;
+    font-size: .12rem;
+    font-weight: bold;
+    > span {
+      display: inline-block;
+      padding: 0 .04rem;
+    }
+    .order_title {
+      background: #1160aa;
+    }
+    // 订单号
+    .order_num {
+      background: #9bb4da;
+      border-top-right-radius: .08rem;
+    }
+  }
+
+  .order_matter {
+    margin-top: .04rem;
+  }
+
+  // 一般金额
+  .mater_price {
+    color: #ea5455;
+    font-weight: bold;
+    font-size: .14rem;
+    line-height: 0.2rem;
+    margin-top: .04rem;
+    display: inline-block;
+    .symbol {
       font-size: .12rem;
-      font-weight: bold;
-      > span {
-        display: inline-block;
-        padding: 0 .04rem;
-      }
-      .order_title {
-        background: #1160aa;
-      }
-      // 订单号
-      .order_num {
-        background: #9bb4da;
-        border-top-right-radius: .08rem;
-      }
     }
-    .order_matter {
-      margin-top: .04rem;
+    .num {
+      font-size: .1rem;
+      color: #757575;
     }
+  }
+  // 单价 数量 税率 等
+  .mater_num {
+    color: #757575;
+    font-size: 0.1rem;
+    span {
+      display: inline-block;
+    }
+    .num {
+      margin-right: 0.04rem;
+    }
+  }
+
   .contacts_part {
     margin-bottom: .1rem;
     padding: .06rem .1rem 0;
