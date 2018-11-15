@@ -70,6 +70,8 @@
           <x-input title="网点名称" v-model="baseinfoExt.varchar18" text-align="right" placeholder="请输入网点名称"></x-input>
           <popup-picker class="each_part" title="明日所在省份" placeholder="请选择省份" :data='areaList' :columns="1"
                         v-model="areaTomorrow"></popup-picker>
+          <popup-picker class="each_part" title="明日所在渠道" placeholder="请选择渠道" :data='bankList' :columns="1"
+                        v-model="bankTomorrow"></popup-picker>
           <popup-picker class="each_part" title="下周所在省份" placeholder="请选择省份" :data='areaNextWeekList' :columns="1"
                         v-model="areaNextWeek"></popup-picker>
           <popup-picker class="each_part" title="下周所在渠道" placeholder="请选择银行" :data='bankNextWeekList' :columns="1"
@@ -113,6 +115,7 @@
         areaToday: [],
         bankToday: [],
         areaTomorrow: [],
+        bankTomorrow: [],
         areaNextWeek: [],
         bankNextWeek: [],
         areaNextWeekList: [],
@@ -152,12 +155,14 @@
         this.baseinfoExt.varchar19 = this.areaTomorrow[0];
         this.baseinfoExt.varchar20 = this.areaNextWeek[0];
         this.baseinfoExt.varchar21 = this.bankNextWeek[0];
+        this.baseinfoExt.varchar22 = this.bankTomorrow[0];
         let validateMap = [
           {key: 'varchar14', msg: '请选择今日所在省份'},
           {key: 'varchar15', msg: '请选择今日所在渠道'},
           {key: 'varchar17', msg: '请填写排期银行名称'},
           {key: 'varchar18', msg: '请填写网点名称'},
           {key: 'varchar19', msg: '请选择明日所在省份'},
+          {key: 'varchar22', msg: '请选择明日所在渠道'},
           {key: 'varchar20', msg: '请选择下周所在省份'},
           {key: 'varchar21', msg: '请选择下周所在渠道'},
         ];

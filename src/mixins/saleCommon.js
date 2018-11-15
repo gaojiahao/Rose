@@ -51,6 +51,7 @@ export default {
         varchar19: '', // 明日所在省份
         varchar20: '', // 下周所在省份
         varchar21: '', // 下周银行渠道
+        varchar22: '', // 明日所在渠道
       },
     };
   },
@@ -277,6 +278,7 @@ export default {
         this.areaTomorrow = [baseinfoExt.varchar19];
         this.areaNextWeek = [baseinfoExt.varchar20];
         this.bankNextWeek = [baseinfoExt.varchar21];
+        this.bankTomorrow = [baseinfoExt.varchar22];
       }
     },
     // TODO 项目类产品切换
