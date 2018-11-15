@@ -65,9 +65,11 @@
                         v-model="areaToday"></popup-picker>
           <popup-picker class="each_part" title="今日所在渠道" placeholder="请选择银行" :data='bankList' :columns="1"
                         v-model="bankToday"></popup-picker>
-          <x-switch title="是否有排期" :value-map="['否', '是']" v-model="baseinfoExt.varchar16"></x-switch>
           <x-input title="排期银行名称" v-model="baseinfoExt.varchar17" text-align="right" placeholder="请输入排期银行名称"></x-input>
           <x-input title="网点名称" v-model="baseinfoExt.varchar18" text-align="right" placeholder="请输入网点名称"></x-input>
+          <x-switch title="是否有排期" :value-map="['否', '是']" v-model="baseinfoExt.varchar16"></x-switch>
+        </group>
+        <group>
           <popup-picker class="each_part" title="明日所在省份" placeholder="请选择省份" :data='areaList' :columns="1"
                         v-model="areaTomorrow"></popup-picker>
           <popup-picker class="each_part" title="明日所在渠道" placeholder="请选择渠道" :data='bankList' :columns="1"
