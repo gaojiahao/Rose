@@ -50,9 +50,11 @@
                         <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
                       </div>
                       <!-- 库存 -->
+                      <div class='mater_more' v-if="item.promDeliTime">
+                        <span class='unit'>预期交货日: {{item.promDeliTime}}</span>
+                      </div>
                       <div class='mater_more'>
                         <span class='qty'>可用库存: {{item.qtyStockBal}}</span>
-                        <span class='qty'>待交付数量: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -99,13 +101,16 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" 
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop"
                     @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span>待交付数量:{{modifyMatter.qtyBal}}</span>
           </template>
           <template slot="materStock" slot-scope="{modifyMatter}">
             <span>可用库存:{{modifyMatter.qtyStockBal}}</span>
+          </template>
+          <template slot="date" slot-scope="{modifyMatter}">
+            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
           </template>
         </pop-matter>
       </div>
@@ -135,7 +140,7 @@
 <script>
   // vux组件引入
   import {
-    Icon, Cell, Popup, Group, XInput, XTextarea, TransferDom, dateFormat,
+    Icon, Cell, Popup, Group, XInput, XTextarea, TransferDom, dateFormat, Datetime,
   } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
@@ -174,7 +179,8 @@
       XInput, RAction, RNumber,
       PopOrderList, PopDealerList,
       PopSingleSelect, PopWarehouseList,
-      PopSodlProjectList, PopEntityList, PopMatter
+      PopSodlProjectList, PopEntityList, PopMatter,
+      Datetime,
     },
     data () {
       return {
@@ -677,7 +683,7 @@
           // };
           this.crDealerPaymentTerm = order.drDealerPaymentTerm;
           this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
-          this.$loading.hide();       
+          this.$loading.hide();
         })
       },
     },

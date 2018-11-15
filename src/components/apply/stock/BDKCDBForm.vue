@@ -81,6 +81,7 @@
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="调拨数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
+            <cell title="库存数量" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
           </template>
         </pop-matter>
       </div>
