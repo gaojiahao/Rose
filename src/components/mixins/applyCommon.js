@@ -9,6 +9,7 @@ import MatterItem from 'components/apply/commonPart/MatterItem'
 import UploadFile from 'components/upload/UploadFile'
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
+import { shareContent } from 'plugins/wx/api'
 
 export default {
   data() {
@@ -278,52 +279,18 @@ export default {
         wx.onHistoryBack && wx.onHistoryBack(() => {
           return this.onHistoryBack ? this.onHistoryBack() : true;
         });
-        wx.onMenuShareAppMessage({
-          title: '哈哈哈', // 分享标题
-          desc: '哈哈哈', // 分享描述
-          link: '', // 分享链接
-          imgUrl: '', // 分享图标
-          success: function () {
-              // 用户确认分享后执行的回调函数
-              alert('转发了')
-          },
-            cancel: function () {
-                // 用户取消分享后执行的回调函数
-              alert('取消啦啦')
-            }
-        });
       })
     },
     // 监听触发转发
     listenShare (){
-      wx.onMenuShareAppMessage({
-          title: '测试', // 分享标题
-          desc: '测试啦啦啦', // 分享描述
-          link: '', // 分享链接
-          imgUrl: '', // 分享图标
-          success: function () {
-              // 用户确认分享后执行的回调函数
-          },
-          cancel: function () {
-              // 用户取消分享后执行的回调函数
-          }
-      });
+      // shareContent();
     }
   },
   created() {
+    register(); // 注册wx-js-sdk
+    let { name, transCode, relationKey } = this.$route.query;
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
-    // (async () =>{
-    //   await register();
-    //   this.listenShare();
-
-    // })()
-    register();
-    this.listenBack();
-    
-    if(data){
-      this.entity.dealerName = JSON.parse(data).entityId
-    }
-    let {transCode, relationKey = ''} = this.$route.query;
+    if(data) this.entity.dealerName = JSON.parse(data).entityId;
     (async () => {
       this.getProcess();
       this.getBaseInfoData();
@@ -342,6 +309,17 @@ export default {
         this.relationKey = relationKey;
         this.getRelationData();
       }
+      // 调用 wx-js-sdk
+      wx.ready(() => {
+        // 分享
+        let shareInfo = {
+          title: `创建新的${name}`, 
+          desc: `点击创建新的${name}`,
+          imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
+          // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.png`
+        }
+        shareContent(shareInfo);
+      })
       this.$loading.hide();
     })()
   },
