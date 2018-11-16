@@ -39,7 +39,7 @@
             </div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance !== ''">
-              <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma(3)}}
+              <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma}}
             </div>
           </div>
         </div>
@@ -58,7 +58,6 @@
               <div class="flow_list">
                 <div class='each_flow' v-for='(Fitem,Findex) in flowData' :key="Findex" @click.stop="Fitem.showList = !Fitem.showList">
                   <!--展开状态-->
-
                   <div class="duty_top">
                     <!-- 编码 -->
                     <div class='transCode'>
@@ -70,7 +69,6 @@
                       {{Fitem.calcTime | dateFormat}}
                     </div>
                   </div>
-
                   <!-- 金额 -->
                   <div class='show_list'>
                     <!-- 应用名称 -->
@@ -82,11 +80,11 @@
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.drAmnt>0">
                           <span class="symbol" >借方金额: </span>
-                          <span class="number_incre">+ {{Fitem.drAmnt}}</span>
+                          <span class="number_incre">+ {{Fitem.drAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.drAmnt<0">
                           <span class="symbol">借方金额: </span>
-                          <span class="number_redu">- {{Fitem.drAmnt}}</span>
+                          <span class="number_redu">- {{Fitem.drAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">借方金额: </span>
@@ -97,11 +95,11 @@
                       <div class="amount_money">
                         <div class="num_part" v-if="Fitem.crAmnt>0">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_incre">+ {{Fitem.crAmnt}}</span>
+                          <span class="number_incre">+ {{Fitem.crAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else-if="Fitem.crAmnt<0">
                           <span class="symbol">贷方金额: </span>
-                          <span class="number_redu">- {{Fitem.crAmnt}}</span>
+                          <span class="number_redu">- {{Fitem.crAmnt | toFixed}}</span>
                         </div>
                         <div class="num_part" v-else>
                           <span class="symbol">贷方金额: </span>
@@ -112,16 +110,12 @@
                   </div>
                   <!-- 金额余额 -->
                   <div class="summary_part vux-1px-t">
-                    <div class="number">
-                    </div>
+                    <div class="number"></div>
                     <div class="price HBZJ_total">
                       <span class="symbol">当前余额:</span>
                       <span :class="{increase: Fitem.amountBalance > 0,reduce: Fitem.amountBalance < 0}">
-                        ￥{{Fitem.amountBalance}}
+                        ￥{{Fitem.amountBalance | toFixed | numberComma}}
                       </span>
-                      <!-- <span class="number_incre" v-if="Fitem.amntBalance>0">￥{{Fitem.amountBalance}}</span>
-                      <span class="number_redu" v-else-if="Fitem.amntBalance<0">￥{{Fitem.amountBalance}}</span>
-                      <span v-else>￥{{Fitem.amountBalance}}</span> -->
                     </div>
                   </div>
                 </div>
@@ -129,14 +123,10 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="btn" v-if='flowData.length>=3'>
-              <span class="cfm_btn" @click="flowShow = false">关闭</span>
-            </div> -->
           </r-scroll>
           <div class="btn when_less">
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
           </div>
-
         </popup>
       </div>
     </div>
@@ -144,27 +134,21 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/kmListCommon'
-  export default {
-    data() {
-      return {
-        uniqueId : 1000,
-        showContent : false,
-        filterArr: [
-            {"operator":"like","value":"","property":"cashCode"}
-        ],
-      }
-    },
-    components:{
-
-    },
-    mixins: [listCommon],
-    methods: {
-    },
-    created(){
-
+import listCommon from 'pageMixins/kmListCommon'
+import { toFixed } from '@/plugins/calc'
+export default {
+  data() {
+    return {
+      uniqueId : 1000,
+      showContent : false,
+      filterArr: [
+        {"operator":"like","value":"","property":"cashCode"}
+      ],
     }
-  }
+  },
+  mixins: [listCommon],
+  filters: { toFixed }
+}
 </script>
 
 <style lang='scss' scoped>

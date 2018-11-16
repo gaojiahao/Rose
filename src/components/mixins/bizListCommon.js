@@ -7,7 +7,6 @@ import ListItem from 'components/list/commonPart/ListItem'
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
-
 import { toFixed } from '@/plugins/calc'
 // 引入映射表 (不可移除)
 import Apps from '@/home/pages/maps/businessApp'

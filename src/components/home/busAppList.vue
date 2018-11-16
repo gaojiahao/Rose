@@ -25,27 +25,26 @@
       </div>
     </div> -->
     <div class="each_part" v-for="(item, inx) in BusApps" :key='inx'>
-      <!-- 应用标题 -->
-      <div class="list_title">
-        <div class="bg_title">
-          <div class="title vux-1px-b">{{item.name}}</div>
-        </div>
-      </div>
-      <!-- 应用列表 -->
-      <div class="app_list defalut_bg mg_auto">
-        <!-- 单个app -->
-        <div class="each_app"
-          @click='goList(app.listId, app.text, app.fileID)'
-          v-for="(app, index) of item.appList" :key='index'>
-          <div class="app_img">
-            <img :src='app.icon' @error="getDefaultIcon(app)">
-          </div>
-          <div class="app_info">
-            <div class="app_name">{{app.text}}</div>
-            <div class="app_intro">{{app.transName}}</div>
+      <template v-if="item.appList.length > 0">
+        <div class="list_title">
+          <div class="bg_title">
+            <div class="title vux-1px-b">{{item.name}}</div>
           </div>
         </div>
-      </div>
+        <div class="app_list defalut_bg mg_auto">
+          <div class="each_app"
+            @click='goList(app.listId, app.text, app.fileID)'
+            v-for="(app, index) of item.appList" :key='index'>
+            <div class="app_img">
+              <img :src='app.icon' @error="getDefaultIcon(app)">
+            </div>
+            <div class="app_info">
+              <div class="app_name">{{app.text}}</div>
+              <div class="app_intro">{{app.transName}}</div>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>  
   
   </div>

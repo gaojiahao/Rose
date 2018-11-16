@@ -2,7 +2,7 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>
+        <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->

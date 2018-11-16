@@ -2,7 +2,7 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>
+        <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
         <!-- 物料列表 -->
         <div class="materiel_list">
           <div class="title">工序信息</div>

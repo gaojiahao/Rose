@@ -41,7 +41,7 @@
             <div class="ware_type"></div>
             <!-- 余额 -->
             <div class="balance" v-if="item.amountBalance !== ''">
-              <span class="symbol">余额: ￥</span>{{item.amountBalance}}
+              <span class="symbol">余额: ￥</span>{{item.amountBalance| toFixed | numberComma}}
             </div>
           </div>
         </div>
@@ -85,9 +85,8 @@
                         <div class="num_part">
                           <span class="symbol">借方金额: </span>
                           <span class="number_incre" v-if="Fitem.drAmnt > 0">
-                            <span class="symbol">￥</span>{{Fitem.drAmnt}}
+                            <span class="symbol">￥</span>{{Fitem.drAmnt | toFixed}}
                           </span>
-                          <!-- <span class="number_redu" v-else-if="Fitem.drAmnt < 0">- {{Fitem.drAmnt.toFixed(2)}}</span> -->
                           <span v-else>0</span>
                         </div>
                       </div>
@@ -96,7 +95,7 @@
                         <div class="num_part">
                           <span class="symbol">贷方金额: </span>
                           <span class="number_incre" v-if="Fitem.crAmnt > 0">
-                            <span class="symbol">￥</span>{{Fitem.crAmnt}}
+                            <span class="symbol">￥</span>{{Fitem.crAmnt | toFixed}}
                           </span>
                           <span v-else>0</span>
                         </div>
@@ -108,16 +107,13 @@
                     <div class="price">
                       <span class="symbol">当前余额:</span>
                       <span :class="{increase: Fitem.amountBalance > 0, reduce: Fitem.amountBalance < 0}">
-                        <span class="symbol"> ￥</span>{{Fitem.amountBalance}}
+                        <span class="symbol"> ￥</span>{{Fitem.amountBalance | toFixed | numberComma}}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- <div class="btn" v-if="flowData.length>=3">
-              <span class="cfm_btn" @click="flowShow = false">关闭</span>
-            </div> -->
           </r-scroll>
           <div class="btn when_less">
             <span class="cfm_btn" @click="flowShow = false">关闭</span>
@@ -129,25 +125,26 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/kmListCommon'
-  import TabItem from 'components/tab'
-
-  export default {
-    data() {
-      return {
-        uniqueId: 9000,
-        showContent: false,
-        handleLoadding: false,
-        filterArr: [
-          {operator: 'like', value: '', property: 'dealerCode'}
-        ],
-      }
-    },
-    components:{
-      TabItem
-    },
-    mixins: [listCommon],
-  }
+import TabItem from 'components/tab'
+import listCommon from 'pageMixins/kmListCommon'
+import { toFixed } from '@/plugins/calc'
+export default {
+  data() {
+    return {
+      uniqueId: 9000,
+      showContent: false,
+      handleLoadding: false,
+      filterArr: [
+        {operator: 'like', value: '', property: 'dealerCode'}
+      ],
+    }
+  },
+  components:{
+    TabItem
+  },
+  mixins: [listCommon],
+  filters: { toFixed }
+}
 </script>
 
 <style lang='scss' scoped>

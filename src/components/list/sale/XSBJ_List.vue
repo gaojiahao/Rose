@@ -4,15 +4,9 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
-        <!--<tab-part @tab-click="tabClick" @sort-click="sortClick"></tab-part>-->
-         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
-           <r-sort @on-sort="onSortList"></r-sort>
-           <r-tab @on-click="onTabClick"></r-tab>
+        <div class="filter_part">
+          <r-sort @on-sort="onSortList"></r-sort>
+          <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
@@ -30,7 +24,6 @@
 <script>
   import {getSellOrderList} from 'service/listService'
   import listCommon from 'pageMixins/bizListCommon'
-  import TabPart from 'components/TabPart.vue'
   export default {
     data() {
       return {
@@ -39,9 +32,6 @@
       }
     },
     mixins: [listCommon],
-    components:{
-      TabPart
-    },
     methods: {
       tabClick(val){
         this.activeTab = val.status;

@@ -161,10 +161,8 @@ export default {
         for(let val of res){
           // 获取应用
           if(Apps[val.id]){
-            // console.log(val);
             // 动态生成数组
             BUSobj[val.text] = [];
-            // console.log(BUSobj[val.text]);
             for(let item of val.children ){
               // 基础对象
               if(basicMap[item.listId]){
@@ -193,21 +191,15 @@ export default {
               }
               // 业务应用
               if(Apps[val.id][item.listId]){
+                // 获取 应用类型ID 对应相应文件夹
                 item.fileID = val.id;
                 item.icon = item.icon
                   ? `/dist/${item.icon}`
                   : this.getDefaultIcon();
                 // 归类到相应的小数组
                 BUSobj[val.text].push(item);
-                // if(!this.BusApps[val.text]){
-                //   this.$set(this.BusApps, val.text, { appList: [item] })
-                // }
-                // else {
-                //   this.BusApps[val.text].appList.push(item);
-                // }
+
               }
-              // 获取 应用类型ID 对应相应文件夹
-              
             }
             this.BusApps.push({
               id: val.id,

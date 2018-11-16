@@ -88,9 +88,7 @@ export default {
       this.flowData = [];
       this.flowPage = 1;
       //工作流锁定余额标不查询流水
-      if(item.qtyLocked>=0){
-        return;
-      }
+      if(item.qtyLocked >= 0) return;
       this.flowTitle = item;
       this.$HandleLoad.show();
       let row = {};
@@ -110,14 +108,6 @@ export default {
         // 关闭笼罩层
         this.$HandleLoad.hide();
       });
-      //流水列表数据
-      // await getView({...requestData,view_scope: 'data',page: 1,start: 0,limit: 25}).then(({data=[],total=0})=>{
-      //   data.forEach(item=>{
-      //     item.showList = false;
-      //   })
-      //   this.flowData = data;
-
-      // })
       await this.getFlowData();
       this.$HandleLoad.hide();
       this.flowShow = true;
