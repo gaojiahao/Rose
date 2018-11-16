@@ -175,7 +175,7 @@ export default {
         });
 
         // this.actions = actions.split(',');
-        this.actions = ['agreement', 'disagree']; // actions字段没有返回，修改固定赋值
+        this.actions = ['agreement', 'disagree', 'transfer']; // actions字段没有返回，修改固定赋值
         // 判断是否为我创建的任务
         if (createFlow.isFirstNode === 0 && createFlow.startUserId === this.userId) {
           this.isMine = true;
@@ -254,7 +254,7 @@ export default {
       wx.ready(() => {
         // 分享
         let shareInfo = {
-          title: `点击查看${name}详情`, 
+          title: `点击查看${name}详情`,
           desc: `点击查看${name}详情，哈哈哈哈`,
           imgUrl : 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=888178039,2627708353&fm=26&gp=0.jpg'
           // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'

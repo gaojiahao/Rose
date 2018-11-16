@@ -4,7 +4,7 @@
       <div class='fill_wrapper'>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         dealer-label-name="供应商"></pop-dealer-list>
+                         :defaultContact="contactInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
                            v-model="crDealerPaymentTerm"></pop-single-select>

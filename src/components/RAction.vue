@@ -5,12 +5,29 @@
       <span class="reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
       <span class="reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
       <span class="agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
+      <span class="transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
+    </div>
+    <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
+                   v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
+    <div v-transfer-dom>
+      <confirm class="action-confirm" title="转办" @on-confirm="onConfirm" v-model="showConfirm">
+        <div class="confirm-item">转办给: {{selectedUser.nickname}}</div>
+        <div class="confirm-item">
+          工时: <input type="number" class="input-value" v-model="transferInfo.taskTime">
+        </div>
+        <div class="confirm-item">
+          备注: <input type="text" class="input-value" v-model="transferInfo.comment">
+        </div>
+      </confirm>
     </div>
   </div>
 </template>
 
 <script>
-  import {commitTask} from 'service/commonService'
+  import {commitTask, transferTask} from 'service/commonService'
+  import {Confirm} from 'vux'
+  import PopUserList from 'components/Popup/PopUserList'
+
   export default {
     name: "RAction",
     props: {
@@ -28,14 +45,26 @@
           return []
         }
       },
-      name:{
-        type : String,
-        default :''
+      name: {
+        type: String,
+        default: ''
       }
+    },
+    components: {
+      Confirm,
+      PopUserList,
     },
     data() {
       return {
-        show: true,
+        showUserList: false, // 是否展示用户列表
+        selectedUser: {
+          nickname: '测试'
+        }, // 选中的转办用户
+        showConfirm: false,
+        transferInfo: {
+          taskTime: 0.1, // 工时
+          comment: '', // 备注
+        },
       }
     },
     methods: {
@@ -75,10 +104,10 @@
               successMsg: '撤回成功',
               value,
               callback: () => {
-                let { fileId, listId } = this.$route.params;
+                let {fileId, listId} = this.$route.params;
                 this.$router.replace({
                   path: `/fillform/${fileId}/${listId}`,
-                  query: { transCode: this.code, name: this.name},
+                  query: {transCode: this.code, name: this.name},
                 });
               }
             });
@@ -121,8 +150,46 @@
         }).catch(e => {
           this.$HandleLoad.hide();
         });
-      }
-    }
+      },
+      // TODO 转办
+      transfer() {
+        this.selectedUser = {};
+        this.showUserList = true;
+      },
+      // TODO 选中转办账号
+      selUser(val) {
+        this.selectedUser = {...val};
+        this.showConfirm = true;
+      },
+      // TODO 点击confirm确定
+      onConfirm() {
+        let submitData = {
+          userId: this.selectedUser.userId,
+          taskId: this.taskId,
+          ...this.transferInfo,
+        };
+        this.$HandleLoad.show();
+        console.log(submitData)
+        transferTask(submitData).then(data => {
+          this.$HandleLoad.hide();
+          let {success = false, message = '提交失败'} = data;
+          if (success) {
+            message = '转办成功';
+            this.$emit('on-submit-success', JSON.stringify({
+              type: 'transfer'
+            }));
+          }
+          this.$vux.alert.show({
+            content: message,
+            onHide: () => {
+              this.$router.go(0);
+            }
+          });
+        }).catch(e => {
+          this.$HandleLoad.hide();
+        });
+      },
+    },
   }
 </script>
 
@@ -130,40 +197,63 @@
   .handle_wrapper {
     background: #FFF;
     overflow: hidden;
-  }
-  // 审批操作
-  .handle_btn {
-    display: flex;
-    width: 100%;
-    height: .4rem;
-    margin: .2rem 0;
-    padding: 0 .2rem;
-    line-height: .4rem;
-    text-align: center;
-
-    justify-content: center;
-    box-sizing: border-box;
-    span {
-      margin-right: .2rem;
-      display: inline-block;
-      width: 1.4rem;
-      color: #fff;
+    // 审批操作
+    .handle_btn {
+      display: flex;
+      width: 100%;
+      height: .4rem;
+      margin: .2rem 0;
+      padding: 0 .2rem;
+      line-height: .4rem;
       text-align: center;
-      border-radius: .24rem;
-      &:last-child {
-        margin-right: 0;
+
+      justify-content: center;
+      box-sizing: border-box;
+      span {
+        margin-right: .2rem;
+        display: inline-block;
+        width: 1.4rem;
+        color: #fff;
+        text-align: center;
+        border-radius: .24rem;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      // 拒绝
+      .reject {
+        /*margin-right: .2rem;*/
+        background: #ea5455;
+        box-shadow: 0 2px 5px #ea5455;
+      }
+      // 同意
+      .agree {
+        background: #5077aa;
+        box-shadow: 0 2px 5px #5077aa;
+      }
+      /* 转办 */
+      .transfer {
+        background-color: #ccc;
+        box-shadow: 0 2px 5px #ccc;
       }
     }
-    // 拒绝
-    .reject {
-      /*margin-right: .2rem;*/
-      background: #ea5455;
-      box-shadow: 0 2px 5px #ea5455;
+  }
+
+  .action-confirm {
+    .confirm-item {
+      padding: .05rem 0;
+      line-height: .2rem;
+      text-align: left;
     }
-    // 同意
-    .agree {
-      background: #5077aa;
-      box-shadow: 0 2px 5px #5077aa;
+    .input-value {
+      width: 80%;
+      border: 1px solid #dedede;
+      border-radius: .05rem;
+      padding: .04rem .05rem;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+      font-size: 16px;
     }
   }
 </style>
