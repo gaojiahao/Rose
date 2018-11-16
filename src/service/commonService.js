@@ -176,7 +176,7 @@ export let getProcessStatus = (listId) => {
       listId,
       page: 1,
       start: 0,
-      limit: 10000, 
+      limit: 10000,
     }
   })
 }
@@ -250,6 +250,28 @@ export let getRoleByUserId = (userId = '') =>{
     }
   })
 }
+// TODO 获取转办人员列表
+export let getUserList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/listUsers',
+    data: {
+      _dc: Date.now(),
+      sort: JSON.stringify([{property: 'crtTime', direction: 'DESC'}]),
+      ...data
+    }
+  })
+};
+
+// TODO 转办
+export let transferTask = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/flow/setAssignee',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
 
 export default {
   getList,
@@ -262,5 +284,7 @@ export default {
   getBaseInfoData,
   saveAndCommitTask,
   getProcessStatus,
-  getObjDealerByLabelName
+  getObjDealerByLabelName,
+  getUserList,
+  transferTask,
 }

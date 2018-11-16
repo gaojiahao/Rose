@@ -5,7 +5,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 选择客户-->
-        <pop-dealer-list :defaultValue="dealerInfo" :defaultContact="contact" @sel-dealer="selDealer" @sel-contact="selContact" >
+        <pop-dealer-list :defaultValue="dealerInfo" :defaultContact="contactInfo" @sel-dealer="selDealer" @sel-contact="selContact" >
         </pop-dealer-list>
         <!-- 商机明细 -->
         <div class="materiel_list">
@@ -106,13 +106,13 @@
         biReferenceId: '',
         categoryLabels: [],
         currentType: [],
-        contact: {},
+        contactInfo: {},
       }
     },
     directives: {TransferDom},
     components: {
       Cell, Popup, Group, XInput, PopupPicker,
-      Datetime, XTextarea, PopupRadio, 
+      Datetime, XTextarea, PopupRadio,
       RPicker, PopDealerList, PopSalesmanList
     },
     mixins: [common],
@@ -127,12 +127,12 @@
         this.formData.dealerDebit = this.dealerInfo.dealerCode;
       },
       selContact (val){
-        let contact = {...val};
-        this.contact = contact;
+        let contactInfo = {...val};
+        this.contactInfo = contactInfo;
         // 联系人
-        this.formData.dealerDebitContactPersonName = contact.dealerName || '';
+        this.formData.dealerDebitContactPersonName = contactInfo.dealerName || '';
         // 联系人电话
-        this.formData.dealerDebitContactInformation = contact.dealerMobilePhone || '';
+        this.formData.dealerDebitContactInformation = contactInfo.dealerMobilePhone || '';
       },
       // TODO 提交
       submitOrder () {
@@ -286,7 +286,7 @@
             [DRAFT_KEY]: {
               formData,
               dealerInfo : this.dealerInfo,
-              contact: this.contact,
+              contactInfo: this.contactInfo,
             }
           };
         }
@@ -298,7 +298,7 @@
         let draft = JSON.parse(data);
         this.formData = draft.formData;
         this.dealerInfo = draft.dealerInfo;
-        this.contact = draft.contact;
+        this.contactInfo = draft.contactInfo;
         sessionStorage.removeItem(DRAFT_KEY)
       }
       this.getTypeLabel()

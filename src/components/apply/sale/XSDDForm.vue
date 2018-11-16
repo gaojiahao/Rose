@@ -2,6 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="formData" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
@@ -137,6 +138,7 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
   const DRAFT_KEY = 'XSDD_DATA';
@@ -164,13 +166,16 @@
     components: {
       XInput, XTextarea, Group, Cell, Popup, 
       PopMatter, RNumber, PopMatterList, PopDealerList,
-      PopSingleSelect,  Datetime, RPicker
+      PopSingleSelect,  Datetime, RPicker, PopBaseinfo
     },
     mixins: [common],
     filters: {
       numberComma,
     },
     methods: {
+      selItem(val){
+        console.log(val)
+      },
       // 选中的客户
       selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
