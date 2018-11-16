@@ -221,6 +221,36 @@ export let getObjDealerByLabelName = (data = {}) => {
   })
 };
 
+// 获取所有的经办人
+export let listUsers = (data = {}) =>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/listUsers',
+    data
+  })
+}
+export let getGroupByUserId = (userId = '') =>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getGroupByUserId',
+    data: {
+      page: 1,
+      start: 0,
+      limit: 10000,
+      userId
+    }
+  })
+}
+export let getRoleByUserId = (userId = '') =>{
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getRoleByUserId',
+    data: {
+      page: 1,
+      start: 0,
+      limit: 10000,
+      userId
+    }
+  })
+}
+
 export default {
   getList,
   upload,
