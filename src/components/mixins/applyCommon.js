@@ -314,8 +314,8 @@ export default {
         // 分享
         let shareInfo = {
           title: `创建新的${name}`, 
-          desc: `点击创建新的${name}`,
-          imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
+          desc: `点击创建新的${name}订单`,
+          imgUrl: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2952407151,1992384149&fm=26&gp=0.jpg'
           // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.png`
         }
         shareContent(shareInfo);

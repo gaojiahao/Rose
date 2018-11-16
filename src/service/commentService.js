@@ -63,6 +63,51 @@ export let savePraise = (commentId = '') => {
   })
 };
 
+// TODO 是否关注
+export let isSubscribeByRelationKey = (relationKey = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/comment/isSubscribeByRelationKey',
+    data: {
+      relationKey
+    }
+  })
+}
+// ToDo 关注
+export let subscribeApp = (data = {}) => {
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/comment/subscribeApp',
+    data: data
+  })
+  // return $axios.post({
+  //   url: '/H_roleplay-si/comment/subscribeApp',
+  //   data: {
+  //     ...data
+  //   }
+  // })
+}
+// TODO 取关
+export let unsubscribeApp = (data = {}) => {
+  return $axios.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
+    url: '/H_roleplay-si/comment/unsubscribeAppByRelationKey',
+    data: data
+  })
+  // return $axios.post({
+  //   url: 'H_roleplay-si/comment/unsubscribeAppByRelationKey',
+  //   data
+  // })
+}
+// TODO 获取关注的人数
+export let getUserList = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/comment/getUserByRelationKey',
+    data
+  })
+}
+
 export default {
   getCommentList: getPCCommentList,
   saveComment,

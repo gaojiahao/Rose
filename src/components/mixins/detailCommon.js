@@ -11,6 +11,9 @@ import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
+/* 引入微信相关 */
+import {register} from 'plugins/wx'
+import { shareContent } from 'plugins/wx/api'
 
 export default {
   components: {
@@ -227,7 +230,7 @@ export default {
       })
     },
     async loadPage() {
-      let {transCode} = this.$route.query;
+      let { transCode, name } = this.$route.query;
       if (!transCode) {
         this.$vux.alert.show({
           content: '抱歉，交易号有误，请尝试刷新之后再次进入'
@@ -248,9 +251,21 @@ export default {
       this.$loading.hide();
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
+      wx.ready(() => {
+        // 分享
+        let shareInfo = {
+          title: `点击查看${name}详情`, 
+          desc: `点击查看${name}详情，哈哈哈哈`,
+          imgUrl : 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=888178039,2627708353&fm=26&gp=0.jpg'
+          // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
+          // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.jpg`
+        }
+        shareContent(shareInfo);
+      })
     },
   },
   created() {
+    register()
     this.loadPage();
   }
 }
