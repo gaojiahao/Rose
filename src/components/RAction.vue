@@ -11,12 +11,17 @@
                    v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
     <div v-transfer-dom>
       <confirm class="action-confirm" title="转办" @on-confirm="onConfirm" v-model="showConfirm">
-        <div class="confirm-item">转办给: {{selectedUser.nickname}}</div>
         <div class="confirm-item">
-          工时: <input type="number" class="input-value" v-model="transferInfo.taskTime">
+          <span class="title">转办给: </span>
+          <span>{{selectedUser.nickname}}</span>
         </div>
         <div class="confirm-item">
-          备注: <input type="text" class="input-value" v-model="transferInfo.comment">
+          <span class="title">工时: </span>
+          <input type="number" class="value" v-model.number="transferInfo.taskTime">
+        </div>
+        <div class="confirm-item">
+          <span class="title">备注: </span>
+          <input type="text" class="value" v-model="transferInfo.comment">
         </div>
       </confirm>
     </div>
@@ -57,9 +62,7 @@
     data() {
       return {
         showUserList: false, // 是否展示用户列表
-        selectedUser: {
-          nickname: '测试'
-        }, // 选中的转办用户
+        selectedUser: {}, // 选中的转办用户
         showConfirm: false,
         transferInfo: {
           taskTime: 0.1, // 工时
@@ -169,7 +172,6 @@
           ...this.transferInfo,
         };
         this.$HandleLoad.show();
-        console.log(submitData)
         transferTask(submitData).then(data => {
           this.$HandleLoad.hide();
           let {success = false, message = '提交失败'} = data;
@@ -241,12 +243,18 @@
 
   .action-confirm {
     .confirm-item {
+      display: flex;
+      align-items: center;
       padding: .05rem 0;
       line-height: .2rem;
       text-align: left;
     }
-    .input-value {
-      width: 80%;
+    .title {
+      display: inline-block;
+      width: .6rem;
+    }
+    .value {
+      flex: 1;
       border: 1px solid #dedede;
       border-radius: .05rem;
       padding: .04rem .05rem;

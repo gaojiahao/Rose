@@ -6,7 +6,7 @@
           <group class="mater_property
           " gutter="0">
             <x-input title="物料编码" text-align='right' placeholder='请填写' :readonly="codeReadOnly"
-                    :class='{readonly : codeReadOnly}' v-model.trim='inventory.inventoryCode'>
+                     :class='{readonly : codeReadOnly}' v-model.trim='inventory.inventoryCode'>
               <template slot="label">
                 <span class="required">物料编码</span>
               </template>
@@ -35,11 +35,16 @@
                     mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
         </group>
         <!-- 辅助计量 -->
-        <group class="duplicate-item" title="辅助计量单位">
+        <div class="duplicate-item-no-select" v-if="!invMoreUnit.length">
+          <span class="title">辅助计量单位</span>
+          <span class="add" @click="addMoreUnit">新增</span>
+        </div>
+        <group class="duplicate-item" title="辅助计量单位" v-else>
           <div v-for="(item,index) in invMoreUnit" :class="{'has_border': index < invMoreUnit.length-1}" :key="index">
-            <r-picker class="vux-1px-t"title="辅助计量单位" :data="measureList" :value="item.invSubUnitName"
+            <r-picker class="vux-1px-t" title="辅助计量单位" :data="measureList" :value="item.invSubUnitName"
                       mode="4" :has-border="false" v-model="item.invSubUnitName" required></r-picker>
-            <x-input title="单位倍数" type="number" text-align='right' placeholder='请填写' v-model='item.invSubUnitMulti' @on-blur="checkAmt(item)">
+            <x-input title="单位倍数" type="number" text-align='right' placeholder='请填写' v-model='item.invSubUnitMulti'
+                     @on-blur="checkAmt(item)">
               <template slot="label">
                 <span class="required">单位倍数</span>
               </template>
@@ -47,14 +52,19 @@
             <x-input title="辅计说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
           </div>
         </group>
-        <div class="add_more">
+        <div class="add_more" v-show="invMoreUnit.length">
           您还需要添加新的辅助计量?请点击
           <span class='add' @click="addMoreUnit">新增</span>
-          <em v-show="invMoreUnit.length>1">或</em>
-          <span class='delete' @click="deleteMoreUnit" v-show="invMoreUnit.length>1">删除</span>
+          <em v-show="invMoreUnit.length>0">或</em>
+          <span class='delete' @click="deleteMoreUnit" v-show="invMoreUnit.length>0">删除</span>
         </div>
+
         <!-- 净含量 -->
-        <group class="duplicate-item" title="净含量">
+        <div class="duplicate-item-no-select" v-if="!invNetWeight.length">
+          <span class="title">净含量</span>
+          <span class="add" @click="addNetWeight">新增</span>
+        </div>
+        <group class="duplicate-item" title="净含量" v-else>
           <div v-for="(item,index) in invNetWeight" :class="{'has_border': index < invNetWeight.length-1}" :key="index">
             <x-input title="净含量名称" text-align='right' placeholder='请填写' v-model='item.invCompName'>
               <template slot="label">
@@ -63,7 +73,8 @@
             </x-input>
             <r-picker title="计量单位" :data="measureList" :value="item.invCompUnit"
                       mode="4" :has-border="false" v-model="item.invCompUnit" has-border-top required></r-picker>
-            <x-input title="净含量数量" type="number" text-align='right' placeholder='请填写' v-model='item.invCompQty' @on-blur="checkAmt(item)">
+            <x-input title="净含量数量" type="number" text-align='right' placeholder='请填写' v-model='item.invCompQty'
+                     @on-blur="checkAmt(item)">
               <template slot="label">
                 <span class="required">净含量数量</span>
               </template>
@@ -71,11 +82,11 @@
             <x-input title="净含量说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
           </div>
         </group>
-        <div class="add_more">
+        <div class="add_more" v-show="invNetWeight.length">
           您还需要添加新的净含量?请点击
           <span class='add' @click="addNetWeight">新增</span>
-          <em v-show="invNetWeight.length>1">或</em>
-          <span class='delete' @click="deleteNetWeight" v-show="invNetWeight.length>1">删除</span>
+          <em v-show="invNetWeight.length>0">或</em>
+          <span class='delete' @click="deleteNetWeight" v-show="invNetWeight.length>0">删除</span>
         </div>
       </div>
     </r-scroll>
@@ -97,6 +108,7 @@
   import UploadImage from 'components/UploadImage'
   import RScroll from 'components/RScroll'
   import {toFixed} from '@/plugins/calc'
+
   export default {
     data() {
       return {
@@ -137,19 +149,14 @@
           inventoryStatus: '', // 物料状态
           inventoryPic: '',
           comment: '', // 物料说明
-          technicsCode: '' //工艺路线
+          technicsCode: '', //工艺路线
+          // leadTime: '', // 加工提前期
+          // procedureName: '', // 工序名称
+          // procedureCode: '', // 工序编码
+          // moq: 0, // 起订量
         },
-        invMoreUnit: [{
-          invSubUnitName: '', // 辅助计量单位
-          invSubUnitMulti: '', // 单位倍数
-          comment: '', // 辅计说明
-        }], // 辅助计量
-        invNetWeight: [{
-          invCompName: '', // 净含量名称
-          invCompUnit: '', // 计量单位
-          invCompQty: '', // 净含量数量
-          comment: '', // 净含量说明
-        }], // 净含量
+        invMoreUnit: [], // 辅助计量
+        invNetWeight: [], // 净含量
         transCode: '',
         hasDefault: false, // 判断是否为回写
         imgFileObj: {}, // 上传的图片对象
@@ -163,8 +170,8 @@
         inventoryStatus: '', // 物料状态
         inventoryTypeDisabled: false,
         inventorySubclassDisabled: false,
-        scrollOptions : {
-          click : true
+        scrollOptions: {
+          click: true
         },
       }
     },
@@ -178,7 +185,7 @@
       RPicker,
       UploadImage,
       XInput,
-      PopupPicker,RScroll
+      PopupPicker, RScroll
     },
     methods: {
       // TODO 上传图片成功触发
@@ -217,13 +224,13 @@
           this.statusList = tableContent;
         })
       },
-      checkAmt(item){
-        let { invSubUnitMulti,invCompQty} = item;
+      checkAmt(item) {
+        let {invSubUnitMulti, invCompQty} = item;
         // 金额
         if (invSubUnitMulti) {
           item.invSubUnitMulti = Math.abs(toFixed(invSubUnitMulti));
         }
-        else if(invCompQty){
+        else if (invCompQty) {
           item.invCompQty = Math.abs(toFixed(invCompQty));
         }
       },
@@ -257,16 +264,7 @@
         if (this.inventory.status) {
           delete this.inventory.status
         }
-        let submitData = {
-          listId: this.listId,
-          // biReferenceId: this.biReferenceId,
-          formData: {
-            baseinfo: this.baseinfo,
-            inventory: this.inventory,
-            invMoreUnit: this.invMoreUnit.length ? this.invMoreUnit : null,
-            invNetWeight: this.invNetWeight.length ? this.invNetWeight : null,
-          }
-        };
+
         //console.log(submitData);
         let operation = save;
         let warn = '';
@@ -278,7 +276,7 @@
           return true;
         });
         // 校验辅助计量
-        if (!warn) {
+        if (!warn && this.invMoreUnit.length) {
           let validateMap = [
             {
               key: 'invSubUnitName',
@@ -291,7 +289,7 @@
           warn = this.validateData(this.invMoreUnit, validateMap);
         }
         // 校验净含量
-        if (!warn) {
+        if (!warn && this.invNetWeight.length) {
           let validateMap = [
             {
               key: 'invCompName',
@@ -313,6 +311,24 @@
           });
           return
         }
+
+        let formData = {
+          baseinfo: this.baseinfo,
+          inventory: this.inventory,
+        };
+
+        if (this.invMoreUnit.length) {
+          formData.invMoreUnit = this.invMoreUnit
+        }
+        if (this.invNetWeight.length) {
+          formData.invNetWeight = this.invNetWeight
+        }
+
+        let submitData = {
+          listId: this.listId,
+          // biReferenceId: this.biReferenceId,
+          formData: formData,
+        };
 
         // 修改
         if (this.transCode) {
@@ -562,15 +578,16 @@
     z-index: 10;
   }
 
-  .vux-1px-b:after, 
-  .vux-1px-l:before ,
-  .vux-1px-t:before,{
+  .vux-1px-b:after,
+  .vux-1px-l:before,
+  .vux-1px-t:before, {
     border-color: #e8e8e8;
     color: #e8e8e8;
-    left:0.1rem;
+    left: 0.1rem;
   }
-  .vux-1px-l:before{
-    left:0;
+
+  .vux-1px-l:before {
+    left: 0;
   }
 
   .content {
@@ -593,10 +610,10 @@
         &:before {
           // left: 0;
           border-color: #e8e8e8;
-          left:0.1rem;
+          left: 0.1rem;
         }
       }
-    }  
+    }
     input {
       border: none;
       outline: none;
@@ -645,10 +662,10 @@
     }
     /* 重复项 */
     .duplicate-item {
-      margin-top:0.1rem;
+      margin-top: 0.1rem;
       background-color: #fff;
       overflow: hidden;
-      .has_border{
+      .has_border {
         border-bottom: .03rem solid #e8e8e8;
       }
       /deep/ .weui-cells__title {
@@ -667,6 +684,22 @@
         &:before {
           display: block;
         }
+      }
+    }
+    .duplicate-item-no-select {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: .1rem;
+      padding: .1rem .2rem .1rem .1rem;
+      background-color: #fff;
+      font-size: .16rem;
+      .add {
+        padding: .01rem .06rem;
+        border-radius: .12rem;
+        background: #5077aa;
+        color: #fff;
+        font-size: .12rem;
       }
     }
     .add_more {
