@@ -153,6 +153,18 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   })
 };
 
+// TODO 删除文件
+export let deleteFile = (id = '') => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/delete',
+    data: {
+      _dc: Date.now(),
+      id,
+      list: 'attachments'
+    }
+  })
+};
+
 // TODO 获取加工属性
 export let getDictByType = (type = '', data = {}) => {
   return $axios.ajax({

@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-file-container" :style="containStyle" v-if="(noUpload && defaultValue.length) || !noUpload">
+  <div class="upload-file-container" :class="{'no-upload': noUpload}" :style="containStyle" v-if="(noUpload && defaultValue.length) || !noUpload">
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files" @click="preview(item)" :key="index">
@@ -10,9 +10,9 @@
         <template v-else>
           {{item.attr1}}
         </template>
+        <i class="icon-close" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
       <div class="upload-file-item" v-if="!noUpload">
-
         <label class="upload-file-add" :for="id" @click.stop="">
           <span class="iconfont icon-fujian"></span>
           <!-- <span class="add_text">增加图片</span> -->
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import {upload,} from 'service/commonService';
+  import {upload, deleteFile,} from 'service/commonService';
   import Exif from 'exif-js'
 
   export default {
@@ -328,7 +328,26 @@
             urls: [imgUrl] // 需要预览的图片http链接列表
           });
         }
-      }
+      },
+      // TODO 删除文件
+      deleteFile(item) {
+        this.$vux.confirm.show({
+          content: '确定删除？',
+          onConfirm: () => {
+            deleteFile(item.id).then(({success = true, message = ''}) => {
+              if (success) {
+                let idx = this.files.findIndex(fItem => fItem.id === item.id);
+                if (idx !== -1) {
+                  this.files.splice(idx, 1);
+                }
+              }
+              this.$vux.alert.show({
+                content: message,
+              })
+            })
+          },
+        })
+      },
     },
     created() {
       this.setDefault();
@@ -343,22 +362,41 @@
     width: 95%;
     background: #fff;
     box-sizing: border-box;
+    &.no-upload {
+      .upload-file-item {
+        margin: 0 .08rem .08rem 0;
+      }
+    }
     .title {
       color: #757575;
       font-size: .12rem;
     }
     .upload-file-list {
       display: flex;
+      flex-wrap: wrap;
       padding: 0.05rem 0;
     }
     .upload-file-item {
+      position: relative;
       display: inline-block;
-      margin-right: 0.08rem;
+      margin: 0 .3rem .3rem 0;
       width: .6rem;
       height: .6rem;
       .img {
         width: 100%;
         height: 100%;
+      }
+      .icon-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 5;
+        display: inline-block;
+        width: .3rem;
+        height: .3rem;
+        background: url(~assets/close.png) no-repeat;
+        background-size: 100% 100%;
+        transform: translate(50%, -50%);
       }
     }
     .upload-file {
