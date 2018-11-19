@@ -34,8 +34,8 @@
                 </div>
                 <div class="handle_result">
                   <span>操作动作:</span>
-                  <span class="result" 
-                  :class='{reject_c : item.lastNode.status === "同意" || 
+                  <span class="result"
+                  :class='{reject_c : item.lastNode.status === "同意" ||
                   item.lastNode.status === "提交"  }'>
                   {{item.lastNode.status}}
                   </span>
@@ -81,7 +81,7 @@ export default {
     }
   },
   components: {
-    search, RScroll, 
+    search, RScroll,
   },
   methods:{
     goDetail(item, index){
@@ -137,7 +137,7 @@ export default {
       this.$refs.bScroll.scrollTo(0, 0);
       this.$refs.bScroll.resetPullDown();
     },
-    searchList(val) {
+    searchList({val = '', property = ''}) {
       this.serachVal = val;
       this.resetCondition();
       this.getList();
@@ -154,7 +154,7 @@ export default {
           page: this.page,
           filter: JSON.stringify(filter),
         }).then(({total = 0, tasks = [], success = true}) => {
-          tasks.forEach(item => {           
+          tasks.forEach(item => {
             item.status = "待处理"
             item.transCode = item.businessKey;
           });
@@ -366,7 +366,7 @@ export default {
         // 操作
         .handle {
           font-size: .14rem;
-          
+
         }
         .tips {
           color: #757575;

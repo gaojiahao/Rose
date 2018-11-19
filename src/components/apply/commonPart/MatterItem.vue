@@ -117,8 +117,8 @@
     .mater_main {
       display: inline-block;
       margin-left: .1rem;
-      /*padding-right: .38rem;*/
-      width: 2.6rem;
+      padding-right: .38rem;
+      width: calc(100% - .75rem);
       box-sizing: border-box;
       &.no-edit {
         padding-right: 0;

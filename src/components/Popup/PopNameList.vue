@@ -1,7 +1,7 @@
 <template>
   <div class="pop-name-list-container" @click="itemClick">
     <template v-if="!selItems.PROJECT_NAME">
-      <div class="title required">项目计划</div>
+      <div class="title required">项目名称</div>
       <div class="mode">请选择项目</div>
       <i class="iconfont icon-youjiantou r_arrow"></i>
     </template>

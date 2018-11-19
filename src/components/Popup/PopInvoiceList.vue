@@ -15,6 +15,7 @@
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="mater_name">{{item.transCode}}</div>
+              <div class="no_invoiced">{{item.inventoryName}}</div>
               <div class="no_invoiced" v-if="getCostList === 'getManyVATBilling'">待开票金额：￥{{item.amntBal}}</div>
               <div class="no_invoiced" v-else>待收票金额：￥{{item.amntBal}}</div>
             </div>

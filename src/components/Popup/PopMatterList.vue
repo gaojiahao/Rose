@@ -480,8 +480,23 @@
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
       },
+      // TODO 设置搜索框过滤条件
+      setFilterList() {
+        if (this.getListMethod === 'getPurchaseInNeeds') {
+          this.filterList = [
+            {
+              name: '物料名称',
+              value: 'invName',
+            }, {
+              name: '物料编码',
+              value: 'matCode',
+            },
+          ]
+        }
+      },
     },
     created() {
+      this.setFilterList();
       this.setDefaultValue();
       // 请求物料
       this[this.getListMethod]();
