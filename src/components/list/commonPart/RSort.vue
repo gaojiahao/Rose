@@ -21,7 +21,7 @@
           <div class="process-status-container basic-mod">
             <div class="filter_title vux-1px-b">流程状态</div>
             <div class="process_status">
-              <div class="each_status" :class="{'active vux-1px' : fieldVlaue === item.fieldVlaue}"
+              <div class="each_status"  :class="{'active vux-1px' : fieldVlaue === item.fieldVlaue}"
               v-for="(item, index) in PcesStaList" :key="index"
               @click="selProcee(item, index)">
                 <div class="status_content">{{item.fieldVlaue}}</div>
@@ -160,7 +160,7 @@ export default {
   border-color: #e8e8e8;
 }
 .vux-1px:before {
-  width: 197%;
+  width: 176%;
   border-radius: .4rem;
   border-color: #5077aa;
 }
@@ -219,7 +219,6 @@ export default {
 .filter-container-part {
   width: 3rem;
   height: 100%;
-  padding: .1rem;
   overflow: auto;
   position: relative;
   box-sizing: border-box;
@@ -234,33 +233,34 @@ export default {
     padding-bottom: .04rem;
   }
   .process-status-container {
+    padding: .1rem 0 0 .1rem;
     .process_status {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      overflow: hidden;
       .each_status {
-        width: 30%;
+        float: left;
+        width: 33.33%;
+        height: .3rem;
+        // overflow: hidden;
         font-size: .12rem;
         font-weight: bold;
+        line-height: .3rem;
         text-align: center;
+        padding-right: .1rem;
         margin-bottom: .1rem;
-        border-radius: .3rem;
-        background: #e8e8e8;
-        padding: .1rem .06rem;
         box-sizing: border-box;
-        // margin-right: .1rem;
         .status_content {
           overflow: hidden;
+          padding: 0 .05rem;
           white-space: nowrap;
+          border-radius: .3rem;  
+          background: #E8E8E8;
           text-overflow: ellipsis;
         }    
       }
-      // .each_status + .each_status {
-      //   margin-right: .1rem;
-      // }
     }
   }
   .time-filter-container {
+    padding: 0 .1rem;
     .time_filter {
       display: flex;
       align-items: center;

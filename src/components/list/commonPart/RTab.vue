@@ -19,6 +19,7 @@
             {name: '全部', status: ''},
             {name: '进行中', status: '进行中'},
             {name: '已生效', status: '已生效'},
+            {name: '草稿', status: '草稿'},
           ]
         }
       }
@@ -58,15 +59,15 @@
     justify-content: space-between;
     .each-tab {
       flex: 1;
-      height: .3rem;
+      padding: .02rem 0;
       font-size: .12rem;
       text-align: center;
-      line-height: .3rem;
       border-radius: 30px;
       background: #f2f2f7;
       box-sizing: border-box;
       &.active {       
         color: #5077aa;
+        font-weight: bold;
       }
     }
     .each-tab + .each-tab {
