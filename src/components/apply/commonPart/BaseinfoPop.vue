@@ -25,22 +25,23 @@
             <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
               <div class="pop-list-main ">
+                <!-- 头像 -->
+                <div class="user-photo">
+                  <img :src="item.photo" alt="mater_img" @error="getDefaultImg(item)">
+                </div>
                 <div class="pop-list-info">
-                  <!--联系人电话 -->
+                  <!-- 名字 -->
                   <div class="withColor">
                     <div class="ForInline name" style="display:inline-block">
                       <span>{{item.nickname}}</span>
                     </div>
                   </div>
-                  <div class="withColor" v-if="item.dealerMobilePhone">
+                  <!-- 用户id -->
+                  <div class="withColor" v-if="item.userCode" style="margin-top:0;">
                     <div class="ForInline " style="display:inline-block">
-                      <span class='creator'>{{item.dealerMobilePhone}}</span>
+                      <span>{{item.userCode}}</span>
                     </div>
                   </div>
-                  <!-- 地址 -->
-                  <!-- <div class="withoutColor">
-                    <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
-                  </div> -->
                 </div>
               </div>
               <!-- icon -->
@@ -146,6 +147,16 @@ export default {
     // TODO 判断是否展示选中图标
     showSelIcon(sItem) {
       return this.selItems.userId === sItem.userId;
+    },
+    // TODO 获取默认图片
+    getDefaultImg(item) {
+      let url = item.gender === '男'
+        ? require('assets/ava03.png')
+        : require('assets/ava04.png')
+      if (item) {
+        item.photo = url;
+      }
+      return url;
     },
     // 选择组织
     changeGroup(val) {
@@ -361,9 +372,21 @@ export default {
           // 列表主体
           .pop-list-main {
             flex: 1;
-            padding-left: .1rem;
+            // padding-left: .1rem;
             box-sizing: border-box;
-            display: inline-block;
+            // display: inline-block;
+            display: flex;
+            //头像
+            .user-photo{
+              width: .5rem;
+              height: .5rem;
+              margin-right: .1rem;
+              img{
+                border-radius: .05rem;
+                width: 100%;
+                height: 100%;
+              }
+            }
             // 物料信息
             .pop-list-info {
               color: #757575;
@@ -372,7 +395,8 @@ export default {
               .withColor {
                 margin-top: .04rem;
                 .name {
-                  color: #5077aa;
+                  // color: #5077aa;
+                  color: #111;
                   font-size: .14rem;
                   font-weight: bold;
                 }
