@@ -1,30 +1,37 @@
 <template>
-  <div class="pop_dealer_list">
+  <div class="pop_dealer_list" :class="{'dealer-list-2': mode === '2'}">
     <div class='dealer-info' @click="showDealerPop = !showDealerPop">
-      <div class='user-content' v-if="dealerInfo.dealerCode">
-        <div class="user-info">
-          <div class="user-name">
-            <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
-            <span>{{dealerInfo.dealerName}}</span>
+      <template v-if="mode === '2'">
+        <div class="title" :class="{required : required}">{{dealerLabelName}}名称</div>
+        <div class="mode">{{dealerInfo.dealerName || placeholder}}</div>
+        <x-icon class="r_arrow" type="ios-arrow-right" size="16"></x-icon>
+      </template>
+      <template v-else>
+        <div class='user-content' v-if="dealerInfo.dealerCode">
+          <div class="user-info">
+            <div class="user-name">
+              <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
+              <span>{{dealerInfo.dealerName}}</span>
+            </div>
+            <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
           </div>
-          <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
-        </div>
-        <div class="cp-info">
-          <span class="iconfont icon-icon-test"></span>
-          <span class="cp-ads" v-if="noAddress">暂无</span>
-          <span class="cp-ads" v-else>
+          <div class="cp-info">
+            <span class="iconfont icon-icon-test"></span>
+            <span class="cp-ads" v-if="noAddress">暂无</span>
+            <span class="cp-ads" v-else>
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
           </span>
+          </div>
         </div>
-      </div>
-      <div class='user-content' v-else>
-        <div class="title">{{dealerLabelName}}列表</div>
-        <div class="required">请选择{{dealerLabelName}}</div>
-      </div>
-      <span class="iconfont icon-youjiantou r-arrow"></span>
+        <div class='user-content' v-else>
+          <div class="title">{{dealerLabelName}}列表</div>
+          <div class="required">请选择{{dealerLabelName}}</div>
+        </div>
+        <span class="iconfont icon-youjiantou r-arrow"></span>
+      </template>
     </div>
     <pop-contact-list :dealer-info="dealerInfo" :default-value="contactInfo"
-                      @sel-contact="selContact"></pop-contact-list>
+                      @sel-contact="selContact" v-if="!noContact"></pop-contact-list>
     <!-- 往来 Popup -->
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -111,6 +118,29 @@
           return {}
         }
       },
+      // 展示模式
+      mode: {
+        type: String,
+        default: '1'
+      },
+      required: {
+        type: Boolean,
+        default: false
+      },
+      // 是否不展示联系人
+      noContact: {
+        type: Boolean,
+        default: false
+      },
+      placeholder: {
+        type: String,
+        default: '请选择'
+      },
+      // 不记录选中的往来项
+      noRecord: {
+        type: Boolean,
+        default: false
+      },
     },
     computed: {
       noAddress() {
@@ -175,7 +205,13 @@
         this.selItems = [sItem];
         this.dealerInfo = Object.freeze({...sItem});
         this.contactInfo = {};
-        sessionStorage.setItem('DEALERLIST_SELITEMS', JSON.stringify(this.selItems));
+        if (!this.noRecord) {
+          sessionStorage.setItem('DEALERLIST_SELITEMS', JSON.stringify(this.selItems));
+        }
+        if (this.mode === '2') {
+          this.$emit('sel-dealer', {...this.dealerInfo});
+          return
+        }
         this.$emit('sel-dealer', JSON.stringify(this.selItems));
       },
       // 选择联系人
@@ -292,9 +328,39 @@
     margin-bottom: 0.1rem;
     box-sizing: border-box;
     padding: .06rem .1rem;
+    &.dealer-list-2 {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      .dealer-info {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        padding: .1rem .2rem .1rem .1rem;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .title {
+        font-size: .16rem;
+      }
+      .mode {
+        color: #999;
+      }
+      .r_arrow {
+        top: 50%;
+        right: .04rem;
+        position: absolute;
+        transform: translate(0, -50%);
+        fill: #999;
+      }
+    }
     .title {
       color: #757575;
       font-size: .12rem;
+      &.required {
+        color: $required;
+        font-weight: bold;
+      }
     }
     .mode {
       font-weight: 500;
@@ -308,6 +374,7 @@
     }
     .dealer-info {
       position: relative;
+      width: 100%;
       .user-content {
         .user-info {
           font-size: 0;

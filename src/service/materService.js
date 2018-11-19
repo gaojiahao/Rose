@@ -109,9 +109,9 @@ export let getInventory7502 = (data = {}) => {
   })
 };
 //获取物料列表
-export let getMatList = ( data = {})=>{
+export let getMatList = (data = {}) => {
   return $axios.ajax({
-    url:'/H_roleplay-si/ds/getMaterialList',
+    url: '/H_roleplay-si/ds/getMaterialList',
     data
   })
 }
@@ -128,9 +128,9 @@ export let getKCPDList = (data = {}) => {
 };
 
 //获取采购退货出库的物料
-export let getCKTHCKList =  ( data = {})=>{
+export let getCKTHCKList = (data = {}) => {
   return $axios.ajax({
-    url:'/H_roleplay-si/ds/getPurchaseReturn',
+    url: '/H_roleplay-si/ds/getPurchaseReturn',
     data
   })
 }
@@ -145,7 +145,7 @@ export let getXQTJList = (data = {}, method = 'getDemandAdjustment') => {
   })
 };
 //获取采购申请物料需求计划列表
-export let getPurchaseInNeeds = (data = {})=>{
+export let getPurchaseInNeeds = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getPurchaseInNeeds',
     data
@@ -181,8 +181,28 @@ export let getTaskBom = (data = {}) => {
       ...data
     }
   })
+};
 
-}
+// TODO 获取工艺路线名称
+export let getObjTechnics = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjTechnics',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+// TODO 获取工序名称
+export let getUsingProcedure = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getUsingProcedure',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
 
 export default {
   save,

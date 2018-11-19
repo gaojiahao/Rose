@@ -5,49 +5,68 @@
       <div class="d_top">
         <div class="mater_info">
           <img class="avatar" :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
-          <span class="mater_name">{{inventory.inventoryName}}</span>          
+          <span class="mater_name">{{inventory.inventoryName}}</span>
           <div class="mater_status_part">
-            <span class="mater_code" >{{inventory.inventoryCode}}</span>
+            <span class="mater_code">{{inventory.inventoryCode}}</span>
             <span class="mater_status" :class="inventory.statusClass">{{inventory.status}}</span>
           </div>
-          
         </div>
       </div>
       <!-- 物料基本信息展示区域 -->
       <div class="d_main">
-        <div class='title vux-1px-b'>
-          基本信息
-        </div>
+        <div class='title vux-1px-b'>基本信息</div>
         <div class='content'>
           <form-cell cellTitle="物料大类" :cellContent="inventory.inventoryType" :showTopBorder="false"></form-cell>
-          <form-cell cellTitle="物料子类" :cellContent="inventory.inventoryType" ></form-cell>
-          <form-cell cellTitle="规格" :cellContent="inventory.specification" ></form-cell>
-          <form-cell cellTitle="加工属性" :cellContent="inventory.processing" ></form-cell>
-          <form-cell cellTitle="材质" :cellContent="inventory.material" ></form-cell>
-          <form-cell cellTitle="颜色" :cellContent="inventory.inventoryColor" ></form-cell>
-          <form-cell cellTitle="单位" :cellContent="inventory.measureUnit" ></form-cell>
+          <form-cell cellTitle="物料子类" :cellContent="inventory.inventorySubclass"></form-cell>
+          <form-cell cellTitle="规格" :cellContent="inventory.specification"></form-cell>
+          <form-cell cellTitle="加工属性" :cellContent="inventory.processing"></form-cell>
+          <form-cell cellTitle="材质" :cellContent="inventory.material"></form-cell>
+          <form-cell cellTitle="颜色" :cellContent="inventory.inventoryColor"></form-cell>
+          <form-cell cellTitle="单位" :cellContent="inventory.measureUnit"></form-cell>
+          <form-cell cellTitle="保质期天数" :cellContent="inventory.keepingDays"></form-cell>
+          <form-cell cellTitle="临保天数" :cellContent="inventory.nearKeepingDays"></form-cell>
+          <form-cell cellTitle="安全库存" :cellContent="inventory.safeStock"></form-cell>
+          <form-cell cellTitle="工艺路线名称" :cellContent="inventory.technicsName"></form-cell>
+          <form-cell :cellTitle="leadTimeTitle" :cellContent="inventory.leadTime" v-if="leadTimeTitle"></form-cell>
+          <form-cell cellTitle="工序名称" :cellContent="inventory.procedureName"></form-cell>
+          <form-cell cellTitle="工序编码" :cellContent="inventory.procedureCode"></form-cell>
+          <form-cell cellTitle="起订量" :cellContent="inventory.measureUnit"></form-cell>
         </div>
       </div>
       <!-- 辅助计量单位-->
       <div class="d_main" v-show="invMoreUnit.length">
-        <div class='title vux-1px-b'>
-          辅助计量单位
-        </div>
+        <div class='title vux-1px-b'>辅助计量单位</div>
         <div class='content' :class="{'show_border' : index>0}" v-for="(item,index) in invMoreUnit" :key="index">
           <form-cell cellTitle='辅助计量单位' :cellContent="item.invSubUnitName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='单位倍数' :cellContent="item.invSubUnitMulti" ></form-cell>
+          <form-cell cellTitle='单位倍数' :cellContent="item.invSubUnitMulti"></form-cell>
           <form-cell cellTitle='辅计说明' :cellContent="item.comment"></form-cell>
         </div>
       </div>
       <div class="d_main" v-show="invNetWeight.length">
-        <div class='title vux-1px-b'>
-          净含量
-        </div>
+        <div class='title vux-1px-b'>净含量</div>
         <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invNetWeight" :key="index">
           <form-cell cellTitle='净含量名称' :cellContent="item.invCompName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='计量单位' :cellContent="item.invCompUnit" ></form-cell>
-          <form-cell cellTitle='净含量数量' :cellContent="item.invCompQty" ></form-cell>
-          <form-cell cellTitle='净含量说明说明' :cellContent="item.comment" ></form-cell>
+          <form-cell cellTitle='计量单位' :cellContent="item.invCompUnit"></form-cell>
+          <form-cell cellTitle='净含量数量' :cellContent="item.invCompQty"></form-cell>
+          <form-cell cellTitle='净含量说明说明' :cellContent="item.comment"></form-cell>
+        </div>
+      </div>
+      <div class="d_main" v-show="invDealerRel.length">
+        <div class='title vux-1px-b'>客户</div>
+        <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invDealerRel" :key="index">
+          <form-cell cellTitle='客户名称' :cellContent="item.productDealerName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle='客户编码' :cellContent="item.productDealerCode"></form-cell>
+          <form-cell cellTitle='客户成品编码' :cellContent="item.clientInventoryCode"></form-cell>
+          <form-cell cellTitle='客户成品名称' :cellContent="item.clientInventoryName"></form-cell>
+          <form-cell cellTitle='说明' :cellContent="item.productComment"></form-cell>
+        </div>
+      </div>
+      <div class="d_main" v-show="invCustomerRel.length">
+        <div class='title vux-1px-b'>供应商</div>
+        <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invCustomerRel" :key="index">
+          <form-cell cellTitle='供应商名称' :cellContent="item.productDealerName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle='供应商编码' :cellContent="item.productDealerCode"></form-cell>
+          <form-cell cellTitle='说明' :cellContent="item.productComment"></form-cell>
         </div>
       </div>
     </div>
@@ -62,6 +81,7 @@
   import {AlertModule} from 'vux';
   import {findData} from 'service/materService'
   import FormCell from 'components/detail/commonPart/FormCell'
+
   export default {
     name: 'materDetail',
     data() {
@@ -70,7 +90,24 @@
         inventory: {},
         invMoreUnit: [],
         invNetWeight: [],
+        invDealerRel: [],
+        invCustomerRel: [],
       }
+    },
+    computed: {
+      // 加工/采购提前期标题
+      leadTimeTitle() {
+        let processing = this.inventory.processing;
+        let pur = ['原料', '商品']; // 采购
+        let mac = ['半成品', '成品', '模具']; // 加工
+        if (pur.includes(processing)) {
+          return '采购提前期'
+        } else if (mac.includes(processing)) {
+          return '加工提前期'
+        } else {
+          return ''
+        }
+      },
     },
     components: {
       FormCell,
@@ -88,15 +125,17 @@
       // TODO 获取物料详情
       findData() {
         return findData(this.transCode).then(({formData}) => {
-           let {inventory = {}} = formData;
+          let {inventory = {}} = formData;
           let status = ['', '使用中', '未使用', '草稿'],
-              statusClass = ['', 'inUse', 'unUse'];
-          inventory.statusClass = statusClass[inventory.status];          
+            statusClass = ['', 'inUse', 'unUse'];
+          inventory.statusClass = statusClass[inventory.status];
           inventory.status = status[inventory.status] || '停用';
           this.inventory = formData.inventory;
           this.invNetWeight = formData.invNetWeight;
           this.invMoreUnit = formData.invMoreUnit;
-          let { inventoryPic, inventoryCode, specification } = this.inventory;
+          this.invDealerRel = formData.invDealerRel || [];
+          this.invCustomerRel = formData.invCustomerRel || [];
+          let {inventoryPic, inventoryCode, specification} = this.inventory;
           // 获取规格和编码的字符串总长度
           this.contentLength = inventoryCode.length + specification.length;
           // 处理图片
@@ -134,6 +173,7 @@
     height: calc(100% - 10%);
     -webkit-overflow-scrolling: touch;
   }
+
   // 下划线
   .vux-1px-b:after {
     border-color: #e8e8e8;
@@ -143,6 +183,7 @@
   .vux-1px-r:after {
     border-color: #e8e8e8;
   }
+
   // 顶部
   .d_top {
     display: flex;
@@ -152,7 +193,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    .mater_info{
+    .mater_info {
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -164,7 +205,7 @@
       .mater_name {
         font-size: .18rem;
         font-weight: bold;
-      } 
+      }
       .mater_status_part {
         font-size: 0;
         .mater_status,
@@ -193,33 +234,33 @@
             background: #5c636e;
           }
           &.longTerm {
-            
+
           }
         }
       }
     }
-    
+
   }
 
   // 中部
   .d_main {
-    margin-top:0.1rem;
+    margin-top: 0.1rem;
     background: #fff;
     padding: 0 0.1rem;
-    .title{
+    .title {
       color: #111;
       background: #fff;
       font-size: .16rem;
       padding: .06rem 0;
       font-weight: bold;
     }
-    .content{
-      
-      &.show_border{
+    .content {
+
+      &.show_border {
         border-bottom: .03rem solid #e8e8e8;
       }
     }
-    
+
   }
 
   // 相关应用
