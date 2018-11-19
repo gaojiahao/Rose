@@ -93,6 +93,7 @@
   import {
     getSumInvBalance,
     getObjInventoryByProcessing,
+    getObjInventory,
     getInventory7501,
     getInventory7502,
     getCKTHCKList,
@@ -282,6 +283,26 @@
       setDefaultValue() {
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
+      },
+      // TODO 获取物料列表(采购入库)
+      getObjInventory() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getObjInventory({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
       },
       // TODO 出库仓库现有物料请求
       getSumInvBalance() {

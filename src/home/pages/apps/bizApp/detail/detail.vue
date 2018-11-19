@@ -116,13 +116,13 @@ export default {
       })
     },
     // TODO 是否已经关注该订单
-    isSubscribeByRelationKey(){
+    isSubscribeByRelationKey() {
       isSubscribeByRelationKey(this.transCode).then( data =>{
         this.isConcern = data;
       })
     },
     // TODO 获取关注的人数
-    getUserList(){
+    getUserList() {
       getUserList({
         page: 1,
         limit: 100,
@@ -132,20 +132,26 @@ export default {
       })
     },
     // TODO 关注或取关
-    goConcern(){
+    goConcern() {
       let operation = subscribeApp,
           data = {
             type: 'instance',
             relationKey: this.transCode
           };
-      if(this.isConcern === 1){
+      if(this.isConcern === 1) {
         operation = unsubscribeApp;
         delete data.type;
       }
       operation(data).then(({success = true, message = ''})=>{
-        if(success){
+        if(success) {
           this.isConcern = message === '订阅成功！' ? 1 : 0;
-          // this.getUserList()
+          let tips = message === '订阅成功！' ? '关注成功' : '取消关注成功';
+          this.$vux.toast.show({
+            type: 'text',
+            time: 1000,
+            position: 'top',
+            text: tips
+          })
         }
       })
     }

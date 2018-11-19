@@ -77,7 +77,16 @@ export let getObjInventoryByProcessing = (data = {}) => {
     }
   })
 };
-
+// TODO 获取物料pop列表
+export let getObjInventory = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjInventory',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
 // TODO 获取物料Pop列表(采购订单)
 export let getInventory7501 = (data = {}) => {
   return $axios.ajax({
