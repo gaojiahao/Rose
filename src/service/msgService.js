@@ -14,3 +14,10 @@ export let getAllMsgList = (data = {}) => {
         data
     })
 }
+
+export let getNotice = ( data = {}) => {
+    return $axios.ajax({
+        url: '/H_roleplay-si/ds/getNotice',
+        data
+    })
+}

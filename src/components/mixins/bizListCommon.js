@@ -57,7 +57,11 @@ export default {
           value: 'dealerName',
         },
       ],
-      sort: []
+      sort: [],
+      timeFilter: {
+        startDate: '',
+        endDate: ''
+      }
     }
   },
   components: {
@@ -239,7 +243,9 @@ export default {
         page: this.page,
         listViewID: this.listViewID,
         filter: JSON.stringify(filter),
-        sort: JSON.stringify(this.sort)
+        sort: JSON.stringify(this.sort),
+        startDate: this.timeFilter.startDate, // 开始日期 (默认为空)
+        endDate: this.timeFilter.endDate      // 截止日期 (默认为空)
       }).then(({total = 0, orders = []}) => {
         // this.$emit('input',false);
         this.hasNext = total > (this.page - 1) * this.limit + orders.length;
@@ -344,6 +350,14 @@ export default {
       this.resetCondition();
       this.getList();
     },
+    // 筛选过滤
+    onFilter (val) {
+      console.log(val);
+      // console.log(val.timeFilter);
+      this.timeFilter = val.timeFilter;
+      this.resetCondition();
+      this.getList();
+    }
   },
   filters: {
     // TODO 过滤日期

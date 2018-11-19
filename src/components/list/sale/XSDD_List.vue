@@ -10,7 +10,7 @@
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>-->
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
