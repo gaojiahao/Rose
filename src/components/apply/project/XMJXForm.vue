@@ -2,6 +2,9 @@
   <div class="pages xmjx-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 项目-->
         <pop-name-list @sel-item="selProject" :default-value="projectApproval"></pop-name-list>
         <!-- 实际情况 -->
@@ -64,13 +67,15 @@
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
   import FormCell from 'components/detail/commonPart/FormCell'
+  import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   const DRAFT_KEY = 'XMJX_DATA';
 
   export default {
     mixins: [ApplyCommon],
     components: {
       Cell, Group, XInput, Datetime,
-      PopNameList, FormCell,
+      PopNameList, FormCell, RPicker, PopBaseinfo,
     },
     data () {
       return {

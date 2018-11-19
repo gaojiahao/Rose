@@ -37,6 +37,7 @@ export default {
       clientHeight : document.documentElement.clientHeight,
       attachment : [],
       relationKey: '',
+      handlerDefault: {} // 经办人默认信息
     }
   },
   components: {
@@ -89,6 +90,13 @@ export default {
     numberComma,
   },
   methods: {
+    // 修改经办人信息
+    selItem(val) {
+      this.formData = {
+        ...this.formData,
+        ...val
+      }
+    },
     //展开可删除状态
     showDelete(){
       this.matterModifyClass = ! this.matterModifyClass;
@@ -204,6 +212,10 @@ export default {
           creator: data.handler,
           modifer: data.handler,
         };
+        this.handlerDefault = {
+          ...this.handlerDefault,
+          ...data
+        }
       })
     },
     // TODO 获取物料价格

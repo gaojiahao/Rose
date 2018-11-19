@@ -2,6 +2,9 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!--项目信息-->
         <div class="or_ads mg_auto" @click="showProjectPop = !showProjectPop">
           <div class="title">项目名称</div>
@@ -94,6 +97,8 @@
   // 组件引入
   import PopCostList from 'components/Popup/PopCostList'
   import PopProjectList from 'components/Popup/PopProjectList'
+  import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import { accAdd } from '@/home/pages/maps/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
@@ -104,7 +109,7 @@
     components: {
       Cell, Group, Popup,
       XInput, XTextarea,
-      PopCostList, PopupPicker, PopProjectList
+      PopCostList, PopupPicker, PopProjectList, RPicker, PopBaseinfo
     },
     data () {
       return {

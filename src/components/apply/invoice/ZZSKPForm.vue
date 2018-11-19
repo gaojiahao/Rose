@@ -2,6 +2,9 @@
   <div class="pages xmjh-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo"
                          @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
@@ -135,6 +138,8 @@
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopInvoiceList from 'components/Popup/PopInvoiceList'
+  import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
@@ -157,7 +162,7 @@
     mixins: [ApplyCommon],
     components: {
       Cell, Group, XInput,
-      Datetime, XTextarea, PopDealerList, PopupPicker, PopInvoiceList
+      Datetime, XTextarea, PopDealerList, PopupPicker, PopInvoiceList, RPicker, PopBaseinfo
     },
     data() {
       return {

@@ -2,6 +2,9 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
@@ -138,6 +141,8 @@ import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import RNumber from 'components/RNumber'
+import RPicker from 'components/RPicker'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 // 方法引入
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 const DRAFT_KEY = 'CGDD_DATA';
@@ -145,7 +150,7 @@ const DRAFT_KEY = 'CGDD_DATA';
 export default {
   components: {
     XTextarea, RNumber, Datetime,
-    PopMatterList, PopDealerList, PopSingleSelect, PopMatter, 
+    PopMatterList, PopDealerList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo
   },
   data () {
     return {

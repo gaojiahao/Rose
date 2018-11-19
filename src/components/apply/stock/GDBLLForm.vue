@@ -2,6 +2,9 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <div class="title">工序信息</div>
@@ -78,6 +81,9 @@
   import PopWorkList from 'components/Popup/workList/PopWorkList'
   import PopWorkGdbllList from 'components/Popup/workList/PopWorkGDBLLList'
   import PopProjectList from 'components/Popup/PopProjectList'
+  import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+
   const DRAFT_KEY = 'GDBLL_DATA';
 
   export default {
@@ -87,7 +93,7 @@
     components: {
       Popup, Group, Cell, Datetime,XInput, XTextarea, 
       PopWorkList, PopManagerList,
-      PopProjectList, PopWorkGdbllList,
+      PopProjectList, PopWorkGdbllList, RPicker, PopBaseinfo
     },
     data () {
       return {

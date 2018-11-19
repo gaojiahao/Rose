@@ -3,6 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
@@ -99,6 +100,7 @@ import PopFacilityList from 'components/Popup/workList/PopFacilityList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import BomList from 'components/detail/commonPart/BomList'
 import RPicker from 'components/RPicker'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 
 /* 引入微信相关 */
 import { scanQRCode } from 'plugins/wx/api'
@@ -115,7 +117,7 @@ export default {
     Popup, PopWorkList,
     Group, Cell, Datetime,
     XInput, XTextarea, PopManagerList,
-    RPicker, PopFacilityList, PopWarehouseList, BomList
+    RPicker, PopFacilityList, PopWarehouseList, BomList, PopBaseinfo
   },
   data () {
     return {

@@ -2,6 +2,7 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
@@ -147,6 +148,8 @@
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import UploadFile from 'components/upload/UploadFile'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+
   const DRAFT_KEY = 'XSBJ_DATA';
 
   export default {
@@ -174,7 +177,7 @@
     components: {
       Icon, XInput, RPicker, XTextarea,
       PopMatterList, PopDealerList, PopSingleSelect,
-      PopMatter, UploadFile
+      PopMatter, UploadFile, PopBaseinfo
     },
     mixins: [ApplyCommon],
     methods: {

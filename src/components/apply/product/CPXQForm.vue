@@ -2,6 +2,44 @@
   <div class='childPage'>
     <div class="content" ref="fill">
       <div class="wrapper">
+        <!-- <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo> -->
+        <!-- <r-picker title="经办人:" :data="listData" :value="formData.handlerName"
+                  @on-change="handlerChange" v-model="formData.handlerName" required></r-picker> -->
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b' @click="showPop = true">
+            <label class="required">经办人:</label>
+            <!-- <input type='text' v-model="formData.handlerName" class='property_val'/> -->
+            <div class="property_val handler">
+              <span>{{formData.handlerName}}</span>
+              <span class="iconfont icon-gengduo"></span>
+            </div>
+          </div>
+        </div>
+        <r-picker title="经办组织:" :data="groupList" :value="formData.handlerUnitName"
+                  @on-change="groupChange" v-model="formData.handlerUnitName" required></r-picker>
+        <r-picker title="经办职位:" :data="roleList" :value="formData.handlerRoleName"
+                  @on-change="roleChange" v-model="formData.handlerRoleName" required></r-picker>          
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b'>
+            <label class="required">标题:</label>
+            <input type='text' v-model.trim="formData.demandTitle" class='property_val'/>
+            <div></div>
+          </div>
+        </div>
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b'>
+            <label class="required">标题:</label>
+            <input type='text' v-model.trim="formData.demandTitle" class='property_val'/>
+            <div></div>
+          </div>
+        </div>
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b'>
+            <label class="required">标题:</label>
+            <input type='text' v-model.trim="formData.demandTitle" class='property_val'/>
+            <div></div>
+          </div>
+        </div>
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">标题:</label>
@@ -34,6 +72,44 @@
         <r-picker title="版本:" :data="versionList" :value="formData.demandVersion"
                   v-model="formData.demandVersion"></r-picker>
         <upload-file @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
+        <div v-transfer-dom>
+          <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
+            <div class="trade_pop">
+              <div class="title">
+                <!-- 搜索栏 -->
+                <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
+              </div>
+              <!-- 经理列表 -->
+              <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
+                        :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
+                <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
+                    @click.stop="selThis(item,index)">
+                  <div class="pop-list-main ">
+                    <div class="pop-list-info">
+                      <!--联系人电话 -->
+                      <div class="withColor">
+                        <div class="ForInline name" style="display:inline-block">
+                          <span>{{item.nickname}}</span>
+                        </div>
+                      </div>
+                      <div class="withColor" v-if="item.dealerMobilePhone">
+                        <div class="ForInline " style="display:inline-block">
+                          <span class='creator'>{{item.dealerMobilePhone}}</span>
+                        </div>
+                      </div>
+                      <!-- 地址 -->
+                      <!-- <div class="withoutColor">
+                        <span>{{item.province}}{{item.city}}{{item.county}}{{item.address}}</span>
+                      </div> -->
+                    </div>
+                  </div>
+                  <!-- icon -->
+                  <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
+                </div>
+              </r-scroll>
+            </div>
+          </popup>
+        </div>
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -43,7 +119,12 @@
 </template>
 
 <script>
+  // vux 引入
+  import { Popup, TransferDom } from 'vux'
   import RPicker from 'components/RPicker';
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import RScroll from 'components/RScroll'
+  import DSearch from 'components/search'
   // 请求 引入
   import {
     submitAndCalc,
@@ -55,6 +136,7 @@
   } from 'service/commonService'
   import { getAuthorizedList } from 'service/listService'
   import { getSOList } from 'service/detailService'
+  import { listUsers, getGroupByUserId, getRoleByUserId } from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   const DRAFT_KEY = 'CPXQ_DATA';
@@ -89,14 +171,149 @@
           width : '100%',
           padding : '0.05rem 0.08rem',
           margin : '0 auto'
-        }
+        },
+        limit: 50,
+        page: 1,
+        hasNext: true,
+        scrollOptions: {
+          click: true,
+          pullUpLoad: true,
+        },
+        showPop: false,
+        srhInpTx: '', // 搜索框内容
+        selItems: {}, // 哪些被选中了
+        listData: [], // 经办人列表
+        groupList: [], // 组织列表
+        roleList: [], // 职位列表
       }
     },
     mixins: [ApplyCommon],
+    directives: {TransferDom},
     components: {
-      RPicker,
+      RPicker, PopBaseinfo, Popup, RScroll, DSearch
     },
     methods: {
+      // TODO 弹窗展示时调用
+      onShow() {
+        this.$nextTick(() => {
+          if (this.$refs.bScroll) {
+            this.$refs.bScroll.refresh();
+          }
+        })
+      },
+      // TODO 弹窗隐藏时调用
+      onHide() {
+        this.showPop = false;
+      },
+      // TODO 搜索仓库
+      searchList({val = ''}) {
+        this.srhInpTx = val;
+        this.listData = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.getlistUsers();
+      },
+      // TODO 上拉加载
+      onPullingUp() {
+        this.page++;
+        this.getlistUsers();
+      },
+      // TODO 判断是否展示选中图标
+      showSelIcon(sItem) {
+        return this.selItems.userId === sItem.userId;
+      },
+      // TODO 选择物料
+      selThis (sItem, sIndex) {
+        this.showPop = false;
+        this.selItems = sItem;
+        this.formData.handler = sItem.userId;
+        this.formData.handlerName = sItem.nickname;
+        this.getGroupByUserId();
+        this.getRoleByUserId();
+      },
+      // TODO 请求部门
+      getGroupByUserId(){
+        return getGroupByUserId(this.formData.handler).then(({tableContent = []}) => {
+          this.groupList = []
+          tableContent.forEach(item=>{          
+            this.groupList.push({
+              ...item,
+              name: item.userGroupName,
+              value: item.userGroupName,
+            })
+          })
+          if(tableContent.length){
+            this.formData.handlerUnitName = tableContent[0].groupName;
+            this.formData.handlerUnit = tableContent[0].userGroupId;
+          }
+        })
+      },
+      // TODO 请求职位
+      getRoleByUserId() {
+        return getRoleByUserId(this.formData.handler).then(({tableContent = []}) => {
+          this.roleList = [];
+          tableContent.forEach(item=>{          
+            this.roleList.push({
+              ...item,
+              name: item.userGroupName,
+              value: item.userGroupName,
+            })
+
+          })
+          if(tableContent.length){
+            this.formData.handlerRoleName = tableContent[0].userGroupName;
+            this.formData.handlerRole = tableContent[0].userGroupId;
+          }               
+        })
+
+      },
+      // TODO 获取仓库列表
+      getlistUsers() {
+        // console.log()
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'nickname',
+            }];
+        }
+        return listUsers({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }).then(({dataCount = 0, tableContent = []}) => {
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+        });
+      },
+      // 选择组织
+      groupChange(val) {
+        console.log(val);
+        this.groupList && this.groupList.forEach( item => {
+          if (item.name === val) {
+            this.formData.handlerUnit = item.userGroupId;
+            return false;
+          }
+        })
+
+      },
+      // 选择职位
+      roleChange(val) {
+        console.log(val);
+        this.roleList && this.roleList.forEach( item => {
+          if (item.name === val) {
+            this.formData.handlerRole = item.userGroupId;
+            return false;
+          }
+        })
+      },
       // TODO 提交/修改物料
       save () {
         let requiredMap = {
@@ -263,6 +480,9 @@
         this.formData = JSON.parse(data).formData;
         sessionStorage.removeItem(DRAFT_KEY);
       }
+      this.getlistUsers();
+      this.getGroupByUserId();
+      this.getRoleByUserId();
     },
   }
 </script>
@@ -312,6 +532,13 @@
         border: none;
         outline: none;
         font-size: 0.16rem;
+        &.handler{
+          line-height: 0.38rem;
+          .icon-gengduo{
+            font-size: 0.24rem;
+            float: right;
+          }
+        }
       }
       .readonly {
         color: #999;
@@ -343,6 +570,86 @@
     }
     &.btn_hide {
       display: none;
+    }
+  }
+  // 弹出层
+  .trade_pop_part {
+    background: #fff;
+    .trade_pop {
+      padding: 0 .08rem;
+      height: 100%;
+      overflow: hidden;
+      // 顶部
+      .title {
+        position: relative;
+        margin: .08rem 0;
+        font-size: .2rem;
+      }
+      .each_mode {
+        margin-right: .1rem;
+        display: inline-block;
+        padding: .04rem .2rem;
+      }
+      // 列表容器
+      .pop-list-container {
+        width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        height: calc(100% - .46rem);
+        /deep/ .scroll-wrapper {
+          padding: .04rem .04rem 0 .3rem;
+        }
+        // 列表项
+        .pop-list-item {
+          position: relative;
+          display: flex;
+          padding: 0.08rem;
+          margin-bottom: .2rem;
+          box-sizing: border-box;
+          // 阴影
+          &.box_sd {
+            box-sizing: border-box;
+            box-shadow: 0 0 8px #e8e8e8;
+          }
+          // 列表主体
+          .pop-list-main {
+            flex: 1;
+            padding-left: .1rem;
+            box-sizing: border-box;
+            display: inline-block;
+            // 物料信息
+            .pop-list-info {
+              color: #757575;
+              font-size: .14rem;
+              // 有颜色包裹的
+              .withColor {
+                margin-top: .04rem;
+                .name {
+                  color: #5077aa;
+                  font-size: .14rem;
+                  font-weight: bold;
+                }
+                .creator {
+                  color: #111;
+                  font-weight: bold;
+                }
+              }
+            }
+          }
+          // 选择icon
+          .selIcon,
+          .isSelIcon {
+            top: 50%;
+            left: -.3rem;
+            position: absolute;
+            transform: translate(0, -50%);
+          }
+          .isSelIcon {
+            fill: #5077aa;
+          }
+        }
+      }
+
     }
   }
 </style>

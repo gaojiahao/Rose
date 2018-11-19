@@ -2,6 +2,9 @@
   <div class="pages bdkcdb-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 出库仓库-->
         <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
 
@@ -115,13 +118,16 @@ import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import RPicker from 'components/RPicker'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+
 const DRAFT_KEY = 'BDKCDB_DATA';
 
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput, XTextarea,
-    RNumber, PopMatterList, PopWarehouseList, PopMatter
+    RNumber, PopMatterList, PopWarehouseList, PopMatter, RPicker, PopBaseinfo
   },
   data() {
     return {

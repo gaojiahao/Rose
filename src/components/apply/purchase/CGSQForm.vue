@@ -2,6 +2,9 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -134,6 +137,8 @@ import common from 'components/mixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import RNumber from 'components/RNumber'
+import RPicker from 'components/RPicker'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 // 方法 引入
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
@@ -160,7 +165,7 @@ export default {
   },
   components: {
     XTextarea, Group, XInput, Datetime, Cell, RNumber,
-    PopMatter,  PopMatterList, 
+    PopMatter,  PopMatterList, RPicker, PopBaseinfo
   },
   computed: {
     // 订单物料总数量

@@ -2,6 +2,9 @@
   <div class="pages xmlx-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <pop-manager-list @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
         <!-- 项目类型-->
         <r-picker title="项目大类" :data="typeList" mode="3" placeholder="请选择项目大类"
@@ -78,6 +81,7 @@
   import common from '@/mixins/common'
   // 组件 引入
   import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopManagerList from 'components/Popup/PopManagerList'
 
   const DRAFT_KEY = 'XMLX_DATA';
@@ -85,7 +89,7 @@
     mixins: [ApplyCommon, common],
     components: {
       Cell, Group, XInput,
-      RPicker, Datetime, XTextarea, PopManagerList,
+       RPicker, PopBaseinfo, Datetime, XTextarea, PopManagerList,
     },
     data() {
       return {

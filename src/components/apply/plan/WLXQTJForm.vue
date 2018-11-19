@@ -2,6 +2,7 @@
   <div class="pages wlxqtj-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
@@ -116,6 +117,7 @@
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
   const DRAFT_KEY = 'XQTJ_DATA';
@@ -125,7 +127,7 @@
     mixins: [applyCommon],
     components: {
       Icon, Cell, Group,XTextarea,
-      XInput, PopMatter, PopOrderXqtjList,RPicker
+      XInput, PopMatter, PopOrderXqtjList,RPicker, PopBaseinfo
     },
     data() {
       return {

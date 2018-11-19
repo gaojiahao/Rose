@@ -2,6 +2,9 @@
   <div class="pages nbjgdd-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -167,6 +170,8 @@
   import FormCell from 'components/detail/commonPart/FormCell'
   import BomList from 'components/detail/commonPart/BomList'
   import BomPop from 'components/apply/commonPart/BomPop'
+  import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 公共方法
   import {accMul, accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
@@ -178,7 +183,7 @@
     components: {
       Icon, Cell, Group, XInput, XTextarea,
       PopMatter, PopOrderList, Datetime,
-      FormCell, BomList, BomPop
+      FormCell, BomList, BomPop, RPicker, PopBaseinfo
     },
     data() {
       return {

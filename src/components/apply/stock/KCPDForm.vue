@@ -2,6 +2,9 @@
   <div class="pages kcpd-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 入库仓库-->
         <pop-warehouse-list title="仓库名称" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
 
@@ -113,6 +116,8 @@ import ApplyCommon from 'pageMixins/applyCommon'
 import PopMatterList from 'components/Popup/PopMatterList'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import RPicker from 'components/RPicker'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 // 方法引入
 import { accSub } from '@/home/pages/maps/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
@@ -122,7 +127,7 @@ export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput, XTextarea,
-    PopMatterList, PopWarehouseList, PopMatter
+    PopMatterList, PopWarehouseList, PopMatter, RPicker, PopBaseinfo
   },
   data() {
     return {

@@ -3,6 +3,9 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!--<div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>-->
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
+                  v-model="biProcessStatus" :hasBorder="false"></r-picker>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <div class="title">工序信息</div>
@@ -37,8 +40,6 @@
         </div>
         <!--<pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>-->
         <pop-facility-list @sel-item="selFacility" :default-value="facility"></pop-facility-list>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
-                  v-model="biProcessStatus" :hasBorder="false"></r-picker>
         <div class="materiel_list" v-show="bomList.length">
           <bom-list :boms="bomList">
             <template slot-scope="{bom}" slot="number">
@@ -82,6 +83,7 @@
   import PopFacilityList from 'components/Popup/workList/PopFacilityList'
   import RPicker from 'components/RPicker'
   import BomList from 'components/detail/commonPart/BomList'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   /* 引入微信相关 */
   import { scanQRCode } from 'plugins/wx/api'
   /* 方法引入 */
@@ -97,7 +99,7 @@
       Popup, PopWorkStartList,
       Group, Cell, Datetime,
       XInput, XTextarea, PopManagerList, RPicker,
-      PopFacilityList, BomList,
+      PopFacilityList, BomList, PopBaseinfo
     },
     data() {
       return {

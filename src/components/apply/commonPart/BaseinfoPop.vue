@@ -9,25 +9,8 @@
           <!-- <span class="iconfont icon-youjiantou"></span> -->
         </div>
       </div>
-      <popup-picker title="经办组织" :data="groupList"  v-model="group" value-text-align="right" :columns="1" @on-change="changeGroup($event)"></popup-picker>
-      <popup-picker title="经办职位" :data="roleList"  v-model="role" value-text-align="right" :columns="1" @on-change="changeRole($event)"></popup-picker>
-      <div class="each_info">
-        <!-- <popup-picker title="经办组织" :data="groupList"  v-model="group" value-text-align="right"></popup-picker> -->
-        <!-- <div class="title">经办组织</div>
-        <div class="mode">
-          <span class="mode_content">{{selItems.handlerUnitName}}</span>
-          <span class="iconfont icon-youjiantou"></span>
-        </div> -->
-      </div>
-      <div class="each_info">
-        <!-- <popup-picker title="经办职位" :data="roleList"  v-model="role" value-text-align="right"></popup-picker> -->
-        <!-- <div class="title">经办职位</div>
-        <div class="mode">
-          <span class="mode_content">{{selItems.handlerRoleName}}</span>
-          <span class="iconfont icon-youjiantou"></span>
-        </div> -->
-      </div>
-
+      <popup-picker title="经办组织" :data="groupList" :columns="1" v-model="group" @on-change="changeGroup" ref="groupPicker"></popup-picker>
+      <popup-picker title="经办职位" :data="roleList" :columns="1" v-model="role" @on-change="changeRole" ref="rolePicker"></popup-picker>
     </div>
      <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -104,7 +87,7 @@ export default {
     return {
       currentUser: {},
       limit: 50,
-      page: 1.,
+      page: 1,
       hasNext: true,
       scrollOptions: {
         click: true,
@@ -113,23 +96,18 @@ export default {
       showPop: false,
       srhInpTx: '', // 搜索框内容
       selItems: {}, // 哪些被选中了
-      listData: [],
-      groupList: [],
-      roleList: [],
-      group: [],
-      role: []
+      listData: [], // 经办人列表
+      groupList: [], // 组织列表
+      roleList: [], // 职位列表
+      group: [], // 选中的组织
+      role: [], // 选中的职位
 
     }
   },
   watch: {
-    // info: {
-    //   handler(val) {
-    //     this.currentUser = {...val}
-    //   }
-    // },
     defaultValue(val) {
       this.setDefaultValue();
-    }
+    },
   },
   methods: {
     // TODO 弹窗展示时调用
@@ -161,56 +139,80 @@ export default {
     setDefaultValue() {
       this.selItems = this.defaultValue ? {...this.defaultValue,userId: this.defaultValue.handler,nickname: this.defaultValue.handlerName} : {};
       this.group = [this.selItems.handlerUnitName];
-      this.role = [this.selItems.handlerRoleName]
-      // this.group = [{name: this.selItems.handlerUnitName,value: this.selItems.handlerUnitName}];
-      // this.role = [{name: this.selItems.handlerRoleName,value: this.selItems.handlerRoleName}]
+      this.role = [this.selItems.handlerRoleName];
+      this.getGroupByUserId();
+      this.getRoleByUserId();
     },
     // TODO 判断是否展示选中图标
     showSelIcon(sItem) {
       return this.selItems.userId === sItem.userId;
     },
-    changeGroup(e){
-      console.log(e)
-    },
-    changeRole(e){
-      console.log(e)
-    },
-    // TODO 选择物料
-    async selThis(sItem, sIndex) {
-      this.showPop = false;
-      this.selItems = sItem;
-      await this.getGroupByUserId().then(()=>{
-        this.group = [this.groupList[0].name];
-      });
-      await this.getRoleByUserId().then(()=>{
-        this.role = [this.roleList[0].name];
-      });
+    // 选择组织
+    changeGroup(val) {
+      this.selItems.handlerUnitName = val[0]
+      this.groupList.forEach( item => {
+        if (item.name === val[0]) {
+          this.selItems.handlerUnit = item.userGroupId;
+          return false;
+        }
+      })
       let emitObj = {
         handler: this.selItems.userId,
         handlerName: this.selItems.nickname,
-        handlerUnit: 347,
-        handlerUnitName: this.group[0],
-        handlerRole: 1,
-        handlerRoleName: this.role[0],
+        handlerUnit: this.selItems.handlerUnit,
+        handlerUnitName: this.selItems.handlerUnitName,
+        handlerRole: this.selItems.handlerRole,
+        handlerRoleName: this.selItems.handlerRoleName,
       }
       this.$emit('sel-item',emitObj);
+    },
+    // 选择职位
+    changeRole(val) {
+      this.selItems.handlerRoleName = val[0]
+      this.roleList.forEach(item => {
+        if(item.name === val[0]){
+          this.selItems.handlerRole = item.userGroupId;
+          return false;
+        }
+      })
+      let emitObj = {
+        handler: this.selItems.userId,
+        handlerName: this.selItems.nickname,
+        handlerUnit: this.selItems.handlerUnit,
+        handlerUnitName: this.selItems.handlerUnitName,
+        handlerRole: this.selItems.handlerRole,
+        handlerRoleName: this.selItems.handlerRoleName,
+      }
+      this.$emit('sel-item',emitObj);
+    },
+    // TODO 选择物料
+    selThis (sItem, sIndex) {
+      this.showPop = false;
+      this.selItems = sItem;
+      this.getGroupByUserId();
+      this.getRoleByUserId();
     },
     // TODO 请求部门
     getGroupByUserId(){
       return getGroupByUserId(this.selItems.userId).then(({tableContent = []}) => {
+        this.groupList = []
         tableContent.forEach(item=>{          
           this.groupList.push({
             ...item,
             name: item.userGroupName,
             value: item.userGroupName,
           })
-
         })
+        if(tableContent.length){
+          this.group = [tableContent[0].userGroupName];
+          this.selItems.handlerUnit = tableContent[0].userGroupId;
+        }
       })
     },
     // TODO 请求职位
-    getRoleByUserId(){
+    getRoleByUserId() {
       return getRoleByUserId(this.selItems.userId).then(({tableContent = []}) => {
+        this.roleList = []
         tableContent.forEach(item=>{          
           this.roleList.push({
             ...item,
@@ -219,6 +221,10 @@ export default {
           })
 
         })
+        if(tableContent.length){
+          this.role = [tableContent[0].userGroupName];
+          this.selItems.handlerRole = tableContent[0].userGroupId;
+        }               
       })
 
     },

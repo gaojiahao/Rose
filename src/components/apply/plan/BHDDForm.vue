@@ -2,6 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 物料列表 -->
@@ -114,8 +115,9 @@
   // 组件引入
   import PopMatterList from 'components/Popup/PopMatterList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
-  // 方法引入
   import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
@@ -124,7 +126,7 @@
   export default {
     components: {
       PopMatterList, XTextarea, Group, XInput, PopMatter, RPicker,
-      Datetime,
+      Datetime, PopBaseinfo
     },
     data() {
       return {

@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="formData" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
@@ -132,12 +132,12 @@
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
-  import RPicker from 'components/RPicker'
   import RNumber from 'components/RNumber'
   import PopMatterList from 'components/Popup/PopMatterList'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
+  import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
@@ -173,11 +173,8 @@
       numberComma,
     },
     methods: {
-      selItem(val){
-        console.log(val)
-      },
       // 选中的客户
-      selDealer (val) {
+      selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         this.matterParams = {
@@ -186,7 +183,7 @@
         this.matterList = [];
         // this.getMatPrice(); // 获取物料价格
       },
-      selContact (val) {
+      selContact(val) {
         this.contact = {...val};
         // 联系人
         this.dealer.dealerDebitContactPersonName = this.contact.dealerName || '';
@@ -194,19 +191,19 @@
         this.dealer.dealerDebitContactInformation = this.contact.dealerMobilePhone;
       },
       // 获取 结算方式
-      getPaymentTerm () {
+      getPaymentTerm() {
         return getDictByType('paymentTerm').then(({tableContent}) => {
           this.transMode = tableContent;
         })
       },
       // 获取 物流条款
-      getLogisticsTerms () {
+      getLogisticsTerms() {
         return getDictByType('dealerLogisticsTerms').then(({tableContent}) => {
           this.logisticsTerm = tableContent;
         })
       },
       // 选择物料，显示物料pop
-      getMatter () {
+      getMatter() {
         if (!this.dealerInfo.dealerCode) {
           this.$vux.alert.show({
             content: '请选择客户'
@@ -216,7 +213,7 @@
         this.showMaterielPop = !this.showMaterielPop;
       },
       // TODO 选中物料项
-      selMatter (val) {
+      selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
           let {tdQty = '', price = item.quotedPrice, taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
@@ -230,7 +227,7 @@
         // this.getMatPrice();
       },
       //选择默认图片
-      getDefaultImg (item) {
+      getDefaultImg(item) {
         let url = require('assets/wl_default02.png');
         if (item) {
           item.inventoryPic = url;
@@ -238,7 +235,7 @@
         return url
       },
       // 滑动删除
-      delClick (sItem, index) {
+      delClick(sItem, index) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
         //若存在重复的 则清除
@@ -249,11 +246,11 @@
         arr.push(sItem);
       },
       // TODO 判断是否展示选中图标
-      showSelIcon (sItem) {
+      showSelIcon(sItem) {
         return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // 全选
-      checkAll () {
+      checkAll() {
         if (this.selItems.length === this.matterList.length) {
           this.selItems = [];
           return
@@ -261,7 +258,7 @@
         this.selItems = JSON.parse(JSON.stringify(this.matterList));
       },
       // 删除选中的
-      deleteCheckd () {
+      deleteCheckd() {
         this.$vux.confirm.show({
           content: '确认删除?',
           // 确定回调
@@ -279,7 +276,7 @@
 
       },
       // TODO 新增更多物料
-      addMatter () {
+      addMatter() {
         for (let item of this.matterList) {
           // 存储已输入的价格
           this.numMap[item.inventoryCode] = {...item};
@@ -287,7 +284,7 @@
         this.showMaterielPop = !this.showMaterielPop;
       },
       // 提价订单
-      submitOrder () {
+      submitOrder() {
         if (!this.dealerInfo.dealerName) {
           this.$vux.alert.show({
             content: '请选择客户'
@@ -390,7 +387,7 @@
         }
       },
       // 获取订单信息用于重新提交
-      getFormData () {
+      getFormData() {
         return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
@@ -467,7 +464,7 @@
         };
       },
     },
-    created () {
+    created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);

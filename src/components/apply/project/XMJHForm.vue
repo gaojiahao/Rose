@@ -2,6 +2,9 @@
   <div class="pages xmjh-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 项目计划基本信息-->
         <pop-name-list @sel-item="selProject" :default-value="project"></pop-name-list>
 
@@ -56,6 +59,8 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopNameList from 'components/Popup/PopNameList'
+  import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XMJH_DATA';
@@ -64,7 +69,7 @@
     mixins: [ApplyCommon],
     components: {
       Cell, Group, XInput,
-      Datetime, XTextarea, PopNameList, PopupPicker
+      Datetime, XTextarea, PopNameList, PopupPicker, RPicker, PopBaseinfo,
     },
     data() {
       return {

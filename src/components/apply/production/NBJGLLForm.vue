@@ -2,6 +2,9 @@
   <div class="pages nbjgll-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 出库仓库-->
         <pop-warehouse-list isRequired title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
         <!-- 入库仓库-->
@@ -129,13 +132,14 @@ import RNumber from 'components/RNumber'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopOrderList from 'components/Popup/PopOrderList'
-
+import RPicker from 'components/RPicker'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 const DRAFT_KEY = 'NBJGLL_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput, XTextarea,
-    RNumber, PopOrderList, PopWarehouseList, PopMatter
+    RNumber, PopOrderList, PopWarehouseList, PopMatter, RPicker, PopBaseinfo
   },
   data() {
     return {

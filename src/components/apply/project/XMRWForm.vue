@@ -2,6 +2,9 @@
   <div class="pages xmrw-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
         <!-- 项目-->
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
                   @on-change="projectChange" v-model="projectTask.projectName" required :has-border="false"></r-picker>
@@ -52,6 +55,7 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
+  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import { toFixed } from '@/plugins/calc'
 
@@ -60,7 +64,7 @@
     mixins: [ApplyCommon],
     components: {
       Icon, Cell, Group, XInput, 
-      RPicker, Datetime
+      RPicker, PopBaseinfo, Datetime
     },
     data () {
       return {
