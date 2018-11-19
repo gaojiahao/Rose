@@ -193,6 +193,9 @@
         vertical-align: top;
         background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
       }
+      /deep/ .img-emotion + .img-emotion {
+        margin-left: .04rem;
+      }
     }
 
     /* 回复内容 */

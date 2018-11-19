@@ -182,7 +182,7 @@
 
 <style scoped lang="scss">
   .comment-list-container {
-    background-color: #fff;
+    background-color: #F6F6F6;
     &.has-emotion {
       .comment-list-wrapper {
         height: calc(100% - 2.5rem);

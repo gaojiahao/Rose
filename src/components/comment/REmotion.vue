@@ -40,24 +40,22 @@
 
 <style scoped lang="scss">
   .emotion-container {
-    padding: .1rem;
     width: 100%;
     height: 2rem;
-    background-color: #fff;
+    padding: .1rem;
     box-sizing: border-box;
+    background-color: #F6F6F6;
     .emotion-wrapper {
-      display: flex;
-      flex-wrap: wrap;
       width: 100%;
       height: 100%;
+      display: flex;
       overflow: auto;
+      flex-wrap: wrap;
     }
     .emotion-item {
-      margin: .05rem;
       width: .24rem;
       height: .24rem;
-      /*flex: 1 0 .3rem;*/
-      /*min-height: .3rem;*/
+      margin: .05rem;
     }
   }
 </style>
