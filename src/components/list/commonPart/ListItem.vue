@@ -1,24 +1,23 @@
 <template>
   <div class="list_item" :class="{visited: item.visited}">
-
     <!-- 订单 时期 -->
     <div class="duty_top">
       <p class="duty_code">
         {{item.transCode}}
-        <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
+        <span class="duty_crt_man" v-if="item.processStatus">{{item.processStatus}}</span>
       </p>
-      <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
+      <span class="duty_status" :class="item.statusClass">{{item.statusName}}</span>
+      <i class="iconfont" :class="item.whichIcon"></i>
     </div>
     <!-- 往来信息 -->
     <div class="dealer_part" v-if='item.dealerName'>
-      <div class="dealer_name vux-1px-t">
+      <div class="dealer_name">
         <div v-if="!isDealer">
           <span class="iconfont icon-gongren2" ></span>{{item.dealerName}}
         </div>
         <div v-else>
           <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
         </div>
-        
       </div>
     </div>
     <div class="dealer_part warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
@@ -38,7 +37,7 @@
     </div>
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
-      <li class="duty_matter_item vux-1px-b" :class="{'is-matched-mat': mItem.matchedMat}"
+      <li class="duty_matter_item" :class="{'is-matched-mat': mItem.matchedMat}"
           v-for="(mItem, mIndex) in item.itmes" :key="mIndex" v-if='mIndex<3'>
         <div class="matter_img">
           <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
@@ -72,21 +71,26 @@
         <span>共 {{item.itemCount}} 条物料，查看更多</span>
         <x-icon type="ios-arrow-right" size="12"></x-icon>
       </div>
-
     </div>
     <!-- 金额合计 -->
     <div class="order_count">
-      <div class="handle_man">
-        {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-      </div>
       <div class="money_part" v-if="!noCount">
+        <span class="num">共{{item.totalQty}}件</span>
         <span class="num">合计:</span>
         <span class="money">
-          <span class="symbol" v-if="item.itmes[0].taxAmount">[含税]</span>
+          <!-- <span class="symbol" v-if="item.itmes[0].taxAmount">[含税]</span> -->
           <span class="symbol">￥</span>{{item.count | toFixed | numberComma(3)}}
         </span>
       </div>
     </div>
+    <!-- 流程状态和修改时间 -->
+    <div class="other_part">
+      <p class="duty_time">{{item.modTime}}<span style="fontSize:.1rem;">[修改时间]</span></p>
+      <div class="handle_man">
+        {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -152,8 +156,9 @@
 .list_item {
   width: 95%;
   position: relative;
-  margin: .1rem auto .2rem;
+  overflow: hidden;
   border-radius: .08rem;
+  margin: .1rem auto .2rem;
   box-shadow: 0 2px 10px #e8e8e8;
   transition: background-color 200ms linear;
   &.visited {
@@ -161,57 +166,61 @@
   }
   .duty_top {
     height: .24rem;
+    font-size: .14rem;
     line-height: .24rem;
-    padding: .04rem .1rem;
+    padding: .04rem .1rem 0;
     .duty_code { //任务编码
       float: left;
-      font-size: .15rem;
       color: #7D7D7D;
-
       .duty_crt_man { // 任务创建者
+        $bgcolor: #5c7893;
         color: #fff;
         padding: .02rem;
-        position: relative;
-        background: #333;
-        font-size: 0.12rem;
         font-weight: bold;
+        position: relative;
+        background: $bgcolor;
+        font-size: 0.12rem;
+        border-radius: .02rem;
         &:before {    //左尖角
-          position: absolute;
-          content: "";
           width: 0;
           height: 0;
-          top: 0;
-          left: -.03rem;
-          border-right: .04rem solid #333;
-          border-bottom: .04rem solid transparent;
+          bottom: 0;
+          content: "";
+          left: -.02rem;
+          position: absolute;
+          border-right: .04rem solid $bgcolor;
+          border-top: .04rem solid transparent;
         }
       }
-      .duty_done_c {
-        background: #53d397;
-        &:before {
-          border-right: .04rem solid #53d397;
-        }
-      }
-      .duty_doing_c {
-        background: #5077aa;
-        &:before {
-          border-right: .04rem solid #5077aa;
-        }
-      }
-      .duty_fall_c {
-        background: #474a56;
-        &:before {
-          border-right: .04rem solid #474a56;
-        }
-      }
-
     }
-    //任务创建时间
-    .duty_time {
+    .icon-yishengxiao {
+      top: 0;
+      right: 10px;
+      font-size: .55rem;
+      color: #53d397;
+      position: absolute;
+    }
+    .duty_status {
       float: right;
-      font-size: .15rem;
-      color: #7D7D7D;
-
+      font-weight: bold;
+    }
+    .duty_done_c {
+      color: #53d397;
+      &:before {
+        border-right: .04rem solid #53d397;
+      }
+    }
+    .duty_doing_c {
+      color: #5077aa;
+      &:before {
+        border-right: .04rem solid #5077aa;
+      }
+    }
+    .duty_fall_c {
+      color: #474a56;
+      &:before {
+        border-right: .04rem solid #474a56;
+      }
     }
   }
   %detailItem {
@@ -243,11 +252,10 @@
     display: block;
     box-sizing: border-box;
     .duty_matter_item {
-      display: flex;
       width: 100%;
-      padding: .04rem .1rem .06rem;
+      display: flex;
       box-sizing: border-box;
-
+      padding: .04rem .1rem 0;
       /* 是否为搜索匹配项(物料) */
       &.is-matched-mat {
         background: linear-gradient(to right, #dbe2ef, #ffffff);
@@ -256,11 +264,11 @@
         width: .6rem;
         height: .6rem;
         margin-top: .04rem;
-        border-radius: .04rem;
         display: inline-block;
         img {
           width: 100%;
           max-height: 100%;
+          border-radius: .04rem;
         }
       }
       .matter_main {
@@ -329,6 +337,16 @@
       align-items: center;
     }
   }
+  .other_part {
+    width: 100%;
+    display: flex;
+    color: #7D7D7D;
+    font-size: .14rem;
+    align-items: center;
+    padding: 0 .1rem .04rem;
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
   /* 合计栏 */
   .order_count {
     width: 100%;
@@ -337,11 +355,8 @@
     align-items: center;
     padding: .04rem .1rem;
     box-sizing: border-box;
-    justify-content: space-between;
-    .handle_man {
-      color: #7D7D7D;
-      font-size: .16rem;
-    }
+    justify-content: flex-end;
+
     .num {
       color: #7D7D7D;
     }

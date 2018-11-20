@@ -153,13 +153,14 @@ export default {
     // TODO 设置状态的class和显示的名称
     setStatus (item) {
       switch (item.biStatus) {
+        case '已生效':
+          item.whichIcon = 'icon-yishengxiao';
+          item.statusClass = 'duty_done_c';
+          item.statusName = ''; 
+          break;
         case '进行中':
           item.statusClass = 'duty_doing_c';
           item.statusName = '进行中';
-          break;
-        case '已生效':
-          item.statusClass = 'duty_done_c';
-          item.statusName = '已生效';
           break;
         case '草稿':
           item.statusClass = 'duty_fall_c';
@@ -269,8 +270,10 @@ export default {
         orders.forEach(item => {
           this.setStatus(item);
           item.count = 0;
+          item.totalQty = 0;
           item.itmes.forEach(mitem => {
             item.count = toFixed(accAdd(item.count, mitem.tdAmount));
+            item.totalQty = toFixed(accAdd(item.totalQty, mitem.tdQty));
           });
 
           // 如果为搜索物料，将匹配的物料放在前面
