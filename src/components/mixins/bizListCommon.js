@@ -227,34 +227,32 @@ export default {
         }]
       }
       if (this.serachVal) {
+        let obj = {
+          operator: "like",     
+          property: this.filterProperty,
+          value: this.serachVal
+        }
         if (this.activeTab) {
-          filter[0].attendedOperation = 'and';
+          obj.attendedOperation = 'and';
         }
         filter = [
           ...filter,
-          {
-            operator: "like",     
-            property: this.filterProperty,
-            value: this.serachVal
-          }
+          obj
         ];
       }
-      if(this.otherFilter){
-        if (this.activeTab) {
-          filter[0].attendedOperation = 'and';
+      if(this.otherFilter.length){
+        let obj = {
+          property: "processStatus",
+          operator: "in",
+        }
+        if(this.activeTab || this.serachVal){
+          obj.attendedOperation = 'and'
         }
         this.otherFilter.forEach((item,index) => {
-          let obj = {
-            operator: "like",     
-            property: "processStatus",
-            value: item.fieldVlaue,
-            attendedOperation: 'or'
-          }
-          if(index === 0) {
-            delete obj.attendedOperation;
-          }
-          filter.push(obj);
+          let key = `value${index+1}`;
+          obj[key] = item.fieldVlaue;
         })
+        filter.push(obj);
         
       }
       return getSellOrderList({
@@ -371,8 +369,6 @@ export default {
     },
     // 筛选过滤
     onFilter (val) {
-      console.log(val);
-      // console.log(val.timeFilter);
       this.timeFilter = val.timeFilter;
       this.otherFilter = val.biProcessStatus;
       this.resetCondition();
