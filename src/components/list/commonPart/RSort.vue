@@ -309,8 +309,6 @@ export default {
       .each_status {
         float: left;
         width: 33.33%;
-        height: .3rem;
-        // overflow: hidden;
         font-size: .12rem;
         font-weight: bold;
         line-height: .3rem;
