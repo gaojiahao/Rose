@@ -90,11 +90,11 @@
 
 .list_wrapper {
   position: relative;
-  height: calc(100% - .52rem - 1.15rem);
+  height: calc(100% - 1.67rem);
   overflow: hidden;
   box-sizing: border-box;
   &.has-sort {
-    height: calc(100% - 2.12rem);
+    height: calc(100% - 2.1rem);
   }
   .each_duty {
     width: 95%;
