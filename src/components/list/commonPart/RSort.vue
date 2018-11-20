@@ -15,13 +15,13 @@
       <span class="iconfont icon-shaixuan"></span>
     </div>
     <div v-transfer-dom>
-      <popup position="right" v-model="showFilter">
+      <popup position="right" v-model="showFilter" @on-hide="onHide">
         <div class="filter-container-part">
           <!-- 流程状态 -->
           <div class="process-status-container basic-mod">
             <div class="filter_title vux-1px-b">流程状态</div>
             <div class="process_status">
-              <div class="each_status"  :class="{'active vux-1px' : fieldVlaue === item.fieldVlaue}"
+              <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item)}"
               v-for="(item, index) in PcesStaList" :key="index"
               @click="selProcee(item, index)">
                 <div class="status_content">{{item.fieldVlaue}}</div>
@@ -42,7 +42,7 @@
             </div>
           </div>
           <div class="handle-part">
-            <span class="reset_btn">重置</span>
+            <span class="reset_btn" @click="filterReset">重置</span>
             <span class="confirm_btn" @click="filterConfirm">确定</span>
           </div>        
         </div>
@@ -79,13 +79,14 @@ export default {
       toDay: '',
       preDate: '',
       property: '', // 被选中的字段
-      fieldVlaue: '', // 被选中的流程状态
+      fieldVlaue: [], // 被选中的流程状态
       PcesStaList: [],  // 流程状态数组
       showFilter: false,  // 是否展示筛选
       timeFilter: {
         startDate: '',
-        endDate: ''
-      }
+        endDate: '',
+      },
+      isConfirm: false, // 是否是点击确定按钮关闭筛选的pop
     }
   },
   methods: {
@@ -107,13 +108,34 @@ export default {
         direction: this.sort,
       });
     },
+    onHide() {
+      if(!this.isConfirm){
+        this.$emit('on-filter', {
+          timeFilter: this.timeFilter,
+          biProcessStatus: this.fieldVlaue
+        })
+      }      
+    },
+    // TODO 匹配相同项的索引
+     showSelIcon(sItem) {
+        return this.fieldVlaue.findIndex(item => item.fieldVlaue === sItem.fieldVlaue) !== -1;
+      },
     // 选择流程状态
-    selProcee(item, index){
-      console.log(item);
-      this.fieldVlaue = item.fieldVlaue;
+    selProcee(sItem, index) {
+      // console.log(item);
+      let arr = this.fieldVlaue;
+      let delIndex = arr.findIndex(item => item.fieldVlaue === sItem.fieldVlaue);
+      // 若存在重复的 则清除
+      if (delIndex !== -1) {
+        arr.splice(delIndex, 1);
+        return;
+      }
+      arr.push(sItem);
+      // this.fieldVlaue = item.fieldVlaue;
+      // this.timeFilter.biProcessStatus.push(item.fieldVlaue);
     },
     // 起始日期
-    getStart(){
+    getStart() {
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
@@ -125,7 +147,7 @@ export default {
       })
     },
     // 截止日期
-    getEnd(){
+    getEnd() {
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
@@ -137,11 +159,21 @@ export default {
       })
     },
     // 筛选确定
-    filterConfirm(){
+    filterConfirm() {
       this.showFilter = false;
+      this.isConfirm = true;
       this.$emit('on-filter', {
-        timeFilter: this.timeFilter
+        timeFilter: this.timeFilter,
+        biProcessStatus: this.fieldVlaue
       })
+    },
+    // 重置筛选
+    filterReset() {
+      this.timeFilter = {
+        startDate: '',
+        endDate: ''
+      }
+      this.fieldVlaue = []
     }
   },
   created(){

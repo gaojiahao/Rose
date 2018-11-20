@@ -295,9 +295,10 @@ export default {
           font-weight: 500;
           display: flex;
           align-items: center;
+          position: relative;
           .mode_content{
             color: #111;
-            // margin-right: .06rem;
+            margin-right: .16rem;
           }
           .iconfont{
             font-weight: bold;
@@ -305,6 +306,10 @@ export default {
           }
           .r_arrow {
             fill: #C8C8CD;
+            position: absolute;
+            top: .02rem;
+            right: -.05rem;
+
           }
         }
       }

@@ -61,7 +61,8 @@ export default {
       timeFilter: {
         startDate: '',
         endDate: ''
-      }
+      },
+      otherFilter: []
     }
   },
   components: {
@@ -232,11 +233,29 @@ export default {
         filter = [
           ...filter,
           {
-            operator: "like",     //模糊查询like，精确查询eq
+            operator: "like",     
             property: this.filterProperty,
             value: this.serachVal
           }
         ];
+      }
+      if(this.otherFilter){
+        if (this.activeTab) {
+          filter[0].attendedOperation = 'and';
+        }
+        this.otherFilter.forEach((item,index) => {
+          let obj = {
+            operator: "like",     
+            property: "processStatus",
+            value: item.fieldVlaue,
+            attendedOperation: 'or'
+          }
+          if(index === 0) {
+            delete obj.attendedOperation;
+          }
+          filter.push(obj);
+        })
+        
       }
       return getSellOrderList({
         limit: this.limit,
@@ -355,6 +374,7 @@ export default {
       console.log(val);
       // console.log(val.timeFilter);
       this.timeFilter = val.timeFilter;
+      this.otherFilter = val.biProcessStatus;
       this.resetCondition();
       this.getList();
     }
