@@ -10,37 +10,39 @@
              :class="[property === SItem.key && sort === 'DESC' ? 'active icon-sort-up-copy-copy' : 'icon-xiasanjiao1']"></i>
       </span>
     </div>
-    <div class="filter-part" @click="showFilter = true"> 
+    <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || this.fieldVlaue.length}"> 
       <span class="filter_name">筛选</span>
       <span class="iconfont icon-shaixuan"></span>
     </div>
     <div v-transfer-dom>
-      <popup position="right" v-model="showFilter" @on-hide="onHide">
+      <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
         <div class="filter-container-part">
-          <!-- 流程状态 -->
-          <div class="process-status-container basic-mod">
-            <div class="filter_title vux-1px-b">流程状态</div>
-            <div class="process_status">
-              <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item)}"
-              v-for="(item, index) in PcesStaList" :key="index"
-              @click="selProcee(item, index)">
-                <div class="status_content">{{item.fieldVlaue}}</div>
-              </div>          
-            </div>
-          </div>
-          <!-- 时间 -->
-          <div class="time-filter-container basic-mod">
-            <div class="filter_title vux-1px-b">时间段</div>
-            <div class="time_filter">
-              <div class="each_time" :class="{'active' : timeFilter.startDate}" @click="getStart">
-                {{timeFilter.startDate || '开始日期'}}
-              </div>
-              <div class="placeholder-part vux-1px-t"></div>
-              <div class="each_time" :class="{'active' : timeFilter.endDate}" @click="getEnd">
-                {{timeFilter.endDate || '结束日期'}}
+          <r-scroll class="list_wrapper" :options="scrollOptions">
+            <!-- 流程状态 -->
+            <div class="process-status-container basic-mod">
+              <div class="filter_title vux-1px-b">流程状态</div>
+              <div class="process_status">
+                <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item)}"
+                v-for="(item, index) in PcesStaList" :key="index"
+                @click="selProcee(item, index)">
+                  <div class="status_content">{{item.fieldVlaue}}</div>
+                </div>          
               </div>
             </div>
-          </div>
+            <!-- 时间 -->
+            <div class="time-filter-container basic-mod">
+              <div class="filter_title vux-1px-b">时间段</div>
+              <div class="time_filter">
+                <div class="each_time" :class="{'active' : timeFilter.startDate}" @click="getStart">
+                  {{timeFilter.startDate || '开始日期'}}
+                </div>
+                <div class="placeholder-part vux-1px-t"></div>
+                <div class="each_time" :class="{'active' : timeFilter.endDate}" @click="getEnd">
+                  {{timeFilter.endDate || '结束日期'}}
+                </div>
+              </div>
+            </div>
+          </r-scroll>
           <div class="handle-part">
             <span class="reset_btn" @click="filterReset">重置</span>
             <span class="confirm_btn" @click="filterConfirm">确定</span>
@@ -55,11 +57,13 @@
 <script>
 // vux组件引入
 import { Popup, TransferDom, dateFormat } from 'vux'
+// 组件引入
+import RScroll from 'components/RScroll'
 // 请求引入
 import { getProcessStatus } from 'service/commonService'
 export default {
   name: "RSort",
-  components: { Popup },
+  components: { Popup, RScroll},
   props: {
     data: {
       type: Array,
@@ -86,7 +90,10 @@ export default {
         startDate: '',
         endDate: '',
       },
-      isConfirm: false, // 是否是点击确定按钮关闭筛选的pop
+      lastFilter: {}, //上次的过滤条件，用于判断列表是否需要刷新
+      scrollOptions: {
+        click: true,
+      },
     }
   },
   methods: {
@@ -108,21 +115,50 @@ export default {
         direction: this.sort,
       });
     },
+    onShow(){
+      this.lastFilter = {
+        timeFilter: JSON.parse(JSON.stringify(this.timeFilter)),
+        biProcessStatus: JSON.parse(JSON.stringify(this.fieldVlaue))
+      }
+    },
+    // 判断数组元素是否相同
+    equar(arr1,arr2) {
+      if(arr1.length !== arr2.length) {
+        return false
+      } else {
+        for(let i = 0; i < arr1.length; i++) {
+          if(arr1[i].fieldVlaue !== arr2[i].fieldVlaue) {
+             return false
+          }
+        }
+        return true;
+      }
+    },
+    // pop关闭时，判断过滤条件是否改变，改变则重新请求列表
     onHide() {
-      if(!this.isConfirm){
+      let isRefreshList = false,
+          isEquar = this.equar(this.fieldVlaue,this.lastFilter.biProcessStatus);
+      // 时间过滤发生改变
+      if(this.timeFilter.startDate !== this.lastFilter.timeFilter.startDate || this.timeFilter.endDate !== this.lastFilter.timeFilter.endDate) {
+        isRefreshList = true;
+      } 
+      // 流程状态过滤发生改变
+      if(!isEquar) {
+        isRefreshList = true;
+      }
+      if(isRefreshList) {
         this.$emit('on-filter', {
           timeFilter: this.timeFilter,
           biProcessStatus: this.fieldVlaue
         })
-      }      
+      }
     },
     // TODO 匹配相同项的索引
-     showSelIcon(sItem) {
-        return this.fieldVlaue.findIndex(item => item.fieldVlaue === sItem.fieldVlaue) !== -1;
-      },
+    showSelIcon(sItem) {
+      return this.fieldVlaue.findIndex(item => item.fieldVlaue === sItem.fieldVlaue) !== -1;
+    },
     // 选择流程状态
     selProcee(sItem, index) {
-      // console.log(item);
       let arr = this.fieldVlaue;
       let delIndex = arr.findIndex(item => item.fieldVlaue === sItem.fieldVlaue);
       // 若存在重复的 则清除
@@ -131,8 +167,6 @@ export default {
         return;
       }
       arr.push(sItem);
-      // this.fieldVlaue = item.fieldVlaue;
-      // this.timeFilter.biProcessStatus.push(item.fieldVlaue);
     },
     // 起始日期
     getStart() {
@@ -161,11 +195,7 @@ export default {
     // 筛选确定
     filterConfirm() {
       this.showFilter = false;
-      this.isConfirm = true;
-      this.$emit('on-filter', {
-        timeFilter: this.timeFilter,
-        biProcessStatus: this.fieldVlaue
-      })
+      this.onHide();
     },
     // 重置筛选
     filterReset() {
@@ -198,6 +228,7 @@ export default {
 }
 /deep/ .vux-popup-dialog {
   background: #F6F6F6;
+  overflow-y: auto;
 } 
 .active  {
   color: #5077aa;
@@ -246,14 +277,21 @@ export default {
   }
   .filter-part {
     @extend .each-sort;
+    &.active{
+      color: #5077aa;
+    }
   }
 }
 .filter-container-part {
   width: 3rem;
   height: 100%;
-  overflow: auto;
+  // overflow: auto;
   position: relative;
   box-sizing: border-box;
+  .list_wrapper{
+    height: calc(100% - 0.6rem);
+    overflow: hidden;
+  }
   .basic-mod {
     margin-bottom: .15rem;
   }
@@ -324,7 +362,7 @@ export default {
     display: flex;    
     width: inherit;
     height: .54rem;
-    position: fixed;    
+    position: absolute;    
     line-height: .54rem;
     span {
       flex: 1;
