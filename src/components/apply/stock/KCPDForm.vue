@@ -6,7 +6,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 入库仓库-->
-        <pop-warehouse-list title="仓库名称" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
+        <pop-warehouse-list title="仓库名称" :default-value="warehouseIn" @sel-item="selWarehouseIn" isRequired></pop-warehouse-list>
 
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -83,7 +83,12 @@
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
             <cell title="差异数量" text-align='right' placeholder='请填写'
                   :value="modifyMatter.differenceNum"
-                  :class='{high_light : modifyMatter.differenceNum !== 0}'></cell>
+                  :class='{high_light : modifyMatter.differenceNum !== 0}'>
+              <template slot="title">
+                <span class='required'>差异数量
+                </span>
+              </template>  
+            </cell>
           </template>
         </pop-matter>
       </div>

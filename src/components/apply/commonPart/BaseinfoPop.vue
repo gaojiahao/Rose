@@ -9,7 +9,12 @@
           <!-- <span class="iconfont icon-youjiantou"></span> -->
         </div>
       </div>
-      <popup-picker title="经办组织" :data="groupList" :columns="1" v-model="group" @on-change="changeGroup" ref="groupPicker"></popup-picker>
+      <popup-picker title="经办组织" :data="groupList" :columns="1" v-model="group" @on-change="changeGroup" ref="groupPicker">
+        <template slot="title">
+          <span class='required'>经办组织
+          </span>
+        </template>
+      </popup-picker>
       <popup-picker title="经办职位" :data="roleList" :columns="1" v-model="role" @on-change="changeRole" ref="rolePicker"></popup-picker>
     </div>
      <div v-transfer-dom>
@@ -293,7 +298,8 @@ export default {
         justify-content: space-between;
         padding: 0.05rem 0;
         .title{
-          color: #757575;
+          font-weight: bold;
+          color: #5077aa;
         }
         .mode{
           font-weight: 500;
@@ -316,6 +322,11 @@ export default {
 
           }
         }
+      }
+      .required{
+        font-weight: bold;
+        color: #5077aa;
+        font-size: 0.14rem;
       }
       /deep/ .weui-cell{
         padding: 0.05rem 0;

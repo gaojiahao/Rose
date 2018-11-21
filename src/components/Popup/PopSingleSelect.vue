@@ -1,7 +1,7 @@
 <template>
   <div class="pop-single-container" @click="showPop = !showPop">
     <div class='pop_info'>
-      <div class="title">{{title}}</div>
+      <div class="title" :class="{required : isRequired}">{{title}}</div>
       <div class="mode">
         <span class="mode-content">{{selected || '请选择'}}</span>
         <span class="iconfont icon-shenglve"></span>
@@ -45,6 +45,10 @@
         default() {
           return []
         }
+      },
+      isRequired: {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -98,6 +102,10 @@
       justify-content: space-between;
       .title {
         color: #757575;
+        &.required{
+          color: #5077aa;
+          font-weight: bold;
+        }
       }
     }
     .icon-shenglve,

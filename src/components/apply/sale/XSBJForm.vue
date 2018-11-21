@@ -92,7 +92,12 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
                <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
-                        @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
+                        @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                  <template slot="label">
+                    <span class='required'>单价
+                    </span>
+                  </template>      
+                </x-input>
               <div class="price_type vux-1px-t" @click="showPrice = !showPrice">
                 <div class="current_type">
                   <label>价格类型</label>

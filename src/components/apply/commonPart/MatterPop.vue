@@ -51,11 +51,24 @@
           <slot name="modify" :modifyMatter="modifyMatter">
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>数量
+                </span>
+              </template>    
             </x-input>
             <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
-            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
+            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>单价
+                </span>
+              </template>    
+            </x-input>
             <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
               @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>税率
+                </span>
+              </template>    
             </x-input>
             <slot name="date" :modifyMatter="modifyMatter">
               <!-- <datetime v-if="showDateTime" :title="dateText" v-model="modifyMatter.promDeliTime"
@@ -218,6 +231,10 @@ export default {
     background: #F8F8F8;
 
   }
+  .required{
+    font-weight: bold;
+    color: #5077aa;
+  }
   .mg_auto{
     padding: 0 .08rem;
     width: 100%;
@@ -253,6 +270,10 @@ export default {
     align-items: center;
     padding: 0.1rem 0.15rem;
     font-size:0.14rem;
+    label{
+      color: #5077aa;
+      font-weight: bold;
+    }
     .matter_val{
       color:#999;
     }

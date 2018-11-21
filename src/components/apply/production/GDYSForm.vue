@@ -27,9 +27,19 @@
             <cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="工艺路线编码" v-model="workInfo.proFlowCode" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="工艺路线名称" v-model="workInfo.technicsName" :disabled="!workInfo.rearProcedureName"></cell>
-            <cell title="物料名称" v-model="workInfo.inventoryName" :disabled="!workInfo.rearProcedureName"></cell>
-            <cell title="物料编码" v-model="workInfo.matCode" :disabled="!workInfo.rearProcedureName"></cell>
-            <cell title="加工属性" v-model="workInfo.processing" :disabled="!workInfo.rearProcedureName"></cell>
+            <cell title="物料名称" v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
+              <template slot="title">
+                <span class='required'>物料名称
+                </span>
+              </template>
+            </cell>
+            <cell title="物料编码" v-model="workInfo.matCode" :disabled="!workInfo.matCode">
+              <template slot="title">
+                <span class='required'>物料编码
+                </span>
+              </template>
+            </cell>
+            <cell title="加工属性" v-model="workInfo.processing" :disabled="!workInfo.processing"></cell>
           </group>
           <!-- 物料popup -->
           <pop-work-check-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
@@ -37,7 +47,7 @@
         </div>
         <pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
         <pop-warehouse-list title="入库仓库" :filter-params="filterParams" :default-value="warehouse"
-                            @sel-item="selWarehouse"></pop-warehouse-list>
+                            @sel-item="selWarehouse" isRequired></pop-warehouse-list>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
                   v-model="biProcessStatus" :hasBorder="false"></r-picker>
         <div class="materiel_list" v-show="bomList.length">

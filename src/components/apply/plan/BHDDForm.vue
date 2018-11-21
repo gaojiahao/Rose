@@ -76,6 +76,10 @@
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span class='required'>数量
+                </span>
+              </template>
             </x-input>
             <datetime title="预计完工日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
           </template>

@@ -10,7 +10,7 @@
                          :defaultContact="contactInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
-                           v-model="crDealerPaymentTerm"></pop-single-select>
+                           v-model="crDealerPaymentTerm" isRequired></pop-single-select>
         <!-- 仓库-->
         <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouse"
                             @sel-item="selWarehouse"></pop-warehouse-list>

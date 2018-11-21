@@ -18,7 +18,9 @@
         <r-picker title="经办组织:" :data="groupList" :value="formData.handlerUnitName"
                   @on-change="groupChange" v-model="formData.handlerUnitName" required></r-picker>
         <r-picker title="经办职位:" :data="roleList" :value="formData.handlerRoleName"
-                  @on-change="roleChange" v-model="formData.handlerRoleName" required></r-picker>
+                  @on-change="roleChange" v-model="formData.handlerRoleName" ></r-picker>
+        <r-picker title="流程状态:" :data="statusList" :value="formData.processStatus"
+                  v-model="formData.processStatus" ></r-picker>
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">标题:</label>
@@ -42,8 +44,6 @@
             <div class='property_val'>{{formData.demandPlan}}</div>
           </div>
         </div>
-        <r-picker title="流程状态:" :data="statusList" :value="formData.processStatus"
-                  v-model="formData.processStatus" required></r-picker>
         <r-picker title="按期信心指数:" :data="confidenceList" :value="formData.timeConfidenceIndex"
                   v-model="formData.timeConfidenceIndex" required></r-picker>
         <r-picker title="被授权团队:" :data="authorizedList" :value="formData.authorizedTeam"

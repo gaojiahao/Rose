@@ -86,7 +86,12 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="date" slot-scope="{modifyMatter}">
-            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
+            <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择">
+              <template slot="title">
+                <span class='required'>预期交货日
+                </span>
+              </template>
+            </datetime>
           </template>
         </pop-matter>
         <!--备注-->

@@ -22,6 +22,18 @@
               </template>
             </x-input>
             <cell title='借方往来标签' v-model="workInfo.dealerLabel" :disabled="!workInfo.dealerLabel"></cell>
+            <cell title='物料名称' v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
+              <template slot="title">
+                <span class='required'>物料名称
+                </span>
+              </template>
+            </cell>
+            <cell title='物料编码' v-model="workInfo.inventoryCode" :disabled="!workInfo.inventoryCode">
+              <template slot="title">
+                <span class='required'>物料编码
+                </span>
+              </template>
+            </cell>
           </group>
           <!-- 物料popup -->
           <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"

@@ -87,6 +87,10 @@
             <cell title="已做需求" v-model="modifyMatter.qtyed" text-align="right"></cell>
             <x-input title="待做需求" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span class='required'>待做需求
+                </span>
+              </template>
             </x-input>
             <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>

@@ -11,7 +11,7 @@
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
-                           v-model="drDealerPaymentTerm"></pop-single-select>
+                           v-model="drDealerPaymentTerm" isRequired></pop-single-select>
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
                            v-model="formData.drDealerLogisticsTerms"></pop-single-select>

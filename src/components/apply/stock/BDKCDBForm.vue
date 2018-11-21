@@ -6,10 +6,10 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 出库仓库-->
-        <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
+        <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut" isRequired></pop-warehouse-list>
 
         <!-- 入库仓库-->
-        <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
+        <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn" isRequired></pop-warehouse-list>
 
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -83,8 +83,18 @@
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="调拨数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
-            <cell title="库存数量" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>调拨数量
+                </span>
+              </template>   
+            </x-input>
+            <cell title="库存数量" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal">
+              <template slot="title">
+                <span class='required'>库存数量
+                </span>
+              </template>   
+            </cell>
           </template>
         </pop-matter>
       </div>

@@ -9,7 +9,7 @@
         <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
-                          v-model="dealer.drDealerPaymentTerm"></pop-single-select>
+                          v-model="dealer.drDealerPaymentTerm" isRequired></pop-single-select>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -83,7 +83,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
-                           get-list-method="getInventory7501" ref="matter"></pop-matter-list>
+                           get-list-method="getInventory7501" ref="matter" :isShowCode="false"></pop-matter-list>
           
         </div>
          <!--物料编辑pop-->
