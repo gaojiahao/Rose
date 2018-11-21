@@ -216,7 +216,7 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let {tdQty = '', price = item.quotedPrice, taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
+          let {tdQty = '', price = item.quotedPrice === 0 ? '' : item.quotedPrice, taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
