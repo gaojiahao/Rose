@@ -43,14 +43,14 @@
                         <span v-show="item.promDeliTime">计划需求日期：{{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">                      
+                      <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <div>
                           <r-number :num="item.tdQty"
                                     :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                        </div>                     
+                        </div>
                       </div>
                     </template>
                     <template slot="editPart" slot-scope="{item}">
@@ -62,8 +62,8 @@
                   <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                  </div>   
-                </div>     
+                  </div>
+                </div>
               </div>
             </div>
           </template>
@@ -80,18 +80,18 @@
                           ref="matter"></pop-matter-list>
         </div>
         <!-- 物料编辑pop -->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <cell title="全部需求" v-model="modifyMatter.allQty" text-align="right"></cell>
             <cell title="已做需求" v-model="modifyMatter.qtyed" text-align="right"></cell>
-            <x-input title="待做需求" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+            <x-input title="待做需求" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
             </x-input>
-            <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right" 
+            <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-            
-            <datetime title="计划需求日期" v-model="modifyMatter.promDeliTime" 
+
+            <datetime title="计划需求日期" v-model="modifyMatter.promDeliTime"
                       placeholder="请选择" ></datetime>
             <cell title="估计金额" :value="'￥' + modifyMatter.noTaxAmount"></cell>
           </template>
@@ -148,7 +148,7 @@ export default {
   data () {
     return {
       listId: '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
-      orderList: {},  
+      orderList: {},
       matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
       formData: {
@@ -406,7 +406,9 @@ export default {
         this.biReferenceId = data.biReferenceId;
         this.attachment = data.attachment;
         let {formData} = data;
-        formData.order.dataSet.map(item=>{
+        let orderList = {};
+        let dataSet = [];
+        dataSet = formData.order.dataSet.map(item => {
           item = {
             ...item,
             inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
@@ -417,13 +419,17 @@ export default {
             measureUnit: item.measureUnit_transObjCode,
             inventoryType: item.inventoryType_transObjCode,
             inventorySubclass: item.inventorySubclass_transObjCode,
+            allQty: item.productDemandQty,
+            qtyed: item.thenLockQty,
           }
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
           orderList[item.transCode].push(item);
-          this.matterList.push(item);
-        })
+          return item;
+        });
+        this.orderList = orderList;
+        this.matterList = dataSet;
         // 基本信息
         this.formData = {
           handler: formData.handler,

@@ -18,28 +18,7 @@
         <r-picker title="经办组织:" :data="groupList" :value="formData.handlerUnitName"
                   @on-change="groupChange" v-model="formData.handlerUnitName" required></r-picker>
         <r-picker title="经办职位:" :data="roleList" :value="formData.handlerRoleName"
-                  @on-change="roleChange" v-model="formData.handlerRoleName" required></r-picker>          
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class="required">标题:</label>
-            <input type='text' v-model.trim="formData.demandTitle" class='property_val'/>
-            <div></div>
-          </div>
-        </div>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class="required">标题:</label>
-            <input type='text' v-model.trim="formData.demandTitle" class='property_val'/>
-            <div></div>
-          </div>
-        </div>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class="required">标题:</label>
-            <input type='text' v-model.trim="formData.demandTitle" class='property_val'/>
-            <div></div>
-          </div>
-        </div>
+                  @on-change="roleChange" v-model="formData.handlerRoleName" required></r-picker>
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">标题:</label>
@@ -235,7 +214,7 @@
       getGroupByUserId(){
         return getGroupByUserId(this.formData.handler).then(({tableContent = []}) => {
           this.groupList = []
-          tableContent.forEach(item=>{          
+          tableContent.forEach(item=>{
             this.groupList.push({
               ...item,
               name: item.userGroupName,
@@ -252,7 +231,7 @@
       getRoleByUserId() {
         return getRoleByUserId(this.formData.handler).then(({tableContent = []}) => {
           this.roleList = [];
-          tableContent.forEach(item=>{          
+          tableContent.forEach(item=>{
             this.roleList.push({
               ...item,
               name: item.userGroupName,
@@ -263,7 +242,7 @@
           if(tableContent.length){
             this.formData.handlerRoleName = tableContent[0].userGroupName;
             this.formData.handlerRole = tableContent[0].userGroupId;
-          }               
+          }
         })
 
       },
@@ -471,7 +450,7 @@
             }
           };
         }
-        
+
       },
     },
     created () {
