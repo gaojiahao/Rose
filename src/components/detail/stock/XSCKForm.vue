@@ -201,9 +201,6 @@ export default {
         border-top-right-radius: .08rem;
       }
     }
-    .order_matter {
-      margin-top: .04rem;
-    }
   }
   .contacts_part {
     margin-bottom: .1rem;

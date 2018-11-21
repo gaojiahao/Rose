@@ -17,9 +17,9 @@
               <span class="units">
                 计量单位: {{item.measureUnit_transObjCode}}
               </span>
-            </div>
-            <div class="mater_num">
-              <span class='num'>预期完工日: {{item.promDeliTime}}</span>
+              <span class="units">
+                预期完工日: {{item.promDeliTime}}
+              </span>
             </div>
             <div class="mater_num">
               <span class='num'>数量: {{item.tdQty}}</span>
@@ -127,22 +127,4 @@ export default {
 
 <style lang='scss' scoped>
 @import './../../scss/bizDetail';
-  .matter_item {
-    .mater_other {
-      .mater_left {
-        color: #757575;
-        font-size: .1rem;
-        .units {
-          margin-right: .04rem;
-        }
-      }
-      .mater_num {
-        .num {
-          color: #111;
-          font-size: .14rem;
-          font-weight: bold;
-        }
-      }
-    }
-  }
 </style>

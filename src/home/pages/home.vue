@@ -8,9 +8,9 @@
               <div class="tips_title">
                 <div>当前主体</div>
                 <div class="entity_name"
-                      :class="[userInfo.entityName && userInfo.entityName.length > 11 ? 'when-is-out': '']">{{userInfo.entityName}}</div>
+                      :class="[userInfo.entityName && userInfo.entityName.length > 11 ? 'when-is-out': '']">{{userInfo.entityName || '暂无主体信息'}}</div>
               </div>
-              <div class="tips-fade-part">
+              <div class="tips-fade-part" v-if="entityList.length > 1">
                 <transition name='fade'>
                   <span v-if="!showDrop" key="on" class="iconfont icon-qiehuan1" @click="showDrop = !showDrop"></span>
                   <span v-else key="off" class="change_btn" @click="showDrop = !showDrop">取消</span>

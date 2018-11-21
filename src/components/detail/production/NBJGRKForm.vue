@@ -206,7 +206,6 @@
       }
     }
     .order_matter {
-      margin-top: .04rem;
       .each_cell {
         background-color: #fff;
       }

@@ -26,6 +26,14 @@
               <matter-item :class="{'vux-1px-b' : index !== oItem.length - 1}" :item="item" v-for="(item, index) in oItem" :key="index">
                 <!-- 调拨数量 -->
                 <div class="mater_other" slot="other" slot-scope="{item}">
+                  <div class="mater_left">
+                    <span class="units">
+                      物料大类: {{item.inventoryType_outPutMatCode}}
+                    </span>
+                    <span class="units">
+                      计量单位: {{item.measureUnit_outPutMatCode}}
+                    </span>
+                  </div>
                   <div class="mater_num">
                     <span class="num">
                       减少数量: {{item.tdQty | toFixed}}
@@ -146,21 +154,6 @@
       .order_num {
         background: #9bb4da;
         border-top-right-radius: .08rem;
-      }
-    }
-    .order_matter {
-      margin-top: .04rem;
-    }
-    .mater_other {
-      .mater_num {
-        .num {
-          color: #111;
-          font-size: .14rem;
-          font-weight: bold;
-          .symbol {
-            color: #757575;
-          }
-        }
       }
     }
   }

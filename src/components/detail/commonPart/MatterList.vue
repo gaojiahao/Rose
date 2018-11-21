@@ -4,8 +4,7 @@
       <span class="iconfont icon-Shape"></span>物料列表
     </div>
     <div class="mater_list" v-if="$scopedSlots.matterOther">
-      <matter-item :item="item" :class="{'vux-1px-b' : index !== matterList.length - 1}"
-                   v-for="(item, index) in matterList" :key='index'>
+      <matter-item :item="item" v-for="(item, index) in matterList" :key='index'>
         <!-- 物料详情 -->
         <template slot="other" slot-scope="{item}">
           <slot name="matterOther" :item="item"></slot>

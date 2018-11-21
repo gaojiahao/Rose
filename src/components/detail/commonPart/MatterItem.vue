@@ -12,12 +12,12 @@
       <div class="mater_info">
         <!-- 物料编码 -->
         <div class="info-item">
-          <span class="title">编码</span>
+          <span class="title">物料编码</span>
           <span class="num">{{item.transObjCode || '无'}}</span>
         </div>
         <!-- 物料规格 -->
         <div class="info-item mater_spec">
-          <span class="title">规格</span>
+          <span class="title">型号规格</span>
           <span class="num">{{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}</span>
         </div>
       </div>
@@ -115,6 +115,7 @@
       > img {
         width: 100%;
         max-height: 100%;
+        border-radius: .04rem;
       }
     }
     // 物料主体
@@ -211,6 +212,25 @@
         }
         .num {
           margin-right: 0.04rem;
+        }
+      }
+    }
+    .mater_other {
+      .mater_left {
+        color: #757575;
+        font-size: .1rem;
+        .units {
+          margin-right: .04rem;
+        }
+      }
+      .mater_num {
+        .num {
+          color: #111;
+          font-size: .14rem;
+          font-weight: bold;
+          .symbol {
+            color: #757575;
+          }
         }
       }
     }

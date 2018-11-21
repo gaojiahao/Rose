@@ -23,7 +23,22 @@
               <span class="order_num">{{key}}</span>
             </div>
             <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index"></matter-item>
+              <matter-item :item="item" v-for="(item, index) in oItem" :key="index">
+                <div class="mater_other" slot="other" slot-scope="{item}">
+                  <div class="mater_left">
+                    <span class="units">全部需求: {{item.productDemandQty}}</span>
+                    <span class="units">已做需求: {{item.thenLockQty}}</span>
+                    <span class="units">起订量: {{item.moq_transObjCode}}</span>
+                  </div>
+                  <div class="mater_num">
+                    <span class="num">待做需求: {{item.tdQty}}</span>
+                    <span class="num">估计价格: ￥{{item.price}}</span>
+                  </div>
+                  <div class="mater_price">
+                    ￥{{item.tdAmount}}<span class="num">[估计金额]</span>
+                  </div>
+                </div>
+              </matter-item>
             </div>
           </div>
         </div>
@@ -31,7 +46,6 @@
           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
         </div>
       </div>
-      <!-- <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment"></matter-list> -->
       <!-- 金额合计栏 -->
       <price-total :count="count" noAmt noTaxAmt></price-total>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
@@ -150,8 +164,5 @@ export default {
         background: #9bb4da;
         border-top-right-radius: .08rem;
       }
-    }
-    .order_matter {
-      margin-top: .04rem;
     }
 </style>

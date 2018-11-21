@@ -217,11 +217,6 @@ export default {
       border-top-right-radius: .08rem;
     }
   }
-
-  .order_matter {
-    margin-top: .04rem;
-  }
-
   // 一般金额
   .mater_price {
     color: #ea5455;
