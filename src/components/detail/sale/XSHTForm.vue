@@ -56,6 +56,7 @@ import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import MatterList from 'components/detail/commonPart/MatterList'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {toFixed} from '@/plugins/calc'
 export default {
   data(){
     return{
@@ -100,7 +101,7 @@ export default {
         for(let val of dataSet){
           val.noTaxAmount = accMul(val.price,val.tdQty);
           val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
+          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
           this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`

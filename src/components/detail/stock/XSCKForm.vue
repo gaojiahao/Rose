@@ -43,8 +43,8 @@
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
 
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions" 
-                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>      
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
 </template>
@@ -55,6 +55,7 @@ import { getSOList } from 'service/detailService'
 import detailCommon from 'components/mixins/detailCommon'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {toFixed} from '@/plugins/calc'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
@@ -133,7 +134,7 @@ export default {
         for (let item of dataSet) {
           item.noTaxAmount = accMul(item.price,item.tdQty);
           item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
-          item.tdAmount = accAdd(item.noTaxAmount,item.taxAmount);
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount,item.taxAmount));
           this.count = accAdd(this.count,item.tdAmount)
           // this.count += item.tdAmount *100;
           item.inventoryPic = item.inventoryPic_outPutMatCode
