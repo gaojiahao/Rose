@@ -5,6 +5,7 @@
         :is='currentComponent'
         @change='modifyRoute'
         @refresh-scroll="refresh"
+        @is-subscribe="isSubscribe"
         ref="detailComponent">
       </component>
     </div>
@@ -116,20 +117,8 @@ export default {
       })
     },
     // TODO 是否已经关注该订单
-    isSubscribeByRelationKey() {
-      isSubscribeByRelationKey(this.transCode).then( data =>{
-        this.isConcern = data;
-      })
-    },
-    // TODO 获取关注的人数
-    getUserList() {
-      getUserList({
-        page: 1,
-        limit: 100,
-        relationKey: this.transCode
-      }).then(({dataCount = 0})=>{
-        this.concernCount = dataCount;
-      })
+    isSubscribe(val){
+      this.isConcern = val;
     },
     // TODO 关注或取关
     goConcern() {
@@ -191,9 +180,6 @@ export default {
         click: true,
       })
     })
-    // 获取是否已经关注
-    this.isSubscribeByRelationKey();
-    // this.getUserList();
   },
   beforeRouteLeave(to, from, next) {
     let { path } = to;

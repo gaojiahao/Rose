@@ -1,5 +1,5 @@
 import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
-import { getPCCommentList } from 'service/commentService'
+import { getPCCommentList, isSubscribeByRelationKey } from 'service/commentService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -229,6 +229,13 @@ export default {
         this.$event.$emit('commentCount', dataCount);
       })
     },
+    // TODO 是否已经关注该订单
+    isSubscribeByRelationKey() {
+      isSubscribeByRelationKey(this.transCode).then( data =>{
+        // this.isConcern = data;
+        this.$emit('is-subscribe',data)
+      })
+    },
     async loadPage() {
       let { transCode, name } = this.$route.query;
       if (!transCode) {
@@ -248,6 +255,7 @@ export default {
       // 获取表单表单详情
       await this.getOrderList(transCode);
       await this.getCommentList();
+      await this.isSubscribeByRelationKey()
       this.$loading.hide();
       // 触发父组件的scroll刷新
       this.$emit('refresh-scroll');
