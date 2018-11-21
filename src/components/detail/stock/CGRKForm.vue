@@ -88,6 +88,7 @@ import MatterItem from 'components/detail/commonPart/MatterItem'
 import FormCell from 'components/detail/commonPart/FormCell'
 //公共方法引入
 import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {toFixed} from '@/plugins/calc'
 export default {
   data() {
     return {
@@ -154,7 +155,7 @@ export default {
         for (let item of dataSet) {
           item.noTaxAmount = accMul(item.price,item.tdQty);
           item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
-          item.tdAmount = accAdd(item.noTaxAmount,item.taxAmount);
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount,item.taxAmount));
           this.count = accAdd(this.count,item.tdAmount)
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
