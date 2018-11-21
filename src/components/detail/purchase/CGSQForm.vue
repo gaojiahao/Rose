@@ -35,19 +35,20 @@
                     <span class="num">估计价格: ￥{{item.price}}</span>
                   </div>
                   <div class="mater_price">
-                    ￥{{item.tdAmount}}<span class="num">[估计金额]</span>
+                    ￥{{item.tdAmount}}<span class="num"> [估计金额]</span>
                   </div>
                 </div>
               </matter-item>
             </div>
           </div>
         </div>
-        <div class="comment-part">
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-        </div>
+        <!-- 金额合计栏 -->
+        <price-total :count="count" noAmt noTaxAmt></price-total>
+
       </div>
-      <!-- 金额合计栏 -->
-      <price-total :count="count" noAmt noTaxAmt></price-total>
+      <div class="comment-part">
+        <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+      </div>      
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" 
