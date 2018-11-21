@@ -102,6 +102,7 @@ export default {
       roleList: [], // 职位列表
       group: [], // 选中的组织
       role: [], // 选中的职位
+      isSetInitial: false, //用于判断经办组织和经办部门是否设置初始值
 
     }
   },
@@ -141,10 +142,9 @@ export default {
       this.selItems = this.defaultValue ? {...this.defaultValue,userId: this.defaultValue.handler,nickname: this.defaultValue.handlerName} : {};
       this.group = [this.selItems.handlerUnitName];
       this.role = [this.selItems.handlerRoleName];
-      if(!this.$route.query.transCode){
-        this.getGroupByUserId();
-        this.getRoleByUserId();
-      }
+      this.getGroupByUserId();
+      this.getRoleByUserId();
+      
       
     },
     // TODO 判断是否展示选中图标
@@ -201,6 +201,7 @@ export default {
     },
     // TODO 选择物料
     selThis (sItem, sIndex) {
+      this.isSetInitial = true;
       this.showPop = false;
       this.selItems = sItem;
       this.getGroupByUserId();
@@ -217,7 +218,7 @@ export default {
             value: item.userGroupName,
           })
         })
-        if(tableContent.length){
+        if(tableContent.length && this.isSetInitial){
           this.group = [tableContent[0].userGroupName];
           this.selItems.handlerUnit = tableContent[0].userGroupId;
         }
@@ -235,7 +236,7 @@ export default {
           })
 
         })
-        if(tableContent.length){
+        if(tableContent.length && this.isSetInitial){
           this.role = [tableContent[0].userGroupName];
           this.selItems.handlerRole = tableContent[0].userGroupId;
         }               
