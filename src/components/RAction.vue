@@ -10,19 +10,22 @@
     <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
                    v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
     <div v-transfer-dom>
-      <confirm class="action-confirm" title="转办" @on-confirm="onConfirm" v-model="showConfirm">
+      <confirm class="action-confirm" title="转办" @on-confirm="onConfirm"
+               :close-on-confirm="false" v-model="showConfirm">
         <div class="confirm-item">
-          <span class="title">转办给: </span>
+          <span class="title required">转办给: </span>
           <span>{{selectedUser.nickname}}</span>
         </div>
         <div class="confirm-item">
-          <span class="title">工时: </span>
+          <span class="title required">工时: </span>
           <input type="number" class="value" v-model.number="transferInfo.taskTime">
         </div>
+        <div class="warn" v-show="showTaskWarn">请输入工时</div>
         <div class="confirm-item">
-          <span class="title">备注: </span>
+          <span class="title required">备注: </span>
           <input type="text" class="value" v-model="transferInfo.comment">
         </div>
+        <div class="warn" v-show="showCommentWarn">请输入备注</div>
       </confirm>
     </div>
   </div>
@@ -68,6 +71,8 @@
           taskTime: 0.1, // 工时
           comment: '', // 备注
         },
+        showTaskWarn: false,
+        showCommentWarn: false,
       }
     },
     methods: {
@@ -166,11 +171,19 @@
       },
       // TODO 点击confirm确定
       onConfirm() {
+        let warn = '';
         let submitData = {
           userId: this.selectedUser.userId,
           taskId: this.taskId,
           ...this.transferInfo,
         };
+        this.showTaskWarn = !this.transferInfo.taskTime;
+        this.showCommentWarn = !this.transferInfo.comment;
+        if (this.showTaskWarn || this.showCommentWarn) {
+          return
+        }
+
+        this.showConfirm = false;
         this.$HandleLoad.show();
         transferTask(submitData).then(data => {
           this.$HandleLoad.hide();
@@ -196,6 +209,8 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~@/scss/color.scss';
+
   .handle_wrapper {
     background: #FFF;
     overflow: hidden;
@@ -249,19 +264,29 @@
       line-height: .2rem;
       text-align: left;
     }
+    .warn {
+      color: #ea5455;
+      text-align: right;
+      font-size: .12rem;
+      font-weight: bold;
+    }
     .title {
       display: inline-block;
       width: .6rem;
+      &.required {
+        color: $required;
+        font-weight: bold;
+      }
     }
     .value {
-      flex: 1;
+      padding: .04rem .05rem;
+      width: calc(100% - .6rem);
       border: 1px solid #dedede;
       border-radius: .05rem;
-      padding: .04rem .05rem;
-      -webkit-appearance: none;
-      appearance: none;
       outline: none;
       font-size: 16px;
+      -webkit-appearance: none;
+      appearance: none;
     }
   }
 </style>
