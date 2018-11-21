@@ -94,9 +94,6 @@
         }).catch(err => {
           this.showLoading = false;
           this.summaryList = [];
-          this.$vux.alert.show({
-            content: err.message
-          })
         })
       },
       // TODO 上一页处理

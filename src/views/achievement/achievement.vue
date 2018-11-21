@@ -115,10 +115,6 @@
           this.$nextTick(() => {
             this.resetScroll();
           })
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message
-          });
         })
       },
       // TODO 重置下拉刷新、上拉加载的状态

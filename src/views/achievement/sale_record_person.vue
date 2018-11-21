@@ -148,10 +148,6 @@
           this.$nextTick(() => {
             this.resetScroll();
           })
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message
-          })
         });
       },
       // TODO 重置列表条件

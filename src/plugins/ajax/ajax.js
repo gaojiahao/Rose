@@ -1,7 +1,14 @@
 import conf from './conf';
 import tokenService from '../../service/tokenService'
+import errHandle from 'service/errHandle'
 
 import axios from 'axios';
+
+// TODO reject处理
+let rejectError = (reject, message) => {
+  errHandle(message);
+  return Promise.reject({ success: false, message });
+};
 
 let Rxports = {
   /**
@@ -67,10 +74,7 @@ let Rxports = {
           if (status === 401) {
             tokenService.login()
           }
-          reject({
-            success: false,
-            message: message
-          })
+          rejectError(reject, message);
         });
       })
     })

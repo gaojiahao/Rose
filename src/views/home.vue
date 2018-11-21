@@ -150,11 +150,7 @@ export default {
         if (`${data.statu}` === '1') { // statu为1则为总裁
           this.showLookReport = true
         }
-      }).catch(err => {
-        this.$vux.alert.show({
-          content: err.message
-        })
-      });
+      })
       await tokenService.getUser().then(userInfo => {
         // 获取当前时间
         this.getToday();
@@ -174,11 +170,7 @@ export default {
           captain: completeData.bmName || '',        //队长（暂无）
           userCode: completeData.userCode || '',      //工号
         }))
-      }).catch(err => {
-        this.$vux.alert.show({
-          content: err.message
-        })
-      });
+      })
       await getCurrMonthStatus().then(({ differ, currMonthTarget }) => {
         this.saleStatus = {
           differ,                   // 距离目标还差多少
@@ -188,11 +180,7 @@ export default {
       await getProductCount().then(({ tableContent }) => {
         let [ Count = {} ] = tableContent;
         this.ProductCount = Count; 
-      }).catch(err => {
-        this.$vux.alert.show({
-          content: err.message
-        })
-      });
+      })
       this.showLoading = false;
     })()
   }

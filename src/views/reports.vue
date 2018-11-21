@@ -245,9 +245,6 @@
           }).catch(err => {
             this.showLoading = false;
             this.reportList = [];
-            this.$vux.alert.show({
-              content: err.message
-            })
           })
         })
       },

@@ -117,13 +117,6 @@
                   }
                 });
               }
-            }).catch(data => {
-              if (data.success == false) {
-                that.$vux.alert.show({
-                  title: "提示",
-                  content: data.message
-                });
-              }
             });
           }
         });

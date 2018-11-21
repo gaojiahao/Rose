@@ -210,10 +210,6 @@
           this.$nextTick(() => {
             this.resetScroll();
           })
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message
-          })
         });
       },
       getProduct() {
@@ -224,10 +220,6 @@
           this.listData = [...this.listData, ...product];
           this.$nextTick(() => {
             this.resetScroll();
-          })
-        }).catch(e => {
-          this.$vux.alert.show({
-            content: e.message
           })
         });
       },
