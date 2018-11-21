@@ -305,7 +305,9 @@ export default {
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
     (async () => {
       this.getProcess();
-      this.getBaseInfoData();
+      if(!transCode){
+        this.getBaseInfoData();
+      }
       this.getProcessStatus();  // 获取流程状态
       this.initRequest && await this.initRequest();   // 提交页面 不共用的数据 请求
       this.getPaymentTerm && await this.getPaymentTerm();   // 提交页面 结算方式 请求

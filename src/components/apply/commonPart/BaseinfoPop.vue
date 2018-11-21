@@ -141,8 +141,11 @@ export default {
       this.selItems = this.defaultValue ? {...this.defaultValue,userId: this.defaultValue.handler,nickname: this.defaultValue.handlerName} : {};
       this.group = [this.selItems.handlerUnitName];
       this.role = [this.selItems.handlerRoleName];
-      this.getGroupByUserId();
-      this.getRoleByUserId();
+      if(!this.$route.query.transCode){
+        this.getGroupByUserId();
+        this.getRoleByUserId();
+      }
+      
     },
     // TODO 判断是否展示选中图标
     showSelIcon(sItem) {

@@ -571,7 +571,9 @@
             creator: formData.creator,
             biId: formData.biId,
             biComment: formData.biComment,
+            biProcessStatus: formData.biProcessStatus,
           };
+          this.handlerDefault = JSON.parse(JSON.stringify(this.formData))
           this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
           this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
           this.biReferenceId = formData.biReferenceId;

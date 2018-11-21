@@ -422,10 +422,10 @@ export default {
             allQty: item.productDemandQty,
             qtyed: item.thenLockQty,
           }
-          if (!orderList[item.transCode]) {
-            orderList[item.transCode] = [];
+          if (!orderList[item.transMatchedCode]) {
+            orderList[item.transMatchedCode] = [];
           }
-          orderList[item.transCode].push(item);
+          orderList[item.transMatchedCode].push(item);
           return item;
         });
         this.orderList = orderList;
@@ -442,7 +442,9 @@ export default {
           modifer: formData.modifer,
           biId: formData.biId,
           biComment: formData.biComment,
+          biProcessStatus: formData.biProcessStatus,
         }
+        this.handlerDefault = JSON.parse(JSON.stringify(this.formData))
         this.$loading.hide();
       })
     },

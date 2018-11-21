@@ -396,8 +396,10 @@ export default {
           handlerUnitName: formData.handlerUnitName,
           creator: formData.creator,
           modifer: formData.modifer,
-          biComment: formData.biComment // 备注
+          biComment: formData.biComment, // 备注
+          biProcessStatus: formData.biProcessStatus,
         }
+        this.handlerDefault = JSON.parse(JSON.stringify(this.formData))
         // 供应商信息展示
         this.dealerInfo = {
           creatorName: formData.dealerDebitContactPersonName,
