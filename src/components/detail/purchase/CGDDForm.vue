@@ -17,17 +17,17 @@
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_num'>
-              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
             </div>
             <div class="mater_num" v-if="item.purchaseDay">
-              <span class='num'>采购需求日期: {{item.purchaseDay}}</span>
+              <span>采购需求日期: {{item.purchaseDay}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
               <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
+                    :style="{display:(item.tdAmount && item.tdAmount.toString().length > 5 ? 'block' : '')}"
                     v-if="item.taxRate">
                   [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                 </span>
