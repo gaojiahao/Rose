@@ -48,6 +48,7 @@ export default {
         color : '#111'
       },
       attachment: [],
+      orderList: ''
     }
   },
   computed: {

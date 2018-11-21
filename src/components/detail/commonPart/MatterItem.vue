@@ -22,8 +22,8 @@
         </div>
       </div>
       <slot name="other" :item="item">
-        <!-- 物料数量和价格 -->
-        <div class='mater_other' v-if="!$slots.other && !$scopedSlots.other">
+        <!-- 物料数量和价格 默认视图 如果父组件编写则此内容会被覆盖-->
+        <div class='mater_other'>
           <div class='mater_num' v-if='item.tdQty'>
             <span v-if="isReturnMatter">
               <span class="num">退货单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
@@ -90,8 +90,6 @@
         }
         return url
       },
-    },
-    created() {
     }
   }
 </script>
