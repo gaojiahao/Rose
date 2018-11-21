@@ -61,8 +61,12 @@
         </group>
 
         <group title="每日情况汇报">
-          <popup-picker class="each_part" title="今日所在省份" placeholder="请选择省份" :data='areaList' :columns="1"
-                        v-model="areaToday"></popup-picker>
+          <popup-picker class="each_part" title="今日所在省份" placeholder="请选择省份" :data='provinceList' :columns="1"
+                        @on-change="provinceChange" v-model="areaToday"></popup-picker>
+          <popup-picker class="each_part" title="今日所在地市" placeholder="请选择地市" :data='cityTodayList' :columns="1"
+                        @on-change="cityChange" v-model="cityToday"></popup-picker>
+          <popup-picker class="each_part" title="今日所在区县" placeholder="请选择区县" :data='countyTodayList' :columns="1"
+                        v-model="countyToday"></popup-picker>
           <popup-picker class="each_part" title="今日所在渠道" placeholder="请选择银行" :data='bankList' :columns="1"
                         v-model="bankToday"></popup-picker>
           <x-input title="排期银行名称" v-model="baseinfoExt.varchar17" text-align="right" placeholder="请输入排期银行名称"></x-input>
@@ -115,6 +119,8 @@
         areaValue: [],
         bankValue: [],
         areaToday: [],
+        cityToday: [],
+        countyToday: [],
         bankToday: [],
         areaTomorrow: [],
         bankTomorrow: [],
@@ -122,6 +128,9 @@
         bankNextWeek: [],
         areaNextWeekList: [],
         bankNextWeekList: [],
+        provinceList: [],
+        cityTodayList: [],
+        countyTodayList: [],
       };
     },
     methods: {
@@ -158,8 +167,12 @@
         this.baseinfoExt.varchar20 = this.areaNextWeek[0];
         this.baseinfoExt.varchar21 = this.bankNextWeek[0];
         this.baseinfoExt.varchar22 = this.bankTomorrow[0];
+        this.baseinfoExt.varchar23 = this.cityToday[0];
+        this.baseinfoExt.varchar24 = this.countyToday[0];
         let validateMap = [
           {key: 'varchar14', msg: '请选择今日所在省份'},
+          {key: 'varchar23', msg: '请选择今日所在地市'},
+          {key: 'varchar24', msg: '请选择今日所在区县'},
           {key: 'varchar15', msg: '请选择今日所在渠道'},
           {key: 'varchar17', msg: '请填写排期银行名称'},
           {key: 'varchar18', msg: '请填写网点名称'},
@@ -335,6 +348,13 @@
       this.getArea();
       // 支援银行
       this.getBank();
+      (async() => {
+        await this.getProvince();
+        if(formInfo) {
+          await this.getCity();
+          this.getCounty();
+        }
+      })()
     },
     beforeRouteLeave(to, from, next) {
       if (!this.arr.length || to.name == "Count") next();

@@ -32,7 +32,17 @@ let optionService = {
         }])
       }
     })
-  }
+  },
+  // TODO 获取级联区域
+  getCascadeRegion(data = {}) {
+    return $axios.ajax({
+      url: '/base/dict/getChildren',
+      data: {
+        parentId: '00077c75-a1a2-4706-be3f-0bf4ad30bf05',
+        ...data,
+      }
+    })
+  },
 }
 
 export default optionService

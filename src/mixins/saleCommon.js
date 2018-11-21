@@ -279,6 +279,8 @@ export default {
         this.areaNextWeek = [baseinfoExt.varchar20];
         this.bankNextWeek = [baseinfoExt.varchar21];
         this.bankTomorrow = [baseinfoExt.varchar22];
+        this.cityToday = [baseinfoExt.varchar23];
+        this.countyToday = [baseinfoExt.varchar24];
       }
     },
     // TODO 项目类产品切换
@@ -312,7 +314,54 @@ export default {
         this.governor = companyCommander.nickname || ''; // 连长
         this.member = group.nickname || ''; // 团长
       })
-    }
+    },
+    // TODO 获取地区级联数据
+    getCascadeRegion(data = {}) {
+      return optionService.getCascadeRegion(data).then(data => {
+        data.forEach(item => {
+          item.originValue = item.value;
+          item.value = item.name;
+        });
+        return data
+      });
+    },
+    // TODO 获取省份
+    getProvince() {
+      return this.getCascadeRegion().then(data => {
+        this.provinceList = data;
+      })
+    },
+    // TODO 获取城市
+    getCity() {
+      let [value = ''] = this.areaToday;
+      let matched = this.provinceList.find(item => item.value === value);
+      return this.getCascadeRegion({
+        parentId: matched.id,
+      }).then(data => {
+        this.cityTodayList = data;
+      })
+    },
+    // TODO 获取地区
+    getCounty() {
+      let [value = ''] = this.cityToday;
+      let matched = this.cityTodayList.find(item => item.value === value);
+      return this.getCascadeRegion({
+        parentId: matched.id,
+      }).then(data => {
+        this.countyTodayList = data;
+      })
+    },
+    // TODO 省份切换
+    provinceChange(val) {
+      this.cityToday = [];
+      this.countyToday = [];
+      this.getCity();
+    },
+    // TODO 城市切换
+    cityChange(val) {
+      this.countyToday = [];
+      this.getCounty();
+    },
   },
   mounted() {
     //提交时间是否超过20点
