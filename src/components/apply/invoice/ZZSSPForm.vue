@@ -199,9 +199,9 @@
             item.tdAmount = '';
             return
           }
-          item.noTaxAmount = accMul(item.tdQty, item.price);
-          item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
-          item.tdAmount = accAdd(item.noTaxAmount, item.taxAmount);
+          item.noTaxAmount = toFixed(accMul(item.tdQty, item.price));
+          item.taxAmount = toFixed(accMul(item.noTaxAmount, item.taxRate));
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
           if (item.tdAmount) {
             Amount = accAdd(Amount, item.tdAmount);
           }
@@ -249,6 +249,7 @@
           ...sels,
           taxRate: this.taxRate,
           tdQty: sels.qtyBal,
+          price: toFixed(sels.price),
           purchaseDay: dateFormat(sels.calcTime, 'YYYY-MM-DD'),
         });
       },

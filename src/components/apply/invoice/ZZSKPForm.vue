@@ -205,24 +205,15 @@
             item.tdAmount = '';
             return
           }
-          item.noTaxAmount = accMul(item.tdQty, item.price);
-          item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
-          item.tdAmount = accAdd(item.noTaxAmount, item.taxAmount);
+          item.noTaxAmount = toFixed(accMul(item.tdQty, item.price));
+          item.taxAmount = toFixed(accMul(item.noTaxAmount, item.taxRate));
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
           if (item.tdAmount) {
             Amount = accAdd(Amount, item.tdAmount);
           }
         });
         return Amount;
       },
-      /*thenAmntBal() {
-        let thenAmntBal = 0;
-        this.invoiceList.forEach(item => {
-          if (item.tdAmount) {
-            thenAmntBal = accAdd(thenAmntBal, item.thenAmntBal)
-          }
-        });
-        return thenAmntBal
-      }*/
     },
     methods: {
       // 选中的客户
@@ -261,15 +252,9 @@
         this.$set(this.invoiceList, this.seletedIndex, {
           ...this.invoiceList[this.seletedIndex],
           ...sels,
+          price: toFixed(sels.price),
           taxRate: this.taxRate,
         });
-      },
-      // 检验金额
-      checkAmt(item) {
-        if (item.tdAmount > item.thenAmntBal) {
-          item.tdAmount = item.thenAmntBal;
-        }
-        item.tdAmount = Math.abs(toFixed(item.tdAmount));
       },
       // TODO 校验数量
       checkQty(item, index) {
