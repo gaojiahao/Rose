@@ -11,15 +11,18 @@
       <!-- 物料基本信息 -->
       <div class="mater_info">
         <!-- 物料编码 -->
-        <div class="info-item">
-          <span class="title">物料编码</span>
-          <span class="num">{{item.transObjCode || '无'}}</span>
-        </div>
+        <span class="info-item">
+          物料编码: {{item.transObjCode || '无'}}
+          <!-- <span class="title">物料编码</span>
+          <span class="num">{{item.transObjCode || '无'}}</span> -->
+        </span>
         <!-- 物料规格 -->
-        <div class="info-item mater_spec">
-          <span class="title">型号规格</span>
-          <span class="num">{{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}</span>
-        </div>
+        <span class="info-item">
+          型号规格: {{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}
+          <!-- <span class="title">型号规格</span>
+          <span class="num">哈驾驶的环境啊开始和大家喀什道具卡</span> -->
+          <!-- <span class="num">{{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}</span> -->
+        </span>
       </div>
       <slot name="other" :item="item">
         <!-- 物料数量和价格 默认视图 如果父组件编写则此内容会被覆盖-->
@@ -118,33 +121,34 @@
     }
     // 物料主体
     .mater_main {
-      width: 2.6rem;
+      flex: 1;
       margin-left: .1rem;
       display: inline-block;
       box-sizing: border-box;
     }
     // 物料名称
     .mater_name {
-      overflow: hidden;
-      display: -webkit-box;
-      max-height: .46rem;
       color: #111;
+      overflow: hidden;
       font-size: .14rem;
       font-weight: bold;
+      max-height: .46rem;
+      display: -webkit-box;
+      word-break: break-all;
       -webkit-line-clamp: 2;
       text-overflow: ellipsis;
       -webkit-box-orient: vertical;
     }
     // 物料信息
     .mater_info {
-      margin-top: .02rem;
-      color: #757575;
-      font-size: 0;
+      color: #4a4a48;
+      font-size: .12rem;
+      // margin-top: .02rem;
+      // font-size: 0;
       // 物料编码和规格
       .info-item {
-        display: inline-block;
+        
         margin-right: .06rem;
-
         .title, .num {
           font-size: .1rem;
           padding: .01rem .04rem;
@@ -203,10 +207,12 @@
       }
       // 单价 数量 税率 等
       .mater_num {
-        color: #757575;
+        color: #3f72af;
         font-size: 0.1rem;
         span {
-          display: inline-block;
+          padding: 0 .04rem;
+          border-radius: .04rem;
+          background: #deecfc;
         }
         .num {
           margin-right: 0.04rem;

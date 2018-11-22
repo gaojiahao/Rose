@@ -13,7 +13,8 @@
         <!-- 往来联系部分 交易基本信息-->
         <contact-part :contact-info="contactInfo" ></contact-part>
         <!-- 物料列表 -->
-        <matter-list :matter-list='orderInfo.order.dataSet' :order-remarks="orderInfo.biComment">
+        <matter-list :matter-list='orderInfo.order.dataSet' :noTaxAmount="noTaxAmount" 
+                     :taxAmount="taxAmount" :count="count">
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
               <div class='mater_num'>
@@ -35,10 +36,12 @@
             </div>
           </template>
         </matter-list>
-        <!-- 金额明细 -->
-        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
+        <!-- 备注 -->
+        <div class="comment-part">
+          <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        </div>
+        <!-- 上传附件 -->
         <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
-
         <!-- 审批操作 -->
         <r-action :code="transCode" :task-id="taskId" :actions="actions"
                   :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
