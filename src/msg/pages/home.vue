@@ -94,6 +94,7 @@
       resetCondition() {
         this.page = 1;
         this.commentList = [];
+        this.listData = {};
         this.hasNext = true;
       },
       //获取应用消息数据
