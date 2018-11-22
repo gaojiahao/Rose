@@ -11,7 +11,7 @@
       </div>
       <popup-picker title="经办组织" :data="groupList" :columns="1" v-model="group" @on-change="changeGroup" ref="groupPicker">
         <template slot="title">
-          <span class='required'>经办组织
+          <span class="title" :class="{required : isRequired}">经办组织
           </span>
         </template>
       </popup-picker>
@@ -83,7 +83,12 @@ export default {
       default() {
         return {}
       }
-    },    
+    }, 
+    //是否为必填项
+    isRequired: {
+      type: Boolean,
+      default: true
+    }   
   },
   directives: {TransferDom},
   components: {
@@ -323,13 +328,16 @@ export default {
           }
         }
       }
-      .required{
-        font-weight: bold;
-        color: #5077aa;
-        font-size: 0.14rem;
-      }
       /deep/ .weui-cell{
         padding: 0.05rem 0;
+        .title{
+          font-size: 0.14rem;
+          color: #757575;
+          &.required{
+            font-weight: bold;
+            color: #5077aa;
+          }
+        }
         &.before{
           border:none;
         }
@@ -348,6 +356,11 @@ export default {
       .vux-cell-box:not(:first-child):before{
         border: none;
       }
+      // .required{
+      //   font-weight: bold;
+      //   color: #5077aa;
+      //   font-size: 0.14rem;
+      // }
     }
   }
    // 弹出层

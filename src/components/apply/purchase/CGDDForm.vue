@@ -93,7 +93,7 @@
             <span v-show="modifyMatter.qtyBal">待下单: {{modifyMatter.qtyBal}}</span>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
-            <datetime  title="采购需求日期" v-model="modifyMatter.purchaseDay"
+            <datetime  title="采购需求日" v-model="modifyMatter.purchaseDay"
                       placeholder="请选择" ></datetime>
              <datetime  title="计划需求日期" v-model="modifyMatter.processingStartDate"
                       placeholder="请选择" ></datetime>
@@ -195,7 +195,7 @@ export default {
       let sels = JSON.parse(val);
       sels.map(item => {
         let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-        let {tdQty = '', price = '', taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
+        let {tdQty = '', price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
         item.tdQty = tdQty;
         item.price = price;
         item.taxRate = taxRate;

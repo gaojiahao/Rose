@@ -2,7 +2,7 @@
   <div class="pages xmrw-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" :isRequired="false"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 项目-->
@@ -28,8 +28,14 @@
             <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime">
               <span class="required" slot="title">实际完成日期</span>
             </datetime>
-            <x-input type="number" title="实际工时" text-align="right" placeholder="请填写实际工时"
-                     @on-blur="checkTime" v-model.number="projectTask.actualTime"></x-input>
+            <x-input type="number" title="实际工时" text-align="right" placeholder="请填写"
+                     @on-blur="checkTime" v-model.number="projectTask.actualTime">
+              <span class="required" slot="label">实际工时</span>
+            </x-input>
+            <x-input type="number" title="实际作业成本" text-align="right" placeholder="请填写"
+                     @on-blur="checkTime" v-model.number="projectTask.actualtHomeworkCost">
+              <span class="required" slot="label">实际作业成本</span>
+            </x-input>
           </group>
         </div>
         <upload-file @on-upload="onUploadFile"></upload-file>
@@ -83,9 +89,13 @@
           taskType: '', // 任务类型
           comment: '', // 任务说明,
           deadline: '', // 截止时间
-          planTime: '', // 计划工时
+          planTime: '', // 标准工时
+          cycleNumber: '', // 周期天数
           actualCompleteTime: '', // 实际完成日期
           actualTime: '', // 实际工时
+          actualtHomeworkCost: '' , // 实际作业成本
+          budgetHomeworkCost: '', // 预算作业成本
+          operatingRate: '' , // 作业费率
         },
       }
     },
@@ -143,6 +153,8 @@
             if (this.transCode) {
               operation = updateProjectTask
             }
+            console.log(submitData);
+            return false;
             this.saveData(operation, submitData);
           }
         });
@@ -182,6 +194,9 @@
           comment: sel.COMMENT, // 任务说明,
           deadline: dateFormat(sel.DEADLINE, 'YYYY-MM-DD'), // 截止时间
           planTime: sel.PLAN_TIME, // 计划工时
+          budgetHomeworkCost: sel.BUDGET_HOMEWORK_COST, // 预算作业成本
+          operatingRate: sel.JOB_RATE , // 作业费率
+          cycleNumber: sel.CYCLE_DAYS,
         }
       },
       // TODO 项目切换
@@ -196,6 +211,9 @@
           comment: '', // 任务说明,
           deadline: '', // 截止时间
           planTime: '', // 计划工时
+          budgetHomeworkCost: '',
+          operatingRate: '',
+          cycleNumber: ''
         };
         this.getTaskList();
       },
@@ -228,8 +246,12 @@
       // TODO 校验计划工时,保留一位小数
       checkTime (item) {
         let val = this.projectTask.actualTime;
+        let cost = this.projectTask.actualtHomeworkCost;
         if (val) {
           this.projectTask.actualTime = Math.abs(toFixed(val, 1));
+        }
+        if(cost) {
+          this.projectTask.actualtHomeworkCost = Math.abs(toFixed(cost, 2));
         }
       },
       // TODO 保存草稿数据

@@ -40,7 +40,7 @@
           <group class='costGroup' @group-title-margin-top="0">
             <cell title="出库单" v-model="item.transCode || '请选择'" is-link @click.native="getCost(index,item)">
               <template slot="title">
-                <span class='required'>出库单</span>
+                <span class='required'>申请单</span>
               </template>
             </cell>
             <cell title="物料名称" v-model='item.inventoryName'>
