@@ -1,13 +1,18 @@
 <template>
   <div class="comment-item" :class="{visited: item.visited, 'is-reply': isReply}">
-    <header class="header" v-if="!noHeader">
+    <!-- 图片 和 应用名称 -->
+    <div class="app-info" v-if="!noHeader">
+      <img class="app-img" :src='item.pic' alt="appImg" @error="getDefaultIcon(item)">
+      <span class="app-name">{{item.listName}}</span>
+    </div>
+    <div class="header" v-if="!noHeader">
       <div class="header-left">
         <img class="avatar" :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg">
         <span class="creator-name">{{item.creatorName}}</span>
         <span class="time">{{item.crtTime | filterTime}}</span>
       </div>
       <div class="header-right">{{item.other}}</div>
-    </header>
+    </div>
     <div class="comment" v-html="handleComment()"></div>
     <div class="comment-image" v-if="item.attachment">
       <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
@@ -15,11 +20,6 @@
     </div>
     <div class="comment-reply" v-if="this.$slots.reply">
       <slot name="reply"></slot>
-    </div>
-    <!-- 全屏展示图片 -->
-    <div class="scale-image-mask" @click.stop="hideScaleImage" @touchmove.prevent=""
-         v-if="item.attachment" v-show="showScaleImg" v-transfer-dom>
-      <div class="scale-image" :style="{'background-image': `url(${scaleImgSrc})`}"></div>
     </div>
   </div>
 </template>
@@ -50,30 +50,28 @@
       },
     },
     data() {
-      return {
-        showScaleImg: false,
-        scaleImgSrc: '',
-      }
+      return {}
     },
     methods: {
+      // TODO 获取应用icon
+      getDefaultIcon(item) {
+        let url = require('assets/defaultApp.png');
+        if (item) {
+          item.pic = url;
+        }
+        return url
+      },
       // TODO 获取默认用户图片
       getDefaultImg(e) {
         e.target.src = require('assets/ava01.png');
       },
       // TODO 放大图片
       scaleImg(img) {
-        // this.scaleImgSrc = img.attachment;
-        // this.showScaleImg = true;
         let imgUrl = `${location.origin}${img}`;
         wx.previewImage({
           current: imgUrl, // 当前显示图片的http链接
           urls: [imgUrl] // 需要预览的图片http链接列表
         });
-      },
-      // TODO 隐藏放大的图片
-      hideScaleImage() {
-        this.scaleImgSrc = '';
-        this.showScaleImg = false;
       },
       // TODO 替换表情图片地址
       handleComment() {
@@ -151,6 +149,23 @@
       box-shadow: none;
       .comment {
         padding-left: 0;
+      }
+    }
+    // 图片、应用名称
+    .app-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: .1rem;
+      // 图片
+      .app-img {
+        width: .24rem;
+        height: .24rem;
+        border-radius: .06rem;
+      }
+      // 应用名称
+      .app-name {
+        font-size: .14rem;
+        margin-left: .06rem;
       }
     }
     .header {

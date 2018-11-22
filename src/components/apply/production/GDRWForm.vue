@@ -34,7 +34,7 @@
                 </span>
               </template>
             </cell>
-            
+
           </group>
           <!-- 物料popup -->
           <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
@@ -134,7 +134,7 @@ export default {
       scanResult: '',
       warehouse: {}, // 选中仓库属性
       bomList: [], // bom列表
-      filter: [ // bom请求参数       
+      filter: [ // bom请求参数
         {
           operator: "in",
           property: "whCode",
@@ -144,7 +144,7 @@ export default {
           operator: "in",
           property: "parentInvCode",
           value: ''
-        }     
+        }
       ],
       filterParams: [{property: 'warehouseType', operator: 'eq', value: '加工车间仓'}],
     }
@@ -158,7 +158,8 @@ export default {
     // 监听派工数量，重新计算bom数量
     tdQty (val) {
       this.bomList.forEach(bom => {
-        let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
+        // let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
+        let tdQty = accMul(this.workInfo.tdQty, bom.qty);
         bom.tdQty = Math.abs(toFixed(tdQty))
       });
     }
@@ -172,15 +173,7 @@ export default {
     selWork (val) {
       this.workInfo = val;
       this.filter[1].value = this.workInfo.inventoryCode
-      getTaskBom({filter : JSON.stringify(this.filter)}).then(({tableContent = []})=>{
-        tableContent.forEach(bom => {
-          if (this.workInfo.tdQty) {
-            let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
-            bom.tdQty = Math.abs(toFixed(tdQty));
-          }         
-        });
-        this.bomList = tableContent;
-      })
+      this.getTaskBom();
     },
     // 选择员工
     selManager (val) {
@@ -209,15 +202,7 @@ export default {
     selWarehouse (val) {
       this.warehouse = JSON.parse(val);
       this.filter[0].value = this.warehouse.warehouseCode;
-      getTaskBom({filter : JSON.stringify(this.filter)}).then(({tableContent = []})=>{
-        tableContent.forEach(bom => {
-          if (this.workInfo.tdQty) {
-            let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
-            bom.tdQty = Math.abs(toFixed(tdQty));
-          }
-        });
-        this.bomList = tableContent;
-      })
+      this.getTaskBom()
     },
     // 提价订单
     submitOrder () {
@@ -239,7 +224,7 @@ export default {
           }
           return true;
         })
-        
+
       }
       if (!warn && !this.warehouse.warehouseCode) {
         warn = '请选择在制仓库';
@@ -305,7 +290,7 @@ export default {
               containerInWarehouseManager: null,
               order: {
                 containerCode: this.warehouse.warehouseCode,
-                dataSet : orderDataSet,                
+                dataSet : orderDataSet,
               },
               outPut: {
                 containerCode: this.warehouse.warehouseCode,
@@ -356,6 +341,19 @@ export default {
         return false
       }
       return true
+    },
+    getTaskBom() {
+      this.filter[0].value = this.warehouse.warehouseCode;
+      return getTaskBom({filter: JSON.stringify(this.filter)}).then(({tableContent = []}) => {
+        tableContent.forEach(bom => {
+          if (this.workInfo.tdQty) {
+            // let tdQty = accMul(this.workInfo.tdQty, bom.qty, (1 + bom.specificLoss));
+            let tdQty = accMul(this.workInfo.tdQty, bom.qty);
+            bom.tdQty = Math.abs(toFixed(tdQty));
+          }
+        });
+        this.bomList = tableContent;
+      })
     },
   },
   created () {

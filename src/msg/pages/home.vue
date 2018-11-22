@@ -1,16 +1,16 @@
 <template>
   <div class="inPage">
-    <r-tab :data="tabList" @on-click="onTabClick"></r-tab>
+    <r-tab :data="tabList" mode="2" :active-index="activeIndex" @on-click="onTabClick"></r-tab>
     <template v-if="listData">
       <r-scroll class="wrapper" :options="scrollOptions" :has-next="hasNext" :no-data="false"
                 @on-pulling-up="onPullingUp" ref="bScroll">
         <div class="when_null" v-if="isNull">{{noDataText}}</div>
         <div class="msg_list" v-else>
-          <template v-if="activeTab === 'todo'">
+          <template v-if="activeIndex === 0">
             <todo-item :name="key" :item="value" v-for='(value, key) in listData'
                        @click.native="goMsglist(value, key)" :key='key'></todo-item>
           </template>
-          <template v-else-if="activeTab === 'comment' || activeTab === 'praise'">
+          <template v-else-if="activeIndex === 1 || activeIndex === 2">
             <comment-item :item="item" v-for="(item, index) in commentList"
                           @click.native="goDetail(item, index)" :key="index">
               <comment-item :item="item.reply" v-if="item.reply" slot="reply" no-header is-reply></comment-item>
@@ -48,7 +48,7 @@
           {name: '评论', status: 'comment'},
           {name: '点赞', status: 'praise'},
         ],
-        activeTab: 'todo',
+        activeIndex: 0,
         commentList: [],
         scrollOptions: {
           // pullDownRefresh: true,
@@ -57,17 +57,14 @@
         page: 1,
         limit: 10,
         hasNext: true,
+        isClickDetail: false,
       }
     },
     computed: {
       // 暂无数据
       noDataText() {
-        let map = {
-          todo: '暂无待办消息',
-          comment: '暂无评论消息',
-          praise: '暂无点赞消息',
-        };
-        return map[this.activeTab]
+        let list = ['暂无待办消息', '暂无评论消息', '暂无点赞消息'];
+        return list[this.activeIndex]
       },
     },
     components: {
@@ -75,19 +72,23 @@
     },
     methods: {
       // TODO tab切换
-      onTabClick(item) {
-        let map = {
-          todo: this.getList,
-          comment: this.getComment,
-          praise: this.getPraise,
-        };
-        this.activeTab = item.status;
+      onTabClick({status = '', index = 0}) {
+        let list = [this.getList, this.getComment, this.getPraise];
+        this.activeIndex = index;
         this.$loading.show();
         this.$refs.bScroll.scrollTo(0, 0);
         this.resetCondition();
-        map[this.activeTab]().then(() => {
+        list[this.activeIndex]().then(() => {
           this.$loading.hide();
         });
+      },
+      // TODO 获取应用icon
+      getDefaultIcon(item) {
+        let url = require('assets/defaultApp.png');
+        if (item) {
+          item.icon = url;
+        }
+        return url
       },
       // TODO 重置条件
       resetCondition() {
@@ -108,9 +109,7 @@
           tableContent.forEach(item => {
             this.isNull = false;
             // app图标处理
-            item.pic = item.icon
-              ? `/dist/${item.icon}`
-              : this.getDefaultImg();
+            item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
             // 只针对已经移动化的应用做消息的显示
             if (Apps[item.listId]) {
               if (!this.listData[item.title]) {
@@ -131,6 +130,7 @@
       goMsglist(item, name) {
         // 高亮点击的应用
         item.visited = true;
+        this.isClickDetail = true;
         this.$set(this.listData, name, {...item});
         // 等待动画结束后跳转
         setTimeout(() => {
@@ -156,13 +156,17 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent = tableContent.reduce((arr, item) => {
             let content = JSON.parse(item.content);
+            // app图标处理
+            item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
             item.comment = content.content;
             item.attachment = content.attachment;
-            item.commentType = content.type;
+            item.commentType = content.type; // 评论类型,list为应用,instance为实例
+            item.RELATION_KEY = content.relationKey; // 实例的交易号
             // list为应用，instance为实例
             item.other = content.type === 'list' ? `评论了应用` : `评论了实例${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
+              item.other = content.type === 'list' ? `回复了应用` : `回复了实例${content.relationKey}`;
               item.reply = {
                 createrName: content.objCreator,
                 comment: `@${content.objCreator}: ${content.objContent}`,
@@ -199,59 +203,84 @@
       },
       // TODO 进入详情
       goDetail(item, index) {
-        /*if (item.commentType === 'list') {
-          return
+        let {commentType = '', listTypeID = '', listId = '', listName = '', RELATION_KEY = ''} = item;
+        let path = `/detail/${listTypeID}/${listId}`;
+        let query = {
+          name: listName,
+          transCode: RELATION_KEY,
+        };
+        if (commentType === 'list') {
+          path = `/appDetail/${listId}`;
+          query = {};
         }
         // 高亮点击的应用
         item.visited = true;
-        this.$set(this.listData, index, {...item});*/
+        this.isClickDetail = true;
+        this.$set(this.commentList, index, {...item});
         // 等待动画结束后跳转
-        /*setTimeout(() => {
-          this.$router.push({
-            path: '/detail',
-            query: {name}
-          })
-        }, 200);*/
+        setTimeout(() => {
+          this.$router.push({path, query,})
+        }, 200);
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        if (this.activeTab === 'comment') {
+        if (this.activeIndex === 1) {
           this.getNotice();
-        } else if (this.activeTab === 'praise') {
+        } else if (this.activeIndex === 2) {
           this.getPraise();
         }
       },
+      // TODO 改变访问状态
+      changeVisitedStatus() {
+        if (this.activeIndex === 0) {
+          let tmp = {...this.listData};
+          Object.values(tmp).forEach(item => {
+            item.visited = false;
+          });
+          setTimeout(() => {
+            this.listData = tmp;
+          }, 200);
+        } else {
+          let tmp = [...this.commentList];
+          tmp.forEach(item => {
+            item.visited = false;
+          });
+          setTimeout(() => {
+            this.commentList = tmp;
+          }, 200);
+        }
+        this.isClickDetail = false;
+      },
     },
-    filters: {
-      handleCrt(val) {
-        let date = val.duration,
-          //计算出小时数
-          hours = parseInt(date / (3600)),
-          //计算相差分钟数
-          leave2 = date - (hours * 3600),       //计算小时数后剩余的毫秒数
-          minutes = Math.floor(leave2 / (60)),
-          //计算相差秒数
-          leave3 = leave2 - (minutes * 60),     //计算分钟数后剩余的毫秒数
-          seconds = Math.round(leave3),
-          backTime;
-        if (hours > 0) {
-          backTime = `${hours}小时前`;
-        }
-        else {
-          backTime = minutes === 0 ? '1分钟前' : `${minutes}分钟前`;
-        }
-        return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
-
+    beforeRouteLeave(to, from, next) {
+      let {path} = to;
+      if (path === '/home') {
+        from.meta.reload = true;
       }
+      next();
     },
     created() {
-      register();
       this.$loading.show();
       this.getList().then(() => {
         this.$loading.hide();
       });
     },
+    activated() {
+      let reload = this.$route.meta.reload;
+      register();
+      if (reload) {
+        this.listData = {};
+        this.activeIndex = 0;
+        this.$loading.show();
+        this.getList().then(() => {
+          this.$loading.hide();
+        });
+        this.$route.meta.reload = false;
+      } else {
+        this.isClickDetail && this.changeVisitedStatus();
+      }
+    }
   }
 </script>
 

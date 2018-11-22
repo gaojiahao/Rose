@@ -4,16 +4,16 @@
       <!-- 图片 和 应用名称 -->
       <div class="app_info">
           <span class="app_img">
-            <img :src='item.list[0].pic' alt="appImg" @error='getDefaultImg(item[0])'>
+            <img :src='item.list && item.list[0].pic' alt="appImg" @error='getDefaultImg(item[0] || "")'>
           </span>
         <span class="app_name">{{name}}</span>
       </div>
       <!-- 时间 -->
-      <div class="msg_time">{{item.list[0] | handleCrt }}</div>
-      <badge :text="item.list.length"></badge>
+      <div class="msg_time">{{item.list | handleCrt }}</div>
+      <badge :text="item.list && item.list.length"></badge>
     </div>
     <div class="recv_msg">
-      您收到{{item.list.length > 1 ? '多' : '一'}}条新的消息
+      您收到{{item.list && item.list.length > 1 ? '多' : '一'}}条新的消息
     </div>
   </div>
 </template>
@@ -52,7 +52,11 @@
     },
     filters: {
       handleCrt(val) {
-        let date = val.duration,
+        if (!val) {
+          return
+        }
+        let [first = {}] = val;
+        let date = first.duration,
           //计算出小时数
           hours = parseInt(date / (3600)),
           //计算相差分钟数
@@ -68,7 +72,7 @@
         else {
           backTime = minutes === 0 ? '1分钟前' : `${minutes}分钟前`;
         }
-        return hours < 24 ? backTime : `${val.crtTime.split(' ')[0]}`;
+        return hours < 24 ? backTime : `${first.crtTime.split(' ')[0]}`;
 
       }
     },
