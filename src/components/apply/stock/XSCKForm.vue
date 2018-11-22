@@ -8,7 +8,7 @@
         <!-- 经办主体 -->
         <!-- <pop-entity-list :value="entity" v-model="entity"></pop-entity-list> -->
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="drDealerPaymentTerm"
                            v-model="drDealerPaymentTerm" isRequired></pop-single-select>
@@ -250,6 +250,11 @@
         this.$refs.order.clearSel();
         this.getMatPrice();
       },
+      selContact(val){
+        this.dealerInfo.dealerDebitContactPersonName = val.dealerName;
+        this.dealerInfo.dealerMobilePhone = val.dealerMobilePhone;
+
+      },
       // TODO 选中仓库
       selWarehouse (val) {
         this.warehouse = JSON.parse(val);
@@ -481,7 +486,7 @@
             formData = {
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
-              dealerDebitContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
+              dealerDebitContactPersonName: this.dealerInfo.dealerDebitContactPersonName || '', // 联系人姓名
               dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
               containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 仓库管理员
               handlerEntity: this.entity.dealerName,

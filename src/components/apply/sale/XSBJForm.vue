@@ -6,7 +6,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"  @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
             v-model="dealerInfo.paymentTerm"></pop-single-select>
@@ -260,6 +260,10 @@
         let [sels] = JSON.parse(val);
         this.dealerInfo = sels;
       },
+      selContact(val) {
+        this.dealerInfo.dealerDebitContactPersonName = val.dealerName;
+        this.dealerInfo.dealerMobilePhone = val.dealerMobilePhone;
+      },
       // TODO 选中物料项
       selMatter (val) {
         let sels = JSON.parse(val);
@@ -335,7 +339,7 @@
               ...this.formData,
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
-              dealerDebitContactPersonName: this.dealerInfo.creatorName || '',
+              dealerDebitContactPersonName: this.dealerInfo.dealerDebitContactPersonName || '',
               dealerDebitContactInformation: this.dealerInfo.dealerMobilePhone || '',
               order: {
                 dealerDebit: this.dealerInfo.dealerCode || '',

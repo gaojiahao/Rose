@@ -6,11 +6,11 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"></pop-dealer-list>
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 仓库-->
         <pop-warehouse-list title="出库仓库" :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm"
+        <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm" isRequired
                            v-model="crDealerPaymentTerm"></pop-single-select>
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -199,6 +199,10 @@ export default {
       this.dealerInfo = sel;
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
+    selContact (val) {
+      this.dealerInfo.dealerDebitContactPersonName = val.dealerName;
+      this.dealerInfo.dealerMobilePhone = val.dealerMobilePhone;
+    },
     // TODO 选中仓库
     selWarehouse (val) {
       this.warehouse = JSON.parse(val);
@@ -370,7 +374,7 @@ export default {
             handlerEntity: this.entity.dealerName,
             creator: this.transCode ? this.formData.handler : '',
             modifer: this.transCode ? this.formData.handler : '',
-            dealerCreditContactPersonName: this.dealerInfo.creatorName || '', // 联系人姓名
+            dealerCreditContactPersonName: this.dealerInfo.dealerDebitContactPersonName || '', // 联系人姓名
             dealerCreditContactInformation: this.dealerInfo.dealerMobilePhone || '', // 联系人手机
             containerOutWarehouseManager: this.warehouse.containerInWarehouseManager || null,
             outPut: {

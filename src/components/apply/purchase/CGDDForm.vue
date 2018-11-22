@@ -183,12 +183,13 @@ export default {
     // 选中的供应商
     selDealer (val) {
         this.dealerInfo = JSON.parse(val)[0];
-        this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+        // this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // 选中联系人
     selContact (val) {
-      this.dealer.dealerDebitContactPersonName = JSON.parse(val)[0].dealerName;
+      this.dealer.dealerDebitContactPersonName = val.dealerName;
+      this.dealer.dealerDebitContactInformation = val.dealerMobilePhone;
     },
     // TODO 选中物料项
     selMatter (val) {

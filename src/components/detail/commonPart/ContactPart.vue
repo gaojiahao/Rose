@@ -5,6 +5,10 @@
       <span class="iconfont icon-kehu1"></span>
       <div class="cp_name m_size_name">{{contactInfo.dealerName}}</div>
       <div class="other_info s_size_name">
+        <span class="title">联系人：</span>
+        <span class="content">{{contactInfo.dealerContactPersonName || '暂无'}}</span>
+      </div>
+      <div class="other_info s_size_name">
         <span class="title">手机：</span>
         <span class="content">{{contactInfo.dealerMobilePhone || '暂无'}}</span>
       </div>

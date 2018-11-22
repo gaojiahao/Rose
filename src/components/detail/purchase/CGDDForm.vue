@@ -125,6 +125,7 @@ export default {
         creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
         dealerName: order.dealerName_dealerDebit, // 公司名
         dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
         dealerCode: order.dealerDebit, // 客户编码
         dealerLabelName: order.drDealerLabel, // 关系标签
         province: order.province_dealerDebit, // 省份

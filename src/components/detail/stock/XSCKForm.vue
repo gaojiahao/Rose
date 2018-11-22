@@ -156,6 +156,7 @@ export default {
           creatorName: formData.dealerDebitContactPersonName, // 客户名
           dealerName: outPut.dealerName_dealerDebit, // 公司名
           dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
+          dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
           dealerCode: outPut.dealerDebit, // 客户编码
           dealerLabelName: outPut.drDealerLabel, // 关系标签
           province: outPut.province_dealerDebit, // 省份

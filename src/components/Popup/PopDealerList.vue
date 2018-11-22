@@ -13,7 +13,7 @@
               <span class="user-tips" v-if="dealerInfo.dealerLabelName">{{dealerInfo.dealerLabelName}}</span>
               <span>{{dealerInfo.dealerName}}</span>
             </div>
-            <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span>
+            <!-- <span class="user-tel" v-if="dealerInfo.dealerMobilePhone">{{dealerInfo.dealerMobilePhone}}</span> -->
           </div>
           <div class="cp-info">
             <span class="iconfont icon-icon-test"></span>

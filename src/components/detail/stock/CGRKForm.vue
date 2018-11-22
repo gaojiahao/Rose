@@ -154,6 +154,7 @@ export default {
           creatorName: formData.dealerCreditContactPersonName, // 客户名
           dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
           dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+          dealerContactPersonName: formData.dealerCreditContactPersonName, // 联系人
           dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
           dealerLabelName: inPut.crDealerLabel, // 关系标签
           province: inPut.province_dealerCodeCredit, // 省份
