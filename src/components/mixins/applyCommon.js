@@ -304,11 +304,11 @@ export default {
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
     (async () => {
-      this.getProcess();
+      await this.getProcess();
       if(!transCode){
         this.getBaseInfoData();
       }
-      this.getProcessStatus();  // 获取流程状态
+      await this.getProcessStatus();  // 获取流程状态
       this.initRequest && await this.initRequest();   // 提交页面 不共用的数据 请求
       this.getPaymentTerm && await this.getPaymentTerm();   // 提交页面 结算方式 请求
       this.getLogisticsTerms && await this.getLogisticsTerms(); //提交页面 物流条款 请求
