@@ -52,8 +52,9 @@
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
               <template slot="label">
-                <span class='required'>数量
-                </span>
+                <slot name="qtyName">
+                  <span class='required'>数量</span>
+                </slot>
               </template>    
             </x-input>
             <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"

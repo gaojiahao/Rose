@@ -53,10 +53,8 @@
                         <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
                       </div>
                       <!-- 库存 -->
-                      <div class='mater_more' v-if="item.promDeliTime">
-                        <span class='unit'>预期交货日: {{item.promDeliTime}}</span>
-                      </div>
-                      <div class='mater_more'>
+                      <div class='mater_more' >
+                        <span class='unit' v-show="item.promDeliTime">预期交货日: {{item.promDeliTime}}</span>
                         <span class='qty'>可用库存: {{item.qtyStockBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
@@ -111,6 +109,9 @@
           </template>
           <template slot="materStock" slot-scope="{modifyMatter}">
             <span>可用库存:{{modifyMatter.qtyStockBal}}</span>
+          </template>
+          <template slot="qtyName">
+            <span class='required'>出库数量</span>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
             <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
