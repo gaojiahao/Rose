@@ -50,7 +50,7 @@
                   v-model="formData.authorizedTeam"></r-picker>
         <r-picker title="版本:" :data="versionList" :value="formData.demandVersion"
                   v-model="formData.demandVersion"></r-picker>
-        <upload-file @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
+        <upload-file :default-value="attachment" @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
         <div v-transfer-dom>
           <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
             <div class="trade_pop">
@@ -376,6 +376,7 @@
             });
             return;
           }
+          this.attachment = data.attachment
           this.hasDefault = true;
           this.biReferenceId = biReferenceId;
           this.formData = {
