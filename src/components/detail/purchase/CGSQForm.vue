@@ -11,41 +11,24 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
-        </div>
-        <div class="mater_list">
-          <div class="each_mater"
-              v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">所属订单</span>
-              <span class="order_num">{{key}}</span>
+      <matter-list :order-list='orderList' :count="count">
+        <template slot="matterOther" slot-scope="{item}">
+          <div class='mater_other'>
+            <div class="mater_left">
+              <span class="units">全部需求: {{item.productDemandQty}}</span>
+              <span class="units">已做需求: {{item.thenLockQty}}</span>
+              <span class="units">起订量: {{item.moq_transObjCode}}</span>
             </div>
-            <div class="order_matter">
-              <matter-item :item="item" v-for="(item, index) in oItem" :key="index">
-                <div class="mater_other" slot="other" slot-scope="{item}">
-                  <div class="mater_left">
-                    <span class="units">全部需求: {{item.productDemandQty}}</span>
-                    <span class="units">已做需求: {{item.thenLockQty}}</span>
-                    <span class="units">起订量: {{item.moq_transObjCode}}</span>
-                  </div>
-                  <div class="mater_num">
-                    <span class="num">待做需求: {{item.tdQty}}</span>
-                    <span class="num">估计价格: ￥{{item.price}}</span>
-                  </div>
-                  <div class="mater_price">
-                    ￥{{item.tdAmount}}<span class="num"> [估计金额]</span>
-                  </div>
-                </div>
-              </matter-item>
+            <div class="mater_num">
+              <span class="num">待做需求: {{item.tdQty}}</span>
+              <span class="num">估计价格: ￥{{item.price}}</span>
             </div>
-          </div>
-        </div>
-        <!-- 金额合计栏 -->
-        <price-total :count="count" noAmt noTaxAmt></price-total>
-
-      </div>
+            <div class="mater_price">
+              ￥{{item.tdAmount}}<span class="num"> [估计金额]</span>
+            </div> 
+          </div> 
+        </template>
+      </matter-list>
       <div class="comment-part">
         <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>      

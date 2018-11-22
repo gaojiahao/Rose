@@ -18,29 +18,29 @@
         <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
       </div>
       <!-- 物料列表 -->
-      <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
-        </div>
-        <div class="mater_list">
-          <div class="each_mater"
-              v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">所属订单</span>
-              <span class="order_num">{{key}}</span>
+       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
+                     :taxAmount="taxAmount" :count="count">
+          <template slot="matterOther" slot-scope="{item}">
+            <div class='mater_other'>
+              <div class='mater_num'>
+                <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+                <span>退货数量: {{item.tdQty | toFixed}}</span>
+                <span>税率: {{item.taxRate}}</span>
+              </div>
+              <div class='mater_price'>
+                <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+                <span class="num"
+                      :style="{display:(item.tdAmount && item.tdAmount.toString().length > 9 ? 'block' : '')}"
+                      v-if="item.taxRate">
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                </span>
+              </div>
             </div>
-            <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index" :isReturnMatter="true">
-              </matter-item>
-            </div>
-          </div>
-        </div>
-        <div class="comment-part">
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-        </div>
+          </template>
+       </matter-list>
+      <div class="comment-part">
+        <form-cell :isTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
-      <!-- 金额合计 -->
-      <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"

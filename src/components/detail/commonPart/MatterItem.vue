@@ -13,15 +13,10 @@
         <!-- 物料编码 -->
         <span class="info-item">
           物料编码: {{item.transObjCode || '无'}}
-          <!-- <span class="title">物料编码</span>
-          <span class="num">{{item.transObjCode || '无'}}</span> -->
         </span>
         <!-- 物料规格 -->
         <span class="info-item">
           型号规格: {{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}
-          <!-- <span class="title">型号规格</span>
-          <span class="num">哈驾驶的环境啊开始和大家喀什道具卡</span> -->
-          <!-- <span class="num">{{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}</span> -->
         </span>
       </div>
       <slot name="other" :item="item">

@@ -5,7 +5,7 @@ import {numberComma} from 'vux'
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import FormCell from 'components/detail/commonPart/FormCell'
 import UploadFile from 'components/upload/UploadFile'
-
+import MatterList from 'components/detail/commonPart/MatterList'
 // 映射表 引入
 import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
@@ -17,7 +17,7 @@ import { shareContent } from 'plugins/wx/api'
 
 export default {
   components: {
-    FormCell, BasicInfo,UploadFile
+    FormCell, BasicInfo, UploadFile, MatterList
   },
   data() {
     return {

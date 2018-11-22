@@ -43,7 +43,6 @@ export default {
   'a0a66a68-b351-4c19-b837-e168cbf48019': {
     'dd4d228d-fc01-4038-bf17-df54d8d06eb9': 'CGDD',       // *采购订单*
     '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',       // *采购申请*
-    '482b7468-06eb-40c7-842a-f7ea6edb1c37': 'CGTHCK',     // *采购退货出库 *
   },
 
   // < 库存类应用 >
@@ -55,6 +54,7 @@ export default {
     'a1e8592f-63c2-4a31-ba22-9d654484db1d': 'XSCK',        // *销售出库*
     'f5bcd76e-6b3b-4ee6-871f-5c3de4fc261f': 'NBJGLL',      // *内部加工领料*
     '5e8d89f1-49a5-4089-9c1a-44dc2ce0ae4b': 'NBJGRK',      // *内部加工入库*
+    '482b7468-06eb-40c7-842a-f7ea6edb1c37': 'CGTHCK',     // *采购退货出库 *
 
   },
 

@@ -16,53 +16,37 @@
         <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
       </div>
       <!-- 物料列表 -->
-      <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
-        </div>
-        <div class="mater_list">
-          <div class="each_mater"
-              v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">所属订单</span>
-              <span class="order_num">{{key}}</span>
-            </div>
-            <div class="order_matter">
-              <matter-item class="vux-1px-b" :item="item" v-for="(item, index) in oItem" :key="index">
-                <template slot-scope="{item}" slot="other">
-                  <div class='mater_num'>
-                    <!--<span class="num" v-if="item.promDeliTime">采购计划到货日: {{item.promDeliTime}}</span>-->
-                    <span class="num" v-if="item.productionDate">生产日期: {{item.productionDate}}</span>
-                    <span class="num" v-if="item.validUntil">有效日期: {{item.validUntil}}</span>
-                  </div>
-                  <div class='mater_num'>
-                    <!--<span v-if="item.keepingDays_transObjCode || item.keepingDays_transObjCode === 0">保质期天数: {{item.keepingDays_transObjCode}}</span>-->
-                  </div>
-                  <div class='mater_num'>
-                    <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                    <span class='num'>数量: {{item.tdQty | toFixed}}</span>
-                    <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-                  </div>
-                  <div class='mater_price'>
-                    <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-                    <span class="num"
-                          :style="{display:(item.tdAmount && item.tdAmount.toString().length > 9 ? 'block' : '')}"
-                          v-if="item.taxRate">
-                      [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                    </span>
-                  </div>
-                </template>
-              </matter-item>
-            </div>
-          </div>
-        </div>
-        <div class="comment-part">
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-        </div>
+      <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
+                   :taxAmount="taxAmount" :count="count">
+         <template slot="matterOther" slot-scope="{item}">
+           <div class='mater_other'>
+              <div class='mater_num'>
+                <!--<span class="num" v-if="item.promDeliTime">采购计划到货日: {{item.promDeliTime}}</span>-->
+                <span class="num" v-if="item.productionDate">生产日期: {{item.productionDate}}</span>
+                <span class="num" v-if="item.validUntil">有效日期: {{item.validUntil}}</span>
+              </div>
+              <div class='mater_num'>
+                <!--<span v-if="item.keepingDays_transObjCode || item.keepingDays_transObjCode === 0">保质期天数: {{item.keepingDays_transObjCode}}</span>-->
+              </div>
+              <div class='mater_num'>
+                <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+                <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+                <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+              </div>
+              <div class='mater_price'>
+                <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+                <span class="num"
+                      :style="{display:(item.tdAmount && item.tdAmount.toString().length > 9 ? 'block' : '')}"
+                      v-if="item.taxRate">
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                </span>
+              </div>
+           </div>
+          </template>
+      </matter-list>
+      <div class="comment-part">
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
-      <!-- <matter-list :matter-list="orderInfo.inPut.dataSet" :order-remarks="orderInfo.biComment"></matter-list> -->
-      <!-- 金额明细 -->
-      <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"></price-total>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"

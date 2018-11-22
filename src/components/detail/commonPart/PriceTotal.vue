@@ -1,11 +1,11 @@
 <template>
   <!-- 金额明细 -->
   <div class="price_detail" :class="{'only-count': onlyCount}">
-    <div class="price_list" v-if="!noTaxAmt">
+    <div class="price_list" v-if="taxAmt>0">
       <div class='title'>税金</div>
       <div class="num"><span class="symbol">￥</span>{{taxAmt | toFixed | numberComma(3)}}</div>
     </div>
-    <div class="price_list" v-if="!noAmt">
+    <div class="price_list" v-if="amt>0">
       <div class='title'>金额</div>
       <div class="num"><span class="symbol">￥</span>{{amt | toFixed | numberComma(3)}}</div>
     </div>
@@ -57,7 +57,8 @@
     },
     computed:{
       onlyCount(){
-        return this.noAmt && this.noTaxAmt
+        // return this.noAmt && this.noTaxAmt
+        return this.amt === 0 && this.taxAmt === 0
       }
     },
     filters: {

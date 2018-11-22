@@ -10,8 +10,36 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
+      <div class="warehouse_part">
+        <!-- 出库-->
+        <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
+        <!-- 入库 -->
+        <warehouse-content :warehouse="warehouseIn"></warehouse-content>
+      </div>
       <!-- 物料列表 -->
-      <div class="materiel_list">
+      <matter-list :order-list='orderList'>
+         <template slot="matterOther" slot-scope="{item}">
+           <div class='mater_other'>
+              <div class="mater_left">
+                <span class="units">
+                  属性: {{item.processing_transObjCode}}
+                </span>
+                <span class="units">
+                  计量单位: {{item.measureUnit_transObjCode}}
+                </span>
+              </div>
+             <div class="mater_num">
+                <span class="num">
+                  本次完工入库: {{item.tdQty | toFixed}}
+                </span>
+                <span class="units">
+                  [待验收余额: {{item.thenQtyBal | toFixed}}]
+                </span>
+              </div>
+           </div>
+         </template>
+      </matter-list>
+      <!-- <div class="materiel_list">
         <div class="title">
           <span class="iconfont icon-Shape"></span>物料列表
         </div>
@@ -25,7 +53,7 @@
             <div class="order_matter">
               <template v-for="(item, index) in oItem">
                 <matter-item :class="{'vux-1px-b': item.bom}" :item="item" >
-                  <!-- 调拨数量 -->
+                  
                   <div class="mater_other" slot="other" slot-scope="{item}">
                     <div class="mater_num">
                       <i class="iconfont icon--"></i>
@@ -42,22 +70,22 @@
                     </div>
                   </div>
                 </matter-item>
-                <!-- <bom-list :boms="item.boms"></bom-list> -->
+                <bom-list :boms="item.boms"></bom-list>
               </template>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- bom合计 -->
-      <div class="bom_list">
+      <!-- <div class="bom_list">
         <bom-list :boms="UniqueBom"></bom-list>
-      </div>
+      </div> -->
       <div class="comment-part">
-        <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
       <!--原料bom列表-->
-      <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
-      </bom-pop>
+      <!-- <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
+      </bom-pop> -->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -80,23 +108,26 @@
   import BomList from 'components/detail/commonPart/BomList'
   import FormCell from 'components/detail/commonPart/FormCell'
   import BomPop from 'components/apply/commonPart/BomPop'
+  import WarehouseContent from 'components/detail/commonPart/WarehouseContent'
   export default {
     data() {
       return {
-        count: 0,          // 金额合计
-        orderInfo: {},      // 表单内容
+        count: 0, // 金额合计
+        orderInfo: {}, // 表单内容
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
         orderList: {}, // 物料列表
-        basicInfo: {},//存放基本信息
-        DuplicateBoms:[],//有重复项的bom
-        UniqueBom:[],//合并去重后的bom
-        bomPopShow :false,//bom展示
-        bom:{}//bomPop中要展示的bom
+        basicInfo: {}, // 存放基本信息
+        DuplicateBoms:[], // 有重复项的bom
+        UniqueBom:[], // 合并去重后的bom
+        bomPopShow :false, // bom展示
+        bom:{}, // bomPop中要展示的bom
+        warehouseIn: {}, // 入库仓库详情
+        warehouseOut: {}, // 出库仓库详情
       }
     },
     mixins: [detailCommon, common],
     components: {
-      workFlow, RAction, MatterItem, BomList,FormCell,BomPop
+      workFlow, RAction, MatterItem, BomList, FormCell, BomPop, WarehouseContent
     },
     watch:{
       DuplicateBoms:{
@@ -152,7 +183,8 @@
           let {order = {}} = formData;
           this.attachment = attachment;
           // 获取合计
-          let {dataSet} = formData.inPut;
+          let {inPut = {}} = formData;
+          let {dataSet} = inPut;
           for (let item of dataSet) {
             item.inventoryPic = item.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
@@ -166,13 +198,37 @@
                 // 接口返回的tdQty有误，自己手动计算
                 bom.tdQty = accMul(bom.bomQty, item.tdQty,(1+bom.bomSpecificLoss));
               }
+              this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             }
-            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
+            
             if (!orderList[item.transMatchedCode]) {
               orderList[item.transMatchedCode] = [];
             }
             orderList[item.transMatchedCode].push(item);
           }
+          this.warehouseIn = {
+            warehouseCode: inPut.containerCode,
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseAction: '入库',
+            warehouseIcon: 'icon-ruku',
+            warehouseType: inPut.warehouseType_containerCode,
+            warehouseProvince: inPut.warehouseProvince_containerCode,
+            warehouseCity: inPut.warehouseCity_containerCode,
+            warehouseDistrict: inPut.warehouseDistrict_containerCode,
+            warehouseAddress: inPut.warehouseAddress_containerCode,
+          };
+          // 出库
+          this.warehouseOut = {
+            warehouseCode: inPut.containerCodeOut,
+            warehouseName: `${inPut.warehouseName_containerCodeOut}`,
+            warehouseAction: '出库',
+            warehouseIcon: 'icon-chuku',
+            warehouseType: inPut.warehouseType_containerCodeOut,
+            warehouseProvince: inPut.warehouseProvince_containerCodeOut,
+            warehouseCity: inPut.warehouseCity_containerCodeOut,
+            warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
+            warehouseAddress: inPut.warehouseAddress_containerCodeOut,
+          };
           this.orderList = orderList;
           this.orderInfo = formData;
           this.workFlowInfoHandler();

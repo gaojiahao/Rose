@@ -11,21 +11,26 @@
         <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
         <!-- 物料列表 -->
-        <matter-list :matter-list="orderInfo.order.dataSet" :order-remarks="orderInfo.biComment">
-          <div class='mater_other' slot="matterOther" slot-scope="{item}">
-            <div class='mater_left'>
-              <span class="units">
-                计量单位: {{item.measureUnit_transObjCode}}
-              </span>
-              <span class="units">
-                预期完工日: {{item.promDeliTime}}
-              </span>
+        <matter-list :matter-list="orderInfo.order.dataSet">
+          <template slot="matterOther" slot-scope="{item}">
+            <div class='mater_other'>
+              <div class='mater_left'>
+                <span class="units">
+                  计量单位: {{item.measureUnit_transObjCode}}
+                </span>
+                <span class="units">
+                  预期完工日: {{item.promDeliTime}}
+                </span>
+              </div>
+              <div class="mater_num">
+                <span class='num'>数量: {{item.tdQty}}</span>
+              </div>
             </div>
-            <div class="mater_num">
-              <span class='num'>数量: {{item.tdQty}}</span>
-            </div>
-          </div>
+          </template>
         </matter-list>
+        <div class="comment-part">
+          <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        </div>
         <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
         <!-- 审批操作 -->
         <r-action :code="transCode" :task-id="taskId" :actions="actions"

@@ -21,27 +21,31 @@
       <!-- 物料列表 -->
       <matter-list :matter-list="orderInfo.inPut.dataSet">
         <!-- 调拨数量 -->
-        <div class="mater_other" slot="matterOther" slot-scope="{item}">
-          <div class="mater_left">
-            <span class="units">
-              属性: {{item.tdProcessing}}
-            </span>
-            <span class="units">
-              计量单位: {{item.measureUnit_transObjCode}}
-            </span>
-          </div>
-          <div class="mater_num">
-            <span class="num">
-              调拨数量: {{item.tdQty | toFixed}}
-            </span>
-            <span class="units">
-              [库存数量: {{item.thenQtyStock | toFixed}}]
-            </span>
-          </div>
-        </div>
+         <template slot="matterOther" slot-scope="{item}">
+            <div class='mater_other'>
+              <div class="mater_left">
+                <span class="units">
+                  属性: {{item.tdProcessing}}
+                </span>
+                <span class="units">
+                  计量单位: {{item.measureUnit_transObjCode}}
+                </span>
+              </div>
+              <div class="mater_num">
+                <span class="num">
+                  调拨数量: {{item.tdQty | toFixed}}
+                </span>
+                <span class="units">
+                  [库存数量: {{item.thenQtyStock | toFixed}}]
+                </span>
+              </div>
+            </div>
+         </template>
       </matter-list>
+      <div class="comment-part">
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+      </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
-
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -64,6 +68,7 @@
   export default {
     data() {
       return {
+        orderInfo: {},
         warehouseIn: {}, // 入库仓库详情
         warehouseOut: {}, // 出库仓库详情
         formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'

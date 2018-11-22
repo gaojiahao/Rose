@@ -11,45 +11,30 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
-        </div>
-        <div class="mater_list">
-          <div class="each_mater"
-               v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">计划号</span>
-              <span class="order_num">{{key}}</span>
+      <matter-list :order-list='orderList'>
+        <template slot="matterOther" slot-scope="{item}">
+            <div class='mater_other'>
+              <div class="mater_left">
+                <span class="units">
+                  物料大类: {{item.inventoryType_outPutMatCode}}
+                </span>
+                <span class="units">
+                  计量单位: {{item.measureUnit_outPutMatCode}}
+                </span>
+              </div>
+              <div class="mater_num">
+                <span class="num">
+                  减少数量: {{item.tdQty}}
+                </span>
+                <span class="units">
+                  [余额: {{item.thenQtyBal}}]
+                </span>
+              </div>
             </div>
-            <div class="order_matter">
-              <matter-item :class="{'vux-1px-b' : index !== oItem.length - 1}" :item="item" v-for="(item, index) in oItem" :key="index">
-                <!-- 调拨数量 -->
-                <div class="mater_other" slot="other" slot-scope="{item}">
-                  <div class="mater_left">
-                    <span class="units">
-                      物料大类: {{item.inventoryType_outPutMatCode}}
-                    </span>
-                    <span class="units">
-                      计量单位: {{item.measureUnit_outPutMatCode}}
-                    </span>
-                  </div>
-                  <div class="mater_num">
-                    <span class="num">
-                      减少数量: {{item.tdQty | toFixed}}
-                    </span>
-                    <span class="units">
-                      [余额: {{item.thenQtyBal | toFixed}}]
-                    </span>
-                  </div>
-                </div>
-              </matter-item>
-            </div>
-          </div>
-        </div>
-        <div class="comment-part">
-           <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-        </div>
+        </template>
+      </matter-list>
+      <div class="comment-part">
+          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
