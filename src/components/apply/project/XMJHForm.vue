@@ -24,8 +24,13 @@
                 <span class='required'>计划截止日期</span>
               </template>
             </datetime>
-            <x-input title="计划工时" type="number" v-model.number="item.planTime" text-align='right'
-                     placeholder='请填写' @on-blur="checkTime(item)"></x-input>
+            <x-input title="周期天数" type="number" v-model.number="item.cycleDays" text-align='right'
+                     placeholder='请填写' @on-blur="checkTime(item,'cycleDays',2)"></x-input>
+            <x-input title="标准工时" type="number" v-model.number="item.planTime" text-align='right'
+                     placeholder='请填写' @on-blur="checkTime(item,'planTime')"></x-input>
+            <x-input title="作业费率" type="number" v-model.number="item.jobRate" text-align='right'
+                     placeholder='请填写' @on-blur="checkTime(item,'jobRate',2)"></x-input>
+            <cell title="预算作业成本" :value="item.budgetHomeworkCost"></cell>
             <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
           </group>
         </div>
@@ -54,7 +59,7 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import { saveProjectPlan, findProjectApproval } from 'service/projectService'
+  import {saveProjectPlan, findProjectApproval} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
@@ -62,7 +67,9 @@
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import { toFixed } from '@/plugins/calc'
+  import {toFixed} from '@/plugins/calc'
+  import {accMul} from '@/home/pages/maps/decimalsAdd'
+
   const DRAFT_KEY = 'XMJH_DATA';
 
   export default {
@@ -81,42 +88,43 @@
           taskType: '', // 任务类型
           comment: '', // 备注
           deadline: '', // 截止日期
-          planTime: '', // 计划工时
+          cycleDays: '', // 周期天数
+          planTime: '', // 标准工时
+          jobRate: '', // 作业费率
+          budgetHomeworkCost: '', // 预算作业成本
         },
         projectPlan: [],
         formData: {},
         formDataComment: '', // 备注
-        projectName: '', // 项目名称
         project: {}, // 项目计划默认值
       }
     },
     methods: {
       // 添加项目计划
-      addPlan () {
+      addPlan() {
         let planModel = JSON.stringify(this.planModel);
         this.projectPlan.push(JSON.parse(planModel));
         this.projectType.push([]);
       },
       // 删除项目计划
-      delatePlan () {
+      delatePlan() {
         this.projectPlan.pop();
         this.projectType.pop();
       },
       // 任务类型选择
-      typeTask (e, item) {
+      typeTask(e, item) {
         item.taskType = e[0];
       },
       // TODO 选中项目计划项
-      selProject (val) {
+      selProject(val) {
         let sel = JSON.parse(val);
-        this.projectName = sel.PROJECT_NAME;
         this.project = sel;
       },
       // TODO 提交
-      save () {
+      save() {
         let warn = '';
         // 验证选择项目
-        if (!this.projectName) {
+        if (!this.project.PROJECT_NAME) {
           warn = '请选择项目';
         }
         let objArr = {
@@ -167,7 +175,11 @@
                   modifer: this.formData.handler,
                 },
                 projectApproval: {
-                  projectName: this.projectName
+                  projectName: this.project.PROJECT_NAME,
+                  comment: this.project.COMMENT,
+                  projectManager: this.project.PROJECT_MANAGER,
+                  expectStartDate: this.project.EXPECT_START_DATE,
+                  expectEndDate: this.project.EXPECT_END_DATE,
                 },
                 projectPlan: this.projectPlan
               },
@@ -176,16 +188,20 @@
           }
         });
       },
-      // TODO 校验计划工时,保留一位小数
-      checkTime (item) {
-        if (item.planTime) {
-          item.planTime = Math.abs(toFixed(item.planTime, 1));
+      // TODO 校验标准工时,保留小数位
+      checkTime(item, key, length = 1) {
+        let {planTime, jobRate} = item;
+        if (item[key]) {
+          item[key] = Math.abs(toFixed(item[key], length));
+        }
+        if (key === 'planTime' || key === 'jobRate') {
+          item.budgetHomeworkCost = accMul(Number(planTime), Number(jobRate));
         }
       },
       // TODO 保存草稿数据
-      hasDraftData () {
+      hasDraftData() {
         // 是否选择项目
-        if (!this.projectName) {
+        if (!this.project.PROJECT_NAME) {
           return false
         }
         return {
@@ -196,8 +212,8 @@
         };
       },
       // TODO 获取关联数据
-      getRelationData () {
-        return findProjectApproval(this.relationKey).then(({formData = {},attachment = []}) => {
+      getRelationData() {
+        return findProjectApproval(this.relationKey).then(({formData = {}, attachment = []}) => {
           let data = JSON.parse(JSON.stringify(formData.approval));
           this.project = {
             BUDGET_CAPITAL: data.budgetCapital,
@@ -221,13 +237,12 @@
         })
       }
     },
-    created () {
+    created() {
       let plan = JSON.stringify(this.planModel);
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
         this.project = draft.project;
-        this.projectName = this.project.PROJECT_NAME;
         this.projectPlan = draft.projectPlan;
         this.projectPlan.forEach((item, index) => {
           this.projectType.push([]);

@@ -8,6 +8,14 @@
         <!-- 项目-->
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
                   @on-change="projectChange" v-model="projectTask.projectName" required :has-border="false"></r-picker>
+        <!-- 项目详情 -->
+        <div class="or_ads mg_auto " v-show="projectTask.projectName">
+          <p class="title">项目详情</p>
+          <group>
+            <cell title="项目大类" :value="projectTask.projectType"></cell>
+            <cell title="项目子类" :value="projectTask.projectSubclass"></cell>
+          </group>
+        </div>
         <!-- 任务 -->
         <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
                   @on-change="taskChange" v-model="projectTask.taskName" required :has-border="false"></r-picker>
@@ -18,7 +26,10 @@
             <cell title="任务类型" :value="projectTask.taskType"></cell>
             <cell title="任务说明" :value="projectTask.comment" primary="content"></cell>
             <cell title="截止日期" :value="projectTask.deadline"></cell>
-            <cell title="计划工时" :value="projectTask.planTime"></cell>
+            <cell title="周期天数" :value="projectTask.cycleNumber"></cell>
+            <cell title="标准工时" :value="projectTask.planTime"></cell>
+            <cell title="作业费率" :value="projectTask.operatingRate"></cell>
+            <cell title="预算作业成本" :value="projectTask.budgetHomeworkCost"></cell>
           </group>
         </div>
         <!-- 实际情况 -->
@@ -69,7 +80,7 @@
   export default {
     mixins: [ApplyCommon],
     components: {
-      Icon, Cell, Group, XInput, 
+      Icon, Cell, Group, XInput,
       RPicker, PopBaseinfo, Datetime
     },
     data () {
@@ -153,8 +164,6 @@
             if (this.transCode) {
               operation = updateProjectTask
             }
-            console.log(submitData);
-            return false;
             this.saveData(operation, submitData);
           }
         });
@@ -174,7 +183,11 @@
         return getProjectPlanProjectName().then(({tableContent = []}) => {
           let tmp = [];
           tableContent.forEach(item => {
-            item.projectName && tmp.push(item.projectName);
+            item.projectName && tmp.push({
+              ...item,
+              name: item.projectName,
+              value: item.projectName,
+            });
           });
           this.projectList = tmp;
         })
@@ -204,8 +217,12 @@
         if (this.relationKey) {
           return false;
         }
+        let matched = this.projectList.find(item => item.projectName === val);
+        console.log(matched)
         this.projectTask = {
           ...this.projectTask,
+          projectType: matched.projectType || '',
+          projectSubclass: matched.projectSubclass || '',
           taskName: '', // 任务名称
           taskType: '', // 任务类型
           comment: '', // 任务说明,
