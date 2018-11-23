@@ -19,13 +19,9 @@
       <!-- 物料列表 -->
       <matter-list :matter-list="orderInfo.inPut.dataSet">
         <div class='mater_other' slot="matterOther" slot-scope="{item}">
-          <div class='mater_left'>
-            <span class="units">
-              账存数量: {{item.thenQtyStock | toFixed}}
-            </span>
-            <span class="units">
-              计量单位: {{item.measureUnit_transObjCode}}
-            </span>
+          <div class='mater_attribute'>
+            <span>账存数量: {{item.thenQtyStock | toFixed}}</span>
+            <span>计量单位: {{item.measureUnit_transObjCode}}</span>
           </div>
           <div class='mater_num'>
             盘点数量: <span class="num">{{item.tdQty | toFixed}}</span>

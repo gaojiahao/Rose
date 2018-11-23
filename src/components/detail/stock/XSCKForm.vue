@@ -22,13 +22,17 @@
                     :taxAmount="taxAmount" :count="count">
         <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
-              <div class='mater_num'>
+              <div class='mater_attribute'>
                 <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
                 <span>出库数量: {{item.tdQty | toFixed}}</span>
                 <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
               </div>
-              <div class="mater_num" v-if="item.promDeliTime">
+              <div class="mater_attribute" v-if="item.promDeliTime">
                 <span>预期交货日: {{item.promDeliTime}}</span>
+              </div>
+              <div class="mater_num">
+                <span class="num">可用库存: {{item.thenQtyStock}}</span>
+                <span class="num">待交付数量: {{item.thenQtyBal}}</span>
               </div>
               <div class='mater_price'>
                 <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

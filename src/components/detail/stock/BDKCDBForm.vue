@@ -23,20 +23,16 @@
         <!-- 调拨数量 -->
          <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
-              <div class="mater_left">
-                <span class="units">
-                  属性: {{item.tdProcessing}}
-                </span>
-                <span class="units">
-                  计量单位: {{item.measureUnit_transObjCode}}
-                </span>
+              <div class="mater_attribute">
+                <span>属性: {{item.tdProcessing}}</span>
+                <span>计量单位: {{item.measureUnit_transObjCode}}</span>
               </div>
               <div class="mater_num">
                 <span class="num">
                   调拨数量: {{item.tdQty | toFixed}}
                 </span>
                 <span class="units">
-                  [库存数量: {{item.thenQtyStock | toFixed}}]
+                  [可用库存数: {{item.thenQtyStock | toFixed}}]
                 </span>
               </div>
             </div>
