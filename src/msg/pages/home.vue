@@ -1,6 +1,8 @@
 <template>
   <div class="inPage">
-    <r-tab :data="tabList" mode="2" :active-index="activeIndex" @on-click="onTabClick"></r-tab>
+    <tab>
+      <tab-item v-for="(item, index) in tabList" :selected="index === activeIndex" @on-item-click="onTabClick" :key="index">{{item.name}}</tab-item>
+    </tab>
     <template v-if="listData">
       <r-scroll class="wrapper" :options="scrollOptions" :has-next="hasNext" :no-data="false"
                 @on-pulling-up="onPullingUp" ref="bScroll">
@@ -24,14 +26,12 @@
 </template>
 <script>
   // vux组件引入
-  import {Badge} from 'vux'
+  import {Badge, Tab, TabItem} from 'vux'
   // 映射表 引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   // 请求 引入
   import {getMsgList, getNotice} from 'service/msgService'
   // 组件 引入
-  import BScroll from 'better-scroll'
-  import RTab from 'components/list/commonPart/RTab'
   import RScroll from 'components/RScroll'
   import TodoItem from 'components/msg/TodoItem'
   import CommentItem from 'components/msg/CommentItem'
@@ -68,11 +68,11 @@
       },
     },
     components: {
-      Badge, RTab, RScroll, TodoItem, CommentItem,
+      Badge, RScroll, TodoItem, CommentItem, Tab, TabItem,
     },
     methods: {
       // TODO tab切换
-      onTabClick({status = '', index = 0}) {
+      onTabClick(index) {
         let list = [this.getList, this.getComment, this.getPraise];
         this.activeIndex = index;
         this.$loading.show();
@@ -270,6 +270,7 @@
     activated() {
       let reload = this.$route.meta.reload;
       register();
+      // 是否需要重新加载数据
       if (reload) {
         this.listData = {};
         this.activeIndex = 0;
@@ -279,6 +280,7 @@
         });
         this.$route.meta.reload = false;
       } else {
+        // 进入过详情才改变状态
         this.isClickDetail && this.changeVisitedStatus();
       }
     }
