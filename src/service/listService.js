@@ -89,7 +89,11 @@ export let getWareHouseType = (data = {}) => {
     }
   })
 }
-
+export let filterFields = (viewId = '') => {
+  return $axios.ajax({
+    url: `/H_roleplay-si/seconds/getInstanceDistinct/${viewId}`
+  })
+}
 export default {
   getList,
   getSellOrderList,
