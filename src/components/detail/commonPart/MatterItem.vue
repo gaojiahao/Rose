@@ -188,7 +188,7 @@
       .mater_price {
         color: #ea5455;
         font-weight: bold;
-        font-size: .14rem;
+        font-size: .16rem;
         line-height: 0.2rem;
         margin-top: .04rem;
         display: inline-block;
@@ -201,7 +201,7 @@
         }
       }
       // 单价 数量 税率 等
-      .mater_num {
+      .mater_attribute {
         color: #3f72af;
         font-size: 0.1rem;
         span {
@@ -225,12 +225,15 @@
       .mater_num {
         .num {
           color: #111;
-          font-size: .12rem;
+          font-size: .14rem;
           font-weight: bold;
           .symbol {
             color: #757575;
           }
         }
+        .units {
+          font-size: .1rem;
+        }      
       }
     }
   }

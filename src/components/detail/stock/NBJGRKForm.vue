@@ -20,13 +20,9 @@
       <matter-list :order-list='orderList'>
          <template slot="matterOther" slot-scope="{item}">
            <div class='mater_other'>
-              <div class="mater_left">
-                <span class="units">
-                  属性: {{item.processing_transObjCode}}
-                </span>
-                <span class="units">
-                  计量单位: {{item.measureUnit_transObjCode}}
-                </span>
+              <div class="mater_attribute">
+                <span>属性: {{item.processing_transObjCode}}</span>
+                <span>计量单位: {{item.measureUnit_transObjCode}}</span>
               </div>
              <div class="mater_num">
                 <span class="num">

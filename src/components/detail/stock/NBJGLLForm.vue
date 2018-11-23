@@ -22,13 +22,9 @@
       <matter-list :matter-list="orderInfo.outPut.dataSet" :order-remarks="orderInfo.biComment">
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
-          <div class="mater_left">
-            <span class="units">
-              计量单位: {{item.measureUnit_outPutMatCode}}
-            </span>
-            <span class="units">
-              待领料: {{item.thenQtyBal}}
-            </span>
+          <div class="mater_attribute">
+            <span>计量单位: {{item.measureUnit_outPutMatCode}}</span>
+            <span>待领料: {{item.thenQtyBal}}</span>
           </div>
           <div class="mater_num">
             <span class="num">

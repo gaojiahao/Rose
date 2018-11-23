@@ -16,7 +16,7 @@
               v-for="(oItem, key) in orderList" :key='key'>
           <div class="order_code">
             <span class="order_title">所属订单</span>
-            <span class="order_num">{{key}}</span>
+            <span class="order_num">{{key || '未查询到相关订单，请检查数据是否正确'}}</span>
           </div>
           <div class="order_matter">
             <matter-item :item="item" v-for="(item, index) in oItem" :key='index'>

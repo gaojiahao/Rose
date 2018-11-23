@@ -14,10 +14,10 @@
       <matter-list :order-list='orderList' :count="count">
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
-            <div class="mater_left">
-              <span class="units">全部需求: {{item.productDemandQty}}</span>
-              <span class="units">已做需求: {{item.thenLockQty}}</span>
-              <span class="units">起订量: {{item.moq_transObjCode}}</span>
+            <div class="mater_attribute">
+              <span>全部需求: {{item.productDemandQty}}</span>
+              <span>已做需求: {{item.thenLockQty}}</span>
+              <span>起订量: {{item.moq_transObjCode}}</span>
             </div>
             <div class="mater_num">
               <span class="num">待做需求: {{item.tdQty}}</span>

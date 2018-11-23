@@ -16,13 +16,9 @@
       <matter-list :matter-list="orderInfo.order.dataSet">
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
-          <div class="mater_left">
-            <span class="units">
-              属性: {{item.processing_transObjCode}}
-            </span>
-            <span class="units">
-              计量单位: {{item.measureUnit_transObjCode}}
-            </span>
+          <div class="mater_attribute">
+            <span>属性: {{item.processing_transObjCode}}</span>
+            <span>计量单位: {{item.measureUnit_transObjCode}}</span>
           </div>
           <div class="mater_price">
             <span class="diff_num">

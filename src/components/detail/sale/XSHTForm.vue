@@ -17,7 +17,7 @@
                      :taxAmount="taxAmount" :count="count">
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
-              <div class='mater_num'>
+              <div class='mater_attribute'>
                 <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
                 <span>数量: {{item.tdQty | toFixed}}</span>
                 <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>

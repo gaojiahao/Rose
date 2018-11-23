@@ -14,13 +14,9 @@
         <matter-list :matter-list="orderInfo.order.dataSet">
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
-              <div class='mater_left'>
-                <span class="units">
-                  计量单位: {{item.measureUnit_transObjCode}}
-                </span>
-                <span class="units">
-                  预期完工日: {{item.promDeliTime}}
-                </span>
+              <div class='mater_attribute'>
+                <span>计量单位: {{item.measureUnit_transObjCode}}</span>
+                <span>预期完工日: {{item.promDeliTime}}</span>
               </div>
               <div class="mater_num">
                 <span class='num'>数量: {{item.tdQty}}</span>
