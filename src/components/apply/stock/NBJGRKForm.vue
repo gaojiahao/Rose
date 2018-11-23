@@ -73,7 +73,14 @@
           <!-- 订单popup -->
           <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
                                :default-value="orderList" list-method="getInProcessingStorage"
-                               ref="order"></pop-order-xqtj-list>
+                               ref="order">
+            <template slot="qtyBal" slot-scope="{item}">
+              <span>待验收余额：{{item.qtyBal}}</span>
+            </template>
+            <template slot="qtyStock" slot-scope="{item}">
+              <div class="mater-balance">可用余额: {{item.qtyStock}}{{item.measureUnit}}</div>
+            </template>
+          </pop-order-xqtj-list>
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -307,6 +314,23 @@
       // TODO 提价订单
       submitOrder () {
         let warn = '';
+        let validateMap = [
+          {
+            key: 'warehouseOut',
+            message: '出库仓库',
+          },
+          {
+            key : 'warehouseIn',
+            message: '入库仓库',
+          }
+        ];
+        validateMap.every(item => {
+          if (!this[item.key]) {
+            warn = `请选择${item.message}`;
+            return false
+          }
+          return true
+        });
         if (!warn && !Object.keys(this.orderList).length) {
           warn = '请选择物料'
         }

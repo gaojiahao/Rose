@@ -60,9 +60,12 @@
                     <div class="mater_material">
                       <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
                       <span class="spec">材质: {{item.material || '无'}}</span>
-                      <span>待验收余额：{{item.qtyBal}}</span>
+                      <slot name="qtyBal" :item="item">
+                      </slot>
                     </div>
-                    <div class="mater-balance">可用余额: {{item.qtyStock}}{{item.measureUnit}}</div>
+                    <slot name="qtyStock" :item="item">
+                      <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
+                    </slot> 
                   </div>
                 </div>
               </div>
