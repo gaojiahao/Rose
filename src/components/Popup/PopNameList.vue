@@ -15,6 +15,14 @@
         <div class="cp_manager">
           {{selItems.PROJECT_MANAGER}}<span class="symbol"> [项目经理]</span>
         </div>
+        <div class="cp_name">
+          <template v-if="selItems.PROJECT_TYPE">
+            {{selItems.PROJECT_TYPE}}<span class="symbol"> [项目大类]</span>
+          </template>
+          <template v-if="selItems.PROJECT_SUBCLASS">
+            {{selItems.PROJECT_SUBCLASS}}<span class="symbol"> [项目子类]</span>
+          </template>
+        </div>
         <p class="cp_name" v-if="selItems.COMMENT">
           {{selItems.COMMENT}}<span class="symbol"> [项目说明]</span>
         </p>

@@ -13,23 +13,28 @@
         <div class="project_content">
           <form-cell cellTitle="名称" :cellContent="projectApproval.projectName" :showTopBorder=false></form-cell>
           <form-cell cellTitle="经理" :cellContent="projectApproval.projectManager"></form-cell>
+          <form-cell cellTitle="大类" :cellContent="projectApproval.projectType"></form-cell>
+          <form-cell cellTitle="子类" :cellContent="projectApproval.projectSubclass"></form-cell>
           <form-cell cellTitle="说明" :cellContent="projectApproval.comment || '无'"></form-cell>
           <form-cell cellTitle="预期开始日期" :cellContent="projectApproval.expectStartDate | timeSplit"></form-cell>
           <form-cell cellTitle="预期截止日期" :cellContent="projectApproval.expectEndDate | timeSplit"></form-cell>
         </div>
-      </div>      
+      </div>
       <!-- 任务计划明细 -->
       <div class="form_part">
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-renwu"></span><span class="title">任务列表</span>
         </div>
-        <div class="form_content" 
+        <div class="form_content"
              :class="{ 'show_border' : index !== projectPlan.length - 1}"
              v-for="(item, index) in projectPlan" :key='index'>
           <div class="main_content" >
               <form-cell cellTitle='任务名称' :cellContent="item.taskName" :showTopBorder=false></form-cell>
               <form-cell cellTitle='任务类型' :cellContent="item.taskType"></form-cell>
-              <form-cell cellTitle='计划工时' :cellContent="item.planTime"></form-cell>
+              <form-cell cellTitle='周期天数' :cellContent="item.cycleDays"></form-cell>
+              <form-cell cellTitle='标准工时' :cellContent="item.planTime"></form-cell>
+              <form-cell cellTitle='作业费率' :cellContent="item.jobRate"></form-cell>
+              <form-cell cellTitle='预算作业成本' :cellContent="item.budgetHomeworkCost"></form-cell>
               <form-cell cellTitle='计划截止日期' :cellContent="item.deadline | timeSplit"></form-cell>
               <form-cell cellTitle='任务说明' :cellContent="item.comment"></form-cell>
           </div>

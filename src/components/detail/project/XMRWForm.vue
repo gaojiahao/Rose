@@ -16,9 +16,13 @@
           <form-cell cellTitle="任务类型" :cellContent="projectTask.taskType"></form-cell>
           <form-cell cellTitle="任务说明" :cellContent="projectTask.comment || '无'"></form-cell>
           <form-cell cellTitle="计划截止日期" :cellContent="projectTask.deadline"></form-cell>
-          <form-cell cellTitle="计划工时" :cellContent="projectTask.planTime"></form-cell>
+          <form-cell cellTitle="周期天数" :cellContent="projectTask.cycleNumber"></form-cell>
+          <form-cell cellTitle="标准工时" :cellContent="projectTask.planTime"></form-cell>
+          <form-cell cellTitle="作业费率" :cellContent="projectTask.operatingRate"></form-cell>
+          <form-cell cellTitle="预算作业成本" :cellContent="projectTask.budgetHomeworkCost"></form-cell>
           <form-cell cellTitle="实际完成日期" :cellContent="projectTask.actualCompleteTime"></form-cell>
           <form-cell cellTitle="实际工时" :cellContent="projectTask.actualTime"></form-cell>
+          <form-cell cellTitle="实际作业成本" :cellContent="projectTask.actualtHomeworkCost"></form-cell>
         </div>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
