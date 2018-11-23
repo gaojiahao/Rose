@@ -24,11 +24,11 @@
               计量单位: {{item.measureUnit_transObjCode}}
             </span>
           </div>
-          <div class="mater_num">
+          <div class="mater_price">
             <span class="diff_num">
               ￥{{item.price | toFixed}}
             </span>
-            <span class="units">
+            <span class="num">
               [价格类型: {{item.priceType}}]
             </span>
           </div>
@@ -138,29 +138,4 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
-  .xsbj-detail-container {
-    .matter_item {
-      .mater_other {
-        .mater_left {
-          color: #757575;
-          font-size: .12rem;
-          .units {
-            margin-right: .04rem;
-          }
-        }
-        .mater_num {
-          color: #757575;
-          font-size: .14rem;
-          font-weight: bold;
-          .diff_num {
-            color: #ea5455;
-          }
-          .units {
-            font-size: .1rem;
-          }
-        }
-      }
-    }
-  }
 </style>

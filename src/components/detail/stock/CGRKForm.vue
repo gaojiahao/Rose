@@ -22,15 +22,12 @@
            <div class='mater_other'>
               <div class='mater_num'>
                 <!--<span class="num" v-if="item.promDeliTime">采购计划到货日: {{item.promDeliTime}}</span>-->
-                <span class="num" v-if="item.productionDate">生产日期: {{item.productionDate}}</span>
-                <span class="num" v-if="item.validUntil">有效日期: {{item.validUntil}}</span>
+                <span v-if="item.productionDate">生产日期: {{item.productionDate}}</span>
+                <span v-if="item.validUntil">有效日期: {{item.validUntil}}</span>
               </div>
               <div class='mater_num'>
-                <!--<span v-if="item.keepingDays_transObjCode || item.keepingDays_transObjCode === 0">保质期天数: {{item.keepingDays_transObjCode}}</span>-->
-              </div>
-              <div class='mater_num'>
-                <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                <span class='num'>数量: {{item.tdQty | toFixed}}</span>
+                <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+                <span>数量: {{item.tdQty | toFixed}}</span>
                 <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
               </div>
               <div class='mater_price'>
@@ -203,34 +200,6 @@ export default {
       border-top-right-radius: .08rem;
     }
   }
-  // 一般金额
-  .mater_price {
-    color: #ea5455;
-    font-weight: bold;
-    font-size: .14rem;
-    line-height: 0.2rem;
-    margin-top: .04rem;
-    display: inline-block;
-    .symbol {
-      font-size: .12rem;
-    }
-    .num {
-      font-size: .1rem;
-      color: #757575;
-    }
-  }
-  // 单价 数量 税率 等
-  .mater_num {
-    color: #757575;
-    font-size: 0.1rem;
-    span {
-      display: inline-block;
-    }
-    .num {
-      margin-right: 0.04rem;
-    }
-  }
-
   .contacts_part {
     margin-bottom: .1rem;
     padding: .06rem .1rem 0;
