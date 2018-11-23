@@ -35,43 +35,6 @@
            </div>
          </template>
       </matter-list>
-      <!-- <div class="materiel_list">
-        <div class="title">
-          <span class="iconfont icon-Shape"></span>物料列表
-        </div>
-        <div class="mater_list">
-          <div class="each_mater"
-               v-for="(oItem, key) in orderList" :key='key'>
-            <div class="order_code">
-              <span class="order_title">加工订单号</span>
-              <span class="order_num">{{key}}</span>
-            </div>
-            <div class="order_matter">
-              <template v-for="(item, index) in oItem">
-                <matter-item :class="{'vux-1px-b': item.bom}" :item="item" >
-                  
-                  <div class="mater_other" slot="other" slot-scope="{item}">
-                    <div class="mater_num">
-                      <i class="iconfont icon--"></i>
-                      <span class="num">{{item.warehouseName_containerCode}}</span>
-                    </div>
-                    <div class="mater_num">
-                      <span class="num">
-                        本次完工入库: {{item.tdQty | toFixed}}
-                      </span>
-                      <span class="units">
-                        [待验收余额: {{item.thenQtyBal | toFixed}}]
-                      </span>
-                      <span class='get_bom' @click="checkBom(item)">查看原料</span>
-                    </div>
-                  </div>
-                </matter-item>
-                <bom-list :boms="item.boms"></bom-list>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div> -->
       <!-- bom合计 -->
       <!-- <div class="bom_list">
         <bom-list :boms="UniqueBom"></bom-list>
