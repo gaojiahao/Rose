@@ -60,8 +60,9 @@
                     <div class="mater_material">
                       <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
                       <span class="spec">材质: {{item.material || '无'}}</span>
+                      <span>待验收余额：{{item.qtyBal}}</span>
                     </div>
-                    <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
+                    <div class="mater-balance">可用余额: {{item.qtyStock}}{{item.measureUnit}}</div>
                   </div>
                 </div>
               </div>
@@ -188,6 +189,13 @@
         if (validateMap.includes(this.listMethod) && !sItem.orderCode) {
           this.$vux.alert.show({
             content: '当前订单号不存在，不可选择'
+          });
+          return
+        }
+        // 加工入库需要对物料的库存进行校验
+        if(sItem.qtyBal && sItem.qtyStock <= 0){
+          this.$vux.alert.show({
+            content: '当前库存为0，不可选择'
           });
           return
         }

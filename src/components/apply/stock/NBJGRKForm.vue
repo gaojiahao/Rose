@@ -5,6 +5,13 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
+        <!-- 出库仓库-->
+        <pop-warehouse-list title="在制仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut" isRequired 
+                            get-list-method="getWareHouseType" :warehouse-type="'加工车间仓'"></pop-warehouse-list>
+
+        <!-- 入库仓库-->
+        <pop-warehouse-list title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn" isRequired 
+                            get-list-method="getWareHouseType" :warehouse-type="'一般部门仓,个人仓,加工车间仓'"></pop-warehouse-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -32,25 +39,22 @@
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index,item, key)" :class="{'vux-1px-b' : index < oItem.length-1}">
                     <template slot-scope="{item}" slot="info">
-                      <div class='mater_more'>
-                        <span>仓库: {{item.warehouseName || '暂未指定'}}</span>
+                      <div class="mater_more">
+                        <span>可用库存: {{item.qtyStock}}</span>
+                        <span>待验收余额: {{item.qtyBal}}</span>
                       </div>
                       <div class="mater_other" v-if="item.tdQty">
                         <div class="matter-remain">
                           <span>本次完工入库: {{item.tdQty}}{{item.measureUnit}}</span>
-                          <span class="symbol">[余额: {{item.qtyBal}}]</span>
                         </div>
-                        <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
                       </div>
                     </template>
                     <template slot="edit" slot-scope="{item}">
                       <div class='mater_other'v-if="!item.tdQty && !matterModifyClass">
                         <div class="edit-tips" @click="modifyMatter(item,index, key)" >点击进行填写</div>
-                        <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
                       </div>
                     </template>
                   </matter-item>
-                  <!-- <bom-list :boms="item.boms"></bom-list> -->
                   <div class='delete_icon' @click="delClick(index,item, key)" v-show='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
@@ -71,17 +75,6 @@
                                :default-value="orderList" list-method="getInProcessingStorage"
                                ref="order"></pop-order-xqtj-list>
         </div>
-        <!-- bom合计-->
-        <div class="materiel_list" v-show="UniqueBom.length">
-          <bom-list :boms="UniqueBom">
-            <template slot-scope="{bom}" slot="number">
-              <div class="number-part">
-                <span class="main-number">本次扣料: {{bom.tdQty}}{{bom.measureUnit}}</span>
-                <span class="number-unit">可用余额: {{bom.qtyStock || bom.thenQtyStock}}</span>
-              </div>
-            </template>
-          </bom-list>
-        </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -91,16 +84,16 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-            <pop-warehouse-nbjgrk-list :default-value="tmpWarehouse"
-                                       @on-hide="hideWarehouse" @sel-item="selWarehouse"></pop-warehouse-nbjgrk-list>
+            <cell title="可用库存" text-align='right' placeholder='请填写' :value="modifyMatter.qtyStock"></cell>
             <cell title="待验收余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+            <x-input title="本次完工入库" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span class="required">本次完工入库</span>
+              </template>
+            </x-input>
           </template>
         </pop-matter>
-         <!--原料bom列表-->
-        <bom-pop :show="bomPopShow" :bomInfo="bom" @bom-confirm="bomConfirm" v-model="bomPopShow"
-                 :btn-is-hide="btnIsHide" :specific-loss-text="'单位损耗率'"></bom-pop>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -140,6 +133,7 @@
   import BomPop from 'components/apply/commonPart/BomPop'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import PopWarehouseList from 'components/Popup/PopWarehouseList'
   // 公共方法
   import { accMul, accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
@@ -151,7 +145,7 @@
     components: {
       Icon, Cell, Group, XInput, XTextarea,
       PopMatter, PopOrderXqtjList, Datetime,
-      FormCell, PopWarehouseNbjgrkList, BomList, BomPop, RPicker, PopBaseinfo
+      FormCell, PopWarehouseNbjgrkList, BomList, BomPop, RPicker, PopBaseinfo,PopWarehouseList
     },
     data() {
       return {
@@ -159,6 +153,7 @@
         orderList: {}, // 订单列表
         showOrderPop: false, // 是否显示物料的popup
         formData: {
+          biProcessStatus: null, // 流程状态
           biComment: '' //备注
         },
         submitSuccess: false, // 是否提交成功
@@ -174,82 +169,41 @@
         tmpItems: {},//选中的订单
         matter: {},
         showMatterPop: false,
-        tmpWarehouse: {},
-        DuplicateBoms: [], // 有重复项的bom
-        UniqueBom: [], // 无重复项的bom
         modifyIndex: null, // 修改物料数量或bom损耗率时，物料的index
         modifyKey: null, // 修改物料数量或bom损耗率时，物料的key
-        bomPopShow: false,
-        bom : {}, // 修改的bom
-        modifyBomTdqty : [] // 修改前bom
+        warehouseOut: null,
+        warehouseIn: null,
       }
     },
-    watch: {
-      matter: {
-        handler (val) {
-          val.boms && val.boms.forEach(item => {
-            // 监听领料需求变化
-            let tdQty = accMul(val.tdQty, item.qty, (1 + item.specificLoss));
-            item.tdQty = Math.abs(toFixed(tdQty))
-          });
-        },
-        deep: true
-      },
-    },
     methods: {
-      // 查看原料
-      checkBom (item,index,key) {
-        this.bom = item;
-        this.modifyIndex = index;
-        this.modifyKey = key;
-        this.bomPopShow = true;
-        this.modifyBomTdqty = JSON.parse(JSON.stringify(item.boms))
+      // TODO 选中出库仓库
+      selWarehouseOut (val) {
+        this.warehouseOut = JSON.parse(val);
       },
-      // 修改原料的损耗率
-      bomConfirm (val) {
-        let matter = JSON.parse(val);
-        this.$set(this.orderList[this.modifyKey], this.modifyIndex, matter);
-        this.reBuildArr(matter);
+      // TODO 选中入库仓库
+      selWarehouseIn (val) {
+        this.warehouseIn = JSON.parse(val);
+      },
+      // 检验数量
+      checkAmt(item){
+        let {tdQty, qtyStock} = item;
+        // 数量
+        if (tdQty) {
+          item.tdQty = Math.abs(toFixed(tdQty));
+          item.tdQty = tdQty > qtyStock ? qtyStock : item.tdQty
+        }
       },
       // TODO 显示物料修改的pop
       modifyMatter (item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
-        this.tmpWarehouse = {
-          warehouseName: item.warehouseName,
-          warehouseCode: item.warehouseCode,
-        };
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
-        this.modifyBomTdqty = [...item.boms]
       },
       // TODO 更新修改后的物料信息
       selConfirm (val) {
         let modMatter = JSON.parse(val);
-        modMatter = {
-          ...modMatter,
-          ...this.tmpWarehouse,
-        };
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
-        this.reBuildArr(modMatter);
-      },
-      reBuildArr (matter) {
-        let BomArr = matter.boms;
-        // 修改数量时，bom数量加上修改后减去修改前的差值
-        this.modifyBomTdqty.forEach(item=>{
-          BomArr.forEach(BItem=>{
-            if (BItem.inventoryCode === item.inventoryCode) {
-              BItem.newTdqty = accSub(BItem.tdQty, item.tdQty);
-              this.UniqueBom.forEach(AItem=>{
-                if (BItem.inventoryCode === AItem.inventoryCode) {
-                  AItem.tdQty = accAdd( AItem.tdQty, BItem.newTdqty);
-                  return false
-                }
-              })
-              return true
-            }
-          })
-        })
       },
       // TODO 选中物料项
       selOrder (val) {
@@ -266,23 +220,7 @@
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
-          promises.push(getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
-            tableContent.forEach(bom => {
-              let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
-              let {specificLoss = bom.specificLoss} = matchedBom;
-              let tdQty = accMul(item.tdQty, bom.qty, (1 + specificLoss));
-              bom.specificLoss = specificLoss;
-              bom.tdQty = Math.abs(toFixed(tdQty))
-            });
-            this.$set(item, 'boms', tableContent);
-            let data = JSON.parse(JSON.stringify(tableContent));
-            this.DuplicateBoms = [...this.DuplicateBoms, ...data];
-          }));
           orderList[item.transCode].push(item);
-        });
-        Promise.all(promises).then(data => {
-          // 合并bom
-          this.mergeBomList();
         });
         this.numMap = {};
         this.matterList = sels;
@@ -351,22 +289,6 @@
                 }
               })
             });
-            // 删除bom
-            this.selItems.forEach(item=>{
-              item.boms.forEach(BItem=>{
-                this.UniqueBom.forEach((AItem,index)=>{
-                  if (BItem.inventoryCode === AItem.inventoryCode) {
-                    let tdQty = accSub(AItem.tdQty,BItem.tdQty)
-                    AItem.tdQty = toFixed(tdQty);
-                    if (AItem.tdQty<=0) {
-                      this.UniqueBom.splice(index,1)
-                    }
-                    return false
-                  }
-                })
-                return true
-              })
-            })
             this.selItems = [];
             this.matterModifyClass = false;
           }
@@ -393,16 +315,6 @@
             for (let vItem of value) {
               if(!vItem.tdQty){
                 warn = '请填写本次入库数量'
-                break;
-              }
-              for (let item of vItem.boms) {
-                // 校验数量
-                if (item.qtyStock < item.tdQty) {
-                  warn = '可用余额不能少于本次扣料，请重新输入入库数量';
-                  break;
-                }
-              }
-              if (warn) {
                 break;
               }
             }
@@ -434,25 +346,6 @@
             // 组装dataSet
             for (let items of Object.values(this.orderList)) {
               for (let item of items) {
-                let boms = [];
-                for (let bom of item.boms) {
-                  boms.push({
-                    tdId : bom.tdId || null,
-                    transMatchedCode: item.transCode,
-                    tdQty:bom.tdQty, // 领料需求
-                    orderCode: item.orderCode,
-                    thenQtyStock: bom.qtyStock,
-                    bomSpecificLoss: bom.specificLoss,
-                    tdProcessing: bom.processing || bom.tdProcessing,
-                    containerCodeOut: bom.warehouseCode,
-                    inventoryName: bom.inventoryName,
-                    transObjCode: bom.inventoryCode,
-                    measureUnit: bom.measureUnit,
-                    warehouseName_containerCodeOut: bom.warehouseName,
-                    bomType: bom.bomType,
-                    bomQty: bom.qty || bom.bomQty,
-                  })
-                }
                 let oItem = {
                   tdId: item.tdId || null,
                   transMatchedCode: item.transCode, // 交易号
@@ -461,12 +354,10 @@
                   inventoryName_transObjCode: item.inventoryName,
                   tdProcessing: item.processing,
                   measureUnit_transObjCode: item.measureUnit,
-                  thenQtyBal: item.qtyBal, // 余额
+                  thenQtyStock: item.qtyStock, // 可用库存
+                  thenQtyBal: item.qtyBal, // 可验收余额
                   tdQty: item.tdQty, // 下单数量
-                  warehouseName_containerCode: item.warehouseName,
-                  containerCode: item.warehouseCode,
                   comment: item.comment || '', // 说明
-                  boms
                 };
                 dataSet.push(oItem);
               }
@@ -476,8 +367,12 @@
               modifer: this.transCode ? this.formData.handler : '',
               handlerEntity: this.entity.dealerName,
               inPut: {
+                containerCodeOut: this.warehouseOut.warehouseCode,
+                containerCode: this.warehouseIn.warehouseCode,
                 dataSet
-              }
+              },
+              containerOutWarehouseManager: this.warehouseOut.manager || null,
+	            containerInWarehouseManager: this.warehouseIn.manager || null,
             };
             // 重新提交
             if (this.transCode) {
@@ -494,19 +389,19 @@
             let submitData = {
               listId: this.listId,
               biComment: '',
-              biReferenceId: this.biReferenceId,
+              // biReferenceId: this.biReferenceId,
               formData: JSON.stringify(formData),
               wfPara: JSON.stringify(wfPara)
             };
-            if (!this.transCode) {
-              delete submitData.biReferenceId
-            }
+            // if (!this.transCode) {
+            //   delete submitData.biReferenceId
+            // }
             if (!this.processCode.length) { // 无工作流
               operation = submitAndCalc;
               delete submitData.wfPara;
-              delete submitData.biReferenceId;
+              // delete submitData.biReferenceId;
             }
-            if (this.biReferenceId) {
+            if (this.transCode) {
               submitData.biReferenceId = this.biReferenceId
             }
             this.saveData(operation, submitData);
@@ -533,79 +428,61 @@
           let {inPut} = formData;
           let {dataSet = []} = inPut;
           for (let item of dataSet) {
-            // bom合计
-            item.boms.forEach(bom => {
-              bom.inventoryCode = bom.transObjCode;
-              bom.warehouseName = bom.warehouseName_containerCodeOut;
-              bom.warehouseCode = bom.containerCodeOut;
-              bom.specificLoss = bom.bomSpecificLoss;
-              bom.qty = bom.bomQty;
-            })
-            this.DuplicateBoms = this.DuplicateBoms.concat(JSON.parse(JSON.stringify(item.boms)));
             item = {
               ...item,
               transCode: item.transMatchedCode,
               qtyBal: item.thenQtyBal,
+              qtyStock: item.thenQtyStock,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_transObjCode,
               inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
-              processing: item.tdProcessing,
-              warehouseName: item.warehouseName_containerCode,
-              warehouseCode: item.containerCode
+              processing: item.tdProcessing,             
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
             }
             orderList[item.transCode].push(item);
           }
+          this.warehouseOut = {
+            warehouseName: inPut.warehouseName_containerCodeOut,
+            warehouseType: inPut.warehouseType_containerCodeOut,
+            warehouseCode: inPut.containerCodeOut,
+            manager: formData.containerOutWarehouseManager
+          }
+          this.warehouseIn = {
+            warehouseName: inPut.warehouseName_containerCode,
+            warehouseType: inPut.warehouseType_containerCode,
+            warehouseCode: inPut.containerCode,
+            manager: formData.containerInWarehouseManager
+          }
           this.matterList = dataSet;
           this.formData = {
             ...this.formData,
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
             creator: formData.creator,
-            biComment: formData.biComment,
-            drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
+            modifer: formData.modifer,
           };
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          }
           this.entity = {
             dealerName: formData.handlerEntity
           };
-          this.mergeBomList();
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
           this.$loading.hide();
         })
-      },
-      // TODO 展示仓库弹窗
-      showWarehouse () {
-        this.showMatterPop = false;
-      },
-      // TODO 仓库弹窗隐藏
-      hideWarehouse () {
-        this.showMatterPop = true;
-      },
-      // TODO 选中仓库
-      selWarehouse (item) {
-        this.tmpWarehouse = {
-          warehouseName: item.warehouseName,
-          warehouseCode: item.warehouseCode,
-        };
-      },
-      // TODO 合并bom列表
-      mergeBomList () {
-        // 对合计的bom进行去重合并
-        let isEqual = (a, b) => a.inventoryCode === b.inventoryCode;
-        let getNew = old => old.reduce((acc, cur) => {
-          let hasItem = acc.some(e => {
-            let temp = isEqual(e, cur);
-            if (temp) {
-              e.tdQty = accAdd(e.tdQty, cur.tdQty);
-            }
-            return temp;
-          });
-          if (!hasItem) acc.push(cur);
-          return acc;
-        }, []);
-        this.UniqueBom = getNew(this.DuplicateBoms);
       },
       // TODO 保存草稿数据
       hasDraftData () {
@@ -617,7 +494,8 @@
           [DRAFT_KEY]: {
             orderList: this.orderList,
             formData: this.formData,
-            DuplicateBoms: this.DuplicateBoms,
+            warehouseIn: this.warehouseIn,
+            warehouseOut: this.warehouseOut,
           }
         };
       },
@@ -628,8 +506,8 @@
         let draft = JSON.parse(data);
         this.orderList = draft.orderList;
         this.formData = draft.formData;
-        this.DuplicateBoms = draft.DuplicateBoms;
-        this.mergeBomList();
+        this.warehouseOut = draft.warehouseOut;
+        this.warehouseIn = draft.warehouseIn;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     }

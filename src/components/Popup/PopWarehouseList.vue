@@ -84,7 +84,7 @@
 
 <script>
   import {Icon, Popup, TransferDom, LoadMore} from 'vux'
-  import {getWarehouse} from 'service/listService'
+  import {getWarehouse, getWareHouseType} from 'service/listService'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
 
@@ -119,6 +119,15 @@
         default() {
           return []
         }
+      },
+      getListMethod: {
+        type: String,
+        default: 'getWarehouse'
+      },
+      // 请求的传参，本地库存调拨请求数据时会传入
+      warehouseType: {
+        type: String,
+        default: '',
       },
     },
     directives: {TransferDom},
@@ -177,7 +186,7 @@
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
-        this.getList();
+        this[this.getListMethod]();
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -198,7 +207,7 @@
         return url
       },
       // TODO 获取仓库列表
-      getList() {
+      getWarehouse() {
         let filter = this.filterParams;
         if (this.srhInpTx) {
           filter = [
@@ -216,28 +225,75 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            item.warehouseCity = item.warehouseCity || item.wareHouseCity;
-          });
-          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          //获取缓存
-          if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
-            let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
-            for (let i = 0; i < this.listData.length; i++) {
-              if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
-                this.selItems = this.listData[i];
-                this.$emit('sel-item', JSON.stringify(this.listData[i]));
-                sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
-              }
+        }).then(this.dataHandler)
+        // .then(({dataCount = 0, tableContent = []}) => {
+        //   this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
+        //   this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        //   tableContent.forEach(item => {
+        //     item.warehouseCity = item.warehouseCity || item.wareHouseCity;
+        //   });
+        //   this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+        //   //获取缓存
+        //   if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
+        //     let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
+        //     for (let i = 0; i < this.listData.length; i++) {
+        //       if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
+        //         this.selItems = this.listData[i];
+        //         this.$emit('sel-item', JSON.stringify(this.listData[i]));
+        //         sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
+        //       }
+        //     }
+        //   }
+        //   this.$nextTick(() => {
+        //     this.$refs.bScroll.finishPullUp();
+        //   })
+        // });
+      },
+      getWareHouseType(){
+        let filter = this.filterParams;
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'warehouseName',
+            },
+          ];
+        }
+        let params = {
+           limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }
+        if(this.warehouseType){
+          params.warehouseType = this.warehouseType;
+        }
+        getWareHouseType(params).then(this.dataHandler)
+      },
+      // TODO 共用的数据处理方法
+      dataHandler({dataCount = 0, tableContent = []}){
+        this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        tableContent.forEach(item => {
+          item.warehouseCity = item.warehouseCity || item.wareHouseCity;
+        });
+        this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+        //获取缓存
+        if (sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')) {
+          let EDIT_WAREHOUSE_TRANSCODE = JSON.parse(sessionStorage.getItem('EDIT_WAREHOUSE_TRANSCODE')).transCode;
+          for (let i = 0; i < this.listData.length; i++) {
+            if (this.listData[i].transCode == EDIT_WAREHOUSE_TRANSCODE) {
+              this.selItems = this.listData[i];
+              this.$emit('sel-item', JSON.stringify(this.listData[i]));
+              sessionStorage.removeItem('EDIT_WAREHOUSE_TRANSCODE')
             }
           }
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
-        });
+        }
+        this.$nextTick(() => {
+          this.$refs.bScroll.finishPullUp();
+        })
       },
       // TODO 搜索仓库
       searchList({val = ''}) {
@@ -245,12 +301,12 @@
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
-        this.getList();
+        this[this.getListMethod]();
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this.getList();
+        this[this.getListMethod]();
       },
       // TODO 设置默认值
       setDefaultValue() {
@@ -278,7 +334,8 @@
       if (this.disabled) {
         return
       }
-      this.getList();
+      this[this.getListMethod]();
+      // this.getWarehouse();
     }
   }
 </script>

@@ -80,6 +80,15 @@ export let getWarehouse = (data = {}) => {
     }
   })
 };
+export let getWareHouseType = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getWareHouseType',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+}
 
 export default {
   getList,
