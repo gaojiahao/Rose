@@ -1,6 +1,6 @@
 <template>
   <div class="inPage">
-    <tab>
+    <tab active-color='#5077aa' :line-width=1>
       <tab-item v-for="(item, index) in tabList" :selected="index === activeIndex" @on-item-click="onTabClick" :key="index">{{item.name}}</tab-item>
     </tab>
     <template v-if="listData">
@@ -75,11 +75,11 @@
       onTabClick(index) {
         let list = [this.getList, this.getComment, this.getPraise];
         this.activeIndex = index;
-        this.$loading.show();
+        // this.$loading.show();
         this.$refs.bScroll.scrollTo(0, 0);
         this.resetCondition();
         list[this.activeIndex]().then(() => {
-          this.$loading.hide();
+          // this.$loading.hide();
         });
       },
       // TODO 获取应用icon
