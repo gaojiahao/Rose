@@ -61,6 +61,7 @@ import { Popup, TransferDom, dateFormat } from 'vux'
 import RScroll from 'components/RScroll'
 // 请求引入
 import { getProcessStatus } from 'service/commonService'
+import { filterFields } from 'service/listService'
 export default {
   name: "RSort",
   components: { Popup, RScroll},
@@ -75,6 +76,10 @@ export default {
           // { name: '流程状态', key: 'processSort' }
         ]
       }
+    },
+    viewId: {
+      type: Number,
+      default: 2190
     }
   },
   data() {
@@ -204,6 +209,12 @@ export default {
         endDate: ''
       }
       this.fieldVlaue = []
+    },
+    // 请求过滤字段
+    getFilterFields(){
+      filterFields(this.viewId).then(data=>{
+        console.log(data)
+      })
     }
   },
   created(){
@@ -213,6 +224,8 @@ export default {
     getProcessStatus(listId).then(({ tableContent }) => {
       this.PcesStaList = tableContent;
     })
+    this.getFilterFields()
+    
   }
 }
 </script>
