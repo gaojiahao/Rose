@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
       <!-- 顶部区域 -->
       <div class="app_top">
@@ -25,11 +25,11 @@
             <div class="cp_info">
               <p class="cp_name">{{item.warehouseName}}</p>
             </div>
-            <span class="iconfont icon-bianji" @click.stop="goEditAds(item, index)"></span>
+            <span class="iconfont icon-bianji" @click.stop="goEditAds(item, index)" v-if="action.update"></span>
           </div>
        </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEditAds">新增</div>
     </div>
     <router-view></router-view>
@@ -40,11 +40,14 @@
 <script>
 import { Tab,TabItem} from 'vux'
 import { getList,getDictByType} from 'service/commonService'
+import {getAppDetail} from 'service/appSettingService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
+
 export default {
   data(){
     return{
+      listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
       warehouseList : [],
       srhInpTx : '',
       tabSelect:'全部',
@@ -61,6 +64,7 @@ export default {
       },
       total : null,
       clickVisited: false, // 判断是否点击过其它列表项
+      action: {}, // 表单允许的操作
     }
   },
   components:{
@@ -262,6 +266,13 @@ export default {
         this.warehouseList = tmp;
       }, 200)
     },
+    // TODO 获取应用详情
+    getAppDetail() {
+      return getAppDetail(this.listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
   },
   watch: {
     $route: {
@@ -287,6 +298,7 @@ export default {
   },
   created(){
     this.$loading.show();
+    this.getAppDetail();
     this.getwarehouseType();
     this.getData(false)
   },
@@ -296,6 +308,13 @@ export default {
 
 <style lang='scss' scoped>
   @import '~@/scss/color';
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
 
   .childPage {
     position: fixed;

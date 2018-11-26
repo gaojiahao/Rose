@@ -1,5 +1,5 @@
 <template>
-  <div class="childPage">
+  <div class="childPage" :class="{'no-edit': !action.update}">
     <div class="main_content">
       <!-- 物料图片展示区域 -->
       <div class="d_top">
@@ -71,7 +71,7 @@
       </div>
     </div>
     <!-- 修改按钮 -->
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.update">
       <div class="cfm_btn" @click="goEdit">修改</div>
     </div>
   </div>
@@ -80,18 +80,21 @@
 <script>
   import {AlertModule} from 'vux';
   import {findData} from 'service/materService'
+  import {getAppDetail} from 'service/appSettingService'
   import FormCell from 'components/detail/commonPart/FormCell'
 
   export default {
     name: 'materDetail',
     data() {
       return {
+        listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
         transCode: '',
         inventory: {},
         invMoreUnit: [],
         invNetWeight: [],
         invDealerRel: [],
         invCustomerRel: [],
+        action: {}, // 表单允许的操作
       }
     },
     computed: {
@@ -156,21 +159,36 @@
       getDefaultImg() {
         this.inventory.inventoryPic = require('assets/wl_default02.png');
       },
+      // TODO 获取应用详情
+      getAppDetail() {
+        return getAppDetail(this.listId).then(([data = {}]) => {
+          let {action} = data;
+          this.action = action;
+        })
+      },
     },
     created() {
-      this.$loading.show();
-      let {transCode = ''} = this.$route.query;
-      this.transCode = transCode;
-      this.findData();
+      (async () => {
+        this.$loading.show();
+        let {transCode = ''} = this.$route.query;
+        this.transCode = transCode;
+        await this.getAppDetail();
+        this.findData();
+      })()
     }
   }
 </script>
 
 <style lang='scss' scoped>
+  .no-edit {
+    .main_content {
+      height: 100%;
+    }
+  }
   .main_content {
     background-color: #f8f8f8;
     overflow: auto;
-    height: calc(100% - 10%);
+    height: 90%;
     -webkit-overflow-scrolling: touch;
   }
 
