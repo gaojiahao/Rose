@@ -22,7 +22,7 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.statusName}}</span>
+              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
             </p>
             <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
           </div>
