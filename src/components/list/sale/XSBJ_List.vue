@@ -5,14 +5,14 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList"  @on-filter="onFilter" :view-id="listViewID"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noQty noCount></list-item>
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noQty noCount></mater-list-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">

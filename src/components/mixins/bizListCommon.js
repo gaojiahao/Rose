@@ -1,21 +1,25 @@
+// vux组件引入
 import { Tab, Icon, TabItem, numberComma, dateFormat } from 'vux'
-import { getSellOrderList } from 'service/listService'
+// 公共请求引入
 import { isMyflow } from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
-import searchIcon from 'components/search'
+import { getSellOrderList } from 'service/listService'
+// 公共组装引入
 import RScroll from 'components/RScroll'
-import ListItem from 'components/list/commonPart/ListItem'
-import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import searchIcon from 'components/search'
 import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
+import justWordItem from 'components/list/commonPart/justWordItem'    // 不包含物料的列表组件
+import materListItem from 'components/list/commonPart/materListItem'  // 包含物料的列表组件
+// 第三方插件引入
 import { toFixed } from '@/plugins/calc'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 // 引入映射表 (不可移除)
 import Apps from '@/home/pages/maps/businessApp'
 import AppsFile from '@/home/pages/maps/businessFile'
 /* 引入微信相关 */
-import {register} from 'plugins/wx'
+import { register } from 'plugins/wx'
 import { shareContent } from 'plugins/wx/api'
-
 export default {
   props: {
     refreshRequest: {
@@ -68,8 +72,9 @@ export default {
     }
   },
   components: {
-    Tab, Icon, TabItem, searchIcon, RScroll, ListItem,
-    RSort, RTab,
+    Tab, Icon, TabItem,
+    RSort, RTab, RScroll, searchIcon,
+    justWordItem, materListItem
   },
   methods: {
     goDetail (item, index) {
@@ -222,6 +227,7 @@ export default {
     // 获取订单数据
     getList (noReset = false) {
       let filter = [];
+      // tab 切换
       if (this.activeTab) {
         filter = [{
           operator: "like",     //模糊查询like，精确查询eq
@@ -229,6 +235,7 @@ export default {
           value: this.activeTab
         }]
       }
+      // 搜索
       if (this.serachVal) {
         let obj = {
           operator: "like",
@@ -243,13 +250,22 @@ export default {
           obj
         ];
       }
-      if(this.otherFilter.length){
-        let obj = {
-          property: "processStatus",
-          operator: "in",
-        }
-        if(this.activeTab || this.serachVal){
-          obj.attendedOperation = 'and'
+      // 过滤
+      if(Object.keys(this.otherFilter).length){
+        let keyArr = Object.keys(this.otherFilter);
+        for(let key in this.otherFilter){
+          let obj = {
+            property: key,
+            operator: 'in'
+          }
+          if((this.activeTab || this.serachVal) && lkey === keyArr[0]){
+            obj.attendedOperation = 'and'
+          }
+          this.otherFilter[key].value.forEach((item,index) => {
+            let key = `value${index+1}`;
+            obj[key] = item;
+          })
+          filter.push(obj);
         }
         this.otherFilter.forEach((item,index) => {
           let key = `value${index+1}`;
@@ -258,6 +274,22 @@ export default {
         filter.push(obj);
 
       }
+      console.log(filter);
+      // if(this.otherFilter.length){
+      //   let obj = {
+      //     property: "processStatus",
+      //     operator: "in",
+      //   }
+      //   if(this.activeTab || this.serachVal){
+      //     obj.attendedOperation = 'and'
+      //   }
+      //   this.otherFilter.forEach((item,index) => {
+      //     let key = `value${index+1}`;
+      //     obj[key] = item.fieldVlaue;
+      //   })
+      //   filter.push(obj);
+
+      // }
       return getSellOrderList({
         limit: this.limit,
         page: this.page,
@@ -374,8 +406,11 @@ export default {
     },
     // 筛选过滤
     onFilter (val) {
+      // console.log('刷新');
+      // console.log(val)
+      // return false
       this.timeFilter = val.timeFilter;
-      this.otherFilter = val.biProcessStatus;
+      this.otherFilter = val.otherFilter;
       this.resetCondition();
       this.getList();
     },

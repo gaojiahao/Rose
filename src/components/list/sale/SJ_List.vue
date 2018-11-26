@@ -5,11 +5,6 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
           <r-sort @on-sort="onSortList"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
@@ -17,35 +12,8 @@
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <!-- 订单编号, 时间 -->
-          <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | filterTime}}</p>
-          </div>
-          <!-- 商机标题、状态、公司 -->
-          <div class="duty_content">
-            <div class="content_title">{{item.opportunityTitle}}</div>
-            <div class="content_step vux-1px-b">
-              <div>{{item.biProcessStatus || '暂无流程状态'}}</div>
-              <div>{{item.dealerName || item.dealerName_dealerDebit}}</div>
-            </div>
-          </div>
-          <!-- 报销人，金额合计 -->
-          <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-            </div>
-            <div class="money_part">
-              <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.tdAmount | toFixed | numberComma}}
-              </span>
-            </div>
-          </div>
-        </div>
+        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        conut-title="预期销售额" @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn" v-if="action.add">

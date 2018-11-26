@@ -5,8 +5,6 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
-        <!-- 出库仓库-->
-        <pop-warehouse-list isRequired title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"></pop-warehouse-list>
         <!-- 入库仓库-->
         <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouseIn" @sel-item="selWarehouseIn"></pop-warehouse-list>
         <!-- 物料列表 -->
@@ -74,16 +72,16 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-order-list :show="showOrderPop" :params="warehouseParams" v-model="showOrderPop" @sel-matter="selOrder"
-                          :default-value="orderList" list-method="getInProcessingStorage" :is-mater-proccing="true"
-                          ref="order">
-            <template slot="materInfo" slot-scope="{item}">
-              <div class="mater_material">
-                <span>待领料:{{item.qtyBal}}</span>
-                <span>可用库存: {{item.qtyStock}}</span>
-              </div>
+          <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
+                               :default-value="orderList" list-method="getManyWhProcessingPicking"
+                               ref="order">
+            <template slot="qtyBal" slot-scope="{item}">
+              <span>待领料余额：{{item.qtyBal}}</span>
             </template>
-          </pop-order-list>
+            <template slot="qtyStock" slot-scope="{item}">
+              <div class="mater-balance">可用库存：{{item.qtyStock}}{{item.measureUnit}}</div>
+            </template>
+          </pop-order-xqtj-list>
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -93,6 +91,9 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <span></span>
+          </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
@@ -132,14 +133,17 @@ import RNumber from 'components/RNumber'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import PopOrderList from 'components/Popup/PopOrderList'
+import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
 import RPicker from 'components/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+import {toFixed} from '@/plugins/calc'
+
 const DRAFT_KEY = 'NBJGLL_DATA';
 export default {
   mixins: [ApplyCommon],
   components: {
     Icon, Cell, Group, XInput, XTextarea,
-    RNumber, PopOrderList, PopWarehouseList, PopMatter, RPicker, PopBaseinfo
+    RNumber, PopOrderList, PopWarehouseList, PopMatter, RPicker, PopBaseinfo, PopOrderXqtjList
   },
   data() {
     return {
@@ -152,27 +156,24 @@ export default {
         biComment: '',
       },
       numMap: {},
-      warehouseOut: null,
       warehouseIn: null,
-      warehouseParams: {
-        whCode: '',
-      },
       matter: {},
       showMatterPop :false,
       modifyIndex: null,
     }
   },
-  watch: {
-    matter: {
-      handler (val) {
-        val.boms && val.boms.forEach(item => {
-          item.tdQty = accMul(val.tdQty, item.qty)
-        });
-      },
-      deep: true
-    },
-  },
   methods: {
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let {tdQty, qtyBal} = item;
+      // 数量
+      if (tdQty) {
+        item.tdQty = Math.abs(toFixed(tdQty));
+        if(tdQty > qtyBal){
+          item.tdQty = qtyBal;
+        }
+      }
+    },
     // TODO 滑动删除
     delClick (index, sItem, key) {
       let arr = this.selItems;
@@ -241,15 +242,6 @@ export default {
       }
       this.showOrderPop = !this.showOrderPop;
     },
-    // TODO 选中出库仓库
-    selWarehouseOut (val) {
-      this.warehouseOut = JSON.parse(val);
-      this.warehouseParams = {
-        ...this.warehouseParams,
-        whCode: this.warehouseOut.warehouseCode,
-      };
-      this.orderList = {};
-    },
     // TODO 选中入库仓库
     selWarehouseIn (val) {
       this.warehouseIn = JSON.parse(val);
@@ -298,10 +290,6 @@ export default {
       let dataSet = [];
       let validateMap = [
         {
-          key: 'warehouseOut',
-          message: '出库仓库',
-        },
-        {
           key : 'warehouseIn',
           message: '入库仓库',
         }
@@ -326,6 +314,8 @@ export default {
           let oItem = {
             transMatchedCode: item.transCode, // 明细被核销交易号
             outPutMatCode: item.inventoryCode, // 输出物料
+            containerCodeOut: this.warehouseIn.warehouseCode, // 入库仓编码
+			      warehouseType_containerCodeOut: this.warehouseIn.warehouseType, // 仓库类型
             tdProcessing: item.processing, // 加工属性
             thenQtyBal: item.qtyBal, // 待交付数量
             thenQtyStock: item.qtyStock, // 当时可用库存
@@ -362,11 +352,9 @@ export default {
             modifer: this.transCode ? this.formData.handler : '',
             handlerEntity: this.entity.dealerName,
             outPut: {
-              containerCodeOut: this.warehouseOut.warehouseCode,
               containerCode: this.warehouseIn.warehouseCode,
               dataSet
             },
-            containerOutWarehouseManager: this.warehouseOut.containerOutWarehouseManager || null, // 出库管理员
             containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
           };
           // 重新提交
@@ -451,19 +439,6 @@ export default {
           warehouseDistrict: outPut.warehouseDistrict_containerCode,
           warehouseAddress: outPut.warehouseAddress_containerCode,
         };
-        // 出库
-        this.warehouseOut = {
-          warehouseCode: outPut.containerCodeOut,
-          warehouseName: outPut.warehouseName_containerCodeOut,
-          warehouseType: outPut.warehouseType_containerCodeOut,
-          warehouseProvince: outPut.warehouseProvince_containerCodeOut,
-          warehouseCity: outPut.warehouseCity_containerCodeOut,
-          warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
-          warehouseAddress: outPut.warehouseAddress_containerCodeOut,
-        };
-        this.warehouseParams = {
-          whCode: this.warehouseOut.warehouseCode,
-        };
         this.formData = {
           ...this.formData,
           creator: formData.creator,
@@ -492,7 +467,6 @@ export default {
       return {
         [DRAFT_KEY]: {
           orderList : this.orderList,
-          warehouseOut : this.warehouseOut,
           warehouseIn : this.warehouseIn,
           formData: this.formData,
         }
@@ -506,9 +480,7 @@ export default {
       this.orderList = draft.orderList;
       this.assembMatterList();
       this.formData = draft.formData;
-      this.warehouseOut = draft.warehouseOut;
       this.warehouseIn = draft.warehouseIn;
-      this.warehouseParams.whCode = this.warehouseOut.warehouseCode;
       sessionStorage.removeItem(DRAFT_KEY);
     }
   }
@@ -542,5 +514,10 @@ export default {
     span {
         margin-right: .06rem;
     }
+  }
+  .mater-balance {
+    font-size: .14rem;
+    font-weight: bold;
+    color: #454545;
   }
 </style>

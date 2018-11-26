@@ -77,22 +77,22 @@
     justify-content: space-between;
     /* mode 2 */
     &.tab-part-2 {
-      justify-content: center;
+      display: flex;
+      // justify-content: center;
       &:after {
         border: none;
       }
       .each-tab {
-        flex: none;
-        padding-bottom: .05rem;
-        width: .5rem;
-        background-color: transparent;
+        flex: 1;
         color: #a8a8a8;
+        padding-bottom: .05rem;
+        background-color: transparent;
         &.active {
           color: #000;
           &:before {
             border: none;
-            border-bottom: 3px solid #ea5455;
             border-radius: 0;
+            border-bottom: 3px solid #ea5455;
           }
         }
       }

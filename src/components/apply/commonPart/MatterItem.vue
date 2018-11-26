@@ -227,6 +227,9 @@
         .symbol {
           color: #757575;
         }
+        .icon--{
+          font-size: 0.14rem;
+        }
       }
     }
     // 物料的补充填写按钮

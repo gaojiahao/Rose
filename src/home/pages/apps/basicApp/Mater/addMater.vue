@@ -16,7 +16,9 @@
         </div>
         <group gutter="0">
           <r-picker title="加工属性" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
-                    :required="true" mode="4" @on-change="natureChange"></r-picker>
+                    :hasBorder='false' :required="true" mode="4" @on-change="natureChange"></r-picker>
+        </group> 
+        <group>
           <r-picker title="材料大类" :data="matBigList" :value="inventory.inventoryType" v-model="inventory.inventoryType"
                     mode="4" @on-change="bigChange"></r-picker>
           <r-picker title="材料子类" :data="matSmlList" :value="inventory.inventorySubclass" :has-border="false"
@@ -24,20 +26,25 @@
           <x-input title="型号规格" text-align='right' placeholder='请填写' v-model.trim='inventory.specification'></x-input>
           <x-input title="颜色" text-align='right' placeholder='请填写' v-model.trim='inventory.inventoryColor'></x-input>
           <x-input title="主材质" text-align='right' placeholder='请填写' v-model.trim='inventory.material'></x-input>
+        </group>
+        <group gutter="10">
           <x-input title="保质期天数" type="number" text-align='right' placeholder='请填写'
                    v-model.number='inventory.keepingDays'></x-input>
           <cell title="临保天数" :value="nearKeepingDays"></cell>
           <x-input title="安全库存" type="number" text-align='right' placeholder='请填写'
                    v-model.number='inventory.safeStock'></x-input>
-          <pop-technics-list class="vux-1px-t" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
-          <x-input :title="leadTimeTitle" type="number" text-align='right' placeholder='请填写'
-                   v-model.number='inventory.leadTime' v-show="leadTimeTitle"></x-input>
-          <pop-procedure-list class="vux-1px-t" @sel-item="selProcedure"
-                              :default-value="inventory"></pop-procedure-list>
+        </group>
+        <group gutter="10">
+          <!-- 工艺路线 -->
+          <pop-technics-list class="vux-1px-b" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
+          <!-- <x-input :title="leadTimeTitle" type="number" text-align='right' placeholder='请填写'
+                   v-model.number='inventory.leadTime' v-show="leadTimeTitle"></x-input> -->
+          <!-- 工艺名称 -->
+          <pop-procedure-list @sel-item="selProcedure" :default-value="inventory"></pop-procedure-list>
           <cell title="工序编码" :value="inventory.procedureCode"></cell>
           <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
                     mode="4" v-model="inventory.measureUnit" has-border-top></r-picker>
-          <r-picker title="物料状态:" :data="statusList" :value="inventoryStatus"
+          <r-picker title="物料状态:" :required="true" :data="statusList" :value="inventoryStatus"
                     mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
           <x-input title="起订量" type="number" text-align='right' placeholder='请填写'
                    v-model.number='inventory.moq'></x-input>
@@ -137,7 +144,7 @@
             </div>
           </group>
           <div class="add_more" v-show="invCustomerRel.length">
-            您还需要添加新的净含量?请点击
+            您还需要添加新的净含量? 请点击
             <span class='add' @click="addCustomerRel">新增</span>
             <em v-show="invCustomerRel.length>0">或</em>
             <span class='delete' @click="deleteCustomerRel" v-show="invCustomerRel.length>0">删除</span>
@@ -343,6 +350,7 @@
           inventoryName: '物料名称',
           processing: '加工属性',
           measureUnit: '主计量单位',
+          inventoryStatus: '物料状态'
         };
         let hasDealer = this.invDealerRel.length && this.inventory.processing === '成品';
         let hasCustomer = this.invCustomerRel.length && this.inventory.processing === '原料';
@@ -809,10 +817,10 @@
   .vux-1px-l:before,
   .vux-1px-t:before, {
     border-color: #e8e8e8;
-    color: #e8e8e8;
-    left: 0.1rem;
   }
-
+  .vux-1px-b:after {
+    left: .1rem;
+  }
   .vux-1px-l:before {
     left: 0;
   }
@@ -822,10 +830,9 @@
     background-color: #f8f8f8;
     overflow: hidden;
     position: relative;
-    // overflow-y: auto;
     /deep/ .weui-cells {
-      // margin-top: 0;
       font-size: .16rem;
+      margin-top: .1rem;
       &:before {
         border-top: none;
       }
