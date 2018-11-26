@@ -144,9 +144,10 @@ export let getProjectList = (data = {}) => {
 };
 
 //TODO 项目计划列表
-export let getProjectPlanList = (data = {}) => {
+export let getProjectPlanList = (listViewID, data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/ds/getProjectPlan',
+    // url: '/H_roleplay-si/ds/getProjectPlan',
+    url: `/H_roleplay-si/mobile/getProjectPlan/${listViewID}`,
     data: {
       _dc: Date.now(),
       ...data

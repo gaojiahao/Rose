@@ -12,7 +12,7 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
-                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
+                        noCount @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">
@@ -78,19 +78,21 @@
             }
           ]
         }
-        return getProjectPlanList({
-          listViewID: this.listViewID,
+        return getProjectPlanList(this.listViewID, {
+          // listViewID: this.listViewID,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
           sort: JSON.stringify(this.sort),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input', false);
+        }).then(( tableContent ) => {
           tableContent.forEach(item => {
             this.setStatus(item);
           });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          if(this.page > 1 && !tableContent.length){
+            this.hasNext = false;
+          }
+          // this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
           if (!noReset) {
             this.$nextTick(() => {

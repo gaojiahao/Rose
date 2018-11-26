@@ -11,8 +11,7 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <!-- 订单 时期 -->
+        <!-- <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
@@ -29,13 +28,14 @@
               {{item.projectName}}
             </div>
           </div>
-          <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
             </div>
           </div>
-        </div>
+        </div> -->
+        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">

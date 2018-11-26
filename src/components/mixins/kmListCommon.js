@@ -59,7 +59,7 @@ export default {
       this.$refs.bScroll.resetPullDown();
     },
     ///tab切换
-    tabClick(val,index) {
+    tabClick(val, index) {
       this.activeIndex = index;
       this.calc_rel_code = val.calc_rel_code;
       this.view_id = val.view_id;
@@ -85,6 +85,7 @@ export default {
     },
     //显示流水详情
     async getFlow(item){
+      if(this.activeIndex === 1) return;
       this.flowData = [];
       this.flowPage = 1;
       //工作流锁定余额标不查询流水
