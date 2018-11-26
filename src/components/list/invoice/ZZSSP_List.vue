@@ -5,11 +5,6 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
           <r-sort @on-sort="onSortList"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
@@ -17,8 +12,7 @@
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <!-- 订单 时期 -->
+        <!-- <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
@@ -29,10 +23,8 @@
           <div class="dealer_part vux-1px-b" v-if='item.dealerName'>
             <div class="dealer_name">
               {{item.dealerName}}
-              <!-- <span class="iconfont icon-kehu1"></span>{{item.dealerName}} -->
             </div>
           </div>
-          <!-- 金额合计 -->
           <div class="order_count">
             <div class="handle_man">
               {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
@@ -44,8 +36,8 @@
               </span>
             </div>
           </div>
-        </div>
-
+        </div> -->
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></mater-list-item>
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn ">

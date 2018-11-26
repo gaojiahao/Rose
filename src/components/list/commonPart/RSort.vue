@@ -213,7 +213,6 @@ export default {
     // 请求过滤字段
     getFilterFields(){
       filterFields(this.viewId).then(data=>{
-        console.log(data)
       })
     }
   },

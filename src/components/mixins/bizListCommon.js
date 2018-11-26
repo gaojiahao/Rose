@@ -1,20 +1,24 @@
+// vux组件引入
 import { Tab, Icon, TabItem, numberComma, dateFormat } from 'vux'
-import { getSellOrderList } from 'service/listService'
+// 公共请求引入
 import { isMyflow } from 'service/detailService'
-import searchIcon from 'components/search'
+import { getSellOrderList } from 'service/listService'
+// 公共组装引入
 import RScroll from 'components/RScroll'
-import ListItem from 'components/list/commonPart/ListItem'
-import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+import searchIcon from 'components/search'
 import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
+import justWordItem from 'components/list/commonPart/justWordItem'    // 不包含物料的列表组件
+import materListItem from 'components/list/commonPart/materListItem'  // 包含物料的列表组件 
+// 第三方插件引入
 import { toFixed } from '@/plugins/calc'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 // 引入映射表 (不可移除)
 import Apps from '@/home/pages/maps/businessApp'
 import AppsFile from '@/home/pages/maps/businessFile'
 /* 引入微信相关 */
-import {register} from 'plugins/wx'
+import { register } from 'plugins/wx'
 import { shareContent } from 'plugins/wx/api'
-
 export default {
   props: {
     refreshRequest: {
@@ -66,8 +70,9 @@ export default {
     }
   },
   components: {
-    Tab, Icon, TabItem, searchIcon, RScroll, ListItem,
-    RSort, RTab,
+    Tab, Icon, TabItem, 
+    RSort, RTab, RScroll, searchIcon, 
+    justWordItem, materListItem
   },
   methods: {
     goDetail (item, index) {

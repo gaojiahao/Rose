@@ -27,7 +27,7 @@
           <!-- 经理列表 -->
           <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="pop-list-item box_sd" v-for="(item, index) in listData" :key='index'
+            <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
                  @click.stop="selThis(item,index)">
               <div class="pop-list-main ">
                 <!-- 头像 -->
@@ -391,7 +391,7 @@ export default {
           padding: .04rem .04rem 0 .3rem;
         }
         // 列表项
-        .pop-list-item {
+        .pop-mater-list-item {
           position: relative;
           display: flex;
           padding: 0.08rem;
