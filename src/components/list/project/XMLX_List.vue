@@ -1,5 +1,5 @@
 <template>
-  <div class="pages xmlx-list-container" ref='list'>
+  <div class="pages xmlx-list-container" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -15,7 +15,7 @@
                         conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
@@ -120,9 +120,6 @@
   @import './../../scss/bizList';
 
   .xmlx-list-container {
-    .list_wrapper {
-      height: calc(100% - 1.64rem);
-    }
     .project_name {
       padding: 0 .1rem;
     }

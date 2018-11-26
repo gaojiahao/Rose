@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class="content">
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -10,7 +10,7 @@
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>
-        </div>      
+        </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
@@ -24,13 +24,13 @@
               </div>
               <p class="cp_ads">{{item.companyType}}</p>
             </div>
-            <span class="iconfont icon-bianji" @click.stop="EditCompany(item, index)"></span>
-        </div>      
+            <span class="iconfont icon-bianji" @click.stop="EditCompany(item, index)" v-if="action.update"></span>
+        </div>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>  
+    </div>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
     return{
       listStatus: [ {name: '全部', status: ''}, {name: '使用中', status: '1'}, {name: '未使用', status: '2'}, {name: '停用', status: '-1'}],
       // 过滤列表
-      filterList: [ 
+      filterList: [
         {
           name: '公司名称',
           value: 'groupName',
@@ -53,7 +53,7 @@ export default {
           name: '公司简称',
           value: 'groupShortName',
         }
-      ],    
+      ],
     }
   },
   methods: {
@@ -96,7 +96,7 @@ export default {
     getList(noReset = false) {
       let filter = [];
       // 按时间排序
-      let sort = [{ 
+      let sort = [{
         property: "crtTime",
         direction: "DESC"
       }]
@@ -106,7 +106,7 @@ export default {
           property: "status",
           value: this.activeTab
         }]
-      }        
+      }
       if (this.serachVal) {
         filter = [
           ...filter,
@@ -141,7 +141,7 @@ export default {
       })
     }
   }
-  
+
 }
 </script>
 

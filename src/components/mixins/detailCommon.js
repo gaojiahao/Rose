@@ -1,5 +1,6 @@
 import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
 import { getPCCommentList, isSubscribeByRelationKey } from 'service/commentService'
+import {getAppDetail} from 'service/appSettingService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -48,7 +49,8 @@ export default {
         color : '#111'
       },
       attachment: [],
-      orderList: ''
+      orderList: '',
+      action: {}, // 表单允许的操作
     }
   },
   computed: {
@@ -249,6 +251,7 @@ export default {
       this.$loading.show();
       //查询当前用户的userId
       await this.getCurrentUser();
+      // this.getAppDetail();
       await this.getListId();
       await this.getFlowAndActions();
       //获取与当前订单相关的实例
@@ -270,6 +273,14 @@ export default {
           // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.jpg`
         }
         shareContent(shareInfo);
+      })
+    },
+    // TODO 获取应用详情
+    getAppDetail() {
+      let {listId = ''} = this.$route.params;
+      return getAppDetail(listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
       })
     },
   },

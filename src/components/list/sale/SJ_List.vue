@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -16,7 +16,7 @@
                         conut-title="预期销售额" @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
-    <div class=" vux-1px-t btn ">
+    <div class=" vux-1px-t btn" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>

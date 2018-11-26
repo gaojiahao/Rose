@@ -1,5 +1,5 @@
 <template>
-  <div class="pages xsbj-list-conatiner" ref='list'>
+  <div class="pages xsbj-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -15,7 +15,7 @@
                         @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
@@ -110,10 +110,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizList';
-
-  .xsbj-list-conatiner {
-    .list_wrapper {
-      height: calc(100% - 1.64rem);
-    }
-  }
 </style>

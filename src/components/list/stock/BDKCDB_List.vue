@@ -1,5 +1,5 @@
 <template>
-  <div class="pages bdkcdb-list-conatiner" ref='list'>
+  <div class="pages bdkcdb-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -20,7 +20,7 @@
         <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noPrice noCount></mater-list-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
