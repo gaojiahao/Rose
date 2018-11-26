@@ -30,7 +30,7 @@
           <form-cell :cellTitle="leadTimeTitle" :cellContent="inventory.leadTime" v-if="leadTimeTitle"></form-cell>
           <form-cell cellTitle="工序名称" :cellContent="inventory.procedureName"></form-cell>
           <form-cell cellTitle="工序编码" :cellContent="inventory.procedureCode"></form-cell>
-          <form-cell cellTitle="起订量" :cellContent="inventory.measureUnit"></form-cell>
+          <form-cell cellTitle="起订量" :cellContent="inventory.moq"></form-cell>
         </div>
       </div>
       <!-- 辅助计量单位-->
