@@ -33,5 +33,9 @@ export default {
   '26d75e08-2c82-4e1a-ad51-b788b026428a': 'project',
 
   // <发票类应用>
-  '752bfc20-9cbf-4552-b2a4-77b2c46eb2d1' : 'invoice'
+  '752bfc20-9cbf-4552-b2a4-77b2c46eb2d1' : 'invoice',
+
+  // <人力应用>
+  'c09c6397-c685-4fb8-ac9e-bd554ab6bc52' : 'hr',
+
 }
