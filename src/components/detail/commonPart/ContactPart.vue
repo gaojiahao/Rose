@@ -32,6 +32,7 @@
        <span class="title">有效期至：</span>
         <span class="mode">{{contactInfo.validUntil || '暂无'}}</span>
     </div>
+    <slot name="other"></slot>
   </div>
 </template>
 
@@ -105,7 +106,7 @@
     // 其他信息
     .other_info {
       color: #454545;
-      // 
+      //
     }
     .other_content {
       padding: .06rem 0;
@@ -116,7 +117,7 @@
         }
         .mode {
           color: #454545;
-          
+
         }
       }
     }
@@ -128,7 +129,7 @@
         }
         .mode {
           color: #454545;
-          
+
         }
     }
     .l_size_name {

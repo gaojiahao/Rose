@@ -1,15 +1,10 @@
 <template>
-  <div class="pages xsbj-list-conatiner" ref='list'>
+  <div class="pages xsbj-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
           <r-sort @on-sort="onSortList"></r-sort>
         </div>
       </div>
@@ -43,7 +38,7 @@
         </div>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
@@ -140,10 +135,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizList';
-
-  .xsbj-list-conatiner {
-    .list_wrapper {
-      height: calc(100% - 1.64rem);
-    }
-  }
 </style>

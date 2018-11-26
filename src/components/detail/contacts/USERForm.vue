@@ -26,7 +26,7 @@
           <form-cell cellTitle="修改时间" :cellContent="userData.modTime"></form-cell>
         </div>
       </div>
-      <div class="edit-btn" @click.stop="goEdit">编辑</div>
+      <div class="edit-btn" @click.stop="goEdit" v-if="action.update">编辑</div>
     </div>
   </div>
 
@@ -35,6 +35,7 @@
 <script>
   // 请求 引入
   import {getUserDetail} from 'service/Directorys/userService'
+  import {getAppDetail} from 'service/appSettingService'
   import FormCell from 'components/detail/commonPart/FormCell'
 
   export default {
@@ -46,12 +47,13 @@
       return {
         colId: '',
         userData: {},
+        action: {}, // 表单允许的操作
       }
     },
     methods: {
       // TODO 获取默认图片
       getDefaultImg(gender) {
-        this.userData.photo = gender === '男' 
+        this.userData.photo = gender === '男'
           ? require('assets/ava03.png')
           : require('assets/ava04.png')
       },
@@ -67,9 +69,9 @@
               statusClass = ['', 'inUse', 'unUse'];
           // 性别、状态等
           data.gender = genders[data.gender] || '未知';
-          data.statusClass = statusClass[data.status];          
+          data.statusClass = statusClass[data.status];
           data.status = status[data.status] || '停用';
-          data.typeClass = typeClass[data.userType];          
+          data.typeClass = typeClass[data.userType];
           data.userType = userTypes[data.userType];
           this.userData = data;
           if (!data.photo) {
@@ -86,12 +88,23 @@
           path: `/fillForm/${fileId}/${listId}`,
           query: { name, colId: this.colId }
         })
-      }
+      },
+      // TODO 获取应用详情
+      getAppDetail() {
+        let {listId = ''} = this.$route.params;
+        return getAppDetail(listId).then(([data = {}]) => {
+          let {action} = data;
+          this.action = action;
+        })
+      },
     },
     created() {
-      let {colId = ''} = this.$route.query;
-      this.colId = colId;
-      this.loadPage();
+      (async () => {
+        let {colId = ''} = this.$route.query;
+        this.colId = colId;
+        await this.getAppDetail();
+        this.loadPage();
+      })()
     }
   }
 </script>
@@ -120,7 +133,7 @@
       .user-name {
         font-size: .18rem;
         font-weight: bold;
-      } 
+      }
       .user-status-part {
         font-size: 0;
         .user-status,

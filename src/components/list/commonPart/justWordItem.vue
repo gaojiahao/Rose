@@ -19,16 +19,26 @@
     <div class="main_container" v-if="item.opportunityTitle">
       <div class="content_part">{{item.opportunityTitle}}</div>
       <div class="other_info_part">
-        <p class="info_with_comment when-is-out">内容简介：{{item.comment}}</p>
+        <p class="info_with_comment">内容简介：{{item.comment}}</p>
         <p class="info_with_comment">备注：{{item.biComment || '无'}}</p>
       </div>
     </div>
-    <div class="main_container when-is-nodealer" v-if="item.projectName || item.dealerName">
-      <div class="status_part" v-if="item.projectType">
+    <!-- 主要信息区域 （没有客户往来） -->
+    <div class="main_container when-is-nodealer" v-if="item.projectName || item.dealerName || item.projectName_project">
+      <div class="status_part" v-if="item.projectType || item.projectType_project">
         <span class="iconfont icon-503020"></span>
-        <span class="status_name">{{item.projectType}}</span>
+        <span class="status_name">{{item.projectType || item.projectType_project}}</span>
       </div>
-      <div class="content_part">{{item.projectName || item.dealerName}}</div>
+      <!-- 主要信息 -->
+      <div class="content_part">{{item.projectName || item.dealerName || item.projectName_project}}</div>
+      <!-- 其他信息 -->
+      <div class="other_info_part" v-if="item.approvalComment_project || item.taskComment">
+        <p class="info_with_comment" v-if="item.taskName">任务名称：{{item.taskName}}</p>
+        <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介：{{item.approvalComment_project || item.taskComment}}</p>
+        <p class="info_with_comment" v-if="item.projectManager_project">项目经理：{{item.projectManager_project}}</p>
+        <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率：{{item.budgetProfitMargin_project | percent}}</p>        
+        <p class="info_with_comment" >备注：{{item.biComment || '无'}}</p>
+      </div>
     </div>
     <!-- 金额合计 -->
     <div class="order_count">
@@ -36,7 +46,7 @@
         <span class="num" v-if="item.itemCount">共{{item.itemCount}}笔费用</span>
         <span class="num">{{conutTitle}}:</span>
         <span class="money">
-          <span class="symbol">￥</span>{{item.tdAmount || item.totalAmount | toFixed | numberComma(3)}}
+          <span class="symbol">￥</span>{{item.tdAmount || item.totalAmount || item.budgetIncome_project | toFixed | numberComma(3)}}
         </span>
       </div>
     </div>
@@ -52,47 +62,55 @@
 </template>
 
 <script>
-  import { numberComma, dateFormat } from 'vux'
-  import { toFixed } from '@/plugins/calc'
-
-  export default {
-    name: "justWordItem",
-    props: {
-      item: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-      // 不展示合计
-      noCount: {
-        type: Boolean,
-        default: false
-      },
-      conutTitle: {
-        type: String,
-        default: '合计'
+import { numberComma, dateFormat } from 'vux'
+import { toFixed } from '@/plugins/calc'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+export default {
+  name: "justWordItem",
+  props: {
+    item: {
+      type: Object,
+      default() {
+        return {}
       }
     },
-    data() {
-      return {}
+    // 不展示合计
+    noCount: {
+      type: Boolean,
+      default: false
     },
-    filters: {
-      dateFormat,
-      numberComma,
-      toFixed,
-    },
-    methods: {
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
+    conutTitle: {
+      type: String,
+      default: '合计'
     }
+  },
+  data() {
+    return {}
+  },
+  filters: {
+    // TODO 转为百分比
+    percent(val) {
+      if (!val && val !== 0) {
+        return '无';
+      }
+      let budget = accMul(val,100);
+      return `${budget}%`;
+    },    
+    toFixed, 
+    dateFormat,
+    numberComma
+  },
+  methods: {
+    // TODO 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl_default02.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
   }
+}
 </script>
 
 <style scoped lang="scss">

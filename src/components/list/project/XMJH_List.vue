@@ -1,5 +1,5 @@
 <template>
-  <div class="pages xsbj-list-conatiner" ref='list'>
+  <div class="pages xsbj-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -11,31 +11,11 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <!-- 订单编号, 时间 -->
-          <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
-          </div>
-          <!-- 项目 -->
-          <div class="project_name">
-            <div class="major_content vux-1px-b">
-              {{item.projectName}}
-            </div>
-          </div>
-          <!-- 项目计划经办人 -->
-          <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-            </div>
-          </div>
-        </div>
+        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
@@ -128,9 +108,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizList';
-  .xsbj-list-conatiner {
-    .list_wrapper {
-      height: calc(100% - 1.64rem);
-    }
-  }
 </style>

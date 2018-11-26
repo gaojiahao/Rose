@@ -1,5 +1,5 @@
 <template>
-  <div class="pages bdkcdb-list-conatiner" :class="{'no-add': !action.add}" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -17,7 +17,7 @@
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noPrice noCount></mater-list-item>
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)"></mater-list-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">
@@ -27,37 +27,29 @@
 </template>
 
 <script>
-  import {getSellOrderList} from 'service/listService'
-  import {getList} from 'service/commonService'
   import listCommon from 'pageMixins/bizListCommon'
-
+  import {getSellOrderList} from 'service/listService'
   export default {
     data() {
       return {
-        listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2243,
-        filterList: [ // 过滤列表
-          {
-            name: '交易号',
-            value: 'transCode',
-          }, {
-            name: '经办人',
-            value: 'handlerName',
-          }, {
-            name: '物料名称',
-            value: 'inventoryName',
-          },
+        listStatus: [
+          {name: '全部', status: ''},
+          {name: '已生效', status: '已生效'},
+          {name: '进行中', status: '进行中'}
         ],
+        listViewID: 2394,
+
       }
     },
     mixins: [listCommon],
     methods: {
     },
     created() {
+
     }
   }
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
+  @import "./../../scss/bizList";
 </style>

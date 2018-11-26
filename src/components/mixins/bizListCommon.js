@@ -2,6 +2,7 @@
 import { Tab, Icon, TabItem, numberComma, dateFormat } from 'vux'
 // 公共请求引入
 import { isMyflow } from 'service/detailService'
+import {getAppDetail} from 'service/appSettingService'
 import { getSellOrderList } from 'service/listService'
 // 公共组装引入
 import RScroll from 'components/RScroll'
@@ -9,7 +10,7 @@ import searchIcon from 'components/search'
 import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
 import justWordItem from 'components/list/commonPart/justWordItem'    // 不包含物料的列表组件
-import materListItem from 'components/list/commonPart/materListItem'  // 包含物料的列表组件 
+import materListItem from 'components/list/commonPart/materListItem'  // 包含物料的列表组件
 // 第三方插件引入
 import { toFixed } from '@/plugins/calc'
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
@@ -66,12 +67,13 @@ export default {
         startDate: '',
         endDate: ''
       },
-      otherFilter: []
+      otherFilter: [],
+      action: {}, // 表单允许的操作
     }
   },
   components: {
-    Tab, Icon, TabItem, 
-    RSort, RTab, RScroll, searchIcon, 
+    Tab, Icon, TabItem,
+    RSort, RTab, RScroll, searchIcon,
     justWordItem, materListItem
   },
   methods: {
@@ -161,7 +163,7 @@ export default {
         case '已生效':
           item.whichIcon = 'icon-yishengxiao';
           item.statusClass = 'duty_done_c';
-          item.statusName = ''; 
+          item.statusName = '';
           break;
         case '进行中':
           item.statusClass = 'duty_doing_c';
@@ -236,7 +238,7 @@ export default {
       // 搜索
       if (this.serachVal) {
         let obj = {
-          operator: "like",     
+          operator: "like",
           property: this.filterProperty,
           value: this.serachVal
         }
@@ -265,6 +267,12 @@ export default {
           })
           filter.push(obj);
         }
+        this.otherFilter.forEach((item,index) => {
+          let key = `value${index+1}`;
+          obj[key] = item.fieldVlaue;
+        })
+        filter.push(obj);
+
       }
       console.log(filter);
       // if(this.otherFilter.length){
@@ -280,7 +288,7 @@ export default {
       //     obj[key] = item.fieldVlaue;
       //   })
       //   filter.push(obj);
-        
+
       // }
       return getSellOrderList({
         limit: this.limit,
@@ -405,7 +413,15 @@ export default {
       this.otherFilter = val.otherFilter;
       this.resetCondition();
       this.getList();
-    }
+    },
+    // TODO 获取应用详情
+    getAppDetail() {
+      let {listId = ''} = this.$route.params;
+      return getAppDetail(listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
   },
   filters: {
     // TODO 过滤日期
@@ -424,6 +440,7 @@ export default {
     register(); // 注册wx-js-sdk
     this.applyCode = this.$route.params.code;
     let { name } = this.$route.query;
+    this.getAppDetail();
     this.$loading.hide();
     this.getData(false).then(() => {
       // 第一次进入页面成功之后 隐藏动画
@@ -431,7 +448,7 @@ export default {
       wx.ready(() => {
         // 分享
         let shareInfo = {
-          title: `点击查看${name}列表`, 
+          title: `点击查看${name}列表`,
           desc: `点击查看${name}列表，可创建新的订单`,
           imgUrl : 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542276320183&di=ef11baa4ce65f2ba1aed2b214cf4dacd&imgtype=0&src=http://www.qqzhi.com/uploadpic/2014-09-26/101958658.jpg'
           // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
