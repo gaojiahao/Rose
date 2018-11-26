@@ -5,11 +5,6 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
           <r-sort @on-sort="onSortList"></r-sort>
         </div>
       </div>

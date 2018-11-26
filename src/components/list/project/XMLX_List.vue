@@ -11,47 +11,8 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index"
-             @click='goDetail(item, index)'>
-          <!-- 订单编号, 时间 -->
-          <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
-          </div>
-          <!-- 项目名称 -->
-          <div class="project_name">
-            <div class="major_content vux-1px-b">
-              <div class="status_part">
-                <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType_project}}</span>
-              </div>
-              <div>{{item.projectName_project}}</div>
-              <div class="content_step">
-                <div>
-                  {{item.projectManager_project}}<span class="symbol">[项目经理]</span>
-                </div>
-                <div>
-                  利润率: {{item.budgetProfitMargin_project | percent}}
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- 项目立项经办人 -->
-          <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-            </div>
-            <div class="money_part">
-              <span class="num">收入:</span>
-              <span class="money">
-                <span style="fontSize:.1rem;">￥</span>{{item.budgetIncome_project | toFixed | numberComma}}
-              </span>
-            </div>
-          </div>
-        </div>
+        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t">
