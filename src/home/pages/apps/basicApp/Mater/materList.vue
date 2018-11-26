@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
       <!-- 顶部区域 -->
       <div class="app_top">
@@ -70,7 +70,7 @@
         </div>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEditAds">新增</div>
     </div>
     <router-view></router-view>
@@ -81,6 +81,7 @@
   import {Tab, Icon, TabItem, Spinner, LoadMore} from 'vux'
   import {getList, getDictByType} from 'service/commonService'
   import {getMatList} from 'service/materService'
+  import {getAppDetail} from 'service/appSettingService'
   import RScroll from 'components/RScroll'
   import RSearch from 'components/search'
 
@@ -91,6 +92,7 @@
     },
     data() {
       return {
+        listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
         srhInpTx: '',
         matNature: [
           {name: '全部'},
@@ -116,6 +118,7 @@
         },
         total: null,
         clickVisited: false, // 判断是否点击过其它列表项
+        action: {}, // 表单允许的操作
       }
     },
     methods: {
@@ -303,6 +306,13 @@
           this.matterList = tmp;
         }, 200);
       },
+      // TODO 获取应用详情
+      getAppDetail() {
+        return getAppDetail(this.listId).then(([data = {}]) => {
+          let {action} = data;
+          this.action = action;
+        })
+      },
     },
     watch: {
       $route: {
@@ -325,6 +335,7 @@
     },
     created() {
       (async () => {
+        await this.getAppDetail();
         await this.getSession();
         await this.getDictByType().then(() => {
           this.getMatList();
@@ -336,6 +347,13 @@
 
 <style lang='scss' scoped>
   @import '~@/scss/color';
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
 
   .content {
     height: 90%;

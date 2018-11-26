@@ -1,5 +1,5 @@
 <template>
-  <div class="pages">
+  <div class="pages" :class="{'no-add': !action.add}">
     <div class="content">
       <!-- 顶部区域 -->
       <div class="app_top">
@@ -23,11 +23,11 @@
               <span class="user_tel" v-if="item.dealerPhone">{{item.dealerPhone}}</span>
               <p class="cp_ads">{{item.province}}{{item.city}}{{item.county}}{{item.address}}</p>
             </div>
-            <span class="iconfont icon-bianji" @click.stop="goEditAds(item, index)"></span>
+            <span class="iconfont icon-bianji" @click.stop="goEditAds(item, index)" v-if="action.update"></span>
           </div>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEditAds">新增</div>
     </div>
     <router-view></router-view>
@@ -37,12 +37,14 @@
 
 <script>
 import { Tab, Icon, TabItem,Spinner,LoadMore } from 'vux'
-import dealerService from 'service/dealerService.js'
+import dealerService from 'service/dealerService'
+import {getAppDetail} from 'service/appSettingService'
 import searchIcon from 'components/search'
 import RScroll from 'components/RScroll'
 export default {
   data(){
     return{
+      listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
       dealerList : [],
       srhInpTx : '',
       activeIndex :0,
@@ -60,6 +62,7 @@ export default {
       },
       total : null,
       clickVisited: false, // 判断是否点击过其它列表项
+      action: {}, // 表单允许的操作
     }
   },
   components:{
@@ -254,6 +257,13 @@ export default {
         this.dealerList = tmp;
       }, 200)
     },
+    // TODO 获取应用详情
+    getAppDetail() {
+      return getAppDetail(this.listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
   },
   watch: {
     $route: {
@@ -281,6 +291,7 @@ export default {
     }
   },
   created(){
+    this.getAppDetail();
     this.getClassfiy();
     this.getData(false);
   },
@@ -295,6 +306,14 @@ export default {
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
+
   .childPage {
     position: fixed;
     width: 100%;
