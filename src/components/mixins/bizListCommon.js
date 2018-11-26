@@ -220,6 +220,7 @@ export default {
     // 获取订单数据
     getList (noReset = false) {
       let filter = [];
+      // tab 切换
       if (this.activeTab) {
         filter = [{
           operator: "like",     //模糊查询like，精确查询eq
@@ -227,6 +228,7 @@ export default {
           value: this.activeTab
         }]
       }
+      // 搜索
       if (this.serachVal) {
         let obj = {
           operator: "like",     
@@ -241,21 +243,40 @@ export default {
           obj
         ];
       }
-      if(this.otherFilter.length){
-        let obj = {
-          property: "processStatus",
-          operator: "in",
+      // 过滤
+      if(Object.keys(this.otherFilter).length){
+        let keyArr = Object.keys(this.otherFilter);
+        for(let key in this.otherFilter){
+          let obj = {
+            property: key,
+            operator: 'in'
+          }
+          if((this.activeTab || this.serachVal) && lkey === keyArr[0]){
+            obj.attendedOperation = 'and'
+          }
+          this.otherFilter[key].value.forEach((item,index) => {
+            let key = `value${index+1}`;
+            obj[key] = item;
+          })
+          filter.push(obj);
         }
-        if(this.activeTab || this.serachVal){
-          obj.attendedOperation = 'and'
-        }
-        this.otherFilter.forEach((item,index) => {
-          let key = `value${index+1}`;
-          obj[key] = item.fieldVlaue;
-        })
-        filter.push(obj);
-        
       }
+      console.log(filter);
+      // if(this.otherFilter.length){
+      //   let obj = {
+      //     property: "processStatus",
+      //     operator: "in",
+      //   }
+      //   if(this.activeTab || this.serachVal){
+      //     obj.attendedOperation = 'and'
+      //   }
+      //   this.otherFilter.forEach((item,index) => {
+      //     let key = `value${index+1}`;
+      //     obj[key] = item.fieldVlaue;
+      //   })
+      //   filter.push(obj);
+        
+      // }
       return getSellOrderList({
         limit: this.limit,
         page: this.page,
@@ -372,8 +393,11 @@ export default {
     },
     // 筛选过滤
     onFilter (val) {
+      // console.log('刷新');
+      // console.log(val)
+      // return false
       this.timeFilter = val.timeFilter;
-      this.otherFilter = val.biProcessStatus;
+      this.otherFilter = val.otherFilter;
       this.resetCondition();
       this.getList();
     }

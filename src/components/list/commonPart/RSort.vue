@@ -17,15 +17,15 @@
     <div v-transfer-dom>
       <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
         <div class="filter-container-part">
-          <r-scroll class="list_wrapper" :options="scrollOptions">
+          <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
             <!-- 流程状态 -->
-            <div class="process-status-container basic-mod">
-              <div class="filter_title vux-1px-b">流程状态</div>
+            <div class="process-status-container basic-mod" v-if="filtersList.biProcessStatus">
+              <div class="filter_title vux-1px-b">{{filtersList.biProcessStatus.alias}}</div>
               <div class="process_status">
-                <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item)}"
-                v-for="(item, index) in PcesStaList" :key="index"
-                @click="selProcee(item, index)">
-                  <div class="status_content">{{item.fieldVlaue}}</div>
+                <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,'biProcessStatus')}"
+                v-for="(item, index) in filtersList.biProcessStatus.value" :key="index"
+                @click="selProcee(item,'biProcessStatus',index)">
+                  <div class="status_content">{{item}}</div>
                 </div>          
               </div>
             </div>
@@ -41,6 +41,19 @@
                   {{timeFilter.endDate || '结束日期'}}
                 </div>
               </div>
+            </div>
+            <div class="process-status-container basic-mod" v-for="(val,key,index) in filtersList" :key="index">
+              <div v-if="val.alias !== '流程状态'">
+                <div class="filter_title vux-1px-b">{{val.alias}}</div>
+                <div class="process_status">
+                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,key)}"
+                  v-for="(item, index) in val.value" :key="index"
+                  @click="selProcee(item,key)">
+                    <div class="status_content">{{item}}</div>
+                  </div>          
+                </div>
+              </div>
+              
             </div>
           </r-scroll>
           <div class="handle-part">
@@ -88,7 +101,7 @@ export default {
       toDay: '',
       preDate: '',
       property: '', // 被选中的字段
-      fieldVlaue: [], // 被选中的流程状态
+      fieldVlaue: {}, // 被选中的流程状态
       PcesStaList: [],  // 流程状态数组
       showFilter: false,  // 是否展示筛选
       timeFilter: {
@@ -99,6 +112,7 @@ export default {
       scrollOptions: {
         click: true,
       },
+      filtersList:{}
     }
   },
   methods: {
@@ -121,10 +135,15 @@ export default {
       });
     },
     onShow(){
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          this.$refs.bScroll.refresh();
+        }
+      })
       this.lastFilter = {
         timeFilter: JSON.parse(JSON.stringify(this.timeFilter)),
-        biProcessStatus: JSON.parse(JSON.stringify(this.fieldVlaue))
-      }
+        otherFilter: JSON.parse(JSON.stringify(this.fieldVlaue))
+      };
     },
     // 判断数组元素是否相同
     equar(arr1,arr2) {
@@ -141,38 +160,51 @@ export default {
     },
     // pop关闭时，判断过滤条件是否改变，改变则重新请求列表
     onHide() {
-      let isRefreshList = false,
-          isEquar = this.equar(this.fieldVlaue,this.lastFilter.biProcessStatus);
+      let isRefreshList = false;
       // 时间过滤发生改变
       if(this.timeFilter.startDate !== this.lastFilter.timeFilter.startDate || this.timeFilter.endDate !== this.lastFilter.timeFilter.endDate) {
         isRefreshList = true;
       } 
-      // 流程状态过滤发生改变
-      if(!isEquar) {
+      let str1 = JSON.stringify(this.fieldVlaue),
+          str2 = JSON.stringify(this.lastFilter.otherFilter);
+      // 其他过滤发生改变
+      if(str1 !== str2) {
         isRefreshList = true;
       }
       if(isRefreshList) {
         this.$emit('on-filter', {
           timeFilter: this.timeFilter,
-          biProcessStatus: this.fieldVlaue
+          otherFilter: this.fieldVlaue
         })
       }
     },
     // TODO 匹配相同项的索引
-    showSelIcon(sItem) {
-      return this.fieldVlaue.findIndex(item => item.fieldVlaue === sItem.fieldVlaue) !== -1;
+    showSelIcon(sItem,key) {
+      if(this.fieldVlaue[key]){
+        return this.fieldVlaue[key].value.findIndex(item => item === sItem) !== -1;
+      }
+      // return this.fieldVlaue[key].value.findIndex(item => item === sItem) !== -1;
     },
     // 选择流程状态
-    selProcee(sItem, index) {
-      let arr = this.fieldVlaue;
-      let delIndex = arr.findIndex(item => item.fieldVlaue === sItem.fieldVlaue);
-      // 若存在重复的 则清除
-      if (delIndex !== -1) {
-        arr.splice(delIndex, 1);
-        return;
+    selProcee(sItem, key) {
+      if(this.fieldVlaue[key]){
+        let arr = this.fieldVlaue[key].value;
+        let delIndex = arr.findIndex(item => item === sItem);
+        // 若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
+        }
+        arr.push(sItem);
       }
-      arr.push(sItem);
-    },
+      else{
+        let obj = {
+          alias: this.filtersList[key].alias,
+          value: [sItem]
+        }
+        this.$set(this.fieldVlaue,key,obj)
+      }
+    },  
     // 起始日期
     getStart() {
       this.$vux.datetime.show({
@@ -213,7 +245,7 @@ export default {
     // 请求过滤字段
     getFilterFields(){
       filterFields(this.viewId).then(data=>{
-        console.log(data)
+        this.filtersList = {...data};
       })
     }
   },
@@ -221,9 +253,9 @@ export default {
     let { listId } = this.$route.params;
     this.toDay = dateFormat(new Date(),'YYYY-MM-DD');
     this.preDate = dateFormat(new Date(new Date().getTime() - 24*60*60*1000), 'YYYY-MM-DD');
-    getProcessStatus(listId).then(({ tableContent }) => {
-      this.PcesStaList = tableContent;
-    })
+    // getProcessStatus(listId).then(({ tableContent }) => {
+    //   this.PcesStaList = tableContent;
+    // })
     this.getFilterFields()
     
   }

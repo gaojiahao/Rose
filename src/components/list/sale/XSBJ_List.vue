@@ -5,7 +5,7 @@
         <!-- 搜索栏 -->
         <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList"  @on-filter="onFilter" :view-id="listViewID"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
