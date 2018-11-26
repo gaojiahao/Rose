@@ -288,7 +288,7 @@
         this.tmpItems = [...this.defaultValue];
         this.selItems = [...this.defaultValue];
       },
-      // TODO 获取物料列表(采购入库)
+      // TODO 获取物料列表(采购入库、采购协议)
       getObjInventory() {
         let filter = [];
         if (this.srhInpTx) {

@@ -43,6 +43,7 @@ export default {
   'a0a66a68-b351-4c19-b837-e168cbf48019': {
     'dd4d228d-fc01-4038-bf17-df54d8d06eb9': 'CGDD',       // *采购订单*
     '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',       // *采购申请*
+    '67ff01b1-52bc-4e01-9650-214dc6e5e8f9': 'CGXY',       // *采购协议*
   },
 
   // < 库存类应用 >
