@@ -1,5 +1,5 @@
 <template>
-  <div class="pages user-list-container" ref='list'>
+  <div class="pages user-list-container" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -33,7 +33,7 @@
         </div>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>
@@ -171,8 +171,8 @@ export default {
         let text = '';
         if (noReset && this.activeIndex === 0) {
           if (this.total) {
-            text = dataCount - this.total === 0 
-              ? '暂无新数据' 
+            text = dataCount - this.total === 0
+              ? '暂无新数据'
               : text = `新增${dataCount - this.total}条数据`;
             this.$vux.toast.show({
               text: text,
@@ -199,9 +199,6 @@ export default {
 <style lang='scss' scoped>
   @import './../../scss/bizList';
   .user-list-container {
-    .list_wrapper {
-      height: calc(100% - 1.68rem);
-    }
     .each_duty {
       padding: 0 .1rem;
       box-sizing: border-box;
@@ -234,7 +231,7 @@ export default {
         .user-tel {
           color: #757575;
           font-size: .12rem;
-          
+
         }
       }
     }
@@ -245,7 +242,7 @@ export default {
       .user-code {
         color: #757575;
         font-size: .14rem;
-      }      
+      }
       .user-status-part {
         font-size: .14rem;
         padding: .04rem 0;
@@ -261,9 +258,9 @@ export default {
           }
           &.offUse {
             background: #474a56
-          }          
+          }
         }
-            
+
       }
 
     }

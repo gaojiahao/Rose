@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -24,7 +24,7 @@
 
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t" v-if="!chartShow">
+    <div class="btn vux-1px-t" v-if="!chartShow && action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
   </div>

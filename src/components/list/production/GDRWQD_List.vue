@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages" :class="{'no-add': !action.add}" ref='list'>
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -20,10 +20,10 @@
         <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noCount noPrice></list-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t">
+    <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
-    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams" 
+    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams"
                         :work-type="'启动'" ref="taskWork"></pop-task-work-list>
   </div>
 </template>
@@ -74,7 +74,7 @@ export default {
           inventoryCode: val.matCode,
           proPointCode: val.proPointCode,
         }
-      }) 
+      })
     }
   }
 }

@@ -100,6 +100,8 @@
     .each-tab {
       flex: 1;
       padding: .02rem 0;
+      height: .24rem;
+      line-height: .2rem;
       font-size: .12rem;
       text-align: center;
       border-radius: 30px;
