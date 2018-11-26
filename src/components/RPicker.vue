@@ -151,6 +151,9 @@
 </script>
 
 <style scoped lang="scss">
+  .vux-1px-b:after {
+    left: .1rem;
+  }
   .r-picker {
     padding: 0.05rem 0.08rem;
     font-size: 0.16rem;

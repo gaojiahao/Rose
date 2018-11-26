@@ -1,5 +1,5 @@
 <template>
-  <div class="list_item" :class="{visited: item.visited}">
+  <div class="mater-list-item" :class="{visited: item.visited}">
     <!-- 订单 时期 -->
     <div class="duty_top">
       <p class="duty_code">
@@ -99,7 +99,7 @@
   import {toFixed} from '@/plugins/calc'
 
   export default {
-    name: "ListItem",
+    name: "materListItem",
     props: {
       item: {
         type: Object,
@@ -153,7 +153,7 @@
 .division-line {
   margin: 0 .02rem;
 }
-.list_item {
+.mater-list-item {
   width: 95%;
   position: relative;
   overflow: hidden;

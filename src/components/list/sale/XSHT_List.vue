@@ -19,7 +19,7 @@
                 ref="bScroll">
         <apply-chart v-if='chartShow'></apply-chart>
         <div class='list' v-else>
-          <list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></list-item>
+          <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></mater-list-item>
         </div>
 
       </r-scroll>

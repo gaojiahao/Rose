@@ -13,9 +13,9 @@
           </div>
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="list-item" v-for="(item, index) in dealerList" :key='index'
+            <div class="mater-list-item" v-for="(item, index) in dealerList" :key='index'
                  @click.stop="selThis(item,index)">
-              <div class="list-item-content">
+              <div class="mater-list-item-content">
                 <!-- 名称 -->
                 <div class="name">{{item.dealerName}}</div>
                 <!-- 地址 -->
@@ -205,7 +205,7 @@
           padding: .04rem .04rem 0 .3rem;
         }
         // 每个销售
-        .list-item {
+        .mater-list-item {
           position: relative;
           display: flex;
           padding: 0.08rem;
@@ -213,7 +213,7 @@
           box-shadow: 0 0 8px #e8e8e8;
           box-sizing: border-box;
           // 销售主体
-          .list-item-content {
+          .mater-list-item-content {
             flex: 1;
             padding-left: .1rem;
             box-sizing: border-box;

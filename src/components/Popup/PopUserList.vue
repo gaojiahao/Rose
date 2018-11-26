@@ -9,7 +9,7 @@
       <!-- 物料列表 -->
       <r-scroll class="user-list" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-        <div class="list-item" v-for="(item, index) in listData" :key='index'
+        <div class="mater-list-item" v-for="(item, index) in listData" :key='index'
              @click.stop="selThis(item, index)">
           <div class="info-item vux-1px-b">
             <img class="avatar" :src="item.photo" alt="头像" @error="getDefaultImg(item)">
@@ -231,7 +231,7 @@
       }
     }
     // 每个用户
-    .list-item {
+    .mater-list-item {
       position: relative;
       padding: .08rem;
       margin-bottom: .2rem;
