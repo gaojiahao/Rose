@@ -188,6 +188,7 @@
         seletedIndex: 0,
         seletedInvoice: [],
         formData: {
+          biProcessStatus: '',
           biComment: ''
         },
         formDataComment: '', // 备注

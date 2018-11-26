@@ -2,14 +2,14 @@
   <div class="pop-company-container" @click="itemClick">
     <!-- 设备信息 -->
     <div v-if="selItems.facilityName">
-      <div class="title">设备</div>
+      <div class="title">设施</div>
       <div class="user_info">
         <span class="user_name">{{selItems.facilityName}}</span>
       </div>
     </div>
     <div v-else>
-      <div class="title">设备</div>
-      <div class="mode">请选择设备</div>
+      <div class="title">设施</div>
+      <div class="mode">请选择设施</div>
     </div>
     <i class="iconfont icon-youjiantou r-arrow" v-show="!disabled"></i>
     <!-- 设备popup -->

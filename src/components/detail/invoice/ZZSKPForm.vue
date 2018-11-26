@@ -106,6 +106,11 @@ export default {
           return;
         }
         this.attachment = data.attachment;
+        this.contactInfo = {
+          ...this.contactInfo,
+          dealerContactPersonName: data.formData.dealerCreditContactPersonName,
+          dealerMobilePhone: data.formData.dealerCreditContactInformation
+        }
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let val of dataSet) {
@@ -122,8 +127,8 @@ export default {
       let orderInfo = this.orderInfo;
       let order = orderInfo[key];
       this.contactInfo = {
+        ...this.contactInfo,
         dealerName: order.dealerName_dealerCodeCredit, // 公司名
-        dealerMobilePhone: orderInfo.dealerCreditContactInformation, // 手机
         dealerCode: order.dealerCodeCredit, // 客户编码
         province: order.province_dealerCodeCreditt, // 省份
         city: order.city_dealerCodeCreditt, // 城市
