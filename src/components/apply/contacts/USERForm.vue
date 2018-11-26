@@ -36,7 +36,7 @@
       </div>
       <r-picker title="状态:" :data="statusList" :value="userData.status"
                 v-model="userData.status"></r-picker>
-      <pop-company-list :default-value="company" @sel-item="selCompany"></pop-company-list>
+      <pop-company-list :default-value="company" :params="companyParams" @sel-item="selCompany"></pop-company-list>
     </r-scroll>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
       <div class="cfm_btn" @click="save">{{ this.colId ? '保存':'提交'}}</div>
@@ -120,6 +120,9 @@
         userCodeWarn: false, // 工号是否校验成功
         colId: '',
         company: {}, // 默认的公司
+        companyParams: {
+          target: 4,
+        },
       }
     },
     mixins: [common],

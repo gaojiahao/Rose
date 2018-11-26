@@ -72,7 +72,13 @@
       disabled: {
         type: Boolean,
         default: false
-      }
+      },
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     directives: {TransferDom},
     components: {
@@ -142,6 +148,7 @@
           pageSize: this.limit,
           currentPage: this.page,
           search: this.srhInpTx,
+          ...this.params,
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
