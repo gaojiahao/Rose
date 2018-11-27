@@ -2,7 +2,7 @@
   <div class="pop_dealer_list" :class="{'dealer-list-2': mode === '2'}">
     <div class='dealer-info' @click="showDealerPop = !showDealerPop">
       <template v-if="mode === '2'">
-        <div class="title" :class="{required : required}">{{dealerLabelName}}名称</div>
+        <div class="title" :class="{required : required}">{{dealerLabel}}名称</div>
         <div class="mode">{{dealerInfo.dealerName || placeholder}}</div>
         <span class="iconfont icon-youjiantou r-arrow"></span>
       </template>
@@ -24,8 +24,8 @@
           </div>
         </div>
         <div class='user-content' v-else>
-          <div class="title">{{dealerLabelName}}列表</div>
-          <div class="required">请选择{{dealerLabelName}}</div>
+          <div class="title">{{dealerLabel}}列表</div>
+          <div class="required">请选择{{dealerLabel}}</div>
         </div>
         <span class="iconfont icon-youjiantou r-arrow"></span>
       </template>
@@ -146,6 +146,16 @@
       noAddress() {
         let {province = '', city = '', county = '', address = ''} = this.defaultValue;
         return !province && !city && !county && !address;
+      },
+      //处理当dealerLabelName为多个值
+      dealerLabel() {
+        if(this.dealerLabelName.includes(',')){
+          return '往来'
+        }
+        else{
+          return this.dealerLabelName
+        }
+
       }
     },
     directives: {TransferDom},

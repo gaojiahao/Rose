@@ -39,7 +39,7 @@
         <p class="info_with_comment" v-if="item.taskName">任务名称：{{item.taskName}}</p>
         <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介：{{item.approvalComment_project || item.taskComment}}</p>
         <p class="info_with_comment" v-if="item.projectManager_project">项目经理：{{item.projectManager_project}}</p>
-        <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率：{{item.budgetProfitMargin_project | percent}}</p>        
+        <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率：{{item.budgetProfitMargin_project | percent}}</p>
         <p class="info_with_comment" >备注：{{item.biComment || '无'}}</p>
       </div>
     </div>
@@ -49,7 +49,7 @@
         <span class="num" v-if="item.itemCount">共{{item.itemCount}}笔费用</span>
         <span class="num">{{conutTitle}}:</span>
         <span class="money">
-          <span class="symbol">￥</span>{{item.tdAmount || item.totalAmount || item.budgetIncome_project | toFixed | numberComma(3)}}
+          <span class="symbol">￥</span>{{total | toFixed | numberComma(3)}}
         </span>
       </div>
     </div>
@@ -89,6 +89,18 @@ export default {
   data() {
     return {}
   },
+  computed: {
+    total() {
+      let {tdAmount, totalAmount, budgetIncome_project} = this.item;
+      if (tdAmount) {
+        return tdAmount
+      } else if (totalAmount || totalAmount === 0) {
+        return totalAmount
+      } else if (budgetIncome_project) {
+        return budgetIncome_project
+      }
+    }
+  },
   filters: {
     // TODO 转为百分比
     percent(val) {
@@ -97,8 +109,8 @@ export default {
       }
       let budget = accMul(val,100);
       return `${budget}%`;
-    },    
-    toFixed, 
+    },
+    toFixed,
     dateFormat,
     numberComma
   },
@@ -239,7 +251,7 @@ export default {
       }
     }
     .each_task {
-      
+
     }
     .other_info_part {
       width: 100%;
@@ -254,7 +266,7 @@ export default {
         overflow: hidden;
         position: relative;
         line-height: .28rem;
-        white-space: nowrap;        
+        white-space: nowrap;
         text-overflow: ellipsis;
       }
 
