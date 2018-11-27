@@ -27,7 +27,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import {getCost, getCostById} from 'service/materService.js'
+ import { getProjectCostByGroupId, getCostByGroupId } from 'service/costService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
@@ -43,6 +43,14 @@
         default() {
           return []
         }
+      },
+      groupId: {
+        type: Number,
+        default: 990713
+      },
+      getListMethod: {
+        type: String,
+        default: 'getCostByGroupId'
       },
     },
     components: {
@@ -116,7 +124,7 @@
         this.selItems = [...this.defaultValue];
       },
       // TODO 获取物料列表
-      getCostList() {
+      getCostByGroupId() {
         let filter = [];
 
         if (this.srhInpTx) {
@@ -129,19 +137,41 @@
             },
           ];
         }
-        return getCostById({
-          groupId: 33,
+        return getCostByGroupId({
+          groupId: this.groupId,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        }).then(this.dataHandler);
+      },
+      getProjectCostByGroupId() {
+        let filter = [];
+
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: 'costName'
+            },
+          ];
+        }
+        return getProjectCostByGroupId({
+          groupId: this.groupId,
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      dataHandler({dataCount = 0, tableContent = []}){
+        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.costList = this.page === 1 ? tableContent : [...this.costList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
-        });
       },
       // TODO 搜索物料
       searchList({val = ''}) {
@@ -150,17 +180,17 @@
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
-        this.getCostList();
+        this[this.getListMethod]();
       },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this.getCostList();
+        this[this.getListMethod]();
       },
     },
     created() {
       this.setDefaultValue();
-      this.getCostList();
+      this[this.getListMethod]();
     }
   }
 </script>

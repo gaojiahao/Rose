@@ -267,11 +267,6 @@ export default {
           })
           filter.push(obj);
         }
-        this.otherFilter.forEach((item,index) => {
-          let key = `value${index+1}`;
-          obj[key] = item.fieldVlaue;
-        })
-        filter.push(obj);
 
       }
       console.log(filter);

@@ -72,3 +72,29 @@ export function accSub(arg1, arg2) {
     n = (r1 >= r2) ? r1 : r2;
     return ((arg1 * m - arg2 * m) / m).toFixed(2);
 }
+// 两个数字相除
+export function accDiv(arg1, arg2) {
+    if (isNaN(arg1)) {
+        arg1 = 0;
+    }
+    if (isNaN(arg2)) {
+        arg2 = 0;
+    }
+    arg1 = Number(arg1);
+    arg2 = Number(arg2);
+    
+    var t1 = 0, t2 = 0, r1, r2;
+    try {
+        t1 = arg1.toString().split(".")[1].length;
+    }
+    catch (e) {
+    }
+    try {
+        t2 = arg2.toString().split(".")[1].length;
+    }
+    catch (e) {
+    }
+    r1 = Number(arg1.toString().replace(".", ""));
+    r2 = Number(arg2.toString().replace(".", ""));
+    return (r1 / r2) * Math.pow(10, t2 - t1);
+}

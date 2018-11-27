@@ -63,8 +63,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!-- 费用popup -->
-        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
-                       ref="matter"></pop-cost-list>
+        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost' 
+                        getListMethod="getProjectCostByGroupId" :group-id="formData.handlerUnit" ref="matter"></pop-cost-list>
         <!--项目的popup-->
         <pop-project-list :show='showProjectPop' :default-value="defaultProject" v-model='showProjectPop'
                           @sel-project='selProject'></pop-project-list>

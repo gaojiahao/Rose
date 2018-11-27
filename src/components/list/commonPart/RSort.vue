@@ -193,6 +193,10 @@ export default {
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
+          //当值为空是，删除该过滤条件
+          if(!arr.length) { 
+            delete this.fieldVlaue[key]
+          }
           return;
         }
         arr.push(sItem);
