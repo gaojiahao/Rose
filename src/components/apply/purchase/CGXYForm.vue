@@ -140,7 +140,7 @@
   // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
-  const DRAFT_KEY = 'CGDD_DATA';
+  const DRAFT_KEY = 'CGXY_DATA';
 
   export default {
     components: {
