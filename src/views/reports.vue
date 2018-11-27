@@ -347,7 +347,7 @@
         if (this.objName === this.A_PROJ_NAME) { // A类产品展示金额，项目类产品展示数量
           this.totalText = `￥${numberComma(total.amount || 0)}（共${total.number || 0}人）`;
         } else {
-          this.totalText = `${total.quantity || 0}件/套（共${total.number || 0}人）`;
+          this.totalText = `${total.quantity || 0}件/折合${toFixed(total.coverNum || 0) }套（共${total.number || 0}人）`;
         }
       },
       // TODO 获取报数汇总
