@@ -31,6 +31,24 @@ export let getObjFunds = (data = {}) => {
     data
   })
 }
+// 获取【员工借款与备用金】往来用户的余额
+export let getEmployeeBal = (data) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getEmployeeBal',
+    data: {
+      limit: 1,
+      filter: data,
+      refresh: true
+    }
+  })
+}
+// 获取【员工借款与备用金】资金账户列表
+export let getEmployeeReserveFunds = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getEmployeeReserveFunds',
+    data
+  })
+}
 export default {
   
 }

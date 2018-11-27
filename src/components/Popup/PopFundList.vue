@@ -33,7 +33,7 @@
 
 <script>
   import {Icon, Popup, LoadMore} from 'vux'
- import { getObjFunds } from 'service/costService.js'
+ import { getObjFunds, getEmployeeReserveFunds } from 'service/costService.js'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
   export default {
@@ -146,21 +146,19 @@
           filter: JSON.stringify(filter),
         }).then(this.dataHandler);
       },
-      getProjectCostByGroupId() {
+      getEmployeeReserveFunds() {
         let filter = [];
-
         if (this.srhInpTx) {
           filter = [
             ...filter,
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'costName'
+              property: 'fundName'
             },
           ];
         }
-        return getProjectCostByGroupId({
-          groupId: this.groupId,
+        return getEmployeeReserveFunds({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
