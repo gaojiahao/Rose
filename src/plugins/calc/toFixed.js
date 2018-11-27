@@ -1,6 +1,6 @@
 // TODO 保留小数位
 export default (val, length = 2) => {
-  if (val === undefined || !/^\d*\.?\d*$/.test(val)) {
+  if (val === undefined || !/^-?\d*\.?\d*$/.test(val)) {
     console.error('the value can not change to number');
     return ''
   }

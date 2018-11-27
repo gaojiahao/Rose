@@ -55,6 +55,17 @@ export let getEmployeeReserveFunds = (data = {}) => {
   })
 };
 
+// TODO 获取采购信息(付供应商欠款)
+export let getPaySupplierArrearsDataSet = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getPaySupplierArrearsDataSet',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
 
 }
