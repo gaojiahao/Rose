@@ -37,8 +37,20 @@ export let getManyVATReceipt = (data = {}) => {
   });
 };
 
-
+// TODO 获取开票申请出库单列表
+export let getBillingApplication = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getBillingApplication',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  }).catch(e => {
+    return errHandle(e);
+  });
+};
 
 export default {
-  getVATBilling
+  getVATBilling,
+  getBillingApplication,
 }
