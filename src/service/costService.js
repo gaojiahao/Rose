@@ -42,13 +42,7 @@ export let getEmployeeBal = (data) => {
     }
   })
 }
-// 获取【员工借款与备用金】资金账户列表
-export let getEmployeeReserveFunds = (data = {}) => {
-  return $axios.ajax({
-    url: '/H_roleplay-si/ds/getEmployeeReserveFunds',
-    data
-  })
-}
+
 
 // TODO 获取资金列表(付供应商欠款)
 export let getEmployeeReserveFunds = (data = {}) => {
