@@ -84,6 +84,17 @@ const dealerService = {
             url: '/H_roleplay-si/ds/getObjDealerContact',
             data
         })
-    }
+    },
+    // TODO 获取供应商列表(付供应商欠款)
+    getPaySupplierArrears(data){
+      return $axios.ajax({
+        url: '/H_roleplay-si/ds/getPaySupplierArrears',
+        data: {
+          _dc: Date.now(),
+          ...data,
+        }
+      })
+    },
 }
+export let getPaySupplierArrears = dealerService.getPaySupplierArrears;
 export default dealerService

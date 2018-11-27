@@ -31,6 +31,18 @@ export let getObjFunds = (data = {}) => {
     data
   })
 }
+
+// TODO 获取资金列表(付供应商欠款)
+export let getEmployeeReserveFunds = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getEmployeeReserveFunds',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
-  
+
 }

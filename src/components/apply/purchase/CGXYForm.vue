@@ -16,8 +16,8 @@
                            v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
         <r-date title="执行日期" :value="order.executionDate" v-model="order.executionDate"></r-date>
         <r-date title="截至日期" :value="order.validUntil" v-model="order.validUntil"></r-date>
-        <x-input class="tdAmount" type="number" title="定金" :value="order.tdAmount" text-align="right"
-                 placeholder="请填写定金" v-model="order.tdAmount"></x-input>
+        <x-input class="tdAmount" type="number" title="定金" :value="inPut.tdAmount" text-align="right"
+                 placeholder="请填写定金" v-model="inPut.tdAmount"></x-input>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -159,6 +159,9 @@
         order: {
           executionDate: '', // 执行日期
           validUntil: '', //截止日期
+        },
+        inPut: {
+          tdAmount: '',
         },
         formData: { // 表单提交内容
           creator: '',
@@ -340,7 +343,7 @@
                 inPut: {
                   dealerDebit: this.dealerInfo.dealerCode,
                   dataSet: [{
-                    tdAmount: this.order.tdAmount || null,
+                    tdAmount: this.inPut.tdAmount || null,
                   }]
                 },
                 order: {
