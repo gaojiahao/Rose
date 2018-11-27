@@ -7,7 +7,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"
-                         @sel-contact="selContact"></pop-dealer-list>
+                         :default-contact="contact" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                            v-model="dealer.drDealerPaymentTerm"></pop-single-select>
@@ -173,6 +173,7 @@
         showTransPop: false, // 是否显示结算方式的popup
         showMaterielPop: false, // 是否显示物料的popup
         showDealerPop: false, // 是否显示供应商的popup
+        contact: {},
       }
     },
     mixins: [common],
@@ -191,6 +192,7 @@
       },
       // 选中联系人
       selContact(val) {
+        this.contact = {...val};
         this.dealer.dealerDebitContactPersonName = val.dealerName;
         this.dealer.dealerDebitContactInformation = val.dealerMobilePhone;
       },
@@ -439,6 +441,7 @@
             formData: this.formData,
             dealer: this.dealer,
             order: this.order,
+            contact: this.contact,
           }
         };
       },
@@ -461,6 +464,7 @@
         this.dealer = draft.dealer;
         this.order = draft.order;
         this.formData = draft.formData;
+        this.contact = draft.contact;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 

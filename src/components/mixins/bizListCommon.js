@@ -305,10 +305,15 @@ export default {
           this.setStatus(item);
           item.count = 0;
           item.totalQty = 0;
-          item.itmes.forEach(mitem => {
-            item.count = toFixed(accAdd(item.count, mitem.tdAmount));
-            item.totalQty = toFixed(accAdd(item.totalQty, mitem.tdQty));
-          });
+          item.itmes = item.itmes.reduce((arr, mitem) => {
+            // 过滤掉采购协议中的没有物料编码的字段
+            if (mitem.inventoryCode) {
+              item.count = toFixed(accAdd(item.count, mitem.tdAmount));
+              item.totalQty = toFixed(accAdd(item.totalQty, mitem.tdQty));
+              arr.push(mitem);
+            }
+            return arr
+          }, []);
 
           // 如果为搜索物料，将匹配的物料放在前面
           if (this.serachVal && this.filterProperty === 'inventoryName') {
