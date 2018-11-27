@@ -41,10 +41,7 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, {
-            name: '项目名称',
-            value: 'projectName',
-          },
+          }
         ],
       }
     },

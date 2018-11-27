@@ -22,8 +22,9 @@
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
               <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
-              <form-cell cellTitle='编码' :cellContent="item.expCode"></form-cell>
               <form-cell cellTitle='科目' :cellContent="item.expSubject"></form-cell>
+              <form-cell cellTitle='费用类型' :cellContent="item.costType_expCode"></form-cell>
+              <form-cell cellTitle='发票类型' :cellContent="item.tdInvoiceType"></form-cell>
               <form-cell cellTitle='申请金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='不含税金额' showSymbol :cellContent="item.noTaxAmount | toFixed | numberComma(3)"></form-cell>
               <form-cell cellTitle='税率' :cellContent="item.taxRate | toFixed"></form-cell>

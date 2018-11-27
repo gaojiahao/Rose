@@ -279,12 +279,10 @@
         }).then((data) => {
           this.attachment = data.attachment;
           this.listId = data.listId;
-          console.log(data);
           this.biComment = data.biComment;
           this.biReferenceId = data.biReferenceId;
           this.CostList = [];
           let {formData} = data;
-          this.projectName = formData.order.project;
           // 基本信息
           this.formData = {
             ...this.formData,
@@ -296,13 +294,15 @@
           // 费用明细
           formData.order.dataSet.forEach(item => {
             let obj = {
-              costName: item.costName_expCode, // 费用名称
-              costCode: item.expCode, // 费用编码
-              costType: item.costType_expCode,
+              exptName: item.costName_expCode, // 费用名称
+              expCode: item.expCode, // 费用编码
+              costType_expCode: item.costType_expCode,
               expSubject: item.expSubject, // 费用科目
-              price: item.tdAmount, // 报销金额
-              reson: item.expCause, // 报销事由
-              comment: item.comment,
+              tdAmount: item.tdAmount, // 报销金额
+              noTaxAmount: item.noTaxAmount,
+              taxRate: item.taxRate,
+              taxAmount: item.taxAmount,
+              expCause: item.expCause, // 报销事由
               tdId: item.tdId
             }
             this.CostList.push(obj);
@@ -313,15 +313,20 @@
       },
       // TODO 保存草稿数据
       hasDraftData () {
-        // 是否选择项目
-        if (!this.projectName) {
-          return false
+        let isSave = false;
+        this.CostList.forEach(item=>{
+          if(item.exptName){
+            isSave = true;
+            return false;
+          }
+        })
+        if(!isSave){
+          return false;
         }
         return {
           [DRAFT_KEY]: {
             cost: this.CostList,
             formData: this.formData,
-            projectName: this.projectName,
           }
         };
       },
@@ -332,7 +337,6 @@
         let draft = JSON.parse(data);
         this.CostList = draft.cost;
         this.formData = draft.formData;
-        this.projectName = draft.projectName;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },
