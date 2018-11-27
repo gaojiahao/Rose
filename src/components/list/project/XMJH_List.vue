@@ -79,21 +79,17 @@
           ]
         }
         return getProjectPlanList(this.listViewID, {
-          // listViewID: this.listViewID,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
           sort: JSON.stringify(this.sort),
-        }).then(( tableContent ) => {
-          tableContent.forEach(item => {
+        }).then(({ total, projectPlan } ) => {
+          projectPlan.forEach(item => {
             this.setStatus(item);
           });
-          if(this.page > 1 && !tableContent.length){
-            this.hasNext = false;
-          }
-          // this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+          this.hasNext = total > (this.page - 1) * this.limit + projectPlan.length;
+          this.listData = this.page === 1 ? projectPlan : this.listData.concat(projectPlan);
           if (!noReset) {
             this.$nextTick(() => {
               this.resetScroll();

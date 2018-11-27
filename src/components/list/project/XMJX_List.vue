@@ -11,31 +11,8 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <!-- <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <div class="duty_top">
-            <p class="duty_code">
-              {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass">{{item.biStatus}}</span>
-            </p>
-            <p class="duty_time">{{item.effectiveTime | dateFormat('YYYY-MM-DD')}}</p>
-          </div>
-          <div class="project_name">
-            <div class="major_content vux-1px-b">
-              <div class="status_part">
-                <span class="iconfont icon-503020"></span>
-                <span class="status_name">{{item.projectType}}</span>
-              </div>
-              {{item.projectName}}
-            </div>
-          </div>
-          <div class="order_count">
-            <div class="handle_man">
-              {{item.handlerName}}<span style="fontSize:.1rem;">[经办人]</span>
-            </div>
-          </div>
-        </div> -->
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
-                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
+                        noCount @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">
