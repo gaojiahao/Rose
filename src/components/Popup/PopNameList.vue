@@ -247,7 +247,7 @@
     }
     .r_arrow {
       top: 50%;
-      right: .04rem;
+      right: 7px;
       position: absolute;
       transform: translate(0, -50%);
     }

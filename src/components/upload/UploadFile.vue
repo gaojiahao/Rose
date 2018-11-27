@@ -2,22 +2,22 @@
   <div class="upload-file-container" :class="{'no-upload': noUpload}" :style="containStyle" v-if="(noUpload && defaultValue.length) || !noUpload">
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
-      <div class="upload-file-item" v-for="(item, index) in files" @click="preview(item)" :key="index">
+      <div class="upload-file-item" v-for="(item, index) in files"  :key="index">
         <template v-if="item.iconType === 'image'">
           <!--{{item.attr1}}-->
-          <img class="img" :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
+          <img @click.stop="preview(item)" class="img" :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
           {{item.attr1}}
         </template>
-        <i class="icon-close" @click="deleteFile(item)" v-if="!noUpload"></i>
+        <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
       <div class="upload-file-item" v-if="!noUpload">
-        <label class="upload-file-add" :for="id" @click.stop="">
-          <span class="iconfont icon-fujian"></span>
-          <!-- <span class="add_text">增加图片</span> -->
-        </label>
         <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/>
+        <label class="upload-file-add" :for="id"></label>
+        <div class="icon_container">
+          <span class="iconfont icon-fujian"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -341,9 +341,6 @@
                   this.files.splice(idx, 1);
                 }
               }
-              this.$vux.alert.show({
-                content: message,
-              })
             })
           },
         })
@@ -357,10 +354,12 @@
 
 <style scoped lang="scss">
   .upload-file-container {
-    margin: .1rem auto;
-    padding: .06rem .1rem;
     width: 95%;
+    z-index: -20;
+    margin: .1rem auto;
     background: #fff;
+    position: relative;
+    padding: .06rem .1rem;
     box-sizing: border-box;
     &.no-upload {
       .upload-file-item {
@@ -377,26 +376,25 @@
       padding: 0.05rem 0;
     }
     .upload-file-item {
-      position: relative;
-      display: inline-block;
-      margin: 0 .3rem .3rem 0;
       width: .6rem;
       height: .6rem;
+      position: relative;
+      margin-bottom: .3rem;
+      display: inline-block;
+      margin: 0 .3rem .3rem 0;
       .img {
         width: 100%;
         height: 100%;
         border-radius: .04rem;
       }
-      .icon-close {
-        position: absolute;
+      .icon-shanchu {
         top: 0;
         right: 0;
         z-index: 5;
-        display: inline-block;
-        width: .3rem;
-        height: .3rem;
-        background: url(~assets/close.png) no-repeat;
-        background-size: 100% 100%;
+        font-size: .2rem;
+        color: #ea5455;
+        // background: #000;
+        position: absolute;
         transform: translate(50%, -50%);
       }
     }
@@ -404,28 +402,44 @@
       display: none;
     }
     .upload-file-add {
-      // display: flex;
-      // background: #f8f8f8;
-      // flex-direction: column;
-      // justify-content: center;
-      // align-items: center;
-      display: block;
       width: .6rem;
       height: .6rem;
-      border: 1px solid #ccc;
+      display: block;
+      position: relative;
       box-sizing: border-box;
       border-radius: 0.05rem;
-      text-align: center;
-      // line-height: 0.6rem;
-      .iconfont {
-        display: inline-block;
-        font-size: 0.25rem;
-        color: #c5c5c5;
-        padding-top: 0.05rem;
-      }
+      border: 1px solid #ccc;
       .add_text {
         font-size: 0.12rem;
       }
     }
+    .icon_container {
+      background: #fff;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -10;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      align-content: center;
+      .icon-fujian {
+        color: #c5c5c5;
+        font-size: .18rem;
+        line-height: .18rem;
+      }
+    }
+    // .icon-fujian {
+    //   top: 47%;
+    //   left: 16%;
+    //   // z-index: -999;
+    //   color: #c5c5c5;
+    //   font-size: .2rem;
+    //   position: absolute;
+    //   transform: translate(50%, -50%);
+    // }
   }
 </style>

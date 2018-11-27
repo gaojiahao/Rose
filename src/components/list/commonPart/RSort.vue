@@ -10,10 +10,10 @@
              :class="[property === SItem.key && sort === 'DESC' ? 'active icon-sort-up-copy-copy' : 'icon-xiasanjiao1']"></i>
       </span>
     </div>
-    <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || this.fieldVlaue.length}"> 
+    <!-- <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || this.fieldVlaue.length}"> 
       <span class="filter_name">筛选</span>
       <span class="iconfont icon-shaixuan"></span>
-    </div>
+    </div> -->
     <div v-transfer-dom>
       <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
         <div class="filter-container-part">
@@ -86,7 +86,7 @@ export default {
           { name: '综合', key: '' },
           { name: '交易号', key: 'transCode' },
           { name: '修改时间', key: 'modTime' },
-          // { name: '流程状态', key: 'processSort' }
+          { name: '流程状态', key: 'processSort' }
         ]
       }
     },

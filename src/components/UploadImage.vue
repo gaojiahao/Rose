@@ -264,28 +264,19 @@
       height: 100%;
     }
     .upload {
-      background: #fff;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
       z-index: -999;
       display: flex;
+      background: #fff;
+      position: absolute;
       align-items: center;
+      align-content: center;
       flex-direction: column;
       justify-content: center;
-      align-content: center;
-      %blockCenter {
-        // display: block;
-        // text-align: center;
-      }
-      .add_text {
-        // @extend %blockCenter;
-      }
       .iconfont {
-        // @extend %blockCenter;
-        // margin-top: 0.24rem;
         font-size: 0.24rem;
       }
     }

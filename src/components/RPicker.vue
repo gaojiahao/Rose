@@ -11,7 +11,8 @@
       <div class='picker'>
         <span class="horizontal-title" :class='{ required : required}'>{{title}}</span>
         <span class='mater_nature'>{{showValue}}</span>
-        <x-icon class="r_arrow" type="ios-arrow-forward" size="16" v-if="showArrow"></x-icon>
+        <span class="iconfont icon-youjiantou r_arrow" v-if="showArrow"></span>
+        <!-- <x-icon class="r_arrow" type="ios-arrow-forward" size="16" v-if="showArrow"></x-icon> -->
         <span class='iconfont icon-gengduo' :class="!pickerStatus?'iconfont_fff':''" v-else></span>
       </div>
     </template>
@@ -19,12 +20,14 @@
     <template v-else-if="mode === '3'">
       <div class="title" :class="{required : required}">{{title}}</div>
       <div class="mode">{{showValue || placeholder}}</div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon>
+      <!-- <x-icon class="r_arrow" type="ios-arrow-right" size="20" v-show="!disabled"></x-icon> -->
+      <span class="iconfont icon-youjiantou r_arrow" v-show="!disabled"></span>
     </template>
     <template v-else-if="mode === '4'">
       <div class="title" :class="{required : required}">{{title}}</div>
       <div class="mode">{{showValue}}</div>
-      <x-icon class="r_arrow" type="ios-arrow-right" size="16" v-show="!disabled"></x-icon>
+      <span class="iconfont icon-youjiantou r_arrow" v-show="!disabled"></span>
+      <!-- <x-icon class="r_arrow" type="ios-arrow-right" size="16" v-show="!disabled"></x-icon> -->
     </template>
     <div v-transfer-dom>
       <popup id="trade_pop_part" v-model="show">
@@ -195,7 +198,8 @@
       }
       .r_arrow {
         top: 50%;
-        right: .04rem;
+        right: 7px;
+        font-weight: bold;
         position: absolute;
         transform: translate(0, -50%);
       }

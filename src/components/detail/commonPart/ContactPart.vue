@@ -106,7 +106,6 @@
     // 其他信息
     .other_info {
       color: #454545;
-      //
     }
     .other_content {
       padding: .06rem 0;

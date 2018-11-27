@@ -4,7 +4,7 @@
       <template v-if="mode === '2'">
         <div class="title" :class="{required : required}">{{dealerLabelName}}名称</div>
         <div class="mode">{{dealerInfo.dealerName || placeholder}}</div>
-        <x-icon class="r_arrow" type="ios-arrow-right" size="16"></x-icon>
+        <span class="iconfont icon-youjiantou r-arrow"></span>
       </template>
       <template v-else>
         <div class='user-content' v-if="dealerInfo.dealerCode">
@@ -323,11 +323,12 @@
 
   .pop_dealer_list {
     width: 95%;
+    position: relative;
     margin: .1rem auto;
     background: #fff;
+    padding: .06rem .1rem;
     margin-bottom: 0.1rem;
     box-sizing: border-box;
-    padding: .06rem .1rem;
     &.dealer-list-2 {
       margin: 0;
       padding: 0;
@@ -348,7 +349,7 @@
       }
       .r_arrow {
         top: 50%;
-        right: .04rem;
+        right: 7px;
         position: absolute;
         transform: translate(0, -50%);
         fill: #999;
@@ -367,13 +368,12 @@
     }
     .r-arrow {
       top: 50%;
-      right: -1%;
+      right: 7px;
       font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
     }
     .dealer-info {
-      position: relative;
       width: 100%;
       .user-content {
         .user-info {

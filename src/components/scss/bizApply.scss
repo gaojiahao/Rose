@@ -159,70 +159,6 @@
 .no_count{
   height: 90%;
 }
-
-// 地址栏
-.or_ads {
-  background: #FFF;
-  position: relative;
-  box-sizing: border-box;
-  padding: .06rem .4rem .06rem .08rem;
-  .icon-gengduo {
-    top: 50%;
-    right: .1rem;
-    font-size: .24rem;
-    position: absolute;
-    transform: translate(0, -50%);
-  }
-  .title {
-    color: #757575;
-
-    font-size: .12rem;
-
-  }
-  .mode {
-    color: #111;
-    font-weight: 500;
-  }
-  .required{
-    color: #5077aa;
-    font-weight: bold;
-
-  }
-  .r_arrow {
-    top: 50%;
-    right: .04rem;
-    position: absolute;
-    transform: translate(0, -50%);
-  }
-  // 用户信息
-  .user_info {
-    color: #111;
-    font-size: .2rem;
-    font-weight: 500;
-    // 用户姓名
-    .user_name {
-      margin-right: .08rem;
-    }
-    // 用户电话
-    .user_tel {
-      font-family: sans-serif, -apple-system-font;
-    }
-  }
-  // 公司信息
-  .cp_info {
-    color: #111;
-    .cp_name {
-      font-weight: bold;
-    }
-    .cp_ads {
-
-      color: #757575;
-    }
-    .user_tel {
-      margin-right: .04rem;
-    }
-  }
-}
 //必填字段
 .required{
   color: #5077aa;
@@ -249,7 +185,7 @@
   // 右箭头
   .r_arrow {
     top: 50%;
-    right: .04rem;
+    right: 7px;
     font-weight: bold;
     position: absolute;
     transform: translate(0, -50%);

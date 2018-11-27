@@ -13,17 +13,19 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo">
         <template slot="other">
-          <div class="cell-item vux-1px-t" v-if="this.contactInfo.executionDate">
-            <div class="title">执行日期：</div>
-            <div class="mode">{{this.contactInfo.executionDate}}</div>
-          </div>
-          <div class="cell-item" v-if="this.contactInfo.validUntil">
-            <div class="title">截至日期：</div>
-            <div class="mode">{{this.contactInfo.validUntil}}</div>
-          </div>
-          <div class="cell-item" v-if="this.contactInfo.tdAmount || this.contactInfo.tdAmount === 0">
-            <div class="title">定金：</div>
-            <div class="mode">{{this.contactInfo.tdAmount}}</div>
+          <div class="other_content vux-1px-t">
+            <div class="trade_info s_size_name" v-if="this.contactInfo.executionDate">
+              <span class="title">执行日期：</span>
+              <span class="mode">{{this.contactInfo.executionDate}}</span>
+            </div>
+            <div class="trade_info s_size_name" v-if="this.contactInfo.validUntil">
+              <span class="title">截至日期：</span>
+              <span class="mode">{{this.contactInfo.validUntil}}</span>
+            </div>
+            <div class="trade_info s_size_name" v-if="this.contactInfo.tdAmount || this.contactInfo.tdAmount === 0">
+              <span class="title">定金：</span>
+              <span class="mode">{{`￥${this.contactInfo.tdAmount}`}}</span>
+            </div>
           </div>
         </template>
       </contact-part>
@@ -168,17 +170,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
-  .cell-item {
-    display: flex;
-    padding: .06rem 0 0;
-    font-size: .14rem;
-    .title {
-      margin-right: .05rem;
-      font-weight: bold;
-    }
-    .mode {
-      color: #454545;
-    }
-  }
 </style>

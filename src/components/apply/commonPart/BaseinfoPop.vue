@@ -6,7 +6,6 @@
         <div class="mode">
           <span class="mode_content">{{selItems.nickname}}</span>
           <x-icon class="r_arrow" type="ios-arrow-forward" size="18" ></x-icon>
-          <!-- <span class="iconfont icon-youjiantou"></span> -->
         </div>
       </div>
       <popup-picker title="经办组织" :data="groupList" :columns="1" v-model="group" @on-change="changeGroup" ref="groupPicker">
@@ -313,17 +312,19 @@ export default {
           position: relative;
           .mode_content{
             color: #111;
-            margin-right: .16rem;
+            margin-right: 13px;
           }
           .iconfont{
             font-weight: bold;
             font-size: 0.14rem;
           }
           .r_arrow {
+            right: -5px;
             fill: #C8C8CD;
             position: absolute;
             top: .02rem;
-            right: -.05rem;
+            // right: -.05rem;
+            
 
           }
         }
