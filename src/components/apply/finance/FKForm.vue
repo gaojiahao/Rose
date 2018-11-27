@@ -5,35 +5,32 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
+        <!-- 用户地址和基本信息-->
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :dealer-label-name="'客户,供应商,员工'"
+                        :defaultValue="dealerInfo" :defaultContact="contact">
+        </pop-dealer-list>
         <!-- 费用列表 -->
         <div class="materiel_list" v-for="(item, index) in CostList" :key='index'>
-          <group :title='`费用明细${index+1}`' class='costGroup'>
-            <cell title="费用名称" v-model='item.exptName' is-link @click.native="getCost(index,item)">
+          <group :title='`资金账户${index+1}`' class='costGroup'>
+            <cell title="资金账户名称" v-model='item.cashName' is-link @click.native="getCost(index,item)">
               <template slot="title">
-                <span class='required'>费用名称
+                <span class='required'>资金账户名称
                 </span>
               </template>
             </cell>
             <!-- <cell title="费用编码" :value="item.expCode"></cell> -->
-            <cell title="费用科目" :value="item.expSubject">
+            <cell title="资金账户大类" :value="item.cashType_cashOutCode">
               <template slot="title">
-                <span class='required'>费用科目</span>
+                <span class='required'>资金账户大类</span>
               </template>
             </cell>
-            <popup-picker title="发票类型" :data="invoiceTypeList" v-model="item.tdInvoiceType"></popup-picker>
-            <x-input title="申请金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
+            <x-input title="支付金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
                      @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
               <template slot="label">
-                <span class='required'>申请金额
+                <span class='required'>支付金额
                 </span>
               </template>
             </x-input>
-            <cell title="不含税金额" :value="item.noTaxAmount"></cell>
-            <x-input title="税率" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                     @on-blur="checkAmt(item)" type='number' v-model.number='item.taxRate'>
-            </x-input>
-            <cell title="税金" :value="item.taxAmount"></cell>
-            <x-input type="text" title="报销事由" text-align='right' placeholder='请填写' v-model="item.expCause"></x-input>
           </group>
         </div>
         <!-- 新增更多 按钮 -->
@@ -50,8 +47,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!-- 费用popup -->
-        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost' :group-id="formData.handlerUnit"
-                       ref="matter"></pop-cost-list>
+        <pop-fund-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
+                       ref="matter"></pop-fund-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -79,9 +76,10 @@
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
-  import PopCostList from 'components/Popup/PopCostList'
+  import PopFundList from 'components/Popup/PopFundList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import PopDealerList from 'components/Popup/PopDealerList'
   // 方法引入
   import { accAdd, accMul, accSub, accDiv } from '@/home/pages/maps/decimalsAdd'
   import { toFixed } from '@/plugins/calc'
@@ -92,32 +90,27 @@
     components: {
       Cell, Group, Popup,
       XInput, XTextarea,
-      PopCostList, PopupPicker, RPicker, PopBaseinfo
+      PopFundList, PopupPicker, RPicker, PopBaseinfo, PopDealerList
     },
     data () {
       return {
-        listId: '18800986-a50f-11e8-96a5-005056a136d0',
+        listId: '1972f3a4-b29a-4a0e-90a8-85090c0e2d28',
         biComment: '',
         biReferenceId: '',
         showCostPop: false,
         CostList: [ // 费用列表
           {
-            exptName: '', // 费用名称
-            expCode: '', // 费用编码
-            expSubject: '', // 费用科目
-            costType_expCode: '', // 费用类型
-            tdInvoiceType: ['普票'] , // 发票类型
-            tdAmount: '', //申请金额
-            noTaxAmount: '', // 不含税金额
-            taxRate: 0.16, // 税率
-            taxAmount: '', // 税金
-            expCause: '', // 报销事由
+            cashName: '', // 资金账户名称
+            cashOutCode: '', // 资金账户编码
+            cashType_cashOutCode: '', // 资金账户大类
+            tdAmount: '', // 支付金额
           }
         ],
-        invoiceTypeList: [['普票','专票']], // 发票类型
         selectedCost: [],
         costIndex: 0,
         transCode: '',
+        dealerInfo: {},
+        contact: {},
         formData: {
           biComment: '',
           biProcessStatus: ''
@@ -137,19 +130,12 @@
       }
     },
     methods: {
-      // TODO 检查金额，取正数、保留两位小数
-      checkAmt(item){
-        let {tdAmount,taxRate} = item;
-        // 金额,税率
-        if(taxRate){
-          item.taxRate = Math.abs(toFixed(taxRate))
-        }
-        if (tdAmount) {
-          item.tdAmount = Math.abs(toFixed(tdAmount));
-          item.noTaxAmount = Math.abs(toFixed(accDiv(item.tdAmount,1+item.taxRate)));
-          item.taxAmount = toFixed(accSub(item.tdAmount,item.noTaxAmount));
-          
-        }
+      // 选中的客户
+      selDealer(val) {
+        this.dealerInfo = JSON.parse(val)[0];
+      },
+      selContact(val) {
+        this.contact = {...val};
       },
       getCost (index, item) {
         this.showCostPop = true;
@@ -160,16 +146,10 @@
       addCost () {
         this.expSubjectList = [];
         this.CostList.push({
-          exptName: '', // 费用名称
-          expCode: '', // 费用编码
-          expSubject: '', // 费用科目
-          costType_expCode: '', // 费用类型
-          tdInvoiceType: ['普票'] , // 发票类型
-          tdAmount: '', //申请金额
-          noTaxAmount: '', // 不含税金额
-          taxRate: 0.16, // 税率
-          taxAmount: '', // 税金
-          expCause: '', // 报销事由
+          cashName: '', // 资金账户名称
+          cashOutCode: '', // 资金账户编码
+          cashType_cashOutCode: '', // 资金账户大类
+          tdAmount: '', // 支付金额
         })
       },
       // 删除费用明细
@@ -179,35 +159,28 @@
       // TODO 选中费用
       selMatter (val) {
         let sels = val;
-        this.CostList[this.costIndex].exptName = sels.costName;
-        this.CostList[this.costIndex].expCode = sels.costCode;
-        this.CostList[this.costIndex].expSubject = sels.costSubject;
-        this.CostList[this.costIndex].costType_expCode = sels.costType;
+        this.CostList[this.costIndex].cashName = sels.fundName;
+        this.CostList[this.costIndex].cashOutCode = sels.fundCode;
+        this.CostList[this.costIndex].cashType_cashOutCode = sels.fundType;
       },
       // TODO 提交
       submitOrder () {
         let warn = '';
         let dataSet = [];
         this.CostList.every(item => {
-          if (!item.exptName) {
-            warn = '请选择费用名称';
+          if (!item.cashName) {
+            warn = '请选择资金账户';
             return false
           }
           if (!item.tdAmount) {
-            warn = '请填写申请金额';
+            warn = '请填写支付金额';
             return false
           }
           dataSet.push({
             tdId: item.tdId || '',
-            expCode: item.expCode, // 费用编码
-            expSubject: item.expSubject, // 费用科目
-            costType_expCode: item.costType_expCode || '', // 费用类型
-            tdInvoiceType: item.tdInvoiceType[0],
+            cashOutCode: item.cashOutCode, // 费用编码
+            cashType_cashOutCode: item.cashType_cashOutCode, // 费用科目
             tdAmount: item.tdAmount, // 报销金额
-            noTaxAmount: item.noTaxAmount, // 不含税金额
-            taxRate: item.taxRate, // 税率
-            taxAmount: item.taxAmount, // 税金
-            expCause: item.expCause, // 报销事由
           });
           return true
         });
@@ -245,11 +218,12 @@
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
                 order: {
-                  crDealerLabel: '员工',
-                  dealerCodeCredit: this.formData.userCode,
-                  departmentName: this.formData.handlerUnitName,
+                  dealerDebit: this.dealerInfo.dealerCode,
+                  drDealerLabel: this.dealerInfo.dealerLabelName,
                   dataSet
-                }
+                },
+                dealerDebitContactPersonName: this.contact.dealerName || null,
+	              dealerDebitContactInformation: this.contact.dealerMobilePhone || null,
               }),
               wfPara: JSON.stringify(wfPara)
             };
@@ -294,19 +268,30 @@
           // 费用明细
           formData.order.dataSet.forEach(item => {
             let obj = {
-              exptName: item.costName_expCode, // 费用名称
-              expCode: item.expCode, // 费用编码
-              costType_expCode: item.costType_expCode,
-              expSubject: item.expSubject, // 费用科目
+              cashName: item.fundName_cashOutCode, // 费用名称
+              cashOutCode: item.cashOutCode, // 费用编码
+              cashType_cashOutCode: item.cashType_cashOutCode,
               tdAmount: item.tdAmount, // 报销金额
-              noTaxAmount: item.noTaxAmount,
-              taxRate: item.taxRate,
-              taxAmount: item.taxAmount,
-              expCause: item.expCause, // 报销事由
               tdId: item.tdId
             }
             this.CostList.push(obj);
           })
+          // 往来信息
+          this.dealerInfo = {
+            creatorName: formData.dealerDebitContactPersonName,
+            dealerMobilePhone: formData.dealerDebitContactInformation,
+            dealerCode: formData.order.dealerDebit,
+            dealerLabelName: formData.order.drDealerLabel,
+            dealerName: formData.order.dealerName_dealerDebit,
+            province: formData.order.province_dealerDebit,
+            city: formData.order.city_dealerDebit,
+            county: formData.order.county_dealerDebit,
+            address: formData.order.address_dealerDebit
+          }
+          this.contact = {
+            dealerName: formData.dealerDebitContactPersonName,
+            dealerMobilePhone: formData.dealerDebitContactInformation
+          }
           this.$loading.hide();
           // this.$emit('input', false);
         })
@@ -315,7 +300,7 @@
       hasDraftData () {
         let isSave = false;
         this.CostList.forEach(item=>{
-          if(item.exptName){
+          if(item.cashName){
             isSave = true;
             return false;
           }
@@ -327,6 +312,8 @@
           [DRAFT_KEY]: {
             cost: this.CostList,
             formData: this.formData,
+            dealerInfo: this.dealerInfo,
+            contact: this.contact,
           }
         };
       },
@@ -337,6 +324,8 @@
         let draft = JSON.parse(data);
         this.CostList = draft.cost;
         this.formData = draft.formData;
+        this.dealerInfo = draft.dealerInfo;
+        this.contact = draft.contact;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },

@@ -10,28 +10,24 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 往来联系部分 交易基本信息-->
+      <contact-part :contact-info="contactInfo" :payment="false" :logistics="false"></contact-part>
       <!-- 物料列表 -->
       <div class="form_part">
         <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">费用列表</span>
+          <span class="iconfont icon-baoxiao"></span><span class="title">账户列表</span>
         </div>
         <div class="form_content"
             :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
-              <form-cell cellTitle='名称' :cellContent="item.costName_expCode" :showTopBorder=false></form-cell>
-              <form-cell cellTitle='科目' :cellContent="item.expSubject"></form-cell>
-              <form-cell cellTitle='费用类型' :cellContent="item.costType_expCode"></form-cell>
-              <form-cell cellTitle='发票类型' :cellContent="item.tdInvoiceType"></form-cell>
-              <form-cell cellTitle='申请金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
-              <form-cell cellTitle='不含税金额' showSymbol :cellContent="item.noTaxAmount | toFixed | numberComma(3)"></form-cell>
-              <form-cell cellTitle='税率' :cellContent="item.taxRate | toFixed"></form-cell>
-              <form-cell cellTitle='税金' showSymbol :cellContent="item.taxAmount | toFixed | numberComma(3)"></form-cell>
-              <form-cell cellTitle='报销事由' :cellContent="item.expCause"></form-cell>
+              <form-cell cellTitle='资金账户名称' :cellContent="item.fundName_cashInCode" :showTopBorder=false></form-cell>
+              <form-cell cellTitle='资金账户大类' :cellContent="item.cashType_cashInCode"></form-cell>
+              <form-cell cellTitle='收款金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
           </div>
         </div>
       </div>
-      <div class="price_cell vux-1px-t">
+      <!-- <div class="price_cell vux-1px-t">
         <div class="price_title">
           <span>报销人：</span>
           <span class="people_name">{{orderInfo.creatorName }}</span>
@@ -40,7 +36,7 @@
           <span class='title'>合计:</span>
           <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
         </div>
-      </div>
+      </div> -->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -60,18 +56,20 @@ import detailCommon from 'components/mixins/detailCommon'
 // 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
+import contactPart from 'components/detail/commonPart/ContactPart'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
       count: 0,          // 金额合计
-      formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70'
+      formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
+      contactInfo: {}, // 客户、付款方式、物流条款的值
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow,RAction
+    workFlow, RAction, contactPart
   },
   methods: {
     // 获取详情
@@ -98,6 +96,19 @@ export default {
         }
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
+        let {order} = this.orderInfo;
+        this.contactInfo = {
+          creatorName: order.dealerDebitContactPersonName, // 客户名
+          dealerName: order.dealerName_dealerCodeCredit, // 公司名
+          dealerMobilePhone: data.formData.dealerCreditContactInformation, // 手机
+          dealerContactPersonName: data.formData.dealerCreditContactPersonName, // 联系人
+          dealerCode: order.dealerCodeCredit, // 客户编码
+          dealerLabelName: order.crDealerLabel, // 关系标签
+          province: order.province_dealerCodeCredit, // 省份
+          city: order.city_dealerCodeCredit, // 城市
+          county: order.county_dealerCodeCredit, // 地区
+          address: order.address_dealerCodeCredit, // 详细地址
+        };
         this.workFlowInfoHandler();
       })
     }

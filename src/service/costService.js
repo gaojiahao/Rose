@@ -24,8 +24,13 @@ export let getCostByGroupId = (data = {}) => {
   })
 }
 
-
-
+// 获取付款资金账户列表
+export let getObjFunds = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjFunds',
+    data
+  })
+}
 export default {
   
 }
