@@ -2,7 +2,7 @@
   <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="formData" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 往来信息 -->
@@ -124,7 +124,6 @@
     data() {
       return {
         listId: 'c930267f-66fd-4927-983b-0216ef9449b3',
-        biComment: '',
         biReferenceId: '',
         selectedCost: [],
         costIndex: 0,
@@ -230,36 +229,42 @@
                 comment: ""
               }
             }
+            let inputDataSet = {
+              dealerName_dealerDebit: this.dealerInfo.nickname,
+              dealerDebit: this.dealerInfo.dealerCode,
+              drDealerLabel: this.dealerInfo.dealerLabelName,
+              thenAmntBalCopy1: this.dealerInfo.amntBal,
+              applicationAmount: this.applicationAmount,
+              tdAmountCopy1: this.tdAmountCopy1,
+              differenceAmount: this.differenceAmount,
+            };
+            let outputDataSet = {
+              fundName_cashOutCode: this.cashInfo.fundName,
+              cashOutCode: this.cashInfo.fundCode,
+              cashType_cashOutCode: this.cashInfo.fundType,
+              thenAmntBal: this.cashInfo.thenAmntBal,
+              tdAmount: this.cashInfo.tdAmount,
+            };
+            if(this.transCode){
+              inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
+              outputDataSet.tdId = this.cashInfo.tdId;
+            }
             let submitData = {
               listId: this.listId,
-              biComment: '',
+              biComment: this.formData.biComment,
               formData: JSON.stringify({
                 ...this.formData,
                 handlerEntity: this.entity.dealerName,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
                 inPut: {
-                  dataSet: [{
-                    dealerName_dealerDebit: this.dealerInfo.nickname,
-                    dealerDebit: this.dealerInfo.dealerCode,
-                    drDealerLabel: this.dealerInfo.dealerLabelName,
-                    thenAmntBalCopy1: this.dealerInfo.amntBal,
-                    applicationAmount: this.applicationAmount,
-                    tdAmountCopy1: this.tdAmountCopy1,
-                    differenceAmount: this.differenceAmount,
-                  }],
+                  dataSet: [inputDataSet],
                 },
                 order: {
                   dataSet
                 },
                 outPut: {
-                  dataSet: [{
-                    fundName_cashOutCode: this.cashInfo.fundName,
-                    cashOutCode: this.cashInfo.fundCode,
-                    cashType_cashOutCode: this.cashInfo.fundType,
-                    thenAmntBal: this.cashInfo.thenAmntBal,
-                    tdAmount: this.cashInfo.tdAmount,
-                  }],
+                  dataSet: [outputDataSet],
                 },
               }),
               wfPara: JSON.stringify(wfPara)
@@ -291,23 +296,23 @@
           let {attachment = [], listId = '', biComment = '', biReferenceId = '', formData = {}} = data;
           this.attachment = attachment;
           this.listId = listId;
-          this.biComment = biComment;
           this.biReferenceId = biReferenceId;
           // 基本信息
-          this.formData = {
-            ...this.formData,
-            ...formData,
-            // creator: formData.creator,
-            // modifer: formData.modifer,
-            // biComment: formData.biComment,
-          };
           this.handlerDefault = {
-            handler: formData.userId,
-            handlerName: formData.nickname,
+            handler: formData.handler,
+            handlerName: formData.handlerName,
             handlerUnit: formData.handlerUnit,
             handlerUnitName: formData.handlerUnitName,
             handlerRole: formData.handlerRole,
             handlerRoleName: formData.handlerRoleName,
+          };
+          this.formData = {
+            ...this.formData,
+            // ...formData,
+            ...this.handlerDefault,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            biComment: formData.biComment,
           };
           let {dataSet: orderDataSet = []} = formData.order;
           let {dataSet: inputDataSet = []} = formData.inPut;
@@ -316,7 +321,8 @@
           let [cashInfo = {}] = outputDataSet;
           // 采购明细
           orderDataSet.forEach(item => {
-
+            item.popiCode = item.transMatchedCode;
+            item.poCode = item.orderCode;
           });
           this.dealerInfo = {
             ...dealerInfo,

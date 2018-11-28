@@ -66,6 +66,17 @@ export let getPaySupplierArrearsDataSet = (data = {}) => {
   })
 };
 
+// TODO 获取资金列表(付供应商定金)
+export let getSupplierToPayDeposit = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSupplierToPayDeposit',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
 
 }

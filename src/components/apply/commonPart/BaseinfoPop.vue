@@ -82,16 +82,16 @@ export default {
       default() {
         return {}
       }
-    }, 
+    },
     //是否为必填项
     isRequired: {
       type: Boolean,
       default: true
-    }   
+    }
   },
   directives: {TransferDom},
   components: {
-    Icon, Popup, RScroll, DSearch,LoadMore,PopupPicker 
+    Icon, Popup, RScroll, DSearch,LoadMore,PopupPicker
   },
   data() {
     return {
@@ -153,12 +153,10 @@ export default {
       this.role = [this.selItems.handlerRoleName];
       this.getGroupByUserId();
       this.getRoleByUserId();
-      
-      
     },
     // TODO 判断是否展示选中图标
     showSelIcon(sItem) {
-      return this.selItems.userId === sItem.userId;
+      return `${this.selItems.userId}` === `${sItem.userId}`;
     },
     // TODO 获取默认图片
     getDefaultImg(item) {
@@ -220,7 +218,7 @@ export default {
     getGroupByUserId(){
       return getGroupByUserId(this.selItems.userId).then(({tableContent = []}) => {
         this.groupList = []
-        tableContent.forEach(item=>{          
+        tableContent.forEach(item=>{
           this.groupList.push({
             ...item,
             name: item.userGroupName,
@@ -237,7 +235,7 @@ export default {
     getRoleByUserId() {
       return getRoleByUserId(this.selItems.userId).then(({tableContent = []}) => {
         this.roleList = []
-        tableContent.forEach(item=>{          
+        tableContent.forEach(item=>{
           this.roleList.push({
             ...item,
             name: item.userGroupName,
@@ -248,7 +246,7 @@ export default {
         if(tableContent.length && this.isSetInitial){
           this.role = [tableContent[0].userGroupName];
           this.selItems.handlerRole = tableContent[0].userGroupId;
-        }               
+        }
       })
 
     },
@@ -324,7 +322,7 @@ export default {
             position: absolute;
             top: .02rem;
             // right: -.05rem;
-            
+
 
           }
         }

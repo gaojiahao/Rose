@@ -13,7 +13,7 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        @click.native="goDetail(item, index)"></just-word-item>
+                        @click.native="goDetail(item, index)" no-count></just-word-item>
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn " v-if="action.add">
