@@ -21,45 +21,32 @@
       <span class="iconfont icon-youjiantou r-arrow"></span>
     </div>
     <slot name="other" v-if="selInfo.fundCode"></slot>
-    <!-- 往来 Popup -->
-    <div v-transfer-dom>
-      <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-        <div class="trade_pop">
-          <div class="title">
-            <!-- 搜索栏 -->
-            <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
-          </div>
-          <!-- 往来列表 -->
-          <r-scroll class="pop-list" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="pop-item" v-for="(item, index) in listData" :key='index' @click.stop="selItem(item, index)">
-              <div class="top">
-                <span class="name">{{item.fundName}}</span>
-                <span class="label">{{item.fundType}}</span>
-              </div>
-              <div class="amt">
-                <span>编码: {{item.fundCode}}</span>
-                <span>账户余额: {{item.thenAmntBal | numberComma}}</span>
-              </div>
-              <!-- icon -->
-              <!--<x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>-->
-              <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
-            </div>
-          </r-scroll>
+
+    <!-- 资金列表pop -->
+    <r-popup :show="showDealerPop" :data="listData" :options="scrollOptions" :has-next="hasNext" :default-value="defaultValue"
+             :judge-keys="['fundCode']" @on-pulling-up="onPullingUp" @on-select="selItem" @on-search="searchList"
+             v-model="showDealerPop">
+      <template slot-scope="{item}" slot="pop-item">
+        <div class="top">
+          <span class="name">{{item.fundName}}</span>
+          <span class="label">{{item.fundType}}</span>
         </div>
-      </popup>
-    </div>
+        <div class="amt">
+          <span>编码: {{item.fundCode}}</span>
+          <span>账户余额: {{item.thenAmntBal | numberComma}}</span>
+        </div>
+      </template>
+    </r-popup>
   </div>
 </template>
 
 <script>
-  import {Icon, Popup, AlertModule, numberComma} from 'vux'
-  import DSearch from 'components/search'
-  import {getEmployeeReserveFunds} from 'service/costService'
-  import RScroll from 'components/RScroll'
+  import { AlertModule, numberComma} from 'vux'
+  import {getEmployeeReserveFunds, getSupplierToPayDeposit} from 'service/costService'
+  import RPopup from 'components/Popup/commonPart/RPopup'
 
   export default {
-    name: "PopDealerList",
+    name: "PopCashList",
     props: {
       // 默认值
       defaultValue: {
@@ -72,18 +59,14 @@
         type: Boolean,
         default: false
       },
-      placeholder: {
-        type: String,
-        default: '请选择'
-      },
       // 请求接口
       request: {
-        type: Number,
-        default: 0
+        type: String,
+        default: '0'
       }
     },
     components: {
-      Icon, Popup, DSearch, RScroll,
+      RPopup,
     },
     data() {
       return {
@@ -104,44 +87,19 @@
     watch: {
       defaultValue: {
         handler() {
-          let defaultValue = this.defaultValue;
-          this.selInfo = Object.freeze({...defaultValue});
-          this.selItems = [{...defaultValue}]
+          this.selInfo = Object.freeze({...this.defaultValue});
         },
         immediate: true
       },
     },
     methods: {
-      // TODO 弹窗展示时调用
-      onShow() {
-        this.$nextTick(() => {
-          if (this.$refs.bScroll) {
-            // 弹窗展示时刷新滚动，防止无法拖动问题
-            this.$refs.bScroll.refresh();
-          }
-        })
-      },
-      // TODO 弹窗隐藏时调用
-      onHide() {
-        this.showDealerPop = false;
-      },
-      // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
-        return this.selItems.findIndex(item => item.fundCode === sItem.fundCode) !== -1;
-      },
       // TODO 选择往来
-      selItem(sItem, sIndex) {
-        this.showDealerPop = false;
-        this.selItems = [sItem];
-        this.selInfo = Object.freeze({...sItem});
-        this.$emit('sel-item', {...this.selInfo});
-      },
-      // 选择联系人
-      selContact(item) {
-        this.$emit('sel-contact', item);
+      selItem(sItem) {
+        this.selInfo = {...sItem};
+        this.$emit('sel-item', {...sItem});
       },
       // TODO 获取往来列表
-      getDealer() {
+      getList() {
         let filter = [];
         if (this.srhInpTx) {
           filter = [
@@ -161,9 +119,6 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
-          })
         }).catch(e => {
           AlertModule.show({
             content: e.message,
@@ -176,24 +131,20 @@
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
-        this.getDealer();
-      },
-      itemClick() {
-        this.showDealerPop = true;
+        this.getList();
       },
       onPullingUp() {
         this.page++;
-        this.getDealer();
+        this.getList();
       }
     },
     filters: {
       numberComma,
     },
     created() {
-      let serviceList = [getEmployeeReserveFunds];
+      let serviceList = [getEmployeeReserveFunds, getSupplierToPayDeposit];
       this.requestMethods = serviceList[this.request];
-      this.getDealer();
+      this.getList();
     }
   }
 </script>
@@ -261,14 +212,6 @@
             vertical-align: middle;
             text-overflow: ellipsis;
           }
-          .user-tel {
-            font-size: .16rem;
-            font-weight: bold;
-            display: inline-block;
-            font-family: Helvetica;
-            vertical-align: middle;
-            margin-bottom: -.02rem;
-          }
         }
       }
     }
@@ -280,66 +223,25 @@
   }
 
   // 弹出层
-  .trade_pop_part {
-    background: #fff;
-    .trade_pop {
-      padding: 0 .08rem;
-      height: 100%;
-      overflow: hidden;
-      // 顶部
-      .title {
-        position: relative;
-        margin: 0.08rem 0;
-        font-size: .2rem;
+  .r-popup-top {
+    .top {
+      display: flex;
+      align-items: baseline;
+      .name {
+        margin-right: .05rem;
+        font-size: .14rem;
+        font-weight: bold;
       }
-      // 往来列表
-      .pop-list {
-        width: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-        height: calc(100% - .38rem);
-        /* 使用深度作用选择器进行样式覆盖 */
-        /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
-        }
-        // 每个物料
-        .pop-item {
-          position: relative;
-          padding: 0.08rem;
-          margin-bottom: .2rem;
-          box-shadow: 0 0 8px #e8e8e8;
-          box-sizing: border-box;
-          .top {
-            display: flex;
-            align-items: baseline;
-            .name {
-              margin-right: .05rem;
-              font-size: .14rem;
-              font-weight: bold;
-            }
-            .label {
-              color: #757575;
-              font-size: .12rem;
-            }
-          }
-          .amt {
-            margin-top: .05rem;
-            color: #757575;
-            font-size: .12rem;
-          }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
-          }
-        }
+      .label {
+        color: #757575;
+        font-size: .12rem;
       }
     }
+    .amt {
+      margin-top: .05rem;
+      color: #757575;
+      font-size: .12rem;
+    }
   }
+
 </style>

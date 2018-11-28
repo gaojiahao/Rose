@@ -6,56 +6,44 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 往来信息 -->
-        <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer">
+        <pop-dealer-list request="1" :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
-              <span class="amt-dealer-item">申请金额: {{applicationAmount}}</span>
-              <span class="amt-dealer-item">本次支付: {{tdAmountCopy1}}</span>
+              <span class="amt-dealer-item">本次申请: {{applicationAmount}}</span>
               <span class="amt-dealer-item">本次支付后余额: {{differenceAmount}}</span>
             </div>
+            <x-input class="amt-copy" title="本次支付" text-align='right' placeholder='请填写'
+                     @on-blur="checkAmt('tdAmountCopy1')"
+                     @on-focus="getFocus($event)" type='number' v-model.number='dealerInfo.tdAmountCopy1'></x-input>
           </template>
         </pop-dealer-list>
 
         <!-- 采购列表 -->
         <div class="materiel_list">
           <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
-            <div class="title">欠款明细</div>
-            <div class="mode">请选择欠款明细</div>
+            <div class="title">定金明细</div>
+            <div class="mode">请选择定金明细</div>
             <span class="iconfont icon-youjiantou r-arrow"></span>
           </div>
           <template v-else>
-            <div class="title">欠款明细</div>
+            <div class="title">定金明细</div>
             <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
                  :key="index">
               <div class="detail-item top">
-                <span class="info-item">{{item.popiCode}}</span>
+                <span class="info-item">{{item.transCode}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item">采购订单号: {{item.poCode}}</span>
-                <span class="info-item">价税合计: {{item.thenTotalAmntBal}}</span>
+                <span class="info-item">总金额: {{item.thenAmntBal}}</span>
+                <span class="info-item">采购定金: {{item.deposit}}</span>
               </div>
-              <div class="detail-item">
-                <span class="info-item">已核销: {{item.thenAlreadyAmnt}}</span>
-                <span class="info-item">待核销: {{item.thenAmntBal}}</span>
-              </div>
-              <div class="detail-item">
-                <span class="info-item" v-if="item.accountExpirationDate || item.accountExpirationDate === 0">账期到期日: {{item.accountExpirationDate}}</span>
-                <span class="info-item"
-                      v-if="item.daysOfAccount || item.daysOfAccount === 0">账期天数: {{item.daysOfAccount}}</span>
-                <span class="info-item" v-if="item.ageOfAging || item.ageOfAging === 0">账龄天数: {{item.ageOfAging}}</span>
-              </div>
-              <div class="detail-item">
-                <span class="info-item" v-if="item.accountRemaingDays || item.accountRemaingDays === 0">账期剩余天数: {{item.accountRemaingDays}}</span>
-                <span class="info-item">已收票: {{item.invoicing}}</span>
-                <span class="info-item">待收票: {{item.invoiced}}</span>
-              </div>
-              <div class="detail-item">
-                <span class="info-item">本次支付后余额: {{item.differenceAmount}}</span>
-              </div>
-              <x-input class="" title="本次申请支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'applicationAmount')"
-                       @on-focus="getFocus($event)" type='number' v-model.number='item.applicationAmount'></x-input>
-              <x-input title="本次支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'tdAmount')" type='number'
-                       @on-focus="getFocus($event)" v-model.number='item.tdAmount'></x-input>
+              <x-input title="已付定金" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'thenAlreadyAmnt')"
+                       @on-focus="getFocus($event)" type='number' v-model.number='item.thenAlreadyAmnt'></x-input>
+              <x-input text-align='right' placeholder='请填写'  type='number' @on-blur="checkAmt(item, 'tdAmount')"
+                       @on-focus="getFocus($event)" v-model.number='item.tdAmount'>
+                <template slot="label">
+                  <span class="required">待付定金</span>
+                </template>
+              </x-input>
             </div>
           </template>
         </div>
@@ -65,10 +53,11 @@
         </div>
 
         <!-- 资金信息 -->
-        <pop-cash-list :default-value="cashInfo" @sel-item="selCash">
+        <pop-cash-list request="1" :default-value="cashInfo" @sel-item="selCash">
           <template slot="other">
-            <x-input class="amt-cash" title="本次支付" text-align='right' placeholder='请填写' type='number'
-                     @on-blur="checkAmt('tdAmount')" @on-focus="getFocus($event)" v-model.number='cashInfo.tdAmount'></x-input>
+            <x-input class="amt-cash" title="支付金额" text-align='right' placeholder='请填写' type='number'
+                     @on-blur="checkAmt('tdAmount')" @on-focus="getFocus($event)"
+                     v-model.number='cashInfo.tdAmount'></x-input>
           </template>
         </pop-cash-list>
 
@@ -79,8 +68,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!-- 采购单信息 -->
-        <pop-order-list :show="showOrder" :params="dealerParams" :default-value="orderList"
-                        @sel-item="selOrder" v-model="showOrder"></pop-order-list>
+        <pop-earnest-money-list :show="showOrder" :params="dealerParams" :default-value="orderList"
+                                @sel-item="selOrder" v-model="showOrder"></pop-earnest-money-list>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -105,11 +94,11 @@
   // 组件引入
   import PopDealerList from 'components/Popup/finance/PopDealerList'
   import PopCashList from 'components/Popup/finance/PopCashList'
-  import PopOrderList from 'components/Popup/finance/PopOrderList'
+  import PopEarnestMoneyList from 'components/Popup/finance/PopEarnestMoneyList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import {accAdd} from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
   const DRAFT_KEY = 'FGYSQK_DATA';
@@ -119,11 +108,11 @@
       Cell, Group, Popup,
       XInput, XTextarea,
       PopupPicker, RPicker, PopBaseinfo,
-      PopDealerList, PopCashList, PopOrderList,
+      PopDealerList, PopCashList, PopEarnestMoneyList,
     },
     data() {
       return {
-        listId: 'c930267f-66fd-4927-983b-0216ef9449b3',
+        listId: '7d172485-8726-4e42-b29d-ec2a716bf062',
         biReferenceId: '',
         selectedCost: [],
         costIndex: 0,
@@ -139,22 +128,11 @@
       }
     },
     computed: {
-      // 申请金额
+      // 本次申请
       applicationAmount() {
         let total = 0;
         this.orderList.forEach(item => {
-          if (item.applicationAmount) {
-            total = accAdd(total, item.applicationAmount);
-          }
-        });
-        return toFixed(total)
-      },
-      // 本次支付
-      tdAmountCopy1() {
-        let total = 0;
-        this.orderList.forEach(item => {
           if (item.tdAmount) {
-            item.differenceAmount = accAdd(item.thenAmntBal, item.tdAmount);
             total = accAdd(total, item.tdAmount);
           }
         });
@@ -162,9 +140,10 @@
       },
       // 本次支付后余额
       differenceAmount() {
-        let total = 0;
-        if (this.dealerInfo.amntBal) {
-          total = accAdd(this.tdAmountCopy1, this.dealerInfo.amntBal)
+        let total = this.dealerInfo.amntBal || 0;
+        total = accSub(total, this.applicationAmount);
+        if (this.dealerInfo.tdAmountCopy1) {
+          total = accAdd(total, this.dealerInfo.tdAmountCopy1)
         }
         return toFixed(total);
       },
@@ -178,30 +157,26 @@
           warn = '请选择供应商';
         }
         if (!warn && !this.orderList.length) {
-          warn = '请选择欠款明细'
+          warn = '请选择定金明细'
         }
         if (!warn) {
           this.orderList.every(item => {
-            if (!item.popiCode) {
-              warn = '请选择采购入库号';
+            if (!item.transCode) {
+              warn = '请选择协议号';
+              return false
+            }
+            if (!item.tdAmount) {
+              warn = '请输入待付定金';
               return false
             }
             dataSet.push({
               tdId: item.tdId || '',
-              transMatchedCode: item.popiCode,
-              orderCode: item.poCode,
-              thenTotalAmntBal: item.thenTotalAmntBal,
+              transMatchedCode: item.transCode,
+              thenTotalAmntBal: item.thenAmntBal,
+              applicationAmount: item.deposit,
               thenAlreadyAmnt: item.thenAlreadyAmnt,
-              thenAmntBal: item.thenAmntBal,
-              accountExpirationDate: item.accountExpirationDate,
-              daysOfAccount: item.daysOfAccount,
-              ageOfAging: item.ageOfAging,
-              accountRemaingDays: item.accountRemaingDays,
-              invoiced: item.invoicing,
-              pendingTicket: item.invoiced,
-              applicationAmount: item.applicationAmount,
               tdAmount: item.tdAmount,
-              differenceAmount: item.differenceAmount,
+              dealerDebit: this.dealerInfo.dealerCode,
             });
             return true
           });
@@ -219,7 +194,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "FGQK", createdBy: JSON.stringify(this.formData.handler)}
+              [this.processCode]: {businessKey: "STPD", createdBy: JSON.stringify(this.formData.handler)}
             }
             if (this.isResubmit) {
               wfPara = {
@@ -235,10 +210,7 @@
               dealerName_dealerDebit: this.dealerInfo.nickname,
               dealerDebit: this.dealerInfo.dealerCode,
               drDealerLabel: this.dealerInfo.dealerLabelName,
-              thenAmntBalCopy1: this.dealerInfo.amntBal,
               applicationAmount: this.applicationAmount,
-              tdAmountCopy1: this.tdAmountCopy1,
-              differenceAmount: this.differenceAmount,
             };
             let outputDataSet = {
               fundName_cashOutCode: this.cashInfo.fundName,
@@ -261,6 +233,9 @@
                 modifer: this.transCode ? this.formData.handler : '',
                 inPut: {
                   dataSet: [inputDataSet],
+                  thenAmntBalCopy1: this.dealerInfo.amntBal,
+                  tdAmountCopy1: this.dealerInfo.tdAmountCopy1,
+                  differenceAmount: this.differenceAmount,
                 },
                 order: {
                   dataSet
@@ -320,17 +295,19 @@
           let {dataSet: outputDataSet = []} = formData.outPut;
           let [dealerInfo = {}] = inputDataSet;
           let [cashInfo = {}] = outputDataSet;
-          // 采购明细
+          // 定金明细
           orderDataSet.forEach(item => {
-            item.popiCode = item.transMatchedCode;
-            item.poCode = item.orderCode;
+            item.transCode = item.transMatchedCode;
+            item.thenAmntBal = item.thenTotalAmntBal;
+            item.deposit = item.applicationAmount;
           });
           this.dealerInfo = {
             ...dealerInfo,
             nickname: dealerInfo.dealerName_dealerDebit,
             dealerCode: dealerInfo.dealerDebit,
             dealerLabelName: dealerInfo.drDealerLabel,
-            amntBal: dealerInfo.thenAmntBalCopy1,
+            amntBal: dealerInfo.thenAmntBal,
+            tdAmountCopy1: formData.inPut.tdAmountCopy1,
           };
           this.cashInfo = {
             ...cashInfo,
@@ -382,6 +359,9 @@
       // TODO 保留两位小数
       checkAmt(item, key) {
         switch (item) {
+          case 'tdAmountCopy1':
+            this.dealerInfo.tdAmountCopy1 = toFixed(this.dealerInfo.tdAmountCopy1);
+            break;
           case 'tdAmount':
             this.cashInfo.tdAmount = toFixed(this.cashInfo.tdAmount);
             break;
@@ -423,7 +403,7 @@
         }
       }
     }
-    .amt-cash {
+    .amt-copy, .amt-cash {
       padding: .1rem 0 0;
       font-size: .14rem;
       &:before {

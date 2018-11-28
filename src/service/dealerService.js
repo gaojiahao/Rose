@@ -86,7 +86,7 @@ const dealerService = {
         })
     },
     // TODO 获取供应商列表(付供应商欠款)
-    getPaySupplierArrears(data){
+    getPaySupplierArrears(data = {}){
       return $axios.ajax({
         url: '/H_roleplay-si/ds/getPaySupplierArrears',
         data: {
@@ -95,6 +95,17 @@ const dealerService = {
         }
       })
     },
+    // TODO 获取供应商列表(付供应商定金)
+    getDepositToPaySuppliers(data = {}) {
+      return $axios.ajax({
+        url: '/H_roleplay-si/ds/getDepositToPaySuppliers',
+        data: {
+          _dc: Date.now(),
+          ...data,
+        }
+      })
+    },
 }
 export let getPaySupplierArrears = dealerService.getPaySupplierArrears;
+export let getDepositToPaySuppliers = dealerService.getDepositToPaySuppliers;
 export default dealerService

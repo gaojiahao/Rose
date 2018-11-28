@@ -54,7 +54,7 @@
 <script>
   import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
   import DSearch from 'components/search'
-  import {getPaySupplierArrears} from 'service/dealerService'
+  import {getPaySupplierArrears, getDepositToPaySuppliers} from 'service/dealerService'
   import RScroll from 'components/RScroll'
 
   export default {
@@ -81,8 +81,8 @@
       },
       // 请求接口
       request: {
-        type: Number,
-        default: 0
+        type: String,
+        default: '0'
       }
     },
     components: {
@@ -195,7 +195,7 @@
       numberComma,
     },
     created() {
-      let serviceList = [getPaySupplierArrears];
+      let serviceList = [getPaySupplierArrears, getDepositToPaySuppliers];
       this.requestMethods = serviceList[this.request];
       this.getDealer();
     }

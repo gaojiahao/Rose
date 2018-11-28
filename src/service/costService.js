@@ -77,6 +77,17 @@ export let getSupplierToPayDeposit = (data = {}) => {
   })
 };
 
+// TODO 获取定金列表(付供应商定金)
+export let getPurchaseAgreementDeposit = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getPurchaseAgreementDeposit',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
 
 }
