@@ -239,7 +239,7 @@
               warn = '请选择出库单';
               return false
             } else if (!item.tdQty && item.tdQty !== 0) {
-              warn = '请填写本次开票数量';
+              warn = '请填写本次申请数量';
               return false
             } else if (!item.taxRate && item.taxRate !== 0) {
               warn = '请填写税率';
