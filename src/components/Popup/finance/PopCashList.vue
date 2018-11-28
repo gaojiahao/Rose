@@ -20,6 +20,7 @@
       </div>
       <span class="iconfont icon-youjiantou r-arrow"></span>
     </div>
+    <slot name="other" v-if="selInfo.fundCode"></slot>
     <!-- 往来 Popup -->
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -52,7 +53,7 @@
 </template>
 
 <script>
-  import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
+  import {Icon, Popup, AlertModule, numberComma} from 'vux'
   import DSearch from 'components/search'
   import {getEmployeeReserveFunds} from 'service/costService'
   import RScroll from 'components/RScroll'
@@ -228,10 +229,10 @@
       font-weight: 500;
     }
     .r-arrow {
+      position: absolute;
       top: 50%;
       right: -1%;
       font-weight: bold;
-      position: absolute;
       transform: translate(0, -50%);
     }
     .dealer-info {

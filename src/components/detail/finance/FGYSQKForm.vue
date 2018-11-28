@@ -45,17 +45,22 @@
             <form-cell cellTitle='采购订单号' :cellContent="item.orderCode"></form-cell>
             <form-cell cellTitle='价税合计' :cellContent="item.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='已核销' :cellContent="item.thenAlreadyAmnt | toFixed | numberComma(3)" showSymbol></form-cell>
-            <form-cell cellTitle='待核销' :cellContent="item.thenAmntBal | toFixed | numberComma(3)" showSymbol></form-cell>
+            <form-cell cellTitle='已核销' :cellContent="item.thenAlreadyAmnt | toFixed | numberComma(3)"
+                       showSymbol></form-cell>
+            <form-cell cellTitle='待核销' :cellContent="item.thenAmntBal | toFixed | numberComma(3)"
+                       showSymbol></form-cell>
             <form-cell cellTitle='账期到期日' :cellContent="item.accountExpirationDate"></form-cell>
             <form-cell cellTitle='账期天数' :cellContent="`${item.daysOfAccount}`"></form-cell>
             <form-cell cellTitle='帐龄天数' :cellContent="`${item.ageOfAging}`"></form-cell>
             <form-cell cellTitle='账期剩余天数' :cellContent="`${item.accountRemaingDays}`"></form-cell>
-            <form-cell cellTitle='已收票' :cellContent="item.invoiced"></form-cell>
-            <form-cell cellTitle='待收票' :cellContent="item.pendingTicket"></form-cell>
-            <form-cell cellTitle='本次申请支付' :cellContent="item.applicationAmount | toFixed | numberComma(3)" showSymbol></form-cell>
+            <form-cell cellTitle='已收票' :cellContent="item.invoiced | toFixed | numberComma(3)" showSymbol></form-cell>
+            <form-cell cellTitle='待收票' :cellContent="item.pendingTicket | toFixed | numberComma(3)"
+                       showSymbol></form-cell>
+            <form-cell cellTitle='本次申请支付' :cellContent="item.applicationAmount | toFixed | numberComma(3)"
+                       showSymbol></form-cell>
             <form-cell cellTitle='本次支付' :cellContent="item.tdAmount | toFixed | numberComma(3)" showSymbol></form-cell>
-            <form-cell cellTitle='本次支付后余额' :cellContent="item.differenceAmount | toFixed | numberComma(3)" showSymbol></form-cell>
+            <form-cell cellTitle='本次支付后余额' :cellContent="item.differenceAmount | toFixed | numberComma(3)"
+                       showSymbol></form-cell>
           </div>
         </div>
       </div>
@@ -69,22 +74,12 @@
             <form-cell cellTitle='资金账户' :cellContent="item.fundName_cashOutCode" :showTopBorder=false></form-cell>
             <form-cell cellTitle='资金编码' :cellContent="item.cashOutCode"></form-cell>
             <form-cell cellTitle='资金账户类型' :cellContent="item.cashType_cashOutCode"></form-cell>
-            <!--<form-cell cellTitle='账户余额' :cellContent="item.thenAmntBal | toFixed | numberComma(3)"
+            <form-cell cellTitle='账户余额' :cellContent="item.thenAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='本次支付' :cellContent="item.tdAmount | toFixed | numberComma(3)" showSymbol></form-cell>-->
+            <form-cell cellTitle='本次支付' :cellContent="item.tdAmount | toFixed | numberComma(3)" showSymbol></form-cell>
           </div>
         </div>
       </div>
-      <!--<div class="price_cell vux-1px-t">
-        <div class="price_title">
-          <span>报销人：</span>
-          <span class="people_name">{{orderInfo.creatorName }}</span>
-        </div>
-        <div>
-          <span class='title'>合计:</span>
-          <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-        </div>
-      </div>-->
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->

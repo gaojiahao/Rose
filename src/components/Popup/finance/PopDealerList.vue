@@ -19,6 +19,7 @@
       </div>
       <span class="iconfont icon-youjiantou r-arrow"></span>
     </div>
+    <slot name="other" v-if="selInfo.dealerCode"></slot>
     <!-- 往来 Popup -->
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
@@ -151,7 +152,8 @@
             {
               operator: 'like',
               value: this.srhInpTx,
-              property: 'dealerName',
+              // property: 'dealerName',
+              property: 'nickname',
             },
           ];
         }

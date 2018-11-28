@@ -1,16 +1,22 @@
 <template>
-  <div class="pages xsbj-apply-container">
+  <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 往来信息 -->
-        <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer"></pop-dealer-list>
-        <!-- 资金信息 -->
-        <pop-cash-list :default-value="cashInfo" @sel-item="selCash"></pop-cash-list>
-        <!-- 费用列表 -->
+        <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer">
+          <template slot="other">
+            <div class="amt-dealer">
+              <span class="amt-dealer-item">申请金额: {{applicationAmount}}</span>
+              <span class="amt-dealer-item">本次支付: {{tdAmountCopy1}}</span>
+              <span class="amt-dealer-item">本次支付后余额: {{differenceAmount}}</span>
+            </div>
+          </template>
+        </pop-dealer-list>
 
+        <!-- 采购列表 -->
         <div class="materiel_list">
           <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
             <div class="title">采购明细</div>
@@ -19,7 +25,8 @@
           </div>
           <template v-else>
             <div class="title">采购明细</div>
-            <div class="order-detail" v-for="(item, index) in orderList" :key="index">
+            <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
+                 :key="index">
               <div class="detail-item top">
                 <span class="info-item">{{item.popiCode}}</span>
               </div>
@@ -42,22 +49,29 @@
                 <span class="info-item">已收票: {{item.invoicing}}</span>
                 <span class="info-item">待收票: {{item.invoiced}}</span>
               </div>
+              <div class="detail-item">
+                <span class="info-item">本次支付后余额: {{item.differenceAmount}}</span>
+              </div>
               <x-input class="" title="本次申请支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item)"
-                       type='number'
-                       v-model.number='item.applicationAmount'></x-input>
+                       @on-focus="getFocus($event)" type='number' v-model.number='item.applicationAmount'></x-input>
               <x-input title="本次支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item)" type='number'
-                       v-model.number='item.tdAmount'></x-input>
-              <cell title="本次支付后余额" :value="item.differenceAmount"></cell>
+                       @on-focus="getFocus($event)" v-model.number='item.tdAmount'></x-input>
             </div>
           </template>
         </div>
         <!-- 新增更多 按钮 -->
         <div class="handle_part vx-1px-t" v-if="orderList.length">
-            <span class="add_more stop" v-if="this.actions.includes('stop')"
-                  @click="stopOrder">终止提交</span>
-          <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
           <span class="add_more" v-if="orderList.length" @click="addOrder">新增更多</span>
         </div>
+
+        <!-- 资金信息 -->
+        <pop-cash-list :default-value="cashInfo" @sel-item="selCash">
+          <template slot="other">
+            <x-input class="amt-cash" title="本次支付" text-align='right' placeholder='请填写' type='number'
+                     @on-focus="getFocus($event)" v-model.number='cashInfo.tdAmount'></x-input>
+          </template>
+        </pop-cash-list>
+
         <div class="materiel_list">
           <group title="其他信息" class="costGroup">
             <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
@@ -69,14 +83,9 @@
                         @sel-item="selOrder" v-model="showOrder"></pop-order-list>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}">
-      <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
-      </span>
-      <span class="count_btn stop" @click="stopOrder"
-            v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>终止</span>
-      <span class="count_btn" @click="submitOrder">提交</span>
+    <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
+      <div class="btn-item stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</div>
+      <div class="btn-item" @click="submitOrder">提交</div>
     </div>
   </div>
 </template>
@@ -131,33 +140,37 @@
       }
     },
     computed: {
-      // 合计金额
-      totalAmount() {
+      // 申请金额
+      applicationAmount() {
+        let total = 0;
+        this.orderList.forEach(item => {
+          if (item.applicationAmount) {
+            total = accAdd(total, item.applicationAmount);
+          }
+        });
+        return toFixed(total)
+      },
+      // 本次支付
+      tdAmountCopy1() {
         let total = 0;
         this.orderList.forEach(item => {
           if (item.tdAmount) {
+            item.differenceAmount = accAdd(item.thenAmntBal, item.tdAmount);
             total = accAdd(total, item.tdAmount);
           }
         });
-        return total;
+        return toFixed(total)
       },
-
-      applicationAmount() {
-        return 0
-      },
-      tdAmountCopy1() {
-        return 0
-      },
+      // 本次支付后余额
       differenceAmount() {
-        return 0
+        let total = 0;
+        if (this.dealerInfo.amntBal) {
+          total = accAdd(this.tdAmountCopy1, this.dealerInfo.amntBal)
+        }
+        return toFixed(total);
       },
     },
     methods: {
-      getOrder(index, item) {
-        this.showOrder = true;
-        this.costIndex = index;
-        this.selectedCost = [item];
-      },
       // TODO 提交
       submitOrder() {
         let warn = '';
@@ -170,13 +183,23 @@
             warn = '请选择费用名称';
             return false
           }
-          let sItem = {
+          dataSet.push({
             tdId: item.tdId || '',
-            ...item,
-            pendingTicket: item.invoiced,
+            transMatchedCode: item.popiCode,
+            orderCode: item.poCode,
+            thenTotalAmntBal: item.thenTotalAmntBal,
+            thenAlreadyAmnt: item.thenAlreadyAmnt,
+            thenAmntBal: item.thenAmntBal,
+            accountExpirationDate: item.accountExpirationDate,
+            daysOfAccount: item.daysOfAccount,
+            ageOfAging: item.ageOfAging,
+            accountRemaingDays: item.accountRemaingDays,
             invoiced: item.invoicing,
-          };
-          dataSet.push(sItem);
+            pendingTicket: item.invoiced,
+            applicationAmount: item.applicationAmount,
+            tdAmount: item.tdAmount,
+            differenceAmount: item.differenceAmount,
+          });
           return true
         });
         if (!this.dealerInfo.dealerCode) {
@@ -265,27 +288,51 @@
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
         }).then((data) => {
-          this.attachment = data.attachment;
-          this.listId = data.listId;
-          console.log(data);
-          this.biComment = data.biComment;
-          this.biReferenceId = data.biReferenceId;
-          let {formData} = data;
+          let {attachment = [], listId = '', biComment = '', biReferenceId = '', formData = {}} = data;
+          this.attachment = attachment;
+          this.listId = listId;
+          this.biComment = biComment;
+          this.biReferenceId = biReferenceId;
           // 基本信息
           this.formData = {
             ...this.formData,
-            creator: formData.creator,
-            modifer: formData.modifer,
-            biComment: formData.biComment,
+            ...formData,
+            // creator: formData.creator,
+            // modifer: formData.modifer,
+            // biComment: formData.biComment,
           };
-          // 费用明细
-          formData.order.dataSet.forEach(item => {
-            let obj = {
-              tdId: item.tdId || '',
-            }
+          this.handlerDefault = {
+            handler: formData.userId,
+            handlerName: formData.nickname,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          let {dataSet: orderDataSet = []} = formData.order;
+          let {dataSet: inputDataSet = []} = formData.inPut;
+          let {dataSet: outputDataSet = []} = formData.outPut;
+          let [dealerInfo = {}] = inputDataSet;
+          let [cashInfo = {}] = outputDataSet;
+          // 采购明细
+          orderDataSet.forEach(item => {
+
           });
+          this.dealerInfo = {
+            ...dealerInfo,
+            nickname: dealerInfo.dealerName_dealerDebit,
+            dealerCode: dealerInfo.dealerDebit,
+            dealerLabelName: dealerInfo.drDealerLabel,
+            amntBal: dealerInfo.thenAmntBalCopy1,
+          };
+          this.cashInfo = {
+            ...cashInfo,
+            fundName: cashInfo.fundName_cashOutCode,
+            fundCode: cashInfo.cashOutCode,
+            fundType: cashInfo.cashType_cashOutCode,
+          };
+          this.orderList = orderDataSet;
           this.$loading.hide();
-          // this.$emit('input', false);
         })
       },
       // TODO 保存草稿数据
@@ -298,6 +345,8 @@
           [DRAFT_KEY]: {
             formData: this.formData,
             dealerInfo: this.dealerInfo,
+            orderList: this.orderList,
+            cashInfo: this.cashInfo,
           }
         };
       },
@@ -330,6 +379,9 @@
         let draft = JSON.parse(data);
         this.formData = draft.formData;
         this.dealerInfo = draft.dealerInfo;
+        this.orderList = draft.orderList;
+        this.cashInfo = draft.cashInfo;
+        this.dealerParams = {dealerCode: this.dealerInfo.dealerCode}
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },
@@ -338,6 +390,29 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
+
+  .fgysqk-apply-container {
+    .amt-dealer {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: .1rem;
+      color: #757575;
+      font-size: .14rem;
+      .amt-dealer-item {
+        margin-right: .1rem;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+    .amt-cash {
+      padding: .1rem 0 0;
+      font-size: .14rem;
+      &:before {
+        display: none;
+      }
+    }
+  }
 
   .costGroup {
     /deep/ > .vux-no-group-title {
@@ -384,7 +459,8 @@
 
   // 新增更多
   .handle_part {
-    width: 100%;
+    margin: 0 auto;
+    width: 95%;
     text-align: center;
     position: relative;
     background-color: #fff;
@@ -420,6 +496,10 @@
 
   .order-detail {
     margin-bottom: .1rem;
+    padding-top: .1rem;
+    &:first-child {
+      padding-top: 0;
+    }
     &:last-child {
       margin-bottom: 0;
     }
@@ -438,29 +518,6 @@
     }
     .weui-cell {
       padding: .05rem 0;
-    }
-  }
-
-  .add_more {
-    width: 100%;
-    text-align: center;
-    font-size: 0.12rem;
-    padding: 0.1rem 0;
-    color: #757575;
-    span {
-      margin: 0 5px;
-      color: #fff;
-      padding: .01rem .06rem;
-      border-radius: .12rem;
-    }
-    .add {
-      background: #5077aa;
-    }
-    .delete {
-      background: red;
-    }
-    em {
-      font-style: normal;
     }
   }
 </style>
