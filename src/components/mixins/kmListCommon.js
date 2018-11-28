@@ -7,7 +7,7 @@ import RScroll from 'components/RScroll'
 export default {
   data() {
     return {
-      //列表scroll参数
+      // 列表scroll参数
       page: 1, 
       limit: 20,
       hasNext: true,
@@ -16,7 +16,7 @@ export default {
         pullDownRefresh: true,
         pullUpLoad: true,
       },
-      //流水scroll
+      // 流水scroll
       flowPage: 1, 
       flowLimit: 20,
       FlowHasNext: true,
@@ -24,22 +24,21 @@ export default {
         click: true,
         pullUpLoad: true,
       },
-      listView: [], //列表视图
-      calc_rel_code : '',
-      view_id : '',
-      listField :[], //列表字段
-      flowShow :false, //流水展示状态
-      flowTitle:{}, //流水标题
-      flowField : [], //流水显示字段
-      flowData:[],//流水数据
-      activeIndex: 0,
-      serachVal: '',
-      listData: [], //存货列表数据
-      activeTab: '',
-      count: 0,
-      total:null, //列表数据总量
-      applyCode : '' ,
-      requestData : {},//请求流水数据的参数
+      total: null,                // 列表数据总量
+      flowShow: false,            // 流水展示状态
+      activeIndex: 0,             // 被选中下标
+      view_id : '',               // 视图 ID
+      serachVal: '',              // 搜索内容
+      activeTab: '',              // 被选中的对应标题
+      applyCode: '' ,
+      calc_rel_code: '',
+      flowData:[],                // 流水数据
+      listData: [],               // 存货列表数据
+      listView: [],               // 列表视图
+      listField: [],              // 列表字段
+      flowField: [],              // 流水显示字段
+      flowTitle: {},              // 流水标题
+      requestData : {},           // 请求流水数据的参数
     }
   },
   directives: { TransferDom },
@@ -61,6 +60,7 @@ export default {
     ///tab切换
     tabClick(val, index) {
       this.activeIndex = index;
+      this.activeTab = val.view_name;
       this.calc_rel_code = val.calc_rel_code;
       this.view_id = val.view_id;
       this.resetCondition();
@@ -73,7 +73,7 @@ export default {
       this.getListData();
     },
     //获取列表视图
-    getClassfiy(){
+    getClassfiy() {
       return getListClassfiy({
         account_code: this.uniqueId,
         device_type : 'phone'
@@ -84,8 +84,8 @@ export default {
       })
     },
     //显示流水详情
-    async getFlow(item){
-      if(this.activeIndex === 1) return;
+    async getFlow(item) {
+      if(this.activeTab.includes('现金流分类')) return; // ‘现金流分类识别’不需要点击事件
       this.flowData = [];
       this.flowPage = 1;
       //工作流锁定余额标不查询流水
@@ -103,7 +103,7 @@ export default {
         row :JSON.stringify(row)
       }
       //流水列表字段
-      await getView({...this.requestData,view_scope: 'model'}).then( data =>{
+      await getView({ ...this.requestData, view_scope: 'model' }).then( data =>{
         this.flowField = data.model;
       }).catch( err => {
         // 关闭笼罩层
@@ -118,52 +118,63 @@ export default {
       })
     },
     //获取流水列表数据
-    getFlowData(){
+    getFlowData() {
       return getView({
         ...this.requestData,
         view_scope: 'data',
         page: this.flowPage,
-        start: (this.flowPage-1)*this.flowLimit,
-        limit: this.flowLimit
-      }).then(({data=[],total=0})=>{
+        limit: this.flowLimit,
+        start: (this.flowPage - 1) * this.flowLimit,
+      }).then(({ data = [], total = 0 }) => {
         this.FlowHasNext = total > (this.flowPage - 1) * this.flowLimit + data.length;
-        data.forEach(item=>{
+        data.forEach( item => {
           item.showList = false;
         })
-        this.flowData = this.FlowHasNext ===1 ? data : this.flowData.concat(data);
+        this.flowData = this.FlowHasNext === 1 ? data : this.flowData.concat(data);
         this.$nextTick(() => {
           this.$refs.flowListWrapper.finishPullUp();
         })
       })
     },
     //获取列表展示字段
-    getView(){
+    getView() {
       return getView({
-        calc_rel_code: this.calc_rel_code,
-        view_id: this.view_id,
         user_code: 1,
-        view_scope: 'model'
-      }).then(data=>{
+        view_scope: 'model',
+        view_id: this.view_id,
+        calc_rel_code: this.calc_rel_code
+      }).then( data => {
         this.listField = data.model;
-
       })
     },
     //获取列表数据
-    getListData(noReset = false){
+    getListData(noReset = false) {
        return getViewList({
-        calc_rel_code: this.calc_rel_code,
-        view_id: this.view_id,
         user_code: 1,
-        view_scope: 'data',
-        page:this.page,
-        start:(this.page-1)*this.limit,
+        page: this.page,
         limit: this.limit,
-        device_type : 'phone',
-        filter:this.serachVal
-      }).then(({data=[],total=0})=>{
+        view_scope: 'data',
+        device_type: 'phone',
+        view_id: this.view_id,
+        filter: this.serachVal,
+        calc_rel_code: this.calc_rel_code,
+        start: (this.page - 1) * this.limit,
+      }).then(({ data = [], total = 0 }) => {
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
-        data.forEach(item=>{
+        data.forEach( item => {
           item.status = false;
+          if(item.cashInOrOut) {
+            switch (item.cashInOrOut) {
+              case '流入':
+                item.flowIconClass = 'iconfont icon-shangjiantou';
+                item.flowWordClass = 'cashIn';
+                break;
+              case '流出': 
+                item.flowIconClass = 'iconfont icon-xiajiantou-copy';
+                item.flowWordClass = 'cashOut';
+                break;
+            }
+          }
         })
         this.listData = this.page === 1 ? data : this.listData.concat(data);
         if (!noReset) {
@@ -171,10 +182,9 @@ export default {
             this.resetScroll();
           })
         }
-        //判断最近有无新增数据
-        //console.log(this.total);
+        // 判断最近有无新增数据
         let text = '';
-        if(noReset && this.activeIndex ===0){
+        if(noReset && this.activeIndex === 0){
           if(this.total){
             text = total - this.total === 0 ? '暂无新数据' : text = `新增${total-this.total}条数据`;
             this.$vux.toast.show({
@@ -187,8 +197,8 @@ export default {
           }
         }
         //列表总数据缓存
-        if(this.activeIndex == 0 && this.page ===1){
-          sessionStorage.setItem(this.applyCode,total);
+        if(this.activeIndex === 0 && this.page === 1){
+          sessionStorage.setItem(this.applyCode, total);
         }
         this.$loading.hide();
       }).catch(e => {
@@ -216,20 +226,20 @@ export default {
       this.getData(true);
     },
     //流水scroll上拉加载
-    onPullingUpFlow(){
+    onPullingUpFlow() {
       this.flowPage++;
       this.getFlowData()        
     },  
     //获取上次存储的列表总数量
-    getSession(){
-      return new Promise(resolve=>{
+    getSession() {
+      return new Promise( resolve => {
         this.total = sessionStorage.getItem(this.applyCode);
         resolve()
       })
     },
-    async getData(noReset){
+    async getData(noReset) {
       await this.getSession();
-      if(noReset){
+      if(noReset) {
         await this.getList(true).then(() => {
             this.$nextTick(() => {
               this.$refs.bScroll.finishPullDown().then(() => {
@@ -240,19 +250,14 @@ export default {
         return
       }
       await this.getList();
-
     }
   },
   created() {
     this.applyCode = this.$route.params.code;
-    // this.getData(false);
-    (async()=>{
+    (async () => {
       await this.getClassfiy();
       await this.getView();
       await this.getListData();
-      this.$emit('input',false);
-
     })()
-  },
-
+  }
 }

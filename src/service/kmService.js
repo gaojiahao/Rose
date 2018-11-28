@@ -48,8 +48,4 @@ export let getProfit = () => {
   });
 };
 
-export default {
-  getListClassfiy,
-  getView,
-  getViewList
-}
+export default {}

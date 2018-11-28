@@ -65,9 +65,31 @@
       padding-bottom: .06rem;
       box-sizing: border-box;
       justify-content: space-between;
-      // 仓库编码
-      .warehouse_info {
+      // 基础信息部分
+      .basic_info {
         display: flex;
+        font-size: .14rem;
+        font-weight: bold;
+        align-items: center;
+        img {
+          width: .6rem;
+          height: .6rem;
+          margin-right: .1rem;
+          border-radius: .08rem;
+        }
+        .app_info_container {
+          display: flex;
+          font-size: .16rem;
+          flex-direction: column;
+          .other_info_with {
+            max-width: 2rem;
+            color: #757575;
+            overflow: hidden;
+            font-size: .12rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }     
         .warehouse {
           font-weight: bold;
           font-size: .12rem;
@@ -83,9 +105,34 @@
           background: #dbe2ef;
         }
       }
+      .cash_flow_status {
+        color: #FFF;
+        display: flex;
+        font-size: .12rem;
+        font-weight: bold;
+        padding: 0 .04rem;
+        border-radius: .3rem;
+        .iconfont {
+          font-size: .12rem;
+        }
+        &.cashIn {
+          background: #fb7777;
+        }
+        &.cashOut {
+          background: #53d397;
+        }
+      }
       .warehouse_type {
         font-size: .14rem;
         color: #757575;
+      }
+    }
+    .common_info_part {
+      color: #454545;
+      font-size: .12rem;
+      font-weight: bold;
+      .each_info {
+        // line-height: .28rem;
       }
     }
     // 物料名称
@@ -101,17 +148,18 @@
       }
       .matter_name {
         font-size: .18rem;
-        font-weight: 200;
-        // padding: .04rem 0 0;
         word-break: break-all;
         .type {
           font-size: .1rem;
         }
       }
+      .matter_type {
+        color: #757575;
+        font-size: .12rem;
+      }
       .mater_days {
         color: #595959;
         font-size: .12rem;
-        font-weight: 400;
         margin-bottom: .04rem;
         .days {
           margin-right: .04rem;
@@ -119,6 +167,13 @@
           border-radius: .12rem;
           padding: .02rem .06rem;
         }
+      }
+    }
+    .main_content {
+      @extend .matter;
+      padding-bottom: .08rem;
+      .other_part {
+        margin-top: .04rem;
       }
     }
     // 仓库关系 金额余额
@@ -129,15 +184,17 @@
       // 仓库关系
       .ware_type {
         font-weight: bold;
-        .type {
-          font-size: .1rem;
-        }
       }
       // 余额
       .balance {
-        color: #c93d1b;
+        color: #111;
+      }
+      .pay_num_part {
+        @extend .balance;
+        display: flex;
         font-weight: bold;
-
+        align-items: flex-end;
+        flex-direction: column;
       }
     }
   }
@@ -216,7 +273,6 @@
           box-sizing: border-box;
           // 应用名称
           .app_name {
-            font-weight: 300;
             font-size: .2rem;
             margin-top: .02rem;
           }

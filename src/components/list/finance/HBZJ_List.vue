@@ -15,34 +15,88 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_duty' v-for='(item,index) in listData' :key='index' @click="getFlow(item)">
-          <div class="duty_top">
-              <div class="warehouse_info">
-                <span class="warehouse warehouse_name">
-                  <!-- 账户编码 -->
-                  账户编码
-                </span>
-                <!-- 编码 -->
-                <span class="warehouse warehouse_code">{{item.cashCode}}</span>
+        <!-- 现金流分类识别 专属dom结构 -->
+        <template v-if="activeTab.includes('现金流分类')">
+          <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
+            <div class="duty_top">
+                <div class="basic_info">
+                  <img :src="item.AppIcon"/>
+                  <div class="app_info_container">
+                    <span>{{item.appTitle}}</span>
+                    <span class="other_info_with">实例编码：{{item.transCode}}</span>
+                    <span class="other_info_with">往来名称：{{item.dealerName}}</span>
+                  </div>
+                </div>
+                <div class="cash_flow_status" :class="item.flowWordClass">
+                  <span>{{item.cashInOrOut}}</span>
+                  <span :class="item.flowIconClass"></span>
+                </div>
+            </div>
+            <div class="common_info_part">
+            </div>
+            <!-- 资金账户名称 -->
+            <div class="main_content">
+              <div class="fund_part">
+                <div class='matter_name'>{{item.fundName}}</div>
+                <p class="matter_type">账户编码：{{item.cashCode}}</p>
+                <p class="matter_type">资金账户大类：{{item.accountSub}}</p>
               </div>
-          </div>
-          <!-- 资金账户名称 -->
-          <div class='matter'>
-            <div class='matter_name'>
-              {{item.fundName}}
+              <div class="other_part">
+                <p class="matter_type">现金流类型：{{item.cashType}}</p>
+                <p class="matter_type">现金流项目：{{item.cashFlow}}</p>
+              </div>
+            </div>
+            
+            <div class='duty_btm vux-1px-t'>
+              <!-- 开户银行 -->
+              <div class="ware_type">
+                <p>{{item.bank || '暂无银行信息'}}<span class="symbol" v-if="item.bank">[开户银行]</span></p>
+                <p class="symbol type_with_num" v-if="item.bank">账号：{{item.account}}</p>
+              </div>
+              <!-- 付款金额 -->
+              <div class="pay_num_part">
+                <p v-if="item.crAmnt" >
+                  <span class="symbol">付款金额: ￥</span>
+                  <span>{{item.crAmnt | numberComma}}</span>
+                </p>
+                <p v-if="item.drAmnt" >
+                  <span class="symbol">收款金额: ￥</span>
+                  <span>{{item.drAmnt | numberComma}}</span>
+                </p>
+                <span class="symbol other_pay_status">币种：人民币</span>
+              </div>
             </div>
           </div>
-          <div class='duty_btm vux-1px-t'>
-            <!-- 开户银行 -->
-            <div class="ware_type">
-              {{item.bank || '暂无银行信息'}}
+        </template>
+        <!-- 其他视图  -->
+        <template v-else>
+          <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
+            <div class="duty_top">
+                <div class="basic_info">
+                  <span class="warehouse warehouse_name">
+                    <!-- 账户编码 -->
+                    账户编码
+                  </span>
+                  <!-- 编码 -->
+                  <span class="warehouse warehouse_code">{{item.cashCode}}</span>
+                </div>
             </div>
-            <!-- 余额 -->
-            <div class="balance" v-if="item.amountBalance !== ''">
-              <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma}}
+            <!-- 资金账户名称 -->
+            <div class='matter'>
+              <div class='matter_name'>{{item.fundName}}</div>
+            </div>
+            <div class='duty_btm vux-1px-t'>
+              <!-- 开户银行 -->
+              <div class="ware_type">
+                {{item.bank || '暂无银行信息'}}
+              </div>
+              <!-- 余额 -->
+              <div class="balance" v-if="item.amountBalance !== ''">
+                <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma}}
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </r-scroll>
 
       <!-- 展开状态 -->
