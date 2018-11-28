@@ -56,7 +56,7 @@
           <div class="mater_list">
             <div class="each_mater">
               <div class="userInp_mode">
-                <div class="title">商机明细</div>
+                <div class="title">账户明细</div>
                 <group class="SJ_group" @group-title-margin-top="0">
                   <cell title="资金账户" v-model='cashInfo.cashName' is-link @click.native="getCost">
                   </cell>
