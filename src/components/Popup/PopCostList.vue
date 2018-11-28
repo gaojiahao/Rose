@@ -11,10 +11,16 @@
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
-               @click.stop="selThis(item, index)">
+               @click.stop="selThis(item, index)">  
             <div class="mater_main ">
               <!-- 物料名称 -->
-              <div class="mater_name">{{item.costName}}</div>
+              <div class="cost_name">
+                {{item.costName}}
+              </div>
+              <!-- 物料基本信息 -->
+              <div class="cost_type">
+                {{item.costType}}
+              </div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -300,91 +306,29 @@
             box-sizing: border-box;
             box-shadow: 0 0 8px #e8e8e8;
           }
-          // 物料图片
-          .mater_img {
-            display: inline-block;
-            width: .75rem;
-            height: .75rem;
-            img {
-              width: 100%;
-              max-height: 100%;
-            }
-          }
           // 物料主体
           .mater_main {
             padding-left: .04rem;
             box-sizing: border-box;
             display: inline-block;
             // 物料名称
-            .mater_name {
-              color: #111;
-              font-size: .18rem;
+            .cost_name {
+              overflow: hidden;
+              color: #5077aa;
+              font-size: .14rem;
+              font-weight: bold;
+              max-height: .46rem;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              text-overflow: ellipsis;
+              -webkit-box-orient: vertical;
             }
             // 物料信息
-            .mater_info {
+            .cost_type {
+              color: #111;
+              font-weight: bold;
               color: #757575;
-              font-size: .12rem;
-              // 有颜色包裹的
-              .withColor {
-                margin-top: .04rem;
-                // 物料编码
-                .mater_code {
-                  display: flex;
-                  .title,
-                  .num {
-                    font-size: .1rem;
-                    display: inline-block;
-                    padding: .01rem .04rem;
-                  }
-                  .title {
-                    color: #fff;
-                    background: #3f72af;
-                  }
-                  .num {
-                    color: #111;
-                    max-width: .85rem;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    background: #dbe2ef;
-                    box-sizing: border-box;
-                    text-overflow: ellipsis;
-                  }
-                }
-                // 规格
-                .mater_spec {
-                  @extend .mater_code;
-                  margin-left: .1rem;
-                  .title {
-                    color: #fff;
-                    background: #537791;
-                  }
-                  .num {
-                    color: #fff;
-                    max-width: .6rem;
-                    background: #ff7f50;
-                  }
-                }
-              }
-              // 没颜色包裹的
-              .withoutColor {
-                // 物料分类
-                .mater_classify {
-                  font-size: .1rem;
-                  margin-top: .02rem;
-                  .type,
-                  .father {
-                    margin-right: .04rem;
-                  }
-                }
-                // 物料颜色 材质
-                .mater_material {
-                  font-size: .1rem;
-                  .unit,
-                  .color {
-                    margin-right: .06rem;
-                  }
-                }
-              }
+              font-size: .14rem;
             }
           }
           // 下划线
