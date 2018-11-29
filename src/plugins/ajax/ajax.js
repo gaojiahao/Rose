@@ -1,6 +1,8 @@
 import tokenService from '../../service/tokenService'
 import errHandle from 'service/errHandle'
 import axios from 'axios';
+import Fly from 'flyio/dist/npm/fly'
+const fly = new Fly();
 
 // import qs from 'qs';
 let qs = require('querystring');
@@ -58,7 +60,8 @@ let Rxports = {
             }
           }
         }
-        axios(params).then( res => {
+        fly.request(params, params.data).then( res => {
+          // axios(params).then( res => {
           let data = res.data;
           let {success = true, message = '请求异常'} = data;
           if (success && Number(res.status) === 200) {
@@ -76,7 +79,7 @@ let Rxports = {
             tokenService.login()
           }
           rejectError(reject, message);
-        });
+        });       
       }).catch(e => {
         console.log(e);
         let {success = false, message = '请求异常'} = e;
@@ -94,11 +97,16 @@ let Rxports = {
             message: '请填写接口地址'
           });
         }
-        axios.post(opts.url, opts.data, {
+        fly.post(opts.url, opts.data, {
           headers: Object.assign({
             Authorization: token,
           }, opts.headers)
         }).then(res => {
+        // axios.post(opts.url, opts.data, {
+        //   headers: Object.assign({
+        //     Authorization: token,
+        //   }, opts.headers)
+        // }).then(res => {
           let data = res.data;
           let {success = true, message = '请求异常'} = data;
           if (success && Number(res.status) === 200) {
