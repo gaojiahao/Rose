@@ -54,7 +54,12 @@
 <script>
   import {Icon, Popup, LoadMore, AlertModule, numberComma} from 'vux'
   import DSearch from 'components/search'
-  import {getPaySupplierArrears, getDepositToPaySuppliers} from 'service/dealerService'
+  import {
+    getPaySupplierArrears,
+    getDepositToPaySuppliers,
+    getSaleAcceptanceBill,
+    getObjDealerBalByLabelName
+  } from 'service/dealerService'
   import RScroll from 'components/RScroll'
 
   export default {
@@ -83,6 +88,13 @@
       request: {
         type: String,
         default: '0'
+      },
+      // 请求参数
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
       }
     },
     components: {
@@ -139,21 +151,23 @@
         this.selInfo = Object.freeze({...sItem});
         this.$emit('sel-item', {...this.selInfo});
       },
-      // 选择联系人
-      selContact(item) {
-        this.$emit('sel-contact', item);
-      },
       // TODO 获取往来列表
       getDealer() {
         let filter = [];
         if (this.srhInpTx) {
+          let property = 'nickname';
+          let dealerKeyList = ['3'];
+          // 收到承兑汇票使用dealerName这个字段
+          if (dealerKeyList.includes(this.request)) {
+            property = 'dealerName';
+          }
           filter = [
             ...filter,
             {
               operator: 'like',
               value: this.srhInpTx,
               // property: 'dealerName',
-              property: 'nickname',
+              property,
             },
           ];
         }
@@ -162,6 +176,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.params,
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
@@ -195,7 +210,7 @@
       numberComma,
     },
     created() {
-      let serviceList = [getPaySupplierArrears, getDepositToPaySuppliers];
+      let serviceList = [getPaySupplierArrears, getDepositToPaySuppliers, getSaleAcceptanceBill, getObjDealerBalByLabelName];
       this.requestMethods = serviceList[this.request];
       this.getDealer();
     }

@@ -88,6 +88,17 @@ export let getPurchaseAgreementDeposit = (data = {}) => {
   })
 };
 
+// TODO 获取汇票列表(出让承兑汇票)
+export let getInputDraft = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getInputDraft',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
 
 }

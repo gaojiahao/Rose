@@ -6,44 +6,54 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 往来信息 -->
-        <pop-dealer-list request="1" :default-value="dealerInfo" @sel-item="selDealer">
+        <pop-dealer-list dealer-label-name="往来" request="2" :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
-              <span class="amt-dealer-item">本次申请: {{applicationAmount}}</span>
-              <span class="amt-dealer-item">本次支付后余额: {{differenceAmount}}</span>
+              <span class="amt-dealer-item">本次收汇票: {{thenTotalAmntBal}}</span>
             </div>
-            <x-input class="amt-copy" title="本次支付" text-align='right' placeholder='请填写'
-                     @on-blur="checkAmt('tdAmountCopy1')"
-                     @on-focus="getFocus($event)" type='number' v-model.number='dealerInfo.tdAmountCopy1'></x-input>
           </template>
         </pop-dealer-list>
 
         <!-- 采购列表 -->
         <div class="materiel_list">
           <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
-            <div class="title">定金明细</div>
-            <div class="mode">请选择定金明细</div>
+            <div class="title">汇票明细</div>
+            <div class="mode">请选择汇票明细</div>
             <span class="iconfont icon-youjiantou r-arrow"></span>
           </div>
           <template v-else>
-            <div class="title">定金明细</div>
+            <div class="title">汇票明细</div>
             <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
                  :key="index">
               <div class="detail-item top">
-                <span class="info-item">{{item.transCode}}</span>
+                <span class="info-item">{{item.draftNumber}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item">总金额: {{item.thenAmntBal}}</span>
-                <span class="info-item">采购定金: {{item.deposit}}</span>
+                <span class="info-item">类型: {{item.draftType}}</span>
+                <span class="info-item">承兑人: {{item.accepter}}</span>
               </div>
-              <x-input title="已付定金" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'thenAlreadyAmnt')"
-                       @on-focus="getFocus($event)" type='number' v-model.number='item.thenAlreadyAmnt'></x-input>
-              <x-input text-align='right' placeholder='请填写'  type='number' @on-blur="checkAmt(item, 'tdAmount')"
+              <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, 'tdAmount')"
                        @on-focus="getFocus($event)" v-model.number='item.tdAmount'>
                 <template slot="label">
-                  <span class="required">待付定金</span>
+                  <span class="required">金额</span>
                 </template>
               </x-input>
+              <datetime v-model='item.draftDate'>
+                <template slot="title">
+                  <span class='required'>出票日</span>
+                </template>
+              </datetime>
+              <datetime v-model='item.draftDueDate'>
+                <template slot="title">
+                  <span class='required'>到期日</span>
+                </template>
+              </datetime>
+              <datetime v-model='item.draftSellDate'>
+                <template slot="title">
+                  <span class='required'>出让日期</span>
+                </template>
+              </datetime>
+              <x-input title="说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
             </div>
           </template>
         </div>
@@ -52,15 +62,6 @@
           <span class="add_more" v-if="orderList.length" @click="addOrder">新增更多</span>
         </div>
 
-        <!-- 资金信息 -->
-        <pop-cash-list request="1" :default-value="cashInfo" @sel-item="selCash">
-          <template slot="other">
-            <x-input class="amt-cash" title="支付金额" text-align='right' placeholder='请填写' type='number'
-                     @on-blur="checkAmt('tdAmount')" @on-focus="getFocus($event)"
-                     v-model.number='cashInfo.tdAmount'></x-input>
-          </template>
-        </pop-cash-list>
-
         <div class="materiel_list">
           <group title="其他信息" class="costGroup">
             <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
@@ -68,8 +69,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!-- 采购单信息 -->
-        <pop-earnest-money-list :show="showOrder" :params="dealerParams" :default-value="orderList"
-                                @sel-item="selOrder" v-model="showOrder"></pop-earnest-money-list>
+        <pop-money-order-list :show="showOrder" :default-value="orderList"
+                              @sel-item="selOrder" v-model="showOrder"></pop-money-order-list>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -82,8 +83,7 @@
 <script>
   // vux插件引入
   import {
-    Cell, Group, XInput,
-    Popup, XTextarea, PopupPicker
+    Cell, Group, XInput, Popup, XTextarea, PopupPicker, Datetime, dateFormat,
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
@@ -93,26 +93,25 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/finance/PopDealerList'
-  import PopCashList from 'components/Popup/finance/PopCashList'
-  import PopEarnestMoneyList from 'components/Popup/finance/PopEarnestMoneyList'
+  import PopMoneyOrderList from 'components/Popup/finance/PopMoneyOrderList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
-  const DRAFT_KEY = 'FGYSDJ_DATA';
+  const DRAFT_KEY = 'CRCDHP_DATA';
   export default {
     mixins: [ApplyCommon],
     components: {
       Cell, Group, Popup,
       XInput, XTextarea,
       PopupPicker, RPicker, PopBaseinfo,
-      PopDealerList, PopCashList, PopEarnestMoneyList,
+      PopDealerList, PopMoneyOrderList, Datetime,
     },
     data() {
       return {
-        listId: '7d172485-8726-4e42-b29d-ec2a716bf062',
+        listId: 'bb9ce973-2f62-4707-a54c-7e8605dc99d6',
         biReferenceId: '',
         selectedCost: [],
         costIndex: 0,
@@ -122,14 +121,12 @@
         },
         dealerInfo: {},
         showOrder: false,
-        dealerParams: {},
         orderList: [],
-        cashInfo: {},
       }
     },
     computed: {
-      // 本次申请
-      applicationAmount() {
+      // 本次出让汇票
+      thenTotalAmntBal() {
         let total = 0;
         this.orderList.forEach(item => {
           if (item.tdAmount) {
@@ -138,47 +135,62 @@
         });
         return toFixed(total)
       },
-      // 本次支付后余额
-      differenceAmount() {
-        let total = this.dealerInfo.amntBal || 0;
-        total = accSub(total, this.applicationAmount);
-        if (this.dealerInfo.tdAmountCopy1) {
-          total = accAdd(total, this.dealerInfo.tdAmountCopy1)
-        }
-        return toFixed(total);
-      },
     },
     methods: {
       // TODO 提交
       submitOrder() {
         let warn = '';
         let dataSet = [];
+        let validateMap = [
+          {
+            key: 'draftNumber',
+            message: '请选择协议号'
+          }, {
+            key: 'draftType',
+            message: '请选择类型'
+          }, {
+            key: 'accepter',
+            message: '请选择承兑人'
+          }, {
+            key: 'tdAmount',
+            message: '请输入金额'
+          }, {
+            key: 'draftDate',
+            message: '请选择出票日'
+          }, {
+            key: 'draftDueDate',
+            message: '请选择到期日'
+          }, {
+            key: 'draftSellDate',
+            message: '请选择出让日期'
+          },
+        ];
         if (!this.dealerInfo.dealerCode) {
-          warn = '请选择供应商';
+          warn = '请选择往来';
         }
         if (!warn && !this.orderList.length) {
-          warn = '请选择定金明细'
+          warn = '请选择汇票明细'
         }
         if (!warn) {
           this.orderList.every(item => {
-            if (!item.transCode) {
-              warn = '请选择协议号';
-              return false
-            }
-            if (!item.tdAmount) {
-              warn = '请输入待付定金';
-              return false
-            }
+            validateMap.every(vItem => {
+              if (!item[vItem.key] && item[vItem.key] !== 0) {
+                warn = vItem.message;
+              }
+              return !warn
+            });
             dataSet.push({
               tdId: item.tdId || '',
-              transMatchedCode: item.transCode,
-              thenTotalAmntBal: item.thenAmntBal,
-              applicationAmount: item.deposit,
-              thenAlreadyAmnt: item.thenAlreadyAmnt,
+              draftNumber: item.draftNumber,
+              draftType: item.draftType,
+              accepter: item.accepter,
               tdAmount: item.tdAmount,
-              dealerDebit: this.dealerInfo.dealerCode,
+              draftDate: item.draftDate,
+              draftDueDate: item.draftDueDate,
+              draftSellDate: item.draftSellDate,
+              comment: item.comment,
             });
-            return true
+            return !warn
           });
         }
         if (warn) {
@@ -194,8 +206,8 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "STPD", createdBy: JSON.stringify(this.formData.handler)}
-            }
+              [this.processCode]: {businessKey: "SAPB", createdBy: JSON.stringify(this.formData.handler)}
+            };
             if (this.isResubmit) {
               wfPara = {
                 businessKey: this.transCode,
@@ -206,23 +218,6 @@
                 comment: ""
               }
             }
-            let inputDataSet = {
-              dealerName_dealerDebit: this.dealerInfo.nickname,
-              dealerDebit: this.dealerInfo.dealerCode,
-              drDealerLabel: this.dealerInfo.dealerLabelName,
-              applicationAmount: this.applicationAmount,
-            };
-            let outputDataSet = {
-              fundName_cashOutCode: this.cashInfo.fundName,
-              cashOutCode: this.cashInfo.fundCode,
-              cashType_cashOutCode: this.cashInfo.fundType,
-              thenAmntBal: this.cashInfo.thenAmntBal,
-              tdAmount: this.cashInfo.tdAmount,
-            };
-            if (this.transCode) {
-              inputDataSet.tdIdCopy1 = this.dealerInfo.tdIdCopy1;
-              outputDataSet.tdId = this.cashInfo.tdId;
-            }
             let submitData = {
               listId: this.listId,
               biComment: this.formData.biComment,
@@ -231,17 +226,13 @@
                 handlerEntity: this.entity.dealerName,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
-                inPut: {
-                  dataSet: [inputDataSet],
-                  thenAmntBalCopy1: this.dealerInfo.amntBal,
-                  tdAmountCopy1: this.dealerInfo.tdAmountCopy1,
-                  differenceAmount: this.differenceAmount,
-                },
                 order: {
-                  dataSet
-                },
-                outPut: {
-                  dataSet: [outputDataSet],
+                  dealerName_dealerDebit: this.dealerInfo.nickname,
+                  dealerDebit: this.dealerInfo.dealerCode,
+                  drDealerLabel: this.dealerInfo.dealerLabelName,
+                  thenAmntBal: this.dealerInfo.amntBal,
+                  thenTotalAmntBal: this.thenTotalAmntBal,
+                  dataSet,
                 },
               }),
               wfPara: JSON.stringify(wfPara)
@@ -290,32 +281,15 @@
             biProcessStatus: formData.biProcessStatus,
             biComment: formData.biComment,
           };
-          let {dataSet: orderDataSet = []} = formData.order;
-          let {dataSet: inputDataSet = []} = formData.inPut;
-          let {dataSet: outputDataSet = []} = formData.outPut;
-          let [dealerInfo = {}] = inputDataSet;
-          let [cashInfo = {}] = outputDataSet;
-          // 定金明细
-          orderDataSet.forEach(item => {
-            item.transCode = item.transMatchedCode;
-            item.thenAmntBal = item.thenTotalAmntBal;
-            item.deposit = item.applicationAmount;
-          });
+          let {order = {}} = formData;
+          let {dataSet = []} = order;
           this.dealerInfo = {
-            ...dealerInfo,
-            nickname: dealerInfo.dealerName_dealerDebit,
-            dealerCode: dealerInfo.dealerDebit,
-            dealerLabelName: dealerInfo.drDealerLabel,
-            amntBal: dealerInfo.thenAmntBal,
-            tdAmountCopy1: formData.inPut.tdAmountCopy1,
+            nickname: order.dealerName_dealerDebit,
+            dealerCode: order.dealerDebit,
+            dealerLabelName: order.drDealerLabel,
+            amntBal: order.thenAmntBal,
           };
-          this.cashInfo = {
-            ...cashInfo,
-            fundName: cashInfo.fundName_cashOutCode,
-            fundCode: cashInfo.cashOutCode,
-            fundType: cashInfo.cashType_cashOutCode,
-          };
-          this.orderList = orderDataSet;
+          this.orderList = dataSet;
           this.$loading.hide();
         })
       },
@@ -330,7 +304,6 @@
             formData: this.formData,
             dealerInfo: this.dealerInfo,
             orderList: this.orderList,
-            cashInfo: this.cashInfo,
           }
         };
       },
@@ -340,17 +313,16 @@
       // TODO 选中供应商
       selDealer(item) {
         this.dealerInfo = {...item};
-        this.dealerParams = {
-          dealerCode: item.dealerCode,
-        }
       },
       // TODO 选中采购明细
       selOrder(val) {
-        this.orderList = JSON.parse(val);
-      },
-      // TODO 选中资金
-      selCash(val) {
-        this.cashInfo = {...val};
+        val.forEach(item => {
+          item.hasOrigin = true; // 是否有原始的金额
+          item.originAmt = item.tdAmount;
+          item.draftDate = dateFormat(item.draftDate, 'YYYY-MM-DD');
+          item.draftDueDate = dateFormat(item.draftDueDate, 'YYYY-MM-DD');
+        });
+        this.orderList = val;
       },
       // TODO 新增
       addOrder() {
@@ -358,17 +330,11 @@
       },
       // TODO 保留两位小数
       checkAmt(item, key) {
-        switch (item) {
-          case 'tdAmountCopy1':
-            this.dealerInfo.tdAmountCopy1 = toFixed(this.dealerInfo.tdAmountCopy1);
-            break;
-          case 'tdAmount':
-            this.cashInfo.tdAmount = toFixed(this.cashInfo.tdAmount);
-            break;
-          default:
-            item[key] = toFixed(item[key]);
-            break;
+        let {hasOrigin = false, originAmt = 0, tdAmount = 0} = item;
+        if (hasOrigin && tdAmount > originAmt) {
+          tdAmount = originAmt;
         }
+        item.tdAmount = Math.abs(toFixed(tdAmount));
       },
     },
     created() {
@@ -378,8 +344,6 @@
         this.formData = draft.formData;
         this.dealerInfo = draft.dealerInfo;
         this.orderList = draft.orderList;
-        this.cashInfo = draft.cashInfo;
-        this.dealerParams = {dealerCode: this.dealerInfo.dealerCode}
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },

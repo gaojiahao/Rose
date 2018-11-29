@@ -105,7 +105,29 @@ const dealerService = {
         }
       })
     },
+    // TODO 获取往来列表(出让承兑汇票)
+    getSaleAcceptanceBill(data = {}) {
+      return $axios.ajax({
+        url: '/H_roleplay-si/ds/getSaleAcceptanceBill',
+        data: {
+          _dc: Date.now(),
+          ...data,
+        }
+      })
+    },
+    // TODO 获取往来列表(收到承兑汇票)
+    getObjDealerBalByLabelName(data = {}) {
+      return $axios.ajax({
+        url: '/H_roleplay-si/ds/getObjDealerBalByLabelName',
+        data: {
+          _dc: Date.now(),
+          ...data,
+        }
+      })
+    },
 }
 export let getPaySupplierArrears = dealerService.getPaySupplierArrears;
 export let getDepositToPaySuppliers = dealerService.getDepositToPaySuppliers;
+export let getSaleAcceptanceBill = dealerService.getSaleAcceptanceBill;
+export let getObjDealerBalByLabelName = dealerService.getObjDealerBalByLabelName;
 export default dealerService
