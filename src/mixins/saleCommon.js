@@ -28,7 +28,8 @@ export default {
       arr: [],    // 选中的 项目类产品
       list: [{name: "无", value: "无", parent: "0", amount: 0, num5: 0}],     // 项目类产品
       Aclass: "",                       // A类产品 输入金额
-      Bclass: "",                       // B类产品 输入金额
+      Bclass: "",                       // B类产品 输入金额 线上
+      BclassDown: '',                  // B类产品线下
       member: "",                       // 常委
       governor: "",                     // 省长
       comments: "",                     // 备注
@@ -58,10 +59,10 @@ export default {
   computed: {
     // 费用销量比
     costVolumeRatio() {
-      if (Number(this.Aclass) === 0) {
+      if (Number(this.AclassTotal) === 0) {
         return '∞'
       }
-      let total = this.totalCost / Number(this.Aclass);
+      let total = this.totalCost / Number(this.AclassTotal);
       total = toFixed(accMul(total, 100));
       return `${total}%`
     },
@@ -255,7 +256,7 @@ export default {
     // 回显表单内容
     echoStorage(basicSrg = {}, formSrc = {}) {
       let {member, governor, captain} = basicSrg;
-      let {Aclass, Bclass, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt, baseinfoExt} = formSrc;
+      let {Aclass, Bclass, BclassDown, comments, saleReportArr, hotelAmt, otherAmt, trafficAmt, lTrafficAmt, baseinfoExt} = formSrc;
       if (basicSrg) {
         this.member = member;
         this.governor = governor;
@@ -266,6 +267,7 @@ export default {
       if (formSrc) {
         this.Aclass = Aclass;
         this.Bclass = Bclass;
+        this.BclassDown = BclassDown;
         this.arr = saleReportArr;
         this.comments = comments;
         this.hotelAmt = hotelAmt;

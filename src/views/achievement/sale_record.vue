@@ -378,7 +378,7 @@
       }
     }
     .scroll-container {
-      height: ~'calc(100% - 1.36rem)';
+      height: ~'calc(100% - 1.76rem)';
       overflow: hidden;
     }
     .business_amount {

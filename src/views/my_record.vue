@@ -32,7 +32,7 @@
       <form-preview
         class="project_part"
         header-label="销量金额"
-        :header-value="'￥'+list2Total | numberComma"
+        :header-value="'￥'+AclassTotal | numberComma"
         :body-items="list2">
       </form-preview>
 
@@ -40,8 +40,8 @@
       <form-preview
         class="project_part"
         header-label="销量金额"
-        :header-value="'￥'+list3Total | numberComma"
-        :body-items="list3">
+        :header-value="'￥'+BClassTotal | numberComma"
+        :body-items="bClassList">
       </form-preview>
 
     </div>
@@ -82,14 +82,14 @@
         demo2: "本日",
         list1: [],
         list2: [],
-        list3: [],
         list1Total: 0,
-        list2Total: 0,
-        list3Total: 0,
+        AclassTotal: 0,
+        BClassTotal: 0,
         remark: "",
         spinner: false,
         totalCoverNum: 0, // 销量套数
         costSalesRatio: '', // 费用销售比
+        bClassList: [], // b类产品展示的item
       };
     },
     filters: {
@@ -135,15 +135,18 @@
           });
       },
       listpanl(m) {
+        let AclassTotal = 0;
+        let BClassTotal = 0;
+        let list2 = [];
+        let bClassList = [];
+        let hotelAndElseCost = 0;
         this.list1Total = 0;
-        this.list2Total = 0;
-        this.list3Total = 0;
         this.list1.length = 0;
         this.list2.length = 0;
 
         for (let i = 0; i < m.length; i++) {
           let item = m[i];
-          if (item.objType == "项目类产品" && item.objName) {
+          if (item.objType === '项目类产品' && item.objName) {
             this.list1Total += Number(item.amount);
             this.list1.push({
               label: item.objName,
@@ -151,35 +154,55 @@
               value: `￥${numberComma(item.amount, 3)} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
             });
             this.totalCoverNum = accAdd(this.totalCoverNum, item.coverNum);
-          } else if (item.objType == "A") {
-            this.list2Total = item.amount;
-            this.list2 = [
-              {
-                label: '费用明细',
-                value: '',
-              }, {
-                label: '住宿费',
-                value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.hotelCost)))}` : '无',
-              }, {
-                label: '市内交通费',
-                value: item.cityTrafficCost ? `￥${numberComma(toFixed(Number(item.cityTrafficCost)))}` : '无',
-              }, {
-                label: '长途交通费',
-                value: item.longCityTrafficCost ? `￥${numberComma(toFixed(Number(item.longCityTrafficCost)))}` : '无',
-              }, {
-                label: '其他费用',
-                value: item.elseCost ? `￥${numberComma(toFixed(Number(item.elseCost)))}` : '无',
-              }, {
-                label: '合计',
-                value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
-              },
-            ]
-            this.costSalesRatio = Number(item.amount) !== 0 ? `${toFixed(accMul(item.hotelAndElseCost / item.amount, 100))}%` : '∞';
-          } else if (item.objType == "B") {
-            this.list3Total = item.amount;
+          } else if (item.objType === 'A') {
+            if (item.objName === 'A类产品') {
+              AclassTotal = accAdd(AclassTotal, item.amount);
+              list2 = [
+                ...list2,
+                {
+                  label: '费用明细',
+                  value: '',
+                }, {
+                  label: '住宿费',
+                  value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.hotelCost)))}` : '无',
+                }, {
+                  label: '市内交通费',
+                  value: item.cityTrafficCost ? `￥${numberComma(toFixed(Number(item.cityTrafficCost)))}` : '无',
+                }, {
+                  label: '长途交通费',
+                  value: item.longCityTrafficCost ? `￥${numberComma(toFixed(Number(item.longCityTrafficCost)))}` : '无',
+                }, {
+                  label: '其他费用',
+                  value: item.elseCost ? `￥${numberComma(toFixed(Number(item.elseCost)))}` : '无',
+                }, {
+                  label: '合计',
+                  value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
+                },
+              ];
+              hotelAndElseCost = item.hotelAndElseCost;
+            } else {
+              list2.unshift({
+                label: item.objName,
+                value: item.amount,
+              });
+            }
+          } else if (item.objType === 'B') {
+            if (item.objName === 'B类产品') {
+              BClassTotal = accAdd(BClassTotal, item.amount);
+            } else {
+              bClassList.push({
+                label: item.objName,
+                value: toFixed(item.amount),
+              });
+            }
           }
         }
-        this.list1Total = this.list1Total.toFixed(2);
+        this.list2 = list2;
+        this.bClassList = bClassList;
+        this.costSalesRatio = Number(AclassTotal) !== 0 ? `${toFixed(accMul(hotelAndElseCost / AclassTotal, 100))}%` : '∞';
+        this.AclassTotal = AclassTotal;
+        this.BClassTotal = toFixed(BClassTotal);
+        this.list1Total = toFixed(this.list1Total);
       }
     },
     created() {

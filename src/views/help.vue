@@ -43,8 +43,11 @@
         </p>
 
         <group class="caution_inputs">
-          <x-input title="A类产品" v-model.number="Aclass" text-align="right" placeholder="请输入金额"></x-input>
-          <x-input title="B类产品" v-model.number="Bclass" text-align="right" placeholder="请输入金额"></x-input>
+          <x-input title="其他A类产品" v-model.number="Aclass" text-align="right" placeholder="请输入金额"></x-input>
+          <cell title="A类产品合计" :value="AclassTotal"></cell>
+          <x-input title="B类产品(线上)" v-model.number="Bclass" text-align="right" placeholder="请输入金额"></x-input>
+          <x-input title="B类产品(线下)" v-model.number="BclassDown" text-align="right" placeholder="请输入金额"></x-input>
+          <cell title="B类产品合计" :value="BclassTotal"></cell>
         </group>
 
         <group title="费用明细">
@@ -83,7 +86,6 @@
           <popup-picker class="each_part" title="下周所在渠道" placeholder="请选择银行" :data='bankNextWeekList' :columns="1"
                         v-model="bankNextWeek"></popup-picker>
         </group>
-
         <group>
           <x-input title="备注" text-align="right" placeholder="非必填 如有需要请填写" v-model="comments"></x-input>
         </group>
@@ -133,6 +135,21 @@
         countyTodayList: [],
       };
     },
+    computed: {
+      AclassTotal() {
+        let total = 0;
+        this.arr.forEach(item => {
+          if (item.qty) {
+            total = accAdd(total, accMul(item.qty, item.amount));
+          }
+        });
+        total = accAdd(total, this.Aclass);
+        return total;
+      },
+      BclassTotal() {
+        return accAdd(this.Bclass, this.BclassDown)
+      },
+    },
     methods: {
       //提交
       goCount() {
@@ -154,8 +171,9 @@
           {key: 'bankValue', msg: '所属银行'},
           {key: 'areaValue', msg: '所属地区'},
           {key: 'arr', msg: '项目产品'},
-          {key: 'Aclass', msg: 'A类产品销售金额'},
-          {key: 'Bclass', msg: 'B类产品销售金额'},
+          {key: 'Aclass', msg: '其他A类产品销售金额'},
+          {key: 'Bclass', msg: 'B类产品(线上)销售金额'},
+          {key: 'BclassDown', msg: 'B类产品(线下)销售金额'},
           {key: 'hotelAmt', msg: '住宿金额'},
           {key: 'trafficAmt', msg: '市内交通费'},
           {key: 'lTrafficAmt', msg: '长途交通费'},
@@ -247,22 +265,45 @@
             integer2: month,     //月
             integer3: day,        //日
             ...this.baseinfoExt,
+            // double12: this.AclassTotal, // A类产品合计
+            // double13: this.BclassTotal, // B类产品合计
           },
           transDetailUncalc: [{
             id: this.guid(),
-            transObjCode: "A类产品", //项目类产品名称
+            transObjCode: "其他A类产品", //项目类产品名称
             containerCode: "A", //类型
             qty: "",
             amount: Number(this.Aclass), //总金额
             fgCode: ""
           }, {
             id: this.guid(),
-            transObjCode: "B类产品", //项目类产品名称
+            transObjCode: "A类产品", //项目类产品名称
+            containerCode: "A", //类型
+            qty: "",
+            amount: Number(this.AclassTotal), //总金额
+            fgCode: ""
+          }, {
+            id: this.guid(),
+            transObjCode: "B类产品(线上)", //项目类产品名称
             containerCode: "B", //类型
             qty: "",
             amount: Number(this.Bclass), //总金额
-            fgCode: ""
-          }
+            fgCode: "",
+          }, {
+            id: this.guid(),
+            transObjCode: "B类产品(线下)", //项目类产品名称
+            containerCode: "B", //类型
+            qty: "",
+            amount: Number(this.BclassDown), //总金额
+            fgCode: "",
+          }, {
+            id: this.guid(),
+            transObjCode: "B类产品", //项目类产品名称
+            containerCode: "B", //类型
+            qty: "",
+            amount: Number(this.BclassTotal), //总金额
+            fgCode: "",
+          },
           ],
           transCode: "XHXSDD"
         };
@@ -322,6 +363,7 @@
           JSON.stringify({
             Aclass: this.Aclass,
             Bclass: this.Bclass,
+            BclassDown: this.BclassDown,
             saleReportArr: this.arr,
             comments: this.comments,
             hotelAmt: this.hotelAmt,
@@ -348,9 +390,9 @@
       this.getArea();
       // 支援银行
       this.getBank();
-      (async() => {
+      (async () => {
         await this.getProvince();
-        if(formInfo) {
+        if (formInfo) {
           await this.getCity();
           this.getCounty();
         }
