@@ -126,7 +126,6 @@
             relationKey: this.listId,
             type: 'list'
           };
-
         }
         return saveComment(submitData).then(({success = true, message = ''}) => {
           if (success) {
@@ -142,7 +141,10 @@
         });
       },
       // TODO 聚焦评论框
-      commentFocusIn() {
+      commentFocusIn(e) {
+        this.$nextTick(() => {
+          e.target.scrollIntoView();
+        });
         this.focusInput = true;
         this.showEmotion = false;
       },
@@ -183,6 +185,7 @@
 <style scoped lang="scss">
   .comment-list-container {
     background-color: #F6F6F6;
+    -webkit-overflow-scrolling: touch;
     &.has-emotion {
       .comment-list-wrapper {
         height: calc(100% - 2.5rem);
@@ -206,12 +209,14 @@
         height: 1rem;
       }
       .comment-value {
+        display: inline-block;
         padding: .05rem .1rem;
         width: calc(100% - 1rem);
         height: 100%;
         outline: none;
         border-radius: 0.05rem;
         border: none;
+        background-color: #fff;
         color: #2d2d2d;
         font-size: .16rem;
         resize: none;
