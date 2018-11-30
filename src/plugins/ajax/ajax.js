@@ -1,6 +1,5 @@
 import tokenService from '../../service/tokenService'
 import errHandle from 'service/errHandle'
-import axios from 'axios';
 import Fly from 'flyio/dist/npm/fly'
 const fly = new Fly();
 
@@ -12,8 +11,9 @@ let rejectError = (reject, message) => {
   errHandle(message);
   return Promise.reject({ success: false, message });
 };
+
 // fly请求 设置拦截器
-fly.interceptors.request.use((request)=> {
+fly.interceptors.request.use((request) => {
   // 检验 token是否存在
   let token = tokenService.checkLogin();
   // token 存在则赋值在header当中
@@ -30,16 +30,20 @@ fly.interceptors.request.use((request)=> {
     }).finally(() => {
       // 解锁队列，后序请求恢复正常
       fly.unlock()
+    }).catch( err => {
+      // 请求拦截 报错标识
+      console.log('req-err:', err);
+      rejectError('reject', err.message)
     })
   }
 })
+
 // fly请求 响应拦截器
 fly.interceptors.response.use(
   response => {
     let { success = true, message = '请求异常' } = response.data;
     if(response.status === 200) {
       if(success){
-        console.log(response.request);
         return response;
       }else {
         rejectError('reject', message)
@@ -56,12 +60,18 @@ fly.interceptors.response.use(
         return Rxports.ajax(response.request)
       })
     }
-    else { 
+    else {
       rejectError('reject', message) 
     }
   },
-  error => { console.log(error) }
+  error => {
+    // 响应拦截 报错标识
+    console.log('respon-err:', error);
+    rejectError('reject', error.message) 
+  }
 )
+
+// 请求选项列表
 let Rxports = {
   /**
    * @param {String} type      请求的类型，默认post
@@ -74,6 +84,8 @@ let Rxports = {
    * @param {Function} error      发送请求前
    * @param return
    */
+  
+  // 标准请求 （支持GET、POST）
   ajax(opts = {}) {
     return new Promise((resolve, reject) => {
       let params = {
@@ -105,12 +117,14 @@ let Rxports = {
       fly.request(params, params.data).then( res => resolve(res.data))
     })
   },
+  
   // post请求，使用Payload
   post(opts = {}) {
     return new Promise((resolve, reject) => {
       fly.post(opts.url, opts.data).then(res => resolve(res.data));
     })
   },
+
   // 上传图片，单个文件
   upload({file = {}, biReferenceId = ''}) {
     let param = new FormData();  // 创建form对象
