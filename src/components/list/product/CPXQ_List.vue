@@ -72,6 +72,7 @@
             value: 'demandTitle',
           },
         ],
+        listViewID: 2335
       }
     },
     mixins: [listCommon],

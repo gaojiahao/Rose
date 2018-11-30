@@ -32,7 +32,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2391,
+        listViewID: 2417,
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -42,7 +42,7 @@
             value: 'handlerName',
           }, {
             name: '客户名称',
-            value: 'dealerName',
+            value: 'dealerName_dealerCodeCredit',
           },
         ],
       }

@@ -10,7 +10,7 @@
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>-->
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
@@ -51,11 +51,6 @@
           pullDownRefresh: true,
           pullUpLoad: true,
         },
-        sortList: [
-          {name: '交易号', key: 'transCode'},
-          {name: '修改时间', key: 'modTime'},
-          {name: '客户名称', key: 'dealerName'},
-        ]
       }
     },
     components:{

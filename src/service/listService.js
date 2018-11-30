@@ -9,9 +9,15 @@ export let getList = (id,data = {}) => {
 };
 
 // TODO 获取销售订单列表
-export let getSellOrderList = (data = {}) => {
+// export let getSellOrderList = (data = {}) => {
+//   return $axios.ajax({
+//     url: '/H_roleplay-si/seconds/getSellOrderList',
+//     data
+//   })
+// };
+export let getSellOrderList = (viewId, data = {}) => {
   return $axios.ajax({
-    url: '/H_roleplay-si/seconds/getSellOrderList',
+    url: `/H_roleplay-si/seconds/mergeDetailItemList/${viewId}`,
     data
   })
 };

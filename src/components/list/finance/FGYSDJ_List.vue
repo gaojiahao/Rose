@@ -33,7 +33,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2434,
+        listViewID: 2435,
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -41,10 +41,11 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, {
-            name: '供应商',
-            value: 'dealerName',
           },
+          //  {
+          //   name: '供应商',
+          //   value: 'dealerName',
+          // },
         ],
       }
     },

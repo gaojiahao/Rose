@@ -10,9 +10,9 @@
       <i class="iconfont" :class="item.whichIcon"></i>
     </div>
     <!-- 往来信息 -->
-    <div class="dealer_part" v-if="item.dealerName_dealerDebit">
+    <div class="dealer_part" v-if="item.dealerName">
       <div class="dealer_name">
-        <span class="iconfont icon-kehu1"></span>{{item.dealerName_dealerDebit}}
+        <span class="iconfont icon-kehu1"></span>{{item.dealerName}}
       </div>
     </div>
     <!-- 主要信息区域 -->
@@ -91,9 +91,9 @@ export default {
   },
   computed: {
     total() {
-      let {tdAmount, totalAmount, budgetIncome_project} = this.item;
-      if (tdAmount) {
-        return tdAmount
+      let {count, totalAmount, budgetIncome_project} = this.item;
+      if (count != null) {
+        return count
       } else if (totalAmount || totalAmount === 0) {
         return totalAmount
       } else if (budgetIncome_project) {

@@ -41,10 +41,11 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, {
-            name: '往来名称',
-            value: 'dealerName',
-          },
+          }, 
+          // {
+          //   name: '往来名称',
+          //   value: 'dealerName',
+          // },
         ],
       }
     },

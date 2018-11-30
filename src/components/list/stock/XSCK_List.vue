@@ -44,14 +44,11 @@
             value: 'handlerName',
           }, {
             name: '物料名称',
-            value: 'inventoryName',
+            value: 'inventoryName_outPutMatCode',
           }, {
             name: '往来名称',
-            value: 'dealerName',
-          },/* {
-            name: '项目名称',
-            value: 'projectName',
-          },*/
+            value: 'dealerName_dealerDebit',
+          }
         ],
       }
     },

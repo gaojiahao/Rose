@@ -44,7 +44,7 @@
             value: 'handlerName',
           }, {
             name: '物料名称',
-            value: 'inventoryName',
+            value: 'inventoryName_transObjCode',
           },
         ],
       }

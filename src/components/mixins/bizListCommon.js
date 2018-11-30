@@ -56,10 +56,10 @@ export default {
           value: 'handlerName',
         }, {
           name: '物料名称',
-          value: 'inventoryName',
+          value: 'inventoryName_transObjCode',
         }, {
           name: '往来名称',
-          value: 'dealerName',
+          value: 'dealerName_dealerDebit',
         },
       ],
       sort: [],
@@ -258,9 +258,6 @@ export default {
             property: key,
             operator: 'in'
           }
-          if((this.activeTab || this.serachVal) && lkey === keyArr[0]){
-            obj.attendedOperation = 'and'
-          }
           this.otherFilter[key].value.forEach((item,index) => {
             let key = `value${index+1}`;
             obj[key] = item;
@@ -269,74 +266,73 @@ export default {
         }
 
       }
-      console.log(filter);
-      // if(this.otherFilter.length){
-      //   let obj = {
-      //     property: "processStatus",
-      //     operator: "in",
-      //   }
-      //   if(this.activeTab || this.serachVal){
-      //     obj.attendedOperation = 'and'
-      //   }
-      //   this.otherFilter.forEach((item,index) => {
-      //     let key = `value${index+1}`;
-      //     obj[key] = item.fieldVlaue;
-      //   })
-      //   filter.push(obj);
-
-      // }
-      return getSellOrderList({
+      // 时间过滤
+      if(this.timeFilter.startDate || this.timeFilter.endDate) {
+        let obj = {
+          property: "crtTime",
+          operator: "date",
+          startDate: this.timeFilter.startDate,
+          endDate: this.timeFilter.endDate,
+        }
+        filter.push(obj);
+      }
+      return getSellOrderList(this.listViewID,{
         limit: this.limit,
         page: this.page,
-        listViewID: this.listViewID,
         filter: JSON.stringify(filter),
         sort: JSON.stringify(this.sort),
-        startDate: this.timeFilter.startDate, // 开始日期 (默认为空)
-        endDate: this.timeFilter.endDate      // 截止日期 (默认为空)
-      }).then(({total = 0, orders = []}) => {
-        // this.$emit('input',false);
-        this.hasNext = total > (this.page - 1) * this.limit + orders.length;
-        orders.forEach(item => {
+      }).then(({total = 0, instanceList = []}) => {
+        this.hasNext = total > (this.page - 1) * this.limit + instanceList.length;
+        instanceList.forEach(item => {
           this.setStatus(item);
           item.count = 0;
           item.totalQty = 0;
-          item.itmes = item.itmes.reduce((arr, mitem) => {
-            // 过滤掉采购协议中的没有物料编码的字段
-            if (mitem.inventoryCode) {
-              item.count = toFixed(accAdd(item.count, mitem.tdAmount));
+          // 不同应用返回的字段名不同，统一增加渲染的公共字段包括（物料，往来）
+          item.dealerName = item.dealerName_dealerDebit || item.dealerName_dealerCodeCredit;
+          item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
+          item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
+          item.detailItem.forEach(mitem => {
+            // console.log(mitem)
+            if(mitem.tdQty != null) {
               item.totalQty = toFixed(accAdd(item.totalQty, mitem.tdQty));
-              arr.push(mitem);
             }
-            return arr
-          }, []);
-
+            if(mitem.tdAmount != null) {
+              item.count = toFixed(accAdd(item.count, mitem.tdAmount));
+            }
+          })
           // 如果为搜索物料，将匹配的物料放在前面
-          if (this.serachVal && this.filterProperty === 'inventoryName') {
-            item.itmes = item.itmes.reduce((arr, mitem) => {
-              // 判断是否含有搜索内容
-              if (mitem.inventoryName && mitem.inventoryName.includes(this.serachVal)) {
-                mitem.matchedMat = true;
-                arr.unshift(mitem)
-              } else {
-                arr.push(mitem);
-              }
-              return arr
-            }, []);
-          }
+          // if (this.serachVal && (this.filterProperty === 'inventoryName_transObjCode' || this.filterProperty === 'inventoryName_outPutMatCode')) {
+          //   item.detailItem = item.detailItem.reduce((arr, mitem) => {
+          //     // 判断是否含有搜索内容
+          //     let isInventoryName = mitem.inventoryName_transObjCode && mitem.inventoryName_transObjCode.includes(this.serachVal),
+          //         isInventoryNameOut = mitem.inventoryName_outPutMatCode && mitem.inventoryName_outPutMatCode.includes(this.serachVal);
+          //     if (isInventoryName || isInventoryNameOut) {
+          //       mitem.matchedMat = true;
+          //       arr.unshift(mitem)
+          //     } else {
+          //       arr.push(mitem);
+          //     }
+          //     return arr
+          //   }, []);
+          // }
 
-          item.itemCount = item.itmes.length;
+          item.itemCount = item.detailItem.length;
           // 列表当中每个订单最多展现5个物料
-          item.itmes = item.itmes.slice(0, 5);
-          item.itmes.forEach(mItem => {
-            mItem.inventoryPic = mItem.inventoryPic
+          item.detailItem = item.detailItem.slice(0, 5);
+          item.detailItem.forEach(mItem => {
+            mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode ;
+            mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
+            mItem.specification = mItem.specification_transObjCode || mItem.measureUnit_outPutMatCode;
+            mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.specification_outPutMatCode;
+            mItem.inventoryPic = mItem.inventoryPic_transObjCode
               // 请求图片
-              ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic}&width=400&height=400`
+              ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
               // 默认图片
               : this.getDefaultImg();
           })
 
         });
-        this.listData = this.page === 1 ? orders : this.listData.concat(orders);
+        this.listData = this.page === 1 ? instanceList : this.listData.concat(instanceList);
         if (!noReset) {
           this.$nextTick(() => {
             this.resetScroll();

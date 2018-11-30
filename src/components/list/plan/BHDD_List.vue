@@ -10,7 +10,7 @@
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>-->
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
@@ -47,7 +47,7 @@
           value: 'handlerName',
         }, {
           name: '物料名称',
-          value: 'inventoryName',
+          value: 'inventoryName_transObjCode',
         }
       ],
 

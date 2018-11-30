@@ -10,16 +10,16 @@
              :class="[property === SItem.key && sort === 'DESC' ? 'active icon-sort-up-copy-copy' : 'icon-xiasanjiao1']"></i>
       </span>
     </div>
-    <!-- <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || this.fieldVlaue.length}"> 
+    <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || Object.keys(this.fieldVlaue).length}"> 
       <span class="filter_name">筛选</span>
       <span class="iconfont icon-shaixuan"></span>
-    </div> -->
+    </div>
     <div v-transfer-dom>
       <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
         <div class="filter-container-part">
           <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
             <!-- 流程状态 -->
-            <div class="process-status-container basic-mod" v-if="filtersList.biProcessStatus">
+            <div class="process-status-container basic-mod" v-if="filtersList.biProcessStatus && filtersList.biProcessStatus.value.length">
               <div class="filter_title vux-1px-b">{{filtersList.biProcessStatus.alias}}</div>
               <div class="process_status">
                 <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,'biProcessStatus')}"
@@ -43,13 +43,20 @@
               </div>
             </div>
             <div class="process-status-container basic-mod" v-for="(val,key,index) in filtersList" :key="index">
-              <div v-if="val.alias !== '流程状态'">
-                <div class="filter_title vux-1px-b">{{val.alias}}</div>
+              <div v-if="val.alias !== '流程状态' && val.value.length">
+                <div class="filter_title vux-1px-b">
+                  <div>{{val.alias}}</div>
+                  <!-- <div>
+                    
+                  </div>
+                  <span>全部</span> -->
+                </div>
                 <div class="process_status">
                   <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,key)}"
                   v-for="(item, index) in val.value" :key="index"
                   @click="selProcee(item,key)">
                     <div class="status_content">{{item}}</div>
+                    <!-- <div class="status_content">全部</div> -->
                   </div>          
                 </div>
               </div>
@@ -236,7 +243,6 @@ export default {
     // 筛选确定
     filterConfirm() {
       this.showFilter = false;
-      this.onHide();
     },
     // 重置筛选
     filterReset() {
@@ -249,6 +255,9 @@ export default {
     // 请求过滤字段
     getFilterFields(){
       filterFields(this.viewId).then(data=>{
+        for(let key in data){
+          data[key].showValue = data[key].value.slice(0,9)
+        }
         this.filtersList = {...data};
       })
     }
@@ -322,10 +331,18 @@ export default {
     &.active  {
       color: #5077aa;
       font-weight: bold;
-    }  
+    }
+    &:first-child{
+      flex: 0.5;
+    } 
+    &:nth-child(2){
+      flex: 0.8;
+    }
   }
   .filter-part {
     @extend .each-sort;
+    flex: 0.7;
+    justify-content: flex-end;
     &.active{
       color: #5077aa;
     }

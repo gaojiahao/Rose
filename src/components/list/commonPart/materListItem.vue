@@ -20,17 +20,17 @@
         </div>
       </div>
     </div>
-    <div class="dealer_part warehouse" v-if="item.inWareHouseName || item.outWareHouseName">
+    <div class="dealer_part warehouse" v-if="item.warehouseName_containerCode || item.warehouseName_containerCodeOut">
       <div :class="{'vux-1px-t dealer_name': !item.dealerName }">
         <!-- 出库 -->
-        <template v-if="item.outWareHouseName">
-          <i class="iconfont icon--"></i><span>出库 - {{item.outWareHouseName}}</span>
+        <template v-if="item.warehouseName_containerCodeOut">
+          <i class="iconfont icon--"></i><span>出库 - {{item.warehouseName_containerCodeOut}}</span>
         </template>
         <!-- 出库和入库同时存在时展示竖线 -->
-        <span class="division-line" v-if="item.inWareHouseName && item.outWareHouseName">|</span>
+        <span class="division-line" v-if="item.warehouseName_containerCode && item.warehouseName_containerCodeOut">|</span>
         <!-- 入库，本地库存调拨不展示前面的入库文字 -->
-        <template v-if="item.inWareHouseName">
-          <i class="iconfont icon--"></i><span>{{!item.transCode.includes('STCK') ? '入库 - ' : ''}}{{item.inWareHouseName}}</span>
+        <template v-if="item.warehouseName_containerCode">
+          <i class="iconfont icon--"></i><span>{{!item.transCode.includes('STCK') ? '入库 - ' : ''}}{{item.warehouseName_containerCode}}</span>
         </template>      
       </div>
 
@@ -38,7 +38,7 @@
     <!-- 物料图片和名称 -->
     <ul class="duty_matter">
       <li class="duty_matter_item" :class="{'is-matched-mat': mItem.matchedMat}"
-          v-for="(mItem, mIndex) in item.itmes" :key="mIndex" v-if='mIndex<3'>
+          v-for="(mItem, mIndex) in item.detailItem" :key="mIndex" v-if='mIndex<3'>
         <div class="matter_img">
           <img :src="mItem.inventoryPic" @error="getDefaultImg(mItem)">
         </div>

@@ -45,7 +45,7 @@ export default {
           value: 'handlerName',
         }, {
           name: '成品名称',
-          value: 'inventoryName',
+          value: 'inventoryName_transObjCode',
         },
       ],
       popShow: false,
