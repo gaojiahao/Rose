@@ -12,7 +12,43 @@ let rejectError = (reject, message) => {
   errHandle(message);
   return Promise.reject({ success: false, message });
 };
-
+fly.interceptors.request.use((request)=> {
+  console.log(`发起请求：path:${request.url}，baseURL:${request.baseURL}`)
+  let token = tokenService.checkLogin('token');
+  // console.log(token)
+  if (!token) {
+    console.log("没有token，先请求token...");
+    // 锁定当天实例，后续请求会在拦截器外排队
+    fly.lock();
+    return tokenService.login('token').then((d) => {
+      request.headers.Authorization = d;
+      // console.log("token请求成功，值为: " + d);
+      // console.log(`继续完成请求：path:${request.url}，baseURL:${request.baseURL}`)
+      return request;
+    }).finally(()=>{
+      fly.unlock(); // 解锁后，会继续发起请求队列中的任务
+    })
+  } else {
+    // console.log('已有的token：' + token)
+    request.headers.Authorization = token;
+  }
+})
+fly.interceptors.response.use(
+  response =>{
+    return response
+  },
+  error => {
+    let res = error.response;
+    let data = (res && res.data) || {};
+    let status = (res && res.status) || 0;
+    let message = data.message || '请求异常';
+    if (status === 401) {
+      tokenService.login()
+    }
+    errHandle(message);
+    // rejectError(reject, message);
+  }
+)
 let Rxports = {
   /**
    * @param {String} type      请求的类型，默认post
@@ -27,107 +63,55 @@ let Rxports = {
    */
   ajax(opts = {}) {
     return new Promise((resolve, reject) => {
-      tokenService.getToken().then(token => {
-        if (!opts.url) {
-          alert('请填写接口地址');
-          return false;
-        }
-        let params = {
-          method: opts.type || 'GET',
-          url: opts.url,
-          headers: {
-            'Content-Type': opts.contentType || '*/*',
-            Authorization: token
-          },
-          timeout: opts.time || 10 * 1000,
-          responseType: opts.dataType || 'json'
-        }
-        if (opts.type && opts.type.toUpperCase() === 'POST') {
-          params.data = qs.stringify(opts.data) || {}
-        } else {
-          // params.params = opts.data || {}
-          if (typeof opts.data === 'object') {
-            let query = [];
-            for (let [key, value] of Object.entries(opts.data)) {
-              query.push(`${key}=${value}`)
-            }
-            if (params.url.indexOf('?') === -1) {
-              // url上没有?
-              params.url = encodeURI(`${params.url}?${query.join('&')}`)
-            } else {
-              // url上有?，给其拼上&
-              params.url = encodeURI(`${params.url}&${query.join('&')}`)
-            }
+      let params = {
+        method: opts.type || 'GET',
+        url: opts.url,
+        headers: {
+          'Content-Type': opts.contentType || '*/*',
+        },
+        timeout: opts.time || 10 * 1000,
+        responseType: opts.dataType || 'json'
+      }
+      if (opts.type && opts.type.toUpperCase() === 'POST') {
+        params.data = qs.stringify(opts.data) || {}
+      } else {
+        // params.params = opts.data || {}
+        if (typeof opts.data === 'object') {
+          let query = [];
+          for (let [key, value] of Object.entries(opts.data)) {
+            query.push(`${key}=${value}`)
           }
-        }
-        fly.request(params, params.data).then( res => {
-          // axios(params).then( res => {
-          let data = res.data;
-          let {success = true, message = '请求异常'} = data;
-          if (success && Number(res.status) === 200) {
-            resolve(data)
+          if (params.url.indexOf('?') === -1) {
+            // url上没有?
+            params.url = encodeURI(`${params.url}?${query.join('&')}`)
           } else {
-            rejectError(reject, message);
+            // url上有?，给其拼上&
+            params.url = encodeURI(`${params.url}&${query.join('&')}`)
           }
-        }).catch( error => {
-          console.log(error);
-          let res = error.response;
-          let data = (res && res.data) || {};
-          let status = (res && res.status) || 0;
-          let message = data.message || '请求异常';
-          if (status === 401) {
-            tokenService.login()
-          }
+        }
+      }
+      fly.request(params, params.data).then( res => {
+        let data = res.data;
+        let {success = true, message = '请求异常'} = data;
+        if (success && Number(res.status) === 200) {
+          resolve(data)
+        } else {
           rejectError(reject, message);
-        });       
-      }).catch(e => {
-        console.log(e);
-        let {success = false, message = '请求异常'} = e;
-        rejectError(reject, message);
-      })
+        }
+      })      
     })
   },
   // TODO post请求，使用Payload
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      tokenService.getToken().then(token => {
-        if (!opts.url) {
-          reject({
-            success: false,
-            message: '请填写接口地址'
-          });
-        }
-        fly.post(opts.url, opts.data, {
-          headers: Object.assign({
-            Authorization: token,
-          }, opts.headers)
-        }).then(res => {
-        // axios.post(opts.url, opts.data, {
-        //   headers: Object.assign({
-        //     Authorization: token,
-        //   }, opts.headers)
-        // }).then(res => {
-          let data = res.data;
-          let {success = true, message = '请求异常'} = data;
-          if (success && Number(res.status) === 200) {
-            resolve(data)
-          } else {
-            rejectError(reject, message);
-          }
-        }).catch( error => {
-          let res = error.response;
-          let data = (res && res.data) || {};
-          let status = (res && res.status) || 0;
-          let message = data.message || '请求异常';
-          if (status === 401) {
-            tokenService.login()
-          }
+      fly.post(opts.url, opts.data).then(res => {
+        let data = res.data;
+        let {success = true, message = '请求异常'} = data;
+        if (success && Number(res.status) === 200) {
+          resolve(data)
+        } else {
           rejectError(reject, message);
-        });
-      }).catch(e => {
-        console.log(e);
-        let {success = false, message = '请求异常'} = e;
-        rejectError(reject, message);
+        }
       })
     })
   },

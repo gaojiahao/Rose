@@ -3,6 +3,8 @@ import $axios from '../plugins/ajax'
 import conf from "../plugins/ajax/conf";
 import {querystring} from 'vux'
 import {corpid, secret, agentid, redirect_uri} from '@/plugins/ajax/conf'
+import Fly from 'flyio/dist/npm/fly'
+const fly = new Fly();
 
 const TOKEN_KEY = 'ROSE_LOGIN_TOKEN';
 const RFD_TOKEN_KEY = 'roleplay-token';
@@ -71,16 +73,16 @@ let tokenService = {
     this.clean();
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     //本地测试模拟线上
-    //return this.QYWXLogin(key);
+    return this.QYWXLogin(key);
     //实际开发
     // if (isQYWX) {
     //   return this.QYWXLogin(key);
     // } else {
-      if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
-        return this.pcLogin(key);
-      } else {
-        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
-      }
+      // if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
+      //   return this.pcLogin(key);
+      // } else {
+      //   window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
+      // }
     // }
   },
   // TODO PC端登录，默认返回token
@@ -97,14 +99,14 @@ let tokenService = {
           data: {
             loginModel: 1,
             password: '123456',
-            userCode: 'rfd9527'
+            userCode: 'rfd118'
             // userCode: '15399909500'
             // userCode: '026'
 
           }
         };
-
-        axios(params).then((res) => {
+        fly.request(params, params.data).then( res => {
+        // axios(params).then((res) => {
           let data = res.data;
           this.setToken({
             key1: data.key1 || '',
@@ -134,7 +136,7 @@ let tokenService = {
     return new Promise((resolve, reject) => {
       let query = querystring.parse(location.search.slice(1));
       let code = query.code || '';
-      axios.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
+      fly.get(`/H_roleplay-si/wxLogin?code=${code}&state=1&corpsecret=${secret}`).then((res) => {
         let data = res.data;
         this.setToken({
           key1: data.key1 || '',
