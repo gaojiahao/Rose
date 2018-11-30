@@ -7,47 +7,60 @@ const fly = new Fly();
 // import qs from 'qs';
 let qs = require('querystring');
 
-// TODO reject处理
+// reject处理
 let rejectError = (reject, message) => {
   errHandle(message);
   return Promise.reject({ success: false, message });
 };
+// fly请求 设置拦截器
 fly.interceptors.request.use((request)=> {
-  console.log(`发起请求：path:${request.url}，baseURL:${request.baseURL}`)
-  let token = tokenService.checkLogin('token');
-  // console.log(token)
-  if (!token) {
-    console.log("没有token，先请求token...");
-    // 锁定当天实例，后续请求会在拦截器外排队
-    fly.lock();
-    return tokenService.login('token').then((d) => {
-      request.headers.Authorization = d;
-      // console.log("token请求成功，值为: " + d);
-      // console.log(`继续完成请求：path:${request.url}，baseURL:${request.baseURL}`)
-      return request;
-    }).finally(()=>{
-      fly.unlock(); // 解锁后，会继续发起请求队列中的任务
-    })
-  } else {
-    // console.log('已有的token：' + token)
+  // 检验 token是否存在
+  let token = tokenService.checkLogin();
+  // token 存在则赋值在header当中
+  if(token){
     request.headers.Authorization = token;
   }
-})
-fly.interceptors.response.use(
-  response =>{
-    return response
-  },
-  error => {
-    let res = error.response;
-    let data = (res && res.data) || {};
-    let status = (res && res.status) || 0;
-    let message = data.message || '请求异常';
-    if (status === 401) {
-      tokenService.login()
-    }
-    errHandle(message);
-    // rejectError(reject, message);
+  else {
+    // token 不存在，锁住请求，优先请求token，后序请求进入队列
+    fly.lock();
+    return tokenService.login().then((token) => {
+      request.headers.Authorization = token;
+      // 请求token成功之后，即将进入第一个请求
+      return request;
+    }).finally(() => {
+      // 解锁队列，后序请求恢复正常
+      fly.unlock()
+    })
   }
+})
+// fly请求 响应拦截器
+fly.interceptors.response.use(
+  response => {
+    let { success = true, message = '请求异常' } = response.data;
+    if(response.status === 200) {
+      if(success){
+        console.log(response.request);
+        return response;
+      }else {
+        rejectError('reject', message)
+      }
+    }
+    else if(response.status === 401) {
+      fly.lock();
+      return tokenService.login().then((token) => {
+        console.log('token已更新')
+      })
+      .finally(() => fly.unlock())
+      .then(() => {
+        // 重新发起新的请求
+        return Rxports.ajax(response.request)
+      })
+    }
+    else { 
+      rejectError('reject', message) 
+    }
+  },
+  error => { console.log(error) }
 )
 let Rxports = {
   /**
@@ -64,18 +77,17 @@ let Rxports = {
   ajax(opts = {}) {
     return new Promise((resolve, reject) => {
       let params = {
-        method: opts.type || 'GET',
+        method: opts.type || opts.method || 'GET',
         url: opts.url,
         headers: {
           'Content-Type': opts.contentType || '*/*',
         },
-        timeout: opts.time || 10 * 1000,
+        timeout: opts.time || 30 * 1000,
         responseType: opts.dataType || 'json'
       }
-      if (opts.type && opts.type.toUpperCase() === 'POST') {
-        params.data = qs.stringify(opts.data) || {}
+      if (params.method.toUpperCase() === 'POST') {
+        params.data = qs.stringify(opts.data || opts.body) || {}
       } else {
-        // params.params = opts.data || {}
         if (typeof opts.data === 'object') {
           let query = [];
           for (let [key, value] of Object.entries(opts.data)) {
@@ -90,39 +102,22 @@ let Rxports = {
           }
         }
       }
-      fly.request(params, params.data).then( res => {
-        let data = res.data;
-        let {success = true, message = '请求异常'} = data;
-        if (success && Number(res.status) === 200) {
-          resolve(data)
-        } else {
-          rejectError(reject, message);
-        }
-      })      
+      fly.request(params, params.data).then( res => resolve(res.data))
     })
   },
-  // TODO post请求，使用Payload
+  // post请求，使用Payload
   post(opts = {}) {
     return new Promise((resolve, reject) => {
-      fly.post(opts.url, opts.data).then(res => {
-        let data = res.data;
-        let {success = true, message = '请求异常'} = data;
-        if (success && Number(res.status) === 200) {
-          resolve(data)
-        } else {
-          rejectError(reject, message);
-        }
-      })
+      fly.post(opts.url, opts.data).then(res => resolve(res.data));
     })
   },
-  // TODO 上传图片，单个文件
+  // 上传图片，单个文件
   upload({file = {}, biReferenceId = ''}) {
     let param = new FormData();  // 创建form对象
     param.append('file', file);  // 通过append向form对象添加数据
     if (biReferenceId) {
       param.append('biReferenceId', biReferenceId); // 添加form表单中其他数据
     }
-    // console.log(param.get('file')); // FormData私有类对象，访问不到，可以通过get判断值是否传进去
     return this.post({
       url: '/H_roleplay-si/ds/upload',
       headers: {
