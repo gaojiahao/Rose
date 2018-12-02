@@ -17,7 +17,7 @@ fly.interceptors.request.use((request) => {
   // 检验 token是否存在
   let token = tokenService.checkLogin();
   // token 存在则赋值在header当中
-  if(token){
+  if(token) {
     request.headers.Authorization = token;
   }
   else {

@@ -1,8 +1,5 @@
-import axios from 'axios';
-import $axios from '../plugins/ajax'
-import conf from "../plugins/ajax/conf";
-import {querystring} from 'vux'
-import {corpid, secret, agentid, redirect_uri} from '@/plugins/ajax/conf'
+import { querystring } from 'vux'
+import { corpid, secret, agentid, redirect_uri } from '@/plugins/ajax/conf'
 import Fly from 'flyio/dist/npm/fly'
 const fly = new Fly();
 
@@ -16,19 +13,6 @@ let tokenService = {
   clean() {
     window.sessionStorage.removeItem(TOKEN_KEY);
     window.localStorage.removeItem(RFD_TOKEN_KEY);
-  },
-  /**
-   * 获取token或者用户ID，默认获取token
-   */
-  getToken(key = 'token') {
-    let token = this.checkLogin(key);
-    if (token) {
-      return new Promise((resolve, reject) => {
-        resolve(token)
-      })
-    } else {
-      return this.login(key)
-    }
   },
   /**
    * 设置token
@@ -50,7 +34,7 @@ let tokenService = {
       token: data.token
     }));
   },
-  // TODO 检查是否登录
+  // 检查是否登录
   checkLogin(key = 'token') {
     let token = JSON.parse(window.sessionStorage.getItem(TOKEN_KEY)) || {};
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
@@ -68,24 +52,24 @@ let tokenService = {
     }
     return token[key]
   },
-  // TODO 开发时用于获取账号的登录信息
+  // 开发时用于获取账号的登录信息
   login(key) {
     this.clean();
     let isQYWX = navigator.userAgent.toLowerCase().match(/wxwork/) !== null; // 是否为企业微信
     //本地测试模拟线上
-    return this.QYWXLogin(key);
+    return this.pcLogin(key);
     //实际开发
-    // if (isQYWX) {
-    //   return this.QYWXLogin(key);
-    // } else {
-      // if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
-      //   return this.pcLogin(key);
-      // } else {
-      //   window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
-      // }
-    // }
+    if (isQYWX) {
+      return this.QYWXLogin(key);
+    } else {
+      if (process.env.NODE_ENV === 'development') { // 不是开发环境则不调用登录接口
+        return this.pcLogin(key);
+      } else {
+        window.location.replace(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&redirect_uri=${redirect_uri}&response_type=code&scope=SCOPE&agentid=${agentid}&state=1#wechat_redirect`)
+      }
+    }
   },
-  // TODO PC端登录，默认返回token
+  // PC端登录，默认返回token
   pcLogin(key = 'token') {
     console.log('进入pc了')
     return new Promise((resolve, reject) => {
@@ -99,14 +83,10 @@ let tokenService = {
           data: {
             loginModel: 1,
             password: '123456',
-            userCode: 'rfd118'
-            // userCode: '15399909500'
-            // userCode: '026'
-
+            userCode: ''
           }
         };
         fly.request(params, params.data).then( res => {
-        // axios(params).then((res) => {
           let data = res.data;
           this.setToken({
             key1: data.key1 || '',
@@ -130,7 +110,7 @@ let tokenService = {
       }
     )
   },
-  // TODO 企业微信登录，默认返回token
+  // 企业微信登录，默认返回token
   QYWXLogin(key = 'token') {
     console.log('进入企业微信了')
     return new Promise((resolve, reject) => {
