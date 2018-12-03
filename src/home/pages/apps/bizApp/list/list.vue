@@ -21,6 +21,7 @@ export default {
     }
   },
   created(){
+    
     /*
     * AppsFile[fileId] => 应用类型文件夹
     * Apps[fileId][listId] => 应用名称.vue 
@@ -28,18 +29,22 @@ export default {
     let { fileId, listId } = this.$route.params;
     if(fileId){
       this.fileId = fileId;
-      this.$loading.show();
       this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
     }
   },
   beforeRouteEnter (to, from, next) {
-    let { name } = to.query;
+    let { name, transCode } = to.query;
     // 合规财务报表的title不需要重定义
     if(name.includes('合规')){
       to.meta.title = name;
       next();
     }
-    to.meta.title = name + '列表';
+    if(transCode) {
+      to.meta.title = '加载中...';
+    }
+    else {
+      to.meta.title = name + '列表';
+    }
     next();
   },
   activated() {

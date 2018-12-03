@@ -81,6 +81,9 @@
   ul,li{
     list-style: none;
   }
+  div {
+    box-sizing: border-box;
+  }
   #app {
     width: 100%;
     height: 100%;

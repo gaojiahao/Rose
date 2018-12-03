@@ -1,19 +1,19 @@
 <template>
-  <div class='each_msg' :class="{visited: item.visited}">
-    <div class="msg_info">
-      <!-- 图片 和 应用名称 -->
-      <div class="app_info">
-          <span class="app_img">
-            <img :src='item.list && item.list[0].pic' alt="appImg" @error='getDefaultImg(item[0] || "")'>
-          </span>
-        <span class="app_name">{{name}}</span>
-      </div>
-      <!-- 时间 -->
-      <div class="msg_time">{{item.list | handleCrt }}</div>
-      <badge :text="item.list && item.list.length"></badge>
+  <div class='each-msg' :class="{visited: item.visited}">
+    <div class="app-img-part">
+      <img :src='item.list && item.list[0].pic' alt="appImg" @error='getDefaultImg(item[0] || "")'>
     </div>
-    <div class="recv_msg">
-      您收到{{item.list && item.list.length > 1 ? '多' : '一'}}条新的消息
+    <div class="msg-container-part">
+      <div class="top_part">
+        <span class="app_name">{{name}}</span>
+        <span class="msg_time">{{item.list | handleCrt}}</span>
+      </div>
+      <div class="main_part vux-1px-b">
+        <span>
+          您收到{{item.list && item.list.length > 1 ? '多' : '一'}}条新的消息
+        </span>
+        <badge :text="item.list && item.list.length"></badge>
+      </div>
     </div>
   </div>
 </template>
@@ -80,63 +80,54 @@
 </script>
 
 <style scoped lang="scss">
-  .each_msg {
-    position: relative;
-    width: 95%;
-    padding: .1rem;
-    background: #fff;
-    margin: .1rem auto .2rem;
-    box-sizing: border-box;
-    border-radius: .08rem;
-    box-shadow: 0 2px 10px #e8e8e8;
-    transition: background-color 200ms linear;
-    &.visited {
-      background-color: #e8e8e8;
-    }
-    .vux-badge {
-      position: absolute;
-      right: 0;
-      top: -.1rem;
-    }
-    // 消息头部信息
-    .msg_info {
+.vux-1px-b:after {
+  border-color: #e8e8e8;
+}
+.each-msg {
+  width: 100%;
+  display: flex;
+  background: #fff;
+  position: relative;
+  padding: .1rem .1rem 0;
+  box-sizing: border-box;
+  transition: background-color 300ms linear;
+  &.visited {
+    background-color: #e8e8e8;
+  }
+  .app-img-part {
+    width: .5rem;
+    height: .5rem;
+    margin-right: .1rem;
+    img {
       width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      span {
-        display: inline-block;
-      }
-      // 图片、应用名称
-      .app_info {
-        display: flex;
-        align-items: center;
-        // 图片
-        .app_img {
-          width: .24rem;
-          height: .24rem;
-          img {
-            width: 100%;
-            border-radius: .06rem;
-          }
-        }
-        // 应用名称
-        .app_name {
-          font-size: .14rem;
-          margin-left: .06rem;
-        }
-      }
-      // 产生时间
-      .msg_time {
-        font-size: .14rem;
-        color: #757575;
-      }
-    }
-    // 消息内容
-    .recv_msg {
-      color: #3a3a3a;
-
-      margin-top: .1rem;
+      height: 100%;
+      border-radius: .08rem;
     }
   }
+  .msg-container-part {
+    flex: 1;
+    box-sizing: border-box;
+    .top_part {
+      display: flex;
+      margin-bottom: .04rem;
+      justify-content: space-between;
+      .app_name {
+        font-weight: bold;
+      }
+      .msg_time {
+        color: #757575;
+        font-size: .14rem;
+      }
+    }
+    .main_part {
+      display: flex;
+      color: #757575;
+      font-size: .14rem;
+      align-items: center;
+      padding-bottom: .1rem;
+      justify-content: space-between;
+
+    }
+  }
+}
 </style>

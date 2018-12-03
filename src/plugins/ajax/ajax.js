@@ -67,7 +67,7 @@ fly.interceptors.response.use(
   error => {
     // 响应拦截 报错标识
     console.log('respon-err:', error);
-    rejectError('reject', error.message) 
+    rejectError('reject', error.response.data.message) 
   }
 )
 

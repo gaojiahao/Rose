@@ -1,10 +1,11 @@
 <template>
   <div class="inPage">
-    <tab active-color='#5077aa' :line-width=1>
+    <tab active-color='#5077aa' :line-width=2>
       <tab-item v-for="(item, index) in tabList" :selected="index === activeIndex" @on-item-click="onTabClick" :key="index">{{item.name}}</tab-item>
     </tab>
     <template v-if="listData">
-      <r-scroll class="wrapper" :options="scrollOptions" :has-next="hasNext" :no-data="false"
+      <r-scroll class="wrapper" :class="{'other-wrapper' :  activeIndex != 0}"
+                :options="scrollOptions" :has-next="hasNext" :no-data="false"
                 @on-pulling-up="onPullingUp" ref="bScroll">
         <div class="when_null" v-if="isNull">{{noDataText}}</div>
         <div class="msg_list" v-else>
@@ -157,6 +158,7 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent = tableContent.reduce((arr, item) => {
             let content = JSON.parse(item.content);
+            // console.log(content);
             // app图标处理
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
             item.comment = content.content;
@@ -164,18 +166,20 @@
             item.commentType = content.type; // 评论类型,list为应用,instance为实例
             item.RELATION_KEY = content.relationKey; // 实例的交易号
             // list为应用，instance为实例
-            item.other = content.type === 'list' ? `评论了应用` : `评论了实例${content.relationKey}`;
+            // item.other = content.type === 'list' ? `评论了应用` : `评论了实例${content.relationKey}`;
+            item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
-              item.other = content.type === 'list' ? `回复了应用` : `回复了实例${content.relationKey}`;
+              // item.other = content.type === 'list' ? `回复了应用` : `回复了实例${content.relationKey}`;
+              item.comment = `回复@${content.objCreator}: ${content.content}`;
               item.reply = {
                 createrName: content.objCreator,
-                comment: `@${content.objCreator}: ${content.objContent}`,
+                comment: `@${content.objCreator} 评论: ${content.objContent}`,
               };
             }
             // 点赞
             if (item.type === 'praise') {
-              item.comment = '赞了我';
+              item.comment = '赞了这条评论';
               item.other = content.type === 'list' ? `赞了应用` : `赞了实例${content.relationKey}`;
               item.reply = {
                 createrName: content.creator,
@@ -292,8 +296,11 @@
     overflow: hidden;
     .wrapper {
       width: 100%;
-      height: calc(100% - .92rem);
       overflow: hidden;
+      height: calc(100% - .92rem);
+      &.other-wrapper {
+        background: #F2F3F5; 
+      }
     }
     /deep/ .scroll-wrapper {
       position: relative;
@@ -310,7 +317,8 @@
       transform: translate(0, -50%);
     }
     .msg_list {
-      padding: .04rem 0 .02rem;
+      // background: #F6F6F6;
+      // padding: .04rem 0 .02rem;
     }
   }
 </style>
