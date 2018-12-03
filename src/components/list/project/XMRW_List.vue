@@ -3,9 +3,10 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
+          <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -44,6 +45,7 @@
             value: 'projectName_project',
           },
         ],
+        listViewID: 2326,
       }
     },
     mixins: [listCommon],
@@ -69,41 +71,6 @@
           })
         }, 200)
       },
-      getList(noReset = false) {
-        let filter = [];
-        if (this.serachVal) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.serachVal,
-              property: this.filterProperty,
-            },
-          ];
-        }
-        return getList(2326, {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          sort: JSON.stringify(this.sort),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.$emit('input', false);
-          tableContent.forEach(item => {
-            this.setStatus(item);
-          });
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
-      }
     }
   }
 </script>

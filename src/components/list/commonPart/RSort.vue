@@ -42,21 +42,20 @@
                 </div>
               </div>
             </div>
-            <div class="process-status-container basic-mod" v-for="(val,key,index) in filtersList" :key="index">
-              <div v-if="val.alias !== '流程状态' && val.value.length">
-                <div class="filter_title vux-1px-b">
+            <div class="process-status-container basic-mod" v-for="(val,key,index) in filtersList" :key="index" v-if="val.alias !== '流程状态' && val.value.length">
+              <div>
+                <div class="filter_title vux-1px-b" @click="val.showAll = !val.showAll">
                   <div>{{val.alias}}</div>
-                  <!-- <div>
-                    
-                  </div>
-                  <span>全部</span> -->
+                  <div class="arrow">
+                   <span>全部</span>
+                   <span class="iconfont icon-xia" :class="{'arrow-up' : val.showAll}"></span>
+                  </div>  
                 </div>
                 <div class="process_status">
                   <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,key)}"
                   v-for="(item, index) in val.value" :key="index"
-                  @click="selProcee(item,key)">
+                  @click="selProcee(item,key)" v-show="index < 3 || val.showAll">
                     <div class="status_content">{{item}}</div>
-                    <!-- <div class="status_content">全部</div> -->
                   </div>          
                 </div>
               </div>
@@ -93,14 +92,14 @@ export default {
           { name: '综合', key: '' },
           { name: '交易号', key: 'transCode' },
           { name: '修改时间', key: 'modTime' },
-          { name: '流程状态', key: 'processSort' }
+          // { name: '流程状态', key: 'processSort' }
         ]
       }
     },
     viewId: {
       type: Number,
       default: 2190
-    }
+    },
   },
   data() {
     return {
@@ -109,7 +108,6 @@ export default {
       preDate: '',
       property: '', // 被选中的字段
       fieldVlaue: {}, // 被选中的流程状态
-      PcesStaList: [],  // 流程状态数组
       showFilter: false,  // 是否展示筛选
       timeFilter: {
         startDate: '',
@@ -152,19 +150,6 @@ export default {
         otherFilter: JSON.parse(JSON.stringify(this.fieldVlaue))
       };
     },
-    // 判断数组元素是否相同
-    equar(arr1,arr2) {
-      if(arr1.length !== arr2.length) {
-        return false
-      } else {
-        for(let i = 0; i < arr1.length; i++) {
-          if(arr1[i].fieldVlaue !== arr2[i].fieldVlaue) {
-             return false
-          }
-        }
-        return true;
-      }
-    },
     // pop关闭时，判断过滤条件是否改变，改变则重新请求列表
     onHide() {
       let isRefreshList = false;
@@ -190,7 +175,6 @@ export default {
       if(this.fieldVlaue[key]){
         return this.fieldVlaue[key].value.findIndex(item => item === sItem) !== -1;
       }
-      // return this.fieldVlaue[key].value.findIndex(item => item === sItem) !== -1;
     },
     // 选择流程状态
     selProcee(sItem, key) {
@@ -213,7 +197,7 @@ export default {
           alias: this.filtersList[key].alias,
           value: [sItem]
         }
-        this.$set(this.fieldVlaue,key,obj)
+        this.$set(this.fieldVlaue,key,{...obj})
       }
     },  
     // 起始日期
@@ -250,13 +234,14 @@ export default {
         startDate: '',
         endDate: ''
       }
-      this.fieldVlaue = []
+      this.fieldVlaue = {}
     },
     // 请求过滤字段
     getFilterFields(){
       filterFields(this.viewId).then(data=>{
         for(let key in data){
-          data[key].showValue = data[key].value.slice(0,9)
+          data[key].showValue = data[key].value.slice(0,9);
+          data[key].showAll = false;
         }
         this.filtersList = {...data};
       })
@@ -266,9 +251,6 @@ export default {
     let { listId } = this.$route.params;
     this.toDay = dateFormat(new Date(),'YYYY-MM-DD');
     this.preDate = dateFormat(new Date(new Date().getTime() - 24*60*60*1000), 'YYYY-MM-DD');
-    // getProcessStatus(listId).then(({ tableContent }) => {
-    //   this.PcesStaList = tableContent;
-    // })
     this.getFilterFields()
     
   }
@@ -327,22 +309,23 @@ export default {
     }
     span + span {
       margin-left: .02rem;
+      color: #757575;
     }
     &.active  {
       color: #5077aa;
       font-weight: bold;
     }
     &:first-child{
-      flex: 0.5;
+      flex: 0.6;
     } 
-    &:nth-child(2){
-      flex: 0.8;
-    }
+    // &:nth-child(2){
+    //   flex: 0.8;
+    // }
   }
   .filter-part {
     @extend .each-sort;
-    flex: 0.7;
-    justify-content: flex-end;
+    // flex: 0.7;
+    // justify-content: flex-end;
     &.active{
       color: #5077aa;
     }
@@ -367,6 +350,28 @@ export default {
     font-weight: bold;
     margin-bottom: .1rem;
     padding-bottom: .04rem;
+    padding-right: .07rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .arrow{
+      font-size: .12rem;
+      color: #757575;
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      // align-content: flex-end;
+      .icon-xia{
+        display: inline-block;
+        color: #757575;
+        font-size: .12rem;
+        margin-left: .05rem;
+        transition: transform 200ms linear;
+        &.arrow-up {
+          transform: rotate(-180deg);
+        }
+      }
+    }
   }
   .process-status-container {
     padding: .1rem 0 0 .1rem;

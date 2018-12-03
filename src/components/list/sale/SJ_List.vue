@@ -3,9 +3,9 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
@@ -42,9 +42,10 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, {
-            name: '商机标题',
-            value: 'opportunityTitle',
+          }, 
+          {
+            name: '客户名称',
+            value: 'dealerName_dealerDebit',
           },
         ],
       }
@@ -52,65 +53,65 @@
     mixins: [listCommon],
     methods:{
       //获取销售订单数据
-      getList(noReset = false) {
-        let filter = [];
-        if(this.activeTab){
-          filter = [{operator: "in", value: this.activeTab, property: "biStatus"}];
-        }
-        if(this.serachVal){
-          filter = [
-            ...filter,
-            {
-              operator: "like",
-              value: this.serachVal,
-              property: this.filterProperty,
-            },
-          ];
-          if(this.activeTab){
-            filter[0].attendedOperation = "and";
-          }
-        }
-        return getList(this.listViewID,{
-          limit: this.limit,
-          page: this.page,
-          start : (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          sort: JSON.stringify(this.sort)
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent.forEach(item => {
-            this.setStatus(item);
-          });
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-          //判断最近有无新增数据
-          //console.log(this.dataCount);
-          let text = '';
-          if(noReset && this.activeIndex ===0){
-            if(this.total){
-              text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
-              this.$vux.toast.show({
-                text: text,
-                position:'top',
-                width:'50%',
-                type:"text",
-                time : 700
-              })
-            }
-          }
-          //列表总数据缓存
-          if(this.activeIndex == 0 && this.page ===1){
-            sessionStorage.setItem(this.applyCode,dataCount);
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
+      // getList(noReset = false) {
+      //   let filter = [];
+      //   if(this.activeTab){
+      //     filter = [{operator: "in", value: this.activeTab, property: "biStatus"}];
+      //   }
+      //   if(this.serachVal){
+      //     filter = [
+      //       ...filter,
+      //       {
+      //         operator: "like",
+      //         value: this.serachVal,
+      //         property: this.filterProperty,
+      //       },
+      //     ];
+      //     if(this.activeTab){
+      //       filter[0].attendedOperation = "and";
+      //     }
+      //   }
+      //   return getList(this.listViewID,{
+      //     limit: this.limit,
+      //     page: this.page,
+      //     start : (this.page - 1) * this.limit,
+      //     filter: JSON.stringify(filter),
+      //     sort: JSON.stringify(this.sort)
+      //   }).then(({dataCount = 0, tableContent = []}) => {
+      //     this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+      //     tableContent.forEach(item => {
+      //       this.setStatus(item);
+      //     });
+      //     this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
+      //     if (!noReset) {
+      //       this.$nextTick(() => {
+      //         this.resetScroll();
+      //       })
+      //     }
+      //     //判断最近有无新增数据
+      //     //console.log(this.dataCount);
+      //     let text = '';
+      //     if(noReset && this.activeIndex ===0){
+      //       if(this.total){
+      //         text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
+      //         this.$vux.toast.show({
+      //           text: text,
+      //           position:'top',
+      //           width:'50%',
+      //           type:"text",
+      //           time : 700
+      //         })
+      //       }
+      //     }
+      //     //列表总数据缓存
+      //     if(this.activeIndex == 0 && this.page ===1){
+      //       sessionStorage.setItem(this.applyCode,dataCount);
+      //     }
+      //     this.$loading.hide();
+      //   }).catch(e => {
+      //     this.resetScroll();
+      //   })
+      // },
     }
   }
 </script>

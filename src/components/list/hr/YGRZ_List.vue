@@ -3,14 +3,10 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
-            <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.name}}
-            </tab-item>
-          </tab>-->
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
+          <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -22,9 +18,10 @@
           <div class="duty_top">
             <p class="duty_code">
               {{item.transCode}}
-              <span class="duty_crt_man" :class="item.statusClass" v-show="item.biProcessStatus">{{item.biProcessStatus}}</span>
+              <span class="duty_crt_man" v-if="item.processStatus">{{item.processStatus}}</span>
             </p>
-            <p class="duty_time">{{item.crtTime | dateFormat('YYYY-MM-DD')}}</p>
+            <span class="duty_status" :class="item.statusClass">{{item.statusName}}</span>
+            <i class="iconfont" :class="item.whichIcon"></i>
           </div>
           <div class="duty_content">
             <div class="content_title">{{item.hiresName}}</div>
@@ -71,6 +68,7 @@
             value: 'profileName',
           },
         ],
+        listViewID: 2375
       }
     },
     mixins: [listCommon],
@@ -107,72 +105,6 @@
       goUserEdit(item, index) {
         this.pathChange(item, index, `/fillform`);
       },
-      // 状态区分
-      setStatus(item) {
-        if(item.processStatus.includes('未启动')){
-          item.statusClass = 'duty_fall_c';
-        }
-        else if(item.processStatus.includes('交付完成')){
-          item.statusClass = 'duty_done_c';
-        }
-      },
-      // TODO 获取用户列表
-      getList(noReset = false) {
-        let filter = [];
-        if (this.activeTab) {
-          filter.push({
-            operator: 'in',
-            value: this.activeTab,
-            property: 'status'
-          })
-        }
-        if (this.serachVal) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.serachVal,
-              property: this.filterProperty,
-            },
-          ];
-        }
-        return getList(2375, {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          sort: JSON.stringify(this.sort),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-          //判断最近有无新增数据
-          let text = '';
-          if (noReset && this.activeIndex === 0) {
-            if (this.total) {
-              text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount - this.total}条数据`;
-              this.$vux.toast.show({
-                text: text,
-                position: 'top',
-                width: '50%',
-                type: "text",
-                time: 700
-              })
-            }
-          }
-          //列表总数据缓存
-          if (this.activeIndex === 0 && this.page === 1) {
-            sessionStorage.setItem(this.applyCode, dataCount);
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
-      }
     }
   }
 </script>
@@ -182,6 +114,38 @@
   .cpxq-list-container {
     .list_wrapper {
       height: calc(100% - 1.64rem);
+      .each_duty{
+        overflow: hidden;
+      }
+      .icon-yishengxiao {
+        top: 0;
+        right: 10px;
+        font-size: .55rem;
+        color: #53d397;
+        position: absolute;
+      }
+      .duty_status {
+        float: right;
+        font-weight: bold;
+      }
+      .duty_done_c {
+        color: #53d397;
+        &:before {
+          border-right: .04rem solid #53d397;
+        }
+      }
+      .duty_doing_c {
+        color: #5077aa;
+        &:before {
+          border-right: .04rem solid #5077aa;
+        }
+      }
+      .duty_fall_c {
+        color: #474a56;
+        &:before {
+          border-right: .04rem solid #474a56;
+        }
+      }
     }
   }
 </style>
