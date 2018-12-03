@@ -12,55 +12,56 @@
                   :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item, index)">
-              <div class="order-code" v-if="item.transCode && !item.transCode.includes(',') && isShowCode">
-                <span class="order-title">订单号</span>
-                <span class="order-num">{{item.transCode}}</span>
+            <div class="order-code" v-if="item.transCode && !item.transCode.includes(',') && isShowCode">
+              <span class="order-title">订单号</span>
+              <span class="order-num">{{item.transCode}}</span>
+            </div>
+            <div class="order-matter">
+              <div class="mater_img">
+                <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
-              <div class="order-matter">
-                <div class="mater_img">
-                  <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
+              <div class="mater_main ">
+                <!-- 物料名称 -->
+                <div class="mater_name">
+                  <span class="whiNum">No.{{index + 1}}</span>
+                  {{item.inventoryName}}
                 </div>
-                <div class="mater_main ">
-                  <!-- 物料名称 -->
-                  <div class="mater_name">
-                    <span class="whiNum">No.{{index + 1}}</span>
-                    {{item.inventoryName}}
-                  </div>
-                  <!-- 物料基本信息 -->
-                  <div class="mater_info">
-                    <!-- 物料编码、规格 -->
-                    <div class="withColor">
-                      <!-- 物料编码 -->
-                      <div class="ForInline" style="display:inline-block">
-                        <div class="mater_code">
-                          <span class="title">编码</span>
-                          <span class="num">{{item.inventoryCode}}</span>
-                        </div>
-                      </div>
-                      <!-- 物料规格 -->
-                      <div class="ForInline" style="display:inline-block">
-                        <div class="mater_spec">
-                          <span class="title">规格</span>
-                          <span class="num">{{item.specification || '无'}}</span>
-                        </div>
+                <!-- 物料基本信息 -->
+                <div class="mater_info">
+                  <!-- 物料编码、规格 -->
+                  <div class="withColor">
+                    <!-- 物料编码 -->
+                    <div class="ForInline" style="display:inline-block">
+                      <div class="mater_code">
+                        <span class="title">编码</span>
+                        <span class="num">{{item.inventoryCode}}</span>
                       </div>
                     </div>
-                    <!-- 物料分类、材质 -->
-                    <div class="withoutColor">
-                      <!-- 物料分类 -->
-                      <div class="mater_classify">
-                        <span class="type">属性: {{item.processing}}</span>
-                        <span class="father">大类: {{item.inventoryType || '无'}}</span>
-                        <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                    <!-- 物料规格 -->
+                    <div class="ForInline" style="display:inline-block">
+                      <div class="mater_spec">
+                        <span class="title">规格</span>
+                        <span class="num">{{item.specification || '无'}}</span>
                       </div>
+                    </div>
+                  </div>
+                  <!-- 物料分类、材质 -->
+                  <div class="withoutColor">
+                    <!-- 物料分类 -->
+                    <div class="mater_classify">
+                      <span class="type">属性: {{item.processing}}</span>
+                      <span class="father">大类: {{item.inventoryType || '无'}}</span>
+                      <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                    </div>
 
-                      <!-- 物料材质等 -->
-                      <div class="mater_material">
-                        <span class="unit">单位: {{item.measureUnit}}</span>
-                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                        <span class="spec">材质: {{item.material || '无'}}</span>
-                      </div>
+                    <!-- 物料材质等 -->
+                    <div class="mater_material">
+                      <span class="unit">单位: {{item.measureUnit}}</span>
+                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class="spec">材质: {{item.material || '无'}}</span>
+                    </div>
 
+                    <slot name="storage" :item="item">
                       <!-- 库存 -->
                       <div class="mater_material" v-if="item.qtyBal !== undefined">
                         <span class="spec">余额: {{item.qtyBal}}</span>
@@ -68,10 +69,11 @@
                       <div class="mater_material" v-if="item.allQty">
                         <span class="spec">待做需求: {{item.qtyBalance}}</span>
                       </div>
-                    </div>
+                    </slot>
                   </div>
                 </div>
               </div>
+            </div>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -88,7 +90,7 @@
 </template>
 
 <script>
-  import {Icon, Popup,dateFormat } from 'vux'
+  import {Icon, Popup, dateFormat} from 'vux'
   import {getList} from 'service/commonService'
   import {
     getSumInvBalance,
@@ -132,6 +134,20 @@
       isShowCode: {
         type: Boolean,
         default: true
+      },
+      filterList: {
+        type: Array,
+        default() {
+          return [ // 过滤列表
+            {
+              name: '物料名称',
+              value: 'inventoryName',
+            }, {
+              name: '物料编码',
+              value: 'inventoryCode',
+            },
+          ]
+        }
       }
     },
     components: {
@@ -152,15 +168,6 @@
           pullUpLoad: true,
         },
         filterProperty: '', // 过滤的key
-        filterList: [ // 过滤列表
-          {
-            name: '物料名称',
-            value: 'inventoryName',
-          }, {
-            name: '物料编码',
-            value: 'inventoryCode',
-          },
-        ],
       }
     },
     watch: {
@@ -344,7 +351,7 @@
           ];
         }
         let {relationKey = ''} = this.$route.query;
-        if(relationKey){
+        if (relationKey) {
           filter = [
             {
               operator: 'eq',
@@ -421,14 +428,14 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []})=>{
+        }).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
             item.inventoryCode = item.matCode;
             item.inventoryName = item.invName;
           });
           let {relationKey = ''} = this.$route.query;
-          if(relationKey){
+          if (relationKey) {
             this.selItems = [...tableContent];
             this.$emit('sel-matter', JSON.stringify(this.selItems));
           }
@@ -462,12 +469,12 @@
         }).then(this.dataHandler);
       },
       // TODO 共用的数据处理方法
-      dataHandler({dataCount = 0, tableContent = []}){
+      dataHandler({dataCount = 0, tableContent = []}) {
         tableContent.forEach(item => {
           item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
         });
         let {relationKey = ''} = this.$route.query;
-        if(relationKey){
+        if (relationKey) {
           this.selItems = [...tableContent];
           this.$emit('sel-matter', JSON.stringify(this.selItems));
         }
@@ -478,29 +485,14 @@
         })
       },
       // TODO 初始化条件
-      resetCondition(){
+      resetCondition() {
         this.matterList = [];
         this.page = 1;
         this.hasNext = true;
         this.$refs.bScroll.scrollTo(0, 0);
       },
-      // TODO 设置搜索框过滤条件
-      setFilterList() {
-        if (this.getListMethod === 'getPurchaseInNeeds') {
-          this.filterList = [
-            {
-              name: '物料名称',
-              value: 'invName',
-            }, {
-              name: '物料编码',
-              value: 'matCode',
-            },
-          ]
-        }
-      },
     },
     created() {
-      this.setFilterList();
       this.setDefaultValue();
       // 请求物料
       this[this.getListMethod]();

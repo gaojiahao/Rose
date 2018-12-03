@@ -76,7 +76,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                          :default-value="matterList" get-list-method="getPurchaseInNeeds"
+                          :default-value="matterList" get-list-method="getPurchaseInNeeds" :filter-list="filterList"
                           ref="matter"></pop-matter-list>
         </div>
         <!-- 物料编辑pop -->
@@ -165,6 +165,15 @@ export default {
         processing: '成品,商品,服务,原料,半成品'
       },
       modifyKey: '',
+      filterList: [
+        {
+          name: '物料名称',
+          value: 'invName',
+        }, {
+          name: '物料编码',
+          value: 'matCode',
+        },
+      ],
     }
   },
   components: {

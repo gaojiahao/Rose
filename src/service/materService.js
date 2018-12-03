@@ -204,6 +204,22 @@ export let getUsingProcedure = (data = {}) => {
   })
 };
 
+// TODO 获取物料的辅助计量
+export let getObjInvMoreUnitByInvCode = (inventoryCode) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjInvMoreUnitByInvCode',
+    data: {
+      _dc: Date.now(),
+      data: {
+        inventoryCode,
+        page: 1,
+        start: 0,
+        limit: 10000,
+      }
+    }
+  })
+};
+
 export default {
   save,
   update,

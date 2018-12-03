@@ -157,7 +157,7 @@ export default {
           content: message,
           onHide: () => {
             if (success) {
-              this.$router.go(-1);
+              this.judgePage();
             }
           }
         });
@@ -193,7 +193,7 @@ export default {
               content: message,
               onHide: () => {
                 if (success) {
-                  this.$router.go(-1);
+                  this.judgePage();
                 }
               }
             });
@@ -296,7 +296,24 @@ export default {
     // 监听触发转发
     listenShare (){
       // shareContent();
-    }
+    },
+    // TODO 判断是返回上一页还是跳转详情页
+    judgePage() {
+      // 在企业微信的提醒中打开重新提交页面history为1，此时终止成功则跳转详情页
+      if (window.history.length !== 1) {
+        this.$router.go(-1);
+      } else {
+        let {name} = this.$route.query;
+        let {fileId, listId} = this.$route.params;
+        this.$router.replace({
+          path: `/detail/${fileId}/${listId}`,
+          query: {
+            name,
+            transCode: this.transCode
+          }
+        });
+      }
+    },
   },
   created() {
     register(); // 注册wx-js-sdk
@@ -327,7 +344,7 @@ export default {
       wx.ready(() => {
         // 分享
         let shareInfo = {
-          title: `创建新的${name}`, 
+          title: `创建新的${name}`,
           desc: `点击创建新的${name}订单`,
           imgUrl: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2952407151,1992384149&fm=26&gp=0.jpg'
           // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.png`

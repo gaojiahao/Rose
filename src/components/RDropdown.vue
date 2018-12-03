@@ -25,6 +25,10 @@
         default() {
           return []
         }
+      },
+      show: {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -37,6 +41,12 @@
       }
     },
     watch: {
+      show: {
+        handler(val) {
+          this.showDrop = val;
+        },
+        immediate: true
+      },
       list: {
         handler() {
           this.selItem = this.list[0];
@@ -66,7 +76,9 @@
   .vux-1px-b:after {
     border-color: #e8e8e8;
   }
+
   .r-dropdown {
+    position: relative;
     width: 100%;
     /* 选中值 */
     .r-dropdown-value {
@@ -99,7 +111,7 @@
       // text-align: center;
       border-bottom-left-radius: .08rem;
       border-bottom-right-radius: .08rem;
-      background-color: #FFF;   
+      background-color: #FFF;
       box-shadow: 0 2px 10px #e8e8e8;
       box-sizing: border-box;
     }

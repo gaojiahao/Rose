@@ -1,7 +1,7 @@
 <template>
-  <div class="pop-contact-list" v-show="contactInfo.dealerCode || contactList.length">
+  <div class="pop-contact-list" v-show="contactInfo.dealerName || contactList.length">
     <div class="contact-content vux-1px-t" @click="showPop = !showPop">
-      <div class="selected-mode" v-if="contactInfo.dealerCode">
+      <div class="selected-mode" v-if="contactInfo.dealerName">
         <div>
           <span class="contact-tips">联系人</span>
           <span>{{contactInfo.dealerName}}</span>
@@ -109,6 +109,7 @@
       },
       defaultValue: {
         handler() {
+          console.log(this.defaultValue)
           this.contactInfo = Object.freeze({...this.defaultValue})
         },
         immediate: true,
@@ -125,7 +126,7 @@
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.contactInfo.dealerCode === sItem.dealerCode;
+        return this.contactInfo.dealerName === sItem.dealerName;
       },
       // 选择联系人
       selContact(item, index) {
