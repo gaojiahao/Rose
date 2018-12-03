@@ -4,7 +4,8 @@ import errHandle from './errHandle'
 // TODO 获取list的分类
 export let getListClassfiy = (data = {}) => {
   return $axios.ajax({
-    url: '/account-api/account/getEntryView',
+    // url: '/account-api/account/getEntryView',
+    url: '/H_roleplay-si/ps/account/getEntryView',
     data
   }).catch(e => {
     return errHandle(e);
