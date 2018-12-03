@@ -16,7 +16,6 @@
           <template v-else-if="activeIndex === 1 || activeIndex === 2">
             <comment-item :item="item" v-for="(item, index) in commentList"
                           @click.native="goDetail(item, index)" :key="index">
-              <comment-item :item="item.reply" v-if="item.reply" slot="reply" no-header is-reply></comment-item>
             </comment-item>
           </template>
         </div>
@@ -156,21 +155,18 @@
           let {dataCount = 0, tableContent = []} = data;
           this.isNull = !tableContent.length;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          tableContent = tableContent.reduce((arr, item) => {
+          for(let item of tableContent) {
             let content = JSON.parse(item.content);
-            // console.log(content);
-            // app图标处理
-            item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
-            item.comment = content.content;
-            item.attachment = content.attachment;
+            
+            item.comment = content.content; // 评论内容
             item.commentType = content.type; // 评论类型,list为应用,instance为实例
+            item.attachment = content.attachment;
             item.RELATION_KEY = content.relationKey; // 实例的交易号
+            item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
             // list为应用，instance为实例
-            // item.other = content.type === 'list' ? `评论了应用` : `评论了实例${content.relationKey}`;
             item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
-              // item.other = content.type === 'list' ? `回复了应用` : `回复了实例${content.relationKey}`;
               item.comment = `回复@${content.objCreator}: ${content.content}`;
               item.reply = {
                 createrName: content.objCreator,
@@ -180,17 +176,14 @@
             // 点赞
             if (item.type === 'praise') {
               item.comment = '赞了这条评论';
-              item.other = content.type === 'list' ? `赞了应用` : `赞了实例${content.relationKey}`;
+              // item.other = content.type === 'list' ? `赞了应用` : `赞了实例${content.relationKey}`;
               item.reply = {
                 createrName: content.creator,
                 comment: `@${content.creator}: ${content.content}`,
                 attachment: content.attachment,
               };
             }
-
-            arr.push(item);
-            return arr
-          }, []);
+          }          
           this.commentList = this.page === 1 ? tableContent : [...this.commentList, ...tableContent];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
@@ -299,7 +292,7 @@
       overflow: hidden;
       height: calc(100% - .92rem);
       &.other-wrapper {
-        background: #F2F3F5; 
+        background: #EEE; 
       }
     }
     /deep/ .scroll-wrapper {

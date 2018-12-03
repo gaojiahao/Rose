@@ -1,8 +1,8 @@
 <template>
-  <div class="comment-item" :class="{visited: item.visited, 'is-reply': isReply}">
+  <div class="comment-item" :class="{'visited': item.visited}">
     <!-- 图片 和 应用名称 -->
     <div class="top-info-part">
-      <div class="header-part" v-if="!noHeader">
+      <div class="header-part">
         <div class="avatar-part">
           <img class="avatar" :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg">
         </div>
@@ -10,21 +10,20 @@
           <span class="creator_name">{{item.creatorName}}</span>
           <span class="time">{{item.crtTime}}</span>
         </div>
-        <!-- <div class="header-right">{{item.other}}</div> -->
       </div>
       <div class="comment-container">
         <div class="comment" v-html="handleComment()"></div>
         <div class="comment-image" v-if="item.attachment">
           <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
               @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
-          <div v-for="(file, index) in item.attachment" :key="index" v-if="!file.isImg"
-          @click.stop="checkFile(file.attachment)">{{file.name}}</div>
+          <div class="each_file" v-for="(file, index) in item.attachment" :key="index" v-if="!file.isImg"
+          @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}</div>
         </div> 
       </div>
     </div>
     <div class="belong-container" :class="{'has-reply': item.reply}">
-      <div class="reply-part">
-        {{item.reply && item.reply.comment}}
+      <div class="reply-part" v-if="item.reply">
+        {{item.reply.comment}}
       </div>
       <div class="belong-part">
         <div class="app_img">
@@ -35,21 +34,7 @@
           <p class="app_status_info">{{item.other}}</p>
         </div>
       </div>
-      <!-- <div class="app-info" v-if="!noHeader">
-        <img class="app-img" :src='item.pic' alt="appImg" @error="getDefaultIcon(item)">
-        <span class="app-name">{{item.listName}}</span>
-      </div> -->
-
     </div>
-    <!-- <a href="javascript:window.open('%2FH_roleplay-si%2Fds%2Fdownload%3Furl%3D%2Fb62b550f-9e6d-4b3f-a130-0c59714009db%2Fef4cf29a-6ac7-4c00-bc6f-434c2b1b8b17.xlsx')" id="ext-element-9" data-tabindex-value="none" tabindex="-1" data-tabindex-counter="1">终版10.29-11.4 折算后数据  提供给IT2018.11.5.xlsx</a> -->
-    <!-- <div class="comment" v-html="handleComment()"></div>
-    <div class="comment-image" v-if="item.attachment">
-      <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
-           @click.stop="scaleImg(img)" :key="iIndex" v-if="img.type === 'image'"/>
-    </div>
-    <div class="comment-reply" v-if="this.$slots.reply">
-      <slot name="reply"></slot>
-    </div> -->
   </div>
 </template>
 
@@ -68,21 +53,6 @@ import { decode } from 'punycode';
           return {}
         }
       },
-      // 是否展示头部
-      noHeader: {
-        type: Boolean,
-        default: false
-      },
-      // 是否为回复内容
-      isReply: {
-        type: Boolean,
-        default: false
-      },
-    },
-    data() {
-      return {
-        fileUrl: ''
-      }
     },
     methods: {
       // 获取应用icon
@@ -126,17 +96,7 @@ import { decode } from 'punycode';
       },
       // 查看附件
       checkFile(file) {
-        console.log('file:', file);
-        // console.log(`${location.origin}${file}`);
-        // this.fileUrl = `${location.origin}${file}`
-        this.$router.push({
-          path: '/H_roleplay-si/ds/download',
-          query: {
-            name: file
-          }
-        })
-        // window.location.href = `${location.origin}${file}`
-        // window.history.go(`${location.origin}${file}`)
+        window.location.href = `${location.origin}${file}`
       },
       // 替换表情图片地址
       handleComment() {
@@ -200,7 +160,8 @@ import { decode } from 'punycode';
     $avatarSize: .45rem;
     width: 100%;
     margin: .1rem 0;
-    padding: .1rem 0;
+    // padding: .1rem 0;
+    padding-top: .1rem;
     box-sizing: border-box;
     background-color: #fff;
     transition: background-color 200ms linear;
@@ -237,12 +198,7 @@ import { decode } from 'punycode';
           display: flex;
           flex-direction: column;
           .creator_name {
-            margin-right: .1rem;
-            max-width: .8rem;
             color: #111;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
           }
           .time {
             color: #757575;
@@ -251,15 +207,20 @@ import { decode } from 'punycode';
         }
       }
       .comment-container {
+        margin-bottom: .04rem;
         .comment {
-          // padding-left: $avatarSize + .1rem;
           color: #454545;
-          word-wrap: break-word;
-          /deep/ .img-emotion {
+          margin-bottom: .04rem;
+          word-break: break-all;
+          /deep/ img {
             display: inline-block;
+            vertical-align: middle;
+          }
+          /deep/ .img-emotion {
             width: 24px;
             height: 24px;
             vertical-align: top;
+            display: inline-block;
             background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
           }
           /deep/ .img-emotion + .img-emotion {
@@ -267,12 +228,14 @@ import { decode } from 'punycode';
           }
         }
         .comment-image {
-          // padding-left: $avatarSize + .1rem;
           .comment-image-item {
-            margin-right: .1rem;
             width: .6rem;
             height: .6rem;
-            border-radius: .06rem;
+            margin-right: .1rem;
+            border: 1px solid #eee;
+          }
+          .each_file {
+            color: #5893d4;
           }
         }
       }
@@ -286,13 +249,18 @@ import { decode } from 'punycode';
     }
     .belong-container {
       width: 100%;
-      padding: .1rem;
+      padding: 0 .1rem .1rem;
       &.has-reply {
+        padding: .1rem;
         margin-top: .04rem;
-        background: #f1f1f1;
+        background: #f7f7f7;
         .belong-part {
           background: #FFF;
         }
+      }
+      .reply-part {
+        color: #7A7A7A;
+        margin-bottom: .06rem;
       }
       .belong-part {
         display: flex;
@@ -319,26 +287,6 @@ import { decode } from 'punycode';
           }
         }
       }
-    }
-  }
-
-  /* 放大的图片 */
-  .scale-image-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 11;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, .8);
-    .scale-image {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      padding-top: 100%;
-      transform: translateY(-50%);
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
     }
   }
 </style>
