@@ -40,7 +40,7 @@
                 <slot name="qtyBal" :modifyMatter="modifyMatter">
                   <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
                 </slot>
-                
+
             </div>
             <div class="mater_more">
               <slot name="materStock" :modifyMatter="modifyMatter"></slot>
@@ -55,28 +55,28 @@
                 <slot name="qtyName">
                   <span class='required'>数量</span>
                 </slot>
-              </template>    
+              </template>
             </x-input>
             <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
             @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <template slot="label">
                 <span class='required'>单价
                 </span>
-              </template>    
+              </template>
             </x-input>
             <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
               @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <template slot="label">
                 <span class='required'>税率
                 </span>
-              </template>    
+              </template>
             </x-input>
             <slot name="date" :modifyMatter="modifyMatter">
               <!-- <datetime v-if="showDateTime" :title="dateText" v-model="modifyMatter.promDeliTime"
                       placeholder="请选择" ></datetime> -->
 
             </slot>
-            
+
           </slot>
         </group>
         <div class='mg_auto' v-show="isShowAmount">
@@ -109,6 +109,7 @@ import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
 //组件引入
 import {toFixed} from '@/plugins/calc'
 export default {
+  name: 'MatterPop',
   props:{
     modifyMatter:{    // 进行修改的单个物料信息
       type: Object,
