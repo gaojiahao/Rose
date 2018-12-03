@@ -82,9 +82,9 @@ export default {
         return
       }
       // 交易号、应用名称等
-      let {transCode} = item,
-        {name} = this.$route.query,
-        {fileId, listId} = this.$route.params;
+      let { transCode } = item,
+          { name } = this.$route.query,
+          { fileId, listId } = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
@@ -432,12 +432,40 @@ export default {
     dateFormat,
     toFixed,
   },
+  beforeCreate() {
+    /*
+     * 企业微信推送，第一层url跳转至此
+     * 此处是判断——跳转至详情页还是提交页面
+     * */ 
+    this.$loading.show();
+    let { name, transCode } = this.$route.query,
+        { fileId, listId } = this.$route.params;
+    // 当路由当中包含transCode
+    if(transCode) {
+      isMyflow({transCode}).then(({tableContent}) => {
+        let path = '';
+        if (tableContent.length > 0) {
+          let {isMyTask, nodeName} = tableContent[0];
+          if (isMyTask === 1 && nodeName === '重新提交') {
+            path = `/fillform/${fileId}/${listId}`;
+          } else {
+            path = `/detail/${fileId}/${listId}`;
+          }
+        } else {
+          path = `/detail/${fileId}/${listId}`;
+        }
+        this.$router.replace({
+          path, query: {name, transCode}
+        })
+        this.$loading.hide();
+      })
+    }
+  },
   created() {
     register(); // 注册wx-js-sdk
     this.applyCode = this.$route.params.code;
     let { name } = this.$route.query;
     this.getAppDetail();
-    this.$loading.hide();
     this.getData(false).then(() => {
       // 第一次进入页面成功之后 隐藏动画
       this.$loading.hide();
