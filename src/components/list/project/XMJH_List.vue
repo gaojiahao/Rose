@@ -3,9 +3,10 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search="searchList"></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
-          <r-sort @on-sort="onSortList"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
+          <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
@@ -29,7 +30,7 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2290,
+        listViewID: 2325,
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -66,39 +67,6 @@
             query: { name, transCode }
           })
         }, 200)
-      },
-      getList(noReset = false) {
-        let filter = [];
-        if (this.serachVal) {
-          filter = [
-            {
-              operator: 'like',
-              value: this.serachVal,
-              property: this.filterProperty,
-            }
-          ]
-        }
-        return getProjectPlanList(this.listViewID, {
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-          sort: JSON.stringify(this.sort),
-        }).then(({ total, projectPlan } ) => {
-          projectPlan.forEach(item => {
-            this.setStatus(item);
-          });
-          this.hasNext = total > (this.page - 1) * this.limit + projectPlan.length;
-          this.listData = this.page === 1 ? projectPlan : this.listData.concat(projectPlan);
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.resetScroll();
-        })
       },
     }
   }

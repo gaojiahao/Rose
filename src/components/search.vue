@@ -32,7 +32,7 @@
         default() {
           return []
         }
-      }
+      },
     },
     data() {
       return {
@@ -82,6 +82,10 @@
       popSelected(item) {
         this.property = item.value;
       },
+      // 过滤时清除搜索
+      clearVal(){
+        this.srhInpTx = ''
+      }
     },
     created() {
     }

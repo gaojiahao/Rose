@@ -3,14 +3,14 @@
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
-        <searchIcon :filterList="filterList" @search='searchList'></searchIcon>
+        <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
           <!--<tab :line-width='2' default-color='#757575' active-color='#2c2727'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
           </tab>-->
-          <r-sort @on-sort="onSortList" :view-id="listViewID"></r-sort>
+          <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
@@ -48,10 +48,7 @@
           }, {
             name: '往来名称',
             value: 'dealerName_dealerDebit',
-          },/* {
-            name: '项目名称',
-            value: 'projectName',
-          },*/
+          },
         ],
       }
     },

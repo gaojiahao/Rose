@@ -97,7 +97,7 @@ export default {
     '223f9387-d2d7-11e8-b8ca-0279b2c6a380' : 'YGDA',      // *员工档案*
     '98519ac0-d2d7-11e8-b8ca-0279b2c6a380' : 'YGRZ',      // *员工入职*
     'da7f15cc-d2d7-11e8-b8ca-0279b2c6a380' : 'YGLZ',      // *员工离职*
-    '3dda676a-4ce0-4c4a-a56f-8bda50a8ef1f' : 'ZPJH',      // *招聘计划*
+    // '3dda676a-4ce0-4c4a-a56f-8bda50a8ef1f' : 'ZPJH',      // *招聘计划*
 
   }
 }

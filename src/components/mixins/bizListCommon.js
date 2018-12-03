@@ -67,7 +67,7 @@ export default {
         startDate: '',
         endDate: ''
       },
-      otherFilter: [],
+      otherFilter: {},
       action: {}, // 表单允许的操作
     }
   },
@@ -151,9 +151,13 @@ export default {
       this.resetCondition();
       this.getList();
     },
+    //搜索
     searchList ({val = '', property = ''}) {
       this.serachVal = val;
       this.filterProperty = property;
+      this.otherFilter = {};
+      this.timeFilter = {};
+      this.$refs.sort.filterReset()
       this.resetCondition();
       this.getList();
     },
@@ -291,46 +295,29 @@ export default {
           item.dealerName = item.dealerName_dealerDebit || item.dealerName_dealerCodeCredit;
           item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
-          item.detailItem.forEach(mitem => {
-            // console.log(mitem)
-            if(mitem.tdQty != null) {
-              item.totalQty = toFixed(accAdd(item.totalQty, mitem.tdQty));
-            }
-            if(mitem.tdAmount != null) {
-              item.count = toFixed(accAdd(item.count, mitem.tdAmount));
-            }
-          })
-          // 如果为搜索物料，将匹配的物料放在前面
-          // if (this.serachVal && (this.filterProperty === 'inventoryName_transObjCode' || this.filterProperty === 'inventoryName_outPutMatCode')) {
-          //   item.detailItem = item.detailItem.reduce((arr, mitem) => {
-          //     // 判断是否含有搜索内容
-          //     let isInventoryName = mitem.inventoryName_transObjCode && mitem.inventoryName_transObjCode.includes(this.serachVal),
-          //         isInventoryNameOut = mitem.inventoryName_outPutMatCode && mitem.inventoryName_outPutMatCode.includes(this.serachVal);
-          //     if (isInventoryName || isInventoryNameOut) {
-          //       mitem.matchedMat = true;
-          //       arr.unshift(mitem)
-          //     } else {
-          //       arr.push(mitem);
-          //     }
-          //     return arr
-          //   }, []);
-          // }
-
           item.itemCount = item.detailItem.length;
-          // 列表当中每个订单最多展现5个物料
+          // // 列表当中每个订单最多展现5个物料
           item.detailItem = item.detailItem.slice(0, 5);
           item.detailItem.forEach(mItem => {
-            mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode ;
-            mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
-            mItem.specification = mItem.specification_transObjCode || mItem.measureUnit_outPutMatCode;
-            mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.specification_outPutMatCode;
-            mItem.inventoryPic = mItem.inventoryPic_transObjCode
-              // 请求图片
-              ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
-              // 默认图片
-              : this.getDefaultImg();
-          })
-
+            if(mItem.tdQty != null) {
+              item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));            
+            }
+            if(mItem.tdAmount != null) {
+              item.count = toFixed(accAdd(item.count, mItem.tdAmount));
+            }
+            // 有物料的增加统一渲染字段
+            if(mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode){
+              mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode ;
+              mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
+              mItem.specification = mItem.specification_transObjCode || mItem.measureUnit_outPutMatCode;
+              mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.specification_outPutMatCode;
+              mItem.inventoryPic = mItem.inventoryPic_transObjCode
+                // 请求图片
+                ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
+                // 默认图片
+                : this.getDefaultImg();
+            }
+          })           
         });
         this.listData = this.page === 1 ? instanceList : this.listData.concat(instanceList);
         if (!noReset) {
@@ -402,9 +389,8 @@ export default {
     },
     // 筛选过滤
     onFilter (val) {
-      // console.log('刷新');
-      // console.log(val)
-      // return false
+      this.serachVal = '';
+      this.$refs.search.clearVal()
       this.timeFilter = val.timeFilter;
       this.otherFilter = val.otherFilter;
       this.resetCondition();

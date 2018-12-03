@@ -24,24 +24,27 @@
       </div>
     </div>
     <!-- 主要信息区域 （没有客户往来） -->
-    <div class="main_container when-is-nodealer" v-if="item.projectName || item.dealerName || item.projectName_project">
-      <div class="status_part" v-if="item.projectType || item.projectType_project">
-        <span class="iconfont icon-503020"></span>
-        <span class="status_name">{{item.projectType || item.projectType_project}}</span>
-      </div>
-      <!-- 主要信息 -->
-      <div class="content_part">{{item.projectName || item.dealerName || item.projectName_project}}</div>
-      <div class="other_info_part" v-for="(task, index) in item.item" :key='index'>
-        <p class="info_with_comment">任务{{ 1 + index }}：{{task.taskName}}</p>
-      </div>
-      <!-- 其他信息 -->
-      <div class="other_info_part" v-if="item.approvalComment_project || item.taskComment">
-        <p class="info_with_comment" v-if="item.taskName">任务名称：{{item.taskName}}</p>
-        <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介：{{item.approvalComment_project || item.taskComment}}</p>
-        <p class="info_with_comment" v-if="item.projectManager_project">项目经理：{{item.projectManager_project}}</p>
-        <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率：{{item.budgetProfitMargin_project | percent}}</p>
-        <p class="info_with_comment" >备注：{{item.biComment || '无'}}</p>
-      </div>
+    <div class="main_container when-is-nodealer">
+      <slot name="list-item" :item="item">
+        <div class="status_part" v-if="item.projectType || item.projectType_project">
+          <span class="iconfont icon-503020"></span>
+          <span class="status_name">{{item.projectType || item.projectType_project}}</span>
+        </div>
+        <!-- 主要信息 -->
+        <div class="content_part">{{item.projectName || item.projectName_project}}</div>
+        <!-- <div class="other_info_part" v-for="(task, index) in item.detailItem" :key='index'>
+          <p class="info_with_comment">任务{{ 1 + index }}：{{task.taskName}}</p>
+        </div> -->
+        <!-- 其他信息 -->
+        <div class="other_info_part" v-if="item.approvalComment_project || item.taskComment">
+          <p class="info_with_comment" v-if="item.taskName">任务名称：{{item.taskName}}</p>
+          <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介：{{item.approvalComment_project || item.taskComment}}</p>
+          <p class="info_with_comment" v-if="item.projectManager_project">项目经理：{{item.projectManager_project}}</p>
+          <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率：{{item.budgetProfitMargin_project | percent}}</p>
+          <p class="info_with_comment" >备注：{{item.biComment || '无'}}</p>
+        </div>
+      </slot>
+      
     </div>
     <!-- 金额合计 -->
     <div class="order_count">
@@ -268,6 +271,7 @@ export default {
         line-height: .28rem;
         white-space: nowrap;
         text-overflow: ellipsis;
+
       }
 
     }
