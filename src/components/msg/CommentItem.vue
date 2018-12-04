@@ -160,7 +160,6 @@ import { decode } from 'punycode';
     $avatarSize: .45rem;
     width: 100%;
     margin: .1rem 0;
-    // padding: .1rem 0;
     padding-top: .1rem;
     box-sizing: border-box;
     background-color: #fff;
@@ -249,6 +248,7 @@ import { decode } from 'punycode';
     }
     .belong-container {
       width: 100%;
+      box-sizing: border-box;
       padding: 0 .1rem .1rem;
       &.has-reply {
         padding: .1rem;
@@ -265,9 +265,7 @@ import { decode } from 'punycode';
       .belong-part {
         display: flex;
         align-items: center;
-        // background: #FFF;
-        // padding: .1rem 0;
-        background: #f1f1f1;
+        background: #F7F7F7;
         .app_img {
           width: .54rem;
           height: .54rem;
