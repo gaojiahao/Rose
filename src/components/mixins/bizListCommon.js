@@ -390,7 +390,15 @@ export default {
     // 筛选过滤
     onFilter (val) {
       this.serachVal = '';
-      this.$refs.search.clearVal()
+      this.$refs.search.clearVal();
+      if(!this.sort.length){
+        this.sort = [
+          {
+            property: 'crtTime',
+            direction: 'DESC'
+          }
+        ]
+      }
       this.timeFilter = val.timeFilter;
       this.otherFilter = val.otherFilter;
       this.resetCondition();
