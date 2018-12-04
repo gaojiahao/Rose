@@ -15,16 +15,18 @@
     <div class="comment" v-html="handleComment()"></div>
     <div class="comment-image" v-if="item.commentAttachments">
       <img class="comment-image-item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
-           @click.stop="scaleImg(img)" :key="iIndex" v-if="img.TYPE === 'image'"/>
+           @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
+      <div class="each_file" v-for="(file, index) in item.commentAttachments" :key="index" v-if="!file.isImg"
+          @click.stop="checkFile(file.ATTACHMENT)">附件{{index + 1}}: {{file.name}}</div>
     </div>
     <div class="comment-reply" v-if="this.$slots.reply">
       <slot name="reply"></slot>
     </div>
     <!-- 全屏展示图片 -->
-    <div class="scale-image-mask" @click.stop="hideScaleImage" @touchmove.prevent=""
+    <!-- <div class="scale-image-mask" @click.stop="hideScaleImage" @touchmove.prevent=""
          v-if="item.commentAttachments" v-show="showScaleImg" v-transfer-dom>
       <div class="scale-image" :style="{'background-image': `url(${scaleImgSrc})`}"></div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -76,8 +78,13 @@
       },
       // TODO 放大图片
       scaleImg(img) {
-        this.scaleImgSrc = img.ATTACHMENT;
-        this.showScaleImg = true;
+        // this.scaleImgSrc = img.ATTACHMENT;
+        // this.showScaleImg = true;
+        let imgUrl = `${location.origin}${img.ATTACHMENT}`;
+        wx.previewImage({
+          current: imgUrl, // 当前显示图片的http链接
+          urls: [imgUrl] // 需要预览的图片http链接列表
+        });
       },
       // TODO 隐藏放大的图片
       hideScaleImage() {
@@ -102,6 +109,31 @@
           return `<span class="img-emotion" style="background-position: -${24 * idx}px 0;"></span>`
         });
         return comment;
+      },
+      // 校验图片后缀名
+      checkImgSuffix() {
+        let suffixList = [
+          'jpg', 'jpeg', 'png', 'gif', 'bmp',
+          'tif', 'pcx', 'tga', 'exif',
+          'fpx','svg','psd','cdr', 
+          'pcd','dxf','ufo','eps', 
+          'ai','raw','WMF','webp'
+        ]
+        if(this.item.commentAttachments){
+          for(let val of this.item.commentAttachments) {
+            // 获取后缀名
+            let index = val.name.lastIndexOf('.'),
+                Imgsuffix = val.name.substr(index + 1);
+            // 校验后缀名
+            if(suffixList.includes(Imgsuffix)) {
+              val.isImg = true;
+            }
+          }
+        }       
+      },
+      // 查看附件
+      checkFile(file) {
+        window.location.href = `${location.origin}${file}`
       },
     },
     filters: {
@@ -133,6 +165,7 @@
       }
     },
     created() {
+      this.checkImgSuffix()
     }
   }
 </script>
@@ -186,11 +219,17 @@
     .comment {
       padding-left: $avatarSize + .1rem;
       color: #454545;
-      /deep/ .img-emotion {
+      margin-bottom: .04rem;
+      word-break: break-all;
+      /deep/ img {
         display: inline-block;
+        vertical-align: middle;
+      }
+      /deep/ .img-emotion {
         width: 24px;
         height: 24px;
         vertical-align: top;
+        display: inline-block;
         background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
       }
       /deep/ .img-emotion + .img-emotion {
@@ -210,9 +249,13 @@
     .comment-image {
       padding-left: $avatarSize + .1rem;
       .comment-image-item {
-        margin-right: .1rem;
         width: .6rem;
         height: .6rem;
+        margin-right: .1rem;
+        border: 1px solid #eee;
+      }
+      .each_file {
+        color: #5893d4;
       }
     }
   }

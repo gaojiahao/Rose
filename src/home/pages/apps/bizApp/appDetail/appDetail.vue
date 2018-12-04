@@ -20,7 +20,7 @@
           <!--管理员自评-->
           <admin-comment ref="adminComment" :handle="isAppAdmin"></admin-comment>
           <!--评论-->
-          <othe-comment ref="comment"></othe-comment>
+          <other-comment ref="comment"></other-comment>
         </div>
       </r-scroll>
     </div>
@@ -37,7 +37,7 @@ import homeService from 'service/homeservice'
 import RScroll from 'components/RScroll'
 import ChangeLog from 'components/appDetail/ChangeLog'
 import AdminComment from 'components/appDetail/AdminComment'
-import OtheComment from 'components/appDetail/OtherComment'
+import OtherComment from 'components/appDetail/OtherComment'
 export default {
   data(){
     return {
@@ -54,7 +54,7 @@ export default {
     }
   },
   components:{
-    RScroll, ChangeLog, AdminComment, OtheComment
+    RScroll, ChangeLog, AdminComment, OtherComment
   },
   watch: {
     $route: {

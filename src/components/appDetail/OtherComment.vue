@@ -23,7 +23,16 @@
               <span class="iconfont icon-L2" :class="{praise: !item.isPraise}"></span>        
             </div>
           </div>
-          <div class="comment" v-html="changeImgPath(item)">            
+          <!-- <div class="comment" v-html="changeImgPath(item)">            
+          </div> -->
+          <div class="comment-container">
+            <div class="comment" v-html="handleComment(item)"></div>
+            <div class="comment-image" v-if="item.commentAttachments.length">
+              <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.commentAttachments"
+                  @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
+              <div class="each_file" v-for="(file, index) in item.commentAttachments" :key="index" v-if="!file.isImg"
+              @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}</div>
+            </div> 
           </div>
         </div>
       </div>
@@ -37,7 +46,7 @@
 //请求 引入
 import {getPCCommentList} from 'service/appSettingService.js'
 import {savePraise} from 'service/commentService'
-import { setTimeout } from 'timers';
+  import emotion from '@/home/pages/maps/emotion'
 export default {
   name:'ChangeLog',
   data(){
@@ -93,6 +102,7 @@ export default {
         total: 0
       }).then(({dataCount = 0, tableContent = []}) =>{
         tableContent.forEach(item=>{
+          this.checkImgSuffix(item)
           if(item.praises.length){
             item.isPraise = false;
             return
@@ -130,7 +140,59 @@ export default {
           item.praiseNum++;
         }
       });
-    }
+    },
+    // 校验图片后缀名
+    checkImgSuffix(item) {
+      let suffixList = [
+        'jpg', 'jpeg', 'png', 'gif', 'bmp',
+        'tif', 'pcx', 'tga', 'exif',
+        'fpx','svg','psd','cdr', 
+        'pcd','dxf','ufo','eps', 
+        'ai','raw','WMF','webp'
+      ]
+      for(let val of item.commentAttachments) {
+        // 获取后缀名
+        let index = val.name.lastIndexOf('.'),
+            Imgsuffix = val.name.substr(index + 1);
+        // 校验后缀名
+        if(suffixList.includes(Imgsuffix)) {
+          val.isImg = true;
+        }
+      }
+    },
+    // 替换表情图片地址
+    handleComment(item) {
+      // let {CONTENT: content = '', type = '', noticeSource = ''} = this.item;
+      let emotionList = [...emotion];
+      let comment = item.content;
+      let reg = /\[(.+?)\]/g;
+      // 处理PC的表情图片
+      comment = comment.replace(/src="resources/g, 'src="/dist/resources');
+      // 处理移动端的表情图片
+      comment = comment.replace(reg, (word) => {
+        // 寻找表情索引
+        let idx = emotionList.findIndex(item => item === word.replace(/(\[|\])/g, ''));
+        // 没有匹配项则返回原文字
+        if (idx === -1) {
+          return word
+        }
+        return `<span class="img-emotion" style="background-position: -${24 * idx}px 0;"></span>`
+      });
+      return comment;
+    },
+    // 放大图片
+    scaleImg(img) {
+      console.log('img:', img);
+      let imgUrl = `${location.origin}${img.attachment}`;
+      wx.previewImage({
+        current: imgUrl, // 当前显示图片的http链接
+        urls: [imgUrl] // 需要预览的图片http链接列表
+      });
+    },
+    // 查看附件
+    checkFile(file) {
+      window.location.href = `${location.origin}${file}`
+    },
 
   },
   created(){
@@ -196,20 +258,39 @@ export default {
           }
         }
       }
-      .comment{
-        height: calc( 100% - 0.22rem);
-        box-sizing: border-box;
-        overflow: hidden;
-        padding: 0.03rem 0 0.1rem 0;
-        font-size: 0.14rem;
-        span{
-          display: block;
+      .comment-container {
+        margin-bottom: .04rem;
+        .comment {
+          color: #454545;
+          margin-bottom: .04rem;
+          word-break: break-all;
+          /deep/ img {
+            display: inline-block;
+            vertical-align: middle;
+          }
+          /deep/ .img-emotion {
+            width: 24px;
+            height: 24px;
+            vertical-align: top;
+            display: inline-block;
+            background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
+          }
+          /deep/ .img-emotion + .img-emotion {
+            margin-left: .04rem;
+          }
         }
-        .achievement,.chance{
-          padding-left: 0.05rem;
+        .comment-image {
+          .comment-image-item {
+            width: .6rem;
+            height: .6rem;
+            margin-right: .1rem;
+            border: 1px solid #eee;
+          }
+          .each_file {
+            color: #5893d4;
+          }
         }
       }
-
     }
   }
   //评论
@@ -241,111 +322,6 @@ export default {
       font-size: 0.12rem;
       color: #757575;
       // padding: 0.1rem 0;
-    }
-    //撰写评论
-    .edit_comment{
-      margin-top:0.05rem;
-      color: #3c7bcb;
-      font-size: 0.14rem;
-      display: flex;
-      align-items: center;
-      .iconfont{
-        font-size: 0.14rem;
-        margin-right: 0.03rem;
-      }
-    }
-  }
-  .vux-popup-dialog {
-    background: #fff;
-    height: 100%;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    .full-flow-container {
-      // height: 100%;
-      height: calc(100% - 0.54rem);
-      /deep/ .scroll-wrapper {
-        overflow: visible;
-        padding-bottom: .01rem;
-      }
-      .change_list{
-        padding: 0 0.1rem;
-        .title{
-          padding: 0.05rem 0;
-          color: #111;
-          font-weight: bold;
-          font-size: .24rem;
-        }
-        .each_comment{
-          padding: 0.1rem 0;
-        }
-      }
-    }
-    // 确定
-    .btn {
-      width: 100%;
-      background: #fff;
-      text-align: center;
-      // margin-bottom: .1rem;
-      padding: 0.1rem 0;
-      box-sizing: border-box;
-      .cfm_btn {
-        width: 2.8rem;
-        color: #fff;
-        height: .44rem;
-        line-height: .44rem;
-        text-align: center;
-        background: #5077aa;
-        display: inline-block;
-        border-radius: .4rem;
-        box-shadow: 0 2px 5px #5077aa;
-      }
-    }
-    // 工作流数据少的时候 按钮固定在底部
-    .when_less {
-      left: 0;
-      bottom: 0;
-      position: fixed;
-    }
-  }
-  /* 评论框 */
-  .send-container {
-    padding: .08rem .1rem;
-    height: .5rem;
-    background-color: #f3f1f2;
-    font-size: 0;
-    box-sizing: border-box;
-    &.focus {
-      position: relative;
-      top: -.5rem;
-      padding-bottom: .3rem;
-      height: 1rem;
-    }
-    .comment-value {
-      padding: .05rem .1rem;
-      width: calc(100% - .6rem);
-      height: 100%;
-      outline: none;
-      border-radius: 0.05rem;
-      border: none;
-      color: #2d2d2d;
-      font-size: .16rem;
-      resize: none;
-      box-sizing: border-box;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    /* 发送按钮 */
-    .btn-send {
-      display: inline-block;
-      margin-left: .1rem;
-      width: .5rem;
-      line-height: .34rem;
-      border-radius: .03rem;
-      background-color: #5077aa;
-      color: #fff;
-      text-align: center;
-      vertical-align: top;
-      font-size: .16rem;
     }
   }
 </style>
