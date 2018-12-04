@@ -14,7 +14,6 @@ let rejectError = (reject, message) => {
 
 // fly请求 设置拦截器
 fly.interceptors.request.use((request) => {
-  // console.log('request:', request)
   // 检验 token是否存在
   let token = tokenService.checkLogin();
   // token 存在则赋值在header当中

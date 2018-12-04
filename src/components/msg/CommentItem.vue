@@ -22,8 +22,7 @@
       </div>
     </div>
     <div class="belong-container" :class="{'has-reply': item.reply}">
-      <div class="reply-part" v-if="item.reply">
-        {{item.reply.comment}}
+      <div class="reply-part" v-if="item.reply" v-html="handleComment('reply')">
       </div>
       <div class="belong-part">
         <div class="app_img">
@@ -99,11 +98,17 @@ import { decode } from 'punycode';
         window.location.href = `${location.origin}${file}`
       },
       // 替换表情图片地址
-      handleComment() {
-        let {CONTENT: content = '', type = '', noticeSource = ''} = this.item;
+      handleComment(comment = 'comment') {
+        let {content = '', type = '', noticeSource = ''} = this.item;
         let emotionList = [...emotion];
-        let comment = this.item.comment;
         let reg = /\[(.+?)\]/g;
+        if(comment === 'reply') {
+          content = JSON.parse(content);
+          comment = `@${content.objCreator} 评论: ${content.objContent}`;
+        }
+        else {
+          comment = this.item.comment;
+        }
         // 处理PC的表情图片
         comment = comment.replace(/src="resources/g, 'src="/dist/resources');
         // 处理移动端的表情图片
@@ -179,6 +184,7 @@ import { decode } from 'punycode';
     .top-info-part {
       width: 100%;
       padding: 0 .1rem;
+      box-sizing: border-box;
       .header-part {
         display: flex;
         align-items: center;
@@ -261,6 +267,7 @@ import { decode } from 'punycode';
       .reply-part {
         color: #7A7A7A;
         margin-bottom: .06rem;
+        word-break: break-all;
       }
       .belong-part {
         display: flex;
