@@ -146,55 +146,64 @@
 
         for (let i = 0; i < m.length; i++) {
           let item = m[i];
-          if (item.objType === '项目类产品' && item.objName) {
-            this.list1Total += Number(item.amount);
-            this.list1.push({
-              label: item.objName,
-              // value: "￥" + numberComma(item.amount, 3) + " " + "(" + item.qty + "件/套" + ")",
-              value: `￥${numberComma(item.amount, 3)} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
-            });
-            this.totalCoverNum = accAdd(this.totalCoverNum, item.coverNum);
-          } else if (item.objType === 'A') {
-            if (item.objName === 'A类产品') {
-              AclassTotal = accAdd(AclassTotal, item.amount);
-              list2 = [
-                ...list2,
-                {
-                  label: '费用明细',
-                  value: '',
-                }, {
-                  label: '住宿费',
-                  value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.hotelCost)))}` : '无',
-                }, {
-                  label: '市内交通费',
-                  value: item.cityTrafficCost ? `￥${numberComma(toFixed(Number(item.cityTrafficCost)))}` : '无',
-                }, {
-                  label: '长途交通费',
-                  value: item.longCityTrafficCost ? `￥${numberComma(toFixed(Number(item.longCityTrafficCost)))}` : '无',
-                }, {
-                  label: '其他费用',
-                  value: item.elseCost ? `￥${numberComma(toFixed(Number(item.elseCost)))}` : '无',
-                }, {
-                  label: '合计',
-                  value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
-                },
-              ];
-              hotelAndElseCost = item.hotelAndElseCost;
-            } else {
-              list2.unshift({
-                label: item.objName,
-                value: item.amount,
-              });
-            }
-          } else if (item.objType === 'B') {
-            if (item.objName === 'B类产品') {
-              BClassTotal = accAdd(BClassTotal, item.amount);
-            } else {
-              bClassList.push({
-                label: item.objName,
-                value: toFixed(item.amount),
-              });
-            }
+          switch (item.objType) {
+            case '项目类产品':
+              if (item.objName) {
+                this.list1Total += Number(item.amount);
+                this.list1.push({
+                  label: item.objName,
+                  value: `￥${numberComma(item.amount, 3)} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
+                });
+                this.totalCoverNum = accAdd(this.totalCoverNum, item.coverNum);
+              }
+              break;
+            case 'A':
+              if (item.objName === 'A类产品') {
+                AclassTotal = accAdd(AclassTotal, item.amount);
+                list2 = [
+                  ...list2,
+                  {
+                    label: '费用明细',
+                    value: '',
+                  }, {
+                    label: '住宿费',
+                    value: item.hotelCost ? `￥${numberComma(toFixed(Number(item.hotelCost)))}` : '无',
+                  }, {
+                    label: '市内交通费',
+                    value: item.cityTrafficCost ? `￥${numberComma(toFixed(Number(item.cityTrafficCost)))}` : '无',
+                  }, {
+                    label: '长途交通费',
+                    value: item.longCityTrafficCost ? `￥${numberComma(toFixed(Number(item.longCityTrafficCost)))}` : '无',
+                  }, {
+                    label: '其他费用',
+                    value: item.elseCost ? `￥${numberComma(toFixed(Number(item.elseCost)))}` : '无',
+                  }, {
+                    label: '合计',
+                    value: item.hotelAndElseCost ? `￥${numberComma(toFixed(Number(item.hotelAndElseCost)))}` : '无',
+                  },
+                ];
+                hotelAndElseCost = item.hotelAndElseCost;
+              } else {
+                list2.unshift({
+                  label: item.objName,
+                  value: `￥${toFixed(item.amount)}`,
+                });
+              }
+              break;
+            case '其他A类':
+              break;
+            case 'B':
+              if (item.objName === 'B类产品') {
+                BClassTotal = accAdd(BClassTotal, item.amount);
+              } else {
+                bClassList.push({
+                  label: item.objName,
+                  value: `￥${toFixed(item.amount)}`,
+                });
+              }
+              break;
+            default:
+              break;
           }
         }
         this.list2 = list2;

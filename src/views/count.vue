@@ -136,35 +136,42 @@
 
         for (let i = 0; i < transDetailUncalc.length; i++) {
           let item = transDetailUncalc[i];
-          if (item.containerCode === "项目类产品" && item.transObjCode) {
-            //项目类产品明细
-            this.projectList.push({
-              label: item.transObjCode,
-              value: `${item.qty || 0}件/折合${item.num1 || 0}套`
-            });
-            // 最终合计 数量
-            list4_num = accAdd(list4_num, Number(item.qty || 0));
-            totalNum1 = accAdd(totalNum1, Number(item.num1 || 0));
-            //项目类产品金额汇总
-            projectAmt = accAdd(projectAmt, item.amount);
-          } else if (item.containerCode === "A") {
-            if (item.transObjCode === 'A类产品') {
+          switch (item.containerCode) {
+            case '项目类产品':
+              if (item.transObjCode) {
+                //项目类产品明细
+                this.projectList.push({
+                  label: item.transObjCode,
+                  value: `${item.qty || 0}件/折合${item.num1 || 0}套`
+                });
+                // 最终合计 数量
+                list4_num = accAdd(list4_num, Number(item.qty || 0));
+                totalNum1 = accAdd(totalNum1, Number(item.num1 || 0));
+                //项目类产品金额汇总
+                projectAmt = accAdd(projectAmt, item.amount);
+              }
+              break;
+            case 'A':
               aClassAmt = accAdd(aClassAmt, item.amount);
-            } else {
+              break;
+            case '其他A类':
               listSalesAmt.unshift({
                 label: item.transObjCode,
                 value: item.amount,
               });
-            }
-          } else if (item.containerCode === "B") {
-            if (item.transObjCode === 'B类产品') {
-              bClassAmt = accAdd(bClassAmt, item.amount);
-            } else {
-              bClassList.push({
-                label: item.transObjCode,
-                value: item.amount
-              });
-            }
+              break;
+            case 'B':
+              if (item.transObjCode === 'B类产品') {
+                bClassAmt = accAdd(bClassAmt, item.amount);
+              } else {
+                bClassList.push({
+                  label: item.transObjCode,
+                  value: item.amount
+                });
+              }
+              break;
+            default:
+              break;
           }
         }
         this.projectAmt = "￥" + projectAmt;

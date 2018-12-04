@@ -271,7 +271,7 @@
           transDetailUncalc: [{
             id: this.guid(),
             transObjCode: "其他A类产品", //项目类产品名称
-            containerCode: "A", //类型
+            containerCode: "其他A类", //类型
             qty: "",
             amount: Number(this.Aclass), //总金额
             fgCode: ""
