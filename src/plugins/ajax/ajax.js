@@ -14,6 +14,7 @@ let rejectError = (reject, message) => {
 
 // fly请求 设置拦截器
 fly.interceptors.request.use((request) => {
+  // console.log('request:', request)
   // 检验 token是否存在
   let token = tokenService.checkLogin();
   // token 存在则赋值在header当中
@@ -40,33 +41,25 @@ fly.interceptors.request.use((request) => {
 
 // fly请求 响应拦截器
 fly.interceptors.response.use(
-  response => {
+  function (response) {
     let { success = true, message = '请求异常' } = response.data;
-    if(response.status === 200) {
-      if(success){
-        return response;
-      }else {
-        rejectError('reject', message)
-      }
-    }
-    else if(response.status === 401) {
-      fly.lock();
-      return tokenService.login().then((token) => {
-        console.log('token已更新')
-      })
-      .finally(() => fly.unlock())
-      .then(() => {
-        // 重新发起新的请求
-        return Rxports.ajax(response.request)
-      })
-    }
-    else {
-      rejectError('reject', message) 
+    if(success){
+      return response;
+    }else {
+      rejectError('reject', message)
     }
   },
-  error => {
+  function (error) {
     // 响应拦截 报错标识
-    console.log('respon-err:', error);
+    if(error.status === 401) {
+      this.lock();
+      return tokenService.login()
+      .then((token) => {
+        console.log('token已更新')
+        error.request.headers.Authorization = token;  
+      })
+      .finally(() => location.reload())
+    }
     rejectError('reject', error.response.data.message) 
   }
 )
