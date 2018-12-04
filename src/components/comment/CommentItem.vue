@@ -35,7 +35,8 @@
   import emotion from '@/home/pages/maps/emotion'
   import {WechatEmotion as Emotion} from 'vux'
   import Vue from 'vue'
-
+  /* 引入微信相关 */
+  import {register} from 'plugins/wx'
   export default {
     name: "CommentItem",
     props: {
@@ -165,6 +166,7 @@
       }
     },
     created() {
+      register()
       this.checkImgSuffix()
     }
   }

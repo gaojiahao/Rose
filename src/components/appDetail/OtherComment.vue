@@ -46,7 +46,9 @@
 //请求 引入
 import {getPCCommentList} from 'service/appSettingService.js'
 import {savePraise} from 'service/commentService'
-  import emotion from '@/home/pages/maps/emotion'
+import emotion from '@/home/pages/maps/emotion'
+  /* 引入微信相关 */
+import {register} from 'plugins/wx'
 export default {
   name:'ChangeLog',
   data(){
@@ -196,6 +198,7 @@ export default {
 
   },
   created(){
+    register();
     let { listId } = this.$route.params;
     if(listId){
       this.listId = listId;
