@@ -83,13 +83,15 @@ import { decode } from 'punycode';
           'pcd','dxf','ufo','eps', 
           'ai','raw','WMF','webp'
         ]
-        for(let val of this.item.attachment) {
-          // 获取后缀名
-          let index = val.name.lastIndexOf('.'),
-              Imgsuffix = val.name.substr(index + 1);
-          // 校验后缀名
-          if(suffixList.includes(Imgsuffix)) {
-            val.isImg = true;
+        if(this.item.attachment) {
+          for(let val of this.item.attachment) {
+            // 获取后缀名
+            let index = val.name.lastIndexOf('.'),
+                Imgsuffix = val.name.substr(index + 1);
+            // 校验后缀名
+            if(suffixList.includes(Imgsuffix)) {
+              val.isImg = true;
+            }
           }
         }
       },
@@ -98,13 +100,13 @@ import { decode } from 'punycode';
         window.location.href = `${location.origin}${file}`
       },
       // 替换表情图片地址
-      handleComment(comment = 'comment') {
-        let {content = '', type = '', noticeSource = ''} = this.item;
+      handleComment(commentType = 'comment') {
+        let {type = '', reply = {}, content = '', noticeSource = ''} = this.item;
         let emotionList = [...emotion];
+        let comment = '';
         let reg = /\[(.+?)\]/g;
-        if(comment === 'reply') {
-          content = JSON.parse(content);
-          comment = `@${content.objCreator} 评论: ${content.objContent}`;
+        if(commentType === 'reply') {
+          comment = reply.comment;
         }
         else {
           comment = this.item.comment;
