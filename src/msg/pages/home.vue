@@ -51,7 +51,6 @@
         activeIndex: 0,
         commentList: [],
         scrollOptions: {
-          // pullDownRefresh: true,
           pullUpLoad: true,
         },
         page: 1,
@@ -75,12 +74,9 @@
       onTabClick(index) {
         let list = [this.getList, this.getComment, this.getPraise];
         this.activeIndex = index;
-        // this.$loading.show();
         this.$refs.bScroll.scrollTo(0, 0);
         this.resetCondition();
-        list[this.activeIndex]().then(() => {
-          // this.$loading.hide();
-        });
+        list[this.activeIndex]();
       },
       // TODO 获取应用icon
       getDefaultIcon(item) {
@@ -157,7 +153,6 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           for(let item of tableContent) {
             let content = JSON.parse(item.content);
-            
             item.comment = content.content; // 评论内容
             item.commentType = content.type; // 评论类型,list为应用,instance为实例
             item.attachment = content.attachment;
@@ -176,7 +171,6 @@
             // 点赞
             if (item.type === 'praise') {
               item.comment = '赞了这条评论';
-              // item.other = content.type === 'list' ? `赞了应用` : `赞了实例${content.relationKey}`;
               item.reply = {
                 createrName: content.creator,
                 comment: `@${content.creator}: ${content.content}`,
