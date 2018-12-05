@@ -220,6 +220,21 @@ export let getObjInvMoreUnitByInvCode = (inventoryCode) => {
   })
 };
 
+// TODO 获取物料列表(低值易耗品采购订单)
+export let getLowValueConsumPurchaseOrder = () => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getLowValueConsumPurchaseOrder',
+    data: {
+      _dc: Date.now(),
+      data: {
+        page: 1,
+        start: 0,
+        limit: 10000,
+      }
+    }
+  })
+};
+
 export default {
   save,
   update,

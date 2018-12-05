@@ -93,14 +93,15 @@
   import {Icon, Popup, dateFormat} from 'vux'
   import {getList} from 'service/commonService'
   import {
-    getSumInvBalance,
     getObjInventoryByProcessing,
+    getSumInvBalance,
     getObjInventory,
     getInventory7501,
     getInventory7502,
     getCKTHCKList,
     getPurchaseInNeeds,
     getKCPDList,
+    getLowValueConsumPurchaseOrder,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -461,6 +462,27 @@
           ];
         }
         return getKCPDList({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // TODO 获取物料列表(低值易耗品采购订单)
+      getLowValueConsumPurchaseOrder() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getLowValueConsumPurchaseOrder({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
