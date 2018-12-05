@@ -17,28 +17,13 @@
               @click="showDrop = !showDrop">
               <span class="entity_name">{{userInfo.entityName}}</span>
               <span v-if="entityList.length > 1" class="iconfont" :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"></span>
-              <!-- <div class="tips_title">
-                <div>当前主体</div>
-                <div class="entity_name"
-                      :class="[userInfo.entityName && userInfo.entityName.length > 11 ? 'when-is-out': '']">{{userInfo.entityName || '暂无主体信息'}}</div>
-              </div> -->
-              <!-- <div class="tips-fade-part" v-if="entityList.length > 1">
-                <transition name='fade'>
-                  <span v-if="!showDrop" key="on" class="iconfont icon-qiehuan1" @click="showDrop = !showDrop"></span>
-                  <span v-else key="off" class="change_btn" @click="showDrop = !showDrop">取消</span>
-                </transition>
-              </div>-->
-              <!-- <transition-group  class="r-dropdown-list" name='bounce' tag='ul'>
-                <li v-show="showDrop" class="r-dropdown-item" :key="index" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
-                    @click.stop="dropItemClick(item)" >
-                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
-                </li>
-              </transition-group>        -->
-              <!-- <span class="arrow"><em></em></span> -->
               <ul class="r-dropdown-list" v-show="showDrop">
-                <li  class="r-dropdown-item" :key="index" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
+                <li  class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1 }" :key="index" v-for="(item, index) in entityList"
                     @click.stop="dropItemClick(item)" >
-                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
+                  <div class="item_name" :class="{'active' : selItem.groupName === item.groupName}">{{item.groupName}}</div>
+                  <div class="tips_part" v-if="selItem.groupName === item.groupName">
+                    <span class="tips_word">当前选中</span>
+                  </div>
                 </li>
               </ul>    
             </div>
@@ -322,6 +307,31 @@ export default {
     background: #F5F5F5;
     padding: .1rem .12rem;
     justify-content: center;
+    // &:before {
+    //   width: 0;
+    //   height: 0;
+    //   bottom: -13px; 
+    //   right: 50%;
+    //   transform: translateX(50%);
+    //   content: '';
+    //   z-index: 9999;
+    //   border-width: 9px;
+    //   position: absolute;
+    //   border-style: solid; 
+    //   border-color: transparent transparent #FFF transparent;
+    // }
+    // &:after {
+    //   width: 0;
+    //   height: 0;
+    //   bottom: -12px; 
+    //   right: 50%;
+    //   transform: translateX(50%);
+    //   content: '';
+    //   position: absolute;
+    //   border-style: solid; 
+    //   border-width: 10px;
+    //   border-color: transparent transparent rgba(232, 232, 232, .3) transparent;
+    // }
     .entity_name {
       font-size: .14rem;
       &.when-is-out {
@@ -396,7 +406,7 @@ export default {
     width: 0;
     height: 0;
     top: -17px; 
-    right: 15px;
+    right: 10.5%;
     content: '';
     z-index: 9999;
     border-width: 9px;
@@ -408,7 +418,7 @@ export default {
     width: 0;
     height: 0;
     top: -20px; 
-    right: 14px;
+    right: 10%;
     content: '';
     position: absolute;
     border-style: solid; 
@@ -418,17 +428,32 @@ export default {
 }
 /* 列表项 */
 .r-dropdown-item {
+  width:100%;
+  display: flex;
   position: relative;
-  line-height: .4rem;
-  font-size: .16rem;
-  span{
-    width:100%;
-    padding: 0 .1rem;
-    display: inline-block;
-    box-sizing: border-box;
+  align-items: center;
+  padding: .12rem .1rem;
+  box-sizing: border-box;
+  justify-content: space-between;
+  .item_name {
+    width: 75%;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
-  .active{
-    // background: #e8e8e8;
+  .tips_part {
+    color: #757575;
+    font-size: .1rem;
+    .tips_word {
+      padding: .02rem;
+      border-radius: .3rem;
+      background: #e8e8e8;
+    }
+  }
+  .active {
+    color: #006DFF;
+    font-weight: bold;
   }
 }
 </style>

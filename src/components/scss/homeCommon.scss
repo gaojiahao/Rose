@@ -11,7 +11,8 @@
     font-size: .18rem;
     line-height: .18rem;
     padding: .04rem .1rem;
-    margin: .2rem 0 .04rem;
+    // margin: .2rem 0 .04rem;
+    margin-top: .1rem;
     box-sizing: border-box;
     > p {
       padding-left: .04rem;
@@ -22,7 +23,8 @@
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    padding: .08rem 0 .14rem;
+    padding-top: .08rem;
+    // padding: .08rem 0 .14rem;
     // 单个APP
     .indval_app {
       width: 50%;
@@ -56,9 +58,9 @@
         }
         .app_detail_btn {
           color: #006DFF;
-          font-size: .12rem;
+          font-size: .1rem;
           font-weight: bold;
-          margin-top: .02rem;
+          margin-top: .06rem;
           width: fit-content;
           box-sizing: border-box;
           background: #EEEEF6;
