@@ -12,7 +12,8 @@ export default {
   '7dab9bd1-f51d-4b09-afc0-3d5c732ca219': {
     '4099b5aa-1468-4b81-85a5-75079e291977': 'BHDD',          // *备货订单*
     // '867e0b4f-548f-4e08-873a-1b8e54333630': 'WLXQJH',        // *物料需求计划*
-    '7532f8ea-caf3-4fc4-97f6-b5aad7bcf6a0': 'WLXQTJ'         // *物料需求调减*
+    '7532f8ea-caf3-4fc4-97f6-b5aad7bcf6a0': 'WLXQTJ',         // *物料需求调减*
+    'a8281547-d2d3-11e8-b8ca-0279b2c6a380': 'XSDDYC',         // *销售订单预测*
   },
 
   // <生产类应用>
