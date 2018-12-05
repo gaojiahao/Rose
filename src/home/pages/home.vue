@@ -4,25 +4,6 @@
       <div class="wrapper">
         <div class="top-part-container">
           <div class="top-part">
-            <div class="entity-part vux-1px-b">
-              <div class="tips_title">
-                <div>当前主体</div>
-                <div class="entity_name"
-                      :class="[userInfo.entityName && userInfo.entityName.length > 11 ? 'when-is-out': '']">{{userInfo.entityName || '暂无主体信息'}}</div>
-              </div>
-              <div class="tips-fade-part" v-if="entityList.length > 1">
-                <transition name='fade'>
-                  <span v-if="!showDrop" key="on" class="iconfont icon-qiehuan1" @click="showDrop = !showDrop"></span>
-                  <span v-else key="off" class="change_btn" @click="showDrop = !showDrop">取消</span>
-                </transition>
-              </div>
-              <transition-group class="r-dropdown-list" name='list' tag='ul'>
-                <li v-show="showDrop" class="r-dropdown-item" :key="index" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
-                    @click.stop="dropItemClick(item)" >
-                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
-                </li>
-              </transition-group>
-            </div>
             <div class="user-info-container">
               <div class="user_avatar">
                 <img :src="userInfo.avatar">
@@ -31,6 +12,35 @@
                 <p class="user_name">{{userInfo.nickname}}</p>
                 <p class="user_other">@{{userInfo.userCode}}</p>
               </div>
+            </div>
+            <div class="entity-part" :class="{'active': showDrop}"
+              @click="showDrop = !showDrop">
+              <span class="entity_name">{{userInfo.entityName}}</span>
+              <span v-if="entityList.length > 1" class="iconfont" :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"></span>
+              <!-- <div class="tips_title">
+                <div>当前主体</div>
+                <div class="entity_name"
+                      :class="[userInfo.entityName && userInfo.entityName.length > 11 ? 'when-is-out': '']">{{userInfo.entityName || '暂无主体信息'}}</div>
+              </div> -->
+              <!-- <div class="tips-fade-part" v-if="entityList.length > 1">
+                <transition name='fade'>
+                  <span v-if="!showDrop" key="on" class="iconfont icon-qiehuan1" @click="showDrop = !showDrop"></span>
+                  <span v-else key="off" class="change_btn" @click="showDrop = !showDrop">取消</span>
+                </transition>
+              </div>-->
+              <!-- <transition-group  class="r-dropdown-list" name='bounce' tag='ul'>
+                <li v-show="showDrop" class="r-dropdown-item" :key="index" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
+                    @click.stop="dropItemClick(item)" >
+                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
+                </li>
+              </transition-group>        -->
+              <!-- <span class="arrow"><em></em></span> -->
+              <ul class="r-dropdown-list" v-show="showDrop">
+                <li  class="r-dropdown-item" :key="index" :class="{'vux-1px-b': index !== entityList.length - 1}" v-for="(item, index) in entityList"
+                    @click.stop="dropItemClick(item)" >
+                  <span :class='{ active : selItem.groupName === item.groupName }'>{{item.groupName}}</span>
+                </li>
+              </ul>    
             </div>
           </div>
         </div>
@@ -42,7 +52,6 @@
 </template>
 
 <script>
-import {} from 'vux'
 // 接口引入
 import homeService from 'service/homeservice'
 import { getMsgList } from 'service/msgService.js'
@@ -109,7 +118,7 @@ export default {
           mobile: data.mobile,                    // 手机号
           userCode: data.userCode,                // 工号
           nickname: data.nickname,                // 姓名
-          entityName: data.entityName             // 当前组织
+          entityName: data.entityName.slice(0, 4) // 当前组织
         }
         // 获取 公司主体列表
         data.sysGroupList && data.sysGroupList.forEach(item=>{
@@ -125,7 +134,7 @@ export default {
     // TODO 选择单条记录
     dropItemClick(item) {
       this.selItem = {...item};
-      this.userInfo.entityName = item.groupName;
+      this.userInfo.entityName = item.groupName.slice(0, 4);
       this.showDrop = false;
       this.$loading.show();
       homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
@@ -251,19 +260,34 @@ export default {
 .fade-leave-active {
   transform: translateX(-30px);
 }
-.list-enter-active, .list-leave-active {
-  transition: all .3s ease;
+
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .list-enter {
-  opacity: 0;
-  transform: translateY(-5px);
+  // opacity: 0;
+  // transform: translateY(-20px);
 }
 .list-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+  // opacity: 0;
+  // transform: translateY(-10px);
 }
 .inPage {
-  background: #F5F5F5;
+  // background: #F5F5F5;
 }
 .vux-1px-b:after {
   border-color: #e8e8e8;
@@ -283,42 +307,23 @@ export default {
   background: #fff;
   box-sizing: border-box;
   .top-part {
-    padding-top: .04rem;
-  }
-  .entity-part {
     width: 100%;
     display: flex;
-    position: relative;
-    line-height: .24rem;
-    align-items: flex-end;
-    padding-bottom: .1rem;
+    padding-top: .1rem;
+    align-items: center;
     justify-content: space-between;
-    .tips_title {
-      color: #8A8A8A;
-      font-size: .14rem;
-      font-weight: bold;
-    }
-    .change_btn {
-      color: #FFF;
-      font-size: .14rem;
-      padding: 0 .04rem;
-      background: #3f72af;
-      border-radius: .18rem;
-    }
-    .icon-qiehuan1 {
-      color: #3f72af;
-      font-size: .24rem;
-      font-weight: bold;
-    }
+  }
+  .entity-part {
+    display: flex;
+    color: #7A7A7A;
+    position: relative;
+    align-items: center;
+    border-radius: .2rem;
+    background: #F5F5F5;
+    padding: .1rem .12rem;
+    justify-content: center;
     .entity_name {
-      color: #111;
-      width: 2.6rem;
-      height: .24rem;
-      overflow: hidden;
-      font-size: .22rem;
-      font-weight: bold;
-      position: relative;
-      white-space: nowrap;
+      font-size: .14rem;
       &.when-is-out {
         &:after {
           right: 0; 
@@ -330,6 +335,12 @@ export default {
           background: linear-gradient(to right, rgba(255,255,255,0), #fff 75%);
         }
       }
+    }
+    .iconfont {
+      right: 8px;
+      color: #7A7A7A;
+      font-size: .12rem;
+      margin-left: .04rem;
     }
     .tips-fade-part {
       width: 40px;
@@ -344,53 +355,80 @@ export default {
   .user-info-container {
     display: flex;
     align-items: center;
-    padding: .14rem 0 .06rem;
     .user_avatar {
-      width: .65rem;
-      height: .65rem;
+      width: .4rem;
+      height: .4rem;
       margin-right: .1rem;
       img {
         width: 100%;
         height: 100%;
-        border-radius: .18rem;
-        // border-radius: 50%;
+        border-radius: 50%;
       }
     }
-    .user_name {
-      font-size: .18rem;
-      font-weight: bold;
-    }
-    .user_other {
-      color: #757575;
-      font-size: .14rem;
-      // font-weight: bold;
+    .user-info {
+      line-height: .18rem;
+      .user_name {
+        font-size: .14rem;
+        font-weight: bold;
+      }
+      .user_other {
+        color: #757575;
+        font-size: .14rem;
+        // font-weight: bold;
+      }
     }
   }
 }
+
 /* 列表容器 */
 .r-dropdown-list {
-  left: 0;
-  top: 100%;
-  width: 100%;
+  $bgColor: #FFF;
+  right: 0;
+  top: 130%;
+  width: 2rem;
   z-index: 100;
   position: absolute;
+  background: $bgColor;
+  box-shadow: 0 1px 5px #e8e8e8;
+  border-radius: .06rem;
   box-sizing: border-box;
+  &:before {
+    width: 0;
+    height: 0;
+    top: -17px; 
+    right: 15px;
+    content: '';
+    z-index: 9999;
+    border-width: 9px;
+    position: absolute;
+    border-style: solid; 
+    border-color: transparent transparent #FFF transparent;
+  }
+  &:after {
+    width: 0;
+    height: 0;
+    top: -20px; 
+    right: 14px;
+    content: '';
+    position: absolute;
+    border-style: solid; 
+    border-width: 10px;
+    border-color: transparent transparent rgba(232, 232, 232, .3) transparent;
+  }
 }
 /* 列表项 */
 .r-dropdown-item {
   position: relative;
   line-height: .4rem;
   font-size: .16rem;
-  background: #FFF;
   span{
     width:100%;
     padding: 0 .1rem;
-    background: #F9F9F9;
     display: inline-block;
     box-sizing: border-box;
   }
   .active{
-    background: #e8e8e8;
+    // background: #e8e8e8;
   }
 }
 </style>
