@@ -1,7 +1,12 @@
-import tokenService from '../../service/tokenService'
-import errHandle from 'service/errHandle'
-import Fly from 'flyio/dist/npm/fly'
+// 请求插件引入
 const fly = new Fly();
+import Fly from 'flyio/dist/npm/fly'
+// 请求地址引入
+import tokenService from '../../service/tokenService'
+// 弹窗插件引入
+import { AlertModule } from 'vux'
+import errHandle from 'service/errHandle'
+
 
 // import qs from 'qs';
 let qs = require('querystring');
@@ -55,9 +60,15 @@ fly.interceptors.response.use(
       return tokenService.login()
       .then((token) => {
         console.log('token已更新')
-        error.request.headers.Authorization = token;  
+        AlertModule.show({
+          title: '温馨提示',
+          content: '您的登录状态似乎有点问题，不用担心，页面刷新之后就好',
+          onHide() {
+            location.reload();
+          }
+        })
       })
-      .finally(() => location.reload())
+      
     }
     rejectError('reject', error.response.data.message) 
   }

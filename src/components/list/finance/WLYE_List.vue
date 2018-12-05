@@ -14,7 +14,7 @@
         <div class="each_duty" v-for="(item,index) in listData" :key="index" @click="getFlow(item)">
           <div class="duty_top">
             <!-- 表单状态 及 编码 -->
-            <div class="warehouse_info">
+            <div class="basic_info">
               <!-- 状态 -->
               <span class="warehouse warehouse_name">
                   <!-- 往来关系标签/二级科目 -->
