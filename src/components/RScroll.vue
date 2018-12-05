@@ -1,6 +1,6 @@
 <template>
   <div class="scroll-container" ref="bScroll">
-    <div class="scroll-wrapper" :class="{hasRefresh: hasRefresh}">
+    <div class="scroll-wrapper" :class="{hasRefresh: hasRefresh}" ref="scrollWrapper">
       <slot></slot>
       <slot name="loadmore">
         <load-more :show-loading="hasNext" :tip="tip" v-show="hasNext || noData"></load-more>
@@ -18,7 +18,6 @@
 <script>
   import BScroll from 'better-scroll'
   import {Spinner, LoadMore} from 'vux'
-
   const PULL_DOWN_REFRESH_HEIGHT = 70;
   export default {
     name: "RScroll",
@@ -100,7 +99,6 @@
                 this.pullDownTop = 0;
               } else {
                 this.pullDownTop = y - PULL_DOWN_REFRESH_HEIGHT;
-                //console.log('pullDownTop:', this.pullDownTop);
               }
             } else {
               this.resetPullDown();
@@ -139,8 +137,8 @@
         })
       },
       // TODO 滚动到指定位置
-      scrollTo({x = 0, y = 0}) {
-        this.bScroll.scrollTo(x, y);
+      scrollTo(x, y) {
+        this.bScroll && this.bScroll.scrollTo(x, y, 400);
       },
       // TODO 重置下拉刷新图标位置
       resetPullDown() {

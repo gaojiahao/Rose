@@ -5,7 +5,7 @@
       <span class="history" @click="popupShow = true" v-show="changeLogList.length">历史记录</span>
     </div>
     <div class="no_data" v-if="!changeLogList.length">暂无数据</div>
-    <div class="latest_change" v-else>
+    <div class="latest_change" v-else @click="popupShow = true">
       <div class="change_time">
         <span class="version">v{{latestLog.VERSION}}</span>
         <span>{{latestLog.CRT_TIME | handerTime}}</span>

@@ -2,13 +2,13 @@
   <div class="admin_comment">
     <div class="title">
       <span>管理员自评</span>
-      <span class="more" @click="popupShow = true" v-show="adminCommentList.length">查看更多</span>
+      <span class="more" @click="getMoreComment" v-show="adminCommentList.length">查看更多</span>
     </div>
     <div class="no_data" v-if="!adminCommentList.length">暂无评论</div>
     <div class="admin-comment-container swiper-container" :class="{'no_swiper' : !adminCommentList.length}">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="(item,index) in adminCommentList" :key="index" v-if="index < 5">
-          <div class="each_comment" >
+        <div class="swiper-slide" v-for="(item,index) in adminCommentList" :key="index" v-if="index < 5" >
+          <div class="each_comment" @click="goPop(index)">
             <div class="user_photo">
               <img :src="item.photo" @error="getUserDefault(item)"/>
             </div>
@@ -19,12 +19,12 @@
               </div>
               <div class="comment">
                 <div>
-                  <span>改进结果:</span>
-                  <span v-html="item.achievement" class="achievement"></span>
+                  <div>改进结果:</div>
+                  <div v-html="item.modifyAchievement" class="achievement"></div>
                 </div>
                 <div>
-                  <span>改进机会:</span>
-                  <span v-html="item.chance" class="chance"></span>
+                  <div>改进机会:</div>
+                  <div v-html="item.modifyChance" class="chance"></div>
                 </div>
               </div>
             </div>
@@ -38,7 +38,7 @@
     </div>
     <!--管理员评论列表-->
     <div v-transfer-dom>
-      <popup v-model="popupShow" position="bottom" height="100%">
+      <popup v-model="popupShow" position="bottom" height="100%"  @on-show="onShow">
         <r-scroll class="full-flow-container" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !adminCommentList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
@@ -46,7 +46,7 @@
             <div class="title vux-1px-b">
               管理员自评
             </div>
-            <div class="each_comment vux-1px-b" v-for="(item,index) in adminCommentList" :key="index">
+            <div class="each_comment vux-1px-b" :class="{visited: index === seletedIndex}" v-for="(item,index) in adminCommentList" :key="index" ref='eachComment'>
               <div class="user_photo">
                 <img :src="item.photo" @error="getUserDefault(item)"/>
               </div>
@@ -85,6 +85,7 @@ import {TransferDom, Popup, Group, Icon, XButton,dateFormat} from 'vux'
 import RScroll from 'components/RScroll'
 //请求 引入
 import {getAdminCommentList} from 'service/appSettingService.js'
+import { setTimeout } from 'timers';
 export default {
   name:'ChangeLog',
   props:{
@@ -106,6 +107,8 @@ export default {
       popupShow : false,
       adminCommentList : [],
       listId : 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+      scrollHeight: 0,
+      seletedIndex: null,
     }
   },
   directives: {
@@ -118,19 +121,6 @@ export default {
     XButton,
     RScroll,
   },
-  watch: {
-    popupShow: {
-      handler(bool) {
-        if (bool) {
-          this.$nextTick(() => {
-            if (this.$refs.bScroll) {
-              this.$refs.bScroll.refresh();
-            }
-          });
-        }
-      }
-    }
-  },
   filters:{
     handerTime(val){
       let time  = dateFormat(val,'YYYY-MM');
@@ -138,12 +128,55 @@ export default {
     }
   },
   methods:{
+    onShow() {
+      this.$nextTick(() => {
+        if (this.$refs.bScroll) {
+          this.$refs.bScroll.refresh();
+          let containerHeight = this.$refs.bScroll.$refs.bScroll.offsetHeight,
+              contentHeight = this.$refs.bScroll.$refs.scrollWrapper.offsetHeight,
+              scrollHeight = contentHeight - containerHeight;
+          // 当滑动内容大于容器高度,可滑动
+          if(contentHeight > containerHeight) {
+            // 当前内容滑动的高度大于可滑动的高度
+            if(this.scrollHeight > scrollHeight) {
+              this.scrollHeight = scrollHeight;
+            }
+            this.$refs.bScroll.scrollTo(0, -this.scrollHeight);
+          }
+        }
+      })
+      setTimeout(() => {
+        this.seletedIndex = null;
+      }, 1000)
+      
+    },
     getUserDefault(item){
       let url = require('assets/ava03.png');
       if(item){
         item.photo = url;
       }
       return url;
+    },
+    // 查看更多
+    getMoreComment(){
+      this.popupShow = true;
+      this.scrollHeight = 0;
+    },
+    // 点击单条评论进入列表
+    goPop(mIndex){
+      this.seletedIndex = mIndex;
+      this.popupShow = true;
+      this.scrollHeight = 0;
+      this.$nextTick(() => {
+        if(mIndex === 0) {
+          return 
+        }
+        this.$refs.eachComment.forEach((item, index) => {
+          if(index < mIndex){
+            this.scrollHeight += item.offsetHeight;
+          }
+        })
+      })
     },
     //获取更新日志日志列表
     getAdminComment(){
@@ -154,6 +187,22 @@ export default {
         sort : JSON.stringify([{property: 'crtTime',direction: 'DESC'}])
       }).then(({dataCount = 0, tableContent = []}) =>{
         this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+        tableContent.forEach(item => {
+          if(item.achievement.includes('<') && !item.achievement.includes('img')) {
+            item.modifyAchievement = item.achievement.replace(/<\/?[^>]*>/g, ""); 
+            item.modifyAchievement = item.modifyAchievement.replace(/\s+/g, "</br>")
+          }
+          else{
+            item.modifyAchievement = item.achievement;
+          }
+          if(item.chance.includes('<') && !item.chance.includes('img')) {
+            item.modifyChance = item.chance.replace(/<\/?[^>]*>/g, ""); 
+            item.modifyChance = item.modifyChance.replace(/\s+/g, "</br>")
+          }
+          else{
+            item.modifyChance = item.chance; 
+          }
+        })
         this.adminCommentList = this.page === 1 ? tableContent : [...this.adminCommentList, ...tableContent];
         this.$nextTick(() => {
           this.$refs.bScroll.finishPullUp();
@@ -191,7 +240,8 @@ export default {
       observer: true,       //修改swiper自己或子元素时，自动初始化swiper
       observeParents: true,
       centeredSlides: true,      
-    })      
+    }) 
+  
   }
 }
 </script>
@@ -261,7 +311,7 @@ export default {
         font-weight: normal;
         color: #3c7bcb;
       }
-
+      
     }
     //无数据提示
     .no_data{
@@ -298,6 +348,13 @@ export default {
         width: 0;
         height: 0;
       }
+      .chance,.achievement{
+        padding-left: .05rem;
+        display:-webkit-box;//对象作为弹性伸缩盒子模型显示 
+        -webkit-box-orient: vertical;//设置或检索伸缩盒对象的子元素的排列方式 
+        -webkit-line-clamp: 2;//溢出省略的界限
+        overflow:hidden;//设置隐藏溢出元素'
+      }
     }
   }
   .vux-popup-dialog {
@@ -322,7 +379,13 @@ export default {
           font-size: .24rem;
         }
         .each_comment{
-          padding: 0.1rem 0;
+          padding: 0.1rem 0.05rem;
+          background: #fff;
+          transition: background-color 200ms linear;
+          &.visited {
+            // background-color: #e8e8e8;
+            background-color: #f0f1f5;
+          }
         }
       }
     }
