@@ -147,7 +147,7 @@
   // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
-  const DRAFT_KEY = 'XSDD_DATA';
+  const DRAFT_KEY = 'XSDDYC_DATA';
 
   export default {
     data() {

@@ -99,7 +99,7 @@
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
 
-  const DRAFT_KEY = 'CPXQ_DATA';
+  const DRAFT_KEY = 'CPFB_DATA';
   export default {
     name: 'ApplyCPFBForm',
     data() {

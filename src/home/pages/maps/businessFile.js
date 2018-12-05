@@ -26,6 +26,10 @@ export default {
 
   // < 财务类应用 >
   '7218d31d-88f4-45bc-82c2-6d4a1c766821': 'finance',
+
+  // <低值易耗品>
+  '27d28ff5-2e04-4881-a159-2b38f10ce7e4': 'consumable',
+
   // <财务会计类科目>
   'f3d819ee-8f77-47d0-81f1-e986841e51eb': 'finance',
 
