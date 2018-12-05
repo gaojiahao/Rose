@@ -99,6 +99,50 @@ export let getInputDraft = (data = {}) => {
   })
 };
 
+// TODO 获取汇票列表(出兑现贴现承兑汇票)
+export let getCashDiscount = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getCashDiscount',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+// TODO 获取资金账户列表(出兑现贴现承兑汇票)
+export let getFundCashDiscount = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getFundCashDiscount',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+// TODO 获取汇票列表(兑付承兑汇票)
+export let getDraftBalance = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getDraftBalance',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
+// TODO 获取资金账户列表(兑付承兑汇票)
+export let getObjFundBalByType = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getObjFundBalByType',
+    data: {
+      _dc: Date.now(),
+      fundType: '其他资金,银行存款',
+      ...data,
+    }
+  })
+};
 export default {
 
 }

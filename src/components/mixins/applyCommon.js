@@ -37,7 +37,8 @@ export default {
       clientHeight : document.documentElement.clientHeight,
       attachment : [],
       relationKey: '',
-      handlerDefault: {} // 经办人默认信息
+      handlerDefault: {}, // 经办人默认信息
+      listId: ''
     }
   },
   components: {
@@ -317,7 +318,9 @@ export default {
   },
   created() {
     register(); // 注册wx-js-sdk
-    let { name, transCode, relationKey } = this.$route.query;
+    let { name, transCode, relationKey } = this.$route.query,
+        { listId } = this.$route.params;
+    this.listId = listId;
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
     (async () => {

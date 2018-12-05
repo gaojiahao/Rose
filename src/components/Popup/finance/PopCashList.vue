@@ -10,13 +10,13 @@
         </div>
         <div class="cp-info">
           <span>编码: {{selInfo.fundCode}}</span>
-          <span>余额: {{selInfo.thenAmntBal | numberComma}}</span>
+          <span>余额: {{selInfo.thenAmntBal || selInfo.amntBal | numberComma}}</span>
         </div>
       </div>
       <div class='user-content' v-else>
         <div class="title">资金信息</div>
-        <!--<div class="required">请选择资金</div>-->
-        <div>请选择资金信息</div>
+        <div class="required">请选择资金</div>
+        <!-- <div>请选择资金信息</div> -->
       </div>
       <span class="iconfont icon-youjiantou r-arrow"></span>
     </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="amt">
           <span>编码: {{item.fundCode}}</span>
-          <span>账户余额: {{item.thenAmntBal | numberComma}}</span>
+          <span>账户余额: {{item.thenAmntBal || item.amntBal | numberComma}}</span>
         </div>
       </template>
     </r-popup>
@@ -42,7 +42,7 @@
 
 <script>
   import { AlertModule, numberComma} from 'vux'
-  import {getEmployeeReserveFunds, getSupplierToPayDeposit} from 'service/costService'
+  import {getEmployeeReserveFunds, getSupplierToPayDeposit, getFundCashDiscount, getObjFundBalByType} from 'service/costService'
   import RPopup from 'components/Popup/commonPart/RPopup'
 
   export default {
@@ -142,7 +142,7 @@
       numberComma,
     },
     created() {
-      let serviceList = [getEmployeeReserveFunds, getSupplierToPayDeposit];
+      let serviceList = [getEmployeeReserveFunds, getSupplierToPayDeposit, getFundCashDiscount, getObjFundBalByType];
       this.requestMethods = serviceList[this.request];
       this.getList();
     }
@@ -168,6 +168,10 @@
     margin-bottom: 0.1rem;
     box-sizing: border-box;
     padding: .06rem .1rem;
+    .weui-cell{
+      padding: .05rem 0;
+      font-size: .14rem;
+    }
     .title {
       color: #757575;
       font-size: .12rem;

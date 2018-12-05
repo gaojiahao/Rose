@@ -10,7 +10,9 @@
       </div>
       <div class="amt">
         <span>汇票号: {{item.draftNumber}}</span>
-        <span>金额: {{item.tdAmount | numberComma}}</span>
+        <slot name="amount" :item="item">
+          <span>金额: {{item.tdAmount | numberComma}}</span>
+        </slot>
       </div>
       <div class="amt">
         <span>出票日: {{item.draftDate | dateFormat('YYYY-MM-DD')}}</span>
@@ -22,7 +24,7 @@
 
 <script>
   import {numberComma, dateFormat} from 'vux'
-  import {getInputDraft} from 'service/costService'
+  import {getInputDraft, getCashDiscount, getDraftBalance} from 'service/costService'
   import RPopup from 'components/Popup/commonPart/RPopup'
 
   export default {
@@ -43,6 +45,11 @@
         type: Boolean,
         default: false
       },
+      // 请求接口
+      request: {
+        type: String,
+        default: '0'
+      }
     },
     components: {
       RPopup,
@@ -58,6 +65,7 @@
         scrollOptions: { // 滚动配置
           pullUpLoad: true,
         },
+        requestMethods: null,
       }
     },
     watch: {
@@ -90,7 +98,7 @@
             },
           ];
         }
-        return getInputDraft({
+        return this.requestMethods({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
@@ -106,11 +114,11 @@
         this.listData = [];
         this.page = 1;
         this.hasNext = true;
-        this.getList();
+        this.getList()
       },
       onPullingUp() {
         this.page++;
-        this.getList();
+        this.getList()
       }
     },
     filters: {
@@ -118,6 +126,8 @@
       dateFormat,
     },
     created() {
+      let serviceList = [getInputDraft, getCashDiscount, getDraftBalance];
+      this.requestMethods = serviceList[this.request];
       this.getList();
     }
   }
