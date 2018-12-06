@@ -158,11 +158,11 @@ export default {
           if(Apps[val.id]){
             // 对象里动态生成数组
             BUSobj[val.text] = [];
-            for(let item of val.children ){
+            for(let item of val.children){
               // 基础对象
               if(basicMap[item.listId]){
                 // 图片处理
-                item.icon = item.icon
+                item.icon = item.icon 
                   ? `/dist/${item.icon}`
                   : ''
                 this.BasicApps.push(item);
@@ -177,29 +177,29 @@ export default {
                 // 归类到相应的小数组
                 BUSobj[val.text].push(item);
               }
-              if(Apps[val.id][item.id]) {
-                childObj[item.text] = [];
+              // 如果业务应用底下存在分类
+              if(Apps[val.id][item.id]){
                 for(let child of item.children) {
                   if(Apps[val.id][item.id][child.listId]) {
-                    childObj[item.text].push(child);
+                    if(!BUSobj[val.text][item.text]) {
+                      this.$set(BUSobj[val.text], item.text, {childList: [child]})
+                    }
+                    else {
+                      BUSobj[val.text][item.text].childList.push(child)
+                    }
                   }
                 }
-                this.$set(BUSobj, val.text, childObj);
-                // console.log('childObj:', childObj)
               }
             }
-            console.log(`${val.text}:`, BUSobj[val.text]);
             this.BusApps.push({
               id: val.id,
               name: val.text,
-              appList: BUSobj[val.text],
-              // childList: childObj
+              appList: {...BUSobj[val.text]}
             })
             this.$loading.hide();
           }
     
         }
-        // console.log('childObj:', childObj);
       })
       // 获取 头像姓名
       let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));

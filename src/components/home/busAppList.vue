@@ -1,7 +1,7 @@
 <template>
   <div class="app-part">
       <div class="each_part" v-for="(item, inx) in BusApps" :key='inx'>
-        <template v-if="item.appList.length > 0">
+        <template v-if="Object.values(item.appList).length > 0">
           <div class="app-container defalut_bg">
             <div class="app_classify_name">
               <p>{{item.name}}</p>
