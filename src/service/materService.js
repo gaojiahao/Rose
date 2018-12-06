@@ -245,6 +245,16 @@ export let getLowPriceConsumableInWarehouse = (data = {}) => {
     }
   })
 };
+// 获取产品价格的物料列表
+export let getProductPriceAllInventory = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProductPriceAllInventory',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
 
 export default {
   save,

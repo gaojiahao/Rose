@@ -106,6 +106,7 @@ export default {
   },
   // <设备>
   '4a1e1cce-186a-46b6-acb7-fbd5febf578b': {
+    'f928725f-5e23-4321-922c-6db0efa85f17': 'SBCGSQ',       // *设备采购申请
     'fac37727-d2d4-11e8-b8ca-0279b2c6a380': 'SBCGDD',       // *设备采购订单
   },
   // <财务会计类科目>

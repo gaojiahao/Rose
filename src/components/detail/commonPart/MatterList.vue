@@ -1,7 +1,7 @@
 <template>
   <div class="materiel_ct_list">
     <div class="title">
-      <span class="iconfont icon-Shape"></span>物料列表
+      <span class="iconfont icon-Shape"></span>{{listTitle}}
     </div>
     <div class="mater_list" v-if="matterList.length">
       <matter-item :item="item" v-for="(item, index) in matterList" :key='index'>
@@ -72,6 +72,10 @@ export default {
       type: Number,
       default: 0
     },
+    listTitle: {
+      type: String,
+      default: '物料列表'
+    }
   },
   components: {
     FormCell,  

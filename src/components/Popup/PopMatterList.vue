@@ -103,6 +103,7 @@
     getKCPDList,
     getLowValueConsumPurchaseOrder,
     getLowPriceConsumableInWarehouse,
+    getProductPriceAllInventory
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -509,6 +510,26 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // 获取产品价格的物料列表
+      getProductPriceAllInventory() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getProductPriceAllInventory({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(this.dataHandler);
       },
