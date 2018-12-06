@@ -131,8 +131,8 @@
           let {inventory = {}} = formData;
           let status = ['', '使用中', '未使用', '草稿'],
             statusClass = ['', 'inUse', 'unUse'];
-          inventory.statusClass = statusClass[inventory.status];
-          inventory.status = status[inventory.status] || '停用';
+          inventory.statusClass = statusClass[inventory.inventoryStatus];
+          inventory.status = status[inventory.inventoryStatus] || '停用';
           this.inventory = formData.inventory;
           this.invNetWeight = formData.invNetWeight;
           this.invMoreUnit = formData.invMoreUnit;

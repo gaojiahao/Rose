@@ -102,7 +102,7 @@ export default {
             : this.getDefaultImg();
         }
         this.attachment = attachment;
-        formData.validUntil = dateFormat(formData.validUntil, 'YYYY-MM-DD');
+        formData.validUntil = dateFormat(order.validUntil, 'YYYY-MM-DD');
         this.orderInfo = formData;
         this.getcontactInfo();
         this.workFlowInfoHandler();

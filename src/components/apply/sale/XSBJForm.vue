@@ -345,6 +345,7 @@
                 dealerDebit: this.dealerInfo.dealerCode || '',
                 drDealerLabel: this.dealerInfo.dealerLabelName || '客户',
                 drDealerPaymentTerm: this.dealerInfo.paymentTerm || '现付',
+                validUntil: this.formData.validUntil,
                 dataSet
               }
             };
@@ -433,17 +434,36 @@
             county: order.county_dealerDebit || '', // 地区
             address: order.address_dealerDebit || '', // 详细地址
           };
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
           this.formData = {
             ...this.formData,
-            creator: formData.creator,
+            ...this.handlerDefault,
             biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD') ,
-          };
+          }
+          // this.formData = {
+          //   ...this.formData,
+          //   creator: formData.creator,
+          //   biComment: formData.biComment,
+          //   drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
+          //   validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD') ,
+          // };
           this.biReferenceId = formData.biReferenceId;
           this.matterList = matterList;
           this.$loading.hide();
-          // this.$emit('input', false);
         })
       },
       // TODO 展示时间选择器
