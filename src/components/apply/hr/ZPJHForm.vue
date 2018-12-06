@@ -10,39 +10,27 @@
           <div class="mater_list">
             <div class="each_mater">
               <div class="userInp_mode">
-                <div class="title">员工信息</div>
+                <div class="title">招聘信息</div>
                 <group class="SJ_group" @group-title-margin-top="0">
-                  <!-- 商机标题 -->
-                  <x-input title="员工" text-align='right' v-model="formData.profileName"
-                           placeholder='请填写'>
+                  <popup-picker :data="groupList" v-model="formData.applicationDepartment" placeholder="请选择">
+                    <template slot="title">
+                        <span class="required">申请部门</span>
+                    </template>
+                  </popup-picker>
+                  <popup-picker :data="roleList" v-model="formData.applicationPost" placeholder="请选择">
+                    <template slot="title">
+                        <span class="required">申请岗位</span>
+                    </template>
+                  </popup-picker>
+                  <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(formData.recruitmentPeople)"
+                       @on-focus="getFocus($event)" v-model.number='formData.recruitmentPeople'>
                     <template slot="label">
-                      <span class='required'>员工
-                      </span>
+                        <span class="required">招聘人数</span>
                     </template>
                   </x-input>
-                  <!-- 预期销售额 -->
-                  <x-input title="身份证号" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkIdCard" v-model.number="formData.idCard">
-                    <template slot="label">
-                      <span class='required'>身份证号
-                      </span>
-                    </template>
-                  </x-input>
-                  <x-input title="紧急联系人"  text-align='right' placeholder='请填写'
-                            v-model.number="formData.urgentContact">
-                  </x-input>
-                  <x-input title="联系方式" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkMobile" v-model.number="formData.profileContact">
-                  </x-input>
-                  <x-input title="地址"  text-align='right' placeholder='请填写'
-                           v-model.number="formData.profileAddress">
-                  </x-input>
-                  <x-input title="学历"  text-align='right' placeholder='请填写'
-                           v-model.number="formData.education">
-                  </x-input>
-                  <!-- 有效期 -->
-                  <datetime v-model="formData.contractPeriod" placeholder='请选择日期' title="合同期限"></datetime>
-                  <datetime v-model="formData.entryDate" placeholder='请选择日期' title="入职日期"></datetime>
+                  <x-textarea title="任职要求" v-model="formData.jobRequirements" :max="100"></x-textarea>
+                  <x-textarea title="岗位描述" v-model="formData.postDescription" :max="100"></x-textarea>
+                  <x-textarea title="招聘原因" v-model="formData.recruitmentReson" :max="100"></x-textarea>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
               </div>
@@ -62,10 +50,11 @@
 <script>
   // vux组件引入
   import {
-    Cell,Group, XInput, Datetime, XTextarea, dateFormat,
+    Cell,Group, XInput, Datetime, XTextarea, dateFormat, PopupPicker
   } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
+  import { getDepartMentWage, getAllRoleInfo } from 'service/hr/employeeService'
   import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
@@ -73,12 +62,11 @@
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  const DRAFT_KEY = 'YGDA_DATA';
+  const DRAFT_KEY = 'ZHJH_DATA';
 
   export default {
     data () {
       return {
-        listId: '223f9387-d2d7-11e8-b8ca-0279b2c6a380',
         formData: {
           biId: '', // 为空
           biComment: '',
@@ -87,59 +75,63 @@
         biReferenceId: '',
         MobileWarn: false,
         idCardWarn: false,
+        groupList: [],
+        roleList: []
       }
     },
     components: {
       Cell,Group, XInput, 
-      Datetime, XTextarea,
-      RPicker, PopBaseinfo
+      Datetime, XTextarea, PopupPicker,
+      RPicker, PopBaseinfo,
     },
     mixins: [common],
     methods: {
-      //校验手机号
-      checkMobile(){
-        let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-        if(this.formData.profileContact && !reg.test(this.formData.profileContact)){
-          this.MobileWarn = true;
-          return
-        }
-        this.MobileWarn = false;
+      // 获取所有的部门
+      getDepartMentWage(){
+        getDepartMentWage().then(data => {
+          let arr = []
+          data.tableContent.forEach(item => {
+            arr.push(item.GROUP_NAME)
+          })
+          this.groupList.push(arr);
+        })
       },
-      // 校验身份证
-      checkIdCard(){
-        let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-        if(this.formData.idCard && !reg.test(this.formData.idCard)){
-          this.idCardWarn = true;
-          return
-        }
-        this.idCardWarn = false;
+      // 获取所有的岗位
+      getAllRoleInfo(){
+        getAllRoleInfo().then(data => {
+          let arr = []
+          data.tableContent.forEach(item => {
+            arr.push(item.roleName)
+          })
+          this.roleList.push(arr);
+        })
       },
       // TODO 提交
       submitOrder () {
         let warn = '';
         let validateMap = [
           {
-            key: 'profileName',
-            message: '员工'
-          }, {
-            key: 'idCard',
-            message: '身份证号'
+            key: 'applicationDepartment',
+            message: '请选择申请部门'
           },
+          {
+            key: 'applicationPost',
+            message: '请选择申请岗位'
+          },
+          {
+            key: 'recruitmentPeople',
+            message: '请填写招聘人数'
+          },
+
         ];
         if (!warn) {
           validateMap.every(item => {
             if (!this.formData[item.key]) {
-              warn = `请填写${item.message}`;
+              warn = item.message;
               return false;
             }
             return true
           });
-        }
-        if (!warn && this.MobileWarn) {
-          warn = '联系方式格式不正确'
-        }
-        if (!warn && this.idCardWarn) {
-          warn = '身份证号格式不正确'
         }
         if (warn) {
           this.$vux.alert.show({
@@ -158,6 +150,8 @@
               ...this.formData,
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
+              applicationDepartment: this.formData.applicationDepartment[0],
+              applicationPost: this.formData.applicationPost[0]
             };
             let submitData = {
               listId: this.listId,
@@ -192,7 +186,7 @@
       // TODO 是否保存草稿
       hasDraftData () {
         let formData = this.formData;
-        if (formData.profileName || formData.idCard) {
+        if (formData.applicationDepartment || formData.applicationPost) {
           return {
             [DRAFT_KEY]: {
               formData
@@ -200,8 +194,14 @@
           };
         }
       },
+      // 处理小数
+      checkAmt(val) {
+        this.formData.recruitmentPeople = Math.round(val);
+      }
     },
     created () {
+      this.getDepartMentWage();
+      this.getAllRoleInfo();
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
@@ -219,15 +219,10 @@
   }
   .sj-apply-container {
     .SJ_group {
-
-      /deep/ > .vux-label {
-        color: #5077aa;
-        font-weight: bold;
-      }
-      /deep/ > .vux-no-group-title {
+      /deep/ .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/> .weui-cells {
+      /deep/ .weui-cells {
         font-size: .16rem;
         .vux-tap-active {
           .vux-label {
@@ -243,7 +238,7 @@
         &:before{
           left: 0;
         }
-        /deep/ >.weui-cell {
+        /deep/ .weui-cell {
           padding: 10px 0;
         }
       }

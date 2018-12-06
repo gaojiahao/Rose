@@ -54,7 +54,7 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopSalesmanList from 'components/Popup/PopSalesmanList'
   // 方法引入
-  const DRAFT_KEY = 'SJ_DATA';
+  const DRAFT_KEY = 'YGRZ_DATA';
 
   export default {
     data () {

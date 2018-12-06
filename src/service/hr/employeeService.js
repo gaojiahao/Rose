@@ -23,6 +23,17 @@ export let getAllRoleInfo = () => {
     }
   })
 }
+export let getDepartMentWage = () => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getDepartMentWage',
+    data: {
+      page: 1,
+      start: 0,
+      limit: 1000
+    }
+  })
+}
+
 
 export default {
   getAllGroup,
