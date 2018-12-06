@@ -152,36 +152,20 @@ export default {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
+        let childObj = {};
         for(let val of res){
           // 获取应用
           if(Apps[val.id]){
-            // 动态生成数组
+            // 对象里动态生成数组
             BUSobj[val.text] = [];
             for(let item of val.children ){
               // 基础对象
               if(basicMap[item.listId]){
-                if(item.transName){
-                  // 动态添加对应的背景底色
-                  switch(item.text){
-                    case '仓库':
-                      item.bgColor = '#D85656';
-                      item.boxShadow = '#D85656';
-                      break;
-                    case '产品与物料':
-                      item.bgColor = '#F29C35';
-                      item.boxShadow = '#F29C35';
-                      break;
-                    case '所有往来账户':
-                      item.bgColor = '#338183';
-                      item.boxShadow = '#338183';
-                      break;
-                  }
-                  // 图片处理
-                  item.icon = item.icon
-                    ? `/dist/${item.icon}`
-                    : ''
-                  this.BasicApps.push(item);
-                }
+                // 图片处理
+                item.icon = item.icon
+                  ? `/dist/${item.icon}`
+                  : ''
+                this.BasicApps.push(item);
               }
               // 业务应用
               if(Apps[val.id][item.listId]){
@@ -192,17 +176,30 @@ export default {
                   : this.getDefaultIcon();
                 // 归类到相应的小数组
                 BUSobj[val.text].push(item);
-
+              }
+              if(Apps[val.id][item.id]) {
+                childObj[item.text] = [];
+                for(let child of item.children) {
+                  if(Apps[val.id][item.id][child.listId]) {
+                    childObj[item.text].push(child);
+                  }
+                }
+                this.$set(BUSobj, val.text, childObj);
+                // console.log('childObj:', childObj)
               }
             }
+            console.log(`${val.text}:`, BUSobj[val.text]);
             this.BusApps.push({
               id: val.id,
               name: val.text,
-              appList: BUSobj[val.text]
+              appList: BUSobj[val.text],
+              // childList: childObj
             })
             this.$loading.hide();
           }
+    
         }
+        // console.log('childObj:', childObj);
       })
       // 获取 头像姓名
       let { name, avatar, position } = JSON.parse(sessionStorage.getItem('ROSE_LOGIN_TOKEN'));

@@ -399,7 +399,7 @@ export default {
     }
   }
   .time-filter-container {
-    padding: 0 .1rem;
+    padding: .1rem;
     .time_filter {
       display: flex;
       align-items: center;
