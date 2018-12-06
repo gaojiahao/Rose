@@ -21,6 +21,9 @@ export default {
   // < 采购类应用 >
   'a0a66a68-b351-4c19-b837-e168cbf48019': 'purchase',
 
+  // <质量>
+  // 'a865b547-baa7-4c9e-8e95-d1e2c7bf728b': 'quality',
+
   // < 库存类应用 >
   '9e5a7193-f2eb-4b99-9849-8fe6c6ae3713': 'stock',
 
@@ -29,6 +32,9 @@ export default {
 
   // <低值易耗品>
   '27d28ff5-2e04-4881-a159-2b38f10ce7e4': 'consumable',
+
+  // <设备>
+  '4a1e1cce-186a-46b6-acb7-fbd5febf578b': 'equipment',
 
   // <财务会计类科目>
   'f3d819ee-8f77-47d0-81f1-e986841e51eb': 'finance',
