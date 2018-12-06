@@ -7,8 +7,6 @@
       </div>
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目信息 -->
-      <project-part :project-info="orderInfo.order"></project-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -23,7 +21,7 @@
             <form-cell cellTitle='往来关系标签' :cellContent="dealerInfo.dealerLabelName"></form-cell>
             <form-cell cellTitle='往来余额' :cellContent="dealerInfo.amntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='本次出让汇票' :cellContent="dealerInfo.thenTotalAmntBal | toFixed | numberComma(3)"
+            <form-cell cellTitle='本次开出汇票' :cellContent="dealerInfo.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
           </div>
         </div>
@@ -39,44 +37,14 @@
           <div class="main_content">
             <form-cell cellTitle='汇票号' :cellContent="item.draftNumber" :showTopBorder=false></form-cell>
             <form-cell cellTitle='类型' :cellContent="item.draftType"></form-cell>
-            <form-cell cellTitle='承兑人' :cellContent="item.accepter"></form-cell>
+            <form-cell cellTitle='承兑人' :cellContent="item.accepter"
+            ></form-cell>
             <form-cell cellTitle='金额' :cellContent="item.tdAmount | toFixed | numberComma(3)" showSymbol></form-cell>
             <form-cell cellTitle='保证金' :cellContent="item.deposit | toFixed | numberComma(3)" showSymbol></form-cell>
             <form-cell cellTitle='出票日' :cellContent="item.draftDate"></form-cell>
             <form-cell cellTitle='到期日' :cellContent="item.draftDueDate"></form-cell>
+            <form-cell cellTitle='出让日期' :cellContent="item.draftSellDate"></form-cell>
             <form-cell cellTitle='说明' :cellContent="item.comment"></form-cell>
-          </div>
-        </div>
-      </div>
-      <div class="form_part">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">银行账户详情</span>
-        </div>
-        <div class="form_content">
-          <div class="main_content">
-            <form-cell cellTitle='银行存款账户' :cellContent="cashOutInfo.fundName_cashOutCode" :showTopBorder=false></form-cell>
-            <form-cell cellTitle='资金编码' :cellContent="cashOutInfo.cashOutCode"></form-cell>
-            <form-cell cellTitle='资金账户类型' :cellContent="cashOutInfo.cashType_cashOutCode"></form-cell>
-            <form-cell cellTitle='账户余额' :cellContent="cashOutInfo.thenAmntBalCopy1 | toFixed | numberComma(3)"
-                       showSymbol></form-cell>
-            <form-cell cellTitle='转出金额' :cellContent="cashOutInfo.tdAmountCopy1 | toFixed | numberComma(3)"
-                       showSymbol></form-cell>
-          </div>
-        </div>
-      </div>
-      <div class="form_part">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">保证金账户详情</span>
-        </div>
-        <div class="form_content">
-          <div class="main_content">
-            <form-cell cellTitle='保证金账户' :cellContent="cashInfo.fundName_cashInCode" :showTopBorder=false></form-cell>
-            <form-cell cellTitle='资金编码' :cellContent="cashInfo.cashInCode"></form-cell>
-            <form-cell cellTitle='资金账户类型' :cellContent="cashInfo.cashType_cashInCode"></form-cell>
-            <form-cell cellTitle='账户余额' :cellContent="cashInfo.thenAmntBal | toFixed | numberComma(3)"
-                       showSymbol></form-cell>
-            <form-cell cellTitle='转入金额' :cellContent="cashInfo.tdAmount | toFixed | numberComma(3)"
-                       showSymbol></form-cell>
           </div>
         </div>
       </div>
@@ -107,14 +75,13 @@
     data() {
       return {
         count: 0,          // 金额合计
+        formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
         dealerInfo: {},
-        cashInfo: {},
-        cashOutInfo: {}
       }
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction
+      workFlow, RAction,
     },
     methods: {
       // 获取详情
@@ -134,9 +101,7 @@
             return;
           }
           let {attachment, formData} = data;
-          let {order = {}, inPut = {}, outPut = {}} = formData;
-          this.cashOutInfo = outPut.dataSet[0];
-          this.cashInfo = inPut.dataSet[0];
+          let {order = {}} = formData;
           this.attachment = attachment;
           this.dealerInfo = {
             dealerName: order.dealerName_dealerDebit,

@@ -10,11 +10,10 @@
                          @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
-              <span class="amt-dealer-item">本次收汇票: {{thenTotalAmntBal}}</span>
+              <span class="amt-dealer-item">本次开出汇票: {{thenTotalAmntBal}}</span>
             </div>
           </template>
         </pop-dealer-list>
-
         <!-- 采购列表 -->
         <div class="materiel_list">
           <div class="title">汇票明细</div>
@@ -36,6 +35,12 @@
                      @on-focus="getFocus($event)" v-model.number='item.tdAmount'>
               <template slot="label">
                 <span class="required">金额</span>
+              </template>
+            </x-input>
+            <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, 'deposit')"
+                     @on-focus="getFocus($event)" v-model.number='item.deposit'>
+              <template slot="label">
+                <span class="required">保证金</span>
               </template>
             </x-input>
             <datetime v-model='item.draftDate' placeholder="请选择出票日">
@@ -65,9 +70,6 @@
           </group>
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
-        <!-- 采购单信息 -->
-        <pop-money-order-list :show="showOrder" :default-value="orderList"
-                              @sel-item="selOrder" v-model="showOrder"></pop-money-order-list>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -90,7 +92,6 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/finance/PopDealerList'
-  import PopMoneyOrderList from 'components/Popup/finance/PopMoneyOrderList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
@@ -103,6 +104,7 @@
     draftType: '',
     accepter: '',
     tdAmount: '',
+    deposit: '',
     draftDate: '',
     draftDueDate: '',
     comment: '',
@@ -113,7 +115,7 @@
       Cell, Group, Popup,
       XInput, XTextarea,
       PopupPicker, RPicker, PopBaseinfo,
-      PopDealerList, PopMoneyOrderList, Datetime,
+      PopDealerList, Datetime,
     },
     data() {
       return {
@@ -123,10 +125,10 @@
         costIndex: 0,
         transCode: '',
         formData: {
-          biComment: ''
+          biComment: '',
+          biProcessStatus: ''
         },
         dealerInfo: {},
-        showOrder: false,
         orderList: [{...MONEY_ORDER}],
         dealerParams: {
           dealerLabelName: '供应商,经销供应商'
@@ -141,6 +143,15 @@
         this.orderList.forEach(item => {
           if (item.tdAmount) {
             total = accAdd(total, item.tdAmount);
+          }
+        });
+        return toFixed(total)
+      },
+      tdAmount() {
+        let total = 0;
+        this.orderList.forEach(item => {
+          if (item.deposit) {
+            total = accAdd(total, item.deposit);
           }
         });
         return toFixed(total)
@@ -164,7 +175,11 @@
           }, {
             key: 'tdAmount',
             message: '请输入金额'
-          }, {
+          },{
+            key: 'deposit',
+            message: '请输入保证金'
+          },
+           {
             key: 'draftDate',
             message: '请选择出票日'
           }, {
@@ -189,6 +204,7 @@
               draftType: item.draftType,
               accepter: item.accepter,
               tdAmount: item.tdAmount,
+              deposit: item.deposit,
               draftDate: item.draftDate,
               draftDueDate: item.draftDueDate,
               comment: item.comment,
@@ -209,7 +225,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "RAAB", createdBy: JSON.stringify(this.formData.handler)}
+              [this.processCode]: {businessKey: "IAAB", createdBy: JSON.stringify(this.formData.handler)}
             };
             if (this.isResubmit) {
               wfPara = {
@@ -227,15 +243,34 @@
               formData: JSON.stringify({
                 ...this.formData,
                 handlerEntity: this.entity.dealerName,
-                creator: this.transCode ? this.formData.handler : '',
-                modifer: this.transCode ? this.formData.handler : '',
+                creator: this.formData.handler,
+                modifer: this.formData.handler,
                 order: {
-                  dealerName_dealerCodeCredit: this.dealerInfo.dealerName,
-                  dealerCodeCredit: this.dealerInfo.dealerCode,
-                  crDealerLabel: this.dealerInfo.dealerLabelName,
+                  dealerName_dealerDebit: this.dealerInfo.dealerName,
+                  dealerDebit: this.dealerInfo.dealerCode,
+                  drDealerLabel: this.dealerInfo.dealerLabelName,
                   thenAmntBalCopy2: this.dealerInfo.amntBal,
                   thenAlreadyAmnt: this.thenTotalAmntBal,
                   dataSet,
+                },
+                outPut: {
+                  dataSet: [{
+                    fundName_cashOutCode: null,
+                    cashOutCode: "",
+                    cashType_cashOutCode: "",
+                    thenAmntBalCopy1: 0,
+                    tdAmountCopy1: this.tdAmount,
+                  }]
+                },
+                inPut: {
+                  dataSet: [{
+                    fundName_cashInCode: null,
+                    cashInCode: "",
+                    cashType_cashInCode: "",
+                    thenAmntBal: 0,
+                    tdAmount: this.tdAmount,
+                    tdId: ''
+                  }]
                 },
               }),
               wfPara: JSON.stringify(wfPara)
@@ -289,9 +324,9 @@
           let {order = {}} = formData;
           let {dataSet = []} = order;
           this.dealerInfo = {
-            dealerName: order.dealerName_dealerCodeCredit,
-            dealerCode: order.dealerCodeCredit,
-            dealerLabelName: order.crDealerLabel,
+            dealerName: order.dealerName_dealerDebit,
+            dealerCode: order.dealerDebit,
+            dealerLabelName: order.drDealerLabel,
             amntBal: order.thenAmntBalCopy2,
             thenTotalAmntBal: order.thenAlreadyAmnt,
           };
@@ -319,14 +354,6 @@
       // TODO 选中供应商
       selDealer(item) {
         this.dealerInfo = {...item};
-      },
-      // TODO 选中采购明细
-      selOrder(val) {
-        val.forEach(item => {
-          item.draftDate = dateFormat(item.draftDate, 'YYYY-MM-DD');
-          item.draftDueDate = dateFormat(item.draftDueDate, 'YYYY-MM-DD');
-        });
-        this.orderList = val;
       },
       // TODO 新增
       addOrder() {
