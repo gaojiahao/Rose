@@ -50,6 +50,11 @@ export default {
     '67ff01b1-52bc-4e01-9650-214dc6e5e8f9': 'CGXY',       // *采购协议*
   },
 
+  // <质量>
+  // 'a865b547-baa7-4c9e-8e95-d1e2c7bf728b': {
+  //   '2cbf6207-c9e9-4afd-a56c-f20b5cfe684b': 'YLCGJHZJ',       // *原料采购进货质检
+  // },
+
   // < 库存类应用 >
   '9e5a7193-f2eb-4b99-9849-8fe6c6ae3713': {
     'edf7b34b-8916-410f-801f-2db7e97efbde': 'KCPD' ,       // *库存盘点*
@@ -98,6 +103,10 @@ export default {
     '4472a646-f2c8-4a07-bad6-4c01f0b9292f': 'DZYHPCGSQ', // 低值易耗品采购申请
     '1d52d5ce-d05e-4987-a023-3f4dba68cad9': 'DZYHPCGDD', // 低值易耗品采购订单
     '0750729a-1bea-423e-99a0-070beb953787': 'DZYHPCGYSYZF', // 低值易耗品采购验收与支付
+  },
+  // <设备>
+  '4a1e1cce-186a-46b6-acb7-fbd5febf578b': {
+    'fac37727-d2d4-11e8-b8ca-0279b2c6a380': 'SBCGDD',       // *设备采购订单
   },
   // <财务会计类科目>
   'f3d819ee-8f77-47d0-81f1-e986841e51eb': {
