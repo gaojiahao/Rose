@@ -18,7 +18,8 @@
         </div>
       </contact-part>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderInfo.inPut.dataSet'>
+      <matter-list :matter-list='matterList' :noTaxAmount="noTaxAmount"
+                     :taxAmount="taxAmount" :count="count">
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
@@ -61,7 +62,7 @@ import contactPart from 'components/detail/commonPart/ContactPart'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
 import MatterList from 'components/detail/commonPart/MatterList'
 //公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 export default {
   data() {
@@ -69,7 +70,26 @@ export default {
       count: 0,          // 金额合计
       formViewUniqueId: '',
       contactInfo: {}, // 客户、付款方式、物流条款的值
+      matterList: [],
     }
+  },
+  computed: {
+    // 合计金额
+    noTaxAmount() {
+      let total = 0;
+      this.matterList.forEach(item => {
+        total = accAdd(total, item.noTaxAmount);
+      });
+      return total;
+    },
+    // 税金
+    taxAmount() {
+      let total = 0;
+      this.matterList.forEach(item => {
+        total = accAdd(total, item.taxAmount);
+      });
+      return total;
+    },
   },
   components: {
     workFlow, RAction, contactPart, PriceTotal,MatterList
@@ -113,6 +133,7 @@ export default {
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
+        this.matterList = dataSet;
         this.orderInfo = data.formData;
         this.getcontactInfo('inPut');
         this.workFlowInfoHandler();
@@ -129,10 +150,10 @@ export default {
         dealerContactPersonName: orderInfo.dealerCreditContactPersonName, // 联系人
         dealerCode: order.dealerCodeCredit, // 客户编码
         dealerLabelName: order.crDealerLabel, // 关系标签
-        province: order.province_dealerDebit, // 省份
-        city: order.city_dealerDebit, // 城市
-        county: order.county_dealerDebit, // 地区
-        address: order.address_dealerDebit, // 详细地址
+        province: order.province_dealerCodeCredit, // 省份
+        city: order.city_dealerCodeCredit, // 城市
+        county: order.county_dealerCodeCredit, // 地区
+        address: order.address_dealerCodeCredit, // 详细地址
         payment: order.crDealerPaymentTerm, // 付款方式
         pamentDays: order.daysOfAccount,
       };

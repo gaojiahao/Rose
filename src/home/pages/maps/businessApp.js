@@ -96,6 +96,7 @@ export default {
   '27d28ff5-2e04-4881-a159-2b38f10ce7e4': {
     '4472a646-f2c8-4a07-bad6-4c01f0b9292f': 'DZYHPCGSQ', // 低值易耗品采购申请
     '1d52d5ce-d05e-4987-a023-3f4dba68cad9': 'DZYHPCGDD', // 低值易耗品采购订单
+    '0750729a-1bea-423e-99a0-070beb953787': 'DZYHPCGYSYZF', // 低值易耗品采购验收与支付
   },
   // <财务会计类科目>
   'f3d819ee-8f77-47d0-81f1-e986841e51eb': {

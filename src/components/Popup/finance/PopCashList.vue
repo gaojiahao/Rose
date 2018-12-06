@@ -63,7 +63,14 @@
       request: {
         type: String,
         default: '0'
-      }
+      },
+      // 请求参数
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     components: {
       RPopup,
@@ -116,6 +123,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.params,
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
