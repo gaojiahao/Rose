@@ -103,7 +103,7 @@ export default {
           mobile: data.mobile,                    // 手机号
           userCode: data.userCode,                // 工号
           nickname: data.nickname,                // 姓名
-          entityName: data.entityName.slice(0, 4) // 当前组织
+          entityName: data.entityName && data.entityName.slice(0, 4) || '' // 当前组织
         }
         // 获取 公司主体列表
         data.sysGroupList && data.sysGroupList.forEach(item=>{
