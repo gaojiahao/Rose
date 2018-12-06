@@ -6,17 +6,17 @@
     <div class="mater_main">
       <!-- 物料名称 -->
       <div class="mater_name">
-        {{item.inventoryName_transObjCode || '该物料未获取到名称，请检查物料信息。'}}
+        {{item.inventoryName_transObjCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
       </div>
       <!-- 物料基本信息 -->
       <div class="mater_info">
         <!-- 物料编码 -->
         <span class="info-item">
-          物料编码: {{item.transObjCode || '无'}}
+          物料编码: {{item.transObjCode || item.facilityCode_facilityObjCode || '无'}}
         </span>
         <!-- 物料规格 -->
         <span class="info-item">
-          型号规格: {{item.specification_transObjCode || item.specification_outPutMatCode || '无'}}
+          型号规格: {{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || '无'}}
         </span>
       </div>
       <slot name="other" :item="item">
@@ -142,7 +142,7 @@
       // font-size: 0;
       // 物料编码和规格
       .info-item {
-        
+
         margin-right: .06rem;
         .title, .num {
           font-size: .1rem;
@@ -233,7 +233,7 @@
         }
         .units {
           font-size: .1rem;
-        }      
+        }
       }
     }
   }

@@ -18,7 +18,7 @@
         <span class="content" v-else>{{contactInfo.province}}{{contactInfo.city}}{{contactInfo.county}}{{contactInfo.address}}</span>
       </div>
     </div>
-    <div class="other_content" v-if="payment || logistics">
+    <div class="other_content" :class="{'no-bottom': $slots.other && !validUntil}" v-if="payment || logistics">
       <div class="trade_info s_size_name" v-if="payment">
         <span class="title">结算方式：</span>
         <span class="mode">{{contactInfo.payment || '暂无'}}</span>
@@ -109,6 +109,9 @@
     }
     .other_content {
       padding: .06rem 0;
+      &.no-bottom {
+        padding-bottom: 0;
+      }
       .trade_info {
         margin: .04rem 0;
         .title {

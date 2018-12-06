@@ -298,7 +298,7 @@ export default {
           item.itemCount = item.detailItem.length;
           // 只取有物料编码的
           let detailItem = item.detailItem.reduce((arr, item) => {
-            if (item.inventoryCode_transObjCode || item.inventoryCode_outPutMatCode) {
+            if (item.inventoryCode_transObjCode || item.inventoryCode_outPutMatCode || item.facilityCode_facilityObjCode) {
               arr.push(item);
             }
             return arr
@@ -318,6 +318,18 @@ export default {
               mItem.inventoryCode = mItem.inventoryCode_transObjCode || mItem.inventoryCode_outPutMatCode;
               mItem.specification = mItem.specification_transObjCode || mItem.measureUnit_outPutMatCode;
               mItem.measureUnit = mItem.measureUnit_transObjCode || mItem.specification_outPutMatCode;
+              mItem.inventoryPic = mItem.inventoryPic_transObjCode
+                // 请求图片
+                ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
+                // 默认图片
+                : this.getDefaultImg();
+            }
+            // 设备
+            if(mItem.facilityCode_facilityObjCode){
+              mItem.inventoryName = mItem.facilityName_facilityObjCode;
+              mItem.inventoryCode = mItem.facilityCode_facilityObjCode;
+              mItem.specification = mItem.facilitySpecification_facilityObjCode;
+              mItem.measureUnit = mItem.facilityUnit_facilityObjCode;
               mItem.inventoryPic = mItem.inventoryPic_transObjCode
                 // 请求图片
                 ? `/H_roleplay-si/ds/download?url=${mItem.inventoryPic_transObjCode}&width=400&height=400`
