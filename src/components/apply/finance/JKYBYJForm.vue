@@ -305,10 +305,23 @@
             tdAmountCopy1: order.dataSet[0].tdAmountCopy1, // 本次支付
             differenceAmount: order.dataSet[0].differenceAmount, // 本次支付后余额
           };
-          this.formData = {
-            ...formData,
-            creator: formData.creator,
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
           };
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+          }
           this.cashInfo = {
             cashName: outPut.dataSet[0].fundName_cashInCode,
             cashInCode: outPut.dataSet[0].cashInCode, // 账户编码

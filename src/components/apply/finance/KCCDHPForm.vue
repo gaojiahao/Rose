@@ -2,11 +2,12 @@
   <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="formData" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 往来信息 -->
-        <pop-dealer-list dealer-label-name="往来" request="2" :default-value="dealerInfo" @sel-item="selDealer">
+        <pop-dealer-list dealer-label-name="往来" request="3" :default-value="dealerInfo" :params="dealerParams"
+                         @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
               <span class="amt-dealer-item">本次收汇票: {{thenTotalAmntBal}}</span>
@@ -16,56 +17,48 @@
 
         <!-- 采购列表 -->
         <div class="materiel_list">
-          <div class="order-info" @click="showOrder = true" v-if="!orderList.length">
-            <div class="title">汇票明细</div>
-            <div class="mode required">请选择汇票明细</div>
-            <span class="iconfont icon-youjiantou r-arrow"></span>
+          <div class="title">汇票明细</div>
+          <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
+               :key="index">
+            <x-input text-align='right' placeholder='请填写' v-model='item.draftNumber'>
+              <template slot="label">
+                <span class="required">汇票号</span>
+              </template>
+            </x-input>
+            <r-picker class="vux-1px-t" title="类型" :data="draftTypeList" mode="4" placeholder="请选择类型" :hasBorder="false"
+                      v-model="item.draftType" required></r-picker>
+            <x-input text-align='right' placeholder='请填写' v-model='item.accepter'>
+              <template slot="label">
+                <span class="required">承兑人</span>
+              </template>
+            </x-input>
+            <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, 'tdAmount')"
+                     @on-focus="getFocus($event)" v-model.number='item.tdAmount'>
+              <template slot="label">
+                <span class="required">金额</span>
+              </template>
+            </x-input>
+            <datetime v-model='item.draftDate' placeholder="请选择出票日">
+              <template slot="title">
+                <span class='required'>出票日</span>
+              </template>
+            </datetime>
+            <datetime v-model='item.draftDueDate' placeholder="请选择到期日">
+              <template slot="title">
+                <span class='required'>到期日</span>
+              </template>
+            </datetime>
+            <x-input title="说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
           </div>
-          <template v-else>
-            <div class="title">汇票明细</div>
-            <div class="order-detail" :class="{'vux-1px-t': index !== 0}" v-for="(item, index) in orderList"
-                 :key="index">
-              <div class="detail-item top">
-                <span class="info-item">{{item.draftNumber}}</span>
-              </div>
-              <div class="detail-item">
-                <span class="info-item">类型: {{item.draftType}}</span>
-                <span class="info-item">承兑人: {{item.accepter}}</span>
-                <span class="info-item">金额: {{item.tdAmount | numberComma}}</span>
-              </div>
-              <div class="detail-item">
-                <span class="info-item">出票日: {{item.draftDate}}</span>
-                <span class="info-item">到期日: {{item.draftDueDate}}</span>
-              </div>
-              <datetime v-model='item.cashingDiscountDate'>
-                <template slot="title">
-                  <span class='required'>兑现贴现日</span>
-                </template>
-              </datetime>
-              <x-input text-align='right' placeholder='请填写' type='number' @on-blur="checkAmt(item, 'discount')"
-                       @on-focus="getFocus($event)" v-model.number='item.discount'>
-                <template slot="label">
-                  <span class="required">贴息</span>
-                </template>
-              </x-input>
-              <cell :value="item.thenAmntBal">
-                <template slot="title">
-                  <span class="required">现后余额</span>
-                </template>
-              </cell>
-              <x-input title="说明" text-align='right' placeholder='请填写' v-model='item.comment'></x-input>
-            </div>
-          </template>
         </div>
         <!-- 新增更多 按钮 -->
-        <div class="handle_part vx-1px-t" v-if="orderList.length">
-          <span class="add_more" v-if="orderList.length" @click="addOrder">新增更多</span>
+        <div class="add_more">
+          您还需要添加新的汇票?请点击
+          <span class='add' @click="addOrder">新增</span>
+          <em v-show="orderList.length>1">或</em>
+          <span class='delete' @click="deleteOrder" v-show="orderList.length>1">删除</span>
         </div>
-        <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="2" :required="true">
-          <template slot="other">
-            <cell title="收款金额" :value="tdAmount"></cell>
-          </template>
-        </pop-cash-list>
+
         <div class="materiel_list">
           <group title="其他信息" class="costGroup">
             <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
@@ -73,12 +66,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!-- 采购单信息 -->
-        <pop-money-order-list :show="showOrder" :default-value="orderList" @sel-item="selOrder" request="1"
-                              v-model="showOrder" get-list-method="getCashDiscount">
-          <template slot="amount" slot-scope="{item}">
-            <span>金额: {{item.amntTbMatched | numberComma}}</span>
-          </template>
-        </pop-money-order-list>
+        <pop-money-order-list :show="showOrder" :default-value="orderList"
+                              @sel-item="selOrder" v-model="showOrder"></pop-money-order-list>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -91,7 +80,7 @@
 <script>
   // vux插件引入
   import {
-    Cell, Group, XInput, Popup, XTextarea, PopupPicker, Datetime, dateFormat, numberComma
+    Cell, Group, XInput, Popup, XTextarea, PopupPicker, Datetime, dateFormat,
   } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
@@ -102,54 +91,60 @@
   // 组件引入
   import PopDealerList from 'components/Popup/finance/PopDealerList'
   import PopMoneyOrderList from 'components/Popup/finance/PopMoneyOrderList'
-   import PopCashList from 'components/Popup/finance/PopCashList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
-  const DRAFT_KEY = 'DXTXCDHP_DATA';
+  const DRAFT_KEY = 'SDCDHP_DATA';
+  const MONEY_ORDER = {
+    draftNumber: '',
+    draftType: '',
+    accepter: '',
+    tdAmount: '',
+    draftDate: '',
+    draftDueDate: '',
+    comment: '',
+  };
   export default {
     mixins: [ApplyCommon],
     components: {
       Cell, Group, Popup,
       XInput, XTextarea,
       PopupPicker, RPicker, PopBaseinfo,
-       PopMoneyOrderList, Datetime, PopCashList
+      PopDealerList, PopMoneyOrderList, Datetime,
     },
     data() {
       return {
-        listId: 'bb9ce973-2f62-4707-a54c-7e8605dc99d6',
+        listId: '1745ffdd-1b6a-4fe5-9c5b-6e5394bd4faf',
         biReferenceId: '',
         selectedCost: [],
         costIndex: 0,
         transCode: '',
         formData: {
-          biComment: '',
-          biProcessStatus: ''
+          biComment: ''
         },
         dealerInfo: {},
         showOrder: false,
-        orderList: [],
-        cashInfo: {},
-        
+        orderList: [{...MONEY_ORDER}],
+        dealerParams: {
+          dealerLabelName: '供应商,经销供应商'
+        },
+        draftTypeList: ['银行承兑', '商业承兑'],
       }
     },
     computed: {
-      // 本次收款金额
-      tdAmount() {
+      // 本次出让汇票
+      thenTotalAmntBal() {
         let total = 0;
         this.orderList.forEach(item => {
-          if (item.thenAmntBal) {
-            total = accAdd(total, item.thenAmntBal);
+          if (item.tdAmount) {
+            total = accAdd(total, item.tdAmount);
           }
         });
         return toFixed(total)
       },
-    },
-    filters:{
-      numberComma, dateFormat
     },
     methods: {
       // TODO 提交
@@ -157,17 +152,28 @@
         let warn = '';
         let dataSet = [];
         let validateMap = [
-
           {
-            key: 'cashingDiscountDate',
-            message: '请选择兑现贴现日'
+            key: 'draftNumber',
+            message: '请输入汇票号'
+          }, {
+            key: 'draftType',
+            message: '请选择类型'
+          }, {
+            key: 'accepter',
+            message: '请输入承兑人'
+          }, {
+            key: 'tdAmount',
+            message: '请输入金额'
+          }, {
+            key: 'draftDate',
+            message: '请选择出票日'
+          }, {
+            key: 'draftDueDate',
+            message: '请选择到期日'
           },
         ];
         if (!this.dealerInfo.dealerCode) {
           warn = '请选择往来';
-        }
-        if (!warn && !this.orderList.length) {
-          warn = '请选择汇票明细'
         }
         if (!warn) {
           this.orderList.every(item => {
@@ -178,23 +184,17 @@
               return !warn
             });
             dataSet.push({
-              tdId: item.tdId || null,
+              tdId: item.tdId || '',
               draftNumber: item.draftNumber,
               draftType: item.draftType,
               accepter: item.accepter,
               tdAmount: item.tdAmount,
               draftDate: item.draftDate,
               draftDueDate: item.draftDueDate,
-              cashingDiscountDate: item.cashingDiscountDate,
-              discount: item.discount,
-              thenAmntBal: item.thenAmntBal,
-              comment: item.comment || '',
+              comment: item.comment,
             });
             return !warn
           });
-        }
-        if(!warn && !this.cashInfo.fundName){
-          warn = '请选择资金账户'
         }
         if (warn) {
           this.$vux.alert.show({
@@ -209,7 +209,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "CDTB", createdBy: JSON.stringify(this.formData.handler)}
+              [this.processCode]: {businessKey: "RAAB", createdBy: JSON.stringify(this.formData.handler)}
             };
             if (this.isResubmit) {
               wfPara = {
@@ -229,19 +229,14 @@
                 handlerEntity: this.entity.dealerName,
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
-                inPut:{
-                  dataSet: [{
-                    fundName_cashInCode: this.cashInfo.fundName,
-                    cashInCode: this.cashInfo.fundCode,
-                    cashType_cashInCode: this.cashInfo.fundType,
-                    thenAmntBal: this.cashInfo.amntBal,
-                    tdAmount: this.tdAmount
-                  }]
-                },
                 order: {
+                  dealerName_dealerCodeCredit: this.dealerInfo.dealerName,
+                  dealerCodeCredit: this.dealerInfo.dealerCode,
+                  crDealerLabel: this.dealerInfo.dealerLabelName,
+                  thenAmntBalCopy2: this.dealerInfo.amntBal,
+                  thenAlreadyAmnt: this.thenTotalAmntBal,
                   dataSet,
                 },
-                deposit: null,
               }),
               wfPara: JSON.stringify(wfPara)
             };
@@ -285,19 +280,21 @@
           this.formData = {
             ...this.formData,
             ...this.handlerDefault,
+            biComment: formData.biComment,
             biId: formData.biId,
             biProcessStatus: formData.biProcessStatus,
-            biComment: formData.biComment,
+            creator: formData.creator,
+            modifer: formData.modifer,
           };
-          let {order = {}, inPut = {}} = formData;
+          let {order = {}} = formData;
           let {dataSet = []} = order;
-          this.cashInfo = {
-            fundName: inPut.dataSet[0].fundName_cashInCode,
-            fundCode: inPut.dataSet[0].cashInCode,
-            fundType: inPut.dataSet[0].cashType_cashInCode,
-            tdAmount: inPut.dataSet[0].tdAmount,
-            amntBal: inPut.dataSet[0].thenAmntBal
-          }
+          this.dealerInfo = {
+            dealerName: order.dealerName_dealerCodeCredit,
+            dealerCode: order.dealerCodeCredit,
+            dealerLabelName: order.crDealerLabel,
+            amntBal: order.thenAmntBalCopy2,
+            thenTotalAmntBal: order.thenAlreadyAmnt,
+          };
           this.orderList = dataSet;
           this.$loading.hide();
         })
@@ -305,13 +302,13 @@
       // TODO 保存草稿数据
       hasDraftData() {
         // 是否选择项目
-        if (!this.orderList.dealerCode) {
+        if (!this.dealerInfo.dealerCode) {
           return false
         }
         return {
           [DRAFT_KEY]: {
             formData: this.formData,
-            cashInfo: this.cashInfo,
+            dealerInfo: this.dealerInfo,
             orderList: this.orderList,
           }
         };
@@ -328,29 +325,27 @@
         val.forEach(item => {
           item.draftDate = dateFormat(item.draftDate, 'YYYY-MM-DD');
           item.draftDueDate = dateFormat(item.draftDueDate, 'YYYY-MM-DD');
-          item.tdAmount = item.amntTbMatched;
         });
         this.orderList = val;
-        this.orderList.forEach(item => {
-          if(!item.discount){
-            item.discount = 0;
-          }
-          item.thenAmntBal = Number(accSub(item.tdAmount, item.discount))
-        })
       },
       // TODO 新增
       addOrder() {
-        this.showOrder = true;
+        this.orderList.push({...MONEY_ORDER});
       },
-      // TODO 选中资金
-      selCash(val) {
-        this.cashInfo = {...val};
+      // TODO 删除
+      deleteOrder() {
+        this.orderList.pop();
       },
       // TODO 保留两位小数
       checkAmt(item, key) {
-        let {discount = 0} = item;
-        item.discount = Math.abs(toFixed(discount));
-        item.thenAmntBal = Number(accSub(item.amntTbMatched, item.discount));
+        switch (item) {
+          case 'tdAmountCopy1':
+            this.dealerInfo.tdAmountCopy1 = toFixed(this.dealerInfo.tdAmountCopy1);
+            break;
+          default:
+            item[key] = toFixed(item[key]);
+            break;
+        }
       },
     },
     created() {
@@ -358,7 +353,7 @@
       if (data) {
         let draft = JSON.parse(data);
         this.formData = draft.formData;
-        this.cashInfo = draft.cashInfo;
+        this.dealerInfo = draft.dealerInfo;
         this.orderList = draft.orderList;
         sessionStorage.removeItem(DRAFT_KEY);
       }
@@ -381,13 +376,6 @@
         &:last-child {
           margin-right: 0;
         }
-      }
-    }
-    .amt-copy, .amt-cash {
-      padding: .1rem 0 0;
-      font-size: .14rem;
-      &:before {
-        display: none;
       }
     }
   }
@@ -435,43 +423,6 @@
     }
   }
 
-  // 新增更多
-  .handle_part {
-    margin: 0 auto;
-    width: 95%;
-    text-align: center;
-    position: relative;
-    background-color: #fff;
-    .add_more {
-      display: inline-block;
-      width: 1rem;
-      color: #fff;
-      height: .24rem;
-      font-size: .12rem;
-      text-align: center;
-      line-height: .24rem;
-      margin: 0 auto .1rem;
-      padding: 0;
-      border-radius: .4rem;
-      background: #5077aa;
-      box-shadow: 0 2px 5px #5077aa;
-      box-sizing: border-box;
-    }
-    .symbol {
-      left: 50%;
-      bottom: 25%;
-      color: #757575;
-      font-size: .12rem;
-      position: absolute;
-      transform: translate(-50%, 0);
-    }
-    .stop {
-      margin-right: .24rem;
-      background: #ea5455;
-      box-shadow: 0 2px 5px #ea5455;
-    }
-  }
-
   .order-detail {
     margin-bottom: .1rem;
     padding-top: .1rem;
@@ -481,25 +432,44 @@
     &:last-child {
       margin-bottom: 0;
     }
-    .detail-item {
-      display: flex;
-      flex-wrap: wrap;
-      color: #757575;
-      font-size: .12rem;
-      &.top {
-        color: #000;
-        font-size: .14rem;
+    /deep/ .r-picker.r-picker-4 {
+      padding: .05rem 0;
+      .mode {
+        padding-right: .2rem;
       }
-    }
-    .info-item {
-      margin-right: .05rem;
+      .r_arrow {
+        right: 0;
+      }
     }
     .weui-cell {
       padding: .05rem 0;
-      font-size: .14rem;
+      /*font-size: .14rem;*/
       &:before {
         left: 0;
       }
+    }
+  }
+
+  .add_more {
+    width: 100%;
+    text-align: center;
+    font-size: 0.12rem;
+    padding: 0.1rem 0;
+    color: #757575;
+    span {
+      margin: 0 5px;
+      color: #fff;
+      padding: .01rem .06rem;
+      border-radius: .12rem;
+    }
+    .add {
+      background: #5077aa;
+    }
+    .delete {
+      background: red;
+    }
+    em {
+      font-style: normal;
     }
   }
 </style>

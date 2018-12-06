@@ -2,7 +2,7 @@
   <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="formData" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 采购列表 -->
@@ -232,9 +232,11 @@
           this.formData = {
             ...this.formData,
             ...this.handlerDefault,
+            biComment: formData.biComment,
             biId: formData.biId,
             biProcessStatus: formData.biProcessStatus,
-            biComment: formData.biComment,
+            creator: formData.creator,
+            modifer: formData.modifer,
           };
           let {order = {}, outPut = {}} = formData;
           let {dataSet = []} = order;

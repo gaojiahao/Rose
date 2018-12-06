@@ -616,8 +616,6 @@
           this.matterParams = {
             dealerCode: this.dealerInfo.dealerCode
           };
-
-          // 基本信息
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
@@ -626,14 +624,16 @@
             handlerRole: formData.handlerRole,
             handlerRoleName: formData.handlerRoleName,
           };
-
+          // 基本信息
           this.formData = {
             ...this.formData,
             ...this.handlerDefault,
-            creator: formData.creator,
-            biId: formData.biId,
             biComment: formData.biComment,
-          };
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+          }
           this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
           this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
           this.biReferenceId = formData.biReferenceId;

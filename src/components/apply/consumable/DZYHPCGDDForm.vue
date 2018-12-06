@@ -381,20 +381,24 @@
             }
             this.matterList.push(item);
           })
-          // 基本信息
-          this.formData = {
+          this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
-            handlerRole: formData.handlerRole,
-            handlerRoleName: formData.handlerRoleName,
             handlerUnit: formData.handlerUnit,
             handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
             creator: formData.creator,
             modifer: formData.modifer,
-            biComment: formData.biComment, // 备注
-            biProcessStatus: formData.biProcessStatus,
           }
-          this.handlerDefault = JSON.parse(JSON.stringify(this.formData))
           // 供应商信息展示
           this.dealerInfo = {
             creatorName: formData.dealerDebitContactPersonName,

@@ -368,11 +368,24 @@
             };
             matterList.push(item);
           }
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
           this.formData = {
             ...this.formData,
-            creator: formData.creator,
+            ...this.handlerDefault,
             biComment: formData.biComment,
-          };
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+          }
           this.biReferenceId = formData.biReferenceId;
           this.matterList = matterList;
           this.$loading.hide();

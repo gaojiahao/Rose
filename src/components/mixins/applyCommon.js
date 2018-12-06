@@ -321,8 +321,10 @@ export default {
     let { name, transCode, relationKey } = this.$route.query,
         { listId } = this.$route.params;
     this.listId = listId;
+    // 获取本地保存的当前的主体
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
+    // 请求页面的数据
     (async () => {
       await this.getProcess();
       if(!transCode){

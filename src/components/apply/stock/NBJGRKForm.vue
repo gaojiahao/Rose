@@ -481,17 +481,6 @@
             manager: formData.containerInWarehouseManager
           }
           this.matterList = dataSet;
-          this.formData = {
-            ...this.formData,
-            handler: formData.handler,
-            handlerName: formData.handlerName,
-            handlerUnit: formData.handlerUnit,
-            handlerUnitName: formData.handlerUnitName,
-            handlerRole: formData.handlerRole,
-            handlerRoleName: formData.handlerRoleName,
-            creator: formData.creator,
-            modifer: formData.modifer,
-          };
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
@@ -499,10 +488,17 @@
             handlerUnitName: formData.handlerUnitName,
             handlerRole: formData.handlerRole,
             handlerRoleName: formData.handlerRoleName,
-          }
-          this.entity = {
-            dealerName: formData.handlerEntity
           };
+          // 基本信息
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+          }
           this.biReferenceId = formData.biReferenceId;
           this.orderList = orderList;
           this.$loading.hide();

@@ -408,14 +408,17 @@
             }
             this.matterList.push(item);
           })
-          // 基本信息
-          this.formData = {
+          this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
-            handlerRole: formData.handlerRole,
-            handlerRoleName: formData.handlerRoleName,
             handlerUnit: formData.handlerUnit,
             handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.handlerDefault,
             creator: formData.creator,
             modifer: formData.modifer,
             dealerDebitContactPersonName: formData.dealerDebitContactPersonName, //联系人
@@ -423,6 +426,8 @@
             drDealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
             duringDate: formData.duringDate,
             biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
           }
           // 客户信息展示
           this.dealerInfo = {

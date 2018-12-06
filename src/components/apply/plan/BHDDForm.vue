@@ -36,13 +36,13 @@
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other'>
-                      <div class='current_num' v-show="item.tdQty">
+                    <div class='mater_num'>
+                      <span class='current_num' v-show="item.tdQty">
                         数量：{{item.tdQty}}
-                      </div>
-                      <div class='current_num' v-show="item.promDeliTime">
+                      </span>
+                      <span class='current_num' v-show="item.promDeliTime" style="margin-left:0.05rem;">
                         预期完工日：{{item.promDeliTime}}
-                      </div>
+                      </span>
                     </div>
                   </template>
                   <template slot="edit" slot-scope="{item}">
@@ -354,18 +354,23 @@
             }
             this.matterList.push(item);
           })
-          //基本信息
-          this.formData = {
+          this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
-            handlerRole: formData.handlerRole,
-            handlerRoleName: formData.handlerRoleName,
             handlerUnit: formData.handlerUnit,
             handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
             creator: formData.creator,
             modifer: formData.modifer,
-            biId: formData.biId,
-            biComment: formData.biComment,
           }
           this.attachment = data.attachment;
           this.$loading.hide();

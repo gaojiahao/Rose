@@ -254,11 +254,30 @@
             county: formData.county_dealerDebit || '', // 地区
             address: formData.address_dealerDebit || '', // 详细地址
           };
-          this.formData = {
-            ...formData,
-            creator: formData.creator,
-            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
           };
+          // 基本信息
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+          }
+          // this.formData = {
+          //   ...formData,
+          //   creator: formData.creator,
+          //   validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+          // };
           this.biReferenceId = formData.biReferenceId;
           this.$loading.hide();
         })

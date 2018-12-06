@@ -423,9 +423,21 @@
             tdAmount: dealerInfo.tdAmount,
             tdId: dealerInfo.tdId,
           };
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
           this.formData = {
-            ...formData,
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
             creator: formData.creator,
+            modifer: formData.modifer,
           };
           this.cashInfo = {
             fundName_cashInCode: cashInfo.fundName_cashInCode,

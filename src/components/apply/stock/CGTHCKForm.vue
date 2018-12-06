@@ -476,13 +476,24 @@ export default {
         this.matterParams = {
           dealerCode: this.dealerInfo.dealerCode
         };
-
+        this.handlerDefault = {
+          handler: formData.handler,
+          handlerName: formData.handlerName,
+          handlerUnit: formData.handlerUnit,
+          handlerUnitName: formData.handlerUnitName,
+          handlerRole: formData.handlerRole,
+          handlerRoleName: formData.handlerRoleName,
+        };
+        // 基本信息
         this.formData = {
           ...this.formData,
-          creator: formData.creator,
-          biId: formData.biId,
+          ...this.handlerDefault,
           biComment: formData.biComment,
-        };
+          biId: formData.biId,
+          biProcessStatus: formData.biProcessStatus,
+          creator: formData.creator,
+          modifer: formData.modifer,
+        }
         this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
         this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
         this.biReferenceId = formData.biReferenceId;
