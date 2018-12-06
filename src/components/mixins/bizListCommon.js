@@ -296,11 +296,18 @@ export default {
           item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
           item.itemCount = item.detailItem.length;
+          // 只取有物料编码的
+          let detailItem = item.detailItem.reduce((arr, item) => {
+            if (item.inventoryCode_transObjCode || item.inventoryCode_outPutMatCode) {
+              arr.push(item);
+            }
+            return arr
+          }, []);
           // // 列表当中每个订单最多展现5个物料
-          item.detailItem = item.detailItem.slice(0, 5);
+          item.detailItem = detailItem.slice(0, 5);
           item.detailItem.forEach(mItem => {
             if(mItem.tdQty != null) {
-              item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));            
+              item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
             }
             if(mItem.tdAmount != null) {
               item.count = toFixed(accAdd(item.count, mItem.tdAmount));
@@ -317,7 +324,7 @@ export default {
                 // 默认图片
                 : this.getDefaultImg();
             }
-          })           
+          })
         });
         this.listData = this.page === 1 ? instanceList : this.listData.concat(instanceList);
         if (!noReset) {
@@ -430,7 +437,7 @@ export default {
     /*
      * 企业微信推送，第一层url跳转至此
      * 此处是判断——跳转至详情页还是提交页面
-     * */ 
+     * */
     this.$loading.show();
     let { name, transCode } = this.$route.query,
         { fileId, listId } = this.$route.params;

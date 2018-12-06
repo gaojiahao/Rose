@@ -210,27 +210,38 @@ export let getObjInvMoreUnitByInvCode = (inventoryCode) => {
     url: '/H_roleplay-si/ds/getObjInvMoreUnitByInvCode',
     data: {
       _dc: Date.now(),
-      data: {
-        inventoryCode,
-        page: 1,
-        start: 0,
-        limit: 10000,
-      }
+      inventoryCode,
+      page: 1,
+      start: 0,
+      limit: 10000,
     }
   })
 };
 
 // TODO 获取物料列表(低值易耗品采购订单)
-export let getLowValueConsumPurchaseOrder = () => {
+export let getLowValueConsumPurchaseOrder = (data = {}) => {
   return $axios.ajax({
     url: '/H_roleplay-si/ds/getLowValueConsumPurchaseOrder',
     data: {
       _dc: Date.now(),
-      data: {
-        page: 1,
-        start: 0,
-        limit: 10000,
-      }
+      page: 1,
+      start: 0,
+      limit: 10000,
+      ...data,
+    }
+  })
+};
+
+// TODO 获取物料列表(低值易耗品采购验收与支付)
+export let getLowPriceConsumableInWarehouse = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getLowPriceConsumableInWarehouse',
+    data: {
+      _dc: Date.now(),
+      page: 1,
+      start: 0,
+      limit: 10000,
+      ...data
     }
   })
 };

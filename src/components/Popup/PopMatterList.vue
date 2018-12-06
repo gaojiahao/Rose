@@ -102,6 +102,7 @@
     getPurchaseInNeeds,
     getKCPDList,
     getLowValueConsumPurchaseOrder,
+    getLowPriceConsumableInWarehouse,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -483,6 +484,27 @@
           ];
         }
         return getLowValueConsumPurchaseOrder({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          ...this.params,
+          filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // TODO 获取物料列表(低值易耗品采购低值易耗品采购验收与支付)
+      getLowPriceConsumableInWarehouse() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getLowPriceConsumableInWarehouse({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
