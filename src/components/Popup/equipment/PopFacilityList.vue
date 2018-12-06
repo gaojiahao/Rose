@@ -48,14 +48,18 @@
                   <div class="withoutColor">
                     <!-- 物料分类 -->
                     <div class="mater_classify">
-                      <span class="father">类型: {{item.facilityType || '无'}}</span>
                       <span class="father">大类: {{item.facilityBigType || '无'}}</span>
                       <span class="child">子类: {{item.facilitySubclass || '无'}}</span>
                     </div>
                     <div class="mater_classify">
+                      <span class="father">类型: {{item.facilityType || '无'}}</span>
                       <span class="unit">单位: {{item.facilityUnit}}</span>
                     </div>
-                    <slot name="storage" :item="item"></slot>
+                    <slot name="storage" :item="item">
+                      <div class="mater_classify">
+                        <span class="spec">待下单: {{item.qtyBal}}</span>
+                      </div>
+                    </slot>
                   </div>
                 </div>
               </div>
@@ -114,11 +118,11 @@
         default() {
           return [ // 过滤列表
             {
-              name: '物料名称',
-              value: 'inventoryName',
+              name: '设施名称',
+              value: 'facilityName',
             }, {
-              name: '物料编码',
-              value: 'inventoryCode',
+              name: '设施',
+              value: 'facilityCode',
             },
           ]
         }
@@ -187,7 +191,7 @@
           if (item.transCode) {
             isSameTransCode = item.transCode === sItem.transCode;
           }
-          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+          return isSameTransCode && item.facilityCode === sItem.facilityCode
         });
       },
       // TODO 判断是否展示选中图标

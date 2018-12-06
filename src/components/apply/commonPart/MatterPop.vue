@@ -6,7 +6,7 @@
           <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
           <div class='mater_main'>
             <div class="mater_name">
-              {{modifyMatter.inventoryName}}
+              {{modifyMatter.inventoryName || modifyMatter.facilityName}}
             </div>
             <!-- 物料基本信息 -->
             <div class="mater_info" style='width:2.6rem;'>
@@ -16,32 +16,47 @@
                 <div class="ForInline" style="display:inline-block">
                   <div class="mater_code">
                     <span class="title">编码</span>
-                    <span class="num">{{modifyMatter.inventoryCode}}</span>
+                    <span class="num">{{modifyMatter.inventoryCode || modifyMatter.facilityCode}}</span>
                   </div>
                 </div>
                 <!-- 物料规格 -->
                 <div class="ForInline" style="display:inline-block">
                   <div class="mater_spec">
                     <span class="title">规格</span>
-                    <span class="num">{{modifyMatter.specification || '无'}}</span>
+                    <span class="num">{{modifyMatter.specification || modifyMatter.facilitySpecification || '无'}}</span>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- 物料属性和单位 -->
-            <div class="mater_more">
+            <template v-if="modifyMatter.inventoryCode">
+              <!-- 物料属性和单位 -->
+              <div class="mater_more">
                 <span class="processing">属性: {{modifyMatter.processing}}</span>
                 <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
                 <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || '无'}}</span>
-            </div>
-            <div class="mater_more">
+              </div>
+              <div class="mater_more">
                 <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
                 <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
                 <slot name="qtyBal" :modifyMatter="modifyMatter">
                   <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
                 </slot>
+              </div>
+            </template>
 
-            </div>
+            <!-- 设施 -->
+            <template v-else-if="modifyMatter.facilityName">
+              <!-- 物料属性和单位 -->
+              <div class="mater_more">
+                <span class="processing">类型: {{modifyMatter.facilityType}}</span>
+                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
+              </div>
+              <div class="mater_more">
+                <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
+                <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
+                <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
+              </div>
+            </template>
             <div class="mater_more">
               <slot name="materStock" :modifyMatter="modifyMatter"></slot>
             </div>
