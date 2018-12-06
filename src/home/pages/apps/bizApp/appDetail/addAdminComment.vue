@@ -86,7 +86,13 @@ export default {
         });
         return
       }
-      saveAssessment({...this.submitData,listId : this.listId}).then((data)=>{
+      let submitData = {
+        achievement: this.submitData.achievement,
+        chance: this.submitData.chance,
+        date: `${this.submitData.date}-1`,
+        listId: this.listId,
+      }
+      saveAssessment(submitData).then((data)=>{
         if(data.success){
           this.submitSuccess = true;
           this.$vux.alert.show({

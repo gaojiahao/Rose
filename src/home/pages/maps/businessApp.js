@@ -32,6 +32,7 @@ export default {
 
   // < 销售类应用 >
   '43b07f14-4ae5-4804-a80e-ef06ce26fb0b': {
+    '548b7e35-16c6-4748-af06-eac1d2dac5d1' : 'CPJG',         // *产品价格*
     'b1b3c988-706c-495b-ad11-0ee73591480e': 'XSDD' ,         // *销售订单*
     '58a607ce-fe93-4d26-a42e-a374f4662f1c': 'XSBJ',          // *销售报价*
     '32a2c333-02a3-416f-a133-95c7a32da678': 'SJ',            // *商机*
@@ -117,7 +118,7 @@ export default {
     '223f9387-d2d7-11e8-b8ca-0279b2c6a380' : 'YGDA',      // *员工档案*
     '98519ac0-d2d7-11e8-b8ca-0279b2c6a380' : 'YGRZ',      // *员工入职*
     'da7f15cc-d2d7-11e8-b8ca-0279b2c6a380' : 'YGLZ',      // *员工离职*
-    // '3dda676a-4ce0-4c4a-a56f-8bda50a8ef1f' : 'ZPJH',      // *招聘计划*
+    '3dda676a-4ce0-4c4a-a56f-8bda50a8ef1f' : 'ZPJH',      // *招聘计划*
 
   }
 }
