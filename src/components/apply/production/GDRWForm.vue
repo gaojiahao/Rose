@@ -51,7 +51,7 @@
             <cell title='加工订单数量' v-model="workInfo.processProQty" :disabled="!workInfo.processProQty"></cell>
           </group>
         </div> -->
-        <div class="materiel_list" v-show="bomList.length">
+        <!-- <div class="materiel_list" v-show="bomList.length">
           <bom-list :boms="bomList">
             <template slot-scope="{bom}" slot="specification">
               <div class="content-unit">
@@ -66,7 +66,7 @@
               </div>
             </template>
           </bom-list>
-        </div>
+        </div> -->
         <!--备注-->
         <div class='comment vux-1px-t'>
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -236,32 +236,48 @@ export default {
         return
       }
       let obj = {
+        transMatchedCode: this.workInfo.transCode,
+        processProQty: this.workInfo.processProQty || '',
+        transObjCode: this.workInfo.inventoryCode,
+        inventoryName_transObjCode: this.workInfo.inventoryName,
         proPointCode: this.workInfo.proPointCode,
+        procedureName_proPointCode: this.workInfo.procedureName,
+        tdId: this.workInfo.tdId || null,
+        productDemandQty: this.workInfo.productDemandQty,
+        thenLockQty: this.workInfo.thenLockQty,
         thenQtyBal: this.workInfo.thenQtyBal,
         tdQty: this.workInfo.tdQty,
-        dealerDebit: this.workInfo.dealerDebit,
+        dealerName_dealerDebit: this.defaultManager.dealerName,
+		    dealerDebit: this.workInfo.dealerDebit,
         drDealerLabel: this.workInfo.drDealerLabel,
-        proFlowCode: this.workInfo.proFlowCode || '',
+			  facilityName_facilityObjCode: this.defaultFacility.facilityName,
+        proFlowCode: this.workInfo.proFlowCode || '',       
+			  technicsName_proFlowCode: this.workInfo.technicsName,
         facilityObjCode: this.workInfo.facilityObjCode || '', // 设备编码
-        facilityTypebase_facilityObjCode: this.workInfo.facilityTypebase_facilityObjCode || '',
-        transObjCode: this.workInfo.inventoryCode,
-        processProQty: this.workInfo.processProQty || '',
+        facilityTypebase_facilityObjCode: this.workInfo.facilityTypebase_facilityObjCode || ''   
       }
       orderDataSet.push(obj);
       this.bomList.forEach(item=>{
         let obj = {
-          inventoryName_outPutMatCode: item.inventoryName,
+          tdQty: item.tdQty,
+          proPointCode: this.workInfo.proPointCode,
+          processCode: this.workInfo.transCode,
+          processProCode: this.workInfo.inventoryCode,
           outPutMatCode: item.inventoryCode,
-          tdProcessing: item.processing,
+          thenQtyStock: item.qtyBal,
           specification_outPutMatCode: item.specification,
+          tdProcessing: item.processing,
+          inventoryName_outPutMatCode: item.inventoryName,
           measureUnit_outPutMatCode: item.measureUnit,
           bomType: item.bomType,
           bomQty: item.qty,
-          thenQtyStock: item.qtyBal,
-          tdQty: item.tdQty
+          thenLockQty: item.tdQty,
+          thenQtyBal: 0        
         }
         bomDataSet.push(obj);
+        orderDataSet[0].boms = bomDataSet;
       })
+      
       this.$vux.confirm.show({
         content: '确认提交?',
         // 确定回调
@@ -287,15 +303,15 @@ export default {
             formData: JSON.stringify({
               ...this.formData,
               handlerEntity: this.entity.dealerName,
-              containerInWarehouseManager: null,
+              // containerInWarehouseManager: null,
               order: {
                 containerCode: this.warehouse.warehouseCode,
                 dataSet : orderDataSet,
               },
-              outPut: {
-                containerCode: this.warehouse.warehouseCode,
-                dataSet: bomDataSet
-              }
+              // outPut: {
+              //   containerCode: this.warehouse.warehouseCode,
+              //   dataSet: bomDataSet
+              // }
             }),
             wfPara : JSON.stringify(wfPara)
           }
