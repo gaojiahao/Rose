@@ -31,184 +31,203 @@
         <label>仓库状态:</label>
         <div class='property_val'>{{warehouse.warehouseStatus}}</div>
       </div>
+      <div class='each_property vux-1px-b'>
+        <label>创建者:</label>
+        <div class='property_val'>{{baseinfo.creatorName}}</div>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>创建时间:</label>
+        <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+      </div>
+      <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+        <label>修改者:</label>
+        <div class='property_val'>{{baseinfo.modiferName}}</div>
+      </div>
+      <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+        <label>修改时间:</label>
+        <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+      </div>
     </div>
   </div>
 </template>
 <script>
-  import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
-  import {getObjDealerByLabelName} from 'service/commonService.js'
+import { dateFormat } from 'vux'
+import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
+import {getObjDealerByLabelName} from 'service/commonService.js'
 import { setTimeout } from 'timers';
-
-  export default {
-    data() {
-      return {
-        transCode: '',
-        MatPic: '', // 图片地址
-        warehouse: {},
-        baseinfo: {},
-        typeSubMap: { // 仓库类型相关二级列表
-          staff: {
-            title: '员工',
-            dealerLabelName: '员工',
-            key: 'staffDealerCode',
-            value: '',
-            code: '',
-            list: [], // 员工列表
-          },
-          group: {
-            title: '组织',
-            dealerLabelName: '',
-            key: 'groupCode',
-            value: '',
-            code: '',
-            list: [], // 组织列表
-          },
-          customer: {
-            title: '客户',
-            dealerLabelName: '客户',
-            key: 'customerDealerCode',
-            value: '',
-            code: '',
-            list: [], // 客户列表
-          },
-          processors: {
-            title: '加工商',
-            dealerLabelName: '加工商',
-            key: 'processorsDealerCode',
-            value: '',
-            code: '',
-            list: [], // 加工商列表
-          },
-          channel: {
-            title: '渠道商',
-            dealerLabelName: '渠道商',
-            key: 'channelDealerCode',
-            value: '',
-            code: '',
-            list: [], // 渠道商列表
-          },
-          noMatched: {
-            title: '',
-            dealerLabelName: '',
-            key: '',
-            value: '',
-            code: '',
-            list: [],
-          },
+export default {
+  filters: {
+    dateFormat
+  },
+  data() {
+    return {
+      transCode: '',
+      MatPic: '', // 图片地址
+      warehouse: {},
+      baseinfo: {},
+      typeSubMap: { // 仓库类型相关二级列表
+        staff: {
+          title: '员工',
+          dealerLabelName: '员工',
+          key: 'staffDealerCode',
+          value: '',
+          code: '',
+          list: [], // 员工列表
         },
-        typeSub: 'group',
-        typeToSubMap: {
-          '配送中心仓': 'group',
-          '加工商仓': 'processors',
-          '加工车间仓': 'group',
-          '客户仓': 'customer',
-          '渠道商仓': 'channel',
-          '个人仓': 'staff',
-          '一般部门仓': 'group',
-        }
-      }
-    },
-    methods: {
-      //仓库信息
-      findData() {
-        return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
-          let {baseinfo = {}, warehouse = {}} = formData;
-          switch (warehouse.warehouseStatus) {
-            case 1:
-              warehouse.warehouseStatus = '使用中';
-              break;
-            case 2:
-              warehouse.warehouseStatus = '未使用';
-              break;
-            case 0:
-              warehouse.warehouseStatus = '草稿';
-              break;
-            case -1:
-              warehouse.warehouseStatus = '停用';
-              break;
-          }
-          this.hasDefault = true;
-          this.baseinfo = {...this.baseinfo, ...baseinfo,};
-          this.warehouse = {...this.warehouse, ...warehouse,};
-          // 设置图片
-          if (this.warehouse.warehousePic) {
-            this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
-          } else {
-            this.getDefaultImg()
-          }
-
-          for (let key in this.warehouse) {
-            if (this.warehouse[key] == '') {
-              this.warehouse[key] = '无'
-            }
-          }
-          // 展示员工、客户、加工商、渠道商列表
-          this.typeSub = this.typeToSubMap[this.warehouse.warehouseType] || 'noMatched';
-          if(this.typeSub === 'noMatched') {
-            return
-          }
-          for (let item of Object.values(this.typeSubMap)) {
-            if (this.warehouse[item.key]) {
-              item.code = this.warehouse[item.key];
-              this.getTypeSubList();
-              break;
-            }
-          }
-          this.biReferenceId = this.warehouse.referenceId;
-          this.$loading.hide();
-        }).catch(e => {
-          this.$loading.hide();
-          this.$vux.alert.show({
-            content: e.message
-          })
-        });
+        group: {
+          title: '组织',
+          dealerLabelName: '',
+          key: 'groupCode',
+          value: '',
+          code: '',
+          list: [], // 组织列表
+        },
+        customer: {
+          title: '客户',
+          dealerLabelName: '客户',
+          key: 'customerDealerCode',
+          value: '',
+          code: '',
+          list: [], // 客户列表
+        },
+        processors: {
+          title: '加工商',
+          dealerLabelName: '加工商',
+          key: 'processorsDealerCode',
+          value: '',
+          code: '',
+          list: [], // 加工商列表
+        },
+        channel: {
+          title: '渠道商',
+          dealerLabelName: '渠道商',
+          key: 'channelDealerCode',
+          value: '',
+          code: '',
+          list: [], // 渠道商列表
+        },
+        noMatched: {
+          title: '',
+          dealerLabelName: '',
+          key: '',
+          value: '',
+          code: '',
+          list: [],
+        },
       },
-      // TODO 获取默认图片
-      getDefaultImg() {
-        this.MatPic = require('assets/ck_default.png');
-      },
-      // TODO 获取仓库类型关联子项下拉列表
-      getTypeSubList() {
-        switch (this.typeSub) {
-          // 请求组织列表
-          case 'group':
-            return getDepartMentWage().then(({tableContent = []}) => {
-              for(let item of tableContent) {
-                if(item.GROUP_CODE === this.typeSubMap[this.typeSub].code) {
-                  this.typeSubMap[this.typeSub].value = item.GROUP_NAME;
-                  break;
-                }
-              }
-            });
-          // 请求员工、客户、加工商、渠道商列表
-          case 'staff':
-          case 'customer':
-          case 'processors':
-          case 'channel':
-            return getObjDealerByLabelName({
-              dealerLabelName: this.typeSubMap[this.typeSub].dealerLabelName
-            }).then(({tableContent = []}) => {
-              for(let item of tableContent) {
-                if(item.dealerCode === this.typeSubMap[this.typeSub].code) {
-                  this.typeSubMap[this.typeSub].value = item.dealerName;
-                  break;
-                }
-              }
-            });
-          default:
-            break;
-        }
-      },
-    },
-    created() {
-      this.$loading.show()
-      let query = this.$route.query;
-      if (query.transCode) {
-        this.transCode = query.transCode;
-        this.findData();
+      typeSub: 'group',
+      typeToSubMap: {
+        '配送中心仓': 'group',
+        '加工商仓': 'processors',
+        '加工车间仓': 'group',
+        '客户仓': 'customer',
+        '渠道商仓': 'channel',
+        '个人仓': 'staff',
+        '一般部门仓': 'group',
       }
     }
+  },
+  methods: {
+    //仓库信息
+    findData() {
+      return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        let {baseinfo = {}, warehouse = {}} = formData;
+        switch (warehouse.warehouseStatus) {
+          case 1:
+            warehouse.warehouseStatus = '使用中';
+            break;
+          case 2:
+            warehouse.warehouseStatus = '未使用';
+            break;
+          case 0:
+            warehouse.warehouseStatus = '草稿';
+            break;
+          case -1:
+            warehouse.warehouseStatus = '停用';
+            break;
+        }
+        this.hasDefault = true;
+        this.baseinfo = {...this.baseinfo, ...baseinfo,};
+        this.warehouse = {...this.warehouse, ...warehouse,};
+        // 设置图片
+        if (this.warehouse.warehousePic) {
+          this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
+        } else {
+          this.getDefaultImg()
+        }
+
+        for (let key in this.warehouse) {
+          if (this.warehouse[key] == '') {
+            this.warehouse[key] = '无'
+          }
+        }
+        // 展示员工、客户、加工商、渠道商列表
+        this.typeSub = this.typeToSubMap[this.warehouse.warehouseType] || 'noMatched';
+        if(this.typeSub === 'noMatched') {
+          return
+        }
+        for (let item of Object.values(this.typeSubMap)) {
+          if (this.warehouse[item.key]) {
+            item.code = this.warehouse[item.key];
+            this.getTypeSubList();
+            break;
+          }
+        }
+        this.biReferenceId = this.warehouse.referenceId;
+        this.$loading.hide();
+      }).catch(e => {
+        this.$loading.hide();
+        this.$vux.alert.show({
+          content: e.message
+        })
+      });
+    },
+    // TODO 获取默认图片
+    getDefaultImg() {
+      this.MatPic = require('assets/ck_default.png');
+    },
+    // TODO 获取仓库类型关联子项下拉列表
+    getTypeSubList() {
+      switch (this.typeSub) {
+        // 请求组织列表
+        case 'group':
+          return getDepartMentWage().then(({tableContent = []}) => {
+            for(let item of tableContent) {
+              if(item.GROUP_CODE === this.typeSubMap[this.typeSub].code) {
+                this.typeSubMap[this.typeSub].value = item.GROUP_NAME;
+                break;
+              }
+            }
+          });
+        // 请求员工、客户、加工商、渠道商列表
+        case 'staff':
+        case 'customer':
+        case 'processors':
+        case 'channel':
+          return getObjDealerByLabelName({
+            dealerLabelName: this.typeSubMap[this.typeSub].dealerLabelName
+          }).then(({tableContent = []}) => {
+            for(let item of tableContent) {
+              if(item.dealerCode === this.typeSubMap[this.typeSub].code) {
+                this.typeSubMap[this.typeSub].value = item.dealerName;
+                break;
+              }
+            }
+          });
+        default:
+          break;
+      }
+    },
+  },
+  created() {
+    this.$loading.show()
+    let query = this.$route.query;
+    if (query.transCode) {
+      this.transCode = query.transCode;
+      this.findData();
+    }
   }
+}
 </script>
 <style lang="scss" scoped>
   .vux-1px-l:before,
