@@ -38,7 +38,7 @@
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                       <span class="processing">属性：{{item.processing}}</span>
-                      <span class='unit'>单位：{{item.measureUnit}}</span>
+                      <span class='unit'>单位：{{item.measureUnit_outPutMatCode}}</span>
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                     </div>
                     <div class="mater_more">
@@ -214,7 +214,6 @@ export default {
         ...this.matterParams,
         whCode: this.warehouse.warehouseCode,
       };
-      console.log('Params:', this.matterParams);
       this.matterList = []
     },
     // TODO 选中物料项
@@ -442,8 +441,8 @@ export default {
         }
         this.attachment = attachment;
         // 获取合计
-        let {inPut, dealerDebit} = formData;
-        let {dataSet = []} = inPut;
+        let {outPut, dealerDebit} = formData;
+        let {dataSet = []} = outPut;
         dataSet = dataSet.map(item => {
           return {
             ...item,
@@ -456,26 +455,26 @@ export default {
         });
         // 供应商信息
         this.dealerInfo = {
-          creatorName: formData.dealerCreditContactPersonName, // 客户名
-          dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+          creatorName: formData.dealerName_dealerDebit, // 客户名
+          dealerName: outPut.dealerName_dealerDebit, // 公司名
           dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
-          dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
-          dealerLabelName: inPut.crDealerLabel, // 关系标签
-          province: inPut.province_dealerCodeCredit, // 省份
-          city: inPut.city_dealerCodeCredit, // 城市
-          county: inPut.county_dealerCodeCredit, // 地区
-          address: inPut.address_dealerCodeCredit, // 详细地址
+          dealerCode: outPut.dealerDebit, // 客户编码
+          dealerLabelName: outPut.drDealerLabel, // 关系标签
+          province: outPut.province_dealerCodeCredit, // 省份
+          city: outPut.city_dealerCodeCredit, // 城市
+          county: outPut.county_dealerCodeCredit, // 地区
+          address: outPut.address_dealerCodeCredit, // 详细地址
         };
         // 仓库信息
         this.warehouse = {
-          warehouseCode: inPut.containerCode,
-          warehouseName: inPut.warehouseName_containerCode,
-          warehouseType: inPut.warehouseType_containerCode,
-          warehouseProvince: inPut.warehouseProvince_containerCode,
-          warehouseCity: inPut.warehouseCity_containerCode,
-          warehouseDistrict: inPut.warehouseDistrict_containerCode,
-          warehouseAddress: inPut.warehouseAddress_containerCode,
-          containerInWarehouseManager: inPut.containerInWarehouseManager,
+          warehouseCode: outPut.containerCodeOut,
+          warehouseName: outPut.warehouseName_containerCodeOut,
+          warehouseType: outPut.warehouseType_containerCodeOut,
+          warehouseProvince: outPut.warehouseProvince_containerCodeOut,
+          warehouseCity: outPut.warehouseCity_containerCodeOut,
+          warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
+          warehouseAddress: outPut.warehouseAddress_containerCodeOut,
+          containerInWarehouseManager: outPut.containerInWarehouseManagerOut,
         };
         // 物料请求参数
         this.matterParams = {
@@ -499,7 +498,7 @@ export default {
           creator: formData.creator,
           modifer: formData.modifer,
         }
-        this.crDealerPaymentTerm = inPut.crDealerPaymentTerm;
+        this.crDealerPaymentTerm = outPut.drDealerPaymentTerm;
         this.DealerPaymentTerm = formData.crDealerPaymentTerm || '现付';
         this.biReferenceId = formData.biReferenceId;
         this.matterList = dataSet;
@@ -556,14 +555,14 @@ export default {
         // 供应商信息
         this.dealerInfo = {
           creatorName: formData.dealerCreditContactPersonName, // 客户名
-          dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
+          dealerName: outPut.dealerName_dealerCodeCredit, // 公司名
           dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
-          dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
-          dealerLabelName: inPut.crDealerLabel, // 关系标签
-          province: inPut.province_dealerCodeCredit, // 省份
-          city: inPut.city_dealerCodeCredit, // 城市
-          county: inPut.county_dealerCodeCredit, // 地区
-          address: inPut.address_dealerCodeCredit, // 详细地址
+          dealerCode: outPut.dealerCode_dealerCodeCredit, // 客户编码
+          dealerLabelName: outPut.crDealerLabel, // 关系标签
+          province: outPut.province_dealerCodeCredit, // 省份
+          city: outPut.city_dealerCodeCredit, // 城市
+          county: outPut.county_dealerCodeCredit, // 地区
+          address: outPut.address_dealerCodeCredit, // 详细地址
         };
         // 物料请求参数
         this.matterParams = {

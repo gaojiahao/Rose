@@ -6,7 +6,7 @@
           <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
           <div class='mater_main'>
             <div class="mater_name">
-              {{modifyMatter.inventoryName || modifyMatter.facilityName}}
+              {{modifyMatter.inventoryName || modifyMatter.facilityName || modifyMatter.inventoryName_outPutMatCode}}
             </div>
             <!-- 物料基本信息 -->
             <div class="mater_info" style='width:2.6rem;'>
@@ -16,18 +16,19 @@
                 <div class="ForInline" style="display:inline-block">
                   <div class="mater_code">
                     <span class="title">编码</span>
-                    <span class="num">{{modifyMatter.inventoryCode || modifyMatter.facilityCode}}</span>
+                    <span class="num">{{modifyMatter.inventoryCode || modifyMatter.facilityCode || modifyMatter.outPutMatCode}}</span>
                   </div>
                 </div>
                 <!-- 物料规格 -->
                 <div class="ForInline" style="display:inline-block">
                   <div class="mater_spec">
                     <span class="title">规格</span>
-                    <span class="num">{{modifyMatter.specification || modifyMatter.facilitySpecification || '无'}}</span>
+                    <span class="num">{{modifyMatter.specification || modifyMatter.facilitySpecification || modifyMatter.specification_outPutMatCode ||'无'}}</span>
                   </div>
                 </div>
               </div>
             </div>
+            <slot name='materUnit'></slot>
             <template v-if="modifyMatter.inventoryCode">
               <!-- 物料属性和单位 -->
               <div class="mater_more">
@@ -43,7 +44,6 @@
                 </slot>
               </div>
             </template>
-
             <!-- 设施 -->
             <template v-else-if="modifyMatter.facilityName">
               <!-- 物料属性和单位 -->
@@ -58,7 +58,7 @@
               </div>
             </template>
             <div class="mater_more">
-              <slot name="materStock" :modifyMatter="modifyMatter"></slot>
+              <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
             </div>
           </div>
         </div>
