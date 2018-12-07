@@ -242,7 +242,9 @@
   // 地址栏
   .or_ads {
     position: relative;
+    box-sizing: border-box;
     padding: .06rem .4rem .06rem .08rem;
+    background: #fff;
     .icon-gengduo {
       top: 50%;
       right: .1rem;
