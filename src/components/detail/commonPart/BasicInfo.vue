@@ -12,6 +12,10 @@
     <!-- 经办信息 -->
     <div class="handle_info vux-1px-b">
       <div class="each_handle s_size_name">
+        <span class="title">经办主体：</span>
+        <span class="content">{{orderInfo.handlerEntityName}}</span>
+      </div>
+      <div class="each_handle s_size_name">
         <span class="title">经办人：</span>
         <span class="content">{{orderInfo.handlerName}}</span>
       </div>
@@ -35,8 +39,8 @@
         <span class="content">{{orderInfo.crtTime | dateFormat }}</span>
       </div>
       <div class="each_time" v-if="orderInfo.effectiveTime">
-        <span class="title">生效时间：</span>
-        <span class="content">{{orderInfo.effectiveTime | dateFormat}}</span>
+        <span class="title">修改时间：</span>
+        <span class="content">{{orderInfo.modTime | dateFormat}}</span>
       </div>
       <div class="each_time">
         <span class="title">流程状态：</span>
