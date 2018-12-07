@@ -123,20 +123,12 @@
                   </span>
                 </template>      
               </x-input>
-              <div class="price_type vux-1px-t" @click="showPrice = !showPrice">
-                <div class="current_type">
-                  <label class="required">客户类型</label>
-                  <div class='matter_val'>{{modifyMatter.drDealerLabel}}
-                    <x-icon  type="ios-arrow-down" :class="{'arrow-up': showPrice}" size="14"></x-icon>
-                  </div>
-                </div>
-                <div class="r-dropdown-list" v-show="showPrice">
-                  <div class="r-dropdown-item" :class="{'vux-1px-b': index !== dealerTypeList.length - 1}" v-for="(item, index) in dealerTypeList"
-                      @click.stop="dropItemClick(item)" :key="index">
-                    <span :class='{ active : currentType === item}'>{{item}}</span>
-                  </div>
-                </div>
-              </div>
+              <popup-picker :data='dealerTypeList' v-model="modifyMatter.PopDealerLabel" :popup-style="pickerStyle" @on-change="onChange($event,modifyMatter)">
+                <template slot="title">
+                  <span class='required'>客户类型
+                  </span>
+                </template>   
+              </popup-picker>
           </template>
         </pop-matter>
         <!--备注-->
@@ -178,12 +170,11 @@
   import UploadFile from 'components/upload/UploadFile'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 
-  const DRAFT_KEY = 'XSBJ_DATA';
+  const DRAFT_KEY = 'CPJG_DATA';
 
   export default {
     data() {
       return {
-        listId: '58a607ce-fe93-4d26-a42e-a374f4662f1c',
         matterList: [], // 物料列表
         showMaterielPop: false, // 是否显示物料的popup
         transCode: '',
@@ -197,6 +188,9 @@
         dealerTypeList: [],
         currentType: '',
         showPrice: false,
+        pickerStyle: {
+          zIndex: 550
+        }
       }
     },
     components: {
@@ -206,22 +200,18 @@
     },
     mixins: [ApplyCommon],
     methods: {
-      // 获取 结算方式
+      onChange(e,modifyMatter){
+        modifyMatter.drDealerLabel = e[0];
+      },
+      // 获取 客户类型
       initRequest () {
         return getDictByType('dealerRelLabel').then(({ tableContent }) => {
-          // let arr = [];
+          let arr = [];
           tableContent.forEach(item => {
-            this.dealerTypeList.push(item.name);
-            // arr.push(item.name)
+            arr.push(item.name)
           })
-          // this.dealerTypeList.push(arr);
+          this.dealerTypeList.push(arr);
         })
-      },
-      // 选择客户类型
-      dropItemClick (item) {
-        this.currentType = item;
-        this.matter.drDealerLabel = item;
-        this.showPrice = false;
       },
       // 滑动删除
       delClick (index, sItem) {
@@ -270,6 +260,7 @@
           this.priceMap[item.inventoryCode] = {
             price: item.price,
             drDealerLabel: item.drDealerLabel,
+            PopDealerLabel: item.PopDealerLabel,
             qtyOnline: item.qtyOnline,
             qtyDownline: item.qtyDownline,
             specialReservePrice: item.specialReservePrice,
@@ -286,6 +277,7 @@
           item.qtyOnline = defaultValue.qtyOnline || '';
           item.qtyDownline = defaultValue.qtyDownline || '';
           item.specialReservePrice = defaultValue.specialReservePrice || '';
+          item.PopDealerLabel = defaultValue.PopDealerLabel || []
           item.drDealerLabel = defaultValue.drDealerLabel || ''
         });
         this.priceMap = {};
@@ -432,32 +424,14 @@
           for (let item of dataSet) {
             item = {
               ...item,
-              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              inventoryCode: item.transObjCode,
               inventoryName: item.inventoryName_transObjCode,
-              inventoryCode: item.inventoryCode_transObjCode,
+              measureUnit:item.measureUnit_transObjCode,
               specification: item.specification_transObjCode,
-              processing: item.processing_transObjCode,
-              inventoryType: item.inventoryType_transObjCode,
-              inventorySubclass: item.inventorySubclass_transObjCode,
-              measureUnit: item.measureUnit_transObjCode,
-              inventoryColor: item.inventoryColor_transObjCode,
-              material: item.material_transObjCode,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
             };
             matterList.push(item);
           }
-          // 客户信息
-          this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName || '', // 客户名
-            dealerName: order.dealerName_dealerDebit || '', // 公司名
-            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
-            dealerCode: order.dealerDebit || '', // 客户编码
-            dealerLabelName: order.drDealerLabel || '客户', // 关系标签
-            paymentTerm: order.drDealerPaymentTerm || '现付',
-            province: order.province_dealerDebit || '', // 省份
-            city: order.city_dealerDebit || '', // 城市
-            county: order.county_dealerDebit || '', // 地区
-            address: order.address_dealerDebit || '', // 详细地址
-          };
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
@@ -475,16 +449,7 @@
             biProcessStatus: formData.biProcessStatus,
             creator: formData.creator,
             modifer: formData.modifer,
-            drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
-            validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD') ,
           }
-          // this.formData = {
-          //   ...this.formData,
-          //   creator: formData.creator,
-          //   biComment: formData.biComment,
-          //   drDealerLogisticsTerms: formData.drDealerLogisticsTerms,
-          //   validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD') ,
-          // };
           this.biReferenceId = formData.biReferenceId;
           this.matterList = matterList;
           this.$loading.hide();
@@ -516,7 +481,9 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply';
-
+  .vux-popup-picker{
+    z-index: 700;
+  }
   .xsbj-apply-container {
     background: #f8f8f8;
     /deep/ .weui-cells {
