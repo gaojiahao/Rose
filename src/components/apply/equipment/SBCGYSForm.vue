@@ -237,6 +237,8 @@
         this.dealerInfo = {
           ...sel,
         };
+        this.matterList = [];
+        this.orderList = {};
         this.facilityParams = {
           dealerCode: sel.dealerCode,
         }

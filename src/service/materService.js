@@ -256,6 +256,17 @@ export let getProductPriceAllInventory = (data = {}) => {
   })
 };
 
+// TODO 获取销售合同的物料列表
+export let getSalesContract = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSalesContract',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 export default {
   save,
   update,

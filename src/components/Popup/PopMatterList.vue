@@ -103,7 +103,8 @@
     getKCPDList,
     getLowValueConsumPurchaseOrder,
     getLowPriceConsumableInWarehouse,
-    getProductPriceAllInventory
+    getProductPriceAllInventory,
+    getSalesContract,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -531,6 +532,27 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+        }).then(this.dataHandler);
+      },
+      // TODO 获取销售合同的物料列表
+      getSalesContract() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getSalesContract({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
         }).then(this.dataHandler);
       },
       // TODO 共用的数据处理方法
