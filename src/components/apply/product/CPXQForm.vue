@@ -461,8 +461,6 @@
         sessionStorage.removeItem(DRAFT_KEY);
       }
       this.getlistUsers();
-      this.getGroupByUserId();
-      this.getRoleByUserId();
     },
   }
 </script>

@@ -217,6 +217,9 @@ export default {
           ...this.handlerDefault,
           ...data
         }
+        // 产品需求的经办人信息为使用组件，需单独请求组织和部门
+        this.getGroupByUserId && this.getGroupByUserId();
+        this.getRoleByUserId && this.getRoleByUserId();
       })
     },
     // TODO 获取物料价格
@@ -326,14 +329,14 @@ export default {
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
     // 请求页面的数据
     (async () => {
-      await this.getProcess();
+      this.getProcess();
       if(!transCode){
         this.getBaseInfoData();
       }
-      await this.getProcessStatus();  // 获取流程状态
-      this.initRequest && await this.initRequest();   // 提交页面 不共用的数据 请求
-      this.getPaymentTerm && await this.getPaymentTerm();   // 提交页面 结算方式 请求
-      this.getLogisticsTerms && await this.getLogisticsTerms(); //提交页面 物流条款 请求
+      this.getProcessStatus();  // 获取流程状态
+      this.initRequest && this.initRequest();   // 提交页面 不共用的数据 请求
+      this.getPaymentTerm && this.getPaymentTerm();   // 提交页面 结算方式 请求
+      this.getLogisticsTerms && this.getLogisticsTerms(); //提交页面 物流条款 请求
       if (transCode) {
         this.isResubmit = true;
         this.transCode = transCode;

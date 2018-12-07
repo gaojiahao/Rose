@@ -6,10 +6,14 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商" @sel-contact="selContact"></pop-dealer-list>
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                           v-model="dealer.drDealerPaymentTerm" isRequired></pop-single-select>
+        <div class="other_info">
+          <div class="title">账期天数</div>
+          <div class="mode">{{dealerInfo.pamentDays}}</div>
+        </div>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -44,6 +48,7 @@
                       </div>
                       <div>
                         <span>待下单：{{item.qtyBal}}</span>
+                        <span>起订量：{{item.qty}}</span>
                         <span v-show="item.processingStartDate">计划需求日:{{item.processingStartDate}}</span>
                         <span v-show="item.purchaseDay">采购需求日:{{item.purchaseDay}}</span>
                       </div>
@@ -91,6 +96,7 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span v-show="modifyMatter.qtyBal">待下单: {{modifyMatter.qtyBal}}</span>
+            <span v-show="modifyMatter.qty">起订量: {{modifyMatter.qty}}</span>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
             <datetime  title="采购需求日" v-model="modifyMatter.purchaseDay"
@@ -196,7 +202,8 @@ export default {
       let sels = JSON.parse(val);
       sels.map(item => {
         let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-        let {tdQty = '', price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
+        let defaultTdQty = item.qtyBal < item.qty ? item.qty : item.qtyBal;
+        let {tdQty = defaultTdQty, price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
         item.tdQty = tdQty;
         item.price = price;
         item.taxRate = taxRate;
@@ -464,13 +471,31 @@ export default {
   /deep/ .vux-no-group-title{
     margin-top: 0;
   }
-    /deep/ .weui-cells {
-      font-size: .14rem;
-      &:before {
-        border-top: none;
-        left: 0;
-      }
+  /deep/ .weui-cells {
+    font-size: .14rem;
+    &:before {
+      border-top: none;
+      left: 0;
     }
   }
+  .other_info{
+    width: 95%;
+    margin: 0 auto;
+    background: #fff;
+    box-sizing: border-box;
+    padding: .08rem .1rem;
+    display: flex;
+    font-size: .14rem;
+    align-items: center;
+    justify-content: space-between;
+    .title{
+      color: #757575;
+    }
+    .mode{
+      color: #111;
+      font-weight: 500;
+    }
+  }
+}
 </style>
 
