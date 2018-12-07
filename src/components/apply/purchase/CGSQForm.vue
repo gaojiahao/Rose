@@ -38,8 +38,8 @@
                         <span class="processing">属性：{{item.processing}}</span>
                         <span class='unit'>单位：{{item.measureUnit}}</span>
                         <span class='qty' >全部需求：{{item.allQty}}</span>
-                        <span class='qty'>已做需求：{{item.qtyed}}</span>
-                        <!-- <span class='qty'>待做需求： {{item.tdQty}}</span> -->
+                        <span class='qty'>已申请：{{item.qtyed}}</span>
+                        <span class='qty'>待申请： {{item.qtyBalance}}</span>
                         <span v-show="item.promDeliTime">计划需求日期：{{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
@@ -49,7 +49,7 @@
                         </div>
                         <div>
                           <r-number :num="item.tdQty"
-                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                                    :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBalance"></r-number>
                         </div>
                       </div>
                     </template>
@@ -84,11 +84,12 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <cell title="全部需求" v-model="modifyMatter.allQty" text-align="right"></cell>
-            <cell title="已做需求" v-model="modifyMatter.qtyed" text-align="right"></cell>
-            <x-input title="待做需求" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+            <cell title="已申请" v-model="modifyMatter.qtyed" text-align="right"></cell>
+            <cell title="代申请" v-model="modifyMatter.qtyBalance" text-align="right"></cell>
+            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
               <template slot="label">
-                <span class='required'>待做需求
+                <span class='required'>本次申请
                 </span>
               </template>
             </x-input>
@@ -173,6 +174,10 @@ export default {
           name: '物料编码',
           value: 'matCode',
         },
+        {
+          name: '订单号',
+          value: 'transCode'
+        }
       ],
     }
   },
@@ -315,6 +320,21 @@ export default {
       }
       this.showMaterielPop = !this.showMaterielPop;
     },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let { price, tdQty, qtyBalance} = item;
+      // 金额
+      if (price) {
+        item.price = Math.abs(toFixed(price));
+      }
+      // 数量
+      if (tdQty) {
+        item.tdQty = Math.abs(toFixed(tdQty));      
+        if (tdQty > qtyBalance) {
+          item.tdQty = qtyBalance;
+        }
+      }
+    },
     // 提价订单
     submitOrder (){
       let warn = '',
@@ -344,6 +364,7 @@ export default {
             assistQty: item.assistQty || 0, // 辅计数量
             productDemandQty: item.allQty, // 全部需求
             thenLockQty: item.qtyed, // 已做需求
+            thenQtyBal: item.qtyBalance, // 代申请
             tdQty: item.tdQty, // 待做需求
             price: item.price, // 单价
             tdAmount: accMul(item.price, item.tdQty), // 合计
@@ -481,6 +502,16 @@ export default {
     if (data) {
       this.orderList = JSON.parse(data).orderList;
       this.formData = JSON.parse(data).formData;
+      for(let key in this.orderList) {
+        this.orderList[key].forEach(item => {
+          this.matterList.push(item)
+        })
+      }
+      // Object.values(this.orderList).forEach(item => {
+      //   this.matterList.push(item)
+      // })
+      // this.matterList = [...Object.values(this.orderList)];
+      // this.matterList = JSON.parse(data).matterList;
       sessionStorage.removeItem(DRAFT_KEY);
     }
   },

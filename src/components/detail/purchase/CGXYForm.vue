@@ -14,17 +14,25 @@
       <contact-part :contact-info="contactInfo">
         <template slot="other">
           <div class="other_content vux-1px-t">
+            <div class="trade_info s_size_name" v-if="this.contactInfo.thenTotalAmntBal || this.contactInfo.thenTotalAmntBal === 0">
+              <span class="title">协议总金额：</span>
+              <span class="mode">{{`￥${this.contactInfo.thenTotalAmntBal}`}}</span>
+            </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.executionDate">
-              <span class="title">执行日期：</span>
+              <span class="title">协议开始日：</span>
               <span class="mode">{{this.contactInfo.executionDate}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.validUntil">
-              <span class="title">截至日期：</span>
+              <span class="title">协议到期日：</span>
               <span class="mode">{{this.contactInfo.validUntil}}</span>
             </div>
-            <div class="trade_info s_size_name" v-if="this.contactInfo.tdAmount || this.contactInfo.tdAmount === 0">
-              <span class="title">定金：</span>
-              <span class="mode">{{`￥${this.contactInfo.tdAmount}`}}</span>
+            <div class="trade_info s_size_name" v-if="this.contactInfo.tdAmountCopy1 || this.contactInfo.tdAmountCopy1 === 0">
+              <span class="title">预付款：</span>
+              <span class="mode">{{`￥${this.contactInfo.tdAmountCopy1}`}}</span>
+            </div>
+            <div class="trade_info s_size_name" v-if="this.contactInfo.prepaymentDueDate">
+              <span class="title">预付到期日：</span>
+              <span class="mode">{{this.contactInfo.prepaymentDueDate}}</span>
             </div>
           </div>
         </template>
@@ -135,10 +143,17 @@
               : this.getDefaultImg();
           }
           this.orderInfo = data.formData;
-          this.contactInfo.logistics = data.formData.drDealerLogisticsTerms;
-          this.contactInfo.executionDate = order.executionDate;
-          this.contactInfo.validUntil = order.validUntil;
-          this.contactInfo.tdAmount = first.tdAmount;
+          this.contactInfo = {
+            ...this.contactInfo,
+            logistics: data.formData.drDealerLogisticsTerms,
+            executionDate: first.executionDate,
+            validUntil: first.validUntil,
+            thenTotalAmntBal: first.thenTotalAmntBal,
+            prepaymentDueDate: first.prepaymentDueDate,
+            tdAmountCopy1: first.tdAmountCopy1
+
+          }
+         
           this.getcontactInfo();
           this.workFlowInfoHandler();
         })

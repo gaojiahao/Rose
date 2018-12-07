@@ -6,18 +6,27 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="供应商"
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="经销供应商"
                          :default-contact="contact" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                            v-model="dealer.drDealerPaymentTerm"></pop-single-select>
+        <div class="other_info">
+          <div class="title">账期天数</div>
+          <div class="mode">{{dealerInfo.pamentDays}}</div>
+        </div>
         <!-- 物流条款 -->
-        <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
-                           v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
-        <r-date title="执行日期" :value="order.executionDate" v-model="order.executionDate"></r-date>
-        <r-date title="截至日期" :value="order.validUntil" v-model="order.validUntil"></r-date>
-        <x-input class="tdAmount" type="number" title="定金" :value="inPut.tdAmount" text-align="right"
-                 placeholder="请填写定金" v-model="inPut.tdAmount"></x-input>
+        <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealerInfo.dealerLogisticsTerms"
+                           v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
+        <div class="other_info">
+          <div class="title">协议总金额</div>
+          <div class="mode">{{tdAmount}}</div>
+        </div>
+        <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate"></r-date>
+        <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil"></r-date>
+        <x-input class="tdAmount" type="number" title="预付款" :value="inPut.tdAmountCopy1" text-align="right"
+                 placeholder="请填写预付款" v-model="inPut.tdAmountCopy1"></x-input>
+        <r-date title="预付到期日" :value="inPut.prepaymentDueDate" v-model="inPut.prepaymentDueDate"></r-date>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -157,11 +166,15 @@
           drDealerLogisticsTerms: '', // 物流条款
         }, // 往来信息
         order: {
-          executionDate: '', // 执行日期
-          validUntil: '', //截止日期
+          // executionDate: '', // 执行日期
+          // validUntil: '', //截止日期
         },
         inPut: {
-          tdAmount: '',
+          tdAmountCopy1: '',
+          executionDate: '', // 执行日期
+          validUntil: '', // 截止日期
+          thenTotalAmntBal: '',
+          prepaymentDueDate: ''
         },
         formData: { // 表单提交内容
           creator: '',
@@ -279,6 +292,12 @@
         } else if (this.matterList.length === 0) {
           warn = '请选择物料';
         }
+        else if(!this.inPut.executionDate){
+          warn = '请选择协议开始日'
+        }
+        else if(!this.inPut.validUntil){
+          warn = '请选择协议到期日'
+        }
         if (!warn) {
           // 校验
           this.matterList.every(item => {
@@ -295,7 +314,6 @@
             // 设置提交参数
             dataSet.push({
               tdId: item.tdId || '',
-              inventoryName_transObjCode: item.inventoryName, // 物料名称
               transObjCode: item.inventoryCode, // 物料编码
               tdProcessing: item.processing,// 加工属性
               tdQty: item.tdQty, // 数量
@@ -321,7 +339,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "PO", createdBy: ""}
+              [this.processCode]: {businessKey: "CGHT", createdBy: ""}
             }
             if (this.isResubmit) {
               wfPara = {
@@ -339,15 +357,16 @@
               formData: JSON.stringify({
                 ...this.formData,
                 ...this.dealer,
+                drDealerLogisticsTerms: this.dealerInfo.dealerLogisticsTerms,
                 handlerEntity: this.entity.dealerName,
                 inPut: {
                   dealerDebit: this.dealerInfo.dealerCode,
                   dataSet: [{
-                    tdAmount: this.inPut.tdAmount || null,
+                    ...this.inPut,
+                    thenTotalAmntBal: this.tdAmount,
                   }]
                 },
                 order: {
-                  ...this.order,
                   dealerDebit: this.dealerInfo.dealerCode,
                   drDealerLabel: this.dealerInfo.dealerLabelName || '',  // 往来关系标签
                   drDealerPaymentTerm: this.dealer.drDealerPaymentTerm,  // 结算方式
@@ -433,7 +452,14 @@
             dealerDebitContactInformation: formData.dealerDebitContactInformation, // 电话dealerDebitContactPersonName
             drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '', // 结算方式
           },
-            this.$loading.hide();
+          this.inPut = {
+            tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
+            executionDate: formData.inPut.dataSet[0].executionDate, // 执行日期
+            validUntil: formData.inPut.dataSet[0].validUntil, // 截止日期
+            thenTotalAmntBal: formData.inPut.dataSet[0].thenTotalAmntBal,
+            prepaymentDueDate: formData.inPut.dataSet[0].prepaymentDueDate
+          }
+          this.$loading.hide();
         })
       },
       // TODO 是否保存草稿
@@ -447,7 +473,6 @@
             dealerInfo: this.dealerInfo,
             formData: this.formData,
             dealer: this.dealer,
-            order: this.order,
             contact: this.contact,
           }
         };
@@ -469,7 +494,6 @@
         this.matterList = draft.matter;
         this.dealerInfo = draft.dealerInfo;
         this.dealer = draft.dealer;
-        this.order = draft.order;
         this.formData = draft.formData;
         this.contact = draft.contact;
         sessionStorage.removeItem(DRAFT_KEY);
@@ -506,6 +530,24 @@
       }
       /deep/ .weui-input {
         color: #111;
+      }
+    }
+    .other_info{
+      width: 95%;
+      margin: 0 auto;
+      background: #fff;
+      box-sizing: border-box;
+      padding: .08rem .1rem;
+      display: flex;
+      font-size: .14rem;
+      align-items: center;
+      justify-content: space-between;
+      .title{
+        color: #757575;
+      }
+      .mode{
+        color: #111;
+        font-weight: 500;
       }
     }
   }
