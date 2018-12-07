@@ -12,6 +12,12 @@
           </div>
         </div>
       </div>
+      <div class="d_main">
+        <form-cell cellTitle="创建者" :cellContent="baseinfo.creatorName" :showTopBorder="false"></form-cell>
+        <form-cell cellTitle="创建时间" :cellContent="baseinfo.crtTime | dateFormat"></form-cell>
+        <form-cell v-if="baseinfo.modiferName" cellTitle="修改者" :cellContent="baseinfo.modiferName"></form-cell>
+        <form-cell v-if="baseinfo.modTime" cellTitle="修改时间" :cellContent="baseinfo.modTime | dateFormat"></form-cell>
+      </div>
       <!-- 物料基本信息展示区域 -->
       <div class="d_main">
         <div class='title vux-1px-b'>基本信息</div>
@@ -78,105 +84,109 @@
 </template>
 
 <script>
-  import {AlertModule} from 'vux';
-  import {findData} from 'service/materService'
-  import {getAppDetail} from 'service/appSettingService'
-  import FormCell from 'components/detail/commonPart/FormCell'
-
-  export default {
-    name: 'materDetail',
-    data() {
-      return {
-        listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
-        transCode: '',
-        inventory: {},
-        invMoreUnit: [],
-        invNetWeight: [],
-        invDealerRel: [],
-        invCustomerRel: [],
-        action: {}, // 表单允许的操作
+import { AlertModule, dateFormat } from 'vux';
+import { findData } from 'service/materService'
+import { getAppDetail } from 'service/appSettingService'
+import FormCell from 'components/detail/commonPart/FormCell'
+export default {
+  name: 'materDetail',
+  filters: {
+    dateFormat
+  },
+  data() {
+    return {
+      listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
+      baseinfo: {},
+      transCode: '',
+      inventory: {},
+      invMoreUnit: [],
+      invNetWeight: [],
+      invDealerRel: [],
+      invCustomerRel: [],
+      action: {}, // 表单允许的操作
+    }
+  },
+  computed: {
+    // 加工/采购提前期标题
+    leadTimeTitle() {
+      let processing = this.inventory.processing;
+      let pur = ['原料', '商品']; // 采购
+      let mac = ['半成品', '成品', '模具']; // 加工
+      if (pur.includes(processing)) {
+        return '采购提前期'
+      } else if (mac.includes(processing)) {
+        return '加工提前期'
+      } else {
+        return ''
       }
     },
-    computed: {
-      // 加工/采购提前期标题
-      leadTimeTitle() {
-        let processing = this.inventory.processing;
-        let pur = ['原料', '商品']; // 采购
-        let mac = ['半成品', '成品', '模具']; // 加工
-        if (pur.includes(processing)) {
-          return '采购提前期'
-        } else if (mac.includes(processing)) {
-          return '加工提前期'
-        } else {
-          return ''
+  },
+  components: {
+    FormCell,
+  },
+  methods: {
+    // TODO 跳转到修改页面
+    goEdit() {
+      this.$router.push({
+        path: '/materlist/addMater',
+        query: {
+          transCode: this.transCode
         }
-      },
+      })
     },
-    components: {
-      FormCell,
-    },
-    methods: {
-      // TODO 跳转到修改页面
-      goEdit() {
-        this.$router.push({
-          path: '/materlist/addMater',
-          query: {
-            transCode: this.transCode
-          }
+    // TODO 获取物料详情
+    findData() {
+      return findData(this.transCode).then(({formData}) => {
+        let {inventory = {}} = formData;
+        let status = ['', '使用中', '未使用', '草稿'],
+          statusClass = ['', 'inUse', 'unUse'];
+        inventory.statusClass = statusClass[inventory.inventoryStatus];
+        inventory.status = status[inventory.inventoryStatus] || '停用';
+        this.baseinfo = formData.baseinfo;
+        this.inventory = formData.inventory;
+        this.invNetWeight = formData.invNetWeight;
+        this.invMoreUnit = formData.invMoreUnit;
+        this.invDealerRel = formData.invDealerRel || [];
+        this.invCustomerRel = formData.invCustomerRel || [];
+        let {inventoryPic, inventoryCode, specification} = this.inventory;
+        // 获取规格和编码的字符串总长度
+        this.contentLength = inventoryCode.length + specification.length;
+        // 处理图片
+        if (inventoryPic) {
+          this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}&width=400&height=400`
+        } else {
+          this.getDefaultImg();
+        }
+        this.$loading.hide();
+      }).catch(e => {
+        this.$loading.hide();
+        AlertModule.show({
+          content: e.message,
         })
-      },
-      // TODO 获取物料详情
-      findData() {
-        return findData(this.transCode).then(({formData}) => {
-          let {inventory = {}} = formData;
-          let status = ['', '使用中', '未使用', '草稿'],
-            statusClass = ['', 'inUse', 'unUse'];
-          inventory.statusClass = statusClass[inventory.inventoryStatus];
-          inventory.status = status[inventory.inventoryStatus] || '停用';
-          this.inventory = formData.inventory;
-          this.invNetWeight = formData.invNetWeight;
-          this.invMoreUnit = formData.invMoreUnit;
-          this.invDealerRel = formData.invDealerRel || [];
-          this.invCustomerRel = formData.invCustomerRel || [];
-          let {inventoryPic, inventoryCode, specification} = this.inventory;
-          // 获取规格和编码的字符串总长度
-          this.contentLength = inventoryCode.length + specification.length;
-          // 处理图片
-          if (inventoryPic) {
-            this.inventory.inventoryPic = `/H_roleplay-si/ds/download?url=${inventoryPic}&width=400&height=400`
-          } else {
-            this.getDefaultImg();
-          }
-          this.$loading.hide();
-        }).catch(e => {
-          this.$loading.hide();
-          AlertModule.show({
-            content: e.message,
-          })
-        });
-      },
-      // TODO 获取默认图片
-      getDefaultImg() {
-        this.inventory.inventoryPic = require('assets/wl_default02.png');
-      },
-      // TODO 获取应用详情
-      getAppDetail() {
-        return getAppDetail(this.listId).then(([data = {}]) => {
-          let {action} = data;
-          this.action = action;
-        })
-      },
+      });
     },
-    created() {
-      (async () => {
-        this.$loading.show();
-        let {transCode = ''} = this.$route.query;
-        this.transCode = transCode;
-        await this.getAppDetail();
-        this.findData();
-      })()
-    }
+    // TODO 获取默认图片
+    getDefaultImg() {
+      this.inventory.inventoryPic = require('assets/wl_default02.png');
+    },
+    // TODO 获取应用详情
+    getAppDetail() {
+      return getAppDetail(this.listId).then(([data = {}]) => {
+        let {action} = data;
+        this.action = action;
+      })
+    },
+  },
+  created() {
+    (async () => {
+      this.$loading.show();
+      let {transCode = ''} = this.$route.query;
+      this.transCode = transCode;
+      await this.getAppDetail();
+      this.findData();
+    })()
   }
+}
 </script>
 
 <style lang='scss' scoped>

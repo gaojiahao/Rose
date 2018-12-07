@@ -49,81 +49,101 @@
         <label>往来状态:</label>
         <div class='property_val'>{{dealer.dealerStatus}}</div>
       </div>
+      <div class='each_property vux-1px-b'>
+        <label>创建者:</label>
+        <div class='property_val'>{{baseinfo.creatorName}}</div>
+      </div>
+      <div class='each_property vux-1px-b'>
+        <label>创建时间:</label>
+        <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+      </div>
+      <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+        <label>修改者:</label>
+        <div class='property_val'>{{baseinfo.modiferName}}</div>
+      </div>
+      <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+        <label>修改时间:</label>
+        <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+      </div>
     </div>
   </div>
 </template>
 <script>
-  import dealerService from 'service/dealerService.js'
-  export default {
-    data() {
-      return {
-        transCode  : '',
-        MatPic: '', // 图片地址
-        imgFileObj: {}, // 上传的图片对象
-        dealer : {},
-        baseinfo :{}
-      }
-    },
-    methods: {
-      //往来信息
-      findData() {
-        return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
-          let {baseinfo = {}, dealer = {}} = formData;
-          switch (dealer.dealerStatus) {
-            case "1":
-              dealer.dealerStatus = '使用中';
-              break;
-            case '2':
-              dealer.dealerStatus = '未使用';
-              break;
-            case '0':
-              dealer.dealerStatus = '草稿';
-              break;
-            case '-1':
-              dealer.dealerStatus = '停用';
-              break;
+import { dateFormat } from 'vux'
+import dealerService from 'service/dealerService.js'
+export default {
+  filters: {
+    dateFormat
+  },
+  data() {
+    return {
+      transCode  : '',
+      MatPic: '', // 图片地址
+      imgFileObj: {}, // 上传的图片对象
+      dealer : {},
+      baseinfo :{}
+    }
+  },
+  methods: {
+    //往来信息
+    findData() {
+      return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        let {baseinfo = {}, dealer = {}} = formData;
+        switch (dealer.dealerStatus) {
+          case "1":
+            dealer.dealerStatus = '使用中';
+            break;
+          case '2':
+            dealer.dealerStatus = '未使用';
+            break;
+          case '0':
+            dealer.dealerStatus = '草稿';
+            break;
+          case '-1':
+            dealer.dealerStatus = '停用';
+            break;
+        }
+        this.hasDefault = true;
+        this.baseinfo = {...this.baseinfo, ...baseinfo,};
+        this.dealer = {...this.dealer, ...dealer,};
+        for(let key in this.dealer){
+          if(this.dealer[key] == ''){
+            this.dealer[key] = '无'
           }
-          this.hasDefault = true;
-          this.baseinfo = {...this.baseinfo, ...baseinfo,};
-          this.dealer = {...this.dealer, ...dealer,};
-          for(let key in this.dealer){
-            if(this.dealer[key] == ''){
-              this.dealer[key] = '无'
-            }
-          }
-          this.biReferenceId = this.dealer.referenceId;
-          if (this.dealer.dealerPic) {
-            this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
-          }
-          else{
-            this.getDefaultImg()
-          }
-          let [imgFileObj = {}] = attachment.filter(item => {
-            return item.attacthment === this.dealer.dealerPic
-          });
-          this.imgFileObj = imgFileObj;
-          this.$loading.hide();
-        }).catch(e=>{
-          this.$loading.hide();
-          this.$vux.alert.show({
-            content:e.message
-          })
+        }
+        this.biReferenceId = this.dealer.referenceId;
+        if (this.dealer.dealerPic) {
+          this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
+        }
+        else{
+          this.getDefaultImg()
+        }
+        let [imgFileObj = {}] = attachment.filter(item => {
+          return item.attacthment === this.dealer.dealerPic
         });
-      },
-      // TODO 获取默认图片
-      getDefaultImg() {
-         this.MatPic = require('assets/contact_default02.png');
-      },
+        this.imgFileObj = imgFileObj;
+        this.$loading.hide();
+      }).catch(e=>{
+        this.$loading.hide();
+        this.$vux.alert.show({
+          content:e.message
+        })
+      });
     },
-    created() {
-      this.$loading.show()
-      let query = this.$route.query;
-      if(query.transCode){
-        this.transCode = query.transCode;
-          this.findData()
-      }
+    // TODO 获取默认图片
+    getDefaultImg() {
+        this.MatPic = require('assets/contact_default02.png');
+    },
+  },
+  created() {
+    this.$loading.show()
+    let query = this.$route.query;
+    if(query.transCode){
+      this.transCode = query.transCode;
+        this.findData()
     }
   }
+}
 </script>
 <style lang="scss" scoped>
   .vux-1px-l:before,
