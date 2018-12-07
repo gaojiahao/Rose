@@ -112,10 +112,15 @@
               successMsg: '撤回成功',
               value,
               callback: () => {
-                let {fileId, listId} = this.$route.params;
+                let { childId } = this.$route.query,
+                    {fileId, listId} = this.$route.params;
                 this.$router.replace({
                   path: `/fillform/${fileId}/${listId}`,
-                  query: {transCode: this.code, name: this.name},
+                  query: {
+                    childId,
+                    name: this.name,
+                    transCode: this.code, 
+                  },
                 });
               }
             });
