@@ -83,7 +83,7 @@ export default {
       }
       // 交易号、应用名称等
       let { transCode } = item,
-          { name } = this.$route.query,
+          { name, childId } = this.$route.query,
           { fileId, listId } = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
@@ -107,7 +107,12 @@ export default {
             path = `/detail/${fileId}/${listId}`;
           }
           this.$router.push({
-            path, query: {name, transCode}
+            path, 
+            query: {
+              name, 
+              childId,
+              transCode
+            }
           })
         };
         let calcTime = Date.now() - start;
@@ -127,11 +132,11 @@ export default {
       })
     },
     goEdit () {
-      let {name} = this.$route.query,
-        {fileId, listId} = this.$route.params;
+      let { name, childId} = this.$route.query,
+          { fileId, listId } = this.$route.params;
       this.$router.push({
         path: `/fillform/${fileId}/${listId}`,
-        query: {name}
+        query: { name, childId}
       })
     },
     // TODO 重置列表条件

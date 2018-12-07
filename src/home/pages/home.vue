@@ -69,8 +69,14 @@ export default {
       this.$router.push({path: `${basicMap[item]}`})
     },
     // 前往列表
-    goList(listId, name, file){
-      this.$router.push({path: `/list/${file}/${listId}`, query: { name }})
+    goList(listId, name, file, childId){
+      this.$router.push({
+        path: `/list/${file}/${listId}`, 
+        query: { 
+          name,
+          childId
+        }
+      })
     },
     goAppDetail(listId){
       this.$router.push({path: `/appDetail/${listId}`})
@@ -181,8 +187,12 @@ export default {
               if(Apps[val.id][item.id]){
                 for(let child of item.children) {
                   if(Apps[val.id][item.id][child.listId]) {
+                    child.fileID = val.id;
+                    child.icon = child.icon
+                    ? `/dist/${child.icon}`
+                    : this.getDefaultIcon();
                     if(!BUSobj[val.text][item.text]) {
-                      this.$set(BUSobj[val.text], item.text, {childList: [child]})
+                      this.$set(BUSobj[val.text], item.text, {childId: item.id, childName: item.text, childList: [child]})
                     }
                     else {
                       BUSobj[val.text][item.text].childList.push(child)

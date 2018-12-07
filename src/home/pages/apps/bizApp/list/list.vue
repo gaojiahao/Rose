@@ -25,11 +25,18 @@ export default {
     /*
     * AppsFile[fileId] => 应用类型文件夹
     * Apps[fileId][listId] => 应用名称.vue 
+    * childId => 分类id （不一定存在）
     */    
-    let { fileId, listId } = this.$route.params;
+    let { fileId, listId } = this.$route.params,
+        { childId } = this.$route.query;
+    this.fileId = fileId;
     if(fileId){
-      this.fileId = fileId;
-      this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
+      if(childId) {
+        this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}_List.vue`).default;
+      }
+      else {
+        this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -53,7 +60,8 @@ export default {
       this.$refs.list.changeVisitedStatus && this.$refs.list.changeVisitedStatus();
     });
     if (reload) {
-      let { fileId, listId } = this.$route.params;
+      let { fileId, listId } = this.$route.params,
+          { childId } = this.$route.query;
       this.$loading.show();
       if (fileId) {
         // 在提交页面提交成功时进入该判断
@@ -61,7 +69,12 @@ export default {
           this.$refs.list.reloadData();
         }
         this.fileId = fileId;
-        this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
+        if(childId) {
+          this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}_List.vue`).default;
+        }
+        else {
+          this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
+        }
       }
       this.$route.meta.reload = false;
     }
@@ -79,12 +92,4 @@ export default {
 </script>
 
 <style lang='scss'>
-.fade-enter-active, .fade-leave-active {
-  transition: all .3s ease;
-  z-index: 999;
-}
-.fade-enter, .fade-leave {
-  opacity: 0;
-  transform: translateX(10px);
-}
 </style>

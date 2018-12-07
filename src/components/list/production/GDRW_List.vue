@@ -54,13 +54,13 @@ export default {
       this.popShow = true;
     },
     selTask(val){
-      console.log(val)
-      let {name} = this.$route.query,
-        {fileId, listId} = this.$route.params;
+      let { name, childId } = this.$route.query,
+          { fileId, listId } = this.$route.params;
       this.$router.push({
         path: `/fillform/${fileId}/${listId}`,
         query: {
           name,
+          childId,
           inventoryCode: val.matCode,
           proPointCode: val.proPointCode,
         }

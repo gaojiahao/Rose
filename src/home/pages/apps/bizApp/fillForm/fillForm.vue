@@ -47,12 +47,17 @@ export default {
   },
   created(){
     this.$loading.show();
-    let {transCode} = this.$route.query;
+    let { fileId, listId } = this.$route.params,
+        { childId, transCode } = this.$route.query;
     if(transCode){
       this.transCode = transCode;
     }
-    let { fileId, listId } = this.$route.params;
-    this.currentComponent = require(`components/apply/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
+    if(childId) {
+      this.currentComponent = require(`components/apply/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}Form.vue`).default;
+    }
+    else {
+      this.currentComponent = require(`components/apply/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
+    }
   },
   beforeRouteLeave(to, from, next) {
     if (this.$refs.fillPage.hasDraftData) {
