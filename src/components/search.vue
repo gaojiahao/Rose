@@ -50,11 +50,18 @@
         // 解决iOS原生输入法在input框输入文字之后一瞬间为空的坑
         setTimeout(() => {
           this.srhInpTx = e.target.value;
+          // 提交页面输入框内容为空时 按钮会变成“返回” 此时让列表重新请求数据 
+          if(this.isFill && !this.srhInpTx) {
+            this.$emit("search", {
+              val: this.srhInpTx,
+              property: this.property,
+            });
+          }
         }, 0)
       },
       searchMat(val) {
         // 如果 输入框没有值 则点击关闭popup
-        if (!val) {
+        if (this.isFill && !val) {
           this.$emit('turn-off', false);
           return;
         }
