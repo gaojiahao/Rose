@@ -198,6 +198,10 @@ export default {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
       this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
+      this.matterParams = {
+        ...this.matterParams,
+        dealerCode: this.dealerInfo.dealerCode,
+      };
     },
     selContact (val) {
       this.dealerInfo.dealerDebitContactPersonName = val.dealerName;
@@ -208,8 +212,9 @@ export default {
       this.warehouse = JSON.parse(val);
       this.matterParams = {
         ...this.matterParams,
-        whCode: this.warehouse.warehouseCode
+        whCode: this.warehouse.warehouseCode,
       };
+      console.log('Params:', this.matterParams);
       this.matterList = []
     },
     // TODO 选中物料项

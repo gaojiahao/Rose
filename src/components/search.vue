@@ -50,20 +50,14 @@
         // 解决iOS原生输入法在input框输入文字之后一瞬间为空的坑
         setTimeout(() => {
           this.srhInpTx = e.target.value;
-          // if (!this.srhInpTx) {
-          //   this.$emit("search", {
-          //     val: this.srhInpTx,
-          //     property: this.property,
-          //   });
-          // }
         }, 0)
       },
       searchMat(val) {
         // 如果 输入框没有值 则点击关闭popup
-        // if (!val) {
-        //   this.$emit('turn-off', false);
-        //   return;
-        // }
+        if (!val) {
+          this.$emit('turn-off', false);
+          return;
+        }
         this.$emit("search", {
           val: this.srhInpTx,
           property: this.property,

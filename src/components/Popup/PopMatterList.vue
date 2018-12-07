@@ -13,7 +13,7 @@
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="order-code" v-if="item.transCode && !item.transCode.includes(',') && isShowCode">
-              <span class="order-title">订单号</span>
+              <span class="order-title">单号</span>
               <span class="order-num">{{item.transCode}}</span>
             </div>
             <div class="order-matter">
