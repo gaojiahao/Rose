@@ -141,7 +141,7 @@ import MSearch from 'components/search'
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.colId === item.colId) {
+          if (sItem.inventoryCode === item.inventoryCode && sItem.proPointCode === item.proPointCode) {
             flag = true;
             return false;
           }
@@ -157,8 +157,8 @@ import MSearch from 'components/search'
       },
       // TODO 设置默认值
       setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
+        this.tmpItems = [this.defaultValue];
+        this.selItems = [this.defaultValue];
       },
       // TODO 获取物料列表
       getWorkOrderTask() {

@@ -9,7 +9,7 @@
         <r-picker title="项目名称" :data="projectList" mode="3" placeholder="请选择项目名称"
                   @on-change="projectChange" v-model="projectTask.projectName" required :has-border="false"></r-picker>
         <!-- 项目详情 -->
-        <div class="or_ads mg_auto " v-show="projectTask.projectName">
+        <div class="materiel_list mg_auto" v-show="projectTask.projectName">
           <p class="title">项目详情</p>
           <group>
             <cell title="项目大类" :value="projectTask.projectType"></cell>
@@ -20,20 +20,20 @@
         <r-picker title="任务名称" :data="taskList" mode="3" placeholder="请选择任务名称"
                   @on-change="taskChange" v-model="projectTask.taskName" required :has-border="false"></r-picker>
         <!-- 任务详情 -->
-        <div class="or_ads mg_auto " v-show="projectTask.taskName">
+        <div class="materiel_list mg_auto " v-show="projectTask.taskName">
           <p class="title">任务详情</p>
           <group>
             <cell title="任务类型" :value="projectTask.taskType"></cell>
             <cell title="任务说明" :value="projectTask.comment" primary="content"></cell>
             <cell title="截止日期" :value="projectTask.deadline"></cell>
-            <cell title="周期天数" :value="projectTask.cycleNumber"></cell>
-            <cell title="标准工时" :value="projectTask.planTime"></cell>
-            <cell title="作业费率" :value="projectTask.operatingRate"></cell>
-            <cell title="预算作业成本" :value="projectTask.budgetHomeworkCost"></cell>
+            <cell title="周期天数" :value="projectTask.cycleNumber" v-show="projectTask.cycleNumber"></cell>
+            <cell title="标准工时" :value="projectTask.planTime" v-show="projectTask.planTime"></cell>
+            <cell title="作业费率" :value="projectTask.operatingRate" v-show="projectTask.operatingRate"></cell>
+            <cell title="预算作业成本" :value="projectTask.budgetHomeworkCost" v-show="projectTask.budgetHomeworkCost"></cell>
           </group>
         </div>
         <!-- 实际情况 -->
-        <div class="or_ads mg_auto">
+        <div class="materiel_list mg_auto">
           <p class="title">实际情况</p>
           <group>
             <datetime title="实际完成日期" v-model="projectTask.actualCompleteTime">
@@ -43,10 +43,13 @@
                      @on-blur="checkTime" v-model.number="projectTask.actualTime">
               <span class="required" slot="label">实际工时</span>
             </x-input>
-            <x-input type="number" title="实际作业成本" text-align="right" placeholder="请填写"
+            <cell title="实际作业成本" :value="projectTask.actualtHomeworkCost">
+              <span class="required" slot="title">实际作业成本</span>
+            </cell>
+            <!-- <x-input type="number" title="实际作业成本" text-align="right" placeholder="请填写"
                      @on-blur="checkTime" v-model.number="projectTask.actualtHomeworkCost">
               <span class="required" slot="label">实际作业成本</span>
-            </x-input>
+            </x-input> -->
           </group>
         </div>
         <upload-file @on-upload="onUploadFile"></upload-file>
@@ -75,6 +78,7 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import { toFixed } from '@/plugins/calc'
+    import {accMul} from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'XMRW_DATA';
   export default {
@@ -104,7 +108,7 @@
           cycleNumber: '', // 周期天数
           actualCompleteTime: '', // 实际完成日期
           actualTime: '', // 实际工时
-          actualtHomeworkCost: '' , // 实际作业成本
+          actualtHomeworkCost: 0 , // 实际作业成本
           budgetHomeworkCost: '', // 预算作业成本
           operatingRate: '' , // 作业费率
         },
@@ -263,12 +267,11 @@
       // TODO 校验计划工时,保留一位小数
       checkTime (item) {
         let val = this.projectTask.actualTime;
-        let cost = this.projectTask.actualtHomeworkCost;
         if (val) {
           this.projectTask.actualTime = Math.abs(toFixed(val, 1));
         }
-        if(cost) {
-          this.projectTask.actualtHomeworkCost = Math.abs(toFixed(cost, 2));
+        if(item.operatingRate && item.actualTime){
+          item.actualtHomeworkCost = accMul(item.operatingRate, item.actualTime)
         }
       },
       // TODO 保存草稿数据
@@ -316,9 +319,9 @@
   @import './../../scss/bizApply';
 
   .xmrw-apply-container {
-    .or_ads {
-      padding: .06rem .08rem;
-    }
+    // .or_ads {
+    //   padding: .06rem .08rem;
+    // }
     /deep/ .weui-cells {
       margin-top: 0;
       font-size: .16rem;

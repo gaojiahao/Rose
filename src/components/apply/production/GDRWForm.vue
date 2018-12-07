@@ -89,6 +89,7 @@ import { Popup, TransferDom, Group,
         Cell, numberComma, Datetime,
         XInput, XTextarea } from 'vux'
 // 请求 引入
+import { getSOList } from 'service/detailService'
 import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
 import { getTaskBom } from 'service/materService'
 // mixins 引入
@@ -178,16 +179,10 @@ export default {
     // 选择员工
     selManager (val) {
       this.defaultManager = JSON.parse(val);
-      // 员工 工号
-      this.workInfo.dealerDebit = this.defaultManager.dealerCode;
-      // 类型
-      this.workInfo.drDealerLabel = this.defaultManager.dealerLabelName;
     },
     // 选择设备
     selFacility (val) {
       this.defaultFacility = val;
-      this.workInfo.facilityObjCode  = this.defaultFacility.facilityCode;
-      this.workInfo.facilityTypebase_facilityObjCode  = this.defaultFacility.facilityType;
     },
     // 校验数量
     checkAmt (item) {
@@ -212,9 +207,13 @@ export default {
       if (!this.workInfo.procedureName) {
         warn = '请选择工序';
       }
+      if (!warn) {
+        if(!this.defaultManager.dealerCode) {
+          warn = '请选择工人'
+        }
+      }
       let checkData = [
-        { key: 'tdQty', msg: '请填写派工数量'},
-        { key: 'dealerDebit', msg: '请选择工人'},
+        { key: 'tdQty', msg: '请填写派工数量'}
       ]
       if (!warn) {
         checkData.every(item => {
@@ -248,13 +247,13 @@ export default {
         thenQtyBal: this.workInfo.thenQtyBal,
         tdQty: this.workInfo.tdQty,
         dealerName_dealerDebit: this.defaultManager.dealerName,
-		    dealerDebit: this.workInfo.dealerDebit,
-        drDealerLabel: this.workInfo.drDealerLabel,
+		    dealerDebit: this.defaultManager.dealerCode,
+        drDealerLabel: this.defaultManager.dealerLabelName,
 			  facilityName_facilityObjCode: this.defaultFacility.facilityName,
         proFlowCode: this.workInfo.proFlowCode || '',       
 			  technicsName_proFlowCode: this.workInfo.technicsName,
-        facilityObjCode: this.workInfo.facilityObjCode || '', // 设备编码
-        facilityTypebase_facilityObjCode: this.workInfo.facilityTypebase_facilityObjCode || ''   
+        facilityObjCode: this.defaultFacility.facilityCode || '', // 设备编码
+        facilityTypebase_facilityObjCode: this.defaultFacility.facilityType || ''   
       }
       orderDataSet.push(obj);
       this.bomList.forEach(item=>{
@@ -266,7 +265,7 @@ export default {
           outPutMatCode: item.inventoryCode,
           thenQtyStock: item.qtyBal,
           specification_outPutMatCode: item.specification,
-          tdProcessing: item.processing,
+          tdProcessing: item.processing || item.tdProcessing,
           inventoryName_outPutMatCode: item.inventoryName,
           measureUnit_outPutMatCode: item.measureUnit,
           bomType: item.bomType,
@@ -357,6 +356,84 @@ export default {
         return false
       }
       return true
+    },
+     // TODO 获取详情
+    getFormData () {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode: this.transCode
+      }).then(data => {
+        let {success = true, formData = {}} = data;
+        // http200时提示报错信息
+        if (!success) {
+          this.$vux.alert.show({
+            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+          });
+          return;
+        }
+        this.attachment = data.attachment;
+        let matterList = [];
+        // 获取合计
+        let {order} = formData;
+        let {dataSet = []} = order;
+        for (let item of dataSet) {
+          item = {
+            ...item,
+            inventoryCode: item.transObjCode,
+            inventoryName: item.inventoryName_outPutMatCode,
+            procedureName: item.procedureName_proPointCode,
+            technicsName: item.technicsName_proFlowCode,
+            transCode: item.transMatchedCode,
+            processing: item.tdProcessing || null,
+          };
+          matterList.push(item);
+        }
+        this.workInfo = matterList[0];
+        // 仓库
+        this.warehouse = {
+          warehouseCode: order.containerCode,
+          warehouseName: order.warehouseName_containerCode,
+          warehouseType: order.warehouseType_containerCode,
+          warehouseProvince: order.warehouseProvince_containerCode,
+          warehouseCity: order.warehouseCity_containerCode,
+          warehouseDistrict: order.warehouseDistrict_containerCode,
+          warehouseAddress: order.warehouseAddress_containerCode,
+        };
+        // 工人
+        this.defaultManager = {
+          dealerCode: dataSet[0].dealerDebit,
+          dealerLabelName: dataSet[0].drDealerLabel,
+          dealerName: dataSet[0].dealerName_dealerDebit,
+
+        };
+        // 设备
+        this.defaultFacility = {
+          facilityCode: dataSet[0].facilityObjCode,
+          facilityName: dataSet[0].facilityName_facilityObjCode,
+          facilityType: dataSet[0].facilityTypebase_facilityObjCode,
+        };
+        this.handlerDefault = {
+          handler: formData.handler,
+          handlerName: formData.handlerName,
+          handlerUnit: formData.handlerUnit,
+          handlerUnitName: formData.handlerUnitName,
+          handlerRole: formData.handlerRole,
+          handlerRoleName: formData.handlerRoleName,
+        };
+        // 基本信息
+        this.formData = {
+          ...this.handlerDefault,
+          biComment: formData.biComment,
+          biId: formData.biId,
+          biProcessStatus: formData.biProcessStatus,
+          creator: formData.creator,
+          modifer: formData.modifer,
+        }
+        this.biReferenceId = formData.biReferenceId;
+        this.bomList = this.workInfo.boms;
+        // this.matterList = matterList;
+        this.$loading.hide();
+      })
     },
     getTaskBom() {
       this.filter[0].value = this.warehouse.warehouseCode;
