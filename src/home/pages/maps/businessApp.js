@@ -110,6 +110,7 @@ export default {
   '4a1e1cce-186a-46b6-acb7-fbd5febf578b': {
     'f928725f-5e23-4321-922c-6db0efa85f17': 'SBCGSQ',       // *设备采购申请
     'fac37727-d2d4-11e8-b8ca-0279b2c6a380': 'SBCGDD',       // *设备采购订单
+    '64c5afbc-c075-11e8-85e2-b06ebfc41432': 'SBCGYS',       // *设备采购验收
   },
   // <财务会计类科目>
   'f3d819ee-8f77-47d0-81f1-e986841e51eb': {
