@@ -267,6 +267,28 @@ export let getSalesContract = (data = {}) => {
   })
 };
 
+// TODO 获取销售订单预测的物料列表
+export let getInventoryToProcessing = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getInventoryToProcessing',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
+// TODO 获取产品销售订单的物料列表
+export let getSalesOrderNew = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getSalesOrderNew',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 export default {
   save,
   update,

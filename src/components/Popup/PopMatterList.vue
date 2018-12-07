@@ -105,6 +105,8 @@
     getLowPriceConsumableInWarehouse,
     getProductPriceAllInventory,
     getSalesContract,
+    getInventoryToProcessing,
+    getSalesOrderNew,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -548,6 +550,48 @@
           ];
         }
         return getSalesContract({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
+        }).then(this.dataHandler);
+      },
+      // TODO 获取销售订单预测的物料列表
+      getInventoryToProcessing() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getInventoryToProcessing({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
+        }).then(this.dataHandler);
+      },
+      // TODO 获取产品销售订单的物料列表
+      getSalesOrderNew() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getSalesOrderNew({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,

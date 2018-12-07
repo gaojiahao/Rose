@@ -103,8 +103,12 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
-      <div class="btn-item" @click="save">提交</div>
+    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
+      <span class="count_num">
+        <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
+        <!--<span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>-->
+      </span>
+      <span class="count_btn" @click="save">提交</span>
     </div>
     <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>

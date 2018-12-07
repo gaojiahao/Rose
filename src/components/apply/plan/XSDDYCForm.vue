@@ -84,8 +84,8 @@
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" get-list-method="getObjInventory"
-                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" get-list-method="getInventoryToProcessing"
+                           @sel-matter="selMatter" :default-value="matterList" :params="matterParams" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
@@ -163,7 +163,9 @@
         contact: {},
         formData: {},
         dealerInfo: {},
-        matterParams: {}, // 请求物料的参数
+        matterParams: {
+          processing: '成品,商品',
+        }, // 请求物料的参数
       }
     },
     directives: {
@@ -183,9 +185,6 @@
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.formData.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
-        this.matterParams = {
-          drDealerCode: this.dealerInfo.dealerCode,
-        };
         this.matterList = [];
       },
       selContact(val) {
@@ -443,10 +442,6 @@
             address: formData.order.address_dealerDebit,
             paymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
           }
-          // 物料列表请求参数
-          this.matterParams = {
-            drDealerCode: this.dealerInfo.dealerCode,
-          };
           this.$loading.hide();
         })
       },
@@ -475,10 +470,6 @@
         this.dealer = draft.dealer;
         this.formData = draft.formData;
         this.contact = draft.contact;
-        // 物料列表请求参数
-        this.matterParams = {
-          drDealerCode: this.dealerInfo.dealerCode,
-        };
         sessionStorage.removeItem(DRAFT_KEY);
       }
     }

@@ -56,7 +56,7 @@
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
                       <div>
-                        <r-number :num="item.tdQty" :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                        <r-number :num="item.tdQty" :checkAmt='checkAmt' :max="item.qtyBal" v-model="item.tdQty"></r-number>
                       </div>
                     </div>
                   </template>
@@ -192,7 +192,7 @@
         sels.map(item => {
           let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
           let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = '', price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[key] || {};
+          let {tdQty = item.qtyBal, price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;

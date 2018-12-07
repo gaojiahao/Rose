@@ -6,7 +6,8 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :defaultContact="contact"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
+                         :defaultContact="contact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
                            v-model="dealer.drDealerPaymentTerm"></pop-single-select>
@@ -80,7 +81,8 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams"
-                           @sel-matter="selMatter" :default-value="matterList" ref="matter"></pop-matter-list>
+                           get-list-method="getSalesOrderNew" @sel-matter="selMatter"
+                           :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
@@ -130,10 +132,10 @@
 
 <script>
   // vux组件引入
-  import { Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea } from 'vux'
+  import {Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea} from 'vux'
   // 请求 引入
-  import { getSOList } from 'service/detailService'
-  import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
+  import {getSOList} from 'service/detailService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
@@ -145,11 +147,12 @@
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+
   const DRAFT_KEY = 'XSDD_DATA';
 
   export default {
-    data () {
+    data() {
       return {
         listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
         showMatterPop: false,
@@ -169,9 +172,9 @@
       TransferDom
     },
     components: {
-      XInput, XTextarea, Group, Cell, Popup, 
+      XInput, XTextarea, Group, Cell, Popup,
       PopMatter, RNumber, PopMatterList, PopDealerList,
-      PopSingleSelect,  Datetime, RPicker, PopBaseinfo
+      PopSingleSelect, Datetime, RPicker, PopBaseinfo
     },
     mixins: [common],
     filters: {
@@ -183,7 +186,7 @@
         this.dealerInfo = JSON.parse(val)[0];
         this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         this.matterParams = {
-          drDealerCode: this.dealerInfo.dealerCode,
+          dealerCode: this.dealerInfo.dealerCode,
         };
         this.matterList = [];
         // this.getMatPrice(); // 获取物料价格
@@ -328,7 +331,7 @@
               taxAmount: taxAmount, // 税金
               tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
               promDeliTime: item.promDeliTime || null, // 预期交货日
-              comment: '' , // 说明
+              comment: '', // 说明
             }
             dataSet.push(obj)
             return true
@@ -454,13 +457,13 @@
           };
           // 物料列表请求参数
           this.matterParams = {
-            drDealerCode: this.dealerInfo.dealerCode,
+            dealerCode: this.dealerInfo.dealerCode,
           };
           this.$loading.hide();
         })
       },
       // TODO 是否保存草稿
-      hasDraftData () {
+      hasDraftData() {
         if (!this.matterList.length) {
           return false
         }
@@ -486,7 +489,7 @@
         this.contact = draft.contact;
         // 物料列表请求参数
         this.matterParams = {
-          drDealerCode: this.dealerInfo.dealerCode,
+          dealerCode: this.dealerInfo.dealerCode,
         };
         sessionStorage.removeItem(DRAFT_KEY);
       }

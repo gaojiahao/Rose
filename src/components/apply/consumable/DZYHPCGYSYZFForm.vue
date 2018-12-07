@@ -318,7 +318,7 @@
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
           let {
-            tdQty = '', price = '', taxRate = 0.16,
+            tdQty = item.qtyBal, price = '', taxRate = 0.16,
             productionDate = '',
             validUntil = '',
           } = this.numMap[key] || {};
