@@ -162,7 +162,7 @@ export default {
       this.filterProperty = property;
       this.otherFilter = {};
       this.timeFilter = {};
-      this.$refs.sort.filterReset()
+      this.$refs.sort && this.$refs.sort.filterReset()
       this.resetCondition();
       this.getList();
     },
