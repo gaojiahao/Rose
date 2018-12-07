@@ -12,7 +12,7 @@
       <div class="mater_info">
         <!-- 物料编码 -->
         <span class="info-item">
-          物料编码: {{item.transObjCode || item.facilityCode_facilityObjCode || '无'}}
+          物料编码: {{item.transObjCode || item.facilityObjCode || '无'}}
         </span>
         <!-- 物料规格 -->
         <span class="info-item">

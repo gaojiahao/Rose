@@ -8,11 +8,6 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
                          :default-contact="contactInfo" dealer-label-name="设施供应商"></pop-dealer-list>
-        <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm" isRequired
-                           v-model="dealerInfo.paymentTerm"></pop-single-select>
-
-        <cell class="cell-item" title="账期天数" :value="dealerInfo.pamentDays"></cell>
 
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -45,12 +40,13 @@
                       <div class="mater_more">
                         <span class='unit'>类型：{{item.facilityType || '无'}}</span>
                         <span class="unit">大类：{{item.facilityBigType}}</span>
-                        <span class='qty'>子类: {{item.facilitySubclass}}</span>
+                        <span class='unit'>单位：{{item.facilitySpecification || '无'}}</span>
                       </div>
                       <div class="mater_more">
-                        <span class='unit'>单位：{{item.facilitySpecification || '无'}}</span>
                         <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                        <span class='qty' v-show="item.qtyBal">待下单: {{item.qtyBal}}</span>
+                        <span class='unit'>订单总数：{{item.qty}}</span>
+                        <span class='qty'>已验收数: {{item.purchased}}</span>
+                        <span class='qty'>待验收数: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -94,14 +90,23 @@
           </div>
 
           <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter"
-                             :default-value="matterList" request="1" ref="matter">
+                             :default-value="matterList" request="2" :params="facilityParams" ref="matter">
+            <template slot-scope="{item}" slot="storage">
+              <div class="mater_material">
+                <span class="spec">订单总数: {{item.qty}}</span>
+                <span class="spec">已验收数: {{item.purchased}}</span>
+                <span class="spec">待验收数: {{item.qtyBal}}</span>
+              </div>
+            </template>
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span>待下单: {{modifyMatter.qtyBal}}</span>
+            <span>订单总数: {{modifyMatter.qty}}</span>
+            <span>已验收数: {{modifyMatter.purchased}}</span>
+            <span>待验收数: {{modifyMatter.qtyBal}}</span>
           </template>
         </pop-matter>
 
@@ -135,7 +140,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Cell} from 'vux'
+  import {XTextarea, Datetime, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {
@@ -151,7 +156,6 @@
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
-  import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import RNumber from 'components/RNumber'
   import RPicker from 'components/RPicker'
@@ -160,13 +164,13 @@
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
 
-  const DRAFT_KEY = 'SBCGDD_DATA';
+  const DRAFT_KEY = 'SBCGYS_DATA';
 
   export default {
-    name: 'ApplySBCGDDForm',
+    name: 'ApplySBCGYSForm',
     data() {
       return {
-        listId: 'fac37727-d2d4-11e8-b8ca-0279b2c6a380',
+        listId: '64c5afbc-c075-11e8-85e2-b06ebfc41432',
         srhInpTx: '', // 搜索框内容
         orderList: {},
         matterList: [], // 订单列表
@@ -204,12 +208,14 @@
             value: 'facilityCode',
           },
         ],
+        facilityParams: {},
       }
     },
     mixins: [applyCommon],
     components: {
-      XTextarea, RNumber, PopDealerList, PopSingleSelect,
-      PopMatter, RPicker, PopBaseinfo, Cell, PopFacilityList,
+      XTextarea, RNumber,
+      PopDealerList, PopMatter, RPicker, PopBaseinfo,
+      PopFacilityList,
     },
     methods: {
       // 修改经办人信息
@@ -231,6 +237,9 @@
         this.dealerInfo = {
           ...sel,
         };
+        this.facilityParams = {
+          dealerCode: sel.dealerCode,
+        }
       },
       // TODO 选择联系人
       selContact(val) {
@@ -365,9 +374,6 @@
         if (!this.dealerInfo.dealerCode) {
           warn = '请选择供应商信息'
         }
-        if (!warn && !this.dealerInfo.paymentTerm) {
-          warn = '请选择结算方式'
-        }
         if (!warn && !this.matterList.length) {
           warn = '请选择设施'
         }
@@ -388,8 +394,9 @@
             let oItem = {
               transMatchedCode: item.transCode,
               facilityObjCode: item.facilityCode, // 物料编码
-              facilityName_facilityObjCode: item.facilityName, // 设施名称
               facilityType: item.facilityType,
+              thenTotalQtyBal: item.qty, // 订单总数
+              thenLockQty: item.purchased, // 已验收
               thenQtyBal: item.qtyBal || 0, // 待验收
               tdQty: item.tdQty, // 明细发生数
               price: item.price, // 明细单价
@@ -430,13 +437,11 @@
               handlerEntity: this.entity.dealerName,
               creator: this.transCode ? this.formData.handler : '',
               modifer: this.transCode ? this.formData.handler : '',
-              dealerDebitContactPersonName: this.contactInfo.dealerName || '', // 联系人姓名
-              dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '', // 联系人手机
+              dealerCreditContactPersonName: this.contactInfo.dealerName || '', // 联系人姓名
+              dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '', // 联系人手机
               order: {
-                dealerDebit: this.dealerInfo.dealerCode, // 供应商编码
-                drDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
-                drDealerPaymentTerm: this.dealerInfo.paymentTerm,
-                daysOfAccount: this.dealerInfo.pamentDays, // 账期天数
+                dealerCodeCredit: this.dealerInfo.dealerCode, // 供应商编码
+                crDealerLabel: this.dealerInfo.dealerLabelName || '供应商', // 供应商页签
                 dataSet,
               },
             };
@@ -506,7 +511,7 @@
               specification: item.specification_facilityObjCode,
               processing: item.tdProcessing,
               keepingDays: item.keepingDays_facilityObjCode,
-              qtyed: item.thenLockQty,
+              purchased: item.thenLockQty,
               qtyBal: item.thenQtyBal,
               qty: item.thenTotalQtyBal,
             };
@@ -682,19 +687,6 @@
       /deep/ .vux-label {
         color: #757575;
         font-size: .14rem;
-      }
-    }
-  }
-
-  .edit_matter {
-    .r-dropdown {
-      width: 1rem;
-      /deep/ .r-dropdown-value {
-        justify-content: flex-end;
-        font-size: .14rem;
-      }
-      /deep/ .r-dropdown-list {
-        text-align: left;
       }
     }
   }
