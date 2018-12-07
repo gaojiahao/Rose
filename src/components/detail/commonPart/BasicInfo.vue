@@ -13,7 +13,7 @@
     <div class="handle_info vux-1px-b">
       <div class="each_handle s_size_name">
         <span class="title">经办主体：</span>
-        <span class="content">{{orderInfo.handlerEntityName}}</span>
+        <span class="content">{{orderInfo.handlerEntityName  || '无'}}</span>
       </div>
       <div class="each_handle s_size_name">
         <span class="title">经办人：</span>
@@ -21,11 +21,11 @@
       </div>
       <div class="each_handle s_size_name">
         <span class="title">经办组织：</span>
-        <span class="content">{{orderInfo.handlerUnitName}}</span>
+        <span class="content">{{orderInfo.handlerUnitName || '无'}}</span>
       </div>
       <div class="each_handle s_size_name">
-        <span class="title">经办主体：</span>
-        <span class="content">{{orderInfo.handlerEntityName || '无'}}</span>
+        <span class="title">经办职位：</span>
+        <span class="content">{{orderInfo.handlerRoleName || '无'}}</span>
       </div>
     </div>
     <!-- 创建时间 完成时间 -->
