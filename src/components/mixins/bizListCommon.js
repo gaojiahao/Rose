@@ -107,9 +107,9 @@ export default {
             path = `/detail/${fileId}/${listId}`;
           }
           this.$router.push({
-            path, 
+            path,
             query: {
-              name, 
+              name,
               childId,
               transCode
             }
@@ -303,7 +303,7 @@ export default {
           item.itemCount = item.detailItem.length;
           // 只取有物料编码的
           let detailItem = item.detailItem.reduce((arr, item) => {
-            if (item.inventoryCode_transObjCode || item.inventoryCode_outPutMatCode || item.facilityCode_facilityObjCode) {
+            if (item.inventoryCode_transObjCode || item.inventoryCode_outPutMatCode || item.facilityCode_facilityObjCode || item.opportunityTitle) {
               arr.push(item);
             }
             return arr

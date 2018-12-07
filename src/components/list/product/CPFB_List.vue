@@ -9,7 +9,7 @@
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="each_duty" :class="{visited: item.visited}" v-for="(item, index) in listData" :key="index"
@@ -24,7 +24,7 @@
             <i class="iconfont" :class="item.whichIcon"></i>
           </div>
           <div class="duty_content">
-            <div class="content_title">{{item.demandTitle}}</div>
+            <div class="content_title">{{item.launchTitle}}</div>
             <div class="content_step vux-1px-b"></div>
           </div>
           <div class="order_count">
@@ -62,10 +62,10 @@
             name: '交易号',
             value: 'transCode',
           },
-          // {
-          //   name: '标题',
-          //   value: 'demandTitle',
-          // },
+          {
+            name: '标题',
+            value: 'launchTitle',
+          },
         ],
         listViewID: 2339
       }
@@ -112,7 +112,6 @@
   @import './../../scss/bizList';
   .cpxq-list-container {
     .list_wrapper {
-      height: calc(100% - 1.64rem);
       .each_duty{
         overflow: hidden;
       }
