@@ -1,10 +1,10 @@
 <template>
   <r-popup class="pop-facility-list" :show="showPop" :data="listData" :options="scrollOptions" :has-next="hasNext"
-           :default-value="selItems" :judge-keys="['transCode', 'facilityCode']" :filter-list="filterList"
+           :default-value="selItems" :judge-keys="judgeKeys" :filter-list="filterList"
            @on-pulling-up="onPullingUp" @on-select="selItem" @on-search="searchList" v-model="showPop" multipart
            ref="RPopup">
     <template slot-scope="{item, index}" slot="pop-item">
-      <div class="order-code">
+      <div class="order-code" v-if="item.transCode">
         <span class="order-title">订单号</span>
         <span class="order-num">{{item.transCode}}</span>
       </div>
@@ -103,6 +103,12 @@
             },
           ]
         }
+      },
+      judgeKeys: {
+        type: Array,
+        default() {
+          return ['transCode', 'facilityCode']
+        }  
       }
     },
     components: {
