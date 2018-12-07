@@ -6,19 +6,19 @@
     <div class="mater_main" :class="[{'show-delete': showDelete}, {'no-edit': hideEdit}]">
       <!-- 物料名称 -->
       <div class="mater_name">
-        {{item.inventoryName}}
+        {{item.inventoryName || item.facilityName}}
       </div>
       <!-- 物料基本信息 -->
       <div class="matter-info">
         <!-- 物料编码 -->
         <div class="matter-info-item">
           <span class="title">编码</span>
-          <span class="num">{{item.inventoryCode}}</span>
+          <span class="num">{{item.inventoryCode || item.facilityCode}}</span>
         </div>
         <!-- 物料规格 -->
         <div class="matter-info-item matter-spec">
           <span class="title">规格</span>
-          <span class="num">{{item.specification || '无'}}</span>
+          <span class="num">{{item.specification || item.facilityUnit || '无'}}</span>
         </div>
       </div>
       <slot name="info" :item="item">

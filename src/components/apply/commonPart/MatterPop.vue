@@ -49,11 +49,11 @@
               <!-- 物料属性和单位 -->
               <div class="mater_more">
                 <span class="processing">类型: {{modifyMatter.facilityType}}</span>
-                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
-              </div>
-              <div class="mater_more">
                 <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
                 <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
+              </div>
+              <div class="mater_more">
+                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
                 <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
               </div>
             </template>

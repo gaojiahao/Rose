@@ -13,7 +13,7 @@
                   :no-data="!hasNext && !data.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="r-popup-item box_sd" v-for="(item, index) in data" :key='index'
                @click.stop="selThis(item, index)">
-            <slot name="pop-item" :item="item"></slot>
+            <slot name="pop-item" :item="item" :index="index"></slot>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20" v-if="multipart"></x-icon>
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -124,11 +124,7 @@
       },
       data: {
         handler(val) {
-          if(this.$refs.bScroll){
-            this.$nextTick(() => {
-              this.$refs.bScroll.finishPullUp();
-            })
-          }
+          this.finishPullUp();
         },
         immediate: true
       },
@@ -208,6 +204,14 @@
       // TODO 上拉加载
       onPullingUp() {
         this.$emit('on-pulling-up')
+      },
+      // TODO 上拉加载结束
+      finishPullUp() {
+        if (this.$refs.bScroll) {
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+        }
       },
     },
     created() {
