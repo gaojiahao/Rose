@@ -6,19 +6,37 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :defaultContact="contact"></pop-dealer-list>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
+                         :defaultContact="contact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
-                           v-model="dealer.drDealerPaymentTerm"></pop-single-select>
+        <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
+                           v-model="dealerInfo.paymentTerm"></pop-single-select>
         <!-- 物流条款 -->
-        <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealer.drDealerLogisticsTerms"
-                           v-model="dealer.drDealerLogisticsTerms"></pop-single-select>
+        <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealerInfo.dealerLogisticsTerms"
+                           v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
         <!-- 有效期至 -->
-        <div class="mg_auto no_top" >
-          <div class="valid_until" @click="clickDateSelect">
-            <div class="title">有效期至</div>
+        <div class="mg_auto no_top">
+          <div class="cell-item">
+            <div class="title">合同总金额</div>
             <div class="mode">
-              <span class="mode_content">{{dealer.validUntil || '请选择有效期'}}</span>
+              <span class="mode_content">{{thenTotalAmntBal}}</span>
+            </div>
+          </div>
+          <div class="cell-item" @click="dateSelect('validUntil')">
+            <div class="title required">合同到期日</div>
+            <div class="mode">
+              <span class="mode_content">{{dealerInfo.validUntil || '请选择'}}</span>
+              <span class="iconfont icon-shenglve"></span>
+            </div>
+          </div>
+          <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
+                   v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance">
+            <span class='required' slot="label">预收款</span>
+          </x-input>
+          <div class="cell-item" @click="dateSelect('advancePaymentDueDate')" v-show="hasAdvance">
+            <div class="title required">预收到期日</div>
+            <div class="mode">
+              <span class="mode_content">{{dealerInfo.advancePaymentDueDate || '请选择'}}</span>
               <span class="iconfont icon-shenglve"></span>
             </div>
           </div>
@@ -53,7 +71,10 @@
                       <span class='unit'>单位：{{item.measureUnit}}</span>
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                       <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                      <span v-show="item.promDeliTime">预期交货日：{{item.promDeliTime}}</span>
+                    </div>
+                    <div class="mater_more">
+                      <span class="processing">交付开始日：{{item.dateActivation}}</span>
+                      <span class='unit'>交付截止日：{{item.executionDate}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
@@ -89,12 +110,19 @@
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" 
-                           :default-value="matterList" get-list-method="getObjInventory" ref="matter"></pop-matter-list>
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+                           :default-value="matterList" get-list-method="getSalesContract" :params="matterParams"
+                           ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
+          <template slot="date" slot-scope="{modifyMatter}">
+            <datetime title="交付开始日" v-model="modifyMatter.dateActivation" :start-date="dealerInfo.advancePaymentDueDate"
+                      :end-date="modifyMatter.executionDate" placeholder="请选择"></datetime>
+            <datetime title="交付截止日" v-model="modifyMatter.executionDate" :start-date="modifyMatter.dateActivation"
+                      :end-date="dealerInfo.validUntil" placeholder="请选择"></datetime>
+          </template>
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -108,8 +136,7 @@
       <span class="count_num"
             :class="{nine_up : tdAmount.length  > 8 ,
           ten_up : tdAmount.length  > 9,
-          ele_up : tdAmount.length  > 10}"
-      >
+          ele_up : tdAmount.length  > 10}">
         <span class="total_price">
           <span class="symbol">￥</span>{{tdAmount | numberComma(3)}}
         </span>
@@ -132,10 +159,10 @@
 
 <script>
   // vux组件引入
-  import { Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea } from 'vux'
+  import {Popup, Group, Cell, numberComma, Datetime, XInput, XTextarea} from 'vux'
   // 请求 引入
-  import { getSOList } from 'service/detailService'
-  import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc } from 'service/commonService'
+  import {getSOList} from 'service/detailService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
@@ -147,11 +174,12 @@
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+
   const DRAFT_KEY = 'XSHT_DATA';
 
   export default {
-    data () {
+    data() {
       return {
         listId: '525bee48-d2d4-11e8-b8ca-0279b2c6a380',
         showMatterPop: false,
@@ -159,21 +187,40 @@
         transMode: [], // 结算方式 数组
         matterList: [], // 物料列表
         logisticsTerm: [], // 物流条款 数组
-        dealer: {},
         numMap: {}, // 用于记录订单物料的数量和价格
         contact: {},
         formData: {},
-        dealerInfo: {},
-        matterParams: {}, // 请求物料的参数
+        dealerInfo: {
+          validUntil: '',
+          advancePaymentDueDate: '',
+        },
+        matterParams: {
+          processing: '成品,商品,服务',
+        }, // 请求物料的参数
       }
     },
-    directives: {
-      TransferDom
+    computed: {
+      thenTotalAmntBal() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let {tdQty, price, taxRate = this.taxRate} = item;
+          let taxAmount = accMul(price, tdQty, taxRate);
+          let tdAmount = accAdd(accMul(price, tdQty), taxAmount);
+          total = accAdd(total, tdAmount);
+        });
+        return total;
+      },
+      // 是否含预收
+      hasAdvance() {
+        let {paymentTerm} = this.dealerInfo;
+        let hasAdvanceList = ['赊销'];
+        return !hasAdvanceList.includes(paymentTerm);
+      }
     },
     components: {
-      XInput, XTextarea, Group, Cell, Popup, 
+      XInput, XTextarea, Group, Cell, Popup,
       PopMatter, RNumber, PopMatterList, PopDealerList,
-      PopSingleSelect,  Datetime, RPicker, PopBaseinfo
+      PopSingleSelect, Datetime, RPicker, PopBaseinfo
     },
     mixins: [common],
     filters: {
@@ -182,9 +229,13 @@
     methods: {
       // 选中的客户
       selDealer(val) {
-        this.dealerInfo = JSON.parse(val)[0];
-        this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
+        let sel = JSON.parse(val)[0];
+        this.dealerInfo = {
+          ...this.dealerInfo,
+          ...sel,
+        };
         this.matterParams = {
+          ...this.matterParams,
           drDealerCode: this.dealerInfo.dealerCode,
         };
         this.matterList = [];
@@ -192,10 +243,6 @@
       },
       selContact(val) {
         this.contact = {...val};
-        // 联系人
-        this.dealer.dealerDebitContactPersonName = this.contact.dealerName || '';
-        // 联系人电话
-        this.dealer.dealerDebitContactInformation = this.contact.dealerMobilePhone;
       },
       // 获取 结算方式
       getPaymentTerm() {
@@ -210,33 +257,62 @@
         })
       },
       // TODO 展示时间选择器
-      clickDateSelect() {
+      dateSelect(key = '') {
+        let validUntil = new Date(this.dealerInfo.validUntil.replace(/-/g, '/'));
+        let advancePaymentDueDate = new Date(this.dealerInfo.advancePaymentDueDate.replace(/-/g, '/'));
+        console.log(validUntil)
+        console.log(advancePaymentDueDate)
+        if (key === 'advancePaymentDueDate' && !this.dealerInfo.validUntil) {
+          this.$vux.alert.show({
+            content: '请选择合同到期日'
+          });
+          return
+        }
         this.$vux.datetime.show({
           confirmText: '确定',
           cancelText: '取消',
-          value: this.dealer.validUntil,
+          value: this.dealerInfo[key],
           onConfirm: (value) => {
-            this.dealer.validUntil = value;
+            this.dealerInfo[key] = value;
           }
         })
       },
       // 选择物料，显示物料pop
       getMatter() {
+        let warn = '';
+        if (!this.dealerInfo.validUntil) {
+          warn = '请选择合同到期日'
+        }
+        if (!warn && this.hasAdvance && !this.dealerInfo.advancePaymentDueDate) {
+          warn = '请选择预收到期日'
+        }
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
+        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let {tdQty = '', price = item.quotedPrice ? '' : item.quotedPrice, taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
+          let {
+            tdQty = '',
+            price = item.quotedPrice,
+            taxRate = 0.16,
+            dateActivation = '',
+            executionDate = '',
+          } = this.numMap[item.inventoryCode] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
-          item.promDeliTime = promDeliTime;
+          item.dateActivation = dateActivation;
+          item.executionDate = executionDate;
         });
         this.numMap = {};
         this.matterList = sels;
-        // this.getMatPrice();
       },
       //选择默认图片
       getDefaultImg(item) {
@@ -297,19 +373,21 @@
       },
       // 提价订单
       submitOrder() {
+        let warn = '';
         if (!this.dealerInfo.dealerName) {
-          this.$vux.alert.show({
-            content: '请选择客户'
-          })
+          warn = '请选择客户';
         }
-        else if (!this.matterList.length) {
-          this.$vux.alert.show({
-            content: '请选择物料'
-          })
+        if (!warn && !this.dealerInfo.validUntil) {
+          warn = '请选择合同到期日'
         }
-        else {
-          let warn = '',
-            dataSet = [];
+        if (!warn && this.hasAdvance && !this.dealerInfo.advancePaymentDueDate) {
+          warn = '请选择预收到期日'
+        }
+        if (!warn && !this.matterList.length) {
+          warn = '请选择物料';
+        }
+        if (!warn) {
+          let dataSet = [];
           this.matterList.every(item => {
             if (!item.tdQty) {
               warn = "请填写数量";
@@ -331,73 +409,89 @@
               taxRate: taxRate, // 税金
               taxAmount: taxAmount, // 税金
               tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
-              comment: '' , // 说明
-            }
-            dataSet.push(obj)
+              dateActivation: item.dateActivation,
+              executionDate: item.executionDate,
+              comment: item.comment || '', // 说明
+            };
+            dataSet.push(obj);
             return true
-          })
-          if (warn) {
-            this.$vux.alert.show({
-              content: warn
-            })
-            return
-          }
-          this.$vux.confirm.show({
-            content: '确认提交?',
-            // 确定回调
-            onConfirm: () => {
-              this.$HandleLoad.show();
-              let operation = saveAndStartWf; // 默认有工作流
-              let wfPara = {
-                [this.processCode]: {businessKey: "SO", createdBy: ""}
-              }
-              if (this.isResubmit) {
-                wfPara = {
-                  businessKey: this.transCode,
-                  createdBy: this.formData.handler,
-                  transCode: this.transCode,
-                  result: 3,
-                  taskId: this.taskId,
-                  comment: ""
-                }
-              }
-              let submitData = {
-                listId: this.listId,
-                biComment: this.formData.biComment,
-                formData: JSON.stringify({
-                  ...this.formData,
-                  ...this.dealer,
-                  handlerEntity: this.entity.dealerName,
-                  order: {
-                    dealerDebit: this.dealerInfo.dealerCode,
-                    drDealerLabel: this.dealerInfo.dealerLabelName,
-                    drDealerPaymentTerm: this.dealer.drDealerPaymentTerm,
-                    validUntil: this.dealer.validUntil,
-                    dataSet
-                  },
-                  assMeasureUnit: null, // 辅助计量
-                  assMeasureScale: null, // 与主计量单位倍数
-                  assistQty: 0, // 辅计数量
-                  promDeliTime: '', // 预期交货日
-                }),
-                wfPara: JSON.stringify(wfPara)
-              }
-              if (this.isResubmit) { // 重新提交
-                operation = saveAndCommitTask;
-                submitData.biReferenceId = this.biReferenceId;
-              }
-              if (!this.processCode.length) { // 无工作流
-                operation = submitAndCalc;
-                delete submitData.wfPara;
-                delete submitData.biReferenceId;
-              }
-              if (this.biReferenceId) {
-                submitData.biReferenceId = this.biReferenceId
-              }
-              this.saveData(operation, submitData);
-            }
-          })
+          });
         }
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          });
+          return
+        }
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            this.$HandleLoad.show();
+            let operation = saveAndStartWf; // 默认有工作流
+            let wfPara = {
+              [this.processCode]: {businessKey: "XS1", createdBy: ""}
+            };
+            if (this.isResubmit) {
+              wfPara = {
+                businessKey: this.transCode,
+                createdBy: this.formData.handler,
+                transCode: this.transCode,
+                result: 3,
+                taskId: this.taskId,
+                comment: ""
+              }
+            }
+            let common = {
+              dealerDebit: this.dealerInfo.dealerCode,
+              drDealerLabel: this.dealerInfo.dealerLabelName,
+              drDealerPaymentTerm: this.dealerInfo.paymentTerm,
+              daysOfAccount: this.dealerInfo.pamentDays,
+            };
+            let submitData = {
+              listId: this.listId,
+              biComment: this.formData.biComment,
+              formData: JSON.stringify({
+                ...this.formData,
+                handlerEntity: this.entity.dealerName,
+                dealerDebitContactPersonName: this.contact.dealerName, // 联系人
+                dealerDebitContactInformation: this.contact.dealerMobilePhone, // 联系人电话
+                drDealerLogisticsTerms: this.dealerInfo.dealerLogisticsTerms,
+                order: {
+                  ...common,
+                  dataSet
+                },
+                inPut: {
+                  ...common,
+                  validUntil: this.dealerInfo.validUntil,
+                  dataSet: [{
+                    thenTotalAmntBal: this.thenTotalAmntBal,
+                    tdAmountCopy1: this.dealerInfo.tdAmountCopy1,
+                    advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate,
+                  }]
+                },
+                assMeasureUnit: null, // 辅助计量
+                assMeasureScale: null, // 与主计量单位倍数
+                assistQty: 0, // 辅计数量
+                promDeliTime: '', // 预期交货日
+              }),
+              wfPara: JSON.stringify(wfPara)
+            }
+            if (this.isResubmit) { // 重新提交
+              operation = saveAndCommitTask;
+              submitData.biReferenceId = this.biReferenceId;
+            }
+            if (!this.processCode.length) { // 无工作流
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
+            }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
+            this.saveData(operation, submitData);
+          }
+        })
       },
       // 获取订单信息用于重新提交
       getFormData() {
@@ -439,7 +533,7 @@
             biProcessStatus: formData.biProcessStatus,
             creator: formData.creator,
             modifer: formData.modifer,
-          }
+          };
           // 客户信息展示
           this.dealerInfo = {
             creatorName: formData.dealerDebitContactPersonName,
@@ -451,24 +545,26 @@
             province: formData.order.province_dealerDebit,
             city: formData.order.city_dealerDebit,
             county: formData.order.county_dealerDebit,
-            address: formData.order.address_dealerDebit
-          }
+            address: formData.order.address_dealerDebit,
+            paymentTerm: formData.order.drDealerPaymentTerm,
+            dealerLogisticsTerms: formData.drDealerLogisticsTerms,
+            // validUntil: formData
+          };
           // 订单信息
-          this.dealer = {
-            dealerDebitContactPersonName: formData.dealerDebitContactPersonName, //联系人
-            dealerDebitContactInformation: formData.dealerDebitContactInformation,//电话
-            drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
-            drDealerLogisticsTerms: formData.drDealerLogisticsTerms || '上门', //物流条件
+          this.contact = {
+            dealerName: formData.dealerDebitContactPersonName, //联系人
+            dealerMobilePhone: formData.dealerDebitContactInformation,//电话
           };
           // 物料列表请求参数
           this.matterParams = {
+            ...this.matterParams,
             drDealerCode: this.dealerInfo.dealerCode,
           };
           this.$loading.hide();
         })
       },
       // TODO 是否保存草稿
-      hasDraftData () {
+      hasDraftData() {
         if (!this.matterList.length) {
           return false
         }
@@ -476,7 +572,6 @@
           [DRAFT_KEY]: {
             matter: this.matterList,
             dealerInfo: this.dealerInfo,
-            dealer: this.dealer,
             formData: this.formData,
             contact: this.contact,
           }
@@ -489,11 +584,11 @@
         let draft = JSON.parse(data);
         this.matterList = draft.matter;
         this.dealerInfo = draft.dealerInfo;
-        this.dealer = draft.dealer;
         this.formData = draft.formData;
         this.contact = draft.contact;
         // 物料列表请求参数
         this.matterParams = {
+          ...this.matterParams,
           drDealerCode: this.dealerInfo.dealerCode,
         };
         sessionStorage.removeItem(DRAFT_KEY);
@@ -533,13 +628,15 @@
   .has_padding {
     padding-right: .38rem;
   }
+
   //有效期
   .no_top {
     margin-top: 0;
     margin-bottom: 0.1rem;
     background: #fff;
   }
-  .valid_until {
+
+  .cell-item {
     background: #fff;
     box-sizing: border-box;
     padding: .02rem .1rem;
@@ -547,8 +644,16 @@
     font-size: .14rem;
     align-items: center;
     justify-content: space-between;
+    height: .36rem;
+    line-height: .32rem;
+    &:before {
+      display: none;
+    }
     .title {
-      color:#757575;
+      color: #757575;
+      &.required {
+        color: #5077aa;
+      }
     }
     .mode {
       color: #111;
