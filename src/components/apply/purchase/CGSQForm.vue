@@ -204,7 +204,7 @@ export default {
           value: 'matCode',
         },
         {
-          name: '订单号',
+          name: '交易号',
           value: 'transCode'
         }
       ],
