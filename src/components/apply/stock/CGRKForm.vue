@@ -44,20 +44,17 @@
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                        <span class="processing">属性：{{item.processing}}</span>
-                        <span class='unit'>单位：{{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
-                        <span class='qty' v-show="item.qtyBal">待验收: {{item.qtyBal}}</span>
-                      </div>
-                      <div class="mater_more">
+                        <span class='unit'>单位：{{item.measureUnit_transObjCode}}</span>
                         <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                        <span>订单总数：{{item.qty}}</span>
-                        <span>已入库数：{{item.qtyed}}</span>
                       </div>
                       <div class="mater_more">
                         <span v-show="item.assMeasureUnit">辅助计量：{{item.assMeasureUnit}}</span>
                         <span v-show="item.assistQty">辅计数量：{{item.assistQty}}</span>
                       </div>
+                      <!-- <div class="mater_more">
+                        <span>订单总数：{{item.qty}}</span>
+                        <span>已入库数：{{item.qtyed}}</span>
+                      </div> -->
                       <div class="mater_more">
                         <span v-show="item.productionDate">生产日期：{{item.productionDate}}</span>
                         <span v-show="item.validUntil">有效日期：{{item.validUntil}}</span>
@@ -96,8 +93,6 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <!-- <pop-order-list :show="showOrderPop" :params="matterParams" v-model="showOrderPop" @sel-matter="selMatter"
-                          :default-value="orderList" ref="order"></pop-order-list> -->
           <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter"
                            :default-value="matterList" get-list-method="getInventory7502" :params="matterParams"
                            :filter-list="filterList" ref="matter">
@@ -112,13 +107,22 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <div>
+              <span>订单总数: {{modifyMatter.thenTotalQtyBal}}</span>
+              <span>待入库数: {{modifyMatter.thenQtyBal}}</span>
+            </div>
+            <div>
+              <span>已入库数: {{modifyMatter.thenLockQty}}</span>
+            </div>
+          </template>
           <template slot="date" slot-scope="{modifyMatter}">
             <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
                   v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
               <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
                           @on-selected="moreUnitSelected"></r-dropdown>
             </cell>
-            <cell title="待验收" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+            <cell title="待验收" text-align='right' placeholder='无' :value="modifyMatter.qtyBal"></cell>
             <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
             <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
           </template>
