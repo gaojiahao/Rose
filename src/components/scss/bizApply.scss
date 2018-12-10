@@ -10,6 +10,11 @@
     border-bottom: none;
   }
 }
+.order-title {
+  padding: 0 .04rem;
+  background: #455d7a;
+  display: inline-block;
+}
 .childPage {
   .content {
     height: 90%;
@@ -213,13 +218,10 @@
         }
         .order_title {
           background: #455d7a;
-          // border-top-left-radius: .12rem;
-          // border-bottom-left-radius: .12rem;
         }
         .order_num {
           background: #c93d1b;
           border-top-right-radius: .08rem;
-          // border-bottom-right-radius: .12rem;
         }
       }
     }

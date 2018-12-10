@@ -23,8 +23,7 @@
               <div class='finished' v-else>完成</div>
             </div>
             <div class="mater_list">
-              <div class="each_mater" :class="{'vux-1px-b' : index < matterList.length - 1}"
-                  v-for="(oItem, key, index) in orderList" :key="key">
+              <div class="each_mater" v-for="(oItem, key) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
                   <span class="order_title">物料需求计划号</span>
                   <span class="order_num">{{key}}</span>
@@ -35,12 +34,13 @@
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                        <span class="processing">属性：{{item.processing}}</span>
-                        <span class='unit'>单位：{{item.measureUnit}}</span>
-                        <span class='qty' >全部需求：{{item.allQty}}</span>
-                        <span class='qty'>已申请：{{item.qtyed}}</span>
-                        <span class='qty'>待申请： {{item.qtyBalance}}</span>
-                        <span v-show="item.promDeliTime">计划需求日期：{{item.promDeliTime}}</span>
+                        <div>
+                          <span class='unit'>单位: {{item.measureUnit}}</span>
+                          <span class='qty'>全部需求: {{item.allQty}}</span>
+                          <span class='qty'>待申请: {{item.qtyBalance}}</span>
+                        </div>
+                        <span class='qty'>已申请: {{item.qtyed}}</span>
+                        <span v-show="item.promDeliTime">计划需求日期: {{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -77,15 +77,44 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                           :default-value="matterList" get-list-method="getPurchaseInNeeds" :filter-list="filterList"
-                          ref="matter"></pop-matter-list>
+                          ref="matter">
+            <!-- 选择title插槽 -->
+            <template slot="titleName" slot-scope="props">
+              <span class="order-title">物料需求计划号</span>
+            </template>
+            <!-- 基本信息插槽 -->
+            <template slot="attribute" slot-scope="{item}">
+              <div class="mater_classify">
+                <span>主计量单位: {{item.measureUnit}}</span>
+                <span>物料类型: {{item.invType}}</span>
+              </div>
+            </template>
+            <!-- 其他信息插槽 -->
+            <template slot="storage" slot-scope="{item}">
+              <div class="mater_material">
+                <div>
+                  <span>全部需求: {{item.allQty}}</span>
+                  <span>已申请: {{item.qtyed}}</span>
+                  <span>待申请: {{item.qtyBalance}}</span>
+                </div>
+                <div>
+                  <span>合同价格: ￥{{item.quotedPrice || 0}}</span>
+                </div>
+              </div>
+            </template>
+          </pop-matter-list>
         </div>
         <!-- 物料编辑pop -->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <div>
+              <span>全部需求: {{modifyMatter.allQty}}</span>
+              <span>已申请: {{modifyMatter.qtyed}}</span>
+            </div>
+            <p>待申请: {{modifyMatter.qtyBalance}}</p>
+          </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <cell title="全部需求" v-model="modifyMatter.allQty" text-align="right"></cell>
-            <cell title="已申请" v-model="modifyMatter.qtyed" text-align="right"></cell>
-            <cell title="代申请" v-model="modifyMatter.qtyBalance" text-align="right"></cell>
             <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
               <template slot="label">
@@ -205,7 +234,7 @@ export default {
   },
   mixins: [common],
   methods: {
-    // TODO 选中物料项
+    // 选中物料项
     selMatter (val) {
       let sels = JSON.parse(val);
       let orderList = {};
@@ -264,7 +293,7 @@ export default {
       }
       arr.push(sItem);
     },
-    // TODO 判断是否展示选中图标
+    // 判断是否展示选中图标
     showSelIcon (sItem) {
       return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
     },
@@ -320,7 +349,7 @@ export default {
       }
       this.showMaterielPop = !this.showMaterielPop;
     },
-    // TODO 检查金额，取正数、保留两位小数
+    // 检查金额，取正数、保留两位小数
     checkAmt(item){
       let { price, tdQty, qtyBalance} = item;
       // 金额
@@ -484,7 +513,7 @@ export default {
         this.$loading.hide();
       })
     },
-    // TODO 是否保存草稿
+    // 是否保存草稿
     hasDraftData () {
       if (!Object.values(this.orderList).length) {
         return false

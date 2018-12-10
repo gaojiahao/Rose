@@ -140,6 +140,7 @@
     }
     // 物料信息
     .matter-info {
+      $borderNum: .04rem;
       display: flex;
       color: #757575;
       font-size: .1rem;
@@ -147,8 +148,8 @@
         color: #fff;
         padding: 0 .04rem;
         background: #3f72af;
-        border-top-left-radius: .12rem;
-        border-bottom-left-radius: .12rem;
+        border-top-left-radius: $borderNum;
+        border-bottom-left-radius: $borderNum;
       }
       .num {
         color: #111;
@@ -158,8 +159,8 @@
         white-space: nowrap;
         background: #dbe2ef;
         text-overflow: ellipsis;
-        border-top-right-radius: .12rem;
-        border-bottom-right-radius: .12rem;
+        border-top-right-radius: $borderNum;
+        border-bottom-right-radius: $borderNum;
       }
       // 物料编码、规格
       .matter-info-item {

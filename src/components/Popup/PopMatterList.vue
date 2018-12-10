@@ -13,7 +13,9 @@
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="order-code" v-if="item.transCode && !item.transCode.includes(',') && isShowCode">
-              <span class="order-title">单号</span>
+              <slot name='titleName'>
+                <span class="order-title">单号</span>
+              </slot>
               <span class="order-num">{{item.transCode}}</span>
             </div>
             <div class="order-matter">
@@ -47,20 +49,22 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
-                    <!-- 物料分类 -->
-                    <div class="mater_classify">
-                      <span class="type">属性: {{item.processing}}</span>
-                      <span class="father">大类: {{item.inventoryType || '无'}}</span>
-                      <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
-                    </div>
-
-                    <!-- 物料材质等 -->
-                    <div class="mater_material">
-                      <span class="unit">单位: {{item.measureUnit}}</span>
-                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                      <span class="spec">材质: {{item.material || '无'}}</span>
-                    </div>
-
+                    <!-- 基本信息插槽 -->
+                    <slot name='attribute' :item="item">
+                      <!-- 物料分类 -->
+                      <div class="mater_classify">
+                        <span class="type">属性: {{item.processing}}</span>
+                        <span class="father">大类: {{item.inventoryType || '无'}}</span>
+                        <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                      </div>
+                      <!-- 物料材质等 -->
+                      <div class="mater_material">
+                        <span class="unit">单位: {{item.measureUnit}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
+                      </div>
+                    </slot>
+                    <!-- 其他信息插槽 -->
                     <slot name="storage" :item="item">
                       <!-- 库存 -->
                       <div class="mater_material" v-if="item.qtyBal !== undefined">
@@ -69,7 +73,7 @@
                       <div class="mater_material" v-if="item.allQty">
                         <span class="spec">待做需求: {{item.qtyBalance}}</span>
                       </div>
-                    </slot>
+                    </slot>                  
                   </div>
                 </div>
               </div>
@@ -746,6 +750,7 @@
             }
             .order-num {
               background: #c93d1b;
+              border-top-right-radius: .08rem;
             }
           }
           .order-matter {
@@ -760,6 +765,7 @@
             img {
               width: 100%;
               max-height: 100%;
+              border-radius: .04rem;
             }
           }
           // 物料主体
@@ -782,11 +788,11 @@
               // 每个物料的索引
               .whiNum {
                 color: #fff;
-
-                padding: 0 .04rem;
                 font-size: .1rem;
+                padding: 0 .04rem;
                 display: inline-block;
                 background: #ea5455;
+                border-radius: .04rem;
                 vertical-align: middle;
                 margin: -.02rem .04rem 0 0;
               }
@@ -810,6 +816,8 @@
                   .title {
                     color: #fff;
                     background: #3f72af;
+                    border-top-left-radius: .04rem;
+                    border-bottom-left-radius: .04rem;
                   }
                   .num {
                     color: #111;
@@ -819,6 +827,8 @@
                     background: #dbe2ef;
                     box-sizing: border-box;
                     text-overflow: ellipsis;
+                    border-top-right-radius: .04rem;
+                    border-bottom-right-radius: .04rem;
                   }
                 }
                 // 规格
