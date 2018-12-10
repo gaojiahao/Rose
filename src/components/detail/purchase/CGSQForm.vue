@@ -16,10 +16,10 @@
           <div class='mater_other'>
             <div class="mater_attribute">
               <span>全部需求: {{item.productDemandQty}}</span>
-              <span>已做需求: {{item.thenLockQty}}</span>
+              <span>已申请: {{item.thenLockQty}}</span>
             </div>
             <div class="mater_num">
-              <span class="num">待做需求: {{item.tdQty}}</span>
+              <span class="num">本次需求: {{item.tdQty}}</span>
               <span class="num">估计价格: ￥{{item.price}}</span>
             </div>
             <div class="mater_price">
