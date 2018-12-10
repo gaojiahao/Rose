@@ -21,7 +21,7 @@
                 <span class='required'>工人</span>
               </template>
             </x-input>
-            <cell title='借方往来标签' v-model="workInfo.dealerLabel" :disabled="!workInfo.dealerLabel"></cell>
+            <!-- <cell title='借方往来标签' v-model="workInfo.dealerLabel" :disabled="!workInfo.dealerLabel"></cell> -->
             <cell title='物料名称' v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
               <template slot="title">
                 <span class='required'>物料名称
@@ -39,8 +39,8 @@
           <pop-work-start-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                                @sel-work="selWork"></pop-work-start-list>
         </div>
-        <div class="warehouse or_ads mg_auto" v-show="workInfo.whInCode">
-          <div class="title">仓库</div>
+        <div class="warehouse materiel_list" v-show="workInfo.whInCode">
+          <div class="title required">仓库</div>
           <div class="mode">
             <span class="mode-item">{{workInfo.wareName}}</span>
             <span class="mode-item">{{workInfo.whInCode}}</span>
@@ -54,9 +54,20 @@
         <pop-facility-list @sel-item="selFacility" :default-value="facility"></pop-facility-list>
         <div class="materiel_list" v-show="bomList.length">
           <bom-list :boms="bomList">
-            <template slot-scope="{bom}" slot="number">
+            <!-- <template slot-scope="{bom}" slot="number">
               <div class="number-part">
                 <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit}}</span>
+              </div>
+            </template> -->
+            <template slot-scope="{bom}" slot="specification">
+              <div class="content-unit">
+                <span>型号规格：{{bom.specification}}</span>
+              </div>
+            </template>
+            <template slot-scope="{bom}" slot="number">
+              <div class="number-part">
+                <span class="main-number">数量: {{bom.tdQty || 0}}{{bom.measureUnit}}</span>
+                <span class="number-unit">bom数量: {{bom.qty}}</span>
               </div>
             </template>
           </bom-list>
@@ -334,6 +345,10 @@
     .warehouse {
       .mode {
         font-size: 0;
+      }
+      .required{
+        font-weight: bold;
+        color: #5077aa;
       }
       .mode-item {
         margin-right: .1rem;
