@@ -303,7 +303,18 @@ export default {
           item.itemCount = item.detailItem.length;
           // 只取有物料编码的
           let detailItem = item.detailItem.reduce((arr, item) => {
-            if (item.inventoryCode_transObjCode || item.inventoryCode_outPutMatCode || item.facilityCode_facilityObjCode || item.opportunityTitle) {
+            let containList = [
+              'inventoryCode_transObjCode',
+              'inventoryCode_outPutMatCode',
+              'facilityCode_facilityObjCode',
+              'opportunityTitle',
+              'fundCode_cashInCode',
+              'fundCode_cashOutCode',
+            ];
+            let flag = containList.findIndex(key => {
+              return !!item[key]
+            }) !== -1;
+            if (flag) {
               arr.push(item);
             }
             return arr

@@ -11,7 +11,7 @@
                   :no-data="!hasNext && !costList.length" @on-pulling-up="onPullingUp"
                    ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in costList" :key='index'
-               @click.stop="selThis(item, index)">  
+               @click.stop="selThis(item, index)">
             <div class="mater_main ">
               <!-- 物料名称 -->
               <div class="cost_name">
@@ -90,7 +90,11 @@
           this.setDefaultValue();
         }
       },
-
+      groupId: {
+        handler() {
+          this[this.getListMethod]();
+        }
+      }
     },
     methods: {
       // TODO 弹窗展示时调用

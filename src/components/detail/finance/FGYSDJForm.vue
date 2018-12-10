@@ -133,7 +133,9 @@
           // 获取合计
           let {dataSet} = formData.order;
           for (let val of dataSet) {
-            this.count = accAdd(this.count, val.tdAmount);
+            if (val.tdAmount) {
+              this.count = accAdd(this.count, val.tdAmount);
+            }
           }
           data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
           this.orderInfo = data.formData;
