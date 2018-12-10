@@ -1,8 +1,8 @@
 <template>
-  <div v-if="cellContent" class="each_cell" :class="{'vux-1px-t' : showTopBorder, 'when-is-right' : textRight}">
+  <div class="each_cell" :class="{'vux-1px-t' : showTopBorder, 'when-is-right' : textRight}">
     <span class="cell_name">{{ cellTitle }}: </span>
     <span class="cell_content">
-      <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent }}
+      <span class="symbol" v-if="showSymbol">￥</span>{{ cellContent || '无' }}
     </span>
   </div>
 </template>
