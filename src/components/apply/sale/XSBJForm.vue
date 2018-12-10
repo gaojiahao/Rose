@@ -301,9 +301,26 @@
           return true
         });
         this.matterList.every(item => {
-          if (!item.price) {
+          let {tdQty, price} = item;
+          if (!tdQty && tdQty !== 0) {
+            warn = "请输入需求数量";
+            return false;
+          } else if (tdQty < item.qtyDownline) {
+            warn = "需求数量不能小于最小数量";
+            return false;
+          } else if (tdQty > item.qtyOnline) {
+            warn = "需求数量不能大于最大数量";
+            return false;
+          }
+          if (!price) {
             warn = '请输入单价';
             return false
+          } else if (price < item.specialReservePrice) {
+            warn = "需求数量不能小于特批底价";
+            return false;
+          } else if (price > item.standardPrice) {
+            warn = "需求数量不能大于标准价格";
+            return false;
           }
           let taxRate = item.taxRate || this.taxRate;
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
