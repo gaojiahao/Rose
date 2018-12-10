@@ -68,7 +68,7 @@
       // 获取详情
       getOrderList(transCode = '') {
         return findProjectApproval(transCode).then(({formData = {},attachment = []}) => {
-          this.approval = formData.approval;
+          this.approval = formData.projectApproval;
           this.attachment = attachment;
           this.comment = formData.comment;
           this.orderInfo = {
