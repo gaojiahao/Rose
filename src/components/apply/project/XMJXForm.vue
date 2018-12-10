@@ -8,7 +8,7 @@
         <!-- 项目-->
         <pop-name-list @sel-item="selProject" :default-value="projectApproval"></pop-name-list>
         <!-- 实际情况 -->
-        <div class="or_ads mg_auto">
+        <div class="materiel_list">
           <p class="title">实际情况</p>
           <group>
             <datetime title="实际开始日期" v-model="projectTime.actualStartTime">
@@ -21,15 +21,15 @@
         </div>
         <!-- 资金明细 -->
         <!--<div class="" v-show="projectConclusion.length">-->
-        <div class="or_ads mg_auto project-amt" v-show="projectConclusion.length">
+        <div class="materiel_list project-amt" v-show="projectConclusion.length">
           <p class="title">资金明细</p>
           <div class="project_content" :class="{'vux-1px-b': index !== projectConclusion.length - 1}"
                v-for="(item, index) in projectConclusion">
-            <form-cell :cellTitle="`实际${item.conclusionName}`" showSymbol textRight
+            <form-cell :cellTitle="`实际${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                        :cellContent="numberComma(item.actual)" :showTopBorder="false"></form-cell>
-            <form-cell :cellTitle="`预算${item.conclusionName}`" showSymbol textRight
+            <form-cell :cellTitle="`预算${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                        :cellContent="numberComma(item.budget)" :showTopBorder="false"></form-cell>
-            <form-cell :cellTitle="`差额${item.conclusionName}`" showSymbol textRight
+            <form-cell :cellTitle="`差额${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                        :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
           </div>
         </div>

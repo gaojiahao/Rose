@@ -7,7 +7,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :default-contact="contactInfo" dealer-label-name="供应商"></pop-dealer-list>
+                         :default-contact="contactInfo" dealer-label-name="经销供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm" isRequired
                            v-model="dealerInfo.paymentTerm"></pop-single-select>
@@ -295,6 +295,7 @@
           ...sel,
           accountExpirationDate: accountExpirationDate,
         };
+        console.log(sel)
         this.matterParams = {
           ...this.matterParams,
           dealerCode: sel.dealerCode

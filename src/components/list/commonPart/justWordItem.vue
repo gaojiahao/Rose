@@ -95,13 +95,14 @@ export default {
   computed: {
     total() {
       let {count, totalAmount, budgetIncome_project} = this.item;
-      if (count != null) {
+      if(budgetIncome_project) {
+        return budgetIncome_project
+      }
+      else if (count != null) {
         return count
       } else if (totalAmount || totalAmount === 0) {
         return totalAmount
-      } else if (budgetIncome_project) {
-        return budgetIncome_project
-      }
+      } 
     }
   },
   filters: {

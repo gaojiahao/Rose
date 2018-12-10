@@ -11,7 +11,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.order.dataSet">
+      <matter-list :matter-list="orderInfo.order.dataSet" :count="count">
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_attribute">
@@ -20,11 +20,11 @@
           </div>
           <div class="mater_attribute">
             <span>本次申请: {{item.tdQty}}</span>
-            <span>估计金额: {{item.tdAmount}}</span>
+            <span>估计价格: {{item.price}}</span>
           </div>
           <div class="mater_price">
             <span class="diff_num">
-              ￥{{item.price | toFixed}}
+              ￥{{item.tdAmount | toFixed}}
             </span>
           </div>
         </div>
@@ -53,13 +53,14 @@ import RAction from 'components/RAction'
 import contactPart from 'components/detail/commonPart/ContactPart'
 import MatterList from 'components/detail/commonPart/MatterList'
 import UploadFile from 'components/upload/UploadFile'
-
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
 export default {
   data() {
     return {
       orderInfo: {},      // 表单内容
       formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
       attachment: [],
+      count: 0,
     }
   },
   mixins: [detailCommon],
@@ -95,6 +96,7 @@ export default {
         // 获取合计
         let {dataSet} = order;
         for (let val of dataSet) {
+          this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
