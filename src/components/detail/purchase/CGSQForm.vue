@@ -17,7 +17,6 @@
             <div class="mater_attribute">
               <span>全部需求: {{item.productDemandQty}}</span>
               <span>已做需求: {{item.thenLockQty}}</span>
-              <span>起订量: {{item.moq_transObjCode || 0}}</span>
             </div>
             <div class="mater_num">
               <span class="num">待做需求: {{item.tdQty}}</span>
