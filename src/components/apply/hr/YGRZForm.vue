@@ -13,7 +13,7 @@
                 <div class="title">员工信息</div>
                 <group class="SJ_group" @group-title-margin-top="0">
                   <pop-salesman-list title="员工" dealer-label-name="员工" :value="formData.salesPerson"
-                                     v-model="formData.hiresName">
+                                     v-model="formData.hiresName" required>
                     <template slot="title">
                       <span class='required'>员工
                       </span>
@@ -73,7 +73,7 @@
       }
     },
     components: {
-      Cell,Group, XInput, 
+      Cell,Group, XInput,
       Datetime, XTextarea, PopupPicker,
       RPicker, PopBaseinfo, PopSalesmanList
     },
@@ -134,8 +134,8 @@
               ...this.formData,
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
-              hiresDepartMent: this.formData.hiresDepartMent[0],
-              hiresPost: this.formData.hiresPost[0]
+              hiresDepartMent: this.formData.hiresDepartMent && this.formData.hiresDepartMent[0],
+              hiresPost: this.formData.hiresPost && this.formData.hiresPost[0]
             };
             let submitData = {
               listId: this.listId,

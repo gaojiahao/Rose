@@ -96,7 +96,7 @@
             </x-input>
             <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">单价</span>
+              <span class='required' slot="label">本次报价</span>
             </x-input>
             <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
                      @on-blur="checkRate(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
@@ -313,7 +313,7 @@
             return false;
           }
           if (!price) {
-            warn = '请输入单价';
+            warn = '请输入本次报价';
             return false
           } else if (price < item.specialReservePrice) {
             warn = "需求数量不能小于特批底价";

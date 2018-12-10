@@ -13,14 +13,16 @@
                 <div class="title">员工信息</div>
                 <group class="SJ_group" @group-title-margin-top="0">
                   <pop-salesman-list title="员工" dealer-label-name="员工" :value="formData.salesPerson"
-                                     v-model="formData.turnoverName">
+                                     v-model="formData.turnoverName" required>
                     <template slot="title">
                       <span class='required'>员工
                       </span>
                     </template>
                   </pop-salesman-list>
-                  <popup-picker title="部门" :data="groupList" v-model="formData.turnoverDepartMent" placeholder="请选择"></popup-picker>
-                  <popup-picker title="岗位" :data="roleList" v-model="formData.turnoverPost" placeholder="请选择"></popup-picker>
+                  <popup-picker title="部门" :data="groupList" v-model="formData.turnoverDepartMent"
+                                placeholder="请选择"></popup-picker>
+                  <popup-picker title="岗位" :data="roleList" v-model="formData.turnoverPost"
+                                placeholder="请选择"></popup-picker>
                   <datetime v-model="formData.turnoverDate" placeholder='请选择日期' title="离职日期"></datetime>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
@@ -41,12 +43,12 @@
 <script>
   // vux组件引入
   import {
-    Cell,Group, XInput, Datetime, XTextarea, dateFormat, PopupPicker
+    Cell, Group, XInput, Datetime, XTextarea, dateFormat, PopupPicker
   } from 'vux'
   // 请求 引入
-  import { getSOList } from 'service/detailService'
-  import { getAllGroup, getAllRoleInfo } from 'service/hr/employeeService'
-  import { submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType } from 'service/commonService'
+  import {getSOList} from 'service/detailService'
+  import {getAllGroup, getAllRoleInfo} from 'service/hr/employeeService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask, getDictByType} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon.js'
   // 组件引入
@@ -57,7 +59,7 @@
   const DRAFT_KEY = 'YGLZ_DATA';
 
   export default {
-    data () {
+    data() {
       return {
         listId: 'da7f15cc-d2d7-11e8-b8ca-0279b2c6a380',
         formData: {
@@ -73,14 +75,14 @@
       }
     },
     components: {
-      Cell,Group, XInput, 
+      Cell, Group, XInput,
       Datetime, XTextarea, PopupPicker,
       RPicker, PopBaseinfo, PopSalesmanList
     },
     mixins: [common],
     methods: {
       // 获取所有的部门
-      getAllGroup(){
+      getAllGroup() {
         getAllGroup().then(data => {
           let arr = []
           data.tableContent.forEach(item => {
@@ -90,7 +92,7 @@
         })
       },
       // 获取所有的岗位
-      getAllRoleInfo(){
+      getAllRoleInfo() {
         getAllRoleInfo().then(data => {
           let arr = []
           data.tableContent.forEach(item => {
@@ -100,7 +102,7 @@
         })
       },
       // TODO 提交
-      submitOrder () {
+      submitOrder() {
         let warn = '';
         let validateMap = [
           {
@@ -134,8 +136,8 @@
               ...this.formData,
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
-              turnoverDepartMent: this.formData.turnoverDepartMent[0],
-              turnoverPost: this.formData.turnoverPost[0]
+              turnoverDepartMent: this.formData.turnoverDepartMent && this.formData.turnoverDepartMent[0],
+              turnoverPost: this.formData.turnoverPost && this.formData.turnoverPost[0]
             };
             let submitData = {
               listId: this.listId,
@@ -168,7 +170,7 @@
         });
       },
       // TODO 是否保存草稿
-      hasDraftData () {
+      hasDraftData() {
         let formData = this.formData;
         if (formData.profileName || formData.idCard) {
           return {
@@ -179,7 +181,7 @@
         }
       },
     },
-    created () {
+    created() {
       this.getAllGroup();
       this.getAllRoleInfo();
       let data = sessionStorage.getItem(DRAFT_KEY);
@@ -194,9 +196,11 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
+
   .materiel_list .mater_list .each_mater {
     padding: unset;
   }
+
   .sj-apply-container {
     .SJ_group {
 
@@ -207,7 +211,7 @@
       /deep/ > .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/> .weui-cells {
+      /deep/ > .weui-cells {
         font-size: .16rem;
         .vux-tap-active {
           .vux-label {
@@ -220,10 +224,10 @@
         }
       }
       .vux-cell-box {
-        &:before{
+        &:before {
           left: 0;
         }
-        /deep/ >.weui-cell {
+        /deep/ > .weui-cell {
           padding: 10px 0;
         }
       }

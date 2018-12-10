@@ -1,7 +1,7 @@
 <template>
   <div class="pop-salesman-list-container">
     <div class="SJForm_cell" @click="itemClick">
-      <div>{{title}}</div>
+      <div :class="{required: required}">{{title}}</div>
       <div class="value">{{currentValue || '请选择'}}</div>
     </div>
     <!-- 销售人员、渠道popup -->
@@ -55,6 +55,10 @@
       value: {
         type: String,
         default: ''
+      },
+      required: {
+        type: Boolean,
+        default: false
       }
     },
     directives: {TransferDom},
@@ -176,6 +180,10 @@
       color: #D9D9D9;
       transform-origin: 0 0;
       transform: scaleY(0.5);
+    }
+    .required {
+      font-weight: bold;
+      color: #5077aa;
     }
     .value {
       color: #757575;
