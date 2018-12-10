@@ -2,7 +2,7 @@
   <div class="r-date-container" @click="clickDateSelect">
     <div class="title">{{title}}</div>
     <div class="mode">
-      <span class="mode_content">{{time || `请选择${title}`}}</span>
+      <span class="mode_content">{{time || placeholder || `请选择${title}`}}</span>
       <span class="iconfont icon-shenglve"></span>
     </div>
   </div>
@@ -23,6 +23,20 @@
       required: {
         type: Boolean,
         default: false
+      },
+      placeholder: {
+        type: String,
+        default: ''
+      },
+      // 起始日期
+      startDate: {
+        type: String,
+        default: '',
+      },
+      // 结束日期
+      endDate: {
+        type: String,
+        default: '',
       }
     },
     data() {
@@ -45,6 +59,8 @@
           confirmText: '确定',
           cancelText: '取消',
           value: this.time,
+          startDate: this.startDate,
+          endDate: this.endDate,
           onConfirm: (value) => {
             this.time = value;
             this.$emit('input', value);

@@ -18,15 +18,20 @@
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_attribute">
             <span>属性: {{item.processing_transObjCode}}</span>
-            <span>计量单位: {{item.measureUnit_transObjCode}}</span>
+            <span>单位: {{item.measureUnit_transObjCode}}</span>
+            <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
           </div>
-          <div class="mater_price">
-            <span class="diff_num">
-              ￥{{item.price | toFixed}}
-            </span>
-            <span class="num">
-              [价格类型: {{item.priceType}}]
-            </span>
+          <div class="mater_attribute">
+            <span>需求数量: {{item.tdQty}}</span>
+            <span>本次报价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+          </div>
+          <div class='mater_price'>
+            <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+            <span class="num"
+                  :style="{display:(item.tdAmount && item.tdAmount.toString().length > 9 ? 'block' : '')}"
+                  v-if="item.taxRate">
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                </span>
           </div>
         </div>
       </matter-list>
