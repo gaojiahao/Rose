@@ -12,11 +12,11 @@
       <div class="mater_info">
         <!-- 物料编码 -->
         <span class="info-item">
-          物料编码: {{item.transObjCode || item.facilityObjCode || '无'}}
+          编码: {{item.transObjCode || item.facilityObjCode || '无'}}
         </span>
         <!-- 物料规格 -->
         <span class="info-item">
-          型号规格: {{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || '无'}}
+          规格: {{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || '无'}}
         </span>
       </div>
       <slot name="other" :item="item">

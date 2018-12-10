@@ -378,13 +378,14 @@
     }
     .r-arrow {
       top: 50%;
-      right: 7px;
+      right: -3px;
       font-weight: bold;
       position: absolute;
       transform: translate(0, -50%);
     }
     .dealer-info {
       width: 100%;
+      position: relative;
       .user-content {
         .user-info {
           font-size: 0;
