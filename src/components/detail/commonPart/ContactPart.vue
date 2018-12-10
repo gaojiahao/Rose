@@ -152,5 +152,15 @@
     .vux-1px-t:before {
       border-color: #e8e8e8;
     }
+    .other {
+      padding-bottom: .06rem;
+      font-size: .14rem;
+      .title {
+        font-weight: bold;
+      }
+      .mode {
+        color: #454545;
+      }
+    }
   }
 </style>
