@@ -10,13 +10,13 @@
             <span>招聘信息</span>
           </div>
         </div>
-        <form-cell cellTitle="申请部门" :cellContent="userData.applicationDepartment"></form-cell>
-        <form-cell cellTitle="申请岗位" :cellContent="userData.applicationPost"></form-cell>
-        <form-cell cellTitle="招聘人数" :cellContent="userData.recruitmentPeople"></form-cell>
-        <form-cell cellTitle="任职要求" :cellContent="userData.jobRequirements"></form-cell>
-        <form-cell cellTitle="岗位描述" :cellContent="userData.postDescription"></form-cell>
-        <form-cell cellTitle="招聘原因" :cellContent="userData.recruitmentReson"></form-cell>
-        <form-cell cellTitle="备注" :cellContent="userData.biComment"></form-cell>
+        <form-cell cellTitle="申请部门" :cellContent="userData.applicationDepartment || '无'"></form-cell>
+        <form-cell cellTitle="申请岗位" :cellContent="userData.applicationPost || '无'"></form-cell>
+        <form-cell cellTitle="招聘人数" :cellContent="userData.recruitmentPeople || '无'"></form-cell>
+        <form-cell cellTitle="任职要求" :cellContent="userData.jobRequirements || '无'"></form-cell>
+        <form-cell cellTitle="岗位描述" :cellContent="userData.postDescription || '无'"></form-cell>
+        <form-cell cellTitle="招聘原因" :cellContent="userData.recruitmentReson || '无'"></form-cell>
+        <form-cell cellTitle="备注" :cellContent="userData.biComment || '无'"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
     </div>

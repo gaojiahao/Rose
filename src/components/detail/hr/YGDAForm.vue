@@ -10,15 +10,15 @@
             <span>员工信息</span>
           </div>
         </div>
-        <form-cell cellTitle="员工" :cellContent="userData.profileName"></form-cell>
-        <form-cell cellTitle="身份证号" :cellContent="userData.idCard"></form-cell>
-        <form-cell cellTitle="紧急联系人" :cellContent="userData.urgentContact"></form-cell>
-        <form-cell cellTitle="联系方式" :cellContent="userData.profileContact"></form-cell>
-        <form-cell cellTitle="地址" :cellContent="userData.profileAddress"></form-cell>
-        <form-cell cellTitle="学历" :cellContent="userData.education"></form-cell>
-        <form-cell cellTitle="合同日期" :cellContent="userData.contractPeriod"></form-cell>
-        <form-cell cellTitle="入职日期" :cellContent="userData.entryDate | date"></form-cell>
-        <form-cell cellTitle="备注" :cellContent="userData.biComment"></form-cell>
+        <form-cell cellTitle="员工" :cellContent="userData.profileName || '无'"></form-cell>
+        <form-cell cellTitle="身份证号" :cellContent="userData.idCard || '无'"></form-cell>
+        <form-cell cellTitle="紧急联系人" :cellContent="userData.urgentContact || '无'"></form-cell>
+        <form-cell cellTitle="联系方式" :cellContent="userData.profileContact || '无'"></form-cell>
+        <form-cell cellTitle="地址" :cellContent="userData.profileAddress || '无'"></form-cell>
+        <form-cell cellTitle="学历" :cellContent="userData.education || '无'"></form-cell>
+        <form-cell cellTitle="合同日期" :cellContent="userData.contractPeriod || '无'"></form-cell>
+        <form-cell cellTitle="入职日期" :cellContent="userData.entryDate || '无' | date"></form-cell>
+        <form-cell cellTitle="备注" :cellContent="userData.biComment || '无'"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
     </div>

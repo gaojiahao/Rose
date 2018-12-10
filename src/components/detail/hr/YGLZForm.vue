@@ -10,11 +10,11 @@
             <span>员工信息</span>
           </div>
         </div>
-        <form-cell cellTitle="员工" :cellContent="userData.turnoverName"></form-cell>
-        <form-cell cellTitle="部门" :cellContent="userData.turnoverDepartMent"></form-cell>
-        <form-cell cellTitle="岗位" :cellContent="userData.turnoverPost"></form-cell>
-        <form-cell cellTitle="离职日期" :cellContent="userData.turnoverDate"></form-cell>
-        <form-cell cellTitle="备注" :cellContent="userData.biComment"></form-cell>
+        <form-cell cellTitle="员工" :cellContent="userData.turnoverName || '无'"></form-cell>
+        <form-cell cellTitle="部门" :cellContent="userData.turnoverDepartMent || '无'"></form-cell>
+        <form-cell cellTitle="岗位" :cellContent="userData.turnoverPost || '无'"></form-cell>
+        <form-cell cellTitle="离职日期" :cellContent="userData.turnoverDate || '无'"></form-cell>
+        <form-cell cellTitle="备注" :cellContent="userData.biComment || '无'"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
     </div>

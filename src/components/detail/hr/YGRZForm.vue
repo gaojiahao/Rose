@@ -11,10 +11,10 @@
           </div>
         </div>
         <form-cell cellTitle="员工" :cellContent="userData.hiresName"></form-cell>
-        <form-cell cellTitle="部门" :cellContent="userData.hiresDepartMent"></form-cell>
-        <form-cell cellTitle="岗位" :cellContent="userData.hiresPost"></form-cell>
-        <form-cell cellTitle="体检日期" :cellContent="userData.examinationDate"></form-cell>
-        <form-cell cellTitle="备注" :cellContent="userData.biComment"></form-cell>
+        <form-cell cellTitle="部门" :cellContent="userData.hiresDepartMent || '无'"></form-cell>
+        <form-cell cellTitle="岗位" :cellContent="userData.hiresPost || '无'"></form-cell>
+        <form-cell cellTitle="体检日期" :cellContent="userData.examinationDate || '无'"></form-cell>
+        <form-cell cellTitle="备注" :cellContent="userData.biComment || '无'"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
     </div>
