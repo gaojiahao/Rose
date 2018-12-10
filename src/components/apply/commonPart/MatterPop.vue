@@ -29,7 +29,20 @@
               </div>
             </div>
             <slot name='materUnit'></slot>
-            <template v-if="modifyMatter.inventoryCode">
+            <!-- 设施 -->
+            <template v-if="modifyMatter.facilityName">
+              <!-- 物料属性和单位 -->
+              <div class="mater_more">
+                <span class="processing">类型: {{modifyMatter.facilityType}}</span>
+                <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
+                <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
+              </div>
+              <div class="mater_more">
+                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
+                <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
+              </div>
+            </template>
+            <template v-else>
               <!-- 物料属性和单位 -->
               <div class="mater_more">
                 <span class="processing">属性: {{modifyMatter.processing}}</span>
@@ -44,22 +57,6 @@
                 </slot>
               </div>
             </template>
-            <!-- 设施 -->
-            <template v-else-if="modifyMatter.facilityName">
-              <!-- 物料属性和单位 -->
-              <div class="mater_more">
-                <span class="processing">类型: {{modifyMatter.facilityType}}</span>
-                <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
-                <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
-              </div>
-              <div class="mater_more">
-                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
-                <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
-              </div>
-            </template>
-            <div class="mater_more">
-              <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
-            </div>
           </div>
         </div>
         <group class='mg_auto'>
