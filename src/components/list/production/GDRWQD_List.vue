@@ -66,8 +66,8 @@ export default {
         query: {
           name,
           childId,
-          inventoryCode: val.matCode,
-          proPointCode: val.proPointCode,
+          inventoryCode: val[0].matCode,
+          proPointCode: val[0].proPointCode,
         }
       })
     }

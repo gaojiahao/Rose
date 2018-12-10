@@ -39,7 +39,8 @@
                 </span>
               </template>
             </cell>
-            <cell title="加工属性" v-model="workInfo.processing" :disabled="!workInfo.processing"></cell>
+            <cell title="制造费用" v-model="workInfo.skinFee" :disabled="!workInfo.skinFee"></cell>
+            <cell title="工价" v-model="workInfo.wages" :disabled="!workInfo.wages"></cell>
           </group>
           <!-- 物料popup -->
           <pop-work-check-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
@@ -48,8 +49,6 @@
         <pop-manager-list title='验收者' @sel-item="selManager" :defaultValue="defaultManager"></pop-manager-list>
         <pop-warehouse-list title="入库仓库" :filter-params="filterParams" :default-value="warehouse"
                             @sel-item="selWarehouse" isRequired></pop-warehouse-list>
-        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
-                  v-model="biProcessStatus" :hasBorder="false"></r-picker>
         <div class="materiel_list" v-show="bomList.length">
           <bom-list :boms="bomList">
             <template slot-scope="{bom}" slot="number">
@@ -192,22 +191,29 @@
         dataSet.push({
           transMatchedCode: workInfo.transCode, // 工单任务号
           orderCode: workInfo.orderCode, // 工单任务号
+          processCode: workInfo.processCode,
           proPointCode: workInfo.proPointCode, // 工序编码
           thenQtyBal: workInfo.qtyBal, // 可验收余额
           tdQty: workInfo.tdQty, // 本次验收
-          rearProPointCode: workInfo.rearProPointCode, // 后置工序编码
+          rearProPointCode: workInfo.rearProPointCode || '', // 后置工序编码
           dealerDebit: workInfo.dealerDebit, // 验收人
           proFlowCode: workInfo.proFlowCode || '',
           transObjCode: workInfo.matCode, // 物料编码
           tdProcessing: workInfo.processing,// 加工属性
+          skinFee: workInfo.skinFee,
+          wages: workInfo.wages
         });
 
         this.bomList.forEach(item => {
           outPutDataSet.push({
             inventoryName_outPutMatCode: item.inventoryName,
             outPutMatCode: item.inventoryCode,
+            proPointCode: workInfo.proPointCode,
             transMatchedCode: workInfo.transCode,
+            orderCode: workInfo.orderCode,
+            processCode: workInfo.processCode,
             parentInventoryCode: workInfo.matCode,
+            processProCode: workInfo.matCode,
             tdProcessing: item.processing,
             specification_outPutMatCode: item.specification,
             measureUnit_outPutMatCode: item.measureUnit,
@@ -215,7 +221,6 @@
             bomType: item.bomType,
             bomQty: item.qty,
             tdQty: item.tdQty,
-            orderCode: workInfo.orderCode,
           })
         });
 

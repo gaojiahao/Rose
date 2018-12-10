@@ -110,7 +110,7 @@
         ],
         filterProperty: '',
         inventoryCode: '', // 物料编码
-        proPointCode: '', // 工艺编码
+        orderCode: '', // 工艺编码
       }
     },
     watch: {
@@ -177,8 +177,8 @@
             },
             {
               operator: 'eq',
-              value: this.proPointCode,
-              property: 'proPointCode'
+              value: this.orderCode,
+              property: 'transCode'
             },
           ];
         }
@@ -189,7 +189,7 @@
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           if (this.inventoryCode) {
-            let matched = tableContent.find(item => item.matCode === this.inventoryCode && item.proPointCode === this.proPointCode);
+            let matched = tableContent.find(item => item.matCode === this.inventoryCode && item.transCode === this.orderCode);
             if (matched) {
               this.selThis(matched);
             }
@@ -218,9 +218,9 @@
       },
     },
     created() {
-      let {inventoryCode = '', proPointCode = ''} = this.$route.query;
+      let {inventoryCode = '', orderCode = ''} = this.$route.query;
       this.inventoryCode = inventoryCode;
-      this.proPointCode = proPointCode;
+      this.orderCode = orderCode;
       this.setDefaultValue();
       this.getWorkOrderTask();
     }

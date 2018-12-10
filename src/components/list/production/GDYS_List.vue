@@ -68,8 +68,8 @@
           query: {
             name,
             childId,
-            inventoryCode: val.matCode,
-            proPointCode: val.proPointCode,
+            inventoryCode: val[0].matCode,
+            orderCode: val[0].transCode,
           }
         })
       }

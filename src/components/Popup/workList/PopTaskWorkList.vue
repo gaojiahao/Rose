@@ -1,6 +1,6 @@
 <template>
   <!-- 物料popup -->
-  <div v-transfer-dom>
+ <div v-transfer-dom>
     <popup v-model="showPop" height="100%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
@@ -9,41 +9,29 @@
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
-          <div class="each-work box_sd"  v-for='(value, i) in taskWorkList' :key='i'  v-if="value.qtyBalance>0"
-               @click.stop="selThis(value, i)">
+           <div class="each-work box_sd"  v-for='(item, index) in taskWorkList' :key='index'  v-if="item.qtyBalance>0"
+               @click.stop="selThis(item, index)">
             <div class="work-main">
               <div class="work_mid">
                 <div class="product_name">
-                  {{value.inventoryName}}<span class="symbol">[{{value.invProcessing}}]</span>
-                </div>
-                <div class="product_unit">
-                  <span class="each_unit">工序: {{value.procedureName}}</span>
-                  <span class="each_unit">可{{workType}}: {{value.qtyBalance}}</span>
-                </div>
-                <div class="arrow" @click.stop="value.showDrop = !value.showDrop">
-                  <x-icon type="ios-arrow-down" :class="{'arrow-up': value.showDrop}" size="14"></x-icon>
+                  {{item.inventoryName}}<span class="symbol">[{{item.invProcessing}}]</span>
                 </div>
               </div>
-              <ul class="order_list" v-show="value.showDrop">
-                <li v-for="(item,index) in value.list" :key="index" class="each_order vux-1px-b">
-                  <div class="order">
-                    <span class="order_title">加工订单号:</span>
-                    <span class="order_code">{{item.transCode}}</span>
-                  </div>
-                  <div class="work_mid">
-                    <div class="product_unit">
-                      <span class="each_unit">总数: {{item.drQty}}</span>
-                      <span class="each_unit">已{{workType}}: {{item.crQty}}</span>
-                      <span class="each_unit">可{{workType}}: {{item.qtyBalance}}</span>
-                    </div>
-                  </div>
-
-                </li>
-              </ul>
+              <div class="work_mid">
+                <div class="product_unit">
+                  <span class="each_unit">加工订单号: {{item.transCode}}</span>
+                  <span class="each_unit">工序: {{item.procedureName}}</span>
+                </div>
+                <div class="product_unit">
+                  <span class="each_unit">总数: {{item.drQty}}</span>
+                  <span class="each_unit">已{{workType}}: {{item.crQty}}</span>
+                  <span class="each_unit">可{{workType}}: {{item.qtyBalance}}</span>
+                </div>
+              </div>
             </div>
             <!-- icon -->
-            <x-icon class="selIcon" type="ios-circle-outline" size="20" v-show="!value.isStartTask"></x-icon>
-            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="value.isStartTask"></x-icon>
+            <x-icon class="selIcon" type="ios-circle-outline" size="20" ></x-icon>
+            <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
           </div>
         </r-scroll>
         <div class="btn vux-1px-t">
@@ -127,12 +115,13 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       // TODO 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
+        this.selItems = []
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.matCode === item.matCode && sItem.procedureName === item.procedureName) {
+          if (sItem.matCode === item.matCode && sItem.transCode === item.transCode) {
             flag = true;
             return false;
           }
@@ -145,13 +134,18 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        for(let key in this.taskWorkList){
-          let value = this.taskWorkList[key];
-          value.isStartTask = value.matCode === sItem.matCode && value.procedureName === sItem.procedureName ?
-                              !value.isStartTask : false
+        console.log(sItem)
+        let arr = this.selItems;
+        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode);
+        // 若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          if(!arr.length){
+             this.btnText = '关闭'
+          }
+          return;
         }
-        this.btnText = sItem.isStartTask ? `发起工单${this.workType}`: '关闭';
-        this.selItems = sItem;
+        this.selItems = [sItem];
       },
       // TODO 获取物料列表
       getWorkOrderTask() {
@@ -170,31 +164,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           ...this.params,
           filter: JSON.stringify(filter),
         }).then(({data = []}) => {
-          data.forEach(item=>{
-            if(!this.taskWorkList[`${item.inventoryName}_${item.procedureName}`]){
-              let obj = {
-                inventoryName: item.inventoryName,
-                invProcessing: item.invProcessing,
-                inventoryPic: `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`,
-                matCode: item.matCode,
-                measureUnit: item.measureUnit,
-                proPointCode: item.proPointCode,
-                procedureName: item.procedureName,
-                qtyBalance: item.qtyBalance,
-                isStartTask : false,
-                showDrop: false,
-                list: [item]
-
-              }
-              this.$set(this.taskWorkList, `${item.inventoryName}_${item.procedureName}`, obj)
-            }
-            else{
-              let qty = this.taskWorkList[`${item.inventoryName}_${item.procedureName}`].qtyBalance;
-              this.taskWorkList[`${item.inventoryName}_${item.procedureName}`].qtyBalance = accAdd( qty,item.qtyBalance);
-              this.taskWorkList[`${item.inventoryName}_${item.procedureName}`].list.push(item);
-            }
-
-          })
+          this.taskWorkList = data;
         });
         console.log(this.taskWorkList);
       },
@@ -400,6 +370,11 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }
           .isSelIcon {
             fill: #5077aa;
+          }
+          .order{
+            font-size: .14rem;
+            padding: .02rem 0;
+            font-weight: bold;
           }
           .order_list{
             padding-left: .24rem;
