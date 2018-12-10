@@ -84,7 +84,8 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span v-show="modifyMatter.qtyBal">可退货数量: {{modifyMatter.qtyBal}}</span>
+            <p v-show="modifyMatter.thenQtyBal">可退货数量: {{modifyMatter.thenQtyBal}}</p>
+            <p v-show="modifyMatter.thenQtyStock">可用库存: {{modifyMatter.thenQtyStock}}</p>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="退货数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
