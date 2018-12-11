@@ -32,6 +32,9 @@
           <form-cell cellTitle="利润率" textRight :cellContent="percent(approval.budgetProfitMargin)"></form-cell>
         </div>
       </div>
+      <div class="comment-part">
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="comment.biComment || '无'"></form-cell>
+      </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
 
     </div>

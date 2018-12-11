@@ -25,6 +25,9 @@
           <form-cell cellTitle="实际作业成本" :cellContent="projectTask.actualtHomeworkCost"></form-cell>
         </div>
       </div>
+      <div class="comment-part">
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="comment.biComment || '无'"></form-cell>
+      </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
 
     </div>
@@ -45,7 +48,8 @@ import RPicker from 'components/RPicker'
 export default {
   data() {
     return {
-      projectTask: {}
+      projectTask: {},
+      comment: {},
     }
   },
   mixins: [detailCommon, common],
@@ -69,6 +73,7 @@ export default {
         let projectTask = formData.projectTask || {};
         this.jsonData = formData;
         this.attachment = attachment;
+        this.comment = formData.comment;
         this.projectTask = {
           ...projectTask,
           deadline: this.changeDate(projectTask.deadline),

@@ -9,8 +9,8 @@
         <pop-name-list @sel-item="selProject" :default-value="project"></pop-name-list>
 
         <!-- 任务计划列表 -->
-        <div class="materiel_list mg_auto" v-for="(item,index) in projectPlan" :key="index">
-          <div class="title">任务计划</div>
+        <div class="materiel_list project_plan" :class="{'vux-1px-t': index > 0}" v-for="(item,index) in projectPlan" :key="index">
+          <div class="title">任务计划{{index+1}}</div>
           <group class="SJ_group" @group-title-margin-top="0">
             <x-input title="任务名称" v-model="item.taskName" text-align='right' placeholder='请填写'>
               <template slot="label">
@@ -19,11 +19,6 @@
             </x-input>
             <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]"
                           @on-change=" typeTask($event,item) "></popup-picker>
-            <datetime title="截止日期" v-model='item.deadline'>
-              <template slot="title">
-                <span class='required'>计划截止日期</span>
-              </template>
-            </datetime>
             <x-input title="周期天数" type="number" v-model.number="item.cycleDays" text-align='right'
                      placeholder='请填写' @on-blur="checkTime(item,'cycleDays',2)"></x-input>
             <x-input title="标准工时" type="number" v-model.number="item.planTime" text-align='right'
@@ -31,10 +26,14 @@
             <x-input title="作业费率" type="number" v-model.number="item.jobRate" text-align='right'
                      placeholder='请填写' @on-blur="checkTime(item,'jobRate',2)"></x-input>
             <cell title="预算作业成本" :value="item.budgetHomeworkCost"></cell>
-            <x-textarea title="任务说明" v-model="item.comment" :max="200"></x-textarea>
+            <x-input title="任务说明" v-model="item.comment" text-align='right'></x-input>
+            <datetime title="截止日期" v-model='item.deadline' >
+              <template slot="title">
+                <span class='required'>计划截止日期</span>
+              </template>
+            </datetime>
           </group>
         </div>
-        <upload-file @on-upload="onUploadFile"></upload-file>
         <!-- 新增 -->
         <div class="XMJH_add">
           <div>您还需要添加新的计划? 请点击
@@ -43,6 +42,12 @@
             <span @click="delatePlan" v-if="projectPlan.length>1"> 删除</span>
           </div>
         </div>
+        <div class="materiel_list">
+          <group title="其他信息" class="costGroup">
+            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+          </group>
+        </div>
+        <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -59,7 +64,7 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import {saveProjectPlan, findProjectApproval} from 'service/projectService'
+  import {saveProjectPlan, findProjectApproval, getProjectBotTask} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
@@ -94,7 +99,10 @@
           budgetHomeworkCost: '', // 预算作业成本
         },
         projectPlan: [],
-        formData: {},
+        formData: {
+          biProcessStatus: '',
+          biComment: '',
+        },
         formDataComment: '', // 备注
         project: {}, // 项目计划默认值
       }
@@ -119,10 +127,40 @@
       selProject(val) {
         let sel = JSON.parse(val);
         this.project = sel;
+        let params = {
+          projectType: this.project.PROJECT_TYPE,
+          filters:JSON.stringify([{operator:"in", property:"projectType", value:this.project.PROJECT_TYPE}])
+        }
+        this.getProjectBotTask(params)
+      },
+      // 获取任务计划的列表
+      getProjectBotTask(params){
+        getProjectBotTask(params).then(({tableContent = []}) => {
+          this.projectType = [[]]
+          // 当根据项目获取到的任务计划为空
+          if(!tableContent.length){
+            this.projectPlan = []
+            let planModel = JSON.stringify(this.planModel)
+            this.projectPlan.push(JSON.parse(planModel));
+            return;
+          }
+          // 获取到的任务计划不为空
+          tableContent.forEach((item,index) => {
+            if(index === 0){
+              this.projectType[0].push(item.taskType)
+            }
+            else{
+              this.projectType.push([item.taskType])
+            }
+            
+          })
+          this.projectPlan = tableContent;
+        })
       },
       // TODO 提交
       save() {
-        let warn = '';
+        let warn = '',
+            dataSet = [];
         // 验证选择项目
         if (!this.project.PROJECT_NAME) {
           warn = '请选择项目';
@@ -141,7 +179,19 @@
               }
               return true
             });
+            dataSet.push({
+              budgetHomeworkCost: item.budgetHomeworkCost,
+              comment: item.comment,
+              cycleDays: item.cycleDays,
+              deadline: item.deadline,
+              jobRate: item.jobRate,
+              planTime: item.planTime,
+              projectType: item.projectType,
+              taskName: item.taskName,
+              taskType: item.taskType,
+            })
             return !warn
+            
           });
         }
         if (warn) {
@@ -159,11 +209,9 @@
             let submitData = {
               listId: this.listId,
               formData: {
-                handlerEntity: this.entity.dealerName,
-                comment: {
-                  biComment: this.formDataComment,
-                },
                 baseinfo: {
+                  biProcessStatus: this.formData.biProcessStatus,
+                  handlerEntity: this.entity.dealerName,
                   creator: this.formData.handler,
                   handler: this.formData.handler,
                   handlerName: this.formData.handlerName,
@@ -174,6 +222,9 @@
                   id: '',
                   modifer: this.formData.handler,
                 },
+                comment: {
+                  biComment: this.formData.biComment,
+                },
                 projectApproval: {
                   projectName: this.project.PROJECT_NAME,
                   comment: this.project.COMMENT,
@@ -181,7 +232,7 @@
                   expectStartDate: this.project.EXPECT_START_DATE,
                   expectEndDate: this.project.EXPECT_END_DATE,
                 },
-                projectPlan: this.projectPlan
+                projectPlan: dataSet
               },
             };
             this.saveData(operation, submitData);
@@ -278,11 +329,16 @@
       }
     }
   }
-
+  .project_plan{
+    margin: 0 auto;
+    &:first-child{
+      margin: .1rem auto 0;
+    }
+  }
   .vux-cell-box:not(:first-child):before {
     left: 0;
   }
-
+  // 添加，删除按钮
   .XMJH_add {
     text-align: center;
     font-size: 0.12rem;
@@ -301,6 +357,18 @@
     }
     em {
       font-style: normal;
+    }
+  }
+  // 备注
+  .materiel_list{
+    /deep/ .weui-cells__title {
+      padding-left: 0;
+      font-size: .12rem;
+    }
+    /deep/ .weui-cells{
+      &:before{
+        border-top: 1px solid #D9D9D9;
+      }
     }
   }
 </style>

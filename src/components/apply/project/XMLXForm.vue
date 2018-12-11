@@ -57,7 +57,13 @@
             <x-textarea title="项目说明" v-model="ProjectApproval.comment" :max="200"></x-textarea>
           </group>
         </div>
+        <div class="materiel_list">
+          <group title="其他信息" class="costGroup">
+            <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+          </group>
+        </div>
         <upload-file @on-upload="onUploadFile"></upload-file>
+        
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -112,7 +118,10 @@
           projectSubclass: '', // 项目子类
         },
         formDataComment: '', // 备注
-        formData: {},
+        formData: {
+          biComment: '',
+          biProcessStatus: ''
+        },
         defaultManager: {}, // 项目经理的默认值
         hasDefault: false, // 是否为界面回写
       }
@@ -318,6 +327,17 @@
         padding: 10px 0;
         &:before {
           left: 0;
+        }
+      }
+    }
+    .materiel_list{
+      /deep/ .weui-cells__title {
+        padding-left: 0;
+        font-size: .12rem;
+      }
+      /deep/ .weui-cells{
+        &:before{
+          border-top: 1px solid #D9D9D9;
         }
       }
     }

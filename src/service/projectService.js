@@ -177,4 +177,15 @@ export let findConclusion = (projectName) => {
   })
 };
 
+// TODO 查询项目对应的实际、预算、差额
+export let getProjectBotTask = (data) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getProjectBotTask',
+    data: {
+      _dc: Date.now(),
+     ...data
+    }
+  })
+};
+
 export default {}

@@ -52,6 +52,11 @@
             </x-input> -->
           </group>
         </div>
+        <div class="materiel_list">
+          <group title="其他信息" class="costGroup">
+            <x-textarea title="备注" v-model="jsonData.comment.biComment" :max="100"></x-textarea>
+          </group>
+        </div>
         <upload-file @on-upload="onUploadFile"></upload-file>
       </div>
     </div>
@@ -64,7 +69,7 @@
 
 <script>
   // vux组件引入
-  import { Icon, Cell, Group, XInput, Datetime, dateFormat } from 'vux'
+  import { Icon, Cell, Group, XInput, Datetime, dateFormat, XTextarea } from 'vux'
   // 请求 引入
   import {
     saveProjectTask, findProjectTask,
@@ -85,13 +90,15 @@
     mixins: [ApplyCommon],
     components: {
       Icon, Cell, Group, XInput,
-      RPicker, PopBaseinfo, Datetime
+      RPicker, PopBaseinfo, Datetime, XTextarea
     },
     data () {
       return {
         projectList: [], // 项目列表
         taskList: [], // 任务列表
-        formData: {},
+        formData: {
+          biProcessStatus: ''
+        },
         jsonData: {
           baseinfo: {},
           comment: {
@@ -265,13 +272,13 @@
         })
       },
       // TODO 校验计划工时,保留一位小数
-      checkTime (item) {
+      checkTime () {
         let val = this.projectTask.actualTime;
         if (val) {
           this.projectTask.actualTime = Math.abs(toFixed(val, 1));
         }
-        if(item.operatingRate && item.actualTime){
-          item.actualtHomeworkCost = accMul(item.operatingRate, item.actualTime)
+        if(this.projectTask.operatingRate && this.projectTask.actualTime){
+          this.projectTask.actualtHomeworkCost = accMul(this.projectTask.operatingRate, this.projectTask.actualTime)
         }
       },
       // TODO 保存草稿数据
@@ -335,6 +342,18 @@
         padding: 10px 0;
         &:before {
           left: 0;
+        }
+      }
+    }
+    // 备注
+    .materiel_list{
+      /deep/ .weui-cells__title {
+        padding-left: 0;
+        font-size: .12rem;
+      }
+      /deep/ .weui-cells{
+        &:before{
+          border-top: 1px solid #D9D9D9;
         }
       }
     }

@@ -33,6 +33,11 @@
                        :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
           </div>
         </div>
+        <div class="materiel_list">
+          <group title="其他信息" class="costGroup">
+            <x-textarea title="备注" v-model="jsonData.comment.biComment" :max="100"></x-textarea>
+          </group>
+        </div>
         <upload-file @on-upload="onUploadFile"></upload-file>
         <!-- 资金明细 -->
         <!--<div class="or_ads mg_auto box_sd" v-show="projectConclusion.length">
@@ -55,7 +60,7 @@
 
 <script>
   // vux组件引入
-  import { Cell, Group, XInput, Datetime, dateFormat, numberComma } from 'vux'
+  import { Cell, Group, XInput, Datetime, dateFormat, numberComma, XTextarea } from 'vux'
   // 请求 引入
   import {
     saveProjectConclusion, findProjectConclusion,
@@ -74,7 +79,7 @@
   export default {
     mixins: [ApplyCommon],
     components: {
-      Cell, Group, XInput, Datetime,
+      Cell, Group, XInput, Datetime, XTextarea,
       PopNameList, FormCell, RPicker, PopBaseinfo,
     },
     data () {
@@ -82,7 +87,9 @@
         listId: 'b87a513e-99ec-4608-89db-3d6e97ef1432',
         projectList: [], // 项目列表
         taskList: [], // 任务列表
-        formData: {},
+        formData: {
+          biProcessStatus: ''
+        },
         projectApproval: {}, // 选中的项目
         jsonData: {
           baseinfo: {},
@@ -291,6 +298,17 @@
         padding: 10px 0;
         &:before {
           left: 0;
+        }
+      }
+    }
+    .materiel_list{
+      /deep/ .weui-cells__title {
+        padding-left: 0;
+        font-size: .12rem;
+      }
+      /deep/ .weui-cells{
+        &:before{
+          border-top: 1px solid #D9D9D9;
         }
       }
     }
