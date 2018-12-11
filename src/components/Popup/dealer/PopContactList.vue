@@ -109,7 +109,6 @@
       },
       defaultValue: {
         handler() {
-          console.log(this.defaultValue)
           this.contactInfo = Object.freeze({...this.defaultValue})
         },
         immediate: true,

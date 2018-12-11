@@ -25,7 +25,6 @@
               <div class="mater_main ">
                 <!-- 物料名称 -->
                 <div class="mater_name">
-                  <span class="whiNum">No.{{index + 1}}</span>
                   {{item.inventoryName}}
                 </div>
                 <!-- 物料基本信息 -->
@@ -51,13 +50,11 @@
                   <div class="withoutColor">
                     <!-- 基本信息插槽 -->
                     <slot name='attribute' :item="item">
-                      <!-- 物料分类 -->
                       <div class="mater_classify">
                         <span class="type">属性: {{item.processing}}</span>
                         <span class="father">大类: {{item.inventoryType || '无'}}</span>
                         <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
                       </div>
-                      <!-- 物料材质等 -->
                       <div class="mater_material">
                         <span class="unit">单位: {{item.measureUnit}}</span>
                         <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
@@ -66,7 +63,6 @@
                     </slot>
                     <!-- 其他信息插槽 -->
                     <slot name="storage" :item="item">
-                      <!-- 库存 -->
                       <div class="mater_material" v-if="item.qtyBal !== undefined">
                         <span class="spec">余额: {{item.qtyBal}}</span>
                       </div>
