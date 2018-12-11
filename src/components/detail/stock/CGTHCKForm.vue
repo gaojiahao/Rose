@@ -20,6 +20,9 @@
       <!-- 物料列表 -->
        <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
                      :taxAmount="taxAmount" :count="count">
+          <template slot="orderTitle">
+            <span class="order_title">入库单号</span>
+          </template>
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
               <div class='mater_attribute'>
@@ -30,7 +33,7 @@
               <div class='mater_price'>
                 <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
                 <span class="num"
-                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 6 ? 'block' : '')}"
+                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}"
                       v-if="item.taxRate">
                   [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                 </span>

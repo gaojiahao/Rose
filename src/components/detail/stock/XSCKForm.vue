@@ -42,13 +42,15 @@
               <span>预期交货日: {{item.promDeliTime}}</span>
             </div>
             <div class="mater_num">
-              <span class="num">可用库存: {{item.thenQtyStock}}</span>
-              <span class="num">待交付数量: {{item.thenQtyBal}}</span>
+              <span class="num">订单数量: {{item.thenTotalQtyBal}}</span>
+              <span class="num">已出库数量: {{item.thenLockQty}}</span>
+              <span class="num">在库库存: {{item.thenQtyStock}}</span>
+              <span class="num">待出库数量: {{item.thenQtyBal}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
               <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 6 ? 'block' : '')}"
+                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}"
                     v-if="item.taxRate">
                   [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                 </span>

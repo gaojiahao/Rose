@@ -41,16 +41,16 @@
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                       <div>
-                        <span class="processing">属性:{{item.processing}}</span>
-                        <span class='unit'>单位:{{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色:{{item.inventoryColor || '无'}}</span>
-                        <span>税率:{{item.taxRate}}</span>
+                        <span>税率: {{item.taxRate}}</span>
+                        <span>安全库存: {{item.safeStock || 0}}</span>
+                        <span>待下单: {{item.qtyBal || 0}}</span>
+                        <span>起订量: {{item.moq || 0}}</span>
                       </div>
                       <div>
-                        <span>待下单：{{item.qtyBal}}</span>
-                        <span>起订量：{{item.qty}}</span>
-                        <span v-show="item.processingStartDate">计划需求日:{{item.processingStartDate}}</span>
-                        <span v-show="item.purchaseDay">采购需求日:{{item.purchaseDay}}</span>
+                      </div>
+                      <div>
+                        <span v-show="item.processingStartDate">计划需求日: {{item.processingStartDate}}</span>
+                        <span v-show="item.purchaseDay">采购需求日: {{item.purchaseDay}}</span>
                       </div>
                     </div>
                     <!-- 物料数量和价格 -->
@@ -88,15 +88,44 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
-                           get-list-method="getInventory7501" ref="matter" :isShowCode="false"></pop-matter-list>
+                           get-list-method="getInventory7501" ref="matter" :isShowCode="false">
+            <template slot="attribute" slot-scope="{item}">
+              <div class="mater_classify">
+                <div>
+                  <span>加工属性: {{item.processing}}</span>
+                  <span>单位: {{item.measureUnit}}</span>
+                  <span>物料大类: {{item.inventoryType}}</span>
+                  <span>物料子类: {{item.inventorySubclass || '无'}}</span>
+                </div>
+              </div>
+            </template>
+            <template slot="storage" slot-scope="{item}">
+              <div class="mater_material">
+                <div>
+                  <span>保质期天数: {{item.keepingDays || '无'}}</span>
+                  <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                  <span>安全库存: {{item.safeStock || 0}}</span>
+                </div>
+                <div>
+                  <span>最小起订量: {{item.moq || 0}}</span>
+                  <span>数量: {{item.qty || 0}}</span>
+                </div>
+              </div>
+            </template>
+          </pop-matter-list>
           
         </div>
          <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span v-show="modifyMatter.qtyBal">待下单: {{modifyMatter.qtyBal}}</span>
-            <span v-show="modifyMatter.qty">起订量: {{modifyMatter.qty}}</span>
+            <div>
+              <span>安全库存: {{modifyMatter.safeStock || 0}}</span>
+            </div>
+            <div>
+              <span>待下单: {{modifyMatter.qtyBal || 0}}</span>
+              <span>起订量: {{modifyMatter.moq || 0}}</span>
+            </div>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
             <datetime  title="采购需求日" v-model="modifyMatter.purchaseDay"
@@ -104,7 +133,6 @@
              <datetime  title="计划需求日期" v-model="modifyMatter.processingStartDate"
                       placeholder="请选择" ></datetime>
           </template>
-         
         </pop-matter>
         <!--备注-->
          <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
