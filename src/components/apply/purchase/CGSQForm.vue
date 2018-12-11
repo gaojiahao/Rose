@@ -38,9 +38,11 @@
                           <span class='unit'>单位: {{item.measureUnit}}</span>
                           <span class='qty'>全部需求: {{item.allQty}}</span>
                           <span class='qty'>待申请: {{item.qtyBalance}}</span>
+                          <span class='qty'>已申请: {{item.qtyed}}</span>
                         </div>
-                        <span class='qty'>已申请: {{item.qtyed}}</span>
-                        <span v-show="item.promDeliTime">计划需求日期: {{item.promDeliTime}}</span>
+                        <div>
+                          <span v-show="item.promDeliTime">计划需求日期: {{item.promDeliTime}}</span>
+                        </div>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -85,7 +87,7 @@
             <!-- 基本信息插槽 -->
             <template slot="attribute" slot-scope="{item}">
               <div class="mater_classify">
-                <span>主计量单位: {{item.measureUnit}}</span>
+                <span>单位: {{item.measureUnit}}</span>
                 <span>物料类型: {{item.invType}}</span>
               </div>
             </template>
