@@ -20,12 +20,19 @@
       <matter-list :matter-list="orderInfo.inPut.dataSet">
         <div class='mater_other' slot="matterOther" slot-scope="{item}">
           <div class='mater_attribute'>
-            <span>账存数量: {{item.thenQtyStock | toFixed}}</span>
+            <span>加工属性: {{item.tdProcessing}}</span>
             <span>计量单位: {{item.measureUnit_transObjCode}}</span>
           </div>
           <div class='mater_num'>
-            盘点数量: <span class="num">{{item.tdQty | toFixed}}</span>
-            差异数量: <span class="diff_num">{{item.differenceNum | toFixed}}</span>
+            <div>
+              <span>库存余额: {{item.thenTotalQtyStock || 0}}</span>
+              <span>计划占用: {{item.thenLockQtyStock || 0}}</span>
+              <span>账存数量: {{item.thenQtyStock | toFixed}}</span>
+            </div>
+            <div>
+              <span>盘点数量: {{item.tdQty | toFixed}}</span>
+              <span>差异数量: <span class="diff_num">{{item.differenceNum | toFixed}}</span></span>
+            </div>
           </div>
         </div>
       </matter-list>
@@ -134,7 +141,7 @@
         }
         .mater_num {
           color: #111;
-          font-size: .14rem;
+          font-size: .12rem;
           font-weight: bold;
           .diff_num {
             color: #ea5455;
