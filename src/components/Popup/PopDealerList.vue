@@ -141,6 +141,13 @@
         type: Boolean,
         default: false
       },
+      // 请求参数
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     computed: {
       noAddress() {
@@ -247,6 +254,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.params,
         }).then(({dataCount = 0, tableContent = []}) => {
           let DEALERLIST_SELITEMS = JSON.parse(sessionStorage.getItem('DEALERLIST_SELITEMS')) || '';
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;

@@ -34,20 +34,20 @@
             :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
             v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
           <div class="main_content" >
-            <form-cell cellTitle='入库单' :cellContent="item.transMatchedCode" textRight></form-cell>
+            <form-cell cellTitle='采购订单' :cellContent="item.transMatchedCode" textRight></form-cell>
             <form-cell cellTitle='入库日期' :cellContent="item.purchaseDay" textRight></form-cell>
             <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode" textRight></form-cell>
             <form-cell cellTitle='物料编码' :cellContent="item.inventoryCode_transObjCode" textRight></form-cell>
+            <form-cell cellTitle='入库数量' :cellContent="item.thenTotalQtyBal" textRight></form-cell>
+            <form-cell cellTitle='已收票数量' :cellContent="item.thenLockQty" textRight></form-cell>
             <form-cell cellTitle='待收票数量' :cellContent="item.thenQtyBal" textRight></form-cell>
             <form-cell cellTitle='单价' :cellContent="item.price | toFixed | numberComma" textRight showSymbol></form-cell>
             <form-cell cellTitle='本次收票数量' :cellContent="item.tdQty" textRight></form-cell>
-            <form-cell cellTitle='金额' :cellContent="item.noTaxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
+            <form-cell cellTitle='本次收票金额' :cellContent="item.noTaxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
             <form-cell cellTitle='税率' :cellContent="item.taxRate" textRight></form-cell>
             <form-cell cellTitle='税金' :cellContent="item.taxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
             <form-cell cellTitle='说价小计' :cellContent="item.tdAmount | toFixed | numberComma" textRight showSymbol></form-cell>
             <form-cell cellTitle='说明' :cellContent="item.comment" textRight></form-cell>
-            <!--<form-cell cellTitle='待收票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)" textRight></form-cell>-->
-            <!--<form-cell cellTitle='本次收票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)" textRight></form-cell>-->
           </div>
         </div>
       </div>
