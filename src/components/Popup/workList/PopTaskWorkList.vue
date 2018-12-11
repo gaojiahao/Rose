@@ -19,7 +19,7 @@
               </div>
               <div class="work_mid">
                 <div class="product_unit">
-                  <span class="each_unit">加工订单号: {{item.transCode}}</span>
+                  <span class="each_unit">加工订单号: {{item.processCode}}</span>
                   <span class="each_unit">工序: {{item.procedureName}}</span>
                 </div>
                 <div class="product_unit">
@@ -121,7 +121,11 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       showSelIcon(sItem) {
         let flag = false;
         this.selItems && this.selItems.every(item => {
-          if (sItem.matCode === item.matCode && sItem.transCode === item.transCode) {
+          if (item.orderCode && sItem.matCode === item.matCode && sItem.transCode === item.transCode && sItem.orderCode === item.orderCode) {
+            flag = true;
+            return false;
+          }
+          else if(!item.orderCode && sItem.matCode === item.matCode && sItem.transCode === item.transCode) {
             flag = true;
             return false;
           }
@@ -136,6 +140,10 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       selThis(sItem, sIndex) {
         let arr = this.selItems;
         let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode);
+        // 工单任务验收选中的检验
+        if(sItem.orderCode){
+          delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode && item.orderCode === sItem.orderCode);
+        }
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
