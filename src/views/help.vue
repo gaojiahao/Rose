@@ -44,17 +44,20 @@
 
         <group class="caution_inputs">
           <x-input title="其他A类产品" v-model.number="Aclass" text-align="right" placeholder="请输入金额"></x-input>
-          <cell title="A类产品合计" :value="AclassTotal"></cell>
-          <x-input title="B类产品(线上)" v-model.number="Bclass" text-align="right" placeholder="请输入金额"></x-input>
-          <x-input title="B类产品(线下)" v-model.number="BclassDown" text-align="right" placeholder="请输入金额"></x-input>
-          <cell title="B类产品合计" :value="BclassTotal"></cell>
+          <cell title="A类产品合计" disabled :value="AclassTotal"></cell>
         </group>
 
-        <group title="B类产品套数">
-          <cell class="each_part" title="B类产品套数(线上)" :value="BSet" value-align="right"></cell>
-          <cell class="each_part" title="B类产品套数(线下)" :value="BSetDown" value-align="right"></cell>
-          <cell class="each_part" title="B类产品套数合计" :value="BSetTotal" value-align="right"></cell>
+        <group title="B类产品">
+          <x-input title="B类产品(线上)" v-model.number="Bclass" text-align="right" placeholder="请输入金额"></x-input>
+          <x-input title="B类产品(线下)" v-model.number="BclassDown" text-align="right" placeholder="请输入金额"></x-input>
+          <cell title="B类产品合计" disabled :value="BclassTotal"></cell>
         </group>
+        <group>
+          <cell class="each_part" title="B类产品套数(线上)" disabled :value="BSet" value-align="right"></cell>
+          <cell class="each_part" title="B类产品套数(线下)" disabled :value="BSetDown" value-align="right"></cell>
+          <cell class="each_part" title="B类产品套数合计" disabled :value="BSetTotal" value-align="right"></cell>
+        </group>
+        
 
         <group title="费用明细">
           <x-input title="住宿费" v-model.number="hotelAmt" text-align="right" placeholder="请输入住宿费"
@@ -65,8 +68,8 @@
                    @on-blur="checkAmt('lTrafficAmt')"></x-input>
           <x-input title="其他" v-model.number="otherAmt" text-align="right" placeholder="请输入其他金额"
                    @on-blur="checkAmt('otherAmt')"></x-input>
-          <cell class="each_part" title="合计" :value="totalCost | numberComma" value-align="right"></cell>
-          <cell class="each_part" title="费用销量比" :value="costVolumeRatio" value-align="right"></cell>
+          <cell class="each_part" title="合计" disabled :value="totalCost | numberComma" value-align="right"></cell>
+          <cell class="each_part" title="费用销量比" disabled :value="costVolumeRatio" value-align="right"></cell>
         </group>
 
         <group title="每日情况汇报">
