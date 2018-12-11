@@ -310,6 +310,7 @@
             qty: "",
             amount: Number(this.Bclass), //总金额
             fgCode: "",
+            num1: this.BSet,
           }, {
             id: this.guid(),
             transObjCode: "B类产品(线下)", //项目类产品名称
@@ -317,6 +318,7 @@
             qty: "",
             amount: Number(this.BclassDown), //总金额
             fgCode: "",
+            num1: this.BSetDown,
           }, {
             id: this.guid(),
             transObjCode: "B类产品", //项目类产品名称
@@ -328,11 +330,13 @@
           ],
           transCode: "XHXSDD"
         };
+        let newVar2 = jsonData.baseinfoExt.varchar2;
+        newVar2 = accAdd(newVar2, this.BSet);
+        newVar2 = accAdd(newVar2, this.BSetDown);
         // 项目类产品
         for (let item of this.arr) {
           // 动态增加 月销量“套”合计
-          let newVar2 = toFixed(jsonData.baseinfoExt.varchar2 += Number(item.num1));
-          this.$set(jsonData.baseinfoExt, 'varchar2', newVar2);
+          newVar2 = toFixed(newVar2, Number(item.num1));
           // 项目类产品
           jsonData.transDetailUncalc.push({
             id: this.guid(),
@@ -345,6 +349,7 @@
             num1: item.num1, // 套数
           });
         }
+        jsonData.baseinfoExt.varchar2 = newVar2;
         this.totalInfo = {
           isMobile: true,
           conn: 20000,

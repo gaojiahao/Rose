@@ -140,6 +140,7 @@
         let list2 = [];
         let bClassList = [];
         let hotelAndElseCost = 0;
+        let totalCoverNum = 0;
         this.list1Total = 0;
         this.list1.length = 0;
         this.list2.length = 0;
@@ -152,9 +153,9 @@
                 this.list1Total += Number(item.amount);
                 this.list1.push({
                   label: item.objName,
-                  value: `￥${numberComma(item.amount, 3)} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
+                  value: `￥${numberComma(toFixed(item.amount))} (${item.qty}件/折合${toFixed(item.coverNum || 0)}套)`,
                 });
-                this.totalCoverNum = accAdd(this.totalCoverNum, item.coverNum);
+                totalCoverNum = accAdd(totalCoverNum, item.coverNum);
               }
               break;
             case 'A':
@@ -196,9 +197,10 @@
               if (item.objName === 'B类产品') {
                 BClassTotal = accAdd(BClassTotal, item.amount);
               } else {
+                totalCoverNum = accAdd(totalCoverNum, item.coverNum);
                 bClassList.push({
                   label: item.objName,
-                  value: `￥${toFixed(item.amount)}`,
+                  value: `￥${numberComma(toFixed(item.amount))}`,
                 });
               }
               break;
@@ -206,6 +208,7 @@
               break;
           }
         }
+        this.totalCoverNum = totalCoverNum;
         this.list2 = list2;
         this.bClassList = bClassList;
         this.costSalesRatio = Number(AclassTotal) !== 0 ? `${toFixed(accMul(hotelAndElseCost / AclassTotal, 100))}%` : '∞';
