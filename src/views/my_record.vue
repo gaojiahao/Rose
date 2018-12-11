@@ -200,7 +200,7 @@
                 totalCoverNum = accAdd(totalCoverNum, item.coverNum);
                 bClassList.push({
                   label: item.objName,
-                  value: `￥${numberComma(toFixed(item.amount))}`,
+                  value: `￥${numberComma(toFixed(item.amount))}/折合${Number(item.coverNum)}套`,
                 });
               }
               break;
