@@ -14,9 +14,9 @@
           <div class="each-work box_sd" v-for="(item, index) in workList" :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
-              <div class="work_top" v-show="item.processCode">
+              <div class="work_top" v-show="item.transCode">
                 <span class="code_name">加工订单号</span>
-                <span class="work_code">{{item.processCode}}</span>
+                <span class="work_code">{{item.transCode}}</span>
               </div>
               <div class="work_mid vux-1px-b">
                 <div class="product_name">
@@ -49,6 +49,11 @@
           </div>
         </r-scroll>
       </div>
+      <!-- 底部栏 -->
+      <div class="count_mode vux-1px-t">
+        <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
+        <span class="count_btn" @click="cfmMater">确定</span>
+      </div>
     </popup>
   </div>
 </template>
@@ -67,9 +72,9 @@ import MSearch from 'components/search'
       },
       // 默认值
       defaultValue: {
-        type: Object,
+        type: Array,
         default() {
-          return {}
+          return []
         }
       },
     },
@@ -137,23 +142,30 @@ import MSearch from 'components/search'
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
       },
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          let isSameTransCode = true;
+          if (item.transCode) {
+            isSameTransCode = item.transCode === sItem.transCode;
+          }
+          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+        });
+      },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        let flag = false;
-        this.selItems && this.selItems.every(item => {
-          if (sItem.inventoryCode === item.inventoryCode && sItem.proPointCode === item.proPointCode) {
-            flag = true;
-            return false;
-          }
-          return true;
-        });
-        return flag;
+        return this.tmpItems.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        this.showPop = false;
-        this.selItems = [sItem];
-        this.$emit('sel-work', this.selItems[0]);
+        let arr = this.tmpItems;
+        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
+        // 若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
+        }
+        arr.push(sItem);
       },
       // TODO 设置默认值
       setDefaultValue() {
@@ -173,21 +185,59 @@ import MSearch from 'components/search'
             },
           ];
         }
-        if(this.$route.query.inventoryCode){
-          let {inventoryCode,proPointCode} = this.$route.query;
+        // if(this.$route.query.orderTransCode){
+        //   let {orderTransCode} = this.$route.query;
+        //   let filterArr = [];
+        //   orderTransCode.forEach( (item, index) => {
+        //     if(filterArr.length) {
+        //       filterArr[0].value += index === orderTransCode.length - 1 ? item.transCode : `${item.transCode},` ;
+        //       filterArr[1].value += index === orderTransCode.length - 1 ? item.inventoryCode : `${item.inventoryCode},`;
+        //     }
+        //     else{
+        //       let arr = [
+        //         {
+        //           operator: 'in',
+        //           value: `${item.transCode},`,
+        //           property: 'transCode',
+        //         },
+        //         {
+        //           attendedOperation: "and", 
+        //           operator: 'in',
+        //           value: `${item.inventoryCode},`,
+        //           property: 'inventoryCode',
+        //         }
+        //       ]
+        //       if(orderTransCode.length === 1) {
+        //         arr[0].value = item.transCode;
+        //         arr[1].value = item.inventoryCode;
+        //       }
+        //       filterArr = [...arr];
+        //     }
+        //   })
+        //   filter = [
+        //     ...filter,
+        //     ...filterArr
+        //   ]
+        // }
+        // 工单任务派工从科目发起，路由传的参数用来过滤数据
+        if(this.$route.query.orderId){
+          let {orderId} = this.$route.query;
+          console.log(orderId)
+          let filterArr = [{
+            operator: 'in',
+            value: '',
+            property: 'colId',
+          }];
+          orderId.forEach( (item, index) => {
+            if(index === orderId.length-1){
+              filterArr[0].value += item;
+              return 
+            }
+            filterArr[0].value += `${item},`
+          })
           filter = [
             ...filter,
-            {
-              operator: 'eq',
-              value: inventoryCode,
-              property: 'inventoryCode',
-              separator: 'and'
-            },
-            {
-              operator: 'eq',
-              value: proPointCode,
-              property: 'proPointCode'
-            }
+            ...filterArr
           ]
         }
         return getWorkOrderTask({
@@ -196,8 +246,9 @@ import MSearch from 'components/search'
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
-          if(this.$route.query.inventoryCode){
-            this.$emit('sel-work', tableContent[0]);
+          // if(this.$route.query.orderTransCode){
+          if(this.$route.query.orderId){
+            this.$emit('sel-work', JSON.stringify(tableContent));
           }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.workList = this.page === 1 ? tableContent : [...this.workList, ...tableContent];
@@ -205,6 +256,15 @@ import MSearch from 'components/search'
             this.$refs.bScroll.finishPullUp();
           })
         });
+      },
+      // TODO 确定选择物料
+      cfmMater() {
+        let sels = [];
+        this.showPop = false;
+        this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
+        this.selItems = [...this.tmpItems];
+        // 触发父组件选中事件
+        this.$emit('sel-work', JSON.stringify(this.selItems));
       },
       // TODO 搜索物料
       searchList({val = '', property = ''}) {

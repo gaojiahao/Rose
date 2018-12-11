@@ -1,6 +1,6 @@
 <template>
   <!-- 物料popup -->
- <div v-transfer-dom>
+  <div v-transfer-dom>
     <popup v-model="showPop" height="100%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
         <div class="title">
@@ -9,12 +9,13 @@
         </div>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
-           <div class="each-work box_sd"  v-for='(item, index) in taskWorkList' :key='index'  v-if="item.qtyBalance>0"
+           <div class="each-work box_sd"  v-for='(item, index) in taskWorkList' :key='index'
                @click.stop="selThis(item, index)">
             <div class="work-main">
               <div class="work_mid">
                 <div class="product_name">
-                  {{item.inventoryName}}<span class="symbol">[{{item.invProcessing}}]</span>
+                  {{item.inventoryName}}
+                  <!-- <span class="symbol">[{{item.invProcessing}}]</span> -->
                 </div>
               </div>
               <div class="work_mid">
@@ -23,9 +24,9 @@
                   <span class="each_unit">工序: {{item.procedureName}}</span>
                 </div>
                 <div class="product_unit">
-                  <span class="each_unit">总数: {{item.drQty}}</span>
-                  <span class="each_unit">已{{workType}}: {{item.crQty}}</span>
-                  <span class="each_unit">可{{workType}}: {{item.qtyBalance}}</span>
+                  <span class="each_unit">总数: {{item.productDemandQty}}</span>
+                  <span class="each_unit">已{{workType}}: {{item.thenLockQty}}</span>
+                  <span class="each_unit">可{{workType}}: {{item.thenQtyBal}}</span>
                 </div>
               </div>
             </div>
@@ -77,7 +78,6 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
-        selItems: [], // 哪些被选中了
         scrollOptions: {
           click: true,
         },
@@ -93,7 +93,9 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }    
         ],
         filterProperty: '',
-        taskWorkList: {},
+        // taskWorkList: {},
+        taskWorkList: [],
+        tmpItems: []
       }
     },
     watch: {
@@ -115,27 +117,26 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       // TODO 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
-        this.selItems = []
+        this.tmpItems = [];
       },
-      // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
-        let flag = false;
-        this.selItems && this.selItems.every(item => {
-          if (sItem.matCode === item.matCode && sItem.transCode === item.transCode) {
-            flag = true;
-            return false;
+      // TODO 匹配相同项的索引
+      findIndex(arr, sItem) {
+        return arr.findIndex(item => {
+          let isSameTransCode = true;
+          if (item.transCode) {
+            isSameTransCode = item.transCode === sItem.transCode;
           }
-          return true;
+          return isSameTransCode && item.inventoryName === sItem.inventoryName && item.procedureName === sItem.procedureName
         });
-        if(flag){
-          this.btnText = `发起工单${this.workType}`
-        }
-        return flag;
+      },
+      showSelIcon(sItem) {
+        let flag = this.findIndex(this.tmpItems, sItem);
+        return flag !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.matCode === sItem.matCode);
+        let arr = this.tmpItems;
+        let delIndex = this.findIndex(arr, sItem);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -144,7 +145,8 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
           }
           return;
         }
-        this.selItems = [sItem];
+        arr.push(sItem);
+        this.btnText = this.tmpItems? `发起工单${this.workType}`: '关闭';
       },
       // TODO 获取物料列表
       getWorkOrderTask() {
@@ -159,11 +161,22 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
             },
           ];
         }
-        return getTaskWorkList({
-          ...this.params,
-          filter: JSON.stringify(filter),
-        }).then(({data = []}) => {
-          this.taskWorkList = data;
+        // return getTaskWorkList({
+        //   ...this.params,
+        //   filter: JSON.stringify(filter),
+        // }).then(({data = []}) => {
+        //   data.forEach(item => {
+        //     item.isStartTask = false;
+        //     if(item.qtyBalance > 0){
+        //       this.taskWorkList.push(item)
+        //     }
+        //   })
+        // });
+        return getWorkOrderTask().then(({tableContent = []}) => {
+          tableContent.forEach(item => {
+            item.isStartTask = false;
+          })
+          this.taskWorkList = tableContent
         });
       },
       // TODO 搜索物料
@@ -176,7 +189,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       },
       btnHandle(){
         if(this.btnText !== '关闭'){
-          this.$emit('sel-task',this.selItems)          
+          this.$emit('sel-task',this.tmpItems)          
         }
         this.showPop = false;
       }
@@ -206,70 +219,6 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;
-        // 搜索
-        .search_part {
-          width: 100%;
-          display: flex;
-          height: .3rem;
-          line-height: .3rem;
-          position: relative;
-          // 搜索输入框
-          .srh_inp {
-            flex: 5;
-            outline: none;
-            border: none;
-            color: #2D2D2D;
-            font-size: .16rem;
-            padding: 0 .3rem 0 .4rem;
-            background: #F3F1F2;
-            border-top-left-radius: .3rem;
-            border-bottom-left-radius: .3rem;
-          }
-          // 取消 按钮
-          .pop_cancel {
-            flex: 1;
-            color: #fff;
-            font-size: .14rem;
-            text-align: center;
-            background: #fc3c3c;
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-          }
-          // 搜索icon
-          .serach_icon {
-            top: 50%;
-            left: 10px;
-            fill: #2D2D2D;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          // 清除icon
-          .clear_icon {
-            top: 50%;
-            right: 14%;
-            width: .3rem;
-            height: .3rem;
-            z-index: 100;
-            display: block;
-            font-size: .12rem;
-            line-height: .3rem;
-            text-align: center;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-        }
-        // 关闭icon
-        .close_icon {
-          top: 50%;
-          right: -2%;
-          position: absolute;
-          transform: translate(0, -50%);
-        }
-      }
-      .each_mode {
-        margin-right: .1rem;
-        display: inline-block;
-        padding: .04rem .2rem;
       }
       .vux-1px:before {
         border-radius: 40px;
@@ -374,23 +323,23 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
             padding: .02rem 0;
             font-weight: bold;
           }
-          .order_list{
-            padding-left: .24rem;
-            border-top: 1px dashed #e8e8e8;
-            .each_order{
-              padding: 0.05rem 0;
-              list-style: initial;
-              .order{
-                font-size: .14rem;
-                padding: .02rem 0;
-                font-weight: bold;
-              }
-              // .work_code,.code_name{
-              //   color: #111;
-              //   background: #fff;
-              // }
-            }
-          }
+          // .order_list{
+          //   padding-left: .24rem;
+          //   border-top: 1px dashed #e8e8e8;
+          //   .each_order{
+          //     padding: 0.05rem 0;
+          //     list-style: initial;
+          //     .order{
+          //       font-size: .14rem;
+          //       padding: .02rem 0;
+          //       font-weight: bold;
+          //     }
+          //     // .work_code,.code_name{
+          //     //   color: #111;
+          //     //   background: #fff;
+          //     // }
+          //   }
+          // }
         }
       }
       //关闭按钮

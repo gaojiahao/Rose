@@ -18,13 +18,14 @@
     <div class="btn vux-1px-t" v-if="action.add">
       <div class="cfm_btn" @click="goEdit">新增</div>
     </div>
-    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-task-work-list>
+    <pop-assignment-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-assignment-task-work-list>
+    <!-- <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" ref="taskWork"></pop-task-work-list> -->
   </div>
 </template>
 
 <script>
 import listCommon from 'pageMixins/bizListCommon'
-import PopTaskWorkList from 'components/Popup/workList/PopTaskWorkList'
+import PopAssignmentTaskWorkList from 'components/Popup/workList/PopAssignmentTaskWorkList'
 export default {
   data() {
     return {
@@ -46,7 +47,7 @@ export default {
     }
   },
   components: {
-    PopTaskWorkList
+    PopAssignmentTaskWorkList
   },
   mixins: [listCommon],
   methods: {
@@ -54,6 +55,14 @@ export default {
       this.popShow = true;
     },
     selTask(val){
+      let arr = [];
+      val.forEach(item => {
+        // arr.push({
+        //   inventoryCode: item.matCode,
+        //   transCode: item.transCode
+        // })
+        arr.push(item.colId)
+      })
       let { name, childId } = this.$route.query,
           { fileId, listId } = this.$route.params;
       this.$router.push({
@@ -61,8 +70,8 @@ export default {
         query: {
           name,
           childId,
-          inventoryCode: val.matCode,
-          proPointCode: val.proPointCode,
+          // orderTransCode: arr,
+          orderId: arr,
         }
       })
     }

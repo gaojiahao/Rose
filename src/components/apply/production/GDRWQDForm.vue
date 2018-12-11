@@ -271,20 +271,20 @@
         })
       },
       // TODO 是否保存草稿
-      hasDraftData () {
-        if (!this.workInfo.procedureName) {
-          return false
-        }
-        return {
-          [DRAFT_KEY]: {
-            workInfo: this.workInfo,
-            bomList: this.bomList,
-            facility: this.facility,
-            formData: this.formData,
-            biProcessStatus: this.biProcessStatus,
-          }
-        };
-      },
+      // hasDraftData () {
+      //   if (!this.workInfo.procedureName) {
+      //     return false
+      //   }
+      //   return {
+      //     [DRAFT_KEY]: {
+      //       workInfo: this.workInfo,
+      //       bomList: this.bomList,
+      //       facility: this.facility,
+      //       formData: this.formData,
+      //       biProcessStatus: this.biProcessStatus,
+      //     }
+      //   };
+      // },
       // TODO 启用企业微信扫一扫
       scanQRCode () {
         scanQRCode().then(({result = ''}) => {
@@ -297,16 +297,16 @@
       },
     },
     created () {
-      let data = sessionStorage.getItem(DRAFT_KEY);
-      if (data) {
-        let draft = JSON.parse(data);
-        this.workInfo = draft.workInfo;
-        this.bomList = draft.bomList;
-        this.facility = draft.facility;
-        this.formData = draft.formData;
-        this.biProcessStatus = draft.biProcessStatus;
-        sessionStorage.removeItem(DRAFT_KEY);
-      }
+      // let data = sessionStorage.getItem(DRAFT_KEY);
+      // if (data) {
+      //   let draft = JSON.parse(data);
+      //   this.workInfo = draft.workInfo;
+      //   this.bomList = draft.bomList;
+      //   this.facility = draft.facility;
+      //   this.formData = draft.formData;
+      //   this.biProcessStatus = draft.biProcessStatus;
+      //   sessionStorage.removeItem(DRAFT_KEY);
+      // }
     }
   }
 </script>

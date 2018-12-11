@@ -18,38 +18,22 @@
           <span class="iconfont icon-mingxi1"></span>
           <span>工单信息</span>
         </div>
-        <div class="main_content">
-          <form-cell cellTitle='工序名称' :cellContent="workInfo.procedureName_proPointCode"></form-cell>
-          <form-cell cellTitle='工序编码' :cellContent="workInfo.proPointCode"></form-cell>
-          <form-cell cellTitle='工序可派工' :cellContent="workInfo.thenQtyBal"></form-cell>
-          <form-cell cellTitle='派工数量' :cellContent="workInfo.tdQty"></form-cell>
-          <form-cell cellTitle='工人' :cellContent="workInfo.dealerName_dealerDebit"></form-cell>
-          <form-cell cellTitle='设施' :cellContent="workInfo.facilityName_facilityObjCode || '无'"></form-cell>
-          <form-cell cellTitle='工艺路线名称' :cellContent="workInfo.technicsName_proFlowCode || '无'"></form-cell>
-          <form-cell cellTitle='工艺路线编码' :cellContent="workInfo.proFlowCode || '无'"></form-cell>
-          <form-cell cellTitle='物料名称' :cellContent="workInfo.inventoryName_transObjCode || '无'"></form-cell>
-          <form-cell cellTitle='物料编码' :cellContent="workInfo.transObjCode || '无'"></form-cell>
+        <div class="main_content" :class="{'has_border' : index > 0}" v-for="(item,index) in workInfo" :key="index">
+          <form-cell cellTitle='工序名称' :cellContent="item.procedureName_proPointCode"></form-cell>
+          <form-cell cellTitle='工序编码' :cellContent="item.proPointCode"></form-cell>
+           <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode || '无'"></form-cell>
+          <form-cell cellTitle='物料编码' :cellContent="item.transObjCode || '无'"></form-cell>
+          <form-cell cellTitle='工序可派工' :cellContent="item.thenQtyBal"></form-cell>
+          <form-cell cellTitle='派工数量' :cellContent="item.tdQty"></form-cell>
+          <form-cell cellTitle='组长' :cellContent="item.dealerName_dealerDebit"></form-cell>
+          <form-cell cellTitle='工人数量' :cellContent="item.numberWorkers"></form-cell>
+          <form-cell cellTitle='设施' :cellContent="item.facilityName_facilityObjCode || '无'"></form-cell>
+          <form-cell cellTitle='工艺路线名称' :cellContent="item.technicsName_proFlowCode || '无'"></form-cell>
+          <form-cell cellTitle='工艺路线编码' :cellContent="item.proFlowCode || '无'"></form-cell>
         </div>
       </div>
-      <!-- 物料 -->
-      <div class="form_content" :class="{'has_margin' : bomList.length}">
-        <div class="main_content">
-          <bom-list :boms="bomList">
-            <template slot-scope="{bom}" slot="specification">
-              <div class="content-unit">
-                <span>型号规格：{{bom.specification}}</span>
-              </div>
-            </template>
-            <template slot-scope="{bom}" slot="number">
-              <div class="number-part">
-                <span class="main-number">数量: {{bom.tdQty || 0}}{{bom.measureUnit}}</span>
-                <span class="number-unit">库存余额: {{bom.thenQtyStock}}</span>
-                <span class="number-unit">bom数量: {{bom.bomQty}}</span>
-              </div>
-            </template>
-          </bom-list>
-          <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-        </div>
+      <div class="comment-part">
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
@@ -78,7 +62,7 @@ import BomList from 'components/detail/commonPart/BomList'
 export default {
   data() {
     return {
-      workInfo: {},       // 工单内容
+      workInfo: [],       // 工单内容
       orderInfo: {},      // 表单内容
       warehouse : {},     //仓库信息
       bomList: [],        //bom信息
@@ -106,25 +90,16 @@ export default {
           return;
         }
         this.attachment = data.attachment;
-        let {order = {},outPut = {}} = data.formData;
+        let {order = {}} = data.formData;
         data.formData.validUntil = dateFormat(data.formData.validUntil, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
-        this.workInfo = order.dataSet[0];
+        this.workInfo = order.dataSet;
         this.warehouse = {
           ...this.warehouse,
-          warehouseName: outPut.warehouseName_containerCode, 
-          warehouseType: outPut.warehouseType_containerCode,
-          warehouseAddress: outPut.warehouseAddress_containerCode,
+          warehouseName: order.warehouseName_containerCode, 
+          warehouseType: order.warehouseType_containerCode,
+          warehouseAddress: order.warehouseAddress_containerCode,
         }
-        outPut.dataSet && outPut.dataSet.forEach(item=>{
-          this.bomList.push({
-            ...item,
-            inventoryCode : item.outPutMatCode,
-            inventoryName : item.inventoryName_outPutMatCode,
-            measureUnit : item.measureUnit_outPutMatCode,
-            specification : item.specification_outPutMatCode,
-          })
-        })
         this.workFlowInfoHandler();
       })
     },
@@ -157,6 +132,9 @@ export default {
       width: 100%;
       background: #fff;
       box-sizing: border-box;
+    }
+    .has_border{
+      border-top: .03rem solid #e8e8e8;
     }
   }
 </style>

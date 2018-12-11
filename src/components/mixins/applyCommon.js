@@ -220,6 +220,7 @@ export default {
         // 产品需求的经办人信息为使用组件，需单独请求组织和部门
         this.getGroupByUserId && this.getGroupByUserId();
         this.getRoleByUserId && this.getRoleByUserId();
+        this.$loading.hide();
       })
     },
     // TODO 获取物料价格
@@ -362,7 +363,6 @@ export default {
         }
         shareContent(shareInfo);
       })
-      this.$loading.hide();
     })()
   },
   mounted() {
