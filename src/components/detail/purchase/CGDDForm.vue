@@ -18,9 +18,15 @@
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
+              <span>单位: {{item.measureUnit_transObjCode}}</span>
               <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
               <span>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            </div>
+            <div class="mater_num">
+              <span class="num">安全库存: {{item.safeStock_transObjCode || 0}}</span>
+              <span class="num">待下单: {{item.thenQtyBal || 0}}</span>
+              <span class="num">起订量: {{item.moq_transObjCode || 0}}</span>
             </div>
             <div class="mater_attribute" v-if="item.purchaseDay">
               <span>采购需求日期: {{item.purchaseDay}}</span>

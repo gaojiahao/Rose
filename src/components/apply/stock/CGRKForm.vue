@@ -7,7 +7,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :default-contact="contactInfo" dealer-label-name="供应商"></pop-dealer-list>
+                         :default-contact="contactInfo" dealer-label-name="原厂供应商,经销供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm" isRequired
                            v-model="crDealerPaymentTerm"></pop-single-select>
@@ -44,20 +44,15 @@
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                        <span class='unit'>单位：{{item.measureUnit_transObjCode}}</span>
-                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
+                        <span>单位: {{item.measureUnit}}</span>
+                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                        <span>订单总数: {{item.qty || 0}}</span>
+                        <span>已入库数: {{item.qtyed || 0}}</span>
+                        <span>待入库数: {{item.qtyBal || 0}}</span>
                       </div>
                       <div class="mater_more">
-                        <span v-show="item.assMeasureUnit">辅助计量：{{item.assMeasureUnit}}</span>
-                        <span v-show="item.assistQty">辅计数量：{{item.assistQty}}</span>
-                      </div>
-                      <!-- <div class="mater_more">
-                        <span>订单总数：{{item.qty}}</span>
-                        <span>已入库数：{{item.qtyed}}</span>
-                      </div> -->
-                      <div class="mater_more">
-                        <span v-show="item.productionDate">生产日期：{{item.productionDate}}</span>
-                        <span v-show="item.validUntil">有效日期：{{item.validUntil}}</span>
+                        <span v-show="item.productionDate">生产日期: {{item.productionDate}}</span>
+                        <span v-show="item.validUntil">有效日期: {{item.validUntil}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -96,10 +91,27 @@
           <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter"
                            :default-value="matterList" get-list-method="getInventory7502" :params="matterParams"
                            :filter-list="filterList" ref="matter">
+            <!-- 单号title插槽 -->
+            <template slot="titleName" slot-scope="props">
+              <span class="order-title">采购订单号</span>
+            </template>
+            <!-- 基本信息插槽 -->
+            <template slot="attribute" slot-scope="{item}">
+              <span class="mater_classify">
+                <span>属性: {{item.processing}}</span>
+                <span>物料大类: {{item.inventoryType}}</span>
+                <span>单位: {{item.measureUnit}}</span>
+                <span v-if="item.keepingDays">保质期天数: {{item.keepingDays}}</span>
+                <span v-if="item.nearKeepingDays">临保天数: {{item.nearKeepingDays}}</span>
+                <span v-if="item.safeStock">安全库存: {{item.safeStock}}</span>
+              </span>
+            </template>
+            <!-- 其他信息插槽 -->
             <template slot-scope="{item}" slot="storage">
               <div class="mater_material">
-                <span class="spec">订单总数: {{item.qty}}</span>
-                <span class="spec">已入库数: {{item.qtyed}}</span>
+                <span>待入库数: {{item.qtyBal}}</span>
+                <span>订单总数: {{item.qty}}</span>
+                <span>已入库数: {{item.qtyed}}</span>
               </div>
             </template>
           </pop-matter-list>
@@ -109,20 +121,44 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
-              <span>订单总数: {{modifyMatter.thenTotalQtyBal}}</span>
-              <span>待入库数: {{modifyMatter.thenQtyBal}}</span>
+              <span>订单总数: {{modifyMatter.qty || 0}}</span>
+              <span>待入库数: {{modifyMatter.qtyBal || 0}}</span>
             </div>
             <div>
-              <span>已入库数: {{modifyMatter.thenLockQty}}</span>
+              <span>已入库数: {{modifyMatter.qtyed}}</span>
             </div>
           </template>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+              placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+              <template slot="label">
+                <slot name="qtyName">
+                  <span class='required'>本次入库数</span>
+                </slot>
+              </template>
+            </x-input>
+            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
+            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>单价
+                </span>
+              </template>
+            </x-input>
+            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>税率
+                </span>
+              </template>
+            </x-input>
+          </template>
           <template slot="date" slot-scope="{modifyMatter}">
-            <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
+            <!-- <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
                   v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
               <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
                           @on-selected="moreUnitSelected"></r-dropdown>
             </cell>
-            <cell title="待验收" text-align='right' placeholder='无' :value="modifyMatter.qtyBal"></cell>
+            <cell title="待验收" text-align='right' placeholder='无' :value="modifyMatter.qtyBal"></cell> -->
             <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
             <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
           </template>
@@ -158,7 +194,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Datetime, dateFormat, Cell} from 'vux'
+  import { Cell, XInput, Datetime, XTextarea, dateFormat } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getObjInvMoreUnitByInvCode} from 'service/materService'
@@ -242,9 +278,10 @@
     },
     mixins: [applyCommon],
     components: {
+      Cell, RDropdown, XInput,
       XTextarea, Datetime, PopOrderList, RNumber,
-      PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
-      Cell, RDropdown,
+      PopDealerList, PopWarehouseList, PopMatterList, 
+      PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
     },
     methods: {
       // 获取 结算方式

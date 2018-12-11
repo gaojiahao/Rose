@@ -801,6 +801,7 @@
             .mater_info {
               color: #757575;
               font-size: .12rem;
+              word-break: break-all;
               // 有颜色包裹的
               .withColor {
                 margin-top: .04rem;
