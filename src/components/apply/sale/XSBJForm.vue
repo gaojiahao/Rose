@@ -86,8 +86,14 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span>标准价格: {{modifyMatter.standardPrice}}</span>
-            <span>特批底价: {{modifyMatter.specialReservePrice}}</span>
+            <div>
+              <span>标准价格: {{modifyMatter.standardPrice}}</span>
+              <span>特批底价: {{modifyMatter.specialReservePrice}}</span>
+            </div>
+            <div>
+              <span>最大需求数量: {{modifyMatter.qtyOnline}}</span>
+              <span>最小需求数量: {{modifyMatter.qtyDownline}}</span>
+            </div>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
@@ -306,10 +312,10 @@
             warn = "请输入需求数量";
             return false;
           } else if (tdQty < item.qtyDownline) {
-            warn = "需求数量不能小于最小数量";
+            warn = "需求数量不能小于最小需求数量";
             return false;
           } else if (tdQty > item.qtyOnline) {
-            warn = "需求数量不能大于最大数量";
+            warn = "需求数量不能大于最大需求数量";
             return false;
           }
           if (!price) {
