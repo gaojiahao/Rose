@@ -9,7 +9,6 @@
         <pop-name-list @sel-item="selProject" :default-value="projectApproval"></pop-name-list>
         <!-- 实际情况 -->
         <div class="materiel_list">
-          <p class="title">实际情况</p>
           <group>
             <datetime title="实际开始日期" v-model="projectTime.actualStartTime">
               <span class="required" slot="title">实际开始日期</span>
@@ -302,13 +301,15 @@
       }
     }
     .materiel_list{
-      /deep/ .weui-cells__title {
-        padding-left: 0;
-        font-size: .12rem;
-      }
-      /deep/ .weui-cells{
-        &:before{
-          border-top: 1px solid #D9D9D9;
+      .costGroup{
+        /deep/ .weui-cells__title {
+          padding-left: 0;
+          font-size: .12rem;
+        }
+        /deep/ .weui-cells{
+          &:before{
+            border-top: 1px solid #D9D9D9;
+          }
         }
       }
     }
