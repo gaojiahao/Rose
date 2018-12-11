@@ -164,9 +164,17 @@
               if (item.transObjCode === 'B类产品') {
                 bClassAmt = accAdd(bClassAmt, item.amount);
               } else {
+                let num = 0;
+                let label = '';
+                if (item.transObjCode.indexOf('线上') !== -1) {
+                  num = toFixed(item.amount / 4000);
+                } else {
+                  num = toFixed(item.amount / 5000);
+                }
+                totalNum1 = accAdd(totalNum1, num);
                 bClassList.push({
                   label: item.transObjCode,
-                  value: item.amount
+                  value: `￥${item.amount}/折合${num}套`
                 });
               }
               break;
@@ -181,8 +189,8 @@
         this.finalAmt = "￥" + accAdd(Number(aClassAmt), Number(bClassAmt));
         this.finalList = [
           {
-            label: "合计数量",
-            value: `${list4_num}件/折合${totalNum1}套`
+            label: "套数",
+            value: `${totalNum1}套`
           }
         ];
         this.listSalesAmt = [

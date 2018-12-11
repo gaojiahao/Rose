@@ -50,6 +50,12 @@
           <cell title="B类产品合计" :value="BclassTotal"></cell>
         </group>
 
+        <group title="B类产品套数">
+          <cell class="each_part" title="B类产品套数(线上)" :value="BSet" value-align="right"></cell>
+          <cell class="each_part" title="B类产品套数(线下)" :value="BSetDown" value-align="right"></cell>
+          <cell class="each_part" title="B类产品套数合计" :value="BSetTotal" value-align="right"></cell>
+        </group>
+
         <group title="费用明细">
           <x-input title="住宿费" v-model.number="hotelAmt" text-align="right" placeholder="请输入住宿费"
                    @on-blur="checkAmt('hotelAmt')"></x-input>
@@ -148,6 +154,18 @@
       },
       BclassTotal() {
         return accAdd(this.Bclass, this.BclassDown)
+      },
+      // B类产品套数线上
+      BSet() {
+        return toFixed(this.Bclass / 4000)
+      },
+      // B类产品套数线下
+      BSetDown() {
+        return toFixed(this.BclassDown / 5000)
+      },
+      // B类产品套数合计
+      BSetTotal() {
+        return toFixed(accAdd(this.BSet, this.BSetDown))
       },
     },
     methods: {
