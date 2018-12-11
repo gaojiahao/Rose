@@ -336,7 +336,7 @@
         // 项目类产品
         for (let item of this.arr) {
           // 动态增加 月销量“套”合计
-          newVar2 = toFixed(newVar2, Number(item.num1));
+          newVar2 = toFixed(accAdd(newVar2, Number(item.num1)));
           // 项目类产品
           jsonData.transDetailUncalc.push({
             id: this.guid(),
