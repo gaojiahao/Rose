@@ -11,6 +11,14 @@
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm" isRequired
                            v-model="crDealerPaymentTerm"></pop-single-select>
+        <div class="other_info" v-show="dealerInfo.pamentDays">
+          <div class="title">账期天数</div>
+          <div class="mode">{{dealerInfo.pamentDays}}</div>
+        </div>
+        <div class="other_info" v-show="dealerInfo.accountExpirationDate">
+          <div class="title">账期到期日</div>
+          <div class="mode">{{dealerInfo.accountExpirationDate}}</div>
+        </div>
         <!-- 仓库-->
         <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouse"
                             @sel-item="selWarehouse"></pop-warehouse-list>
@@ -236,7 +244,7 @@
         DealerPaymentTerm: '现付', // 结算方式
         transMode: ['现付', '预付', '账期', '票据'], // 结算方式
         showDealerPop: false, // 是否显示供应商的popup
-        dealerInfo: null, // 供应商客户信息
+        dealerInfo: {}, // 供应商客户信息
         contactInfo: {},
         crDealerPaymentTerm: '现付', // 结算方式
         formData: {
@@ -329,7 +337,7 @@
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
           let {
-            tdQty = '', price = '', taxRate = 0.16,
+            tdQty = item.qtyBal, price = item.price, taxRate = 0.16,
             productionDate = '',
             validUntil = '',
           } = this.numMap[key] || {};
@@ -823,6 +831,24 @@
       /deep/ .r-dropdown-list {
         text-align: left;
       }
+    }
+  }
+  .other_info{
+    width: 95%;
+    margin: 0 auto;
+    background: #fff;
+    box-sizing: border-box;
+    padding: .08rem .1rem;
+    display: flex;
+    font-size: .14rem;
+    align-items: center;
+    justify-content: space-between;
+    .title{
+      color: #757575;
+    }
+    .mode{
+      color: #111;
+      font-weight: 500;
     }
   }
 </style>
