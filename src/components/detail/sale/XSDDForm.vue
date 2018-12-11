@@ -11,19 +11,34 @@
         <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
         <!-- 往来联系部分 交易基本信息-->
-        <contact-part :contact-info="contactInfo" ></contact-part>
+        <contact-part :contact-info="contactInfo">
+          <template slot="other">
+            <div class="other">
+              <span class="title">账期天数：</span>
+              <span class="mode">{{contactInfo.pamentDays || '暂无'}}</span>
+            </div>
+          </template>
+        </contact-part>
         <!-- 物料列表 -->
-        <matter-list :matter-list='orderInfo.order.dataSet' :noTaxAmount="noTaxAmount" 
-                     :taxAmount="taxAmount" :count="count">
+        <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
+              <div class="mater_attribute">
+                <span>合同数量: {{item.thenTotalQtyBal}}</span>
+                <span>已下单: {{item.thenLockQty}}</span>
+                <span>待下单: {{item.thenQtyBal}}</span>
+              </div>
+              <div class="mater_attribute">
+                <span>交付开始日: {{item.dateActivation}}</span>
+                <span>预期交货日: {{item.promDeliTime}}</span>
+              </div>
+              <div class="mater_attribute">
+                <span>交付截止日: {{item.executionDate}}</span>
+              </div>
               <div class='mater_attribute'>
                 <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                <span>数量: {{item.tdQty | toFixed}}</span>
+                <span>本次下单: {{item.tdQty | toFixed}}</span>
                 <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-              </div>
-              <div class="mater_attribute" v-if="item.promDeliTime">
-                <span>预期交货日: {{item.promDeliTime}}</span>
               </div>
               <div class='mater_price'>
                 <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
@@ -70,6 +85,7 @@ export default {
       orderInfo: {},      // 表单内容
       formViewUniqueId : '',
       contactInfo: {}, // 客户、付款方式、物流条款的值
+      orderList: {},
     }
   },
   components:{
@@ -102,17 +118,23 @@ export default {
           })
           return;
         }
+        let orderList = {};
         // 获取合计
         let { dataSet } = data.formData.order;
-        for(let val of dataSet){
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
-          this.count = accAdd(this.count,val.tdAmount);
-          val.inventoryPic = val.inventoryPic_transObjCode
-            ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
+        for(let item of dataSet){
+          item.noTaxAmount = accMul(item.price,item.tdQty);
+          item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount,item.taxAmount));
+          this.count = accAdd(this.count,item.tdAmount);
+          item.inventoryPic = item.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
+          if (!orderList[item.transMatchedCode]) {
+            orderList[item.transMatchedCode] = [];
+          }
+          orderList[item.transMatchedCode].push(item);
         }
+        this.orderList = orderList;
         this.attachment = data.attachment;
         this.orderInfo = data.formData;
         this.getcontactInfo()
@@ -136,6 +158,7 @@ export default {
         address: order.address_dealerDebit, // 详细地址
         payment: order.drDealerPaymentTerm, // 付款方式,
         logistics : orderInfo.drDealerLogisticsTerms, //物料方式
+        pamentDays: order.daysOfAccount,
       };
     },
   }

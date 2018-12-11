@@ -38,7 +38,8 @@ export default {
       attachment : [],
       relationKey: '',
       handlerDefault: {}, // 经办人默认信息
-      listId: ''
+      listId: '',
+      taxRate: 0.16, // 税率
     }
   },
   components: {
@@ -258,7 +259,7 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item){
-      let { price, tdQty, qtyBal, qtyStockBal, thenQtyBal, qtyStock} = item;
+      let { price, tdQty, qtyBal, qtyStockBal, thenQtyBal, qtyStock, taxRate} = item;
       // 金额
       if (price) {
         item.price = Math.abs(toFixed(price));
@@ -283,6 +284,10 @@ export default {
         else if(thenQtyBal && tdQty > thenQtyBal) {
           item.tdQty = thenQtyBal;
         }
+      }
+      //税率
+      if (taxRate) {
+        item.taxRate = Math.abs(toFixed(taxRate));
       }
     },
     //输入框获取焦点，内容选中
