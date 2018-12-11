@@ -26,11 +26,11 @@
         <div class="info_title vux-1px-b"><span class="iconfont icon-yusuan2"></span>资金明细</div>
         <div class="project_content" :class="{'vux-1px-b': index !== projectConclusion.length - 1}"
              v-for="(item, index) in projectConclusion">
-          <form-cell :cellTitle="`实际${item.conclusionName}`" showSymbol textRight
+          <form-cell :cellTitle="`实际${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                      :cellContent="numberComma(item.actual)" :showTopBorder="false"></form-cell>
-          <form-cell :cellTitle="`预算${item.conclusionName}`" showSymbol textRight
+          <form-cell :cellTitle="`预算${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                      :cellContent="numberComma(item.budget)" :showTopBorder="false"></form-cell>
-          <form-cell :cellTitle="`差额${item.conclusionName}`" showSymbol textRight
+          <form-cell :cellTitle="`差额${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight v-show="item.conclusionName !== '利润率'"
                      :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
         </div>
       </div>

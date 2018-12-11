@@ -29,7 +29,8 @@
             <form-cell :cellTitle="`预算${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                        :cellContent="numberComma(item.budget)" :showTopBorder="false"></form-cell>
             <form-cell :cellTitle="`差额${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
-                       :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
+                       :cellContent="numberComma(item.difference)" :showTopBorder="false" v-show="item.conclusionName !== '利润率'">
+            </form-cell>
           </div>
         </div>
         <div class="materiel_list">
