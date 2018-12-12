@@ -60,10 +60,10 @@ export default {
       this.$refs.list.changeVisitedStatus && this.$refs.list.changeVisitedStatus();
     });
     this.$nextTick(() => {
-      if (this.$refs.list.$refs.bScroll) {
+      if (this.$refs.list && this.$refs.list.$refs.bScroll) {
         this.$refs.list.$refs.bScroll.refresh();
       }
-    })
+    })  
     if (reload) {
       let { fileId, listId } = this.$route.params,
           { childId } = this.$route.query;
