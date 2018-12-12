@@ -647,7 +647,8 @@ export default {
           matter: this.matterList,
           dealer: this.dealerInfo,
           warehouse: this.warehouse,
-          formData: this.formData
+          formData: this.formData,
+          orderList: this.orderList,
         }
       };
     },
@@ -714,6 +715,7 @@ export default {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       this.matterList = JSON.parse(data).matter;
+      this.orderList = JSON.parse(data).orderList;
       this.dealerInfo = JSON.parse(data).dealer;
       this.warehouse = JSON.parse(data).warehouse;
       this.formData = JSON.parse(data).formData;
