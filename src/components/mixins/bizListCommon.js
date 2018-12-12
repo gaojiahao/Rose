@@ -301,26 +301,8 @@ export default {
           item.crtTime = dateFormat(item.crtTime, 'YYYY-MM-DD HH:mm:ss');
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
           item.itemCount = item.detailItem.length;
-          // 只取有物料编码的
-          let detailItem = item.detailItem.reduce((arr, item) => {
-            let containList = [
-              'inventoryCode_transObjCode',
-              'inventoryCode_outPutMatCode',
-              'facilityCode_facilityObjCode',
-              'opportunityTitle',
-              'fundCode_cashInCode',
-              'fundCode_cashOutCode',
-            ];
-            let flag = containList.findIndex(key => {
-              return !!item[key]
-            }) !== -1;
-            if (flag) {
-              arr.push(item);
-            }
-            return arr
-          }, []);
           // // 列表当中每个订单最多展现5个物料
-          item.detailItem = detailItem.slice(0, 5);
+          item.detailItem = item.detailItem.slice(0, 5);
           item.detailItem.forEach(mItem => {
             if(mItem.tdQty != null) {
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
