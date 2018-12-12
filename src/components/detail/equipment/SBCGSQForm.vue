@@ -11,7 +11,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderList' :listTitle="'设施列表'"
+      <matter-list :matter-list='orderList' listTitle='设施列表'
                    :count="count">
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>

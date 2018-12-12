@@ -7,11 +7,10 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :default-contact="contactInfo" dealer-label-name="设施供应商"></pop-dealer-list>
+                         :default-contact="contactInfo" dealer-label-name="供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm" isRequired
                            v-model="dealerInfo.paymentTerm"></pop-single-select>
-
         <cell class="cell-item" title="账期天数" :value="dealerInfo.pamentDays"></cell>
 
         <!-- 物料列表 -->
@@ -19,8 +18,8 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
-              <div class="title">订单列表</div>
-              <div class="required">请选择订单</div>
+              <div class="title">申请号列表</div>
+              <div class="required">请选择申请号</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
@@ -63,13 +62,6 @@
                         </div>
                       </div>
                     </template>
-                    <!--<template slot="edit" slot-scope="{item}">
-                      <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.tdQty && !matterModifyClass">
-                        <div class="edit-tips">
-                          <span class="tips-word">点击进行填写</span>
-                        </div>
-                      </div>
-                    </template>-->
                     <template slot="editPart" slot-scope="{item}">
                       <div class="edit-part vux-1px-l" @click="modifyMatter(item,index,key)"
                            v-show="(item.price && (item.tdQty || item.tdQty === 0)) &&!matterModifyClass">
@@ -93,8 +85,14 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
 
-          <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter"
-                             :default-value="matterList" request="1" ref="matter">
+          <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :filter-list="filterList"
+                             default-title='申请号' :default-value="matterList" request="1" ref="matter">
+            <template slot="storage" slot-scope="{item}">
+              <div class="mater_classify">
+                <span class="father">单价: ￥{{item.price || 0}}</span>
+                <span>待下单: {{item.qtyBal || 0}}</span>
+              </div>
+            </template>
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
@@ -194,7 +192,7 @@
         modifyKey: null,
         filterList: [
           {
-            name: '交易号',
+            name: '申请号',
             value: 'transCode',
           }, {
             name: '设施名称',
@@ -674,11 +672,11 @@
       }
     }
     .cell-item {
-      margin: 0 auto;
-      padding: .05rem .1rem;
       width: 95%;
-      background-color: #fff;
+      margin: 0 auto;
+      padding: .07rem .1rem;
       box-sizing: border-box;
+      background-color: #fff;
       /deep/ .vux-label {
         color: #757575;
         font-size: .14rem;

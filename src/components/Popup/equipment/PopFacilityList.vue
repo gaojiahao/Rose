@@ -5,7 +5,7 @@
            ref="RPopup">
     <template slot-scope="{item, index}" slot="pop-item">
       <div class="order-code" v-if="item.transCode">
-        <span class="order-title">订单号</span>
+        <span class="order-title">{{defaultTitle}}</span>
         <span class="order-num">{{item.transCode}}</span>
       </div>
       <div class="order-matter">
@@ -50,11 +50,7 @@
                 <span>折旧摊销月数: {{item.facilityDepreciation || 0}}</span>
                 <span>预留残值比例: {{item.facilityResidualRatio || '无'}}</span>
               </div>
-              <slot name="storage" :item="item">
-                <div class="mater_classify">
-                  <span class="spec">待下单: {{item.qtyBal}}</span>
-                </div>
-              </slot>
+              <slot name="storage" :item="item"></slot>
             </div>
           </div>
         </div>
@@ -80,6 +76,10 @@
         default() {
           return []
         }
+      },
+      defaultTitle: {
+        type: String,
+        default: '订单号'
       },
       // 请求接口
       request: {
