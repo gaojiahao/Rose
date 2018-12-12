@@ -34,11 +34,12 @@
                     <!--单位，属性，颜色-->
                     <div class="mater_more">
                       <span class="processing">属性: {{item.processing}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
+                      <span class='unit'>主计量单位: {{item.measureUnit}}</span>
                     </div>
                     <div class="mater_more">
-                      <span class="symbol">账存数量: {{item.qtyBal}}</span>
+                      <span class="symbol">库存余额: {{item.qtyBal}}</span>
+                      <span class="symbol">计划占用: {{item.qtyLock}}</span>
+                      <span class="symbol">库存余额: {{item.thenQtyStock}}</span>
                     </div>
                     <div class='mater_num' v-show="item.tdQty">
                       盘点数量: <span class="num">{{item.tdQty}}</span>
@@ -237,6 +238,7 @@ export default {
       sels.forEach(item => {
         item.tdQty = this.numMap[item.inventoryCode] || 0;
         item.differenceNum = accSub(item.tdQty, item.qtyBal);
+        item.thenQtyStock = toFixed(accSub(item.qtyBal, item.qtyLock))
       });
       this.numMap = {};
       this.matterList = [...sels];
@@ -276,13 +278,15 @@ export default {
         }
         let mItem = {
           transObjCode: item.inventoryCode, // 物料编码
-          thenQtyStock: item.qtyBal, // 可用库存
+          thenQtyStock: item.thenQtyStock, // 可用库存
           tdQty: item.tdQty, // 盘点数量
           differenceNum: item.differenceNum || 0,
           tdProcessing: item.processing, // 物料加工属性
           assistQty: item.assistQty || 0, // 辅计数量（明细）
           assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
           assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
+          thenLockQtyStock: item.qtyLock, // 计划占用
+          thenTotalQtyStock:item.qtyBal, // 库存余额
           comment: item.comment || null,
         };
         if (this.transCode) {
