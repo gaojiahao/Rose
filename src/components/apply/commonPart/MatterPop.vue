@@ -36,9 +36,9 @@
                 <span class="processing">类型: {{modifyMatter.facilityType}}</span>
                 <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
                 <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
+                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
               </div>
               <div class="mater_more">
-                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
                 <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
               </div>
             </template>
@@ -84,11 +84,7 @@
                 </span>
               </template>
             </x-input>
-            <slot name="date" :modifyMatter="modifyMatter">
-              <!-- <datetime v-if="showDateTime" :title="dateText" v-model="modifyMatter.promDeliTime"
-                      placeholder="请选择" ></datetime> -->
-
-            </slot>
+            <slot name="date" :modifyMatter="modifyMatter"></slot>
 
           </slot>
         </group>

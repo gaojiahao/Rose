@@ -70,9 +70,6 @@
           </div>
           <pop-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :judgeKeys="['facilityCode']"
                              :default-value="matterList" :params="matterParams" ref="matter">
-            <template slot="storage" slot-scope="{item}">
-              <div class="mater_classify"></div>
-            </template>
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->

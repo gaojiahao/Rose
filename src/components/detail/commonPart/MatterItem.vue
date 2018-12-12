@@ -231,6 +231,9 @@
             color: #757575;
           }
         }
+        .num + .num {
+          margin-left: .04rem;
+        }
         .units {
           font-size: .1rem;
         }
