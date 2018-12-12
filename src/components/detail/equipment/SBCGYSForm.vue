@@ -15,7 +15,10 @@
                     :payment="false"></contact-part>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
-                   :taxAmount="taxAmount" :count="count">
+                   :taxAmount="taxAmount" :count="count" list-title="设施列表">
+        <template slot="orderTitle" slot-scope="props">
+          <span class="order_title">订单号</span>
+        </template>
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
