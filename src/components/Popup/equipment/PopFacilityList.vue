@@ -15,7 +15,7 @@
         <div class="mater_main ">
           <!-- 物料名称 -->
           <div class="mater_name">
-            <span class="whiNum">No.{{index + 1}}</span>{{item.facilityName}}
+            {{item.facilityName}}
           </div>
           <!-- 物料基本信息 -->
           <div class="mater_info">
@@ -40,12 +40,15 @@
             <div class="withoutColor">
               <!-- 物料分类 -->
               <div class="mater_classify">
-                <span class="father">大类: {{item.facilityBigType || '无'}}</span>
-                <span class="child">子类: {{item.facilitySubclass || '无'}}</span>
+                <span class="father">类型: {{item.facilityType || '无'}}</span>
+                <span>单位: {{item.facilityUnit}}</span>
               </div>
               <div class="mater_classify">
-                <span class="father">类型: {{item.facilityType || '无'}}</span>
-                <span class="unit">单位: {{item.facilityUnit}}</span>
+                <span class="father">大类: {{item.facilityBigType || '无'}}</span>
+                <span>子类: {{item.facilitySubclass || '无'}}</span>
+                <span>设施厂商: {{item.facilityManufacturer || '无'}}</span>
+                <span>折旧摊销月数: {{item.facilityDepreciation || 0}}</span>
+                <span>预留残值比例: {{item.facilityResidualRatio || '无'}}</span>
               </div>
               <slot name="storage" :item="item">
                 <div class="mater_classify">
@@ -258,6 +261,7 @@
       img {
         width: 100%;
         max-height: 100%;
+        border-radius: .04rem;
       }
     }
 
@@ -309,6 +313,8 @@
             .title {
               color: #fff;
               background: #3f72af;
+              border-top-left-radius: .04rem;
+              border-bottom-left-radius: .04rem;
             }
             .num {
               color: #111;
@@ -318,6 +324,8 @@
               background: #dbe2ef;
               box-sizing: border-box;
               text-overflow: ellipsis;
+              border-top-right-radius: .04rem;
+              border-bottom-right-radius: .04rem;
             }
           }
           // 规格
@@ -341,6 +349,7 @@
           .mater_classify {
             font-size: .1rem;
             margin-top: .02rem;
+            word-break: break-all;
             .type,
             .father {
               margin-right: .04rem;
