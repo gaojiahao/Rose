@@ -30,7 +30,7 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">申请号</span>
+                  <span class="order_title">订单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -40,7 +40,7 @@
                       <div class="mater_more">
                         <span class='unit'>类型：{{item.facilityType || '无'}}</span>
                         <span class="unit">大类：{{item.facilityBigType}}</span>
-                        <span class='unit'>单位：{{item.facilitySpecification || '无'}}</span>
+                        <span class='unit'>单位：{{item.facilityUnit || '无'}}</span>
                       </div>
                       <div class="mater_more">
                         <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
@@ -59,13 +59,6 @@
                         </div>
                       </div>
                     </template>
-                    <!--<template slot="edit" slot-scope="{item}">
-                      <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.tdQty && !matterModifyClass">
-                        <div class="edit-tips">
-                          <span class="tips-word">点击进行填写</span>
-                        </div>
-                      </div>
-                    </template>-->
                     <template slot="editPart" slot-scope="{item}">
                       <div class="edit-part vux-1px-l" @click="modifyMatter(item,index,key)"
                            v-show="(item.price && (item.tdQty || item.tdQty === 0)) &&!matterModifyClass">
@@ -89,13 +82,13 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
 
-          <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter"
+          <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :filter-list="filterList"
                              :default-value="matterList" request="2" :params="facilityParams" ref="matter">
             <template slot-scope="{item}" slot="storage">
-              <div class="mater_material">
-                <span class="spec">订单总数: {{item.qty}}</span>
-                <span class="spec">已验收数: {{item.purchased}}</span>
-                <span class="spec">待验收数: {{item.qtyBal}}</span>
+              <div class="mater_classify">
+                <span class="father">订单总数: {{item.qty}}</span>
+                <span class="father">已验收数: {{item.purchased}}</span>
+                <span>待验收数: {{item.qtyBal}}</span>
               </div>
             </template>
           </pop-facility-list>
@@ -107,6 +100,30 @@
             <span>订单总数: {{modifyMatter.qty}}</span>
             <span>已验收数: {{modifyMatter.purchased}}</span>
             <span>待验收数: {{modifyMatter.qtyBal}}</span>
+          </template>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input title="本次验收" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+              placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+              <template slot="label">
+                <slot name="qtyName">
+                  <span class='required'>本次验收</span>
+                </slot>
+              </template>
+            </x-input>
+            <x-input disabled title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
+            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>单价
+                </span>
+              </template>
+            </x-input>
+            <x-input disabled title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>税率
+                </span>
+              </template>
+            </x-input>
           </template>
         </pop-matter>
 
@@ -140,9 +157,9 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Datetime, dateFormat} from 'vux'
+  import { XInput, Datetime, XTextarea, dateFormat } from 'vux'
   // 请求 引入
-  import {getSOList} from 'service/detailService'
+  import { getSOList } from 'service/detailService'
   import {
     saveAndStartWf,
     getBaseInfoData,
@@ -213,9 +230,9 @@
     },
     mixins: [applyCommon],
     components: {
-      XTextarea, RNumber,
-      PopDealerList, PopMatter, RPicker, PopBaseinfo,
-      PopFacilityList,
+      XInput, RNumber, XTextarea, 
+      PopMatter, RPicker, PopDealerList, 
+      PopBaseinfo, PopFacilityList
     },
     methods: {
       // 修改经办人信息
@@ -261,13 +278,15 @@
         sels.forEach(item => {
           let key = `${item.transCode}_${item.facilityCode}`;
           let {
-            tdQty = '', price = '', taxRate = 0.16,
+            tdQty = '', 
+            price = '', 
+            taxRate = 0.16,
           } = this.numMap[key] || {};
-          item.tdQty = tdQty;
+          item.tdQty = item.qtyBal;
+          item.taxRate = taxRate;
           if (price.length) {
             item.price = price;
           }
-          item.taxRate = taxRate;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }

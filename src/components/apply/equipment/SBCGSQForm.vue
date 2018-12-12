@@ -10,15 +10,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showFacilityPop = !showFacilityPop">
-              <div class="title">设备列表</div>
-              <div class="required">请选择设备</div>
+              <div class="title">设施列表</div>
+              <div class="required">请选择设施</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>订单列表</div>
+              <div>设施列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -30,12 +30,10 @@
                   <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                        <span class="processing">大类：{{item.facilityBigType}}</span>
-                        <span class='mater_color'>子类：{{item.facilitySubclass || '无'}}</span>
-                        <span class='unit'>单位：{{item.facilityUnit}}</span> 
-                      </div>
-                      <div class="mater_more">
-                        <span>设备类型：{{item.facilityType}}</span>
+                        <span class="processing">大类: {{item.facilityBigType}}</span>
+                        <span class='mater_color'>子类: {{item.facilitySubclass || '无'}}</span>
+                        <span class='unit'>单位: {{item.facilityUnit}}</span> 
+                        <span>设施类型: {{item.facilityType}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -72,9 +70,6 @@
           </div>
           <pop-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :judgeKeys="['facilityCode']"
                              :default-value="matterList" :params="matterParams" ref="matter">
-            <template slot="storage" slot-scope="{item}">
-              <div class="mater_classify"></div>
-            </template>
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->

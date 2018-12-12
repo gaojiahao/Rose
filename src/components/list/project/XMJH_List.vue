@@ -9,7 +9,7 @@
           <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 

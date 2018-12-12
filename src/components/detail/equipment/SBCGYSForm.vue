@@ -15,22 +15,26 @@
                     :payment="false"></contact-part>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
-                   :taxAmount="taxAmount" :count="count">
+                   :taxAmount="taxAmount" :count="count" list-title="设施列表">
+        <template slot="orderTitle" slot-scope="props">
+          <span class="order_title">订单号</span>
+        </template>
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
               <span>类型: {{item.facilityType}}</span>
               <span>大类: {{item.facilityBigType_facilityObjCode}}</span>
+              <span>单位: {{item.facilityUnit_facilityObjCode || '无'}}</span>
+              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
             </div>
             <div class='mater_attribute'>
               <span>订单总数: {{item.thenTotalQtyBal}}</span>
               <span>已验收数: {{item.thenLockQty}}</span>
               <span>待验收数: {{item.thenQtyBal}}</span>
             </div>
-            <div class='mater_attribute'>
-              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>本次验收: {{item.tdQty | toFixed}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            <div class='mater_num'>
+              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span class="num">本次验收: {{item.tdQty | toFixed}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

@@ -11,21 +11,24 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderList' :listTitle="'设备列表'"
+      <matter-list :matter-list='orderList' listTitle='设施列表'
                    :count="count">
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
               <span>类型: {{item.facilityType}}</span>
+              <span>单位: {{item.facilityUnit_facilityObjCode || '无'}}</span>
               <span>大类: {{item.facilityBigType_facilityObjCode}}</span>
-              <span>子类: {{item.facilitySubclass_facilityObjCode}}</span>
+              <span>子类: {{item.facilitySubclass_facilityObjCode || '无'}}</span>
             </div>
-            <div class='mater_attribute'>
-              <span>估计价格: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>本次申请: {{item.tdQty | toFixed}}</span>
+            <div class='mater_num'>
+              <span class="num">估计价格: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span class="num">本次申请: {{item.tdQty | toFixed}}</span>
             </div>
             <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+              <span>
+                <span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}
+              </span>
             </div>
           </div>
         </template>
