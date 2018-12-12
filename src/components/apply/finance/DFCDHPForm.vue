@@ -421,7 +421,6 @@
 
   .order-detail {
     margin-bottom: .1rem;
-    padding-top: .1rem;
     &:first-child {
       padding-top: 0;
     }
@@ -442,7 +441,7 @@
       margin-right: .05rem;
     }
     .weui-cell {
-      padding: .05rem 0;
+      padding: 10px 0;
       font-size: .14rem;
       &:before {
         left: 0;

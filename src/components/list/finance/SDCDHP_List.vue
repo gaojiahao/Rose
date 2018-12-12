@@ -13,7 +13,13 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        @click.native="goDetail(item, index)" no-count></just-word-item>
+                        @click.native="goDetail(item, index)">
+          <template slot="list-item" slot-scope="{item}">
+            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
+              <div class="content">汇票号: {{val.draftNumber}}</div>
+            </div>
+          </template>
+        </just-word-item>
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn " v-if="action.add">
@@ -62,4 +68,8 @@
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
+  .each-slot-item {
+    width: 100%;
+    
+  }
 </style>

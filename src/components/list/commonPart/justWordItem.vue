@@ -19,7 +19,7 @@
     <div class="main_container" v-if="item.opportunityTitle">
       <div class="content_part">{{item.opportunityTitle}}</div>
       <div class="other_info_part">
-        <p class="info_with_comment">内容简介：{{item.comment}}</p>
+        <p class="info_with_comment">内容简介：{{item.comment || '无'}}</p>
         <p class="info_with_comment">备注：{{item.biComment || '无'}}</p>
       </div>
     </div>
@@ -32,13 +32,13 @@
         </div>
         <!-- 主要信息 -->
         <div class="content_part">{{item.projectName || item.projectName_project}}</div>
+        <!-- 其他信息 -->        
         <template v-if="item.detailItem.length > 1">
           <div class="other_info_part" v-if="task.taskName" v-for="(task, index) in item.detailItem" :key='index'>
             <p class="info_with_comment">任务{{ 1 + index }}：{{task.taskName}}</p>
           </div>
         </template>
         <template v-else>
-          <!-- 其他信息 -->
           <div class="other_info_part" v-if="item.approvalComment_project || item.taskComment">
             <p class="info_with_comment" v-if="item.taskName">任务名称：{{item.taskName}}</p>
             <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介：{{item.approvalComment_project || item.taskComment}}</p>
@@ -53,7 +53,7 @@
     <!-- 金额合计 -->
     <div class="order_count">
       <div class="money_part" v-if="!noCount">
-        <span class="num" v-if="item.itemCount">共{{item.itemCount}}笔费用</span>
+        <span class="num" v-if="item.itemCount > 1">共{{item.itemCount}}笔</span>
         <span class="num">{{conutTitle}}:</span>
         <span class="money">
           <span class="symbol">￥</span>{{total | toFixed | numberComma(3)}}
@@ -257,9 +257,6 @@ export default {
         color: #757575;
         font-size: .12rem;
       }
-    }
-    .each_task {
-
     }
     .other_info_part {
       width: 100%;
