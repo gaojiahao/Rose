@@ -49,19 +49,19 @@
                   <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                          <span class="processing">属性：{{item.processing}}</span>
-                          <span class='unit'>单位：{{item.measureUnit}}</span>
-                          <span class='mater_color' v-show="item.drDealerLabel">客户类型：{{item.drDealerLabel}}</span>
-                          <span class='mater_color' v-show="item.qtyOnline">数量上线{{item.qtyOnline}}</span>
-                          <span class='mater_color' v-show="item.qtyDownline">数量下线{{item.qtyDownline}}</span>
+                          <!-- <span class="processing">属性：{{item.processing}}</span> -->
+                          <span class='unit'>单位: {{item.measureUnit}}</span>
+                          <span class='mater_color' v-show="item.drDealerLabel">客户类型: {{item.drDealerLabel}}</span>
+                          <span class='mater_color' v-show="item.qtyOnline">数量上线: {{item.qtyOnline}}</span>
+                          <span class='mater_color' v-show="item.qtyDownline">数量下线: {{item.qtyDownline}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other'>
                         <div v-if="item.price" class="price">
-                          保准价格：<span class="mater_price"><span class="symbol">￥</span>{{item.price}}</span>
+                          保准价格: <span class="mater_price"><span class="symbol">￥</span>{{item.price}}</span>
                         </div>
                         <div v-if="item.specialReservePrice" class="price">
-                          特批低价：<span class="mater_price"><span class="symbol">￥</span>{{item.specialReservePrice}}</span>
+                          特批低价: <span class="mater_price"><span class="symbol">￥</span>{{item.specialReservePrice}}</span>
                         </div>
                       </div>
                   </template>
@@ -428,6 +428,7 @@
               inventoryName: item.inventoryName_transObjCode,
               measureUnit:item.measureUnit_transObjCode,
               specification: item.specification_transObjCode,
+              PopDealerLabel: [item.drDealerLabel],
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
             };
             matterList.push(item);

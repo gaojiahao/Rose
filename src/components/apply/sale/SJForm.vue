@@ -254,6 +254,10 @@
             county: formData.county_dealerDebit || '', // 地区
             address: formData.address_dealerDebit || '', // 详细地址
           };
+          this.contactInfo = {
+            dealerName: formData.dealerDebitContactPersonName || '', // 联系人
+            dealerMobilePhone: formData.dealerDebitContactInformation || '', // 手机
+          }
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,
@@ -265,6 +269,7 @@
           // 基本信息
           this.formData = {
             ...this.formData,
+            ...formData,
             ...this.handlerDefault,
             biComment: formData.biComment,
             biId: formData.biId,
@@ -272,12 +277,9 @@
             creator: formData.creator,
             modifer: formData.modifer,
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
+            
           }
-          // this.formData = {
-          //   ...formData,
-          //   creator: formData.creator,
-          //   validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
-          // };
+          this.categoryLabels = [formData.categoryLabels]
           this.biReferenceId = formData.biReferenceId;
           this.$loading.hide();
         })
