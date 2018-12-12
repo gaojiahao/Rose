@@ -34,93 +34,123 @@
                      @on-focus="getFocus($event)"></x-input>
           </group>
         </div>
-        <!-- 任务计划列表 -->
-        <div class="materiel_list" v-for="(item,index) in invoiceList" :key="index">
-          <div class="title">开票明细</div>
-          <group class='costGroup' @group-title-margin-top="0">
-            <cell title="出库单" v-model="item.transCode || '请选择'" is-link @click.native="getCost(index,item)">
-              <template slot="title">
-                <span class='required'>申请单</span>
-              </template>
-            </cell>
-            <cell title="物料名称" v-model='item.inventoryName'>
-              <template slot="title">
-                <span class='required'>物料名称</span>
-              </template>
-            </cell>
-            <cell title="物料编码" v-model='item.inventoryCode'>
-              <template slot="title">
-                <span class='required'>物料编码</span>
-              </template>
-            </cell>
-            <cell title="待开票数量" v-model='item.qtyBal'>
-              <template slot="title">
-                <span class='required'>待开票数量</span>
-              </template>
-            </cell>
-            <cell title="单价" v-model='item.price'>
-              <template slot="title">
-                <span class='required'>单价</span>
-              </template>
-            </cell>
-            <!--<cell title="待开票金额" v-model='item.amntBal'></cell>-->
-            <x-input title="本次开票数量" text-align='right' placeholder='请填写' type='number' v-model.number='item.tdQty'
-                     @on-blur="checkQty(item, index)" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>本次开票数量</span>
-              </template>
-            </x-input>
-            <cell title="金额" v-model='item.noTaxAmount'>
-              <template slot="title">
-                <span class='required'>金额</span>
-              </template>
-            </cell>
-            <x-input title="税率" text-align='right' placeholder='请填写' type='number' v-model.number='item.taxRate'
-                     @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>税率</span>
-              </template>
-            </x-input>
-            <cell title="税金" v-model='item.taxAmount'>
-              <template slot="title">
-                <span class='required'>税金</span>
-              </template>
-            </cell>
-            <cell title="税价小计" v-model='item.tdAmount'>
-              <template slot="title">
-                <span class='required'>税价小计</span>
-              </template>
-            </cell>
-            <x-input type="text" title="说明" text-align='right' placeholder="请填写" @on-focus="getFocus($event)"
-                     v-model="item.comment"></x-input>
-          </group>
-        </div>
-        <!-- 新增 -->
-        <div class="XMJH_add">
-          <div>您还需要添加新的明细? 请点击
-            <span @click="addInvoice">添加</span>
-            <em v-if="invoiceList.length>1">或</em>
-            <span @click="deleteInvoice" v-if="invoiceList.length>1"> 删除</span>
+        <!-- 物料列表 -->
+        <div class="materiel_list">
+          <!-- 没有选择物料 -->
+          <template v-if="!Object.keys(orderList).length">
+            <div @click="getMatter" class='no-matter'>
+              <div class="title">物料列表</div>
+              <div class="required">请选择物料</div>
+              <span class="iconfont icon-youjiantou r_arrow"></span>
+            </div>
+          </template>
+          <!-- 已经选择了物料 -->
+          <template v-else>
+            <div class="title" @click="showDelete">
+              <div>物料列表</div>
+              <div class='edit' v-if='!matterModifyClass'>编辑</div>
+              <div class='finished' v-else>完成</div>
+            </div>
+            <div class="mater_list">
+              <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
+                   v-for="(oItem, key, index) in orderList" :key="key">
+                <div class="order_code" v-if='oItem.length'>
+                  <span class="order_title">所属合同</span>
+                  <span class="order_num">{{key}}</span>
+                </div>
+                <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
+                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
+                               @click.native="delClick(index, item, key)">
+                    <template slot-scope="{item}" slot="info">
+                      <!-- 物料属性和单位 -->
+                      <div class='mater_more'>
+                        <span class='unit'>属性: {{item.processing}}</span>
+                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
+                        <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                        <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
+                      </div>
+                      <div class="mater_more">
+                        <span>待开票数量: {{item.qtyBal}}</span>
+                      </div>
+                      <!-- 物料数量和价格 -->
+                      <div class='mater_other' v-if="item.price && item.tdQty">
+                        <div class='mater_price'>
+                          <span class="symbol">￥</span>{{item.price}}
+                        </div>
+                        <div>
+                          <r-number :num="item.tdQty" :max="item.qtyBal"
+                                    :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                        </div>
+                      </div>
+                    </template>
+                    <template slot="editPart" slot-scope="{item}">
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)"
+                           v-show="(item.price && item.tdQty) &&!matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
+                      </div>
+                    </template>
+                  </matter-item>
+                  <div class='delete_icon' @click="delClick(index, item, key)" v-if='matterModifyClass'>
+                    <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
+                    <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- 新增更多 按钮 -->
+          <div class="handle_part" v-if="matterList.length && !matterModifyClass">
+            <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
+                  @click="stopOrder">终止提交</span>
+            <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
+            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
+          <!-- 物料popup -->
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams"
+                           get-list-method="getManyVATBilling" @sel-matter="selMatter"
+                           :default-value="matterList" ref="matter">
+            <template slot="titleName" slot-scope="props">
+              <span class="order-title">申请单</span>
+            </template>
+            <template slot="storage" slot-scope="{item}">
+              <div>
+                <span>数量余额: {{item.qtyBal || 0}}</span>
+              </div>
+            </template>
+          </pop-matter-list>
         </div>
+        <!--物料编辑pop-->
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <div>
+              <span>待开票数量: {{modifyMatter.qtyBal}}</span>
+            </div>
+          </template>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <span class='required' slot="label">本次开票数量</span>
+            </x-input>
+            <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <span class='required' slot="label">单价</span>
+            </x-input>
+            <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <span class='required' slot="label">税率</span>
+            </x-input>
+          </template>
+        </pop-matter>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
-        <!--开票列表-->
-        <pop-invoice-list :show="showInvoicePop" v-model="showInvoicePop" @sel-matter="selInvoice"
-                          :defaultValue='seletedInvoice'
-                          :params="dealerParams" ref="matter"></pop-invoice-list>
       </div>
     </div>
-    <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}">
-      <span class="count_num">
-        <span class="total_price">
-          <span style="fontSize:.14rem">￥</span>{{totalAmount | numberComma(3)}}
-        </span>
-        <!-- <span class="total-num">[代开票金额: {{thenAmntBal}}]</span> -->
-      </span>
-      <span class="count_btn stop" @click="stopOrder" v-if="this.actions.includes('stop')">终止</span>
-      <span class="count_btn" @click="submitOrder">提交</span>
-    </div>
+
+    <!-- 底部提交确认栏 -->
+    <op-button :is-modify="matterModifyClass" :hide="btnIsHide" :td-amount="tdAmount" :tax-amount="taxAmount"
+               :all-check="selItems.length === matterList.length" @on-submit="submitOrder" @on-check-all="checkAll"
+               @on-delete="deleteCheckd"></op-button>
   </div>
 </template>
 
@@ -137,32 +167,23 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import PopDealerList from 'components/Popup/PopDealerList'
-  import PopInvoiceList from 'components/Popup/PopInvoiceList'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import RNumber from 'components/RNumber'
+  import PopMatterList from 'components/Popup/PopMatterList'
+  import PopMatter from 'components/apply/commonPart/MatterPop'
+  import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
   import {toFixed} from '@/plugins/calc'
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'ZZSKP_DATA';
-  // 开票明细项
-  const INVOICE_LIST_ITEM = {
-    transCode: '', //实例编码,
-    inventoryName: '',
-    inventoryCode: '',
-    qtyBal: '',
-    price: '',
-    tdQty: '',
-    taxRate: '',
-    taxAmount: '', // 税金
-    tdAmount: '', // 税价小计
-    comment: "", //说明
-  };
   export default {
     mixins: [ApplyCommon],
     components: {
       Cell, Group, XInput,
-      Datetime, XTextarea, PopDealerList, PopupPicker, PopInvoiceList, RPicker, PopBaseinfo
+      Datetime, XTextarea, PopDealerList, PopupPicker, RPicker, PopBaseinfo,
+      RNumber, PopMatterList, PopMatter, OpButton,
     },
     data() {
       return {
@@ -183,7 +204,6 @@
           dealerCode: ''
         },
         taxRate: 0.16,
-        invoiceList: [{...INVOICE_LIST_ITEM}],
         showInvoicePop: false,
         seletedIndex: 0,
         seletedInvoice: [],
@@ -193,35 +213,22 @@
         },
         formDataComment: '', // 备注
         projectName: '', // 项目名称
+        matterList: [],
+        orderList: {},
+        showMaterielPop: false,
+        matterParams: {},
+        numMap: {},
       }
-    },
-    computed: {
-      // 合计金额
-      totalAmount() {
-        let Amount = 0;
-        this.invoiceList.forEach(item => {
-          if (!item.tdQty && item.tdQty !== 0) {
-            item.noTaxAmount = '';
-            item.taxAmount = '';
-            item.tdAmount = '';
-            return
-          }
-          item.noTaxAmount = toFixed(accMul(item.tdQty, item.price));
-          item.taxAmount = toFixed(accMul(item.noTaxAmount, item.taxRate));
-          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
-          if (item.tdAmount) {
-            Amount = accAdd(Amount, item.tdAmount);
-          }
-        });
-        return Amount;
-      },
     },
     methods: {
       // 选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
-        this.invoiceList = [{...INVOICE_LIST_ITEM}];
+        this.matterParams = {
+          dealerCode: this.dealerInfo.dealerCode,
+        };
+        this.matterList = [];
+        this.orderList = {};
       },
       // TODO 选中联系人
       selContact(item) {
@@ -231,41 +238,137 @@
       typeTask(e) {
         this.invoiceInfo.invoiceType = e[0];
       },
-      // 展示实例列表
-      getCost(index, item) {
-        this.showInvoicePop = true;
-        this.seletedIndex = index;
-        this.seletedInvoice = [];
-        this.invoiceList.forEach(item => {
-          this.seletedInvoice.push(item);
-        })
+      // TODO 显示物料修改的pop
+      modifyMatter(item, index, key) {
+        this.matter = JSON.parse(JSON.stringify(item));
+        this.showMatterPop = true;
+        this.modifyIndex = index;
+        this.modifyKey = key;
       },
-      // TODO 点击增加明细
-      addInvoice() {
-        this.invoiceList.push({...INVOICE_LIST_ITEM})
-      },
-      // 删除明细
-      deleteInvoice() {
-        this.invoiceList.pop();
-      },
-      // TODO 选中费用
-      selInvoice(sels) {
-        this.$set(this.invoiceList, this.seletedIndex, {
-          ...this.invoiceList[this.seletedIndex],
-          ...sels,
-          price: toFixed(sels.price),
-          taxRate: this.taxRate,
+      // TODO 更新修改后的物料信息
+      selConfirm(val) {
+        let modMatter = JSON.parse(val);
+        this.matterList.every((item, index) => {
+          // 修改matterList，触发合计金额计算
+          if (modMatter.transCode === item.transCode && modMatter.inventoryCode === item.inventoryCode) {
+            this.$set(this.matterList, index, modMatter);
+            return false
+          }
+          return true
         });
+        this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
       },
-      // TODO 校验数量
-      checkQty(item, index) {
-        if (item.tdQty > item.qtyBal) {
-          item.tdQty = item.qtyBal;
+      // 选择物料，显示物料pop
+      getMatter() {
+        if (!this.dealerInfo.dealerCode) {
+          this.$vux.alert.show({
+            content: '请选择客户'
+          });
+          return
         }
-        this.$set(this.invoiceList, index, {
-          ...item,
-          tdQty: Math.abs(toFixed(item.tdQty)),
+        this.showMaterielPop = !this.showMaterielPop;
+      },
+      // TODO 选中物料项
+      selMatter(val) {
+        let sels = JSON.parse(val);
+        let orderList = {};
+        sels.forEach(item => {
+          let key = `${item.transCode}_${item.inventoryCode}`;
+          let {
+            tdQty = item.qtyBal,
+            price = item.price,
+            taxRate = this.taxRate,
+          } = this.numMap[item.inventoryCode] || {};
+          item.tdQty = tdQty;
+          item.price = price;
+          item.taxRate = taxRate;
+          item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD');
+          if (!orderList[item.transCode]) {
+            orderList[item.transCode] = [];
+          }
+          orderList[item.transCode].push(item);
+        });
+        this.numMap = {};
+        this.matterList = sels;
+        this.orderList = orderList;
+      },
+      //选择默认图片
+      getDefaultImg(item) {
+        let url = require('assets/wl_default02.png');
+        if (item) {
+          item.inventoryPic = url;
+        }
+        return url
+      },
+      // 滑动删除
+      delClick(index, sItem, key) {
+        let arr = this.selItems;
+        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
+        //若存在重复的 则清除
+        if (delIndex !== -1) {
+          arr.splice(delIndex, 1);
+          return;
+        }
+        arr.push(sItem);
+      },
+      // TODO 判断是否展示选中图标
+      showSelIcon(sItem) {
+        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
+      },
+      // 全选
+      checkAll() {
+        if (this.selItems.length === this.matterList.length) {
+          this.selItems = [];
+          return
+        }
+        this.selItems = JSON.parse(JSON.stringify(this.matterList));
+      },
+      // 删除选中的
+      deleteCheckd() {
+        this.$vux.confirm.show({
+          content: '确认删除?',
+          // 确定回调
+          onConfirm: () => {
+            let newArr = [];
+            let keys = Object.keys(this.orderList);
+            keys.forEach(item => {
+              newArr = newArr.concat(this.orderList[item]);
+            });
+            this.selItems.forEach(SItem => {
+              newArr.forEach(OItem => {
+                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                  let delArr = this.orderList[OItem.transCode];
+                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                  if (delIndex >= 0) {
+                    this.$refs.matter.delSelItem(delArr[delIndex]);
+                    delArr.splice(delIndex, 1);
+                  }
+                  if (!delArr.length) {
+                    delete this.orderList[OItem.transCode];
+                  }
+                }
+              });
+              this.matterList.forEach((item, index) => {
+                if (item.inventoryCode === SItem.inventoryCode) {
+                  this.matterList.splice(index, 1);
+                  index--;
+                }
+              })
+            });
+            this.selItems = [];
+            this.matterModifyClass = false;
+          }
         })
+      },
+      // TODO 新增更多物料
+      addMatter() {
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            // 存储已输入的价格
+            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
+          }
+        }
+        this.showMaterielPop = !this.showMaterielPop;
       },
       // TODO 提交
       submitOrder() {
@@ -288,10 +391,13 @@
             return true
           })
         }
+        if (!warn && !this.matterList.length) {
+          warn = '请选择物料';
+        }
         if (!warn) {
-          this.invoiceList.every(item => {
+          this.matterList.every(item => {
             if (!item.transCode) {
-              warn = '请选择出库单';
+              warn = '请选择申请单';
               return false
             } else if (!item.tdQty && item.tdQty !== 0) {
               warn = '请填写本次开票数量';
@@ -300,6 +406,9 @@
               warn = '请填写税率';
               return false
             }
+            let taxRate = item.taxRate || this.taxRate;
+            let noTaxAmount = accMul(item.price, item.tdQty);
+            let taxAmount = accMul(noTaxAmount, taxRate);
             dataSet.push({
               tdId: item.tdId || '',
               transMatchedCode: item.transCode, // 实例编码,
@@ -308,9 +417,9 @@
               thenQtyBal: item.qtyBal,
               price: item.price,
               tdQty: item.tdQty,
-              taxRate: item.taxRate,
-              taxAmount: item.taxAmount,
-              tdAmount: item.tdAmount, // 本次开票金额,
+              taxRate: taxRate,
+              taxAmount: taxAmount,
+              tdAmount: accAdd(noTaxAmount, taxAmount), // 本次开票金额,
               comment: item.comment, // 说明
             });
             return true
@@ -393,7 +502,6 @@
           this.listId = data.listId;
           this.biComment = data.biComment;
           this.biReferenceId = data.biReferenceId;
-          this.invoiceList = [];
           let {formData} = data;
           this.handlerDefault = {
             handler: formData.handler,
@@ -435,7 +543,7 @@
               inventoryCode: item.inventoryCode,
               qtyBal: item.thenQtyBal,
             }
-            this.invoiceList.push(obj);
+            this.matterList.push(obj);
           })
           this.invoiceInfo = {
             ...this.invoiceInfo,
@@ -463,8 +571,9 @@
             invoice: {
               dealer: this.dealerInfo,
               invoiceInfo: this.invoiceInfo,
-              list: this.invoiceList,
               contactInfo: this.contactInfo,
+              matterList: this.matterList,
+              orderList: this.orderList,
             }
           }
         };
@@ -474,10 +583,11 @@
       let data = sessionStorage.getItem('ZZSKP_DATA');
       if (data) {
         let draft = JSON.parse(data);
-        this.invoiceList = draft.invoice.list;
         this.dealerInfo = draft.invoice.dealer;
         this.contactInfo = draft.invoice.contactInfo;
         this.invoiceInfo = draft.invoice.invoiceInfo;
+        this.matterList = draft.invoice.matterList;
+        this.orderList = draft.invoice.orderList;
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
         this.invoiceGetType.push(this.invoiceInfo.invoiceType);
         sessionStorage.removeItem(DRAFT_KEY);

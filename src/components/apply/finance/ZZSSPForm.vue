@@ -6,7 +6,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" dealerTitle="供应商" 
+        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" dealerTitle="供应商"
                          :params="dealerParams" @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
         <cell class="cell-item" title="结算方式" :value="dealerInfo.paymentTerm"></cell>
         <!--发票信息-->
@@ -232,27 +232,6 @@
         numMap: {},
       }
     },
-    /*computed: {
-      // 合计金额
-      totalAmount() {
-        let Amount = 0;
-        this.matterList.forEach(item => {
-          if (!item.tdQty && item.tdQty !== 0) {
-            item.noTaxAmount = '';
-            item.taxAmount = '';
-            item.tdAmount = '';
-            return
-          }
-          item.noTaxAmount = toFixed(accMul(item.tdQty, item.price));
-          item.taxAmount = toFixed(accMul(item.noTaxAmount, item.taxRate));
-          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
-          if (item.tdAmount) {
-            Amount = accAdd(Amount, item.tdAmount);
-          }
-        });
-        return Amount;
-      },
-    },*/
     methods: {
       // 选中的客户
       selDealer(val) {
@@ -634,6 +613,8 @@
         this.dealerInfo = draft.invoice.dealer;
         this.invoiceInfo = draft.invoice.invoiceInfo;
         this.contactInfo = draft.invoice.contactInfo;
+        this.matterList = draft.invoice.matterList;
+        this.orderList = draft.invoice.orderList;
         this.matterParams = {
           dealerCode: this.dealerInfo.dealerCodeCredit,
         };

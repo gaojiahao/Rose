@@ -26,35 +26,6 @@
           </div>
         </div>
       </div>
-      <!--<div class="form_part">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">收票列表</span>
-        </div>
-        <div class="form_content"
-            :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
-            v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-          <div class="main_content" >
-            <form-cell cellTitle='采购订单' :cellContent="item.transMatchedCode" textRight></form-cell>
-            <form-cell cellTitle='入库日期' :cellContent="item.purchaseDay" textRight></form-cell>
-            <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode" textRight></form-cell>
-            <form-cell cellTitle='物料编码' :cellContent="item.inventoryCode_transObjCode" textRight></form-cell>
-            <form-cell cellTitle='入库数量' :cellContent="item.thenTotalQtyBal" textRight></form-cell>
-            <form-cell cellTitle='已收票数量' :cellContent="item.thenLockQty" textRight></form-cell>
-            <form-cell cellTitle='待收票数量' :cellContent="item.thenQtyBal" textRight></form-cell>
-            <form-cell cellTitle='单价' :cellContent="item.price | toFixed | numberComma" textRight showSymbol></form-cell>
-            <form-cell cellTitle='本次收票数量' :cellContent="item.tdQty" textRight></form-cell>
-            <form-cell cellTitle='本次收票金额' :cellContent="item.noTaxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-            <form-cell cellTitle='税率' :cellContent="item.taxRate" textRight></form-cell>
-            <form-cell cellTitle='税金' :cellContent="item.taxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-            <form-cell cellTitle='说价小计' :cellContent="item.tdAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-            <form-cell cellTitle='说明' :cellContent="item.comment" textRight></form-cell>
-          </div>
-        </div>
-      </div>
-      <div class="price_cell vux-1px-t">
-        <span class='title'>合计:</span>
-        <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-      </div>-->
       <!-- 物料列表 -->
       <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
         <template slot="matterOther" slot-scope="{item}">

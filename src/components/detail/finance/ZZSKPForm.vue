@@ -26,34 +26,29 @@
           </div>
         </div>
       </div>
-      <div class="form_part">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">开票列表</span>
-        </div>
-        <div class="form_content"
-            :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
-            v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-          <div class="main_content" >
-              <form-cell cellTitle='出库单' :cellContent="item.transMatchedCode" :showTopBorder=false textRight></form-cell>
-              <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode" textRight></form-cell>
-              <form-cell cellTitle='物料编码' :cellContent="item.inventoryCode_transObjCode" textRight></form-cell>
-              <form-cell cellTitle='待开票数量' :cellContent="item.thenQtyBal" textRight></form-cell>
-              <form-cell cellTitle='单价' :cellContent="item.price | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='本次开票数量' :cellContent="item.tdQty" textRight></form-cell>
-              <form-cell cellTitle='金额' :cellContent="item.noTaxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='税率' :cellContent="item.taxRate" textRight></form-cell>
-              <form-cell cellTitle='税金' :cellContent="item.taxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='税价小计' :cellContent="item.tdAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='说明' :cellContent="item.comment" textRight></form-cell>
-              <!--<form-cell cellTitle='待开票金额' showSymbol :cellContent="item.thenAmntBal | toFixed | numberComma(3)" textRight></form-cell>-->
-              <!--<form-cell cellTitle='本次开票金额' showSymbol :cellContent="item.tdAmount | toFixed | numberComma(3)" textRight></form-cell>-->
+      <!-- 物料列表 -->
+      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
+        <template slot="matterOther" slot-scope="{item}">
+          <div class='mater_other'>
+            <div class="mater_attribute">
+              <span>待开票数量: {{item.thenQtyBal}}</span>
+              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            </div>
+            <div class='mater_attribute'>
+              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span>本次开票数量: {{item.tdQty | toFixed}}</span>
+            </div>
+            <div class='mater_price'>
+              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+              <span class="num"
+                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}"
+                    v-if="item.taxRate">
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                </span>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="price_cell vux-1px-t">
-        <span class='title'>合计:</span>
-        <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-      </div>
+        </template>
+      </matter-list>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
@@ -70,18 +65,20 @@ import { getSOList } from 'service/detailService'
 // mixins 引入
 import detailCommon from 'components/mixins/detailCommon'
 // 组件引入
-// 组件 引入
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import contactPart from 'components/detail/commonPart/ContactPart'
 //公共方法引入
-import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
+import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd'
+import {toFixed} from '@/plugins/calc'
+
 export default {
   data() {
     return {
       count: 0,          // 金额合计
       formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
       contactInfo:{},
+      orderList: {},
     }
   },
   mixins: [detailCommon],
@@ -89,6 +86,14 @@ export default {
     workFlow,RAction,contactPart
   },
   methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl_default02.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
     // 获取详情
     getOrderList(transCode = '') {
       return getSOList({
@@ -106,11 +111,25 @@ export default {
           return;
         }
         this.attachment = data.attachment;
+        let orderList = {};
+        let count = 0;
         // 获取合计
         let {dataSet} = data.formData.order;
-        for (let val of dataSet) {
-          this.count = accAdd(this.count,val.tdAmount);
+        for (let item of dataSet) {
+          item.noTaxAmount = accMul(item.price, item.tdQty);
+          item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
+          item.inventoryPic = item.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
+            : this.getDefaultImg();
+          count = accAdd(count, item.tdAmount);
+          if (!orderList[item.transMatchedCode]) {
+            orderList[item.transMatchedCode] = [];
+          }
+          this.orderList = orderList;
+          orderList[item.transMatchedCode].push(item);
         }
+        this.count = count;
         data.formData.invoiceDate = dateFormat(data.formData.invoiceDate, 'YYYY-MM-DD');
         this.orderInfo = data.formData;
         this.getcontactInfo();
