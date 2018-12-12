@@ -243,7 +243,7 @@ export default {
       sels.map(item => {
         let key = `${item.transCode}_${item.inventoryCode}`;
         let defaultPromDeliTime = item.processingStartDate ? item.processingStartDate.split(" ")[0] : '';
-        let {tdQty = '', price = '', promDeliTime = defaultPromDeliTime} = this.numMap[key] || {};
+        let {tdQty = item.qtyBalance, price = '', promDeliTime = defaultPromDeliTime} = this.numMap[key] || {};
         item.tdQty = tdQty;
         item.price = price;
         item.promDeliTime = promDeliTime;
@@ -287,7 +287,7 @@ export default {
     // 滑动删除
     delClick (index, sItem) {
       let arr = this.selItems;
-      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode);
       // 若存在重复的 则清除
       if (delIndex !== -1) {
         arr.splice(delIndex, 1);
@@ -297,7 +297,7 @@ export default {
     },
     // 判断是否展示选中图标
     showSelIcon (sItem) {
-      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode && item.transCode === sItem.transCode) !== -1;
     },
     // 全选
     checkAll (){
