@@ -69,7 +69,7 @@
                       <div class="mater_material" v-if="item.allQty">
                         <span class="spec">待做需求: {{item.qtyBalance}}</span>
                       </div>
-                    </slot>                  
+                    </slot>
                   </div>
                 </div>
               </div>
@@ -91,7 +91,7 @@
 
 <script>
   import {Icon, Popup, dateFormat} from 'vux'
-  import {getList} from 'service/commonService'
+  import {getManyVATBilling, getManyVATReceipt} from 'service/invoiceService'
   import {
     getObjInventoryByProcessing,
     getSumInvBalance,
@@ -174,6 +174,7 @@
           pullUpLoad: true,
         },
         filterProperty: '', // 过滤的key
+        requestMethods: null,
       }
     },
     watch: {
@@ -193,6 +194,7 @@
           this.resetCondition();
           // 参数改变，重新请求接口
           this[this.getListMethod]();
+          this.requestMethods();
         }
       }
     },
@@ -294,7 +296,8 @@
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this[this.getListMethod]();
+        // this[this.getListMethod]();
+        this.requestMethods();
       },
       // TODO 设置默认值
       setDefaultValue() {
@@ -599,6 +602,48 @@
           ...this.params,
         }).then(this.dataHandler);
       },
+      // TODO 获取物料列表(增值税开票)
+      getManyVATBilling() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getManyVATBilling({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
+        }).then(this.dataHandler);
+      },
+      // TODO 获取的物料列表(增值税收票)
+      getManyVATReceipt() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getManyVATReceipt({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
+        }).then(this.dataHandler);
+      },
       // TODO 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}) {
         tableContent.forEach(item => {
@@ -626,7 +671,9 @@
     created() {
       this.setDefaultValue();
       // 请求物料
-      this[this.getListMethod]();
+      this.requestMethods = this[this.getListMethod];
+      // this[this.getListMethod]();
+      this.requestMethods();
     }
   }
 </script>

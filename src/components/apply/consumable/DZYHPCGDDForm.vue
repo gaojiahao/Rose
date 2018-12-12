@@ -85,7 +85,7 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" get-list-method="getLowValueConsumPurchaseOrder"
-                           ref="matter"></pop-matter-list>
+                           :filter-list="filterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
@@ -167,6 +167,18 @@
         showTransPop: false, // 是否显示结算方式的popup
         showMaterielPop: false, // 是否显示物料的popup
         showDealerPop: false, // 是否显示供应商的popup
+        filterList: [
+          {
+            name: '交易号',
+            value: 'transCode',
+          }, {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          },
+        ],
       }
     },
     mixins: [common],
