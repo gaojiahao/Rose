@@ -17,7 +17,13 @@
         <!-- 有效期至 -->
         <div class="mg_auto no_top">
           <div class="cell-item">
-            <div class="title">合同总金额</div>
+            <div class="title">账期天数</div>
+            <div class="mode">
+              <span class="mode_content">{{dealerInfo.pamentDays || "无"}}</span>
+            </div>
+          </div>
+          <div class="cell-item">
+            <div class="title required">合同总金额</div>
             <div class="mode">
               <span class="mode_content">{{thenTotalAmntBal}}</span>
             </div>
@@ -31,10 +37,10 @@
           </div>
           <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
                    v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance">
-            <span class='required' slot="label">预收款</span>
+            <span slot="label">预收款</span>
           </x-input>
           <div class="cell-item" @click="dateSelect('advancePaymentDueDate')" v-show="hasAdvance">
-            <div class="title required">预收到期日</div>
+            <div class="title">预收到期日</div>
             <div class="mode">
               <span class="mode_content">{{dealerInfo.advancePaymentDueDate || '请选择'}}</span>
               <span class="iconfont icon-shenglve"></span>
@@ -68,13 +74,13 @@
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                       <span class="processing">属性：{{item.processing}}</span>
-                      <span class='unit'>单位：{{item.measureUnit}}</span>
+                      <span class='unit'>主计量单位：{{item.measureUnit}}</span>
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                       <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                     </div>
                     <div class="mater_more">
-                      <span class="processing">交付开始日：{{item.dateActivation}}</span>
-                      <span class='unit'>交付截止日：{{item.executionDate}}</span>
+                      <span class="processing" v-show="item.dateActivation">交付开始日：{{item.dateActivation}}</span>
+                      <span class='unit' v-show="item.executionDate">交付截止日：{{item.executionDate}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
@@ -118,10 +124,18 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="date" slot-scope="{modifyMatter}">
-            <datetime title="交付开始日" v-model="modifyMatter.dateActivation" :start-date="dealerInfo.advancePaymentDueDate"
-                      :end-date="modifyMatter.executionDate" placeholder="请选择"></datetime>
-            <datetime title="交付截止日" v-model="modifyMatter.executionDate" :start-date="modifyMatter.dateActivation"
-                      :end-date="dealerInfo.validUntil" placeholder="请选择"></datetime>
+            <datetime v-model="modifyMatter.dateActivation" :start-date="dealerInfo.advancePaymentDueDate"
+                      :end-date="modifyMatter.executionDate" placeholder="请选择">
+              <template slot="title">
+                <span class="required">交付开始日</span>
+              </template>
+            </datetime>
+            <datetime v-model="modifyMatter.executionDate" :start-date="modifyMatter.dateActivation"
+                      :end-date="dealerInfo.validUntil" placeholder="请选择">
+              <template slot="title">
+                <span class="required">交付截止日</span>
+              </template>
+            </datetime>
           </template>
         </pop-matter>
         <!--备注-->
@@ -374,6 +388,7 @@
       // 提价订单
       submitOrder() {
         let warn = '';
+        let dataSet = [];
         if (!this.dealerInfo.dealerName) {
           warn = '请选择客户';
         }
@@ -387,7 +402,6 @@
           warn = '请选择物料';
         }
         if (!warn) {
-          let dataSet = [];
           this.matterList.every(item => {
             if (!item.tdQty) {
               warn = "请填写数量";
@@ -635,7 +649,6 @@
     margin-bottom: 0.1rem;
     background: #fff;
   }
-
   .cell-item {
     background: #fff;
     box-sizing: border-box;
@@ -646,6 +659,9 @@
     justify-content: space-between;
     height: .36rem;
     line-height: .32rem;
+    /deep/ .weui-cell__hd{
+      color: #757575;
+    }
     &:before {
       display: none;
     }

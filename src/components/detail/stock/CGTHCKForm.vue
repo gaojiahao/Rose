@@ -21,7 +21,7 @@
        <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
                      :taxAmount="taxAmount" :count="count">
           <template slot="orderTitle">
-            <span class="order_title">入库单号</span>
+            <span class="order_title">订单号</span>
           </template>
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
@@ -143,10 +143,10 @@ export default {
             : this.getDefaultImg();
           item.inventoryName_transObjCode = item.inventoryName_outPutMatCode;
           item.transObjCode = item.outPutMatCode;
-          if (!orderList[item.transMatchedCode]) {
-            orderList[item.transMatchedCode] = [];
+          if (!orderList[item.orderCode]) {
+            orderList[item.orderCode] = [];
           }
-          orderList[item.transMatchedCode].push(item);
+          orderList[item.orderCode].push(item);
         }
         // this.count = (this.count/100).toFixed(2);
         this.orderList = orderList;

@@ -6,7 +6,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list :defaultValue="dealerInfo" :dealer-label-name="'供应商'" :default-contact="contactInfo"
+        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" dealerTitle="供应商" 
                          :params="dealerParams" @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
         <cell class="cell-item" title="结算方式" :value="dealerInfo.paymentTerm"></cell>
         <!--发票信息-->

@@ -141,6 +141,11 @@
         type: Boolean,
         default: true
       },
+      // 是否检验可用库存，是，当库存为零，该物料不能被选中
+      isShowStock: { 
+        type: Boolean,
+        default: false 
+      },
       filterList: {
         type: Array,
         default() {
@@ -229,6 +234,13 @@
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
+        // 校验库存
+        if (this.isShowStock && sItem.qtyStockBal=== 0) {
+          this.$vux.alert.show({
+            content: '当前订单库存为0，请选择其他订单'
+          });
+          return
+        }
         let arr = this.tmpItems;
         let delIndex = this.findIndex(arr, sItem);
         // 若存在重复的 则清除

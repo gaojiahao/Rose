@@ -21,13 +21,13 @@
         <div class='mater_other' slot="matterOther" slot-scope="{item}">
           <div class='mater_attribute'>
             <span>加工属性: {{item.tdProcessing}}</span>
-            <span>计量单位: {{item.measureUnit_transObjCode}}</span>
+            <span>主计量单位: {{item.measureUnit_transObjCode}}</span>
           </div>
           <div class='mater_num'>
             <div>
               <span>库存余额: {{item.thenTotalQtyStock || 0}}</span>
               <span>计划占用: {{item.thenLockQtyStock || 0}}</span>
-              <span>账存数量: {{item.thenQtyStock | toFixed}}</span>
+              <span>可用库存: {{item.thenQtyStock | toFixed}}</span>
             </div>
             <div>
               <span>盘点数量: {{item.tdQty | toFixed}}</span>

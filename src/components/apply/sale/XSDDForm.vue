@@ -537,6 +537,7 @@
               qty: item.thenTotalQtyBal,
               stockQty: item.thenLockQty,
               qtyBal: item.thenQtyBal,
+              transCode: item.transMatchedCode
             };
             this.matterList.push(item);
             if (!orderList[item.transCode]) {

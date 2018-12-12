@@ -365,13 +365,17 @@
             dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit
 
           }
+          this.contactInfo = {
+            dealerMobilePhone: formData.dealerCreditContactInformation,
+            dealerName: formData.dealerCreditContactPersonName
+          }
           // 发票列表明细
           formData.order.dataSet.forEach(item => {
             let obj = {
               ...item,
-              transCode: item.transCode, // 实例编码,
-              inventoryName: item.inventoryName,
-              inventoryCode: item.inventoryCode,
+              transCode: item.transMatchedCode, // 实例编码,
+              inventoryName: item.inventoryName_transObjCode,
+              inventoryCode: item.inventoryCode_transObjCode,
               qtyBal: item.thenQtyBal,
             }
             this.invoiceList.push(obj);
@@ -407,7 +411,7 @@
         this.invoiceList = draft.list;
         this.contactInfo = draft.contactInfo;
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
-        // sessionStorage.removeItem(DRAFT_KEY);
+        sessionStorage.removeItem(DRAFT_KEY);
       }
     },
   }

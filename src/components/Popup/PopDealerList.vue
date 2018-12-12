@@ -24,8 +24,8 @@
           </div>
         </div>
         <div class='user-content' v-else>
-          <div class="title">{{dealerLabel}}列表</div>
-          <div class="required">请选择{{dealerLabel}}</div>
+          <div class="title">{{dealerTitle}}列表</div>
+          <div class="required">请选择{{dealerTitle}}</div>
         </div>
         <span class="iconfont icon-youjiantou r-arrow"></span>
       </template>
@@ -100,9 +100,15 @@
   export default {
     name: "PopDealerList",
     props: {
+      // 用做请求接口的参数
       dealerLabelName: {
         type: String,
         default: "客户"
+      },
+      // 往来名称，dealerLabelName会有多个参数，所以需要单独传值
+      dealerTitle: {
+        type: String,
+        default: '客户'
       },
       // 默认值
       defaultValue: {
@@ -154,16 +160,16 @@
         let {province = '', city = '', county = '', address = ''} = this.defaultValue;
         return !province && !city && !county && !address;
       },
-      //处理当dealerLabelName为多个值
-      dealerLabel() {
-        if(this.dealerLabelName.includes(',')){
-          return '往来'
-        }
-        else{
-          return this.dealerLabelName
-        }
+      // //处理当dealerLabelName为多个值
+      // dealerLabel() {
+      //   if(this.dealerLabelName.includes(',')){
+      //     return '往来'
+      //   }
+      //   else{
+      //     return this.dealerLabelName
+      //   }
 
-      }
+      // }
     },
     directives: {TransferDom},
     components: {
