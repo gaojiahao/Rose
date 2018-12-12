@@ -486,11 +486,12 @@ export default {
             inventorySubclass: item.inventorySubclass_transObjCode,
             allQty: item.productDemandQty,
             qtyed: item.thenLockQty,
+            transCode: item.transMatchedCode,
           }
-          if (!orderList[item.transMatchedCode]) {
-            orderList[item.transMatchedCode] = [];
+          if (!orderList[item.transCode]) {
+            orderList[item.transCode] = [];
           }
-          orderList[item.transMatchedCode].push(item);
+          orderList[item.transCode].push(item);
           return item;
         });
         this.orderList = orderList;
