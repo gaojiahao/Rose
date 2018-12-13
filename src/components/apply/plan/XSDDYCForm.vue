@@ -313,7 +313,7 @@
               transObjCode: item.inventoryCode, // 物料编码
               tdProcessing: item.processing, // 加工属性
               assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
-              assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数
+              assMeasureScale: item.assMeasureScale || null, // 与单位倍数
               assistQty: item.assistQty || 0, // 辅计数量
               tdQty: item.tdQty, // 数量
               price: item.price, // 单价

@@ -74,7 +74,7 @@
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                       <span class="processing">属性：{{item.processing}}</span>
-                      <span class='unit'>主计量单位：{{item.measureUnit}}</span>
+                      <span class='unit'>单位：{{item.measureUnit}}</span>
                       <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
                       <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
                     </div>
@@ -485,7 +485,7 @@
                   }]
                 },
                 assMeasureUnit: null, // 辅助计量
-                assMeasureScale: null, // 与主计量单位倍数
+                assMeasureScale: null, // 与单位倍数
                 assistQty: 0, // 辅计数量
                 promDeliTime: '', // 预期交货日
               }),

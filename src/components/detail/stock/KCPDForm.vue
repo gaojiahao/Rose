@@ -21,7 +21,7 @@
         <div class='mater_other' slot="matterOther" slot-scope="{item}">
           <div class='mater_attribute'>
             <span>加工属性: {{item.tdProcessing}}</span>
-            <span>主计量单位: {{item.measureUnit_transObjCode}}</span>
+            <span>单位: {{item.measureUnit_transObjCode}}</span>
           </div>
           <div class='mater_num'>
             <div>

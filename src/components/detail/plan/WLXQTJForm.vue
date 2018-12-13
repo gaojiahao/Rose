@@ -19,7 +19,7 @@
             <div class='mater_other'>
               <div class="mater_attribute">
                 <span>物料大类: {{item.inventoryType_outPutMatCode || '无'}}</span>
-                <span>计量单位: {{item.measureUnit_outPutMatCode}}</span>
+                <span>单位: {{item.measureUnit_outPutMatCode}}</span>
               </div>
               <div class="mater_num">
                 <span class="num">

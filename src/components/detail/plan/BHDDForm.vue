@@ -15,7 +15,7 @@
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
               <div class='mater_attribute'>
-                <span>计量单位: {{item.measureUnit_transObjCode}}</span>
+                <span>单位: {{item.measureUnit_transObjCode}}</span>
                 <span>预期完工日: {{item.promDeliTime}}</span>
               </div>
               <div class="mater_num">

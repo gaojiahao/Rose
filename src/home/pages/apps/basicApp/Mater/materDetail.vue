@@ -39,11 +39,11 @@
           <form-cell cellTitle="起订量" :cellContent="inventory.moq"></form-cell>
         </div>
       </div>
-      <!-- 辅助计量单位-->
+      <!-- 辅计单位-->
       <div class="d_main" v-show="invMoreUnit.length">
-        <div class='title vux-1px-b'>辅助计量单位</div>
+        <div class='title vux-1px-b'>辅计单位</div>
         <div class='content' :class="{'show_border' : index>0}" v-for="(item,index) in invMoreUnit" :key="index">
-          <form-cell cellTitle='辅助计量单位' :cellContent="item.invSubUnitName" :showTopBorder=false></form-cell>
+          <form-cell cellTitle='辅计单位' :cellContent="item.invSubUnitName" :showTopBorder=false></form-cell>
           <form-cell cellTitle='单位倍数' :cellContent="item.invSubUnitMulti"></form-cell>
           <form-cell cellTitle='辅计说明' :cellContent="item.comment"></form-cell>
         </div>
@@ -52,7 +52,7 @@
         <div class='title vux-1px-b'>净含量</div>
         <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invNetWeight" :key="index">
           <form-cell cellTitle='净含量名称' :cellContent="item.invCompName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='计量单位' :cellContent="item.invCompUnit"></form-cell>
+          <form-cell cellTitle='单位' :cellContent="item.invCompUnit"></form-cell>
           <form-cell cellTitle='净含量数量' :cellContent="item.invCompQty"></form-cell>
           <form-cell cellTitle='净含量说明说明' :cellContent="item.comment"></form-cell>
         </div>

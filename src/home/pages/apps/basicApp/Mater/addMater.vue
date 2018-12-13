@@ -42,7 +42,7 @@
           <!-- 工艺名称 -->
           <pop-procedure-list @sel-item="selProcedure" :default-value="inventory"></pop-procedure-list>
           <cell title="工序编码" :value="inventory.procedureCode"></cell>
-          <r-picker title="主计量单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
+          <r-picker title="单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
                     mode="4" v-model="inventory.measureUnit" has-border-top></r-picker>
           <r-picker title="物料状态:" :required="true" :data="statusList" :value="inventoryStatus"
                     mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
@@ -52,12 +52,12 @@
 
         <!-- 辅助计量 -->
         <div class="duplicate-item-no-select" v-if="!invMoreUnit.length">
-          <span class="title">辅助计量单位</span>
+          <span class="title">辅计单位</span>
           <span class="add" @click="addMoreUnit">新增</span>
         </div>
-        <group class="duplicate-item" title="辅助计量单位" v-else>
+        <group class="duplicate-item" title="辅计单位" v-else>
           <div v-for="(item,index) in invMoreUnit" :class="{'has_border': index < invMoreUnit.length-1}" :key="index">
-            <r-picker class="vux-1px-t" title="辅助计量单位" :data="measureList" :value="item.invSubUnitName"
+            <r-picker class="vux-1px-t" title="辅计单位" :data="measureList" :value="item.invSubUnitName"
                       mode="4" :has-border="false" v-model="item.invSubUnitName" required></r-picker>
             <x-input title="单位倍数" type="number" text-align='right' placeholder='请填写' v-model='item.invSubUnitMulti'
                      @on-blur="checkAmt(item)">
@@ -83,7 +83,7 @@
             <x-input title="净含量名称" text-align='right' placeholder='请填写' v-model='item.invCompName'>
               <span class="required" slot="label">净含量名称</span>
             </x-input>
-            <r-picker title="计量单位" :data="measureList" :value="item.invCompUnit"
+            <r-picker title="单位" :data="measureList" :value="item.invCompUnit"
                       mode="4" :has-border="false" v-model="item.invCompUnit" has-border-top required></r-picker>
             <x-input title="净含量数量" type="number" text-align='right' placeholder='请填写' v-model='item.invCompQty'
                      @on-blur="checkAmt(item)">
@@ -183,7 +183,7 @@
         matNatureList: [], // 加工属性列表
         matBigList: [], // 材料大类列表
         matSmlList: [], // 材料子类列表
-        measureList: [], // 主计量单位列表
+        measureList: [], // 单位列表
         statusList: [],//物料状态
         picShow: false, // 是否展示图片
         baseinfo: {
@@ -204,7 +204,7 @@
           processing: '', // 加工属性
           inventoryType: '', // 物料大类
           inventorySubclass: '', // 物料子类
-          measureUnit: '', // 主计量单位
+          measureUnit: '', // 单位
           specification: '', // 型号规格
           material: '', // 主材质
           inventoryColor: '', // 颜色
@@ -231,7 +231,7 @@
         processing: [], // 加工属性
         inventoryType: [], // 材料大类
         inventorySubclass: [], // 材料子类
-        measureUnit: [], // 主计量单位
+        measureUnit: [], // 单位
         inventoryStatus: '', // 物料状态
         inventoryTypeDisabled: false,
         inventorySubclassDisabled: false,
@@ -349,7 +349,7 @@
           inventoryCode: '物料编码',
           inventoryName: '物料名称',
           processing: '加工属性',
-          measureUnit: '主计量单位',
+          measureUnit: '单位',
           inventoryStatus: '物料状态'
         };
         let hasDealer = this.invDealerRel.length && this.inventory.processing === '成品';
@@ -392,7 +392,7 @@
           let validateMap = [
             {
               key: 'invSubUnitName',
-              message: '辅助计量单位'
+              message: '辅计单位'
             }, {
               key: 'invSubUnitMulti',
               message: '单位倍数'
@@ -408,7 +408,7 @@
               message: '净含量名称'
             }, {
               key: 'invCompUnit',
-              message: '净含量计量单位'
+              message: '净含量单位'
             }, {
               key: 'invCompQty',
               message: '净含量数量'
@@ -609,7 +609,7 @@
           this.inventory.inventorySubclass = '';
         })
       },
-      // TODO 获取主计量单位列表
+      // TODO 获取单位列表
       getMeasure() {
         return getDictByType('measureUnit').then(data => {
           let {tableContent} = data;
@@ -641,7 +641,7 @@
       // TODO 新增辅助计量
       addMoreUnit() {
         this.invMoreUnit.push({
-          invSubUnitName: '', // 辅助计量单位
+          invSubUnitName: '', // 辅计单位
           invSubUnitMulti: '', // 单位倍数
           comment: '', // 辅计说明
         })
@@ -654,7 +654,7 @@
       addNetWeight() {
         this.invNetWeight.push({
           invCompName: '', // 净含量名称
-          invCompUnit: '', // 计量单位
+          invCompUnit: '', // 单位
           invCompQty: '', // 净含量数量
           comment: '', // 净含量说明
         })

@@ -34,7 +34,7 @@
                     <!--单位，属性，颜色-->
                     <div class="mater_more">
                       <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>主计量单位: {{item.measureUnit}}</span>
+                      <span class='unit'>单位: {{item.measureUnit}}</span>
                     </div>
                     <div class="mater_more">
                       <span class="symbol">库存余额: {{item.qtyBal}}</span>
@@ -283,7 +283,7 @@ export default {
           differenceNum: item.differenceNum || 0,
           tdProcessing: item.processing, // 物料加工属性
           assistQty: item.assistQty || 0, // 辅计数量（明细）
-          assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数（明细）
+          assMeasureScale: item.assMeasureScale || null, // 与单位倍数（明细）
           assMeasureUnit: item.assMeasureUnit || null, // 辅助计量（明细）
           thenLockQtyStock: item.qtyLock, // 计划占用
           thenTotalQtyStock:item.qtyBal, // 库存余额

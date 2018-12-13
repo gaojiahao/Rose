@@ -454,7 +454,7 @@ export default {
             outPutMatCode: item.inventoryCode, // 物料编码
             tdProcessing: item.processing, // 加工属性
             assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-            assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与主计量单位倍数
+            assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与单位倍数
             assistQty: item.assistQty || 0, // 辅计数量（明细）
             thenQtyBal: item.qtyBal,
 			      thenQtyStock: item.qtyStockBal,

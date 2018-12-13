@@ -47,7 +47,7 @@
                       <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                        <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
                       </div>
                       <div class="mater_more">
@@ -430,7 +430,7 @@
                 transObjCode: item.inventoryCode, // 物料编码
                 tdProcessing: item.processing, // 加工属性
                 assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
-                assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数
+                assMeasureScale: item.assMeasureScale || null, // 与单位倍数
                 assistQty: item.assistQty || 0, // 辅计数量
                 dealerInventoryName: item.clientInventoryName,
                 dealerInventoryCode: item.clientInventoryCode,
