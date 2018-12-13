@@ -1,6 +1,7 @@
 import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
 import { getPCCommentList, isSubscribeByRelationKey } from 'service/commentService'
 import {getAppDetail} from 'service/appSettingService'
+import {saveAndCommitTask} from 'service/commonService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -51,6 +52,7 @@ export default {
       attachment: [],
       orderList: '',
       action: {}, // 表单允许的操作
+      currentWL: {}, // 当前工作流
     }
   },
   computed: {
@@ -161,6 +163,7 @@ export default {
 
         // 赋值 完整版工作流
         this.fullWL = workFlow;
+        this.currentWL = flow;
 
         // 已终止
         if (last.status === '终止') {
@@ -282,6 +285,50 @@ export default {
         let {action} = data;
         this.action = action;
       })
+    },
+    // TODO 输入框获取焦点，内容选中
+    getFocus(e){
+      event.currentTarget.select();
+    },
+    // TODO 审批
+    saveData(formData) {
+      this.$vux.confirm.prompt('', {
+        title: '审批意见',
+        onConfirm: (value) => {
+          let orderInfo = this.orderInfo;
+          let jsonData = {
+            listId: this.listId,
+            biComment: orderInfo.biComment,
+            biReferenceId: orderInfo.biReferenceId,
+            formData: JSON.stringify(formData),
+            wfPara: JSON.stringify({
+              businessKey: this.transCode,
+              createdBy: orderInfo.creator,
+              transCode: this.transCode,
+              result: 1,
+              taskId: this.taskId,
+              comment: value,
+            })
+          };
+          this.$HandleLoad.show();
+          saveAndCommitTask(jsonData).then(data => {
+            this.$HandleLoad.hide();
+            let {success = false, message = '提交失败'} = data;
+            if (success) {
+              message = '提交成功';
+              this.$emit('change', true);
+            }
+            this.$vux.alert.show({
+              content: message,
+              onHide: () => {
+                if (success) {
+                  this.$router.go(0);
+                }
+              }
+            });
+          });
+        }
+      });
     },
   },
   created() {

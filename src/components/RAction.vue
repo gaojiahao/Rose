@@ -56,6 +56,11 @@
       name: {
         type: String,
         default: ''
+      },
+      // 同意的处理
+      agreeHandler: {
+        type: Function,
+        default: null
       }
     },
     components: {
@@ -91,6 +96,10 @@
       },
       // TODO 同意
       agree() {
+        if (this.agreeHandler) {
+          this.agreeHandler();
+          return
+        }
         this.$vux.confirm.prompt('', {
           title: '审批意见',
           onConfirm: (value) => {
@@ -119,7 +128,7 @@
                   query: {
                     childId,
                     name: this.name,
-                    transCode: this.code, 
+                    transCode: this.code,
                   },
                 });
               }

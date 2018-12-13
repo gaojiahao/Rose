@@ -22,7 +22,7 @@
                   </x-input>
                   <!-- 预期销售额 -->
                   <x-input title="身份证号" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkIdCard" v-model.number="formData.idCard">
+                           @on-blur="checkIdCard" v-model="formData.idCard">
                     <template slot="label">
                       <span class='required'>身份证号
                       </span>
@@ -90,7 +90,7 @@
       }
     },
     components: {
-      Cell,Group, XInput, 
+      Cell,Group, XInput,
       Datetime, XTextarea,
       RPicker, PopBaseinfo
     },

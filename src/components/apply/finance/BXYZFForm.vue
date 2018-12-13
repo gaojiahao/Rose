@@ -10,29 +10,18 @@
           <div class="title">{{`费用明细${index+1}`}}</div>
           <group class="SJ_group" @group-title-margin-top="0">
             <cell title="费用名称" v-model='item.exptName' is-link @click.native="getCost(index,item)">
-              <template slot="title">
-                <span class='required'>费用名称
-                </span>
-              </template>
+              <span class='required' slot="title">费用名称</span>
             </cell>
             <cell title="费用编码" v-model="item.expCode"></cell>
             <cell title="费用科目" v-model="item.expSubject">
-              <template slot="title">
-                <span class='required'>费用科目</span>
-              </template>
+              <span class='required' slot="title">费用科目</span>
             </cell>
-            <cell title="费用类型" v-model="item.costType" v-show="item.costType"></cell>
+            <cell title="费用类型" v-model="item.costType"></cell>
             <x-input title="申请金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                    @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
-              <template slot="label">
-                <span class='required'>申请金额
-                </span>
-              </template>
+                     @on-blur="checkAmt(item)" type='number' v-model.number='item.tdAmount'>
+              <span class='required' slot="label">申请金额</span>
             </x-input>
-            <x-input title="可抵扣金额" text-align='right' placeholder='请填写' @on-focus="getFocus($event)"
-                    @on-blur="checkAmt(item)" type='number' v-model.number='item.taxAmount'>
-            </x-input>
-            <cell title="抵扣后金额" text-align='right' v-model="item.noTaxAmount"></cell>
+            <x-input title="报销事由" text-align='right' placeholder='请填写' v-model='item.expCause'></x-input>
           </group>
         </div>
         <div class="add_more">
@@ -41,67 +30,9 @@
           <em v-show="CostList.length>1">或</em>
           <span class='delete' @click="deleteCost" v-show="CostList.length>1">删除</span>
         </div>
-        <!-- 往来信息-->
-        <div class="materiel_list">
-          <div class="mater_list">
-            <div class="each_mater">
-              <div class="userInp_mode">
-                <div class="title">往来明细</div>
-                <group class="SJ_group" @group-title-margin-top="0">
-                  <cell title="往来名称" v-model="dealerInfo.dealerName_dealerCodeCredit" text-align='right'>
-                    <template slot="title">
-                        <span class="required">往来名称</span>
-                    </template>
-                  </cell>
-                  <cell title="往来编码" v-model="dealerInfo.dealerCodeCredit" text-align='right'>
-                    <template slot="title">
-                        <span class="required">往来编码</span>
-                    </template>
-                  </cell>
-                  <cell title="往来关系标签" v-model="dealerInfo.crDealerLabel" text-align='right'>
-                    <template slot="title">
-                        <span class="required">往来关系标签</span>
-                    </template>
-                  </cell>
-                  <cell title="往来余额" v-model="dealerInfo.thenAmntBal" text-align='right'></cell>
-                  <x-input title="信用额度" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkAmt" v-model.number="dealerInfo.tdCreditLine">
-                  </x-input>
-                  <cell title="本次贷方增加" text-align='right' v-model="dealerInfo.thenAlreadyAmnt"></cell>
-                  <x-input title="本次支付" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkAmt" v-model.number="dealerInfo.thenTotalAmntBal">
-                  </x-input>
-                  <cell title="本次报销与支付后余额" v-model="differenceAmount" text-align='right'></cell>
-                </group>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- 账户明细 -->
-        <div class="materiel_list">
-          <div class="mater_list">
-            <div class="each_mater">
-              <div class="userInp_mode">
-                <div class="title">资金账户明细</div>
-                <group class="SJ_group" @group-title-margin-top="0">
-                  <cell title="资金账户" v-model='cashInfo.fundName_cashInCode' is-link @click.native="getFund">
-                  </cell>
-                  <cell title="资金编码" v-model='cashInfo.cashInCode'></cell>
-                  <cell title="资金账户类型" v-model='cashInfo.cashType_cashInCode'></cell>
-                  <cell title="账户余额" v-model='cashInfo.thenAmntBalCopy1'></cell>
-                  <x-input title="支付金额" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkAmt" v-model.number="cashInfo.tdAmountCopy1">
-                  </x-input>
-                  <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
-                </group>
-              </div>
-            </div>
-          </div>
-        </div>
-        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost' getListMethod="getProjectCostByGroupId"
-                        :group-id="Number(formData.handlerUnit)" ref="matter"></pop-cost-list>
-        <pop-fund-list :show="showFundPop" v-model="showFundPop" @sel-matter="selFund" :defaultValue="selectedFund" getListMethod="getEmployeeReserveFunds"
-                       ref="matter"></pop-fund-list>
+        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
+                       getListMethod="getProjectCostByGroupId"
+                       :group-id="Number(formData.handlerUnit)" ref="matter"></pop-cost-list>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
       </div>
     </div>
@@ -114,31 +45,41 @@
 
 <script>
   // vux组件引入
-  import { Cell, Group, XInput, XTextarea } from 'vux'
+  import {Cell, Group, XInput, XTextarea} from 'vux'
   // 请求 引入
-  import { getSOList } from 'service/detailService'
-  import { submitAndCalc, saveAndStartWf, saveAndCommitTask } from 'service/commonService'
-  import { getEmployeeBal } from 'service/costService'
+  import {getSOList} from 'service/detailService'
+  import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
+  import {getEmployeeBal} from 'service/costService'
   // mixins 引入
-  import common from 'components/mixins/applyCommon.js'
+  import common from 'components/mixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
   import PopFundList from 'components/Popup/PopFundList'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopCostList from 'components/Popup/PopCostList'
   // 方法引入
-  import { toFixed } from '@/plugins/calc'
-  import { accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
+  import {toFixed} from '@/plugins/calc'
+  import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
+
   const DRAFT_KEY = 'BXYZF_DATA';
+  const COST_DETAIL = {
+    exptName: '', // 费用名称
+    expCode: '', // 费用编码
+    expSubject: '', // 费用科目
+    costType: '', // 费用类型
+    tdAmount: 0, //申请金额
+    taxAmount: 0, // 税金
+    noTaxAmount: 0, // 不含税金额
+  };
 
   export default {
-    data () {
+    data() {
       return {
         listId: '080147c6-05ea-4ae7-9390-49e8e0379a11',
         dealerInfo: {
           dealerName_dealerCodeCredit: '', // 往来名称
           dealerCodeCredit: '', // 用户编码
-          crDealerLabel:  '', // 关系标签
+          crDealerLabel: '', // 关系标签
           tdCreditLine: '', // 信用额度
           thenAmntBal: '', // 往来余额
           thenAlreadyAmnt: 0, // 本次贷方增加
@@ -155,20 +96,10 @@
           fundName_cashInCode: '',
           cashInCode: '', // 账户编码
           cashType_cashInCode: '', // 账户类型
-          thenAmntBalCopy1: '' , // 账户余额
+          thenAmntBalCopy1: '', // 账户余额
           tdAmountCopy1: '', // 支付金额
         },
-         CostList: [ // 费用列表
-          {
-            exptName: '', // 费用名称
-            expCode: '', // 费用编码
-            expSubject: '', // 费用科目
-            costType: '', // 费用类型
-            tdAmount: 0, //申请金额
-            taxAmount: 0, // 税金
-            noTaxAmount: 0, // 不含税金额
-          }
-        ],
+        CostList: [{...COST_DETAIL}],
         biReferenceId: '',
         showCostPop: false, // 费用的Pop
         costIndex: 0,
@@ -182,36 +113,37 @@
       RPicker, PopFundList, PopBaseinfo, PopCostList
     },
     mixins: [common],
-    computed:{
+    computed: {
       creatorName() {
         return this.formData.userCode
       },
       // 本次报销与支付后余额
       differenceAmount() {
         let total = 0,
-            subAmount = accSub(this.dealerInfo.thenAmntBal, this.dealerInfo.thenAlreadyAmnt);
+          subAmount = accSub(this.dealerInfo.thenAmntBal, this.dealerInfo.thenAlreadyAmnt);
         total = accAdd(subAmount, this.dealerInfo.thenTotalAmntBal);
         return toFixed(total);
       },
       // 往来差异金额
-      tdAmount(){
-        let total = accSub(this.dealerInfo.thenAlreadyAmnt, this.cashInfo.tdAmountCopy1);
+      tdAmount() {
+        // let total = accSub(this.dealerInfo.thenAlreadyAmnt, this.cashInfo.tdAmountCopy1);
+        let {thenAlreadyAmnt = 0, thenTotalAmntBal = 0} = this.dealerInfo;
+        let total = accSub(thenAlreadyAmnt, thenTotalAmntBal);
         return toFixed(total);
       },
     },
-    watch:{
+    watch: {
       creatorName(val) {
         this.getEmployeeBal()
       },
       CostList: {
         handler(val) {
-          let total = 0; 
+          let total = 0;
           val.forEach(item => {
             item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount))
             total = accAdd(total, item.tdAmount)
           })
           this.dealerInfo.thenAlreadyAmnt = toFixed(total);
-          // this.dealerInfo.thenTotalAmntBal = toFixed(total);
         },
         deep: true,
       },
@@ -224,7 +156,7 @@
       cashInfo: {
         handler(val) {
           // 支付金额大于账户余额
-          if(val.thenAmntBalCopy1 && val.tdAmountCopy1 > val.thenAmntBalCopy1){
+          if (val.thenAmntBalCopy1 && val.tdAmountCopy1 > val.thenAmntBalCopy1) {
             val.tdAmountCopy1 = val.thenAmntBalCopy1;
           }
         },
@@ -233,7 +165,7 @@
     },
     methods: {
       // 获取当前往来用户的往来余额
-      getEmployeeBal(){
+      getEmployeeBal() {
         let filter = [
           {
             operator: "eq",
@@ -242,69 +174,49 @@
           }
         ]
         getEmployeeBal(JSON.stringify(filter)).then(({tableContent = []}) => {
+          let [data = {}] = tableContent;
           this.dealerInfo = {
             ...this.dealerInfo,
-            dealerName_dealerCodeCredit: tableContent[0].nickname, // 往来名称
-            dealerCodeCredit: tableContent[0].dealerCode, // 用户编码
-            crDealerLabel: tableContent[0].dealerLabelName, // 关系标签
-            tdCreditLine: tableContent[0].tdCreditLine, // 信用额度
-            thenAmntBal: tableContent[0].amntBal, // 往来余额
-          }          
+            dealerName_dealerCodeCredit: data.nickname, // 往来名称
+            dealerCodeCredit: data.dealerCode, // 用户编码
+            crDealerLabel: data.dealerLabelName, // 关系标签
+            tdCreditLine: data.tdCreditLine, // 信用额度
+            thenAmntBal: data.amntBal, // 往来余额
+          }
         })
       },
-      getCost (index, item) {
+      getCost(index, item) {
         this.showCostPop = true;
         this.costIndex = index;
         this.selectedCost = [item];
       },
       // TODO 点击增加费用
-      addCost () {
-        this.CostList.push({
-          exptName: '', // 费用名称
-            expCode: '', // 费用编码
-            expSubject: '', // 费用科目
-            costType: '', // 费用类型
-            tdAmount: 0, //申请金额
-            taxAmount: 0, // 税金
-            noTaxAmount: 0, // 不含税金额
-        })
+      addCost() {
+        this.CostList.push({...COST_DETAIL})
       },
       // 删除费用明细
-      deleteCost () {
+      deleteCost() {
         this.CostList.pop();
       },
       // TODO 选中费用
-      selMatter (val) {
+      selMatter(val) {
         let sels = val;
         this.CostList[this.costIndex].exptName = sels.costName;
         this.CostList[this.costIndex].expCode = sels.costCode;
         this.CostList[this.costIndex].expSubject = sels.costSubject;
-        this.CostList[this.costIndex].costType_expCode = sels.costType;
-      },
-      getFund () {
-        this.showFundPop = true;
-        this.selectedFund = [this.cashInfo];
-      },
-      // TODO 选中账户
-      selFund(val) {
-        this.cashInfo = {
-          ...this.cashInfo,
-          fundName_cashInCode: val.fundName,
-          cashInCode: val.fundCode, // 账户编码
-          cashType_cashInCode: val.fundType, // 账户类型
-          thenAmntBalCopy1: val.thenAmntBal , // 账户余额
-        }
+        this.CostList[this.costIndex].costType = sels.costType;
+        this.CostList[this.costIndex].expCause = '';
       },
       // TODO 提交
-      submitOrder () {
+      submitOrder() {
         let warn = '';
         let dataSet = [];
         this.CostList.every(item => {
-          if(!item.exptName) {
+          if (!item.exptName) {
             warn = '请选择费用名称';
             return false
           }
-          if(!item.tdAmount) {
+          if (!item.tdAmount) {
             warn = '请填写申请金额';
             return false
           }
@@ -315,13 +227,11 @@
             tdAmount: item.tdAmount, // 申请金额
             taxAmount: item.taxAmount, // 税金
             noTaxAmount: item.noTaxAmount, // 不含税金额
+            expCause: item.expCause, // 报销事由
           });
           return true
         });
-        if(!warn && !this.cashInfo.fundName_cashInCode) {
-          warn = '请选择资金账户'
-        }
-        if(warn) {
+        if (warn) {
           this.$vux.alert.show({
             content: warn,
           });
@@ -379,12 +289,12 @@
               });
             }
             // 无工作流
-            if(!this.processCode.length) {
+            if (!this.processCode.length) {
               operation = submitAndCalc;
               delete submitData.wfPara;
               delete submitData.biReferenceId;
             }
-            if(this.biReferenceId) {
+            if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
             this.saveData(operation, submitData);
@@ -392,12 +302,12 @@
         });
       },
       // TODO 获取详情
-      getFormData () {
+      getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
           transCode: this.transCode
         }).then(data => {
-          let {success = true, formData = {},attachment = []} = data;
+          let {success = true, formData = {}, attachment = []} = data;
           // http200时提示报错信息
           if (!success) {
             this.$vux.alert.show({
@@ -408,18 +318,18 @@
           this.attachment = attachment;
           // 获取合计
           let {order, outPut, inPut} = formData,
-              dealerInfo = inPut.dataSet[0],
-              cashInfo = outPut.dataSet[0];
+            dealerInfo = inPut.dataSet[0],
+            cashInfo = outPut.dataSet[0];
           // 客户信息
           this.dealerInfo = {
             dealerName_dealerCodeCredit: dealerInfo.dealerName_dealerCodeCredit, // 往来名称
             dealerCodeCredit: dealerInfo.dealerCodeCredit, // 用户编码
-            crDealerLabel:  dealerInfo.crDealerLabel, // 关系标签
+            crDealerLabel: dealerInfo.crDealerLabel, // 关系标签
             tdCreditLine: dealerInfo.tdCreditLine, // 信用额度
             thenAmntBal: dealerInfo.thenAmntBal, // 往来余额
-            thenAlreadyAmnt: dealerInfo.thenAlreadyAmnt, 
+            thenAlreadyAmnt: dealerInfo.thenAlreadyAmnt,
             thenTotalAmntBal: dealerInfo.thenTotalAmntBal, // 本次支付
-            differenceAmount: dealerInfo.differenceAmount, 
+            differenceAmount: dealerInfo.differenceAmount,
             tdAmount: dealerInfo.tdAmount,
             tdId: dealerInfo.tdId,
           };
@@ -443,7 +353,7 @@
             fundName_cashInCode: cashInfo.fundName_cashInCode,
             cashInCode: cashInfo.cashInCode, // 账户编码
             cashType_cashInCode: cashInfo.cashType_cashInCode, // 账户类型
-            thenAmntBalCopy1: cashInfo.thenAmntBalCopy1 , // 账户余额
+            thenAmntBalCopy1: cashInfo.thenAmntBalCopy1, // 账户余额
             tdAmountCopy1: cashInfo.tdAmountCopy1, // 本次支付
             tdIdCopy1: cashInfo.tdIdCopy1
           }
@@ -453,7 +363,7 @@
               exptName: item.costName_expCode, // 费用名称
               expCode: item.expCode, // 费用编码
               expSubject: item.expSubject, // 费用科目
-              costType: item.costType_expCode, // 费用类型
+              costType: item.costType, // 费用类型
               tdAmount: item.tdAmount, //申请金额
               taxAmount: item.taxAmount, // 税金
               noTaxAmount: item.noTaxAmount, // 不含税金额
@@ -464,39 +374,39 @@
         })
       },
       // TODO 检查金额
-      checkAmt (item) {
+      checkAmt(item) {
         let {tdAmount, taxAmount} = item,
-            {tdCreditLine, thenTotalAmntBal} = this.dealerInfo,
-            {tdAmountCopy1} = this.cashInfo;
-        if(tdAmount) {
+          {tdCreditLine, thenTotalAmntBal} = this.dealerInfo,
+          {tdAmountCopy1} = this.cashInfo;
+        if (tdAmount) {
           item.tdAmount = Math.abs(toFixed(tdAmount));
         }
-        if(taxAmount) {
+        if (taxAmount) {
           item.taxAmount = Math.abs(toFixed(taxAmount));
         }
-        if(tdCreditLine) {
+        if (tdCreditLine) {
           this.dealerInfo.tdCreditLine = Math.abs(toFixed(tdCreditLine));
         }
-        if(thenTotalAmntBal) {
+        if (thenTotalAmntBal) {
           this.dealerInfo.thenTotalAmntBal = Math.abs(toFixed(thenTotalAmntBal));
         }
-        if(tdAmountCopy1) {
+        if (tdAmountCopy1) {
           this.cashInfo.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
         }
       },
       // TODO 是否保存草稿
-      hasDraftData () {        
+      hasDraftData() {
         return {
           [DRAFT_KEY]: {
-            dealerInfo : this.dealerInfo,
+            dealerInfo: this.dealerInfo,
             cashInfo: this.contactInfo,
             costList: this.costList,
             formData: this.formData
           }
-        };       
+        };
       },
     },
-    created () {
+    created() {
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
@@ -512,16 +422,14 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
+
   .materiel_list .mater_list .each_mater {
     padding: unset;
   }
+
   .sj-apply-container {
     .SJ_group {
 
-      /deep/ .vux-label {
-        color: #5077aa;
-        font-weight: bold;
-      }
       /deep/ .vux-no-group-title {
         margin-top: 0.08rem;
       }
@@ -538,7 +446,7 @@
         }
       }
       .vux-cell-box {
-        &:before{
+        &:before {
           left: 0;
         }
         /deep/ .weui-cell {
@@ -555,6 +463,7 @@
     }
 
   }
+
   .add_more {
     width: 100%;
     text-align: center;

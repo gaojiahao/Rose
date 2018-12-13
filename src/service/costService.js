@@ -143,6 +143,18 @@ export let getObjFundBalByType = (data = {}) => {
     }
   })
 };
+
+// TODO 获取资金账户列表(兑付承兑汇票)
+export let getComplexExpenseReimbursement = (data = {}) => {
+  return $axios.ajax({
+    url: '/H_roleplay-si/ds/getComplexExpenseReimbursement',
+    data: {
+      _dc: Date.now(),
+      ...data,
+    }
+  })
+};
+
 export default {
 
 }

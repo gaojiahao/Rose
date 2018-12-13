@@ -42,7 +42,7 @@
 
 <script>
   import { AlertModule, numberComma} from 'vux'
-  import {getEmployeeReserveFunds, getSupplierToPayDeposit, getFundCashDiscount, getObjFundBalByType} from 'service/costService'
+  import {getEmployeeReserveFunds, getSupplierToPayDeposit, getFundCashDiscount, getObjFundBalByType, getComplexExpenseReimbursement} from 'service/costService'
   import RPopup from 'components/Popup/commonPart/RPopup'
 
   export default {
@@ -150,7 +150,7 @@
       numberComma,
     },
     created() {
-      let serviceList = [getEmployeeReserveFunds, getSupplierToPayDeposit, getFundCashDiscount, getObjFundBalByType];
+      let serviceList = [getEmployeeReserveFunds, getSupplierToPayDeposit, getFundCashDiscount, getObjFundBalByType, getComplexExpenseReimbursement];
       this.requestMethods = serviceList[this.request];
       this.getList();
     }
