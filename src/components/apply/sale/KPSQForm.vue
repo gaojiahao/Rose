@@ -362,7 +362,8 @@
             city: formData.order.city_dealerCodeCredit,
             county: formData.order.county_dealerCodeCredit,
             address: formData.order.address_dealerCodeCredit,
-            dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit
+            dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit,
+            dealerLabelName:formData.order.crDealerLabel,
 
           }
           this.contactInfo = {

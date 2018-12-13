@@ -442,6 +442,10 @@
             address: formData.order.address_dealerDebit,
             paymentTerm: formData.order.drDealerPaymentTerm || '现付', //付款
           }
+          this.contact = {
+            dealerName: formData.dealerDebitContactPersonName, //联系人
+            dealerMobilePhone: formData.dealerDebitContactInformation,//电话
+          };
           this.$loading.hide();
         })
       },

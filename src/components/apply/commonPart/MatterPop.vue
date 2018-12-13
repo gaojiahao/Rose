@@ -46,9 +46,9 @@
               <div class="mater_more">
                 <slot name="qtyBal" :modifyMatter="modifyMatter">
                   <div>
-                    <span class="processing">属性: {{modifyMatter.processing}}</span>
+                    <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
                     <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
-                    <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || '无'}}</span>
+                    <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
                   </div>
                   <div>
                     <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
