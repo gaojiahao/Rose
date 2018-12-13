@@ -499,14 +499,13 @@
               ...item,
               transCode: item.transMatchedCode,
               inventoryPic: item.inventoryPic_facilityObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_facilityObjCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_facilityObjCode,
+              facilityName: item.facilityName_facilityObjCode,
               facilityCode: item.facilityObjCode,
+              facilityBigType: item.facilityBigType_facilityObjCode,
+              facilitySubclass: item.facilitySubclass_facilityObjCode,
+              facilityUnit: item.facilityUnit_facilityObjCode,
               specification: item.specification_facilityObjCode,
-              processing: item.tdProcessing,
-              keepingDays: item.keepingDays_facilityObjCode,
-              qtyed: item.thenLockQty,
-              qtyBal: item.thenQtyBal,
-              qty: item.thenTotalQtyBal,
+              processing: item.tdProcessing
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
@@ -526,12 +525,12 @@
             county: order.county_dealerDebit, // 地区
             address: order.address_dealerDebit, // 详细地址
             paymentTerm: order.drDealerPaymentTerm,
+            pamentDays: order.daysOfAccount,
           };
           this.contactInfo = {
-            dealerName: formData.dealerCreditContactPersonName,
-            dealerMobilePhone: formData.dealerCreditContactInformation,
+            dealerName: formData.dealerDebitContactPersonName,
+            dealerMobilePhone: formData.dealerDebitContactInformation,
           };
-
           // 基本信息
           this.handlerDefault = {
             handler: formData.handler,

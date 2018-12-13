@@ -117,7 +117,6 @@
           comment: '', // 项目说明
           projectSubclass: '', // 项目子类
         },
-        formDataComment: '', // 备注
         formData: {
           biComment: '',
           biProcessStatus: ''
@@ -185,7 +184,7 @@
               formData: {
                 handlerEntity: this.entity.dealerName,
                 comment: {
-                  biComment: this.formDataComment,
+                  biComment: this.formData.biComment,
                 },
                 baseinfo: {
                   creator: this.formData.handler,
@@ -258,18 +257,36 @@
         return findProjectApproval(this.transCode).then(({formData = {}}) => {
           this.hasDefault = true;
           this.defaultManager = {
-            dealerName: formData.approval.projectManager,
-            dealerMobilePhone: formData.approval.phoneNumber,
+            dealerName: formData.projectApproval.projectManager,
+            dealerMobilePhone: formData.projectApproval.phoneNumber,
           };
-          formData.approval.expectStartDate = this.changeDate(formData.approval.expectStartDate);
-          formData.approval.expectEndDate = this.changeDate(formData.approval.expectEndDate);
-          this.ProjectApproval = formData.approval;
-          this.formData = formData.baseinfo;
-          this.formDataComment = formData.comment.biComment;
+          formData.projectApproval.expectStartDate = this.changeDate(formData.projectApproval.expectStartDate);
+          formData.projectApproval.expectEndDate = this.changeDate(formData.projectApproval.expectEndDate);
+          this.ProjectApproval = formData.projectApproval;
           this.$nextTick(() => {
             // 渲染完后重置为false
             this.hasDefault = false;
           })
+          this.handlerDefault = {
+            handler: formData.baseinfo.handler,
+            handlerName: formData.baseinfo.handlerName,
+            handlerUnit: formData.baseinfo.handlerUnit,
+            handlerUnitName: formData.baseinfo.handlerUnitName,
+            handlerRole: formData.baseinfo.handlerRole,
+            handlerRoleName: formData.baseinfo.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.baseinfo.biComment,
+            biId: formData.baseinfo.biId,
+            biProcessStatus: formData.baseinfo.biProcessStatus,
+            creator: formData.baseinfo.creator,
+            modifer: formData.baseinfo.modifer,
+          }
+          this.biReferenceId = formData.biReferenceId;
+          this.$loading.hide()
         })
       },
       // TODO 初始化页面的数据

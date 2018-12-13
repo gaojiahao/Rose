@@ -205,7 +205,7 @@
       },
       // TODO 切换任务
       taskChange (val) {
-        if (this.relationKey) {
+        if (this.relationKey || this.transCode) {
           return false;
         }
         let [sel = {}] = this.taskList.filter(item => {
@@ -225,11 +225,10 @@
       },
       // TODO 项目切换
       projectChange (val) {
-        if (this.relationKey) {
+        if (this.relationKey || this.transCode) {
           return false;
         }
         let matched = this.projectList.find(item => item.projectName === val);
-        console.log(matched)
         this.projectTask = {
           ...this.projectTask,
           projectType: matched.projectType || '',
@@ -248,13 +247,22 @@
       // TODO 获取详情
       getFormData () {
         return findProjectTask(this.transCode).then(({formData = {}}) => {
-          let projectTask = formData.projectTask || {};
+          let projectTask = formData.projectTask;
           this.jsonData = formData;
           this.projectTask = {
             ...projectTask,
             actualCompleteTime: dateFormat(projectTask.actualCompleteTime, 'YYYY-MM-DD')
           };
-          this.$emit('input', false);
+          this.handlerDefault = {
+            handler: formData.baseinfo.handler,
+            handlerName: formData.baseinfo.handlerName,
+            handlerUnit: formData.baseinfo.handlerUnit,
+            handlerUnitName: formData.baseinfo.handlerUnitName,
+            handlerRole: formData.baseinfo.handlerRole,
+            handlerRoleName: formData.baseinfo.handlerRoleName,
+          };
+          this.getTaskList()
+          this.$loading.hide()
         })
       },
       // TODO 获取任务列表

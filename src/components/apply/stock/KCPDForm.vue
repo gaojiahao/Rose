@@ -39,7 +39,7 @@
                     <div class="mater_more">
                       <span class="symbol">库存余额: {{item.qtyBal}}</span>
                       <span class="symbol">计划占用: {{item.qtyLock}}</span>
-                      <span class="symbol">库存余额: {{item.thenQtyStock}}</span>
+                      <span class="symbol">可用库存: {{item.thenQtyStock}}</span>
                     </div>
                     <div class='mater_num' v-show="item.tdQty">
                       盘点数量: <span class="num">{{item.tdQty}}</span>
@@ -377,13 +377,14 @@ export default {
         for (let item of dataSet) {
           item = {
             ...item,
-            qtyBal: item.thenQtyStock,
+            qtyBal: item.thenTotalQtyStock,
+            qtyLock: item.thenLockQtyStock,
             inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
             inventoryName: item.inventoryName_transObjCode,
-            // inventoryCode: item.inventoryCode_transObjCode,
             inventoryCode: item.transObjCode,
             specification: item.specification_transObjCode,
             measureUnit: item.measureUnit_transObjCode,
+            processing: item.tdProcessing
           };
           matterList.push(item);
         }

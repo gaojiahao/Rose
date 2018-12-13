@@ -17,7 +17,7 @@
                 <span class='required'>任务名称</span>
               </template>
             </x-input>
-            <popup-picker title="任务类型" :data="projectTypes" v-model="projectType[index]"
+            <popup-picker title="任务类型" :data="projectTypes" v-model="item.taskTypes"
                           @on-change=" typeTask($event,item) "></popup-picker>
             <x-input title="周期天数" type="number" v-model.number="item.cycleDays" text-align='right'
                      placeholder='请填写' @on-blur="checkTime(item,'cycleDays',2)"></x-input>
@@ -64,7 +64,7 @@
     XTextarea, Datetime, PopupPicker
   } from 'vux'
   // 请求 引入
-  import {saveProjectPlan, findProjectApproval, getProjectBotTask} from 'service/projectService'
+  import {saveProjectPlan, findProjectPlan, getProjectBotTask} from 'service/projectService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
@@ -87,10 +87,10 @@
       return {
         listId: '0281f8eb-f1d2-415c-b566-756fc749ccb3',
         projectTypes: [['设计类', '协调类', '执行类']],
-        projectType: [],
         planModel: {
           taskName: '', // 任务名称
           taskType: '', // 任务类型
+          taskTypes: [], // 用于显示popupPicker
           comment: '', // 备注
           deadline: '', // 截止日期
           cycleDays: '', // 周期天数
@@ -112,12 +112,10 @@
       addPlan() {
         let planModel = JSON.stringify(this.planModel);
         this.projectPlan.push(JSON.parse(planModel));
-        this.projectType.push([]);
       },
       // 删除项目计划
       delatePlan() {
         this.projectPlan.pop();
-        this.projectType.pop();
       },
       // 任务类型选择
       typeTask(e, item) {
@@ -130,29 +128,14 @@
         let params = {
           projectType: this.project.PROJECT_TYPE,
           filters:JSON.stringify([{operator:"in", property:"projectType", value:this.project.PROJECT_TYPE}])
-        }
-        this.getProjectBotTask(params)
+        }       
+        this.getProjectBotTask(params)               
       },
       // 获取任务计划的列表
       getProjectBotTask(params){
         getProjectBotTask(params).then(({tableContent = []}) => {
-          this.projectType = [[]]
-          // 当根据项目获取到的任务计划为空
-          if(!tableContent.length){
-            this.projectPlan = []
-            let planModel = JSON.stringify(this.planModel)
-            this.projectPlan.push(JSON.parse(planModel));
-            return;
-          }
-          // 获取到的任务计划不为空
-          tableContent.forEach((item,index) => {
-            if(index === 0){
-              this.projectType[0].push(item.taskType)
-            }
-            else{
-              this.projectType.push([item.taskType])
-            }
-            
+          tableContent.forEach(item => {
+            item.taskTypes = [item.taskType]
           })
           this.projectPlan = tableContent;
         })
@@ -264,8 +247,8 @@
       },
       // TODO 获取关联数据
       getRelationData() {
-        return findProjectApproval(this.relationKey).then(({formData = {}, attachment = []}) => {
-          let data = JSON.parse(JSON.stringify(formData.approval));
+        return findProjectPlan(this.relationKey).then(({formData = {}, attachment = []}) => {
+          let data = JSON.parse(JSON.stringify(formData.projectApproval));
           this.project = {
             BUDGET_CAPITAL: data.budgetCapital,
             BUDGET_COST: data.budgetCost,
@@ -284,7 +267,58 @@
             PROJECT_TYPE: data.projectType,
             REFERENCE_ID: data.referenceId
           }
+          this.projectPlan = formData.projectPlan;
+          this.formData = formData.baseinfo;
           this.selProject(JSON.stringify(this.project));
+          this.$loading.hide()
+        })
+      },
+      // TODO 获取详情
+      getFormData() {
+        return findProjectPlan(this.transCode).then(({formData = {}, attachment = []}) => {
+          let data = JSON.parse(JSON.stringify(formData.projectApproval));
+          this.project = {
+            BUDGET_CAPITAL: data.budgetCapital,
+            BUDGET_COST: data.budgetCost,
+            BUDGET_INCOME: data.budgetIncome,
+            BUDGET_PROFIT: data.budgetProfit,
+            BUDGET_PROFIT_MARGIN: data.budgetProfitMargin,
+            COMMENT: data.comment,
+            EXPECT_END_DATE: data.expectEndDate,
+            EXPECT_START_DATE: data.expectStartDate,
+            ID: data.projectApprovalId,
+            PHONE_NUMBER: data.phoneNumber,
+            PROJECT_MANAGER: data.projectManager,
+            PROJECT_NAME: data.projectName,
+            PROJECT_STATUS: data.projectStatus,
+            PROJECT_SUBCLASS: data.projectSubclass,
+            PROJECT_TYPE: data.projectType,
+            REFERENCE_ID: data.referenceId
+          }
+          formData.projectPlan.forEach(item => {
+            item.taskTypes = [item.taskType];
+          })
+          this.projectPlan = formData.projectPlan;
+          this.handlerDefault = {
+            handler: formData.baseinfo.handler,
+            handlerName: formData.baseinfo.handlerName,
+            handlerUnit: formData.baseinfo.handlerUnit,
+            handlerUnitName: formData.baseinfo.handlerUnitName,
+            handlerRole: formData.baseinfo.handlerRole,
+            handlerRoleName: formData.baseinfo.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.formData,
+            ...this.handlerDefault,
+            biComment: formData.baseinfo.biComment,
+            biId: formData.baseinfo.biId,
+            biProcessStatus: formData.baseinfo.biProcessStatus,
+            creator: formData.baseinfo.creator,
+            modifer: formData.baseinfo.modifer,
+          }
+          this.biReferenceId = formData.biReferenceId;
+          this.$loading.hide()
         })
       }
     },
@@ -295,15 +329,12 @@
         let draft = JSON.parse(data);
         this.project = draft.project;
         this.projectPlan = draft.projectPlan;
-        this.projectPlan.forEach((item, index) => {
-          this.projectType.push([]);
-          this.projectType[index].push(item.taskType);
-        });
         sessionStorage.removeItem(DRAFT_KEY);
         return
       }
-      this.projectPlan.push(JSON.parse(plan));
-      this.projectType.push([]);
+      if(!this.transCode && !this.relationKey){
+        this.projectPlan.push(JSON.parse(plan));
+      }      
     },
   }
 </script>

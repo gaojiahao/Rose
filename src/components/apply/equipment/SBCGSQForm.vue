@@ -385,7 +385,7 @@
             modifer: formData.modifer,
             biId: formData.biId,
             biComment: formData.biComment,
-            biProcessStatus: item.biProcessStatus
+            biProcessStatus: formData.biProcessStatus
           };
           this.biReferenceId = formData.biReferenceId;
           this.matterList = matterList;

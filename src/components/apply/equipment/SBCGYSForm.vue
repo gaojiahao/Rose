@@ -527,14 +527,14 @@
               ...item,
               transCode: item.transMatchedCode,
               inventoryPic: item.inventoryPic_facilityObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_facilityObjCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_facilityObjCode,
-              facilityCode: item.facilityObjCode,
-              specification: item.specification_facilityObjCode,
-              processing: item.tdProcessing,
-              keepingDays: item.keepingDays_facilityObjCode,
-              purchased: item.thenLockQty,
-              qtyBal: item.thenQtyBal,
-              qty: item.thenTotalQtyBal,
+              facilityName: item.facilityName_facilityObjCode,
+              facilityCode: item.facilityCode_facilityObjCode,
+              facilityBigType: item.facilityBigType_facilityObjCode,
+              facilitySubclass: item.facilitySubclass_facilityObjCode,
+              facilityUnit: item.facilityUnit_facilityObjCode,
+              qty: item.thenTotalQtyBal, // 订单总数
+              purchased: item.thenLockQty, // 已验收
+              qtyBal: item.thenQtyBal, // 待验收
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
@@ -544,16 +544,14 @@
           }
           // 供应商信息
           this.dealerInfo = {
-            creatorName: formData.dealerCreditContactPersonName, // 客户名
-            dealerName: order.dealerName_dealerDebit, // 公司名
+            dealerName: order.dealerName_dealerCodeCredit, // 公司名
             dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
-            dealerCode: order.dealerCode_dealerDebit, // 客户编码
-            dealerLabelName: order.drDealerLabel, // 关系标签
-            province: order.province_dealerDebit, // 省份
-            city: order.city_dealerDebit, // 城市
-            county: order.county_dealerDebit, // 地区
-            address: order.address_dealerDebit, // 详细地址
-            paymentTerm: order.drDealerPaymentTerm,
+            dealerCode: order.dealerCodeCredit, // 客户编码
+            dealerLabelName: order.crDealerLabel, // 关系标签
+            province: order.province_dealerCodeCredit, // 省份
+            city: order.city_dealerCodeCredit, // 城市
+            county: order.county_dealerCodeCredit, // 地区
+            address: order.address_dealerCodeCredit, // 详细地址
           };
           this.contactInfo = {
             dealerName: formData.dealerCreditContactPersonName,
