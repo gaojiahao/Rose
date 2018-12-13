@@ -120,9 +120,12 @@
             <span class="add_more"  @click="addOrder">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :filterList="filterList"
                            :default-value="matterList" get-list-method="getCKTHCKList" :params="matterParams" 
                            isShowStock ref="matter">
+            <template slot="titleName">
+              <span class="order-title">订单号</span>
+            </template>
             <template slot="storage" slot-scope="{item}">
               <div class="mater_material">
                 <span class="spec">可用库存: {{item.qtyStockBal}}</span>
@@ -231,7 +234,19 @@ export default {
       matterParams: { // 物料列表的请求参数
         whCode: ''
       },
-      contactInfo: {}
+      contactInfo: {},
+      filterList: [
+        {
+          name: '物料名称',
+          value: 'inventoryName',
+        }, {
+          name: '物料编码',
+          value: 'inventoryCode',
+        },{
+          name: '订单号',
+          value: 'transCode',
+        },
+      ]
     }
   },
   components: {
@@ -275,7 +290,7 @@ export default {
       let orderList = {};
       sels.forEach(item => {
         let key = `${item.transCode}_${item.inventoryCode}`;
-        let { tdQty = item.qtyStockBal || '', price = item.price, taxRate = 0.16 } = this.numMap[key] || {};
+        let { tdQty = item.currQty || '', price = item.price, taxRate = 0.16 } = this.numMap[key] || {};
         item.tdQty = tdQty;
         if (price.length) {
           item.price = price;

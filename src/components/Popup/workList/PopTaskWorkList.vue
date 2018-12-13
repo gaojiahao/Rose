@@ -12,6 +12,11 @@
            <div class="each-work box_sd"  v-for='(item, index) in taskWorkList' :key='index'  v-if="item.qtyBalance>0"
                @click.stop="selThis(item, index)">
             <div class="work-main">
+              <div class="order-code">
+                <span class="order-title" v-show="workType === '启动'">派工单号</span>
+                <span class="order-title" v-show="workType === '验收'">启动单号</span>
+                <span class="order-num">{{item.transCode}}</span>
+              </div>
               <div class="work_mid">
                 <div class="product_name">
                   {{item.inventoryName}}<span class="symbol">[{{item.invProcessing}}]</span>
@@ -115,7 +120,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       // TODO 弹窗隐藏时调用
       onHide() {
         this.$emit('input', false);
-        this.selItems = []
+        // this.selItems = []
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -311,6 +316,21 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
             }
             .work_code {
               background: #c93d1b
+            }
+          }
+          .order-code{
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            .order-title{
+              padding: 0 .04rem;
+              background: #455d7a;
+              display: inline-block;
+            }
+            .order-num{
+              background: #c93d1b;
+              border-top-right-radius: .08rem;
+              padding: 0 .04rem;
             }
           }
           .work_mid {

@@ -20,7 +20,7 @@
                            v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
         <div class="other_info">
           <div class="title">协议总金额</div>
-          <div class="mode">{{tdAmount}}</div>
+          <div class="mode">{{tdAmount | numberComma}}</div>
         </div>
         <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate"></r-date>
         <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil"></r-date>
@@ -94,8 +94,8 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList"
-                           get-list-method="getObjInventory" ref="matter" :isShowCode="false"></pop-matter-list>
+                           :default-value="matterList" processing="原料"
+                           ref="matter" :isShowCode="false"></pop-matter-list>
 
         </div>
         <!--物料编辑pop-->

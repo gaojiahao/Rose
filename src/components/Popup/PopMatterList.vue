@@ -137,6 +137,11 @@
           return {}
         }
       },
+      // 以属性查询物料的数据
+      processing: {
+        type: String,
+        default: '成品,商品,服务'
+      },
       isShowCode: {
         type: Boolean,
         default: true
@@ -282,7 +287,7 @@
           ];
         }
         return getObjInventoryByProcessing({
-          processing: '成品,商品,服务',
+          processing: this.processing,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
