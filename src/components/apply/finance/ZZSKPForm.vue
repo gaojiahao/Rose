@@ -55,7 +55,7 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属合同</span>
+                  <span class="order_title">申请单</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -531,20 +531,27 @@
             city: formData.order.city_dealerCodeCredit,
             county: formData.order.county_dealerCodeCredit,
             address: formData.order.address_dealerCodeCredit,
-            dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit
-
+            dealerMobilePhone: formData.dealerMobilePhone_dealerCodeCredit
           }
+          this.contactInfo = {
+            dealerName: formData.dealerCreditContactPersonName,
+            dealerMobilePhone: formData.dealerCreditContactInformation
+          }
+          let orderList = {}
           // 发票列表明细
-          formData.order.dataSet.forEach(item => {
-            let obj = {
-              ...item,
-              transCode: item.transCode, // 实例编码,
-              inventoryName: item.inventoryName,
-              inventoryCode: item.inventoryCode,
-              qtyBal: item.thenQtyBal,
+          formData.order.dataSet.forEach(item => {           
+            item.transCode = item.transMatchedCode, // 实例编码,
+            item.inventoryName = item.inventoryName_transObjCode,
+            item.inventoryCode = item.inventoryCode_transObjCode,
+            item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+            item.qtyBal = item.thenQtyBal,           
+            this.matterList.push(item);
+            if (!orderList[item.transCode]) {
+              orderList[item.transCode] = [];
             }
-            this.matterList.push(obj);
+            orderList[item.transCode].push(item);
           })
+          this.orderList = orderList
           this.invoiceInfo = {
             ...this.invoiceInfo,
             ticketNumber: formData.ticketNumber, // 票号

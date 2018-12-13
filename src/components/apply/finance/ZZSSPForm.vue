@@ -55,7 +55,7 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属合同</span>
+                  <span class="order_title">入库单号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -546,7 +546,8 @@
             city: formData.order.city_dealerCodeCredit,
             county: formData.order.county_dealerCodeCredit,
             address: formData.order.address_dealerCodeCredit,
-            dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit
+            dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit,
+            paymentTerm: formData.order.crDealerPaymentTerm || '无'
           }
           let orderList = {};
           // 发票列表明细
@@ -556,14 +557,15 @@
               transCode: item.transMatchedCode, //实例编码,
               inventoryName: item.inventoryName_transObjCode,
               inventoryCode: item.inventoryCode_transObjCode,
+              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
               qty: item.thenTotalQtyBal,
               stockQty: item.thenLockQty,
               qtyBal: item.thenQtyBal,
             };
-            if (!orderList[item.transCode]) {
-              orderList[item.transCode] = [];
+            if (!orderList[item.transMatchedCode]) {
+              orderList[item.transMatchedCode] = [];
             }
-            orderList[item.transCode].push(obj);
+            orderList[item.transMatchedCode].push(obj);
             this.matterList.push(obj);
           });
           this.orderList = orderList;

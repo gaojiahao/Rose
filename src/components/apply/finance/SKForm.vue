@@ -299,8 +299,8 @@
             address: formData.order.address_dealerCodeCredit
           }
           this.contact = {
-            dealerName: formData.dealerDebitContactPersonName,
-            dealerMobilePhone: formData.dealerDebitContactInformation
+            dealerName: formData.dealerCreditContactPersonName,
+            dealerMobilePhone: formData.dealerCreditContactInformation
           }
           this.$loading.hide();
           // this.$emit('input', false);

@@ -6,7 +6,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商"
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商"
                          dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
@@ -162,6 +162,7 @@
           biComment: ''
         },
         dealerInfo: {},
+        contact: {},
         transMode: [], // 结算方式
         matterList: [], // 物料列表
         showTransPop: false, // 是否显示结算方式的popup
@@ -197,6 +198,7 @@
       selContact(val) {
         this.formData.dealerCreditContactPersonName = val.dealerName;
         this.formData.dealerCreditContactInformation = val.dealerMobilePhone;
+        this.contact = val;
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -371,8 +373,8 @@
         })
       },
       // 获取订单信息用于重新提交
-      async getFormData() {
-        await getSOList({
+      getFormData() {
+        return getSOList({
           formViewUniqueId: this.uniqueId,
           transCode: this.transCode
         }).then((data) => {
@@ -386,10 +388,11 @@
               ...item,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_transObjCode,
-              inventoryCode: item.inventoryCode_transObjCode,
+              inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
               processing: item.tdProcessing || '商品',
               measureUnit: item.measureUnit_transObjCode,
+              qtyBal: item.thenQtyBal,
             }
             this.matterList.push(item);
           })
@@ -413,19 +416,23 @@
           }
           // 供应商信息展示
           this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName,
-            dealerMobilePhone: formData.dealerDebitContactInformation,
-            dealerCode: formData.inPut.dealerDebit,
+            dealerMobilePhone: formData.dealerCreditContactInformation,
+            dealerCode: formData.inPut.dealerCodeCredit,
             dealerSubclass: formData.inPut.drAccountSub,
-            dealerName: formData.inPut.dealerName_dealerDebit,
-            province: formData.inPut.province_dealerDebit,
-            city: formData.inPut.city_dealerDebit,
-            county: formData.inPut.county_dealerDebit,
-            address: formData.inPut.address_dealerDebit,
-            dealerCreditContactPersonName: formData.dealerName,
-            dealerCreditContactInformation: formData.dealerMobilePhone,
+            dealerName: formData.inPut.dealerName_dealerCodeCredit,
+            dealerLabelName: formData.inPut.crDealerLabel,
+            province: formData.inPut.province_dealerCodeCredit,
+            city: formData.inPut.city_dealerCodeCredit,
+            county: formData.inPut.county_dealerCodeCredit,
+            address: formData.inPut.address_dealerCodeCredit,
+            dealerCreditContactPersonName: formData.dealerCreditContactPersonName,
+            dealerCreditContactInformation: formData.dealerCreditContactInformation,
             paymentTerm: formData.inPut.crDealerPaymentTerm,
             pamentDays: formData.inPut.daysOfAccount,
+          }
+          this.contact = {
+            dealerMobilePhone: formData.dealerCreditContactInformation,
+            dealerName: formData.dealerCreditContactPersonName
           }
           this.$loading.hide();
         })

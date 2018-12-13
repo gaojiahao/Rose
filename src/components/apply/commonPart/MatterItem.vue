@@ -71,7 +71,7 @@
       },
       hideEdit () {
         // 存在 价格、数量 输入
-        if (this.item.price === '' || this.item.tdQty === '' || this.item.price === 0) {
+        if (this.item.price === '' || this.item.tdQty === '' || this.item.price === 0 || this.item.tdQty === 0) {
          return !this.item.price || !this.item.tdQty
         }
       }

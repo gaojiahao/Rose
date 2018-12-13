@@ -597,7 +597,7 @@
           }
           this.attachment = attachment;
           // 获取合计
-          let {inPut, dealerDebit} = formData;
+          let {inPut, dealerDebit, outPut} = formData;
           let {dataSet = []} = inPut;
           let orderList = {};
           let matterList = [];
@@ -635,7 +635,17 @@
             address: inPut.address_dealerCodeCredit, // 详细地址
             accountExpirationDate: inPut.accountExpirationDate,
             paymentTerm: inPut.crDealerPaymentTerm,
+            pamentDays: inPut.daysOfAccount,
+            accountExpirationDate: inPut.accountExpirationDate || '无'
           };
+          for(let item of outPut.dataSet){
+            this.cashInfo = {
+              fundName: item.fundName_cashOutCode,
+              fundCode: item.cashOutCode,
+              fundType: item.cashType_cashOutCode,
+              amntBal: item.thenAmntBalCopy1,
+            }
+          }
           this.contactInfo = {
             dealerName: formData.dealerCreditContactPersonName,
             dealerMobilePhone: formData.dealerCreditContactInformation,

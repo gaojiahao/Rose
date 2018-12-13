@@ -47,7 +47,7 @@
               <div class="detail-item">
                 <span class="info-item" v-if="item.accountRemaingDays || item.accountRemaingDays === 0">账期剩余天数: {{item.accountRemaingDays}}</span>
                 <span class="info-item">已收票: {{item.invoicing}}</span>
-                <span class="info-item">待收票: {{item.invoiced}}</span>
+                <span class="info-item">待收票: {{item.pendingTicket || item.invoiced}}</span>
               </div>
               <div class="detail-item">
                 <span class="info-item">本次支付后余额: {{item.differenceAmount}}</span>
@@ -326,6 +326,7 @@
           orderDataSet.forEach(item => {
             item.popiCode = item.transMatchedCode;
             item.poCode = item.orderCode;
+            item.invoicing = item.invoiced;
           });
           this.dealerInfo = {
             ...dealerInfo,
@@ -372,6 +373,7 @@
       // TODO 选中采购明细
       selOrder(val) {
         this.orderList = JSON.parse(val);
+        this.orderList
       },
       // TODO 选中资金
       selCash(val) {

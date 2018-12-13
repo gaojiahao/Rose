@@ -82,7 +82,7 @@
           <div class="mater_list">
             <div class="each_mater">
               <div class="userInp_mode">
-                <div class="title">商机明细</div>
+                <div class="title">资金账户明细</div>
                 <group class="SJ_group" @group-title-margin-top="0">
                   <cell title="资金账户" v-model='cashInfo.fundName_cashInCode' is-link @click.native="getFund">
                   </cell>
@@ -99,7 +99,7 @@
           </div>
         </div>
         <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost' getListMethod="getProjectCostByGroupId"
-                        :group-id="formData.handlerUnit" ref="matter"></pop-cost-list>
+                        :group-id="Number(formData.handlerUnit)" ref="matter"></pop-cost-list>
         <pop-fund-list :show="showFundPop" v-model="showFundPop" @sel-matter="selFund" :defaultValue="selectedFund" getListMethod="getEmployeeReserveFunds"
                        ref="matter"></pop-fund-list>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
@@ -211,7 +211,7 @@
             total = accAdd(total, item.tdAmount)
           })
           this.dealerInfo.thenAlreadyAmnt = toFixed(total);
-          this.dealerInfo.thenTotalAmntBal = toFixed(total);
+          // this.dealerInfo.thenTotalAmntBal = toFixed(total);
         },
         deep: true,
       },
@@ -409,7 +409,7 @@
           // 获取合计
           let {order, outPut, inPut} = formData,
               dealerInfo = inPut.dataSet[0],
-              cashInfo = cashInfo
+              cashInfo = outPut.dataSet[0];
           // 客户信息
           this.dealerInfo = {
             dealerName_dealerCodeCredit: dealerInfo.dealerName_dealerCodeCredit, // 往来名称
@@ -447,6 +447,7 @@
             tdAmountCopy1: cashInfo.tdAmountCopy1, // 本次支付
             tdIdCopy1: cashInfo.tdIdCopy1
           }
+          this.CostList = [];
           order.dataSet.forEach(item => {
             this.CostList.push({
               exptName: item.costName_expCode, // 费用名称
