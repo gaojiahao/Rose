@@ -13,7 +13,24 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        @click.native="goDetail(item, index)" no-count></just-word-item>
+                        @click.native="goDetail(item, index)" conutTitle='支付合计'>
+          <template slot="list-item" slot-scope="{item}">
+            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
+              <div class="top-content">协议号: {{val.transMatchedCode}}</div>
+              <div class="main-content">
+                <div class="info_part">
+                  总金额: ￥{{val.thenTotalAmntBal | numberComma}}
+                </div>
+                <div class="info_part">
+                  采购定金: ￥{{val.differenceAmountCopy1 | numberComma}}
+                </div>
+                <div class="info_part different_type">
+                  本次申请: ￥{{val.applicationAmount | numberComma}}
+                </div>
+              </div>
+            </div>
+          </template>
+        </just-word-item>
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn " v-if="action.add">
@@ -23,8 +40,11 @@
 </template>
 
 <script>
-  import listCommon from 'pageMixins/bizListCommon'
-  import {getSellOrderList} from 'service/listService'
+import listCommon from 'pageMixins/bizListCommon'
+import { getSellOrderList } from 'service/listService'
+// 第三方插件引入
+import { toFixed } from '@/plugins/calc'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
   export default {
     data() {
       return {
@@ -42,21 +62,27 @@
             name: '经办人',
             value: 'handlerName',
           },
-          //  {
-          //   name: '供应商',
-          //   value: 'dealerName',
-          // },
-        ],
+           {
+            name: '协议号',
+            value: 'transMatchedCode',
+          },
+        ]
       }
     },
     mixins: [listCommon],
-    methods: {
-
-    },
-    created() {
-
+    watch: {
+      listData: {
+        handler(listData) {
+          // 此处重新计算 合计金额
+          for(let val of listData) {
+            for(let item of val.detailItem) {
+              val.count = toFixed(accAdd(val.count, item.tdAmountCopy1));
+            }
+          } 
+        }
+      }
+      
     }
-
   }
 </script>
 

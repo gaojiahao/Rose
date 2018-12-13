@@ -15,12 +15,14 @@
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
                         @click.native="goDetail(item, index)">
           <template slot="list-item" slot-scope="{item}">
-            <div v-for="(sItem,index) in item.detailItem">
-              <div class="content_part">{{sItem.fundName_cashOutCode}}</div>
-              <div class="other_info_part">
-                <p class="info_with_comment">支付金额：￥{{sItem.tdAmount}}</p>
+            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
+              <div class="top-content">资金账户: {{val.fundName_cashInCode}}</div>
+              <div class="main-content">
+                <div class="info_part">
+                  收款金额: ￥{{val.tdAmount | numberComma}}
+                </div>
               </div>
-            </div>  
+            </div>
           </template>
         </just-word-item>
       </r-scroll>

@@ -23,6 +23,7 @@
     color:#757575;
   }
 }
+
 // 通讯录基本属性
 .client_ads {
   position: relative;
@@ -87,7 +88,6 @@
     background: #4F90F9;
   }
 }
-
 /* 没有新增 */
 .no-add {
   .list_wrapper {
@@ -97,7 +97,6 @@
     }
   }
 }
-
 .list_wrapper {
   position: relative;
   height: calc(100% - 1.68rem);
@@ -320,7 +319,6 @@
     }
   }
 }
-
 // 确定
 .btn {
   left: 0;
@@ -344,3 +342,45 @@
     box-shadow: 0 2px 5px #5077aa;
   }
 }
+// slot样式 
+.each-slot-item {
+  width: 100%;
+  margin-top: .1rem;
+  .top-content {
+    color: #111;
+    font-weight: bold;
+    line-height: .16rem;
+    padding-left: .05rem;
+    border-left: .04rem solid #5077aa;    
+  }
+  .main-content {
+    margin-top: .06rem;
+    padding-left: .1rem;
+    .info_part {
+      &:before {
+        content: '';
+        width: .05rem;
+        height: .05rem;
+        border-radius: 50%;
+        margin-top: -.02rem;
+        background: #757575;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      &.different_type {
+        color: #5077aa;
+        font-weight: bold;
+      }
+      color: #757575;
+      font-size: .14rem;
+      margin-top: .1rem;
+    }
+    .info_part + .info_part {
+      margin-top: .06rem;
+    }
+  }
+}
+.each-slot-item + .each-slot-item {
+  margin-top: .14rem;
+}
+
