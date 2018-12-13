@@ -465,8 +465,8 @@
         width: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        height: 100%;
         padding: 0 .04rem 0 0;
+        height: calc(100% - .45rem);
         .mater_list_wrapper {
           position: relative;
           width: 100%;
