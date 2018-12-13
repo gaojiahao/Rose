@@ -409,7 +409,7 @@
               ...item,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_transObjCode,
-              inventoryCode: item.inventoryCode_transObjCode,
+              inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
               processing: item.tdProcessing || '商品',
               measureUnit: item.measureUnit_transObjCode,
@@ -439,12 +439,17 @@
             creatorName: formData.dealerDebitContactPersonName,
             dealerMobilePhone: formData.dealerDebitContactInformation,
             dealerCode: formData.order.dealerDebit,
-            dealerSubclass: formData.order.drAccountSub,
             dealerName: formData.order.dealerName_dealerDebit,
             province: formData.order.province_dealerDebit,
             city: formData.order.city_dealerDebit,
             county: formData.order.county_dealerDebit,
-            address: formData.order.address_dealerDebit
+            address: formData.order.address_dealerDebit,
+            dealerLogisticsTerms: formData.drDealerLogisticsTerms,
+            pamentDays: formData.inPut.daysOfAccount,
+          }
+          this.contact = {
+            dealerName: formData.dealerDebitContactPersonName,
+            dealerMobilePhone: formData.dealerDebitContactInformation,
           }
           // 订单信息
           this.dealer = {

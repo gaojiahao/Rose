@@ -51,9 +51,15 @@
                             @sel-item="selWarehouse" isRequired></pop-warehouse-list>
         <div class="materiel_list" v-show="bomList.length">
           <bom-list :boms="bomList">
+            <template slot-scope="{bom}" slot="specification">
+              <div class="content-unit">
+                <span>型号规格：{{bom.specification || "无"}}</span>
+              </div>
+            </template>
             <template slot-scope="{bom}" slot="number">
               <div class="number-part">
                 <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                <span class="number-unit">bom数量: {{bom.qty}}</span>
               </div>
             </template>
           </bom-list>
@@ -84,6 +90,7 @@
   // 请求 引入
   import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
   import { getBomWorkCheck } from 'service/Product/gdService'
+  import { getSOList } from 'service/detailService'
   // mixins 引入
   import Applycommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -276,6 +283,95 @@
             }
             this.saveData(operation, submitData);
           }
+        })
+      },
+      // TODO 获取详情
+      getFormData () {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode: this.transCode
+        }).then(data => {
+          let {success = true, formData = {}} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          this.attachment = data.attachment;
+          let matterList = [];
+          // 获取合计
+          let {order,outPut} = formData,
+              {dataSet = []} = order;
+          let boms = outPut.dataSet; 
+          this.workInfo = {
+            ...dataSet[0],
+            matCode: dataSet[0].transObjCode,
+            inventoryName: dataSet[0].inventoryName_transObjCode,
+            procedureName: dataSet[0].procedureName_proPointCode,
+            technicsName: dataSet[0].technicsName_proFlowCode,
+            qtyBal: dataSet[0].thenQtyBal,
+            transCode: dataSet[0].transMatchedCode,
+            processing: dataSet[0].tdProcessing || null,
+            wareName: order.warehouseName_containerCode,
+            whInCode: order.containerCode,
+            wareAddress: order.warehouseAddress_containerCode,
+            dealerName: dataSet[0].dealerName_dealerDebit,
+            dealerCode: dataSet[0].dealerDebit, // 工人
+            dealerLabel: dataSet[0].drDealerLabel, // 标签
+          }
+          this.defaultManager = {
+            dealerName: dataSet[0].dealerName_dealerDebit,
+            dealerCode: dataSet[0].dealerDebit, // 工人
+            dealerLabel: dataSet[0].drDealerLabel, // 标签
+          }
+          this.facility = {
+            facilityName: dataSet[0].facilityName_facilityObjCode,
+            facilityCode: dataSet[0].facilityObjCode,
+            facilityType: dataSet[0].facilityTypebase_facilityObjCode,
+          }        
+          boms.forEach(bom => {
+            bom.inventoryCode = bom.outPutMatCode;
+            bom.inventoryName =bom.inventoryName_outPutMatCode;
+            bom.measureUnit = bom.measureUnit_outPutMatCode;
+            bom.parentInvCode = bom.processProCode;
+            bom.processing = bom.tdProcessing;
+            bom.qty = bom.bomQty;
+            bom.whCode = bom.containerCodeOut,
+            bom.specification = bom.specification_outPutMatCode || '无';
+          })
+          this.bomList = boms;
+          // 仓库
+          this.warehouse = {
+            warehouseCode: order.containerCode,
+            warehouseName: order.warehouseName_containerCode,
+            warehouseType: order.warehouseType_containerCode,
+            warehouseProvince: order.warehouseProvince_containerCode,
+            warehouseCity: order.warehouseCity_containerCode,
+            warehouseDistrict: order.warehouseDistrict_containerCode,
+            warehouseAddress: order.warehouseAddress_containerCode,
+          };
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+          }
+          this.biProcessStatus = formData.biProcessStatus;
+          this.biReferenceId = formData.biReferenceId;
+          this.$loading.hide();
         })
       },
       // TODO 是否保存草稿

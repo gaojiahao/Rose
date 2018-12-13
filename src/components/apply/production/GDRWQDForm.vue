@@ -15,10 +15,10 @@
             <cell title='工序编码' v-model="workInfo.proPointCode" :disabled="!workInfo.proPointCode"></cell>
             <cell title='工序待启动' v-model="workInfo.thenQtyBal" :disabled="!workInfo.thenQtyBal"></cell>
             <cell title='启动数量' v-model="workInfo.tdQty" :disabled="!workInfo.tdQty"></cell>
-            <x-input title="工人" v-model="workInfo.dealerName" :disabled='!workInfo.dealerName' text-align="right"
+            <x-input v-model="workInfo.dealerName" :disabled='!workInfo.dealerName' text-align="right"
                      :placeholder="workInfo.qtyBal ? '请填写':''" @on-focus="getFocus($event)">
               <template slot="label">
-                <span class='required'>工人</span>
+                <span class='required'>组长</span>
               </template>
             </x-input>
             <!-- <cell title='借方往来标签' v-model="workInfo.dealerLabel" :disabled="!workInfo.dealerLabel"></cell> -->
@@ -98,6 +98,7 @@
   // 请求 引入
   import { saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
   import { getBomWorkStart } from 'service/Product/gdService'
+  import { getSOList } from 'service/detailService'
   // mixins 引入
   import Applycommon from 'components/mixins/applyCommon'
   // 组件引入
@@ -268,6 +269,88 @@
             }
             this.saveData(operation, submitData);
           }
+        })
+      },
+      // TODO 获取详情
+      getFormData () {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode: this.transCode
+        }).then(data => {
+          let {success = true, formData = {}} = data;
+          // http200时提示报错信息
+          if (!success) {
+            this.$vux.alert.show({
+              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+            });
+            return;
+          }
+          this.attachment = data.attachment;
+          let matterList = [];
+          // 获取合计
+          let {order,outPut} = formData,
+              {dataSet = []} = order;
+          let boms = outPut.dataSet; 
+          this.workInfo = {
+            ...dataSet[0],
+            inventoryCode: dataSet[0].transObjCode,
+            inventoryName: dataSet[0].inventoryName_transObjCode,
+            procedureName: dataSet[0].procedureName_proPointCode,
+            technicsName: dataSet[0].technicsName_proFlowCode,
+            transCode: dataSet[0].transMatchedCode,
+            processing: dataSet[0].tdProcessing || null,
+            wareName: order.warehouseName_containerCode,
+            whInCode: order.containerCode,
+            wareAddress: order.warehouseAddress_containerCode,
+            dealerName: dataSet[0].dealerName_dealerDebit,
+            dealerCode: dataSet[0].dealerDebit, // 工人
+            dealerLabel: dataSet[0].drDealerLabel, // 标签
+          }
+          this.facility = {
+            facilityName: dataSet[0].facilityName_facilityObjCode,
+            facilityCode: dataSet[0].facilityObjCode,
+            facilityType: dataSet[0].facilityTypebase_facilityObjCode,
+          }        
+          boms.forEach(bom => {
+            bom.inventoryCode = bom.outPutMatCode;
+            bom.inventoryName =bom.inventoryName_outPutMatCode;
+            bom.measureUnit = bom.measureUnit_outPutMatCode;
+            bom.parentInvCode = bom.processProCode;
+            bom.processing = bom.tdProcessing;
+            bom.qty = bom.bomQty;
+            bom.qtyBal = bom.thenQtyStock;
+            bom.specification = bom.specification_outPutMatCode || '无';
+          })
+          this.bomList = boms;
+          // 仓库
+          this.warehouse = {
+            warehouseCode: order.containerCode,
+            warehouseName: order.warehouseName_containerCode,
+            warehouseType: order.warehouseType_containerCode,
+            warehouseProvince: order.warehouseProvince_containerCode,
+            warehouseCity: order.warehouseCity_containerCode,
+            warehouseDistrict: order.warehouseDistrict_containerCode,
+            warehouseAddress: order.warehouseAddress_containerCode,
+          };
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };
+          // 基本信息
+          this.formData = {
+            ...this.handlerDefault,
+            biComment: formData.biComment,
+            biId: formData.biId,
+            biProcessStatus: formData.biProcessStatus,
+            creator: formData.creator,
+            modifer: formData.modifer,
+          }
+          this.biReferenceId = formData.biReferenceId;
+          this.$loading.hide();
         })
       },
       // TODO 是否保存草稿

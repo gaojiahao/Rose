@@ -6,7 +6,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商" 
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商" 
                           dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
@@ -200,6 +200,7 @@ export default {
         biComment: ''
       },                                    
       dealerInfo: {},
+      contact: {},
       transMode: [], // 结算方式
       matterList: [], // 物料列表
       showTransPop: false, // 是否显示结算方式的popup
@@ -420,6 +421,9 @@ export default {
             specification: item.specification_transObjCode,
             processing: item.tdProcessing || '商品',
             measureUnit: item.measureUnit_transObjCode,
+            safeStock: item.safeStock_transObjCode,
+            qtyBal: item.thenQtyBal,
+            moq: item.moq_transObjCode,
           }
           this.matterList.push(item);
         })
@@ -442,15 +446,19 @@ export default {
         }
         // 供应商信息展示
         this.dealerInfo = {
-          creatorName: formData.dealerDebitContactPersonName,
           dealerMobilePhone: formData.dealerDebitContactInformation,
-          dealerCode: formData.order.dealerDebit,
-          dealerSubclass: formData.order.drAccountSub,
-          dealerName: formData.order.dealerName_dealerDebit,
-          province: formData.order.province_dealerDebit,
-          city: formData.order.city_dealerDebit,
-          county: formData.order.county_dealerDebit,
-          address: formData.order.address_dealerDebit
+          dealerCode: formData.inPut.dataSet[0].dealerDebit,
+          dealerSubclass: formData.inPut.dataSet[0].drAccountSub,
+          dealerName: formData.inPut.dataSet[0].dealerName_dealerDebit,
+          province: formData.inPut.dataSet[0].province_dealerDebit,
+          city: formData.inPut.dataSet[0].city_dealerDebit,
+          county: formData.inPut.dataSet[0].county_dealerDebit,
+          address: formData.inPut.dataSet[0].address_dealerDebit,
+          pamentDays: formData.order.daysOfAccount,
+        }
+        this.contact = {
+          dealerName: formData.dealerDebitContactPersonName,
+          dealerMobilePhone: formData.dealerDebitContactInformation,
         }
         // 订单信息
         this.dealer = {

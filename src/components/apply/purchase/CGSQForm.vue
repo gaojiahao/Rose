@@ -486,6 +486,7 @@ export default {
             inventorySubclass: item.inventorySubclass_transObjCode,
             allQty: item.productDemandQty,
             qtyed: item.thenLockQty,
+            qtyBalance: item.thenQtyBal,
             transCode: item.transMatchedCode,
           }
           if (!orderList[item.transCode]) {
