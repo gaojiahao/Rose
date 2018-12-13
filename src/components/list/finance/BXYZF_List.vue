@@ -13,7 +13,30 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
-                        @click.native="goDetail(item, index)" no-count></just-word-item>
+                        @click.native="goDetail(item, index)">
+          <template slot="list-item" slot-scope="{item}">
+            <!-- <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
+              <div class="top-content">费用名称: {{val.costName_expCode}}</div>
+              <div class="main-content">
+                <div class="info_part">
+                  费用科目: {{val.expSubject}}
+                </div>
+                <div class="info_part">
+                  费用类型: {{val.costType_expCode}}
+                </div>
+                <div class="info_part">
+                  申请金额: ￥{{val.tdAmount | numberComma}}
+                </div>
+                <div class="info_part">
+                  可抵扣税金: ￥{{val.taxAmount | numberComma}}
+                </div>                
+                <div class="info_part different_type">
+                  抵扣后金额: ￥{{val.noTaxAmount | numberComma}}
+                </div>
+              </div>
+            </div> -->
+          </template>
+        </just-word-item>
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn " v-if="action.add">
