@@ -25,7 +25,7 @@
             <div class='mater_other'>
               <div class="mater_attribute">
                 <span>属性: {{item.tdProcessing}}</span>
-                <span>计量单位: {{item.measureUnit_transObjCode}}</span>
+                <span>单位: {{item.measureUnit_transObjCode}}</span>
               </div>
               <div class="mater_num">
                 <span class="num">

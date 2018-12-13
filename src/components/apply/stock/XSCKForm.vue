@@ -50,7 +50,7 @@
                       <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                        <span class='unit'>计量单位: {{item.measureUnit}}</span>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
                       </div>
                       <!-- 库存 -->
@@ -451,7 +451,7 @@
               orderProCode: item.inventoryCode, // 销售订单产品编码（明细）
               tdProcessing: item.processing, // 加工属性
               assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
-              assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与主计量单位倍数
+              assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与单位倍数
               dealerInventoryName: item.clientInventoryName,
               dealerInventoryCode: item.clientInventoryCode,
               thenTotalQtyBal: item.qty, // 订单总数

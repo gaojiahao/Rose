@@ -326,7 +326,7 @@ export default {
             transObjCode: item.inventoryCode, // 物料编码
             tdProcessing: item.processing ,// 加工属性
             assMeasureUnit: item.assMeasureUnit ||'个', // 辅助计量
-            assMeasureScale: item.assMeasureScale || null, // 与主计量单位倍数
+            assMeasureScale: item.assMeasureScale || null, // 与单位倍数
             assistQty: item.assistQty || 0, // 辅计数量
             thenQtyBal: item.qtyBal || 0, // 余额
             tdQty: item.tdQty, // 数量

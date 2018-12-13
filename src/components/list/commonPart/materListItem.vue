@@ -48,9 +48,9 @@
               <div class="matter_name">{{mItem.inventoryName}}</div>
               <div class="matter_units">
                 <span>编码: {{mItem.inventoryCode}}</span>
-                <span>规格: {{mItem.specification || '无'}}</span>
+                <span>规格: {{mItem.specification_outPutMatCode || mItem.specification || '无'}}</span>
               </div>
-              <div class="matter_units">单位: {{mItem.measureUnit}}</div>
+              <div class="matter_units">单位: {{mItem.measureUnit_outPutMatCode || mItem.measureUnit}}</div>
             </div>
             <div class="matter_price_part">
               <p class="price_num" v-if="!noPrice">

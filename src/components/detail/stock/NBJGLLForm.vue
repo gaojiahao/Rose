@@ -23,7 +23,7 @@
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_attribute">
-            <span>计量单位: {{item.measureUnit_outPutMatCode}}</span>
+            <span>单位: {{item.measureUnit_outPutMatCode}}</span>
             <span>待领料: {{item.thenQtyBal}}</span>
           </div>
           <div class="mater_num">
