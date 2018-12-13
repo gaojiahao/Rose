@@ -523,7 +523,7 @@
               ...item,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
               inventoryName: item.inventoryName_transObjCode,
-              inventoryCode: item.inventoryCode_transObjCode,
+              inventoryCode: item.transObjCode,
               specification: item.specification_transObjCode,
               processing: item.tdProcessing || '商品',
               measureUnit: item.measureUnit_transObjCode,
@@ -562,7 +562,10 @@
             address: formData.order.address_dealerDebit,
             paymentTerm: formData.order.drDealerPaymentTerm,
             dealerLogisticsTerms: formData.drDealerLogisticsTerms,
-            // validUntil: formData
+            pamentDays: formData.inPut.daysOfAccount,
+            validUntil: formData.inPut.validUntil,
+            tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
+            advancePaymentDueDate: formData.inPut.dataSet[0].advancePaymentDueDate,
           };
           // 订单信息
           this.contact = {

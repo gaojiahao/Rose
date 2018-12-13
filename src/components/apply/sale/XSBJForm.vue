@@ -85,7 +85,7 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
-          <template slot="qtyBal" slot-scope="{modifyMatter}">
+          <!-- <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
               <span>标准价格: {{modifyMatter.standardPrice}}</span>
               <span>特批底价: {{modifyMatter.specialReservePrice}}</span>
@@ -94,7 +94,7 @@
               <span>最大需求数量: {{modifyMatter.qtyOnline}}</span>
               <span>最小需求数量: {{modifyMatter.qtyDownline}}</span>
             </div>
-          </template>
+          </template> -->
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
                      @on-blur="checkQty(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">

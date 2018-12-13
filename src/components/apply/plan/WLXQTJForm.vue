@@ -407,6 +407,7 @@
               measureUnit: item.measureUnit_outPutMatCode,
               processing: item.tdProcessing,
               calcRelCode: item.subjectCode,
+              inventoryTypen: item.inventoryType_outPutMatCode,
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
