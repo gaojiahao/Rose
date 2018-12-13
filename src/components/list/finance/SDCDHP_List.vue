@@ -16,7 +16,15 @@
                         @click.native="goDetail(item, index)">
           <template slot="list-item" slot-scope="{item}">
             <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
-              <div class="content">汇票号: {{val.draftNumber}}</div>
+              <div class="top-content">汇票号: {{val.draftNumber}}</div>
+              <div class="main-content">
+                <div class="info_part">
+                  承汇类型: {{item.draftType}}
+                </div>
+                <div class="info_part">
+                  承汇人: {{item.accepter}}
+                </div>
+              </div>
             </div>
           </template>
         </just-word-item>
@@ -68,8 +76,4 @@
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
-  .each-slot-item {
-    width: 100%;
-    
-  }
 </style>
