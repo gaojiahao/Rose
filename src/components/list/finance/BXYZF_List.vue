@@ -15,7 +15,7 @@
         <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
                         @click.native="goDetail(item, index)">
           <template slot="list-item" slot-scope="{item}">
-            <!-- <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
+            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
               <div class="top-content">费用名称: {{val.costName_expCode}}</div>
               <div class="main-content">
                 <div class="info_part">
@@ -34,7 +34,7 @@
                   抵扣后金额: ￥{{val.noTaxAmount | numberComma}}
                 </div>
               </div>
-            </div> -->
+            </div>
           </template>
         </just-word-item>
       </r-scroll>
@@ -56,7 +56,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2430,
+        listViewID: 2482,
         filterList: [ // 过滤列表
           {
             name: '交易号',
