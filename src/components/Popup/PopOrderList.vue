@@ -57,8 +57,8 @@
                       <span class="spec">材质: {{item.material || '无'}}</span>
                     </div>
                     <slot name="materInfo" :item="item">
-                      <!--默认展示的子弹-->
-                      <div  class="mater_material">
+                      <!--默认展示的字段-->
+                      <div class="mater_material">
                         <span>待交付数量:{{item.qtyBal}}</span>
                         <span>库存: {{item.qtyStockBal}}</span>
                       </div>

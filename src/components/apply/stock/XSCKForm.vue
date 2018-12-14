@@ -55,8 +55,12 @@
                       </div>
                       <!-- 库存 -->
                       <div class='mater_more'>
+                        <div>
+                          <span>订单数量: {{item.qty}}</span>
+                          <span>已出库数量: {{item.stockQty}}</span>
+                          <span>在库库存: {{item.qtyStockBal}}</span>
+                        </div>
                         <span class='unit' v-show="item.promDeliTime">预期交货日: {{item.promDeliTime}}</span>
-                        <span class='qty'>可用库存: {{item.qtyStockBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -93,7 +97,25 @@
           </div>
           <!-- 物料popup -->
           <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
-                          :default-value="orderList" ref="order"></pop-order-list>
+                          :default-value="orderList" ref="order">
+            <template slot="materInfo" slot-scope="{item}">
+              <div class="mater_material">
+                <div>
+                  <span>保质期天数: {{item.keepingDays}}</span>
+                  <span>临保天数: {{item.nearKeepingDays}}</span>
+                  <span>安全库存: {{item.safeStock}}</span>
+                  <span>物料状态: {{item.inventoryStatus}}</span>
+                </div>
+                <div>
+                  <span>预交货日期: {{item.promDeliTime}}</span>
+                </div>
+              </div>
+              <div class="mater_num">
+                <span>可用库存: {{item.qtyStockBal}}</span>
+                <span>单价: ￥{{item.quotedPrice | numberComma}}</span>
+              </div>
+            </template>
+          </pop-order-list>
         </div>
         <!-- 项目 -->
         <pop-sodl-projectList :value="project" v-model="project"></pop-sodl-projectList>
@@ -106,10 +128,14 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop"
                     @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span>待交付数量:{{modifyMatter.qtyBal}}</span>
-          </template>
-          <template slot="materStock" slot-scope="{modifyMatter}">
-            <span>可用库存:{{modifyMatter.qtyStockBal}}</span>
+            <div>
+              <span>订单数量: {{modifyMatter.qty}}</span>
+              <span>已出库数量: {{modifyMatter.stockQty}}</span>
+            </div>
+            <div>
+              <span>待出库数量: {{modifyMatter.qtyBal}}</span>
+              <span>预期交货日: {{modifyMatter.promDeliTime}}</span>
+            </div>
           </template>
           <template slot="qtyName">
             <span class='required'>出库数量</span>

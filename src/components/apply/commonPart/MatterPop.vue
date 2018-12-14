@@ -427,11 +427,11 @@ export default {
         margin-top: .02rem;
         color: #757575;
         font-size: 0.1rem;
-        span{
+        span {
           display: inline-block;
           margin-right: 0.04rem;
           .mater_color{
-          margin-right: 0;
+            margin-right: 0;
           }
         }
 

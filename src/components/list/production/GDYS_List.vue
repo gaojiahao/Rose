@@ -13,7 +13,7 @@
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)"
-                   noCount noPrice></mater-list-item>
+                   noCount noPrice :isDealer="false"></mater-list-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">
