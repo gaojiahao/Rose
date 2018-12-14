@@ -114,13 +114,7 @@
       // TODO 是否为会计复核
       isAccountingReview() {
         let {nodeName = ''} = this.currentWL;
-        let isAccountingReview = this.isMyTask && nodeName === '会计复核';
-        if (isAccountingReview) {
-          let {thenAlreadyAmnt = 0} = this.dealerInfo;
-          this.dealerInfo.thenTotalAmntBal = thenAlreadyAmnt;
-          this.dealerInfo.differenceAmount = 0;
-        }
-        return isAccountingReview;
+        return this.isMyTask && nodeName === '会计复核';
       },
       // TODO 是否为出纳
       isCashier() {
@@ -161,6 +155,15 @@
           this.dealerInfo = formData.inPut.dataSet[0];
           this.cashInfo = formData.outPut.dataSet[0];
           this.costList = dataSet;
+
+          // 当前审批人为会计时，自动赋值本次支付金额
+          if (this.isAccountingReview) {
+            let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
+            this.dealerInfo.thenTotalAmntBal = thenAlreadyAmnt;
+            // 往来余额 - 本次贷方增加 + 本次支付
+            this.dealerInfo.differenceAmount = thenAmntBal;
+          }
+
           this.workFlowInfoHandler();
         })
       },
@@ -221,13 +224,13 @@
       },
       // TODO 计算本次报销与支付后余额
       calcPayment(item) {
-        let {thenAlreadyAmnt = 0, thenTotalAmntBal = 0} = item;
+        let {thenAmntBal = 0, thenAlreadyAmnt = 0, thenTotalAmntBal = 0} = item;
         if (!thenTotalAmntBal) {
           thenTotalAmntBal = 0;
           item.thenTotalAmntBal = 0;
         }
         item.tdAmount = accSub(thenAlreadyAmnt, thenTotalAmntBal);
-        item.differenceAmount = accSub(thenTotalAmntBal, thenAlreadyAmnt);
+        item.differenceAmount = accAdd(accSub(thenAmntBal, thenAlreadyAmnt), thenTotalAmntBal);
         this.cashInfo.tdAmountCopy1 = thenTotalAmntBal;
       },
       // TODO 选中资金

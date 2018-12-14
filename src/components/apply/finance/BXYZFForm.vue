@@ -360,10 +360,11 @@
           this.CostList = [];
           order.dataSet.forEach(item => {
             this.CostList.push({
+              tdId: item.tdId,
               exptName: item.costName_expCode, // 费用名称
               expCode: item.expCode, // 费用编码
               expSubject: item.expSubject, // 费用科目
-              costType: item.costType, // 费用类型
+              costType: item.costType_expCode, // 费用类型
               tdAmount: item.tdAmount, //申请金额
               taxAmount: item.taxAmount, // 税金
               noTaxAmount: item.noTaxAmount, // 不含税金额
