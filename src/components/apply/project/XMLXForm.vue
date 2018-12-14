@@ -89,7 +89,8 @@
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopManagerList from 'components/Popup/PopManagerList'
-
+  import { accMul, accAdd, accSub } from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XMLX_DATA';
   export default {
     mixins: [ApplyCommon, common],
@@ -128,15 +129,17 @@
     computed: {
       // 利润
       profit () {
-        let {budgetIncome = 0, budgetCapital = 0, budgetCost = 0} = this.ProjectApproval;
-        let budgetProfit = Number(budgetIncome) - Number(budgetCapital) - Number(budgetCost);
+        let {budgetIncome = 0, budgetCapital = 0, budgetCost = 0} = this.ProjectApproval,
+            difference = accSub(budgetIncome, budgetCapital),
+        // let budgetProfit = Number(budgetIncome) - Number(budgetCapital) - Number(budgetCost);
+            budgetProfit = toFixed(accSub(difference, budgetCost));
         this.ProjectApproval.budgetProfit = budgetProfit;
         return budgetProfit;
       },
       // 利润率
       profitMargin () {
         let {budgetIncome = 0, budgetProfit = 1} = this.ProjectApproval;
-        let budgetProfitMargin = Math.floor(Number(budgetProfit) / (Number(budgetIncome) || 1) * 10000) / 10000;
+        let budgetProfitMargin = toFixed(Math.floor(Number(budgetProfit) / (Number(budgetIncome) || 1) * 10000) / 10000);
         this.ProjectApproval.budgetProfitMargin = budgetProfitMargin;
         return `${budgetProfitMargin * 10000 / 100}%`;
       }
@@ -214,7 +217,7 @@
       // TODO 检查金额
       checkAmt (key = '', val) {
         if (val) {
-          this.ProjectApproval[key] = Math.abs(parseInt(val));
+          this.ProjectApproval[key] = toFixed(val);
         }
       },
       // TODO 获取项目大类

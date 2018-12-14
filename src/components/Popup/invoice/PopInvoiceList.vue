@@ -63,8 +63,8 @@
         showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
-        tmpItems: [],
-        costList: [],
+        tmpItems: [], // 用于判断是否第一次选择
+        costList: [], 
         limit: 10,
         page: 1.,
         hasNext: true,
@@ -107,34 +107,60 @@
       },
       // TODO 弹窗隐藏时调用
       onHide() {
-        // this.tmpItems = [...this.selItems];
+        this.tmpItems = [...this.selItems];
         this.$emit('input', false);
-
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
         let flag = false;
-        this.selItems && this.selItems.every(item => {
-          if (sItem.transCode === item.transCode) {
-            flag = true;
-            return false;
-          }
-          return true;
-        });
+        // 已经选择了，再次重新选择
+        if(this.selItems.length && this.selItems[0].transCode) {
+          this.selItems && this.selItems.every(item => {
+            if (sItem.transCode === item.transCode) {
+              flag = true;
+              return false;
+            }
+            return true;
+          });
+        }
+        else{
+          // 第一次选择
+          this.tmpItems && this.tmpItems.every(item => {
+            if (sItem.transCode === item.transCode) {
+              flag = true;
+              return false;
+            }
+            return true;
+          });
+        }
+        
         return flag;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
         //已经选择过的不允许再选
         let warn = ''
-        this.selItems.every(item => {
-          if (sItem.transCode === item.transCode) {
-            warn = '该实例编码已选择，请选择其他';
-            return false;
+        // 重新选择
+        if(this.selItems.length && this.selItems[0].transCode) {
+          this.selItems.every(item => {
+            if (sItem.transCode === item.transCode) {
+              warn = '该实例编码已选择，请选择其他';
+              return false;
 
-          }
-          return true
-        })
+            }
+            return true
+          })
+        }
+        else{
+          // 初次选择
+          this.tmpItems.every(item => {
+            if (sItem.transCode === item.transCode) {
+              warn = '该实例编码已选择，请选择其他';
+              return false;
+            }
+            return true
+          })
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn,
@@ -147,7 +173,9 @@
       },
       // TODO 设置默认值
       setDefaultValue() {
-        // this.tmpItems = [...this.defaultValue];
+        if(this.defaultValue.length && !this.tmpItems.length && !this.defaultValue[0].transCode) {
+          this.tmpItems = [...this.defaultValue];
+        }
         this.selItems = [...this.defaultValue];
       },
       // TODO 获取物料列表

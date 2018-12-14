@@ -79,7 +79,7 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!--开票列表-->
         <pop-invoice-list :show="showInvoicePop" v-model="showInvoicePop" @sel-matter="selInvoice"
-                          :defaultValue='seletedInvoice' :params="dealerParams"></pop-invoice-list>
+                          :defaultValue='seletedInvoice' :params="dealerParams" ref="costList"></pop-invoice-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
@@ -194,6 +194,12 @@
       },
       // 展示实例列表
       getCost(index, item) {
+        if(!this.dealerInfo.dealerName) {
+          this.$vux.alert.show({
+            content: '请先选择客户',
+          });
+          return
+        }
         let selected = this.invoiceList[index];
         this.showInvoicePop = true;
         this.seletedIndex = index;
@@ -201,6 +207,14 @@
       },
       // TODO 点击增加明细
       addInvoice() {
+        // 若当前新增明细大于可选择的名字，则提示不能选择
+        let allCostList = this.$refs.costList.costList;
+        if(this.invoiceList.length >= allCostList.length){
+          this.$vux.alert.show({
+            content: '暂无其他出库单，不可新增',
+          });
+          return
+        }
         this.invoiceList.push({...INVOICE_LIST_ITEM})
       },
       // 删除明细

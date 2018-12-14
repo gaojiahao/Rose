@@ -161,18 +161,9 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
             },
           ];
         }
-        // return getTaskWorkList({
-        //   ...this.params,
-        //   filter: JSON.stringify(filter),
-        // }).then(({data = []}) => {
-        //   data.forEach(item => {
-        //     item.isStartTask = false;
-        //     if(item.qtyBalance > 0){
-        //       this.taskWorkList.push(item)
-        //     }
-        //   })
-        // });
-        return getWorkOrderTask().then(({tableContent = []}) => {
+        return getWorkOrderTask({
+          filter: JSON.stringify(filter),
+        }).then(({tableContent = []}) => {
           tableContent.forEach(item => {
             item.isStartTask = false;
           })

@@ -12,7 +12,8 @@
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" noCount noPrice :is-dealer="false"></mater-list-item>
+        <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" 
+                          noCount noPrice isMoreDealer></mater-list-item>
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="action.add">

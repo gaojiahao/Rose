@@ -36,7 +36,7 @@
             </div>
           </div>
           <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
-                   v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance">
+                   v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance" @on-blur="checkAmt(dealerInfo)">
             <span slot="label">预收款</span>
           </x-input>
           <div class="cell-item" @click="dateSelect('advancePaymentDueDate')" v-show="hasAdvance">
@@ -189,7 +189,7 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-
+  import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XSHT_DATA';
 
   export default {
@@ -384,6 +384,15 @@
           this.numMap[item.inventoryCode] = {...item};
         }
         this.showMaterielPop = !this.showMaterielPop;
+      },
+      checkAmt(item) {
+        let {tdQty, tdAmountCopy1} = item;
+        if(tdQty) {
+          item.tdQty = Math.abs(toFixed(tdQty));
+        }
+        if(tdAmountCopy1) {
+          item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
+        }
       },
       // 提价订单
       submitOrder() {

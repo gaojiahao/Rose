@@ -10,7 +10,7 @@
       <i class="iconfont" :class="item.whichIcon"></i>
     </div>
     <!-- 往来信息 -->
-    <div class="dealer_part" v-if='item.dealerName'>
+    <div class="dealer_part" v-if='!isMoreDealer && item.dealerName'>
       <div class="dealer_name">
         <div v-if="!isDealer">
           <span class="iconfont icon-gongren2" ></span>{{item.dealerName}}
@@ -125,6 +125,11 @@
       isDealer: {
         type: Boolean,
         default: true
+      },
+      // 工序是否存在多个组长,若是存在则不显示dealer
+      isMoreDealer: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
