@@ -195,12 +195,21 @@
       },
       // TODO 进入详情
       goDetail(item, index) {
-        let {commentType = '', listTypeID = '', listId = '', listName = '', RELATION_KEY = ''} = item;
-        let path = `/detail/${listTypeID}/${listId}`;
+        let {commentType = '', listId = '', listName = '', RELATION_KEY = ''} = item;
         let query = {
           name: listName,
           transCode: RELATION_KEY,
         };
+        let fileId = '', childId = '';
+        if(item.listTypeID){
+          fileId = item.listTypeID;
+          childId = item.parentId;
+          query.childId = childId
+        }
+        else{
+          fileId = item.parentId;
+        }
+        let path = `/detail/${fileId}/${listId}`;
         if (commentType === 'list') {
           path = `/appDetail/${listId}`;
           query = {};

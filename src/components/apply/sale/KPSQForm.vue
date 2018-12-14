@@ -76,6 +76,9 @@
             <span @click="deleteInvoice" v-if="invoiceList.length>1"> 删除</span>
           </div>
         </div>
+        <div class='comment vux-1px-t' :class="{no_margin : !invoiceList.length}">
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!--开票列表-->
         <pop-invoice-list :show="showInvoicePop" v-model="showInvoicePop" @sel-matter="selInvoice"
