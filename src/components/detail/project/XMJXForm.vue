@@ -19,6 +19,8 @@
           <form-cell cellTitle="说明" :cellContent="projectApproval.comment || '无'"></form-cell>
           <form-cell cellTitle="预期开始日期" :cellContent="projectApproval.expectStartDate | dateFormat('YYYY-MM-DD')"></form-cell>
           <form-cell cellTitle="预期截止日期" :cellContent="projectApproval.expectEndDate | dateFormat('YYYY-MM-DD')"></form-cell>
+          <form-cell cellTitle="实际开始日期" :cellContent="projectTime.actualStartTime | dateFormat('YYYY-MM-DD')"></form-cell>
+          <form-cell cellTitle="实际完成日期" :cellContent="projectTime.actualCompleteTime | dateFormat('YYYY-MM-DD')"></form-cell>
         </div>
       </div>
       <!-- 资金明细 -->
