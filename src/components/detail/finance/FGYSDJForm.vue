@@ -44,12 +44,16 @@
             <form-cell cellTitle='协议号' :cellContent="item.transMatchedCode" :showTopBorder=false></form-cell>
             <form-cell cellTitle='总金额' :cellContent="item.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='采购定金' :cellContent="item.applicationAmount | toFixed | numberComma(3)"
+            <form-cell cellTitle='采购定金' :cellContent="item.differenceAmountCopy1 | toFixed | numberComma(3)"
                        showSymbol></form-cell>
             <form-cell cellTitle='已付定金' :cellContent="item.thenAlreadyAmnt | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='待付定金' :cellContent="item.tdAmount | toFixed | numberComma(3)"
+            <form-cell cellTitle='待付定金' :cellContent="item.thenAmntBalCopy2 | toFixed | numberComma(3)"
                        showSymbol></form-cell>
+            <form-cell cellTitle='本次申请' :cellContent="item.applicationAmount | toFixed | numberComma(3)"
+                        showSymbol></form-cell>
+            <form-cell cellTitle='本次支付' :cellContent="item.tdAmountCopy1 | toFixed | numberComma(3)"
+                        showSymbol></form-cell>
           </div>
         </div>
       </div>

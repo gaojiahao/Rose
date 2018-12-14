@@ -75,6 +75,7 @@ import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
         handler(listData) {
           // 此处重新计算 合计金额
           for(let val of listData) {
+            val.count = 0;
             for(let item of val.detailItem) {
               val.count = toFixed(accAdd(val.count, item.tdAmountCopy1));
             }
