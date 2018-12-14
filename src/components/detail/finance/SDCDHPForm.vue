@@ -23,7 +23,7 @@
             <form-cell cellTitle='往来关系标签' :cellContent="dealerInfo.dealerLabelName"></form-cell>
             <form-cell cellTitle='往来余额' :cellContent="dealerInfo.amntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
-            <form-cell cellTitle='本次出让汇票' :cellContent="dealerInfo.thenTotalAmntBal | toFixed | numberComma(3)"
+            <form-cell cellTitle='本次收汇票' :cellContent="dealerInfo.thenTotalAmntBal | toFixed | numberComma(3)"
                        showSymbol></form-cell>
           </div>
         </div>
