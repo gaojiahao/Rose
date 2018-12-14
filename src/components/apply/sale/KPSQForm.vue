@@ -79,7 +79,7 @@
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
         <!--开票列表-->
         <pop-invoice-list :show="showInvoicePop" v-model="showInvoicePop" @sel-matter="selInvoice"
-                          :defaultValue='seletedInvoice' :params="dealerParams" ref="costList"></pop-invoice-list>
+                          :defaultValue='invoiceList' :params="dealerParams" ref="costList"></pop-invoice-list>
       </div>
     </div>
     <!-- 底部确认栏 -->
