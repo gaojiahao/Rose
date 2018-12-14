@@ -99,6 +99,7 @@
   import PopCashList from 'components/Popup/finance/PopCashList'
   //公共方法引入
   import {accAdd, accSub} from '@/home/pages/maps/decimalsAdd'
+  import {toFixed} from '@/plugins/calc'
 
   export default {
     data() {
@@ -111,6 +112,11 @@
       }
     },
     computed: {
+      // TODO 是否为采购总监
+      isApproval(){
+        let {nodeName = '',viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === '7d18cfc2-475f-44c5-ae12-a723d6234253';
+      },
       // TODO 是否为会计复核
       isAccountingReview() {
         let {nodeName = ''} = this.currentWL;
@@ -211,7 +217,9 @@
           }
 
           this.saveData(formData);
+          return true
         }
+        return false
       },
       // TODO 计算抵扣后金额
       calcTax(item) {
@@ -227,10 +235,11 @@
         let {thenAmntBal = 0, thenAlreadyAmnt = 0, thenTotalAmntBal = 0} = item;
         if (!thenTotalAmntBal) {
           thenTotalAmntBal = 0;
-          item.thenTotalAmntBal = 0;
         }
-        item.tdAmount = accSub(thenAlreadyAmnt, thenTotalAmntBal);
-        item.differenceAmount = accAdd(accSub(thenAmntBal, thenAlreadyAmnt), thenTotalAmntBal);
+        thenTotalAmntBal = toFixed(thenTotalAmntBal);
+        item.thenTotalAmntBal = thenTotalAmntBal;
+        item.tdAmount = toFixed(accSub(thenAlreadyAmnt, thenTotalAmntBal));
+        item.differenceAmount = toFixed(accAdd(accSub(thenAmntBal, thenAlreadyAmnt), thenTotalAmntBal));
         this.cashInfo.tdAmountCopy1 = thenTotalAmntBal;
       },
       // TODO 选中资金
