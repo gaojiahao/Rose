@@ -5,6 +5,8 @@
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
+                         :defaultContact="contactInfo"></pop-dealer-list>
         <div class="materiel_list">
           <div class="mater_list">
             <div class="each_mater">
@@ -20,11 +22,10 @@
                   </x-input>
                   <!-- <r-picker title="类型:" mode='2' :data="launchTypeList" :value="formData.launchType"
                             v-model="formData.launchType" required></r-picker> -->
-                  <!-- <popup-picker title="类型" :data="launchTypeList" v-model="formData.launchType"
-                                placeholder="请选择" > -->
-                    <template slot="label">
-                      <span class='required'>类型
-                      </span>
+                  <popup-picker title="类型" :data="launchTypeList" v-model="selectedType"
+                                placeholder="请选择" @on-change='isSelectType'>
+                    <template slot="title">
+                      <span class="required">类型</span>
                     </template>
                   </popup-picker>
                   <x-textarea title="描述" v-model="formData.launchDescribe" :max="200"></x-textarea>
@@ -34,60 +35,6 @@
             </div>
           </div>
         </div>
-        
-        
-        
-        
-        
-        
-        
-        <!-- <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class="required">标题:</label>
-            <input type='text' v-model.trim="formData.launchTitle" class='property_val'/>
-            <div></div>
-          </div>
-        </div>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label class="required">描述:</label>
-            <input type='text' v-model.trim="formData.launchDescribe" class='property_val'/>
-          </div>
-        </div>
-        <r-picker title="类型:" :data="launchTypeList" :value="formData.launchType"
-                  v-model="formData.launchType" required></r-picker>
-        <upload-file :default-value="attachment" @on-upload="onUploadFile"></upload-file>
-         -->
-        <!-- <div v-transfer-dom>
-          <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
-            <div class="trade_pop">
-              <div class="title">
-                <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
-              </div>
-              <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
-                        :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
-                <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
-                     @click.stop="selThis(item,index)">
-                  <div class="pop-list-main ">
-                    <div class="pop-list-info">
-                      <div class="withColor">
-                        <div class="ForInline name" style="display:inline-block">
-                          <span>{{item.nickname}}</span>
-                        </div>
-                      </div>
-                      <div class="withColor" v-if="item.dealerMobilePhone">
-                        <div class="ForInline " style="display:inline-block">
-                          <span class='creator'>{{item.dealerMobilePhone}}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
-                </div>
-              </r-scroll>
-            </div>
-          </popup>
-        </div> -->
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -101,6 +48,7 @@
   import { Group, XInput, Popup, XTextarea, PopupPicker } from 'vux'
   import RPicker from 'components/RPicker';
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+  import PopDealerList from 'components/Popup/PopDealerList'
   import RScroll from 'components/RScroll'
   import DSearch from 'components/search'
   // 请求 引入
@@ -126,15 +74,17 @@
         subList: [],
         statusList: [],
         launchTypeList: [],
+        selectedType: [],
         authorizedList: [],
         versionList: [],
         formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',
         formData: {
+          biId: '', 
+          biComment: '', // 备注
+          launchType: '', // 类型
           launchTitle: '', // 标题
           launchDescribe: '', // 描述
           biProcessStatus: '', // 流程状态
-          launchType: '', // 类型
-          biComment: '', // 备注
         },
         hasDefault: false,
         biReferenceId: '',
@@ -151,144 +101,44 @@
         listData: [], // 经办人列表
         groupList: [], // 组织列表
         roleList: [], // 职位列表
+        dealerInfo: {},
+        contactInfo: {}
       }
     },
     mixins: [ApplyCommon],
     // directives: {TransferDom},
     components: {
-      Group, Popup, XInput, XTextarea, DSearch,
-      RPicker, PopBaseinfo, RScroll, PopupPicker
+      Group, Popup, XInput, XTextarea, 
+      RPicker, DSearch, RScroll, PopupPicker,
+      PopBaseinfo, PopDealerList
     },
     methods: {
-      // TODO 弹窗展示时调用
-      onShow() {
-        this.$nextTick(() => {
-          if (this.$refs.bScroll) {
-            this.$refs.bScroll.refresh();
-          }
-        })
+      // 选择联系人
+      selContact(val) {
+        this.contactInfo = {...val};
+      },    
+      // 选择客户
+      selDealer(val) {
+        this.dealerInfo = JSON.parse(val)[0];
+        this.formData.launchDealerCode = this.dealerInfo.dealerCode;
       },
-      // TODO 弹窗隐藏时调用
-      onHide() {
-        this.showPop = false;
-      },
-      // TODO 搜索仓库
-      searchList({val = ''}) {
-        this.srhInpTx = val;
-        this.listData = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.getlistUsers();
-      },
-      // TODO 上拉加载
-      onPullingUp() {
-        this.page++;
-        this.getlistUsers();
-      },
-      // TODO 判断是否展示选中图标
-      showSelIcon(sItem) {
-        return this.selItems.userId === sItem.userId;
-      },
-      // TODO 选择物料
-      // selThis(sItem, sIndex) {
-      //   this.showPop = false;
-      //   this.selItems = sItem;
-      //   this.formData.handler = sItem.userId;
-      //   this.formData.handlerName = sItem.nickname;
-      //   // this.getGroupByUserId();
-      //   // this.getRoleByUserId();
-      // },
-      // TODO 请求部门
-      // getGroupByUserId() {
-      //   return getGroupByUserId(this.formData.handler).then(({tableContent = []}) => {
-      //     this.groupList = []
-      //     tableContent.forEach(item => {
-      //       this.groupList.push({
-      //         ...item,
-      //         name: item.userGroupName,
-      //         value: item.userGroupName,
-      //       })
-      //     })
-      //     if (tableContent.length) {
-      //       this.formData.handlerUnitName = tableContent[0].groupName;
-      //       this.formData.handlerUnit = tableContent[0].userGroupId;
-      //     }
-      //   })
-      // },
-      // // TODO 请求职位
-      // getRoleByUserId() {
-      //   this.roleList = [];
-      //   return getRoleByUserId(this.formData.handler).then(({tableContent = []}) => {
-      //     tableContent.forEach(item => {
-      //       this.roleList.push({
-      //         ...item,
-      //         name: item.userGroupName,
-      //         value: item.userGroupName,
-      //       })
-      //     })
-      //     if (tableContent.length) {
-      //       this.formData.handlerRoleName = tableContent[0].userGroupName;
-      //       this.formData.handlerRole = tableContent[0].userGroupId;
-      //     }
-      //   })
-
-      // },
-      // TODO 获取用户列表
-      getlistUsers() {
-        let filter = [];
-        if (this.srhInpTx) {
-          filter = [
-            ...filter,
-            {
-              operator: 'like',
-              value: this.srhInpTx,
-              property: 'nickname',
-            }];
-        }
-        return listUsers({
-          limit: this.limit,
-          page: this.page,
-          start: (this.page - 1) * this.limit,
-          filter: JSON.stringify(filter),
-        }).then(({dataCount = 0, tableContent = []}) => {
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
-          this.$nextTick(() => {
-            this.$refs.bScroll && this.$refs.bScroll.finishPullUp();
-          })
-        });
-      },
-      // 选择组织
-      groupChange(val) {
-        this.groupList && this.groupList.forEach(item => {
-          if (item.name === val) {
-            this.formData.handlerUnit = item.userGroupId;
-            return false;
-          }
-        })
-      },
-      // 选择职位
-      roleChange(val) {
-        this.roleList && this.roleList.forEach(item => {
-          if (item.name === val) {
-            this.formData.handlerRole = item.userGroupId;
-            return false;
-          }
-        })
-      },
-      // TODO 提交/修改物料
+      // 选择类型
+      isSelectType(val) {
+        this.formData.launchType = val[0];
+      }, 
+      // 提交/修改物料
       save() {
         let requiredMap = {
+          launchDealerCode: '客户',
           launchTitle: '标题',
-          launchDescribe: '描述',
           launchType: '类型',
+          launchDescribe: '描述',
         };
         for (let key in this.formData) {
           if (typeof(this.formData[key]) === 'string' && this.formData[key].indexOf(' ') >= 0) {
             this.formData[key] = this.formData[key].replace(/\s/g, '');
           }
         }
-
         let warn = '';
         !warn && Object.entries(requiredMap).every(([key, msg]) => {
           if (!this.formData[key]) {
@@ -303,20 +153,32 @@
           });
           return
         }
-
         this.$vux.confirm.show({
           content: '确认提交?',
           // 确定回调
           onConfirm: () => {
             this.$HandleLoad.show();
-            let formData = this.formData;
-            let operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
+            let formData = this.formData,
+                dealerInfo = {
+                  launchDealerCode: this.dealerInfo.dealerCode,  // 往来编码
+                  address_launchDealerCode: this.dealerInfo.address, // 往来地址
+                  launchDealerLabel: this.dealerInfo.dealerLabelName,  // 往来关系标签
+                  dealerName_launchDealerCode: this.dealerInfo.dealerName, // 往来名称
+                },
+                contactInfo = {
+                  dealerDebitContactPersonName: this.contactInfo.dealerName, // 往来联系人 名称
+                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone // 往来联系人 信息 (不敢相信PC这里存的是电话)
+                },
+                operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
+            
             let submitData = {
               listId: this.listId,
               biComment: '',
               formData: JSON.stringify({
                 handlerEntity: this.entity.dealerName,
-                ...formData
+                ...formData,
+                ...dealerInfo,
+                ...contactInfo
               }),
               wfPara: JSON.stringify({
                 [this.processCode]: {
@@ -350,18 +212,7 @@
           }
         });
       },
-      // TODO 设置规划时间
-      getDate() {
-        this.$vux.datetime.show({
-          confirmText: '确定',
-          cancelText: '取消',
-          value: this.formData.demandPlan,
-          onConfirm: (value) => {
-            this.formData.demandPlan = value;
-          }
-        })
-      },
-      // TODO 获取用户数据
+      // 重新提交时 读取数据
       getFormData() {
         return getSOList({
           formViewUniqueId: this.formViewUniqueId,
@@ -398,20 +249,14 @@
       // 请求产品类型
       getProductType() {
         return getDictByType('productRelease').then(({tableContent = []}) => {
-          console.log('tableContent:', tableContent);
-          tableContent.forEach(item => {
-            item.value = item.name;
-          });
-          this.launchTypeList = tableContent;
+          let TypeList = [];
+          for(let item of tableContent) {
+            TypeList.push(item.name);
+          }
+          this.launchTypeList.push(TypeList);   
         })
       },
-      // TODO 请求picker数据
-      // initRequest() {
-      //   let promises = [];
-      //   promises.push(this.getDictByType('productRelease', 'launchTypeList'));
-      //   return Promise.all(promises);
-      // },
-      // TODO 是否保存草稿
+      // 是否保存草稿
       hasDraftData() {
         let draftList = ['biProcessStatus', 'launchTitle', 'launchDescribe', 'launchType'];
         let formData = this.formData;
@@ -430,7 +275,6 @@
             }
           };
         }
-
       },
     },
     created() {
@@ -439,9 +283,7 @@
         this.formData = JSON.parse(data).formData;
         sessionStorage.removeItem(DRAFT_KEY);
       }
-      // this.getlistUsers();
-      // this.getGroupByUserId();
-      // this.getRoleByUserId();
+      this.getProductType();
     },
   }
 </script>
@@ -450,7 +292,6 @@
   @import './../../scss/bizApply.scss';
   .cpfb-apply-container {
     .CP_group {
-
       /deep/ > .vux-label {
         color: #5077aa;
         font-weight: bold;
