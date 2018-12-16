@@ -449,7 +449,7 @@ export default {
      * 此处是判断——跳转至详情页还是提交页面
      * */
     this.$loading.show();
-    let { name, transCode } = this.$route.query,
+    let { name, childId, transCode } = this.$route.query,
         { fileId, listId } = this.$route.params;
     // 当路由当中包含transCode
     if(transCode) {
@@ -466,9 +466,9 @@ export default {
           path = `/detail/${fileId}/${listId}`;
         }
         this.$router.replace({
-          path, query: {name, transCode}
+          path, query: {name, childId, transCode}
         })
-        this.$loading.hide();
+        // this.$loading.hide();
       })
     }
   },

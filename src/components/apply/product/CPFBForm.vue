@@ -11,26 +11,22 @@
               <div class="userInp_mode">
                 <div class="title">发布信息</div>
                 <group class="CP_group" @group-title-margin-top="0">
-                  <!-- 商机标题 -->
-                  <x-input title="商机标题" text-align='right' v-model="formData.launchTitle"
+                  <x-input title="标题" text-align='right' v-model="formData.launchTitle"
                            placeholder='请填写'>
                     <template slot="label">
-                      <span class='required'>商机标题
-                      </span>
-                    </template>
-                  </x-input>
-                  <!-- 预期销售额 -->
-                  <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
-                           @on-blur="checkAmt" v-model.number="formData.tdAmount">
-                    <template slot="label">
-                      <span class='required'>预期销售额
+                      <span class='required'>标题
                       </span>
                     </template>
                   </x-input>
                   <!-- <r-picker title="类型:" mode='2' :data="launchTypeList" :value="formData.launchType"
                             v-model="formData.launchType" required></r-picker> -->
                   <!-- <popup-picker title="类型" :data="launchTypeList" v-model="formData.launchType"
-                                placeholder="请选择" ></popup-picker> -->
+                                placeholder="请选择" > -->
+                    <template slot="label">
+                      <span class='required'>类型
+                      </span>
+                    </template>
+                  </popup-picker>
                   <x-textarea title="描述" v-model="formData.launchDescribe" :max="200"></x-textarea>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
@@ -194,49 +190,49 @@
         return this.selItems.userId === sItem.userId;
       },
       // TODO 选择物料
-      selThis(sItem, sIndex) {
-        this.showPop = false;
-        this.selItems = sItem;
-        this.formData.handler = sItem.userId;
-        this.formData.handlerName = sItem.nickname;
-        this.getGroupByUserId();
-        this.getRoleByUserId();
-      },
+      // selThis(sItem, sIndex) {
+      //   this.showPop = false;
+      //   this.selItems = sItem;
+      //   this.formData.handler = sItem.userId;
+      //   this.formData.handlerName = sItem.nickname;
+      //   // this.getGroupByUserId();
+      //   // this.getRoleByUserId();
+      // },
       // TODO 请求部门
-      getGroupByUserId() {
-        return getGroupByUserId(this.formData.handler).then(({tableContent = []}) => {
-          this.groupList = []
-          tableContent.forEach(item => {
-            this.groupList.push({
-              ...item,
-              name: item.userGroupName,
-              value: item.userGroupName,
-            })
-          })
-          if (tableContent.length) {
-            this.formData.handlerUnitName = tableContent[0].groupName;
-            this.formData.handlerUnit = tableContent[0].userGroupId;
-          }
-        })
-      },
-      // TODO 请求职位
-      getRoleByUserId() {
-        this.roleList = [];
-        return getRoleByUserId(this.formData.handler).then(({tableContent = []}) => {
-          tableContent.forEach(item => {
-            this.roleList.push({
-              ...item,
-              name: item.userGroupName,
-              value: item.userGroupName,
-            })
-          })
-          if (tableContent.length) {
-            this.formData.handlerRoleName = tableContent[0].userGroupName;
-            this.formData.handlerRole = tableContent[0].userGroupId;
-          }
-        })
+      // getGroupByUserId() {
+      //   return getGroupByUserId(this.formData.handler).then(({tableContent = []}) => {
+      //     this.groupList = []
+      //     tableContent.forEach(item => {
+      //       this.groupList.push({
+      //         ...item,
+      //         name: item.userGroupName,
+      //         value: item.userGroupName,
+      //       })
+      //     })
+      //     if (tableContent.length) {
+      //       this.formData.handlerUnitName = tableContent[0].groupName;
+      //       this.formData.handlerUnit = tableContent[0].userGroupId;
+      //     }
+      //   })
+      // },
+      // // TODO 请求职位
+      // getRoleByUserId() {
+      //   this.roleList = [];
+      //   return getRoleByUserId(this.formData.handler).then(({tableContent = []}) => {
+      //     tableContent.forEach(item => {
+      //       this.roleList.push({
+      //         ...item,
+      //         name: item.userGroupName,
+      //         value: item.userGroupName,
+      //       })
+      //     })
+      //     if (tableContent.length) {
+      //       this.formData.handlerRoleName = tableContent[0].userGroupName;
+      //       this.formData.handlerRole = tableContent[0].userGroupId;
+      //     }
+      //   })
 
-      },
+      // },
       // TODO 获取用户列表
       getlistUsers() {
         let filter = [];
@@ -399,22 +395,22 @@
           this.$loading.hide();
         })
       },
-      // 请求
-      getDictByType(type = 'bigType', key = 'typeList') {
-        return getDictByType(type).then(({tableContent = []}) => {
+      // 请求产品类型
+      getProductType() {
+        return getDictByType('productRelease').then(({tableContent = []}) => {
           console.log('tableContent:', tableContent);
           tableContent.forEach(item => {
             item.value = item.name;
           });
-          this[key] = tableContent;
+          this.launchTypeList = tableContent;
         })
       },
       // TODO 请求picker数据
-      initRequest() {
-        let promises = [];
-        promises.push(this.getDictByType('productRelease', 'launchTypeList'));
-        return Promise.all(promises);
-      },
+      // initRequest() {
+      //   let promises = [];
+      //   promises.push(this.getDictByType('productRelease', 'launchTypeList'));
+      //   return Promise.all(promises);
+      // },
       // TODO 是否保存草稿
       hasDraftData() {
         let draftList = ['biProcessStatus', 'launchTitle', 'launchDescribe', 'launchType'];
@@ -443,9 +439,9 @@
         this.formData = JSON.parse(data).formData;
         sessionStorage.removeItem(DRAFT_KEY);
       }
-      this.getlistUsers();
-      this.getGroupByUserId();
-      this.getRoleByUserId();
+      // this.getlistUsers();
+      // this.getGroupByUserId();
+      // this.getRoleByUserId();
     },
   }
 </script>
