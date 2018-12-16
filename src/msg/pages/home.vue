@@ -159,7 +159,7 @@
             item.RELATION_KEY = content.relationKey; // 实例的交易号
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
             // list为应用，instance为实例
-            item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
+            item.other = content.type === 'list' ? `@应用详情` : `@实例编码: ${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
               item.comment = `回复@${content.objCreator}: ${content.content}`;

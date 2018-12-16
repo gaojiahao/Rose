@@ -11,7 +11,7 @@
         <div class="main-content">
           <div class="content-unit">
             <span class="iconfont icon-bianma"></span>
-            <span>原料编码：{{bom.inventoryCode}}</span>
+            <span>原料编码: {{bom.inventoryCode}}</span>
           </div>
           <div class="content-name">
             {{bom.inventoryName}}

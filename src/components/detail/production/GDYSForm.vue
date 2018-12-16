@@ -51,7 +51,7 @@
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
             <div class="content-unit" v-show="bom.specification_outPutMatCode">
-              <span>型号规格：{{bom.specification_outPutMatCode}}</span>
+              <span>型号规格: {{bom.specification_outPutMatCode}}</span>
             </div>
           </template>
           <template slot-scope="{bom}" slot="number">

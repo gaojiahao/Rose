@@ -11,7 +11,7 @@
               <img class="icon" :src="item.icon">
               <div>
                 <div class="related_name">{{item.listName}}</div>
-                <div class="related_num">实例数量：<span>{{item.itemCount}}</span></div>
+                <div class="related_num">实例数量: <span>{{item.itemCount}}</span></div>
               </div> 
             </div>
             <div @click="goRelation(item)" class="create_order" v-show="item.isrelated">创建并关联</div>

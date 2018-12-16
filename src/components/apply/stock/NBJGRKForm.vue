@@ -75,7 +75,7 @@
                                :default-value="orderList" list-method="getInProcessingStorage"
                                ref="order">
             <template slot="qtyBal" slot-scope="{item}">
-              <span>待验收余额：{{item.qtyBal}}</span>
+              <span>待验收余额: {{item.qtyBal}}</span>
             </template>
             <template slot="qtyStock" slot-scope="{item}">
                 <div class="mater-balance">可用余额: {{item.qtyStock}}{{item.measureUnit}}</div>

@@ -34,7 +34,7 @@
           <div class='matter'>
             <div class="matter_code" v-if="item.matCode">
               <span class="iconfont icon-bianma"></span>
-              <span>物料编码：{{item.matCode}}</span>
+              <span>物料编码: {{item.matCode}}</span>
             </div>
             <div class='matter_name'>
               {{item.inventoryName}}<span class="type">[{{item.invProcessing}}]</span>

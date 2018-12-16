@@ -15,7 +15,7 @@
                 <div class="main-content">
                   <div class="content-unit">
                     <span class="iconfont icon-bianma"></span>
-                    <span>原料编码：{{bom.inventoryCode}}</span>
+                    <span>原料编码: {{bom.inventoryCode}}</span>
                   </div>
                   <div class="content-name">
                     {{bom.inventoryName}}
@@ -30,7 +30,7 @@
                     <span class="number-unit">可用余额: {{bom.qtyStock}}</span>
                   </div>
                 </slot>
-                <div class="specific_loss" @click="modifyBom(bom)" v-show="isEdit && !noSpecificLoss">{{specificLossText}}：{{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
+                <div class="specific_loss" @click="modifyBom(bom)" v-show="isEdit && !noSpecificLoss">{{specificLossText}}: {{bom.specificLoss}}<span class="iconfont icon-bianji1"></span></div>
               </div>
             </div>
           </div>

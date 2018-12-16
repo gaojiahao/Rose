@@ -38,13 +38,13 @@
                                @click.native="delClick(index,item)" :class="{'vux-1px-b' : index < oItem.length-1}">
                     <template slot="info" slot-scope="{item}">
                       <div class="mater_more">
-                        <span class='unit'>类型：{{item.facilityType || '无'}}</span>
-                        <span class="unit">大类：{{item.facilityBigType}}</span>
-                        <span class='unit'>单位：{{item.facilityUnit || '无'}}</span>
+                        <span class='unit'>类型: {{item.facilityType || '无'}}</span>
+                        <span class="unit">大类: {{item.facilityBigType}}</span>
+                        <span class='unit'>单位: {{item.facilityUnit || '无'}}</span>
                       </div>
                       <div class="mater_more">
-                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                        <span class='unit'>订单总数：{{item.qty}}</span>
+                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                        <span class='unit'>订单总数: {{item.qty}}</span>
                         <span class='qty'>已验收数: {{item.purchased}}</span>
                         <span class='qty'>待验收数: {{item.qtyBal}}</span>
                       </div>

@@ -69,7 +69,7 @@
             <span class="number-unit">库存余额: {{bom.qtyStock}}</span>
           </div>
           <div class="specific_loss">原料库存计划: {{bom.lockQty}}</div>
-          <div class="specific_loss">单位损耗率：{{bom.bomSpecificLoss}}</div>
+          <div class="specific_loss">单位损耗率: {{bom.bomSpecificLoss}}</div>
         </template>
       </bom-pop>
       <!-- 审批操作 -->

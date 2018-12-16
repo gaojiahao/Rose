@@ -14,7 +14,7 @@
       <contact-part class='contacts_part' :contact-info="dealerInfo" :hasClass="false" :logistics="false">
         <template slot="other">
           <div class="other">
-            <span class="title">账期天数：</span>
+            <span class="title">账期天数: </span>
             <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
           </div>
         </template>

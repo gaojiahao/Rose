@@ -49,7 +49,7 @@
                   <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                          <!-- <span class="processing">属性：{{item.processing}}</span> -->
+                          <!-- <span class="processing">属性: {{item.processing}}</span> -->
                           <span class='unit'>单位: {{item.measureUnit}}</span>
                           <span class='mater_color' v-show="item.drDealerLabel">客户类型: {{item.drDealerLabel}}</span>
                           <span class='mater_color' v-show="item.qtyOnline">数量上线: {{item.qtyOnline}}</span>

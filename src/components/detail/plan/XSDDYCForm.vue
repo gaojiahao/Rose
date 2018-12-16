@@ -13,7 +13,7 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo">
         <div class="other" slot="other">
-          <span class="title">日期期间：</span>
+          <span class="title">日期期间: </span>
           <span class="mode">{{orderInfo.duringDate || '暂无'}}</span>
         </div>
       </contact-part>

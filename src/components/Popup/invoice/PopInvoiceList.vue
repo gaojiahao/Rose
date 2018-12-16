@@ -16,7 +16,7 @@
               <!-- 物料名称 -->
               <div class="mater_name">{{item.transCode}}</div>
               <div class="no_invoiced">{{item.inventoryName}}</div>
-              <div class="no_invoiced">金额：￥{{item.amntBal}}</div>
+              <div class="no_invoiced">金额: ￥{{item.amntBal}}</div>
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>

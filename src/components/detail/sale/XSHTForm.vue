@@ -14,19 +14,19 @@
       <contact-part :contact-info="contactInfo">
         <template slot="other">
           <div class="other">
-            <span class="title">合同总金额：</span>
+            <span class="title">合同总金额: </span>
             <span class="mode">￥{{contactInfo.thenTotalAmntBal | toFixed | numberComma(3)}}</span>
           </div>
           <div class="other">
-            <span class="title">合同到期日：</span>
+            <span class="title">合同到期日: </span>
             <span class="mode">{{contactInfo.validUntil}}</span>
           </div>
           <div class="other">
-            <span class="title">预收款：</span>
+            <span class="title">预收款: </span>
             <span class="mode">￥{{contactInfo.tdAmountCopy1 | toFixed | numberComma(3)}}</span>
           </div>
           <div class="other">
-            <span class="title">预收到期日：</span>
+            <span class="title">预收到期日: </span>
             <span class="mode">{{contactInfo.advancePaymentDueDate}}</span>
           </div>
         </template>

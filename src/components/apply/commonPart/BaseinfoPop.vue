@@ -285,21 +285,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .baseinfo_wrapper{
+  .baseinfo_wrapper {
     width: 95%;
     margin: .1rem auto;
     background: #fff;
-    margin-bottom: 0.1rem;
+    margin-bottom: .1rem;
     box-sizing: border-box;
     padding: .06rem .1rem;
-    .baseinfo_content{
-      .each_info{
+    .baseinfo_content {
+      .each_info {
         display: flex;
         font-size: .14rem;
         align-items: center;
         justify-content: space-between;
-        padding: 0.05rem 0;
-        .title{
+        padding: .05rem 0;
+        .title {
           font-weight: bold;
           color: #5077aa;
         }
@@ -308,58 +308,50 @@ export default {
           display: flex;
           align-items: center;
           position: relative;
-          .mode_content{
+          .mode_content {
             color: #111;
             margin-right: 13px;
           }
-          .iconfont{
+          .iconfont {
             font-weight: bold;
-            font-size: 0.14rem;
+            font-size: .14rem;
           }
           .r_arrow {
             right: -5px;
             fill: #C8C8CD;
             position: absolute;
             top: .02rem;
-            // right: -.05rem;
-
-
           }
         }
       }
-      /deep/ .weui-cell{
-        padding: 0.05rem 0;
-        .title{
-          font-size: 0.14rem;
+      /deep/ .weui-cell {
+        display: flex;
+        padding: .05rem 0;
+        position: relative;
+        align-items: center;        
+        .title {
+          font-size: .14rem;
           color: #757575;
-          &.required{
+          &.required {
             font-weight: bold;
             color: #5077aa;
           }
         }
-        &.before{
+        &.before {
           border:none;
         }
-        .weui-label{
+        .weui-label {
           color: #757575;
-          font-size: 0.14rem;
+          font-size: .14rem;
         }
-        .vux-cell-value{
+        .vux-cell-value {
           color: #111;
-          font-size: 0.14rem;
+          font-size: .14rem;
         }
-        // .weui-cell__ft:after{
-        //   border-color: #757575;
-        // }
       }
-      .vux-cell-box:not(:first-child):before{
+      .vux-cell-box:not(:first-child):before {
         border: none;
       }
-      // .required{
-      //   font-weight: bold;
-      //   color: #5077aa;
-      //   font-size: 0.14rem;
-      // }
     }
   }
    // 弹出层
@@ -393,7 +385,7 @@ export default {
         .pop-mater-list-item {
           position: relative;
           display: flex;
-          padding: 0.08rem;
+          padding: .08rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
           // 阴影
@@ -404,9 +396,7 @@ export default {
           // 列表主体
           .pop-list-main {
             flex: 1;
-            // padding-left: .1rem;
             box-sizing: border-box;
-            // display: inline-block;
             display: flex;
             //头像
             .user-photo{

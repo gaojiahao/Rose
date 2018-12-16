@@ -13,7 +13,7 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" :logistics="false">
         <div class="other" slot="other">
-          <span class="title">账期天数：</span>
+          <span class="title">账期天数: </span>
           <span class="mode">{{contactInfo.pamentDays || '暂无'}}</span>
         </div>
       </contact-part>

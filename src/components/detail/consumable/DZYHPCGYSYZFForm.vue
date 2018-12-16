@@ -14,7 +14,7 @@
       <!--<div class='contacts_part'>
         <contact-part :contact-info="dealerInfo" :hasClass="false" :logistics="false">
           <div class="other" slot="other">
-            <span class="title">账期天数：</span>
+            <span class="title">账期天数: </span>
             <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
           </div>
         </contact-part>
@@ -22,11 +22,11 @@
       <contact-part class="contacts_part" :contact-info="dealerInfo" :hasClass="false" :logistics="false">
         <template slot="other">
           <div class="other">
-            <span class="title">账期天数：</span>
+            <span class="title">账期天数: </span>
             <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
           </div>
           <div class="other">
-            <span class="title">账期到期日：</span>
+            <span class="title">账期到期日: </span>
             <span class="mode">{{dealerInfo.accountExpirationDate || '暂无'}}</span>
           </div>
         </template>

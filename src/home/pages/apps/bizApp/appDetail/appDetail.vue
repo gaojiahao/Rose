@@ -9,8 +9,8 @@
           <div class="app_info">
             <div class="app_name">{{appInfo.title}}</div>
             <div class="base_style app_type">{{appInfo.TRANS_NAME}}</div>
-            <div class="base_style app_admin" v-show="appInfo.administrator">应用管理员：{{appInfo.administrator}}</div>
-            <div class="base_style crt_time" v-show="appInfo.crtTime">创建时间：{{appInfo.crtTime}}</div>
+            <div class="base_style app_admin" v-show="appInfo.administrator">应用管理员: {{appInfo.administrator}}</div>
+            <div class="base_style crt_time" v-show="appInfo.crtTime">创建时间: {{appInfo.crtTime}}</div>
           </div>
         </div>
         <!--更新日志-->

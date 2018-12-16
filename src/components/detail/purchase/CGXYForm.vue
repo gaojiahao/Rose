@@ -15,23 +15,23 @@
         <template slot="other">
           <div class="other_content vux-1px-t">
             <div class="trade_info s_size_name" v-if="this.contactInfo.thenTotalAmntBal || this.contactInfo.thenTotalAmntBal === 0">
-              <span class="title">协议总金额：</span>
+              <span class="title">协议总金额: </span>
               <span class="mode">{{`￥${this.contactInfo.thenTotalAmntBal}`}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.executionDate">
-              <span class="title">协议开始日：</span>
+              <span class="title">协议开始日: </span>
               <span class="mode">{{this.contactInfo.executionDate}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.validUntil">
-              <span class="title">协议到期日：</span>
+              <span class="title">协议到期日: </span>
               <span class="mode">{{this.contactInfo.validUntil}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.tdAmountCopy1 || this.contactInfo.tdAmountCopy1 === 0">
-              <span class="title">预付款：</span>
+              <span class="title">预付款: </span>
               <span class="mode">{{`￥${this.contactInfo.tdAmountCopy1}`}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.prepaymentDueDate">
-              <span class="title">预付到期日：</span>
+              <span class="title">预付到期日: </span>
               <span class="mode">{{this.contactInfo.prepaymentDueDate}}</span>
             </div>
           </div>

@@ -17,8 +17,8 @@
           <template slot="list-item" slot-scope="{item}">
             <div class="content_part">招聘信息</div>
             <div class="other_info_part">
-              <p class="info_with_comment">申请部门：{{item.applicationDepartment}}</p>
-              <p class="info_with_comment">申请岗位：{{item.applicationPost}}</p>
+              <p class="info_with_comment">申请部门: {{item.applicationDepartment}}</p>
+              <p class="info_with_comment">申请岗位: {{item.applicationPost}}</p>
             </div>
           </template>
         </just-word-item>

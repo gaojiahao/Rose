@@ -23,8 +23,8 @@
                   <img :src="item.AppIcon"/>
                   <div class="app_info_container">
                     <span>{{item.appTitle}}</span>
-                    <span class="other_info_with">实例编码：{{item.transCode}}</span>
-                    <span class="other_info_with">往来名称：{{item.dealerName}}</span>
+                    <span class="other_info_with">实例编码: {{item.transCode}}</span>
+                    <span class="other_info_with">往来名称: {{item.dealerName}}</span>
                   </div>
                 </div>
                 <div class="cash_flow_status" :class="item.flowWordClass">
@@ -38,12 +38,12 @@
             <div class="main_content">
               <div class="fund_part">
                 <div class='matter_name'>{{item.fundName}}</div>
-                <p class="matter_type">账户编码：{{item.cashCode}}</p>
-                <p class="matter_type">资金账户大类：{{item.accountSub}}</p>
+                <p class="matter_type">账户编码: {{item.cashCode}}</p>
+                <p class="matter_type">资金账户大类: {{item.accountSub}}</p>
               </div>
               <div class="other_part">
-                <p class="matter_type">现金流类型：{{item.cashType}}</p>
-                <p class="matter_type">现金流项目：{{item.cashFlow}}</p>
+                <p class="matter_type">现金流类型: {{item.cashType}}</p>
+                <p class="matter_type">现金流项目: {{item.cashFlow}}</p>
               </div>
             </div>
             
@@ -51,7 +51,7 @@
               <!-- 开户银行 -->
               <div class="ware_type">
                 <p>{{item.bank || '暂无银行信息'}}<span class="symbol" v-if="item.bank">[开户银行]</span></p>
-                <p class="symbol type_with_num" v-if="item.bank">账号：{{item.account}}</p>
+                <p class="symbol type_with_num" v-if="item.bank">账号: {{item.account}}</p>
               </div>
               <!-- 付款金额 -->
               <div class="pay_num_part">
@@ -63,7 +63,7 @@
                   <span class="symbol">收款金额: ￥</span>
                   <span>{{item.drAmnt | numberComma}}</span>
                 </p>
-                <span class="symbol other_pay_status">币种：人民币</span>
+                <span class="symbol other_pay_status">币种: 人民币</span>
               </div>
             </div>
           </div>

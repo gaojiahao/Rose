@@ -76,10 +76,10 @@
                                :default-value="orderList" list-method="getManyWhProcessingPicking"
                                ref="order">
             <template slot="qtyBal" slot-scope="{item}">
-              <span>待领料余额：{{item.qtyBal}}</span>
+              <span>待领料余额: {{item.qtyBal}}</span>
             </template>
             <template slot="qtyStock" slot-scope="{item}">
-              <div class="mater-balance">可用库存：{{item.qtyStock}}{{item.measureUnit}}</div>
+              <div class="mater-balance">可用库存: {{item.qtyStock}}{{item.measureUnit}}</div>
             </template>
           </pop-order-xqtj-list>
         </div>

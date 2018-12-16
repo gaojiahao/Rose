@@ -31,17 +31,17 @@
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
-                      <span class="processing">属性：{{item.processing}}</span>
-                      <span class='unit'>单位：{{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                      <span class="processing">属性: {{item.processing}}</span>
+                      <span class='unit'>单位: {{item.measureUnit}}</span>
+                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_num'>
                       <span class='current_num' v-show="item.tdQty">
-                        数量：{{item.tdQty}}
+                        数量: {{item.tdQty}}
                       </span>
                       <span class='current_num' v-show="item.promDeliTime" style="margin-left:0.05rem;">
-                        预期完工日：{{item.promDeliTime}}
+                        预期完工日: {{item.promDeliTime}}
                       </span>
                     </div>
                   </template>

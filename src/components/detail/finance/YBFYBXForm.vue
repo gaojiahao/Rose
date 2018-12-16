@@ -33,7 +33,7 @@
       </div>
       <div class="price_cell vux-1px-t">
         <div class="price_title">
-          <span>报销人：</span>
+          <span>报销人: </span>
           <span class="people_name">{{orderInfo.creatorName }}</span>
         </div>
         <div>
