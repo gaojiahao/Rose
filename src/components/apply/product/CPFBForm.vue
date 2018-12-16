@@ -45,12 +45,10 @@
 
 <script>
   // vux 引入
-  import { Group, XInput, Popup, XTextarea, PopupPicker } from 'vux'
+  import { Group, XInput, XTextarea, PopupPicker } from 'vux'
   import RPicker from 'components/RPicker';
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopDealerList from 'components/Popup/PopDealerList'
-  import RScroll from 'components/RScroll'
-  import DSearch from 'components/search'
   // 请求 引入
   import {
     submitAndCalc,
@@ -60,24 +58,15 @@
     getDictByType,
   } from 'service/commonService'
   import {getSOList} from 'service/detailService'
-  import {listUsers, getGroupByUserId, getRoleByUserId} from 'service/commonService'
   // mixins 引入
   import ApplyCommon from 'pageMixins/applyCommon'
-
   const DRAFT_KEY = 'CPFB_DATA';
   export default {
     name: 'ApplyCPFBForm',
     data() {
       return {
         listId: 'eb8a01a3-7a74-439b-bc44-8d58cbfa6166',
-        typeList: [],
-        subList: [],
-        statusList: [],
-        launchTypeList: [],
-        selectedType: [],
-        authorizedList: [],
-        versionList: [],
-        formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',
+        formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',        
         formData: {
           biId: '', 
           biComment: '', // 备注
@@ -86,31 +75,18 @@
           launchDescribe: '', // 描述
           biProcessStatus: '', // 流程状态
         },
-        hasDefault: false,
         biReferenceId: '',
-        limit: 50,
-        page: 1,
-        hasNext: true,
-        scrollOptions: {
-          click: true,
-          pullUpLoad: true,
-        },
-        showPop: false,
-        srhInpTx: '', // 搜索框内容
-        selItems: {}, // 哪些被选中了
-        listData: [], // 经办人列表
-        groupList: [], // 组织列表
-        roleList: [], // 职位列表
+        typeList: [],
+        selectedType: [],
+        launchTypeList: [],
         dealerInfo: {},
-        contactInfo: {}
+        contactInfo: {},
       }
     },
     mixins: [ApplyCommon],
-    // directives: {TransferDom},
     components: {
-      Group, Popup, XInput, XTextarea, 
-      RPicker, DSearch, RScroll, PopupPicker,
-      PopBaseinfo, PopDealerList
+      Group, XInput, XTextarea, PopupPicker,
+      RPicker, PopBaseinfo, PopDealerList
     },
     methods: {
       // 选择联系人
@@ -227,7 +203,6 @@
             return;
           }
           this.attachment = data.attachment;
-          this.hasDefault = true;
           this.biReferenceId = biReferenceId;
           this.handlerDefault = {
             handler: formData.handler,
