@@ -27,6 +27,8 @@
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
               <div class="mater_attribute">
+                <span>属性: {{item.tdProcessing || '无'}}</span>
+                <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
                 <span>合同数量: {{item.thenTotalQtyBal}}</span>
                 <span>已下单: {{item.thenLockQty}}</span>
                 <span>待下单: {{item.thenQtyBal}}</span>
@@ -38,10 +40,9 @@
               <div class="mater_attribute">
                 <span>交付截止日: {{item.executionDate}}</span>
               </div>
-              <div class='mater_attribute'>
-                <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                <span>本次下单: {{item.tdQty | toFixed}}</span>
-                <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+              <div class='mater_num'>
+                <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+                <span class="num">本次下单: {{item.tdQty | toFixed}}</span>
               </div>
               <div class='mater_price'>
                 <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

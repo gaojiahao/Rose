@@ -95,7 +95,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams"
-                           get-list-method="getSalesOrderNew" @sel-matter="selMatter"
+                           get-list-method="getSalesOrderNew" @sel-matter="selMatter" :filter-list="filterList"
                            :default-value="matterList" ref="matter">
             <template slot="titleName" slot-scope="props">
               <span class="order-title">销售合同号</span>
@@ -128,19 +128,11 @@
               <span>待下单: {{modifyMatter.qtyBal}}</span>
             </div>
           </template>
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">本次下单</span>
-            </x-input>
-            <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">单价</span>
-            </x-input>
-            <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">税率</span>
-            </x-input>
+          <!-- 输入框title -->
+          <template slot="qtyName">
+            <span class='required'>本次下单</span>
+          </template>
+          <template slot="date" slot-scope="{modifyMatter}">
             <datetime title="预期交货日" :start-date="modifyMatter.dateActivation" :end-date="modifyMatter.executionDate"
                       v-model="modifyMatter.promDeliTime" placeholder="请选择">
               <span class='required' slot="title">预期交货日</span>
@@ -206,6 +198,18 @@
     data() {
       return {
         listId: 'a4897429-f4f2-44a4-ade7-2fe8dc67c3cf',
+        filterList: [
+          {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          }, {
+            name: '合同号',
+            value: 'transCode',
+          }
+        ],        
         showMatterPop: false,
         showMaterielPop: false, // 是否显示物料的popup
         transMode: [], // 结算方式 数组
