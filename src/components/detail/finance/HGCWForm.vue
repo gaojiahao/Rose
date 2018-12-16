@@ -19,7 +19,7 @@
                :class="{'final-total': lItem.isTotal,
                  'border-1px-t': lItem.isTotal,
                  'is-first': lItem.bigSubject,
-                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes('：')}"
+                 'indent': lItem.bigSubject !== undefined && !lItem.bigSubject && !lItem.subjectName.includes(': ')}"
                v-for="(lItem, lIndex) in item.items" :key="lIndex" ref="partLeftContent">
             {{lItem.subjectName}}
           </div>

@@ -3,17 +3,17 @@
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files"  :key="index">
-        <template v-if="item.iconType === 'image'">
-          <!--{{item.attr1}}-->
+        <img :src='item'>
+        <!-- <template v-if="item.iconType === 'image'">
           <img @click.stop="preview(item)" class="img" :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
           {{item.attr1}}
-        </template>
+        </template> -->
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
-      <div class="upload-file-item" v-if="!noUpload">
-        <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/>
+      <div class="upload-file-item" v-if="!noUpload" @click="chooseImage">
+        <!-- <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/> -->
         <label class="upload-file-add" :for="id"></label>
         <div class="icon_container">
           <span class="iconfont icon-fujian"></span>
@@ -76,6 +76,30 @@
       },
     },
     methods: {
+      chooseImage(){
+        wx.chooseImage({
+            count: 1, // 默认9
+            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+            defaultCameraMode: "batch", //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
+            success: function (res) {
+              var localIds = res.localIds; // 返回选定照片的本地ID列表，
+                        // andriod中localId可以作为img标签的src属性显示图片；
+                        // 而在IOS中需通过上面的接口getLocalImgData获取图片base64数据，从而用于img标签的显示
+              wx.getLocalImgData({
+                  localId: localIds, // 图片的localID
+                  success: function (res) {
+                      alert(res);
+                      var localData = res.localData; // localData是图片的base64数据，可以用img标签显示
+                      let files = [...localData];
+                      let [file] = files;
+                      this.file = file;
+                  }
+              });
+            }
+        });
+
+      },
       uploadFile(e) {
         let files = [...e.target.files];
         if (!files.length) return;
@@ -83,6 +107,7 @@
         this.file = file;
         e.target.value = '';
         this.imgPreview();
+
       },
       imgPreview() {
         this.showLoading = true;
@@ -220,9 +245,9 @@
         }
         //进行最小压缩
         let ndata = canvas.toDataURL('image/jpeg/gif', 0.5);
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
+        console.log('压缩前: ' + initSize);
+        console.log('压缩后: ' + ndata.length);
+        console.log('压缩率: ' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
         tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
         return ndata;
       },

@@ -178,9 +178,9 @@
         }
         //进行最小压缩
         let ndata = canvas.toDataURL('image/jpeg/gif', 0.5);
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
+        console.log('压缩前: ' + initSize);
+        console.log('压缩后: ' + ndata.length);
+        console.log('压缩率: ' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
         tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
         return ndata;
       },

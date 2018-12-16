@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper task_container">
     <div class="basicPart" v-if='orderInfo'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <div class='contacts_part' v-show="warehouse.warehouseName">

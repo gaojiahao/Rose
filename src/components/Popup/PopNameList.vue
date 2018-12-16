@@ -26,8 +26,8 @@
         <p class="cp_name" v-if="selItems.COMMENT">
           {{selItems.COMMENT}}<span class="symbol"> [项目说明]</span>
         </p>
-        <p class="cp_ads">预期开始日期：{{selItems.EXPECT_START_DATE | handlerDate}}</p>
-        <p class="cp_ads">预期截止日期：{{selItems.EXPECT_END_DATE | handlerDate}}</p>
+        <p class="cp_ads">预期开始日期: {{selItems.EXPECT_START_DATE | handlerDate}}</p>
+        <p class="cp_ads">预期截止日期: {{selItems.EXPECT_END_DATE | handlerDate}}</p>
       </div>
       <x-icon class="r_arrow" type="ios-arrow-right" size="30" v-show="isChoice"></x-icon>
     </template>
@@ -60,8 +60,8 @@
                       {{item.COMMENT}}<span class="symbol"> [项目说明]</span>
                     </div>
                     <div class="mater_time">
-                      <div>预期开始日期：{{item.EXPECT_START_DATE | handlerDate}}</div>
-                      <div>预期截止日期：{{item.EXPECT_END_DATE | handlerDate}}</div>
+                      <div>预期开始日期: {{item.EXPECT_START_DATE | handlerDate}}</div>
+                      <div>预期截止日期: {{item.EXPECT_END_DATE | handlerDate}}</div>
                     </div>
                   </div>
                 </div>

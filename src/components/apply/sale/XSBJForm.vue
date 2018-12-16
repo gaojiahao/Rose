@@ -44,10 +44,10 @@
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
-                      <span class="processing">属性：{{item.processing}}</span>
-                      <span class='unit'>单位：{{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
-                      <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
+                      <span class="processing">属性: {{item.processing}}</span>
+                      <span class='unit'>单位: {{item.measureUnit}}</span>
+                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
+                      <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">

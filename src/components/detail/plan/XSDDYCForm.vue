@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper xsddyc-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -13,7 +13,7 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo">
         <div class="other" slot="other">
-          <span class="title">日期期间：</span>
+          <span class="title">日期期间: </span>
           <span class="mode">{{orderInfo.duringDate || '暂无'}}</span>
         </div>
       </contact-part>

@@ -126,7 +126,7 @@ export default {
             fontSize: 12
           },
           formatter:(params)=>{
-            return `${params.data.name}<br/>销售额：￥${numberComma(params.value)} (${params.percent}%)`
+            return `${params.data.name}<br/>销售额: ￥${numberComma(params.value)} (${params.percent}%)`
           },
         },
         color: ['#07689f','#a2d5f2','#ff7e67','#abedd8','#283c63','#bad7df'],

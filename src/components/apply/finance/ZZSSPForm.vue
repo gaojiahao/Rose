@@ -67,7 +67,7 @@
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span v-show="item.taxRate">税率：{{item.taxRate || taxRate}}</span>
+                        <span v-show="item.taxRate">税率: {{item.taxRate || taxRate}}</span>
                       </div>
                       <div class="mater_more">
                         <span>入库数量: {{item.qty}}</span>

@@ -53,7 +53,7 @@
           <bom-list :boms="bomList">
             <template slot-scope="{bom}" slot="specification">
               <div class="content-unit">
-                <span>型号规格：{{bom.specification || "无"}}</span>
+                <span>型号规格: {{bom.specification || "无"}}</span>
               </div>
             </template>
             <template slot-scope="{bom}" slot="number">

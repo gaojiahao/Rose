@@ -45,7 +45,7 @@
                         <span>税率:{{item.taxRate}}</span>
                       </div>
                       <div>
-                        <span>待下单：{{item.qtyBal}}</span>
+                        <span>待下单: {{item.qtyBal}}</span>
                         <span v-show="item.processingStartDate">计划需求日:{{item.processingStartDate}}</span>
                         <span v-show="item.purchaseDay">采购需求日:{{item.purchaseDay}}</span>
                       </div>

@@ -159,7 +159,7 @@
             item.RELATION_KEY = content.relationKey; // 实例的交易号
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
             // list为应用，instance为实例
-            item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
+            item.other = content.type === 'list' ? `@应用详情` : `@实例编码: ${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
               item.comment = `回复@${content.objCreator}: ${content.content}`;
@@ -195,12 +195,21 @@
       },
       // TODO 进入详情
       goDetail(item, index) {
-        let {commentType = '', listTypeID = '', listId = '', listName = '', RELATION_KEY = ''} = item;
-        let path = `/detail/${listTypeID}/${listId}`;
+        let {commentType = '', listId = '', listName = '', RELATION_KEY = ''} = item;
         let query = {
           name: listName,
           transCode: RELATION_KEY,
         };
+        let fileId = '', childId = '';
+        if(item.listTypeID){
+          fileId = item.listTypeID;
+          childId = item.parentId;
+          query.childId = childId
+        }
+        else{
+          fileId = item.parentId;
+        }
+        let path = `/detail/${fileId}/${listId}`;
         if (commentType === 'list') {
           path = `/appDetail/${listId}`;
           query = {};

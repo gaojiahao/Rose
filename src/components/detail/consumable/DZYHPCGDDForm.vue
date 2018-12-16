@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -13,7 +13,7 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" :logistics="false">
         <div class="other" slot="other">
-          <span class="title">账期天数：</span>
+          <span class="title">账期天数: </span>
           <span class="mode">{{contactInfo.pamentDays || '暂无'}}</span>
         </div>
       </contact-part>

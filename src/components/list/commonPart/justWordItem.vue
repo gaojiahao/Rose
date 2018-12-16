@@ -19,8 +19,8 @@
     <div class="main_container" v-if="item.opportunityTitle">
       <div class="content_part">{{item.opportunityTitle}}</div>
       <div class="other_info_part">
-        <p class="info_with_comment">内容简介：{{item.comment || '无'}}</p>
-        <p class="info_with_comment">备注：{{item.biComment || '无'}}</p>
+        <p class="info_with_comment">内容简介: {{item.comment || '无'}}</p>
+        <p class="info_with_comment">备注: {{item.biComment || '无'}}</p>
       </div>
     </div>
     <!-- 主要信息区域 （没有客户往来） -->
@@ -35,16 +35,16 @@
         <!-- 其他信息 -->        
         <template v-if="item.detailItem.length > 1">
           <div class="other_info_part" v-if="task.taskName" v-for="(task, index) in item.detailItem" :key='index'>
-            <p class="info_with_comment">任务{{ 1 + index }}：{{task.taskName}}</p>
+            <p class="info_with_comment">任务{{ 1 + index }}: {{task.taskName}}</p>
           </div>
         </template>
         <template v-else>
           <div class="other_info_part" v-if="item.approvalComment_project || item.taskComment">
-            <p class="info_with_comment" v-if="item.taskName">任务名称：{{item.taskName}}</p>
-            <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介：{{item.approvalComment_project || item.taskComment}}</p>
-            <p class="info_with_comment" v-if="item.projectManager_project">项目经理：{{item.projectManager_project}}</p>
-            <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率：{{item.budgetProfitMargin_project | percent}}</p>
-            <p class="info_with_comment" >备注：{{item.biComment || '无'}}</p>
+            <p class="info_with_comment" v-if="item.taskName">任务名称: {{item.taskName}}</p>
+            <p class="info_with_comment" v-if="item.approvalComment_project || item.taskComment">说明简介: {{item.approvalComment_project || item.taskComment}}</p>
+            <p class="info_with_comment" v-if="item.projectManager_project">项目经理: {{item.projectManager_project}}</p>
+            <p class="info_with_comment" v-if="item.budgetProfitMargin_project">利润率: {{item.budgetProfitMargin_project | percent}}</p>
+            <p class="info_with_comment" >备注: {{item.biComment || '无'}}</p>
           </div>
         </template>
       </slot>

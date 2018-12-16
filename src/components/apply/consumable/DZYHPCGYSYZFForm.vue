@@ -45,23 +45,23 @@
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
-                        <span class="processing">属性：{{item.processing}}</span>
-                        <span class='unit'>单位：{{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色：{{item.inventoryColor || '无'}}</span>
+                        <span class="processing">属性: {{item.processing}}</span>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
+                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
                         <span class='qty' v-show="item.qtyBal">待验收: {{item.qtyBal}}</span>
                       </div>
                       <div class="mater_more">
-                        <span v-show="item.taxRate">税率：{{item.taxRate}}</span>
-                        <span>订单总数：{{item.qty}}</span>
-                        <span>已入库数：{{item.qtyed}}</span>
+                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                        <span>订单总数: {{item.qty}}</span>
+                        <span>已入库数: {{item.qtyed}}</span>
                       </div>
                       <div class="mater_more">
-                        <span v-show="item.assMeasureUnit">辅助计量：{{item.assMeasureUnit}}</span>
-                        <span v-show="item.assistQty">辅计数量：{{item.assistQty}}</span>
+                        <span v-show="item.assMeasureUnit">辅助计量: {{item.assMeasureUnit}}</span>
+                        <span v-show="item.assistQty">辅计数量: {{item.assistQty}}</span>
                       </div>
                       <div class="mater_more">
-                        <span v-show="item.productionDate">生产日期：{{item.productionDate}}</span>
-                        <span v-show="item.validUntil">有效日期：{{item.validUntil}}</span>
+                        <span v-show="item.productionDate">生产日期: {{item.productionDate}}</span>
+                        <span v-show="item.validUntil">有效日期: {{item.validUntil}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">

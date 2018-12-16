@@ -12,38 +12,38 @@
     <!-- 经办信息 -->
     <div class="handle_info vux-1px-b">
       <div class="each_handle s_size_name">
-        <span class="title">经办主体：</span>
+        <span class="title">经办主体: </span>
         <span class="content">{{orderInfo.handlerEntityName  || '无'}}</span>
       </div>
       <div class="each_handle s_size_name">
-        <span class="title">经办人：</span>
+        <span class="title">经办人: </span>
         <span class="content">{{orderInfo.handlerName}}</span>
       </div>
       <div class="each_handle s_size_name">
-        <span class="title">经办组织：</span>
+        <span class="title">经办组织: </span>
         <span class="content">{{orderInfo.handlerUnitName || '无'}}</span>
       </div>
       <div class="each_handle s_size_name">
-        <span class="title">经办职位：</span>
+        <span class="title">经办职位: </span>
         <span class="content">{{orderInfo.handlerRoleName || '无'}}</span>
       </div>
     </div>
     <!-- 创建时间 完成时间 -->
     <div class="time_info s_size_name">
       <div class="each_time">
-        <span class="title">创建人：</span>
+        <span class="title">创建人: </span>
         <span class="content">{{orderInfo.creatorName}}</span>
       </div>
       <div class="each_time">
-        <span class="title">创建时间：</span>
+        <span class="title">创建时间: </span>
         <span class="content">{{orderInfo.crtTime | dateFormat }}</span>
       </div>
       <div class="each_time" v-if="orderInfo.effectiveTime">
-        <span class="title">修改时间：</span>
+        <span class="title">修改时间: </span>
         <span class="content">{{orderInfo.modTime | dateFormat}}</span>
       </div>
       <div class="each_time">
-        <span class="title">流程状态：</span>
+        <span class="title">流程状态: </span>
         <span class="content">{{orderInfo.biProcessStatus || '无'}}</span>
       </div>
     </div>

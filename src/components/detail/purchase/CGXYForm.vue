@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -15,23 +15,23 @@
         <template slot="other">
           <div class="other_content vux-1px-t">
             <div class="trade_info s_size_name" v-if="this.contactInfo.thenTotalAmntBal || this.contactInfo.thenTotalAmntBal === 0">
-              <span class="title">协议总金额：</span>
+              <span class="title">协议总金额: </span>
               <span class="mode">{{`￥${this.contactInfo.thenTotalAmntBal}`}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.executionDate">
-              <span class="title">协议开始日：</span>
+              <span class="title">协议开始日: </span>
               <span class="mode">{{this.contactInfo.executionDate}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.validUntil">
-              <span class="title">协议到期日：</span>
+              <span class="title">协议到期日: </span>
               <span class="mode">{{this.contactInfo.validUntil}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.tdAmountCopy1 || this.contactInfo.tdAmountCopy1 === 0">
-              <span class="title">预付款：</span>
+              <span class="title">预付款: </span>
               <span class="mode">{{`￥${this.contactInfo.tdAmountCopy1}`}}</span>
             </div>
             <div class="trade_info s_size_name" v-if="this.contactInfo.prepaymentDueDate">
-              <span class="title">预付到期日：</span>
+              <span class="title">预付到期日: </span>
               <span class="mode">{{this.contactInfo.prepaymentDueDate}}</span>
             </div>
           </div>

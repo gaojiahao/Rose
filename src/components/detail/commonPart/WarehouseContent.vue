@@ -7,11 +7,11 @@
       <span v-if="warehouse.warehouseAction">{{warehouse.warehouseAction}} - </span>{{warehouse.warehouseName}}
     </div>
     <div class="other_info s_size_name">
-      <span class="title">类型：</span>
+      <span class="title">类型: </span>
       <span class="content">{{warehouse.warehouseType || '暂无'}}</span>
     </div>
     <div class="other_info s_size_name">
-      <span class="title">地址：</span>
+      <span class="title">地址: </span>
       <span class="content" v-if="noAddress">暂无</span>
       <span class="content" v-else>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}} </span>
     </div>

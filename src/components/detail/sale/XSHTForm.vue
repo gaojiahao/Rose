@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper">
     <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -14,19 +14,19 @@
       <contact-part :contact-info="contactInfo">
         <template slot="other">
           <div class="other">
-            <span class="title">合同总金额：</span>
+            <span class="title">合同总金额: </span>
             <span class="mode">￥{{contactInfo.thenTotalAmntBal | toFixed | numberComma(3)}}</span>
           </div>
           <div class="other">
-            <span class="title">合同到期日：</span>
+            <span class="title">合同到期日: </span>
             <span class="mode">{{contactInfo.validUntil}}</span>
           </div>
           <div class="other">
-            <span class="title">预收款：</span>
+            <span class="title">预收款: </span>
             <span class="mode">￥{{contactInfo.tdAmountCopy1 | toFixed | numberComma(3)}}</span>
           </div>
           <div class="other">
-            <span class="title">预收到期日：</span>
+            <span class="title">预收到期日: </span>
             <span class="mode">{{contactInfo.advancePaymentDueDate}}</span>
           </div>
         </template>

@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper wlxqjh-detail-container">
     <div class="basicPart" v-if='orderInfo && orderInfo.inPut'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -69,7 +69,7 @@
             <span class="number-unit">库存余额: {{bom.qtyStock}}</span>
           </div>
           <div class="specific_loss">原料库存计划: {{bom.lockQty}}</div>
-          <div class="specific_loss">单位损耗率：{{bom.bomSpecificLoss}}</div>
+          <div class="specific_loss">单位损耗率: {{bom.bomSpecificLoss}}</div>
         </template>
       </bom-pop>
       <!-- 审批操作 -->

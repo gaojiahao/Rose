@@ -130,7 +130,7 @@
               原料库存计划: {{bom.lockQty}}<span class="iconfont icon-bianji1"></span>
             </div>
             <div class="specific_loss">
-              单位损耗率：{{bom.specificLoss}}<!--<span class="iconfont icon-bianji1"></span>-->
+              单位损耗率: {{bom.specificLoss}}<!--<span class="iconfont icon-bianji1"></span>-->
             </div>
           </template>
         </bom-pop>

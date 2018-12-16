@@ -1,10 +1,10 @@
 <template>
   <div class="detail_wrapper xsbj-detail-container">
     <div class="basicPart" v-if='orderInfo'>
-      <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
         <span>其他应用里存在与本条相关联的数据，快去看看</span>
         <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-      </div>
+      </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 工作流 -->
@@ -51,7 +51,7 @@
         <bom-list :boms="bomList">
           <template slot-scope="{bom}" slot="specification">
             <div class="content-unit" v-show="bom.specification_outPutMatCode">
-              <span>型号规格：{{bom.specification_outPutMatCode}}</span>
+              <span>型号规格: {{bom.specification_outPutMatCode}}</span>
             </div>
           </template>
           <template slot-scope="{bom}" slot="number">

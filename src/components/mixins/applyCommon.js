@@ -1,5 +1,6 @@
 import {commitTask, getBaseInfoData, getProcess, getProcessStatus} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
+import {getAppDetail} from 'service/appSettingService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
 import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
@@ -40,6 +41,7 @@ export default {
       handlerDefault: {}, // 经办人默认信息
       listId: '',
       taxRate: 0.16, // 税率
+      businessKey: '', // 应用前缀
     }
   },
   components: {
@@ -327,6 +329,13 @@ export default {
         });
       }
     },
+    // TODO 获取应用详情
+    getAppDetail() {
+      return getAppDetail(this.listId).then(([data = {}]) => {
+        let {action, prefix} = data;
+        this.businessKey = prefix;
+      })
+    },
   },
   created() {
     register(); // 注册wx-js-sdk
@@ -343,6 +352,7 @@ export default {
         this.getBaseInfoData();
       }
       this.getProcessStatus();  // 获取流程状态
+      this.getAppDetail();
       this.initRequest && this.initRequest();   // 提交页面 不共用的数据 请求
       this.getPaymentTerm && this.getPaymentTerm();   // 提交页面 结算方式 请求
       this.getLogisticsTerms && this.getLogisticsTerms(); //提交页面 物流条款 请求

@@ -5,31 +5,31 @@
       <span class="iconfont icon-kehu1"></span>
       <div class="cp_name m_size_name">{{contactInfo.dealerName}}</div>
       <div class="other_info s_size_name">
-        <span class="title">联系人：</span>
+        <span class="title">联系人: </span>
         <span class="content">{{contactInfo.dealerContactPersonName || '暂无'}}</span>
       </div>
       <div class="other_info s_size_name">
-        <span class="title">手机：</span>
+        <span class="title">手机: </span>
         <span class="content">{{contactInfo.dealerMobilePhone || '暂无'}}</span>
       </div>
       <div class="other_info s_size_name">
-        <span class="title">地址：</span>
+        <span class="title">地址: </span>
         <span class="content" v-if="noAddress">暂无</span>
         <span class="content" v-else>{{contactInfo.province}}{{contactInfo.city}}{{contactInfo.county}}{{contactInfo.address}}</span>
       </div>
     </div>
     <div class="other_content" :class="{'no-bottom': $slots.other && !validUntil}" v-if="payment || logistics">
       <div class="trade_info s_size_name" v-if="payment">
-        <span class="title">结算方式：</span>
+        <span class="title">结算方式: </span>
         <span class="mode">{{contactInfo.payment || '暂无'}}</span>
       </div>
       <div class="trade_info s_size_name" v-if="logistics">
-        <span class="title">物流条款：</span>
+        <span class="title">物流条款: </span>
         <span class="mode">{{contactInfo.logistics || '暂无'}}</span>
       </div>
     </div>
     <div class="valid vux-1px-t" v-if="validUntil">
-       <span class="title">有效期至：</span>
+       <span class="title">有效期至: </span>
         <span class="mode">{{contactInfo.validUntil || '暂无'}}</span>
     </div>
     <slot name="other"></slot>

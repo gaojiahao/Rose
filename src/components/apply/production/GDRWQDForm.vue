@@ -61,7 +61,7 @@
             </template> -->
             <template slot-scope="{bom}" slot="specification">
               <div class="content-unit">
-                <span>型号规格：{{bom.specification}}</span>
+                <span>型号规格: {{bom.specification}}</span>
               </div>
             </template>
             <template slot-scope="{bom}" slot="number">

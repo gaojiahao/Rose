@@ -96,8 +96,7 @@
       },
       // TODO 同意
       agree() {
-        if (this.agreeHandler) {
-          this.agreeHandler();
+        if (this.agreeHandler && this.agreeHandler()) {
           return
         }
         this.$vux.confirm.prompt('', {
