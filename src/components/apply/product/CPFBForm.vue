@@ -1,27 +1,51 @@
 <template>
-  <div class='childPage cpfb-apply-container'>
-    <div class="content" ref="fill">
-      <div class="wrapper">
-        <!-- <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo> -->
-        <!-- <r-picker title="经办人:" :data="listData" :value="formData.handlerName"
-                  @on-change="handlerChange" v-model="formData.handlerName" required></r-picker> -->
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b' @click="showPop = true">
-            <label class="required">经办人:</label>
-            <!-- <input type='text' v-model="formData.handlerName" class='property_val'/> -->
-            <div class="property_val handler">
-              <span>{{formData.handlerName}}</span>
-              <span class="iconfont icon-gengduo"></span>
+  <div class='pages cpfb-apply-container'>
+    <div class="basicPart no_count" ref="fill">
+      <div class="fill_wrapper">
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
+                  v-model="formData.biProcessStatus"></r-picker>
+        <div class="materiel_list">
+          <div class="mater_list">
+            <div class="each_mater">
+              <div class="userInp_mode">
+                <div class="title">发布信息</div>
+                <group class="CP_group" @group-title-margin-top="0">
+                  <!-- 商机标题 -->
+                  <x-input title="商机标题" text-align='right' v-model="formData.launchTitle"
+                           placeholder='请填写'>
+                    <template slot="label">
+                      <span class='required'>商机标题
+                      </span>
+                    </template>
+                  </x-input>
+                  <!-- 预期销售额 -->
+                  <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
+                           @on-blur="checkAmt" v-model.number="formData.tdAmount">
+                    <template slot="label">
+                      <span class='required'>预期销售额
+                      </span>
+                    </template>
+                  </x-input>
+                  <!-- <r-picker title="类型:" mode='2' :data="launchTypeList" :value="formData.launchType"
+                            v-model="formData.launchType" required></r-picker> -->
+                  <!-- <popup-picker title="类型" :data="launchTypeList" v-model="formData.launchType"
+                                placeholder="请选择" ></popup-picker> -->
+                  <x-textarea title="描述" v-model="formData.launchDescribe" :max="200"></x-textarea>
+                  <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
+                </group>
+              </div>
             </div>
           </div>
         </div>
-        <r-picker title="经办组织:" :data="groupList" :value="formData.handlerUnitName"
-                  @on-change="groupChange" v-model="formData.handlerUnitName" required></r-picker>
-        <r-picker title="经办职位:" :data="roleList" :value="formData.handlerRoleName"
-                  @on-change="roleChange" v-model="formData.handlerRoleName"></r-picker>
-        <r-picker title="流程状态:" :data="currentStage" :value="formData.biProcessStatus"
-                  v-model="formData.biProcessStatus"></r-picker>
-        <div class='mater_property'>
+        
+        
+        
+        
+        
+        
+        
+        <!-- <div class='mater_property'>
           <div class='each_property vux-1px-b'>
             <label class="required">标题:</label>
             <input type='text' v-model.trim="formData.launchTitle" class='property_val'/>
@@ -37,21 +61,19 @@
         <r-picker title="类型:" :data="launchTypeList" :value="formData.launchType"
                   v-model="formData.launchType" required></r-picker>
         <upload-file :default-value="attachment" @on-upload="onUploadFile"></upload-file>
-        <div v-transfer-dom>
+         -->
+        <!-- <div v-transfer-dom>
           <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
             <div class="trade_pop">
               <div class="title">
-                <!-- 搜索栏 -->
                 <d-search @search='searchList' @turn-off="onHide" :isFill='true'></d-search>
               </div>
-              <!-- 经理列表 -->
               <r-scroll class="pop-list-container" :options="scrollOptions" :has-next="hasNext"
                         :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
                 <div class="pop-mater-list-item box_sd" v-for="(item, index) in listData" :key='index'
                      @click.stop="selThis(item,index)">
                   <div class="pop-list-main ">
                     <div class="pop-list-info">
-                      <!--联系人电话 -->
                       <div class="withColor">
                         <div class="ForInline name" style="display:inline-block">
                           <span>{{item.nickname}}</span>
@@ -64,13 +86,12 @@
                       </div>
                     </div>
                   </div>
-                  <!-- icon -->
                   <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
                 </div>
               </r-scroll>
             </div>
           </popup>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -81,7 +102,7 @@
 
 <script>
   // vux 引入
-  import {Popup, TransferDom} from 'vux'
+  import { Group, XInput, Popup, XTextarea, PopupPicker } from 'vux'
   import RPicker from 'components/RPicker';
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import RScroll from 'components/RScroll'
@@ -137,9 +158,10 @@
       }
     },
     mixins: [ApplyCommon],
-    directives: {TransferDom},
+    // directives: {TransferDom},
     components: {
-      RPicker, PopBaseinfo, Popup, RScroll, DSearch
+      Group, Popup, XInput, XTextarea, DSearch,
+      RPicker, PopBaseinfo, RScroll, PopupPicker
     },
     methods: {
       // TODO 弹窗展示时调用
@@ -201,7 +223,6 @@
       getRoleByUserId() {
         this.roleList = [];
         return getRoleByUserId(this.formData.handler).then(({tableContent = []}) => {
-          console.log(tableContent)
           tableContent.forEach(item => {
             this.roleList.push({
               ...item,
@@ -218,7 +239,6 @@
       },
       // TODO 获取用户列表
       getlistUsers() {
-        // console.log()
         let filter = [];
         if (this.srhInpTx) {
           filter = [
@@ -238,24 +258,21 @@
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
           this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
+            this.$refs.bScroll && this.$refs.bScroll.finishPullUp();
           })
         });
       },
       // 选择组织
       groupChange(val) {
-        console.log(val);
         this.groupList && this.groupList.forEach(item => {
           if (item.name === val) {
             this.formData.handlerUnit = item.userGroupId;
             return false;
           }
         })
-
       },
       // 选择职位
       roleChange(val) {
-        console.log(val);
         this.roleList && this.roleList.forEach(item => {
           if (item.name === val) {
             this.formData.handlerRole = item.userGroupId;
@@ -365,27 +382,32 @@
           this.attachment = data.attachment;
           this.hasDefault = true;
           this.biReferenceId = biReferenceId;
+          this.handlerDefault = {
+            handler: formData.handler,
+            handlerName: formData.handlerName,
+            handlerUnit: formData.handlerUnit,
+            handlerUnitName: formData.handlerUnitName,
+            handlerRole: formData.handlerRole,
+            handlerRoleName: formData.handlerRoleName,
+          };          
           this.formData = {
             ...this.formData,
-            ...formData
+            ...formData,
+            ...this.handlerDefault
           };
 
           this.$loading.hide();
         })
       },
-      // TODO 请求大类、流程状态、信心指数列表数据
+      // 请求
       getDictByType(type = 'bigType', key = 'typeList') {
         return getDictByType(type).then(({tableContent = []}) => {
+          console.log('tableContent:', tableContent);
           tableContent.forEach(item => {
             item.value = item.name;
           });
           this[key] = tableContent;
         })
-      },
-      // TODO 大类切换
-      typeChange() {
-        this.subList = [];
-        this.getSubList()
       },
       // TODO 请求picker数据
       initRequest() {
@@ -429,169 +451,210 @@
 </script>
 
 <style lang="scss" scoped>
+  @import './../../scss/bizApply.scss';
   .cpfb-apply-container {
-    height: 100%;
-    .upload-file-container {
-      width: 100%;
-      padding: .05rem .08rem;
-      margin: 0 auto;
-    }
-  }
+    .CP_group {
 
-  .vux-1px-b:after, .vux-1px-l:before {
-    border-color: #e8e8e8;
-    color: #e8e8e8;
-  }
-
-  .content {
-    height: 90%;
-    overflow: hidden;
-    .mater_baseinfo {
-      display: flex;
-      align-items: flex-end;
-      .mater_property {
-        flex: 1;
-      }
-    }
-    .each_property {
-      padding: 0.05rem 0.08rem;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        line-height: 0.2rem;
-      }
-      .required {
+      /deep/ > .vux-label {
         color: #5077aa;
         font-weight: bold;
       }
-      .property_val {
-        display: block;
-        width: 100%;
-        min-height: .24rem;
-        line-height: 0.24rem;
-        border: none;
-        outline: none;
-        font-size: 0.16rem;
-        &.handler {
-          line-height: 0.38rem;
-          .icon-gengduo {
-            font-size: 0.24rem;
-            float: right;
+      /deep/ > .vux-no-group-title {
+        margin-top: 0.08rem;
+      }
+      /deep/> .weui-cells {
+        font-size: .16rem;
+        .vux-tap-active {
+          .vux-label {
+            color: #5077aa;
+            font-weight: bold;
           }
         }
-      }
-      .readonly {
-        color: #999;
-      }
-    }
-  }
-
-  // 确定
-  .btn {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 10%;
-    position: fixed;
-    background: #fff;
-    .cfm_btn {
-      top: 50%;
-      left: 50%;
-      width: 2.8rem;
-      color: #fff;
-      height: .44rem;
-      line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #5077aa;
-    }
-    &.btn_hide {
-      display: none;
-    }
-  }
-
-  // 弹出层
-  .trade_pop_part {
-    background: #fff;
-    .trade_pop {
-      padding: 0 .08rem;
-      height: 100%;
-      overflow: hidden;
-      // 顶部
-      .title {
-        position: relative;
-        margin: .08rem 0;
-        font-size: .2rem;
-      }
-      .each_mode {
-        margin-right: .1rem;
-        display: inline-block;
-        padding: .04rem .2rem;
-      }
-      // 列表容器
-      .pop-list-container {
-        width: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-        height: calc(100% - .46rem);
-        /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
-        }
-        // 列表项
-        .pop-mater-list-item {
-          position: relative;
-          display: flex;
-          padding: 0.08rem;
-          margin-bottom: .2rem;
-          box-sizing: border-box;
-          // 阴影
-          &.box_sd {
-            box-sizing: border-box;
-            box-shadow: 0 0 8px #e8e8e8;
-          }
-          // 列表主体
-          .pop-list-main {
-            flex: 1;
-            padding-left: .1rem;
-            box-sizing: border-box;
-            display: inline-block;
-            // 物料信息
-            .pop-list-info {
-              color: #757575;
-              font-size: .14rem;
-              // 有颜色包裹的
-              .withColor {
-                margin-top: .04rem;
-                .name {
-                  color: #5077aa;
-                  font-size: .14rem;
-                  font-weight: bold;
-                }
-                .creator {
-                  color: #111;
-                  font-weight: bold;
-                }
-              }
-            }
-          }
-          // 选择icon
-          .selIcon,
-          .isSelIcon {
-            top: 50%;
-            left: -.3rem;
-            position: absolute;
-            transform: translate(0, -50%);
-          }
-          .isSelIcon {
-            fill: #5077aa;
-          }
+        &:after {
+          border-bottom: none;
         }
       }
-
+      .vux-cell-box {
+        &:before{
+          left: 0;
+        }
+        /deep/ >.weui-cell {
+          padding: 10px 0;
+        }
+      }
     }
+    .weui-cell {
+      padding: 10px 0;
+
+      &:before {
+        left: 0;
+      }
+    }
+
   }
+  // .cpfb-apply-container {
+  //   height: 100%;
+  //   .upload-file-container {
+  //     width: 100%;
+  //     padding: .05rem .08rem;
+  //     margin: 0 auto;
+  //   }
+  // }
+
+  // .vux-1px-b:after, .vux-1px-l:before {
+  //   border-color: #e8e8e8;
+  //   color: #e8e8e8;
+  // }
+
+  // .content {
+  //   height: 90%;
+  //   overflow: hidden;
+  //   .mater_baseinfo {
+  //     display: flex;
+  //     align-items: flex-end;
+  //     .mater_property {
+  //       flex: 1;
+  //     }
+  //   }
+  //   .each_property {
+  //     padding: 0.05rem 0.08rem;
+  //     label {
+  //       color: #6d6d6d;
+  //       font-size: 0.12rem;
+  //       display: block;
+  //       line-height: 0.2rem;
+  //     }
+  //     .required {
+  //       color: #5077aa;
+  //       font-weight: bold;
+  //     }
+  //     .property_val {
+  //       display: block;
+  //       width: 100%;
+  //       min-height: .24rem;
+  //       line-height: 0.24rem;
+  //       border: none;
+  //       outline: none;
+  //       font-size: 0.16rem;
+  //       &.handler {
+  //         line-height: 0.38rem;
+  //         .icon-gengduo {
+  //           font-size: 0.24rem;
+  //           float: right;
+  //         }
+  //       }
+  //     }
+  //     .readonly {
+  //       color: #999;
+  //     }
+  //   }
+  // }
+
+  // // 确定
+  // .btn {
+  //   left: 0;
+  //   bottom: 0;
+  //   width: 100%;
+  //   height: 10%;
+  //   position: fixed;
+  //   background: #fff;
+  //   .cfm_btn {
+  //     top: 50%;
+  //     left: 50%;
+  //     width: 2.8rem;
+  //     color: #fff;
+  //     height: .44rem;
+  //     line-height: .44rem;
+  //     position: absolute;
+  //     text-align: center;
+  //     background: #5077aa;
+  //     border-radius: .4rem;
+  //     transform: translate(-50%, -50%);
+  //     box-shadow: 0 2px 5px #5077aa;
+  //   }
+  //   &.btn_hide {
+  //     display: none;
+  //   }
+  // }
+
+  // // 弹出层
+  // .trade_pop_part {
+  //   background: #fff;
+  //   .trade_pop {
+  //     padding: 0 .08rem;
+  //     height: 100%;
+  //     overflow: hidden;
+  //     // 顶部
+  //     .title {
+  //       position: relative;
+  //       margin: .08rem 0;
+  //       font-size: .2rem;
+  //     }
+  //     .each_mode {
+  //       margin-right: .1rem;
+  //       display: inline-block;
+  //       padding: .04rem .2rem;
+  //     }
+  //     // 列表容器
+  //     .pop-list-container {
+  //       width: 100%;
+  //       overflow: hidden;
+  //       box-sizing: border-box;
+  //       height: calc(100% - .46rem);
+  //       /deep/ .scroll-wrapper {
+  //         padding: .04rem .04rem 0 .3rem;
+  //       }
+  //       // 列表项
+  //       .pop-mater-list-item {
+  //         position: relative;
+  //         display: flex;
+  //         padding: 0.08rem;
+  //         margin-bottom: .2rem;
+  //         box-sizing: border-box;
+  //         // 阴影
+  //         &.box_sd {
+  //           box-sizing: border-box;
+  //           box-shadow: 0 0 8px #e8e8e8;
+  //         }
+  //         // 列表主体
+  //         .pop-list-main {
+  //           flex: 1;
+  //           padding-left: .1rem;
+  //           box-sizing: border-box;
+  //           display: inline-block;
+  //           // 物料信息
+  //           .pop-list-info {
+  //             color: #757575;
+  //             font-size: .14rem;
+  //             // 有颜色包裹的
+  //             .withColor {
+  //               margin-top: .04rem;
+  //               .name {
+  //                 color: #5077aa;
+  //                 font-size: .14rem;
+  //                 font-weight: bold;
+  //               }
+  //               .creator {
+  //                 color: #111;
+  //                 font-weight: bold;
+  //               }
+  //             }
+  //           }
+  //         }
+  //         // 选择icon
+  //         .selIcon,
+  //         .isSelIcon {
+  //           top: 50%;
+  //           left: -.3rem;
+  //           position: absolute;
+  //           transform: translate(0, -50%);
+  //         }
+  //         .isSelIcon {
+  //           fill: #5077aa;
+  //         }
+  //       }
+  //     }
+
+  //   }
+  // }
 </style>
