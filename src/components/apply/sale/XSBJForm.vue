@@ -46,9 +46,12 @@
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                       <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class='unit'>主计量: {{item.measureUnit}}</span>
+                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
                       <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                    </div>
+                    <div class="mater_more">
+                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
@@ -101,6 +104,7 @@
                      @on-blur="checkQty(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">需求数量</span>
             </x-input>
+            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
             <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">本次报价</span>
@@ -109,6 +113,7 @@
                      @on-blur="checkRate(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">税率</span>
             </x-input>
+            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
           </template>
         </pop-matter>
         <!--备注-->
@@ -146,7 +151,7 @@
 
 <script>
   // vux组件引入
-  import {Icon, XInput, XTextarea, dateFormat} from 'vux'
+  import {Icon, XInput, XTextarea, dateFormat, Cell} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/commonService'
@@ -191,7 +196,7 @@
       }
     },
     components: {
-      Icon, XInput, RPicker, XTextarea,
+      Icon, XInput, RPicker, XTextarea, Cell,
       PopMatterList, PopDealerList, PopSingleSelect,
       PopMatter, UploadFile, PopBaseinfo, RDate, RNumber,
     },
@@ -273,6 +278,9 @@
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
           this.getPriceRange(item, index);
         });
         this.numMap = {};
@@ -334,11 +342,19 @@
           let mItem = {
             inventoryName_transObjCode: item.inventoryName,
             transObjCode: item.inventoryCode,
+            tdProcessing: item.processing,
+            assMeasureUnit: item.invSubUnitName || null, // 辅助计量
+            assMeasureDescription: item.invSubUnitComment || null, // 辅助计量说明
+            assMeasureScale: item.invSubUnitMulti || null, // 与单位倍数
             tdQty: item.tdQty,
+            assistQty: item.assistQty,
+            standardPrice: item.standardPrice,
+            specialReservePrice: item.specialReservePrice,
             price: item.price,
+            tdAmount: item.tdAmount, // 价税小计
             taxRate: taxRate, // 税金
-            taxAmount: taxAmount, // 税金
-            tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
+            noTaxPrice: item.noTaxPrice,
+            taxAmount: item.taxAmount, // 税金            
             comment: item.comment || null,
           };
           if (this.transCode) {
@@ -375,11 +391,6 @@
                 validUntil: this.formData.validUntil,
                 dataSet
               },
-              tdProcessing: first.processing,
-              assMeasureScale: null,
-              assistQty: 0,
-              standardPrice: first.standardPrice,
-              specialReservePrice: first.specialReservePrice,
             };
             let submitData = {
               listId: this.listId,

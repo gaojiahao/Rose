@@ -42,13 +42,14 @@
                              @click.native="delClick(item,index)">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
-                    <div class="mater_more">
-                      <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                      <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                    <div class='matter-more'>
+                      <span class='unit'>属性: {{item.processing}}</span>
+                      <span class='unit'>主计量: {{item.measureUnit}}</span>
+                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                      <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                     </div>
                     <div class="mater_more">
+                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                       <span v-show="item.promDeliTime">预期交货日: {{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
@@ -215,11 +216,14 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let {tdQty = '', price = item.quotedPrice === 0 ? '' : item.quotedPrice, taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
+          let {tdQty = '', price = '', taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
         });
         this.numMap = {};
         this.matterList = sels;
@@ -313,14 +317,16 @@
               inventoryName_transObjCode: item.inventoryName, // 物料名称
               transObjCode: item.inventoryCode, // 物料编码
               tdProcessing: item.processing, // 加工属性
-              assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
-              assMeasureScale: item.assMeasureScale || null, // 与单位倍数
+              assMeasureUnit: item.invSubUnitName || null, // 辅助计量
+              assMeasureScale: item.invSubUnitMulti || null, // 与单位倍数
+              assMeasureDescription: item.invSubUnitComment || null, // 辅助计量说明
               assistQty: item.assistQty || 0, // 辅计数量
               tdQty: item.tdQty, // 数量
               price: item.price, // 单价
-              taxRate: taxRate, // 税金
-              taxAmount: taxAmount, // 税金
-              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
+              noTaxPrice: item.noTaxPrice,
+              taxRate: taxRate, // 税率
+              taxAmount: item.taxAmount, // 税金
+              tdAmount: item.tdAmount, // 价税小计
               promDeliTime: item.promDeliTime || '', // 预期交货日
               comment: item.comment || '', // 说明
             }

@@ -70,10 +70,11 @@
                 </slot>
               </template>
             </x-input>
-            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
+            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
+            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
             @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <template slot="label">
-                <span class='required'>单价
+                <span class='required'>含税单价
                 </span>
               </template>
             </x-input>
@@ -84,20 +85,21 @@
                 </span>
               </template>
             </x-input>
+            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
             <slot name="date" :modifyMatter="modifyMatter"></slot>
 
           </slot>
         </group>
         <div class='mg_auto' v-show="isShowAmount">
           <div class='each_info vux-1px-b'>
-            <slot name="modifyTitle">
-              <label>金额</label>
-            </slot>
-            <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
-          </div>
-          <div class='each_info vux-1px-b'>
             <label>税金</label>
             <div class='matter_val'>￥{{modifyMatter.taxAmount}}</div>
+          </div>
+          <div class='each_info vux-1px-b'>
+            <slot name="modifyTitle">
+              <label>不含税金额</label>
+            </slot>
+            <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
           </div>
           <div class='each_info'>
             <label>价税小计</label>
@@ -114,7 +116,7 @@
 
 <script>
 // vux组件引入
-import {Popup, TransferDom,Group,Cell,Datetime,XInput,PopupPicker } from 'vux'
+import {Popup, TransferDom, Group, Cell, Datetime, XInput, PopupPicker } from 'vux'
 //组件引入
 import {toFixed} from '@/plugins/calc'
 export default {

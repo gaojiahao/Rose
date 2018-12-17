@@ -112,9 +112,9 @@
           // 获取合计
           let {dataSet} = data.formData.order;
           for (let val of dataSet) {
-            val.noTaxAmount = accMul(val.price, val.tdQty);
-            val.taxAmount = accMul(val.noTaxAmount, val.taxRate);
-            val.tdAmount = toFixed(accAdd(val.noTaxAmount, val.taxAmount));
+            // val.noTaxAmount = accMul(val.price, val.tdQty);
+            // val.taxAmount = accMul(val.noTaxAmount, val.taxRate);
+            // val.tdAmount = toFixed(accAdd(val.noTaxAmount, val.taxAmount));
             this.count = accAdd(this.count, val.tdAmount);
             val.inventoryPic = val.inventoryPic_transObjCode
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`

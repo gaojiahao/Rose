@@ -75,9 +75,12 @@
                     <!-- 物料属性和单位 -->
                     <div class="mater_more">
                       <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
+                      <span class='unit'>主计量: {{item.measureUnit}}</span>
+                     <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
                       <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                    </div>
+                    <div class="mater_more">
+                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                     </div>
                     <div class="mater_more">
                       <span class="processing" v-show="item.dateActivation">交付开始日: {{item.dateActivation}}</span>
@@ -218,18 +221,24 @@
       thenTotalAmntBal() {
         let total = 0;
         this.matterList.forEach(item => {
-          let {tdQty, price, taxRate = this.taxRate} = item;
-          let taxAmount = accMul(price, tdQty, taxRate);
-          let tdAmount = accAdd(accMul(price, tdQty), taxAmount);
+          let {assistQty, price} = item;
+          let tdAmount = accMul(assistQty, price);
           total = accAdd(total, tdAmount);
         });
-        return total;
+        return total.toFixed(2);
       },
       // 是否含预收
       hasAdvance() {
         let {paymentTerm} = this.dealerInfo;
         let hasAdvanceList = ['赊销'];
-        return !hasAdvanceList.includes(paymentTerm);
+        if(!paymentTerm) {
+          return false
+        }
+        else{
+          return !paymentTerm.includes(hasAdvanceList);
+        }
+       
+        // return !hasAdvanceList.includes(paymentTerm);
       }
     },
     components: {
@@ -315,7 +324,7 @@
         sels.map(item => {
           let {
             tdQty = '',
-            price = item.quotedPrice,
+            price = '',
             taxRate = 0.16,
             dateActivation = '',
             executionDate = '',
@@ -325,6 +334,9 @@
           item.taxRate = taxRate;
           item.dateActivation = dateActivation;
           item.executionDate = executionDate;
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
         });
         this.numMap = {};
         this.matterList = sels;
@@ -421,18 +433,22 @@
               warn = "请输入单价";
               return false;
             }
-            let taxRate = item.taxRate || this.taxRate;
-            let taxAmount = accMul(item.price, item.tdQty, taxRate);
             let obj = {
               tdId: item.tdId || '',
               inventoryName_transObjCode: item.inventoryName, // 物料名称
               transObjCode: item.inventoryCode, // 物料编码
               tdProcessing: item.processing, // 加工属性
+              assMeasureUnit: item.assMeasureUnit,
+              assMeasureDescription: item.assMeasureDescription,
+              assMeasureScale: item.assMeasureScale,
               tdQty: item.tdQty, // 数量
+              assistQty: item.assistQty,
               price: item.price, // 单价
-              taxRate: taxRate, // 税金
-              taxAmount: taxAmount, // 税金
-              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
+              tdAmount: item.tdAmount,
+              taxRate: item.taxRate, // 税金
+              noTaxPrice: item.noTaxPrice,
+              taxAmount: item.taxAmount, // 税金
+              noTaxAmount: item.noTaxAmount,
               dateActivation: item.dateActivation,
               executionDate: item.executionDate,
               comment: item.comment || '', // 说明
@@ -494,9 +510,6 @@
                     advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate,
                   }]
                 },
-                assMeasureUnit: null, // 辅助计量
-                assMeasureScale: null, // 与单位倍数
-                assistQty: 0, // 辅计数量
                 promDeliTime: '', // 预期交货日
               }),
               wfPara: JSON.stringify(wfPara)

@@ -311,6 +311,7 @@
               formData,
               dealerInfo : this.dealerInfo,
               contactInfo: this.contactInfo,
+              categoryLabels: this.categoryLabels,
             }
           };
         }
@@ -323,6 +324,7 @@
         this.formData = draft.formData;
         this.dealerInfo = draft.dealerInfo;
         this.contactInfo = draft.contactInfo;
+        this.categoryLabels = draft.categoryLabels;
         sessionStorage.removeItem(DRAFT_KEY)
       }
       this.getTypeLabel()

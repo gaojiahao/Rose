@@ -3,7 +3,7 @@ import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
 import {numberComma,} from 'vux'
 import Bscroll from 'better-scroll'
-import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
+import {accAdd, accMul, accSub, accDiv} from '@/home/pages/maps/decimalsAdd'
 import {toFixed} from '@/plugins/calc'
 import platfrom from '@/plugins/platform/index'
 import MatterItem from 'components/apply/commonPart/MatterItem'
@@ -50,32 +50,27 @@ export default {
     MatterItem,UploadFile
   },
   computed: {
-    // 合计金额
-    totalAmount() {
-      let total = 0;
-      this.matterList.forEach(item => {
-        let price = item.price || 0,
-            tdQty = item.tdQty || 0;
-        item.noTax = accMul(tdQty,price);
-        total = accAdd(total, item.noTax);
-      });
-      return Number(total);
-    },
     // 税金
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        let price = item.price || 0,
-            tdQty = item.tdQty || 0,
+        let noTaxPrice = item.noTaxPrice || 0,
+            assistQty = item.assistQty || 0,
             taxRate = item.taxRate || 0;
-        item.noTax = accMul(tdQty,price);
-        total = accAdd(total, accMul(item.noTax,taxRate)).toFixed(2);
-
+        total = accAdd(total, accMul(assistQty, taxRate, noTaxPrice));
       });
-      return total;
+      return toFixed(total);
     },
+    // 税金小计
     tdAmount() {
-      return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+      let total = 0;
+      this.matterList.forEach(item => {
+        let price = item.price || 0,
+            assistQty = item.assistQty || 0;
+        total = accAdd(total, accMul(price, assistQty));
+      });
+      return toFixed(total);
+      // return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
     },
   },
   watch:{
@@ -85,9 +80,14 @@ export default {
         let price = val.price || 0,
             tdQty = val.tdQty || 0,
             taxRate = val.taxRate || 0;
-        val.noTaxAmount = accMul(price,tdQty).toFixed(2);
-        val.taxAmount = accMul(val.noTaxAmount,taxRate).toFixed(2);
-        val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);
+        val.assistQty = toFixed(accDiv(tdQty, val.assMeasureScale));
+        val.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)));
+        val.tdAmount = toFixed(accMul(price, val.assistQty));
+        val.taxAmount = toFixed(accMul(val.assistQty, taxRate, val.noTaxPrice));
+        val.noTaxAmount = accSub(val.tdAmount, val.taxAmount);
+        // val.noTaxAmount = accMul(price,tdQty).toFixed(2);
+        // val.taxAmount = accMul(val.noTaxAmount,taxRate).toFixed(2);
+        // val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);
       },
       deep:true
     }

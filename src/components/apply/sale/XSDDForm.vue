@@ -15,7 +15,25 @@
         <!-- 物流条款 -->
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealerInfo.dealerLogisticsTerms"
                            v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
-        <cell class="cell-item" title="账期天数" :value="dealerInfo.pamentDays"></cell>
+        <div class="mg_auto no_top">
+          <div class="cell-item">
+            <div class="title">账期天数</div>
+            <div class="mode">
+              <span class="mode_content">{{dealerInfo.pamentDays || "无"}}</span>
+            </div>
+          </div>
+          <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
+                   v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance" @on-blur="checkAmt(dealerInfo)">
+            <span slot="label">预收款</span>
+          </x-input>
+          <div class="cell-item" @click="dateSelect('advancePaymentDueDate')" v-show="hasAdvance">
+            <div class="title">预收到期日</div>
+            <div class="mode">
+              <span class="mode_content">{{dealerInfo.advancePaymentDueDate || '请选择'}}</span>
+              <span class="iconfont icon-shenglve"></span>
+            </div>
+          </div>
+        </div>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -45,13 +63,14 @@
                                @click.native="delClick(index, item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
-                      <div class='mater_more'>
+                      <div class='matter-more'>
                         <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span v-show="item.taxRate">税率: {{item.taxRate || taxRate}}</span>
+                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <div class="mater_more">
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                         <span>合同数量: {{item.qty}}</span>
                         <span>已下单: {{item.stockQty}}</span>
                         <span>待下单: {{item.qtyBal}}</span>
@@ -191,8 +210,8 @@
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
-  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-
+  import {accAdd, accMul, accDiv, accSub} from '@/home/pages/maps/decimalsAdd'
+  import { toFixed } from '@/plugins/calc'
   const DRAFT_KEY = 'XSDD_DATA';
 
   export default {
@@ -236,6 +255,19 @@
     mixins: [common],
     filters: {
       numberComma,
+    },
+    computed: {
+      // 是否含预收
+      hasAdvance() {
+        let {paymentTerm} = this.dealerInfo;
+        let hasAdvanceList = ['赊销'];
+        if(!paymentTerm) {
+          return false
+        }
+        else{
+          return !paymentTerm.includes(hasAdvanceList);
+        }
+      }
     },
     methods: {
       // 选中的客户
@@ -292,6 +324,15 @@
         }
         this.showMaterielPop = !this.showMaterielPop;
       },
+      checkAmt(item) {
+        let {tdQty, tdAmountCopy1} = item;
+        if(tdQty) {
+          item.tdQty = Math.abs(toFixed(tdQty));
+        }
+        if(tdAmountCopy1) {
+          item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
+        }
+      },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
@@ -305,6 +346,11 @@
             promDeliTime = '',
           } = this.numMap[item.inventoryCode] || {};
           item.tdQty = tdQty;
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
+          item.assistQty = toFixed(accDiv(item.tdQty, item.invSubUnitMulti));
+          item.noTaxPrice = toFixed(accDiv(item.price, accAdd(1, taxRate)));
           item.price = price;
           item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;
@@ -397,6 +443,17 @@
         }
         this.showMaterielPop = !this.showMaterielPop;
       },
+      // TODO 展示时间选择器
+      dateSelect(key = '') {
+        this.$vux.datetime.show({
+          confirmText: '确定',
+          cancelText: '取消',
+          value: this.dealerInfo[key],
+          onConfirm: (value) => {
+            this.$set(this.dealerInfo, key, value)
+          }
+        })
+      },
       // 提价订单
       submitOrder() {
         if (!this.dealerInfo.dealerName) {
@@ -427,7 +484,7 @@
                 break
               }
               let taxRate = item.taxRate || this.taxRate;
-              let taxAmount = accMul(item.price, item.tdQty, taxRate);
+              let taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
               let obj = {
                 tdId: item.tdId || '',
                 transMatchedCode: item.transCode,
@@ -435,18 +492,21 @@
                 transObjCode: item.inventoryCode, // 物料编码
                 tdProcessing: item.processing, // 加工属性
                 assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
+                assMeasureDescription: item.assMeasureDescription || null,
                 assMeasureScale: item.assMeasureScale || null, // 与单位倍数
-                assistQty: item.assistQty || 0, // 辅计数量
                 dealerInventoryName: item.clientInventoryName,
                 dealerInventoryCode: item.clientInventoryCode,
                 thenTotalQtyBal: item.qty,
                 thenLockQty: item.stockQty,
                 thenQtyBal: item.qtyBal,
                 tdQty: item.tdQty, // 数量
+                assistQty: item.assistQty || 0, // 辅计数量
                 price: item.price, // 单价
+                tdAmount: toFixed(accMul(item.price, item.assistQty)), // 价税小计
                 taxRate: taxRate, // 税金
+                noTaxPrice: item.noTaxPrice,
                 taxAmount: taxAmount, // 税金
-                tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
+                noTaxAmount: accSub(item.tdAmount, item.taxAmount),
                 dateActivation: item.dateActivation, // 交付开始日
                 promDeliTime: item.promDeliTime || null, // 预期交货日
                 executionDate: item.executionDate, // 交付截止日
@@ -486,8 +546,8 @@
                 formData: JSON.stringify({
                   ...this.formData,
                   handlerEntity: this.entity.dealerName,
-                  dealerDebitContactPersonName: this.contactInfo.dealerName,
-                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone,
+                  dealerDebitContactPersonName: this.contactInfo.dealerName || '',
+                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '',
                   drDealerLogisticsTerms: this.dealerInfo.dealerLogisticsTerms,
                   order: {
                     dealerDebit: this.dealerInfo.dealerCode,
@@ -495,7 +555,15 @@
                     drDealerPaymentTerm: this.dealerInfo.paymentTerm,
                     daysOfAccount: this.dealerInfo.pamentDays,
                     dataSet
-                  }
+                  },
+                  inPut: {
+                    dataSet: [{
+                      dealerDebit: this.dealerInfo.dealerCode,
+                      drDealerLabel: this.dealerInfo.dealerLabelName,
+                      tdAmountCopy1: this.dealerInfo.tdAmountCopy1,
+                      advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate,
+                    }]
+                  },
                 }),
                 wfPara: JSON.stringify(wfPara)
               }
@@ -604,7 +672,6 @@
         }
         return {
           [DRAFT_KEY]: {
-            matter: this.matterList,
             dealerInfo: this.dealerInfo,
             formData: this.formData,
             contactInfo: this.contactInfo,
@@ -617,11 +684,15 @@
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
-        this.matterList = draft.matter;
         this.dealerInfo = draft.dealerInfo;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
         this.orderList = draft.orderList;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            this.matterList.push(item)
+          }
+        }
         // 物料列表请求参数
         this.matterParams = {
           dealerCode: this.dealerInfo.dealerCode,
@@ -639,22 +710,48 @@
   .vux-1px-t:before {
     border-color: #e8e8e8;
   }
-
+  //有效期
+  .no_top {
+    margin-top: 0;
+    margin-bottom: 0.1rem;
+    background: #fff;
+  }
   .cell-item {
-    margin: 0 auto;
-    padding: .05rem .1rem;
-    width: 95%;
-    background-color: #fff;
+    background: #fff;
     box-sizing: border-box;
+    padding: .02rem .1rem;
+    display: flex;
+    font-size: .14rem;
+    align-items: center;
+    justify-content: space-between;
+    height: .36rem;
+    line-height: .32rem;
+    /deep/ .weui-cell__hd{
+      color: #757575;
+    }
     &:before {
       display: none;
     }
-    /deep/ .vux-label {
+    .title {
       color: #757575;
-      font-size: .14rem;
+      &.required {
+        color: #5077aa;
+      }
+    }
+    .mode {
+      color: #111;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      .mode_content {
+        margin-right: .06rem;
+      }
+      .icon-shenglve {
+        font-size: .2rem;
+        color: #707070;
+      }
     }
   }
-
   .comment {
     width: 95%;
     margin: 0 auto;
