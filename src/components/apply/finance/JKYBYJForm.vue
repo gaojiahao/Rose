@@ -37,9 +37,10 @@
                   </popup-picker>
                   <cell title="信用额度" v-model="dealerInfo.tdCreditLine" text-align='right'></cell>
                   <cell title="往来余额" v-model="dealerInfo.thenAmntBalCopy1" text-align='right'></cell>
-                  <x-input title="申请余额" type="number" text-align='right' placeholder='请填写'
+                  <x-input type="number" text-align='right' placeholder='请填写'
                            @on-blur="checkAmt(dealerInfo.thenTotalAmntBal)" @on-focus="getFocus"
                            v-model.number="dealerInfo.thenTotalAmntBal">
+                    <span class="required" slot="label">申请金额</span>
                   </x-input>
                   <!--<template v-if="transCode">
                     <cell title="本次支付" v-model="dealerInfo.tdAmountCopy1" text-align='right'></cell>
@@ -165,7 +166,10 @@
         let warn = '';
         let dealerInfo = this.dealerInfo;
         if (!dealerInfo.applicationType.length) {
-          warn = '请选择类型'
+          warn = '请选择类型';
+        }
+        if (!warn && !dealerInfo.thenTotalAmntBal && dealerInfo.thenTotalAmntBal !== 0) {
+          warn = '请输入申请金额';
         }
         // 有必填值为空，或者金额为0，展示错误提示
         if (warn) {
@@ -199,11 +203,13 @@
               },
               outPut: {
                 dataSet: [{
+                  tdId: this.cashInfo.tdId || '',
                   cashInCode: this.cashInfo.cashInCode,
                   cashType_cashInCode: this.cashInfo.cashType_cashInCode,
                   thenAmntBal: this.cashInfo.thenAmntBal,
                   tdAmount: this.cashInfo.tdAmount,
-                  tdId: this.cashInfo.tdId || '',
+                  dealerCodeCredit: dealerInfo.dealerCodeCredit,
+                  crDealerLabel: dealerInfo.crDealerLabel,
                 }]
               }
             };
