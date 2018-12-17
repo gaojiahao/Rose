@@ -5,7 +5,7 @@
         <div class="user-info">
           <div class="user-name">
             <span class="user-tips">{{selInfo.fundType}}</span>
-            <span>{{selInfo.fundName}}</span>
+            <span>{{selInfo.fundName || '暂无银行名称'}}</span>
           </div>
         </div>
         <div class="cp-info">
@@ -28,7 +28,7 @@
              v-model="showDealerPop">
       <template slot-scope="{item}" slot="pop-item">
         <div class="top">
-          <span class="name">{{item.fundName}}</span>
+          <span class="name">{{item.fundName || '暂无银行名称'}}</span>
           <span class="label">{{item.fundType}}</span>
         </div>
         <div class="amt">
