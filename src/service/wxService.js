@@ -1,8 +1,8 @@
-import $axios from '../plugins/ajax';
+import $flyio from '../plugins/ajax';
 
 // TODO 获取企业微信config参数
 export let getJsApiSignature = (url = '') => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/getJsApiSignature',
     data: {
       url,

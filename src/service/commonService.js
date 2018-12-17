@@ -1,8 +1,8 @@
-import $axios from '../plugins/ajax';
+import $flyio from '../plugins/ajax'
 
 // TODO 保存
 export let saveAndStartWf = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/saveAndStartWf',
@@ -12,7 +12,7 @@ export let saveAndStartWf = (data = {}) => {
 
 // TODO 修改
 export let saveAndCommitTask = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/saveAndCommitTask',
@@ -22,7 +22,7 @@ export let saveAndCommitTask = (data = {}) => {
 
 // TODO 保存(没有工作流)
 export let submitAndCalc = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/submitAndCalc',
@@ -32,7 +32,7 @@ export let submitAndCalc = (data = {}) => {
 
 // TODO 修改(没有工作流)
 export let updateAndCalc = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/formAPI/updateAndCalc',
@@ -41,7 +41,7 @@ export let updateAndCalc = (data = {}) => {
 };
 
 export let commitTask = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/flow/commitTask',
@@ -52,12 +52,12 @@ export let commitTask = (data = {}) => {
 // TODO 获取当前用户信息(基础对象调用)
 export let getBaseInfoDataBase = () => {
   return new Promise(async (resolve, reject) => {
-    let {nickname, userId} = await $axios.ajax({
+    let {nickname, userId} = await $flyio.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
     })
-    let {userGroupId = '', userGroupName = ''} = await $axios.ajax({
+    let {userGroupId = '', userGroupName = ''} = await $flyio.ajax({
       url: '/H_roleplay-si/ds/getUnitsByUserId',
       data: {
         userId: userId,
@@ -69,7 +69,7 @@ export let getBaseInfoDataBase = () => {
       let [unit = {}] = tableContent;
       return unit
     })
-    $axios.ajax({
+    $flyio.ajax({
       url: '/H_roleplay-si/ds/getRolesByUserId',
       data: {
         userId: userId,
@@ -96,12 +96,12 @@ export let getBaseInfoDataBase = () => {
 export let getBaseInfoData = () => {
   return new Promise(async (resolve, reject) => {
 
-    let {nickname, userId, userCode} = await $axios.ajax({
+    let {nickname, userId, userCode} = await $flyio.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
     })
-    let {groupId = '', groupName = ''} = await $axios.ajax({
+    let {groupId = '', groupName = ''} = await $flyio.ajax({
       url: '/H_roleplay-si/ds/getGroupByUserId',
       data: {
         userId: userId,
@@ -113,7 +113,7 @@ export let getBaseInfoData = () => {
       let [unit = {}] = tableContent;
       return unit
     })
-    await $axios.ajax({
+    await $flyio.ajax({
       url: '/H_roleplay-si/ds/getRoleByUserId',
       data: {
         userId: userId,
@@ -139,7 +139,7 @@ export let getBaseInfoData = () => {
 
 // TODO 获取视图列表
 export let getList = (viewId = 0, data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: `/H_roleplay-si/seconds/getReportInfoByListViewId/${viewId}`,
     data
   })
@@ -147,7 +147,7 @@ export let getList = (viewId = 0, data = {}) => {
 
 // TODO 上传图片
 export let upload = ({file = {}, biReferenceId = ''}) => {
-  return $axios.upload({
+  return $flyio.upload({
     file,
     biReferenceId
   })
@@ -155,7 +155,7 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
 
 // TODO 删除文件
 export let deleteFile = (id = '') => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/delete',
     data: {
       _dc: Date.now(),
@@ -167,7 +167,7 @@ export let deleteFile = (id = '') => {
 
 // TODO 获取加工属性
 export let getDictByType = (type = '', data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDictByType',
     data: {
       _dc: Date.now(),
@@ -182,7 +182,7 @@ export let getDictByType = (type = '', data = {}) => {
 
 // 获取流程状态
 export let getProcessStatus = (listId) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getProcessStatus',
     data: {
       listId,
@@ -195,7 +195,7 @@ export let getProcessStatus = (listId) => {
 
 // TODO 获取材料大类、材料子类
 export let getDictByValue = (value = '', data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDictByValue',
     data: {
       _dc: Date.now(),
@@ -210,7 +210,7 @@ export let getDictByValue = (value = '', data = {}) => {
 
 // TODO 获取工作流的processCode
 export let getProcess = (listId = '') => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/list/getProcessByListId',
     data: {
       _dc: Date.now(),
@@ -221,7 +221,7 @@ export let getProcess = (listId = '') => {
 
 // TODO 获取员工、客户、加工商、渠道商
 export let getObjDealerByLabelName = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getObjDealerByLabelName',
     data: {
       _dc: Date.now(),
@@ -235,13 +235,13 @@ export let getObjDealerByLabelName = (data = {}) => {
 
 // 获取所有的经办人
 export let listUsers = (data = {}) =>{
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/listUsers',
     data
   })
 }
 export let getGroupByUserId = (userId = '') =>{
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getGroupByUserId',
     data: {
       page: 1,
@@ -252,7 +252,7 @@ export let getGroupByUserId = (userId = '') =>{
   })
 }
 export let getRoleByUserId = (userId = '') =>{
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getRoleByUserId',
     data: {
       page: 1,
@@ -264,7 +264,7 @@ export let getRoleByUserId = (userId = '') =>{
 }
 // TODO 获取转办人员列表
 export let getUserList = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/listUsers',
     data: {
       _dc: Date.now(),
@@ -276,7 +276,7 @@ export let getUserList = (data = {}) => {
 
 // TODO 转办
 export let transferTask = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/flow/setAssignee',
     data: {
       _dc: Date.now(),

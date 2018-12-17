@@ -1,9 +1,9 @@
 
-import $axios from 'plugins/ajax';
+import $flyio from 'plugins/ajax';
 
 // 获取 所有部门列表
 export let getAllGroup = () => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getAllGroup',
     data: {
       page: 1,
@@ -14,7 +14,7 @@ export let getAllGroup = () => {
 }
 // 获取所有岗位列表
 export let getAllRoleInfo = () => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getAllRoleInfo',
     data: {
       page: 1,
@@ -24,7 +24,7 @@ export let getAllRoleInfo = () => {
   })
 }
 export let getDepartMentWage = () => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getDepartMentWage',
     data: {
       page: 1,
