@@ -98,6 +98,11 @@
       }
     },
     computed: {
+      // TODO 是否为部门负责人、财务总监
+      isInCharge(){
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'd7ef0729-4a55-46fe-a750-e5298042c5bc';
+      },
       // TODO 是否为采购总监、财务经理/总监、总经理
       isApproval() {
         let {viewId = ''} = this.currentWL;
@@ -186,8 +191,9 @@
             },
           };
           this.saveData(formData);
+          return true
         }
-        return true
+        return false
       },
       // TODO 选中资金
       selCash(item) {
