@@ -43,14 +43,15 @@
                                @click.native="delClick(index, item, key)">
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
-                      <div class="mater_more">
-                        <span class="processing">属性: {{item.processing}}</span>
-                        <span class='unit'>单位: {{item.measureUnit_outPutMatCode}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
+                      <div class='matter-more'>
+                        <span class='unit'>属性: {{item.processing}}</span>
+                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <div class="mater_more">
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                         <span class='qty' v-show="item.qtyBal">可退货数量: {{item.qtyBal}}</span>
-                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">                      
@@ -141,14 +142,26 @@
             <p v-show="modifyMatter.qtyStockBal">可用库存: {{modifyMatter.qtyStockBal}}</p>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="退货数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span class="required">退货数量</span>
+              </template>
             </x-input>
-            <x-input title="退货单价" type="number"  v-model.number='modifyMatter.price' text-align="right" 
-            @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
+            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right" 
+            @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span class="required">退货单价</span>
+              </template>
+            </x-input>
+            <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span class="required">税率</span>
+              </template>
             </x-input>
+            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
           </template>
           <template slot="modifyTitle">
             <label>退货金额</label>
@@ -184,7 +197,7 @@
 
 <script>
 // vux插件引入
-import { XTextarea, XInput } from 'vux'
+import { XTextarea, XInput, Cell} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc } from 'service/commonService'
@@ -251,7 +264,7 @@ export default {
     }
   },
   components: {
-    XTextarea, XInput, RNumber,
+    XTextarea, XInput, RNumber, Cell,
     PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter, RPicker, PopBaseinfo
   },
   mixins: [applyCommon],
@@ -297,6 +310,9 @@ export default {
           item.price = price;
         }
         item.taxRate = taxRate;
+        item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+        item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+        item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
         if (!orderList[item.transCode]) {
           orderList[item.transCode] = [];
         }
@@ -457,14 +473,16 @@ export default {
             tdProcessing: item.processing, // 加工属性
             assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
             assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与单位倍数
-            assistQty: item.assistQty || 0, // 辅计数量（明细）
+            assMeasureDescription: item.assMeasureDescription || '',
             thenQtyBal: item.qtyBal,
 			      thenQtyStock: item.qtyStockBal,
             tdQty: item.tdQty, // 明细发生
+            assistQty: item.assistQty || 0, // 辅计数量（明细）
             price: item.price, // 明细单价
+            tdAmount: item.tdAmount,
             taxRate: taxRate, // 税率
-            taxAmount: taxAmount, // 税金
-            tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
+            noTaxPrice: item.noTaxPrice,
+            taxAmount: item.taxAmount, // 税金
             comment: item.comment || '', // 说明
           };
           if (this.transCode) {
