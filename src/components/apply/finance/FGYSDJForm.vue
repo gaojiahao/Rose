@@ -221,8 +221,12 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "STPD_yyMMdd_4_0", createdBy: JSON.stringify(this.formData.handler)}
-            }
+              [this.processCode]: {
+                businessKey: this.businessKey,
+                createdBy: JSON.stringify(this.formData.handler),
+                '本次支付': this.applicationAmount,
+              }
+            };
             if (this.isResubmit) {
               wfPara = {
                 businessKey: this.transCode,
@@ -348,9 +352,9 @@
           };
           this.cashInfo = {
             ...cashInfo,
-            fundName: cashInfo.fundName_cashOutCode,
-            fundCode: cashInfo.cashOutCode,
-            fundType: cashInfo.cashType_cashOutCode,
+            // fundName: cashInfo.fundName_cashOutCode,
+            // fundCode: cashInfo.cashOutCode,
+            // fundType: cashInfo.cashType_cashOutCode,
           };
           this.orderList = orderDataSet;
           this.$loading.hide();

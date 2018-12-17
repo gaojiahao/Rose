@@ -291,7 +291,7 @@ export default {
       event.currentTarget.select();
     },
     // TODO 审批
-    saveData(formData) {
+    saveData(formData = {},wfPara = {}) {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
         onConfirm: (value) => {
@@ -308,6 +308,7 @@ export default {
               result: 1,
               taskId: this.taskId,
               comment: value,
+              ...wfPara,
             })
           };
           this.$HandleLoad.show();

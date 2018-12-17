@@ -16,8 +16,12 @@
               <span class="info-item">{{item.transCode}}</span>
             </div>
             <div class="pop-info">
-              <span class="info-item">采购定金: {{item.thenAmntBal}}</span>
-              <span class="info-item">总金额: {{item.deposit}}</span>
+              <span class="info-item">采购定金: {{item.amount}}</span>
+              <span class="info-item">总金额: {{item.thenAmntBal}}</span>
+            </div>
+            <div class="pop-info">
+              <span class="info-item">已付定金: {{item.amnted}}</span>
+              <span class="info-item">待付定金: {{item.deposit}}</span>
             </div>
             <!-- icon -->
             <x-icon class="selIcon" type="ios-circle-outline" size="20"></x-icon>
