@@ -92,47 +92,45 @@ export let getBaseInfoDataBase = () => {
   });
 };
 
-// TODO 获取当前用户信息
+// 获取当前用户信息
 export let getBaseInfoData = () => {
   return new Promise(async (resolve, reject) => {
-
+    // 当前用户
     let {nickname, userId, userCode} = await $flyio.ajax({
       url: '/H_roleplay-si/userInfo/currentUser',
     }).then(data => {
       return data
     })
-    let {groupId = '', groupName = ''} = await $flyio.ajax({
+    // 经办组织
+    let { tableContent: handleORG } = await $flyio.ajax({
       url: '/H_roleplay-si/ds/getGroupByUserId',
       data: {
-        userId: userId,
+        userId,
         page: 1,
         start: 0,
         limit: 10000
       }
     }).then(({tableContent = []}) => {
-      let [unit = {}] = tableContent;
-      return unit
+      return { tableContent };
     })
-    await $flyio.ajax({
+    // 经办职位
+    let { tableContent: userRoleList } = await $flyio.ajax({
       url: '/H_roleplay-si/ds/getRoleByUserId',
       data: {
-        userId: userId,
-        // parentId: userGroupId,
+        userId,
         page: 1,
         start: 0,
         limit: 10000
       }
     }).then(({tableContent = []}) => {
-      let [role = {}] = tableContent;
-      resolve({
-        handler: userId,
-        handlerName: nickname,
-        handlerUnit: groupId,
-        handlerUnitName: groupName,
-        handlerRole: role.roleId || '',
-        handlerRoleName: role.roleName || '',
-        userCode: userCode,
-      });
+      return { tableContent }
+    })
+    resolve({
+      handleORG,
+      userRoleList,
+      userId,
+      nickname,
+      userCode,
     })
   });
 };

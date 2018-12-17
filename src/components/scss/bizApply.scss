@@ -168,9 +168,13 @@
     overflow: hidden;
   }
 }
-//底部为提交时
+// 底部为(价格 + 提交)样式
 .no_count{
   height: 95%;
+}
+// 全部是表格提交 并且底部只有(提交)格式
+.when-is-form {
+  height: 90%;
 }
 //必填字段
 .required{

@@ -1,8 +1,9 @@
 <template>
   <div class='pages cpfb-apply-container'>
-    <div class="basicPart no_count" ref="fill">
+    <div class="basicPart when-is-form" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
@@ -20,8 +21,6 @@
                       </span>
                     </template>
                   </x-input>
-                  <!-- <r-picker title="类型:" mode='2' :data="launchTypeList" :value="formData.launchType"
-                            v-model="formData.launchType" required></r-picker> -->
                   <popup-picker title="类型" :data="launchTypeList" v-model="selectedType"
                                 placeholder="请选择" @on-change='isSelectType'>
                     <template slot="title">
@@ -35,6 +34,7 @@
             </div>
           </div>
         </div>
+        <upload-file :default-value="attachment" @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -81,6 +81,7 @@
         launchTypeList: [],
         dealerInfo: {},
         contactInfo: {},
+        uploadStyle : {},        
       }
     },
     mixins: [ApplyCommon],
@@ -271,6 +272,9 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply.scss';
+  .materiel_list .mater_list .each_mater {
+    padding: unset;
+  }  
   .cpfb-apply-container {
     .CP_group {
       /deep/ > .vux-label {

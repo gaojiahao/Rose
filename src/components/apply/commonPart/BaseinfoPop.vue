@@ -70,18 +70,26 @@ import DSearch from 'components/search'
 export default {
   name: 'BaseInfo',
   props: {
-    info: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
     // 默认值
     defaultValue: {
       type: Object,
       default() {
         return {}
       }
+    },
+    handleOrgList: {
+      type: Array,
+      default() {
+        return []
+      },
+      required: true
+    },
+    userRoleList: {
+      type: Array,
+      default() {
+        return []
+      },
+      required: true
     },
     //是否为必填项
     isRequired: {
@@ -95,24 +103,23 @@ export default {
   },
   data() {
     return {
-      currentUser: {},
-      limit: 50,
       page: 1,
+      limit: 50,
       hasNext: true,
       scrollOptions: {
         click: true,
         pullUpLoad: true,
       },
-      showPop: false,
       srhInpTx: '', // 搜索框内容
+      showPop: false,
+      isSetInitial: false, // 用于判断经办组织和经办部门是否设置初始值
       selItems: {}, // 哪些被选中了
-      listData: [], // 经办人列表
-      groupList: [], // 组织列表
-      roleList: [], // 职位列表
-      group: [], // 选中的组织
+      currentUser: {},
       role: [], // 选中的职位
-      isSetInitial: false, //用于判断经办组织和经办部门是否设置初始值
-
+      group: [], // 选中的组织
+      listData: [], // 经办人列表
+      roleList: [], // 职位列表
+      groupList: [], // 组织列表
     }
   },
   watch: {
@@ -121,7 +128,7 @@ export default {
     },
   },
   methods: {
-    // TODO 弹窗展示时调用
+    // 弹窗展示时调用
     onShow() {
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
@@ -129,128 +136,85 @@ export default {
         }
       })
     },
-    // TODO 弹窗隐藏时调用
+    // 弹窗隐藏时调用
     onHide() {
       this.showPop = false;
     },
-    // TODO 搜索仓库
+
+    // 上拉加载
+    onPullingUp() {
+      this.page++;
+      this.getlistUsers();
+    },
+    // 判断是否展示选中图标
+    showSelIcon(sItem) {
+      return `${this.selItems.userId}` === `${sItem.userId}`;
+    },
+    // 获取 默认图片
+    getDefaultImg(item) {
+      let url = item.gender === '男'
+        ? require('assets/ava03.png')
+        : require('assets/ava04.png');
+      if (item) {
+        item.photo = url;
+      };
+      return url;
+    },
+    // 选择 组织
+    changeGroup(val) {
+      this.selItems.handlerUnitName = val[0];
+      this.groupList.forEach( item => {
+        if (item.name === val[0]) {
+          this.selItems.handlerUnit = item.userGroupId;
+          return false;
+        }
+      });
+      let emitObj = {
+        handler: this.selItems.userId,
+        handlerName: this.selItems.nickname,
+        handlerUnit: this.selItems.handlerUnit,
+        handlerUnitName: this.selItems.handlerUnitName,
+        handlerRole: this.selItems.handlerRole,
+        handlerRoleName: this.selItems.handlerRoleName,
+      };
+      this.$emit('sel-item',emitObj);
+    },
+    // 选择 职位
+    changeRole(val) {
+      this.selItems.handlerRoleName = val[0];
+      this.roleList.forEach( item => {
+        if(item.name === val[0]){
+          this.selItems.handlerRole = item.userGroupId;
+          return false;
+        }
+      });
+      let emitObj = {
+        handler: this.selItems.userId,
+        handlerName: this.selItems.nickname,
+        handlerUnit: this.selItems.handlerUnit,
+        handlerUnitName: this.selItems.handlerUnitName,
+        handlerRole: this.selItems.handlerRole,
+        handlerRoleName: this.selItems.handlerRoleName,
+      };
+      this.$emit('sel-item',emitObj);
+    },
+    // 选择 经办人
+    selThis (sItem, sIndex) {
+      this.isSetInitial = true;
+      this.showPop = false;
+      this.selItems = sItem;
+      this.getNewHandleORG();
+      this.getNewUserRole();
+    },
+    // 搜索 经办人
     searchList({val = ''}) {
       this.srhInpTx = val;
       this.listData = [];
       this.page = 1;
       this.hasNext = true;
       this.getlistUsers();
-    },
-    // TODO 上拉加载
-    onPullingUp() {
-      this.page++;
-      this.getlistUsers();
-    },
-    // TODO 设置默认值
-    setDefaultValue() {
-      this.selItems = this.defaultValue ? {...this.defaultValue,userId: this.defaultValue.handler,nickname: this.defaultValue.handlerName} : {};
-      this.group = [this.selItems.handlerUnitName];
-      this.role = [this.selItems.handlerRoleName];
-      this.getGroupByUserId();
-      this.getRoleByUserId();
-    },
-    // TODO 判断是否展示选中图标
-    showSelIcon(sItem) {
-      return `${this.selItems.userId}` === `${sItem.userId}`;
-    },
-    // TODO 获取默认图片
-    getDefaultImg(item) {
-      let url = item.gender === '男'
-        ? require('assets/ava03.png')
-        : require('assets/ava04.png')
-      if (item) {
-        item.photo = url;
-      }
-      return url;
-    },
-    // 选择组织
-    changeGroup(val) {
-      this.selItems.handlerUnitName = val[0]
-      this.groupList.forEach( item => {
-        if (item.name === val[0]) {
-          this.selItems.handlerUnit = item.userGroupId;
-          return false;
-        }
-      })
-      let emitObj = {
-        handler: this.selItems.userId,
-        handlerName: this.selItems.nickname,
-        handlerUnit: this.selItems.handlerUnit,
-        handlerUnitName: this.selItems.handlerUnitName,
-        handlerRole: this.selItems.handlerRole,
-        handlerRoleName: this.selItems.handlerRoleName,
-      }
-      this.$emit('sel-item',emitObj);
-    },
-    // 选择职位
-    changeRole(val) {
-      this.selItems.handlerRoleName = val[0]
-      this.roleList.forEach(item => {
-        if(item.name === val[0]){
-          this.selItems.handlerRole = item.userGroupId;
-          return false;
-        }
-      })
-      let emitObj = {
-        handler: this.selItems.userId,
-        handlerName: this.selItems.nickname,
-        handlerUnit: this.selItems.handlerUnit,
-        handlerUnitName: this.selItems.handlerUnitName,
-        handlerRole: this.selItems.handlerRole,
-        handlerRoleName: this.selItems.handlerRoleName,
-      }
-      this.$emit('sel-item',emitObj);
-    },
-    // TODO 选择物料
-    selThis (sItem, sIndex) {
-      this.isSetInitial = true;
-      this.showPop = false;
-      this.selItems = sItem;
-      this.getGroupByUserId();
-      this.getRoleByUserId();
-    },
-    // TODO 请求部门
-    getGroupByUserId(){
-      return getGroupByUserId(this.selItems.userId).then(({tableContent = []}) => {
-        this.groupList = []
-        tableContent.forEach(item=>{
-          this.groupList.push({
-            ...item,
-            name: item.userGroupName,
-            value: item.userGroupName,
-          })
-        })
-        if(tableContent.length && this.isSetInitial){
-          this.group = [tableContent[0].userGroupName];
-          this.selItems.handlerUnit = tableContent[0].userGroupId;
-        }
-      })
-    },
-    // TODO 请求职位
-    getRoleByUserId() {
-      return getRoleByUserId(this.selItems.userId).then(({tableContent = []}) => {
-        this.roleList = []
-        tableContent.forEach(item=>{
-          this.roleList.push({
-            ...item,
-            name: item.userGroupName,
-            value: item.userGroupName,
-          })
-
-        })
-        if(tableContent.length && this.isSetInitial){
-          this.role = [tableContent[0].userGroupName];
-          this.selItems.handlerRole = tableContent[0].userGroupId;
-        }
-      })
-
-    },
-    // TODO 获取仓库列表
+    },    
+    // 请求 经办人列表
     getlistUsers() {
       let filter = [];
       if (this.srhInpTx) {
@@ -260,8 +224,9 @@ export default {
             operator: 'like',
             value: this.srhInpTx,
             property: 'nickname',
-          }];
-      }
+          }
+        ];
+      };
       return listUsers({
         limit: this.limit,
         page: this.page,
@@ -274,13 +239,84 @@ export default {
           this.$refs.bScroll.finishPullUp();
         })
       });
+    },    
+    // 设置默认值
+    setDefaultValue() {
+      this.selItems = this.defaultValue 
+        ? {
+            ...this.defaultValue,
+            userId: this.defaultValue.handler,
+            nickname: this.defaultValue.handlerName
+          } 
+        : {};
+      this.group = [this.selItems.handlerUnitName];
+      this.role = [this.selItems.handlerRoleName];
+      this.defaultORG();  // 默认 经办组织
+      this.defaultUserRole(); // 默认 经办职位
     },
+    // 默认（传入）经办组织
+    defaultORG() {
+      this.groupList = [];
+      this.handleOrgList.forEach( item => {
+        this.groupList.push({
+          ...item,
+          name: item.userGroupName,
+          value: item.userGroupName,
+        })
+      });
+    },
+    // 默认（传入）经办职位
+    defaultUserRole() {
+      this.roleList = [];
+      this.userRoleList.forEach( item => {
+        this.roleList.push({
+          ...item,
+          name: item.userGroupName,
+          value: item.userGroupName,
+        })
+      });
+    },
+    // 当经办人更换时，重新请求 经办组织
+    getNewHandleORG() {
+      return getGroupByUserId(this.selItems.userId).then(({tableContent = []}) => {
+        this.group = [];
+        this.groupList = [];
+        tableContent.forEach( item => {
+          this.groupList.push({
+            ...item,
+            name: item.userGroupName,
+            value: item.userGroupName,
+          })
+        });
+        if(tableContent.length && this.isSetInitial){
+          this.group = [tableContent[0].userGroupName];
+          this.selItems.handlerUnit = tableContent[0].userGroupId;
+        };
+      })
+    },
+    // 当经办人更换时，重新请求 经办职位
+    getNewUserRole() {
+      return getRoleByUserId(this.selItems.userId).then(({tableContent = []}) => {
+        this.role = [];
+        this.roleList = [];
+        tableContent.forEach( item => {
+          this.roleList.push({
+            ...item,
+            name: item.userGroupName,
+            value: item.userGroupName,
+          })
+        });
+        if(tableContent.length && this.isSetInitial){
+          this.role = [tableContent[0].userGroupName];
+          this.selItems.handlerRole = tableContent[0].userGroupId;
+        };
+      })
+    }
   },
   created() {
-    this.setDefaultValue();
     this.getlistUsers();
+    this.setDefaultValue();
   }
-
 }
 </script>
 
@@ -347,6 +383,28 @@ export default {
         .vux-cell-value {
           color: #111;
           font-size: .14rem;
+        }
+        .weui-cell__ft {
+          padding-right: 13px;
+          position: relative;          
+          &:after {
+            content: " ";
+            display: inline-block;
+            height: 6px;
+            width: 6px;
+            border-width: 2px 2px 0 0;
+            border-color: #C8C8CD;
+            border-style: solid;
+            -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+            -ms-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+            transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+            position: relative;
+            top: -2px;
+            position: absolute;
+            top: 50%;
+            margin-top: -4px;
+            right: 2px;          
+          }
         }
       }
       .vux-cell-box:not(:first-child):before {

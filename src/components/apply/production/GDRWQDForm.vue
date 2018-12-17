@@ -3,7 +3,8 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!--<div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>-->
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
                   v-model="biProcessStatus" :hasBorder="false"></r-picker>
         <!-- 物料列表 -->
