@@ -94,7 +94,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" processing="原料"
+                           :default-value="matterList" :params="matterParams" get-list-method="getInventoryToProcessing"
                            ref="matter" :isShowCode="false"></pop-matter-list>
 
         </div>
@@ -190,6 +190,9 @@
         showMaterielPop: false, // 是否显示物料的popup
         showDealerPop: false, // 是否显示供应商的popup
         contact: {},
+        matterParams: {
+          processing: '原料',
+        }, 
       }
     },
     mixins: [common],
@@ -217,7 +220,7 @@
         let sels = JSON.parse(val);
         sels.map(item => {
           let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-          let {tdQty = '', price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
+          let {tdQty = '', price = '', taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
@@ -479,6 +482,7 @@
             formData: this.formData,
             dealer: this.dealer,
             contact: this.contact,
+            inPut: this.inPut
           }
         };
       },
@@ -501,6 +505,7 @@
         this.dealer = draft.dealer;
         this.formData = draft.formData;
         this.contact = draft.contact;
+        this.inPut = draft.inPut;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 

@@ -123,7 +123,7 @@
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :filterList="filterList"
                            :default-value="matterList" get-list-method="getCKTHCKList" :params="matterParams" 
                            isShowStock ref="matter">
-            <template slot="titleName">
+            <template slot="titleName" slot-scope="{item}">
               <span class="order-title">订单号</span>
             </template>
             <template slot="storage" slot-scope="{item}">
@@ -304,20 +304,6 @@ export default {
       this.numMap = {};
       this.matterList = sels;
       this.orderList = orderList;
-      // let sels = JSON.parse(val);
-      // sels.forEach(item => {
-      //   if (this.numMap[item.inventoryCode]) {
-      //     item.tdQty = this.numMap[item.inventoryCode].tdQty;
-      //     item.price = this.numMap[item.inventoryCode].price;
-      //   } 
-      //   else {
-      //     item.tdQty = '';
-      //     item.price = '';
-      //   }
-      //   item.taxRate = 0.16;
-      // });
-      // this.numMap = {};
-      // this.matterList = sels;
     },
     // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
@@ -659,11 +645,11 @@ export default {
       }
       return {
         [DRAFT_KEY]: {
-          matter: this.matterList,
           dealer: this.dealerInfo,
           warehouse: this.warehouse,
           formData: this.formData,
           orderList: this.orderList,
+          crDealerPaymentTerm: this.crDealerPaymentTerm,
         }
       };
     },
@@ -729,12 +715,16 @@ export default {
   created () {
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
-      this.matterList = JSON.parse(data).matter;
       this.orderList = JSON.parse(data).orderList;
+      for (let items of Object.values(this.orderList)) {
+        for (let item of items) {
+          this.matterList.push(item)
+        }
+      }
       this.dealerInfo = JSON.parse(data).dealer;
       this.warehouse = JSON.parse(data).warehouse;
       this.formData = JSON.parse(data).formData;
-      this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
+      this.crDealerPaymentTerm = this.crDealerPaymentTerm;
       sessionStorage.removeItem(DRAFT_KEY);
     }
   },

@@ -540,11 +540,6 @@ export default {
           this.matterList.push(item)
         })
       }
-      // Object.values(this.orderList).forEach(item => {
-      //   this.matterList.push(item)
-      // })
-      // this.matterList = [...Object.values(this.orderList)];
-      // this.matterList = JSON.parse(data).matterList;
       sessionStorage.removeItem(DRAFT_KEY);
     }
   },
