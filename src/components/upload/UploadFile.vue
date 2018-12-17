@@ -3,17 +3,17 @@
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
       <div class="upload-file-item" v-for="(item, index) in files"  :key="index">
-        <img :src='item'>
-        <!-- <template v-if="item.iconType === 'image'">
+        <!-- <img :src='item'> -->
+        <template v-if="item.iconType === 'image'">
           <img @click.stop="preview(item)" class="img" :src="`/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`">
         </template>
         <template v-else>
           {{item.attr1}}
-        </template> -->
+        </template>
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
-      <div class="upload-file-item" v-if="!noUpload" @click="chooseImage">
-        <!-- <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/> -->
+      <div class="upload-file-item" v-if="!noUpload">
+        <input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/>
         <label class="upload-file-add" :for="id"></label>
         <div class="icon_container">
           <span class="iconfont icon-fujian"></span>
