@@ -52,7 +52,7 @@
   // 请求 引入
   import {
     submitAndCalc,
-    updateAndCalc,
+    updateData,
     saveAndStartWf,
     saveAndCommitTask,
     getDictByType,
@@ -166,7 +166,7 @@
             };
 
             if (this.transCode) {
-              operation = this.processCode.length ? saveAndCommitTask : updateAndCalc;
+              operation = this.processCode.length ? saveAndCommitTask : updateData;
               submitData.biReferenceId = this.biReferenceId;
               submitData.wfPara = JSON.stringify({
                 businessKey: this.transCode,
@@ -312,171 +312,5 @@
         left: 0;
       }
     }
-
   }
-  // .cpfb-apply-container {
-  //   height: 100%;
-  //   .upload-file-container {
-  //     width: 100%;
-  //     padding: .05rem .08rem;
-  //     margin: 0 auto;
-  //   }
-  // }
-
-  // .vux-1px-b:after, .vux-1px-l:before {
-  //   border-color: #e8e8e8;
-  //   color: #e8e8e8;
-  // }
-
-  // .content {
-  //   height: 90%;
-  //   overflow: hidden;
-  //   .mater_baseinfo {
-  //     display: flex;
-  //     align-items: flex-end;
-  //     .mater_property {
-  //       flex: 1;
-  //     }
-  //   }
-  //   .each_property {
-  //     padding: 0.05rem 0.08rem;
-  //     label {
-  //       color: #6d6d6d;
-  //       font-size: 0.12rem;
-  //       display: block;
-  //       line-height: 0.2rem;
-  //     }
-  //     .required {
-  //       color: #5077aa;
-  //       font-weight: bold;
-  //     }
-  //     .property_val {
-  //       display: block;
-  //       width: 100%;
-  //       min-height: .24rem;
-  //       line-height: 0.24rem;
-  //       border: none;
-  //       outline: none;
-  //       font-size: 0.16rem;
-  //       &.handler {
-  //         line-height: 0.38rem;
-  //         .icon-gengduo {
-  //           font-size: 0.24rem;
-  //           float: right;
-  //         }
-  //       }
-  //     }
-  //     .readonly {
-  //       color: #999;
-  //     }
-  //   }
-  // }
-
-  // // 确定
-  // .btn {
-  //   left: 0;
-  //   bottom: 0;
-  //   width: 100%;
-  //   height: 10%;
-  //   position: fixed;
-  //   background: #fff;
-  //   .cfm_btn {
-  //     top: 50%;
-  //     left: 50%;
-  //     width: 2.8rem;
-  //     color: #fff;
-  //     height: .44rem;
-  //     line-height: .44rem;
-  //     position: absolute;
-  //     text-align: center;
-  //     background: #5077aa;
-  //     border-radius: .4rem;
-  //     transform: translate(-50%, -50%);
-  //     box-shadow: 0 2px 5px #5077aa;
-  //   }
-  //   &.btn_hide {
-  //     display: none;
-  //   }
-  // }
-
-  // // 弹出层
-  // .trade_pop_part {
-  //   background: #fff;
-  //   .trade_pop {
-  //     padding: 0 .08rem;
-  //     height: 100%;
-  //     overflow: hidden;
-  //     // 顶部
-  //     .title {
-  //       position: relative;
-  //       margin: .08rem 0;
-  //       font-size: .2rem;
-  //     }
-  //     .each_mode {
-  //       margin-right: .1rem;
-  //       display: inline-block;
-  //       padding: .04rem .2rem;
-  //     }
-  //     // 列表容器
-  //     .pop-list-container {
-  //       width: 100%;
-  //       overflow: hidden;
-  //       box-sizing: border-box;
-  //       height: calc(100% - .46rem);
-  //       /deep/ .scroll-wrapper {
-  //         padding: .04rem .04rem 0 .3rem;
-  //       }
-  //       // 列表项
-  //       .pop-mater-list-item {
-  //         position: relative;
-  //         display: flex;
-  //         padding: 0.08rem;
-  //         margin-bottom: .2rem;
-  //         box-sizing: border-box;
-  //         // 阴影
-  //         &.box_sd {
-  //           box-sizing: border-box;
-  //           box-shadow: 0 0 8px #e8e8e8;
-  //         }
-  //         // 列表主体
-  //         .pop-list-main {
-  //           flex: 1;
-  //           padding-left: .1rem;
-  //           box-sizing: border-box;
-  //           display: inline-block;
-  //           // 物料信息
-  //           .pop-list-info {
-  //             color: #757575;
-  //             font-size: .14rem;
-  //             // 有颜色包裹的
-  //             .withColor {
-  //               margin-top: .04rem;
-  //               .name {
-  //                 color: #5077aa;
-  //                 font-size: .14rem;
-  //                 font-weight: bold;
-  //               }
-  //               .creator {
-  //                 color: #111;
-  //                 font-weight: bold;
-  //               }
-  //             }
-  //           }
-  //         }
-  //         // 选择icon
-  //         .selIcon,
-  //         .isSelIcon {
-  //           top: 50%;
-  //           left: -.3rem;
-  //           position: absolute;
-  //           transform: translate(0, -50%);
-  //         }
-  //         .isSelIcon {
-  //           fill: #5077aa;
-  //         }
-  //       }
-  //     }
-
-  //   }
-  // }
 </style>

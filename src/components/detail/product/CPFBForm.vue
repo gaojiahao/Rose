@@ -16,14 +16,15 @@
             <span class="iconfont icon-mingxi1"></span>
             <span>产品信息</span>
           </div>
-          <!--<div @click="goEdit">
+          <!-- <div @click="goEdit">
             <i class="iconfont icon-bianji1"></i>
             <span>编辑</span>
-          </div>-->
+          </div> -->
         </div>
         <form-cell cellTitle="标题" :cellContent="orderInfo.launchTitle"></form-cell>
         <form-cell cellTitle="描述" :cellContent="orderInfo.launchDescribe"></form-cell>
         <form-cell cellTitle="类型" :cellContent="orderInfo.launchType"></form-cell>
+        <form-cell cellTitle="备注" :cellContent="orderInfo.biComment"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->

@@ -312,7 +312,7 @@ export default {
     },
     // TODO 上传文件成功
     onUploadFile({biReferenceId}) {
-      this.biReferenceId = biReferenceId;
+      // this.biReferenceId = biReferenceId;
     },
     // TODO 监听返回事件
     listenBack() {

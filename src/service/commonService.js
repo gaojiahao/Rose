@@ -31,11 +31,11 @@ export let submitAndCalc = (data = {}) => {
 };
 
 // TODO 修改(没有工作流)
-export let updateAndCalc = (data = {}) => {
+export let updateData = (data = {}) => {
   return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
-    url: '/H_roleplay-si/formAPI/updateAndCalc',
+    url: '/H_roleplay-si/formAPI/updateData',
     data: data
   })
 };

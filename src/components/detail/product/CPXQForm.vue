@@ -23,13 +23,7 @@
         </div>
         <form-cell cellTitle="标题" :cellContent="orderInfo.demandTitle"></form-cell>
         <form-cell cellTitle="描述" :cellContent="orderInfo.demandDescribe"></form-cell>
-        <form-cell cellTitle="大类" :cellContent="orderInfo.demandType"></form-cell>
-        <form-cell cellTitle="子类" :cellContent="orderInfo.demandSubclass"></form-cell>
-        <form-cell cellTitle="规划" :cellContent="orderInfo.demandPlan"></form-cell>
-        <form-cell cellTitle="流程状态" :cellContent="orderInfo.processStatus"></form-cell>
-        <form-cell cellTitle="按期信息指数" :cellContent="orderInfo.timeConfidenceIndex"></form-cell>
-        <form-cell cellTitle="被授权团队" :cellContent="orderInfo.authorizedTeam"></form-cell>
-        <form-cell cellTitle="版本" :cellContent="orderInfo.demandVersion"></form-cell>
+        <form-cell cellTitle="备注" :cellContent="orderInfo.biComment"></form-cell>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->

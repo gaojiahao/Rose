@@ -468,18 +468,23 @@ export default {
         this.$router.replace({
           path, query: {name, childId, transCode}
         })
-        // this.$loading.hide();
       })
     }
+    return;
   },
   created() {
     register(); // 注册wx-js-sdk
     this.applyCode = this.$route.params.code;
-    let { name } = this.$route.query;
+    let { name, transCode } = this.$route.query;
     this.getAppDetail();
     this.getData(false).then(() => {
-      // 第一次进入页面成功之后 隐藏动画
-      this.$loading.hide();
+      /*
+      * 第一次进入页面成功之后 隐藏动画
+      * 如果是从推送打开 则不关闭动画
+      */ 
+      if(!transCode) {
+        this.$loading.hide();
+      }
       wx.ready(() => {
         // 分享
         let shareInfo = {

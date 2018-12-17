@@ -50,11 +50,9 @@
   // 请求 引入
   import {
     submitAndCalc,
-    updateAndCalc,
+    updateData,
     saveAndStartWf,
-    saveAndCommitTask,
-    getDictByType,
-    getDictByValue
+    saveAndCommitTask
   } from 'service/commonService'
   import { getSOList } from 'service/detailService'
   // mixins 引入
@@ -146,11 +144,9 @@
               }),
             };
             if (this.transCode) {
-              operation = updateAndCalc;
+              operation = updateData;
+              console.log('bId:', this.biReferenceId)
               submitData.biReferenceId = this.biReferenceId;
-            }
-            if (this.biReferenceId) {
-              submitData.biReferenceId = this.biReferenceId
             }
             this.saveData(operation, submitData);
           }
