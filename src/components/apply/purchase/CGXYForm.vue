@@ -53,13 +53,14 @@
                              @click.native="delClick(item,index)">
                   <template slot="info" slot-scope="{item}">
                     <!-- 物料属性和单位 -->
+                    <div class='matter-more'>
+                      <span class='unit'>属性: {{item.processing}}</span>
+                      <span class='unit'>主计量: {{item.measureUnit}}</span>
+                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                      <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
+                    </div>
                     <div class="mater_more">
-                      <div>
-                        <span class="processing">属性: {{item.processing}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                        <span>税率: {{item.taxRate}}</span>
-                      </div>
+                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
@@ -226,6 +227,9 @@
           item.price = price;
           item.taxRate = taxRate;
           item.processingStartDate = processingStartDate;
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
         })
         this.numMap = {};
         this.matterList = sels;
@@ -320,11 +324,16 @@
               tdId: item.tdId || '',
               transObjCode: item.inventoryCode, // 物料编码
               tdProcessing: item.processing,// 加工属性
+              assMeasureUnit: item.assMeasureUnit,
+              assMeasureDescription: item.assMeasureDescription,
+              assMeasureScale: item.assMeasureScale,
               tdQty: item.tdQty, // 数量
+              assistQty: item.assistQty,
               price: item.price, // 单价
+              tdAmount: item.tdAmount,
               taxRate: taxRate, // 税金
+              noTaxPrice: item.noTaxPrice,
               taxAmount: taxAmount, // 税金
-              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 价税小计
               comment: item.comment || '' // 说明
             });
             return true
