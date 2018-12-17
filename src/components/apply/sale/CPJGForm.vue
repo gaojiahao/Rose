@@ -119,7 +119,7 @@
               <x-input type="number"  v-model.number='modifyMatter.specialReservePrice' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
-                  <span class='required'>特批低价
+                  <span class='required'>特批底价
                   </span>
                 </template>      
               </x-input>

@@ -224,6 +224,9 @@ export default {
       });   
       return  
     }
+    if(query.jobType) {
+      this.jobInfo.type = query.jobType;
+    }
     this.$loading.hide();
 
   }

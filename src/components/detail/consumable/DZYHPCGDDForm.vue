@@ -14,7 +14,7 @@
       <contact-part :contact-info="contactInfo" :logistics="false">
         <div class="other" slot="other">
           <span class="title">账期天数: </span>
-          <span class="mode">{{contactInfo.pamentDays || '暂无'}}</span>
+          <span class="mode">{{contactInfo.pamentDays}}</span>
         </div>
       </contact-part>
       <!-- 物料列表 -->

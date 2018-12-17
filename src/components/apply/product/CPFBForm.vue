@@ -247,6 +247,9 @@
           return {
             [DRAFT_KEY]: {
               formData: this.formData,
+              dealerInfo: this.dealerInfo,
+              contactInfo: this.contactInfo,
+              selectedType: this.selectedType
             }
           };
         }
@@ -256,6 +259,9 @@
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.formData = JSON.parse(data).formData;
+        this.dealerInfo = JSON.parse(data).dealerInfo;
+        this.contactInfo = JSON.parse(data).contactInfo;
+        this.selectedType = JSON.parse(data).selectedType;
         sessionStorage.removeItem(DRAFT_KEY);
       }
       this.getProductType();

@@ -55,6 +55,7 @@
             value: 'name',
           }
         ],
+        activeName: ''
       }
     },
     mixins: [listCommon],
@@ -180,7 +181,24 @@
       },
       goEditJob(item, index) {
         this.goNextPage(item, index, '/fillform')
-      }
+      },
+      // tab切换
+      tabClick (item, index) {
+        this.activeIndex = index;
+        this.activeTab = item.status;
+        this.activeName = item.name === '全部' ? '' : item.name;
+        this.resetCondition();
+        this.getList();
+      },
+      // 新增
+      goEdit () {
+      let { name, childId} = this.$route.query,
+          { fileId, listId } = this.$route.params;
+      this.$router.push({
+        path: `/fillform/${fileId}/${listId}`,
+        query: { name, childId, jobType: this.activeName}
+      })
+    },
     }
   }
 </script>

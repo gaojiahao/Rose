@@ -20,7 +20,7 @@
             <span>客户类型: {{item.drDealerLabel}}</span>
             <span>数量上线: {{item.qtyOnline}}</span>
             <span>数量下线: {{item.qtyDownline}}</span>
-            <span>特批低价: ￥{{item.specialReservePrice | toFixed}}</span>
+            <span>特批底价: ￥{{item.specialReservePrice | toFixed}}</span>
           </div>
           <div class="mater_price">
             <span class="diff_num">

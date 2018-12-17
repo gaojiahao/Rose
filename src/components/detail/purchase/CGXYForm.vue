@@ -13,6 +13,10 @@
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo">
         <template slot="other">
+          <div class="other">
+            <span class="title">账期天数: </span>
+            <span class="mode">{{contactInfo.daysOfAccount}}</span>
+          </div>
           <div class="other_content vux-1px-t">
             <div class="trade_info s_size_name" v-if="this.contactInfo.thenTotalAmntBal || this.contactInfo.thenTotalAmntBal === 0">
               <span class="title">协议总金额: </span>
@@ -150,7 +154,8 @@
             validUntil: first.validUntil,
             thenTotalAmntBal: first.thenTotalAmntBal,
             prepaymentDueDate: first.prepaymentDueDate,
-            tdAmountCopy1: first.tdAmountCopy1
+            tdAmountCopy1: first.tdAmountCopy1,
+            daysOfAccount: inPut.daysOfAccount
 
           }
          
@@ -185,4 +190,14 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
+  .other {
+    padding-bottom: .06rem;
+    font-size: .14rem;
+    .title {
+      font-weight: bold;
+    }
+    .mode {
+      color: #454545;
+    }
+  }
 </style>

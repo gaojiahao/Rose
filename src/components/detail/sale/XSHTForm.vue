@@ -14,6 +14,10 @@
       <contact-part :contact-info="contactInfo">
         <template slot="other">
           <div class="other">
+            <span class="title">账期天数: </span>
+            <span class="mode">{{contactInfo.daysOfAccount}}</span>
+          </div>
+          <div class="other">
             <span class="title">合同总金额: </span>
             <span class="mode">￥{{contactInfo.thenTotalAmntBal | toFixed | numberComma(3)}}</span>
           </div>
@@ -157,6 +161,7 @@
             thenTotalAmntBal: contract.thenTotalAmntBal, // 合同总金额
             tdAmountCopy1: contract.tdAmountCopy1, // 预收款
             advancePaymentDueDate: contract.advancePaymentDueDate, // 预收到期日
+            daysOfAccount: inPut.daysOfAccount
           };
           this.workFlowInfoHandler();
         })
