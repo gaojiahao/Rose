@@ -28,6 +28,8 @@ export default {
       btnInfo: {},                                // 操作按钮信息
       actions: [],
       selItems: [],                               // 选中的要删除的物料
+      handleORG: [],                              // 经办组织
+      userRoleList: [],                           // 经办职位
       currentStage: [],                           // 流程状态
       modifyIndex:null,                           // 选中编辑物料的pop
       fillBscroll: null,
@@ -209,20 +211,32 @@ export default {
     },
     // TODO 获取用户基本信息
     getBaseInfoData() {
-      getBaseInfoData().then(data => {
+      getBaseInfoData().then(({handleORG, userRoleList, ...basicUserInfo}) => {
+        this.handleORG = handleORG;
+        this.userRoleList = userRoleList;
+        // 默认取第一个值
+        let [firstORG = {}] = handleORG,
+            [firstRole = {}] = userRoleList;
+        // 用户相关经办信息初始化
+        let defaultUserInfo = {
+          handler: basicUserInfo.userId,  // 用户id
+          handlerName: basicUserInfo.nickname,  //用户名称
+          handlerUnit: firstORG.groupId,  // 用户组织id
+          handlerUnitName: firstORG.groupName,  // 用户组织名称
+          handlerRole: firstRole.roleId || '',  // 用户职位id
+          handlerRoleName: firstRole.roleName || '',  // 用户职位名称
+          userCode: basicUserInfo.userCode, // 用户工号
+        }     
         this.formData = {
           ...this.formData,
-          ...data,
-          creator: data.handler,
-          modifer: data.handler,
+          ...defaultUserInfo,
+          creator: defaultUserInfo.handler,
+          modifer: defaultUserInfo.handler,
         };
-        this.handlerDefault = {
-          ...this.handlerDefault,
-          ...data
-        }
-        // 产品需求的经办人信息为使用组件，需单独请求组织和部门
-        this.getGroupByUserId && this.getGroupByUserId();
-        this.getRoleByUserId && this.getRoleByUserId();
+        this.handlerDefault = defaultUserInfo;
+        // // 产品需求的经办人信息为使用组件，需单独请求组织和部门
+        // this.getGroupByUserId && this.getGroupByUserId();
+        // this.getRoleByUserId && this.getRoleByUserId();
         this.$loading.hide();
       })
     },
