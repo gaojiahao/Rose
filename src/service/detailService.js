@@ -1,36 +1,36 @@
-import $axios from '../plugins/ajax';
+import $flyio from '../plugins/ajax';
 
 // 工作流
 export let getWorkFlow = (data = {}) => {
-    return $axios.ajax({
+    return $flyio.ajax({
         url: '/H_roleplay-si/ds/listTaskLogByTransCode',
         data
     })
 }
 // 判断工作流节点是否与<我>有关
 export let isMyflow = (data = {}) => {
-    return $axios.ajax({
+    return $flyio.ajax({
         url: '/H_roleplay-si/ds/getWorkFlowInfoByTransCode',
         data
     })
 }
 //获取listId
 export let getListId = (transCode = '')=>{
-    return $axios.ajax({
+    return $flyio.ajax({
         url:`/H_roleplay-si/ds/list/getFormByTransCode?transCode=${transCode}`,
 
     })
 }
 // 获取表单详情
 export let getSOList = (data = {}) => {
-    return $axios.ajax({
+    return $flyio.ajax({
         url: '/H_roleplay-si/formAPI/findData',
         data
     })
 }
 // 获取当前用户
 export let currentUser = (_dc = '') => {
-    return $axios.ajax({
+    return $flyio.ajax({
         url: '/H_roleplay-si/userInfo/currentUser',
         _dc
     })
@@ -38,7 +38,7 @@ export let currentUser = (_dc = '') => {
 
 // TODO 获取物料价格
 export let getSaleQuotePrice = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/ds/getSaleQuotePrice',
@@ -47,14 +47,14 @@ export let getSaleQuotePrice = (data = {}) => {
 };
 // TODO 获取相关实例分类
 export let getAppExampleDetails = (data = {})=>{
-    return $axios.ajax({
+    return $flyio.ajax({
         url:'/H_roleplay-si/trans/getAppExampleDetails',
         data
     })
 }
 // TODO 获取相关实例应用的视图
 export let getListView = (data = {})=>{
-    return $axios.ajax({
+    return $flyio.ajax({
         url:'/H_roleplay-si/ds/list/getListViews',
         data
     })

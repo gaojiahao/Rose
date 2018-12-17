@@ -98,19 +98,24 @@
       }
     },
     computed: {
+      // TODO 是否为部门负责人、财务总监
+      isInCharge(){
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'd7ef0729-4a55-46fe-a750-e5298042c5bc';
+      },
       // TODO 是否为采购总监、财务经理/总监、总经理
       isApproval() {
-        let {nodeName = '', viewId = ''} = this.currentWL;
+        let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '65afdac2-db7d-42d1-a059-7fdb98892134';
       },
       // TODO 是否为出纳
       isCashier() {
-        let {nodeName = '', viewId = ''} = this.currentWL;
+        let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '14128204-e4ee-4688-98c7-9d3c03e7a3ad';
       },
       // TODO 是否为会计
       isAccount() {
-        let {nodeName = '', viewId = ''} = this.currentWL;
+        let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === 'b8490da9-513f-408b-8974-83998188bf6a';
       },
       cashParams() {
@@ -154,7 +159,7 @@
             this.$vux.alert.show({
               content: '请选择资金账户',
             });
-            return
+            return true
           }
           let orderInfo = this.orderInfo;
           let dealerInfo = this.dealerInfo;
@@ -186,8 +191,9 @@
             },
           };
           this.saveData(formData);
+          return true
         }
-        return true
+        return false
       },
       // TODO 选中资金
       selCash(item) {

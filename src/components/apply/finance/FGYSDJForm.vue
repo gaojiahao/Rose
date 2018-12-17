@@ -2,7 +2,8 @@
   <div class="pages fgysqk-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"></pop-baseinfo>
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+                      :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 往来信息 -->
@@ -221,8 +222,12 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "STPD_yyMMdd_4_0", createdBy: JSON.stringify(this.formData.handler)}
-            }
+              [this.processCode]: {
+                businessKey: this.businessKey,
+                createdBy: JSON.stringify(this.formData.handler),
+                '本次支付': this.applicationAmount,
+              }
+            };
             if (this.isResubmit) {
               wfPara = {
                 businessKey: this.transCode,
@@ -348,9 +353,9 @@
           };
           this.cashInfo = {
             ...cashInfo,
-            fundName: cashInfo.fundName_cashOutCode,
-            fundCode: cashInfo.cashOutCode,
-            fundType: cashInfo.cashType_cashOutCode,
+            // fundName: cashInfo.fundName_cashOutCode,
+            // fundCode: cashInfo.cashOutCode,
+            // fundType: cashInfo.cashType_cashOutCode,
           };
           this.orderList = orderDataSet;
           this.$loading.hide();

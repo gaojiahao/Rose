@@ -21,8 +21,9 @@
           <form-cell cellTitle='费用类型' :cellContent="item.costType_expCode"></form-cell>
           <form-cell cellTitle='申请金额' showSymbol
                      :cellContent="item.tdAmount | toFixed | numberComma(3)"></form-cell>
+          <form-cell cell-title="报销事由" :cell-content="item.expCause"></form-cell>
           <x-input type="number" title="可抵扣税金" :value="item.taxAmount" text-align="right" @on-focus="getFocus"
-                   @on-blur="calcTax(item)" v-model.number="item.taxAmount" v-if="isAccountingReview"></x-input>
+                   @on-blur="calcTax(item)" v-model.number="item.taxAmount" v-if="isAccounting"></x-input>
           <form-cell cellTitle='可抵扣税金' showSymbol
                      :cellContent="item.taxAmount | toFixed | numberComma(3)" v-else></form-cell>
           <form-cell cellTitle='抵扣后金额' showSymbol
@@ -46,7 +47,7 @@
                      :cellContent="dealerInfo.thenAlreadyAmnt | toFixed | numberComma(3)"></form-cell>
           <x-input type="number" title="本次支付" :value="dealerInfo.thenTotalAmntBal" text-align="right"
                    @on-focus="getFocus" @on-blur="calcPayment(dealerInfo)" v-model.number="dealerInfo.thenTotalAmntBal"
-                   v-if="isAccountingReview"></x-input>
+                   v-if="isAccounting"></x-input>
           <form-cell cellTitle='本次支付' showSymbol
                      :cellContent="dealerInfo.thenTotalAmntBal | toFixed | numberComma(3)" v-else></form-cell>
           <form-cell cellTitle='本次报销与支付后余额' showSymbol
@@ -61,7 +62,7 @@
                      :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
         </template>
       </pop-cash-list>
-      <div class="form_content" style="margin-top:0.1rem;" v-else-if="!isCashier && !isAccountingReview">
+      <div class="form_content" style="margin-top:0.1rem;" v-else-if="!isCashier && !isAccounting && !isApproval">
         <div class="form_title">
           <span class="iconfont icon-baoxiao"></span>
           <span class="title">资金账户信息</span>
@@ -112,20 +113,20 @@
       }
     },
     computed: {
-      // TODO 是否为采购总监
+      // TODO 是否为部门负责人
       isApproval(){
-        let {nodeName = '',viewId = ''} = this.currentWL;
+        let {viewId = ''} = this.currentWL;
         return this.isMyTask && viewId === '7d18cfc2-475f-44c5-ae12-a723d6234253';
       },
       // TODO 是否为会计复核
-      isAccountingReview() {
-        let {nodeName = ''} = this.currentWL;
-        return this.isMyTask && nodeName === '会计复核';
+      isAccounting() {
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === '69c3a187-1816-41cf-a9ec-899e9932940e';
       },
       // TODO 是否为出纳
       isCashier() {
-        let {nodeName = ''} = this.currentWL;
-        return this.isMyTask && nodeName === '出纳支付';
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === '8ea73083-fc91-49f2-97d6-e9923ac9b9e2';
       },
       cashParams() {
         return {
@@ -163,7 +164,7 @@
           this.costList = dataSet;
 
           // 当前审批人为会计时，自动赋值本次支付金额
-          if (this.isAccountingReview) {
+          if (this.isAccounting) {
             let {thenAmntBal = 0, thenAlreadyAmnt = 0} = this.dealerInfo;
             this.dealerInfo.thenTotalAmntBal = thenAlreadyAmnt;
             // 往来余额 - 本次贷方增加 + 本次支付
@@ -175,12 +176,12 @@
       },
       // TODO 同意的处理
       agreeHandler() {
-        if (this.isAccountingReview || this.isCashier) {
+        if (this.isApproval || this.isAccounting || this.isCashier) {
           if (this.isCashier && !this.cashInfo.fundCode) {
             this.$vux.alert.show({
               content: '请选择资金账户',
             });
-            return
+            return true
           }
           let orderInfo = this.orderInfo;
           let dataSet = this.costList.map(item => {

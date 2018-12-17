@@ -1,9 +1,9 @@
 /* 评论相关接口 */
-import $axios from '../plugins/ajax';
+import $flyio from '../plugins/ajax';
 
 // TODO 获取pc评论列表
 export let getPCCommentList = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByRelationKey',
     data: {
       sort: JSON.stringify([{"property": "crtTime", "direction": "DESC"}]),
@@ -17,7 +17,7 @@ export let getPCCommentList = (data = {}) => {
 
 // TODO 获取评论列表
 export let getCommentList = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getMobileCommentByTransCode',
     data: {
       page: 1,
@@ -29,7 +29,7 @@ export let getCommentList = (data = {}) => {
 
 // TODO 获取回复列表
 export let getReply = (data = {}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/comment/getCommentByParentId',
     data: {
       sort: JSON.stringify([{"property":"crtTime","direction":"ASC"}]),
@@ -43,7 +43,7 @@ export let getReply = (data = {}) => {
 
 // TODO 发送评论
 export let saveComment = (data = {}) => {
-  return $axios.post({
+  return $flyio.post({
     url: '/H_roleplay-si/comment/saveComment',
     data: {
       commentAndReply: false,
@@ -56,7 +56,7 @@ export let saveComment = (data = {}) => {
 
 // TODO 点赞
 export let savePraise = (commentId = '') => {
-  return $axios.post({
+  return $flyio.post({
     url: '/H_roleplay-si/comment/savePraise',
     data: {
       commentId
@@ -65,7 +65,7 @@ export let savePraise = (commentId = '') => {
 };
 //获取应用的详情
 export let getAppDetail = (uniqueId = '') => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/list/getListById',
     data: {
       uniqueId
@@ -74,21 +74,21 @@ export let getAppDetail = (uniqueId = '') => {
 };
 //获取更新日志列表
 export let getChangeLog = (data={}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getChangeLog',
     data
   })
 };
 //获取管理员自评列表
 export let getAdminCommentList = (data={}) => {
-  return $axios.ajax({
+  return $flyio.ajax({
     url: '/H_roleplay-si/ds/getAssessmentByListId',
     data
   })
 };
 //提交日志
 export let saveLog = (data={}) =>{
-  return $axios.ajax({
+  return $flyio.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/app/saveLog',
@@ -96,7 +96,7 @@ export let saveLog = (data={}) =>{
   })
 }
 export let saveAssessment = (data={}) =>{
-  return $axios.post({
+  return $flyio.post({
     url: '/H_roleplay-si/app/saveAssessment',
     data
   })

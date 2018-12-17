@@ -1,27 +1,27 @@
-import $axios from '../plugins/ajax'
+import $flyio from '../plugins/ajax'
 
 let homeService = {
     getMeau(){
-        return $axios.ajax({
+        return $flyio.ajax({
             url:'/H_roleplay-si/ds/getMenu'
         })
 
     },
     getMyTask(){
-        return $axios.ajax({
+        return $flyio.ajax({
             url:'/H_roleplay-si/ds/getMyTaskCountAll'
         })
 
     },
     //获取当前用户
     currentUser(){
-        return $axios.ajax({
+        return $flyio.ajax({
             url:'/H_roleplay-si/userInfo/currentUser'
         })
     },
     //切换主体
     changeEntity(data = {}){
-        return $axios.ajax({
+        return $flyio.ajax({
             type: 'POST',
             contentType: 'application/x-www-form-urlencoded',
             url: '/H_roleplay-si/changeEntity',
