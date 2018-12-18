@@ -107,6 +107,7 @@
     getSalesContract,
     getInventoryToProcessing,
     getSalesOrderNew,
+    getEtcPutInStorage,
   } from 'service/materService'
   import RScroll from 'components/RScroll'
   import MSearch from 'components/search'
@@ -147,9 +148,9 @@
         default: true
       },
       // 是否检验可用库存，是，当库存为零，该物料不能被选中
-      isShowStock: { 
+      isShowStock: {
         type: Boolean,
-        default: false 
+        default: false
       },
       filterList: {
         type: Array,
@@ -203,7 +204,6 @@
         handler() {
           this.resetCondition();
           // 参数改变，重新请求接口
-          this[this.getListMethod]();
           this.requestMethods();
         }
       }
@@ -313,7 +313,6 @@
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        // this[this.getListMethod]();
         this.requestMethods();
       },
       // TODO 设置默认值
@@ -661,6 +660,27 @@
           ...this.params,
         }).then(this.dataHandler);
       },
+      // TODO 获取的物料列表(完工预入库)
+      getEtcPutInStorage() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getEtcPutInStorage({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
+        }).then(this.dataHandler);
+      },
       // TODO 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}) {
         tableContent.forEach(item => {
@@ -689,7 +709,6 @@
       this.setDefaultValue();
       // 请求物料
       this.requestMethods = this[this.getListMethod];
-      // this[this.getListMethod]();
       this.requestMethods();
     }
   }

@@ -23,6 +23,7 @@ export default {
       '2372f734-93c1-11e8-85db-005056a136d0': 'GDRW',        // *工单任务*
       'f9f1e0cb-7edf-43aa-b2f2-527e2525b96e': 'GDYS',        // *工单验收*
       'c54b3325-a5c1-4d75-a3c4-c6cf0e988aae': 'GDRWQD',      // 工单任务启动
+      '3e8d0dc2-45a0-463a-a7b5-21c63955eb8f': 'WGYRK',      // 完工预入库
     }
   },
 

@@ -124,11 +124,13 @@
         type: String,
         default: 'getWarehouse'
       },
-      // 请求的传参，本地库存调拨请求数据时会传入
-      warehouseType: {
-        type: String,
-        default: '',
-      },
+      // 请求参数
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
     },
     directives: {TransferDom},
     components: {
@@ -225,6 +227,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.params,
         }).then(this.dataHandler)
         // .then(({dataCount = 0, tableContent = []}) => {
         //   this.showAddWarehouse = this.srhInpTx && tableContent.length === 0;
@@ -261,16 +264,13 @@
             },
           ];
         }
-        let params = {
-           limit: this.limit,
+        getWareHouseType({
+          limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-        }
-        if(this.warehouseType){
-          params.warehouseType = this.warehouseType;
-        }
-        getWareHouseType(params).then(this.dataHandler)
+          ...this.params,
+        }).then(this.dataHandler)
       },
       // TODO 共用的数据处理方法
       dataHandler({dataCount = 0, tableContent = []}){
