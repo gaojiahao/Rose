@@ -54,10 +54,15 @@ export default {
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        let noTaxPrice = toFixed(accDiv(item.price, accAdd(1, item.taxRate))),
-            assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale)),
+        let price = item.price || 0,
+            tdQty = item.tdQty || 0,
             taxRate = item.taxRate || 0;
-        total = accAdd(total, accMul(assistQty, taxRate, noTaxPrice));
+        item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
+        item.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)));
+        item.tdAmount = toFixed(accMul(price, item.assistQty));
+        item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
+        item.noTaxAmount = accSub(item.tdAmount, item.taxAmount);
+        total = accAdd(total, item.taxAmount);
       });
       return toFixed(total);
     },
@@ -66,8 +71,14 @@ export default {
       let total = 0;
       this.matterList.forEach(item => {
         let price = item.price || 0,
-            assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale));
-        total = accAdd(total, accMul(price, assistQty));
+            tdQty = item.tdQty || 0,
+            taxRate = item.taxRate || 0;
+        item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
+        item.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)));
+        item.tdAmount = toFixed(accMul(price, item.assistQty));
+        item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
+        item.noTaxAmount = accSub(item.tdAmount, item.taxAmount);
+        total = accAdd(total, item.tdAmount);
       });
       return toFixed(total);
     },
