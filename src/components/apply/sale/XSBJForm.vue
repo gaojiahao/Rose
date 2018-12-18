@@ -343,9 +343,9 @@
             inventoryName_transObjCode: item.inventoryName,
             transObjCode: item.inventoryCode,
             tdProcessing: item.processing,
-            assMeasureUnit: item.invSubUnitName || null, // 辅助计量
-            assMeasureDescription: item.invSubUnitComment || null, // 辅助计量说明
-            assMeasureScale: item.invSubUnitMulti || null, // 与单位倍数
+            assMeasureUnit: item.assMeasureUnit || null, // 辅助计量
+            assMeasureDescription: item.assMeasureDescription || null, // 辅助计量说明
+            assMeasureScale: item.assMeasureScale || null, // 与单位倍数
             tdQty: item.tdQty,
             assistQty: item.assistQty,
             standardPrice: item.standardPrice,

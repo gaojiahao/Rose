@@ -118,17 +118,42 @@
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
-          <template slot="date" slot-scope="{modifyMatter}">
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <cell title="待验收" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                     placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+              <template slot="label">
+                <slot name="qtyName">
+                  <span class='required'>数量</span>
+                </slot>
+              </template>
+            </x-input>
             <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
                   v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
               <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
                           @on-selected="moreUnitSelected"></r-dropdown>
             </cell>
-            <cell title="待验收" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>单价
+                </span>
+              </template>
+            </x-input>
+            <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>税率
+                </span>
+              </template>
+            </x-input>
             <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
             <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
+          </template>
+          <template slot="modifyTitle" slot-scope="{modifyMatter}">
+            <label>金额</label>
           </template>
         </pop-matter>
 
@@ -168,7 +193,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Datetime, dateFormat, Cell} from 'vux'
+  import {XTextarea, Datetime, dateFormat, Cell, XInput} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getObjInvMoreUnitByInvCode} from 'service/materService'
@@ -247,10 +272,38 @@
         cashInfo: {},
         cashParams: {
           fundType: '银行存款',
-        }
+        },
+        consumables: {}
       }
     },
     computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0;
+          item.noTax = accMul(tdQty,price);
+          total = accAdd(total, item.noTax);
+        });
+        return Number(total);
+      },
+      // 税金
+      taxAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0,
+              taxRate = item.taxRate || 0;
+          item.noTax = accMul(tdQty,price);
+          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
+
+        });
+        return total;
+      },
+      tdAmount() {
+        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+      },
       //支付金额
       tdAmountCopy1() {
         let total = 0;
@@ -262,9 +315,23 @@
         return toFixed(total);
       },
     },
+    watch:{
+      //修改的物料
+      consumables:{
+        handler(val){
+          let price = val.price || 0,
+              tdQty = val.tdQty || 0,
+              taxRate = val.taxRate || 0;
+          val.noTaxAmount = toFixed(accMul(price,tdQty));
+          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
+          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+        },
+        deep:true
+      }
+    },
     mixins: [applyCommon],
     components: {
-      XTextarea, Datetime, PopOrderList, RNumber,
+      XTextarea, Datetime, PopOrderList, RNumber, XInput,
       PopDealerList, PopMatterList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
       Cell, RDropdown, PopCashList,
     },
@@ -308,7 +375,7 @@
       },
       // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
-        this.matter = JSON.parse(JSON.stringify(item));
+        this.consumables = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
@@ -773,8 +840,8 @@
       },
       // TODO 选中辅助计量
       moreUnitSelected(val) {
-        this.matter.assMeasureUnit = val.invSubUnitName;
-        this.matter.assistQty = val.invSubUnitMulti;
+        this.consumables.assMeasureUnit = val.invSubUnitName;
+        this.consumables.assistQty = val.invSubUnitMulti;
       },
       // TODO 选中资金
       selCash(item) {

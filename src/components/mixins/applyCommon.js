@@ -54,8 +54,8 @@ export default {
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        let noTaxPrice = item.noTaxPrice || 0,
-            assistQty = item.assistQty || 0,
+        let noTaxPrice = toFixed(accDiv(item.price, accAdd(1, item.taxRate))),
+            assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale)),
             taxRate = item.taxRate || 0;
         total = accAdd(total, accMul(assistQty, taxRate, noTaxPrice));
       });
@@ -66,11 +66,10 @@ export default {
       let total = 0;
       this.matterList.forEach(item => {
         let price = item.price || 0,
-            assistQty = item.assistQty || 0;
+            assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale));
         total = accAdd(total, accMul(price, assistQty));
       });
       return toFixed(total);
-      // return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
     },
   },
   watch:{
@@ -85,9 +84,6 @@ export default {
         val.tdAmount = toFixed(accMul(price, val.assistQty));
         val.taxAmount = toFixed(accMul(val.assistQty, taxRate, val.noTaxPrice));
         val.noTaxAmount = accSub(val.tdAmount, val.taxAmount);
-        // val.noTaxAmount = accMul(price,tdQty).toFixed(2);
-        // val.taxAmount = accMul(val.noTaxAmount,taxRate).toFixed(2);
-        // val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount).toFixed(2);
       },
       deep:true
     }

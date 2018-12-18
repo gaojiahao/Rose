@@ -134,9 +134,6 @@ export default {
         // 获取合计
         let {dataSet} = formData.outPut;
         for (let item of dataSet) {
-          item.noTaxAmount = accMul(item.price,item.tdQty);
-          item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
-          item.tdAmount = toFixed(accAdd(item.noTaxAmount,item.taxAmount));
           this.count = accAdd(this.count,item.tdAmount)
           item.inventoryPic = item.inventoryPic_outPutMatCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400`
@@ -148,7 +145,6 @@ export default {
           }
           orderList[item.orderCode].push(item);
         }
-        // this.count = (this.count/100).toFixed(2);
         this.orderList = orderList;
         this.dealerInfo = {
           creatorName: formData.dealerDebitContactPersonName, // 客户名

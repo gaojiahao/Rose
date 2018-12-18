@@ -38,7 +38,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID : 2386,
+        listViewID : 2568,
         chartShow : false,
         hasNext: true,
         scrollOptions: {

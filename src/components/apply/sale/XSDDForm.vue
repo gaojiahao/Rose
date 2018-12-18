@@ -637,21 +637,22 @@
             creator: formData.creator,
             modifer: formData.modifer,
           }
+          let dealer = formData.inPut.dataSet[0]
           // 客户信息展示
           this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName,
             dealerMobilePhone: formData.dealerDebitContactInformation,
-            dealerCode: formData.order.dealerDebit,
-            dealerSubclass: formData.order.drAccountSub,
-            dealerLabelName: formData.order.drDealerLabel,
-            dealerName: formData.order.dealerName_dealerDebit,
-            province: formData.order.province_dealerDebit,
-            city: formData.order.city_dealerDebit,
-            county: formData.order.county_dealerDebit,
-            address: formData.order.address_dealerDebit,
+            dealerCode: dealer.dealerDebit,
+            dealerLabelName: dealer.drDealerLabel,
+            dealerName: formData.inPut.dealerName_dealerDebit,
+            province: formData.inPut.province_dealerDebit,
+            city: formData.inPut.city_dealerDebit,
+            county: formData.inPut.county_dealerDebit,
+            address: formData.inPut.address_dealerDebit,
             paymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
             dealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
             pamentDays: formData.order.daysOfAccount,
+            tdAmountCopy1: dealer.tdAmountCopy1,
+            advancePaymentDueDate: dealer.advancePaymentDueDate,
           };
           // 订单信息
           this.contactInfo = {

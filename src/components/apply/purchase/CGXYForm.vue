@@ -333,7 +333,7 @@
               tdAmount: item.tdAmount,
               taxRate: taxRate, // 税金
               noTaxPrice: item.noTaxPrice,
-              taxAmount: taxAmount, // 税金
+              taxAmount: item.taxAmount, // 税金
               comment: item.comment || '' // 说明
             });
             return true

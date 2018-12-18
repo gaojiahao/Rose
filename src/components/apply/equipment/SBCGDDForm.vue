@@ -97,10 +97,37 @@
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span>待下单: {{modifyMatter.qtyBal}}</span>
+          </template>
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                     placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+              <template slot="label">
+                <slot name="qtyName">
+                  <span class='required'>数量</span>
+                </slot>
+              </template>
+            </x-input>
+            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
+                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>单价
+                </span>
+              </template>
+            </x-input>
+            <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+              <template slot="label">
+                <span class='required'>税率
+                </span>
+              </template>
+            </x-input>
+          </template>
+          <template slot="modifyTitle" slot-scope="{modifyMatter}">
+            <label>金额</label>
           </template>
         </pop-matter>
 
@@ -134,7 +161,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Cell} from 'vux'
+  import {XTextarea, Cell, XInput} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {
@@ -187,7 +214,6 @@
         taskId: '',
         showOrderPop: false,
         tmpItems: {}, // 选中的订单
-        matter: {},
         showMatterPop: false,
         modifyIndex: null,
         modifyKey: null,
@@ -203,12 +229,56 @@
             value: 'facilityCode',
           },
         ],
+        facility: {}
       }
     },
     mixins: [applyCommon],
     components: {
-      XTextarea, RNumber, PopDealerList, PopSingleSelect,
+      XTextarea, RNumber, PopDealerList, PopSingleSelect, XInput,
       PopMatter, RPicker, PopBaseinfo, Cell, PopFacilityList,
+    },
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0;
+          item.noTax = accMul(tdQty,price);
+          total = accAdd(total, item.noTax);
+        });
+        return Number(total);
+      },
+      // 税金
+      taxAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0,
+              taxRate = item.taxRate || 0;
+          item.noTax = accMul(tdQty,price);
+          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
+
+        });
+        return total;
+      },
+      tdAmount() {
+        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+      },
+    },
+    watch:{
+      //修改的物料
+      facility:{
+        handler(val){
+          let price = val.price || 0,
+              tdQty = val.tdQty || 0,
+              taxRate = val.taxRate || 0;
+          val.noTaxAmount = toFixed(accMul(price,tdQty));
+          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
+          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+        },
+        deep:true
+      }
     },
     methods: {
       // 修改经办人信息
@@ -237,7 +307,7 @@
       },
       // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
-        this.matter = JSON.parse(JSON.stringify(item));
+        this.facility = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
@@ -249,7 +319,7 @@
         sels.forEach(item => {
           let key = `${item.transCode}_${item.facilityCode}`;
           let {
-            tdQty = '', price = '', taxRate = 0.16,
+            tdQty = item.qtyBal !== undefined ? item.qtyBal : '', price = '', taxRate = 0.16,
           } = this.numMap[key] || {};
           item.tdQty = tdQty;
           if (price.length) {
@@ -562,7 +632,7 @@
         }
         return {
           [DRAFT_KEY]: {
-            matter: this.matterList,
+            facility: this.matterList,
             dealer: this.dealerInfo,
             formData: this.formData,
             contactInfo: this.contactInfo,
@@ -628,8 +698,8 @@
       },
       // TODO 选中辅助计量
       moreUnitSelected(val) {
-        this.matter.assMeasureUnit = val.invSubUnitName;
-        this.matter.assistQty = val.invSubUnitMulti;
+        this.facility.assMeasureUnit = val.invSubUnitName;
+        this.facility.assistQty = val.invSubUnitMulti;
       },
       // TODO 组装orderList
       assembleOrder(arr) {
@@ -647,7 +717,7 @@
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
-        this.matterList = draft.matter;
+        this.matterList = draft.facility;
         this.dealerInfo = draft.dealer;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;

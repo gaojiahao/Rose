@@ -95,7 +95,7 @@
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span>订单总数: {{modifyMatter.qty}}</span>
@@ -210,7 +210,7 @@
         taskId: '',
         showOrderPop: false,
         tmpItems: {}, // 选中的订单
-        matter: {},
+        facility: {},
         showMatterPop: false,
         modifyIndex: null,
         modifyKey: null,
@@ -234,6 +234,49 @@
       XInput, RNumber, XTextarea, 
       PopMatter, RPicker, PopDealerList, 
       PopBaseinfo, PopFacilityList
+    },
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0;
+          item.noTax = accMul(tdQty,price);
+          total = accAdd(total, item.noTax);
+        });
+        return Number(total);
+      },
+      // 税金
+      taxAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0,
+              taxRate = item.taxRate || 0;
+          item.noTax = accMul(tdQty,price);
+          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
+
+        });
+        return total;
+      },
+      tdAmount() {
+        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+      },
+    },
+    watch:{
+      //修改的物料
+      facility:{
+        handler(val){
+          let price = val.price || 0,
+              tdQty = val.tdQty || 0,
+              taxRate = val.taxRate || 0;
+          val.noTaxAmount = toFixed(accMul(price,tdQty));
+          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
+          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+        },
+        deep:true
+      }
     },
     methods: {
       // 修改经办人信息
@@ -267,7 +310,7 @@
       },
       // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
-        this.matter = JSON.parse(JSON.stringify(item));
+        this.facility = JSON.parse(JSON.stringify(item));
         this.showMatterPop = true;
         this.modifyIndex = index;
         this.modifyKey = key;
@@ -655,8 +698,8 @@
       },
       // TODO 选中辅助计量
       moreUnitSelected(val) {
-        this.matter.assMeasureUnit = val.invSubUnitName;
-        this.matter.assistQty = val.invSubUnitMulti;
+        this.facility.assMeasureUnit = val.invSubUnitName;
+        this.facility.assistQty = val.invSubUnitMulti;
       },
       // TODO 组装orderList
       assembleOrder(arr) {

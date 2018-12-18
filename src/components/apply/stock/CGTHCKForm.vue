@@ -323,12 +323,12 @@ export default {
       this.orderList = orderList;
     },
     // TODO 显示物料修改的pop
-      modifyMatter(item, index, key) {
-        this.matter = JSON.parse(JSON.stringify(item));
-        this.showMatterPop = true;
-        this.modifyIndex = index;
-        this.modifyKey = key;
-      },
+    modifyMatter(item, index, key) {
+      this.matter = JSON.parse(JSON.stringify(item));
+      this.showMatterPop = true;
+      this.modifyIndex = index;
+      this.modifyKey = key;
+    },
     // TODO 更新修改后的物料信息
     selConfirm(val) {
       let modMatter = JSON.parse(val);
@@ -582,17 +582,14 @@ export default {
         let {outPut, dealerDebit} = formData;
         let {dataSet = []} = outPut;
         for (let item of dataSet) {
-          item = {
-             ...item,
-            inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
-            inventoryName: item.inventoryName_outPutMatCode,
-            inventoryCode: item.outPutMatCode,
-            specification: item.specification_outPutMatCode,
-            processing: item.tdProcessing,
-            qtyStockBal: item.thenQtyStock, // 可用库存
-            qtyBal: item.thenQtyBal, // 可退货数量
-            transCode: item.orderCode
-          };
+          item.inventoryPic = item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg();
+          item.inventoryName=  item.inventoryName_outPutMatCode;
+          item.inventoryCode= item.outPutMatCode;
+          item.specification= item.specification_outPutMatCode;
+          item.processing= item.tdProcessing;
+          item.qtyStockBal= item.thenQtyStock; // 可用库存
+          item.qtyBal= item.thenQtyBal; // 可退货数量
+          item.transCode= item.orderCode;
           if (!orderList[item.orderCode]) {
             orderList[item.orderCode] = [];
           }

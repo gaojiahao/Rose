@@ -74,7 +74,7 @@
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :isShowAmount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
@@ -168,13 +168,57 @@
           facilityType: '工程物资,固定资产'
         },
         showMatterPop: false,
-        selItems: []
+        selItems: [],
+        facility: {},
       }
     },
     mixins: [applyCommon],
     components: {
       XTextarea, Datetime, RNumber, Cell, XInput,
       PopMatter, RPicker, PopBaseinfo, PopFacilityList,
+    },
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0;
+          item.noTax = accMul(tdQty,price);
+          total = accAdd(total, item.noTax);
+        });
+        return Number(total);
+      },
+      // 税金
+      taxAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0,
+              taxRate = item.taxRate || 0;
+          item.noTax = accMul(tdQty,price);
+          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
+
+        });
+        return total;
+      },
+      tdAmount() {
+        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+      },
+    },
+    watch:{
+      //修改的物料
+      facility:{
+        handler(val){
+          let price = val.price || 0,
+              tdQty = val.tdQty || 0,
+              taxRate = val.taxRate || 0;
+          val.noTaxAmount = toFixed(accMul(price,tdQty));
+          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
+          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+        },
+        deep:true
+      }
     },
     methods: {
       // TODO 选中物料项
@@ -187,6 +231,12 @@
         });
         this.numMap = {};
         this.matterList = sels;
+      },
+      //显示物料修改的pop
+      modifyMatter(item,index){
+        this.facility = JSON.parse(JSON.stringify(item));
+        this.showMatterPop = true;
+        this.modifyIndex = index;
       },
       // TODO 选择默认图片
       getDefaultImg(item) {

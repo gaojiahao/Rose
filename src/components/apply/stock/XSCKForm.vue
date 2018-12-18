@@ -50,17 +50,16 @@
                       <!-- 物料属性和单位 -->
                       <div class='mater_more'>
                         <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span v-show="item.taxRate">税率: {{item.taxRate || taxRate}}</span>
+                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <!-- 库存 -->
-                      <div class='mater_more'>
-                        <div>
-                          <span>订单数量: {{item.qty}}</span>
-                          <span>已出库数量: {{item.stockQty}}</span>
-                          <span>在库库存: {{item.qtyStockBal}}</span>
-                        </div>
+                      <div class='mater_more'>                       
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
+                        <span>订单数量: {{item.qty}}</span>
+                        <span>已出库数量: {{item.stockQty}}</span>
+                        <span>在库库存: {{item.qtyStockBal}}</span>
                         <span class='unit' v-show="item.promDeliTime">预期交货日: {{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
@@ -139,7 +138,7 @@
             </div>
           </template>
           <template slot="qtyName">
-            <span class='required'>出库数量</span>
+            <span class='required'>本次出库数量</span>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
             <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
@@ -336,6 +335,9 @@
           item.price = price;
           item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -479,18 +481,21 @@
               tdProcessing: item.processing, // 加工属性
               assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
               assMeasureScale: item.assMeasureScale !== undefined ? item.assMeasureScale : null, // 与单位倍数
+              assMeasureDescription: item.assMeasureDescription || '',
               dealerInventoryName: item.clientInventoryName,
               dealerInventoryCode: item.clientInventoryCode,
               thenTotalQtyBal: item.qty, // 订单总数
               thenLockQty: item.stockQty, // 已出库数量
               thenQtyBal: item.qtyBal, // 待交付数量
               thenQtyStock: item.qtyStockBal, // 当时可用库存
-              assistQty: item.assistQty || 0, // 辅计数量（明细）
               tdQty: item.tdQty, // 明细发生数
+              assistQty: item.assistQty || 0, // 辅计数量（明细）
               price: item.price, // 明细单价
+              tdAmount: item.tdAmount,
               taxRate: taxRate, // 税率
-              taxAmount: taxAmount, // 税金
-              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
+              noTaxPrice: item.noTaxPrice,
+              taxAmount: item.taxAmount, // 税金
+              // tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
               promDeliTime: item.promDeliTime || '', // 承诺交付时间
               comment: item.comment || '', // 说明
             };
@@ -593,21 +598,18 @@
           let {outPut} = formData;
           let {dataSet = []} = outPut;
           for (let item of dataSet) {
-            item = {
-              ...item,
-              transCode: item.transMatchedCode,
-              qtyBal: item.thenQtyBal,
-              qtyStockBal: item.thenQtyStock,
-              inventoryPic: item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg(),
-              inventoryName: item.inventoryName_outPutMatCode,
-              inventoryCode: item.outPutMatCode,
-              specification: item.specification_outPutMatCode,
-              processing: item.tdProcessing,
-              qty: item.thenTotalQtyBal,
-              stockQty: item.thenLockQty,
-              clientInventoryName: item.dealerInventoryName,
-              clientInventoryCode: item.dealerInventoryCode,
-            };
+            item.transCode = item.transMatchedCode;
+            item.qtyBal = item.thenQtyBal;
+            item.qtyStockBal = item.thenQtyStock,
+            item.inventoryPic = item.inventoryPic_outPutMatCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_outPutMatCode}&width=400&height=400` : this.getDefaultImg();
+            item.inventoryName = item.inventoryName_outPutMatCode;
+            item.inventoryCode = item.outPutMatCode;
+            item.specification = item.specification_outPutMatCode;
+            item.processing = item.tdProcessing;
+            item.qty = item.thenTotalQtyBal;
+            item.stockQty = item.thenLockQty;
+            item.clientInventoryName = item.dealerInventoryName;
+            item.clientInventoryCode = item.dealerInventoryCode;
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
             }
@@ -761,6 +763,11 @@
       if (data) {
         let draft = JSON.parse(data);
         this.orderList = draft.orderList;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            this.matterList.push(item)
+          }
+        }
         this.warehouse = draft.warehouse;
         this.dealerInfo = draft.dealerInfo;
         this.contactInfo = draft.contactInfo;

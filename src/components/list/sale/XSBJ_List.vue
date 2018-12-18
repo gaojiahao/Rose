@@ -28,7 +28,7 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2230,
+        listViewID: 2544,
       }
     },
     mixins: [listCommon],

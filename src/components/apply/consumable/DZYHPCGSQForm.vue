@@ -82,7 +82,7 @@
                            :params="matterParams" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input title="本次申请" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
@@ -143,8 +143,8 @@
   import RNumber from 'components/RNumber'
 
   // 方法引入
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
   import {toFixed} from '@/plugins/calc'
-  import {accMul} from '@/home/pages/maps/decimalsAdd'
 
   const DRAFT_KEY = 'DZYHPCGSQ_DATA';
 
@@ -162,6 +162,7 @@
         matterParams: {
           processing: '低值易耗品'
         },
+        consumables: {}
       }
     },
     components: {
@@ -170,7 +171,57 @@
       PopBaseinfo, Cell, RNumber,
     },
     mixins: [ApplyCommon],
+    computed: {
+      // 合计金额
+      totalAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0;
+          item.noTax = accMul(tdQty,price);
+          total = accAdd(total, item.noTax);
+        });
+        return Number(total);
+      },
+      // 税金
+      taxAmount() {
+        let total = 0;
+        this.matterList.forEach(item => {
+          let price = item.price || 0,
+              tdQty = item.tdQty || 0,
+              taxRate = item.taxRate || 0;
+          item.noTax = accMul(tdQty,price);
+          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
+
+        });
+        return total;
+      },
+      tdAmount() {
+        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
+      },
+    },
+    watch:{
+      //修改的物料
+      consumables:{
+        handler(val){
+          let price = val.price || 0,
+              tdQty = val.tdQty || 0,
+              taxRate = val.taxRate || 0;
+          val.noTaxAmount = toFixed(accMul(price,tdQty));
+          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
+          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+        },
+        deep:true
+      }
+    },
     methods: {
+      // TODO 显示物料修改的pop
+      modifyMatter(item, index, key) {
+        this.consumables = JSON.parse(JSON.stringify(item));
+        this.showMatterPop = true;
+        this.modifyIndex = index;
+        this.modifyKey = key;
+      },
       // 滑动删除
       delClick(index, sItem) {
         let arr = this.selItems;
