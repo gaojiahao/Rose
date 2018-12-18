@@ -17,6 +17,14 @@
               <span class="title">账期天数: </span>
               <span class="mode">{{contactInfo.pamentDays || '暂无'}}</span>
             </div>
+            <div class="other" v-if="hasAdvance">
+              <span class="title">预收款: </span>
+              <span class="mode">￥{{contactInfo.tdAmountCopy1 | numberComma}}</span>
+            </div>
+            <div class="other" v-if="hasAdvance">
+              <span class="title">预收到期日: </span>
+              <span class="mode">{{contactInfo.advancePaymentDueDate || '暂无'}}</span>
+            </div>
           </template>
         </contact-part>
         <!-- 物料列表 -->
@@ -92,6 +100,19 @@ export default {
       orderList: {},
     }
   },
+  computed: {
+    // 是否含预收
+    hasAdvance() {
+      let {payment} = this.contactInfo;
+      let hasAdvanceList = ['赊销'];
+      if(!payment) {
+        return false
+      }
+      else{
+        return !payment.includes(hasAdvanceList);
+      }
+    }
+  },
   components:{
     workFlow, RAction,contactPart,PriceTotal,MatterList
   },
@@ -123,13 +144,15 @@ export default {
           return;
         }
         let orderList = {};
+        let {inPut = {}} = data.formData;
+        let [dealerInfo = {}] = inPut.dataSet;
         // 获取合计
-        let { dataSet } = data.formData.order;
-        for(let item of dataSet){
-          item.noTaxAmount = accMul(item.price,item.tdQty);
-          item.taxAmount = accMul(item.noTaxAmount,item.taxRate);
-          item.tdAmount = toFixed(accAdd(item.noTaxAmount,item.taxAmount));
-          this.count = accAdd(this.count,item.tdAmount);
+        let {dataSet} = data.formData.order;
+        for (let item of dataSet) {
+          item.noTaxAmount = accMul(item.price, item.tdQty);
+          item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
+          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
+          this.count = accAdd(this.count, item.tdAmount);
           item.inventoryPic = item.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
@@ -141,7 +164,11 @@ export default {
         this.orderList = orderList;
         this.attachment = data.attachment;
         this.orderInfo = data.formData;
-        this.getcontactInfo()
+        this.contactInfo = {
+          tdAmountCopy1: dealerInfo.tdAmountCopy1,
+          advancePaymentDueDate: dealerInfo.advancePaymentDueDate,
+        };
+        this.getcontactInfo();
         this.workFlowInfoHandler();
       })
     },
@@ -150,6 +177,7 @@ export default {
       let orderInfo = this.orderInfo;
       let order = orderInfo[key];
       this.contactInfo = {
+        ...this.contactInfo,
         creatorName: order.dealerDebitContactPersonName, // 客户名
         dealerName: order.dealerName_dealerDebit, // 公司名
         dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
