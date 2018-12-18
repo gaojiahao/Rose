@@ -465,7 +465,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf; // 默认有工作流
             let wfPara = {
-              [this.processCode]: {businessKey: "XS1", createdBy: ""}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             };
             if (this.isResubmit) {
               wfPara = {

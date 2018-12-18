@@ -21,7 +21,7 @@
                            v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
         <div class="other_info">
           <div class="title">协议总金额</div>
-          <div class="mode">{{tdAmount | numberComma}}</div>
+          <div class="mode">￥{{tdAmount | numberComma}}</div>
         </div>
         <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate"></r-date>
         <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil"></r-date>
