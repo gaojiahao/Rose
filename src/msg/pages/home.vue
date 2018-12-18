@@ -196,19 +196,13 @@
       // TODO 进入详情
       goDetail(item, index) {
         let {commentType = '', listId = '', listName = '', RELATION_KEY = ''} = item;
+        let fileId = item.typeId, 
+            childId = item.childId;
         let query = {
+          childId,
           name: listName,
           transCode: RELATION_KEY,
         };
-        let fileId = '', childId = '';
-        if(item.listTypeID){
-          fileId = item.listTypeID;
-          childId = item.parentId;
-          query.childId = childId
-        }
-        else{
-          fileId = item.parentId;
-        }
         let path = `/detail/${fileId}/${listId}`;
         if (commentType === 'list') {
           path = `/appDetail/${listId}`;
