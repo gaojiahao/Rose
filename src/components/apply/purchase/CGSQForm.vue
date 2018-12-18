@@ -30,8 +30,8 @@
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{'mater_delete' : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
-                  <matter-item :item="item" @on-modify="modifyMatter(item,index,key)" :show-delete="matterModifyClass"
-                              @click.native="delClick(index,item)">
+                  <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
+                              @click.native="delClick(index, item)">
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
                       <div class="mater_more">
@@ -46,23 +46,26 @@
                         </div>
                       </div>
                       <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">
-                        <div class='mater_price'>
-                          <span class="symbol">￥</span>{{item.price}}
-                        </div>
-                        <div>
-                          <r-number :num="item.tdQty"
-                                    :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBalance"></r-number>
+                      <div class='mater_other' v-if="item.tdQty">
+                        <span>
+                          本次申请: <span class="mater_price">{{item.tdQty}}</span>
+                        </span>
+                      </div>
+                    </template>
+                    <template slot="edit" slot-scope="{item}">
+                      <div class='mater_other' @click="modifyMatter(item, index, key)" v-if="!item.tdQty && !matterModifyClass">
+                        <div class="edit-tips">
+                          <span class="tips-word">点击进行填写</span>
                         </div>
                       </div>
                     </template>
                     <template slot="editPart" slot-scope="{item}">
-                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index,key)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index, key)" v-show="item.tdQty &&!matterModifyClass">
                         <span class='iconfont icon-bianji1'></span>
                       </div>
                     </template>
                   </matter-item>
-                  <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
+                  <div class='delete_icon' @click="delClick(index, item)" v-if='matterModifyClass'>
                     <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                     <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
                   </div>
@@ -99,9 +102,11 @@
                   <span>全部需求: {{item.allQty}}</span>
                   <span>已申请: {{item.qtyed}}</span>
                   <span>待申请: {{item.qtyBalance}}</span>
+                  <span>采购提前期: {{item.leadtime}}</span>
                 </div>
                 <div>
-                  <span>合同价格: ￥{{item.quotedPrice || 0}}</span>
+                  <p>下单截止日: {{item.shippingTime}}</p>
+                  <p>到货截止日: {{item.processingStartDate}}</p>
                 </div>
               </div>
             </template>
@@ -115,7 +120,10 @@
               <span>全部需求: {{modifyMatter.allQty}}</span>
               <span>已申请: {{modifyMatter.qtyed}}</span>
             </div>
-            <p>待申请: {{modifyMatter.qtyBalance}}</p>
+            <div>
+              <span>待申请: {{modifyMatter.qtyBalance}}</span>
+              <span>采购提前期: {{modifyMatter.leadtime}}</span>
+            </div>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
@@ -125,12 +133,16 @@
                 </span>
               </template>
             </x-input>
-            <x-input title="估计价格" type="number"  v-model.number='modifyMatter.price' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-
-            <datetime title="计划需求日期" v-model="modifyMatter.promDeliTime"
-                      placeholder="请选择" ></datetime>
-            <cell title="估计金额" :value="'￥' + modifyMatter.noTaxAmount"></cell>
+            <x-input v-model.number='modifyMatter.comment' text-align="right"
+                    @on-focus="getFocus($event)" placeholder="请输入">
+              <template slot="label">
+                <span>申请说明</span>
+              </template>
+            </x-input>
+          </template>
+          <template slot="date" slot-scope="{modifyMatter}">
+            <cell disabled title="下单截止日" :value="modifyMatter.shippingTime || '无'"></cell>
+            <cell disabled title="到货截止日" :value="modifyMatter.promDeliTime"></cell>
           </template>
         </pop-matter>
         <!--备注-->
@@ -227,13 +239,13 @@ export default {
       return Number(total);
     },
     // 订单总金额
-    tdAmount () {
-      let total = 0;
-      this.matterList.forEach(item => {
-        total = accAdd(total, accMul(item.tdQty, item.price))
-      });
-      return parseFloat(total.toFixed(2));
-    }
+    // tdAmount () {
+    //   let total = 0;
+    //   this.matterList.forEach(item => {
+    //     total = accAdd(total, accMul(item.tdQty, item.price))
+    //   });
+    //   return parseFloat(total.toFixed(2));
+    // }
   },
   mixins: [common],
   methods: {
@@ -242,13 +254,9 @@ export default {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.map(item => {
-        let key = `${item.transCode}_${item.inventoryCode}`;
-        let defaultPromDeliTime = item.processingStartDate ? item.processingStartDate.split(" ")[0] : '';
-        let {tdQty = item.qtyBalance, price = '', promDeliTime = defaultPromDeliTime} = this.numMap[key] || {};
-        item.tdQty = tdQty;
-        item.price = price;
-        item.promDeliTime = promDeliTime;
-        if (!orderList[item.transCode]) {
+        item.tdQty = item.qtyBalance;
+        item.promDeliTime = item.processingStartDate;
+        if(!orderList[item.transCode]) {
           orderList[item.transCode] = [];
         }
         orderList[item.transCode].push(item);
@@ -311,38 +319,38 @@ export default {
     // 删除选中的
     deleteCheckd (){
       this.$vux.confirm.show({
-          content: '确认删除?',
-          // 确定回调
-          onConfirm: () => {
-            let newArr = [];
-            let keys = Object.keys(this.orderList);
-            keys.forEach(item => {
-              newArr = newArr.concat(this.orderList[item]);
-            })
-            this.selItems.forEach(SItem => {
-              newArr.forEach(OItem => {
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                  let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    delArr.splice(delIndex, 1);
-                  }
-                  if (!delArr.length) {
-                    delete this.orderList[OItem.transCode];
-                  }
+        content: '确认删除?',
+        // 确定回调
+        onConfirm: () => {
+          let newArr = [];
+          let keys = Object.keys(this.orderList);
+          keys.forEach(item => {
+            newArr = newArr.concat(this.orderList[item]);
+          })
+          this.selItems.forEach(SItem => {
+            newArr.forEach(OItem => {
+              if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                let delArr = this.orderList[OItem.transCode];
+                let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                if (delIndex >= 0) {
+                  delArr.splice(delIndex, 1);
                 }
-              })
-              this.matterList.forEach((item, index) => {
-                if (item.inventoryCode === SItem.inventoryCode) {
-                  this.matterList.splice(index, 1);
-                  index--;
+                if (!delArr.length) {
+                  delete this.orderList[OItem.transCode];
                 }
-              })
+              }
             })
-            this.selItems = [];
-            this.matterModifyClass = false;
-          }
-        })
+            this.matterList.forEach((item, index) => {
+              if (item.inventoryCode === SItem.inventoryCode) {
+                this.matterList.splice(index, 1);
+                index--;
+              }
+            })
+          })
+          this.selItems = [];
+          this.matterModifyClass = false;
+        }
+      })
     },
     // 新增物料
     addMatter () {
@@ -377,10 +385,6 @@ export default {
       if (!warn) {
         // 校验
         this.matterList.every(item => {
-          if (!item.price) {
-            warn = '单价不能为空';
-            return false
-          }
           if (!item.tdQty) {
             warn = '数量不能为空';
             return false
@@ -398,10 +402,9 @@ export default {
             thenLockQty: item.qtyed, // 已做需求
             thenQtyBal: item.qtyBalance, // 代申请
             tdQty: item.tdQty, // 待做需求
-            price: item.price, // 单价
-            tdAmount: accMul(item.price, item.tdQty), // 合计
+            shippingTime: item.shippingTime,
             promDeliTime: item.promDeliTime, // 计划需求日期
-            comment : '', // 说明
+            comment : item.comment, // 说明
           });
           return true
         })

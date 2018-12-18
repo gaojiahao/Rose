@@ -6,25 +6,6 @@
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
-        <!-- 用户地址和基本信息-->
-        <!-- <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"  @sel-contact="selContact"></pop-dealer-list> -->
-        <!-- 结算方式 -->
-        <!-- <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
-            v-model="dealerInfo.paymentTerm"></pop-single-select> -->
-        <!-- 物流条款 -->
-        <!-- <pop-single-select title="物流条款" :data="logisticsTerm" :value="formData.drDealerLogisticsTerms"
-                           v-model="formData.drDealerLogisticsTerms">
-        </pop-single-select> -->
-        <!-- 有效期至 -->
-        <!-- <div class="mg_auto no_top" >
-          <div class="valid_until" @click="clickDateSelect">
-            <div class="title">有效期至</div>
-            <div class="mode">
-              <span class="mode_content">{{formData.validUntil || '请选择有效期'}}</span>
-              <span class="iconfont icon-shenglve"></span>
-            </div>
-          </div>
-        </div> -->
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->

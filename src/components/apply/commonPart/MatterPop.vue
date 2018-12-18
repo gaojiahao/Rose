@@ -60,6 +60,7 @@
             </template>
           </div>
         </div>
+        <!-- 基本信息插槽 -->
         <group class='mg_auto'>
           <slot name="modify" :modifyMatter="modifyMatter">
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
@@ -86,9 +87,11 @@
               </template>
             </x-input>
             <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
-            <slot name="date" :modifyMatter="modifyMatter"></slot>
-
           </slot>
+        </group>
+        <!-- 日期插槽 -->
+        <group class="mg_auto">
+          <slot name="date" :modifyMatter="modifyMatter"></slot>
         </group>
         <div class='mg_auto' v-show="isShowAmount">
           <div class='each_info vux-1px-b'>
