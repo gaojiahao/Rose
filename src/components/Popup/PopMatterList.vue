@@ -91,7 +91,7 @@
 
 <script>
   import {Icon, Popup, dateFormat} from 'vux'
-  import {getManyVATBilling, getManyVATReceipt} from 'service/invoiceService'
+  import {getManyVATBilling, getManyVATReceipt, getBillingApplication} from 'service/invoiceService'
   import {
     getObjInventoryByProcessing,
     getSumInvBalance,
@@ -205,7 +205,8 @@
           this.resetCondition();
           // 参数改变，重新请求接口
           this.requestMethods();
-        }
+        },
+        deep: true
       }
     },
     methods: {
@@ -674,6 +675,27 @@
           ];
         }
         return getEtcPutInStorage({
+          limit: this.limit,
+          page: this.page,
+          start: (this.page - 1) * this.limit,
+          filter: JSON.stringify(filter),
+          ...this.params,
+        }).then(this.dataHandler);
+      },
+       // TODO 获取的物料列表(开票申请)
+      getBillingApplication() {
+        let filter = [];
+        if (this.srhInpTx) {
+          filter = [
+            ...filter,
+            {
+              operator: 'like',
+              value: this.srhInpTx,
+              property: this.filterProperty,
+            },
+          ];
+        }
+        return getBillingApplication({
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
