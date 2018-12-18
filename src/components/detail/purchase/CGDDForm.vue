@@ -11,7 +11,24 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="contactInfo" :logistics="false"></contact-part>
+      <contact-part :contact-info="contactInfo" :logistics="false">
+        <template slot="other">
+          <div class="other">
+            <span class="title">账期天数: </span>
+            <span class="mode">{{contactInfo.daysOfAccount}}</span>
+          </div>
+          <div class="other_content vux-1px-t">
+            <div class="trade_info s_size_name" v-if="this.contactInfo.tdAmountCopy1 || this.contactInfo.tdAmountCopy1 === 0">
+              <span class="title">预付款: </span>
+              <span class="mode">{{`￥${this.contactInfo.tdAmountCopy1}`}}</span>
+            </div>
+            <div class="trade_info s_size_name" v-if="this.contactInfo.prepaymentDueDate">
+              <span class="title">预付到期日: </span>
+              <span class="mode">{{this.contactInfo.prepaymentDueDate}}</span>
+            </div>
+          </div>
+        </template>
+      </contact-part>
       <!-- 物料列表 -->
       <matter-list :matter-list='orderInfo.order.dataSet' :noTaxAmount="noTaxAmount" 
                      :taxAmount="taxAmount" :count="count">
@@ -110,9 +127,6 @@ export default {
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let val of dataSet) {
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
           this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
@@ -124,22 +138,28 @@ export default {
       })
     },
     // TODO 生成contactInfo对象
-    getcontactInfo(key = 'order') {
+    getcontactInfo(key = 'inPut') {
       let orderInfo = this.orderInfo;
       let order = orderInfo[key];
+      console.log(orderInfo)
       this.contactInfo = {
         creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
-        dealerName: order.dealerName_dealerDebit, // 公司名
+        dealerName: order.dataSet[0].dealerName_dealerDebit, // 公司名
         dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
         dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
-        dealerCode: order.dealerDebit, // 客户编码
-        dealerLabelName: order.drDealerLabel, // 关系标签
-        province: order.province_dealerDebit, // 省份
-        city: order.city_dealerDebit, // 城市
-        county: order.county_dealerDebit, // 地区
-        address: order.address_dealerDebit, // 详细地址
-        payment: order.drDealerPaymentTerm, // 付款方式
+        dealerCode: order.dataSet[0].dealerDebit, // 客户编码
+        dealerLabelName: order.dataSet[0].drDealerLabel, // 关系标签
+        province: order.dataSet[0].province_dealerDebit, // 省份
+        city: order.dataSet[0].city_dealerDebit, // 城市
+        county: order.dataSet[0].county_dealerDebit, // 地区
+        address: order.dataSet[0].address_dealerDebit, // 详细地址
+        payment: orderInfo.order.drDealerPaymentTerm, // 付款方式
+        daysOfAccount: orderInfo.order.daysOfAccount,
+        tdAmountCopy1: order.dataSet[0].tdAmountCopy1,
+        prepaymentDueDate: order.dataSet[0].prepaymentDueDate,
+
       };
+      console.log(this.contactInfo)
     },
   },
   created() {

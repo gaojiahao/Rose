@@ -12,45 +12,32 @@
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分-->
       <contact-part :contact-info="contactInfo" :logistics="false" :payment="false"></contact-part>
-      <div class="form_part" v-if="orderInfo.ticketNumber">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-xiangmu"></span><span class="title">发票信息</span>
-        </div>
-        <div class="form_content" style="margin-bottom:0.1rem;">
-          <div class="main_content" >
-            <form-cell cellTitle='票号' :cellContent="orderInfo.ticketNumber" textRight></form-cell>
-            <form-cell cellTitle='发票类型' :cellContent="orderInfo.invoiceType" textRight></form-cell>
-            <form-cell cellTitle='发票日期' :cellContent="orderInfo.invoiceDate" textRight></form-cell>
-            <form-cell cellTitle='发票内容' :cellContent="orderInfo.invoiceContent" textRight></form-cell>
-          </div>
-        </div>
-      </div>
-      <div class="form_part">
-        <div class="form_title vux-1px-b">
-          <span class="iconfont icon-baoxiao"></span><span class="title">开票列表</span>
-        </div>
-        <div class="form_content"
-            :class="{ 'show_border' : index !== orderInfo.order.dataSet.length - 1}"
-            v-for="(item, index) in orderInfo.order.dataSet" :key='index'>
-          <div class="main_content" >
-              <form-cell cellTitle='出库单' :cellContent="item.transMatchedCode" :showTopBorder=false textRight></form-cell>
-              <form-cell cellTitle='物料名称' :cellContent="item.inventoryName_transObjCode" textRight></form-cell>
-              <form-cell cellTitle='物料编码' :cellContent="item.inventoryCode_transObjCode" textRight></form-cell>
-              <form-cell cellTitle='待申请数量' :cellContent="item.thenQtyBal" textRight></form-cell>
-              <form-cell cellTitle='单价' :cellContent="item.price | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='本次申请数量' :cellContent="item.tdQty" textRight></form-cell>
-              <form-cell cellTitle='金额' :cellContent="item.noTaxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='税率' :cellContent="item.taxRate" textRight></form-cell>
-              <form-cell cellTitle='税金' :cellContent="item.taxAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='税价小计' :cellContent="item.tdAmount | toFixed | numberComma" textRight showSymbol></form-cell>
-              <form-cell cellTitle='说明' :cellContent="item.comment" textRight></form-cell>
-          </div>
-        </div>
-      </div>
-      <div class="price_cell vux-1px-t">
-        <span class='title'>合计:</span>
-        <span class="num"><span style="fontSize:.12rem;">￥</span>{{count | toFixed | numberComma(3)}}</span>
-      </div>
+      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
+          <template slot="orderTitle" slot-scope="props">
+            <span class="order_title">出库单</span>
+          </template>
+          <template slot="matterOther" slot-scope="{item}">
+            <div class='mater_other'>
+              <div class="mater_attribute">
+                <span>属性: {{item.tdProcessing || '无'}}</span>
+                <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+                <span>待开票数量: {{item.thenQtyBal}}</span>
+              </div>
+              <div class='mater_num'>
+                <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+                <span class="num">本次开票数量: {{item.tdQty | toFixed}}</span>
+              </div>
+              <div class='mater_price'>
+                <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+                <span class="num"
+                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}"
+                      v-if="item.taxRate">
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                </span>
+              </div>
+            </div>
+          </template>
+        </matter-list>
        <div class="comment-part">
         <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
       </div>
@@ -74,6 +61,7 @@ import detailCommon from 'components/mixins/detailCommon'
 import RAction from 'components/RAction'
 import workFlow from 'components/workFlow'
 import contactPart from 'components/detail/commonPart/ContactPart'
+import MatterList from 'components/detail/commonPart/MatterList'
 //公共方法引入
 import {accAdd} from '@/home/pages/maps/decimalsAdd'
 export default {
@@ -82,36 +70,55 @@ export default {
       count: 0,          // 金额合计
       formViewUniqueId: '7aa1ae41-77a0-4905-84b4-9fa09926be70',
       contactInfo:{},
+      orderList: {},
+      orderInfo: {}
     }
   },
   mixins: [detailCommon],
   components: {
-    workFlow,RAction,contactPart
+    workFlow, RAction, contactPart, MatterList
   },
   methods: {
+    //选择默认图片
+    getDefaultImg(item) {
+      let url = require('assets/wl_default02.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
     // 获取详情
-    getOrderList(transCode = '') {
+    getOrderList(transCode = ''){
       return getSOList({
-        formViewUniqueId: this.formViewUniqueId,
+        formViewUniqueId : this.formViewUniqueId,
         transCode
       }).then(data => {
+        this.submitInfo  = JSON.parse(JSON.stringify(data));
         // http200时提示报错信息
-        if (data.success === false) {
+        if(data.success === false){
           this.$vux.alert.show({
             content: '抱歉，数据有误，暂无法查看',
               onHide:()=>{
               this.$router.back();
             }
-          });
+          })
           return;
         }
-        this.attachment = data.attachment;
+        let orderList = {};
         // 获取合计
-        let {dataSet} = data.formData.order;
-        for (let val of dataSet) {
-          this.count = accAdd(this.count,val.tdAmount);
+        let { dataSet } = data.formData.order;
+        for(let item of dataSet){
+          this.count = accAdd(this.count,item.tdAmount);
+          item.inventoryPic = item.inventoryPic_transObjCode
+            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
+            : this.getDefaultImg();
+          if (!orderList[item.transMatchedCode]) {
+            orderList[item.transMatchedCode] = [];
+          }
+          orderList[item.transMatchedCode].push(item);
         }
-        data.formData.invoiceDate = dateFormat(data.formData.invoiceDate, 'YYYY-MM-DD');
+        this.orderList = orderList;
+        this.attachment = data.attachment;
         this.orderInfo = data.formData;
         this.getcontactInfo();
         this.workFlowInfoHandler();
@@ -122,12 +129,15 @@ export default {
       let orderInfo = this.orderInfo;
       let order = orderInfo[key];
       this.contactInfo = {
+        ...this.contactInfo,
+        creatorName: order.dealerDebitContactPersonName, // 客户名
         dealerName: order.dealerName_dealerCodeCredit, // 公司名
-        dealerContactPersonName: orderInfo.dealerCreditContactPersonName,
-        dealerMobilePhone: orderInfo.dealerCreditContactInformation,
+        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+        dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
         dealerCode: order.dealerCodeCredit, // 客户编码
-        province: order.province_dealerCodeCreditt, // 省份
-        city: order.city_dealerCodeCreditt, // 城市
+        dealerLabelName: order.crDealerLabel, // 关系标签
+        province: order.province_dealerCodeCredit, // 省份
+        city: order.city_dealerCodeCredit, // 城市
         county: order.county_dealerCodeCredit, // 地区
         address: order.address_dealerCodeCredit, // 详细地址
       };

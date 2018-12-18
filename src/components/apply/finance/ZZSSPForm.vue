@@ -10,6 +10,8 @@
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" dealerTitle="供应商"
                          :params="dealerParams" @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
         <cell class="cell-item" title="结算方式" :value="dealerInfo.paymentTerm"></cell>
+        <cell class="cell-item" title="账期天数" :value="dealerInfo.pamentDays"></cell>
+        <datetime class="cell-item" title="预付款日期" v-model="dealerInfo.expectedPaymentDate" text-align="right" placeholder="请选择"></datetime>
         <!--发票信息-->
         <div class="materiel_list">
           <div class="title">发票信息</div>
@@ -64,19 +66,18 @@
                                @click.native="delClick(index, item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
-                      <div class='mater_more'>
+                      <div class='matter-more'>
                         <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span v-show="item.taxRate">税率: {{item.taxRate || taxRate}}</span>
+                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <div class="mater_more">
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                         <span>入库数量: {{item.qty}}</span>
                         <span>已收票数量: {{item.stockQty}}</span>
                         <span>待收票数量: {{item.qtyBal}}</span>
-                      </div>
-                      <div class='mater_more'>
-                        <span class='unit'>入库日期: {{item.purchaseDay}}</span>
+                         <span class='unit'>入库日期: {{item.purchaseDay}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
@@ -149,6 +150,7 @@
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">本次收票数量</span>
             </x-input>
+            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
             <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">单价</span>
@@ -157,6 +159,10 @@
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">税率</span>
             </x-input>
+            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
+          </template>
+          <template slot="tdAmount">
+            <label>本次收票金额</label>
           </template>
         </pop-matter>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
@@ -296,6 +302,9 @@
           item.price = price;
           item.taxRate = taxRate;
           item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD');
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -420,23 +429,27 @@
               return false
             }
             let taxRate = item.taxRate || this.taxRate;
-            let noTaxAmount = accMul(item.price, item.tdQty);
-            let taxAmount = accMul(noTaxAmount, taxRate);
             dataSet.push({
               tdId: item.tdId || '',
-              orderCode: item.transCode, // 实例编码,
+              orderCode: item.orderCode, // 实例编码,
               transMatchedCode: item.transCode, // 实例编码,
               purchaseDay: item.purchaseDay,
               transObjCode: item.inventoryCode,
+              tdProcessing: item.processing,
+              assMeasureUnit: item.assMeasureUnit,
+              assMeasureScale: item.assMeasureScale,
+              assMeasureDescription: item.assMeasureDescription,
               thenTotalQtyBal: item.qty,
               thenLockQty: item.stockQty,
               thenQtyBal: item.qtyBal,
-              price: item.price,
               tdQty: item.tdQty,
-              noTaxAmount: noTaxAmount,
-              taxRate: taxRate,
-              taxAmount: taxAmount,
-              tdAmount: accAdd(noTaxAmount, taxAmount), // 本次开票金额,
+              assistQty: item.assistQty,
+              price: item.price,
+              tdAmount: item.tdAmount,
+              taxRate: item.taxRate,
+              noTaxPrice: item.noTaxPrice,
+              taxAmount: item.taxAmount,
+              noTaxAmount: item.noTaxAmount, // 本次开票金额,
               comment: item.comment || '', // 说明
             });
             return true
@@ -473,13 +486,14 @@
               formData: JSON.stringify({
                 ...this.formData,
                 handlerEntity: this.entity.dealerName,
-                creator: this.transCode ? this.formData.handler : '',
-                modifer: this.transCode ? this.formData.handler : '',
+                creator: this.formData.handler,
+                modifer: this.formData.handler,
                 order: {
                   dealerCodeCredit: this.dealerInfo.dealerCode,
                   crDealerLabel: this.dealerInfo.dealerLabelName,
                   crDealerPaymentTerm: this.dealerInfo.paymentTerm || null,
                   pamentDays_dealerCodeCredit: this.dealerInfo.pamentDays || null,
+                  expectedPaymentDate: this.dealerInfo.expectedPaymentDate || null,
                   dataSet: dataSet,
                 },
                 dealerCreditContactPersonName: this.contactInfo.dealerName || null,
@@ -548,7 +562,10 @@
             county: formData.order.county_dealerCodeCredit,
             address: formData.order.address_dealerCodeCredit,
             dealerMobilePhone: formData.order.dealerMobilePhone_dealerCodeCredit,
-            paymentTerm: formData.order.crDealerPaymentTerm || '无'
+            paymentTerm: formData.order.crDealerPaymentTerm || '无',
+            pamentDays: formData.order.pamentDays_dealerCodeCredit,
+            expectedPaymentDate: formData.order.expectedPaymentDate,
+            dealerLabelName: formData.order.crDealerLabel
           }
           let orderList = {};
           // 发票列表明细
@@ -557,8 +574,9 @@
               ...item,
               transCode: item.transMatchedCode, //实例编码,
               inventoryName: item.inventoryName_transObjCode,
-              inventoryCode: item.inventoryCode_transObjCode,
+              inventoryCode: item.transObjCode,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+              processing: item.tdProcessing,
               qty: item.thenTotalQtyBal,
               stockQty: item.thenLockQty,
               qtyBal: item.thenQtyBal,
@@ -638,12 +656,10 @@
       width: 95%;
       background-color: #fff;
       box-sizing: border-box;
+      color: #757575;
+      font-size: .14rem;
       &:before {
         display: none;
-      }
-      /deep/ .vux-label {
-        color: #757575;
-        font-size: .14rem;
       }
     }
     /deep/ .weui-cells {

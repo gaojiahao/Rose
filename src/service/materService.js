@@ -301,6 +301,17 @@ export let getPriceRange = (data = {}) => {
   })
 };
 
+// TODO 获取物料列表(完工预入库)
+export let getEtcPutInStorage = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getEtcPutInStorage',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 export default {
   save,
   update,

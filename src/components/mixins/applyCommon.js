@@ -54,10 +54,8 @@ export default {
     taxAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        let noTaxPrice = toFixed(accDiv(item.price, accAdd(1, item.taxRate))),
-            assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale)),
-            taxRate = item.taxRate || 0;
-        total = accAdd(total, accMul(assistQty, taxRate, noTaxPrice));
+        this.calcMatter(item);
+        total = accAdd(total, item.taxAmount);
       });
       return toFixed(total);
     },
@@ -65,9 +63,8 @@ export default {
     tdAmount() {
       let total = 0;
       this.matterList.forEach(item => {
-        let price = item.price || 0,
-            assistQty = toFixed(accDiv(item.tdQty, item.assMeasureScale));
-        total = accAdd(total, accMul(price, assistQty));
+        this.calcMatter(item);
+        total = accAdd(total, item.tdAmount);
       });
       return toFixed(total);
     },
@@ -76,14 +73,7 @@ export default {
     //修改的物料
     matter:{
       handler(val){
-        let price = val.price || 0,
-            tdQty = val.tdQty || 0,
-            taxRate = val.taxRate || 0;
-        val.assistQty = toFixed(accDiv(tdQty, val.assMeasureScale));
-        val.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)));
-        val.tdAmount = toFixed(accMul(price, val.assistQty));
-        val.taxAmount = toFixed(accMul(val.assistQty, taxRate, val.noTaxPrice));
-        val.noTaxAmount = accSub(val.tdAmount, val.taxAmount);
+        this.calcMatter(val);
       },
       deep:true
     }
@@ -222,7 +212,7 @@ export default {
           handlerRole: firstRole.roleId || '',  // 用户职位id
           handlerRoleName: firstRole.roleName || '',  // 用户职位名称
           userCode: basicUserInfo.userCode, // 用户工号
-        }     
+        }
         this.formData = {
           ...this.formData,
           ...defaultUserInfo,
@@ -345,6 +335,17 @@ export default {
         let {action, prefix} = data;
         this.businessKey = prefix;
       })
+    },
+    // TODO 计算物料相关值
+    calcMatter(item) {
+      let price = item.price || 0,
+        tdQty = item.tdQty || 0,
+        taxRate = item.taxRate || 0;
+      item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
+      item.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)));
+      item.tdAmount = toFixed(accMul(price, item.assistQty));
+      item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
+      item.noTaxAmount = accSub(item.tdAmount, item.taxAmount);
     },
   },
   created() {
