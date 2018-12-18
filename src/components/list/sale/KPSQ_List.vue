@@ -32,7 +32,7 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID: 2418,
+        listViewID: 2558,
         filterList: [ // 过滤列表
           {
             name: '交易号',

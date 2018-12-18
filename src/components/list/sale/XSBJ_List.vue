@@ -28,26 +28,10 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2230,
+        listViewID: 2496,
       }
     },
-    mixins: [listCommon],
-    methods: {
-      // tabClick(val){
-      //   this.activeTab = val.status;
-      //   this.resetCondition();
-      //   this.getList();
-      // },
-      //排序
-      // sortClick(val){
-      //   this.sort = [val];
-      //   this.resetCondition();
-      //   this.getList();
-
-      // }
-    },
-    created() {
-    }
+    mixins: [listCommon]
   }
 </script>
 
