@@ -26,8 +26,8 @@
           <div class="duty_content">
             <div class="content_title">{{item.demandTitle}}</div>
             <div class="content_step vux-1px-b">
-              <div>规划: {{item.demandPlan}}</div>
-              <div>信心指数: {{item.timeConfidenceIndex}}</div>
+              <div v-if="item.demandPlan">规划: {{item.demandPlan}}</div>
+              <div v-if="item.timeConfidenceIndex">信心指数: {{item.timeConfidenceIndex}}</div>
             </div>
           </div>
           <div class="order_count">
