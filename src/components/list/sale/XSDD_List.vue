@@ -16,7 +16,6 @@
         <div class='list' v-else>
           <mater-list-item :item="item" v-for="(item, index) in listData" :key="index" @click.native="goDetail(item, index)" ></mater-list-item>
         </div>
-
       </r-scroll>
     </div>
     <div class="btn vux-1px-t" v-if="!chartShow && action.add">
@@ -56,40 +55,7 @@
     components:{
       ApplyChart
     },
-    mixins: [listCommon],
-    methods: {
-      ///tab切换
-      // tabClick(item, index) {
-      //   console.log(item);
-      //   switch (item.status) {
-      //     case '已生效' :
-      //       this.biStatus = '1';
-      //       break;
-      //     case '进行中' :
-      //       this.biStatus = '2';
-      //       break;
-      //     case '' :
-      //       this.biStatus = '';
-      //       break;
-      //   }
-      //   if(index === 0){
-      //     this.chartShow = true;
-      //     this.hasNext = false;
-      //   }
-      //   else{
-      //     this.chartShow = false;
-      //     this.hasNext = true;
-      //     this.scrollOptions.pullDownRefresh = true;
-      //     this.scrollOptions.pullUpLoad =  true;
-      //     this.resetScroll();
-      //   }
-      //   this.activeIndex = index;
-      //   this.activeTab = item.status;
-      //   this.resetCondition();
-      //   this.getList();
-      // }
-
-    }
+    mixins: [listCommon]
   }
 </script>
 

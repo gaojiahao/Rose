@@ -20,7 +20,7 @@
       <!-- 物料列表 -->
        <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
                      :taxAmount="taxAmount" :count="count">
-          <template slot="orderTitle">
+          <template slot="orderTitle" slot-scope="props">
             <span class="order_title">订单号</span>
           </template>
           <template slot="matterOther" slot-scope="{item}">

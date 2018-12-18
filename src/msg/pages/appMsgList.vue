@@ -92,14 +92,8 @@ export default {
       this.$set(this.listData, index, {...item});
       let start = Date.now();
       const TRANSITION_TIME = 200; // 动画时间
-      let fileId = '', childId = '';
-      if(item.typeID){
-        fileId = item.typeID;
-        childId = item.parentId;
-      }
-      else{
-        fileId = item.parentId;
-      }
+      let fileId = item.typeId, 
+          childId = item.childId;
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
         let jump = () => {
@@ -115,11 +109,9 @@ export default {
             path = `/detail/${fileId}/${item.listId}`;
           }
           let query = {
+            childId,
             name: title,
             transCode : item.businessKey,
-          }
-          if(item.typeID){
-            query.childId = childId
           }
           this.$router.push({
             path,

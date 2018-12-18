@@ -29,7 +29,7 @@
     data() {
       return {
         listStatus: [{name: '全部', status: ''}, {name: '已生效', status: '已生效'}, {name: '进行中', status: '进行中'}],
-        listViewID: 2217,
+        listViewID: 2572,
         filterList: [ // 过滤列表
           {
             name: '交易号',

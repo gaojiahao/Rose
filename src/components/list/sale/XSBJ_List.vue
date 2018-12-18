@@ -31,23 +31,7 @@
         listViewID: 2544,
       }
     },
-    mixins: [listCommon],
-    methods: {
-      // tabClick(val){
-      //   this.activeTab = val.status;
-      //   this.resetCondition();
-      //   this.getList();
-      // },
-      //排序
-      // sortClick(val){
-      //   this.sort = [val];
-      //   this.resetCondition();
-      //   this.getList();
-
-      // }
-    },
-    created() {
-    }
+    mixins: [listCommon]
   }
 </script>
 

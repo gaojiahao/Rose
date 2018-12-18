@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -229,7 +229,7 @@
             name: '合同号',
             value: 'transCode',
           }
-        ],        
+        ],
         showMatterPop: false,
         showMaterielPop: false, // 是否显示物料的popup
         transMode: [], // 结算方式 数组
@@ -344,7 +344,7 @@
             price = item.price,
             taxRate = this.taxRate,
             promDeliTime = '',
-          } = this.numMap[item.inventoryCode] || {};
+          } = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
@@ -528,7 +528,7 @@
               this.$HandleLoad.show();
               let operation = saveAndStartWf; // 默认有工作流
               let wfPara = {
-                [this.processCode]: {businessKey: "SO3", createdBy: ""}
+                [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
               }
               if (this.isResubmit) {
                 wfPara = {
@@ -596,7 +596,9 @@
           this.attachment = data.attachment;
           let orderList = {};
           let {formData} = data;
-          formData.order.dataSet.map(item => {
+          let {inPut = {}, order = {}} = formData;
+          let [dealerInfo = {}] = inPut.dataSet;
+          order.dataSet.map(item => {
             item = {
               ...item,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
@@ -610,7 +612,8 @@
               qty: item.thenTotalQtyBal,
               stockQty: item.thenLockQty,
               qtyBal: item.thenQtyBal,
-              transCode: item.transMatchedCode
+              transCode: item.transMatchedCode,
+              invSubUnitMulti: item.assMeasureScale,
             };
             this.matterList.push(item);
             if (!orderList[item.transCode]) {

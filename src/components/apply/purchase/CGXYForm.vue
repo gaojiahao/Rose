@@ -2,16 +2,16 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商"
-                         dealerTitle="供应商" :default-contact="contact" @sel-contact="selContact"></pop-dealer-list>
+                         dealerTitle="供应商" :default-contact="contactInfo" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="dealer.drDealerPaymentTerm"
-                           v-model="dealer.drDealerPaymentTerm"></pop-single-select>
+        <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
+                           v-model="dealerInfo.paymentTerm"></pop-single-select>
         <div class="other_info">
           <div class="title">账期天数</div>
           <div class="mode">{{dealerInfo.pamentDays}}</div>
@@ -21,7 +21,7 @@
                            v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
         <div class="other_info">
           <div class="title">协议总金额</div>
-          <div class="mode">{{tdAmount | numberComma}}</div>
+          <div class="mode">￥{{tdAmount | numberComma}}</div>
         </div>
         <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate"></r-date>
         <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil"></r-date>
@@ -164,9 +164,6 @@
         listId: '67ff01b1-52bc-4e01-9650-214dc6e5e8f9',
         taxRate: 0.16, // 税率
         numMap: {},
-        dealer: {
-          drDealerLogisticsTerms: '', // 物流条款
-        }, // 往来信息
         order: {
           // executionDate: '', // 执行日期
           // validUntil: '', //截止日期
@@ -191,10 +188,10 @@
         showTransPop: false, // 是否显示结算方式的popup
         showMaterielPop: false, // 是否显示物料的popup
         showDealerPop: false, // 是否显示供应商的popup
-        contact: {},
+        contactInfo: {},
         matterParams: {
           processing: '原料',
-        }, 
+        },
       }
     },
     mixins: [common],
@@ -208,14 +205,10 @@
       // 选中的供应商
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        // this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
-        this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
       },
       // 选中联系人
       selContact(val) {
-        this.contact = {...val};
-        this.dealer.dealerDebitContactPersonName = val.dealerName;
-        this.dealer.dealerDebitContactInformation = val.dealerMobilePhone;
+        this.contactInfo = {...val};
       },
       // TODO 选中物料项
       selMatter(val) {
@@ -322,7 +315,10 @@
             // 设置提交参数
             dataSet.push({
               tdId: item.tdId || '',
+              inventoryName_transObjCode: item.inventoryName, // 物料名称
               transObjCode: item.inventoryCode, // 物料编码
+              executionDate: this.inPut.executionDate,
+              validUntil: this.inPut.validUntil,
               tdProcessing: item.processing,// 加工属性
               assMeasureUnit: item.assMeasureUnit,
               assMeasureDescription: item.assMeasureDescription,
@@ -352,7 +348,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "CGHT", createdBy: ""}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             }
             if (this.isResubmit) {
               wfPara = {
@@ -364,16 +360,20 @@
                 comment: ""
               }
             }
+            let dealerInfo = this.dealerInfo;
             let submitData = {
               listId: this.listId,
               biComment: this.biComment,
               formData: JSON.stringify({
                 ...this.formData,
-                ...this.dealer,
-                drDealerLogisticsTerms: this.dealerInfo.dealerLogisticsTerms,
                 handlerEntity: this.entity.dealerName,
+                dealerDebitContactPersonName: this.contactInfo.dealerName || null,
+                dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '',
+                drDealerLogisticsTerms: dealerInfo.dealerLogisticsTerms,
                 inPut: {
-                  dealerDebit: this.dealerInfo.dealerCode,
+                  dealerDebit: dealerInfo.dealerCode,
+                  drDealerLabel: dealerInfo.dealerLabelName,
+                  daysOfAccount: dealerInfo.pamentDays,
                   dataSet: [{
                     ...this.inPut,
                     thenTotalAmntBal: this.tdAmount,
@@ -382,7 +382,7 @@
                 order: {
                   dealerDebit: this.dealerInfo.dealerCode,
                   drDealerLabel: this.dealerInfo.dealerLabelName || '',  // 往来关系标签
-                  drDealerPaymentTerm: this.dealer.drDealerPaymentTerm,  // 结算方式
+                  drDealerPaymentTerm: this.dealerInfo.paymentTerm,  // 结算方式
                   dataSet,
                 },
               }),
@@ -459,17 +459,12 @@
             address: formData.order.address_dealerDebit,
             dealerLogisticsTerms: formData.drDealerLogisticsTerms,
             pamentDays: formData.inPut.daysOfAccount,
+            paymentTerm: formData.order.drDealerPaymentTerm || '', // 结算方式
           }
-          this.contact = {
+          this.contactInfo = {
             dealerName: formData.dealerDebitContactPersonName,
             dealerMobilePhone: formData.dealerDebitContactInformation,
           }
-          // 订单信息
-          this.dealer = {
-            dealerDebitContactPersonName: formData.dealerDebitContactPersonName, // 联系人
-            dealerDebitContactInformation: formData.dealerDebitContactInformation, // 电话dealerDebitContactPersonName
-            drDealerPaymentTerm: formData.order.drDealerPaymentTerm || '', // 结算方式
-          },
           this.inPut = {
             tdAmountCopy1: formData.inPut.dataSet[0].tdAmountCopy1,
             executionDate: formData.inPut.dataSet[0].executionDate, // 执行日期
@@ -490,8 +485,7 @@
             matter: this.matterList,
             dealerInfo: this.dealerInfo,
             formData: this.formData,
-            dealer: this.dealer,
-            contact: this.contact,
+            contactInfo: this.contactInfo,
             inPut: this.inPut
           }
         };
@@ -512,9 +506,8 @@
         let draft = JSON.parse(data);
         this.matterList = draft.matter;
         this.dealerInfo = draft.dealerInfo;
-        this.dealer = draft.dealer;
         this.formData = draft.formData;
-        this.contact = draft.contact;
+        this.contactInfo = draft.contactInfo;
         this.inPut = draft.inPut;
         sessionStorage.removeItem(DRAFT_KEY);
       }

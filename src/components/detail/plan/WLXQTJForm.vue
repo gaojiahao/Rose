@@ -12,7 +12,7 @@
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList'>
-        <template slot="orderTitle">
+        <template slot="orderTitle" slot-scope="props">
           <span class="order_title">计划号</span>
         </template>
         <template slot="matterOther" slot-scope="{item}">

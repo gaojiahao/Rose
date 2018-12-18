@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -26,7 +26,7 @@
           <div class="cell-item">
             <div class="title required">合同总金额</div>
             <div class="mode">
-              <span class="mode_content">{{thenTotalAmntBal}}</span>
+              <span class="mode_content">￥{{thenTotalAmntBal | numberComma}}</span>
             </div>
           </div>
           <div class="cell-item" @click="dateSelect('validUntil')">
@@ -76,7 +76,7 @@
                     <div class="mater_more">
                       <span class="processing">属性: {{item.processing}}</span>
                       <span class='unit'>主计量: {{item.measureUnit}}</span>
-                     <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
                       <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
                     </div>
                     <div class="mater_more">
@@ -92,8 +92,7 @@
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
                       <div>
-                        <r-number :num="item.tdQty"
-                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
+                        <r-number :num="item.tdQty" :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
                       </div>
                     </div>
                   </template>
@@ -128,8 +127,8 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="date" slot-scope="{modifyMatter}">
-            <datetime v-model="modifyMatter.dateActivation" :start-date="dealerInfo.advancePaymentDueDate"
-                      :end-date="modifyMatter.executionDate" placeholder="请选择">
+            <datetime v-model="modifyMatter.dateActivation"
+                      :end-date="modifyMatter.executionDate || dealerInfo.validUntil" placeholder="请选择">
               <template slot="title">
                 <span class="required">交付开始日</span>
               </template>
@@ -193,7 +192,8 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   // 方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd'
-  import { toFixed } from '@/plugins/calc'
+  import {toFixed} from '@/plugins/calc'
+
   const DRAFT_KEY = 'XSHT_DATA';
 
   export default {
@@ -225,20 +225,18 @@
           let tdAmount = accMul(assistQty, price);
           total = accAdd(total, tdAmount);
         });
-        return total.toFixed(2);
+        return toFixed(total);
       },
       // 是否含预收
       hasAdvance() {
         let {paymentTerm} = this.dealerInfo;
         let hasAdvanceList = ['赊销'];
-        if(!paymentTerm) {
+        if (!paymentTerm) {
           return false
         }
-        else{
+        else {
           return !paymentTerm.includes(hasAdvanceList);
         }
-       
-        // return !hasAdvanceList.includes(paymentTerm);
       }
     },
     components: {
@@ -263,7 +261,6 @@
           drDealerCode: this.dealerInfo.dealerCode,
         };
         this.matterList = [];
-        // this.getMatPrice(); // 获取物料价格
       },
       selContact(val) {
         this.contact = {...val};
@@ -284,8 +281,6 @@
       dateSelect(key = '') {
         let validUntil = new Date(this.dealerInfo.validUntil.replace(/-/g, '/'));
         let advancePaymentDueDate = new Date(this.dealerInfo.advancePaymentDueDate.replace(/-/g, '/'));
-        console.log(validUntil)
-        console.log(advancePaymentDueDate)
         if (key === 'advancePaymentDueDate' && !this.dealerInfo.validUntil) {
           this.$vux.alert.show({
             content: '请选择合同到期日'
@@ -307,9 +302,9 @@
         if (!this.dealerInfo.validUntil) {
           warn = '请选择合同到期日'
         }
-        if (!warn && this.hasAdvance && !this.dealerInfo.advancePaymentDueDate) {
-          warn = '请选择预收到期日'
-        }
+        // if (!warn && this.hasAdvance && !this.dealerInfo.advancePaymentDueDate) {
+        //   warn = '请选择预收到期日'
+        // }
         if (warn) {
           this.$vux.alert.show({
             content: warn
@@ -336,7 +331,7 @@
           item.executionDate = executionDate;
           item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
-          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
+          item.assMeasureDescription = item.invSubUnitComment || null; // 辅助计量说明
         });
         this.numMap = {};
         this.matterList = sels;
@@ -400,10 +395,10 @@
       },
       checkAmt(item) {
         let {tdQty, tdAmountCopy1} = item;
-        if(tdQty) {
+        if (tdQty) {
           item.tdQty = Math.abs(toFixed(tdQty));
         }
-        if(tdAmountCopy1) {
+        if (tdAmountCopy1) {
           item.tdAmountCopy1 = Math.abs(toFixed(tdAmountCopy1));
         }
       },
@@ -417,9 +412,9 @@
         if (!warn && !this.dealerInfo.validUntil) {
           warn = '请选择合同到期日'
         }
-        if (!warn && this.hasAdvance && !this.dealerInfo.advancePaymentDueDate) {
-          warn = '请选择预收到期日'
-        }
+        // if (!warn && this.hasAdvance && !this.dealerInfo.advancePaymentDueDate) {
+        //   warn = '请选择预收到期日'
+        // }
         if (!warn && !this.matterList.length) {
           warn = '请选择物料';
         }
@@ -470,7 +465,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf; // 默认有工作流
             let wfPara = {
-              [this.processCode]: {businessKey: "XS1", createdBy: ""}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             };
             if (this.isResubmit) {
               wfPara = {
@@ -675,6 +670,7 @@
     margin-bottom: 0.1rem;
     background: #fff;
   }
+
   .cell-item {
     background: #fff;
     box-sizing: border-box;
@@ -685,7 +681,7 @@
     justify-content: space-between;
     height: .36rem;
     line-height: .32rem;
-    /deep/ .weui-cell__hd{
+    /deep/ .weui-cell__hd {
       color: #757575;
     }
     &:before {
