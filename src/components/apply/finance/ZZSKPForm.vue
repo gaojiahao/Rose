@@ -64,13 +64,14 @@
                                @click.native="delClick(index, item, key)">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
-                      <div class='mater_more'>
+                      <div class='matter-more'>
                         <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || "无"}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span v-show="item.taxRate">税率: {{item.taxRate || taxRate}}</span>
+                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <div class="mater_more">
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                         <span>待开票数量: {{item.qtyBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
@@ -134,6 +135,7 @@
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">本次开票数量</span>
             </x-input>
+            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
             <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">单价</span>
@@ -142,6 +144,7 @@
                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <span class='required' slot="label">税率</span>
             </x-input>
+             <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
           </template>
         </pop-matter>
         <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
@@ -159,7 +162,7 @@
   // vux组件引入
   import {
     Cell, Group, XInput, dateFormat,
-    XTextarea, Datetime, PopupPicker
+    XTextarea, Datetime, PopupPicker,
   } from 'vux'
   // 请求 引入
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
@@ -284,6 +287,9 @@
           item.price = price;
           item.taxRate = taxRate;
           item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD');
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -413,14 +419,22 @@
             dataSet.push({
               tdId: item.tdId || '',
               transMatchedCode: item.transCode, // 实例编码,
+              salesOutCode: item.salesOutCode,
               inventoryName_transObjCode: item.inventoryName,
               transObjCode: item.inventoryCode,
+              tdProcessing: item.processing,
+              measureUnit_transObjCode: item.measureUnit,
+              assMeasureUnit: item.assMeasureUnit || '',
+              assMeasureDescription: item.assMeasureDescription || '',
+              assMeasureScale: item.assMeasureScale,
               thenQtyBal: item.qtyBal,
-              price: item.price,
               tdQty: item.tdQty,
+              assistQty: item.assistQty,
+              price: item.price,
+              tdAmount: item.tdAmount,
               taxRate: taxRate,
-              taxAmount: taxAmount,
-              tdAmount: accAdd(noTaxAmount, taxAmount), // 本次开票金额,
+              noTaxPrice: item.noTaxPrice,
+              taxAmount: item.taxAmount,
               comment: item.comment, // 说明
             });
             return true
@@ -460,7 +474,7 @@
                 creator: this.transCode ? this.formData.handler : '',
                 modifer: this.transCode ? this.formData.handler : '',
                 order: {
-                  crDealerLabel: '客户',
+                  crDealerLabel: this.dealerInfo.dealerLabelName,
                   dealerCodeCredit: this.dealerInfo.dealerCode,
                   dataSet: dataSet,
                 },
@@ -469,7 +483,6 @@
                 invoiceDate: this.invoiceInfo.invoiceDate,
                 ticketNumber: this.invoiceInfo.ticketNumber,
                 invoiceType: this.invoiceInfo.invoiceType,
-                // invoiceAmount: this.invoiceInfo.invoiceAmount || 0,
                 invoiceContent: this.invoiceInfo.invoiceContent,
 
               }),
@@ -532,7 +545,8 @@
             city: formData.order.city_dealerCodeCredit,
             county: formData.order.county_dealerCodeCredit,
             address: formData.order.address_dealerCodeCredit,
-            dealerMobilePhone: formData.dealerMobilePhone_dealerCodeCredit
+            dealerMobilePhone: formData.dealerMobilePhone_dealerCodeCredit,
+            dealerLabelName: formData.order.crDealerLabel
           }
           this.contactInfo = {
             dealerName: formData.dealerCreditContactPersonName,
@@ -543,9 +557,11 @@
           formData.order.dataSet.forEach(item => {           
             item.transCode = item.transMatchedCode, // 实例编码,
             item.inventoryName = item.inventoryName_transObjCode,
-            item.inventoryCode = item.inventoryCode_transObjCode,
+            item.inventoryCode = item.transObjCode,
             item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-            item.qtyBal = item.thenQtyBal,           
+            item.qtyBal = item.thenQtyBal, 
+            item.processing = item.tdProcessing,
+            item.measureUnit = item.measureUnit_transObjCode,          
             this.matterList.push(item);
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];

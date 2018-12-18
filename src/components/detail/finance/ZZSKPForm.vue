@@ -116,9 +116,6 @@ export default {
         // 获取合计
         let {dataSet} = data.formData.order;
         for (let item of dataSet) {
-          item.noTaxAmount = accMul(item.price, item.tdQty);
-          item.taxAmount = accMul(item.noTaxAmount, item.taxRate);
-          item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
           item.inventoryPic = item.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();

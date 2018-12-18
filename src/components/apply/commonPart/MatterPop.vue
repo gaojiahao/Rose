@@ -102,7 +102,9 @@
             <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
           </div>
           <div class='each_info'>
-            <label>价税小计</label>
+            <slot name="tdAmount">
+              <label>价税小计</label>
+            </slot>           
             <div class='matter_val'>￥{{modifyMatter.tdAmount}}</div>
           </div>
         </div>
