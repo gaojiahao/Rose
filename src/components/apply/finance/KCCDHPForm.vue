@@ -70,7 +70,7 @@
             <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
           </group>
         </div>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">

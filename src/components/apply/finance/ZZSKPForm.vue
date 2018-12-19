@@ -147,7 +147,7 @@
              <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
           </template>
         </pop-matter>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
 

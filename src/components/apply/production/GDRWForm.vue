@@ -73,7 +73,7 @@
         <div class='comment vux-1px-t'>
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
     <!-- 底部提交确认栏 -->

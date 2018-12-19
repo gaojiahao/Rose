@@ -227,10 +227,11 @@
           color: #111;
           font-size: .12rem;
           font-weight: bold;
-          .symbol {
-            color: #757575;
-          }
+
         }
+        .symbol {
+          color: #757575;
+        }        
         .num + .num {
           margin-left: .04rem;
         }

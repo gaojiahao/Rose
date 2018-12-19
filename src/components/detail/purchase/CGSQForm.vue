@@ -20,14 +20,19 @@
             <div class="mater_attribute">
               <span>全部需求: {{item.productDemandQty}}</span>
               <span>已申请: {{item.thenLockQty}}</span>
+              <span>待申请: {{item.thenLockQty}}</span>
+              <span>采购提前期: {{item.leadTime_transObjCode}}</span>
             </div>
             <div class="mater_num">
-              <span class="num">本次申请: {{item.tdQty}}</span>
-              <span class="num">估计价格: ￥{{item.price}}</span>
+              <div>
+                <span class="unit symbol">下单截止日: {{item.shippingTime}}</span>
+                <span class="unit symbol">到货截止日: {{item.promDeliTime}}</span>
+              </div>
+              <div>
+                <span class="num">本次申请: {{item.tdQty}}</span>
+                <span class="symbol">[申请说明: {{item.comment || '无'}}]</span>
+              </div>
             </div>
-            <div class="mater_price">
-              ￥{{item.tdAmount}}<span class="num"> [估计金额]</span>
-            </div> 
           </div> 
         </template>
       </matter-list>

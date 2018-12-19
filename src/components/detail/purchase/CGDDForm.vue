@@ -40,13 +40,13 @@
               <span>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
             </div>
+            <div class="mater_attribute" v-if="item.purchaseDay">
+              <span>采购需求日期: {{item.purchaseDay}}</span>
+            </div>
             <div class="mater_num">
               <span class="num">安全库存: {{item.safeStock_transObjCode || 0}}</span>
               <span class="num">待下单: {{item.thenQtyBal || 0}}</span>
               <span class="num">起订量: {{item.moq_transObjCode || 0}}</span>
-            </div>
-            <div class="mater_attribute" v-if="item.purchaseDay">
-              <span>采购需求日期: {{item.purchaseDay}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

@@ -165,7 +165,7 @@
             <label>本次收票金额</label>
           </template>
         </pop-matter>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
     <!-- 底部提交确认栏 -->
