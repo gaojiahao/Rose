@@ -79,7 +79,16 @@ export default {
     }
   },
   filters: {
+    // 千分符处理
     numberComma,
+    // 百分比处理
+    percent(val) {
+      if (!val && val !== 0) {
+        return '无';
+      }
+      let budget = accMul(val, 100);
+      return `${budget}%`;
+    }
   },
   methods: {
     // 修改经办人信息
@@ -298,7 +307,7 @@ export default {
     },
     // TODO 上传文件成功
     onUploadFile({biReferenceId}) {
-      // this.biReferenceId = biReferenceId;
+      this.biReferenceId = biReferenceId;
     },
     // TODO 监听返回事件
     listenBack() {
@@ -339,13 +348,13 @@ export default {
     // TODO 计算物料相关值
     calcMatter(item) {
       let price = item.price || 0,
-        tdQty = item.tdQty || 0,
-        taxRate = item.taxRate || 0;
+          tdQty = item.tdQty || 0,
+          taxRate = item.taxRate || 0;
       item.assistQty = toFixed(accDiv(tdQty, item.assMeasureScale));
-      item.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)));
+      item.noTaxPrice = toFixed(accDiv(price, accAdd(1, taxRate)), 6);
       item.tdAmount = toFixed(accMul(price, item.assistQty));
       item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
-      item.noTaxAmount = accSub(item.tdAmount, item.taxAmount);
+      item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount));
     },
   },
   created() {

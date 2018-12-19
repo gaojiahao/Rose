@@ -18,9 +18,9 @@
               <span class="entity_name">{{userInfo.entityName}}</span>
               <span v-if="entityList.length > 1" class="iconfont" :class="{'icon-xia' : !showDrop, 'icon-shang' : showDrop}"></span>
               <ul class="r-dropdown-list" v-show="showDrop">
-                <li  class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1 }" :key="index" v-for="(item, index) in entityList"
+                <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1 }" :key="index" v-for="(item, index) in entityList"
                     @click.stop="dropItemClick(item)" >
-                  <div class="item_name" :class="{'active' : selItem.groupName === item.groupName}">{{item.groupName}}</div>
+                  <div class="item_name" :class="{'active is-being-sel' : selItem.groupName === item.groupName}">{{item.groupName}}</div>
                   <div class="tips_part" v-if="selItem.groupName === item.groupName">
                     <span class="tips_word">当前选中</span>
                   </div>
@@ -443,11 +443,14 @@ export default {
   box-sizing: border-box;
   justify-content: space-between;
   .item_name {
-    width: 75%;
+    width: 100%;
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    &.is-being-sel {
+      width: 75%;
+    }
   }
   .tips_part {
     color: #757575;

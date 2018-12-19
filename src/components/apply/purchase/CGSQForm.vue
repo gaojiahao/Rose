@@ -149,16 +149,15 @@
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
         </div>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num">
         <span class="total_price">
-          <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
+          <span style="fontSize:.14rem">合计: </span>{{totalNum}}
         </span>
-        <span class="total-num">[数量: {{totalNum}}]</span>
       </span>
       <span class="count_btn" @click="submitOrder">提交</span>
     </div>
@@ -237,15 +236,7 @@ export default {
         total = accAdd(total, item.tdQty);
       });
       return Number(total);
-    },
-    // 订单总金额
-    // tdAmount () {
-    //   let total = 0;
-    //   this.matterList.forEach(item => {
-    //     total = accAdd(total, accMul(item.tdQty, item.price))
-    //   });
-    //   return parseFloat(total.toFixed(2));
-    // }
+    }
   },
   mixins: [common],
   methods: {
@@ -379,7 +370,7 @@ export default {
     submitOrder (){
       let warn = '',
           dataSet = [];
-      if (this.matterList.length === 0) {
+      if (!this.matterList.length) {
         warn = '请选择物料';
       }
       if (!warn) {

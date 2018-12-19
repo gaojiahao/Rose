@@ -57,14 +57,17 @@
         default() {
           return {}
         }
-
+      },
+      // 表单提交id
+      biReferenceId: {
+        type: String,
+        default: ''
       }
     },
     data() {
       return {
         files: [],
         file: null,
-        biReferenceId: '',
         showLoading: false
       }
     },
@@ -312,7 +315,6 @@
           }
         });
         this.files = files;
-        this.biReferenceId = first.referenceId;
       },
       // TODO 判断图片类型
       judgeFileType(url) {

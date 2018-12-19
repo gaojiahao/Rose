@@ -31,7 +31,7 @@
             </div>
           </div>
         </div>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
     <div class='btn-no-amt vux-1px-t' :class="{'btn_hide' : btnIsHide}">

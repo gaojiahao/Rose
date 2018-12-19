@@ -71,7 +71,7 @@
             <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
           </group>
         </div>
-        <upload-file @on-upload="onUploadFile" :default-value="attachment"></upload-file>
+        <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!-- 采购单信息 -->
         <pop-earnest-money-list :show="showOrder" :params="dealerParams" :default-value="orderList"
                                 @sel-item="selOrder" v-model="showOrder"></pop-earnest-money-list>
