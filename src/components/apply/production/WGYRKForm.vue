@@ -8,7 +8,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 出库仓库-->
         <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"
-                            get-list-method="getWareHouseType" :params="wareouseOutParams"
+                            get-list-method="getWareHouseType" :params="warehouseOutParams"
                             isRequired></pop-warehouse-list>
 
         <!-- 入库仓库-->
@@ -165,7 +165,7 @@
         matter: {},
         showMatterPop: false,
         modifyIndex: null,
-        wareouseOutParams: {
+        warehouseOutParams: {
           warehouseType: '加工车间仓',
         },
       }

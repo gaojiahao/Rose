@@ -13,7 +13,7 @@
           <div class="order-item" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item, index)">
             <div class="order-code">
-              <span class="order-title">计划号</span>
+              <span class="order-title">交易号</span>
               <span class="order-num">{{item.transCode}}</span>
             </div>
             <div class="order-top">
@@ -65,7 +65,7 @@
                     </div>
                     <slot name="qtyStock" :item="item">
                       <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
-                    </slot> 
+                    </slot>
                   </div>
                 </div>
               </div>
@@ -108,7 +108,13 @@
       listMethod: {
         type: String,
         default: 'getDemandAdjustment'
-      }
+      },
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
     },
     components: {
       Icon, Popup, RScroll, RSearch,
@@ -151,6 +157,11 @@
       defaultValue: {
         handler(val) {
           this.setDefaultValue();
+        }
+      },
+      params: {
+        handler() {
+          this.getList();
         }
       },
     },
@@ -255,6 +266,7 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
+          ...this.params,
         }, this.listMethod).then(({dataCount = 0, tableContent = []}) => {
           tableContent.forEach(item => {
             item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
