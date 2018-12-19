@@ -23,13 +23,11 @@
       </div>
       <slot name="info" :item="item">
         <!-- 物料属性和单位 -->
-        <div class='matter-more'>
+        <div class='mater_more'>
           <span class='unit'>属性: {{item.processing}}</span>
           <span class='unit'>主计量: {{item.measureUnit}}</span>
           <span class='unit'>辅助计量: {{item.invSubUnitName}}</span>
-          <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
-        </div>
-        <div class="mater_more">
+          <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate | percent}}</span>
           <span class='unit'>辅助计量说明: {{item.invSubUnitComment}}</span>
         </div>
       </slot>
@@ -49,54 +47,64 @@
 </template>
 
 <script>
-  export default {
-    name: "MatterItem",
-    props: {
-      // 是否展示删除图标
-      showDelete: {
-        type: Boolean,
-        default: false
-      },
-      // 展示数据
-      item: {
-        type: Object,
-        default () {
-          return {}
-        }
+import { accMul } from '@/home/pages/maps/decimalsAdd'
+export default {
+  name: "MatterItem",
+  filters: {
+    percent(val) {
+      if(!val && val !== 0) {
+        return '无'
       }
+      let budget = accMul(val, 100);
+      return `${budget}%`;    
+    }
+  },
+  props: {
+    // 是否展示删除图标
+    showDelete: {
+      type: Boolean,
+      default: false
     },
-    computed: {
-      showEdit () {
-        // 存在 价格、数量 输入
-        if(this.item.price || this.item.tdQty){
-          return this.item.price || this.item.tdQty
-        }
-      },
-      hideEdit () {
-        // 存在 价格、数量 输入
-        if (this.item.price === '' || this.item.tdQty === '' || this.item.price === 0 || this.item.tdQty === 0) {
-         return !this.item.price || !this.item.tdQty
-        }
-      }
-    },
-    data () {
-      return {}
-    },
-    methods: {
-      // TODO 选择默认图片
-      getDefaultImg (item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // TODO 触发编辑事件
-      modifyMatter () {
-        this.$emit('on-modify', this.item);
+    // 展示数据
+    item: {
+      type: Object,
+      default () {
+        return {}
       }
     }
+  },
+  computed: {
+    showEdit () {
+      // 存在 价格、数量 输入
+      if(this.item.price || this.item.tdQty){
+        return this.item.price || this.item.tdQty
+      }
+    },
+    hideEdit () {
+      // 存在 价格、数量 输入
+      if (this.item.price === '' || this.item.tdQty === '' || this.item.price === 0 || this.item.tdQty === 0) {
+        return !this.item.price || !this.item.tdQty
+      }
+    }
+  },
+  data () {
+    return {}
+  },
+  methods: {
+    // TODO 选择默认图片
+    getDefaultImg (item) {
+      let url = require('assets/wl_default02.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // TODO 触发编辑事件
+    modifyMatter () {
+      this.$emit('on-modify', this.item);
+    }
   }
+}
 </script>
 
 <style scoped lang="scss">

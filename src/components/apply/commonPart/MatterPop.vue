@@ -61,8 +61,9 @@
           </div>
         </div>
         <!-- 基本信息插槽 -->
-        <group class='mg_auto'>
-          <slot name="modify" :modifyMatter="modifyMatter">
+        <slot name="modify" :modifyMatter="modifyMatter">
+
+          <group class='mg_auto'>
             <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
               placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
               <template slot="label">
@@ -71,7 +72,10 @@
                 </slot>
               </template>
             </x-input>
-            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
+            <cell disabled title="包装数量" :value="modifyMatter.assistQty"></cell>
+          </group>
+
+          <group class="mg_auto">
             <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
             @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
               <template slot="label">
@@ -86,31 +90,19 @@
                 </span>
               </template>
             </x-input>
-            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
-          </slot>
-        </group>
+            <cell disabled title="不含税单价" :value="`￥${numberComma(modifyMatter.noTaxPrice)}`"></cell>
+          </group>
+        </slot>
         <!-- 日期插槽 -->
         <group class="mg_auto">
           <slot name="date" :modifyMatter="modifyMatter"></slot>
         </group>
-        <div class='mg_auto' v-show="isShowAmount">
-          <div class='each_info vux-1px-b'>
-            <label>税金</label>
-            <div class='matter_val'>￥{{modifyMatter.taxAmount}}</div>
-          </div>
-          <div class='each_info vux-1px-b'>
-            <slot name="modifyTitle">
-              <label>不含税金额</label>
-            </slot>
-            <div class='matter_val'>￥{{modifyMatter.noTaxAmount}}</div>
-          </div>
-          <div class='each_info'>
-            <slot name="tdAmount">
-              <label>价税小计</label>
-            </slot>           
-            <div class='matter_val'>￥{{modifyMatter.tdAmount}}</div>
-          </div>
-        </div>
+        <!-- 价格合计部分 -->
+        <group class="mg_auto">
+          <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell>
+          <cell disabled title="不含税金额" :value="`￥${numberComma(modifyMatter.noTaxAmount)}`"></cell>
+          <cell disabled title="价税小计" :value="`￥${numberComma(modifyMatter.tdAmount)}`"></cell>
+        </group>
       </div>
       <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm">
         <div class='confirm'>确认</div>
@@ -121,12 +113,16 @@
 
 <script>
 // vux组件引入
-import {Popup, TransferDom, Group, Cell, Datetime, XInput, PopupPicker } from 'vux'
+import { Cell, Group, Popup, XInput, Datetime, numberComma } from 'vux'
 //组件引入
-import {toFixed} from '@/plugins/calc'
+import { toFixed } from '@/plugins/calc'
+import { accMul } from '@/home/pages/maps/decimalsAdd'
 export default {
   name: 'MatterPop',
-  props:{
+  filters: { 
+    numberComma,
+  },
+  props: {
     modifyMatter:{    // 进行修改的单个物料信息
       type: Object,
       default() {
@@ -159,21 +155,27 @@ export default {
     }
   },
   components: {
-      Popup,Group,Cell,Datetime,XInput,
+    Cell, Group, Popup, XInput, Datetime
+  },
+  watch: {
+    showPop: {
+      handler(val) {
+        this.show = val;
+      }
+    }
   },
   data(){
     return{
       show: false
     }
   },
-  watch:{
-    showPop: {
-      handler(val) {
-        this.show = val;
+  methods: {
+    numberComma(val) {
+      if (!val && val !== 0) {
+        return '无';
       }
-    },
-  },
-  methods:{
+      return numberComma(val);
+    },    
     // TODO 弹窗展示时调用
     onShow() {
       this.$nextTick(() => {
@@ -235,9 +237,7 @@ export default {
     getFocus(e){
       event.currentTarget.select();
     }
-
-  },
-
+  }
 }
 </script>
 
