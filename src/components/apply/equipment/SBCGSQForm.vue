@@ -74,7 +74,7 @@
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :isShowAmount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class='mg_auto'>
@@ -167,6 +167,16 @@
         showMatterPop: false,
         selItems: [],
         facility: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写本次申请数量'
+          },
+          {
+            key: 'price',
+            message: '请填写估计价格'
+          },
+        ]
       }
     },
     mixins: [applyCommon],
@@ -176,43 +186,20 @@
     },
     computed: {
       // 合计金额
-      totalAmount() {
+      tdAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0;
-          item.noTax = accMul(tdQty,price);
-          total = accAdd(total, item.noTax);
-        });
-        return Number(total);
-      },
-      // 税金
-      taxAmount() {
-        let total = 0;
-        this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0,
-              taxRate = item.taxRate || 0;
-          item.noTax = accMul(tdQty,price);
-          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
-
+          this.simpleCalcMatter(item)
+          total = accAdd(total, item.tdAmount);
         });
         return total;
-      },
-      tdAmount() {
-        return parseFloat(accAdd(this.totalAmount, Number(this.taxAmount)).toFixed(2))
-      },
+      }
     },
     watch:{
       //修改的物料
       facility:{
         handler(val){
-          let price = val.price || 0,
-              tdQty = val.tdQty || 0,
-              taxRate = val.taxRate || 0;
-          val.noTaxAmount = toFixed(accMul(price,tdQty));
-          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+          this.simpleCalcMatter(val)
         },
         deep:true
       }
@@ -222,11 +209,9 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let {tdQty = '', price = ''} = this.numMap[item.facilityCode] || {};
-          item.tdQty = tdQty;
-          item.price = price;
+          item.tdQty = item.tdQty || '';
+          item.price = item.price || '';
         });
-        this.numMap = {};
         this.matterList = sels;
       },
       //显示物料修改的pop
@@ -285,10 +270,6 @@
       },
       // TODO 新增更多订单
       addOrder() {
-        for (let item of this.matterList) {
-          // 存储已输入的价格
-          this.numMap[item.facilityCode] = {...item};
-        }
         this.showFacilityPop = !this.showFacilityPop;
       },
       // TODO 提价订单
@@ -296,31 +277,36 @@
         let warn = '';
         let dataSet = [];
         // 校验
-        this.matterList.every(item => {
-          if (!item.price) {
-            warn = '单价不能为空';
-            return false
-          }
-          if (!item.tdQty && item.tdQty !== 0) {
-            warn = '数量不能为空';
-            return false
-          }
-          let oItem = {
-            facilityObjCode: item.facilityCode,
-            facilityType: item.facilityType,
-            assMeasureUnit: null, // 辅助计量（明细）
-            assistQty: item.assistQty || null, // 辅计数量（明细）
-            tdQty: item.tdQty, // 明细发生数
-            price: item.price, // 明细单价
-            tdAmount: item.tdAmount, // 明细发生金
-            comment: item.comment || '', // 说明
-          };
-          if (this.transCode) {
-            oItem.tdId = item.tdId || null;
-          }
-          dataSet.push(oItem);
-          return true
-        })
+        if(!this.matterList.length){
+          warn = '请选择设备'
+        }
+        else{
+          this.matterList.every(item => {
+            if (!item.price) {
+              warn = '单价不能为空';
+              return false
+            }
+            if (!item.tdQty && item.tdQty !== 0) {
+              warn = '数量不能为空';
+              return false
+            }
+            let oItem = {
+              facilityObjCode: item.facilityCode,
+              facilityType: item.facilityType,
+              assMeasureUnit: null, // 辅助计量（明细）
+              assistQty: item.assistQty || null, // 辅计数量（明细）
+              tdQty: item.tdQty, // 明细发生数
+              price: item.price, // 明细单价
+              tdAmount: item.tdAmount, // 明细发生金
+              comment: item.comment || '', // 说明
+            };
+            if (this.transCode) {
+              oItem.tdId = item.tdId || null;
+            }
+            dataSet.push(oItem);
+            return true
+          })
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn
@@ -343,8 +329,8 @@
             formData = {
               ...this.formData,
               handlerEntity: this.entity.dealerName,
-              creator: this.transCode ? this.formData.handler : '',
-              modifer: this.transCode ? this.formData.handler : '',
+              creator: this.formData.handler,
+              modifer: this.formData.handler,
               order: {
                 dataSet
               },

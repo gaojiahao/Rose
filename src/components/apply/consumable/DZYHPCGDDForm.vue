@@ -47,8 +47,8 @@
                       </div>
                       <div>
                         <span>待下单: {{item.qtyBal}}</span>
-                        <span v-show="item.processingStartDate">计划需求日:{{item.processingStartDate}}</span>
-                        <span v-show="item.purchaseDay">采购需求日:{{item.purchaseDay}}</span>
+                        <!-- <span v-show="item.processingStartDate">计划需求日:{{item.processingStartDate}}</span>
+                        <span v-show="item.purchaseDay">采购需求日:{{item.purchaseDay}}</span> -->
                       </div>
                     </div>
                     <!-- 物料数量和价格 -->
@@ -89,7 +89,7 @@
                            :filter-list="filterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span v-show="modifyMatter.qtyBal">待下单: {{modifyMatter.qtyBal}}</span>
@@ -207,7 +207,21 @@
             value: 'inventoryCode',
           },
         ],
-        consumables: {}
+        consumables: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+          {
+            key: 'price',
+            message: '请填写单价'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
       }
     },
     mixins: [common],
@@ -216,10 +230,8 @@
       totalAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0;
-          item.noTax = accMul(tdQty,price);
-          total = accAdd(total, item.noTax);
+          this.simpleCalcMatter(item);
+          total = accAdd(total, item.noTaxAmount);
         });
         return Number(total);
       },
@@ -227,12 +239,7 @@
       taxAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0,
-              taxRate = item.taxRate || 0;
-          item.noTax = accMul(tdQty,price);
-          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
-
+          total = toFixed(accAdd(total, item.taxAmount));
         });
         return total;
       },
@@ -244,12 +251,7 @@
       //修改的物料
       consumables:{
         handler(val){
-          let price = val.price || 0,
-              tdQty = val.tdQty || 0,
-              taxRate = val.taxRate || 0;
-          val.noTaxAmount = toFixed(accMul(price,tdQty));
-          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+          this.simpleCalcMatter(val)
         },
         deep:true
       }
@@ -275,13 +277,11 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-          let key = `${item.transCode}_${item.inventoryCode}`;
-          let {tdQty = item.qtyBal, price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[key] || {};
-          item.tdQty = tdQty;
-          item.price = price;
-          item.taxRate = taxRate;
-          item.processingStartDate = processingStartDate;
+          // let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
+          item.tdQty = item.tdQty || item.qtyBal;
+          item.price = item.price || '';
+          item.taxRate = item.taxRate || 0.16;
+          // item.processingStartDate = item.processingStartDate || defaultTime;
         })
         this.numMap = {};
         this.matterList = sels;
@@ -344,11 +344,6 @@
       },
       // TODO 新增更多物料
       addMatter() {
-        for (let item of this.matterList) {
-          let key = `${item.transCode}_${item.inventoryCode}`;
-          // 存储已输入的价格
-          this.numMap[key] = {...item};
-        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       // 提价订单

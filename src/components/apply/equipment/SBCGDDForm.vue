@@ -48,7 +48,7 @@
                         <span class='qty'>子类: {{item.facilitySubclass}}</span>
                       </div>
                       <div class="mater_more">
-                        <span class='unit'>单位: {{item.facilitySpecification || '无'}}</span>
+                        <span class='unit'>单位: {{item.facilityUnit || '无'}}</span>
                         <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
                         <span class='qty' v-show="item.qtyBal">待下单: {{item.qtyBal}}</span>
                       </div>
@@ -97,7 +97,7 @@
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span>待下单: {{modifyMatter.qtyBal}}</span>
@@ -228,7 +228,21 @@
             value: 'facilityCode',
           },
         ],
-        facility: {}
+        facility: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+          {
+            key: 'price',
+            message: '请填写单价'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
       }
     },
     mixins: [applyCommon],
@@ -241,10 +255,8 @@
       totalAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0;
-          item.noTax = accMul(tdQty,price);
-          total = accAdd(total, item.noTax);
+          this.simpleCalcMatter(item);
+          total = accAdd(total, item.noTaxAmount);
         });
         return Number(total);
       },
@@ -252,12 +264,7 @@
       taxAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0,
-              taxRate = item.taxRate || 0;
-          item.noTax = accMul(tdQty,price);
-          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
-
+          total = toFixed(accAdd(total, item.taxAmount));
         });
         return total;
       },
@@ -269,12 +276,7 @@
       //修改的物料
       facility:{
         handler(val){
-          let price = val.price || 0,
-              tdQty = val.tdQty || 0,
-              taxRate = val.taxRate || 0;
-          val.noTaxAmount = toFixed(accMul(price,tdQty));
-          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+          this.simpleCalcMatter(val)
         },
         deep:true
       }
@@ -316,15 +318,9 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.facilityCode}`;
-          let {
-            tdQty = item.qtyBal !== undefined ? item.qtyBal : '', price = '', taxRate = 0.16,
-          } = this.numMap[key] || {};
-          item.tdQty = tdQty;
-          if (price.length) {
-            item.price = price;
-          }
-          item.taxRate = taxRate;
+          item.tdQty = item.tdQty || item.qtyBal;
+          item.price = item.price || ''
+          item.taxRate = item.taxRate || 0.16;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -418,12 +414,6 @@
       },
       // TODO 新增更多订单
       addOrder() {
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.facilityCode}`] = {...item};
-          }
-        }
         this.showOrderPop = !this.showOrderPop;
       },
       // TODO 提价订单
@@ -496,8 +486,8 @@
             formData = {
               ...this.formData,
               handlerEntity: this.entity.dealerName,
-              creator: this.transCode ? this.formData.handler : '',
-              modifer: this.transCode ? this.formData.handler : '',
+              creator: this.formData.handler,
+              modifer: this.formData.handler,
               dealerDebitContactPersonName: this.contactInfo.dealerName || '', // 联系人姓名
               dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '', // 联系人手机
               order: {

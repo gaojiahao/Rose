@@ -18,7 +18,7 @@
         <!-- 物料规格 -->
         <div class="matter-info-item matter-spec">
           <span class="title">规格</span>
-          <span class="num">{{item.specification || item.facilityUnit || item.specification_outPutMatCode || '无'}}</span>
+          <span class="num">{{item.specification || item.facilitySpecification || item.specification_outPutMatCode || '无'}}</span>
         </div>
       </div>
       <slot name="info" :item="item">

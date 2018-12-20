@@ -95,7 +95,7 @@
           </pop-facility-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <span>订单总数: {{modifyMatter.qty}}</span>
@@ -112,20 +112,8 @@
                   </slot>
                 </template>
               </x-input>
-              <x-input disabled title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>单价
-                  </span>
-                </template>
-              </x-input>
-              <x-input disabled title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>税率
-                  </span>
-                </template>
-              </x-input>
+              <cell title="单价" :value="modifyMatter.price" disabled></cell>
+              <cell title="税率" :value="modifyMatter.taxRate" disabled></cell>
             </group>
           </template>
         </pop-matter>
@@ -160,7 +148,7 @@
 
 <script>
   // vux插件引入
-  import { XInput, Datetime, XTextarea, dateFormat, Group } from 'vux'
+  import { XInput, Datetime, XTextarea, dateFormat, Group, Cell } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
   import {
@@ -229,11 +217,17 @@
           },
         ],
         facilityParams: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写本次验收数量'
+          }
+        ]
       }
     },
     mixins: [applyCommon],
     components: {
-      XInput, RNumber, XTextarea, Group,
+      XInput, RNumber, XTextarea, Group, Cell,
       PopMatter, RPicker, PopDealerList, 
       PopBaseinfo, PopFacilityList
     },
@@ -242,10 +236,8 @@
       totalAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0;
-          item.noTax = accMul(tdQty,price);
-          total = accAdd(total, item.noTax);
+         this.simpleCalcMatter(item)
+          total = accAdd(total, item.noTaxAmount);
         });
         return Number(total);
       },
@@ -253,12 +245,7 @@
       taxAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0,
-              taxRate = item.taxRate || 0;
-          item.noTax = accMul(tdQty,price);
-          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
-
+          total = toFixed(accAdd(total, item.taxAmount));
         });
         return total;
       },
@@ -270,12 +257,7 @@
       //修改的物料
       facility:{
         handler(val){
-          let price = val.price || 0,
-              tdQty = val.tdQty || 0,
-              taxRate = val.taxRate || 0;
-          val.noTaxAmount = toFixed(accMul(price,tdQty));
-          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+          this.simpleCalcMatter(val)
         },
         deep:true
       }
@@ -322,23 +304,13 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.facilityCode}`;
-          let {
-            tdQty = '', 
-            price = '', 
-            taxRate = 0.16,
-          } = this.numMap[key] || {};
-          item.tdQty = item.qtyBal;
-          item.taxRate = taxRate;
-          if (price.length) {
-            item.price = price;
-          }
+          item.tdQty = item.tdQty || item.qtyBal;
+          item.taxRate = 0.16;
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
           orderList[item.transCode].push(item);
         });
-        this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
       },
@@ -426,12 +398,6 @@
       },
       // TODO 新增更多订单
       addOrder() {
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.facilityCode}`] = {...item};
-          }
-        }
         this.showOrderPop = !this.showOrderPop;
       },
       // TODO 提价订单
@@ -502,8 +468,8 @@
             formData = {
               ...this.formData,
               handlerEntity: this.entity.dealerName,
-              creator: this.transCode ? this.formData.handler : '',
-              modifer: this.transCode ? this.formData.handler : '',
+              creator: this.formData.handler,
+              modifer: this.formData.handler,
               dealerCreditContactPersonName: this.contactInfo.dealerName || '', // 联系人姓名
               dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '', // 联系人手机
               order: {
@@ -574,7 +540,7 @@
               transCode: item.transMatchedCode,
               inventoryPic: item.inventoryPic_facilityObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_facilityObjCode}&width=400&height=400` : this.getDefaultImg(),
               facilityName: item.facilityName_facilityObjCode,
-              facilityCode: item.facilityCode_facilityObjCode,
+              facilityCode: item.facilityObjCode,
               facilityBigType: item.facilityBigType_facilityObjCode,
               facilitySubclass: item.facilitySubclass_facilityObjCode,
               facilityUnit: item.facilityUnit_facilityObjCode,
