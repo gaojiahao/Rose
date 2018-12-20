@@ -121,36 +121,42 @@
         <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <cell title="待验收" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
-            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-                     placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-              <template slot="label">
-                <slot name="qtyName">
-                  <span class='required'>数量</span>
-                </slot>
-              </template>
-            </x-input>
-            <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
-                  v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
-              <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
-                          @on-selected="moreUnitSelected"></r-dropdown>
-            </cell>
-            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>单价
-                </span>
-              </template>
-            </x-input>
-            <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>税率
-                </span>
-              </template>
-            </x-input>
-            <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
-            <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
+            <group class='mg_auto'>
+              <cell title="待验收" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                      placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <slot name="qtyName">
+                    <span class='required'>数量</span>
+                  </slot>
+                </template>
+              </x-input>
+              <!-- <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
+                    v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
+                <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
+                            @on-selected="moreUnitSelected"></r-dropdown>
+              </cell>  -->
+            </group>
+            <group class='mg_auto'>
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>单价
+                  </span>
+                </template>
+              </x-input>
+              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>税率
+                  </span>
+                </template>
+              </x-input>
+            </group>
+            <group class='mg_auto'>
+              <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
+              <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
+            </group>
           </template>
           <template slot="modifyTitle" slot-scope="{modifyMatter}">
             <label>金额</label>
@@ -193,7 +199,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Datetime, dateFormat, Cell, XInput} from 'vux'
+  import {XTextarea, Datetime, dateFormat, Cell, XInput, Group} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getObjInvMoreUnitByInvCode} from 'service/materService'
@@ -331,7 +337,7 @@
     },
     mixins: [applyCommon],
     components: {
-      XTextarea, Datetime, PopOrderList, RNumber, XInput,
+      XTextarea, Datetime, PopOrderList, RNumber, XInput, Group,
       PopDealerList, PopMatterList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
       Cell, RDropdown, PopCashList,
     },

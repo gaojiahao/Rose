@@ -146,23 +146,27 @@
             </div>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">本次收票数量</span>
-            </x-input>
-            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
-            <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">单价</span>
-            </x-input>
-            <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <span class='required' slot="label">税率</span>
-            </x-input>
-            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
+            <group class='mg_auto'>
+              <x-input type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <span class='required' slot="label">本次收票数量</span>
+              </x-input>
+              <cell title="包装数量" :value="modifyMatter.assistQty" disabled></cell>
+            </group>
+            <group class='mg_auto'>
+              <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <span class='required' slot="label">含税单价</span>
+              </x-input>
+              <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <span class='required' slot="label">税率</span>
+              </x-input>
+              <cell title="不含税单价" :value="modifyMatter.noTaxPrice" disabled></cell>
+            </group>
           </template>
-          <template slot="tdAmount">
-            <label>本次收票金额</label>
+          <template slot="tdAmountTitle" >
+            <span>本次收票金额</span>
           </template>
         </pop-matter>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
@@ -179,7 +183,7 @@
   // vux组件引入
   import {
     Cell, Group, XInput, dateFormat,
-    XTextarea, Datetime, PopupPicker
+    XTextarea, Datetime, PopupPicker, numberComma,
   } from 'vux'
   // 请求 引入
   import {submitAndCalc, saveAndStartWf, saveAndCommitTask} from 'service/commonService'
@@ -238,6 +242,9 @@
         matterParams: {},
         numMap: {},
       }
+    },
+    filters: { 
+      numberComma,
     },
     methods: {
       // 选中的客户

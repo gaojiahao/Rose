@@ -85,15 +85,17 @@
         <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次申请" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>本次申请</span>
-              </template>
-            </x-input>
-            <x-input title="估计价格" type="number" v-model.number='modifyMatter.price' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
-            <cell title="估计金额" :value="modifyMatter.tdAmount"></cell>
+            <group class='mg_auto'>
+              <x-input title="本次申请" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>本次申请</span>
+                </template>
+              </x-input>
+              <x-input title="估计价格" type="number" v-model.number='modifyMatter.price' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
+              <cell title="估计金额" :value="modifyMatter.tdAmount"></cell>
+            </group>
           </template>
         </pop-matter>
         <!--备注-->
@@ -126,7 +128,7 @@
 
 <script>
   // vux组件引入
-  import {Icon, XInput, XTextarea, Cell} from 'vux'
+  import {Icon, XInput, XTextarea, Cell, Group} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask} from 'service/commonService'
@@ -166,7 +168,7 @@
       }
     },
     components: {
-      Icon, XInput, RPicker, XTextarea,
+      Icon, XInput, RPicker, XTextarea, Group,
       PopMatterList, PopMatter, UploadFile,
       PopBaseinfo, Cell, RNumber,
     },

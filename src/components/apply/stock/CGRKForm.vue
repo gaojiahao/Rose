@@ -52,9 +52,14 @@
                                @click.native="delClick(index,item)" :class="{'vux-1px-b' : index < oItem.length-1}">
                     <template slot="info" slot-scope="{item}">
                       <!-- 物料属性和单位 -->
+                      <div class='matter-more'>
+                        <span class='unit'>属性: {{item.processing}}</span>
+                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
+                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
+                      </div>
                       <div class="mater_more">
-                        <span>单位: {{item.measureUnit}}</span>
-                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                         <span>订单总数: {{item.qty || 0}}</span>
                         <span>已入库数: {{item.qtyed || 0}}</span>
                         <span>待入库数: {{item.qtyBal || 0}}</span>
@@ -138,38 +143,64 @@
             </div>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-              placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-              <template slot="label">
-                <slot name="qtyName">
-                  <span class='required'>本次入库数</span>
-                </slot>
-              </template>
-            </x-input>
-            <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
-            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>单价
-                </span>
-              </template>
-            </x-input>
-            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>税率
-                </span>
-              </template>
-            </x-input>
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+                @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class="required">送货数</span>
+                </template>
+              </x-input>
+              <cell title="包装数量" :value="modifyMatter.assistQty" disabled></cell>
+            </group>
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right" 
+              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class="required">含税单价</span>
+                </template>
+              </x-input>
+              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+                @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class="required">税率</span>
+                </template>
+              </x-input>
+              <cell title="不含税单价" :value="modifyMatter.noTaxPrice" disabled></cell>
+            </group>
           </template>
+            <!-- <group class="mg_auto">
+              <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <slot name="qtyName">
+                    <span class='required'>本次入库数</span>
+                  </slot>
+                </template>
+              </x-input>
+              <x-input title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>单价
+                  </span>
+                </template>
+              </x-input>
+              <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>税率
+                  </span>
+                </template>
+              </x-input>
+            </group> -->
+          <!-- </template> -->
           <template slot="date" slot-scope="{modifyMatter}">
-            <!-- <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
-                  v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
-              <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
-                          @on-selected="moreUnitSelected"></r-dropdown>
-            </cell>
-            <cell title="待验收" text-align='right' placeholder='无' :value="modifyMatter.qtyBal"></cell> -->
-            <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
-            <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
+            <cell title="保质期天数" :value="modifyMatter.keepingDays" disabled></cell>
+            <datetime v-model="modifyMatter.productionDate" placeholder="请选择" @on-confirm="checkDate(modifyMatter,$event)">
+              <template slot="title">
+                <span class="required">生产日期</span>
+              </template>
+            </datetime>
+            <cell title="有效日期" :value="modifyMatter.validUntil" disabled></cell>
           </template>
         </pop-matter>
 
@@ -203,7 +234,7 @@
 
 <script>
   // vux插件引入
-  import { Cell, XInput, Datetime, XTextarea, dateFormat } from 'vux'
+  import { Cell, XInput, Datetime, XTextarea, dateFormat, Group } from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getObjInvMoreUnitByInvCode} from 'service/materService'
@@ -287,7 +318,7 @@
     },
     mixins: [applyCommon],
     components: {
-      Cell, RDropdown, XInput,
+      Cell, RDropdown, XInput, Group,
       XTextarea, Datetime, PopOrderList, RNumber,
       PopDealerList, PopWarehouseList, PopMatterList, 
       PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
@@ -336,23 +367,27 @@
         console.log(sels);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
-          let {
-            tdQty = item.qtyBal, price = item.price, taxRate = 0.16,
-            productionDate = '',
-            validUntil = '',
-          } = this.numMap[key] || {};
-          item.tdQty = tdQty;
-          if (price.length) {
-            item.price = price;
-          }
-          item.taxRate = taxRate;
-          item.productionDate = productionDate;
-          item.validUntil = validUntil;
+          // let key = `${item.transCode}_${item.inventoryCode}`;
+          // let {
+          //   tdQty = item.qtyBal, price = item.price, taxRate = 0.16,
+          //   productionDate = '',
+          //   validUntil = '',
+          // } = this.numMap[key] || {};
+          
+          // if (price.length) {
+          //   item.price = price;
+          // }
+          item.tdQty = item.tdQty || item.qtyBal;
+          item.taxRate = item.taxRate || 0.16;
+          // item.productionDate = item.productionDate;
+          item.validUntil = item.validUntil || '';
+          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
-          this.getMoreUnit(item);
+          // this.getMoreUnit(item);
           orderList[item.transCode].push(item);
         });
         this.numMap = {};
@@ -443,13 +478,19 @@
       },
       // TODO 新增更多订单
       addOrder() {
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
-          }
-        }
+        // for (let items of Object.values(this.orderList)) {
+        //   for (let item of items) {
+        //     // 存储已输入的价格
+        //     this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
+        //   }
+        // }
         this.showOrderPop = !this.showOrderPop;
+      },
+      // 计算有效期
+      checkDate(modifyMatter,e){
+        let productionDate = new Date(e).getTime(),
+            day = 24 * 3600 * 1000;
+        modifyMatter.validUntil = productionDate ? dateFormat(productionDate + accMul(modifyMatter.keepingDays, day), 'YYYY-MM-DD') : '';
       },
       // TODO 提价订单
       submitOrder() {
@@ -496,16 +537,19 @@
               transObjCode: item.inventoryCode, // 物料编码
               tdProcessing: item.processing, // 加工属性
               assMeasureUnit: item.assMeasureUnit !== undefined ? item.assMeasureUnit : null, // 辅助计量（明细）
+              assMeasureScale: item.assMeasureScale || null,
+              assMeasureDescription: item.assMeasureDescription || '',
               thenTotalQtyBal: item.qty, // 订单总数
               thenLockQty: item.qtyed, // 已入库数
               thenQtyBal: item.qtyBal || 0, // 待验收
+              qualityQty: item.tdQty,
               tdQty: item.tdQty, // 明细发生数
-              assMeasureScale: null,
               assistQty: item.assistQty || 0, // 辅计数量（明细）
               price: item.price, // 明细单价
-              taxRate: taxRate, // 税率
-              taxAmount: taxAmount, // 税金
-              tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
+              taxRate: item.taxRate, // 税率
+              tdAmount: item.tdAmount, // 明细发生金额
+              noTaxPrice: item.noTaxPrice,
+              taxAmount: item.taxAmount, // 税金
               processingStartDate: item.processingStartDate || null,
               keepingDays_transObjCode: item.keepingDays, // 保质期
               productionDate: item.productionDate, // 保质期
@@ -542,8 +586,8 @@
             formData = {
               ...this.formData,
               handlerEntity: this.entity.dealerName,
-              creator: this.transCode ? this.formData.handler : '',
-              modifer: this.transCode ? this.formData.handler : '',
+              creator: this.formData.handler,
+              modifer: this.formData.handler,
               dealerCreditContactPersonName: this.contactInfo.dealerName || '', // 联系人姓名
               dealerCreditContactInformation: this.contactInfo.dealerMobilePhone || '', // 联系人手机
               containerInWarehouseManager: this.warehouse.containerInWarehouseManager || null,
@@ -627,7 +671,7 @@
               qtyBal: item.thenQtyBal,
               qty: item.thenTotalQtyBal,
             };
-            this.getMoreUnit(item);
+            // this.getMoreUnit(item);
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
             }
@@ -769,21 +813,21 @@
         })
       },
       // TODO 获取物料的辅助计量
-      getMoreUnit(item) {
-        let {inventoryCode} = item;
-        return getObjInvMoreUnitByInvCode(inventoryCode).then(({tableContent = []}) => {
-          item.showDrop = false;
-          tableContent.forEach(unit => {
-            unit.name = unit.invSubUnitName;
-            unit.value = unit.invSubUnitName;
-          });
-          item.moreUnitList = tableContent;
-        });
-      },
+      // getMoreUnit(item) {
+      //   let {inventoryCode} = item;
+      //   return getObjInvMoreUnitByInvCode(inventoryCode).then(({tableContent = []}) => {
+      //     item.showDrop = false;
+      //     tableContent.forEach(unit => {
+      //       unit.name = unit.invSubUnitName;
+      //       unit.value = unit.invSubUnitName;
+      //     });
+      //     item.moreUnitList = tableContent;
+      //   });
+      // },
       // TODO 点击辅助计量栏
-      moreUnitClick(item) {
-        item.showDrop = !item.showDrop;
-      },
+      // moreUnitClick(item) {
+      //   item.showDrop = !item.showDrop;
+      // },
       // TODO 选中辅助计量
       moreUnitSelected(val) {
         this.matter.assMeasureUnit = val.invSubUnitName;

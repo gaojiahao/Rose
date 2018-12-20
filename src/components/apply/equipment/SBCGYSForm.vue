@@ -103,28 +103,30 @@
             <span>待验收数: {{modifyMatter.qtyBal}}</span>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次验收" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-              placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-              <template slot="label">
-                <slot name="qtyName">
-                  <span class='required'>本次验收</span>
-                </slot>
-              </template>
-            </x-input>
-            <x-input disabled title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
-            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>单价
-                </span>
-              </template>
-            </x-input>
-            <x-input disabled title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+            <group class='mg_auto'>
+              <x-input title="本次验收" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <slot name="qtyName">
+                    <span class='required'>本次验收</span>
+                  </slot>
+                </template>
+              </x-input>
+              <x-input disabled title="单价" type="number"  v-model.number='modifyMatter.price' text-align="right"
               @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>税率
-                </span>
-              </template>
-            </x-input>
+                <template slot="label">
+                  <span class='required'>单价
+                  </span>
+                </template>
+              </x-input>
+              <x-input disabled title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>税率
+                  </span>
+                </template>
+              </x-input>
+            </group>
           </template>
         </pop-matter>
 
@@ -158,7 +160,7 @@
 
 <script>
   // vux插件引入
-  import { XInput, Datetime, XTextarea, dateFormat } from 'vux'
+  import { XInput, Datetime, XTextarea, dateFormat, Group } from 'vux'
   // 请求 引入
   import { getSOList } from 'service/detailService'
   import {
@@ -231,7 +233,7 @@
     },
     mixins: [applyCommon],
     components: {
-      XInput, RNumber, XTextarea, 
+      XInput, RNumber, XTextarea, Group,
       PopMatter, RPicker, PopDealerList, 
       PopBaseinfo, PopFacilityList
     },

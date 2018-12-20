@@ -96,10 +96,12 @@
             <span></span>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
-            <cell title="可用库存" :value="modifyMatter.qtyStock"></cell>
-            <cell title="待领料" :value="modifyMatter.qtyBal"></cell>
+            <group class="mg_auto">
+              <x-input title="本次领料" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入"></x-input>
+              <cell title="可用库存" :value="modifyMatter.qtyStock"></cell>
+              <cell title="待领料" :value="modifyMatter.qtyBal"></cell>
+            </group>
           </template>
         </pop-matter>
       </div>

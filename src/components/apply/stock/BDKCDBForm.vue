@@ -83,19 +83,17 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
                     :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="调拨数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>调拨数量
-                </span>
-              </template>   
-            </x-input>
-            <cell title="库存数量" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal">
-              <template slot="title">
-                <span class='required'>库存数量
-                </span>
-              </template>   
-            </cell>
+            <group class="mg_auto">
+              <cell title="可用库存数" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal" disabled>
+              </cell>
+              <x-input title="调拨数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>调拨数量
+                  </span>
+                </template>   
+              </x-input>
+            </group>
           </template>
         </pop-matter>
       </div>

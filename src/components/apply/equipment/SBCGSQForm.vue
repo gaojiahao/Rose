@@ -77,27 +77,24 @@
         <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :isShowAmount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-                     placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-              <template slot="label">
-                <slot name="qtyName">
-                  <span class='required'>本次申请</span>
-                </slot>
-              </template>
-            </x-input>
-            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>估计价格
-                </span>
-              </template>
-            </x-input>
-            <cell :value="modifyMatter.tdAmount">
-              <template slot="title">
-                <span class='required'>估计金额
-                </span>
-              </template>
-            </cell>
+            <group class='mg_auto'>
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                      placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <slot name="qtyName">
+                    <span class='required'>本次申请</span>
+                  </slot>
+                </template>
+              </x-input>
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>估计价格
+                  </span>
+                </template>
+              </x-input>
+              <cell title="估计金额" :value="modifyMatter.tdAmount" disabled></cell>
+            </group>
           </template>
         </pop-matter>
 
@@ -130,7 +127,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, Datetime, dateFormat, Cell, XInput} from 'vux'
+  import {XTextarea, Datetime, dateFormat, Cell, XInput, Group} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {
@@ -174,7 +171,7 @@
     },
     mixins: [applyCommon],
     components: {
-      XTextarea, Datetime, RNumber, Cell, XInput,
+      XTextarea, Datetime, RNumber, Cell, XInput, Group,
       PopMatter, RPicker, PopBaseinfo, PopFacilityList,
     },
     computed: {

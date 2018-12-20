@@ -77,41 +77,6 @@
                   </div>
                 </div>
               </div>
-              <!-- <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}" 
-                v-for="(item, index) in matterList" :key="index" >
-                <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                            @click.native="delClick(index,item)">
-                  <template slot="info" slot-scope="{item}">
-                    <div class="mater_more">
-                      <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit_outPutMatCode}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class='qty' v-show="item.qtyBal">可退货数量: {{item.qtyBal}}</span>
-                      <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
-                    </div>
-                    <div class='mater_other' v-if="item.price && item.tdQty">                      
-                      <div class='mater_price'>
-                        <span class="symbol">￥</span>{{item.price}}
-                      </div>
-                      <div>
-                        <r-number :num="item.tdQty"
-                                  :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>                     
-                    </div>
-                  </template>
-                  <template slot="editPart" slot-scope="{item}">
-                    <div class="edit-part vux-1px-l" @click="modifyMatter(item,index)" v-show="(item.price && item.tdQty) &&!matterModifyClass">
-                      <span class='iconfont icon-bianji1'></span>
-                    </div>
-                  </template>
-                </matter-item>
-                <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
-                  <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
-                  <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>
-              </div> -->
             </div>
           </template>
           <!-- 新增更多 按钮 -->
@@ -142,26 +107,30 @@
             <p v-show="modifyMatter.qtyStockBal">可用库存: {{modifyMatter.qtyStockBal}}</p>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+                @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class="required">退货数量</span>
+                </template>
+              </x-input>
+              <cell title="包装数量" :value="modifyMatter.assistQty" disabled></cell>
+            </group>
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right" 
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span class="required">退货数量</span>
-              </template>
-            </x-input>
-            <cell title="包装数量" :value="modifyMatter.assistQty"></cell>
-            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right" 
-            @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span class="required">退货单价</span>
-              </template>
-            </x-input>
-            <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
-              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span class="required">税率</span>
-              </template>
-            </x-input>
-            <cell title="不含税单价" :value="modifyMatter.noTaxPrice"></cell>
+                <template slot="label">
+                  <span class="required">退货单价</span>
+                </template>
+              </x-input>
+              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+                @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class="required">税率</span>
+                </template>
+              </x-input>
+              <cell title="不含税单价" :value="modifyMatter.noTaxPrice" disabled></cell>
+            </group>
           </template>
           <template slot="modifyTitle">
             <label>退货金额</label>
@@ -197,7 +166,7 @@
 
 <script>
 // vux插件引入
-import { XTextarea, XInput, Cell} from 'vux'
+import { XTextarea, XInput, Cell, Group} from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDictByType, submitAndCalc } from 'service/commonService'
@@ -264,7 +233,7 @@ export default {
     }
   },
   components: {
-    XTextarea, XInput, RNumber, Cell,
+    XTextarea, XInput, RNumber, Cell, Group,
     PopDealerList, PopWarehouseList, PopMatterList, PopSingleSelect,PopMatter, RPicker, PopBaseinfo
   },
   mixins: [applyCommon],
@@ -303,13 +272,15 @@ export default {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.forEach(item => {
-        let key = `${item.transCode}_${item.inventoryCode}`;
-        let { tdQty = item.currQty || '', price = item.price, taxRate = 0.16 } = this.numMap[key] || {};
-        item.tdQty = tdQty;
-        if (price.length) {
-          item.price = price;
-        }
-        item.taxRate = taxRate;
+        // let key = `${item.transCode}_${item.inventoryCode}`;
+        // let { tdQty = item.currQty || '', price = item.price, taxRate = 0.16 } = this.numMap[key] || {};
+        // item.tdQty = tdQty;
+        // if (price.length) {
+        //   item.price = price;
+        // }
+        item.tdQty = item.tdQty || item.currQty;
+        item.price = item.price;
+        item.taxRate = item.taxRate || 0.16;
         item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
@@ -414,16 +385,16 @@ export default {
     },
     // TODO 新增更多订单
     addOrder () {
-      for (let items of Object.values(this.orderList)) {
-        for (let item of items) {
-          // 存储已输入的价格
-          this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
-            tdQty: item.tdQty,
-            price: item.price,
-            taxRate: item.taxRate,
-          };
-        }
-      }
+      // for (let items of Object.values(this.orderList)) {
+      //   for (let item of items) {
+      //     // 存储已输入的价格
+      //     this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
+      //       tdQty: item.tdQty,
+      //       price: item.price,
+      //       taxRate: item.taxRate,
+      //     };
+      //   }
+      // }
       this.showMaterielPop = !this.showMaterielPop;
     },
     // TODO 提价订单
