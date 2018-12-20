@@ -175,12 +175,9 @@
           let [detail = {}] = data;
           detail.iconType = this.judgeFileType(detail.attr1);
           this.files.push(detail);
-          if (!this.biReferenceId) {
-            this.biReferenceId = detail.biReferenceId;
-            this.$emit('on-upload', {
-              biReferenceId: this.biReferenceId
-            })
-          }
+          this.$emit('on-upload', {
+            biReferenceId: detail.biReferenceId
+          })
         }).catch(e => {
           this.$vux.alert.show({
             content: e.message,

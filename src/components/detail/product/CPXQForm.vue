@@ -55,7 +55,6 @@ export default {
       uploadStyle: {
         width: '100%',
         padding :'0.06rem 0.1rem'
-
       }
     }
   },

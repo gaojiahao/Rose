@@ -34,7 +34,7 @@
             </div>
           </div>
         </div>
-        <upload-file :default-value="attachment" @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
+        <upload-file :default-value="attachment" @on-upload="onUploadFile" :biReferenceId="biReferenceId" :contain-style="uploadStyle"></upload-file>
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">

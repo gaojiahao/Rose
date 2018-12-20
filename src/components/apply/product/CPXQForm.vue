@@ -32,7 +32,7 @@
             </div>
           </div>
         </div>
-        <upload-file :default-value="attachment" @on-upload="onUploadFile" :contain-style="uploadStyle"></upload-file>
+        <upload-file :default-value="attachment" @on-upload="onUploadFile" :biReferenceId="biReferenceId" :contain-style="uploadStyle"></upload-file>
       </div>
     </div>
     <div class='btn vux-1px-t' :class="{'btn_hide' : btnIsHide}">
@@ -134,8 +134,9 @@
                 },
                 operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
             let submitData = {
-              listId: this.listId,
               biComment: '',
+              listId: this.listId,
+              biReferenceId: this.biReferenceId,
               formData: JSON.stringify({
                 handlerEntity: this.entity.dealerName,
                 ...formData,
@@ -145,8 +146,6 @@
             };
             if (this.transCode) {
               operation = updateData;
-              console.log('bId:', this.biReferenceId)
-              submitData.biReferenceId = this.biReferenceId;
             }
             this.saveData(operation, submitData);
           }
@@ -184,10 +183,11 @@
       // 是否保存草稿
       hasDraftData () {
         let formData = this.formData;
-        if (formData.demandTitle || formData.demandDescribe || formData.demandType || formData.processStatus || formData.timeConfidenceIndex) {
+        if (formData.demandTitle || formData.demandDescribe ||  formData.processStatus) {
           return {
             [DRAFT_KEY]: {
               formData: this.formData,
+              dealerInfo: this.dealerInfo
             }
           };
         }
@@ -197,6 +197,7 @@
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         this.formData = JSON.parse(data).formData;
+        this.dealerInfo = JSON.parse(data).dealerInfo;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },
