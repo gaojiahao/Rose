@@ -229,14 +229,8 @@ export default {
     },
     // 是否含预收
     hasAdvance() {
-      let {paymentTerm} = this.dealerInfo;
-      let hasAdvanceList = ['赊销'];
-      if (!paymentTerm) {
-        return false
-      }
-      else {
-        return !paymentTerm.includes(hasAdvanceList);
-      }
+      let { paymentTerm } = this.dealerInfo;
+      return paymentTerm && paymentTerm.includes('预收');
     }
   },
   components: {

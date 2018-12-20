@@ -30,7 +30,7 @@
         <!-- 物料列表 -->
         <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
           <template slot="orderTitle" slot-scope="props">
-             <span class="order_title">所属合同</span>
+             <span class="order_title">销售合同号</span>
           </template>
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
@@ -103,14 +103,8 @@ export default {
   computed: {
     // 是否含预收
     hasAdvance() {
-      let {payment} = this.contactInfo;
-      let hasAdvanceList = ['赊销'];
-      if(!payment) {
-        return false
-      }
-      else{
-        return !payment.includes(hasAdvanceList);
-      }
+      let { payment } = this.contactInfo;
+      return payment && payment.includes('预收')
     }
   },
   components:{

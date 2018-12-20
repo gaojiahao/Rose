@@ -204,6 +204,7 @@
       .mater_attribute {
         color: #3f72af;
         font-size: 0.1rem;
+        word-break: keep-all;
         span {
           padding: 0 .04rem;
           border-radius: .04rem;
