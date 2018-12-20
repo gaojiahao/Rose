@@ -98,11 +98,19 @@
           <slot name="date" :modifyMatter="modifyMatter"></slot>
         </group>
         <!-- 价格合计部分 -->
-        <group class="mg_auto">
-          <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell>
+        <group class="mg_auto" v-if="isShowAmount">
+          <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell> 
           <cell disabled title="不含税金额" :value="`￥${numberComma(modifyMatter.noTaxAmount)}`"></cell>
-          <cell disabled title="价税小计" :value="`￥${numberComma(modifyMatter.tdAmount)}`"></cell>
+          <!-- 该插槽用于替换价税小计的title-->    
+          <cell disabled title="价税小计" :value="`￥${numberComma(modifyMatter.tdAmount)}`">
+            <template slot="title">
+              <slot name="tdAmountTitle">
+                <span>价税小计</span>
+              </slot>
+            </template>
+          </cell>
         </group>
+       
       </div>
       <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm">
         <div class='confirm'>确认</div>
@@ -152,6 +160,26 @@ export default {
     dateText:{
       type : String,
       default : '预期交货日'
+    },
+    // 校验的字段
+    validateMap: {
+      type: Array,
+      default() {
+        return [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+          {
+            key: 'price',
+            message: '请填写含税单价'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
+      }
     }
   },
   components: {
@@ -195,6 +223,20 @@ export default {
     },
     //确认修改
     confirm(){
+      let warn = '';
+      this.validateMap.every(item => {
+        if (!this.modifyMatter[item.key]) {
+          warn = item.message;
+          return false
+        }
+        return true
+      });
+      if (warn) {
+        this.$vux.alert.show({
+          content: warn
+        });
+        return
+      }
       this.$emit('sel-confirm',JSON.stringify(this.modifyMatter))
       this.show = false;
     },
