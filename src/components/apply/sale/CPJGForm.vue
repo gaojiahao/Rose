@@ -77,6 +77,13 @@
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
+            <group class="mg_auto">
+              <popup-picker :data='dealerTypeList' v-model="modifyMatter.PopDealerLabel" :popup-style="pickerStyle" @on-change="onChange($event,modifyMatter)">
+                <template slot="title">
+                  <span class='required'>客户类型
+                  </span>
+                </template>   
+              </popup-picker>
               <x-input type="number"  v-model.number='modifyMatter.qtyDownline' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
@@ -91,6 +98,8 @@
                   </span>
                 </template>      
               </x-input>
+            </group>
+            <group class="mg_auto">
               <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
@@ -105,12 +114,7 @@
                   </span>
                 </template>      
               </x-input>
-              <popup-picker :data='dealerTypeList' v-model="modifyMatter.PopDealerLabel" :popup-style="pickerStyle" @on-change="onChange($event,modifyMatter)">
-                <template slot="title">
-                  <span class='required'>客户类型
-                  </span>
-                </template>   
-              </popup-picker>
+            </group>
           </template>
         </pop-matter>
         <!--备注-->
@@ -138,328 +142,325 @@
 </template>
 
 <script>
-  // vux组件引入
-  import { Icon, XInput, XTextarea, dateFormat, PopupPicker,Picker  } from 'vux'
-  // 请求 引入
-  import { getSOList } from 'service/detailService'
-  import { submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask } from 'service/commonService'
-  // mixins 引入
-  import ApplyCommon from 'pageMixins/applyCommon'
-  // 组件引入
-  import RPicker from 'components/RPicker'
-  import PopMatterList from 'components/Popup/PopMatterList'
-  import PopMatter from 'components/apply/commonPart/MatterPop'
-  import UploadFile from 'components/upload/UploadFile'
-  import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
-
-  const DRAFT_KEY = 'CPJG_DATA';
-
-  export default {
-    data() {
-      return {
-        matterList: [], // 物料列表
-        showMaterielPop: false, // 是否显示物料的popup
-        transCode: '',
-        formData: {
-          biComment: '',
-          biId: '',
-          biProcessStatus: ''
-        },
-        priceMap: {},
-        showDealerPop: false,
-        dealerTypeList: [],
-        currentType: '',
-        showPrice: false,
-        pickerStyle: {
-          zIndex: 550
-        }
-      }
-    },
-    components: {
-      Icon, XInput, RPicker, XTextarea, PopupPicker, Picker ,
-      PopMatterList,
-      PopMatter, UploadFile, PopBaseinfo
-    },
-    mixins: [ApplyCommon],
-    methods: {
-      onChange(e,modifyMatter){
-        modifyMatter.drDealerLabel = e[0];
+// vux组件引入
+import { Icon, Group, Picker, XInput,  XTextarea, dateFormat, PopupPicker } from 'vux'
+// 请求 引入
+import { getSOList } from 'service/detailService'
+import { submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask } from 'service/commonService'
+// mixins 引入
+import ApplyCommon from 'pageMixins/applyCommon'
+// 组件引入
+import RPicker from 'components/RPicker'
+import PopMatterList from 'components/Popup/PopMatterList'
+import PopMatter from 'components/apply/commonPart/MatterPop'
+import UploadFile from 'components/upload/UploadFile'
+import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+const DRAFT_KEY = 'CPJG_DATA';
+export default {
+  data() {
+    return {
+      matterList: [], // 物料列表
+      showMaterielPop: false, // 是否显示物料的popup
+      transCode: '',
+      formData: {
+        biComment: '',
+        biId: '',
+        biProcessStatus: ''
       },
-      // 获取 客户类型
-      initRequest () {
-        return getDictByType('dealerRelLabel').then(({ tableContent }) => {
-          let arr = [];
-          tableContent.forEach(item => {
-            arr.push(item.name)
-          })
-          this.dealerTypeList.push(arr);
-        })
-      },
-      // 滑动删除
-      delClick (index, sItem) {
-        let arr = this.selItems;
-        let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
-        // 若存在重复的 则清除
-        if (delIndex !== -1) {
-          arr.splice(delIndex, 1);
-          return;
-        }
-        arr.push(sItem);
-      },
-      // TODO 判断是否展示选中图标
-      showSelIcon (sItem) {
-        return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
-      },
-      // 全选
-      checkAll () {
-        if (this.selItems.length === this.matterList.length) {
-          this.selItems = [];
-          return
-        }
-        this.selItems = JSON.parse(JSON.stringify(this.matterList));
-      },
-      // 删除选中的
-      deleteCheckd () {
-        this.$vux.confirm.show({
-          content: '确认删除?',
-          // 确定回调
-          onConfirm: () => {
-            this.selItems.forEach(item=>{
-              let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
-              if(index >= 0){
-                this.matterList.splice(index,1);
-              }
-            })
-            this.selItems = [];
-            this.matterModifyClass = false;
-          }
-        })
-      },
-      // TODO 点击增加更多物料
-      addMatter () {
-        this.matterList.forEach(item => {
-          // 存储已输入的价格
-          this.priceMap[item.inventoryCode] = {
-            price: item.price,
-            drDealerLabel: item.drDealerLabel,
-            PopDealerLabel: item.PopDealerLabel,
-            qtyOnline: item.qtyOnline,
-            qtyDownline: item.qtyDownline,
-            specialReservePrice: item.specialReservePrice,
-          };
-        });
-        this.showMaterielPop = !this.showMaterielPop
-      },
-      // TODO 选中物料项
-      selMatter (val) {
-        let sels = JSON.parse(val);
-        sels.forEach(item => {
-          let defaultValue = this.priceMap[item.inventoryCode] || {};
-          item.price = defaultValue.price || '';
-          item.qtyOnline = defaultValue.qtyOnline || '';
-          item.qtyDownline = defaultValue.qtyDownline || '';
-          item.specialReservePrice = defaultValue.specialReservePrice || '';
-          item.PopDealerLabel = defaultValue.PopDealerLabel || []
-          item.drDealerLabel = defaultValue.drDealerLabel || ''
-        });
-        this.priceMap = {};
-        this.matterList = [...sels];
-      },
-      // TODO 获取默认图片
-      getDefaultImg (item) {
-        let url = require('assets/wl_default02.png');
-        if (item) {
-          item.inventoryPic = url;
-        }
-        return url
-      },
-      // TODO 提交
-      save () {
-        let warn = '',
-            dataSet = [];
-        let validateMap = [
-          {
-            key: 'drDealerLabel',
-            message: '请选择客户类型'
-          },
-          {
-            key: 'qtyDownline',
-            message: '请填写数量下线'
-          },
-          {
-            key: 'qtyOnline',
-            message: '请填写数量上线'
-          },
-          {
-            key: 'price',
-            message: '请填写标准价格'
-          },
-          {
-            key: 'specialReservePrice',
-            message: '请填写特批低价'
-          }
-        ];
-        if(!this.matterList.length){
-          warn = '请选择物料'
-        }
-        if (!warn) {
-          this.matterList.every(item => {
-            validateMap.every(vItem => {
-              if (!item[vItem.key]) {
-                warn = vItem.message;
-              }
-              return !warn
-            });
-            let mItem = {
-              transObjCode: item.inventoryCode,
-              drDealerLabel: item.drDealerLabel,
-              qtyDownline: item.qtyDownline,
-              qtyOnline: item.qtyOnline,
-              price: item.price,
-              specialReservePrice: item.specialReservePrice,
-              comment: ''
-            };
-            if (this.transCode) {
-              mItem.tdId = item.tdId || '';
-            }
-            dataSet.push(mItem);
-            return !warn
-          });
-        }
-        if (warn) {
-          this.$vux.alert.show({
-            content: warn,
-          });
-          return
-        }
-        this.$vux.confirm.show({
-          content: '确认提交?',
-          // 确定回调
-          onConfirm: () => {
-            this.$HandleLoad.show();
-            let operation = saveAndStartWf;
-            let formData = {
-              creator: this.formData.handler,
-              ...this.formData,
-              modifer: this.formData.handler,
-              handlerEntity: this.entity.dealerName,
-              order: {
-                dataSet
-              }
-            };
-            let submitData = {
-              listId: this.listId,
-              biComment: '',
-              formData: JSON.stringify(formData),
-              wfPara: JSON.stringify({
-                [this.processCode]: {
-                  businessKey: 'PQ',
-                  createdBy: formData.creator,
-                }
-              }),
-            };
-            // 若为重新提交，则修改提交参数
-            if (this.transCode) {
-              operation = saveAndCommitTask;
-              submitData.biReferenceId = this.biReferenceId;
-              submitData.wfPara = JSON.stringify({
-                businessKey: this.transCode,
-                createdBy: formData.creator,
-                transCode: this.transCode,
-                result: 3,
-                taskId: this.taskId,
-                comment: ''
-              });
-            }
-            // 无工作流
-            if (!this.processCode.length) {
-              operation = submitAndCalc;
-              delete submitData.wfPara;
-              delete submitData.biReferenceId;
-            }
-            if (this.biReferenceId) {
-              submitData.biReferenceId = this.biReferenceId
-            }
-            this.saveData(operation, submitData);
-          }
-        });
-      },
-      // TODO 获取详情
-      getFormData () {
-        return getSOList({
-          formViewUniqueId: this.formViewUniqueId,
-          transCode: this.transCode
-        }).then(data => {
-          let {success = true, formData = {},attachment = []} = data;
-          // http200时提示报错信息
-          if (!success) {
-            this.$vux.alert.show({
-              content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
-            });
-            return;
-          }
-          let matterList = [];
-          this.attachment = attachment;
-          // 获取合计
-          let {order} = formData;
-          let {dataSet = []} = order;
-          for (let item of dataSet) {
-            item = {
-              ...item,
-              inventoryCode: item.transObjCode,
-              inventoryName: item.inventoryName_transObjCode,
-              measureUnit:item.measureUnit_transObjCode,
-              specification: item.specification_transObjCode,
-              PopDealerLabel: [item.drDealerLabel],
-              inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-            };
-            matterList.push(item);
-          }
-          this.handlerDefault = {
-            handler: formData.handler,
-            handlerName: formData.handlerName,
-            handlerUnit: formData.handlerUnit,
-            handlerUnitName: formData.handlerUnitName,
-            handlerRole: formData.handlerRole,
-            handlerRoleName: formData.handlerRoleName,
-          };
-          // 基本信息
-          this.formData = {
-            ...this.formData,
-            ...this.handlerDefault,
-            biComment: formData.biComment,
-            biId: formData.biId,
-            biProcessStatus: formData.biProcessStatus,
-            creator: formData.creator,
-            modifer: formData.modifer,
-          }
-          this.biReferenceId = formData.biReferenceId;
-          this.matterList = matterList;
-          this.$loading.hide();
-        })
-      },
-      // TODO 是否保存草稿
-      hasDraftData () {
-        if (!this.matterList.length) {
-          return false
-        }
-        return {
-          [DRAFT_KEY]: {
-            matter: this.matterList,
-            formData: this.formData
-          }
-        };
-      },
-    },
-    created () {
-      let data = sessionStorage.getItem(DRAFT_KEY);
-      if (data) {
-        this.matterList = JSON.parse(data).matter;
-        this.formData = JSON.parse(data).formData;
-        sessionStorage.removeItem(DRAFT_KEY)
+      priceMap: {},
+      showDealerPop: false,
+      dealerTypeList: [],
+      currentType: '',
+      showPrice: false,
+      pickerStyle: {
+        zIndex: 550
       }
     }
+  },
+  components: {
+    Icon, Group, Picker, XInput, RPicker, XTextarea, PopupPicker, 
+    PopMatterList, PopMatter, UploadFile, PopBaseinfo
+  },
+  mixins: [ApplyCommon],
+  methods: {
+    onChange(e,modifyMatter){
+      modifyMatter.drDealerLabel = e[0];
+    },
+    // 获取 客户类型
+    initRequest () {
+      return getDictByType('dealerRelLabel').then(({ tableContent }) => {
+        let arr = [];
+        tableContent.forEach(item => {
+          arr.push(item.name)
+        })
+        this.dealerTypeList.push(arr);
+      })
+    },
+    // 滑动删除
+    delClick (index, sItem) {
+      let arr = this.selItems;
+      let delIndex = arr.findIndex(item => item.inventoryCode === sItem.inventoryCode);
+      // 若存在重复的 则清除
+      if (delIndex !== -1) {
+        arr.splice(delIndex, 1);
+        return;
+      }
+      arr.push(sItem);
+    },
+    // TODO 判断是否展示选中图标
+    showSelIcon (sItem) {
+      return this.selItems.findIndex(item => item.inventoryCode === sItem.inventoryCode) !== -1;
+    },
+    // 全选
+    checkAll () {
+      if (this.selItems.length === this.matterList.length) {
+        this.selItems = [];
+        return
+      }
+      this.selItems = JSON.parse(JSON.stringify(this.matterList));
+    },
+    // 删除选中的
+    deleteCheckd () {
+      this.$vux.confirm.show({
+        content: '确认删除?',
+        // 确定回调
+        onConfirm: () => {
+          this.selItems.forEach(item=>{
+            let index = this.matterList.findIndex(item2=>item2.inventoryCode === item.inventoryCode);
+            if(index >= 0){
+              this.matterList.splice(index,1);
+            }
+          })
+          this.selItems = [];
+          this.matterModifyClass = false;
+        }
+      })
+    },
+    // TODO 点击增加更多物料
+    addMatter () {
+      this.matterList.forEach(item => {
+        // 存储已输入的价格
+        this.priceMap[item.inventoryCode] = {
+          price: item.price,
+          drDealerLabel: item.drDealerLabel,
+          PopDealerLabel: item.PopDealerLabel,
+          qtyOnline: item.qtyOnline,
+          qtyDownline: item.qtyDownline,
+          specialReservePrice: item.specialReservePrice,
+        };
+      });
+      this.showMaterielPop = !this.showMaterielPop
+    },
+    // TODO 选中物料项
+    selMatter (val) {
+      let sels = JSON.parse(val);
+      sels.forEach(item => {
+        let defaultValue = this.priceMap[item.inventoryCode] || {};
+        item.price = defaultValue.price || '';
+        item.qtyOnline = defaultValue.qtyOnline || '';
+        item.qtyDownline = defaultValue.qtyDownline || '';
+        item.specialReservePrice = defaultValue.specialReservePrice || '';
+        item.PopDealerLabel = defaultValue.PopDealerLabel || []
+        item.drDealerLabel = defaultValue.drDealerLabel || ''
+      });
+      this.priceMap = {};
+      this.matterList = [...sels];
+    },
+    // TODO 获取默认图片
+    getDefaultImg (item) {
+      let url = require('assets/wl_default02.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
+    // TODO 提交
+    save () {
+      let warn = '',
+          dataSet = [];
+      let validateMap = [
+        {
+          key: 'drDealerLabel',
+          message: '请选择客户类型'
+        },
+        {
+          key: 'qtyDownline',
+          message: '请填写数量下线'
+        },
+        {
+          key: 'qtyOnline',
+          message: '请填写数量上线'
+        },
+        {
+          key: 'price',
+          message: '请填写标准价格'
+        },
+        {
+          key: 'specialReservePrice',
+          message: '请填写特批低价'
+        }
+      ];
+      if(!this.matterList.length){
+        warn = '请选择物料'
+      }
+      if (!warn) {
+        this.matterList.every(item => {
+          validateMap.every(vItem => {
+            if (!item[vItem.key]) {
+              warn = vItem.message;
+            }
+            return !warn
+          });
+          let mItem = {
+            transObjCode: item.inventoryCode,
+            drDealerLabel: item.drDealerLabel,
+            qtyDownline: item.qtyDownline,
+            qtyOnline: item.qtyOnline,
+            price: item.price,
+            specialReservePrice: item.specialReservePrice,
+            comment: ''
+          };
+          if (this.transCode) {
+            mItem.tdId = item.tdId || '';
+          }
+          dataSet.push(mItem);
+          return !warn
+        });
+      }
+      if (warn) {
+        this.$vux.alert.show({
+          content: warn,
+        });
+        return
+      }
+      this.$vux.confirm.show({
+        content: '确认提交?',
+        // 确定回调
+        onConfirm: () => {
+          this.$HandleLoad.show();
+          let operation = saveAndStartWf;
+          let formData = {
+            creator: this.formData.handler,
+            ...this.formData,
+            modifer: this.formData.handler,
+            handlerEntity: this.entity.dealerName,
+            order: {
+              dataSet
+            }
+          };
+          let submitData = {
+            listId: this.listId,
+            biComment: '',
+            formData: JSON.stringify(formData),
+            wfPara: JSON.stringify({
+              [this.processCode]: {
+                businessKey: 'PQ',
+                createdBy: formData.creator,
+              }
+            }),
+          };
+          // 若为重新提交，则修改提交参数
+          if (this.transCode) {
+            operation = saveAndCommitTask;
+            submitData.biReferenceId = this.biReferenceId;
+            submitData.wfPara = JSON.stringify({
+              businessKey: this.transCode,
+              createdBy: formData.creator,
+              transCode: this.transCode,
+              result: 3,
+              taskId: this.taskId,
+              comment: ''
+            });
+          }
+          // 无工作流
+          if (!this.processCode.length) {
+            operation = submitAndCalc;
+            delete submitData.wfPara;
+            delete submitData.biReferenceId;
+          }
+          if (this.biReferenceId) {
+            submitData.biReferenceId = this.biReferenceId
+          }
+          this.saveData(operation, submitData);
+        }
+      });
+    },
+    // TODO 获取详情
+    getFormData () {
+      return getSOList({
+        formViewUniqueId: this.formViewUniqueId,
+        transCode: this.transCode
+      }).then(data => {
+        let {success = true, formData = {},attachment = []} = data;
+        // http200时提示报错信息
+        if (!success) {
+          this.$vux.alert.show({
+            content: '抱歉，无法支持您查看的交易号，请确认交易号是否正确'
+          });
+          return;
+        }
+        let matterList = [];
+        this.attachment = attachment;
+        // 获取合计
+        let {order} = formData;
+        let {dataSet = []} = order;
+        for (let item of dataSet) {
+          item = {
+            ...item,
+            inventoryCode: item.transObjCode,
+            inventoryName: item.inventoryName_transObjCode,
+            measureUnit:item.measureUnit_transObjCode,
+            specification: item.specification_transObjCode,
+            PopDealerLabel: [item.drDealerLabel],
+            inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
+          };
+          matterList.push(item);
+        }
+        this.handlerDefault = {
+          handler: formData.handler,
+          handlerName: formData.handlerName,
+          handlerUnit: formData.handlerUnit,
+          handlerUnitName: formData.handlerUnitName,
+          handlerRole: formData.handlerRole,
+          handlerRoleName: formData.handlerRoleName,
+        };
+        // 基本信息
+        this.formData = {
+          ...this.formData,
+          ...this.handlerDefault,
+          biComment: formData.biComment,
+          biId: formData.biId,
+          biProcessStatus: formData.biProcessStatus,
+          creator: formData.creator,
+          modifer: formData.modifer,
+        }
+        this.biReferenceId = formData.biReferenceId;
+        this.matterList = matterList;
+        this.$loading.hide();
+      })
+    },
+    // TODO 是否保存草稿
+    hasDraftData () {
+      if (!this.matterList.length) {
+        return false
+      }
+      return {
+        [DRAFT_KEY]: {
+          matter: this.matterList,
+          formData: this.formData
+        }
+      };
+    },
+  },
+  created () {
+    let data = sessionStorage.getItem(DRAFT_KEY);
+    if (data) {
+      this.matterList = JSON.parse(data).matter;
+      this.formData = JSON.parse(data).formData;
+      sessionStorage.removeItem(DRAFT_KEY)
+    }
   }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -148,6 +148,37 @@
     // position: relative;
     margin: .1rem auto 0;
 }
+.edit_matter {
+  .mg_auto{
+    padding: 0 .08rem;
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    margin-bottom: 0.06rem;
+    .vux-no-group-title{
+      margin-top:0;
+    }
+    /deep/ .weui-cells{
+      margin-top:0;
+      overflow: visible;
+      .weui-cell{
+        font-size: 0.14rem;
+
+        &:before{
+          left:0;
+          border-color:#e8e8e8;
+        }
+      }
+      &:before{
+        border-top:none;
+
+      }
+      &:after{
+        border-bottom:none;
+      }
+    }
+  }
+}
 .symbol {
   font-size: .12rem;
 }
