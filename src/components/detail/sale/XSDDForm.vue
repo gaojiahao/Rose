@@ -30,7 +30,7 @@
         <!-- 物料列表 -->
         <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
           <template slot="orderTitle" slot-scope="props">
-             <span class="order_title">所属合同</span>
+             <span class="order_title">销售合同号</span>
           </template>
           <template slot="matterOther" slot-scope="{item}">
             <div class='mater_other'>
@@ -55,7 +55,7 @@
               <div class='mater_price'>
                 <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
                 <span class="num"
-                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}"
+                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
                       v-if="item.taxRate">
                   [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                 </span>
@@ -103,14 +103,8 @@ export default {
   computed: {
     // 是否含预收
     hasAdvance() {
-      let {payment} = this.contactInfo;
-      let hasAdvanceList = ['赊销'];
-      if(!payment) {
-        return false
-      }
-      else{
-        return !payment.includes(hasAdvanceList);
-      }
+      let { payment } = this.contactInfo;
+      return payment && payment.includes('预收')
     }
   },
   components:{

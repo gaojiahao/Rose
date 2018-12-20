@@ -10,6 +10,7 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
+      <contact-part :contact-info="contactInfo" :payment='false' :logistics='false'></contact-part>
       <div class="product">
         <div class="title">
           <div>
@@ -90,6 +91,11 @@ export default {
         }
         this.attachment = attachment;
         this.orderInfo = formData;
+        this.contactInfo = {
+          dealerName: formData.dealerName_launchDealerCode, // 公司名
+          dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
+          dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
+        }
         this.workFlowInfoHandler();
       })
     },

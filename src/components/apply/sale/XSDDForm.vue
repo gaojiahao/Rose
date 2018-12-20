@@ -55,7 +55,7 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">所属合同</span>
+                  <span class="order_title">销售合同号</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -70,13 +70,13 @@
                         <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <div class="mater_more">
-                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                         <span>合同数量: {{item.qty}}</span>
                         <span>已下单: {{item.stockQty}}</span>
                         <span>待下单: {{item.qtyBal}}</span>
                       </div>
                       <!-- 库存 -->
                       <div class='mater_more'>
+                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                         <span class='unit' v-show="item.promDeliTime">预期交货日: {{item.promDeliTime}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
@@ -157,6 +157,8 @@
                       v-model="modifyMatter.promDeliTime" placeholder="请选择">
               <span class='required' slot="title">预期交货日</span>
             </datetime>
+            <cell disabled title="交付开始日" :value="modifyMatter.dateActivation"></cell>
+            <cell disabled title="交付截止日" :value="modifyMatter.executionDate"></cell>
           </template>
         </pop-matter>
         <!--备注-->
@@ -259,14 +261,8 @@
     computed: {
       // 是否含预收
       hasAdvance() {
-        let {paymentTerm} = this.dealerInfo;
-        let hasAdvanceList = ['赊销'];
-        if(!paymentTerm) {
-          return false
-        }
-        else{
-          return !paymentTerm.includes(hasAdvanceList);
-        }
+        let { paymentTerm } = this.dealerInfo;
+        return paymentTerm && paymentTerm.includes('预收');
       }
     },
     methods: {

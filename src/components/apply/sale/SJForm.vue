@@ -1,6 +1,6 @@
 <template>
   <div class="pages sj-apply-container">
-    <div class="basicPart no_count" ref='fill'>
+    <div class="basicPart when-is-form" ref='fill'>
       <div class='fill_wrapper'>
         <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
@@ -144,14 +144,11 @@
           {
             key: 'opportunityTitle',
             message: '请填写商机标题'
-          }, {
+          }, 
+          {
             key: 'tdAmount',
             message: '请填写预期销售额'
-          },
-          // {
-          //   key: 'biProcessStatus',
-          //   message: '请选择流程状态'
-          // },
+          }
         ];
         if (JSON.stringify(this.dealerInfo) == '{}') {
           warn = '请选择客户';

@@ -10,16 +10,17 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
+      <contact-part :contact-info="contactInfo" :payment='false' :logistics='false'></contact-part>
       <div class="product">
         <div class="title">
           <div>
             <span class="iconfont icon-mingxi1"></span>
             <span>需求信息</span>
           </div>
-          <div @click="goEdit">
+          <!-- <div @click="goEdit">
             <i class="iconfont icon-bianji1"></i>
             <span>编辑</span>
-          </div>
+          </div> -->
         </div>
         <form-cell cellTitle="标题" :cellContent="orderInfo.demandTitle"></form-cell>
         <form-cell cellTitle="描述" :cellContent="orderInfo.demandDescribe"></form-cell>
@@ -89,6 +90,11 @@ export default {
         }
         this.attachment = attachment;
         this.orderInfo = formData;
+        this.contactInfo = {
+          dealerName: formData.dealerName_productDealerCode, // 公司名
+          dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
+          dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
+        }
         this.workFlowInfoHandler();
       })
     },
@@ -104,7 +110,7 @@ export default {
           transCode: this.transCode
         }
       })
-    },
+    }  
   }
 }
 </script>

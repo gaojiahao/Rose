@@ -407,19 +407,17 @@
         }
       }
       //物料单价，属性，颜色
-      .mater_more{
+      .mater_more {
         color: #757575;
         font-size: 0.1rem;
         margin-top: .02rem;
         word-break: break-all;
-        span{
-          // display: inline-block;
-          margin-right: 0.04rem;
-          .mater_color{
+        span {
+          margin-right: .04rem;
+          .mater_color {
             margin-right: 0;
           }
         }
-
       }
       //物料价格，数量
       .mater_other {
