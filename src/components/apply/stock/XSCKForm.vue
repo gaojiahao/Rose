@@ -125,7 +125,7 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop"
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" :validateMap="checkFieldList"
                     @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
@@ -249,6 +249,20 @@
         modifyIndex: null,
         modifyKey: null,
         contactInfo: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写本次出库数量'
+          },
+          {
+            key: 'price',
+            message: '请填写单价'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
       }
     },
     methods: {
@@ -329,7 +343,7 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
+           let key = `${item.transCode}_${item.inventoryCode}`;
           let {tdQty = '', price = item.quotedPrice, taxRate = 0.16, promDeliTime = dateFormat(item.promDeliTime, 'YYYY-MM-DD')} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.price = price;
@@ -343,7 +357,7 @@
           }
           orderList[item.transCode].push(item);
         });
-        this.numMap = {};
+        // this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
       },
@@ -439,18 +453,27 @@
         let dataSet = [];
         let validateMap = [
           {
+            key: 'dealerInfo',
+            childKey: 'dealerCode',
+            message: '客户信息'
+          },
+          {
+            key: 'dealerInfo',
+            childKey: 'paymentTerm',
+            message: '结算方式'
+          },
+          {
             key: 'warehouse',
             message: '仓库'
           },
         ];
-        if (!this.dealerInfo.dealerCode) {
-          warn = '请选择客户信息';
-        } else if (!this.dealerInfo.paymentTerm) {
-          warn = '请选择结算方式';
-        }
         if (!warn) {
           validateMap.every(item => {
-            if (!this[item.key]) {
+            if (item.childKey && !this[item.key][item.childKey]) {
+              warn = `请选择${item.message}`;
+              return false
+            }
+            else if(!this[item.key]) {
               warn = `请选择${item.message}`;
               return false
             }

@@ -80,8 +80,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop'
-                    :btn-is-hide="btnIsHide" :is-show-amount="false">
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class="mg_auto">
               <cell title="可用库存数" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal" disabled>
@@ -156,6 +156,12 @@ export default {
       matter: {},
       showMatterPop: false,
       modifyIndex: null,
+      checkFieldList: [
+        {
+          key: 'tdQty',
+          message: '请填写调拨数量'
+        },
+      ]
     }
   },
   methods: {
@@ -202,10 +208,6 @@ export default {
     },
     // TODO 点击增加更多物料
     addMatter () {
-      this.matterList.forEach(item => {
-        // 存储已输入的价格
-        this.numMap[item.inventoryCode] = item.tdQty;
-      });
       this.showMaterielPop = !this.showMaterielPop
     },
     // TODO 选中出库仓库
@@ -236,7 +238,7 @@ export default {
     selMatter (val) {
       let sels = JSON.parse(val);
       sels.forEach(item => {
-        item.tdQty = this.numMap[item.inventoryCode] || ""
+        item.tdQty = item.tdQty || '';
       });
       this.numMap = {};
       this.matterList = [...sels];

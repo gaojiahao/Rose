@@ -131,7 +131,7 @@
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
@@ -314,6 +314,20 @@
             value: 'inventoryCode',
           },
         ],
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写本次收票数量'
+          },
+          {
+            key: 'price',
+            message: '请填写含税单价'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
       }
     },
     mixins: [applyCommon],
@@ -379,7 +393,7 @@
           // }
           item.tdQty = item.tdQty || item.qtyBal;
           item.taxRate = item.taxRate || 0.16;
-          // item.productionDate = item.productionDate;
+          item.productionDate = item.productionDate || '';
           item.validUntil = item.validUntil || '';
           item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
@@ -522,7 +536,7 @@
           // 校验
           this.matterList.every(item => {
             if (!item.price) {
-              warn = '单价不能为空';
+              warn = '含税单价不能为空';
               return false
             }
             if (!item.tdQty) {
