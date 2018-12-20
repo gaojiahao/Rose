@@ -90,14 +90,14 @@
                 </template>   
               </popup-picker>
               <x-input type="number"  v-model.number='modifyMatter.qtyDownline' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                      @on-blur="checkAmt(modifyMatter.qtyDownline, 'qtyDownline', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>数量下线
                   </span>
                 </template>      
               </x-input>
               <x-input type="number"  v-model.number='modifyMatter.qtyOnline' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                      @on-blur="checkAmt(modifyMatter.qtyOnline, 'qtyOnline', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>数量上线
                   </span>
@@ -106,14 +106,14 @@
             </group>
             <group class="mg_auto">
               <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                      @on-blur="checkAmt(modifyMatter.price, 'price', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>标准价格
                   </span>
                 </template>      
               </x-input>
               <x-input type="number"  v-model.number='modifyMatter.specialReservePrice' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                      @on-blur="checkAmt(modifyMatter.specialReservePrice, 'specialReservePrice', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>特批底价
                   </span>
@@ -160,6 +160,7 @@ import PopMatterList from 'components/Popup/PopMatterList'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import UploadFile from 'components/upload/UploadFile'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
+import { toFixed } from '@/plugins/calc'
 const DRAFT_KEY = 'CPJG_DATA';
 export default {
   data() {
@@ -186,6 +187,9 @@ export default {
   },
   mixins: [ApplyCommon],
   methods: {
+    checkAmt(val, key, modifyMatter) {
+      modifyMatter[key] = Math.abs(toFixed(val));
+    },
     onChange(e, modifyMatter){
       modifyMatter.drDealerLabel = e[0];
     },
