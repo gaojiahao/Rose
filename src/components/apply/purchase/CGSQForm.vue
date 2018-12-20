@@ -126,19 +126,21 @@
             </div>
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span class='required'>本次申请
-                </span>
-              </template>
-            </x-input>
-            <x-input v-model.number='modifyMatter.comment' text-align="right"
-                    @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span>申请说明</span>
-              </template>
-            </x-input>
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class='required'>本次申请
+                  </span>
+                </template>
+              </x-input>
+              <x-input v-model.number='modifyMatter.comment' text-align="right"
+                      @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span>申请说明</span>
+                </template>
+              </x-input>
+            </group>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
             <cell disabled title="下单截止日" :value="modifyMatter.shippingTime || '无'"></cell>
