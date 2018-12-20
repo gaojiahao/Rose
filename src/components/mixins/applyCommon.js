@@ -356,6 +356,15 @@ export default {
       item.taxAmount = toFixed(accMul(item.assistQty, taxRate, item.noTaxPrice));
       item.noTaxAmount = toFixed(accSub(item.tdAmount, item.taxAmount));
     },
+    // ToDo 简单计算物料相关值
+    simpleCalcMatter(item) {
+      let price = item.price || 0,
+          tdQty = item.tdQty || 0,
+          taxRate = item.taxRate || 0;
+      item.noTaxAmount = toFixed(accMul(price, tdQty));
+      item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
+      item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
+    }
   },
   created() {
     register(); // 注册wx-js-sdk

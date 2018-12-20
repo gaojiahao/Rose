@@ -14,7 +14,7 @@
                            v-model="dealerInfo.paymentTerm"></pop-single-select>
 
         <cell class="cell-item" title="账期天数" :value="dealerInfo.pamentDays"></cell>
-        <cell class="cell-item" title="账期到期日" :value="dealerInfo.accountExpirationDate"></cell>
+        <cell class="cell-item" title="账期到期日" :value="dealerInfo.accountExpirationDate || '无'"></cell>
 
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -118,7 +118,7 @@
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class='mg_auto'>
@@ -131,13 +131,10 @@
                   </slot>
                 </template>
               </x-input>
-              <!-- <cell title="辅助计量" @click.native="moreUnitClick(modifyMatter)"
-                    v-if="modifyMatter.moreUnitList && modifyMatter.moreUnitList.length">
-                <r-dropdown :show="modifyMatter.showDrop" :list="modifyMatter.moreUnitList"
-                            @on-selected="moreUnitSelected"></r-dropdown>
-              </cell>  -->
+              <cell title="单价" :value="modifyMatter.price" disabled></cell>
+              <cell title="税率" :value="modifyMatter.taxRate" disabled></cell>
             </group>
-            <group class='mg_auto'>
+            <!-- <group class='mg_auto'>
               <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
@@ -152,8 +149,9 @@
                   </span>
                 </template>
               </x-input>
-            </group>
+            </group> -->
             <group class='mg_auto'>
+              <cell title="保质期天数" :value="modifyMatter.keepingDays" disabled></cell>
               <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
               <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
             </group>
@@ -164,11 +162,11 @@
         </pop-matter>
 
         <!-- 资金 -->
-        <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams" required>
+        <!-- <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams" required>
           <template slot="other">
             <cell title="支付金额" :value="tdAmountCopy1"></cell>
           </template>
-        </pop-cash-list>
+        </pop-cash-list> -->
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -279,7 +277,13 @@
         cashParams: {
           fundType: '银行存款',
         },
-        consumables: {}
+        consumables: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+        ]
       }
     },
     computed: {
@@ -287,10 +291,8 @@
       totalAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0;
-          item.noTax = accMul(tdQty,price);
-          total = accAdd(total, item.noTax);
+          this.simpleCalcMatter(item);
+          total = accAdd(total, item.noTaxAmount);
         });
         return Number(total);
       },
@@ -298,12 +300,7 @@
       taxAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0,
-              taxRate = item.taxRate || 0;
-          item.noTax = accMul(tdQty,price);
-          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
-
+          total = toFixed(accAdd(total, item.taxAmount));
         });
         return total;
       },
@@ -325,12 +322,7 @@
       //修改的物料
       consumables:{
         handler(val){
-          let price = val.price || 0,
-              tdQty = val.tdQty || 0,
-              taxRate = val.taxRate || 0;
-          val.noTaxAmount = toFixed(accMul(price,tdQty));
-          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+          this.simpleCalcMatter(val)
         },
         deep:true
       }
@@ -369,7 +361,6 @@
           ...sel,
           accountExpirationDate: accountExpirationDate,
         };
-        console.log(sel)
         this.matterParams = {
           ...this.matterParams,
           dealerCode: sel.dealerCode
@@ -391,19 +382,11 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
-          let {
-            tdQty = item.qtyBal, price = '', taxRate = 0.16,
-            productionDate = '',
-            validUntil = '',
-          } = this.numMap[key] || {};
-          item.tdQty = tdQty;
-          if (price.length) {
-            item.price = price;
-          }
-          item.taxRate = taxRate;
-          item.productionDate = productionDate;
-          item.validUntil = validUntil;
+          item.tdQty = item.tdQty || item.qtyBal;
+          item.price = item.price || '';
+          item.taxRate = item.taxRate || 0.16;
+          item.productionDate = item.productionDate || '';
+          item.validUntil = item.validUntil || '';
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
@@ -498,31 +481,15 @@
       },
       // TODO 新增更多订单
       addOrder() {
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
-          }
-        }
         this.showOrderPop = !this.showOrderPop;
       },
       // TODO 提价订单
       submitOrder() {
         let warn = '';
         let dataSet = [];
-        let validateMap = [
-          {
-            key: 'dealerInfo',
-            message: '供应商信息'
-          },
-        ];
-        validateMap.every(item => {
-          if (!this[item.key]) {
-            warn = `请选择${item.message}`;
-            return false
-          }
-          return true
-        });
+        if(!this.dealerInfo.dealerCode){
+          warn = '请选择供应商'
+        }
         if (!warn && !this.dealerInfo.paymentTerm) {
           warn = '请选择结算方式'
         }
@@ -532,10 +499,6 @@
         if (!warn) {
           // 校验
           this.matterList.every(item => {
-            if (!item.price) {
-              warn = '单价不能为空';
-              return false
-            }
             if (!item.tdQty && item.tdQty !== 0) {
               warn = '数量不能为空';
               return false
@@ -561,8 +524,8 @@
               tdAmount: accAdd(accMul(item.price, item.tdQty), taxAmount), // 明细发生金额
               processingStartDate: item.processingStartDate || null,
               keepingDays_transObjCode: item.keepingDays, // 保质期
-              productionDate: item.productionDate || '', // 保质期
-              validUntil: item.validUntil || '', // 保质期
+              productionDate: item.productionDate || null, // 保质期
+              validUntil: item.validUntil || null, // 保质期
               comment: item.comment || '', // 说明
             };
             if (this.transCode) {
@@ -701,16 +664,15 @@
             creatorName: formData.dealerCreditContactPersonName, // 客户名
             dealerName: inPut.dealerName_dealerCodeCredit, // 公司名
             dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
-            dealerCode: inPut.dealerCode_dealerCodeCredit, // 客户编码
+            dealerCode: inPut.dealerCodeCredit, // 客户编码
             dealerLabelName: inPut.crDealerLabel, // 关系标签
             province: inPut.province_dealerCodeCredit, // 省份
             city: inPut.city_dealerCodeCredit, // 城市
             county: inPut.county_dealerCodeCredit, // 地区
             address: inPut.address_dealerCodeCredit, // 详细地址
-            accountExpirationDate: inPut.accountExpirationDate,
             paymentTerm: inPut.crDealerPaymentTerm,
             pamentDays: inPut.daysOfAccount,
-            accountExpirationDate: inPut.accountExpirationDate || '无'
+            accountExpirationDate: inPut.accountExpirationDate || ''
           };
           for(let item of outPut.dataSet){
             this.cashInfo = {

@@ -220,6 +220,7 @@
       // TODO 选择设施
       selItem(sItem) {
         this.$emit('sel-matter', JSON.stringify(sItem));
+        this.$emit('input', false)
       },
     },
     created() {

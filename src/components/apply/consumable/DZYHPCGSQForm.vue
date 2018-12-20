@@ -82,7 +82,7 @@
                            :params="matterParams" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class='mg_auto'>
@@ -94,7 +94,7 @@
               </x-input>
               <x-input title="估计价格" type="number" v-model.number='modifyMatter.price' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
-              <cell title="估计金额" :value="modifyMatter.tdAmount"></cell>
+              <cell title="估计金额" :value="modifyMatter.tdAmount" disabled></cell>
             </group>
           </template>
         </pop-matter>
@@ -164,7 +164,17 @@
         matterParams: {
           processing: '低值易耗品'
         },
-        consumables: {}
+        consumables: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写本次申请数量'
+          },
+          {
+            key: 'price',
+            message: '请填写估计价格'
+          },
+        ]
       }
     },
     components: {
@@ -178,10 +188,8 @@
       totalAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0;
-          item.noTax = accMul(tdQty,price);
-          total = accAdd(total, item.noTax);
+          this.simpleCalcMatter(item);
+          total = accAdd(total, item.noTaxAmount);
         });
         return Number(total);
       },
@@ -189,12 +197,7 @@
       taxAmount() {
         let total = 0;
         this.matterList.forEach(item => {
-          let price = item.price || 0,
-              tdQty = item.tdQty || 0,
-              taxRate = item.taxRate || 0;
-          item.noTax = accMul(tdQty,price);
-          total = toFixed(accAdd(total, accMul(item.noTax,taxRate)));
-
+          total = toFixed(accAdd(total, item.taxAmount));
         });
         return total;
       },
@@ -206,12 +209,7 @@
       //修改的物料
       consumables:{
         handler(val){
-          let price = val.price || 0,
-              tdQty = val.tdQty || 0,
-              taxRate = val.taxRate || 0;
-          val.noTaxAmount = toFixed(accMul(price,tdQty));
-          val.taxAmount = toFixed(accMul(val.noTaxAmount,taxRate));
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
+          this.simpleCalcMatter(val)
         },
         deep:true
       }
@@ -266,24 +264,15 @@
       },
       // TODO 点击增加更多物料
       addMatter() {
-        this.matterList.forEach(item => {
-          // 存储已输入的价格
-          this.priceMap[item.inventoryCode] = {
-            price: item.price,
-            priceType: item.priceType,
-          };
-        });
         this.showMaterielPop = !this.showMaterielPop
       },
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.forEach(item => {
-          let defaultValue = this.priceMap[item.inventoryCode] || {};
-          item.price = defaultValue.price || '';
-          item.priceType = defaultValue.priceType || '渠道价';
+          item.price = item.price || '';
+          item.tdQty = item.tdQty || '';
         });
-        this.priceMap = {};
         this.matterList = [...sels];
       },
       // TODO 获取默认图片
@@ -313,7 +302,11 @@
         });
         this.matterList.every(item => {
           if (!item.tdQty) {
-            warn = '请输入本次申请';
+            warn = '请输入本次申请数量';
+            return false
+          }
+          if(!item.price){
+            warn = '请输入估计价格';
             return false
           }
           let mItem = {
