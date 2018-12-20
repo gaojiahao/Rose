@@ -117,7 +117,7 @@
             <span class="add_more stop" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'
                   @click="stopOrder">终止提交</span>
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
-            <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
+            <span class="add_more" v-if="matterList.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</span>
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
@@ -298,15 +298,8 @@ export default {
     },
     // TODO 选中物料项
     selMatter(val) {
-      let sels = JSON.parse(val);
+      let sels = JSON.parse(val); 
       sels.map(item => {
-        // let {
-        //   tdQty = '',
-        //   price = '',
-        //   taxRate = 0.16,
-        //   dateActivation = '',
-        //   executionDate = '',
-        // } = this.numMap[item.inventoryCode] || {};
         item.tdQty = item.tdQty || '';
         item.price = item.price || '';
         item.taxRate = item.taxRate || 0.16;
@@ -316,7 +309,6 @@ export default {
         item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription = item.invSubUnitComment || null; // 辅助计量说明
       });
-      // this.numMap = {};
       this.matterList = sels;
     },
     //选择默认图片
@@ -367,14 +359,6 @@ export default {
         }
       })
     },
-    // TODO 新增更多物料
-    addMatter() {
-      // for (let item of this.matterList) {
-      //   // 存储已输入的价格
-      //   this.numMap[item.inventoryCode] = {...item};
-      // }
-      this.showMaterielPop = !this.showMaterielPop;
-    },
     checkAmt(item) {
       let {tdQty, tdAmountCopy1} = item;
       if (tdQty) {
@@ -388,53 +372,80 @@ export default {
     submitOrder() {
       let warn = '',
           dataSet = [];
-      // let verifyField = [
-      //   {
-      //     key: 'dealerInfo["dealerName"]',
-      //     message: '请选择客户'
-      //   }, 
-      //   {
-      //     key: 'dealerInfo.validUntil',
-      //     message: '请选择合同到期日'
-      //   },
-      //   {
-      //     key: 'matterList.length',
-      //     message: '请选择物料'
-      //   }, 
-      //   {
-      //     key: '',
-      //     message: ''
-      //   }  
-      // ]
-      if (!this.dealerInfo.dealerName) {
-        warn = '请选择客户';
-      }
-      if (!warn && !this.dealerInfo.validUntil) {
-        warn = '请选择合同到期日'
-      }
-      if (!warn && !this.matterList.length) {
-        warn = '请选择物料';
-      }
+      // 表单校验字段
+      let verifyField = [
+        /*
+         * key -> 第一层校验字段
+         * childKey -> 第二层校验字段 （非必填，如果只有一层，此处可以为空）
+        */ 
+        {
+          key: 'dealerInfo',
+          childKey: 'dealerName',
+          message: '请选择客户'
+        }, 
+        {
+          key: 'dealerInfo',
+          childKey: 'validUntil',
+          message: '请选择合同到期日'
+        },
+        {
+          key: 'dealerInfo',
+          childKey: 'tdAmountCopy1',
+          message: '请填写预收款'
+        },
+        {
+          key: 'dealerInfo',
+          childKey: 'advancePaymentDueDate',
+          message: '请选择预收到期日'
+        },     
+        {
+          key: 'matterList',
+          childKey: 'length',
+          message: '请选择物料'
+        }, 
+      ]
       if (!warn) {
-        // verifyField.every( item => {
-        //   // console.log('item[key]:', this);
-        //   console.log('val1:', this[item.key]);
-        //   console.log('val2:', this.dealerInfo.dealerName);
-        //   if(!this[item.key]) {
-        //     warn = item.message;
-        //     return false
-        //   }
-        //   return true;
-        // })
-        this.matterList.every(item => {
-          if (!item.tdQty) {
-            warn = "请填写数量";
-            return false
-          }
-          if (!item.price) {
-            warn = "请输入单价";
+        // matterPop组件 必填项
+        let matterVerify = [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+          {
+            key: 'price',
+            message: '请填写单价'
+          },
+          {
+            key: 'dateActivation',
+            message: '请选择交付开始日'
+          },
+          {
+            key: 'executionDate',
+            message: '请选择交付截止日'
+          }          
+        ]
+        // 校验 最外层表单必填项
+        verifyField.every( item => {
+          if(item.childKey && !this[item.key][item.childKey]) {
+            warn = item.message;
             return false;
           }
+          else if(!this[item.key]) {
+            warn = item.message;
+            return false;
+          }  
+          return true;
+        })
+        // 校验 matterPop组件 必填项
+        this.matterList.every(item => {
+          matterVerify.every( val => {
+            if(!item[val.key]) {
+              console.log('key:', val.key);
+              warn = val.message;
+              return false;
+            }
+            return true;
+          })
           let obj = {
             tdId: item.tdId || '',
             inventoryName_transObjCode: item.inventoryName, // 物料名称
@@ -451,8 +462,8 @@ export default {
             noTaxPrice: item.noTaxPrice,
             taxAmount: item.taxAmount, // 税金
             noTaxAmount: item.noTaxAmount,
-            dateActivation: item.dateActivation,
-            executionDate: item.executionDate,
+            dateActivation: item.dateActivation,  // 交付开始日
+            executionDate: item.executionDate,  // 交付截止日
             comment: item.comment || '', // 说明
           };
           dataSet.push(obj);
@@ -507,7 +518,7 @@ export default {
                 ...common,
                 validUntil: this.dealerInfo.validUntil, // 合同到期日
                 dataSet: [{
-                  thenTotalAmntBal: this.thenTotalAmntBal, // 合同总金额 (12.19 金额与预收款一致)
+                  thenTotalAmntBal: this.thenTotalAmntBal, // 合同总金额 
                   tdAmountCopy1: this.dealerInfo.tdAmountCopy1, // 预收款
                   advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate, // 预收到期日
                 }]

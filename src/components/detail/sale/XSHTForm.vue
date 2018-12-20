@@ -19,7 +19,7 @@
           </div>
           <div class="other">
             <span class="title">合同总金额: </span>
-            <span class="mode">￥{{contactInfo.thenTotalAmntBal | toFixed | numberComma(3)}}</span>
+            <span class="mode">￥{{contactInfo.thenTotalAmntBal | toFixed | numberComma}}</span>
           </div>
           <div class="other">
             <span class="title">合同到期日: </span>
@@ -27,7 +27,7 @@
           </div>
           <div class="other">
             <span class="title">预收款: </span>
-            <span class="mode">￥{{contactInfo.tdAmountCopy1 | toFixed | numberComma(3)}}</span>
+            <span class="mode">￥{{contactInfo.tdAmountCopy1 | toFixed | numberComma}}</span>
           </div>
           <div class="other">
             <span class="title">预收到期日: </span>
@@ -41,20 +41,20 @@
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
+              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
               <span>交付开始日: {{item.dateActivation}}</span>
               <span>交付截止日: {{item.executionDate}}</span>
             </div>
-            <div class='mater_attribute'>
-              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>数量: {{item.tdQty | toFixed}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            <div class="mater_num">
+              <span class="num">单价: ￥{{item.price | toFixed | numberComma}}</span>
+              <span class="num">数量: {{item.tdQty | toFixed}}</span>
             </div>
             <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
               <span class="num"
                     :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 7 ? 'block' : '')}"
                     v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
+                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma}} + 税金: ￥{{item.taxAmount | toFixed | numberComma}}]
                 </span>
             </div>
           </div>
