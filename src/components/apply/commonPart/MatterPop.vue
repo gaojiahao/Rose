@@ -28,7 +28,6 @@
                 </div>
               </div>
             </div>
-            <slot name='materUnit'></slot>
             <!-- 设施 -->
             <template v-if="modifyMatter.facilityName">
               <!-- 物料属性和单位 -->
@@ -45,16 +44,16 @@
             <template v-else>
               <div class="mater_more">
                 <slot name="qtyBal" :modifyMatter="modifyMatter">
-                  <div>
-                    <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
-                    <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
-                    <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
-                  </div>
-                  <div>
-                    <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
-                    <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
-                    <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
-                  </div>
+                    <div>
+                      <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
+                      <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
+                      <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
+                    </div>
+                    <div>
+                      <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
+                      <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
+                      <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
+                    </div>
                 </slot>
               </div>
             </template>
@@ -436,12 +435,14 @@ export default {
         font-size: 0.1rem;
         span {
           display: inline-block;
-          margin-right: 0.04rem;
+          margin-right: .04rem;
           .mater_color{
             margin-right: 0;
           }
         }
-
+        .unit {
+          margin-right: .04rem;
+        }
       }
     }
 

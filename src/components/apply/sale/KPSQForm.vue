@@ -14,8 +14,8 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">出库单列表</div>
+              <div class="required">请选择出库单</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
@@ -84,16 +84,43 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="dealerParams"
-                           get-list-method="getBillingApplication" @sel-matter="selMatter" 
+                           get-list-method="getBillingApplication" @sel-matter="selMatter" :filter-list="filterList"
                            :default-value="matterList" ref="matter">
+            <!-- 抬头 插槽 -->
             <template slot="titleName" slot-scope="props">
               <span class="order-title">出库单</span>
+            </template>
+            <!-- 基本属性 插槽 -->
+            <template slot="attribute" slot-scope="{item}">
+              <div class="mater_classify"> 
+                <span class="type">主计量: {{item.measureUnit}}</span>
+                <span class="type">辅助计量: {{item.invSubUnitName}}</span>
+                <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
+              </div>
+            </template>
+            <!-- 余额、单价等 插槽 -->
+            <template slot="storage" slot-scope="{item}">
+              <div class="mater_material">
+                <span>待开票数量: {{item.qtyBal}}</span>
+                <span>主计倍数: {{item.invSubUnitMulti}}</span>
+              </div>
+              <div>
+                单价: ￥{{item.price | numberComma}}
+              </div>
             </template>
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
+          <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <div>
+              <span class="unit">主计量: {{modifyMatter.measureUnit || "无"}}</span>
+              <span>辅助计量: {{modifyMatter.invSubUnitName || "无"}}</span>
+              <span>辅助计量说明: {{modifyMatter.invSubUnitComment}}</span>
+            </div>
+            <div>待开票数量: {{modifyMatter.qtyBal}}</div>
+          </template>
           <!-- 输入框title -->
           <template slot="qtyName">
             <span class='required'>本次开票数量</span>
@@ -164,24 +191,35 @@
     },
     data() {
       return {
+        taxRate: 0.16,
+        modifyKey: null,
+        showMatterPop: false,
+        showMaterielPop: false,
+        filterList: [
+          {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          }, {
+            name: '出库单',
+            value: 'transCode',
+          }
+        ],
         listId: 'ebd2225c-9354-4df9-bded-8631e3cac4ac',
+        numMap: {},
+        orderList: {},
+        matterList: [],
         dealerInfo: {}, //客户信息
         contactInfo: {}, // 联系人信息
-        orderList: {},
-        dealerParams: { //
+        dealerParams: { 
           dealerCode: ''
         },
-        taxRate: 0.16,
-        showMaterielPop: false,
         formData: {
           biProcessStatus: '',
           biComment: ''
         },
-        modifyKey: null,
-        showMatterPop: false,
-        matterList: [],
-        numMap: {}
-
       }
     },
     methods: {
@@ -558,7 +596,18 @@
 
 <style lang="scss" scoped>
   @import './../../scss/bizApply';
-
+  .mater_more {
+    color: #757575;
+    font-size: 0.1rem;
+    margin-top: .02rem;
+    word-break: break-all;
+    span {
+      margin-right: .04rem;
+      .mater_color {
+        margin-right: 0;
+      }
+    }
+  }
   .xmjh-apply-container {
     /deep/ .weui-cells {
       margin-top: 0;
