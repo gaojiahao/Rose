@@ -122,7 +122,7 @@
             </template>
             <template slot="storage" slot-scope="{item}">
               <div>
-                <span>入库日期: {{item.calcTime || 0}}</span>
+                <span>入库日期: {{item.calcTime || 0 | dateFormat('YYYY-MM-DD')}}</span>
                 <span>待收票金额: {{item.amntBal || 0}}</span>
               </div>
               <div>
@@ -133,7 +133,7 @@
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
@@ -154,10 +154,7 @@
               <cell title="包装数量" :value="modifyMatter.assistQty" disabled></cell>
             </group>
             <group class='mg_auto'>
-              <x-input type="number" v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <span class='required' slot="label">含税单价</span>
-              </x-input>
+              <cell title="含税单价" :value="modifyMatter.price" disabled></cell>
               <x-input type="number" v-model.number='modifyMatter.taxRate' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <span class='required' slot="label">税率</span>
@@ -241,10 +238,21 @@
         showMaterielPop: false,
         matterParams: {},
         numMap: {},
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写本次收票数量'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
       }
     },
     filters: { 
       numberComma,
+      dateFormat
     },
     methods: {
       // 选中的客户
@@ -299,15 +307,8 @@
         let sels = JSON.parse(val);
         let orderList = {};
         sels.forEach(item => {
-          let key = `${item.transCode}_${item.inventoryCode}`;
-          let {
-            tdQty = item.qtyBal,
-            price = item.price,
-            taxRate = this.taxRate,
-          } = this.numMap[item.inventoryCode] || {};
-          item.tdQty = tdQty;
-          item.price = price;
-          item.taxRate = taxRate;
+          item.tdQty = item.tdQty || item.qtyBal;
+          item.taxRate = item.taxRate || 0.16;
           item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD');
           item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
@@ -317,7 +318,6 @@
           }
           orderList[item.transCode].push(item);
         });
-        this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
       },
@@ -391,12 +391,6 @@
       },
       // TODO 新增更多物料
       addMatter() {
-        for (let items of Object.values(this.orderList)) {
-          for (let item of items) {
-            // 存储已输入的价格
-            this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
-          }
-        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       // TODO 提交
@@ -425,14 +419,8 @@
         }
         if (!warn) {
           this.matterList.every(item => {
-            if (!item.transCode) {
-              warn = '请选择采购订单';
-              return false
-            } else if (!item.tdQty && item.tdQty !== 0) {
+            if (!item.tdQty && item.tdQty !== 0) {
               warn = '请填写本次收票数量';
-              return false
-            } else if (!item.taxRate && item.taxRate !== 0) {
-              warn = '请填写税率';
               return false
             }
             let taxRate = item.taxRate || this.taxRate;

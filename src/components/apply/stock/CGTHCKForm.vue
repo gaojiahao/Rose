@@ -101,7 +101,8 @@
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :btn-is-hide="btnIsHide">
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <p v-show="modifyMatter.qtyBal">可退货数量: {{modifyMatter.qtyBal}}</p>
             <p v-show="modifyMatter.qtyStockBal">可用库存: {{modifyMatter.qtyStockBal}}</p>
@@ -229,6 +230,20 @@ export default {
           name: '订单号',
           value: 'transCode',
         },
+      ],
+      checkFieldList: [
+        {
+          key: 'tdQty',
+          message: '请填写退货数量'
+        },
+        {
+          key: 'price',
+          message: '请填写退货单价'
+        },
+        {
+          key: 'taxRate',
+          message: '请填写税率'
+        },
       ]
     }
   },
@@ -272,12 +287,6 @@ export default {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.forEach(item => {
-        // let key = `${item.transCode}_${item.inventoryCode}`;
-        // let { tdQty = item.currQty || '', price = item.price, taxRate = 0.16 } = this.numMap[key] || {};
-        // item.tdQty = tdQty;
-        // if (price.length) {
-        //   item.price = price;
-        // }
         item.tdQty = item.tdQty || item.currQty;
         item.price = item.price;
         item.taxRate = item.taxRate || 0.16;
@@ -385,16 +394,6 @@ export default {
     },
     // TODO 新增更多订单
     addOrder () {
-      // for (let items of Object.values(this.orderList)) {
-      //   for (let item of items) {
-      //     // 存储已输入的价格
-      //     this.numMap[`${item.transCode}_${item.inventoryCode}`] = {
-      //       tdQty: item.tdQty,
-      //       price: item.price,
-      //       taxRate: item.taxRate,
-      //     };
-      //   }
-      // }
       this.showMaterielPop = !this.showMaterielPop;
     },
     // TODO 提价订单
