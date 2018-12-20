@@ -29,23 +29,28 @@
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
                               @click.native="delClick(index,item)">
                   <template slot="info" slot-scope="{item}">
-                      <!-- 物料属性和单位 -->
-                      <div class="mater_more">
-                          <!-- <span class="processing">属性: {{item.processing}}</span> -->
-                          <span class='unit'>单位: {{item.measureUnit}}</span>
-                          <span class='mater_color' v-show="item.drDealerLabel">客户类型: {{item.drDealerLabel}}</span>
-                          <span class='mater_color' v-show="item.qtyOnline">数量上线: {{item.qtyOnline}}</span>
-                          <span class='mater_color' v-show="item.qtyDownline">数量下线: {{item.qtyDownline}}</span>
+                    <!-- 物料属性和单位 -->
+                    <div class="mater_more">
+                      <div>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
+                        <span class='mater_color' v-show="item.drDealerLabel">客户类型: {{item.drDealerLabel}}</span>
                       </div>
-                      <!-- 物料数量和价格 -->
-                      <div class='mater_other'>
-                        <div v-if="item.price" class="price">
-                          保准价格: <span class="mater_price"><span class="symbol">￥</span>{{item.price}}</span>
-                        </div>
-                        <div v-if="item.specialReservePrice" class="price">
-                          特批低价: <span class="mater_price"><span class="symbol">￥</span>{{item.specialReservePrice}}</span>
-                        </div>
+                      <div>
+                        <span class='mater_color' v-show="item.qtyOnline">数量上线: {{item.qtyOnline}}</span>
+                        <span class='mater_color' v-show="item.qtyDownline">数量下线: {{item.qtyDownline}}</span>
                       </div>
+                    </div>
+                    <!-- 物料数量和价格 -->
+                    <div class='mater_other'>
+                      <div>
+                        <span v-if="item.price" class="price">
+                          标准价格: <span class="mater_price"><span class="symbol">￥</span>{{item.price}}</span>
+                        </span>
+                        <span v-if="item.specialReservePrice" class="price">
+                          特批底价: <span class="mater_price"><span class="symbol">￥</span>{{item.specialReservePrice}}</span>
+                        </span>
+                      </div>
+                    </div>
                   </template>
                   <template slot="edit" slot-scope="{item}">
                     <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
@@ -143,7 +148,7 @@
 
 <script>
 // vux组件引入
-import { Icon, Group, Picker, XInput,  XTextarea, dateFormat, PopupPicker } from 'vux'
+import { Icon, Group, Picker, XInput, XTextarea, dateFormat, PopupPicker } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask } from 'service/commonService'
@@ -159,22 +164,20 @@ const DRAFT_KEY = 'CPJG_DATA';
 export default {
   data() {
     return {
-      matterList: [], // 物料列表
-      showMaterielPop: false, // 是否显示物料的popup
+      pickerStyle: { zIndex: 550 },
       transCode: '',
+      currentType: '',
       formData: {
-        biComment: '',
         biId: '',
+        biComment: '',
         biProcessStatus: ''
       },
       priceMap: {},
-      showDealerPop: false,
+      matterList: [], // 物料列表
       dealerTypeList: [],
-      currentType: '',
       showPrice: false,
-      pickerStyle: {
-        zIndex: 550
-      }
+      showDealerPop: false,
+      showMaterielPop: false, // 是否显示物料的popup
     }
   },
   components: {
@@ -183,7 +186,7 @@ export default {
   },
   mixins: [ApplyCommon],
   methods: {
-    onChange(e,modifyMatter){
+    onChange(e, modifyMatter){
       modifyMatter.drDealerLabel = e[0];
     },
     // 获取 客户类型
@@ -241,11 +244,11 @@ export default {
       this.matterList.forEach(item => {
         // 存储已输入的价格
         this.priceMap[item.inventoryCode] = {
-          price: item.price,
-          drDealerLabel: item.drDealerLabel,
-          PopDealerLabel: item.PopDealerLabel,
-          qtyOnline: item.qtyOnline,
-          qtyDownline: item.qtyDownline,
+          price: item.price,  // 标准价格
+          qtyOnline: item.qtyOnline,  // 数量上线
+          qtyDownline: item.qtyDownline,  // 数量下线
+          drDealerLabel: item.drDealerLabel,  // 客户类型
+          PopDealerLabel: item.PopDealerLabel,  // 
           specialReservePrice: item.specialReservePrice,
         };
       });
@@ -297,7 +300,7 @@ export default {
         },
         {
           key: 'specialReservePrice',
-          message: '请填写特批低价'
+          message: '请填写特批底价'
         }
       ];
       if(!this.matterList.length){
@@ -482,13 +485,14 @@ export default {
       font-size: .14rem;
     }
   }
-  .mater_other{
-    font-size: 0.14rem;
+  .mater_other {
+    font-size: .12rem;
     color: #111;
     font-weight: bold;
     flex-wrap: wrap;
-    .price{
-      .mater_price{
+    .price {
+      margin-right: .04rem;
+      .mater_price {
         color: #ea5455;
       }
     }

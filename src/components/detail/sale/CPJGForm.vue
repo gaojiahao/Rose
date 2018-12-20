@@ -10,24 +10,25 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
-      <!-- 往来联系部分 交易基本信息-->
-      <!-- <contact-part :contact-info="contactInfo" validUntil></contact-part> -->
       <!-- 物料列表 -->
       <matter-list :matter-list="orderInfo.order.dataSet">
         <!-- 调拨数量 -->
         <div class="mater_other" slot="matterOther" slot-scope="{item}">
           <div class="mater_attribute">
             <span>客户类型: {{item.drDealerLabel}}</span>
-            <span>数量上线: {{item.qtyOnline}}</span>
-            <span>数量下线: {{item.qtyDownline}}</span>
-            <span>特批底价: ￥{{item.specialReservePrice | toFixed}}</span>
+          </div>
+          <div class="mater_num">
+            <span class="num">数量上线: {{item.qtyOnline}}</span>
+            <span class="num">数量下线: {{item.qtyDownline}}</span>
           </div>
           <div class="mater_price">
             <span class="diff_num">
               ￥{{item.price | toFixed}}
+              <span class="num">[标准价格]</span>
             </span>
-            <span class="num">
-              [标准价格]
+            <span class="diff_num">
+              ￥{{item.specialReservePrice | toFixed}}
+              <span class="num">[特批底价]</span>
             </span>
           </div>
         </div>

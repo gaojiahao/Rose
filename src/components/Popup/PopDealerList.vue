@@ -17,7 +17,7 @@
           </div>
           <div class="cp-info">
             <span class="iconfont icon-icon-test"></span>
-            <span class="cp-ads" v-if="noAddress">暂无</span>
+            <span class="cp-ads" v-if="noAddress">暂无联系地址</span>
             <span class="cp-ads" v-else>
             {{dealerInfo.province}}{{dealerInfo.city}}{{dealerInfo.county}}{{dealerInfo.address}}
           </span>
@@ -159,17 +159,7 @@
       noAddress() {
         let {province = '', city = '', county = '', address = ''} = this.defaultValue;
         return !province && !city && !county && !address;
-      },
-      // //处理当dealerLabelName为多个值
-      // dealerLabel() {
-      //   if(this.dealerLabelName.includes(',')){
-      //     return '往来'
-      //   }
-      //   else{
-      //     return this.dealerLabelName
-      //   }
-
-      // }
+      }
     },
     directives: {TransferDom},
     components: {
@@ -316,7 +306,13 @@
       //新增往来
       add() {
         let pickVal = this.dealerLabelName;
-        this.$router.push({path: '/adress/edit_ads', query: {add: 1, pickVal: pickVal}})
+        this.$router.push({
+          path: '/adress/edit_ads', 
+          query: { 
+            add: 1, 
+            pickVal: pickVal 
+          }
+        })
       },
       itemClick() {
         this.showDealerPop = true;
@@ -414,11 +410,10 @@
             vertical-align: middle;
           }
           .user-name {
-            max-width: 2.2rem;
+            max-width: 95%;
             overflow: hidden;
             font-size: .16rem;
             white-space: nowrap;
-            margin-right: .04rem;
             display: inline-block;
             vertical-align: middle;
             text-overflow: ellipsis;
@@ -434,7 +429,6 @@
         }
       }
     }
-
     .cp-info {
       color: #111;
       .icon-icon-test {
@@ -446,7 +440,6 @@
       }
     }
   }
-
   // 弹出层
   .trade_pop_part {
     background: #fff;
