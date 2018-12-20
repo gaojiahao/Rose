@@ -125,7 +125,7 @@
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :validate-map="validateMap" :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="date" slot-scope="{modifyMatter}">
             <datetime v-model="modifyMatter.dateActivation"
@@ -201,6 +201,25 @@ export default {
       listId: '525bee48-d2d4-11e8-b8ca-0279b2c6a380',
       showMatterPop: false,
       showMaterielPop: false, // 是否显示物料的popup
+        // matterPop组件 必填项
+      validateMap: [
+        {
+          key: 'tdQty',
+          message: '请填写数量'
+        },
+        {
+          key: 'price',
+          message: '请填写含税单价'
+        },
+        {
+          key: 'dateActivation',
+          message: '请选择交付开始日'
+        },
+        {
+          key: 'executionDate',
+          message: '请选择交付截止日'
+        }          
+      ],
       transMode: [], // 结算方式 数组
       matterList: [], // 物料列表
       logisticsTerm: [], // 物流条款 数组
@@ -399,25 +418,6 @@ export default {
         }, 
       ]
       if (!warn) {
-        // matterPop组件 必填项
-        let matterVerify = [
-          {
-            key: 'tdQty',
-            message: '请填写数量'
-          },
-          {
-            key: 'price',
-            message: '请填写单价'
-          },
-          {
-            key: 'dateActivation',
-            message: '请选择交付开始日'
-          },
-          {
-            key: 'executionDate',
-            message: '请选择交付截止日'
-          }          
-        ]
         // 校验 最外层表单必填项
         verifyField.every( item => {
           if(item.childKey && !this[item.key][item.childKey]) {
@@ -430,11 +430,9 @@ export default {
           }  
           return true;
         })
-        // 校验 matterPop组件 必填项
         this.matterList.every(item => {
-          matterVerify.every( val => {
+          this.validateMap.every( val => {
             if(!item[val.key]) {
-              console.log('key:', val.key);
               warn = val.message;
               return false;
             }

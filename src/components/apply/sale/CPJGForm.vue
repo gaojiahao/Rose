@@ -79,7 +79,7 @@
                            :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :validate-map="validateMap" :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class="mg_auto">
@@ -166,6 +166,28 @@ export default {
   data() {
     return {
       pickerStyle: { zIndex: 550 },
+      validateMap: [
+        {
+          key: 'drDealerLabel',
+          message: '请选择客户类型'
+        },
+        {
+          key: 'qtyDownline',
+          message: '请填写数量下线'
+        },
+        {
+          key: 'qtyOnline',
+          message: '请填写数量上线'
+        },
+        {
+          key: 'price',
+          message: '请填写标准价格'
+        },
+        {
+          key: 'specialReservePrice',
+          message: '请填写特批底价'
+        }
+      ],
       transCode: '',
       currentType: '',
       formData: {
@@ -285,34 +307,12 @@ export default {
     save () {
       let warn = '',
           dataSet = [];
-      let validateMap = [
-        {
-          key: 'drDealerLabel',
-          message: '请选择客户类型'
-        },
-        {
-          key: 'qtyDownline',
-          message: '请填写数量下线'
-        },
-        {
-          key: 'qtyOnline',
-          message: '请填写数量上线'
-        },
-        {
-          key: 'price',
-          message: '请填写标准价格'
-        },
-        {
-          key: 'specialReservePrice',
-          message: '请填写特批底价'
-        }
-      ];
       if(!this.matterList.length){
         warn = '请选择物料'
       }
       if (!warn) {
         this.matterList.every(item => {
-          validateMap.every(vItem => {
+          this.validateMap.every(vItem => {
             if (!item[vItem.key]) {
               warn = vItem.message;
             }
