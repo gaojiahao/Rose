@@ -289,14 +289,6 @@ export default {
     },
     // TODO 展示时间选择器
     dateSelect(key = '') {
-      let validUntil = new Date(this.dealerInfo.validUntil.replace(/-/g, '/'));
-      let advancePaymentDueDate = new Date(this.dealerInfo.advancePaymentDueDate.replace(/-/g, '/'));
-      if (key === 'advancePaymentDueDate' && !this.dealerInfo.validUntil) {
-        this.$vux.alert.show({
-          content: '请选择合同到期日'
-        });
-        return
-      }
       this.$vux.datetime.show({
         confirmText: '确定',
         cancelText: '取消',

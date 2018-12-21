@@ -25,13 +25,13 @@
             <span class="title">合同到期日: </span>
             <span class="mode">{{contactInfo.validUntil}}</span>
           </div>
-          <div class="other">
+          <div class="other" v-show="contactInfo.payment.includes('预收')">
             <span class="title">预收款: </span>
             <span class="mode">￥{{contactInfo.tdAmountCopy1 | toFixed | numberComma}}</span>
           </div>
-          <div class="other">
+          <div class="other" v-show="contactInfo.payment.includes('预收')">
             <span class="title">预收到期日: </span>
-            <span class="mode">{{contactInfo.advancePaymentDueDate}}</span>
+            <span class="mode">{{contactInfo.advancePaymentDueDate || "无"}}</span>
           </div>
         </template>
       </contact-part>
