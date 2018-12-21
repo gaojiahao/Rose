@@ -1,3 +1,5 @@
+import {mediaUpload} from 'service/commonService';
+
 // TODO 扫一扫
 export const scanQRCode = (params = {}) => {
   return new Promise((resolve, reject) => {
@@ -54,6 +56,36 @@ export const shareContent = (shareInfo = {}) => {
       alert('分享失败！');
     },
   });
-}
+};
+
+// TODO 上传图片
+export const uploadImage = (data) => {
+  let {options = {}, localId = '', biReferenceId = ''} = data;
+  return new Promise((resolve, reject) => {
+    wx.uploadImage({
+      localId, // 需要上传的图片的本地ID，由chooseImage接口获得
+      isShowProgressTips: 0, // 默认为1，显示进度提示
+      success: (res) => {
+        console.log(res)
+        let {serverId = ''} = res; // 返回图片的服务器端ID
+        let params = {
+          mediaId: serverId,
+        };
+        if (biReferenceId) {
+          params.biReferenceId = biReferenceId;
+        }
+        mediaUpload(params).then(res => {
+          resolve(res);
+        }).catch(e => {
+          reject();
+        })
+      },
+      fail: () => {
+        reject();
+      },
+      ...options,
+    });
+  })
+};
 
 export default {}
