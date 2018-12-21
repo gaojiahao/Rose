@@ -44,13 +44,15 @@
                       <div class="mater_more">
                         <span>车间仓库存: {{item.qtyStock}}</span>
                         <span>待入库数量: {{item.qtyBal}}</span>
+                      </div>
+                      <div class="mater_more">
                         <span>计划完工日期: {{item.shippingTime}}</span>
                       </div>
                       <div class="mater_more">
                         <span>合格数: {{item.tdQty}}</span>
                         <span>不合格数: {{item.differenceNum}}</span>
                       </div>
-                      <div class="mater_other" v-if="item.tdQty">
+                      <div class="mater_other" v-if="item.qualityQty">
                         <div class="matter-remain">
                           <span>本次质检: {{item.qualityQty}}</span>
                         </div>
@@ -58,9 +60,15 @@
                       </div>
                     </template>
                     <template slot="edit" slot-scope="{item}">
-                      <div class='mater_other' v-if="!item.tdQty && !matterModifyClass">
+                      <div class='mater_other' v-if="!item.qualityQty && !matterModifyClass">
                         <div class="edit-tips" @click="modifyMatter(item,index, key)">点击进行填写</div>
                         <span class='check_bom' @click="checkBom(item,index,key)">查看原料</span>
+                      </div>
+                    </template>
+                    <template slot="editPart" slot-scope="{item}">
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item,index, key)"
+                           v-show="item.qualityQty && !matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
                       </div>
                     </template>
                   </matter-item>
@@ -93,10 +101,14 @@
         <!-- bom合计-->
         <div class="materiel_list" v-show="UniqueBom.length">
           <bom-list :boms="UniqueBom">
+            <!--<template slot="specification">
+              <div></div>
+            </template>-->
             <template slot-scope="{bom}" slot="number">
               <div class="number-part">
-                <span class="main-number">原料需求: {{bom.demandQty}}{{bom.measureUnit}}</span>
-                <span class="number-unit">待领料: {{bom.qtyBal}}</span>
+                <span class="main-number">领料需求: {{bom.tdQty}}{{bom.measureUnit}}</span>
+                <span class="number-unit">Bom需求: {{bom.demandQty}}</span>
+                <span class="number-unit">待领料: {{bom.thenQtyBalCopy1}}</span>
                 <span class="number-unit">在库余额: {{bom.thenTotalQtyStock}}</span>
               </div>
             </template>
@@ -139,7 +151,7 @@
                  :btn-is-hide="btnIsHide" :no-specific-loss="true" ref="bomPop">
           <template slot="number" slot-scope="{bom}">
             <div class="number-part">
-              <span class="main-number">原料需求: {{bom.demandQty}}{{bom.measureUnit}}</span>
+              <span class="main-number">领料需求: {{bom.qualityQty}}{{bom.measureUnit}}</span>
             </div>
             <div class="specific_loss">单位损耗率: {{bom.specificLoss}}</div>
           </template>
@@ -234,7 +246,8 @@
           warehouseType: '一般部门仓,个人仓,加工车间仓',
         },
         orderParams: {
-          whCode: 'QC0001',
+          // whCode: 'QC0001',
+          whCode: 'FG0001',
         },
         DuplicateBoms: [],//有重复项的bom
         UniqueBom: [],//无重复项的bom
@@ -243,19 +256,6 @@
         modifyBomTdqty: [], //修改前bom
       }
     },
-    /*watch: {
-      matter: {
-        handler(val) {
-          val.boms && val.boms.forEach(bom => {
-            // 监听领料需求变化
-            let demandQty = this.calcBom(val.differenceNum, bom);
-            bom.demandQty = Math.abs(toFixed(demandQty))
-          });
-          this.mergeBomList();
-        },
-        deep: true
-      },
-    },*/
     methods: {
       // TODO 选中在制仓库
       selWarehouseOut(val) {
@@ -295,12 +295,6 @@
         this.bomPopShow = true;
         this.modifyBomTdqty = JSON.parse(JSON.stringify(item.boms))
       },
-      //修改原料的损耗率
-      bomConfirm(val) {
-        let matter = JSON.parse(val);
-        this.$set(this.orderList[this.modifyKey], this.modifyIndex, matter);
-        this.reBuildArr(matter);
-      },
       // TODO 显示物料修改的pop
       modifyMatter(item, index, key) {
         this.matter = JSON.parse(JSON.stringify(item));
@@ -313,33 +307,14 @@
       selConfirm(val) {
         let modMatter = JSON.parse(val);
         this.$set(this.orderList[this.modifyKey], this.modifyIndex, modMatter);
-        this.reBuildArr(modMatter);
-      },
-      reBuildArr(matter) {
-        let BomArr = matter.boms;
-        //修改数量时，bom数量加上修改后减去修改前的差值
-        this.modifyBomTdqty.forEach(item => {
-          BomArr.forEach(BItem => {
-            if (BItem.inventoryCode === item.inventoryCode) {
-              BItem.newTdqty = accSub(BItem.demandQty, item.demandQty);
-              console.log(BItem.newTdqty)
-              this.UniqueBom.forEach(AItem => {
-                if (BItem.inventoryCode === AItem.inventoryCode) {
-                  AItem.demandQty = accAdd(AItem.demandQty, BItem.newTdqty);
-                  return false
-                }
-              });
-              return true
-            }
-          })
-        })
+        this.reBuildUniqueBom(modMatter);
       },
       // TODO 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
         let orderList = {};
         let promises = [];
-        this.DuplicateBoms = [];
+        let DuplicateBoms = [];
         sels.forEach(item => {
           let key = `${item.transCode}_${item.orderCode}_${item.inventoryCode}`;
           let maxQty = Math.min(item.qtyStock || 0, item.qtyBal || 0); // 最大质检数量
@@ -350,28 +325,32 @@
           item.differenceNum = accSub(qualityQty, tdQty);
           promises.push(getJGRKBom({parentInvCode: item.inventoryCode,}).then(({tableContent = []}) => {
             tableContent.forEach(bom => {
-              let matchedBom = boms.find(item => bom.inventoryCode === item.inventoryCode) || {};
-              let {specificLoss = bom.specificLoss, lockQty = 0} = matchedBom;
-              bom.specificLoss = parseFloat(specificLoss);
-              let demandQty = this.calcBom(item.differenceNum, bom);
-              bom.demandQty = Math.abs(toFixed(demandQty));
+              let qty = this.calcBom(item.differenceNum, bom);
+              // 领料需求
+              bom.qualityQty = qty;
+              bom.demandQty = qty;
             });
-            this.$set(item, 'boms', tableContent);
-            let data = JSON.parse(JSON.stringify(tableContent));
-            this.DuplicateBoms = [...this.DuplicateBoms, ...data];
+            let boms = this.mergeSingleBom(tableContent);
+            let assembleBoms = this.oneToMul(item, tableContent);
+
+            this.$set(item, 'boms', boms);
+            this.$set(item, 'assembleBoms', assembleBoms);
+            // let data = JSON.parse(JSON.stringify(tableContent));
+            DuplicateBoms = [...DuplicateBoms, ...tableContent];
           }));
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }
           orderList[item.transCode].push(item);
         });
-        Promise.all(promises).then(data => {
-          // 合并bom
-          this.mergeBomList();
-        });
         this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
+        Promise.all(promises).then(data => {
+          this.DuplicateBoms = DuplicateBoms;
+          // 合并bom
+          this.mergeBomList();
+        });
       },
       // TODO 选择默认图片
       getDefaultImg(item) {
@@ -455,10 +434,10 @@
       submitOrder() {
         let warn = '';
         let validateMap = [
-          {
+          /*{
             key: 'warehouseOut',
             message: '在制仓库',
-          },
+          },*/
           {
             key: 'warehouseIn',
             message: '入库仓库',
@@ -477,8 +456,8 @@
         if (!warn) {
           for (let value of Object.values(this.orderList)) {
             for (let vItem of value) {
-              if (!vItem.tdQty) {
-                warn = '请填写本次入库数量'
+              if (!vItem.qualityQty) {
+                warn = '请填写本次入库数量';
                 break;
               }
             }
@@ -503,25 +482,50 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'IPPI',
+                businessKey: this.businessKey,
                 createdBy: ''
               }
             };
             // 组装dataSet
             for (let items of Object.values(this.orderList)) {
               for (let item of items) {
+                let boms = item.boms.reduce((arr, bom) => {
+                  arr.push({
+                    tdId: bom.tdId || null,
+                    transMatchedCode: item.transCode, // 交易号
+                    qualityQty: bom.qualityQty, // bom领料需求
+                    bomSpecificLoss: bom.specificLoss, // bom损耗率
+                    tdProcessing: bom.processing, // bom加工属性
+                    inventoryName: bom.inventoryName, // bom物料名称
+                    demandQty: bom.demandQty, // bom需求
+                    transObjCode: bom.inventoryCode, // 编码
+                    measureUnit: bom.measureUnit, // 单位
+                    bomType: bom.bomType, // bom类型
+                    bomQty: bom.qty, // bom数量
+                    parentInventoryCode: bom.parentInventoryCode, // 父级物料编码
+                  });
+                  return arr;
+                }, []);
                 let oItem = {
                   tdId: item.tdId || null,
                   transMatchedCode: item.transCode, // 交易号
                   orderCode: item.orderCode,
-                  transObjCode: item.inventoryCode, // 输出物料
                   inventoryName_transObjCode: item.inventoryName,
+                  transObjCode: item.inventoryCode, // 输出物料
                   tdProcessing: item.processing,
                   measureUnit_transObjCode: item.measureUnit,
-                  thenQtyStock: item.qtyStock, // 可用库存
+                  thenTotalQtyBal: item.productDemandQty, // 订单数量
+                  thenQtyStock: item.qtyStock, // 待检仓库存
+                  thenLockQty: item.stockQty, // 已入库数量
                   thenQtyBal: item.qtyBal, // 可验收余额
-                  tdQty: item.tdQty, // 下单数量
+                  qualityQty: item.qualityQty, // 本次质检
+                  tdQty: item.tdQty, // 合格数量
+                  differenceNum: item.differenceNum, // 不合格数量
+                  shippingTime: item.shippingTime, // 计划完工日期
+                  skinFee: item.skinFee, // 制造费用
+                  wages: item.wages, // 工价
                   comment: item.comment || '', // 说明
+                  boms,
                 };
                 dataSet.push(oItem);
               }
@@ -530,10 +534,13 @@
               ...this.formData,
               modifer: this.transCode ? this.formData.handler : '',
               handlerEntity: this.entity.dealerName,
-              inPut: {
+              order: {
                 containerCodeOut: this.warehouseOut.warehouseCode,
                 containerCode: this.warehouseIn.warehouseCode,
                 dataSet
+              },
+              outPut: {
+                dataSet: outPutDataSet,
               },
               containerOutWarehouseManager: this.warehouseOut.manager || null,
               containerInWarehouseManager: this.warehouseIn.manager || null,
@@ -589,12 +596,14 @@
           this.attachment = attachment;
           let orderList = {};
           // 获取合计
-          let {inPut} = formData;
-          let {dataSet = []} = inPut;
+          let {order, outPut} = formData;
+          let {dataSet = []} = order;
+          let {dataSet: outPutDataSet = []} = outPut;
           for (let item of dataSet) {
             item = {
               ...item,
               transCode: item.transMatchedCode,
+              measureUnit: item.measureUnit_transObjCode,
               qtyBal: item.thenQtyBal,
               qtyStock: item.thenQtyStock,
               inventoryPic: item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
@@ -608,18 +617,24 @@
             }
             orderList[item.transCode].push(item);
           }
+          outPutDataSet.forEach(item => {
+            item.inventoryName = item.inventoryName_outPutMatCode;
+            item.inventoryCode = item.outPutMatCode;
+            item.measureUnit = item.measureUnit_outPutMatCode;
+            item.processing = item.tdProcessing;
+          });
           this.warehouseOut = {
-            warehouseName: inPut.warehouseName_containerCodeOut,
-            warehouseType: inPut.warehouseType_containerCodeOut,
-            warehouseCode: inPut.containerCodeOut,
+            warehouseName: order.warehouseName_containerCodeOut,
+            warehouseType: order.warehouseType_containerCodeOut,
+            warehouseCode: order.containerCodeOut,
             manager: formData.containerOutWarehouseManager
-          }
+          };
           this.warehouseIn = {
-            warehouseName: inPut.warehouseName_containerCode,
-            warehouseType: inPut.warehouseType_containerCode,
-            warehouseCode: inPut.containerCode,
+            warehouseName: order.warehouseName_containerCode,
+            warehouseType: order.warehouseType_containerCode,
+            warehouseCode: order.containerCode,
             manager: formData.containerInWarehouseManager
-          }
+          };
           this.matterList = dataSet;
           this.handlerDefault = {
             handler: formData.handler,
@@ -663,23 +678,135 @@
           }
         };
       },
-      // TODO 合并bom列表
+      // TODO 合并单个物料的bom
+      mergeSingleBom(boms) {
+        return boms.reduce((arr, bom) => {
+          let matched = arr.find(a => a.inventoryCode === bom.inventoryCode);
+          if (!matched) {
+            arr.push(bom);
+          } else {
+            matched.demandQty = accAdd(matched.demandQty, bom.demandQty);
+            matched.qualityQty = accAdd(matched.qualityQty, bom.qualityQty);
+          }
+          return arr;
+        }, []);
+      },
+      // TODO 一维转多维
+      oneToMul(item, boms) {
+        let parentCode = item.inventoryCode;
+        let tmp = JSON.parse(JSON.stringify(boms));
+        let childBoms = tmp.filter(bom => bom.parentInventoryCode === parentCode); // 第一层数据
+        if (childBoms && childBoms.length) {
+          childBoms.forEach(cItem => {
+            cItem.child = this.oneToMul(cItem, boms);
+          });
+        }
+        return childBoms || [];
+      },
+      // TODO 多维度转一维
+      mulToOne(boms) {
+        let arr = boms;
+        boms.reduce((a, bom) => {
+          if (bom.child) {
+            arr = [...arr, ...this.mulToOne(bom.child)];
+          }
+          return a
+        }, []);
+        return arr
+      },
+      // TODO 获取当前物料的库存
+      getStock(matter) {
+        let matched = this.UniqueBom.find(uItem => uItem.inventoryCode === matter.inventoryCode);
+        let currentStock = accSub(matched.thenTotalQtyStock, matched.thenQtyBalCopy1);
+        // 获取物料列表
+        let matterList = Object.values(this.orderList).reduce((arr, item) => {
+          return [...arr, ...item];
+        }, []);
+        let UniqueBom = matterList.reduce((arr, matter) => {
+          let boms = this.mulToOne(matter.assembleBoms);
+          matter.boms = boms;
+          return [...arr, ...boms]
+        }, []);
+        let usedBom = UniqueBom.reduce((sum, item) => {
+          let qty = 0;
+          if (item.inventoryCode === matched.inventoryCode) {
+            qty = item.qualityQty;
+          }
+          return accAdd(sum, qty);
+        }, 0);
+        if (currentStock < 0) {
+          return 0
+        }
+        return accSub(currentStock, usedBom);
+      },
+      // TODO 处理Bom计算
+      reBuildUniqueBom(matter) {
+        let processQty = 0;
+        let calc = (boms, parentQty) => {
+          boms.map((bom, i) => {
+            let qty = 0;
+            let thenQtyStock = 0;
+            if (parseFloat(parentQty)) {
+              qty = this.calcBom(parentQty, bom);
+              bom.demandQty = qty;
+              if (bom.processing === '原料') {
+                bom.qualityQty = qty;
+              } else {
+                thenQtyStock = this.getStock(bom, qty);// 当前可用库存
+
+                if (thenQtyStock) {
+                  bom.qualityQty = qty > thenQtyStock ? thenQtyStock : qty;// 领料需求
+                } else {
+                  bom.qualityQty = 0;
+                }
+                processQty = accSub(qty, bom.qualityQty); // 库存不足数
+              }
+            } else {
+              bom.demandQty = 0;
+              bom.qualityQty = 0;
+              processQty = 0;//item.safetyStockGap;
+            }
+            if (bom.child && bom.child.length) {
+              calc(bom.child, processQty)
+            }
+          });
+        };
+        // 获取物料列表
+        let matterList = Object.values(this.orderList).reduce((arr, item) => {
+          return [...arr, ...item];
+        }, []);
+        let UniqueBom = matterList.reduce((arr, matter) => {
+          calc(matter.assembleBoms, matter.differenceNum);
+          let boms = this.mulToOne(matter.assembleBoms);
+          matter.boms = this.mergeSingleBom(boms);
+          return [...arr, ...boms]
+        }, []);
+        console.log(UniqueBom)
+        UniqueBom = this.mergeSingleBom(UniqueBom);
+        this.UniqueBom.forEach(item => {
+          let matched = UniqueBom.find(uItem => uItem.inventoryCode === item.inventoryCode);
+          item.demandQty = matched.demandQty;
+          item.tdQty = matched.qualityQty;
+        });
+      },
+      // TODO 合并所有物料bom列表
       mergeBomList() {
         //对合计的bom进行去重合并
         let promise = [];
-        let UniqueBom = this.DuplicateBoms.reduce((arr, item) => {
+        let DuplicateBoms = JSON.parse(JSON.stringify(this.DuplicateBoms));
+        let UniqueBom = DuplicateBoms.reduce((arr, item) => {
           let matched = arr.find(a => a.inventoryCode === item.inventoryCode);
           if (!matched) {
             !item.thenTotalQtyStock && item.thenTotalQtyStock !== 0
             && promise.push(getInProcessingStorageSumSource({inventoryCode: item.inventoryCode}).then(({tableContent = []}) => {
               let [data = {}] = tableContent;
-              item.qtyBal = data.qtyBal || 0;
+              item.thenQtyBalCopy1 = data.qtyBal || 0;
               item.thenTotalQtyStock = data.thenTotalQtyStock || 0;
             }));
-            item.tdQty = item.demandQty;
+            item.tdQty = item.qualityQty;
             arr.push(item);
           } else {
-            matched.tdQty = accAdd(matched.tdQty, item.demandQty);
+            matched.tdQty = accAdd(matched.tdQty, item.qualityQty);
           }
           return arr;
         }, []);
