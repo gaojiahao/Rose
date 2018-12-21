@@ -79,17 +79,19 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
-            <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span class='required'>减少数量
-                </span>
-              </template>
-            </x-input>
+            <group class="mg_auto">
+              <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
+              <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class='required'>减少数量
+                  </span>
+                </template>
+              </x-input>
+            </group>
           </template>
         </pop-matter>
       </div>
@@ -164,6 +166,12 @@
         showMatterPop: false,
         modifyIndex: null,
         modifyKey: null,
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写减少数量'
+          },
+        ]
       }
     },
     methods: {
@@ -296,7 +304,7 @@
         for (let items of Object.values(this.orderList)) {
           for (let item of items) {
             if(!item.tdQty){
-              warn = '请填写数量'
+              warn = '请填写减少数量'
               break;
             }
             let oItem = {
@@ -371,7 +379,6 @@
             if (this.biReferenceId) {
               submitData.biReferenceId = this.biReferenceId
             }
-            console.log(submitData)
             this.saveData(operation, submitData);
           }
         })

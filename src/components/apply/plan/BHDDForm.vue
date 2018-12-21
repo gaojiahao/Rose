@@ -72,17 +72,19 @@
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="modify" slot-scope="{modifyMatter}">
-            <x-input title="数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                     @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
-              <template slot="label">
-                <span class='required'>数量
-                </span>
-              </template>
-            </x-input>
-            <datetime title="预计完工日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
+            <group class="mg_auto">
+              <x-input title="数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
+                      @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
+                <template slot="label">
+                  <span class='required'>数量
+                  </span>
+                </template>
+              </x-input>
+              <datetime title="预计完工日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
+            </group>
           </template>
         </pop-matter>
         <!--备注-->
@@ -151,6 +153,12 @@
         matterParams: {
           processing: '半成品'
         },
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+        ]
       }
     },
     mixins: [common],
@@ -168,15 +176,8 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          if (this.numMap[item.inventoryCode]) {
-            item.tdQty = this.numMap[item.inventoryCode].tdQty;
-            // item.price = this.numMap[item.inventoryCode].price;
-          } else {
-            item.tdQty = '';
-            // item.price = '';
-          }
+          item.tdQty = item.tdQty || ''
         })
-        this.numMap = {};
         this.matterList = sels;
         // this.getMatPrice();
       },
@@ -231,13 +232,6 @@
       },
       // TODO 新增更多物料
       addMatter() {
-        for (let item of this.matterList) {
-          // 存储已输入的价格
-          this.numMap[item.inventoryCode] = {
-            tdQty: item.tdQty,
-            price: item.price
-          };
-        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       //提价订单
@@ -255,7 +249,7 @@
             //   return false
             // }
             if (!item.tdQty) {
-              warn = '数量不能为空';
+              warn = '请填写数量';
               return false
             }
             // 设置提交参数

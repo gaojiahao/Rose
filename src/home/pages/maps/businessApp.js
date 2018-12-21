@@ -14,6 +14,7 @@ export default {
     // '867e0b4f-548f-4e08-873a-1b8e54333630': 'WLXQJH',      // *物料需求计划*
     '7532f8ea-caf3-4fc4-97f6-b5aad7bcf6a0': 'WLXQTJ',         // *物料需求调减*
     '2e8e23c6-2fa4-4067-9cef-b5c92463d4c9': 'XSDDYC',         // *销售订单预测*
+    '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',       // *采购申请*
   },
 
   // <生产类应用>
@@ -49,7 +50,6 @@ export default {
   // < 采购类应用 >
   'a0a66a68-b351-4c19-b837-e168cbf48019': {
     'a4474c03-1139-4e8c-bc4e-2beb4565be33': 'CGDD',       // *采购订单*
-    '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e': 'CGSQ',       // *采购申请*
     '9e8de557-2e56-4ce5-8792-54829eef7c5b': 'CGXY',       // *采购协议*
   },
 

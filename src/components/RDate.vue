@@ -1,6 +1,6 @@
 <template>
   <div class="r-date-container" @click="clickDateSelect">
-    <div class="title">{{title}}</div>
+    <div class="title" :class="{'required' : required}">{{title}}</div>
     <div class="mode">
       <span class="mode_content">{{time || placeholder || `请选择${title}`}}</span>
       <span class="iconfont icon-shenglve"></span>
@@ -84,6 +84,10 @@
     box-sizing: border-box;
     .title {
       color: #757575;
+      &.required{
+        color: #5077aa;
+        font-weight: bold;
+      }
     }
     .mode {
       color: #111;

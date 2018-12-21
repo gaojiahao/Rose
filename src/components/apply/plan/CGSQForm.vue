@@ -113,7 +113,7 @@
           </pop-matter-list>
         </div>
         <!-- 物料编辑pop -->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
@@ -224,6 +224,12 @@ export default {
           value: 'transCode'
         }
       ],
+      checkFieldList: [
+        {
+          key: 'tdQty',
+          message: '请填写本次申请数量'
+        },
+      ]
     }
   },
   components: {
@@ -247,7 +253,7 @@ export default {
       let sels = JSON.parse(val);
       let orderList = {};
       sels.map(item => {
-        item.tdQty = item.qtyBalance;
+        item.tdQty = item.tdQty || item.qtyBalance;
         item.promDeliTime = item.processingStartDate;
         if(!orderList[item.transCode]) {
           orderList[item.transCode] = [];
@@ -379,7 +385,7 @@ export default {
         // 校验
         this.matterList.every(item => {
           if (!item.tdQty) {
-            warn = '数量不能为空';
+            warn = '请填写本次申请数量';
             return false
           }
           // 设置提交参数

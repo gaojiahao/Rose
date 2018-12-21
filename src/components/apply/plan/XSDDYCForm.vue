@@ -90,7 +90,7 @@
                            @sel-matter="selMatter" :default-value="matterList" :params="matterParams" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="date" slot-scope="{modifyMatter}">
             <datetime title="预期交货日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
@@ -168,6 +168,20 @@
         matterParams: {
           processing: '成品,商品',
         }, // 请求物料的参数
+        checkFieldList: [
+          {
+            key: 'tdQty',
+            message: '请填写数量'
+          },
+          {
+            key: 'price',
+            message: '请填写含税单价'
+          },
+          {
+            key: 'taxRate',
+            message: '请填写税率'
+          },
+        ]
       }
     },
     directives: {
@@ -216,11 +230,10 @@
       selMatter(val) {
         let sels = JSON.parse(val);
         sels.map(item => {
-          let {tdQty = '', price = '', taxRate = 0.16, promDeliTime = ''} = this.numMap[item.inventoryCode] || {};
-          item.tdQty = tdQty;
-          item.price = price;
-          item.taxRate = taxRate;
-          item.promDeliTime = promDeliTime;
+          item.tdQty = item.tdQty || '';
+          item.price = item.price || '';
+          item.taxRate = item.taxRate || 0.16;
+          item.promDeliTime = item.promDeliTime || '';
           item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
@@ -280,10 +293,6 @@
       },
       // TODO 新增更多物料
       addMatter() {
-        for (let item of this.matterList) {
-          // 存储已输入的价格
-          this.numMap[item.inventoryCode] = {...item};
-        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       // 提价订单
@@ -307,7 +316,7 @@
               return false
             }
             if (!item.price) {
-              warn = "请输入单价";
+              warn = "请输入含税单价";
               return false;
             }
             let taxRate = item.taxRate || this.taxRate;

@@ -123,7 +123,7 @@
           
         </div>
          <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
@@ -219,6 +219,24 @@ export default {
       showTransPop: false, // 是否显示结算方式的popup
       showMaterielPop: false, // 是否显示物料的popup
       showDealerPop: false, // 是否显示供应商的popup
+      checkFieldList: [
+        {
+          key: 'tdQty',
+          message: '请填写数量'
+        },
+        {
+          key: 'price',
+          message: '请填写含税单价'
+        },
+        {
+          key: 'taxRate',
+          message: '请填写税率'
+        },
+        {
+          key: 'purchaseDay',
+          message: '请选择采购需求日'
+        },
+      ]
     }
   },
   mixins: [common],

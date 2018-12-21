@@ -1,116 +1,118 @@
 <template>
   <div v-transfer-dom>
     <popup v-model="show" height="80%" @on-show="onShow" @on-hide="onHide">
-      <div class='edit_matter'>
-        <div class='matter_info mg_auto'>
-          <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
-          <div class='mater_main'>
-            <div class="mater_name">
-              {{modifyMatter.inventoryName || modifyMatter.facilityName || modifyMatter.inventoryName_outPutMatCode}}
-            </div>
-            <!-- 物料基本信息 -->
-            <div class="mater_info" style='width:2.6rem;'>
-              <!-- 物料编码、规格 -->
-              <div class="withColor">
-                <!-- 物料编码 -->
-                <div class="ForInline" style="display:inline-block">
-                  <div class="mater_code">
-                    <span class="title">编码</span>
-                    <span class="num">{{modifyMatter.inventoryCode || modifyMatter.facilityCode || modifyMatter.outPutMatCode}}</span>
+      <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
+        <div class='edit_matter'>
+          <div class='matter_info mg_auto'>
+            <img :src="modifyMatter.inventoryPic" alt="mater_img" @error="getDefaultImg(item)" class='mater_img'/>
+            <div class='mater_main'>
+              <div class="mater_name">
+                {{modifyMatter.inventoryName || modifyMatter.facilityName || modifyMatter.inventoryName_outPutMatCode}}
+              </div>
+              <!-- 物料基本信息 -->
+              <div class="mater_info" style='width:2.6rem;'>
+                <!-- 物料编码、规格 -->
+                <div class="withColor">
+                  <!-- 物料编码 -->
+                  <div class="ForInline" style="display:inline-block">
+                    <div class="mater_code">
+                      <span class="title">编码</span>
+                      <span class="num">{{modifyMatter.inventoryCode || modifyMatter.facilityCode || modifyMatter.outPutMatCode}}</span>
+                    </div>
+                  </div>
+                  <!-- 物料规格 -->
+                  <div class="ForInline" style="display:inline-block">
+                    <div class="mater_spec">
+                      <span class="title">规格</span>
+                      <span class="num">{{modifyMatter.specification || modifyMatter.facilitySpecification || modifyMatter.specification_outPutMatCode ||'无'}}</span>
+                    </div>
                   </div>
                 </div>
-                <!-- 物料规格 -->
-                <div class="ForInline" style="display:inline-block">
-                  <div class="mater_spec">
-                    <span class="title">规格</span>
-                    <span class="num">{{modifyMatter.specification || modifyMatter.facilitySpecification || modifyMatter.specification_outPutMatCode ||'无'}}</span>
-                  </div>
+              </div>
+              <!-- 设施 -->
+              <template v-if="modifyMatter.facilityName">
+                <!-- 物料属性和单位 -->
+                <div class="mater_more">
+                  <span class="processing">类型: {{modifyMatter.facilityType}}</span>
+                  <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
+                  <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
+                  <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
                 </div>
-              </div>
+                <div class="mater_more">
+                  <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
+                </div>
+              </template>
+              <template v-else>
+                <div class="mater_more">
+                  <slot name="qtyBal" :modifyMatter="modifyMatter">
+                      <div>
+                        <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
+                        <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
+                        <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
+                      </div>
+                      <div>
+                        <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
+                        <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
+                        <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
+                      </div>
+                  </slot>
+                </div>
+              </template>
             </div>
-            <!-- 设施 -->
-            <template v-if="modifyMatter.facilityName">
-              <!-- 物料属性和单位 -->
-              <div class="mater_more">
-                <span class="processing">类型: {{modifyMatter.facilityType}}</span>
-                <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
-                <span>子类: {{modifyMatter.facilitySubclass || "无"}}</span>
-                <span class='unit'>单位: {{modifyMatter.facilityUnit}}</span>
-              </div>
-              <div class="mater_more">
-                <slot name="qtyBal" :modifyMatter="modifyMatter"></slot>
-              </div>
-            </template>
-            <template v-else>
-              <div class="mater_more">
-                <slot name="qtyBal" :modifyMatter="modifyMatter">
-                    <div>
-                      <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
-                      <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
-                    </div>
-                    <div>
-                      <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
-                      <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
-                      <span v-show="modifyMatter.qtyBal">余额: {{modifyMatter.qtyBal}}</span>
-                    </div>
-                </slot>
-              </div>
-            </template>
           </div>
-        </div>
-        <!-- 基本信息插槽 -->
-        <slot name="modify" :modifyMatter="modifyMatter">
+          <!-- 基本信息插槽 -->
+          <slot name="modify" :modifyMatter="modifyMatter">
 
-          <group class='mg_auto'>
-            <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-              placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-              <template slot="label">
-                <slot name="qtyName">
-                  <span class='required'>数量</span>
+            <group class='mg_auto'>
+              <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
+                placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <slot name="qtyName">
+                    <span class='required'>数量</span>
+                  </slot>
+                </template>
+              </x-input>
+              <cell disabled title="包装数量" :value="modifyMatter.assistQty"></cell>
+            </group>
+
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
+              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>含税单价
+                  </span>
+                </template>
+              </x-input>
+              <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
+                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>税率
+                  </span>
+                </template>
+              </x-input>
+              <cell disabled title="不含税单价" :value="`￥${numberComma(modifyMatter.noTaxPrice)}`"></cell>
+            </group>
+          </slot>
+          <!-- 日期插槽 -->
+          <group class="mg_auto">
+            <slot name="date" :modifyMatter="modifyMatter"></slot>
+          </group>
+          <!-- 价格合计部分 -->
+          <group class="mg_auto" v-if="isShowAmount">
+            <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell> 
+            <cell disabled title="不含税金额" :value="`￥${numberComma(modifyMatter.noTaxAmount)}`"></cell>
+            <!-- 该插槽用于替换价税小计的title-->    
+            <cell disabled title="价税小计" :value="`￥${numberComma(modifyMatter.tdAmount)}`">
+              <template slot="title">
+                <slot name="tdAmountTitle">
+                  <span>价税小计</span>
                 </slot>
               </template>
-            </x-input>
-            <cell disabled title="包装数量" :value="modifyMatter.assistQty"></cell>
+            </cell>
           </group>
-
-          <group class="mg_auto">
-            <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-            @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>含税单价
-                </span>
-              </template>
-            </x-input>
-            <x-input title="税率" type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-              @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-              <template slot="label">
-                <span class='required'>税率
-                </span>
-              </template>
-            </x-input>
-            <cell disabled title="不含税单价" :value="`￥${numberComma(modifyMatter.noTaxPrice)}`"></cell>
-          </group>
-        </slot>
-        <!-- 日期插槽 -->
-        <group class="mg_auto">
-          <slot name="date" :modifyMatter="modifyMatter"></slot>
-        </group>
-        <!-- 价格合计部分 -->
-        <group class="mg_auto" v-if="isShowAmount">
-          <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell> 
-          <cell disabled title="不含税金额" :value="`￥${numberComma(modifyMatter.noTaxAmount)}`"></cell>
-          <!-- 该插槽用于替换价税小计的title-->    
-          <cell disabled title="价税小计" :value="`￥${numberComma(modifyMatter.tdAmount)}`">
-            <template slot="title">
-              <slot name="tdAmountTitle">
-                <span>价税小计</span>
-              </slot>
-            </template>
-          </cell>
-        </group>
-       
-      </div>
+        
+        </div>
+      </r-scroll>
       <div class='confirm_btn' :class="{btn_hide : btnIsHide}" @click="confirm">
         <div class='confirm'>确认</div>
       </div>
@@ -122,6 +124,7 @@
 // vux组件引入
 import { Cell, Group, Popup, XInput, Datetime, numberComma } from 'vux'
 //组件引入
+import RScroll from 'components/RScroll'
 import { toFixed } from '@/plugins/calc'
 import { accMul } from '@/home/pages/maps/decimalsAdd'
 export default {
@@ -169,7 +172,7 @@ export default {
     }
   },
   components: {
-    Cell, Group, Popup, XInput, Datetime
+    Cell, Group, Popup, XInput, Datetime, RScroll
   },
   watch: {
     showPop: {
@@ -180,7 +183,10 @@ export default {
   },
   data(){
     return{
-      show: false
+      show: false,
+      scrollOptions: { // 滚动配置
+        click: true,
+      },
     }
   },
   methods: {
@@ -280,6 +286,12 @@ export default {
   .required{
     font-weight: bold;
     color: #5077aa;
+  }
+  .mater_list {
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    height: calc(100% - .6rem);
   }
   .mg_auto{
     padding: 0 .08rem;
