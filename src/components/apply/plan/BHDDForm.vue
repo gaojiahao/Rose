@@ -90,7 +90,7 @@
                   </span>
                 </template>
               </x-input>
-              <datetime title="预计完工日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
+              <datetime title="预期完工日" v-model="modifyMatter.promDeliTime" placeholder="请选择"></datetime>
             </group>
           </template>
         </pop-matter>

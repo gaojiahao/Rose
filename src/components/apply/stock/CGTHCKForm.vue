@@ -52,6 +52,7 @@
                       <div class="mater_more">
                         <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                         <span class='qty' v-show="item.qtyBal">可退货数量: {{item.qtyBal}}</span>
+                        <span class='qty' v-show="item.qtyStockBal">可用库存: {{item.qtyStockBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">                      
@@ -60,7 +61,7 @@
                         </div>
                         <div>
                           <r-number :num="item.tdQty"
-                                    :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyStockBal"></r-number>
+                                    :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBal"></r-number>
                         </div>                     
                       </div>
                     </template>
@@ -94,7 +95,14 @@
               <span class="order-title">订单号</span>
             </template>
             <template slot="storage" slot-scope="{item}">
+              <div>
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
               <div class="mater_material">
+                <span class="spec">单价: ￥{{item.price}}</span>
+                <span class="spec">可退货数量: {{item.qtyBal}}</span>
                 <span class="spec">可用库存: {{item.qtyStockBal}}</span>
               </div>
             </template>
@@ -396,6 +404,25 @@ export default {
     addOrder () {
       this.showMaterielPop = !this.showMaterielPop;
     },
+    // TODO 检查金额，取正数、保留两位小数
+    checkAmt(item){
+      let { price, tdQty, qtyBal, taxRate} = item;
+      // 金额
+      if (price) {
+        item.price = Math.abs(toFixed(price));
+      }
+      // 数量
+      if (tdQty) {
+        item.tdQty = Math.abs(toFixed(tdQty));
+        if (qtyBal && tdQty > qtyBal) {
+          item.tdQty = qtyBal;
+        }
+      }
+      //税率
+      if (taxRate) {
+        item.taxRate = Math.abs(toFixed(taxRate));
+      }
+    },
     // TODO 提价订单
     submitOrder () {
       let warn = '';
@@ -574,10 +601,10 @@ export default {
           dealerDebitContactPersonName: formData.dealerDebitContactPersonName, // 联系人
           dealerCode: outPut.dealerDebit, // 客户编码
           dealerLabelName: outPut.drDealerLabel, // 关系标签
-          province: outPut.province_dealerCodeCredit, // 省份
-          city: outPut.city_dealerCodeCredit, // 城市
-          county: outPut.county_dealerCodeCredit, // 地区
-          address: outPut.address_dealerCodeCredit, // 详细地址
+          province: outPut.province_dealerDebit, // 省份
+          city: outPut.city_dealerDebit, // 城市
+          county: outPut.county_dealerDebit, // 地区
+          address: outPut.address_dealerDebit, // 详细地址
         };
         // 供应商联系人信息
         this.contactInfo = {

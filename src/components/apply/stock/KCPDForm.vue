@@ -70,7 +70,19 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" get-list-method="getKCPDList" :params="warehouseParams"
-                           ref="matter"></pop-matter-list>
+                           ref="matter">
+            <template slot="storage" slot-scope="{item}">
+              <div>
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
+              <div>
+                <span class="spec">库存余额: {{item.qtyBal}}</span>
+                <span class="spec">计划占用: {{item.qtyLock}}</span>
+              </div>
+            </template>
+          </pop-matter-list>
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
