@@ -151,6 +151,22 @@ export let upload = ({file = {}, biReferenceId = ''}) => {
   })
 };
 
+// TODO 获取企业微信临时素材
+export let mediaUpload = ({mediaId = '', biReferenceId = ''}) => {
+  let param = new FormData();  // 创建form对象
+  param.append('mediaId', mediaId);  // 通过append向form对象添加数据
+  if (biReferenceId) {
+    param.append('biReferenceId', biReferenceId); // 添加form表单中其他数据
+  }
+  return $flyio.post({
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    url: '/H_roleplay-si/ds/mediaUpload',
+    data: param
+  })
+};
+
 // TODO 删除文件
 export let deleteFile = (id = '') => {
   return $flyio.ajax({
@@ -286,6 +302,7 @@ export let transferTask = (data = {}) => {
 export default {
   getList,
   upload,
+  mediaUpload,
   getProcess,
   getDictByType,
   submitAndCalc,

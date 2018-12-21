@@ -312,6 +312,17 @@ export let getEtcPutInStorage = (data = {}) => {
   })
 };
 
+// TODO 获取物料bom库存
+export let getInProcessingStorageSumSource = (data = {}) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/getInProcessingStorageSumSource',
+    data: {
+      _dc: Date.now(),
+      ...data
+    }
+  })
+};
+
 export default {
   save,
   update,
