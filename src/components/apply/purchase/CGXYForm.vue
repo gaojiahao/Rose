@@ -20,11 +20,11 @@
         <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealerInfo.dealerLogisticsTerms"
                            v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select>
         <div class="other_info">
-          <div class="title">协议总金额</div>
+          <div class="title required">协议总金额</div>
           <div class="mode">￥{{tdAmount | numberComma}}</div>
         </div>
-        <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate"></r-date>
-        <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil"></r-date>
+        <r-date title="协议开始日" :value="inPut.executionDate" v-model="inPut.executionDate" required></r-date>
+        <r-date title="协议到期日" :value="inPut.validUntil" v-model="inPut.validUntil" required></r-date>
         <x-input class="tdAmount" type="number" title="预付款" :value="inPut.tdAmountCopy1" text-align="right"
                  placeholder="请填写预付款" v-model="inPut.tdAmountCopy1"></x-input>
         <r-date title="预付到期日" :value="inPut.prepaymentDueDate" v-model="inPut.prepaymentDueDate"></r-date>
@@ -63,20 +63,27 @@
                       <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
-                    <div class='mater_other' v-if="item.price && item.tdQty">
+                    <div class='mater_other' v-if="item.price">
                       <div class='mater_price'>
                         <span class="symbol">￥</span>{{item.price}}
                       </div>
-                      <div>
+                      <!-- <div>
                         <r-number :num="item.tdQty" :checkAmt='checkAmt' v-model="item.tdQty"></r-number>
-                      </div>
+                      </div> -->
                     </div>
                   </template>
                   <template slot="editPart" slot-scope="{item}">
                     <div class="edit-part vux-1px-l"
                          @click="modifyMatter(item, index)"
-                         v-show="(item.price && item.tdQty) && !matterModifyClass">
+                         v-show="item.price && !matterModifyClass">
                       <span class='iconfont icon-bianji1'></span>
+                    </div>
+                  </template>
+                  <template slot="edit" slot-scope="{item}">
+                    <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
+                      <div class="edit-tips">
+                        <span class="tips-word">点击进行填写</span>
+                      </div>
                     </div>
                   </template>
                 </matter-item>
@@ -101,8 +108,20 @@
 
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false"></pop-matter>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false" :isShowAmount="false">
+          <template slot="modify" slot-scope="{modifyMatter}">
+            <group class="mg_auto">
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
+                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
+                <template slot="label">
+                  <span class='required'>包装含税单价
+                  </span>
+                </template>
+              </x-input>
+            </group>
+          </template>
+        </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -111,13 +130,16 @@
       </div>
     </div>
     <!-- 底部确认栏 -->
-    <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
+    <div class='btn-no-amt vux-1px-t' :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
+      <div class="btn-item" @click="submitOrder">提交</div>
+    </div>
+    <!-- <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num">
         <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
         <span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>
       </span>
       <span class="count_btn" @click="submitOrder">提交</span>
-    </div>
+    </div> -->
     <!-- 底部删除确认栏 -->
     <div class="count_mode vux-1px-t delete_mode" :class="{btn_hide : btnIsHide}" v-else>
       <div class='count_num all_checked' @click="checkAll">
@@ -133,7 +155,7 @@
 
 <script>
   // vux插件引入
-  import {XTextarea, dateFormat, Datetime, XInput} from 'vux'
+  import {XTextarea, dateFormat, Datetime, XInput, Group} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
   import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
@@ -155,7 +177,7 @@
 
   export default {
     components: {
-      XTextarea, RNumber, Datetime,
+      XTextarea, RNumber, Datetime, Group,
       PopMatterList, PopDealerList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
       RDate, XInput,
     },
@@ -192,6 +214,12 @@
         matterParams: {
           processing: '原料',
         },
+        checkFieldList: [
+          {
+            key: 'price',
+            message: '请填写包装含税单价'
+          },
+        ]
       }
     },
     mixins: [common],
@@ -215,11 +243,14 @@
         let sels = JSON.parse(val);
         sels.map(item => {
           let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
-          let {tdQty = '', price = '', taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
-          item.tdQty = tdQty;
-          item.price = price;
-          item.taxRate = taxRate;
-          item.processingStartDate = processingStartDate;
+          // let {tdQty = '', price = '', taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
+          // item.tdQty = tdQty;
+          // item.price = price;
+          // item.taxRate = taxRate;
+          item.tdQty = item.tdQty || '';
+          item.price = item.price || '';
+          item.taxRate = item.taxRate || 0.16;
+          item.processingStartDate = item.processingStartDate || defaultTime;
           item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
@@ -278,10 +309,6 @@
       },
       // TODO 新增更多物料
       addMatter() {
-        for (let item of this.matterList) {
-          // 存储已输入的价格
-          this.numMap[item.inventoryCode] = {...item};
-        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       // 提价订单
@@ -306,10 +333,10 @@
               warn = '单价不能为空';
               return false
             }
-            if (!item.tdQty) {
-              warn = '数量不能为空';
-              return false
-            }
+            // if (!item.tdQty) {
+            //   warn = '数量不能为空';
+            //   return false
+            // }
             let taxRate = item.taxRate;
             let taxAmount = accMul(item.price, item.tdQty, taxRate);
             // 设置提交参数

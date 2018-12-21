@@ -135,12 +135,15 @@
             </div>
           </template>
           <template slot="date" slot-scope="{modifyMatter}">
-            <cell title="采购提前期" :value="modifyMatter.leadTime"></cell>
-            <cell title="下单截止日" :value="modifyMatter.shippingTime"></cell>
-            <datetime  title="采购需求日" v-model="modifyMatter.purchaseDay"
-                      placeholder="请选择" ></datetime>
-             <datetime  title="到货截止日" v-model="modifyMatter.processingStartDate"
-                      placeholder="请选择" ></datetime>
+            <cell title="采购提前期" :value="modifyMatter.leadTime" disabled></cell>
+            <cell title="下单截止日" :value="modifyMatter.shippingTime" disabled></cell>
+            <datetime v-model="modifyMatter.purchaseDay"
+                      placeholder="请选择" >
+              <template slot="title">
+                <span class="required">采购需求日</span>
+              </template>
+            </datetime>
+            <cell title="到货截止日" :value="modifyMatter.processingStartDate" disabled></cell>
           </template>
         </pop-matter>
         <!--备注-->
@@ -270,6 +273,10 @@ export default {
     selContact (val) {
       this.dealer.dealerDebitContactPersonName = val.dealerName;
       this.dealer.dealerDebitContactInformation = val.dealerMobilePhone;
+      this.contact = {
+        ...this.contact,
+        ...val
+      }
     },
     // TODO 选中物料项
     selMatter (val) {
@@ -359,14 +366,19 @@ export default {
       if (!warn) {
         // 校验
         this.matterList.every(item => {
-          if (!item.price) {
-            warn = '单价不能为空';
-            return false
-          }
           if (!item.tdQty) {
-            warn = '数量不能为空';
+            warn = '请填写数量';
             return false
           }
+          if (!item.price) {
+            warn = '请填写含税单价';
+            return false
+          }
+          if (!item.purchaseDay) {
+            warn = '请选择采购需求日';
+            return false
+          }
+          
           let taxRate = item.taxRate;
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
           // 设置提交参数
