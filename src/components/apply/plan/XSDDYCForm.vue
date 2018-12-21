@@ -47,9 +47,7 @@
                       <span class='unit'>主计量: {{item.measureUnit}}</span>
                       <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
                       <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
+                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription || "无"}}</span>
                       <span v-show="item.promDeliTime">预期交货日: {{item.promDeliTime}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
@@ -87,7 +85,20 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" get-list-method="getInventoryToProcessing"
-                           @sel-matter="selMatter" :default-value="matterList" :params="matterParams" ref="matter"></pop-matter-list>
+                           @sel-matter="selMatter" :default-value="matterList" :params="matterParams" ref="matter">
+            <template slot="storage" slot-scope="{item}">
+              <div>
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
+              <div>
+                <span>主计倍数: {{item.invSubUnitMulti || 0}}</span>
+                <span>辅助计量: {{item.invSubUnitName || "无"}}</span>
+                <span>辅助计量说明: {{item.invSubUnitComment || "无"}}</span>
+              </div>
+            </template>
+          </pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
@@ -201,7 +212,7 @@
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
         this.formData.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
-        this.matterList = [];
+        // this.matterList = [];
       },
       selContact(val) {
         this.contact = {...val};

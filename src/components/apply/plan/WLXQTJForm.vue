@@ -71,7 +71,18 @@
           </div>
           <!-- 订单popup -->
           <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
-                               :default-value="orderList" ref="order"></pop-order-xqtj-list>
+                               :default-value="orderList" ref="order">
+            <template slot="qtyStock" slot-scope="{item}">
+              <div>
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
+              <div>
+                <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
+              </div>
+            </template>
+          </pop-order-xqtj-list>
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">

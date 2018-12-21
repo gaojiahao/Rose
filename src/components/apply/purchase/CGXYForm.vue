@@ -104,7 +104,20 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
                            :default-value="matterList" :params="matterParams" get-list-method="getInventoryToProcessing"
-                           ref="matter" :isShowCode="false"></pop-matter-list>
+                           ref="matter" :isShowCode="false">
+            <template slot="storage" slot-scope="{item}">
+              <div>
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
+              <div>
+                <span>主计倍数: {{item.invSubUnitMulti || 0}}</span>
+                <span>辅助计量: {{item.invSubUnitName || "无"}}</span>
+                <span>辅助计量说明: {{item.invSubUnitComment || "无"}}</span>
+              </div>
+            </template>
+          </pop-matter-list>
 
         </div>
         <!--物料编辑pop-->

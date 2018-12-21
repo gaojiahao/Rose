@@ -43,10 +43,15 @@
             <div class="mater_attribute" v-if="item.purchaseDay">
               <span>采购需求日期: {{item.purchaseDay}}</span>
             </div>
-            <div class="mater_num">
+            <div class="mater_attribute">
               <span class="num">安全库存: {{item.safeStock_transObjCode || 0}}</span>
               <span class="num">待下单: {{item.thenQtyBal || 0}}</span>
               <span class="num">起订量: {{item.moq_transObjCode || 0}}</span>
+            </div>
+            <div class="mater_attribute">
+              <span class="num">采购提前期: {{item.leadTime_transObjCode || "无"}}</span>
+              <span class="num">下单截止日: {{item.shippingTime || "无"}}</span>
+              <span class="num">到货截止日: {{item.processingStartDate || "无"}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

@@ -51,13 +51,12 @@
                       <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                     </div>
                     <div class="mater_more">
-                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                       <span>安全库存: {{item.safeStock || 0}}</span>
                       <span>待下单: {{item.qtyBal || 0}}</span>
                       <span>起订量: {{item.moq || 0}}</span>
                     </div>
                     <div class="mater_more">
-                      <span v-show="item.processingStartDate">计划需求日: {{item.processingStartDate}}</span>
+                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                       <span v-show="item.purchaseDay">采购需求日: {{item.purchaseDay}}</span>
                     </div>
                     <!-- 物料数量和价格 -->
@@ -104,18 +103,27 @@
                   <span>物料大类: {{item.inventoryType}}</span>
                   <span>物料子类: {{item.inventorySubclass || '无'}}</span>
                 </div>
+                <div>
+                  <span>主计倍数: {{item.invSubUnitMulti || 0}}</span>
+                  <span>辅助计量: {{item.invSubUnitName || '无'}}</span>
+                  <span>辅助计量说明: {{item.invSubUnitComment || '无'}}</span>
+                </div>
               </div>
             </template>
             <template slot="storage" slot-scope="{item}">
               <div class="mater_material">
                 <div>
-                  <span>保质期天数: {{item.keepingDays || '无'}}</span>
-                  <span>临保天数: {{item.nearKeepingDays || 0}}</span>
                   <span>安全库存: {{item.safeStock || 0}}</span>
-                </div>
-                <div>
                   <span>最小起订量: {{item.moq || 0}}</span>
                   <span>数量: {{item.qty || 0}}</span>
+                </div>
+                <div>
+                  <span>下单截止日: {{item.shippingTime | dateFormat('YYYY-MM-DD') || "无"}}</span>
+                  <span>采购提前期: {{item.leadTime || "无"}}</span>
+                  <span>到货截止日: {{item.processingStartDate | dateFormat('YYYY-MM-DD') || "无"}}</span>
+                </div>
+                <div>
+                  <span>待下单: {{item.qtyBal || 0}}</span>
                 </div>
               </div>
             </template>
@@ -243,17 +251,14 @@ export default {
     }
   },
   mixins: [common],
+  filters: {
+    dateFormat,
+  },
   computed:{
     // 是否含预收
     hasAdvance() {
-      let {paymentTerm} = this.dealerInfo;
-      let hasAdvanceList = ['赊销'];
-      if (!paymentTerm) {
-        return false
-      }
-      else {
-        return !paymentTerm.includes(hasAdvanceList);
-      }
+      let { paymentTerm } = this.dealerInfo;
+      return paymentTerm && paymentTerm.includes('预收');
     },
   },
   methods: {
@@ -265,9 +270,9 @@ export default {
     },
     // 选中的供应商
     selDealer (val) {
-        this.dealerInfo = JSON.parse(val)[0];
-        // this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
-        this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
+      this.dealerInfo = JSON.parse(val)[0];
+      // this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+      this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // 选中联系人
     selContact (val) {
@@ -284,12 +289,14 @@ export default {
       sels.map(item => {
         let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
         let defaultTdQty = item.qtyBal < item.qty ? item.qty : item.qtyBal;
-        let {tdQty = defaultTdQty, price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
-        item.tdQty = tdQty;
-        item.price = price;
-        item.taxRate = taxRate;
+        // let {tdQty = defaultTdQty, price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
+        // item.tdQty = tdQty;
+        // item.price = price;
+        // item.taxRate = taxRate;
+        item.tdQty = item.tdQty || defaultTdQty;
+        item.taxRate = item.taxRate || 0.16;
         item.shippingTime = dateFormat(item.shippingTime, 'YYYY-MM-DD')
-        item.processingStartDate = processingStartDate;
+        item.processingStartDate = item.processingStartDate || defaultTime;
         item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
         item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
@@ -348,10 +355,10 @@ export default {
     },
     // TODO 新增更多物料
     addMatter () {
-      for (let item of this.matterList) {
-        // 存储已输入的价格
-        this.numMap[item.inventoryCode] = {...item};
-      }
+      // for (let item of this.matterList) {
+      //   // 存储已输入的价格
+      //   this.numMap[item.inventoryCode] = {...item};
+      // }
       this.showMaterielPop = !this.showMaterielPop;
     },
     // 提价订单
@@ -562,7 +569,9 @@ export default {
           matter: this.matterList,
           dealerInfo: this.dealerInfo,
           formData: this.formData,
-          dealer: this.dealer
+          dealer: this.dealer,
+          contact: this.contact,
+          inPut: this.inPut
         }
       };
       
@@ -575,6 +584,8 @@ export default {
       this.dealerInfo = JSON.parse(data).dealerInfo;
       this.dealer = JSON.parse(data).dealer;
       this.formData = JSON.parse(data).formData;
+      this.contact = JSON.parse(data).contact;
+      this.inPut = JSON.parse(data).inPut;
       sessionStorage.removeItem(DRAFT_KEY);
     }
 
