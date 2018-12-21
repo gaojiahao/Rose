@@ -30,6 +30,10 @@
                 <span>退货数量: {{item.tdQty | toFixed}}</span>
                 <span>税率: {{item.taxRate}}</span>
               </div>
+              <div class="mater_num">
+                <span class="num">可退货数量: {{item.thenQtyBal}}</span>
+                <span class="num">可用库存: {{item.thenQtyStock}}</span>
+              </div>
               <div class='mater_price'>
                 <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
                 <span class="num"

@@ -115,17 +115,20 @@
                 <span>属性: {{item.processing}}</span>
                 <span>物料大类: {{item.inventoryType}}</span>
                 <span>单位: {{item.measureUnit}}</span>
-                <span v-if="item.keepingDays">保质期天数: {{item.keepingDays}}</span>
-                <span v-if="item.nearKeepingDays">临保天数: {{item.nearKeepingDays}}</span>
-                <span v-if="item.safeStock">安全库存: {{item.safeStock}}</span>
               </span>
             </template>
             <!-- 其他信息插槽 -->
             <template slot-scope="{item}" slot="storage">
               <div class="mater_material">
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
+              <div class="mater_material">
                 <span>待入库数: {{item.qtyBal}}</span>
                 <span>订单总数: {{item.qty}}</span>
                 <span>已入库数: {{item.qtyed}}</span>
+                <span>单价: ￥{{item.price}}</span>
               </div>
             </template>
           </pop-matter-list>
@@ -304,15 +307,16 @@
         modifyKey: null,
         filterList: [
           {
-            name: '交易号',
-            value: 'transCode',
-          }, {
             name: '物料名称',
             value: 'inventoryName',
           }, {
             name: '物料编码',
             value: 'inventoryCode',
           },
+          {
+            name: '订单号',
+            value: 'transCode',
+          }, 
         ],
         checkFieldList: [
           {
@@ -326,6 +330,10 @@
           {
             key: 'taxRate',
             message: '请填写税率'
+          },
+          {
+            key: 'productionDate',
+            message: '请选择生产日期'
           },
         ]
       }
@@ -359,6 +367,8 @@
           dealerCode: sel.dealerCode
         };
         this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
+        this.matterList = [];
+        this.orderList = {}
       },
       // TODO 选择联系人
       selContact(val) {
