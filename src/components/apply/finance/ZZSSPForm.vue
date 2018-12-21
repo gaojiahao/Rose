@@ -42,15 +42,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">订单列表</div>
+              <div class="required">请选择订单</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>订单列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>

@@ -27,7 +27,7 @@
         </div>
       </div>
       <!-- 物料列表 -->
-      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
+      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count" listTitle="订单列表">
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class="mater_attribute">
