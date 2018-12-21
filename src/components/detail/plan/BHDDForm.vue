@@ -16,7 +16,7 @@
             <div class='mater_other'>
               <div class='mater_attribute'>
                 <span>单位: {{item.measureUnit_transObjCode}}</span>
-                <span>预期完工日: {{item.promDeliTime}}</span>
+                <span>预期完工日: {{item.promDeliTime || "无"}}</span>
               </div>
               <div class="mater_num">
                 <span class='num'>数量: {{item.tdQty}}</span>
