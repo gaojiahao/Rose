@@ -187,7 +187,8 @@
           return {
             [DRAFT_KEY]: {
               formData: this.formData,
-              dealerInfo: this.dealerInfo
+              dealerInfo: this.dealerInfo,
+              contactInfo: this.contactInfo
             }
           };
         }
@@ -198,6 +199,7 @@
       if (data) {
         this.formData = JSON.parse(data).formData;
         this.dealerInfo = JSON.parse(data).dealerInfo;
+        this.contactInfo = JSON.parse(data).contactInfo;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },
