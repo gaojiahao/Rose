@@ -132,8 +132,8 @@ export default {
         ...this.contactInfo,
         creatorName: order.dealerDebitContactPersonName, // 客户名
         dealerName: order.dealerName_dealerCodeCredit, // 公司名
-        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
-        dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
+        dealerMobilePhone: orderInfo.dealerCreditContactInformation, // 手机
+        dealerContactPersonName: orderInfo.dealerCreditContactPersonName, // 联系人
         dealerCode: order.dealerCodeCredit, // 客户编码
         dealerLabelName: order.crDealerLabel, // 关系标签
         province: order.province_dealerCodeCredit, // 省份

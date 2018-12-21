@@ -22,7 +22,7 @@
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>出库单列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -540,10 +540,10 @@
           }
           // 客户信息展示
           this.dealerInfo = {
-            creatorName: formData.dealerDebitContactPersonName, // 客户名
+            creatorName: formData.dealerCreditContactPersonName, // 客户名
             dealerName: order.dealerName_dealerCodeCredit, // 公司名
-            dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
-            dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
+            dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+            dealerContactPersonName: formData.dealerCreditContactPersonName, // 联系人
             dealerCode: order.dealerCodeCredit, // 客户编码
             dealerLabelName: order.crDealerLabel, // 关系标签
             province: order.province_dealerCodeCredit, // 省份
@@ -553,8 +553,8 @@
           };
           // 订单信息
           this.contactInfo = {
-            dealerName: formData.dealerDebitContactPersonName, //联系人
-            dealerMobilePhone: formData.dealerDebitContactInformation,//电话
+            dealerName: formData.dealerCreditContactPersonName, //联系人
+            dealerMobilePhone: formData.dealerCreditContactInformation,//电话
           };
           // 物料列表请求参数
           this.dealerParams = {
@@ -586,6 +586,11 @@
         this.handlerDefault = draft.handlerDefault;
         this.dealerInfo = draft.dealer;
         this.orderList = draft.list;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            this.matterList.push(item)
+          }
+        }
         this.contactInfo = draft.contactInfo;
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
