@@ -164,20 +164,7 @@ export default {
     validateMap: {
       type: Array,
       default() {
-        return [
-          {
-            key: 'tdQty',
-            message: '请填写数量'
-          },
-          {
-            key: 'price',
-            message: '请填写含税单价'
-          },
-          {
-            key: 'taxRate',
-            message: '请填写税率'
-          },
-        ]
+        return []
       }
     }
   },
@@ -223,7 +210,7 @@ export default {
     //确认修改
     confirm(){
       let warn = '';
-      this.validateMap.every(item => {
+      this.validateMap.length && this.validateMap.every(item => {
         if (!this.modifyMatter[item.key]) {
           warn = item.message;
           return false

@@ -16,7 +16,6 @@
         <div class="main_content">
           <form-cell cellTitle='标题' :cellContent="orderInfo.opportunityTitle"></form-cell>
           <form-cell cellTitle='内容' :cellContent="orderInfo.comment || '无'"></form-cell>
-          <form-cell cellTitle='流程状态' :cellContent="orderInfo.biProcessStatus || '暂无'"></form-cell>
           <form-cell cellTitle='有效期至' :cellContent="orderInfo.validUntil"></form-cell>
           <form-cell cellTitle='销售人员' :cellContent="orderInfo.salesPerson"></form-cell>
           <form-cell cellTitle='销售渠道' :cellContent="orderInfo.salesChannels"></form-cell>
@@ -100,7 +99,7 @@ export default {
         creatorName: orderInfo.dealerDebitContactPersonName, // 客户名
         dealerName: orderInfo.dealerName_dealerDebit, // 公司名
         dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
-        dealerContactPersonName: orderInfo.dealerCreditContactPersonName, // 联系人
+        dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
         dealerCode: orderInfo.dealerDebit, // 客户编码
         dealerLabelName: orderInfo.drDealerLabel, // 关系标签
         province: orderInfo.province_dealerDebit, // 省份

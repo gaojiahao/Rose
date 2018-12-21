@@ -38,14 +38,11 @@
               <span class="iconfont icon-shenglve"></span>
             </div>
           </div>
-          <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
+          <x-input title="预收款" class="cell-item" type="number" text-align='right' placeholder='请填写'
                    v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance" @on-blur="checkAmt(dealerInfo)">
-            <template slot="label">
-              <span class="required">预收款</span>
-            </template>
           </x-input>
           <div class="cell-item" @click="dateSelect('advancePaymentDueDate')" v-show="hasAdvance">
-            <div class="title required">预收到期日</div>
+            <div class="title">预收到期日</div>
             <div class="mode">
               <span class="mode_content">{{dealerInfo.advancePaymentDueDate || '请选择'}}</span>
               <span class="iconfont icon-shenglve"></span>
@@ -401,16 +398,16 @@ export default {
           childKey: 'validUntil',
           message: '请选择合同到期日'
         },
-        {
-          key: 'dealerInfo',
-          childKey: 'tdAmountCopy1',
-          message: '请填写预收款'
-        },
-        {
-          key: 'dealerInfo',
-          childKey: 'advancePaymentDueDate',
-          message: '请选择预收到期日'
-        },     
+        // {
+        //   key: 'dealerInfo',
+        //   childKey: 'tdAmountCopy1',
+        //   message: '请填写预收款'
+        // },
+        // {
+        //   key: 'dealerInfo',
+        //   childKey: 'advancePaymentDueDate',
+        //   message: '请选择预收到期日'
+        // },     
         {
           key: 'matterList',
           childKey: 'length',
