@@ -13,19 +13,19 @@
       </div>
       <div class='each_property vux-1px-b'>
         <label>创建者:</label>
-        <div class='property_val'>{{jobInfo.creator}}</div>
+        <div class='property_val'>{{jobInfo.creator || "无"}}</div>
       </div>
       <div class='each_property vux-1px-b'>
         <label>创建时间:</label>
-        <div class='property_val'>{{jobInfo.crtTime}}</div>
+        <div class='property_val'>{{jobInfo.crtTime || "无"}}</div>
       </div>
-      <div class='each_property vux-1px-b' v-if="jobInfo.modifier">
+      <div class='each_property vux-1px-b'>
         <label>修改者:</label>
-        <div class='property_val'>{{jobInfo.modifier}}</div>
+        <div class='property_val'>{{jobInfo.modifier || "无"}}</div>
       </div>
-      <div class='each_property vux-1px-b' v-if="jobInfo.modTime">
+      <div class='each_property vux-1px-b'>
         <label>修改时间:</label>
-        <div class='property_val'>{{jobInfo.modTime}}</div>
+        <div class='property_val'>{{jobInfo.modTime || "无"}}</div>
       </div>
       <div class='each_property vux-1px-b'>
         <label>职位状态:</label>
