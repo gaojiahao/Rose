@@ -8,17 +8,17 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :default-contact="contactInfo" dealer-label-name="原厂供应商,经销供应商"></pop-dealer-list>
+                         dealerTitle="供应商" :default-contact="contactInfo" dealer-label-name="原厂供应商,经销供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="crDealerPaymentTerm" isRequired
                            v-model="crDealerPaymentTerm"></pop-single-select>
-        <div class="other_info" v-show="dealerInfo.pamentDays">
+        <div class="other_info">
           <div class="title">账期天数</div>
-          <div class="mode">{{dealerInfo.pamentDays}}</div>
+          <div class="mode">{{dealerInfo.pamentDays || "无"}}</div>
         </div>
-        <div class="other_info" v-show="dealerInfo.accountExpirationDate">
+        <div class="other_info">
           <div class="title">账期到期日</div>
-          <div class="mode">{{dealerInfo.accountExpirationDate}}</div>
+          <div class="mode">{{dealerInfo.accountExpirationDate || "无"}}</div>
         </div>
         <!-- 仓库-->
         <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouse"
@@ -288,7 +288,11 @@
         },
         submitSuccess: false, // 是否提交成功
         showWarehousePop: false,
-        warehouse: null, // 选中仓库属性
+        warehouse: {
+          warehouseCode: 'MA0001',
+          warehouseName: '原料仓',
+          warehouseType: '一般部门仓'
+        }, // 选中仓库属性
         taxRate: 0.16, // 税率
         numMap: {}, // 用于记录订单物料的数量
         transCode: '',
@@ -767,7 +771,7 @@
         }
         return {
           [DRAFT_KEY]: {
-            matter: this.matterList,
+            orderList: this.orderList,
             dealer: this.dealerInfo,
             warehouse: this.warehouse,
             formData: this.formData,
@@ -862,12 +866,18 @@
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
-        this.matterList = draft.matter;
+        this.orderList = draft.orderList;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            this.matterList.push(item)
+          }
+        }
         this.dealerInfo = draft.dealer;
         this.warehouse = draft.warehouse;
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
         this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
+        this.matterParams.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 

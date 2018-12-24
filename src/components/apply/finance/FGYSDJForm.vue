@@ -10,7 +10,7 @@
         <pop-dealer-list request="1" :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
-              <span class="amt-dealer-item">本次申请: {{applicationAmount}}</span>
+              <span class="amt-dealer-item">本次申请: {{applicationAmount | numberComma(3)}}</span>
               <!-- <span class="amt-dealer-item">本次支付后余额: {{differenceAmount}}</span> -->
             </div>
             <!-- <x-input class="amt-copy" title="本次支付" text-align='right' placeholder='请填写'
@@ -34,11 +34,11 @@
                 <span class="info-item">{{item.transCode}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item">总金额: {{item.thenAmntBal}}</span>
-                <span class="info-item">采购定金: {{item.amount}}</span>
+                <span class="info-item">总金额: {{item.thenAmntBal | numberComma(3)}}</span>
+                <span class="info-item">采购定金: {{item.amount | numberComma(3)}}</span>
               </div>
-              <cell title="已付定金" text-align='right' :value="item.amnted"></cell>
-              <cell text-align='right' :value="item.deposit">
+              <cell title="已付定金" text-align='right' :value="item.amnted | numberComma(3)"></cell>
+              <cell text-align='right' :value="item.deposit | numberComma(3)">
                 <template slot="title">
                   <span class="required">待付定金</span>
                 </template>

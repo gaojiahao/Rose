@@ -11,7 +11,7 @@
                          @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
-              <span class="amt-dealer-item">本次收汇票: {{thenTotalAmntBal}}</span>
+              <span class="amt-dealer-item">本次收汇票: {{thenTotalAmntBal | numberComma(3)}}</span>
             </div>
           </template>
         </pop-dealer-list>

@@ -10,9 +10,9 @@
         <pop-dealer-list :default-value="dealerInfo" @sel-item="selDealer">
           <template slot="other">
             <div class="amt-dealer">
-              <span class="amt-dealer-item">申请金额: {{applicationAmount}}</span>
-              <span class="amt-dealer-item">本次支付: {{tdAmountCopy1}}</span>
-              <span class="amt-dealer-item">本次支付后余额: {{differenceAmount}}</span>
+              <span class="amt-dealer-item">申请金额: {{applicationAmount | numberComma(3)}}</span>
+              <!-- <span class="amt-dealer-item">本次支付: {{tdAmountCopy1 | numberComma(3)}}</span>
+              <span class="amt-dealer-item">本次支付后余额: {{differenceAmount | numberComma(3)}}</span> -->
             </div>
           </template>
         </pop-dealer-list>
@@ -33,11 +33,11 @@
               </div>
               <div class="detail-item">
                 <span class="info-item">采购订单号: {{item.poCode}}</span>
-                <span class="info-item">价税合计: {{item.thenTotalAmntBal}}</span>
+                <span class="info-item">价税合计: {{item.thenTotalAmntBal | numberComma(3)}}</span>
               </div>
               <div class="detail-item">
-                <span class="info-item">已核销: {{item.thenAlreadyAmnt}}</span>
-                <span class="info-item">待核销: {{item.thenAmntBal}}</span>
+                <span class="info-item">已核销: {{item.thenAlreadyAmnt | numberComma(3)}}</span>
+                <span class="info-item">待核销: {{item.thenAmntBal | numberComma(3)}}</span>
               </div>
               <div class="detail-item">
                 <span class="info-item" v-if="item.accountExpirationDate || item.accountExpirationDate === 0">账期到期日: {{item.accountExpirationDate}}</span>
@@ -47,16 +47,16 @@
               </div>
               <div class="detail-item">
                 <span class="info-item" v-if="item.accountRemaingDays || item.accountRemaingDays === 0">账期剩余天数: {{item.accountRemaingDays}}</span>
-                <span class="info-item">已收票: {{item.invoicing}}</span>
-                <span class="info-item">待收票: {{item.pendingTicket || item.invoiced}}</span>
+                <span class="info-item">已收票: {{item.invoicing | numberComma(3)}}</span>
+                <span class="info-item">待收票: {{item.pendingTicket || item.invoiced | numberComma(3)}}</span>
               </div>
-              <div class="detail-item">
+              <!-- <div class="detail-item">
                 <span class="info-item">本次支付后余额: {{item.differenceAmount}}</span>
-              </div>
-              <x-input class="" title="本次申请支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'applicationAmount')"
+              </div> -->
+              <x-input class="" title="本次申请" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'applicationAmount')"
                        @on-focus="getFocus($event)" type='number' v-model.number='item.applicationAmount'></x-input>
-              <x-input title="本次支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'tdAmount')" type='number'
-                       @on-focus="getFocus($event)" v-model.number='item.tdAmount'></x-input>
+              <!-- <x-input title="本次支付" text-align='right' placeholder='请填写' @on-blur="checkAmt(item, 'tdAmount')" type='number'
+                       @on-focus="getFocus($event)" v-model.number='item.tdAmount'></x-input> -->
             </div>
           </template>
         </div>
@@ -66,12 +66,12 @@
         </div>
 
         <!-- 资金信息 -->
-        <pop-cash-list :default-value="cashInfo" @sel-item="selCash">
+        <!-- <pop-cash-list :default-value="cashInfo" @sel-item="selCash">
           <template slot="other">
             <x-input class="amt-cash" title="本次支付" text-align='right' placeholder='请填写' type='number'
                      @on-blur="checkAmt('tdAmount')" @on-focus="getFocus($event)" v-model.number='cashInfo.tdAmount'></x-input>
           </template>
-        </pop-cash-list>
+        </pop-cash-list> -->
 
         <div class="materiel_list">
           <group title="其他信息" class="costGroup">

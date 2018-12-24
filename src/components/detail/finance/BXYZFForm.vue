@@ -15,7 +15,7 @@
           <span class="iconfont icon-baoxiao"></span>
           <span class="title">费用信息</span>
         </div>
-        <div class="main_content" v-for="(item, index) in costList" :key="index">
+        <div class="main_content" :class="{'has_border' : index > 0}" v-for="(item, index) in costList" :key="index">
           <form-cell cellTitle='费用名称' :cellContent="item.costName_expCode"></form-cell>
           <form-cell cellTitle='费用科目' :cellContent="item.expSubject"></form-cell>
           <form-cell cellTitle='费用类型' :cellContent="item.costType_expCode"></form-cell>
@@ -274,6 +274,9 @@
       /deep/ .weui-label {
         color: #757575;
         font-size: .14rem;
+      }
+      &.has_border{
+        border-top:2px solid #e8e8e8;
       }
     }
   }
