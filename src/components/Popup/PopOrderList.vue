@@ -14,7 +14,7 @@
                @click.stop="selThis(item,index)">
             <div class="order-code">
               <slot name='titleName'>
-                <span class="order-title">交易号</span>
+                <span class="order-title">订单号</span>
               </slot>
               <span class="order-num">{{item.transCode}}</span>
             </div>
@@ -152,7 +152,7 @@
             name: '物料编码',
             value: 'inventoryCode',
           }, {
-            name: '交易号',
+            name: '订单号',
             value: 'transCode'
           }
         ],
