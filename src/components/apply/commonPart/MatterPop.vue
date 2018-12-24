@@ -100,9 +100,15 @@
           <!-- 价格合计部分 -->
           <group class="mg_auto" v-if="isShowAmount">
             <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell> 
-            <cell disabled title="不含税金额" :value="`￥${numberComma(modifyMatter.noTaxAmount)}`"></cell>
+            <cell disabled :value="`￥${numberComma(modifyMatter.noTaxAmount)}`">
+              <template slot="title">
+                <slot name="noTaxAmountTitle">
+                  <span>不含税金额</span>
+                </slot>
+              </template>
+            </cell>
             <!-- 该插槽用于替换价税小计的title-->    
-            <cell disabled title="价税小计" :value="`￥${numberComma(modifyMatter.tdAmount)}`">
+            <cell disabled :value="`￥${numberComma(modifyMatter.tdAmount)}`">
               <template slot="title">
                 <slot name="tdAmountTitle">
                   <span>价税小计</span>

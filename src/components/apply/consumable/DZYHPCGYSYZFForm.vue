@@ -21,15 +21,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
-              <div class="title">订单列表</div>
-              <div class="required">请选择订单</div>
+              <div class="title">采购订单列表</div>
+              <div class="required">请选择采购订单</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>订单列表</div>
+              <div>采购订单列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -48,17 +48,12 @@
                       <div class="mater_more">
                         <span class="processing">属性: {{item.processing}}</span>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                        <span class='qty' v-show="item.qtyBal">待验收: {{item.qtyBal}}</span>
+                        <span >税率: {{item.taxRate}}</span>
                       </div>
                       <div class="mater_more">
-                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
                         <span>订单总数: {{item.qty}}</span>
                         <span>已入库数: {{item.qtyed}}</span>
-                      </div>
-                      <div class="mater_more">
-                        <span v-show="item.assMeasureUnit">辅助计量: {{item.assMeasureUnit}}</span>
-                        <span v-show="item.assistQty">辅计数量: {{item.assistQty}}</span>
+                        <span class='qty' v-show="item.qtyBal">待验收: {{item.qtyBal}}</span>
                       </div>
                       <div class="mater_more">
                         <span v-show="item.productionDate">生产日期: {{item.productionDate}}</span>
@@ -109,10 +104,19 @@
                            :default-value="matterList" get-list-method="getLowPriceConsumableInWarehouse"
                            :params="matterParams"
                            :filter-list="filterList" ref="matter">
+            <template slot="titleName" slot-scope="{item}">
+              <span class="order-title">采购订单号</span>
+            </template>
             <template slot-scope="{item}" slot="storage">
+              <div class="mater_material">
+                <span>保质期天数: {{item.keepingDays || 0}}</span>
+                <span>临保天数: {{item.nearKeepingDays || 0}}</span>
+                <span>安全库存: {{item.safeStock || 0}}</span>
+              </div>
               <div class="mater_material">
                 <span class="spec">订单总数: {{item.qty}}</span>
                 <span class="spec">已入库数: {{item.qtyed}}</span>
+                <span class="spec">待入库数: {{item.qtyBal}}</span>
               </div>
             </template>
           </pop-matter-list>
@@ -120,9 +124,20 @@
         <!--物料编辑pop-->
         <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
                     v-model='showMatterPop' :btn-is-hide="btnIsHide">
+           <template slot="qtyBal" slot-scope="{modifyMatter}">
+            <div>
+              <span class="processing">属性: {{modifyMatter.processing || "无"}}</span>
+              <span class='unit'>单位: {{modifyMatter.measureUnit}}</span>
+              <span class='mater_color'>颜色: {{modifyMatter.inventoryColor || "无"}}</span>
+            </div>
+            <div>
+              <span>大类: {{modifyMatter.inventoryTypen || "无"}}</span>
+              <span>子类: {{modifyMatter.inventorySubclass || "无"}}</span>
+              <span v-show="modifyMatter.qtyBal">待验收: {{modifyMatter.qtyBal}}</span>
+            </div>
+           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class='mg_auto'>
-              <cell title="待验收" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
               <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
                       placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
                 <template slot="label">
@@ -134,30 +149,14 @@
               <cell title="单价" :value="modifyMatter.price" disabled></cell>
               <cell title="税率" :value="modifyMatter.taxRate" disabled></cell>
             </group>
-            <!-- <group class='mg_auto'>
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>单价
-                  </span>
-                </template>
-              </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>税率
-                  </span>
-                </template>
-              </x-input>
-            </group> -->
             <group class='mg_auto'>
               <cell title="保质期天数" :value="modifyMatter.keepingDays" disabled></cell>
               <datetime title="生产日期" v-model="modifyMatter.productionDate" placeholder="请选择"></datetime>
               <datetime title="有效日期" v-model="modifyMatter.validUntil" placeholder="请选择"></datetime>
             </group>
           </template>
-          <template slot="modifyTitle" slot-scope="{modifyMatter}">
-            <label>金额</label>
+          <template slot="noTaxAmountTitle">
+            <span>金额</span>
           </template>
         </pop-matter>
 

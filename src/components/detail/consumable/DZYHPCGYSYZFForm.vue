@@ -34,6 +34,9 @@
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
                    :taxAmount="taxAmount" :count="count">
+        <template slot="orderTitle" slot-scope="props">
+          <span class="order_title">采购订单号</span>
+        </template>
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
@@ -44,6 +47,11 @@
               <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
               <span>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            </div>
+            <div class="mater_num">
+              <span class="num">订单总数: {{item.thenTotalQtyBal}}</span>
+              <span class="num">已入库: {{item.thenLockQty}}</span>
+              <span class="num">待验收: {{item.thenQtyBal}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>

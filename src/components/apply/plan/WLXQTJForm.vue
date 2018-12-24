@@ -79,7 +79,7 @@
                 <span>安全库存: {{item.safeStock || 0}}</span>
               </div>
               <div>
-                <div class="mater-balance">余额: {{item.qtyBal}}{{item.measureUnit}}</div>
+                <div class="mater-balance">余额: {{item.qtyBal}}</div>
               </div>
             </template>
           </pop-order-xqtj-list>

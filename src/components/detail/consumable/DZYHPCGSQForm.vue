@@ -24,7 +24,7 @@
           </div>
           <div class="mater_price">
             <span class="diff_num">
-              ￥{{item.tdAmount | toFixed}}
+              ￥{{item.tdAmount | toFixed | numberComma(3)}}
             </span>
           </div>
         </div>

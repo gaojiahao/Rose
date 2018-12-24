@@ -18,14 +18,20 @@
         </div>
       </contact-part>
       <!-- 物料列表 -->
-      <matter-list :matter-list='matterList' :noTaxAmount="noTaxAmount"
+      <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
                      :taxAmount="taxAmount" :count="count">
+        <template slot="orderTitle" slot-scope="props">
+          <span class="order_title">申请号</span>
+        </template>
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
               <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
               <span>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+            </div>
+            <div class="mater_num">
+              <span class="num">待下单: {{item.thenQtyBal}}</span>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
@@ -70,7 +76,8 @@ export default {
       count: 0,          // 金额合计
       formViewUniqueId: '',
       contactInfo: {}, // 客户、付款方式、物流条款的值
-      matterList: [],
+      orderList: {},
+      matterList: []
     }
   },
   computed: {
@@ -123,17 +130,21 @@ export default {
         }
         this.attachment = data.attachment;
         // 获取合计
+        let orderList = {};
         let {dataSet} = data.formData.inPut;
         for (let val of dataSet) {
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = toFixed(accAdd(val.noTaxAmount,val.taxAmount));
           this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
+          val.transObjCode = val.transMatchedCode;
+          if (!orderList[val.transMatchedCode]) {
+            orderList[val.transMatchedCode] = [];
+          }
+          orderList[val.transMatchedCode].push(val);
         }
         this.matterList = dataSet;
+        this.orderList = orderList;
         this.orderInfo = data.formData;
         this.getcontactInfo('inPut');
         this.workFlowInfoHandler();

@@ -42,15 +42,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
-              <div class="title">订单列表</div>
-              <div class="required">请选择订单</div>
+              <div class="title">入库单号列表</div>
+              <div class="required">请选择入库单号</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>订单列表</div>
+              <div>入库单号列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -615,7 +615,6 @@
               dealer: this.dealerInfo,
               invoiceInfo: this.invoiceInfo,
               contactInfo: this.contactInfo,
-              matterList: this.matterList,
               orderList: this.orderList,
             }
           }
@@ -629,8 +628,12 @@
         this.dealerInfo = draft.invoice.dealer;
         this.invoiceInfo = draft.invoice.invoiceInfo;
         this.contactInfo = draft.invoice.contactInfo;
-        this.matterList = draft.invoice.matterList;
         this.orderList = draft.invoice.orderList;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            this.matterList.push(item)
+          }
+        }
         this.matterParams = {
           dealerCode: this.dealerInfo.dealerCodeCredit,
         };

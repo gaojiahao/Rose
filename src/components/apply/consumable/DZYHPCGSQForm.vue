@@ -79,7 +79,13 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :params="matterParams" :default-value="matterList" ref="matter"></pop-matter-list>
+                           :params="matterParams" :default-value="matterList" ref="matter">
+            <template slot="storage" slot-scope="{item}">
+              <div class="mater_material">
+                <span class="spec">安全库存: {{item.safeStock}}</span>
+              </div>
+            </template>
+          </pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
@@ -94,7 +100,7 @@
               </x-input>
               <x-input title="估计价格" type="number" v-model.number='modifyMatter.price' text-align="right"
                       @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
-              <cell title="估计金额" :value="modifyMatter.tdAmount" disabled></cell>
+              <cell title="估计金额" :value="modifyMatter.tdAmount | numberComma(3)" disabled></cell>
             </group>
           </template>
         </pop-matter>
@@ -108,7 +114,7 @@
     <!-- 底部确认栏 -->
     <div class="count_mode vux-1px-t" :class="{btn_hide : btnIsHide}" v-if="!matterModifyClass">
       <span class="count_num">
-        <span style="fontSize:.14rem">￥</span>{{tdAmount |numberComma(3)}}
+        <span style="fontSize:.14rem">￥</span>{{tdAmount | numberComma(3)}}
         <!--<span class="taxAmount">[含税: ￥{{taxAmount |numberComma(3)}}]</span>-->
       </span>
       <span class="count_btn" @click="save">提交</span>

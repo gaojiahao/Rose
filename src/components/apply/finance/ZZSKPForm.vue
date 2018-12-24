@@ -40,15 +40,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">申请单列表</div>
+              <div class="required">请选择申请单</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>申请单列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -147,9 +147,9 @@
               <cell title="不含税单价" :value="modifyMatter.noTaxPrice" disabled></cell>
             </group>
           </template>
-          <template slot="tdAmountTitle" >
+          <!-- <template slot="tdAmountTitle" >
             <span>本次开票金额</span>
-          </template>
+          </template> -->
         </pop-matter>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
@@ -591,7 +591,6 @@
               dealer: this.dealerInfo,
               invoiceInfo: this.invoiceInfo,
               contactInfo: this.contactInfo,
-              matterList: this.matterList,
               orderList: this.orderList,
             }
           }
@@ -605,8 +604,12 @@
         this.dealerInfo = draft.invoice.dealer;
         this.contactInfo = draft.invoice.contactInfo;
         this.invoiceInfo = draft.invoice.invoiceInfo;
-        this.matterList = draft.invoice.matterList;
         this.orderList = draft.invoice.orderList;
+        for (let items of Object.values(this.orderList)) {
+          for (let item of items) {
+            this.matterList.push(item)
+          }
+        }
         this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
         this.invoiceGetType.push(this.invoiceInfo.invoiceType);
         sessionStorage.removeItem(DRAFT_KEY);
