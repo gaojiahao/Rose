@@ -31,7 +31,7 @@
           <div class="handle_info">
             <div class="handle_name">
               <!-- 操作动作 -->
-              <span>{{item.nodeName}}</span>
+              <span class="handle_node_name">{{item.nodeName}}</span>
               <!-- 操作状态 A(没有返回状态) -->
               <span class="status" v-if="!item.status">{{workFlowInfo.biStatus}}</span>
               <!-- 操作状态 B(有返回状态) -->
@@ -46,7 +46,7 @@
           </div>
         </div>
         <div class="tips_content" v-if="index === simpleWL.length - 1">
-          最新节点状态
+          最新节点
         </div>
       </div>
     </div>
@@ -335,7 +335,11 @@
             display: flex;
             font-size: .12rem;
             font-weight: bold;
-            align-items: center;
+            align-items: baseline;
+            .handle_node_name {
+              display: block;
+              max-width: 1.2rem;
+            }
             // 默认样式
             .status {
               color: #fff;
