@@ -3,11 +3,11 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
-        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse" 
+        <pop-warehouse-list title="在制仓库" :default-value="warehouse" @sel-item="selWarehouse"
                             :filter-params="filterParams" :is-required="true">
         </pop-warehouse-list>
         <!-- 工单列表 -->
@@ -64,9 +64,9 @@
         <!-- 工序popup -->
         <pop-work-list :show="showWorkPop" v-model="showWorkPop" :defaultValue="workInfo"
                         @sel-work="selWork" ref="matter"></pop-work-list>
-        <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager" 
+        <pop-manager-list :show="showManagerPop" v-model="showManagerPop" @sel-item="selManager"
                           :defaultValue="defaultManager"></pop-manager-list>
-        <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility" 
+        <pop-work-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-item="selFacility"
                                 :defaultValue="defaultFacility">
         </pop-work-facility-list>
         <!--备注-->
@@ -206,7 +206,7 @@ export default {
       }
       if(numberWorkers){
         item.numberWorkers = Math.round(numberWorkers);
-      }     
+      }
     },
     // TODO 选中仓库
     selWarehouse (val) {
@@ -214,10 +214,10 @@ export default {
       this.filter[0].value = this.warehouse.warehouseCode;
       this.workInfo.forEach((item, index) => {
         this.filter[1].value = item.inventoryCode;
-        // 获取bom 
+        // 获取bom
         this.getTaskBom(index).then(data => {
           item.boms = data
-          this.$set(this.workInfo, index, {...item})         
+          this.$set(this.workInfo, index, {...item})
         })
       })
     },
@@ -260,6 +260,7 @@ export default {
               processCode: item.transCode,
               processProCode: item.inventoryCode,
               outPutMatCode: bItem.inventoryCode,
+              bomSpecificLoss: bItem.specificLoss,
               thenQtyStock: bItem.qtyBal,
               specification_outPutMatCode: bItem.specification,
               tdProcessing: bItem.processing,
@@ -276,6 +277,7 @@ export default {
             processProQty: item.processProQty || null,
             transObjCode: item.inventoryCode,
             inventoryName_transObjCode: item.inventoryName,
+            tdProcessing: item.processing,
             proPointCode: item.proPointCode,
             procedureName_proPointCode: item.procedureName,
             tdId: item.tdId || null,
@@ -286,24 +288,24 @@ export default {
             dealerName_dealerDebit: item.dealerName_dealerDebit,
             dealerDebit: item.dealerDebit,
             drDealerLabel: item.drDealerLabel,
-            numberWorkers: item.numberWorkers,
-            facilityName_facilityObjCode: item.facilityName_facilityObjCode,
-            proFlowCode: item.proFlowCode || '',       
+            numberWorkers: item.numberWorkers || null,
+            facilityName_facilityObjCode: item.facilityName_facilityObjCode || null,
+            proFlowCode: item.proFlowCode || '',
             technicsName_proFlowCode: item.technicsName,
             promDeliTime: item.promDeliTime,
-            facilityObjCode: item.facilityObjCode || '', // 设备编码
-            facilityTypebase_facilityObjCode: item.facilityTypebase_facilityObjCode || '',
+            facilityObjCode: item.facilityObjCode || null, // 设备编码
+            facilityTypebase_facilityObjCode: item.facilityTypebase_facilityObjCode || null,
             boms: bom
           })
           return true
-        })   
+        })
       }
       if (warn) {
         this.$vux.alert.show({
           content: warn
         })
         return
-      }     
+      }
       this.$vux.confirm.show({
         content: '确认提交?',
         // 确定回调
@@ -311,7 +313,7 @@ export default {
           this.$HandleLoad.show();
           let operation = saveAndStartWf; // 默认有工作流
           let wfPara = {
-            [this.processCode]: {businessKey: "WTSK", createdBy: ""}
+            [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
           }
           if (this.isResubmit) {
             wfPara = {
@@ -320,7 +322,7 @@ export default {
               transCode: this.transCode,
               result: 3,
               taskId: this.taskId,
-              comment: ""
+              comment: this.formData.biComment,
             }
           }
           let submitData = {
@@ -405,6 +407,7 @@ export default {
             bom.qty = bom.bomQty;
             bom.qtyBal = bom.thenQtyStock;
             bom.specification = bom.specification_outPutMatCode;
+            bom.specificLoss = bom.bomSpecificLoss;
           })
           matterList.push(item);
         }
@@ -444,8 +447,8 @@ export default {
       this.filter[0].value = this.warehouse.warehouseCode;
       return getTaskBom({filter: JSON.stringify(this.filter)}).then(({tableContent = []}) => {
         tableContent.forEach(bom => {
-          let tdQty1 = this.workInfo[index].tdQty;    
-          let tdQty = accMul(tdQty1, bom.qty);
+          let tdQty1 = this.workInfo[index].tdQty;
+          let tdQty = accMul(tdQty1, bom.qty, (1 + bom.specificLoss));
           bom.tdQty = toFixed(tdQty);
         });
         return tableContent;

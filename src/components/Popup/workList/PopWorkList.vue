@@ -42,7 +42,7 @@
               <div>
                 <!-- dateFormat('YYYY-MM-DD') -->
               </div>
-              
+
             </div>
             <!-- icon -->
             <x-icon class="isSelIcon" type="ios-checkmark" size="20" v-show="showSelIcon(item)"></x-icon>
@@ -109,7 +109,7 @@ import MSearch from 'components/search'
           {
             name: '工序名称',
             value: 'procedureName'
-          }    
+          }
         ],
         filterProperty: ''
       }
@@ -175,6 +175,8 @@ import MSearch from 'components/search'
       // TODO 获取物料列表
       getWorkOrderTask() {
         let filter = [];
+        let {orderId = '[]'} = this.$route.query;
+        let orderIds = JSON.parse(orderId);
         if (this.srhInpTx) {
           filter = [
             ...filter,
@@ -201,7 +203,7 @@ import MSearch from 'components/search'
         //           property: 'transCode',
         //         },
         //         {
-        //           attendedOperation: "and", 
+        //           attendedOperation: "and",
         //           operator: 'in',
         //           value: `${item.inventoryCode},`,
         //           property: 'inventoryCode',
@@ -220,18 +222,16 @@ import MSearch from 'components/search'
         //   ]
         // }
         // 工单任务派工从科目发起，路由传的参数用来过滤数据
-        if(this.$route.query.orderId){
-          let {orderId} = this.$route.query;
-          console.log(orderId)
+        if(orderIds.length){
           let filterArr = [{
             operator: 'in',
             value: '',
             property: 'colId',
           }];
-          orderId.forEach( (item, index) => {
-            if(index === orderId.length-1){
+          orderIds.forEach( (item, index) => {
+            if(index === orderIds.length-1){
               filterArr[0].value += item;
-              return 
+              return
             }
             filterArr[0].value += `${item},`
           })
@@ -247,7 +247,7 @@ import MSearch from 'components/search'
           filter: JSON.stringify(filter),
         }).then(({dataCount = 0, tableContent = []}) => {
           // if(this.$route.query.orderTransCode){
-          if(this.$route.query.orderId){
+          if(orderIds.length){
             this.$emit('sel-work', JSON.stringify(tableContent));
           }
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
