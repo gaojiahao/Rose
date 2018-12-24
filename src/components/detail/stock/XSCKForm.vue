@@ -35,7 +35,7 @@
           <div class='mater_other'>
             <div class='mater_attribute'>
               <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>不含税单价: ￥{{item.noTaxPrice | toFixed | numberComma(3)}}</span>
+              <span>不含税单价: ￥{{item.noTaxPrice | numberComma(3)}}</span>
               <span>出库数量: {{item.tdQty | toFixed}}</span>
               <span>包装数量: {{item.assistQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
