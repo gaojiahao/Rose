@@ -565,7 +565,8 @@
               facilitySubclass: item.facilitySubclass_facilityObjCode,
               facilityUnit: item.facilityUnit_facilityObjCode,
               specification: item.specification_facilityObjCode,
-              processing: item.tdProcessing
+              processing: item.tdProcessing,
+              qtyBal: item.thenQtyBal,
             };
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];

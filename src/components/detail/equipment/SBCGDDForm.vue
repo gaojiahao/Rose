@@ -34,6 +34,9 @@
               <span>数量: {{item.tdQty | toFixed}}</span>
               <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
             </div>
+            <div class='mater_attribute'>
+              <span>待下单: {{item.thenQtyBal | toFixed}}</span>
+            </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
               <span class="num"

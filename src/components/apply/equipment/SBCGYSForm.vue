@@ -15,15 +15,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
-              <div class="title">订单列表</div>
-              <div class="required">请选择订单</div>
+              <div class="title">订单号列表</div>
+              <div class="required">请选择订单号</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>订单列表</div>
+              <div>订单号列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -90,6 +90,7 @@
                 <span class="father">订单总数: {{item.qty}}</span>
                 <span class="father">已验收数: {{item.purchased}}</span>
                 <span>待验收数: {{item.qtyBal}}</span>
+                <span>单价: ￥{{item.price}}</span>
               </div>
             </template>
           </pop-facility-list>
@@ -112,7 +113,7 @@
                   </slot>
                 </template>
               </x-input>
-              <cell title="单价" :value="modifyMatter.price" disabled></cell>
+              <cell title="单价" :value="modifyMatter.price | numberComma(3)" disabled></cell>
               <cell title="税率" :value="modifyMatter.taxRate" disabled></cell>
             </group>
           </template>

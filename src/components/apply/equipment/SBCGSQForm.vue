@@ -93,7 +93,7 @@
                   </span>
                 </template>
               </x-input>
-              <cell title="估计金额" :value="modifyMatter.tdAmount" disabled></cell>
+              <cell title="估计金额" :value="modifyMatter.tdAmount | numberComma(3)" disabled></cell>
             </group>
           </template>
         </pop-matter>
