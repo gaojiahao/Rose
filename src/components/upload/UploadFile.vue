@@ -14,8 +14,6 @@
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
       <div class="upload-file-item" v-if="!noUpload" @click="chooseImage">
-        <!--<input class="upload-file" type="file" :id="id" name="upload-file" @change="uploadFile"/>-->
-        <!--<label class="upload-file-add" :for="id"></label>-->
         <label class="upload-file-add"></label>
         <div class="icon_container">
           <span class="iconfont icon-fujian"></span>
@@ -27,8 +25,7 @@
 
 <script>
   import {deleteFile} from 'service/commonService';
-  import Exif from 'exif-js'
-  import {uploadImage} from 'plugins/wx/api'
+  import {chooseImage, uploadImage} from 'plugins/wx/api'
 
   export default {
     name: "UploadFile",
@@ -85,24 +82,13 @@
     methods: {
       // TODO 选择图片
       chooseImage() {
-        console.log('chooseImage')
-        wx.chooseImage({
+        let options = {
           count: 5, // 默认9
-          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-          defaultCameraMode: "batch", //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
-          success: async(res) => {
-            console.log(res)
-            // localIds返回选定照片的本地ID列表，
-            // andriod中localId可以作为img标签的src属性显示图片；
-            // 而在IOS中需通过上面的接口getLocalImgData获取图片base64数据，从而用于img标签的显示
-            let {localIds = []} = res;
-            for(let localId of localIds) {
-              await this.upload(localId);
-            }
-            /*localIds.forEach(localId => {
-              this.upload(localId);
-            });*/
+          defaultCameraMode: 'batch', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
+        };
+        chooseImage({options,}).then(async localIds => {
+          for (let localId of localIds) {
+            await this.upload(localId);
           }
         });
       },
@@ -148,13 +134,23 @@
         });
         return type
       },
+      // TODO 获取预览图片链接
+      getImgUrl(item){
+        return `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}`
+      },
       // TODO 放大图片预览
       preview(item) {
         if (item.iconType === 'image') {
-          let imgUrl = `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}&width=400&height=400`;
+          let images = this.files.reduce((arr, image) => {
+            if (image.iconType === 'image') {
+              arr.push(this.getImgUrl(image));
+            }
+            return arr
+          }, []);
+          let imgUrl = this.getImgUrl(item);
           wx.previewImage({
             current: imgUrl, // 当前显示图片的http链接
-            urls: [imgUrl] // 需要预览的图片http链接列表
+            urls: images // 需要预览的图片http链接列表
           });
         }
       },
@@ -179,15 +175,14 @@
         return uploadImage({
           localId,
           biReferenceId: this.biReferenceId,
-        }).then(res => {
-          let {success = false, message = '上传失败', data} = res;
+        }).then(data => {
           let [detail = {}] = data;
           detail.iconType = this.judgeFileType(detail.attr1);
           this.files.push(detail);
           this.$emit('on-upload', {
-            biReferenceId: detail.biReferenceId
+            biReferenceId: detail.biReferenceId,
           });
-        })
+        });
       },
     },
     created() {

@@ -1,7 +1,7 @@
 import {mediaUpload} from 'service/commonService';
 
 // TODO 扫一扫
-export const scanQRCode = (params = {}) => {
+export const scanQRCode = (options = {}) => {
   return new Promise((resolve, reject) => {
     wx.scanQRCode({
       desc: 'scanQRCode desc',
@@ -37,7 +37,7 @@ export const scanQRCode = (params = {}) => {
           message,
         });
       },
-      ...params,
+      ...options,
     });
   })
 };
@@ -58,15 +58,39 @@ export const shareContent = (shareInfo = {}) => {
   });
 };
 
+// TODO 选择图片
+export const chooseImage = ({options = {}}) => {
+  return new Promise((resolve, reject) => {
+    wx.chooseImage({
+      count: 1, // 默认9
+      sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      defaultCameraMode: 'normal', //表示进入拍照界面的默认模式，目前有normal与batch两种选择，normal表示普通单拍模式，batch表示连拍模式，不传该参数则为normal模式。（注: 用户进入拍照界面仍然可自由切换两种模式）
+      success: (res) => {
+        // localIds返回选定照片的本地ID列表，
+        // andriod中localId可以作为img标签的src属性显示图片；
+        // 而在IOS中需通过上面的接口getLocalImgData获取图片base64数据，从而用于img标签的显示
+        let {localIds = []} = res;
+        resolve(localIds);
+      },
+      fail: () => {
+        reject({
+          success: false,
+          message: '选择失败'
+        });
+      },
+      ...options,
+    });
+  })
+};
+
 // TODO 上传图片
-export const uploadImage = (data) => {
-  let {options = {}, localId = '', biReferenceId = ''} = data;
+export const uploadImage = ({options = {}, localId = '', biReferenceId = ''}) => {
   return new Promise((resolve, reject) => {
     wx.uploadImage({
       localId, // 需要上传的图片的本地ID，由chooseImage接口获得
       isShowProgressTips: 0, // 默认为1，显示进度提示
       success: (res) => {
-        console.log(res)
         let {serverId = ''} = res; // 返回图片的服务器端ID
         let params = {
           mediaId: serverId,
@@ -75,13 +99,17 @@ export const uploadImage = (data) => {
           params.biReferenceId = biReferenceId;
         }
         mediaUpload(params).then(res => {
-          resolve(res);
+          let {success = false, message = '上传失败', data} = res;
+          resolve(data);
         }).catch(e => {
           reject();
         })
       },
       fail: () => {
-        reject();
+        reject({
+          success: false,
+          message: '上传失败'
+        });
       },
       ...options,
     });
