@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!--<div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div>-->
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
                   v-model="biProcessStatus" :hasBorder="false"></r-picker>
@@ -41,7 +41,7 @@
                                @sel-work="selWork"></pop-work-start-list>
         </div>
         <div class="warehouse materiel_list" v-show="workInfo.whInCode">
-          <div class="title required">仓库</div>
+          <div class="title required">在制仓库</div>
           <div class="mode">
             <span class="mode-item">{{workInfo.wareName}}</span>
             <span class="mode-item">{{workInfo.whInCode}}</span>
@@ -69,6 +69,7 @@
               <div class="number-part">
                 <span class="main-number">数量: {{bom.tdQty || 0}}{{bom.measureUnit}}</span>
                 <span class="number-unit">bom数量: {{bom.qty}}</span>
+                <span class="number-unit">损耗率: {{bom.specificLoss}}</span>
               </div>
             </template>
           </bom-list>
@@ -153,7 +154,7 @@
         this.workInfo = val;
         getBomWorkStart(this.workInfo.inventoryCode).then(({tableContent = []}) => {
           tableContent.forEach(item => {
-            item.tdQty = toFixed(accMul(item.qty, val.tdQty), 3);
+            item.tdQty = toFixed(accMul(item.qty, val.tdQty, (1 + item.specificLoss)), 2);
           });
           this.bomList = tableContent;
         })
@@ -208,13 +209,15 @@
 
         this.bomList.forEach(item => {
           outPutDataSet.push({
-            inventoryName_outPutMatCode: item.inventoryName,
             outPutMatCode: item.inventoryCode,
+            inventoryName_outPutMatCode: item.inventoryName,
+            processProCode: item.parentInvCode,
             tdProcessing: item.processing,
             specification_outPutMatCode: item.specification,
             measureUnit_outPutMatCode: item.measureUnit,
             bomType: item.bomType,
             bomQty: item.qty,
+            bomSpecificLoss: item.specificLoss,
             tdQty: item.tdQty,
           })
         });
@@ -226,7 +229,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf; // 默认有工作流
             let wfPara = {
-              [this.processCode]: {businessKey: "PGRW", createdBy: ""}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             }
             if (this.isResubmit) {
               wfPara = {
@@ -291,7 +294,7 @@
           // 获取合计
           let {order,outPut} = formData,
               {dataSet = []} = order;
-          let boms = outPut.dataSet; 
+          let boms = outPut.dataSet;
           this.workInfo = {
             ...dataSet[0],
             inventoryCode: dataSet[0].transObjCode,
@@ -311,7 +314,7 @@
             facilityName: dataSet[0].facilityName_facilityObjCode,
             facilityCode: dataSet[0].facilityObjCode,
             facilityType: dataSet[0].facilityTypebase_facilityObjCode,
-          }        
+          }
           boms.forEach(bom => {
             bom.inventoryCode = bom.outPutMatCode;
             bom.inventoryName =bom.inventoryName_outPutMatCode;
@@ -321,6 +324,7 @@
             bom.qty = bom.bomQty;
             bom.qtyBal = bom.thenQtyStock;
             bom.specification = bom.specification_outPutMatCode || '无';
+            bom.specificLoss = bom.bomSpecificLoss || 0;
           })
           this.bomList = boms;
           // 仓库

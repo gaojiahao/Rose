@@ -3,7 +3,7 @@
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
         <!-- <div class="scan" @click="scanQRCode">扫一扫 {{scanResult}}</div> -->
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态"
                   v-model="biProcessStatus" :hasBorder="false"></r-picker>
@@ -14,6 +14,7 @@
             <cell isLink title='工单启动号' v-model="workInfo.transCode || '请选择'"
                   @click.native="showWorkPop = !showWorkPop"></cell>
             <cell title='工单派工号' v-model="workInfo.orderCode" :disabled="!workInfo.orderCode"></cell>
+            <cell title='加工订单号' v-model="workInfo.processCode" :disabled="!workInfo.orderCode"></cell>
             <cell title='工序名称' v-model="workInfo.procedureName" :disabled="!workInfo.procedureName"></cell>
             <cell title='可验收余额' v-model="workInfo.qtyBal" :disabled="!workInfo.qtyBal"></cell>
             <x-input title="本次验收" type="number" v-model.number="workInfo.tdQty" :disabled='!workInfo.qtyBal'
@@ -21,25 +22,23 @@
                      :placeholder="workInfo.qtyBal ? '请填写':''" @on-focus="getFocus($event)"
                      @on-blur="checkAmt(workInfo)">
               <template slot="label">
-                <span class='required'>本次验收
-                </span>
+                <span class='required'>本次验收</span>
               </template>
             </x-input>
-            <cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>
+            <!--<cell title="后置工序" v-model="workInfo.rearProcedureName" :disabled="!workInfo.rearProcedureName"></cell>-->
             <cell title="工艺路线编码" v-model="workInfo.proFlowCode" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="工艺路线名称" v-model="workInfo.technicsName" :disabled="!workInfo.rearProcedureName"></cell>
             <cell title="物料名称" v-model="workInfo.inventoryName" :disabled="!workInfo.inventoryName">
               <template slot="title">
-                <span class='required'>物料名称
-                </span>
+                <span class='required'>物料名称</span>
               </template>
             </cell>
             <cell title="物料编码" v-model="workInfo.matCode" :disabled="!workInfo.matCode">
               <template slot="title">
-                <span class='required'>物料编码
-                </span>
+                <span class='required'>物料编码</span>
               </template>
             </cell>
+            <cell title="加工属性" v-model="workInfo.processing || '无'" :disabled="!workInfo.processing"></cell>
             <cell title="制造费用" v-model="workInfo.skinFee" :disabled="!workInfo.skinFee"></cell>
             <cell title="工价" v-model="workInfo.wages" :disabled="!workInfo.wages"></cell>
           </group>
@@ -61,6 +60,7 @@
               <div class="number-part">
                 <span class="main-number">数量: {{bom.tdQty}}{{bom.measureUnit}}</span>
                 <span class="number-unit">bom数量: {{bom.qty}}</span>
+                <span class="number-unit">损耗率: {{bom.specificLoss}}</span>
               </div>
             </template>
           </bom-list>
@@ -177,7 +177,6 @@
         }
         let checkData = [
           {key: 'tdQty', msg: '请填写验收数量'},
-          {key: 'dealerDebit', msg: '请选择验收者'}
         ]
         if (!warn) {
           checkData.every(item => {
@@ -188,10 +187,16 @@
             return true;
           })
         }
+        if (!warn && !this.defaultManager.dealerCode) {
+          warn = '请选择验收者'
+        }
+        if (!warn && !this.warehouse.warehouseCode) {
+          warn = '请选择入库仓库'
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn
-          })
+          });
           return
         }
         let workInfo = this.workInfo;
@@ -204,7 +209,7 @@
           thenQtyBal: workInfo.qtyBal, // 可验收余额
           tdQty: workInfo.tdQty, // 本次验收
           rearProPointCode: workInfo.rearProPointCode || '', // 后置工序编码
-          dealerDebit: workInfo.dealerDebit, // 验收人
+          dealerDebit: this.defaultManager.dealerCode, // 验收人
           proFlowCode: workInfo.proFlowCode || '',
           transObjCode: workInfo.matCode, // 物料编码
           tdProcessing: workInfo.processing,// 加工属性
@@ -228,6 +233,7 @@
             containerCodeOut: item.whCode,
             bomType: item.bomType,
             bomQty: item.qty,
+            bomSpecificLoss: item.specificLoss,
             tdQty: item.tdQty,
           })
         });
@@ -239,7 +245,12 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf; // 默认有工作流
             let wfPara = {
-              [this.processCode]: {businessKey: "WTAC", createdBy: ""}
+              [this.processCode]: {
+                businessKey: this.businessKey,
+                createdBy: "",
+                acceptor: workInfo.dealerDebit,
+                inWarehouseName: this.warehouse.warehouseName,
+              }
             }
             if (this.isResubmit) {
               wfPara = {
@@ -248,7 +259,7 @@
                 transCode: this.transCode,
                 result: 3,
                 taskId: this.taskId,
-                comment: ""
+                comment: this.formData.biComment,
               }
             }
             let submitData = {
@@ -305,7 +316,7 @@
           // 获取合计
           let {order,outPut} = formData,
               {dataSet = []} = order;
-          let boms = outPut.dataSet; 
+          let boms = outPut.dataSet;
           this.workInfo = {
             ...dataSet[0],
             matCode: dataSet[0].transObjCode,
@@ -331,7 +342,7 @@
             facilityName: dataSet[0].facilityName_facilityObjCode,
             facilityCode: dataSet[0].facilityObjCode,
             facilityType: dataSet[0].facilityTypebase_facilityObjCode,
-          }        
+          }
           boms.forEach(bom => {
             bom.inventoryCode = bom.outPutMatCode;
             bom.inventoryName =bom.inventoryName_outPutMatCode;
@@ -341,6 +352,7 @@
             bom.qty = bom.bomQty;
             bom.whCode = bom.containerCodeOut,
             bom.specification = bom.specification_outPutMatCode || '无';
+            bom.specificLoss = bom.bomSpecificLoss || 0;
           })
           this.bomList = boms;
           // 仓库
@@ -406,7 +418,7 @@
         this.bomList = this.bomList.map(item => {
           return {
             ...item,
-            tdQty: toFixed(accMul(item.qty, tdQty), 3)
+            tdQty: toFixed(accMul(item.qty, tdQty, (1 + item.specificLoss)), 2)
           }
         });
       },
