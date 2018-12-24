@@ -23,6 +23,21 @@
     margin-right: .04rem;
   }
 }
+.mater_material {
+  color: #454545;
+  font-size: .12rem;
+  .unit {
+    margin-right: .04rem;
+  }
+}
+.mater_num {
+  color: #111;
+  font-size: .12rem;
+  font-weight: bold;
+  span + span {
+    margin-left: .04rem;
+  }
+}
 .childPage {
   .content {
     height: 90%;

@@ -12,15 +12,18 @@
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
                @click.stop="selThis(item,index)">
-            <div class="order-code">{{item.transCode}}</div>
+            <div class="order-code">
+              <slot name='titleName'>
+                <span class="order-title">交易号</span>
+              </slot>
+              <span class="order-num">{{item.transCode}}</span>
+            </div>
             <div class="order-matter">
               <div class="mater_img">
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
               <div class="mater_main ">
-                <!-- 物料名称 -->
                 <div class="mater_name">
-                  <span class="whiNum">No.{{index + 1}}</span>
                   {{item.inventoryName}}
                 </div>
                 <!-- 物料基本信息 -->
@@ -44,18 +47,20 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
-                    <!-- 物料分类 -->
-                    <div class="mater_classify">
-                      <span class="type">属性: {{item.processing}}</span>
-                      <span class="father">大类: {{item.inventoryType}}</span>
-                      <span class="child">子类: {{item.inventorySubclass}}</span>
-                    </div>
-                    <!-- 物料材质等 -->
-                    <div class="mater_material">
-                      <span class="unit">单位: {{item.measureUnit}}</span>
-                      <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
-                      <span class="spec">材质: {{item.material || '无'}}</span>
-                    </div>
+                    <slot name="basicInfo" :item="item">
+                      <!-- 物料分类 -->
+                      <div class="mater_classify">
+                        <span class="type">属性: {{item.processing}}</span>
+                        <span class="father">大类: {{item.inventoryType}}</span>
+                        <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                      </div>
+                      <!-- 物料材质等 -->
+                      <div class="mater_material">
+                        <span class="unit">单位: {{item.measureUnit}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
+                      </div>
+                    </slot>
                     <slot name="materInfo" :item="item">
                       <!--默认展示的字段-->
                       <div class="mater_material">
@@ -439,7 +444,20 @@
             box-shadow: 0 0 8px #e8e8e8;
           }
           .order-code {
-            font-size: .14rem;
+            display: flex;
+            color: #fff;
+            font-size: .12rem;
+            span {
+              display: inline-block;
+              padding: 0 .04rem;
+            }
+            .order-title {
+              background: #455d7a;
+            }
+            .order-num {
+              background: #c93d1b;
+              border-top-right-radius: .08rem;
+            }
           }
           .order-matter {
             display: flex;
@@ -447,12 +465,13 @@
           }
           // 物料图片
           .mater_img {
-            display: inline-block;
             width: .75rem;
             height: .75rem;
+            display: inline-block;
             img {
               width: 100%;
               max-height: 100%;
+              border-radius: .04rem;
             }
           }
           // 物料主体
@@ -503,6 +522,8 @@
                   .title {
                     color: #fff;
                     background: #3f72af;
+                    border-top-left-radius: .04rem;
+                    border-bottom-left-radius: .04rem;
                   }
                   .num {
                     color: #111;
@@ -512,6 +533,8 @@
                     background: #dbe2ef;
                     box-sizing: border-box;
                     text-overflow: ellipsis;
+                    border-top-right-radius: .04rem;
+                    border-bottom-right-radius: .04rem;
                   }
                 }
                 // 规格

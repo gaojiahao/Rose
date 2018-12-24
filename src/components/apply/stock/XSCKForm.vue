@@ -98,16 +98,39 @@
           <!-- 物料popup -->
           <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
                           :default-value="orderList" ref="order">
+            <template slot="basicInfo" slot-scope="{item}">
+              <div class="mater_classify">
+                <div>
+                  <span class="type">属性: {{item.processing}}</span>
+                  <span class="type">大类: {{item.inventoryType}}</span>
+                  <span class="type">子类: {{item.inventorySubclass || '无'}}</span>
+                </div>
+                <div>
+                  <span class="type">单位: {{item.measureUnit}}</span>
+                  <span class="type">颜色: {{item.inventoryColor || '无'}}</span>
+                  <span class="type">材质: {{item.material || '无'}}</span>
+                </div>
+                <div>
+                  <span class="type">主计倍数: {{item.invSubUnitMulti}}</span>
+                  <span class="type">辅助计量: {{item.invSubUnitName}}</span>
+                  <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
+                </div>
+              </div>
+            </template>
             <template slot="materInfo" slot-scope="{item}">
               <div class="mater_material">
                 <div>
-                  <span>保质期天数: {{item.keepingDays}}</span>
-                  <span>临保天数: {{item.nearKeepingDays}}</span>
-                  <span>安全库存: {{item.safeStock}}</span>
-                  <span>物料状态: {{item.inventoryStatus}}</span>
+                  <span class="unit">保质期天数: {{item.keepingDays}}</span>
+                  <span class="unit">临保天数: {{item.nearKeepingDays}}</span>
+                  <span class="unit">安全库存: {{item.safeStock}}</span>
                 </div>
                 <div>
-                  <span>预交货日期: {{item.promDeliTime}}</span>
+                  <span class="unit">待交付数量: {{item.qtyBal}}</span>
+                  <span class="unit">订单数量: {{item.qty}}</span>
+                  <span class="unit">已出库数量: {{item.stockQty}}</span>
+                </div>
+                <div>
+                  <span class="unit">预交货日期: {{item.promDeliTime}}</span>
                 </div>
               </div>
               <div class="mater_num">

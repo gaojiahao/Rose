@@ -94,22 +94,23 @@
     }
     .r-number-handle {
       display: inline-block;
-      width: 0.2rem;
-      height: 0.2rem;
+      width: .2rem;
+      height: .2rem;
       text-align: center;
-      line-height: 0.2rem;
+      line-height: .2rem;
       font-size: .18rem;
     }
     .disabled {
       color: #eee;
     }
     .num {
-      width: 0.4rem;
-      height: 0.2rem;
-      background: #e8e8e8;
+      width: .6rem;
+      height: .2rem;
+      padding: 0 .04rem;
+      font-size: .12rem;
       text-align: center;
-      line-height: 0.2rem;
-      font-size: 0.12rem;
+      line-height: .2rem;
+      background: #e8e8e8;
       border-radius: 0 !important;
     }
   }
