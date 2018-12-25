@@ -20,8 +20,11 @@
               <ul class="r-dropdown-list" v-show="showDrop">
                 <li class="r-dropdown-item" :class="{'vux-1px-b': index !== entityList.length - 1 }" :key="index" v-for="(item, index) in entityList"
                     @click.stop="dropItemClick(item)" >
-                  <div class="item_name" :class="{'active is-being-sel' : selItem.groupName === item.groupName}">{{item.groupName}}</div>
-                  <div class="tips_part" v-if="selItem.groupName === item.groupName">
+                  <div class="each_item" :class="{'active is-being-sel' : selItem.groupCode === item.groupCode}">
+                    <p class="full_name">{{item.groupName}}</p>
+                    <p class="shor_name">简称: {{item.groupShortName}}</p>
+                  </div>
+                  <div class="tips_part" v-if="selItem.groupCode === item.groupCode">
                     <span class="tips_word">当前选中</span>
                   </div>
                 </li>
@@ -103,7 +106,7 @@ export default {
     },
     //获取当前用户信息
     getCurrentUser(){
-      return homeService.currentUser().then( data =>{
+      return homeService.currentUser().then(data =>{
         this.userInfo = {
           photo: data.photo,                      // 头像
           mobile: data.mobile,                    // 手机号
@@ -112,10 +115,10 @@ export default {
           entityName: data.entityName && data.entityName.slice(0, 4) || '' // 当前组织
         }
         // 获取 公司主体列表
-        data.sysGroupList && data.sysGroupList.forEach(item=>{
+        data.sysGroupList && data.sysGroupList.forEach(item => {
           if(item.groupType === 'C'){
             this.entityList.push(item);
-            if(item.groupName === data.entityName){
+            if(item.groupCode === data.entityId){
               this.selItem = item;
             }
           }
@@ -124,11 +127,12 @@ export default {
     },
     // TODO 选择单条记录
     dropItemClick(item) {
+      if(this.selItem.groupCode === item.groupCode) return;
       this.selItem = {...item};
       this.userInfo.entityName = item.groupName.slice(0, 4);
       this.showDrop = false;
       this.$loading.show();
-      homeService.changeEntity({entityId : item.groupCode}).then((data)=>{
+      homeService.changeEntity({entityId : item.groupCode}).then((data) => {
         let tokenInfo = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
         if(tokenInfo){
           tokenInfo = JSON.parse(tokenInfo);
@@ -438,18 +442,24 @@ export default {
   width:100%;
   display: flex;
   position: relative;
-  align-items: center;
+  align-items: baseline;
   padding: .12rem .1rem;
   box-sizing: border-box;
   justify-content: space-between;
-  .item_name {
+  .each_item {
     width: 100%;
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     &.is-being-sel {
       width: 75%;
+    }    
+    .full_name {
+      width: 100%;
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .shor_name {
+      font-size: .1rem;
     }
   }
   .tips_part {
