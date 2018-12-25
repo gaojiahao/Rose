@@ -16,10 +16,7 @@
                          noCount noPrice :isDealer="false"></mater-list-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t" v-if="action.add">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
-    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams"
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>    <pop-task-work-list :show="popShow" v-model="popShow" @sel-task="selTask" :params="requestParams"
                         :work-type="'启动'" ref="taskWork"></pop-task-work-list>
   </div>
 </template>

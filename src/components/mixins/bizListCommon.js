@@ -9,6 +9,7 @@ import RScroll from 'components/RScroll'
 import searchIcon from 'components/search'
 import RSort from 'components/list/commonPart/RSort'
 import RTab from 'components/list/commonPart/RTab'
+import addBtn from 'components/list/commonPart/addBtn'    // 不包含物料的列表组件
 import justWordItem from 'components/list/commonPart/justWordItem'    // 不包含物料的列表组件
 import materListItem from 'components/list/commonPart/materListItem'  // 包含物料的列表组件
 // 第三方插件引入
@@ -74,7 +75,7 @@ export default {
   components: {
     Tab, Icon, TabItem,
     RSort, RTab, RScroll, searchIcon,
-    justWordItem, materListItem
+    addBtn, justWordItem, materListItem
   },
   methods: {
     goDetail (item, index) {

@@ -53,18 +53,12 @@
         </div>
       </r-scroll>
     </div>
-    <div class="vux-1px-t btn" v-if="action.add">
-      <div class="cfm_btn" @click="goEdit"> 
-        <span class="icon-add"></span>
-        <span>新增</span>
-      </div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>
   </div>
 </template>
 
 <script>
   import listCommon from 'pageMixins/bizListCommon'
-
   export default {
     data() {
       return {

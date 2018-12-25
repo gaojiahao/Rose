@@ -25,9 +25,8 @@
         </just-word-item>
       </r-scroll>
     </div>
-    <div class=" vux-1px-t btn " v-if="action.add">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>  
+  </div>
   </div>
 </template>
 

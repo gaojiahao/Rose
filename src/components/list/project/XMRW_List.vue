@@ -16,9 +16,7 @@
                         noCount @click.native="goDetail(item, index)"></just-word-item>
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t" v-if="action.add">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
 </template>
 

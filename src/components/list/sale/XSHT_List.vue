@@ -19,9 +19,7 @@
 
       </r-scroll>
     </div>
-    <div class="btn vux-1px-t" v-if="!chartShow && action.add">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
 </template>
 
