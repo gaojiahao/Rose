@@ -34,3 +34,18 @@
   background: url('/src/assets/iconfont/check.png');
   background-size: cover;
 }
+
+.icon-code {
+  background: url('~assets/iconfont/code.png');
+  background-size: cover;
+}
+
+.icon-handler {
+  background: url('~assets/iconfont/handler.png');
+  background-size: cover;
+}
+
+.icon-mod-time {
+  background: url('~assets/iconfont/mod_time.png');
+  background-size: cover;
+}

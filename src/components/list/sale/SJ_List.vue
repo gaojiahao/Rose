@@ -6,14 +6,54 @@
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
-          <r-tab @on-click="onTabClick"></r-tab>
+          <!--<r-tab @on-click="onTabClick"></r-tab>-->
         </div>
       </div>
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
-                        conut-title="预期销售额" @click.native="goDetail(item, index)"></just-word-item>
+        <div class="instance-item-wrapper" v-for="(item, index) in listData" :key="index">
+          <div class="instance-header">
+            <span class="instance-header-left">
+              <i class="icon-code"></i>
+              <span class="instance_code">{{item.transCode}}</span>
+            </span>
+            <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
+          </div>
+          <div class="instance-top">
+            <span class="instance_dealer">{{item.dealerName}}</span>
+            <span class="instance_process_status">{{item.biProcessStatus || '无'}}</span>
+          </div>
+          <div class="instance-amt-wrapper">
+            <div class="instance_amt_title">预期销售额</div>
+            <div class="instance_amt">{{item.tdAmount | numberComma}}</div>
+            <div class="instance_amt_info">
+              <span>销售人员: {{item.salesPerson}}</span>
+              <span>有效期至: {{item.validUntil | dateFormat('YYYY-MM-DD')}}</span>
+            </div>
+          </div>
+          <div class="instance-item vux-1px-b">
+            <span class="instance_item_title">标题内容</span>
+            <span class="instance_item_value">{{item.opportunityTitle}}</span>
+          </div>
+          <div class="instance-item vux-1px-b">
+            <span class="instance_item_title">分类标签</span>
+            <span class="instance_item_value">{{item.categoryLabels}}</span>
+          </div>
+          <div class="instance-bottom">
+            <div class="instance_bottom_item instance_handler">
+              <i class="icon icon-handler"></i>
+              <span>经办人: {{item.handlerName}}</span>
+            </div>
+            <div class="instance_bottom_item instance_mod_time">
+              <i class="icon icon-mod-time"></i>
+              <span>修改时间: {{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
+                        conut-title="预期销售额" @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
     <div class=" vux-1px-t btn" v-if="action.add">
@@ -24,7 +64,7 @@
 
 <script>
   import listCommon from 'pageMixins/bizListCommon'
-  import {getList} from 'service/listService.js'
+
   export default {
     data() {
       return {
@@ -33,8 +73,8 @@
           {name: '已生效', status: '已生效'},
           {name: '进行中', status: '进行中'}
         ],
-        listViewID :2244,
-        biStatus:'',
+        listViewID: 2244,
+        biStatus: '',
         filterList: [ // 过滤列表
           {
             name: '交易号',
@@ -42,7 +82,7 @@
           }, {
             name: '经办人',
             value: 'handlerName',
-          }, 
+          },
           {
             name: '客户名称',
             value: 'dealerName_dealerDebit',
@@ -51,71 +91,133 @@
       }
     },
     mixins: [listCommon],
-    methods:{
-      //获取销售订单数据
-      // getList(noReset = false) {
-      //   let filter = [];
-      //   if(this.activeTab){
-      //     filter = [{operator: "in", value: this.activeTab, property: "biStatus"}];
-      //   }
-      //   if(this.serachVal){
-      //     filter = [
-      //       ...filter,
-      //       {
-      //         operator: "like",
-      //         value: this.serachVal,
-      //         property: this.filterProperty,
-      //       },
-      //     ];
-      //     if(this.activeTab){
-      //       filter[0].attendedOperation = "and";
-      //     }
-      //   }
-      //   return getList(this.listViewID,{
-      //     limit: this.limit,
-      //     page: this.page,
-      //     start : (this.page - 1) * this.limit,
-      //     filter: JSON.stringify(filter),
-      //     sort: JSON.stringify(this.sort)
-      //   }).then(({dataCount = 0, tableContent = []}) => {
-      //     this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-      //     tableContent.forEach(item => {
-      //       this.setStatus(item);
-      //     });
-      //     this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
-      //     if (!noReset) {
-      //       this.$nextTick(() => {
-      //         this.resetScroll();
-      //       })
-      //     }
-      //     //判断最近有无新增数据
-      //     //console.log(this.dataCount);
-      //     let text = '';
-      //     if(noReset && this.activeIndex ===0){
-      //       if(this.total){
-      //         text = dataCount - this.total === 0 ? '暂无新数据' : text = `新增${dataCount-this.total}条数据`;
-      //         this.$vux.toast.show({
-      //           text: text,
-      //           position:'top',
-      //           width:'50%',
-      //           type:"text",
-      //           time : 700
-      //         })
-      //       }
-      //     }
-      //     //列表总数据缓存
-      //     if(this.activeIndex == 0 && this.page ===1){
-      //       sessionStorage.setItem(this.applyCode,dataCount);
-      //     }
-      //     this.$loading.hide();
-      //   }).catch(e => {
-      //     this.resetScroll();
-      //   })
-      // },
-    }
+    methods: {}
   }
 </script>
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
+  .instance-item-wrapper {
+    margin: .1rem .1rem 0;
+    padding: .1rem;
+    width: calc(100% - .2rem);
+    background: #fff;
+    border-radius: 4px;
+    color: #333;
+    box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.5);
+    box-sizing: border-box;
+    .instance-header {
+      display: flex;
+      justify-content: space-between;
+      .instance-header-left {
+        display: flex;
+        align-items: center;
+      }
+      .icon-code {
+        display: inline-block;
+        width: .14rem;
+        height: .14rem;
+      }
+      .instance_code {
+        margin-left: .05rem;
+        line-height: .12rem;
+        font-size: .14rem;
+      }
+      .instance_status {
+        font-size: .12rem;
+        line-height: .12rem;
+      }
+    }
+    .duty_done_c {
+      color: #3296FA;
+    }
+    .duty_doing_c {
+      color: #333;
+    }
+    .duty_fall_c {
+      color: #999;
+    }
+
+    .instance-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: .1rem;
+      .instance_dealer {
+        line-height: .12rem;
+        color: #696969;
+        font-size: .12rem;
+      }
+      .instance_process_status {
+        padding: .04rem .06rem;
+        line-height: .12rem;
+        border-radius: 10px;
+        background-color: #fff4e6;
+        color: #fb880b;
+        font-size: .12rem;
+      }
+    }
+    .instance-amt-wrapper {
+      margin-top: .15rem;
+      padding: .15rem .2rem;
+      width: 100%;
+      /*height: 1.2rem;*/
+      background: url(~assets/bg/bg-amt.png);
+      color: #fff;
+      background-size: 100% 100%;
+      box-sizing: border-box;
+      .instance_amt_title {
+        line-height: .12rem;
+        font-size: .12rem;
+      }
+      .instance_amt {
+        margin-top: .1rem;
+        line-height: .36rem;
+        font-size: .36rem;
+        font-weight: bold;
+      }
+      .instance_amt_info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: .15rem;
+        line-height: .14rem;
+        font-size: .12rem;
+      }
+    }
+    .instance-item {
+      display: flex;
+      padding: .15rem 0;
+      .instance_item_title {
+        margin-right: .15rem;
+        color: #666;
+        line-height: .14rem;
+        font-size: .14rem;
+      }
+      .instance_item_value {
+        line-height: .14rem;
+        font-size: .14rem;
+        font-weight: 600;
+      }
+    }
+    .instance-bottom {
+      display: flex;
+      align-items: center;
+      line-height: .14rem;
+      font-size: .12rem;
+      .instance_bottom_item {
+        display: flex;
+        align-items: center;
+        margin-top: .15rem;
+      }
+      .instance_handler {
+        margin-right: .3rem;
+      }
+      .icon {
+        display: inline-block;
+        margin-right: .05rem;
+        width: .16rem;
+        height: .16rem;
+      }
+    }
+  }
 </style>
