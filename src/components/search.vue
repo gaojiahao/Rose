@@ -2,14 +2,14 @@
   <div class='search'>
     <form class="search_part" :class="{'has-filter': filterList.length}" action=""
           @submit.prevent="searchMat(srhInpTx)">
-      <div class="icon-search serach_icon"></div>
+      <i class="icon-search serach_icon"></i>
       <input class="srh_inp" type="search" autocomplete="off" @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
       <div class="pop_cfm" v-if='isFill'
            :class='{ pop_cancel : !srhInpTx.length }'
            @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}
       </div>
       <div class="pop_cfm" v-else @click="searchMat(srhInpTx)">搜索</div>
-      <div class="icon-clear clear_icon" v-if="srhInpTx" @click="clear"></div>
+      <i class="icon-clear clear_icon" v-if="srhInpTx" @click="clear"></i>
     </form>
     <div class="search_filter" v-show="isShowDrop">
       <r-dropdown :list="filterList" @on-selected="popSelected" v-if="filterList.length"></r-dropdown>
@@ -93,8 +93,6 @@
       clearVal(){
         this.srhInpTx = ''
       }
-    },
-    created() {
     }
   };
 </script>
@@ -103,10 +101,9 @@
   .search_part {
     width: 100%;
     display: flex;
-    height: 0.34rem;
-    // padding: 0 0.08rem;
-    line-height: 0.34rem;
+    height: .34rem;
     position: relative;
+    line-height: .34rem;
     box-sizing: border-box;
     &.has-filter {
       .srh_inp {
@@ -115,19 +112,16 @@
     }
     // 搜索输入框
     .srh_inp {
-      /*flex: 5;*/
-      width: 3.06rem;
-      height: .34rem;
-      margin-left: 0.15rem;
-      outline: none;
       border: none;
+      outline: none;
       color: #333;
-      font-size: 0.14rem;
-      background: #F6F6F6;
-      line-height: .34rem;
-      border-radius: .2rem;
-      -webkit-appearance: none;
+      width: 3.06rem;
       appearance: none;
+      font-size: .14rem;
+      margin-left: .15rem;
+      border-radius: .2rem;
+      background: #F6F6F6;
+      -webkit-appearance: none;
       &::-webkit-search-cancel-button {
         display: none;
       }
@@ -144,41 +138,41 @@
     }
     // 搜索icon
     .serach_icon {
-      position: absolute;
-      left: .25rem;
       top: 50%;
       z-index: 1;
+      left: .25rem;
+      width: .14rem;
+      height: .16rem;
       fill: #2d2d2d;
+      position: absolute;
       transform: translate(0, -50%);
-      width: 0.14rem;
-      height: 0.16rem;
     }
     // 清除icon
     .clear_icon {
       top: 50%;
+      z-index: 100;
       right: .64rem;
       width: .18rem;
       height: .18rem;
-      z-index: 100;
       display: block;
-      font-size: 0.12rem;
-      line-height: 0.3rem;
+      font-size: .12rem;
+      line-height: .3rem;
       text-align: center;
       position: absolute;
       transform: translate(0, -50%);
     }
   }
   .search_filter {
-    top: .49rem;
-    width: 100%;
     left: 0;
     bottom: 0;
-    position: absolute;
+    top: .49rem;
+    width: 100%;
     z-index: 100;
     font-size: .14rem;
+    position: absolute;
     .layer {
       background: #000;
-      opacity: 0.5;
+      opacity: .5;
       height: calc(100% - 1.46rem);
     }
   }
