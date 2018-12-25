@@ -566,6 +566,9 @@
             county: order.county_dealerCodeCredit, // 地区
             address: order.address_dealerCodeCredit, // 详细地址
           };
+          this.facilityParams = {
+            dealerCode: order.dealerCodeCredit
+          }
           this.contactInfo = {
             dealerName: formData.dealerCreditContactPersonName,
             dealerMobilePhone: formData.dealerCreditContactInformation,

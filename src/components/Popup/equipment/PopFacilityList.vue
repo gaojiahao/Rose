@@ -40,13 +40,12 @@
             <div class="withoutColor">
               <!-- 物料分类 -->
               <div class="mater_classify">
+                <span class="father">大类: {{item.facilityBigType || '无'}}</span>
+                <span class="father">子类: {{item.facilitySubclass || '无'}}</span>
                 <span class="father">类型: {{item.facilityType || '无'}}</span>
                 <span>单位: {{item.facilityUnit}}</span>
               </div>
               <div class="mater_classify">
-                <span class="father">大类: {{item.facilityBigType || '无'}}</span>
-                <span class="father">子类: {{item.facilitySubclass || '无'}}</span>
-                <span class="father">设施厂商: {{item.facilityManufacturer || '无'}}</span>
                 <span class="father">折旧摊销月数: {{item.facilityDepreciation || 0}}</span>
                 <span>预留残值比例: {{item.facilityResidualRatio || '无'}}</span>
               </div>

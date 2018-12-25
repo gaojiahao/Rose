@@ -1,36 +1,52 @@
 <template>
   <div class="comment-item" :class="{'visited': item.visited}">
-    <!-- 图片 和 应用名称 -->
-    <div class="top-info-part">
-      <div class="header-part">
-        <div class="avatar-part">
-          <img class="avatar" :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg">
-        </div>
-        <div class="main-container">
-          <span class="creator_name">{{item.creatorName}}</span>
-          <span class="time">{{item.crtTime}}</span>
-        </div>
-      </div>
+    <div class="comment-left">
+      <!-- 头像 -->
+      <img :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg" class="avatar">
+    </div>
+    <div class="comment-right" :class="{'vux-1px-b': !noBorder}">
+      <!-- 评论/点赞者名称 -->
+      <div class="creator-name">{{item.creatorName}}</div>
+      <!-- 时间 -->
+      <div class="time">{{item.crtTime | filterTime}}</div>
+      <!-- 评论/点赞内容 -->
       <div class="comment-container">
         <div class="comment" v-html="handleComment()"></div>
-        <div class="comment-image" v-if="item.attachment">
+        <!-- 附件 -->
+        <div class="comment-attachments" v-if="item.attachment">
           <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
-              @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
+               @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
           <div class="each_file" v-for="(file, index) in item.attachment" :key="index" v-if="!file.isImg"
-          @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}</div>
-        </div> 
-      </div>
-    </div>
-    <div class="belong-container" :class="{'has-reply': item.reply}">
-      <div class="reply-part" v-if="item.reply" v-html="handleComment('reply')">
-      </div>
-      <div class="belong-part">
-        <div class="app_img">
-          <img class="app_img" :src='item.pic' alt="appImg" @error="getDefaultIcon(item)">
+               @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}
+          </div>
         </div>
-        <div class="other_info">
-          <p class="app_name">{{item.listName}}</p>
-          <p class="app_status_info">{{item.other}}</p>
+      </div>
+      <!-- 实例创建者信息 -->
+      <div class="belong-container" :class="{'has-reply': item.reply}">
+        <div class="reply-part" v-if="item.reply" v-html="handleComment('reply')"></div>
+        <div class="belong-part">
+          <div class="app_img">
+            <img class="app_img" :src='item.pic' alt="appImg" @error="getDefaultIcon(item)">
+          </div>
+          <div class="other_info">
+            <p class="app-name">{{item.listName}}</p>
+            <p class="app_status_info">{{item.other}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="praise-count-container" v-if="item.type === 'praise' && item.praiseUserList">
+        <div class="praise-left">
+          <!--<img class="avatar" :src="praiser.photo" @error="getDefaultImg"
+               v-for="(praiser, index) in item.praiseUserList" v-if="index < 4">-->
+          <r-popover v-for="(praiser, index) in item.praiseUserList" :key="index" @click.native.stop=""
+                     v-if="index < 4">
+            <img class="avatar" :src="praiser.photo" @error="getDefaultImg">
+            <div class="praise-user" slot="content">{{praiser.nickname}}</div>
+          </r-popover>
+        </div>
+        <div class="praise-right">
+          <span>共{{item.praiseUserList.length}}人点赞这个动态</span>
+          <!--<x-icon type="ios-arrow-right" size="12"></x-icon>-->
         </div>
       </div>
     </div>
@@ -40,8 +56,7 @@
 <script>
   import emotion from '@/home/pages/maps/emotion'
   import {dateFormat} from 'vux'
-  import Vue from 'vue'
-import { decode } from 'punycode';
+  import RPopover from 'components/comment/RPopover'
 
   export default {
     name: "CommentItem",
@@ -52,6 +67,19 @@ import { decode } from 'punycode';
           return {}
         }
       },
+      // 是否展示底部边框
+      noBorder: {
+        type: Boolean,
+        default: false
+      },
+    },
+    components: {
+      RPopover,
+    },
+    data() {
+      return {
+        attachmentImgs: [], // 预览图片数组
+      }
     },
     methods: {
       // 获取应用icon
@@ -66,12 +94,16 @@ import { decode } from 'punycode';
       getDefaultImg(e) {
         e.target.src = require('assets/ava01.png');
       },
+      // TODO 获取预览图片链接
+      getImgUrl(item) {
+        return `${location.origin}${item.attachment}`
+      },
       // 放大图片
       scaleImg(img) {
-        let imgUrl = `${location.origin}${img.attachment}`;
+        let imgUrl = this.getImgUrl(img);
         wx.previewImage({
           current: imgUrl, // 当前显示图片的http链接
-          urls: [imgUrl] // 需要预览的图片http链接列表
+          urls: this.attachmentImgs // 需要预览的图片http链接列表
         });
       },
       // 校验图片后缀名
@@ -79,20 +111,23 @@ import { decode } from 'punycode';
         let suffixList = [
           'jpg', 'jpeg', 'png', 'gif', 'bmp',
           'tif', 'pcx', 'tga', 'exif',
-          'fpx','svg','psd','cdr', 
-          'pcd','dxf','ufo','eps', 
-          'ai','raw','WMF','webp'
-        ]
-        if(this.item.attachment) {
-          for(let val of this.item.attachment) {
+          'fpx', 'svg', 'psd', 'cdr',
+          'pcd', 'dxf', 'ufo', 'eps',
+          'ai', 'raw', 'WMF', 'webp'
+        ];
+        let attachmentImgs = [];
+        if (this.item.attachment) {
+          for (let val of this.item.attachment) {
             // 获取后缀名
             let index = val.name.lastIndexOf('.'),
-                Imgsuffix = val.name.substr(index + 1);
+              Imgsuffix = val.name.substr(index + 1);
             // 校验后缀名
-            if(suffixList.includes(Imgsuffix)) {
+            if (suffixList.includes(Imgsuffix)) {
               val.isImg = true;
+              attachmentImgs.push(this.getImgUrl(val));
             }
           }
+          this.attachmentImgs = attachmentImgs;
         }
       },
       // 查看附件
@@ -105,7 +140,7 @@ import { decode } from 'punycode';
         let emotionList = [...emotion];
         let comment = '';
         let reg = /\[(.+?)\]/g;
-        if(commentType === 'reply') {
+        if (commentType === 'reply') {
           comment = reply.comment;
         }
         else {
@@ -132,13 +167,15 @@ import { decode } from 'punycode';
         if (!val) {
           return
         }
-        let now = Date.now();
         if (typeof val === 'string') {
           val = val.replace(/-/g, '/').replace(/\..*/g, '');
         }
+        let now = Date.now();
+        const dayTime = 24 * 3600 * 1000;
+        let prefix = dateFormat(val, 'YYYY-MM-DD');
         let date = +new Date(val);
         let calc = now - date;
-        let second = calc / 1000;
+        /*let second = calc / 1000;
         let minute = second / 60;
         let hour = minute / 60;
         let day = hour / 24;
@@ -151,8 +188,15 @@ import { decode } from 'punycode';
         } else if (day < 30) {
           return `${parseInt(day)}天前`;
         }
-        return dateFormat(val, 'YYYY-MM-DD')
-      }
+        return dateFormat(val, 'YYYY-MM-DD')*/
+
+        if (calc < dayTime) {
+          prefix = '今天'
+        } else if (calc < 2 * dayTime) {
+          prefix = '昨天'
+        }
+        return `${prefix} ${dateFormat(val, 'HH:mm')}`;
+      },
     },
     created() {
       // 校验消息当中图片的后缀名
@@ -164,133 +208,163 @@ import { decode } from 'punycode';
 <style scoped lang="scss">
   /* 单条评论项 */
   .comment-item {
-    $avatarSize: .45rem;
+    $avatarSize: .4rem;
+    display: flex;
+    padding: .15rem .15rem 0;
     width: 100%;
-    margin: .1rem 0;
-    padding-top: .1rem;
     box-sizing: border-box;
     background-color: #fff;
     transition: background-color 200ms linear;
     &.visited {
-      background-color: #e8e8e8;
-    }
-    &.is-reply {
-      margin: 0;
-      padding: 0;
-      background-color: transparent;
-      box-shadow: none;
-      .comment {
-        padding-left: 0;
-      }
-    }
-    .top-info-part {
-      width: 100%;
-      padding: 0 .1rem;
-      box-sizing: border-box;
-      .header-part {
-        display: flex;
-        align-items: center;
-        margin-bottom: .04rem;
-        .avatar-part {
-          margin-right: .1rem;
-          width: $avatarSize;
-          height: $avatarSize;
-          img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-          }
-        }
-        .main-container {
-          display: flex;
-          flex-direction: column;
-          .creator_name {
-            color: #111;
-          }
-          .time {
-            color: #757575;
-            font-size: .14rem;
-          }
+      $bgVisited: #e8e8e8;
+      background-color: $bgVisited;
+      .comment-right {
+        .belong-container {
+          background-color: $bgVisited;
         }
       }
+    }
+    .comment-left {
+      width: $avatarSize + .1rem;
+      .avatar {
+        width: $avatarSize;
+        height: $avatarSize;
+        border-radius: 50%;
+      }
+    }
+    .vux-1px-b:after {
+      border-color: #ECEDEC;
+    }
+    .comment-right {
+      padding-bottom: .15rem;
+      width: calc(100% - .5rem);
+      /* 创建者 */
+      .creator-name {
+        line-height: .14rem;
+        color: #696969;
+        font-size: .14rem;
+      }
+      /* 创建时间 */
+      .time {
+        margin-top: .05rem;
+        line-height: .12rem;
+        color: #aaa;
+        font-size: .12rem;
+      }
+      /* 评论容器 */
       .comment-container {
-        margin-bottom: .04rem;
+        margin: .15rem 0;
+        /* 评论内容 */
         .comment {
-          color: #454545;
-          margin-bottom: .04rem;
+          line-height: .22rem;
+          color: #333;
           word-break: break-all;
+          /* PC端表情 */
           /deep/ img {
             display: inline-block;
             vertical-align: middle;
           }
+          /* 移动端表情 */
           /deep/ .img-emotion {
             width: 24px;
             height: 24px;
             vertical-align: top;
             display: inline-block;
             background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
-          }
-          /deep/ .img-emotion + .img-emotion {
-            margin-left: .04rem;
+            & + .img-emotion {
+              margin-left: .04rem;
+            }
           }
         }
-        .comment-image {
+        /* 附件 */
+        .comment-attachments {
+          display: flex;
+          flex-wrap: wrap;
+          /* 图片 */
           .comment-image-item {
             width: .6rem;
             height: .6rem;
             margin-right: .1rem;
-            border: 1px solid #eee;
+            border-radius: 2px;
           }
           .each_file {
             color: #5893d4;
           }
         }
       }
-    }
-    /* 回复内容 */
-    .comment-reply {
-      padding-left: $avatarSize + .1rem;
-      .comment-item {
-        padding: .1rem 0;
-      }
-    }
-    .belong-container {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0 .1rem .1rem;
-      &.has-reply {
+      /* 实例内容 */
+      .belong-container {
         padding: .1rem;
-        margin-top: .04rem;
-        background: #f7f7f7;
+        width: 100%;
+        background-color: #F7F7F7;
+        color: #333;
+        box-sizing: border-box;
+        &.has-reply {
+          .belong-part {
+          }
+        }
+        .reply-part {
+          margin-bottom: .15rem;
+          line-height: .22rem;
+          word-break: break-all;
+        }
         .belong-part {
-          background: #FFF;
+          display: flex;
+          align-items: center;
+          .app_img {
+            padding: .01rem;
+            width: .4rem;
+            height: .4rem;
+            margin-right: .1rem;
+            box-sizing: border-box;
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+            }
+          }
+          .other_info {
+            font-size: .14rem;
+            .app-name {
+              line-height: .14rem;
+            }
+            .app_status_info {
+              margin-top: .05rem;
+              line-height: .12rem;
+              color: #979797;
+              font-size: .12rem;
+            }
+          }
         }
       }
-      .reply-part {
-        color: #7A7A7A;
-        margin-bottom: .06rem;
-        word-break: break-all;
-      }
-      .belong-part {
+      /* 点赞者 */
+      .praise-count-container {
         display: flex;
-        align-items: center;
-        background: #F7F7F7;
-        .app_img {
-          width: .54rem;
-          height: .54rem;
-          margin-right: .1rem;
-          img {
-            width: 100%;
-            height: 100%;
+        justify-content: space-between;
+        margin-top: .15rem;
+        .praise-left {
+          display: flex;
+          .r-popover-container {
+            & + .r-popover-container {
+              margin-left: .1rem;
+            }
+          }
+          .praise-user {
+            white-space: nowrap;
+          }
+          .avatar {
+            width: .2rem;
+            height: .2rem;
+            border-radius: 50%;
           }
         }
-        .other_info {
-          font-size: .14rem;
-          .app_name {
-            font-weight: bold;
-          }
-          .app_status_info {
-            color: #757575;
+        .praise-right {
+          display: flex;
+          align-items: center;
+          color: #999;
+          font-size: .12rem;
+          .vux-x-icon-ios-arrow-right {
+            fill: #999;
           }
         }
       }

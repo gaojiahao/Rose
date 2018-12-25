@@ -1,9 +1,8 @@
 <template>
-  <div class="tab-part vux-1px-b" :class="{'tab-part-2': mode === '2'}">
-    <div class='each-tab' :class="{'active vux-1px' : TIndex === activeTabIndex}"
-         v-for="(TItem, TIndex) in data"
+  <div class="tab-part vux-1px-b" :class="{'tab-part-2': mode === '2', 'tab-part-3': mode === '3'}">
+    <div class='each-tab' :class="{'active vux-1px' : TIndex === activeTabIndex}" v-for="(TItem, TIndex) in data"
          :key="TIndex" @click="switchTab(TItem, TIndex)">
-      <div class="tab_content">{{TItem.name}}</div>
+      {{TItem.name}}
     </div>
   </div>
 </template>
@@ -94,6 +93,32 @@
             border-radius: 0;
             border-bottom: 3px solid #ea5455;
           }
+        }
+      }
+    }
+    &.tab-part-3 {
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0 .15rem;
+      height: .5rem;
+      &:after {
+        display: none;
+      }
+      .each-tab {
+        flex: none;
+        background-color: transparent;
+        color: #999;
+        font-size: .14rem;
+        transition: font-size .2s linear;
+        &.active {
+          color: #333;
+          font-size: .18rem;
+          &:before {
+            display: none;
+          }
+        }
+        + .each-tab {
+          margin-left: .15rem;
         }
       }
     }

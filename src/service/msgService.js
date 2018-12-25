@@ -21,3 +21,11 @@ export let getNotice = ( data = {}) => {
         data
     })
 }
+
+// TODO 获取点赞列表
+export let getNoticeByPraise = ( data = {}) => {
+    return $flyio.ajax({
+        url: '/H_roleplay-si/mobile/getNoticeByPraise',
+        data
+    })
+}

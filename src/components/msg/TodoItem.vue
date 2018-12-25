@@ -3,15 +3,13 @@
     <div class="app-img-part">
       <img :src='item.list && item.list[0].pic' alt="appImg" @error='getDefaultImg(item[0] || "")'>
     </div>
-    <div class="msg-container-part">
+    <div class="msg-container-part" :class="{'vux-1px-b': !noBorder}">
       <div class="top_part">
         <span class="app_name">{{name}}</span>
         <span class="msg_time">{{item.list | handleCrt}}</span>
       </div>
-      <div class="main_part vux-1px-b">
-        <span>
-          您收到{{item.list && item.list.length > 1 ? '多' : '一'}}条新的消息
-        </span>
+      <div class="main_part">
+        <span class="info">您收到{{item.list && item.list.length > 1 ? '多' : '一'}}条新的消息</span>
         <badge :text="item.list && item.list.length"></badge>
       </div>
     </div>
@@ -33,7 +31,12 @@
       name: {
         type: String,
         default: ''
-      }
+      },
+      // 是否展示底部边框
+      noBorder: {
+        type: Boolean,
+        default: false
+      },
     },
     components: {
       Badge,
@@ -81,52 +84,57 @@
 
 <style scoped lang="scss">
 .vux-1px-b:after {
-  border-color: #e8e8e8;
+  border-color: #ECEDEC;
 }
 .each-msg {
   width: 100%;
   display: flex;
   background: #fff;
   position: relative;
-  padding: .1rem .1rem 0;
+  padding: .15rem;
   box-sizing: border-box;
   transition: background-color 300ms linear;
   &.visited {
     background-color: #e8e8e8;
   }
   .app-img-part {
-    width: .5rem;
-    height: .5rem;
+    width: .45rem;
+    height: .45rem;
     margin-right: .1rem;
     img {
       width: 100%;
       height: 100%;
-      border-radius: .08rem;
+      border-radius: 50%;
     }
   }
   .msg-container-part {
     flex: 1;
+    padding-bottom: .15rem;
     box-sizing: border-box;
     .top_part {
       display: flex;
-      margin-bottom: .04rem;
+      margin-bottom: .1rem;
       justify-content: space-between;
       .app_name {
-        font-weight: bold;
+        line-height: .22rem;
+        color: #333;
+        font-weight: 600;
       }
       .msg_time {
-        color: #757575;
-        font-size: .14rem;
+        line-height: .17rem;
+        color: #ccc;
+        font-size: .12rem;
       }
     }
     .main_part {
       display: flex;
-      color: #757575;
-      font-size: .14rem;
+      color: #696969;
       align-items: center;
-      padding-bottom: .1rem;
       justify-content: space-between;
-
+      font-size: .12rem;
+      .info {
+        line-height: .17rem;
+      }
     }
   }
 }

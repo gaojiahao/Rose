@@ -1,8 +1,6 @@
 <template>
   <div class="inPage">
-    <tab active-color='#5077aa' :line-width=2>
-      <tab-item v-for="(item, index) in tabList" :selected="index === activeIndex" @on-item-click="onTabClick" :key="index">{{item.name}}</tab-item>
-    </tab>
+    <r-tab :data="tabList" :active-index="activeIndex" @on-click="onTabClick" mode="3"></r-tab>
     <template v-if="listData">
       <r-scroll class="wrapper" :class="{'other-wrapper' :  activeIndex != 0}"
                 :options="scrollOptions" :has-next="hasNext" :no-data="false"
@@ -11,11 +9,13 @@
         <div class="msg_list" v-else>
           <template v-if="activeIndex === 0">
             <todo-item :name="key" :item="value" v-for='(value, key) in listData'
-                       @click.native="goMsglist(value, key)" :key='key'></todo-item>
+                       :no-border="value.noBorder" @click.native="goMsglist(value, key)"
+                       :key='key'></todo-item>
           </template>
           <template v-else-if="activeIndex === 1 || activeIndex === 2">
             <comment-item :item="item" v-for="(item, index) in commentList"
-                          @click.native="goDetail(item, index)" :key="index">
+                          :no-border="index === commentList.length - 1" @click.native="goDetail(item, index)"
+                          :key="index">
             </comment-item>
           </template>
         </div>
@@ -30,9 +30,10 @@
   // 映射表 引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   // 请求 引入
-  import {getMsgList, getNotice} from 'service/msgService'
+  import {getMsgList, getNotice, getNoticeByPraise} from 'service/msgService'
   // 组件 引入
   import RScroll from 'components/RScroll'
+  import RTab from 'components/list/commonPart/RTab'
   import TodoItem from 'components/msg/TodoItem'
   import CommentItem from 'components/msg/CommentItem'
   /* 引入微信相关 */
@@ -67,11 +68,11 @@
       },
     },
     components: {
-      Badge, RScroll, TodoItem, CommentItem, Tab, TabItem,
+      Badge, RScroll, TodoItem, CommentItem, Tab, TabItem, RTab,
     },
     methods: {
       // TODO tab切换
-      onTabClick(index) {
+      onTabClick({index}) {
         let list = [this.getList, this.getComment, this.getPraise];
         this.activeIndex = index;
         this.$refs.bScroll.scrollTo(0, 0);
@@ -103,21 +104,31 @@
             this.isNull = true;
             return;
           }
+          let listData = {};
           tableContent.forEach(item => {
             this.isNull = false;
             // app图标处理
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
             // 只针对已经移动化的应用做消息的显示
             if (Apps[item.listId]) {
-              if (!this.listData[item.title]) {
+              if (!listData[item.title]) {
                 // 以 <应用名称> 进行分类
-                this.$set(this.listData, item.title, {list: [item]})
+                listData[item.title] = {
+                  list: [item],
+                  noBorder: false,
+                };
               }
               else {
-                this.listData[item.title].list.push(item);
+                listData[item.title].list.push(item);
               }
             }
           });
+          let values = Object.values(listData);
+          // 设置最后一项不展示边框
+          if (values.length) {
+            values[values.length - 1].noBorder = true;
+          }
+          this.listData = listData;
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           })
@@ -151,7 +162,7 @@
           let {dataCount = 0, tableContent = []} = data;
           this.isNull = !tableContent.length;
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-          for(let item of tableContent) {
+          for (let item of tableContent) {
             let content = JSON.parse(item.content);
             item.comment = content.content; // 评论内容
             item.commentType = content.type; // 评论类型,list为应用,instance为实例
@@ -177,8 +188,39 @@
                 attachment: content.attachment,
               };
             }
-          }          
+          }
           this.commentList = this.page === 1 ? tableContent : [...this.commentList, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          });
+          return data
+        })
+      },
+      // TODO 获取点赞列表
+      getNoticeByPraise() {
+        return getNoticeByPraise({
+          page: this.page,
+          limit: this.limit,
+        }).then(data => {
+          let {total = 0, praiseNoticeList = []} = data;
+          this.isNull = !praiseNoticeList.length;
+          this.hasNext = total > (this.page - 1) * this.limit + praiseNoticeList.length;
+          for (let item of praiseNoticeList) {
+            let content = JSON.parse(item.content);
+            item.comment = '赞了这条评论';
+            item.reply = {
+              createrName: content.creator,
+              comment: `@${content.creator}: ${content.content}`,
+              attachment: content.attachment,
+            };
+            item.commentType = content.type; // 评论类型,list为应用,instance为实例
+            item.attachment = content.attachment;
+            item.RELATION_KEY = content.relationKey; // 实例的交易号
+            item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
+            // list为应用，instance为实例
+            item.other = content.type === 'list' ? `@应用详情` : `@实例编码: ${content.relationKey}`;
+          }
+          this.commentList = this.page === 1 ? praiseNoticeList : [...this.commentList, ...praiseNoticeList];
           this.$nextTick(() => {
             this.$refs.bScroll.finishPullUp();
           });
@@ -191,13 +233,13 @@
       },
       // TODO 获取点赞
       getPraise() {
-        return this.getNotice('praise');
+        return this.getNoticeByPraise();
       },
       // TODO 进入详情
       goDetail(item, index) {
         let {commentType = '', listId = '', listName = '', RELATION_KEY = ''} = item;
-        let fileId = item.typeId, 
-            childId = item.childId;
+        let fileId = item.typeId,
+          childId = item.childId;
         let query = {
           childId,
           name: listName,
@@ -287,9 +329,9 @@
     .wrapper {
       width: 100%;
       overflow: hidden;
-      height: calc(100% - .92rem);
+      height: calc(100% - .99rem);
       &.other-wrapper {
-        background: #EEE; 
+        /*background: #EEE;*/
       }
     }
     /deep/ .scroll-wrapper {
