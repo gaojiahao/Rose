@@ -60,6 +60,7 @@
   @import '~vux/src/styles/reset.less';
   @import '~vux/src/styles/1px.less';
   @import './common/swiper-4.2.2.min.css';
+  @import './../static/css/icon.css';
   html {
     height: 100%;
   }

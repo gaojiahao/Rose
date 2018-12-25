@@ -1,0 +1,36 @@
+.icon-clear {
+  background: url('/src/assets/iconfont/clear.png');
+  background-size: cover;
+}
+.icon-search {
+  background: url('/src/assets/iconfont/nav_search.png');
+  background-size: cover;
+}
+.icon-up {
+  background: url('/src/assets/iconfont/up.png');
+  background-size: cover;
+}
+.icon-up-fill {
+  background: url('/src/assets/iconfont/up_fill.png');
+  background-size: cover;
+}
+.icon-down {
+  background: url('/src/assets/iconfont/down.png');
+  background-size: cover;
+}
+.icon-down-fill {
+  background: url('/src/assets/iconfont/down_fill.png');
+  background-size: cover;
+}
+.icon-add {
+  background: url('/src/assets/iconfont/add.png');
+  background-size: cover;
+}
+.icon-dealer {
+  background: url('/src/assets/iconfont/dealer.png');
+  background-size: cover;
+}
+.icon-check {
+  background: url('/src/assets/iconfont/check.png');
+  background-size: cover;
+}
