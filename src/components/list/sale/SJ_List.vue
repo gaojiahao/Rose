@@ -9,7 +9,7 @@
           <!--<r-tab @on-click="onTabClick"></r-tab>-->
         </div>
       </div>
-      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" :key="index">
@@ -51,13 +51,13 @@
             </div>
           </div>
         </div>
-
-        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        conut-title="预期销售额" @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
-    <div class=" vux-1px-t btn" v-if="action.add">
-      <div class="cfm_btn" @click="goEdit">新增</div>
+    <div class="vux-1px-t btn" v-if="action.add">
+      <div class="cfm_btn" @click="goEdit"> 
+        <span class="icon-add"></span>
+        <span>新增</span>
+      </div>
     </div>
   </div>
 </template>
@@ -98,14 +98,15 @@
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
   .instance-item-wrapper {
-    margin: .1rem .1rem 0;
+    color: #333;
     padding: .1rem;
-    width: calc(100% - .2rem);
     background: #fff;
     border-radius: 4px;
-    color: #333;
-    box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.5);
+    margin: .1rem .1rem 0;
     box-sizing: border-box;
+    width: calc(100% - .2rem);
+    // box-shadow: 0 2px 10px #e8e8e8;
+    box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.5);
     .instance-header {
       display: flex;
       justify-content: space-between;
