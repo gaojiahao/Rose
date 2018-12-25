@@ -29,18 +29,19 @@
       return {
         listViewID: 2476,
         filterList: [ // 过滤列表
-        {
-          name: '交易号',
-          value: 'transCode',
-        }, {
-          name: '经办人',
-          value: 'handlerName',
-        }, {
-          name: '设备名称',
-          value: 'facilityName_facilityObjCode',
-        },
-      ],
-
+          {
+            name: '交易号',
+            value: 'transCode',
+          }, 
+          {
+            name: '经办人',
+            value: 'handlerName',
+          }, 
+          {
+            name: '设备名称',
+            value: 'facilityName_facilityObjCode',
+          }
+        ]
       }
     },
     mixins: [listCommon],

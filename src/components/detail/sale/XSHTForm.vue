@@ -41,13 +41,20 @@
         <template slot="matterOther" slot-scope="{item}">
           <div class='mater_other'>
             <div class='mater_attribute'>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-              <span>交付开始日: {{item.dateActivation}}</span>
-              <span>交付截止日: {{item.executionDate}}</span>
+              <span>单位: {{item.measureUnit_transObjCode}}</span>
+              <span>辅助计量: {{item.assMeasureUnit}}</span>
+              <span>辅助计量说明: {{item.assMeasureDescription}} </span>
             </div>
             <div class="mater_num">
-              <span class="num">单价: ￥{{item.price | toFixed | numberComma}}</span>
-              <span class="num">数量: {{item.tdQty | toFixed}}</span>
+              <div>
+                <span class="num">交付开始日: {{item.dateActivation}}</span>
+                <span class="num">交付截止日: {{item.executionDate}}</span>
+              </div>
+              <div>
+                <span class="num">单价: ￥{{item.price | toFixed | numberComma}}</span>
+                <span class="num">数量: {{item.tdQty | toFixed}}</span>
+                <span class="num">包装数量: {{item.assistQty | toFixed}}</span>
+              </div>
             </div>
             <div class='mater_price'>
               <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>

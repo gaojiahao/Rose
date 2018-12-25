@@ -28,7 +28,24 @@
     data() {
       return {
         listViewID: 2387,
-
+        filterList: [ // 过滤列表
+          {
+            name: '交易号',
+            value: 'transCode',
+          }, 
+          {
+            name: '经办人',
+            value: 'handlerName',
+          }, 
+          {
+            name: '往来名称',
+            value: 'dealerName_dealerDebit',
+          }, 
+          {
+            name: '设备名称',
+            value: 'facilityName_facilityObjCode',
+          }
+        ]
       }
     },
     mixins: [listCommon],
