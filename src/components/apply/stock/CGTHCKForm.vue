@@ -298,9 +298,9 @@ export default {
         item.tdQty = item.tdQty || item.currQty;
         item.price = item.price;
         item.taxRate = item.taxRate || 0.16;
-        item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
-        item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
-        item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
+        item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
         if (!orderList[item.transCode]) {
           orderList[item.transCode] = [];
         }
@@ -624,7 +624,8 @@ export default {
         };
         // 物料请求参数
         this.matterParams = {
-          dealerCode: this.dealerInfo.dealerCode
+          dealerCode: this.dealerInfo.dealerCode,
+          whCode: this.warehouse.warehouseCode
         };
         this.handlerDefault = {
           handler: formData.handler,

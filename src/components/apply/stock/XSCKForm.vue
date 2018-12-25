@@ -364,17 +364,18 @@
       // TODO 选中物料项
       selOrder(val) {
         let sels = JSON.parse(val);
+        console.log(sels)
         let orderList = {};
         sels.forEach(item => {
-           let key = `${item.transCode}_${item.inventoryCode}`;
+          let key = `${item.transCode}_${item.inventoryCode}`;
           let {tdQty = '', price = item.quotedPrice, taxRate = 0.16, promDeliTime = dateFormat(item.promDeliTime, 'YYYY-MM-DD')} = this.numMap[key] || {};
           item.tdQty = tdQty;
           item.price = price;
           item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;
-          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
-          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
-          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
+          item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
           if (!orderList[item.transCode]) {
             orderList[item.transCode] = [];
           }

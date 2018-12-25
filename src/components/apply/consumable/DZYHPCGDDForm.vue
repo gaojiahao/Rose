@@ -93,7 +93,7 @@
                            :default-value="matterList" get-list-method="getLowValueConsumPurchaseOrder"
                            :filter-list="filterList" ref="matter">
             <template slot="titleName" slot-scope="{item}">
-              <span class="order-title">采购订单号</span>
+              <span class="order-title">申请号</span>
             </template>
             <template slot="storage" slot-scope="{item}">
               <div class="mater_material">
@@ -508,7 +508,8 @@
           this.biComment = data.biComment;
           this.biReferenceId = data.biReferenceId;
           let {formData} = data;
-          this.attachment = data.attachment
+          this.attachment = data.attachment;
+          let orderList = {};
           formData.inPut.dataSet.map(item => {
             item = {
               ...item,
@@ -519,9 +520,15 @@
               processing: item.tdProcessing || '商品',
               measureUnit: item.measureUnit_transObjCode,
               qtyBal: item.thenQtyBal,
+              transCode: item.transMatchedCode,
             }
+            if (!orderList[item.transCode]) {
+              orderList[item.transCode] = [];
+            }
+            orderList[item.transCode].push(item);
             this.matterList.push(item);
           })
+          this.orderList = orderList;
           this.handlerDefault = {
             handler: formData.handler,
             handlerName: formData.handlerName,

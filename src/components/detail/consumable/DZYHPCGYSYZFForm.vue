@@ -64,7 +64,14 @@
           </div>
         </template>
       </matter-list>
-      <div class="form_part">
+      <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
+                     v-if="isCashier" required>
+        <template slot="other">
+          <form-cell cellTitle='支付金额' showSymbol
+                     :cellContent="cashInfo.tdAmountCopy1 | toFixed | numberComma(3)"></form-cell>
+        </template>
+      </pop-cash-list>
+      <div class="form_part" v-else>
         <div class="form_title vux-1px-b">
           <span class="iconfont icon-baoxiao"></span><span class="title">资金账户详情</span>
         </div>
@@ -86,7 +93,7 @@
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
-      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+      <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
     </div>
   </div>
@@ -105,6 +112,7 @@
   import MatterList from 'components/detail/commonPart/MatterList'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   import FormCell from 'components/detail/commonPart/FormCell'
+  import PopCashList from 'components/Popup/finance/PopCashList'
   //公共方法引入
   import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
   import {toFixed} from '@/plugins/calc'
@@ -118,6 +126,7 @@
         formViewUniqueId: 'e76a8c6f-05cc-45ee-ba93-299fe6751856',
         orderList: {}, // 物料列表
         cashInfo: {},
+        costList: [],
       }
     },
     computed: {
@@ -137,10 +146,22 @@
         });
         return total;
       },
+      // TODO 是否为出纳
+      isCashier() {
+        let {viewId = ''} = this.currentWL;
+        return this.isMyTask && viewId === 'e185e706-5b21-4467-bbe9-cff1856873a7';
+      },
+      // 请求资金账户的参数
+      cashParams() {
+        return {
+          transCode: this.transCode,
+          fundType: '银行存款'
+        }
+      }
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, PriceTotal, contactPart, MatterList, MatterItem, FormCell
+      workFlow, RAction, PriceTotal, contactPart, MatterList, MatterItem, FormCell, PopCashList
     },
     methods: {
       //选择默认图片
@@ -208,13 +229,91 @@
           this.workFlowInfoHandler();
         })
       },
+      // TODO 同意的处理
+      agreeHandler() {
+        if (this.isCashier) {
+          if (this.isCashier && !this.cashInfo.fundCode) {
+            this.$vux.alert.show({
+              content: '请选择资金账户',
+            });
+            return true
+          }
+          let orderInfo = this.orderInfo;
+          let dataSet = []
+          for (let items of Object.values(this.orderList)) {
+            for (let item of items) {
+              dataSet.push({
+                tdId: item.tdId,
+                transMatchedCode: item.transMatchedCode,
+                transObjCode: item.transObjCode,
+                tdProcessing: item.tdProcessing,
+                assMeasureUnit: item.assMeasureUnit,
+                expSubject: item.expSubject,
+                thenTotalQtyBal: item.thenTotalQtyBal,
+                thenLockQty: item.thenLockQty,
+                thenQtyBal: item.thenQtyBal,
+                tdQty: item.tdQty,
+                assMeasureScale: item.assMeasureScale,
+                assistQty: item.assistQty,
+                price: item.price,
+                taxRate: item.taxRate,
+                taxAmount: item.taxAmount,
+                tdAmount: item.tdAmount,
+                processingStartDate: item.processingStartDate,
+                keepingDays_transObjCode: item.keepingDays_transObjCode,
+                productionDate: item.productionDate,
+                validUntil: item.validUntil,
+                comment: item.comment
+              })
+            }
+          }
+          let formData = {
+            ...orderInfo,
+            inPut: {
+              dealerCodeCredit: this.orderInfo.inPut.dealerCodeCredit,
+              crDealerLabel: this.orderInfo.inPut.crDealerLabel,
+              crDealerPaymentTerm: this.orderInfo.inPut.crDealerPaymentTerm,
+              daysOfAccount: this.orderInfo.inPut.daysOfAccount,
+              accountExpirationDate: this.orderInfo.inPut.accountExpirationDate,
+              containerCode: this.orderInfo.inPut.containerCode,
+              dataSet,
+            },
+          };
+          if (this.isCashier) {
+            let cashInfo = this.cashInfo;
+            formData.outPut.dataSet = [{
+              fundName_cashInCode: cashInfo.fundName,
+              cashOutCode: cashInfo.fundCode,
+              cashType_cashOutCode: cashInfo.fundType,
+              thenAmntBalCopy1: cashInfo.thenAmntBal,
+              tdAmountCopy1: cashInfo.tdAmountCopy1,
+              tdIdCopy1: cashInfo.tdIdCopy1,
+            }] 
+          }
+          console.log(formData);
+          this.saveData(formData);
+          return true
+        }
+        return false
+      },
+      // TODO 选中资金
+      selCash(item) {
+        this.cashInfo = {
+          ...this.cashInfo,
+          ...item,
+        };
+      },
     }
   }
 </script>
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
+  .detail_wrapper {
+    .pop_dealer_list {
+      width: 100%;
+    }
+  }
   .dzyhpcgysyzf-detail-container {
     .basicPart {
       /deep/ .other_content {

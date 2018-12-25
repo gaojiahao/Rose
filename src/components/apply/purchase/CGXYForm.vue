@@ -264,9 +264,9 @@
           item.price = item.price || '';
           item.taxRate = item.taxRate || 0.16;
           item.processingStartDate = item.processingStartDate || defaultTime;
-          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
-          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
-          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
+          item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
         })
         this.numMap = {};
         this.matterList = sels;

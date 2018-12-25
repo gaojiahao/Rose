@@ -356,11 +356,11 @@
             promDeliTime = '',
           } = this.numMap[key] || {};
           item.tdQty = tdQty;
-          item.assMeasureUnit = item.invSubUnitName || null; // 辅助计量
-          item.assMeasureScale = item.invSubUnitMulti || null; // 与单位倍数
-          item.assMeasureDescription =  item.invSubUnitComment || null; // 辅助计量说明
-          item.assistQty = toFixed(accDiv(item.tdQty, item.invSubUnitMulti));
-          item.noTaxPrice = toFixed(accDiv(item.price, accAdd(1, taxRate)));
+          item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
+          item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
+          item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
+          // item.assistQty = toFixed(accDiv(item.tdQty, item.invSubUnitMulti));
+          // item.noTaxPrice = toFixed(accDiv(item.price, accAdd(1, taxRate)));
           item.price = price;
           item.taxRate = taxRate;
           item.promDeliTime = promDeliTime;

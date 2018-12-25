@@ -56,8 +56,11 @@
               <p class="price_num" v-if="!noPrice">
                 <span class="symbol">￥</span>{{mItem.price | toFixed}}
               </p>
-              <p class="mater_count" v-if="!noQty">
-                <span class="symbol">x</span>{{mItem.tdQty | toFixed}}
+              <p class="mater_count" v-if="!noQty && mItem.assistQty != null">
+                <span class="symbol">x</span>{{mItem.assistQty | toFixed}}
+              </p>
+              <p class="mater_count" v-if="!noQty && mItem.assistQty == null">
+                <span class="symbol">x</span>{{ mItem.tdQty | toFixed}}
               </p>
             </div>
           </div>

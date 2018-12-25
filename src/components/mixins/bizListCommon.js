@@ -304,7 +304,13 @@ export default {
           // // 列表当中每个订单最多展现5个物料
           item.detailItem = item.detailItem.slice(0, 5);
           item.detailItem.forEach(mItem => {
-            if(mItem.tdQty != null) {
+            // 重新计算tdAmount
+            if(mItem.assistQty != null){
+              mItem.tdAmount = toFixed(accMul(mItem.price, mItem.assistQty));
+              item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
+            }
+            else if(mItem.assistQty == null && mItem.tdQty != null) {
+              mItem.tdAmount = toFixed(accMul(mItem.price, mItem.tdQty));
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
             }
             if(mItem.tdAmount != null) {
