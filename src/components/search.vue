@@ -2,23 +2,27 @@
   <div class='search'>
     <form class="search_part" :class="{'has-filter': filterList.length}" action=""
           @submit.prevent="searchMat(srhInpTx)">
-      <x-icon class="serach_icon" type="ios-search" size="20"></x-icon>
-      <r-dropdown :list="filterList" @on-selected="popSelected" v-if="filterList.length"></r-dropdown>
-      <input class="srh_inp" type="search" autocomplete="off" @input='getValue($event)' :value='srhInpTx'>
+      <div class="icon-search serach_icon"></div>
+      <input class="srh_inp" type="search" autocomplete="off" @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
       <div class="pop_cfm" v-if='isFill'
            :class='{ pop_cancel : !srhInpTx.length }'
            @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}
       </div>
       <div class="pop_cfm" v-else @click="searchMat(srhInpTx)">搜索</div>
-      <icon class="clear_icon" type="clear" v-if="srhInpTx" @click.native="clear"></icon>
+      <div class="icon-clear clear_icon" v-if="srhInpTx" @click="clear"></div>
     </form>
+    <div class="search_filter" v-show="isShowDrop">
+      <r-dropdown :list="filterList" @on-selected="popSelected" v-if="filterList.length"></r-dropdown>
+      <div class="layer" @click="isShowDrop = false"></div>
+    </div>
+    
   </div>
 </template>
 
 <script>
   import {Icon} from "vux";
   import {setTimeout} from 'timers';
-  import RDropdown from 'components/RDropdown'
+  import RDropdown from 'components/searchDropdown'
 
   export default {
     name: 'RSearch',
@@ -39,6 +43,7 @@
         srhInpTx: "",
         timer: null,
         property: '',
+        isShowDrop: false,
       };
     },
     components: {
@@ -71,6 +76,7 @@
         });
         // 点击'搜索' 关闭输入框
         document.activeElement.blur();
+        this.isShowDrop = false;
       },
       clear() {
         this.srhInpTx = "";
@@ -97,39 +103,29 @@
   .search_part {
     width: 100%;
     display: flex;
-    height: 0.3rem;
-    padding: 0 0.08rem;
-    line-height: 0.3rem;
+    height: 0.34rem;
+    // padding: 0 0.08rem;
+    line-height: 0.34rem;
     position: relative;
     box-sizing: border-box;
     &.has-filter {
       .srh_inp {
-        padding-left: 1.05rem;
+        padding-left: .35rem;
       }
-    }
-    /* 下拉框 */
-    .r-dropdown {
-      top: 0;
-      width: .75rem;
-      left: .07rem;
-      position: absolute;
-      padding-left: .25rem;
-      background: #dbe2ef;
-      border-top-left-radius: .3rem;
-      border-bottom-left-radius: .3rem;    
     }
     // 搜索输入框
     .srh_inp {
       /*flex: 5;*/
-      width: calc(100% - .5rem);
+      width: 3.06rem;
+      height: .34rem;
+      margin-left: 0.15rem;
       outline: none;
       border: none;
-      color: #2d2d2d;
-      font-size: 0.16rem;
-      padding: 0 0.3rem 0 .4rem;
-      background: #f3f1f2;
-      border-top-left-radius: 0.3rem;
-      border-bottom-left-radius: 0.3rem;
+      color: #333;
+      font-size: 0.14rem;
+      background: #F6F6F6;
+      line-height: .34rem;
+      border-radius: .2rem;
       -webkit-appearance: none;
       appearance: none;
       &::-webkit-search-cancel-button {
@@ -138,34 +134,31 @@
     }
     // 搜索 按钮
     .pop_cfm {
-      /*flex: 1;*/
-      width: .5rem;
-      color: #fff;
-      font-size: 0.14rem;
-      text-align: center;
-      background: #3f72af;
-      border-top-right-radius: 0.3rem;
-      border-bottom-right-radius: 0.3rem;
+      color: #999;
+      font-size: .12rem;
+      margin-left: .15rem;
     }
     // 返回 按钮
     .pop_cancel {
-      background: #fc3c3c;
+      color: #fc3c3c;
     }
     // 搜索icon
     .serach_icon {
       position: absolute;
-      left: 0.14rem;
+      left: .25rem;
       top: 50%;
       z-index: 1;
       fill: #2d2d2d;
       transform: translate(0, -50%);
+      width: 0.14rem;
+      height: 0.16rem;
     }
     // 清除icon
     .clear_icon {
       top: 50%;
-      right: .55rem;
-      width: 0.3rem;
-      height: 0.3rem;
+      right: .64rem;
+      width: .18rem;
+      height: .18rem;
       z-index: 100;
       display: block;
       font-size: 0.12rem;
@@ -173,6 +166,20 @@
       text-align: center;
       position: absolute;
       transform: translate(0, -50%);
+    }
+  }
+  .search_filter {
+    top: .49rem;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    z-index: 100;
+    font-size: .14rem;
+    .layer {
+      background: #000;
+      opacity: 0.5;
+      height: calc(100% - 1.46rem);
     }
   }
 </style>
