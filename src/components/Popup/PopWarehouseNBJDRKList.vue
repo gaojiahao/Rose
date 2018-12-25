@@ -310,7 +310,7 @@
     background: #fff;
     z-index: 502;
     .trade_pop {
-      padding: 0 .08rem;
+      
       height: 100%;
       overflow: hidden;
       // 顶部

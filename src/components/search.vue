@@ -105,11 +105,6 @@
     position: relative;
     line-height: .34rem;
     box-sizing: border-box;
-    &.has-filter {
-      .srh_inp {
-        padding-left: .35rem;
-      }
-    }
     // 搜索输入框
     .srh_inp {
       border: none;
@@ -119,6 +114,7 @@
       appearance: none;
       font-size: .14rem;
       margin-left: .15rem;
+      padding-left: .35rem;      
       border-radius: .2rem;
       background: #F6F6F6;
       -webkit-appearance: none;
@@ -129,8 +125,8 @@
     // 搜索 按钮
     .pop_cfm {
       color: #999;
-      font-size: .12rem;
-      margin-left: .15rem;
+      font-size: .14rem;
+      margin-left: .12rem;
     }
     // 返回 按钮
     .pop_cancel {

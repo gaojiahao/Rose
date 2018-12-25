@@ -128,7 +128,7 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      padding: 0 .08rem;
+      
       // 顶部
       .title {
         font-size: .2rem;
