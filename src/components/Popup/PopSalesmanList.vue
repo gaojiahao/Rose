@@ -8,9 +8,7 @@
     <div v-transfer-dom>
       <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="trade_pop_title">
-            <r-search @search="searchList" @turn-off="onHide" :isFill='true'></r-search>
-          </div>
+          <r-search @search="searchList" @turn-off="onHide" :isFill='true'></r-search>
           <r-scroll class="salesman-list" :options="scrollOptions" :has-next="hasNext"
                     :no-data="!hasNext && !dealerList.length" @on-pulling-up="onPullingUp" ref="bScroll">
             <div class="mater-list-item" v-for="(item, index) in dealerList" :key='index'

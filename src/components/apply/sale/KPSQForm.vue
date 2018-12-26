@@ -40,7 +40,7 @@
                       <!-- 物料属性和单位 -->
                       <div class='matter-more'>
                         <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='unit'>主计量: {{item.measureUnit}}</span>
+                        <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
                         <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
@@ -93,7 +93,7 @@
             <!-- 基本属性 插槽 -->
             <template slot="attribute" slot-scope="{item}">
               <div class="mater_classify"> 
-                <span class="type">主计量: {{item.measureUnit}}</span>
+                <span class="type">单位: {{item.measureUnit}}</span>
                 <span class="type">辅助计量: {{item.invSubUnitName}}</span>
                 <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
               </div>
@@ -115,7 +115,7 @@
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
           <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
-              <span class="unit">主计量: {{modifyMatter.measureUnit || "无"}}</span>
+              <span class="unit">单位: {{modifyMatter.measureUnit || "无"}}</span>
               <span>辅助计量: {{modifyMatter.invSubUnitName || "无"}}</span>
               <span>辅助计量说明: {{modifyMatter.invSubUnitComment}}</span>
             </div>

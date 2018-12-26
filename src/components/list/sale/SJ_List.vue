@@ -12,7 +12,7 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="instance-item-wrapper" v-for="(item, index) in listData" :key="index">
+        <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)" :key="index">
           <div class="instance-header">
             <span class="instance-header-left">
               <i class="icon-code"></i>
@@ -22,14 +22,14 @@
           </div>
           <div class="instance-top">
             <span class="instance_dealer">{{item.dealerName}}</span>
-            <span class="instance_process_status">{{item.biProcessStatus || '无'}}</span>
+            <span class="instance_process_status">{{item.biProcessStatus || '暂未指定流程状态'}}</span>
           </div>
           <div class="instance-amt-wrapper">
             <div class="instance_amt_title">预期销售额</div>
             <div class="instance_amt">{{item.tdAmount | numberComma}}</div>
             <div class="instance_amt_info">
-              <span>销售人员: {{item.salesPerson}}</span>
-              <span>有效期至: {{item.validUntil | dateFormat('YYYY-MM-DD')}}</span>
+              <span>销售人员: {{item.salesPerson || '暂无'}}</span>
+              <span>有效期至: {{item.validUntil | dateFormat('YYYY-MM-DD') || '暂无'}}</span>
             </div>
           </div>
           <div class="instance-item vux-1px-b">
@@ -38,7 +38,7 @@
           </div>
           <div class="instance-item vux-1px-b">
             <span class="instance_item_title">分类标签</span>
-            <span class="instance_item_value">{{item.categoryLabels}}</span>
+            <span class="instance_item_value">{{item.categoryLabels || '暂无'}}</span>
           </div>
           <div class="instance-bottom">
             <div class="instance_bottom_item instance_handler">
@@ -59,6 +59,7 @@
 
 <script>
   import listCommon from 'pageMixins/bizListCommon'
+
   export default {
     data() {
       return {
@@ -91,6 +92,7 @@
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
+
   .instance-item-wrapper {
     color: #333;
     padding: .1rem;
@@ -156,7 +158,6 @@
       margin-top: .15rem;
       padding: .15rem .2rem;
       width: 100%;
-      /*height: 1.2rem;*/
       background: url(~assets/bg/bg-amt.png);
       color: #fff;
       background-size: 100% 100%;
@@ -170,6 +171,7 @@
         line-height: .36rem;
         font-size: .36rem;
         font-weight: bold;
+        text-shadow: 0 2px 4px rgba(16, 140, 213, 1);
       }
       .instance_amt_info {
         display: flex;
@@ -197,12 +199,12 @@
     .instance-bottom {
       display: flex;
       align-items: center;
+      margin: .15rem 0 .05rem;
       line-height: .14rem;
       font-size: .12rem;
       .instance_bottom_item {
         display: flex;
         align-items: center;
-        margin-top: .15rem;
       }
       .instance_handler {
         margin-right: .3rem;

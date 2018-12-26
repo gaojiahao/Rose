@@ -2,10 +2,7 @@
   <!-- 用户popup -->
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="popup-user-list-container" @on-show="onShow" @on-hide="onHide">
-      <div class="title">
-        <!-- 搜索栏 -->
-        <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
-      </div>
+      <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
       <!-- 物料列表 -->
       <r-scroll class="user-list" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">

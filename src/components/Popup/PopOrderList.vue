@@ -3,10 +3,7 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
-        </div>
+        <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -189,6 +186,8 @@
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
+        // 组件传值 传回给search组件 强制关闭下拉框
+        this.$event.$emit('shut-down-filter', false);
       },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
@@ -349,6 +348,7 @@
       height: calc(100% - .44rem);
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;

@@ -36,10 +36,7 @@
     <div v-transfer-dom>
       <popup v-model="showDealerPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
         <div class="trade_pop">
-          <div class="title">
-            <!-- 搜索栏 -->
-            <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
-          </div>
+          <d-search @search="searchList" @turn-off="onHide" :isFill="true"></d-search>
           <!-- 往来列表 -->
           <div class="mater_list" ref="dealer">
             <div class="mater_list_wrapper">
@@ -444,14 +441,14 @@
   .trade_pop_part {
     background: #fff;
     .trade_pop {
-      
       height: 100%;
       overflow: hidden;
       // 顶部
       .title {
-        position: relative;
-        margin: 0.08rem 0;
+        height: 100%;
         font-size: .2rem;
+        position: relative;
+        padding-top: 0.08rem;
       }
       // 往来列表
       .mater_list {

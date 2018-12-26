@@ -226,14 +226,14 @@
       box-sizing: border-box;
     }
     .trade_pop {
-      
       height: 100%;
       overflow: hidden;
       // 顶部
       .title {
-        position: relative;
-        margin: 0.08rem 0;
+        height: 100%;
         font-size: .2rem;
+        position: relative;
+        padding-top: 0.08rem;
       }
       // 往来列表
       .mater_list {

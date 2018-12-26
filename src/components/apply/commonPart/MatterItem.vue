@@ -25,7 +25,7 @@
         <!-- 物料属性和单位 -->
         <div class='mater_more'>
           <span class='unit'>属性: {{item.processing}}</span>
-          <span class='unit'>主计量: {{item.measureUnit}}</span>
+          <span class='unit'>单位: {{item.measureUnit}}</span>
           <span class='unit'>辅助计量: {{item.invSubUnitName}}</span>
           <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate | percent}}</span>
           <span class='unit'>辅助计量说明: {{item.invSubUnitComment}}</span>

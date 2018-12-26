@@ -4,10 +4,7 @@
     <popup class="r-popup-container" :class="{multipart: multipart}" v-model="showPop" height="80%" @on-show="onShow"
            @on-hide="onHide">
       <div class="r-popup-top">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :is-fill="isFill"></r-search>
-        </div>
+        <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
         <!-- 物料列表 -->
         <r-scroll class="r-popup-list" :options="options" :has-next="hasNext"
                   :no-data="!hasNext && !data.length" @on-pulling-up="onPullingUp" ref="bScroll">
@@ -143,6 +140,8 @@
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
+        // 组件传值 传回给search组件 强制关闭下拉框
+        this.$event.$emit('shut-down-filter', false);
       },
       // TODO 匹配相同项的索引
       findIndex(arr, sItem) {
@@ -229,10 +228,10 @@
       }
     }
     .r-popup-top {
-      padding: 0 .08rem;
       height: 100%;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding: .08rem 0;

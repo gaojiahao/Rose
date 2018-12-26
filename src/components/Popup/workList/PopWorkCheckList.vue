@@ -3,10 +3,7 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-        </div>
+        <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
                   :no-data="!hasNext && !workList.length" @on-pulling-up="onPullingUp"
@@ -244,6 +241,7 @@
       height: 100%;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;

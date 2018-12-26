@@ -3,9 +3,7 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-        </div>
+        <m-search @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :no-data="!data.length" ref="bScroll" >
           <div class="each_mater box_sd" v-for="(item, index) in data" :key='index'
@@ -114,6 +112,7 @@
       height: 100%;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;

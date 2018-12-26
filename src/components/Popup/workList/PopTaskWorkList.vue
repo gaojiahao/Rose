@@ -3,10 +3,7 @@
  <div v-transfer-dom>
     <popup v-model="showPop" height="100%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <div class="title">
-          <!-- 搜索栏 -->
-          <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
-        </div>
+        <m-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></m-search>
         <!-- 费用列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" ref="bScroll">
            <div class="each-work box_sd"  v-for='(item, index) in taskWorkList' :key='index'  v-if="item.qtyBalance>0"
@@ -216,6 +213,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd'
       position: relative;
       // 顶部
       .title {
+        height: 100%;
         font-size: .2rem;
         position: relative;
         padding-top: 0.08rem;
