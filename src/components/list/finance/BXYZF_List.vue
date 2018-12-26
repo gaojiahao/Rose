@@ -6,37 +6,13 @@
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
-          <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
-                        @click.native="goDetail(item, index)">
-          <template slot="list-item" slot-scope="{item}">
-            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
-              <div class="top-content">费用名称: {{val.costName_expCode}}</div>
-              <div class="main-content">
-                <div class="info_part">
-                  费用科目: {{val.expSubject}}
-                </div>
-                <div class="info_part">
-                  费用类型: {{val.costType_expCode}}
-                </div>
-                <div class="info_part">
-                  申请金额: ￥{{val.tdAmount | numberComma}}
-                </div>
-                <div class="info_part">
-                  可抵扣税金: ￥{{val.taxAmount | numberComma}}
-                </div>                
-                <div class="info_part different_type">
-                  抵扣后金额: ￥{{val.noTaxAmount | numberComma}}
-                </div>
-              </div>
-            </div>
-          </template>
-        </just-word-item>
+        <finance-list-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        @click.native="goDetail(item, index)"></finance-list-item>
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>  
@@ -47,6 +23,7 @@
 <script>
   import listCommon from 'pageMixins/bizListCommon'
   import {getSellOrderList} from 'service/listService'
+  import financeListItem from 'components/list/commonPart/financeListItem'
   export default {
     data() {
       return {
@@ -66,6 +43,9 @@
           }
         ],
       }
+    },
+    components: {
+      financeListItem
     },
     mixins: [listCommon],
     methods: {
