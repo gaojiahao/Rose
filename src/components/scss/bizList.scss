@@ -101,8 +101,9 @@
   height: calc(100% - 1.68rem);
   overflow: hidden;
   box-sizing: border-box;
+  background: #F7F7F7;
   &.has-sort {
-    height: calc(100% - 2.12rem);
+    height: calc(100% - 1.68rem);
   }
   .each_duty {
     width: 95%;
