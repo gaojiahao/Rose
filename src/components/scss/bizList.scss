@@ -97,139 +97,136 @@
   }
 }
 .list_wrapper {
-  position: relative;
-  height: calc(100% - 1.68rem);
   overflow: hidden;
+  position: relative;
+  background: #FFF;
   box-sizing: border-box;
-  background: #fff;
+  height: calc(100% - 1.65rem);
   &.has_matter{
     background: #F7F7F7;
   }
-  &.has-sort {
-    height: calc(100% - 1.68rem);
-  }
-  .each_duty {
-    width: 95%;
-    color: #111;
-    position: relative;
-    border-radius: .08rem;
-    box-sizing: border-box;
-    margin: .1rem auto .2rem;
-    box-shadow: 0 2px 10px #e8e8e8;
-    transition: background-color 200ms linear;
-    &.visited {
-      background-color: $list_visited;
-    }
-    .duty_name { //任务名称
-      width: 100%;
-      padding: 0 .1rem;
-      max-height: 1rem;
-      overflow: hidden;
-      font-size: .16rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      box-sizing: border-box;
-      text-overflow: ellipsis;
-      -webkit-box-orient: vertical;
+  // .each_duty {
+  //   width: 95%;
+  //   color: #111;
+  //   position: relative;
+  //   border-radius: .08rem;
+  //   box-sizing: border-box;
+  //   margin: .1rem auto .2rem;
+  //   box-shadow: 0 2px 10px #e8e8e8;
+  //   transition: background-color 200ms linear;
+  //   &.visited {
+  //     background-color: $list_visited;
+  //   }
+  //   .duty_name { //任务名称
+  //     width: 100%;
+  //     padding: 0 .1rem;
+  //     max-height: 1rem;
+  //     overflow: hidden;
+  //     font-size: .16rem;
+  //     display: -webkit-box;
+  //     -webkit-line-clamp: 2;
+  //     box-sizing: border-box;
+  //     text-overflow: ellipsis;
+  //     -webkit-box-orient: vertical;
 
-    }
-    .duty_top {
-      height: .24rem;
-      line-height: .24rem;
-      padding: .04rem .1rem .02rem;
-      .duty_code { //任务编码
-        float: left;
-        font-size: .15rem;
-        color: #7D7D7D;
-        .duty_crt_man { // 任务创建者
-          color: #fff;
-          padding: .02rem;
-          position: relative;
-          background: #5077aa;
-          font-size: 0.12rem;
-          font-weight: bold;
-          &:before {
-            position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            top: 0;
-            left: -.03rem;
-            border-right: .04rem solid #5077aa;
-            border-bottom: .04rem solid transparent;
-          }
-        }
-        .duty_done_c {
-          background: #53d397;
-          &:before {
-            border-right: .04rem solid #53d397;
-          }
-        }
-        .duty_doing_c {
-          background: #5077aa;
-          &:before {
-            border-right: .04rem solid #5077aa;
-          }
-        }
-        .duty_fall_c {
-          background: #474a56;
-          &:before {
-            border-right: .04rem solid #474a56;
-          }
-        }
-      }
-    .duty_time { //任务创建时间
-      float: right;
-      font-size: .15rem;
-      color: #7D7D7D;
-      }
-    }
-    .duty_main {
-      .major_content {
-        font-size: .16rem;
-        font-weight: bold;
-      }
-    }
-    .duty_item {
-      padding: 0 .1rem;
-    }
-    .duty_content{
-      width: 100%;
-      color: #7d7d7d;
-      padding: .02rem .1rem;
-      box-sizing: border-box;
-      .content_title {
-        color: #111;
-        font-size: .18rem;
-      }
-      .content_step {
-        display: flex;
-        font-size: .12rem;
-        align-items: center;
-        padding: .02rem 0 .04rem;
-        justify-content: space-between;
-      }
-    }
-    // 项目名称
-    .project_name {
-      width: 100%;
-      padding: 0 .1rem;
-      box-sizing: border-box;
-      .status_part {
-        color: #757575;
-        font-size: .12rem;
-        font-weight: normal;
-        .iconfont {
-          font-size: .1rem;
-        }
-      }
-      .major_content {
-        font-weight: bold;
-        // padding-bottom: .04rem;
-        padding: .04rem 0;
-      }
-    }
-  }
+  //   }
+  //   .duty_top {
+  //     height: .24rem;
+  //     line-height: .24rem;
+  //     padding: .04rem .1rem .02rem;
+  //     .duty_code { //任务编码
+  //       float: left;
+  //       font-size: .15rem;
+  //       color: #7D7D7D;
+  //       .duty_crt_man { // 任务创建者
+  //         color: #fff;
+  //         padding: .02rem;
+  //         position: relative;
+  //         background: #5077aa;
+  //         font-size: 0.12rem;
+  //         font-weight: bold;
+  //         &:before {
+  //           position: absolute;
+  //           content: "";
+  //           width: 0;
+  //           height: 0;
+  //           top: 0;
+  //           left: -.03rem;
+  //           border-right: .04rem solid #5077aa;
+  //           border-bottom: .04rem solid transparent;
+  //         }
+  //       }
+  //       .duty_done_c {
+  //         background: #53d397;
+  //         &:before {
+  //           border-right: .04rem solid #53d397;
+  //         }
+  //       }
+  //       .duty_doing_c {
+  //         background: #5077aa;
+  //         &:before {
+  //           border-right: .04rem solid #5077aa;
+  //         }
+  //       }
+  //       .duty_fall_c {
+  //         background: #474a56;
+  //         &:before {
+  //           border-right: .04rem solid #474a56;
+  //         }
+  //       }
+  //     }
+  //   .duty_time { //任务创建时间
+  //     float: right;
+  //     font-size: .15rem;
+  //     color: #7D7D7D;
+  //     }
+  //   }
+  //   .duty_main {
+  //     .major_content {
+  //       font-size: .16rem;
+  //       font-weight: bold;
+  //     }
+  //   }
+  //   .duty_item {
+  //     padding: 0 .1rem;
+  //   }
+  //   .duty_content{
+  //     width: 100%;
+  //     color: #7d7d7d;
+  //     padding: .02rem .1rem;
+  //     box-sizing: border-box;
+  //     .content_title {
+  //       color: #111;
+  //       font-size: .18rem;
+  //     }
+  //     .content_step {
+  //       display: flex;
+  //       font-size: .12rem;
+  //       align-items: center;
+  //       padding: .02rem 0 .04rem;
+  //       justify-content: space-between;
+  //     }
+  //   }
+  //   // 项目名称
+  //   .project_name {
+  //     width: 100%;
+  //     padding: 0 .1rem;
+  //     box-sizing: border-box;
+  //     .status_part {
+  //       color: #757575;
+  //       font-size: .12rem;
+  //       font-weight: normal;
+  //       .iconfont {
+  //         font-size: .1rem;
+  //       }
+  //     }
+  //     .major_content {
+  //       font-weight: bold;
+  //       // padding-bottom: .04rem;
+  //       padding: .04rem 0;
+  //     }
+  //   }
+  // }
   /* 物料 */
   .duty_matter {
     display: block;

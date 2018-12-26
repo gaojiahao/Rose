@@ -231,7 +231,7 @@
           if (item.transCode) {
             isSameTransCode = item.transCode === sItem.transCode;
           }
-          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+          return isSameTransCode && item.inventoryCode === sItem.inventoryCode && item.colId === sItem.colId
         });
       },
       // TODO 判断是否展示选中图标

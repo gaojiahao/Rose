@@ -6,7 +6,6 @@
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
-          <r-tab @on-click="onTabClick"></r-tab>
         </div>
       </div>
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
