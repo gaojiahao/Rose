@@ -15,7 +15,7 @@
           <template v-else-if="activeIndex === 1 || activeIndex === 2">
             <comment-item :item="item" v-for="(item, index) in commentList"
                           :no-border="index === commentList.length - 1" @click.native="goDetail(item, index)"
-                          :key="index">
+                          @on-popover-click="onPopoverClick" :key="index" ref="commentItem">
             </comment-item>
           </template>
         </div>
@@ -170,13 +170,13 @@
             item.RELATION_KEY = content.relationKey; // 实例的交易号
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
             // list为应用，instance为实例
-            item.other = content.type === 'list' ? `@应用详情` : `@实例编码: ${content.relationKey}`;
+            item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
-              item.comment = `回复@${content.objCreator}: ${content.content}`;
+              item.comment = `回复@${content.objCreator}：${content.content}`;
               item.reply = {
                 createrName: content.objCreator,
-                comment: `@${content.objCreator} 评论: ${content.objContent}`,
+                comment: `@${content.objCreator} 评论：${content.objContent}`,
               };
             }
             // 点赞
@@ -218,7 +218,7 @@
             item.RELATION_KEY = content.relationKey; // 实例的交易号
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon(); // app图标处理
             // list为应用，instance为实例
-            item.other = content.type === 'list' ? `@应用详情` : `@实例编码: ${content.relationKey}`;
+            item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
           }
           this.commentList = this.page === 1 ? praiseNoticeList : [...this.commentList, ...praiseNoticeList];
           this.$nextTick(() => {
@@ -288,6 +288,13 @@
           }, 200);
         }
         this.isClickDetail = false;
+      },
+      // TODO popover点击事件
+      onPopoverClick(){
+        let $commentItem = this.$refs.commentItem || [];
+        $commentItem.forEach(comment => {
+          comment.hidePopover();
+        });
       },
     },
     beforeRouteLeave(to, from, next) {

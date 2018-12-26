@@ -6,13 +6,13 @@
         <searchIcon :filterList="filterList" @search='searchList' ref="search"></searchIcon>
         <div class="filter_part">
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
-          <!--<r-tab @on-click="onTabClick"></r-tab>-->
         </div>
       </div>
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)" :key="index">
+        <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
+             :class="{visited: item.visited}" :key="index">
           <div class="instance-header">
             <span class="instance-header-left">
               <i class="icon-code"></i>
@@ -28,8 +28,8 @@
             <div class="instance_amt_title">预期销售额</div>
             <div class="instance_amt">{{item.tdAmount | numberComma}}</div>
             <div class="instance_amt_info">
-              <span>销售人员: {{item.salesPerson || '暂无'}}</span>
-              <span>有效期至: {{item.validUntil | dateFormat('YYYY-MM-DD') || '暂无'}}</span>
+              <span>销售人员：{{item.salesPerson || '暂无'}}</span>
+              <span>有效期至：{{item.validUntil | dateFormat('YYYY-MM-DD') || '暂无'}}</span>
             </div>
           </div>
           <div class="instance-item vux-1px-b">
@@ -43,11 +43,11 @@
           <div class="instance-bottom">
             <div class="instance_bottom_item instance_handler">
               <i class="icon icon-handler"></i>
-              <span>经办人: {{item.handlerName}}</span>
+              <span>经办人：{{item.handlerName}}</span>
             </div>
             <div class="instance_bottom_item instance_mod_time">
               <i class="icon icon-mod-time"></i>
-              <span>修改时间: {{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+              <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
             </div>
           </div>
         </div>
@@ -92,17 +92,22 @@
 
 <style lang='scss' scoped>
   @import "./../../scss/bizList.scss";
+  @import '~@/scss/color';
 
   .instance-item-wrapper {
     color: #333;
-    padding: .1rem;
+    padding: .15rem .1rem;
     background: #fff;
     border-radius: 4px;
-    margin: .1rem .1rem 0;
+    margin: .1rem;
     box-sizing: border-box;
     width: calc(100% - .2rem);
     // box-shadow: 0 2px 10px #e8e8e8;
+    transition: background-color 200ms linear;
     box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.5);
+    &.visited {
+      background-color: $list_visited;
+    }
     .instance-header {
       display: flex;
       justify-content: space-between;
@@ -199,12 +204,13 @@
     .instance-bottom {
       display: flex;
       align-items: center;
-      margin: .15rem 0 .05rem;
+      margin-top: .15rem;
       line-height: .14rem;
       font-size: .12rem;
       .instance_bottom_item {
         display: flex;
         align-items: center;
+        color: #999;
       }
       .instance_handler {
         margin-right: .3rem;
