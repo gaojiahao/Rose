@@ -4,7 +4,10 @@ import $flyio from '../plugins/ajax';
 export let getWorkFlow = (data = {}) => {
     return $flyio.ajax({
         url: '/H_roleplay-si/ds/listTaskLogByTransCode',
-        data
+        data: {
+          _dc: Date.now(),
+          ...data,
+        }
     })
 }
 // 判断工作流节点是否与<我>有关

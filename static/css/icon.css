@@ -65,3 +65,13 @@
   background: url('~assets/iconfont/filter_back.png');
   background-size: cover;
 }
+
+.icon-flow-time {
+  background: url('~assets/iconfont/flow_time.png');
+  background-size: cover;
+}
+
+.icon-success {
+  background: url('~assets/iconfont/success.png');
+  background-size: cover;
+}
