@@ -2,17 +2,17 @@
   <div class='sort-part vux-1px-b'>
     <div class='each-sort' :class="{'active' : property === SItem.key}" v-for="(SItem, SIndex) in data" :key="SIndex"
          @click="sortClick(SItem, SIndex)">
-      <span class='sort_name'>{{SItem.name}}</span>
-      <span class='arrow' v-if="SItem.key">
-          <i class='iconfont arrow_up'
-             :class="[property === SItem.key && sort === 'ASC' ? 'active icon-shangsanjiao-copy' : 'icon-shangsanjiao']"></i>
-          <i class='iconfont arrow_down'
-             :class="[property === SItem.key && sort === 'DESC' ? 'active icon-sort-up-copy-copy' : 'icon-xiasanjiao1']"></i>
-      </span>
+      <div class='sort_name'>{{SItem.name}}</div>
+      <div class='arrow' v-if="SItem.key">
+        <span class='arrow_up'
+            :class="[property === SItem.key && sort === 'ASC' ? 'icon-up-fill' : 'icon-up']"></span>
+        <span class='arrow_down'
+            :class="[property === SItem.key && sort === 'DESC' ? 'icon-down-fill' : 'icon-down']"></span>
+      </div>
     </div>
     <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || Object.keys(this.fieldVlaue).length}"> 
       <span class="filter_name">筛选</span>
-      <span class="iconfont icon-shaixuan"></span>
+      <span class="icon-filter"></span>
     </div>
     <div v-transfer-dom>
       <popup position="right" v-model="showFilter" @on-hide="onHide" @on-show="onShow">
@@ -30,26 +30,23 @@
               </div>
             </div>
             <!-- 时间 -->
-            <div class="time-filter-container basic-mod">
-              <div class="filter_title vux-1px-b">时间段</div>
+            <div class="time-filter-container vux-1px-b">
+              <div class="filter_title">时间段</div>
               <div class="time_filter">
                 <div class="each_time" :class="{'active' : timeFilter.startDate}" @click="getStart">
                   {{timeFilter.startDate || '开始日期'}}
                 </div>
-                <div class="placeholder-part vux-1px-t"></div>
+                <span class="symbol"></span>
                 <div class="each_time" :class="{'active' : timeFilter.endDate}" @click="getEnd">
                   {{timeFilter.endDate || '结束日期'}}
                 </div>
               </div>
             </div>
-            <div class="process-status-container basic-mod" v-for="(val,key,index) in filtersList" :key="index" v-if="val.alias !== '流程状态' && val.value.length">
-              <div>
-                <div class="filter_title vux-1px-b" @click="val.showAll = !val.showAll">
-                  <div>{{val.alias}}</div>
-                  <div class="arrow">
-                   <span>全部</span>
-                   <span class="iconfont icon-xia" :class="{'arrow-up' : val.showAll}"></span>
-                  </div>  
+            <div class="process-status-container vux-1px-b" v-for="(val,key,index) in filtersList" :key="index" v-if="val.alias !== '流程状态' && val.value.length">
+              <div class="process-wrapper">
+                <div class="filter_title " @click="val.showAll = !val.showAll">
+                  <span>{{val.alias}}</span>
+                  <span class="arrow icon-filter-down" :class="{'icon-filter-up' : val.showAll}"></span>
                 </div>
                 <div class="process_status">
                   <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,key)}"
@@ -58,16 +55,14 @@
                     <div class="status_content">{{item}}</div>
                   </div>          
                 </div>
-              </div>
-              
+              </div>  
             </div>
           </r-scroll>
-          <div class="handle-part">
+          <div class="handle-part vux-1px-t">
             <span class="reset_btn" @click="filterReset">重置</span>
             <span class="confirm_btn" @click="filterConfirm">确定</span>
           </div>        
         </div>
-
       </popup>
     </div>
   </div>
@@ -258,7 +253,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.vux-1px-b:after {
+.vux-1px-b:after,.vux-1px-t:before {
   border-color: #e8e8e8;
 }
 .vux-1px:before {
@@ -267,161 +262,140 @@ export default {
   border-color: #5077aa;
 }
 /deep/ .vux-popup-dialog {
-  background: #F6F6F6;
+  background: #fff;
   overflow-y: auto;
 } 
-.active  {
-  color: #5077aa;
-  font-weight: bold;
-}  
 .sort-part {
   display: flex;
-  padding: .1rem;
-  height: 0.24rem;
-  line-height: 0.24rem;
+  padding: 0 .2rem;
+  justify-content: space-between;
   .each-sort {
-    flex: 1;
-    color: #111;      
+    padding: .08rem .05rem .14rem;
+    color: #333;     
     display: flex;
     font-size: .14rem;
-    font-weight: bold;
+    line-height: 0.14rem;
     box-sizing: border-box;
-    justify-content: center;
+    border-bottom: 2px solid #fff;
     .arrow {
       height: 100%;
       position: relative;
-      .iconfont {
-        font-size: .1rem;
-        color: #757575;
-        &.active {
-          color: #5077aa;
-          font-weight: bold;
-        }
+      span{
+        width: .06rem;
+        height: .04rem;
       }
       .arrow_up {
-        top: -.02rem;
+        top: .01rem;
+        left: .04rem;
         position: absolute;
       }
       .arrow_down {
-        top: .04rem;
+        bottom: .01rem;
         position: absolute;
+        left: .04rem;
       }
     }
-    span + span {
-      margin-left: .02rem;
-      color: #757575;
-    }
     &.active  {
-      color: #5077aa;
-      font-weight: bold;
+      color: #3296FA;
+      border-color: #3296FA;
     }
-    &:first-child{
-      flex: 0.6;
-    } 
-    // &:nth-child(2){
-    //   flex: 0.8;
-    // }
   }
   .filter-part {
     @extend .each-sort;
-    // flex: 0.7;
-    // justify-content: flex-end;
+    align-items: center;
     &.active{
-      color: #5077aa;
+      color: #3296FA;
+    }
+    .icon-filter{
+      width: .11rem;
+      height: .12rem;
+      margin-left: .04rem;
     }
   }
 }
 .filter-container-part {
-  width: 3rem;
+  width: 3.05rem;
   height: 100%;
+  font-size: .12rem;
   // overflow: auto;
   position: relative;
   box-sizing: border-box;
   .list_wrapper{
-    height: calc(100% - 0.6rem);
+    height: calc(100% - 0.48rem);
     overflow: hidden;
   }
   .basic-mod {
     margin-bottom: .15rem;
   }
   .filter_title {
-    color: #111;
-    font-size: .18rem;
-    font-weight: bold;
-    margin-bottom: .1rem;
-    padding-bottom: .04rem;
-    padding-right: .07rem;
+    color: #666;
+    font-size: .12rem;
+    padding: 0  0 .17rem .06rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     .arrow{
-      font-size: .12rem;
-      color: #757575;
-      font-weight: normal;
-      display: flex;
-      align-items: center;
-      // align-content: flex-end;
-      .icon-xia{
-        display: inline-block;
-        color: #757575;
-        font-size: .12rem;
-        margin-left: .05rem;
-        transition: transform 200ms linear;
-        &.arrow-up {
-          transform: rotate(-180deg);
-        }
+      display: inline-block;
+      width: .12rem;
+      height: .06rem;
+      transition: transform 200ms linear;
+      &.icon-filter-up {
+        transform: rotate(-180deg);
       }
     }
   }
-  .process-status-container {
-    padding: .1rem 0 0 .1rem;
+  .process-status-container { 
+    .process-wrapper{
+      padding: .17rem .23rem .08rem .24rem;
+    }
     .process_status {
       overflow: hidden;
+      display: flex;
+      flex-flow: wrap;
       .each_status {
-        float: left;
-        width: 33.33%;
-        font-size: .12rem;
-        font-weight: bold;
-        line-height: .3rem;
+        width: .7rem;
+        height: .36rem;
+        border-radius: .04rem;
+        color: #333;
+        line-height: .36rem;
         text-align: center;
-        padding-right: .1rem;
-        margin-bottom: .1rem;
+        margin: 0  .16rem .14rem 0;
         box-sizing: border-box;
+        background: #F4F4F4;
         .status_content {
           overflow: hidden;
           padding: 0 .05rem;
-          white-space: nowrap;
-          border-radius: .3rem;  
-          background: #E8E8E8;
+          white-space: nowrap; 
           text-overflow: ellipsis;
         }    
       }
     }
   }
   .time-filter-container {
-    padding: .1rem;
+    padding: .18rem .39rem .22rem .24rem;
     .time_filter {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      .placeholder-part {
-        width: .1rem;
-      }
       .each_time {
-        width: 45%;
-        color: #c7c7c7;
-        padding: .1rem 0;
-        font-size: .12rem;
-        font-weight: bold;
+        width: 1.06rem;
+        height: .31rem;
+        background: #F4F4F4;
+        color: #999;
         text-align: center;
-        border-radius: .3rem;
-        background: #e8e8e8;
+        line-height: .31rem;
+        border-radius: .04rem;
         &.active {
           color: #111;
+          border: 1px solid #3296FA;
+          background: #fff;
+          color: #3296FA;
         }
       }
-      .each_time + .each_time {
-        margin-left: .15rem;
+      .symbol{
+        width: .1rem;
+        height: 1px;
+        background: #d9d9d9;
+        margin: .15rem .1rem;
       }
     }
   }
@@ -430,19 +404,20 @@ export default {
     bottom: 0;
     display: flex;    
     width: inherit;
-    height: .54rem;
+    height: .44rem;
     position: absolute;    
-    line-height: .54rem;
+    line-height: .44rem;
     span {
       flex: 1;
       text-align: center;
     }
     .reset_btn {
-      background: #EEE;
+      background: #F4F4F4;
+      color: #666;
     }
     .confirm_btn {
       color: #FFF;
-      background: #5077aa;
+      background: #3296FA;
     }
   }
 }
