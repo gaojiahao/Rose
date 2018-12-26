@@ -38,8 +38,8 @@
         <div class="praise-left">
           <!--<img class="avatar" :src="praiser.photo" @error="getDefaultImg"
                v-for="(praiser, index) in item.praiseUserList" v-if="index < 4">-->
-          <r-popover v-for="(praiser, index) in item.praiseUserList" :key="index" @click.native.stop=""
-                     v-if="index < 4">
+          <r-popover v-for="(praiser, index) in item.praiseUserList" :key="index" ref="popover" @click.native.stop=""
+                     @on-click="onPopoverClick" v-if="index < 4">
             <img class="avatar" :src="praiser.photo" @error="getDefaultImg">
             <div class="praise-user" slot="content">{{praiser.nickname}}</div>
           </r-popover>
@@ -159,6 +159,17 @@
           return `<span class="img-emotion" style="background-position: -${24 * idx}px 0;"></span>`
         });
         return comment;
+      },
+      // TODO popover点击事件
+      onPopoverClick(){
+        this.$emit('on-popover-click');
+      },
+      // TODO 隐藏popover
+      hidePopover(){
+        let $popover = this.$refs.popover || [];
+        $popover.forEach(pop => {
+          pop.hidePopover();
+        })
       },
     },
     filters: {
