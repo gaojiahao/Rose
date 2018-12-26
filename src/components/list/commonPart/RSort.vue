@@ -19,25 +19,27 @@
         <div class="filter-container-part">
           <r-scroll class="list_wrapper" :options="scrollOptions" ref="bScroll">
             <!-- 流程状态 -->
-            <div class="process-status-container basic-mod" v-if="filtersList.biProcessStatus && filtersList.biProcessStatus.value.length">
-              <div class="filter_title vux-1px-b">{{filtersList.biProcessStatus.alias}}</div>
-              <div class="process_status">
-                <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,'biProcessStatus')}"
-                v-for="(item, index) in filtersList.biProcessStatus.value" :key="index"
-                @click="selProcee(item,'biProcessStatus',index)">
-                  <div class="status_content">{{item}}</div>
-                </div>          
+            <div class="process-status-container vux-1px-b" v-if="filtersList.biProcessStatus && filtersList.biProcessStatus.value.length">
+              <div class="process-wrapper">
+                <div class="filter_title">{{filtersList.biProcessStatus.alias}}</div>
+                <div class="process_status">
+                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,'biProcessStatus')}"
+                  v-for="(item, index) in filtersList.biProcessStatus.value" :key="index"
+                  @click="selProcee(item,'biProcessStatus',index)">
+                    <div class="status_content">{{item}}</div>
+                  </div>          
+                </div>
               </div>
             </div>
             <!-- 时间 -->
             <div class="time-filter-container vux-1px-b">
               <div class="filter_title">时间段</div>
               <div class="time_filter">
-                <div class="each_time" :class="{'active' : timeFilter.startDate}" @click="getStart">
+                <div class="each_time" :class="{'active vux-1px' : timeFilter.startDate}" @click="getStart">
                   {{timeFilter.startDate || '开始日期'}}
                 </div>
                 <span class="symbol"></span>
-                <div class="each_time" :class="{'active' : timeFilter.endDate}" @click="getEnd">
+                <div class="each_time" :class="{'active vux-1px' : timeFilter.endDate}" @click="getEnd">
                   {{timeFilter.endDate || '结束日期'}}
                 </div>
               </div>
@@ -253,18 +255,25 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.vux-1px-b:after,.vux-1px-t:before {
-  border-color: #e8e8e8;
+.vux-1px-b:after{
+  border-color: #ECEDEC;
+}
+.vux-1px-t:before {
+  border-color: #D9D9D9;
 }
 .vux-1px:before {
-  width: 176%;
-  border-radius: .4rem;
-  border-color: #5077aa;
+  width: 200%;
+  border-radius: .04rem;
+  border-color: #3296FA;
 }
 /deep/ .vux-popup-dialog {
   background: #fff;
   overflow-y: auto;
 } 
+.active  {
+  color: #3296FA;
+  background: #fff;
+}
 .sort-part {
   display: flex;
   padding: 0 .2rem;
@@ -276,7 +285,6 @@ export default {
     font-size: .14rem;
     line-height: 0.14rem;
     box-sizing: border-box;
-    border-bottom: 2px solid #fff;
     .arrow {
       height: 100%;
       position: relative;
@@ -295,17 +303,11 @@ export default {
         left: .04rem;
       }
     }
-    &.active  {
-      color: #3296FA;
-      border-color: #3296FA;
-    }
+    
   }
   .filter-part {
     @extend .each-sort;
     align-items: center;
-    &.active{
-      color: #3296FA;
-    }
     .icon-filter{
       width: .11rem;
       height: .12rem;
@@ -323,9 +325,6 @@ export default {
   .list_wrapper{
     height: calc(100% - 0.48rem);
     overflow: hidden;
-  }
-  .basic-mod {
-    margin-bottom: .15rem;
   }
   .filter_title {
     color: #666;
@@ -367,7 +366,10 @@ export default {
           padding: 0 .05rem;
           white-space: nowrap; 
           text-overflow: ellipsis;
-        }    
+        }
+        &.active{
+          @extend .active
+        }
       }
     }
   }
@@ -384,11 +386,8 @@ export default {
         text-align: center;
         line-height: .31rem;
         border-radius: .04rem;
-        &.active {
-          color: #111;
-          border: 1px solid #3296FA;
-          background: #fff;
-          color: #3296FA;
+        &.active{
+          @extend .active
         }
       }
       .symbol{
