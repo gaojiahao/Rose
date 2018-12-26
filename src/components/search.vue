@@ -11,8 +11,8 @@
       <div class="pop_cfm" v-else @click="searchMat(srhInpTx)">搜索</div>
       <i class="icon-clear clear_icon" v-if="srhInpTx" @click="clear"></i>
     </form>
-    <div class="search_filter" v-show="isShowDrop">
-      <r-dropdown :list="filterList" @on-selected="popSelected" v-if="filterList.length"></r-dropdown>
+    <div class="search_filter" v-show="isShowDrop" v-if="filterList.length">
+      <r-dropdown :list="filterList" @on-selected="popSelected"></r-dropdown>
       <div class="layer" @click="isShowDrop = false"></div>
     </div>
     
@@ -37,6 +37,16 @@
           return []
         }
       },
+    },
+    watch: {
+      isShowDrop: {
+        handler(status) {
+          this.$event.$on('shut-down-filter', (val) => {
+            this.isShowDrop = val;
+            this.$event.$off('shut-down-filter');
+          })
+        }
+      }
     },
     data() {
       return {
@@ -67,6 +77,7 @@
       searchMat(val) {
         // 如果 输入框没有值 则点击关闭popup
         if (this.isFill && !val) {
+          this.isShowDrop = false;
           this.$emit('turn-off', false);
           return;
         }
@@ -98,78 +109,83 @@
 </script>
 
 <style lang='scss' scoped>
-  .search_part {
+  .search {
     width: 100%;
-    display: flex;
-    height: .34rem;
-    position: relative;
-    line-height: .34rem;
-    box-sizing: border-box;
-    // 搜索输入框
-    .srh_inp {
-      border: none;
-      outline: none;
-      color: #333;
-      width: 3.06rem;
-      appearance: none;
-      font-size: .14rem;
-      margin-left: .15rem;
-      padding-left: .35rem;      
-      border-radius: .2rem;
-      background: #F6F6F6;
-      -webkit-appearance: none;
-      &::-webkit-search-cancel-button {
-        display: none;
+    padding: .08rem 0;
+    .search_part {
+      width: 100%;
+      display: flex;
+      height: .34rem;
+      position: relative;
+      line-height: .34rem;
+      box-sizing: border-box;
+      // 搜索输入框
+      .srh_inp {
+        border: none;
+        outline: none;
+        color: #333;
+        width: 3.06rem;
+        appearance: none;
+        font-size: .14rem;
+        margin-left: .15rem;
+        padding-left: .35rem;      
+        border-radius: .2rem;
+        background: #F6F6F6;
+        -webkit-appearance: none;
+        &::-webkit-search-cancel-button {
+          display: none;
+        }
+      }
+      // 搜索 按钮
+      .pop_cfm {
+        color: #999;
+        font-size: .14rem;
+        margin-left: .12rem;
+      }
+      // 返回 按钮
+      .pop_cancel {
+        color: #fc3c3c;
+      }
+      // 搜索icon
+      .serach_icon {
+        top: 50%;
+        z-index: 1;
+        left: .25rem;
+        width: .14rem;
+        height: .16rem;
+        fill: #2d2d2d;
+        position: absolute;
+        transform: translate(0, -50%);
+      }
+      // 清除icon
+      .clear_icon {
+        top: 50%;
+        z-index: 100;
+        right: .64rem;
+        width: .18rem;
+        height: .18rem;
+        display: block;
+        font-size: .12rem;
+        line-height: .3rem;
+        text-align: center;
+        position: absolute;
+        transform: translate(0, -50%);
       }
     }
-    // 搜索 按钮
-    .pop_cfm {
-      color: #999;
-      font-size: .14rem;
-      margin-left: .12rem;
-    }
-    // 返回 按钮
-    .pop_cancel {
-      color: #fc3c3c;
-    }
-    // 搜索icon
-    .serach_icon {
-      top: 50%;
-      z-index: 1;
-      left: .25rem;
-      width: .14rem;
-      height: .16rem;
-      fill: #2d2d2d;
-      position: absolute;
-      transform: translate(0, -50%);
-    }
-    // 清除icon
-    .clear_icon {
-      top: 50%;
+    .search_filter {
+      left: 0;
+      bottom: 0;
+      top: .49rem;
+      width: 100%;
       z-index: 100;
-      right: .64rem;
-      width: .18rem;
-      height: .18rem;
-      display: block;
-      font-size: .12rem;
-      line-height: .3rem;
-      text-align: center;
+      font-size: .14rem;
       position: absolute;
-      transform: translate(0, -50%);
-    }
-  }
-  .search_filter {
-    left: 0;
-    bottom: 0;
-    top: .49rem;
-    width: 100%;
-    z-index: 100;
-    font-size: .14rem;
-    position: absolute;
-    .layer {
-      background: #000;
-      opacity: .5;
-      height: calc(100% - 1.46rem);
+      .layer {
+        opacity: .5;
+        height: 100%;
+        background: #ccc;
+        // height: calc(100% - 1.46rem);
+      }
     }
   }
 </style>

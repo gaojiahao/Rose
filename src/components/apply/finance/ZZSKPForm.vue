@@ -111,7 +111,7 @@
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams"
                            get-list-method="getManyVATBilling" @sel-matter="selMatter"
-                           :default-value="matterList" ref="matter">
+                           :default-value="matterList" :filter-list="filterList" ref="matter">
             <template slot="titleName" slot-scope="props">
               <span class="order-title">申请单</span>
             </template>
@@ -235,6 +235,18 @@
             key: 'taxRate',
             message: '请填写税率'
           },
+        ],
+        filterList: [
+          {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          }, {
+            name: '申请单',
+            value: 'transCode',
+          }
         ]
       }
     },

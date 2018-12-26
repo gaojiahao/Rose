@@ -262,15 +262,15 @@
         modifyKey: null,
         filterList: [
           {
-            name: '交易号',
-            value: 'transCode',
-          }, {
             name: '物料名称',
             value: 'inventoryName',
           }, {
             name: '物料编码',
             value: 'inventoryCode',
-          },
+          }, {
+            name: '订单号',
+            value: 'transCode',
+          }, 
         ],
         cashInfo: {},
         cashParams: {

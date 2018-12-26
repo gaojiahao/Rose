@@ -207,15 +207,15 @@
         modifyKey: null,
         filterList: [
           {
-            name: '交易号',
-            value: 'transCode',
-          }, {
             name: '设施名称',
             value: 'facilityName',
           }, {
             name: '设施编码',
             value: 'facilityCode',
-          },
+          }, {
+            name: '订单号',
+            value: 'transCode',
+          }, 
         ],
         facilityParams: {},
         checkFieldList: [

@@ -218,15 +218,15 @@
         modifyKey: null,
         filterList: [
           {
-            name: '申请号',
-            value: 'transCode',
-          }, {
             name: '设施名称',
             value: 'facilityName',
           }, {
             name: '设施编码',
             value: 'facilityCode',
-          },
+          }, {
+            name: '申请号',
+            value: 'transCode',
+          }, 
         ],
         facility: {},
         checkFieldList: [
