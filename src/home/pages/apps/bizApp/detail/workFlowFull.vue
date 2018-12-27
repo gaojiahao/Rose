@@ -89,6 +89,8 @@
           if (!lastNode.endTime) {
             lastNode.statusClass = 'doing';
             lastNode.statusText = '进行中';
+          } else {
+            lastNode.statusClass = 'done';
           }
           this.workFlow = tableContent.reverse();
         })
@@ -117,7 +119,7 @@
     left: 0;
     top: 0;
     z-index: 10;
-    padding: .15rem 0 .2rem 0;
+    /*padding: .15rem 0 0;*/
     width: 100%;
     height: 100%;
     background-color: #fff;
@@ -134,6 +136,7 @@
       }
     }
     .work-flow-header {
+      margin-top: .15rem;
       line-height: .14rem;
       font-size: .16rem;
     }
@@ -177,6 +180,11 @@
           color: #3296fa;
           font-size: .16rem;
         }
+        &:after {
+          background-color: #3296fa;
+        }
+      }
+      &.done {
         &:after {
           top: -.1rem;
           width: .16rem;
