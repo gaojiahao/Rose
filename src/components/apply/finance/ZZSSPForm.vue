@@ -166,6 +166,9 @@
             <span>本次收票金额</span>
           </template>
         </pop-matter>
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
@@ -321,7 +324,7 @@
         sels.forEach(item => {
           item.tdQty = item.tdQty || item.qtyBal;
           item.taxRate = item.taxRate || 0.16;
-          item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD');
+          item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD') || item.purchaseDay;
           item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明

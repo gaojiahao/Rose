@@ -57,6 +57,10 @@
           </div>
         </template>
       </matter-list>
+      <!-- 备注 -->
+      <div class="comment-part">
+        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+      </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
       <!-- 审批操作 -->
