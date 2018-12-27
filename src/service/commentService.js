@@ -68,7 +68,8 @@ export let isSubscribeByRelationKey = (relationKey = '') => {
   return $flyio.ajax({
     url: '/H_roleplay-si/comment/isSubscribeByRelationKey',
     data: {
-      relationKey
+      relationKey,
+      type: 'instance'
     }
   })
 }
@@ -93,12 +94,11 @@ export let unsubscribeApp = (data = {}) => {
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     url: '/H_roleplay-si/comment/unsubscribeAppByRelationKey',
-    data: data
+    data: {
+      ...data,
+      type: 'instance'
+    }
   })
-  // return $flyio.post({
-  //   url: 'H_roleplay-si/comment/unsubscribeAppByRelationKey',
-  //   data
-  // })
 }
 // TODO 获取关注的人数
 export let getUserList = (data = {}) => {
