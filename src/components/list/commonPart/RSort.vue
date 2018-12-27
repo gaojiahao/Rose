@@ -263,7 +263,7 @@ export default {
 }
 .vux-1px:before {
   width: 200%;
-  border-radius: .04rem;
+  border-radius: .08rem;
   border-color: #3296FA;
 }
 /deep/ .vux-popup-dialog {
@@ -354,13 +354,13 @@ export default {
       .each_status {
         width: .7rem;
         height: .36rem;
-        border-radius: .04rem;
         color: #333;
         line-height: .36rem;
         text-align: center;
         margin: 0  .16rem .14rem 0;
         box-sizing: border-box;
         background: #F4F4F4;
+        border-radius: .04rem;
         .status_content {
           overflow: hidden;
           padding: 0 .05rem;

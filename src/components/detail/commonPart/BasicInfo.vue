@@ -2,49 +2,76 @@
   <!-- 经办信息 （订单、主体等） -->
   <div class="basic_info">
     <!-- 订单编码栏 -->
-    <div class="serial_bar vux-1px-b">
-      <div>
-        <span class="iconfont icon-dingdan1"></span>
-        <span class="l_size_name">{{workFlowInfo.transCode}}</span>
+    <div class="basic_top">
+      <div class="serial_bar">
+        <span class="trans_code">{{workFlowInfo.transCode}}</span>
+        <span class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</span>
       </div>
-      <p class="work_status" :class="workFlowInfo.dyClass">{{workFlowInfo.biStatus}}</p>
+      <div class="work_proStatus">
+        <span class="status">流程状态：{{orderInfo.biProcessStatus || "无"}}</span>
+      </div>
     </div>
     <!-- 经办信息 -->
-    <div class="handle_info vux-1px-b">
-      <div class="each_handle s_size_name">
-        <span class="title">经办主体: </span>
-        <span class="content">{{orderInfo.handlerEntityName  || '无'}}</span>
+    <div class="handler_info">
+      <div class="info_title">
+        <span class="title">经办信息</span>
       </div>
-      <div class="each_handle s_size_name">
-        <span class="title">经办人: </span>
-        <span class="content">{{orderInfo.handlerName}}</span>
+      <div class='info_content info_content_part' v-if="!showMore">
+        <div class="each_handle" >
+          <p class="each_info">
+            <label>创建人：</label>
+            <span>{{orderInfo.creatorName}}</span>
+          </p>
+          <p class="each_info">
+            <label>修改时间：</label>
+            <span>{{orderInfo.modTime | dateFormat('YYYY-MM-DD')}}</span>
+          </p>
+        </div>
+        <div class="each_handle">
+          <p class="each_info">
+            <label>经办主体：</label>
+            <span>{{orderInfo.handlerEntityName  || '无'}}</span>
+          </p>
+          <p class="each_info">
+            <label>经办组织：</label>
+            <span>{{orderInfo.handlerUnitName  || '无'}}</span>
+          </p>
+        </div>
       </div>
-      <div class="each_handle s_size_name">
-        <span class="title">经办组织: </span>
-        <span class="content">{{orderInfo.handlerUnitName || '无'}}</span>
+      <div class='info_content info_content_whole' v-else>
+        <div class="each_handle">
+          <p class="each_info">
+            <label>经办主体：</label>
+            <span>{{orderInfo.handlerEntityName  || '无'}}</span>
+          </p>
+          <p class="each_info">
+            <label>经办组织：</label>
+            <span>{{orderInfo.handlerUnitName  || '无'}}</span>
+          </p>
+        </div>
+        <div class="each_handle">
+          <p class="each_info">
+            <label>经办人：</label>
+            <span>{{orderInfo.handlerName}}</span>
+          </p>
+          <p class="each_info">
+            <label>经办职位：</label>
+            <span>{{orderInfo.handlerRoleName || '无'}}</span>
+          </p>
+        </div>
+        <div class="each_handle" v-show="showMore">
+          <p class="each_info">
+            <label>创建人：</label>
+            <span>{{orderInfo.creatorName}}</span>
+          </p>
+          <p class="each_info">
+            <label>修改时间：</label>
+            <span>{{orderInfo.modTime | dateFormat('YYYY-MM-DD')}}</span>
+          </p>
+        </div>
       </div>
-      <div class="each_handle s_size_name">
-        <span class="title">经办职位: </span>
-        <span class="content">{{orderInfo.handlerRoleName || '无'}}</span>
-      </div>
-    </div>
-    <!-- 创建时间 完成时间 -->
-    <div class="time_info s_size_name">
-      <div class="each_time">
-        <span class="title">创建人: </span>
-        <span class="content">{{orderInfo.creatorName}}</span>
-      </div>
-      <div class="each_time">
-        <span class="title">创建时间: </span>
-        <span class="content">{{orderInfo.crtTime | dateFormat }}</span>
-      </div>
-      <div class="each_time" v-if="orderInfo.effectiveTime">
-        <span class="title">修改时间: </span>
-        <span class="content">{{orderInfo.modTime | dateFormat}}</span>
-      </div>
-      <div class="each_time">
-        <span class="title">流程状态: </span>
-        <span class="content">{{orderInfo.biProcessStatus || '无'}}</span>
+      <div class="check_more vux-1px" @click="showMore = true" v-show="!showMore">        
+        查看更多详情 <span class="icon-filter-down"></span>
       </div>
     </div>
   </div>
@@ -52,6 +79,7 @@
 
 <script>
   import { dateFormat } from 'vux'
+import { fail } from 'assert';
   export default {
     name: "BasicInfo",
     props: {
@@ -68,6 +96,11 @@
         }
       }
     },
+    data(){
+      return {
+        showMore: false,
+      }
+    },
     filters: {
       dateFormat
     }
@@ -76,67 +109,121 @@
 
 <style scoped lang="scss">
   // 基本信息 （订单、经办主体等）
+  .vux-1px:before{
+    border-color: #979797;
+    border-radius: .34rem;
+  }
   .basic_info {
     width: 100%;
-    padding: 0 .1rem;
     background: #fff;
     margin-bottom: .1rem;
     box-sizing: border-box;
-    // 订单栏
-    .serial_bar {
-      display: flex;
-      padding: .04rem 0;
-      align-items: center;
-      justify-content: space-between;
-      // 表单状态
-      .work_status {
-        color: #fff;
-        font-size: .12rem;
-        font-weight: bold;
-        padding: .01rem .04rem;
-        background: #53d397;
-        border-radius: .12rem;
+    margin-bottom: .1rem;
+    position: relative;
+    z-index: -10;
+    .basic_top {
+      padding: .1rem 0 .03rem .25rem;
+      color: #333;
+      // 订单栏
+      .serial_bar {
+        display: flex;
+        align-items: center;
+        // 编码
+        .trans_code{
+          font-size: .14rem;
+          color: #666;
+        }
+        // 表单状态
+        .work_status {
+          margin-left: .1rem;
+          background: url('/src/assets/iconfont/detail_order_status.png');
+          background-size: cover;
+          width: .42rem;
+          height: .24rem;
+          color: #3296FA;
+          font-size: .1rem;
+          text-align: center;
+          line-height: .24rem;
+        }
+        
+        // 进行中
+        .doing_work {
+          color: #333;
+        }
+        // 已失效
+        .invalid_work {
+          color: #999;
+        }
       }
-      // 进行中
-      .doing_work {
-        background: #5077aa;
-      }
-      // 已失效
-      .invalid_work {
-        background: #474a56;
+      .work_proStatus {
+        margin-top: .02rem;
+        .status {
+          position: relative;
+          font-size: .16rem;
+          line-height: .22rem;
+          display: inline-block;
+          &:before{
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: calc(100% + .1rem);
+            height: .08rem;
+            background: #F9D40A;
+            z-index: -1;
+
+          }
+        }
       }
     }
-    // 经办主体
-    .handle_info {
-      padding: .06rem 0;
-      .each_handle {
-        margin: .04rem 0;
-      }
-      .title {
-        font-weight: bold;
-      }
-      .content {
-        color: #454545;
-      }
-    }
-    // 创建时间
-    .time_info {
-      @extend .handle_info;
-      .each_time {
-        @extend .each_handle;
-      }
-    }
-    .l_size_name {
-      color: #111;
-      padding: .06rem 0;
-      font-size: .22rem;
-      font-weight: 400;
-    }
-    .m_size_name {
-      font-size: .18rem;
-    }
-    .s_size_name {
+    .handler_info {
+      padding: .19rem .25rem .12rem;
       font-size: .14rem;
+      .info_title{
+        width: .83rem;
+        height: .41rem;
+        background: url('/src/assets/iconfont/handler_bg.png');
+        background-size: cover;
+        margin: 0 auto;
+        position: relative;
+        .title {
+          position: absolute;
+          left: .16rem;
+          top: .1rem;
+          line-height: .14rem;
+          color: #fff;
+
+        }
+      }
+      .info_content{
+        margin-top: .13rem;
+        .each_handle{
+          display: flex;  
+        }
+        .each_info{
+          line-height: .24rem;
+          color: #333;
+          flex: 1;
+          label{
+            color: #999;
+          }
+        }
+      }
+
+    }
+    .check_more {
+      width: 1.29rem;
+      height: .34rem;
+      margin: .25rem auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      .icon-filter-down{
+        width: .11rem;
+        height: .05rem;
+        margin-left: .02rem;
+      }
     }
     .vux-1px-b:after {
       border-color: #e8e8e8;
