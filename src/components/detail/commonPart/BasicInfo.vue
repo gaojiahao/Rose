@@ -16,11 +16,11 @@
       <div class="info_title">
         <span class="title">经办信息</span>
       </div>
-      <div class='info_content info_content_part' v-if="!showMore">
+      <div class='info_content info_content_part'>
         <div class="each_handle" >
           <p class="each_info">
-            <label>创建人：</label>
-            <span>{{orderInfo.creatorName}}</span>
+            <label>经办人：</label>
+            <span>{{orderInfo.handlerName}}</span>
           </p>
           <p class="each_info">
             <label>修改时间：</label>
@@ -37,41 +37,19 @@
             <span>{{orderInfo.handlerUnitName  || '无'}}</span>
           </p>
         </div>
-      </div>
-      <div class='info_content info_content_whole' v-else>
-        <div class="each_handle">
+        <div class="each_handle" v-if="showMore">
           <p class="each_info">
-            <label>经办主体：</label>
-            <span>{{orderInfo.handlerEntityName  || '无'}}</span>
-          </p>
-          <p class="each_info">
-            <label>经办组织：</label>
-            <span>{{orderInfo.handlerUnitName  || '无'}}</span>
-          </p>
-        </div>
-        <div class="each_handle">
-          <p class="each_info">
-            <label>经办人：</label>
-            <span>{{orderInfo.handlerName}}</span>
+            <label>创建人：</label>
+            <span>{{orderInfo.creatorName}}</span>
           </p>
           <p class="each_info">
             <label>经办职位：</label>
             <span>{{orderInfo.handlerRoleName || '无'}}</span>
           </p>
         </div>
-        <div class="each_handle" v-show="showMore">
-          <p class="each_info">
-            <label>创建人：</label>
-            <span>{{orderInfo.creatorName}}</span>
-          </p>
-          <p class="each_info">
-            <label>修改时间：</label>
-            <span>{{orderInfo.modTime | dateFormat('YYYY-MM-DD')}}</span>
-          </p>
-        </div>
       </div>
       <div class="check_more vux-1px" @click="showMore = true" v-show="!showMore">        
-        查看更多详情 <span class="icon-filter-down"></span>
+        查看更多<span class="icon-filter-down"></span>
       </div>
     </div>
   </div>
@@ -136,23 +114,39 @@ import { fail } from 'assert';
         // 表单状态
         .work_status {
           margin-left: .1rem;
-          background: url('/src/assets/iconfont/detail_order_status.png');
-          background-size: cover;
-          width: .42rem;
-          height: .24rem;
+          padding: .05rem .06rem;
           color: #3296FA;
           font-size: .1rem;
           text-align: center;
-          line-height: .24rem;
+          line-height: .14rem;
+          position: relative;
+          &:before{
+            content: " ";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200%;
+            border: 1px solid #3296FA;
+            color: #3296FA;
+            height: 200%;
+            transform-origin: left top;
+            transform: scale(0.5);
+            border-radius: .24rem .24rem .24rem 0;
+          }
         }
-        
         // 进行中
         .doing_work {
           color: #333;
+          &:before{
+            border-color: #333;
+          }
         }
         // 已失效
         .invalid_work {
-          color: #999;
+          border-color: #999;
+          &:before{
+            border-color: #999;
+          }
         }
       }
       .work_proStatus {

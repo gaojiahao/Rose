@@ -1,43 +1,37 @@
 <template>
   <div class="mater-list-item" :class="{visited: item.visited}">
     <!-- 往来，流畅状态-->
-    <div class="dealer_part vux-1px-b" v-show="item.dealerName">
+    <div class="dealer_part" v-show="item.dealerName">
       <div class="order_dealer">
         <span class="icon-dealer"></span>
         <span class="dealer_name">{{item.dealerName}}</span>
       </div>
+      <div class="order_status"><span :class="item.statusClass">{{item.biStatus}}</span></div> 
+    </div>
+    <!-- 订单编码默认状态 -->
+    <div class="duty_top" v-if="!istransCodeBottom">
+      <div class="duty_code">
+        <div class="code">
+          <label>订单编号：</label>
+          <span>{{item.transCode}}</span>
+        </div>
+        <div class="order_status" v-if="!item.dealerName"><span :class="item.statusClass">{{item.biStatus}}</span></div> 
+        <div class="order_biProStatus" v-else>{{item.processStatus || "暂未指定流程状态"}}</div>
+        
+      </div>
+    </div>
+    <!--仓库-->
+    <div class="warehouse_part" v-if="isWarehouse">
+      <div class="warehouse">
+        <!--入库仓 -->
+        <span class="warehouse_in" v-if="item.warehouseName_containerCode">入库 - {{item.warehouseName_containerCode}}</span>
+        <!-- 出库库仓 -->
+        <span class="warehouse_out"  v-if="item.warehouseName_containerCodeOut">出库 - {{item.warehouseName_containerCodeOut}}</span>
+
+      </div>
       <div class="order_biProStatus">{{item.processStatus || "暂未指定流程状态"}}</div>
     </div>
     <div class="order_main vux-1px-b" :class="{'has_margin' : noCount}">
-      <!-- 订单 时期 -->
-      <div class="duty_top">
-        <div class="duty_code">
-          <div class="code">
-            <span class="icon-code"></span>
-            <span>订单编号： {{item.transCode}}</span>
-          </div>
-          <div class="order_status">状态： <span :class="item.statusClass">{{item.biStatus}}</span></div> 
-        </div>
-        <div class="duty_creator">
-          <p class="order_handler">经办人： {{item.handlerName}}</p>
-          <p class="mod_time">修改时间： {{item.modTime}}</p>
-        </div>
-      </div>
-      <!-- <div class="dealer_part warehouse" v-if="item.warehouseName_containerCode || item.warehouseName_containerCodeOut">
-        <div :class="{'vux-1px-t dealer_name': !item.dealerName }"> -->
-          <!-- 出库 -->
-          <!-- <template v-if="item.warehouseName_containerCodeOut">
-            <i class="iconfont icon--"></i><span>出库 - {{item.warehouseName_containerCodeOut}}</span>
-          </template> -->
-          <!-- 出库和入库同时存在时展示竖线 -->
-          <!-- <span class="division-line" v-if="item.warehouseName_containerCode && item.warehouseName_containerCodeOut">|</span> -->
-          <!-- 入库，本地库存调拨不展示前面的入库文字 -->
-          <!-- <template v-if="item.warehouseName_containerCode">
-            <i class="iconfont icon--"></i><span>{{!item.transCode.includes('STCK') ? '入库 - ' : ''}}{{item.warehouseName_containerCode}}</span>
-          </template>       -->
-        <!-- </div>
-
-      </div> -->
       <!-- 物料图片和名称 -->
       <ul class="duty_matter">
         <li class="duty_matter_item" :class="{'is-matched-mat': mItem.matchedMat}"
@@ -75,7 +69,7 @@
       </ul>
     </div>
     <!-- 金额合计 -->
-    <div class="order_count">
+    <div class="order_count vux-1px-b">
       <div class="num">
         <span>共{{item.itemCount}}类商品</span>
         <span v-show="item.totalQty">合计{{item.totalQty}}件</span>
@@ -83,7 +77,25 @@
       <div class="money" v-if="!noCount">
         价税小计：<span class="symbol">￥</span><span class="tdAmount">{{item.count | toFixed | numberComma(3)}}</span>
       </div>
+      <!--无仓库和往来时流程状态-->
+      <div class="order_biProStatus" v-if="isDealerWarehouse">{{item.processStatus || "暂未指定流程状态"}}</div>
     </div>
+    <!--有仓库，有往来时订单编码-->
+    <div class="transcode_part vux-1px-b" v-if="istransCodeBottom">
+      <label>订单编码：</label>
+      <span>{{item.transCode}}</span>
+    </div>
+    <!-- 经办人合计 -->
+    <div class="duty_creator">
+        <p class="order_handler">
+          <label>经办人：</label>
+          <span>{{item.handlerName}}</span>
+        </p>
+        <p class="order_handler">
+          <label>修改时间：</label>
+          <span>{{item.modTime}}</span>
+        </p>
+      </div>
     <!-- 提示 -->
     <div class="tips_part" v-show="item.itemCount > 3">      
       <span>查看全部 {{item.itemCount}} 条信息</span>
@@ -138,6 +150,20 @@
       numberComma,
       toFixed,
     },
+    computed: {
+      // 订单编码是否在底部
+      istransCodeBottom(){
+        return this.item.dealerName && (this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut)
+      },
+      //是否有仓库
+      isWarehouse(){
+        return this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut
+      },
+      // 不存在往来和仓库,流程状态放在商品合计栏
+      isDealerWarehouse(){
+        return !this.item.dealerName && !(this.item.warehouseName_containerCode || this.item.warehouseName_containerCodeOut)
+      },
+    },
     methods: {
       // TODO 获取默认图片
       getDefaultImg(item) {
@@ -157,20 +183,42 @@
 .division-line {
   margin: 0 .02rem;
 }
+// 流程状态
+.order_biProStatus{
+  padding: .05rem .04rem;
+  color: #FB880B;
+  background: #FFF4E6;
+  border-radius: .1rem;
+  line-height: .12rem;
+}
+label{
+  color: #999;
+}
+//订单已生效
+.duty_done_c {
+  color: #3296FA;
+}
+// 订单失效或者草稿
+.duty_fall_c {
+  color: #999;
+}
 .mater-list-item {
-  // width: 95%;
   position: relative;
   overflow: hidden;
-  margin-top: .1rem;
-  background: #fff;
+  margin: .1rem;
+  padding: .1rem 0 .15rem;
   box-sizing: border-box;
   font-size: .12rem;
   transition: background-color 200ms linear;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: .04rem;
+  background: #fff;
+  color: #333;  
   &.visited {
     background-color: $list_visited;
   }
   .dealer_part {
-    height: .44rem;
+    // height: .44rem;
     padding: 0 .15rem;
     display: flex;
     justify-content: space-between;
@@ -182,21 +230,12 @@
       display: flex;
       align-items: center;
       .icon-dealer {
-        width: .14rem;
-        height: .13rem;
+        width: .16rem;
+        height: .15rem;
       }
       .dealer_name {
-        color: #333;
         margin-left: .1rem;
       }
-    }
-    // 流畅状态
-    .order_biProStatus{
-      padding: .04rem .06rem;
-      color: #FB880B;
-      background: #FFF4E6;
-      border-radius: .1rem;
-      line-height: .12rem;
     }
   }
   .order_main {
@@ -207,63 +246,61 @@
   }
   .duty_top {
     overflow: hidden;
+    padding: .06rem .15rem 0;
     // 订单编码
     .duty_code {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      color: #333;
-      margin: .12rem 0 .07rem 0;
-      .code{
-        display: flex;
-        align-items: center;
-        .icon-code {
-          width: .14rem;
-          height: .14rem;
-          margin-right: .08rem;
-        }
-      }
-      .duty_done_c {
-        color: #3296FA;
-      }
-      .duty_fall_c {
-        color: #999;
-      }
-      
-    }
-    // 经办人，修改时间
-    .duty_creator {
-      display: flex;
-      color: #999;
-      padding-left: .22rem;
-      .order_handler {
-        margin-right: .07rem;
-      }
-    }
-
-  }
-  %detailItem {
-    width: 100%;
-    color: #757575;
-    padding: 0 .1rem;
-    font-size: .14rem;
-    box-sizing: border-box;
-    .iconfont {
-      font-size: .14rem;
-      margin-right: .02rem;
+      align-items: center; 
     }
   }
   /* 仓库 */
-  .warehouse {
-    @extend %detailItem;
+  .warehouse_part{
+    padding: .06rem .15rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .warehouse_style{
+      padding: .03rem .02rem;
+      position: relative;
+      color: #3296FA;
+      &:before{
+        border-radius: .08rem;
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200%;
+        border: 1px solid #3296FA;
+        color: #3296FA;
+        height: 200%;
+        transform-origin: left top;
+        transform: scale(0.5);
+      }
+    }
+    .warehouse{
+      font-size: .1rem;
+      line-height: .14rem;
+      .warehouse_in{
+        @extend .warehouse_style;
+        color: #C0A170;
+        margin-right: .08rem;
+        &:before{
+          border-color: #C0A170;
+        }
+      }
+      .warehouse_out{
+        @extend .warehouse_style;
+      }
+    }
   }
-
   /* 物料 */
   .duty_matter {
     display: block;
     box-sizing: border-box;
     .duty_matter_item {
       width: 100%;
+      padding-top: .16rem;
       display: flex;
       box-sizing: border-box;
       display: flex;
@@ -276,7 +313,7 @@
         width: .95rem;
         height: .95rem;
         display: inline-block;
-        margin-top: .15rem;
+        margin-bottom: .04rem;
         img {
           width: 100%;
           max-height: 100%;
@@ -284,48 +321,43 @@
       }
       .matter_main {
         flex: 1;
-        margin-left: .1rem;
-        padding: .15rem  0;
+        margin-left: .12rem;
         position: relative;
+        padding-bottom: .15rem;
         .main_top {
           .matter_name {
-            color: #333;
             font-size: .14rem;
             line-height: .19rem;
           }
           .matter_units {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            margin-top: .08rem;
+            align-items: flex-start;
+            margin-top: .04rem;
             color: #999;
-            p{
-              line-height: .17rem;
-              span{
+            p {
+              line-height: .20rem;
+              span {
                 margin-right: .02rem;
               }
             }
           }
           .matter_price_part {
             font-size: .14rem;
-            color: #333;
-            margin-top: .12rem;
-            
+            margin-top: .08rem;           
           }
           .matter_num_part {
             color: #999;
-            // position: absolute;
-            // bottom: .45rem;
-            // right: 0;
           }
         }
       }
     }
   }
+  //查看全部
   .tips_part {
     color: #318EFF;
     box-sizing: border-box;
-    padding: .01rem 0 .15rem 0;
+    padding-top: .15rem;
     text-align: center;
   }
   /* 合计栏 */
@@ -348,8 +380,24 @@
         color: #FA7138;
       }
     }
+    .order_biProStatus{
+      font-weight: normal;
+      font-size: .12rem;
+    }
   }
-
+  /** 创建人 */
+  .duty_creator {
+    display: flex;
+    padding: .15rem .15rem 0;
+    line-height: .14rem;
+    .order_handler {
+      margin-right: .12rem;
+    }
+  }
+  .transcode_part{
+    padding: .15rem;
+    line-height: .14rem;
+  }
   /* vux组件样式 */
   .vux-1px-t:before,
   .vux-1px-b:after {

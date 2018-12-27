@@ -87,13 +87,13 @@
   .finance-list-item{
     position: relative;
     overflow: hidden;
-    margin-top: .1rem;
-    margin: .1rem .07rem 0 .13rem;
+    margin: .1rem;
     padding: .15rem 0;
     box-sizing: border-box;
     font-size: .12rem;
     transition: background-color 200ms linear;
-    box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.5);
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: .04rem;
     &.visited {
       background-color: $list_visited;
     }
@@ -145,12 +145,22 @@
           align-items: center;
           margin-bottom: .11rem;
           .name{
-            width: .5rem;
-            height: .22rem;
-            background: url('/src/assets/iconfont/icon_jux.png');
-            background-size: cover;
-            text-align: center;
+            padding: .04rem .13rem;
+            line-height: .14rem;
+            position: relative;
             color: #fff;
+            &:before{
+              content: "";
+              position: absolute;
+              left: 0;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              background: #4978B0;
+              border-radius: .02rem;
+              z-index: -1;
+              transform: skew(-10deg)
+            }
           }
           .type{
             color: #696969;
