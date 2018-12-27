@@ -166,6 +166,9 @@
             <span>本次收票金额</span>
           </template>
         </pop-matter>
+        <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
+          <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
+        </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
       </div>
     </div>
