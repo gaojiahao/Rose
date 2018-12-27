@@ -311,12 +311,10 @@ export default {
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
             }
             else if(mItem.assistQty == null && mItem.tdQty != null) {
-              mItem.tdAmount = toFixed(accMul(mItem.price, mItem.tdQty));
+              mItem.tdAmount = toFixed(accAdd(accMul(mItem.price, mItem.tdQty), mItem.taxAmount));
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
             }
-            if(mItem.tdAmount != null) {
-              item.count = toFixed(accAdd(item.count, mItem.tdAmount));
-            }
+            item.count = toFixed(accAdd(item.count, mItem.tdAmount));
             // 有物料的增加统一渲染字段
             if(mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode){
               mItem.inventoryName = mItem.inventoryName_transObjCode || mItem.inventoryName_outPutMatCode ;
