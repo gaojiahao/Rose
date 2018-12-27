@@ -181,6 +181,9 @@
           font-size: .16rem;
         }
         &:after {
+          top: -.04rem;
+          width: .1rem;
+          height: .1rem;
           background-color: #3296fa;
         }
       }
