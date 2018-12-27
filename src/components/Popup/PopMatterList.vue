@@ -227,11 +227,14 @@
       // TODO 匹配相同项的索引
       findIndex(arr, sItem) {
         return arr.findIndex(item => {
-          let isSameTransCode = true;
-          if (item.transCode) {
-            isSameTransCode = item.transCode === sItem.transCode;
+          let isSameTransCode = true,
+              isSameOrderCode = true;
+          if(item.orderCode) {
+            isSameOrderCode = item.orderCode === sItem.orderCode;
+            return isSameOrderCode && item.inventoryCode === sItem.inventoryCode
           }
-          return isSameTransCode && item.inventoryCode === sItem.inventoryCode && item.colId === sItem.colId
+          isSameTransCode = item.transCode === sItem.transCode;
+          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
         });
       },
       // TODO 判断是否展示选中图标

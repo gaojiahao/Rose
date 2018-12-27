@@ -606,8 +606,8 @@
           this.attachment = data.attachment;
           let orderList = {};
           let {formData} = data;
-          let {inPut = {}, order = {}} = formData;
-          let [dealerInfo = {}] = inPut.dataSet;
+          let {order = {}} = formData;
+          // let [dealerInfo = {}] = order.dataSet;
           order.dataSet.map(item => {
             item = {
               ...item,
@@ -650,17 +650,17 @@
             creator: formData.creator,
             modifer: formData.modifer,
           }
-          let dealer = formData.inPut.dataSet[0]
+          let dealer = formData.order.dataSet[0]
           // 客户信息展示
           this.dealerInfo = {
             dealerMobilePhone: formData.dealerDebitContactInformation,
             dealerCode: dealer.dealerDebit,
             dealerLabelName: dealer.drDealerLabel,
-            dealerName: formData.inPut.dealerName_dealerDebit,
-            province: formData.inPut.province_dealerDebit,
-            city: formData.inPut.city_dealerDebit,
-            county: formData.inPut.county_dealerDebit,
-            address: formData.inPut.address_dealerDebit,
+            dealerName: formData.order.dealerName_dealerDebit,
+            province: formData.order.province_dealerDebit,
+            city: formData.order.city_dealerDebit,
+            county: formData.order.county_dealerDebit,
+            address: formData.order.address_dealerDebit,
             paymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
             dealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
             pamentDays: formData.order.daysOfAccount,

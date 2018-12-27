@@ -321,7 +321,7 @@
         sels.forEach(item => {
           item.tdQty = item.tdQty || item.qtyBal;
           item.taxRate = item.taxRate || 0.16;
-          item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD');
+          item.purchaseDay = dateFormat(item.calcTime, 'YYYY-MM-DD') || item.purchaseDay;
           item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
