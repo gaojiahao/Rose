@@ -11,8 +11,8 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">计划号列表</div>
+              <div class="required">请选择计划号</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
@@ -105,7 +105,6 @@
                   <span>采购提前期: {{item.leadtime}}</span>
                 </div>
                 <div>
-                  <p>下单截止日: {{item.shippingTime}}</p>
                   <p>到货截止日: {{item.processingStartDate}}</p>
                 </div>
               </div>
@@ -177,7 +176,7 @@
 
 <script>
 // vux插件 引入
-import { Group, XInput, XTextarea, Datetime, Cell } from 'vux'
+import { Group, XInput, XTextarea, Datetime, Cell, dateFormat } from 'vux'
 // 请求 引入
 import { getSOList } from 'service/detailService'
 import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, submitAndCalc } from 'service/commonService'
@@ -192,6 +191,7 @@ import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 // 方法 引入
 import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 import { toFixed } from '@/plugins/calc'
+import dateCount from '@/plugins/dateCount'
 const DRAFT_KEY = 'CGSQ_DATA';
 
 export default {
@@ -236,14 +236,27 @@ export default {
     XTextarea, Group, XInput, Datetime, Cell, RNumber,
     PopMatter,  PopMatterList, RPicker, PopBaseinfo
   },
+  filters: {
+    dateFormat
+  },
   computed: {
     // 订单物料总数量
-    totalNum () {
+    totalNum() {
       let total = 0;
       this.matterList.forEach(item => {
         total = accAdd(total, item.tdQty);
       });
       return Number(total);
+    }
+  },
+  watch: {
+    matterList: {
+      handler(list) {
+        for(let item of list) {
+          // 此处计算下单截止日（算法：到货截止日 减去 采购提前期 如果有周末则要减去周末）
+          item.shippingTime = dateFormat(dateCount(item.shippingTime, item.promDeliTime), 'YYYY-MM-DD');
+        }
+      }
     }
   },
   mixins: [common],
