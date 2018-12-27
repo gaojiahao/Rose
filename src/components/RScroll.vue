@@ -146,9 +146,19 @@
           this.pullDownTop = -PULL_DOWN_REFRESH_HEIGHT;
         }
       },
+      // TODO 销毁better-scroll
+      destroy() {
+        this.bScroll.destroy();
+        this.bScroll = null;
+      },
     },
     created() {
       this._initScroll();
+    },
+    beforeDestroy() {
+      if (this.bScroll) {
+        this.destroy();
+      }
     },
   }
 </script>

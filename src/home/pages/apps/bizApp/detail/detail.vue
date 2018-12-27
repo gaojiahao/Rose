@@ -37,6 +37,8 @@ import AppsFile from '@/home/pages/maps/businessFile'
 import Bscroll from 'better-scroll'
 // 请求 引入
 import { isSubscribeByRelationKey, subscribeApp, unsubscribeApp, getUserList } from 'service/commentService.js'
+/* 引入微信相关 */
+import {register} from 'plugins/wx'
 export default {
   data() {
     return {
@@ -93,7 +95,9 @@ export default {
     },
     // TODO 刷新better-scroll
     refresh() {
-      this.detailScroll.refresh();
+      this.$nextTick(() => {
+        this.detailScroll.refresh();
+      })
     },
     // TODO 底部评论返回按钮事件
     back() {
@@ -106,14 +110,6 @@ export default {
         query: {
           transCode: this.transCode
         }
-      })
-    },
-    // TODO 请求评论列表
-    getCommentList() {
-      return getPCCommentList({
-        relationKey: this.transCode
-      }).then(({dataCount = 0}) => {
-        this.commentCount = dataCount;
       })
     },
     // TODO 是否已经关注该订单
@@ -143,7 +139,42 @@ export default {
           })
         }
       })
-    }
+    },
+    // TODO 初始化页面
+    initPage(){
+      // this.$loading.show();
+      let { childId, transCode } = this.$route.query,
+        { fileId, listId } = this.$route.params;
+      this.hasComment = !!transCode;
+      this.transCode = transCode;
+      try {
+        if(childId) {
+          this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}Form.vue`).default;
+        }
+        else {
+          this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
+        }
+        // 监听详情页传回来的 ‘评论’
+        this.$event.$on('commentCount', (val) => {
+          this.commentCount = val;
+        })
+      } catch (e) {
+        console.log(e);
+        this.$vux.alert.show({
+          content: '抱歉，无法支持该应用的查看',
+          onHide: () => {
+            this.$router.go(-1);
+          }
+        });
+      }
+      this.$nextTick(() => {
+        if (!this.detailScroll) {
+          this.detailScroll = new Bscroll(this.$refs.detail, {
+            click: true,
+          })
+        }
+      })
+    },
   },
   beforeRouteEnter(to, from, next) {
     let { name = '' } = to.query;
@@ -155,51 +186,34 @@ export default {
     next();
   },
   created() {
-    this.$loading.show();
-    let { childId, transCode } = this.$route.query,
-        { fileId, listId } = this.$route.params;
-    this.hasComment = !!transCode;
-    this.transCode = transCode;
-    try {
-      if(childId) {
-        this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}Form.vue`).default;
-      }
-      else {
-        this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
-      }
-      // 监听详情页传回来的 ‘评论’
-      this.$event.$on('commentCount', (val) => {
-        this.commentCount = val;
-      })
-    } catch (e) {
-      console.log(e);
-      this.$vux.alert.show({
-        content: '抱歉，无法支持该应用的查看',
-        onHide: () => {
-          this.$router.go(-1);
-        }
-      });
+    this.initPage();
+  },
+  activated() {
+    let reload = this.$route.meta.reload;
+    if(reload) {
+      this.initPage();
+      this.$route.meta.reload = false;
     }
-    this.$nextTick(() => {
-      this.detailScroll = new Bscroll(this.$refs.detail, {
-        click: true,
-      })
-    })
   },
   beforeRouteLeave(to, from, next) {
     let { path } = to;
+    let isGoList = to.name === 'LIST' || to.name === 'MSGLIST';
     this.$HandleLoad.hide();
+    if (isGoList) {
+      this.currentComponent = null;
+      // 销毁better-scroll
+      this.detailScroll.destroy();
+      this.detailScroll = null;
+      // 销毁监听
+      this.$event.$off('commentCount');
+      from.meta.reload = true;
+    }
     // 新建物料，修改列表页的meta值
-    if (this.submitSuccess && (to.name === 'LIST' || to.name === 'MSGLIST')) {
+    if (this.submitSuccess && isGoList) {
       to.meta.reload = true;
     }
     next();
   },
-  beforeDestroy(){
-    // 销毁监听
-    this.$event.$off('commentCount');
-  }
-
 }
 </script>
 
@@ -234,7 +248,7 @@ export default {
       }
       .operations{
         display: flex;
-        align-items: center; 
+        align-items: center;
       }
       .iconfont {
         color: #757575;

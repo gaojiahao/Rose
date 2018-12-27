@@ -1,123 +1,22 @@
 <template>
   <!-- 工作流 -->
-  <div class="work_flow" @click="popupShow = true" :class="{hidden : simpleWL.length<=0}" v-if="simpleWL.length">
-    <div class="work_title">
-      <div>
-        <span class="iconfont icon-chakangongzuoliu"></span>
-        <span class="content">工作流</span>
-      </div>
-      <div class="tips">查看更多</div>
+  <div class="work-flow-container" v-if="fullWorkFlow.length">
+    <div class="work-flow-header">工作流</div>
+    <div class="work-flow-status-wrapper">
+      <i class="icon-flow-time"></i>
+      <span>工作流已到{{currentStatus.nodeName}}，当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span></span>
     </div>
-    <!-- 简化版工作流 -->
-    <div class="flow_list">
-      <div class="left_tabBar">
-        <span class="iconfont icon-gongzuoliuyiqueren"></span>
-        <div class="side_bar vux-1px-r"></div>
-        <span class="iconfont"
-             :class="[{'icon-gongzuoliushenpizhong' : workFlowInfo.biStatus === '进行中' },
-             {'icon-gongzuoliuyiqueren' : workFlowInfo.biStatus === '已生效' },
-             {'icon-zhongzhi' : workFlowInfo.biStatus === '已失效' }]"></span>
+    <div class="work-flow-time">{{currentStatus.startTime | dateFormat('YYYY-MM-DD')}}</div>
+    <div class="work-flow-more" @click="goWorkFlowFull">
+      <div class="work_flow_more_button">
+        <span class="text">查看更多详情</span>
+        <i class="icon-filter-down"></i>
       </div>
-      <div class="each_msg"
-           :class="{'vux-1px-b' : index === 0}"
-           v-for="(item, index) in simpleWL"
-           :key=index>
-        <div class="main_content">
-          <!-- 头像 -->
-          <div class="user_avatar">
-            <img :src='item.photoUrl || defaulImg ' @error="getDefaultIcon(item)" alt="avatar">
-          </div>
-          <!-- 操作信息 -->
-          <div class="handle_info">
-            <div class="handle_name">
-              <!-- 操作动作 -->
-              <span class="handle_node_name">{{item.nodeName}}</span>
-              <!-- 操作状态 A(没有返回状态) -->
-              <span class="status" v-if="!item.status">{{workFlowInfo.biStatus}}</span>
-              <!-- 操作状态 B(有返回状态) -->
-              <span class="status" :class=item.dyClass v-else-if="item.status">{{item.status}}</span>
-            </div>
-            <!-- 流程节点 用户名 -->
-            <div class="user_name">
-              {{item.userName}}
-            </div>
-            <!-- 备注 -->
-            <div class="remark">备注: {{item.message || '无'}}</div>
-          </div>
-        </div>
-        <div class="tips_content" v-if="index === simpleWL.length - 1">
-          最新节点
-        </div>
-      </div>
-    </div>
-    <!-- 工作流详情 -->
-    <div v-transfer-dom>
-      <popup v-model="popupShow" position="bottom" height="100%">
-        <r-scroll class="full-flow-container" ref="bScroll">
-          <div class="flow">
-            <div class='flow_top'>
-              <span class="title">工作流详情</span>
-              <span class="close" @click="closePop" v-if="fullWorkFlow.length >= 5">关闭</span>
-              <!-- <icon type="cancel" @click.native="closePop"></icon> -->
-            </div>
-            <div class="flow_list">
-              <div class="each_msg"
-                   :class="isMyTask && index === fullWorkFlow.length - 1 || userName === item.userName ? 'whenisMine' : ''"
-                   v-for="(item, index) in fullWorkFlow"
-                   :key=index>
-                <!-- 接收时间 -->
-                <div class="recive_time">
-                  <span class="num">{{item.startTime || crtTime}}</span>
-                </div>
-                <div class="info_part">
-                  <!-- 头像 -->
-                  <div class="user_info">
-                    <div class="user_avatar">
-                      <img :src='item.photoUrl || defaulImg ' @error="getDefaultIcon(item)" alt="avatar">
-                      <div class="name">{{item.userName}}</div>
-                    </div>
-                  </div>
-                  <!-- 操作信息 -->
-                  <div class="handle_info">
-                    <div class="triangle"></div>
-                    <div class="content">
-                      <div class="handle_name">
-                        <!-- 操作动作 -->
-                        <span>{{item.nodeName}}</span>
-                        <!-- 操作状态 B(有返回状态) -->
-                        <span class="status"
-                              :class=item.dyClass
-                              v-if='index > 0'>
-                      {{item.status === '撤回'? '提交者主动撤回' : item.status || noStatus}}
-                    </span>
-                      </div>
-                      <!-- 备注 -->
-                      <div class="remark" v-if="index === fullWorkFlow.length - 1 && noStatus === '进行中'">备注: 待操作人填写</div>
-                      <div class="remark" v-else>备注: {{item.message || '无'}}</div>
-                      <!-- 处理时间 -->
-                      <div class="handle" v-if="item.endTime">处理时间: {{item.endTime || '暂无'}}</div>
-                    </div>
-                  </div>
-                  <!-- 此处为空白div 解决因为浮动而没有高度的问题 -->
-                  <div class="del_f"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="btn" v-if="fullWorkFlow.length >= 5">
-            <span class="cfm_btn" @click="closePop">关闭</span>
-          </div>
-        </r-scroll>
-        <!-- 少于5条数据时固定在底部 -->
-        <div class="btn when_less" v-if="fullWorkFlow.length < 5">
-          <span class="cfm_btn" @click="closePop">关闭</span>
-        </div>
-      </popup>
     </div>
   </div>
 </template>
 <script>
-  import {TransferDom, Popup, Group, Icon, XButton} from 'vux'
+  import {Popup, Group, Icon, XButton, dateFormat} from 'vux'
   import RScroll from 'components/RScroll'
 
   export default {
@@ -157,71 +56,57 @@
     data() {
       return {
         defaulImg: require('assets/ava03.png'),   // 默认图片1
-        simpleWL: [],
-        popupShow: false,
+        currentStatus: {},
+      }
+    },
+    computed: {
+      statusClass() {
+        let {biStatus = ''} = this.workFlowInfo;
+        switch (biStatus) {
+          case '进行中':
+            return 'doing';
+          case '已失效':
+            return 'failure';
+          default:
+            return ''
+        }
       }
     },
     watch: {
       fullWorkFlow: {
         handler() {
           this.workFlowHandler();
-        }
+        },
+        immediate: true,
       },
-      popupShow: {
-        handler(bool) {
-          if (bool) {
-            this.$nextTick(() => {
-              if (this.$refs.bScroll) {
-                this.$refs.bScroll.refresh();
-              }
-            });
-          }
-        }
-      }
-    },
-    directives: {
-      TransferDom
     },
     components: {
-      Popup,
-      Group,
-      Icon,
-      XButton,
-      RScroll,
+      Popup, Group, Icon, XButton, RScroll,
     },
     methods: {
-      closePop() {
-        this.popupShow = false;
-      },
       workFlowHandler() {
+        let [currentStatus = {}] = this.fullWorkFlow.slice(-1);
         for (let item of this.fullWorkFlow) {
           // 去除名字中的空格
           item.userName = item.userName.replace(/\s*/g, "");
-          switch (item.status) {
-            case '同意':
-              item.dyClass = 'agree_c';
-              break;
-            case '不同意':
-              item.dyClass = 'reject_c';
-              break;
-            case '终止':
-              item.dyClass = 'over_c';
-              break;
-          }
         }
-        this.simpleWL = this.fullWorkFlow.slice(-2);
+        this.currentStatus = currentStatus;
       },
-      // 设置默认图片
-      getDefaultIcon(app){
-        let url = this.defaulImg;
-        if(app){
-          app.icon = url;
-        }
-        return url;
-      }
+      // TODO 跳转到工作流列表页面
+      goWorkFlowFull() {
+        let {transCode = ''} = this.workFlowInfo;
+        this.$router.push({
+          path: '/workFlowFull',
+          query: {
+            transCode,
+          }
+        })
+      },
+    },
+    filters: {
+      dateFormat,
     },
     created() {
-      this.workFlowHandler();
     }
   }
 </script>
@@ -231,359 +116,71 @@
     border-color: #e8e8e8;
   }
 
-  // 简易版工作流
-  .work_flow {
-    position: relative;
-    background: #fff;
-    .work_title {
-      display: flex;
-      align-items: center;
-      padding: .04rem .1rem 0;
-      justify-content: space-between;
-      .iconfont {
-        font-size: .14rem;
-      }
-      .content {
-        font-size: .16rem;
-        font-weight: bold;
-      }
-      .tips {
-        color: #5077aa;
-        font-size: .14rem;
-        // font-weight: bold;
-      }
-    }
-    .hidden {
-      display: none;
-    }
-    // 提示文字
-    .tip_tx {
-      width: 100%;
-      font-size: .1rem;
-      color: #757575;
-      padding: .04rem 0;
-    }
-    // 工作流信息
-    .flow_list {
-      margin-bottom: .1rem;
-      padding: 0 .1rem 0 .4rem;
-      background: #fff;
-      position: relative;
-      .left_tabBar {
-        display: flex;
-        position: absolute;
-        align-items: center;
-        flex-direction: column;
-        left: .1rem;
-        top: .22rem;
-      }
-      // 竖线
-      .side_bar {
-        height: .4rem;
-      }
-      // 工作流
-      .icon-gongzuoliuyiqueren {
-        color: #5077aa;
-        font-size: .16rem;
-      }
-      .icon-gongzuoliushenpizhong {
-        font-size: .16rem;
-      }
-      // 每一个明细
-      .each_msg {
-        display: flex;
-        color: #111;
-        padding: .05rem 0;
-        align-items: center;
-        border-radius: .12rem;
-        justify-content: space-between;
-        .main_content {
-          display: flex;
-          align-items: center;
-        }
-        .tips_content {
-          font-size: .1rem;
-          color: #454545;
-          background: #e8e8e8;
-          border-radius: .12rem;
-          padding: 0 .04rem;
-        }
-        // 用户头像
-        .user_avatar {
-          width: .45rem;
-          height: .45rem;
-          img {
-            width: 100%;
-            height: 100%;
-            border-radius: .1rem;
-          }
-        }
-        // 操作信息
-        .handle_info {
-          color: #111;
-          display: flex;
-          font-size: .1rem;
-          margin-left: .1rem;
-          flex-direction: column;
-          justify-content: center;
-          // 用户名称
-          .user_name {
-            font-size: .12rem;
-          }
-          // 操作名称
-          .handle_name {
-            display: flex;
-            font-size: .12rem;
-            font-weight: bold;
-            align-items: baseline;
-            .handle_node_name {
-              display: block;
-              max-width: 1.2rem;
-            }
-            // 默认样式
-            .status {
-              color: #fff;
-              font-size: .1rem;
-              padding: 0 .04rem;
-              margin-left: .04rem;
-              background: #5077aa;
-              border-radius: .12rem;
-            }
-            // 同意样式
-            .agree_c {
-              background: #53d397;
-            }
-            // 拒绝样式
-            .reject_c {
-              background: #c93d1b;
-            }
-            .over_c {
-              background: #474a56;
-            }
-          }
-          // 备注
-          .remark {
-            max-width: 2rem;
-            overflow: hidden;
-            font-size: .1rem;
-            color: #454545;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-          }
-        }
-      }
-    }
+  %icon {
+    display: inline-block;
+    width: .16rem;
+    height: .16rem;
   }
 
-  // 完整版工作流
-  .vux-popup-dialog {
-    background: #fff;
-    height: 100%;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    .full-flow-container {
-      height: 100%;
-      /deep/ .scroll-wrapper {
-        overflow: visible;
-        padding-bottom: .01rem;
+  .work-flow-container {
+    margin: .1rem 0;
+    padding: .15rem .25rem;
+    width: 100%;
+    background-color: #fff;
+    color: #333;
+    box-sizing: border-box;
+    .work-flow-header {
+      line-height: .14rem;
+      font-size: .16rem;
+    }
+    /* 已生效、草稿为#333 */
+    .work-flow-status-wrapper {
+      display: flex;
+      align-items: center;
+      margin-top: .15rem;
+      line-height: .14rem;
+      font-size: .14rem;
+      /* 进行中 */
+      .doing {
+        color: #3296fa;
+      }
+      /* 已失效 */
+      .failure {
+        color: #999;
       }
     }
-    .flow {
-      .flow_top {
+    .icon-flow-time {
+      @extend %icon;
+      margin-right: .1rem;
+    }
+    .work-flow-time {
+      margin-left: .26rem;
+      margin-top: .1rem;
+      line-height: .12rem;
+      color: #696969;
+      font-size: .12rem;
+    }
+    /* 查看更多 */
+    .work-flow-more {
+      display: flex;
+      justify-content: center;
+      margin-top: .3rem;
+      .work_flow_more_button {
         display: flex;
         align-items: center;
-        padding: .05rem .1rem;
-        justify-content: space-between;
-        // 标题
-        .title {
-          color: #111;
-          font-weight: bold;
-          font-size: .24rem;
-        }
-        // 关闭按钮
-        .close {
-          display: block;
-          color: #fff;
-          padding: 0 .1rem;
-          font-size: .18rem;
-          margin-top: -.04rem;
-          background: #dd0a35;
-          border-radius: .24rem;
-          box-shadow: 0 .2px 2px #dd0a35;
-        }
+        padding: .1rem .15rem;
+        line-height: .14rem;
+        border: 1px solid #979797;
+        border-radius: .17rem;
+        font-size: .14rem;
       }
-      // 工作流信息
-      .flow_list {
-        position: relative;
-        padding: .06rem .08rem 0;
-        // 每一个明细
-        .each_msg {
-          margin-bottom: .2rem;
-          position: relative;
-          // 接收时间
-          .recive_time {
-            width: 100%;
-            font-size: .12rem;
-            color: #757575;
-            text-align: center;
-            box-sizing: border-box;
-            margin-bottom: .02rem;
-          }
-          // 内容部分
-          .info_part {
-            // position: relative;
-            // padding-left: .44rem;
-            display: flex;
-            .user_info {
-              // position: absolute;
-              // left: 0;
-              // top: 0;
-              // 用户头像
-              .user_avatar {
-                width: .5rem;
-                display: flex;
-                font-size: .1rem;
-                flex-direction: column;
-                // 图片
-                img {
-                  width: 100%;
-                  border-radius: .24rem;
-                }
-                // 名字
-                .name {
-                  margin-top: .02rem;
-                  text-align: center;
-                }
-              }
-            }
-            // 操作信息
-            .handle_info {
-              color: #111;
-              font-size: .12rem;
-              margin-left: .2rem;
-              position: relative;
-              display: inline-block;
-              // 内容区域
-              .content {
-                background: #F4F4F4;
-                border-radius: .08rem;
-                padding: .04rem .1rem .02rem;
-                box-sizing: border-box;
-                // 用户名称
-                .user_name {
-                  font-size: .14rem;
-                }
-                // 操作名称
-                .handle_name {
-                  font-size: .18rem;
-                  font-weight: bold;
-                  span {
-                    display: inline-block;
-                  }
-                  // 默认样式
-                  .status {
-                    color: #fff;
-                    font-size: .1rem;
-                    padding: 0 .04rem;
-                    margin-top: -.02rem;
-                    background: #5077aa;
-                    vertical-align: middle;
-                  }
-                  // 同意样式
-                  .agree_c {
-                    background: #53d397;
-                  }
-                  // 拒绝样式
-                  .reject_c {
-                    background: #c93d1b;
-                  }
-                  // 终止样式
-                  .over_c {
-                    background: #474a56;
-                  }
-                }
-                // 备注
-                .remark {
-                  font-size: .14rem;
-                  color: #757575;
-                }
-              }
-              // 三角
-              .triangle {
-                content: "";
-                width: 0;
-                height: 0;
-                top: .14rem;
-                left: -.1rem;
-                position: absolute;
-                border-top: .1rem solid transparent;
-                border-right: .1rem solid #F4F4F4;
-                border-bottom: .1rem solid transparent;
-              }
-            }
-          }
-        }
-        // 当工作流为最后一个 并且节点与我有关时
-        .whenisMine {
-          .info_part {
-            flex-direction: row-reverse;
-            .user_info {
-              // right: 0;
-              // left: inherit;
-            }
-            .handle_info {
-              // float: right;
-              margin-left: inherit;
-              margin-right: .2rem;
-              //#cde3eb
-              $bgcolor: #d6e4f0;
-              .content {
-                background: $bgcolor;
-              }
-              .triangle {
-                content: "";
-                width: 0;
-                height: 0;
-                top: .14rem;
-                left: inherit;
-                right: -.1rem;
-                position: absolute;
-                border-right: inherit;
-                border-top: .1rem solid transparent;
-                border-left: .1rem solid $bgcolor;
-                border-bottom: .1rem solid transparent;
-              }
-            }
-            .del_f {
-              clear: both;
-            }
-          }
-        }
-      }
-    }
-    // 确定
-    .btn {
-      width: 100%;
-      background: #fff;
-      text-align: center;
-      margin-bottom: .1rem;
-      .cfm_btn {
-        width: 2.8rem;
-        color: #fff;
-        height: .44rem;
-        line-height: .44rem;
-        text-align: center;
-        background: #5077aa;
+      .icon-filter-down {
         display: inline-block;
-        border-radius: .4rem;
-        box-shadow: 0 2px 5px #5077aa;
+        margin-left: .05rem;
+        width: .11rem;
+        height: .05rem;
+        background-size: 100% 100%;
       }
-    }
-    // 工作流数据少的时候 按钮固定在底部
-    .when_less {
-      left: 0;
-      bottom: 0;
-      position: fixed;
     }
   }
 </style>
