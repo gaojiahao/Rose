@@ -216,7 +216,10 @@
           page: this.page,
           filter: JSON.stringify(filter),
           listViewID : 2132,
-          sort: JSON.stringify([{property: 'effectiveTime', direction: 'desc'}]),
+          sort: JSON.stringify([
+            {property: 'effectiveTime', direction: 'desc'},
+            {property: 'inventoryName', direction: 'desc'}
+          ]),
         }).then(({dataCount = 0, tableContent = []}) => {
           //判断最近有无新增数据
           //console.log(this.total);
