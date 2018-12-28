@@ -2,14 +2,16 @@
 export function accAdd(arg1, arg2) {
     var r1, r2, m, c;
     try {
-        r1 = arg1.toString().split(".")[1].length;
+      let arr1 = arg1.toString().split(".");
+      r1 = arr1[1] && arr1[1].length || 0;
     }
     catch (e) {
         r1 = 0;
         console.error(e)
     }
     try {
-        r2 = arg2.toString().split(".")[1].length;
+      let arr2 = arg2.toString().split(".");
+      r2 = arr2[1] && arr2[1].length;
     }
     catch (e) {
         r2 = 0;
@@ -59,14 +61,16 @@ export function accMul(...args) {
 export function accSub(arg1, arg2) {
     var r1, r2, m, n;
     try {
-        r1 = arg1.toString().split(".")[1].length;
+      let arr1 = arg1.toString().split(".");
+      r1 = arr1[1] && arr1[1].length || 0;
     }
     catch (e) {
         r1 = 0;
       console.error(e)
     }
     try {
-        r2 = arg2.toString().split(".")[1].length;
+      let arr2 = arg2.toString().split(".");
+      r2 = arr2[1] && arr2[1].length;
     }
     catch (e) {
         r2 = 0;
@@ -89,13 +93,15 @@ export function accDiv(arg1, arg2) {
 
     var t1 = 0, t2 = 0, r1, r2;
     try {
-        t1 = arg1.toString().split(".")[1].length;
+      let arr1 = arg1.toString().split(".");
+      r1 = arr1[1] && arr1[1].length || 0;
     }
     catch (e) {
       console.error(e)
     }
     try {
-        t2 = arg2.toString().split(".")[1].length;
+      let arr2 = arg2.toString().split(".");
+      r2 = arr2[1] && arr2[1].length;
     }
     catch (e) {
       console.error(e)
