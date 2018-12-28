@@ -193,7 +193,6 @@ export default {
   beforeRouteLeave(to, from, next) {
     let { path } = to;
     let isGoList = to.name === 'LIST' || to.name === 'MSGHOME';
-    console.log(to)
     this.$HandleLoad.hide();
     if (isGoList) {
       this.currentComponent = null;

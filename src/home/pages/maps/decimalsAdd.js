@@ -6,12 +6,14 @@ export function accAdd(arg1, arg2) {
     }
     catch (e) {
         r1 = 0;
+        console.error(e)
     }
     try {
         r2 = arg2.toString().split(".")[1].length;
     }
     catch (e) {
         r2 = 0;
+      console.error(e)
     }
     c = Math.abs(r1 - r2);
     m = Math.pow(10, Math.max(r1, r2));
@@ -61,12 +63,14 @@ export function accSub(arg1, arg2) {
     }
     catch (e) {
         r1 = 0;
+      console.error(e)
     }
     try {
         r2 = arg2.toString().split(".")[1].length;
     }
     catch (e) {
         r2 = 0;
+      console.error(e)
     }
     m = Math.pow(10, Math.max(r1, r2)); //last modify by deeka //动态控制精度长度
     n = (r1 >= r2) ? r1 : r2;
@@ -82,17 +86,19 @@ export function accDiv(arg1, arg2) {
     }
     arg1 = Number(arg1);
     arg2 = Number(arg2);
-    
+
     var t1 = 0, t2 = 0, r1, r2;
     try {
         t1 = arg1.toString().split(".")[1].length;
     }
     catch (e) {
+      console.error(e)
     }
     try {
         t2 = arg2.toString().split(".")[1].length;
     }
     catch (e) {
+      console.error(e)
     }
     r1 = Number(arg1.toString().replace(".", ""));
     r2 = Number(arg2.toString().replace(".", ""));
