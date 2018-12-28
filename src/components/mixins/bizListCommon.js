@@ -311,7 +311,12 @@ export default {
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.assistQty));
             }
             else if(mItem.assistQty == null && mItem.tdQty != null) {
-              mItem.tdAmount = toFixed(accAdd(accMul(mItem.price, mItem.tdQty), mItem.taxAmount));
+              // 没有税率
+              mItem.tdAmount = toFixed(accMul(mItem.price, mItem.tdQty));
+              // 有税率
+              if(mItem.taxAmount){
+                mItem.tdAmount = toFixed(accAdd(accMul(mItem.price, mItem.tdQty), mItem.taxAmount));
+              }
               item.totalQty = toFixed(accAdd(item.totalQty, mItem.tdQty));
             }
             item.count = toFixed(accAdd(item.count, mItem.tdAmount));

@@ -288,7 +288,7 @@ export default {
     .arrow {
       height: 100%;
       position: relative;
-      span{
+      span {
         width: .06rem;
         height: .04rem;
       }
@@ -308,7 +308,7 @@ export default {
   .filter-part {
     @extend .each-sort;
     align-items: center;
-    .icon-filter{
+    .icon-filter {
       width: .11rem;
       height: .12rem;
       margin-left: .04rem;
@@ -322,7 +322,7 @@ export default {
   // overflow: auto;
   position: relative;
   box-sizing: border-box;
-  .list_wrapper{
+  .list_wrapper {
     height: calc(100% - 0.48rem);
     overflow: hidden;
   }
@@ -333,7 +333,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .arrow{
+    .arrow {
       display: inline-block;
       width: .12rem;
       height: .06rem;
@@ -344,7 +344,7 @@ export default {
     }
   }
   .process-status-container { 
-    .process-wrapper{
+    .process-wrapper {
       padding: .17rem .23rem .08rem .24rem;
     }
     .process_status {
@@ -367,7 +367,7 @@ export default {
           white-space: nowrap; 
           text-overflow: ellipsis;
         }
-        &.active{
+        &.active {
           @extend .active
         }
       }
@@ -386,11 +386,11 @@ export default {
         text-align: center;
         line-height: .31rem;
         border-radius: .04rem;
-        &.active{
+        &.active {
           @extend .active
         }
       }
-      .symbol{
+      .symbol {
         width: .1rem;
         height: 1px;
         background: #d9d9d9;

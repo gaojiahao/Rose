@@ -12,7 +12,7 @@
     <div class="duty_top" v-if="!istransCodeBottom">
       <div class="duty_code">
         <div class="code">
-          <label>订单编号：</label>
+          <label>交易号：</label>
           <span>{{item.transCode}}</span>
         </div>
         <div class="order_status" v-if="!item.dealerName"><span :class="item.statusClass">{{item.biStatus}}</span></div> 
@@ -82,7 +82,7 @@
     </div>
     <!--有仓库，有往来时订单编码-->
     <div class="transcode_part vux-1px-b" v-if="istransCodeBottom">
-      <label>订单编码：</label>
+      <label>交易号：</label>
       <span>{{item.transCode}}</span>
     </div>
     <!-- 经办人合计 -->
@@ -184,14 +184,14 @@
   margin: 0 .02rem;
 }
 // 流程状态
-.order_biProStatus{
+.order_biProStatus {
   padding: .05rem .04rem;
   color: #FB880B;
   background: #FFF4E6;
   border-radius: .1rem;
   line-height: .12rem;
 }
-label{
+label {
   color: #999;
 }
 //订单已生效
@@ -240,7 +240,7 @@ label{
   }
   .order_main {
     padding: 0 .15rem;
-    &.has_margin{
+    &.has_margin {
       padding-bottom: .1rem;
     }
   }
@@ -255,16 +255,16 @@ label{
     }
   }
   /* 仓库 */
-  .warehouse_part{
+  .warehouse_part {
     padding: .06rem .15rem 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .warehouse_style{
+    .warehouse_style {
       padding: .03rem .02rem;
       position: relative;
       color: #3296FA;
-      &:before{
+      &:before {
         border-radius: .08rem;
         content: "";
         position: absolute;
@@ -278,18 +278,18 @@ label{
         transform: scale(0.5);
       }
     }
-    .warehouse{
+    .warehouse {
       font-size: .1rem;
       line-height: .14rem;
-      .warehouse_in{
+      .warehouse_in {
         @extend .warehouse_style;
         color: #C0A170;
         margin-right: .08rem;
-        &:before{
+        &:before {
           border-color: #C0A170;
         }
       }
-      .warehouse_out{
+      .warehouse_out {
         @extend .warehouse_style;
       }
     }
@@ -380,7 +380,7 @@ label{
         color: #FA7138;
       }
     }
-    .order_biProStatus{
+    .order_biProStatus {
       font-weight: normal;
       font-size: .12rem;
     }
@@ -394,7 +394,7 @@ label{
       margin-right: .12rem;
     }
   }
-  .transcode_part{
+  .transcode_part {
     padding: .15rem;
     line-height: .14rem;
   }

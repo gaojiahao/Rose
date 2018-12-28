@@ -79,3 +79,18 @@
   background: url('~assets/iconfont/success.png');
   background-size: cover;
 }
+
+.icon-dialog {
+  background: url('~assets/iconfont/dialog.png');
+  background-size: cover;
+}
+
+.icon-heart{
+  background: url('~assets/iconfont/heart.png');
+  background-size: cover;
+}
+
+.icon-heart-fill{
+  background: url('~assets/iconfont/heart_fill.png');
+  background-size: cover;
+}

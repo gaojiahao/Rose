@@ -11,21 +11,23 @@
       <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <just-word-item :item="item" v-for="(item, index) in listData" :key="index" 
-                        @click.native="goDetail(item, index)">
-          <template slot="list-item" slot-scope="{item}">
-            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
-              <div class="main-content">
-                <div class="info_part">
-                  申请金额: ￥{{val.tdAmountCopy1 | numberComma}}
-                </div>
-                <div class="info_part different_type">
-                  本次支付: ￥{{val.tdAmountCopy1 | numberComma}}
-                </div>
-              </div>
+        <finance-list-item :item="item" v-for="(item, index) in listData" :key="index" 
+                        @click.native="goDetail(item, index)" :isHasCount="false">
+          <template slot="cost_info" slot-scope="{mItem}">
+            <div class="each_amount">
+              <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
+              <span class="title">本次支付</span>
+            </div>
+            <div class="each_amount">
+              <span class="money">￥{{mItem.tdAmountCopy1 | numberComma}}</span>
+              <span class="title">申请金额</span>
+            </div>
+            <div class="each_amount count">
+              <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
+              <span class="title">本次合计</span>
             </div>
           </template>
-        </just-word-item>
+        </finance-list-item>
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>  
@@ -35,7 +37,7 @@
 
 <script>
   import listCommon from 'pageMixins/bizListCommon'
-  import {getSellOrderList} from 'service/listService'
+  import financeListItem from 'components/list/commonPart/financeListItem'
   export default {
     data() {
       return {
@@ -55,6 +57,9 @@
           }
         ],
       }
+    },
+    components: {
+      financeListItem
     },
     mixins: [listCommon],
     methods: {
