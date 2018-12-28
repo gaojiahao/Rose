@@ -216,7 +216,7 @@ import { fail } from 'assert';
       .icon-filter-down{
         width: .11rem;
         height: .05rem;
-        margin-left: .02rem;
+        margin-left: .05rem;
       }
     }
     .vux-1px-b:after {
