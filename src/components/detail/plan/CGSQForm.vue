@@ -75,7 +75,7 @@ export default {
   methods: {
     //选择默认图片
     getDefaultImg(item) {
-      let url = require('assets/wl_default02.png');
+      let url = require('assets/wl_default03.png');
       if (item) {
         item.inventoryPic = url;
       }

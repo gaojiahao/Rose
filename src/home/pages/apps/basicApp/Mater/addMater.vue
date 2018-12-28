@@ -636,7 +636,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.MatPic = require('assets/wl_default02.png');
+        this.MatPic = require('assets/wl_default03.png');
       },
       // TODO 新增辅助计量
       addMoreUnit() {

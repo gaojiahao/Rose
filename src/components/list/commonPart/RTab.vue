@@ -109,10 +109,10 @@
         background-color: transparent;
         color: #999;
         font-size: .14rem;
-        transition: font-size .2s linear;
         &.active {
           color: #333;
-          font-size: .18rem;
+          transform: scale(1.3);
+          transition: transform .3s;
           &:before {
             display: none;
           }

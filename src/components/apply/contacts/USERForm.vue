@@ -224,7 +224,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg() {
-        this.userData.photo = require('assets/wl_default02.png');
+        this.userData.photo = require('assets/wl_default03.png');
       },
       // TODO 选中公司
       selCompany(sel) {
