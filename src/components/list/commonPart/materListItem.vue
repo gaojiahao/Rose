@@ -12,7 +12,7 @@
     <div class="duty_top" v-if="!istransCodeBottom">
       <div class="duty_code">
         <div class="code">
-          <label>订单编号：</label>
+          <label>交易号：</label>
           <span>{{item.transCode}}</span>
         </div>
         <div class="order_status" v-if="!item.dealerName"><span :class="item.statusClass">{{item.biStatus}}</span></div> 
@@ -82,7 +82,7 @@
     </div>
     <!--有仓库，有往来时订单编码-->
     <div class="transcode_part vux-1px-b" v-if="istransCodeBottom">
-      <label>订单编码：</label>
+      <label>交易号：</label>
       <span>{{item.transCode}}</span>
     </div>
     <!-- 经办人合计 -->
