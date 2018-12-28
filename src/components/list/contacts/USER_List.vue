@@ -66,8 +66,8 @@ export default {
     // TODO 获取默认图片
     getDefaultImg(item, gender) {
       let url = gender === 1
-        ? require('assets/ava03.png')
-        : require('assets/ava04.png')
+        ? require('assets/ava01.png')
+        : require('assets/ava02.png')
       if (item) {
         item.photo = url;
       }

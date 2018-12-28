@@ -117,7 +117,7 @@
       // TODO 获取默认图片
       getDefaultImg(item = {}) {
         let {gender = ''} = item;
-        let url = gender === '男' ? require('assets/ava03.png') : require('assets/ava04.png');
+        let url = gender === '男' ? require('assets/ava01.png') : require('assets/ava02.png');
         if (item) {
           item.photo = url;
         }

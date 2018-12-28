@@ -72,7 +72,7 @@ export default {
       page: 1,
       limit: 10,
       hasNext: true,
-      DefaultImg : require('assets/ava03.png'),
+      DefaultImg : require('assets/ava01.png'),
       scrollOptions: {
         click: true,
         pullDownRefresh: true,

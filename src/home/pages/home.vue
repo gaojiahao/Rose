@@ -221,7 +221,7 @@ export default {
       if(!avatar){
         let url = this.userInfo.photo;
         if(!this.userInfo.photo){
-          url = require('assets/ava03.png');
+          url = require('assets/ava01.png');
         }
         avatar = url;
       };

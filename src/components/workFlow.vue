@@ -61,7 +61,7 @@
     },
     data() {
       return {
-        defaulImg: require('assets/ava03.png'),   // 默认图片1
+        defaulImg: require('assets/ava01.png'),   // 默认图片1
         currentStatus: {},
       }
     },
