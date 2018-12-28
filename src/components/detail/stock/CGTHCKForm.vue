@@ -9,14 +9,14 @@
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 项目 -->
       <project-part :project-info="orderInfo.outPut"></project-part>
-      <!-- 工作流 -->
-      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                :no-status="orderInfo.biStatus"></work-flow>
       <!-- 用户地址和基本信息-->
-      <div class='contacts_part'>
+      <div >
         <contact-part :contact-info="dealerInfo" :hasClass='false' :logistics="false" :payment="false"></contact-part>
         <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
       </div>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
        <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
                      :taxAmount="taxAmount" :count="count">
@@ -204,12 +204,5 @@ export default {
         border-top-right-radius: .08rem;
       }
     }
-  }
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
   }
 </style>

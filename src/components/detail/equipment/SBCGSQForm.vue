@@ -149,13 +149,5 @@
       border-top-right-radius: .08rem;
     }
   }
-
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
-  }
 </style>
 
