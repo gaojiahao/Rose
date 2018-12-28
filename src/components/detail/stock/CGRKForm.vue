@@ -11,8 +11,8 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
         <!-- 往来联系部分 交易基本信息-->
-      <div class='contacts_part'>
-        <contact-part :contact-info="dealerInfo" :hasClass="false" :logistics="false"></contact-part>
+      <div >
+        <contact-part :contact-info="dealerInfo" :logistics="false"></contact-part>
         <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
       </div>
       <!-- 物料列表 -->
@@ -27,6 +27,7 @@
               <div class='mater_attribute'>
                 <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
                 <span>数量: {{item.tdQty | toFixed}}</span>
+                <span>包装数量: {{item.assistQty | toFixed}}</span>
                 <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
               </div>
               <div class="mater_num">
@@ -200,13 +201,6 @@ export default {
       background: #9bb4da;
       border-top-right-radius: .08rem;
     }
-  }
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
   }
 </style>
 

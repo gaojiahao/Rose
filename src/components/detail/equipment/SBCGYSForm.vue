@@ -7,12 +7,12 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 往来联系部分 交易基本信息-->
+      <contact-part  :contact-info="dealerInfo" :logistics="false"
+                    :payment="false"></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
-      <!-- 往来联系部分 交易基本信息-->
-      <contact-part class='contacts_part' :contact-info="dealerInfo" :hasClass="false" :logistics="false"
-                    :payment="false"></contact-part>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
                    :taxAmount="taxAmount" :count="count" list-title="设施列表">
@@ -184,14 +184,6 @@
       background: #9bb4da;
       border-top-right-radius: .08rem;
     }
-  }
-
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
   }
 </style>
 

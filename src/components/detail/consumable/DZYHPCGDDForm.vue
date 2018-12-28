@@ -7,9 +7,6 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <!-- 工作流 -->
-      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分 交易基本信息-->
       <contact-part :contact-info="contactInfo" :logistics="false">
         <div class="other" slot="other">
@@ -17,6 +14,9 @@
           <span class="mode">{{contactInfo.pamentDays}}</span>
         </div>
       </contact-part>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
                      :taxAmount="taxAmount" :count="count">

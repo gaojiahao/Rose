@@ -11,7 +11,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part class='contacts_part' :contact-info="dealerInfo" :hasClass="false" :logistics="false">
+      <contact-part :contact-info="dealerInfo" :logistics="false">
         <template slot="other">
           <div class="other">
             <span class="title">账期天数: </span>
@@ -187,14 +187,6 @@
       background: #9bb4da;
       border-top-right-radius: .08rem;
     }
-  }
-
-  .contacts_part {
-    margin-bottom: .1rem;
-    padding: .06rem .1rem 0;
-    width: 100%;
-    background: #fff;
-    box-sizing: border-box;
   }
 </style>
 

@@ -7,15 +7,15 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <!-- 工作流 -->
-      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                 :no-status="orderInfo.biStatus"></work-flow>
       <div class="warehouse_part">
         <!-- 出库-->
         <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
         <!-- 入库 -->
         <warehouse-content :warehouse="warehouseIn"></warehouse-content>
       </div>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
       <matter-list :order-list='orderList'>
          <template slot="matterOther" slot-scope="{item}">

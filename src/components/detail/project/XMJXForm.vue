@@ -27,7 +27,7 @@
       <div class="project_info project-amt" v-show="projectConclusion.length">
         <div class="info_title vux-1px-b"><span class="iconfont icon-yusuan2"></span>资金明细</div>
         <div class="project_content" :class="{'vux-1px-b': index !== projectConclusion.length - 1}"
-             v-for="(item, index) in projectConclusion">
+             v-for="(item, index) in projectConclusion" :key="index">
           <form-cell :cellTitle="`实际${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight
                      :cellContent="numberComma(item.actual)" :showTopBorder="false"></form-cell>
           <form-cell :cellTitle="`预算${item.conclusionName}`" :showSymbol="item.conclusionName !== '利润率'" textRight

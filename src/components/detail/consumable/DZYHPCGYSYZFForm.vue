@@ -11,15 +11,15 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分 交易基本信息-->
-      <!--<div class='contacts_part'>
-        <contact-part :contact-info="dealerInfo" :hasClass="false" :logistics="false">
+      <!--<div >
+        <contact-part :contact-info="dealerInfo" :logistics="false">
           <div class="other" slot="other">
             <span class="title">账期天数: </span>
             <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
           </div>
         </contact-part>
       </div>-->
-      <contact-part class="contacts_part" :contact-info="dealerInfo" :hasClass="false" :logistics="false">
+      <contact-part class="contacts_part" :contact-info="dealerInfo" :logistics="false">
         <template slot="other">
           <div class="other">
             <span class="title">账期天数: </span>

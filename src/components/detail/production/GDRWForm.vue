@@ -7,7 +7,7 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <div class='contacts_part' v-show="warehouse.warehouseName">
+      <div  v-show="warehouse.warehouseName">
         <warehouse-content :warehouse="warehouse"></warehouse-content>
       </div>  
       <!-- 工作流 -->
@@ -125,13 +125,6 @@ export default {
           left: 0;
         }
       }
-    }
-    .contacts_part {
-      margin-bottom: .1rem;
-      padding: 0 .1rem;
-      width: 100%;
-      background: #fff;
-      box-sizing: border-box;
     }
     .has_border{
       border-top: .03rem solid #e8e8e8;

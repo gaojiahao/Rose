@@ -7,10 +7,11 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 往来信息 -->
+      <contact-part :contact-info="contactInfo" :payment='false' :logistics='false'></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
-      <contact-part :contact-info="contactInfo" :payment='false' :logistics='false'></contact-part>
       <div class="product">
         <div class="title">
           <div>
