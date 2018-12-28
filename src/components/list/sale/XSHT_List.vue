@@ -8,7 +8,7 @@
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper has_matter" :class="{'dashboard': chartShow}" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper " :class="{'dashboard': chartShow}" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <apply-chart v-if='chartShow'></apply-chart>

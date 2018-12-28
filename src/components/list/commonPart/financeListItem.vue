@@ -9,7 +9,7 @@
         </div>
         <div class="status" :class="item.statusClass">{{item.biStatus}}</div>
       </div>
-      <div class="order_amount">
+      <div class="order_amount" v-show="isHasCount">
         <p class="amount">总支付￥{{item.count | toFixed | numberComma(3)}}</p>
         <p class="num">共{{item.itemCount}}笔</p>
       </div>
@@ -17,25 +17,26 @@
     <ul class="order-cost">
       <li class="each_cost" :class="{'vux-1px-b' : mIndex < item.detailItem.length-1}" v-for="(mItem, mIndex) in item.detailItem" :key="mIndex">
         <div class="cost_name">
-          <span class="name">{{item.costName_expCode}}</span>
-          <span class="type">科目：{{mItem.expSubject}}</span>
-          <span class='type'>类型：{{mItem.costType_expCode}}</span>
+          <span class="name">{{mItem.costName_expCode || mItem.dealerName_dealerCodeCredit}}</span>
+          <span class="type" v-show="mItem.expSubject">科目：{{mItem.expSubject}}</span>
+          <span class='type' v-show="mItem.costType_expCod">类型：{{mItem.costType_expCode}}</span>
         </div>
         <div class="cost_amount">
-          <div class="each_amount">
-            <span class="money">￥{{mItem.noTaxAmount | numberComma}}</span>
-            <span class="title">抵扣后金额</span>
-          </div>
-          <div class="each_amount">
-            <span class="money">￥{{mItem.taxAmount | numberComma}}</span>
-            <span class="title">可抵扣税金</span>
-          </div>
-          <div class="each_amount">
-            <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
-            <span class="title">申请金额</span>
-          </div>
+          <slot name="cost_info" :mItem="mItem">
+            <div class="each_amount">
+              <span class="money">￥{{mItem.noTaxAmount | numberComma}}</span>
+              <span class="title">抵扣后金额</span>
+            </div>
+            <div class="each_amount">
+              <span class="money">￥{{mItem.taxAmount | numberComma}}</span>
+              <span class="title">可抵扣税金</span>
+            </div>
+            <div class="each_amount">
+              <span class="money">￥{{mItem.tdAmount | numberComma}}</span>
+              <span class="title">申请金额</span>
+            </div>
+          </slot>
         </div>
-
       </li>
     </ul>
     <div class="order-creator">
@@ -62,6 +63,10 @@
         default() {
           return {}
         }
+      },
+      isHasCount: {
+        type: Boolean,
+        default: true
       }
     },
     data() {
@@ -84,7 +89,7 @@
   .vux-1px-b:after {
     border-color: #E8E8E8;
   }
-  .finance-list-item{
+  .finance-list-item {
     position: relative;
     overflow: hidden;
     margin: .1rem;
@@ -97,18 +102,20 @@
     &.visited {
       background-color: $list_visited;
     }
-    .order-top{
+    // 订单编码，报销或者借款合计
+    .order-top {
       padding: 0 .18rem 0 .12rem;
       line-height: .14rem;
-      .order_code{
+      .order_code {
+        padding-bottom: .15rem;
         display: flex;
         justify-content: space-between;
         color: #333;  
-        .code{
+        .code {
           display: flex;
           align-items: center;
           font-size: .14rem;
-          .icon-code{
+          .icon-code {
             width: .14rem;
             height: .14rem;
             margin-right: .05rem;
@@ -121,35 +128,36 @@
           color: #999;
         }
       }
-      .order_amount{
+      .order_amount {
         text-align: center;
-        padding: .2rem 0 .16rem 0 ;
-        .amount{
+        padding: .1rem 0 .16rem 0 ;
+        .amount {
           font-size: .24rem;
           color: #FA7138;
           font-weight: bold;
         }
-        .num{
+        .num {
           color: #999;
           margin-top: .11rem;
         }
         
       }
     }
-    .order-cost{
+    // 每一条费用
+    .order-cost {
       padding: 0 .18rem 0 .12rem;
-      .each_cost{
+      .each_cost {
         padding: .15rem 0;
-        .cost_name{
+        .cost_name {
           display: flex;
           align-items: center;
           margin-bottom: .11rem;
-          .name{
+          .name {
             padding: .04rem .13rem;
             line-height: .14rem;
             position: relative;
             color: #fff;
-            &:before{
+            &:before {
               content: "";
               position: absolute;
               left: 0;
@@ -162,36 +170,48 @@
               transform: skew(-10deg)
             }
           }
-          .type{
+          .type {
             color: #696969;
             margin-left: .05rem;
           }
          
         }
-        .cost_amount{
+        .cost_amount {
           display: flex;
           justify-content: space-between;
+          align-items: flex-end;
           .each_amount{
             text-align: center;
-            span{
+            span {
               display: block;
             }
-            .money{
+            .money {
               font-size: .16rem;
               line-height: .16rem;
               font-weight: bold;
               color: #333;
               margin-bottom: .11rem;
             }
-            .title{
+            .title {
               color: #999;
+            }
+            &.count {
+              .money {
+                font-size: .2rem;
+                color: #FA7138;
+                font-weight: bold;
+                line-height: .2rem;
+
+              }
             }
           }
         }
+        
       }
 
     }
-    .order-creator{
+    // 订单创建人
+    .order-creator {
       height: .3rem;
       display: flex;
       align-items: center;
@@ -200,17 +220,17 @@
       background: #F7F7F7;
       border-radius: .21rem;
       color: #999;
-      .icon{
+      .icon {
         width: .16rem;
         height: .16rem;
         margin-right: .05rem;
       }
-      .creator{
+      .creator {
         margin-left: .1rem;
         display: flex;
         align-items: center;
       }
-      .modTime{
+      .modTime {
         margin-left: .26rem;
       }
 
