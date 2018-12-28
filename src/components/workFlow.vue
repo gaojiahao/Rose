@@ -1,18 +1,24 @@
 <template>
   <!-- 工作流 -->
-  <div class="work-flow-container" v-if="fullWorkFlow.length">
-    <div class="work-flow-header">工作流</div>
+  <div class="work-flow-container" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
+    <div class="work-flow-header">
+      <span>工作流</span>
+      <span class="check_more">
+        查看更多<i class="icon-right"></i>
+      </span>
+      
+    </div>
     <div class="work-flow-status-wrapper">
       <i class="icon-flow-time"></i>
       <span>工作流已到{{currentStatus.nodeName}}，当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span></span>
     </div>
-    <div class="work-flow-time">{{currentStatus.startTime | dateFormat('YYYY-MM-DD')}}</div>
-    <div class="work-flow-more" @click="goWorkFlowFull">
+    <div class="work-flow-time">{{currentStatus.startTime}}</div>
+    <!-- <div class="work-flow-more" >
       <div class="work_flow_more_button">
-        <span class="text">查看更多详情</span>
+        <span class="text">查看更多</span>
         <i class="icon-filter-down"></i>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -130,8 +136,21 @@
     color: #333;
     box-sizing: border-box;
     .work-flow-header {
-      line-height: .14rem;
+      display: flex;
       font-size: .16rem;
+      line-height: .14rem;
+      justify-content: space-between;
+      .check_more {
+        color: #999;
+        display: flex;
+        font-size: .12rem;
+      }
+      .icon-right {
+        width: .08rem;
+        height: .14rem;
+        margin-left: .04rem;
+        display: inline-block;
+      }
     }
     /* 已生效、草稿为#333 */
     .work-flow-status-wrapper {

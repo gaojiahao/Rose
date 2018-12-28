@@ -6,6 +6,10 @@
   background: url('/src/assets/iconfont/nav_search.png');
   background-size: cover;
 }
+.icon-right {
+  background: url('/src/assets/iconfont/right.png');
+  background-size: cover;
+}
 .icon-up {
   background: url('/src/assets/iconfont/up.png');
   background-size: cover;
