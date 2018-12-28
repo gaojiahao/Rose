@@ -3,10 +3,11 @@
     <r-scroll class="comment-list-wrapper" :options="scrollOptions" :has-next="hasNext"
               :no-data="!hasNext && !commentList.length" @on-pulling-up="onPullingUp" ref="bScroll">
       <comment-item :item="item" v-for="(item, index) in commentList"
-                    @on-reply="onReply" @on-praise-success="onPraiseSuccess" :key="index">
+                    @on-reply="onReply" @on-praise-success="onPraiseSuccess"
+                    :no-border="index === commentList.length - 1" :key="index">
         <comment-item :item="rItem" v-for="(rItem, rIndex) in item.allReply"
                       @on-reply="onReply" @on-praise-success="onPraiseSuccess"
-                      slot="reply" :key="rIndex"></comment-item>
+                      slot="reply" :key="rIndex" no-border></comment-item>
       </comment-item>
     </r-scroll>
     <div class="send-container" :class="{focus: focusInput}">
@@ -24,6 +25,8 @@
   import RScroll from 'components/RScroll'
   import CommentItem from 'components/comment/CommentItem'
   import REmotion from 'components/comment/REmotion'
+  /* 引入微信相关 */
+  import {register} from 'plugins/wx'
 
   export default {
     name: "comment",
@@ -58,6 +61,10 @@
         this.page++;
         this.getCommentList();
       },
+      // TODO 设置回复内容的文字与颜色
+      setReply(creator, conntent) {
+        return `@<span style="color: #2994FD;">${creator}</span>：${conntent}`
+      },
       // TODO 获取订单详情评论列表
       getCommentList() {
         let data = {
@@ -74,7 +81,9 @@
             item.allReply && item.allReply.forEach((rItem, index, arr) => {
               let matched = item.allReply.find(mItem => mItem.ID === rItem.PARENT_ID);
               if (matched) {
-                rItem.CONTENT = `@${matched.creatorName}: ${rItem.CONTENT}`;
+                rItem.CONTENT = this.setReply(matched.creatorName, rItem.CONTENT);
+              } else {
+                rItem.CONTENT = this.setReply(item.creatorName, rItem.CONTENT);
               }
             });
           });
@@ -169,6 +178,7 @@
       this.transCode = transCode;
       this.listId = listId;
       this.$loading.show();
+      register();
       this.getCommentList().then(() => {
         this.$loading.hide();
       });
@@ -184,7 +194,7 @@
 
 <style scoped lang="scss">
   .comment-list-container {
-    background-color: #F6F6F6;
+    background-color: #fff;
     -webkit-overflow-scrolling: touch;
     &.has-emotion {
       .comment-list-wrapper {

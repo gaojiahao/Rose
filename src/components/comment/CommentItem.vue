@@ -1,42 +1,45 @@
 <template>
   <div class="comment-item" @click.stop="reply">
-    <header class="header">
-      <div class="header-left">
-        <img class="avatar" :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg">
-        <span class="creator-name">{{item.creatorName}}</span>
-        <span class="time">{{item.CRT_TIME | filterTime}}</span>
-      </div>
-      <div class="header-right" @click.stop="savePraise">
-        <!-- isPraise: 是否能点赞 -->
-        <span class="praise-num" v-if="item.praiseNum">{{item.praiseNum}}</span>
-        <i class="iconfont icon-L2" :class="{praise: !item.isPraise}"></i>
-      </div>
-    </header>
-    <div class="comment" v-html="handleComment()"></div>
-    <div class="comment-image" v-if="item.commentAttachments">
-      <img class="comment-image-item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
-           @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
-      <div class="each_file" v-for="(file, index) in item.commentAttachments" :key="index" v-if="!file.isImg"
-          @click.stop="checkFile(file.ATTACHMENT)">附件{{index + 1}}: {{file.name}}</div>
+    <div class="comment-left">
+      <!-- 头像 -->
+      <img :src="item.photo || require('assets/ava01.png')" @error="getDefaultImg" class="avatar">
     </div>
-    <div class="comment-reply" v-if="this.$slots.reply">
-      <slot name="reply"></slot>
+    <div class="comment-right" :class="{'vux-1px-b': !noBorder}">
+      <div class="comment-header">
+        <div class="header_left">
+          <!-- 评论/点赞者名称 -->
+          <div class="creator-name">{{item.creatorName}}</div>
+          <!-- 时间 -->
+          <div class="time">{{item.CRT_TIME | filterTime}}</div>
+        </div>
+        <div class="header_right" @click.stop="savePraise">
+          <!--  isPraise: 是否能点赞 -->
+          <span class="praise_num" v-if="item.praiseNum">{{item.praiseNum}}</span>
+          <i class="icon" :class="[!item.isPraise ? 'icon-praise-fill' : 'icon-praise']"></i>
+        </div>
+      </div>
+      <!-- 评论内容 -->
+      <div class="comment" v-html="handleComment()"></div>
+      <!-- 附件 -->
+      <div class="comment-attachments" v-if="item.commentAttachments && item.commentAttachments.length">
+        <img class="comment_image_item" :src="img.ATTACHMENT" v-for="(img, iIndex) in item.commentAttachments"
+             @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
+        <div class="each_file" v-for="(file, index) in item.commentAttachments" :key="index" v-if="!file.isImg"
+             @click.stop="checkFile(file.ATTACHMENT)">附件{{index + 1}}: {{file.name}}
+        </div>
+      </div>
+      <div class="comment-reply" v-if="this.$slots.reply">
+        <slot name="reply"></slot>
+      </div>
     </div>
-    <!-- 全屏展示图片 -->
-    <!-- <div class="scale-image-mask" @click.stop="hideScaleImage" @touchmove.prevent=""
-         v-if="item.commentAttachments" v-show="showScaleImg" v-transfer-dom>
-      <div class="scale-image" :style="{'background-image': `url(${scaleImgSrc})`}"></div>
-    </div> -->
   </div>
 </template>
 
 <script>
   import {savePraise} from 'service/commentService'
   import emotion from '@/home/pages/maps/emotion'
-  import {WechatEmotion as Emotion} from 'vux'
-  import Vue from 'vue'
-  /* 引入微信相关 */
-  import {register} from 'plugins/wx'
+  import {WechatEmotion as Emotion, dateFormat} from 'vux'
+
   export default {
     name: "CommentItem",
     props: {
@@ -45,15 +48,19 @@
         default() {
           return {}
         }
-      }
+      },
+      // 是否展示底部边框
+      noBorder: {
+        type: Boolean,
+        default: false
+      },
     },
     components: {
       Emotion,
     },
     data() {
       return {
-        showScaleImg: false,
-        scaleImgSrc: '',
+        attachmentImgs: [], // 预览图片数组
       }
     },
     methods: {
@@ -77,20 +84,17 @@
           }
         });
       },
+      // TODO 获取预览图片链接
+      getImgUrl(item) {
+        return `${location.origin}${item.ATTACHMENT}`
+      },
       // TODO 放大图片
       scaleImg(img) {
-        // this.scaleImgSrc = img.ATTACHMENT;
-        // this.showScaleImg = true;
-        let imgUrl = `${location.origin}${img.ATTACHMENT}`;
+        let imgUrl = this.getImgUrl(img);
         wx.previewImage({
           current: imgUrl, // 当前显示图片的http链接
-          urls: [imgUrl] // 需要预览的图片http链接列表
+          urls: this.attachmentImgs // 需要预览的图片http链接列表
         });
-      },
-      // TODO 隐藏放大的图片
-      hideScaleImage() {
-        this.scaleImgSrc = '';
-        this.showScaleImg = false;
       },
       // TODO 替换表情图片地址
       handleComment() {
@@ -116,21 +120,24 @@
         let suffixList = [
           'jpg', 'jpeg', 'png', 'gif', 'bmp',
           'tif', 'pcx', 'tga', 'exif',
-          'fpx','svg','psd','cdr', 
-          'pcd','dxf','ufo','eps', 
-          'ai','raw','WMF','webp'
-        ]
-        if(this.item.commentAttachments){
-          for(let val of this.item.commentAttachments) {
+          'fpx', 'svg', 'psd', 'cdr',
+          'pcd', 'dxf', 'ufo', 'eps',
+          'ai', 'raw', 'WMF', 'webp'
+        ];
+        let attachmentImgs = [];
+        if (this.item.commentAttachments) {
+          for (let val of this.item.commentAttachments) {
             // 获取后缀名
             let index = val.name.lastIndexOf('.'),
-                Imgsuffix = val.name.substr(index + 1);
+              Imgsuffix = val.name.substr(index + 1);
             // 校验后缀名
-            if(suffixList.includes(Imgsuffix)) {
+            if (suffixList.includes(Imgsuffix)) {
               val.isImg = true;
+              attachmentImgs.push(this.getImgUrl(val));
             }
           }
-        }       
+          this.attachmentImgs = attachmentImgs;
+        }
       },
       // 查看附件
       checkFile(file) {
@@ -143,13 +150,15 @@
         if (!val) {
           return
         }
-        let now = Date.now();
         if (typeof val === 'string') {
           val = val.replace(/-/g, '/').replace(/\..*/g, '');
         }
+        let now = Date.now();
+        const dayTime = 24 * 3600 * 1000;
+        let prefix = dateFormat(val, 'YYYY-MM-DD');
         let date = +new Date(val);
         let calc = now - date;
-        let second = calc / 1000;
+        /*let second = calc / 1000;
         let minute = second / 60;
         let hour = minute / 60;
         let day = hour / 24;
@@ -162,11 +171,17 @@
         } else if (day < 30) {
           return `${parseInt(day)}天前`;
         }
-        return val
+        return dateFormat(val, 'YYYY-MM-DD')*/
+
+        if (calc < dayTime) {
+          prefix = '今天'
+        } else if (calc < 2 * dayTime) {
+          prefix = '昨天'
+        }
+        return `${prefix} ${dateFormat(val, 'HH:mm')}`;
       }
     },
     created() {
-      register()
       this.checkImgSuffix()
     }
   }
@@ -175,110 +190,116 @@
 <style scoped lang="scss">
   /* 单条评论项 */
   .comment-item {
-    $avatarSize: .35rem;
-    padding: .1rem;
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .header-left {
-      display: flex;
-      align-items: center;
-    }
-    .header-right {
-      font-size: 0;
-      .praise-num {
-        margin-right: .05rem;
-        font-size: .16rem;
+    $avatarSize: .4rem;
+    display: flex;
+    padding: .15rem .15rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+    transition: background-color 200ms linear;
+    .comment-left {
+      width: $avatarSize + .1rem;
+      .avatar {
+        width: $avatarSize;
+        height: $avatarSize;
+        border-radius: 50%;
       }
-      .icon-L2 {
-        &.praise {
-          color: #c93d1b;
+    }
+    .vux-1px-b:after {
+      border-color: #ECEDEC;
+    }
+    .comment-right {
+      margin-top: .05rem;
+      padding-bottom: .15rem;
+      width: calc(100% - .5rem);
+      /* 顶部评论者信息 */
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      /* 创建者 */
+      .creator-name {
+        line-height: .14rem;
+        color: #696969;
+        font-size: .14rem;
+      }
+      /* 创建时间 */
+      .time {
+        margin-top: .05rem;
+        line-height: .12rem;
+        color: #ccc;
+        font-size: .12rem;
+      }
+      .header_right {
+        display: flex;
+        align-items: center;
+        line-height: .14rem;
+      }
+      /* 点赞数量 */
+      .praise_num {
+        margin-right: .05rem;
+        line-height: .12rem;
+        color: #696969;
+        font-size: .12rem;
+      }
+      .icon {
+        display: inline-block;
+        width: .14rem;
+        height: .15rem;
+      }
+
+      /* 评论内容 */
+      .comment {
+        margin-top: .15rem;
+        line-height: .22rem;
+        color: #333;
+        word-break: break-all;
+        /* PC端表情 */
+        /deep/ img {
+          display: inline-block;
+          vertical-align: middle;
+        }
+        /* 移动端表情 */
+        /deep/ .img-emotion {
+          width: 24px;
+          height: 24px;
+          vertical-align: top;
+          display: inline-block;
+          background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
+          & + .img-emotion {
+            margin-left: .04rem;
+          }
         }
       }
-    }
-    /* 评论者头像 */
-    .avatar {
-      margin-right: .1rem;
-      width: $avatarSize;
-      height: $avatarSize;
-      border-radius: $avatarSize/2;
-    }
-    /* 评论者名称 */
-    .creator-name {
-      margin-right: .1rem;
-      color: #111;
-      font-weight: bold;
-    }
-    /* 时间 */
-    .time {
-      color: #757575;
-      font-size: .14rem;
-    }
+      /* 附件 */
+      .comment-attachments {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: .1rem;
+        /* 图片 */
+        .comment_image_item {
+          width: .6rem;
+          height: .6rem;
+          margin-right: .1rem;
+          border-radius: 2px;
+        }
+        .each_file {
+          color: #5893d4;
+        }
+      }
 
-    /* 评论内容 */
-    .comment {
-      padding-left: $avatarSize + .1rem;
-      color: #454545;
-      margin-bottom: .04rem;
-      word-break: break-all;
-      /deep/ img {
-        display: inline-block;
-        vertical-align: middle;
+      /* 回复 */
+      .comment-reply {
+        margin-top: .15rem;
+        .comment-item {
+          padding: .1rem;
+          background-color: #f7f7f7;
+        }
+        .comment-right {
+          padding-bottom: 0;
+        }
       }
-      /deep/ .img-emotion {
-        width: 24px;
-        height: 24px;
-        vertical-align: top;
-        display: inline-block;
-        background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
-      }
-      /deep/ .img-emotion + .img-emotion {
-        margin-left: .04rem;
-      }
-    }
-
-    /* 回复内容 */
-    .comment-reply {
-      padding-left: $avatarSize + .1rem;
-      .comment-item {
-        padding: .1rem 0;
-      }
-    }
-
-    /* 上传的图片 */
-    .comment-image {
-      padding-left: $avatarSize + .1rem;
-      .comment-image-item {
-        width: .6rem;
-        height: .6rem;
-        margin-right: .1rem;
-        border: 1px solid #eee;
-      }
-      .each_file {
-        color: #5893d4;
-      }
-    }
-  }
-
-  /* 放大的图片 */
-  .scale-image-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 11;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, .8);
-    .scale-image {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      padding-top: 100%;
-      transform: translateY(-50%);
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
     }
   }
 </style>

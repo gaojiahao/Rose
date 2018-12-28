@@ -94,3 +94,13 @@
   background: url('~assets/iconfont/heart_fill.png');
   background-size: cover;
 }
+
+.icon-praise{
+  background: url('~assets/iconfont/praise.png');
+  background-size: cover;
+}
+
+.icon-praise-fill{
+  background: url('~assets/iconfont/praise_fill.png');
+  background-size: cover;
+}

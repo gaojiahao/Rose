@@ -9,16 +9,13 @@
       <div class="creator-name">{{item.creatorName}}</div>
       <!-- 时间 -->
       <div class="time">{{item.crtTime | filterTime}}</div>
-      <!-- 评论/点赞内容 -->
-      <div class="comment-container">
-        <div class="comment" v-html="handleComment()"></div>
-        <!-- 附件 -->
-        <div class="comment-attachments" v-if="item.attachment">
-          <img class="comment-image-item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
-               @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
-          <div class="each_file" v-for="(file, index) in item.attachment" :key="index" v-if="!file.isImg"
-               @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}
-          </div>
+      <div class="comment" v-html="handleComment()"></div>
+      <!-- 附件 -->
+      <div class="comment-attachments" v-if="item.attachment && item.attachment.length">
+        <img class="comment_image_item" :src="img.attachment" v-for="(img, iIndex) in item.attachment"
+             @click.stop="scaleImg(img)" :key="iIndex" v-if="img.isImg"/>
+        <div class="each_file" v-for="(file, index) in item.attachment" :key="index" v-if="!file.isImg"
+             @click.stop="checkFile(file.attachment)">附件{{index + 1}}: {{file.name}}
         </div>
       </div>
       <!-- 实例创建者信息 -->
@@ -259,52 +256,51 @@
       .time {
         margin-top: .05rem;
         line-height: .12rem;
-        color: #aaa;
+        color: #ccc;
         font-size: .12rem;
       }
-      /* 评论容器 */
-      .comment-container {
-        margin: .15rem 0;
-        /* 评论内容 */
-        .comment {
-          line-height: .22rem;
-          color: #333;
-          word-break: break-all;
-          /* PC端表情 */
-          /deep/ img {
-            display: inline-block;
-            vertical-align: middle;
-          }
-          /* 移动端表情 */
-          /deep/ .img-emotion {
-            width: 24px;
-            height: 24px;
-            vertical-align: top;
-            display: inline-block;
-            background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
-            & + .img-emotion {
-              margin-left: .04rem;
-            }
+      /* 评论内容 */
+      .comment {
+        margin-top: .15rem;
+        line-height: .22rem;
+        color: #333;
+        word-break: break-all;
+        /* PC端表情 */
+        /deep/ img {
+          display: inline-block;
+          vertical-align: middle;
+        }
+        /* 移动端表情 */
+        /deep/ .img-emotion {
+          width: 24px;
+          height: 24px;
+          vertical-align: top;
+          display: inline-block;
+          background: url(https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/default218877.gif);
+          & + .img-emotion {
+            margin-left: .04rem;
           }
         }
-        /* 附件 */
-        .comment-attachments {
-          display: flex;
-          flex-wrap: wrap;
-          /* 图片 */
-          .comment-image-item {
-            width: .6rem;
-            height: .6rem;
-            margin-right: .1rem;
-            border-radius: 2px;
-          }
-          .each_file {
-            color: #5893d4;
-          }
+      }
+      /* 附件 */
+      .comment-attachments {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: .1rem;
+        /* 图片 */
+        .comment_image_item {
+          width: .6rem;
+          height: .6rem;
+          margin-right: .1rem;
+          border-radius: 2px;
+        }
+        .each_file {
+          color: #5893d4;
         }
       }
       /* 实例内容 */
       .belong-container {
+        margin-top: .15rem;
         padding: .1rem;
         width: 100%;
         background-color: #F7F7F7;
