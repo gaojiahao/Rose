@@ -22,7 +22,7 @@
           </div>
           <div class="instance-top">
             <span class="instance_dealer">{{item.dealerName}}</span>
-            <span class="instance_process_status">{{item.biProcessStatus || '暂未指定流程状态'}}</span>
+            <span class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</span>
           </div>
           <div class="instance-amt-wrapper">
             <div class="instance_amt_title">预期销售额</div>

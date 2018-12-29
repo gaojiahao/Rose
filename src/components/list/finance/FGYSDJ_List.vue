@@ -23,7 +23,7 @@
             </div>
             <div class="instance-top">
               <span class="instance_dealer">{{item.dealerName}}</span>
-              <span class="instance_process_status">{{item.biProcessStatus || '暂未指定流程状态'}}</span>
+              <span class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</span>
             </div>
             <div class="instance-amt-wrapper">
               <div class="instance_amt">总支付￥{{item.count | numberComma}}</div>
