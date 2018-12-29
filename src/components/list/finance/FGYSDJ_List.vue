@@ -13,12 +13,9 @@
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
              :class="{visited: item.visited}" :key="index">
-          <div class="instance-summary vux-1px-b">
+          <div class="instance-summary">
             <div class="instance-header">
-              <span class="instance-header-left">
-                <i class="icon-code"></i>
-                <span class="instance_code">{{item.transCode}}</span>
-              </span>
+              <span class="instance_code vux-1px-l">{{item.transCode}}</span>
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-top">
@@ -30,7 +27,7 @@
               <div class="instance_count">共{{item.itemCount}}笔</div>
             </div>
           </div>
-          <div class="instance-detail">
+          <div class="instance-detail vux-1px-t">
             <div class="instance_detail_item" v-for="(detail, index) in item.detailItem">
               <div class="instance_detail_code">协议号: {{detail.transMatchedCode}}</div>
               <div class="instance_detail_amt_wrapper">
@@ -137,19 +134,16 @@
     .instance-header {
       display: flex;
       justify-content: space-between;
-      .instance-header-left {
-        display: flex;
-        align-items: center;
-      }
-      .icon-code {
-        display: inline-block;
-        width: .14rem;
-        height: .14rem;
-      }
       .instance_code {
-        margin-left: .05rem;
+        position: relative;
+        left: -.15rem;
+        padding-left: .14rem;
         line-height: .12rem;
-        font-size: .14rem;
+        font-size: .12rem;
+        &:before {
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
       }
       .instance_status {
         font-size: .12rem;
