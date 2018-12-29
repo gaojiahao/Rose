@@ -147,6 +147,10 @@
           })
         }, 200);
       },
+      // TODO 设置评论者/实例创建者的颜色
+      setReply(name) {
+        return `<span style="color: #2994FD;">${name}</span>`;
+      },
       // TODO 获取通知，默认取评论
       getNotice(noticeType = 'comment') {
         let filter = [{
@@ -173,19 +177,10 @@
             item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
             // 为回复，不为评论
             if (content.parentId !== -1) {
-              item.comment = `回复@${content.objCreator}：${content.content}`;
+              item.comment = `回复@${this.setReply(content.objCreator)}：${content.content}`;
               item.reply = {
                 createrName: content.objCreator,
-                comment: `@${content.objCreator} 评论：${content.objContent}`,
-              };
-            }
-            // 点赞
-            if (item.type === 'praise') {
-              item.comment = '赞了这条评论';
-              item.reply = {
-                createrName: content.creator,
-                comment: `@${content.creator}: ${content.content}`,
-                attachment: content.attachment,
+                comment: `@${this.setReply(content.objCreator)} 评论：${content.objContent}`,
               };
             }
           }
@@ -210,7 +205,7 @@
             item.comment = '赞了这条评论';
             item.reply = {
               createrName: content.creator,
-              comment: `@${content.creator}: ${content.content}`,
+              comment: `@${this.setReply(content.creator)}: ${content.content}`,
               attachment: content.attachment,
             };
             item.commentType = content.type; // 评论类型,list为应用,instance为实例
