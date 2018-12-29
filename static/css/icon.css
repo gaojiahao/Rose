@@ -104,3 +104,18 @@
   background: url('~assets/iconfont/praise_fill.png');
   background-size: cover;
 }
+
+.icon-task{
+  background: url('~assets/iconfont/task.png');
+  background-size: cover;
+}
+
+.icon-task2{
+  background: url('~assets/iconfont/task2.png');
+  background-size: cover;
+}
+
+.icon-task3{
+  background: url('~assets/iconfont/task3.png');
+  background-size: cover;
+}

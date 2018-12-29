@@ -14,10 +14,7 @@
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
              :class="{visited: item.visited}" :key="index">
           <div class="instance-header">
-            <span class="instance-header-left">
-              <i class="icon-code"></i>
-              <span class="instance_code">{{item.transCode}}</span>
-            </span>
+            <span class="instance_code vux-1px-l">{{item.transCode}}</span>
             <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
           </div>
           <div class="instance-top">
@@ -111,19 +108,16 @@
     .instance-header {
       display: flex;
       justify-content: space-between;
-      .instance-header-left {
-        display: flex;
-        align-items: center;
-      }
-      .icon-code {
-        display: inline-block;
-        width: .14rem;
-        height: .14rem;
-      }
       .instance_code {
-        margin-left: .05rem;
+        position: relative;
+        left: -.1rem;
+        padding-left: .14rem;
         line-height: .12rem;
-        font-size: .14rem;
+        font-size: .12rem;
+        &:before {
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
       }
       .instance_status {
         font-size: .12rem;
