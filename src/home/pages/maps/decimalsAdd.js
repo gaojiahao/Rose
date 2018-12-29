@@ -11,7 +11,7 @@ export function accAdd(arg1, arg2) {
     }
     try {
       let arr2 = arg2.toString().split(".");
-      r2 = arr2[1] && arr2[1].length;
+      r2 = arr2[1] && arr2[1].length || 0;
     }
     catch (e) {
         r2 = 0;
@@ -70,7 +70,7 @@ export function accSub(arg1, arg2) {
     }
     try {
       let arr2 = arg2.toString().split(".");
-      r2 = arr2[1] && arr2[1].length;
+      r2 = arr2[1] && arr2[1].length || 0;
     }
     catch (e) {
         r2 = 0;

@@ -243,11 +243,22 @@ export default {
       }
       .icon {
         display: inline-block;
+        width: .2rem;
+        height: .19rem;
+      }
+      .icon-heart {
         width: .22rem;
         height: .2rem;
       }
+      .icon-heart-fill {
+        width: .2rem;
+        height: .18rem;
+      }
       /** 关注 */
       .concern{
+        display: flex;
+        justify-content: center;
+        align-items: center;
         .icon-xihuan{
           color: #c93d1b;
         }
