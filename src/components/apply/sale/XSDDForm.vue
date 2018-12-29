@@ -221,7 +221,7 @@
   import {Popup, TransferDom, Group, Cell, numberComma, Datetime, XInput, XTextarea, dateFormat} from 'vux'
   // 请求 引入
   import {getSOList} from 'service/detailService'
-  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc, getFormConfig, requestData} from 'service/commonService'
+  import {getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, submitAndCalc} from 'service/commonService'
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
@@ -282,10 +282,10 @@
         viewId: '58b8e704-b589-4480-8abb-5a85d6c28ea7',
         dealerConfig: [],
         matterConifg: [],
-        matterPopConfig: [],
-        orderTitle: '',
-        matterEditConfig: {},
-        requestApi: ''
+        matterPopConfig: [], // 物料列表pop配置
+        orderTitle: '', // 物料列表订单的title
+        matterEditConfig: {}, // 物料编辑的pop
+        requestApi: '', // 请求物料的接口
       }
     },
     directives: {
@@ -745,87 +745,7 @@
       },
     },
     created() {
-      getFormConfig(this.viewId).then(({config = {}}) => {
-        console.log(config)
-        let dealerConfig = config[0].items;
-        let matterConfig = config[1].items;
-        // 处理往来配置里面的接口请求
-        dealerConfig.forEach(item => {
-          if(item.dataSource && item.dataSource.type === 'remoteData') {
-            let url = item.dataSource.data.url;
-            let params = item.dataSource.data.params;
-            let key = Object.keys(params)[0];
-            let data = {};
-            data[key] = params[key].value;
-            requestData({url,data}).then(data => {
-              item.rometeData = data.tableContent
-            })
-          }
-        })
-        this.dealerConfig = dealerConfig;
-        let eidtMatterPopConfig = {
-          property: [],
-          editPart: []
-        }
-        let eidtMatterPop = []
-        // 处理物料配置
-        matterConfig.forEach((item,index) => {
-          if(item.dataSource && item.dataSource.type === 'remoteData') {
-            this.requestApi = item.dataSource.data.url;
-            let params = item.dataSource.data.params;
-            let data = {}
-            let keys = Object.keys(params);
-            keys.forEach(item => {
-              this.matterParams[item] = ''
-              if(item === 'dealerCode'){
-                data[item] = this.dealerInfo[item]
-              }  
-            })
-          }
-          // 组合matterPop配置
-          // matterPop需要隐藏的物料的字段
-          if(item.editorType === 'r2Selector'){
-            let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
-            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification');
-            let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
-            // 循环删除要隐藏的字段
-            hiddenField.forEach(hItem => {
-              matterPopField.forEach((item,index) => {
-                if(item.k === 'transCode'){
-                  this.orderTitle = item.v;
-                }
-                if(item.k === hItem) {
-                  matterPopField.splice(index, 1)
-                  index --;
-                  return false
-                }
-              })
-            })
-            // console.log(matterPopField)
-            this.matterPopConfig = matterPopField;
-          }
-          // 组合物料编辑的matterPop的配置
-          if(!item.hidden){
-            if(item.dataSource && item.dataSource.type === 'formData'){
-              item.showFieldCode = item.dataSource.data.valueField[1];
-            }
-            if(item.valueField !== "transCode" && item.showFieldCode !== 'inventoryName' && item.showFieldCode !== 'inventoryCode' && item.showFieldCode !== 'specification'){
-              eidtMatterPop.push(item);
-            }
-          }
-        })
-        // console.log(eidtMatterPop);
-        // 将配置拆分为属性和可编辑的部分
-        eidtMatterPop.length && eidtMatterPop.forEach((item,index) => {
-          if(item.fieldCode === 'tdQty'){
-            eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
-            eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
-          }
-          
-        })
-        // console.log(eidtMatterPopConfig)
-        this.matterEditConfig = eidtMatterPopConfig;
-      })
+      this.getFormConfig()
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);
