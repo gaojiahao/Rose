@@ -2,7 +2,7 @@
   <div class="pages nbjgll-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -346,7 +346,7 @@ export default {
           let formData = {};
           let wfPara = {
             [this.processCode]: {
-              businessKey: 'PREQ',
+              businessKey: this.businessKey,
               createdBy: ''
             }
           };
@@ -383,7 +383,7 @@ export default {
             delete submitData.biReferenceId
           }
           if (!this.processCode.length) { // 无工作流
-            operation = submitAndCalc; 
+            operation = submitAndCalc;
             delete submitData.wfPara;
             delete submitData.biReferenceId;
           }

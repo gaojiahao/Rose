@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -270,7 +270,7 @@
           }, {
             name: '订单号',
             value: 'transCode',
-          }, 
+          },
         ],
         cashInfo: {},
         cashParams: {
@@ -549,7 +549,7 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'POPI',
+                businessKey: this.businessKey,
                 createdBy: ''
               }
             };

@@ -2,7 +2,7 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -87,21 +87,21 @@
                 <template slot="title">
                   <span class='required'>客户类型
                   </span>
-                </template>   
+                </template>
               </popup-picker>
               <x-input type="number"  v-model.number='modifyMatter.qtyDownline' text-align="right"
                       @on-blur="checkAmt(modifyMatter.qtyDownline, 'qtyDownline', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>数量下线
                   </span>
-                </template>      
+                </template>
               </x-input>
               <x-input type="number"  v-model.number='modifyMatter.qtyOnline' text-align="right"
                       @on-blur="checkAmt(modifyMatter.qtyOnline, 'qtyOnline', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>数量上线
                   </span>
-                </template>      
+                </template>
               </x-input>
             </group>
             <group class="mg_auto">
@@ -110,14 +110,14 @@
                 <template slot="label">
                   <span class='required'>标准价格
                   </span>
-                </template>      
+                </template>
               </x-input>
               <x-input type="number"  v-model.number='modifyMatter.specialReservePrice' text-align="right"
                       @on-blur="checkAmt(modifyMatter.specialReservePrice, 'specialReservePrice', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
                 <template slot="label">
                   <span class='required'>特批底价
                   </span>
-                </template>      
+                </template>
               </x-input>
             </group>
           </template>
@@ -204,7 +204,7 @@ export default {
     }
   },
   components: {
-    Icon, Group, Picker, XInput, RPicker, XTextarea, PopupPicker, 
+    Icon, Group, Picker, XInput, RPicker, XTextarea, PopupPicker,
     PopMatterList, PopMatter, UploadFile, PopBaseinfo
   },
   mixins: [ApplyCommon],
@@ -274,7 +274,7 @@ export default {
           qtyOnline: item.qtyOnline,  // 数量上线
           qtyDownline: item.qtyDownline,  // 数量下线
           drDealerLabel: item.drDealerLabel,  // 客户类型
-          PopDealerLabel: item.PopDealerLabel,  // 
+          PopDealerLabel: item.PopDealerLabel,  //
           specialReservePrice: item.specialReservePrice,
         };
       });
@@ -361,7 +361,7 @@ export default {
             formData: JSON.stringify(formData),
             wfPara: JSON.stringify({
               [this.processCode]: {
-                businessKey: 'PQ',
+                businessKey: this.businessKey,
                 createdBy: formData.creator,
               }
             }),

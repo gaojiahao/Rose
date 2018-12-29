@@ -2,7 +2,7 @@
   <div class="pages gdrw-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -92,7 +92,7 @@
       TransferDom
     },
     components: {
-      Popup, Group, Cell, Datetime,XInput, XTextarea, 
+      Popup, Group, Cell, Datetime,XInput, XTextarea,
       PopWorkList, PopManagerList,
       PopProjectList, PopWorkGdbllList, RPicker, PopBaseinfo
     },
@@ -163,7 +163,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;//默认有工作流
             let wfPara = {
-              [this.processCode]: {businessKey: "WTSK", createdBy: ""}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             }
             if (this.isResubmit) {
               wfPara = {

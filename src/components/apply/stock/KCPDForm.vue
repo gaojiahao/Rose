@@ -2,7 +2,7 @@
   <div class="pages kcpd-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -102,7 +102,7 @@
                 <template slot="title">
                   <span class='required'>差异数量
                   </span>
-                </template>  
+                </template>
               </cell>
             </group>
           </template>
@@ -341,7 +341,7 @@ export default {
             formData: JSON.stringify(formData),
             wfPara: JSON.stringify({
               [this.processCode]: {
-                businessKey: 'STCK',
+                businessKey: this.businessKey,
                 createdBy: formData.creator,
               }
             }),

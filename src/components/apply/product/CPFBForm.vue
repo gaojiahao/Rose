@@ -2,7 +2,7 @@
   <div class='pages cpfb-apply-container'>
     <div class="basicPart when-is-form" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -66,9 +66,9 @@
     data() {
       return {
         listId: 'eb8a01a3-7a74-439b-bc44-8d58cbfa6166',
-        formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',        
+        formViewUniqueId: 'b018ef18-f0d1-41a8-985e-29de19e6b705',
         formData: {
-          biId: '', 
+          biId: '',
           biComment: '', // 备注
           launchType: '', // 类型
           launchTitle: '', // 标题
@@ -81,7 +81,7 @@
         launchTypeList: [],
         dealerInfo: {},
         contactInfo: {},
-        uploadStyle : {},        
+        uploadStyle : {},
       }
     },
     mixins: [ApplyCommon],
@@ -93,7 +93,7 @@
       // 选择联系人
       selContact(val) {
         this.contactInfo = {...val};
-      },    
+      },
       // 选择客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
@@ -102,7 +102,7 @@
       // 选择类型
       isSelectType(val) {
         this.formData.launchType = val[0];
-      }, 
+      },
       // 提交/修改物料
       save() {
         let requiredMap = {
@@ -147,7 +147,7 @@
                   dealerDebitContactInformation: this.contactInfo.dealerMobilePhone // 往来联系人 信息 (不敢相信PC这里存的是电话)
                 },
                 operation = this.processCode.length ? saveAndStartWf : submitAndCalc;
-            
+
             let submitData = {
               listId: this.listId,
               biComment: '',
@@ -159,7 +159,7 @@
               }),
               wfPara: JSON.stringify({
                 [this.processCode]: {
-                  businessKey: 'RELS',
+                  businessKey: this.businessKey,
                   createdBy: formData.creator,
                 }
               }),
@@ -212,7 +212,7 @@
             handlerUnitName: formData.handlerUnitName,
             handlerRole: formData.handlerRole,
             handlerRoleName: formData.handlerRoleName,
-          };          
+          };
           this.formData = {
             ...this.formData,
             ...formData,
@@ -229,7 +229,7 @@
           for(let item of tableContent) {
             TypeList.push(item.name);
           }
-          this.launchTypeList.push(TypeList);   
+          this.launchTypeList.push(TypeList);
         })
       },
       // 是否保存草稿
@@ -274,7 +274,7 @@
   @import './../../scss/bizApply.scss';
   .materiel_list .mater_list .each_mater {
     padding: unset;
-  }  
+  }
   .cpfb-apply-container {
     .CP_group {
       /deep/ > .vux-label {

@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -147,7 +147,7 @@
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
                 @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
                 <template slot="label">
                   <span class="required">送货数</span>
@@ -156,13 +156,13 @@
               <cell title="包装数量" :value="modifyMatter.assistQty" disabled></cell>
             </group>
             <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right" 
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
                 <template slot="label">
                   <span class="required">含税单价</span>
                 </template>
               </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
                 @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
                 <template slot="label">
                   <span class="required">税率</span>
@@ -320,7 +320,7 @@
           {
             name: '订单号',
             value: 'transCode',
-          }, 
+          },
         ],
         checkFieldList: [
           {
@@ -346,7 +346,7 @@
     components: {
       Cell, RDropdown, XInput, Group,
       XTextarea, Datetime, PopOrderList, RNumber,
-      PopDealerList, PopWarehouseList, PopMatterList, 
+      PopDealerList, PopWarehouseList, PopMatterList,
       PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
     },
     methods: {
@@ -401,7 +401,7 @@
           //   productionDate = '',
           //   validUntil = '',
           // } = this.numMap[key] || {};
-          
+
           // if (price.length) {
           //   item.price = price;
           // }
@@ -606,7 +606,7 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'POPI',
+                businessKey: this.businessKey,
                 createdBy: ''
               }
             };

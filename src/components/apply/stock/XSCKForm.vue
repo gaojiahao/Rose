@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -55,7 +55,7 @@
                         <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
                       </div>
                       <!-- 库存 -->
-                      <div class='mater_more'>                       
+                      <div class='mater_more'>
                         <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
                         <span>订单数量: {{item.qty}}</span>
                         <span>已出库数量: {{item.stockQty}}</span>
@@ -567,7 +567,7 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'SODL',
+                businessKey: this.businessKey,
                 createdBy: ''
               }
             };

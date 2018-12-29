@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -381,7 +381,7 @@ export default {
       }
       // 数量
       if (tdQty) {
-        item.tdQty = Math.abs(toFixed(tdQty));      
+        item.tdQty = Math.abs(toFixed(tdQty));
         if (tdQty > qtyBalance) {
           item.tdQty = qtyBalance;
         }
@@ -434,7 +434,7 @@ export default {
           this.$HandleLoad.show();
           let operation = saveAndStartWf;
           let wfPara = {
-            [this.processCode]: {businessKey: "PAPP", createdBy: ""}
+            [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
           }
           if (this.isResubmit) {
             wfPara = {

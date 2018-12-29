@@ -2,7 +2,7 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -64,7 +64,7 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!-- 费用popup -->
-        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost' 
+        <pop-cost-list :show="showCostPop" v-model="showCostPop" @sel-matter="selMatter" :defaultValue='selectedCost'
                         getListMethod="getProjectCostByGroupId" :group-id="formData.handlerUnit" ref="matter"></pop-cost-list>
         <!--项目的popup-->
         <pop-project-list :show='showProjectPop' :default-value="defaultProject" v-model='showProjectPop'
@@ -239,7 +239,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "REIM1", createdBy: JSON.stringify(this.formData.handler)}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: JSON.stringify(this.formData.handler)}
             }
             if (this.isResubmit) {
               wfPara = {

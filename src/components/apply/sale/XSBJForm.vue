@@ -2,7 +2,7 @@
   <div class="pages xsbj-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -354,7 +354,7 @@
             tdAmount: item.tdAmount, // 价税小计
             taxRate: taxRate, // 税金
             noTaxPrice: item.noTaxPrice,
-            taxAmount: item.taxAmount, // 税金            
+            taxAmount: item.taxAmount, // 税金
             comment: item.comment || null,
           };
           if (this.transCode) {
@@ -398,7 +398,7 @@
               formData: JSON.stringify(formData),
               wfPara: JSON.stringify({
                 [this.processCode]: {
-                  businessKey: 'QUOT',
+                  businessKey: this.businessKey,
                   createdBy: formData.creator,
                 }
               }),

@@ -2,7 +2,7 @@
   <div class="pages xmjh-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -419,7 +419,7 @@
             if (!item.tdQty && item.tdQty !== 0) {
               warn = '请填写本次开票数量';
               return false
-            } 
+            }
             let taxRate = item.taxRate || this.taxRate;
             let noTaxAmount = accMul(item.price, item.tdQty);
             let taxAmount = accMul(noTaxAmount, taxRate);
@@ -460,7 +460,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "VATO", createdBy: JSON.stringify(this.formData.handler)}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: JSON.stringify(this.formData.handler)}
             }
             if (this.isResubmit) {
               wfPara = {
@@ -561,14 +561,14 @@
           }
           let orderList = {}
           // 发票列表明细
-          formData.order.dataSet.forEach(item => {           
+          formData.order.dataSet.forEach(item => {
             item.transCode = item.transMatchedCode, // 实例编码,
             item.inventoryName = item.inventoryName_transObjCode,
             item.inventoryCode = item.transObjCode,
             item.inventoryPic = item.inventoryPic_transObjCode ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400` : this.getDefaultImg(),
-            item.qtyBal = item.thenQtyBal, 
+            item.qtyBal = item.thenQtyBal,
             item.processing = item.tdProcessing,
-            item.measureUnit = item.measureUnit_transObjCode,          
+            item.measureUnit = item.measureUnit_transObjCode,
             this.matterList.push(item);
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
