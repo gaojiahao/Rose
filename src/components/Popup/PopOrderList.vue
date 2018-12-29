@@ -3,18 +3,16 @@
   <div v-transfer-dom>
     <popup v-model="showPop" height="80%" class="trade_pop_part" @on-show="onShow" @on-hide="onHide">
       <div class="trade_pop">
-        <!-- @turn-off="onHide" -->
-        <m-search :filterList="filterList" @search='searchList'  :isFill='true'></m-search>
+        <r-search :filterList="filterList" @search='searchList' @turn-off="onHide" :isFill='true'></r-search>
         <!-- 物料列表 -->
         <r-scroll class="mater_list" :options="scrollOptions" :has-next="hasNext"
-                  :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp" ref="bScroll">
-          <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
-               @click.stop="selThis(item, index)">
-            <div class="order-code" v-if="item.transCode && !item.transCode.includes(',') && isShowCode">
-              <!-- <slot name='titleName'>
-                <span class="order-title">单号</span>
-              </slot> -->
-              <span class="order-title">{{orderTitle}}</span>
+                  :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" ref="bScroll">
+          <div class="each_mater box_sd" v-for="(item, index) in listData" :key='index'
+               @click.stop="selThis(item,index)">
+            <div class="order-code">
+              <slot name='titleName'>
+                <span class="order-title">订单号</span>
+              </slot>
               <span class="order-num">{{item.transCode}}</span>
             </div>
             <div class="order-matter">
@@ -22,7 +20,6 @@
                 <img :src="item.inventoryPic" alt="mater_img" @error="getDefaultImg(item)">
               </div>
               <div class="mater_main ">
-                <!-- 物料名称 -->
                 <div class="mater_name">
                   {{item.inventoryName}}
                 </div>
@@ -47,11 +44,28 @@
                   </div>
                   <!-- 物料分类、材质 -->
                   <div class="withoutColor">
-                    <div class="mater_classify">
-                      <span class="type" v-for="(fItem,fIndex) in config" :key="fIndex">
-                        {{fItem.v}}: {{item[fItem.k]}}
-                      </span>
-                    </div>
+                    <slot name="basicInfo" :item="item">
+                      <!-- 物料分类 -->
+                      <div class="mater_classify">
+                        <span class="type">属性: {{item.processing}}</span>
+                        <span class="father">大类: {{item.inventoryType}}</span>
+                        <span class="child">子类: {{item.inventorySubclass || '无'}}</span>
+                      </div>
+                      <!-- 物料材质等 -->
+                      <div class="mater_material">
+                        <span class="unit">单位: {{item.measureUnit}}</span>
+                        <span class="color">颜色: {{item.inventoryColor || '无'}}</span>
+                        <span class="spec">材质: {{item.material || '无'}}</span>
+                      </div>
+                    </slot>
+                    <slot name="materInfo" :item="item">
+                      <!--默认展示的字段-->
+                      <div class="mater_material">
+                        <span>待交付数量:{{item.qtyBal}}</span>
+                        <span>库存: {{item.qtyStockBal}}</span>
+                      </div>
+                    </slot>
+
                   </div>
                 </div>
               </div>
@@ -65,110 +79,80 @@
       <!-- 底部栏 -->
       <div class="count_mode vux-1px-t">
         <span class="count_num"> {{tmpItems.length ? `已选 ${tmpItems.length} 个` : '请选择'}} </span>
-        <span class="count_btn" @click="cfmMater">确定</span>
+        <span class="count_btn" @click="selConfirm">确定</span>
       </div>
     </popup>
   </div>
 </template>
 
 <script>
-  import {Icon, Popup, dateFormat} from 'vux'
-  import {getManyVATBilling, getManyVATReceipt, getBillingApplication} from 'service/invoiceService'
-  import {requestData} from 'service/commonService'
+  import {Icon, Popup} from 'vux'
   import RScroll from 'components/RScroll'
-  import MSearch from 'components/search'
+  import {getSalesOrderList,getMaterOrderList,getNBJGLLOrderList} from 'service/listService'
+  import RSearch from 'components/search'
 
   export default {
-    name: "PopMatterList",
+    name: "PopOrderList",
     props: {
       show: {
         type: Boolean,
         default: false
       },
-      // 默认值
-      defaultValue: {
-        type: Array,
+      // 请求列表的参数
+      params: {
+        type: Object,
         default() {
-          return []
+          return {
+            dealerCode: '',
+            whCode: '',
+          }
         }
       },
-      // 用于请求的key名，用于区分不同的接口
-      getListMethod: {
-        type: String,
-        default: 'getMatList'
-      },
-      // 请求的传参，本地库存调拨请求数据时会传入
-      params: {
+      defaultValue: {
         type: Object,
         default() {
           return {}
         }
       },
-      // 以属性查询物料的数据
-      processing: {
-        type: String,
-        default: '成品,商品,服务'
+      isMaterOrder:{
+        type : Boolean,
+        default : false
       },
-      isShowCode: {
-        type: Boolean,
-        default: true
-      },
-      // 是否检验可用库存，是，当库存为零，该物料不能被选中
-      isShowStock: {
-        type: Boolean,
-        default: false
-      },
-      filterList: {
-        type: Array,
-        default() {
-          return [ // 过滤列表
-            {
-              name: '物料名称',
-              value: 'inventoryName',
-            }, {
-              name: '物料编码',
-              value: 'inventoryCode',
-            },
-          ]
-        }
-      },
-      // 物料列表的配置
-      config: {
-        type: Array,
-        default() {
-          return []
-        }
-      },
-      // 请求的接口
-      requestApi: {
-        type: String,
-        default: ''
-      },
-      // 物料订单号的title
-      orderTitle: {
-        type: String,
-        default: '单号'
+      isMaterProccing:{
+        type : Boolean,
+        default : false
       }
     },
     components: {
-      Icon, Popup, RScroll, MSearch
+      Icon, Popup, RScroll, RSearch,
     },
     data() {
       return {
         showPop: false,
         srhInpTx: '', // 搜索框内容
         selItems: [], // 哪些被选中了
-        tmpItems: [], // 临时存储
-        matterList: [], // 物料列表
-        limit: 100, // 每页条数
-        page: 1., // 当前页码
-        hasNext: true, // 是否有下一页
-        scrollOptions: { // 滚动配置
+        tmpItems: [],
+        listData: [],
+        limit: 100,
+        page: 1.,
+        hasNext: true,
+        scrollOptions: {
           click: true,
           pullUpLoad: true,
         },
         filterProperty: '', // 过滤的key
-        requestMethods: null,
+        filterList: [ // 过滤列表
+          {
+            name: '物料名称',
+            value: 'inventoryName',
+          }, {
+            name: '物料编码',
+            value: 'inventoryCode',
+          }, {
+            name: '订单号',
+            value: 'transCode'
+          }
+        ],
       }
     },
     watch: {
@@ -177,71 +161,48 @@
           this.showPop = val;
         }
       },
-      defaultValue: {
-        handler(val) {
-          // 默认值改变，重新赋值
-          this.setDefaultValue();
-        }
-      },
       params: {
         handler() {
           this.resetCondition();
-          // 参数改变，重新请求接口
-          this.requestData();
-        },
-        deep: true
-      },
-      requestApi: {
-        handler(val){
-          this.requestData();
+          this.getList();
         }
-      }
+      },
+      defaultValue: {
+        handler(val) {
+          this.setDefaultValue();
+        }
+      },
     },
     methods: {
       // TODO 弹窗展示时调用
       onShow() {
         this.$nextTick(() => {
           if (this.$refs.bScroll) {
-            // 弹窗展示时刷新滚动，防止无法拖动问题
             this.$refs.bScroll.refresh();
           }
         })
       },
-      // 弹窗隐藏时调用
+      // TODO 弹窗隐藏时调用
       onHide() {
         this.tmpItems = [...this.selItems];
         this.$emit('input', false);
         // 组件传值 传回给search组件 强制关闭下拉框
         this.$event.$emit('shut-down-filter', false);
       },
-      // TODO 匹配相同项的索引
-      findIndex(arr, sItem) {
-        return arr.findIndex(item => {
-          let isSameTransCode = true,
-              isSameOrderCode = true;
-          if(item.orderCode) {
-            isSameOrderCode = item.orderCode === sItem.orderCode;
-            return isSameOrderCode && item.inventoryCode === sItem.inventoryCode
-          }
-          isSameTransCode = item.transCode === sItem.transCode;
-          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
-        });
-      },
       // TODO 判断是否展示选中图标
       showSelIcon(sItem) {
-        return this.findIndex(this.tmpItems, sItem) !== -1;
+        return this.tmpItems.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode) !== -1;
       },
       // TODO 选择物料
       selThis(sItem, sIndex) {
-        // 校验库存
-        if (this.isShowStock && sItem.qtyStockBal=== 0) {
+        if ( (!this.isMaterOrder && (sItem.qtyStockBal===0 || sItem.qtyStock === 0 )) || (this.isMaterOrder && sItem.qtyStock === 0)) {
           this.$vux.alert.show({
             content: '当前订单库存为0，请选择其他订单'
           });
           return
         }
         let arr = this.tmpItems;
-        let delIndex = this.findIndex(arr, sItem);
+        let delIndex = arr.findIndex(item => item.transCode === sItem.transCode && item.inventoryCode === sItem.inventoryCode);
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
@@ -249,13 +210,14 @@
         }
         arr.push(sItem);
       },
-      // TODO 确定选择物料
-      cfmMater() {
+      // TODO 确定选择订单
+      selConfirm() {
         let sels = [];
+        // 返回上层
         this.showPop = false;
+        // 设置选中项的顺序和列表顺序一致
         this.tmpItems.sort((a, b) => b.effectiveTime - a.effectiveTime);
         this.selItems = [...this.tmpItems];
-        // 触发父组件选中事件
         this.$emit('sel-matter', JSON.stringify(this.selItems));
       },
       // TODO 获取默认图片
@@ -266,86 +228,113 @@
         }
         return url
       },
-      // TODO 获取物料列表
-      requestData() {
+      // TODO 获取订单列表
+      getList() {
         let filter = [];
-        //成品,商品,服务
         if (this.srhInpTx) {
           filter = [
-            ...filter,
             {
               operator: 'like',
               value: this.srhInpTx,
               property: this.filterProperty,
-            },
+            }
           ];
         }
-        let data = {
+        let requestMethods = getSalesOrderList;
+        let submitData = {
+          ...this.params,
+        }
+        //物料订单
+        if(this.isMaterOrder){
+          requestMethods = getMaterOrderList;
+          submitData = {};
+        }
+        //加工物料
+        if(this.isMaterProccing){
+          requestMethods = getNBJGLLOrderList;
+        }
+        let {relationKey=''} = this.$route.query;
+        if(relationKey){
+          filter = [{          
+              operator: 'eq',
+              value: relationKey,
+              property: 'transCode'
+            }
+          ]
+        }
+        return requestMethods({
+          ...submitData,
           limit: this.limit,
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-          ...this.params,
-        }
-        console.log(data)
-        return requestData({
-          url: this.requestApi,
-          data
-        }).then(this.dataHandler);
+        }).then(({dataCount = 0, tableContent = []}) => {
+          tableContent.forEach(item => {
+            item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
+          });
+          if(relationKey){
+            this.selItems = [...tableContent];
+            this.$emit('sel-matter', JSON.stringify(this.selItems));
+          }
+          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.listData = this.page === 1 ? tableContent : [...this.listData, ...tableContent];
+          this.$nextTick(() => {
+            this.$refs.bScroll.finishPullUp();
+          })
+        });
       },
-      // TODO 搜索物料
+      // TODO 重置列表条件
+      resetCondition() {
+        this.listData = [];
+        this.page = 1;
+        this.hasNext = true;
+        this.$refs.bScroll.scrollTo(0, 0);
+      },
+      // TODO 搜索订单
       searchList({val = '', property = ''}) {
         this.srhInpTx = val;
         this.filterProperty = property;
         this.resetCondition();
-        this.requestData()
+        this.getList();
+      },
+      // TODO 清空搜索条件
+      clearList() {
+        this.srhInpTx = '';
+        this.resetCondition();
+        this.getList();
       },
       // TODO 删除选中项
       delSelItem(dItem) {
-        let delIndex = this.findIndex(this.selItems, dItem);
+        let delIndex = this.selItems.findIndex(item => item.transCode === dItem.transCode && item.inventoryCode === dItem.inventoryCode);
         if (delIndex !== -1) {
           this.selItems.splice(delIndex, 1);
         }
         this.tmpItems = [...this.selItems];
       },
+      // TODO 清空选择项
+      clearSel() {
+        this.selItems = [];
+        this.tmpItems = [];
+      },
       // TODO 上拉加载
       onPullingUp() {
         this.page++;
-        this.requestData();
+        this.getList();
       },
       // TODO 设置默认值
       setDefaultValue() {
-        this.tmpItems = [...this.defaultValue];
-        this.selItems = [...this.defaultValue];
-      },
-      // TODO 共用的数据处理方法
-      dataHandler({dataCount = 0, tableContent = []}) {
-        tableContent.forEach(item => {
-          item.inventoryPic = item.inventoryPic ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400` : this.getDefaultImg();
-        });
-        let {relationKey = ''} = this.$route.query;
-        if (relationKey) {
-          this.selItems = [...tableContent];
-          this.$emit('sel-matter', JSON.stringify(this.selItems));
+        let tmp = [];
+        for (let items of Object.values(this.defaultValue)) {
+          tmp = [...tmp, ...items];
         }
-        this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
-        this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
-        this.$nextTick(() => {
-          this.$refs.bScroll.finishPullUp();
-        })
-      },
-      // TODO 初始化条件
-      resetCondition() {
-        this.matterList = [];
-        this.page = 1;
-        this.hasNext = true;
-        this.$refs.bScroll.scrollTo(0, 0);
+        this.tmpItems = [...tmp];
+        this.selItems = [...tmp];
       },
     },
     created() {
+      this.showPop = this.show;
       this.setDefaultValue();
-      // 请求物料
-      // this.requestData()
+      this.getList();
     }
   }
 </script>
@@ -362,7 +351,7 @@
         height: 100%;
         font-size: .2rem;
         position: relative;
-        padding: .08rem 0;
+        padding-top: 0.08rem;
         // 搜索
         .search_part {
           width: 100%;
@@ -439,12 +428,13 @@
         height: calc(100% - .38rem);
         /* 使用深度作用选择器进行样式覆盖 */
         /deep/ .scroll-wrapper {
-          padding: .04rem .04rem 0 .3rem;
+          padding: .14rem .04rem 0 .3rem;
         }
         // 每个物料
         .each_mater {
           position: relative;
-          // display: flex;
+          display: flex;
+          flex-direction: column;
           padding: 0.08rem;
           margin-bottom: .2rem;
           box-sizing: border-box;
@@ -475,9 +465,9 @@
           }
           // 物料图片
           .mater_img {
-            display: inline-block;
             width: .75rem;
             height: .75rem;
+            display: inline-block;
             img {
               width: 100%;
               max-height: 100%;
@@ -504,11 +494,11 @@
               // 每个物料的索引
               .whiNum {
                 color: #fff;
-                font-size: .1rem;
+
                 padding: 0 .04rem;
+                font-size: .1rem;
                 display: inline-block;
                 background: #ea5455;
-                border-radius: .04rem;
                 vertical-align: middle;
                 margin: -.02rem .04rem 0 0;
               }
@@ -517,7 +507,6 @@
             .mater_info {
               color: #757575;
               font-size: .12rem;
-              word-break: break-all;
               // 有颜色包裹的
               .withColor {
                 margin-top: .04rem;
@@ -580,6 +569,9 @@
                   .unit,
                   .color {
                     margin-right: .06rem;
+                  }
+                  span{
+                     margin-right: .06rem;
                   }
                 }
               }
