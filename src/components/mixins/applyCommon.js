@@ -1,4 +1,4 @@
-import {commitTask, getBaseInfoData, getProcess, getProcessStatus} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
 import {numberComma,} from 'vux'
@@ -364,7 +364,97 @@ export default {
       item.noTaxAmount = toFixed(accMul(price, tdQty));
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
+    },
+    // 请求配置
+    getFormConfig(){
+      getFormConfig(this.viewId).then(({config = []}) => {
+        console.log(config)
+        let dealerConfig = [];
+        let matterConfig = [];
+        config.forEach(item => {
+          if(item.name === 'kh' || item.name === 'inPut'){
+            dealerConfig = dealerConfig.concat(item.items)
+          }
+          if(item.name === 'order'){
+            matterConfig = item.items;
+          }
+        })
+        // 处理往来配置里面的接口请求
+        dealerConfig.forEach(item => {
+          if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+            let url = item.dataSource.data.url;
+            let params = item.dataSource.data.params;
+            let key = Object.keys(params)[0];
+            let data = {};
+            data[key] = params[key].value;
+            requestData({url,data}).then(data => {
+              item.rometeData = data.tableContent
+            })
+          }
+        })
+        this.dealerConfig = dealerConfig;
+        let eidtMatterPopConfig = {
+          property: [],
+          editPart: []
+        }
+        let eidtMatterPop = []
+        // 处理物料配置
+        matterConfig.forEach((item,index) => {
+          if(item.dataSource && item.dataSource.type === 'remoteData') {
+            this.requestApi = item.dataSource.data.url;
+            let params = item.dataSource.data.params;
+            let data = {}
+            let keys = Object.keys(params);
+            keys.forEach(item => {
+              this.matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+            })
+          }
+          // 组合matterPop配置
+          // matterPop需要隐藏的物料的字段
+          if(item.editorType === 'r2Selector'){
+            let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
+            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification');
+            let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
+            // 循环删除要隐藏的字段
+            hiddenField.forEach(hItem => {
+              matterPopField.forEach((item,index) => {
+                if(item.k === 'transCode'){
+                  this.orderTitle = item.v;
+                }
+                if(item.k === hItem) {
+                  matterPopField.splice(index, 1)
+                  index --;
+                  return false
+                }
+              })
+            })
+            console.log(matterPopField)
+            this.matterPopConfig = matterPopField;
+          }
+          // 组合物料编辑的matterPop的配置
+          if(!item.hidden){
+            if(item.dataSource && item.dataSource.type === 'formData'){
+              item.showFieldCode = item.dataSource.data.valueField[1];
+            }
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.showFieldCode !== 'inventoryName' && item.showFieldCode !== 'inventoryCode' && item.showFieldCode !== 'specification'){
+              eidtMatterPop.push(item);
+            }
+          }
+        })
+        // console.log(eidtMatterPop);
+        // 将配置拆分为属性和可编辑的部分
+        eidtMatterPop.length && eidtMatterPop.forEach((item,index) => {
+          if(item.fieldCode === 'tdQty'){
+            eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
+            eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
+          }
+          
+        })
+        // console.log(eidtMatterPopConfig)
+        this.matterEditConfig = eidtMatterPopConfig;
+      })
     }
+    
   },
   created() {
     register(); // 注册wx-js-sdk
