@@ -119,3 +119,8 @@
   background: url('~assets/iconfont/task3.png');
   background-size: cover;
 }
+
+.icon-project{
+  background: url('~assets/iconfont/project.png');
+  background-size: cover;
+}
