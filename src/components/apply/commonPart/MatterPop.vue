@@ -29,9 +29,13 @@
                   </div>
                 </div>
               </div>
+              <div class="mater_more">
+                <span v-for="(item,index) in config.property">
+                  {{item.text}}: {{modifyMatter[item.showFieldCode] || "无"}}
+                </span>
+              </div>
               <!-- 设施 -->
-              <template v-if="modifyMatter.facilityName">
-                <!-- 物料属性和单位 -->
+              <!-- <template v-if="modifyMatter.facilityName">
                 <div class="mater_more">
                   <span class="processing">类型: {{modifyMatter.facilityType}}</span>
                   <span>大类: {{modifyMatter.facilityBigType || "无"}}</span>
@@ -57,11 +61,31 @@
                       </div>
                   </slot>
                 </div>
-              </template>
+              </template> -->
             </div>
           </div>
+          <group class="mg_auto">
+            <div v-for="(eItem,eIndex) in config.editPart" :key="eIndex">
+              <div v-if="!eItem.readOnly">
+                <x-input class="vux-1px-b" :title="eItem.text" type="number"  v-model.number='modifyMatter[eItem.fieldCode]' text-align="right"
+                  placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" v-if="eItem.editorType === 'r2Numberfield'">
+                  <template slot="label" v-if="!eItem.allowBlank">
+                    <span class='required'>{{eItem.text}}</span>
+                  </template>
+                </x-input>
+                <datetime class="vux-1px-b" :title="eItem.text" :start-date="modifyMatter[eItem.fieldCode]" :end-date="modifyMatter[eItem.fieldCode]"
+                          v-model="modifyMatter[eItem.fieldCode]" placeholder="请选择" v-if="eItem.editorType === 'r2Datefield'">
+                  <template slot="title" v-if="!eItem.allowBlank">
+                    <span class='required'>{{eItem.text}}</span>
+                  </template>
+                </datetime>
+              </div>
+              <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode]" v-else></cell>
+            </div>
+            
+          </group>
           <!-- 基本信息插槽 -->
-          <slot name="modify" :modifyMatter="modifyMatter">
+          <!-- <slot name="modify" :modifyMatter="modifyMatter">
 
             <group class='mg_auto'>
               <x-input title="数量" type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
@@ -92,13 +116,13 @@
               </x-input>
               <cell disabled title="不含税单价" :value="`￥${numberComma(modifyMatter.noTaxPrice)}`"></cell>
             </group>
-          </slot>
+          </slot> -->
           <!-- 日期插槽 -->
-          <group class="mg_auto">
+          <!-- <group class="mg_auto">
             <slot name="date" :modifyMatter="modifyMatter"></slot>
-          </group>
+          </group> -->
           <!-- 价格合计部分 -->
-          <group class="mg_auto" v-if="isShowAmount">
+          <!-- <group class="mg_auto" v-if="isShowAmount">
             <cell disabled title="税金" :value="`￥${numberComma(modifyMatter.taxAmount)}`"></cell> 
             <cell disabled :value="`￥${numberComma(modifyMatter.noTaxAmount)}`">
               <template slot="title">
@@ -106,16 +130,16 @@
                   <span>不含税金额</span>
                 </slot>
               </template>
-            </cell>
+            </cell> -->
             <!-- 该插槽用于替换价税小计的title-->    
-            <cell disabled :value="`￥${numberComma(modifyMatter.tdAmount)}`">
+            <!-- <cell disabled :value="`￥${numberComma(modifyMatter.tdAmount)}`">
               <template slot="title">
                 <slot name="tdAmountTitle">
                   <span>价税小计</span>
                 </slot>
               </template>
             </cell>
-          </group>
+          </group> -->
         
         </div>
       </r-scroll>
@@ -174,6 +198,12 @@ export default {
       type: Array,
       default() {
         return []
+      }
+    },
+    config: {
+      type: Object,
+      default() {
+        return {}
       }
     }
   },

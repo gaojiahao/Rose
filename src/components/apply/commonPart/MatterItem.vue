@@ -21,15 +21,20 @@
           <span class="num">{{item.specification || item.facilitySpecification || item.specification_outPutMatCode || '无'}}</span>
         </div>
       </div>
+      <div class="matter-more">
+        <span class="unit" v-for="(cItem,cIndex) in config" :key="cIndex">
+          {{cItem.text}}: {{item[cItem.showFieldCode] || "无"}}
+        </span>
+      </div>
       <slot name="info" :item="item">
         <!-- 物料属性和单位 -->
-        <div class='mater_more'>
+        <!-- <div class='mater_more'>
           <span class='unit'>属性: {{item.processing}}</span>
           <span class='unit'>单位: {{item.measureUnit}}</span>
           <span class='unit'>辅助计量: {{item.invSubUnitName}}</span>
           <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate | percent}}</span>
           <span class='unit'>辅助计量说明: {{item.invSubUnitComment}}</span>
-        </div>
+        </div> -->
       </slot>
       <slot name="edit" :item="item">
         <div class='mater_other' @click="modifyMatter" v-if="hideEdit && !showDelete">
@@ -71,7 +76,14 @@ export default {
       default () {
         return {}
       }
+    },
+    config: {
+      type: Array,
+      default() {
+        return []
+      }
     }
+
   },
   computed: {
     showEdit () {

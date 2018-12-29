@@ -298,7 +298,18 @@ export let transferTask = (data = {}) => {
     }
   })
 };
-
+export let getFormConfig = (viewId = '') => {
+  return $flyio.ajax({
+    url: `/H_roleplay-si/mobile/formView/${viewId}`
+  })
+  
+}
+export let requestData = ({url = '', data = {}}) => {
+  return $flyio.ajax({
+    url,
+    data
+  })
+}
 export default {
   getList,
   upload,
@@ -314,4 +325,5 @@ export default {
   getObjDealerByLabelName,
   getUserList,
   transferTask,
+  getFormConfig
 }
