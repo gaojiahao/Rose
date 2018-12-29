@@ -10,7 +10,7 @@
             :class="[property === SItem.key && sort === 'DESC' ? 'icon-down-fill' : 'icon-down']"></span>
       </div>
     </div>
-    <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || Object.keys(this.fieldVlaue).length}"> 
+    <div class="filter-part" @click="showFilter = true" :class="{ active : this.timeFilter.startDate || this.timeFilter.endDate || Object.keys(this.fieldVlaue).length}">
       <span class="filter_name">筛选</span>
       <span class="icon-filter"></span>
     </div>
@@ -27,7 +27,7 @@
                   v-for="(item, index) in filtersList.biProcessStatus.value" :key="index"
                   @click="selProcee(item,'biProcessStatus',index)">
                     <div class="status_content">{{item}}</div>
-                  </div>          
+                  </div>
                 </div>
               </div>
             </div>
@@ -55,15 +55,15 @@
                   v-for="(item, index) in val.value" :key="index"
                   @click="selProcee(item,key)" v-show="index < 3 || val.showAll">
                     <div class="status_content">{{item}}</div>
-                  </div>          
+                  </div>
                 </div>
-              </div>  
+              </div>
             </div>
           </r-scroll>
           <div class="handle-part vux-1px-t">
             <span class="reset_btn" @click="filterReset">重置</span>
             <span class="confirm_btn" @click="filterConfirm">确定</span>
-          </div>        
+          </div>
         </div>
       </popup>
     </div>
@@ -114,7 +114,7 @@ export default {
       scrollOptions: {
         click: true,
       },
-      filtersList:{}
+      filtersList:{},
     }
   },
   methods: {
@@ -122,13 +122,13 @@ export default {
     sortClick(item, i) {
       if(this.property === item.key){
         // 排序转变
-        this.sort = this.sort === 'ASC' 
+        this.sort = this.sort === 'ASC'
           ? 'DESC'
           : 'ASC'
       }
       else{
         // 默认为正序
-        this.sort = 'ASC' 
+        this.sort = 'ASC'
       }
       this.property = item.key;
       this.$emit('on-sort', {
@@ -153,7 +153,7 @@ export default {
       // 时间过滤发生改变
       if(this.timeFilter.startDate !== this.lastFilter.timeFilter.startDate || this.timeFilter.endDate !== this.lastFilter.timeFilter.endDate) {
         isRefreshList = true;
-      } 
+      }
       let str1 = JSON.stringify(this.fieldVlaue),
           str2 = JSON.stringify(this.lastFilter.otherFilter);
       // 其他过滤发生改变
@@ -182,7 +182,7 @@ export default {
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);
           //当值为空是，删除该过滤条件
-          if(!arr.length) { 
+          if(!arr.length) {
             delete this.fieldVlaue[key]
           }
           return;
@@ -196,14 +196,14 @@ export default {
         }
         this.$set(this.fieldVlaue,key,{...obj})
       }
-    },  
+    },
     // 起始日期
     getStart() {
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
         value: this.timeFilter.startDate,
-        endDate: this.preDate,
+        // endDate: this.preDate,
         onConfirm: (val) => {
           this.timeFilter.startDate = val;
         }
@@ -215,7 +215,7 @@ export default {
         cancelText: '取消',
         confirmText: '确定',
         value: this.timeFilter.endDate,
-        endDate: this.toDay,
+        // endDate: this.toDay,
         onConfirm: (val) => {
           this.timeFilter.endDate = val;
         }
@@ -236,11 +236,24 @@ export default {
     // 请求过滤字段
     getFilterFields(){
       filterFields(this.viewId).then(data=>{
-        for(let key in data){
-          data[key].showValue = data[key].value.slice(0,9);
-          data[key].showAll = false;
+        let formStatusList = ['进行中', '已生效', '草稿'];
+        let filtersList = {
+          biStatus: {
+            alias: '表单状态',
+            showAll: false,
+            showValue: formStatusList,
+            value: formStatusList,
+          }
+        };
+        for(let key of Object.keys(data)){
+          let item = data[key];
+          filtersList[key] = {
+            ...item,
+            showValue: item.value.slice(0,9),
+            showAll: false,
+          };
         }
-        this.filtersList = {...data};
+        this.filtersList = {...filtersList};
       })
     }
   },
@@ -249,7 +262,7 @@ export default {
     this.toDay = dateFormat(new Date(),'YYYY-MM-DD');
     this.preDate = dateFormat(new Date(new Date().getTime() - 24*60*60*1000), 'YYYY-MM-DD');
     this.getFilterFields()
-    
+
   }
 }
 </script>
@@ -269,7 +282,7 @@ export default {
 /deep/ .vux-popup-dialog {
   background: #fff;
   overflow-y: auto;
-} 
+}
 .active  {
   color: #3296FA;
   background: #fff;
@@ -280,7 +293,7 @@ export default {
   justify-content: space-between;
   .each-sort {
     padding: .08rem .05rem .14rem;
-    color: #333;     
+    color: #333;
     display: flex;
     font-size: .14rem;
     line-height: 0.14rem;
@@ -303,7 +316,7 @@ export default {
         left: .04rem;
       }
     }
-    
+
   }
   .filter-part {
     @extend .each-sort;
@@ -343,7 +356,7 @@ export default {
       }
     }
   }
-  .process-status-container { 
+  .process-status-container {
     .process-wrapper {
       padding: .17rem .23rem .08rem .24rem;
     }
@@ -364,7 +377,7 @@ export default {
         .status_content {
           overflow: hidden;
           padding: 0 .05rem;
-          white-space: nowrap; 
+          white-space: nowrap;
           text-overflow: ellipsis;
         }
         &.active {
@@ -401,10 +414,10 @@ export default {
   .handle-part {
     right: 0;
     bottom: 0;
-    display: flex;    
+    display: flex;
     width: inherit;
     height: .44rem;
-    position: absolute;    
+    position: absolute;
     line-height: .44rem;
     span {
       flex: 1;
