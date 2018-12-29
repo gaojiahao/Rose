@@ -2,12 +2,12 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商" 
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商"
                           dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
@@ -81,7 +81,7 @@
                 <div class='delete_icon' @click="delClick(item,index)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
                   <x-icon type="ios-circle-outline" size="20" v-show="!showSelIcon(item)"></x-icon>
-                </div>        
+                </div>
               </div>
             </div>
           </template>
@@ -128,7 +128,7 @@
               </div>
             </template>
           </pop-matter-list>
-          
+
         </div>
          <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
@@ -218,11 +218,11 @@ export default {
         modifer: '',
         biId: '',
         biComment: ''
-      },  
+      },
       inPut: {
         tdAmountCopy1: '',
         prepaymentDueDate: ''
-      },                                  
+      },
       dealerInfo: {},
       contact: {},
       transMode: [], // 结算方式
@@ -306,7 +306,7 @@ export default {
     },
     // 选择默认图片
     getDefaultImg (item) {
-      let url = require('assets/wl_default02.png');
+      let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -385,7 +385,7 @@ export default {
             warn = '请选择采购需求日';
             return false
           }
-          
+
           let taxRate = item.taxRate;
           let taxAmount = accMul(item.price, item.tdQty, taxRate);
           // 设置提交参数
@@ -426,7 +426,7 @@ export default {
           this.$HandleLoad.show();
           let operation = saveAndStartWf;
           let wfPara = {
-            [this.processCode]: {businessKey:"PO",createdBy:""}
+            [this.processCode]: {businessKey:this.businessKey,createdBy:""}
           }
           if (this.isResubmit) {
             wfPara = {
@@ -574,7 +574,7 @@ export default {
           inPut: this.inPut
         }
       };
-      
+
     },
   },
   created () {

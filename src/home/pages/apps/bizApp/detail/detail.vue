@@ -10,19 +10,14 @@
       </component>
     </div>
     <div class="detail-comment-container vux-1px-t" v-if="hasComment">
-      <x-icon class="left-arrow" type="ios-arrow-left" size="24" @click.native.stop="back"></x-icon>
-      <div class="operations">
-        <!-- 关注 -->
-        <div class="concern" @click="goConcern">
-          <span class="iconfont icon-xihuan1" v-if="isConcern === 0"></span>
-          <span class="iconfont icon-xihuan" v-else></span>
-          <!-- <span class="count concern-count">{{concernCount || ''}}</span> -->
-        </div>
-        <!-- 评论 -->
-        <div class="operation" @click="goDiscuss">
-          <span class="iconfont icon-pinglun"></span>
-          <span class="count comment-count">{{commentCount || ''}}</span>
-        </div>
+      <div class="concern" @click="goConcern">
+        <span class="icon icon-heart" v-if="isConcern === 0"></span>
+        <span class="icon icon-heart-fill" v-else></span>
+      </div>
+      <!-- 评论 -->
+      <div class="operation" @click="goDiscuss">
+        <span class="icon icon-dialog"></span>
+        <span class="count">{{commentCount || ''}}</span>
       </div>
     </div>
   </div>
@@ -100,9 +95,9 @@ export default {
       })
     },
     // TODO 底部评论返回按钮事件
-    back() {
+    /*back() {
       this.$router.go(-1);
-    },
+    },*/
     // TODO 跳转到评论页面
     goDiscuss() {
       this.$router.push({
@@ -197,7 +192,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     let { path } = to;
-    let isGoList = to.name === 'LIST' || to.name === 'MSGLIST';
+    let isGoList = to.name === 'LIST' || to.name === 'MSGHOME';
     this.$HandleLoad.hide();
     if (isGoList) {
       this.currentComponent = null;
@@ -233,46 +228,48 @@ export default {
       overflow: hidden;
       // background: #FFF;
       &.has-comment {
-        height: calc(100% - .48rem);
+        height: calc(100% - .44rem);
       }
     }
     .detail-comment-container {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
-      padding: 0 .1rem;
-      height: .48rem;
-      background: #fff;
-      .left-arrow {
-        fill: #757575;
+      height: .44rem;
+      background-color: #fafafa;
+      color: #999;
+      &:before {
+        border-color: #d9d9d9
       }
-      .operations{
-        display: flex;
-        align-items: center;
+      .icon {
+        display: inline-block;
+        width: .2rem;
+        height: .19rem;
       }
-      .iconfont {
-        color: #757575;
-        font-size: .25rem;
-        &.icon-pinglun{
-          font-size: 0.24rem;
-        }
+      .icon-heart {
+        width: .22rem;
+        height: .2rem;
+      }
+      .icon-heart-fill {
+        width: .2rem;
+        height: .18rem;
       }
       /** 关注 */
       .concern{
-        margin-right: .2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         .icon-xihuan{
           color: #c93d1b;
         }
-
+      }
+      .operation {
+        display: flex;
+        align-items: center;
       }
       .count{
-        position: relative;
-        top: -0.1rem;
-        right: .04rem;
-        font-size: .14rem;
-        &.comment-count {
-          right: .01rem;
-        }
+        margin-left: .04rem;
+        font-size: .12rem;
       }
     }
   }

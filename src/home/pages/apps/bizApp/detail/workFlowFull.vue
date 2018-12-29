@@ -40,7 +40,7 @@
         transCode: '',
         currentUser: {}, // 当前用户信息
         workFlow: [],
-        defaulImg: require('assets/ava03.png'),   // 默认图片1
+        defaulImg: require('assets/ava01.png'),   // 默认图片1
       }
     },
     computed: {
@@ -142,6 +142,7 @@
     }
     .work-flow-wrapper {
       width: 100%;
+      margin-bottom: .15rem;
       box-sizing: border-box;
     }
     .work_flow_item {

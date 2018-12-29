@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -33,7 +33,7 @@
                       <div class="mater_more">
                         <span class="processing">大类: {{item.facilityBigType}}</span>
                         <span class='mater_color'>子类: {{item.facilitySubclass || '无'}}</span>
-                        <span class='unit'>单位: {{item.facilityUnit}}</span> 
+                        <span class='unit'>单位: {{item.facilityUnit}}</span>
                         <span>设施类型: {{item.facilityType}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
@@ -222,7 +222,7 @@
       },
       // TODO 选择默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -322,7 +322,7 @@
             let formData = {};
             let wfPara = {
               [this.processCode]: {
-                businessKey: 'EPAP',
+                businessKey: this.businessKey,
                 createdBy: ''
               }
             };

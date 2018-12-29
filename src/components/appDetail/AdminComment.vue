@@ -151,7 +151,7 @@ export default {
       
     },
     getUserDefault(item){
-      let url = require('assets/ava03.png');
+      let url = require('assets/ava01.png');
       if(item){
         item.photo = url;
       }

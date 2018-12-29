@@ -2,7 +2,7 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -221,7 +221,7 @@
           }, {
             name: '申请号',
             value: 'transCode',
-          }, 
+          },
         ],
         consumables: {},
         checkFieldList: [
@@ -322,7 +322,7 @@
       },
       // 选择默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -451,7 +451,7 @@
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
             let wfPara = {
-              [this.processCode]: {businessKey: "PO", createdBy: ""}
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
             }
             if (this.isResubmit) {
               wfPara = {

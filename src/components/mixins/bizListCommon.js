@@ -192,7 +192,7 @@ export default {
     },
     // TODO 获取默认图片
     getDefaultImg (item) {
-      let url = require('assets/wl_default02.png');
+      let url = require('assets/wl_default03.png');
       if (item) {
         item.inventoryPic = url;
       }
@@ -303,8 +303,9 @@ export default {
           item.modTime = dateFormat(item.modTime, 'YYYY-MM-DD HH:mm:ss');
           item.itemCount = item.detailItem.length;
           // // 列表当中每个订单最多展现5个物料
-          item.detailItem = item.detailItem.slice(0, 5);
+          item.detailItem = item.detailItem.slice(0, 3);
           item.detailItem.forEach(mItem => {
+            mItem.tdAmount = 0;
             // 重新计算tdAmount
             if(mItem.assistQty != null){
               mItem.tdAmount = toFixed(accMul(mItem.price, mItem.assistQty));
@@ -491,7 +492,7 @@ export default {
       /*
       * 第一次进入页面成功之后 隐藏动画
       * 如果是从推送打开 则不关闭动画
-      */ 
+      */
       if(!transCode) {
         this.$loading.hide();
       }

@@ -2,7 +2,7 @@
   <div class="pages bdkcdb-apply-container">
     <div class="basicPart no_count" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -91,7 +91,7 @@
                 <template slot="label">
                   <span class='required'>调拨数量
                   </span>
-                </template>   
+                </template>
               </x-input>
             </group>
           </template>
@@ -245,7 +245,7 @@ export default {
     },
     // TODO 获取默认图片
     getDefaultImg (item) {
-      let url = require('assets/wl_default02.png');
+      let url = require('assets/wl_default03.png');
       if (item) {
         item.inventoryPic = url;
       }
@@ -327,7 +327,7 @@ export default {
             formData: JSON.stringify(formData),
             wfPara: JSON.stringify({
               [this.processCode]: {
-                businessKey: 'TRAN',
+                businessKey: this.businessKey,
                 createdBy: formData.creator,
               }
             }),

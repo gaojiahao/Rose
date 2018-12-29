@@ -97,7 +97,7 @@
     box-sizing: border-box;
     font-size: .12rem;
     transition: background-color 200ms linear;
-    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px 0 rgba(232, 232, 232, 0.5);
     border-radius: .04rem;
     &.visited {
       background-color: $list_visited;

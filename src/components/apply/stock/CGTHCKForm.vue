@@ -2,12 +2,12 @@
   <div class="pages">
     <div class="basicPart" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商" 
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商"
                           dealerTitle="供应商" @sel-contact="selContact" :defaultContact="contactInfo"></pop-dealer-list>
         <!-- 仓库-->
         <pop-warehouse-list title="出库仓库" :default-value="warehouse" @sel-item="selWarehouse" :is-required="true"></pop-warehouse-list>
@@ -55,14 +55,14 @@
                         <span class='qty' v-show="item.qtyStockBal">可用库存: {{item.qtyStockBal}}</span>
                       </div>
                       <!-- 物料数量和价格 -->
-                      <div class='mater_other' v-if="item.price && item.tdQty">                      
+                      <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
                           <span class="symbol">￥</span>{{item.price}}
                         </div>
                         <div>
                           <r-number :num="item.tdQty"
                                     :checkAmt='checkAmt' v-model="item.tdQty" :max="item.qtyBal"></r-number>
-                        </div>                     
+                        </div>
                       </div>
                     </template>
                     <template slot="editPart" slot-scope="{item}">
@@ -89,7 +89,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :filterList="filterList"
-                           :default-value="matterList" get-list-method="getCKTHCKList" :params="matterParams" 
+                           :default-value="matterList" get-list-method="getCKTHCKList" :params="matterParams"
                            isShowStock ref="matter">
             <template slot="titleName" slot-scope="{item}">
               <span class="order-title">订单号</span>
@@ -117,7 +117,7 @@
           </template>
           <template slot="modify" slot-scope="{modifyMatter}">
             <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right" 
+              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
                 @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
                 <template slot="label">
                   <span class="required">退货数量</span>
@@ -126,13 +126,13 @@
               <cell title="包装数量" :value="modifyMatter.assistQty" disabled></cell>
             </group>
             <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right" 
+              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
               @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
                 <template slot="label">
                   <span class="required">退货单价</span>
                 </template>
               </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right" 
+              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
                 @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" placeholder="请输入">
                 <template slot="label">
                   <span class="required">税率</span>
@@ -145,7 +145,7 @@
             <label>退货金额</label>
           </template>
         </pop-matter>
-       
+
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -266,7 +266,7 @@ export default {
       return getDictByType('paymentTerm').then(({ tableContent }) => {
         this.transMode = tableContent;
       })
-    }, 
+    },
     // TODO 选中的供应商
     selDealer (val) {
       let [sel] = JSON.parse(val);
@@ -332,7 +332,7 @@ export default {
     },
     // TODO 选择默认图片
     getDefaultImg (item) {
-      let url = require('assets/wl_default02.png');
+      let url = require('assets/wl_default03.png');
       if (item) {
         item.inventoryPic = url;
       }
@@ -503,7 +503,7 @@ export default {
           let formData = {};
           let wfPara = {
             [this.processCode]: {
-              businessKey: 'PORT',
+              businessKey: this.businessKey,
               createdBy: this.formData.handler
             }
           };
@@ -722,7 +722,7 @@ export default {
           [this.relationKey]: dataSet,
         };
         this.DealerPaymentTerm = formData.drDealerPaymentTerm || '现付';
-        this.$loading.hide();       
+        this.$loading.hide();
       })
     },
   },

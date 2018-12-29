@@ -2,7 +2,7 @@
   <div class="pages sj-apply-container">
     <div class="basicPart when-is-form" ref='fill'>
       <div class='fill_wrapper'>
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -144,7 +144,7 @@
           {
             key: 'opportunityTitle',
             message: '请填写商机标题'
-          }, 
+          },
           {
             key: 'tdAmount',
             message: '请填写预期销售额'
@@ -192,7 +192,7 @@
               formData: JSON.stringify(formData),
               wfPara: JSON.stringify({
                 [this.processCode]: {
-                  businessKey: 'OPPT',
+                  businessKey: this.businessKey,
                   createdBy: formData.creator,
                 }
               }),
@@ -275,7 +275,7 @@
             creator: formData.creator,
             modifer: formData.modifer,
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
-            
+
           }
           this.categoryLabels = [formData.categoryLabels]
           this.biReferenceId = formData.biReferenceId;

@@ -54,8 +54,8 @@
       // TODO 获取默认图片
       getDefaultImg(gender) {
         this.userData.photo = gender === '男'
-          ? require('assets/ava03.png')
-          : require('assets/ava04.png')
+          ? require('assets/ava01.png')
+          : require('assets/ava02.png')
       },
       // TODO 获取详情
       loadPage(transCode = '') {

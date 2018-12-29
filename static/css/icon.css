@@ -6,6 +6,10 @@
   background: url('/src/assets/iconfont/nav_search.png');
   background-size: cover;
 }
+.icon-right {
+  background: url('/src/assets/iconfont/right.png');
+  background-size: cover;
+}
 .icon-up {
   background: url('/src/assets/iconfont/up.png');
   background-size: cover;
@@ -88,5 +92,30 @@
 
 .icon-heart-fill{
   background: url('~assets/iconfont/heart_fill.png');
+  background-size: cover;
+}
+
+.icon-praise{
+  background: url('~assets/iconfont/praise.png');
+  background-size: cover;
+}
+
+.icon-praise-fill{
+  background: url('~assets/iconfont/praise_fill.png');
+  background-size: cover;
+}
+
+.icon-task{
+  background: url('~assets/iconfont/task.png');
+  background-size: cover;
+}
+
+.icon-task2{
+  background: url('~assets/iconfont/task2.png');
+  background-size: cover;
+}
+
+.icon-task3{
+  background: url('~assets/iconfont/task3.png');
   background-size: cover;
 }

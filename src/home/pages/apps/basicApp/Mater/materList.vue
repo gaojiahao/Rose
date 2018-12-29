@@ -135,7 +135,7 @@
       },
       // TODO 获取默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -215,7 +215,11 @@
           limit: this.limit,
           page: this.page,
           filter: JSON.stringify(filter),
-          listViewID : 2132
+          listViewID : 2132,
+          sort: JSON.stringify([
+            {property: 'effectiveTime', direction: 'desc'},
+            {property: 'inventoryName', direction: 'desc'}
+          ]),
         }).then(({dataCount = 0, tableContent = []}) => {
           //判断最近有无新增数据
           //console.log(this.total);

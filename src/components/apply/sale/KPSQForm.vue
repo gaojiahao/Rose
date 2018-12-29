@@ -2,7 +2,7 @@
   <div class="pages xmjh-apply-container">
     <div class="basicPart no_count" ref="fill">
       <div class="fill_wrapper">
-        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem" 
+        <pop-baseinfo :defaultValue="handlerDefault" @sel-item="selItem"
                       :handle-org-list="handleORG" :user-role-list="userRoleList"></pop-baseinfo>
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
@@ -92,7 +92,7 @@
             </template>
             <!-- 基本属性 插槽 -->
             <template slot="attribute" slot-scope="{item}">
-              <div class="mater_classify"> 
+              <div class="mater_classify">
                 <span class="type">单位: {{item.measureUnit}}</span>
                 <span class="type">辅助计量: {{item.invSubUnitName}}</span>
                 <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
@@ -213,7 +213,7 @@
         matterList: [],
         dealerInfo: {}, //客户信息
         contactInfo: {}, // 联系人信息
-        dealerParams: { 
+        dealerParams: {
           dealerCode: ''
         },
         formData: {
@@ -294,7 +294,7 @@
       },
       //选择默认图片
       getDefaultImg(item) {
-        let url = require('assets/wl_default02.png');
+        let url = require('assets/wl_default03.png');
         if (item) {
           item.inventoryPic = url;
         }
@@ -433,7 +433,7 @@
               this.$HandleLoad.show();
               let operation = saveAndStartWf;
               let wfPara = {
-                [this.processCode]: {businessKey: "VATO", createdBy: JSON.stringify(this.formData.handler)}
+                [this.processCode]: {businessKey: this.businessKey, createdBy: JSON.stringify(this.formData.handler)}
               }
               if (this.isResubmit) {
                 wfPara = {
@@ -481,7 +481,7 @@
             }
           });
         }
-        
+
       },
       // 获取订单信息用于重新提交
       getFormData() {
