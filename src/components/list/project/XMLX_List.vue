@@ -8,7 +8,7 @@
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
@@ -63,8 +63,8 @@
           </div>
         </div>
 
-        <just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>
+        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
+                        conutTitle="收入" @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>
