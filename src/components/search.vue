@@ -3,7 +3,7 @@
     <form class="search_part" :class="{'has-filter': filterList.length}" action=""
           @submit.prevent="searchMat(srhInpTx)">
       <i class="icon-search serach_icon"></i>
-      <input ref="searchInp" class="srh_inp" type="search" autocomplete="off" 
+      <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
             @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
       <div class="pop_cfm" v-if='isFill'
            :class='{ pop_cancel : !srhInpTx.length }'
@@ -16,7 +16,7 @@
       <r-dropdown :list="filterList" @on-selected="popSelected"></r-dropdown>
       <div class="layer" @click="isShowDrop = false"></div>
     </div>
-    
+
   </div>
 </template>
 
@@ -66,7 +66,7 @@
         // 解决iOS原生输入法在input框输入文字之后一瞬间为空的坑
         setTimeout(() => {
           this.srhInpTx = e.target.value;
-          // 提交页面输入框内容为空时 按钮会变成“返回” 此时让列表重新请求数据 
+          // 提交页面输入框内容为空时 按钮会变成“返回” 此时让列表重新请求数据
           if(this.isFill && !this.srhInpTx) {
             this.$emit("search", {
               val: this.srhInpTx,
@@ -123,14 +123,14 @@
       box-sizing: border-box;
       // 搜索输入框
       .srh_inp {
+        flex: 1;
         border: none;
         outline: none;
         color: #333;
-        width: 3.06rem;
         appearance: none;
         font-size: .14rem;
         margin-left: .15rem;
-        padding-left: .35rem;      
+        padding-left: .35rem;
         border-radius: .2rem;
         background: #F6F6F6;
         -webkit-appearance: none;
@@ -142,7 +142,7 @@
       .pop_cfm {
         color: #999;
         font-size: .14rem;
-        margin-left: .12rem;
+        margin: 0 .15rem 0 .12rem;
       }
       // 返回 按钮
       .pop_cancel {

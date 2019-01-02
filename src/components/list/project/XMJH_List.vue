@@ -223,6 +223,7 @@
       .task_info {
         display: flex;
         margin-top: .1rem;
+        line-height: .12rem;
         font-size: .12rem;
       }
       .task_info_item {
