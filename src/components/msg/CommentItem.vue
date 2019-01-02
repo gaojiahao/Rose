@@ -70,6 +70,15 @@
         default: false
       },
     },
+    watch: {
+      item: {
+        handler() {
+          // 校验消息当中图片的后缀名
+          this.checkImgSuffix();
+        },
+        immediate: true
+      }
+    },
     components: {
       RPopover,
     },
@@ -158,11 +167,11 @@
         return comment;
       },
       // TODO popover点击事件
-      onPopoverClick(){
+      onPopoverClick() {
         this.$emit('on-popover-click');
       },
       // TODO 隐藏popover
-      hidePopover(){
+      hidePopover() {
         let $popover = this.$refs.popover || [];
         $popover.forEach(pop => {
           pop.hidePopover();
@@ -207,8 +216,6 @@
       },
     },
     created() {
-      // 校验消息当中图片的后缀名
-      this.checkImgSuffix();
     }
   }
 </script>
