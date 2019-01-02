@@ -10,29 +10,21 @@
         <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商"
                           dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
-                          v-model="dealerInfo.paymentTerm" isRequired></pop-single-select>
-        <div class="other_info">
-          <div class="title">账期天数</div>
-          <div class="mode">{{dealerInfo.pamentDays}}</div>
-        </div>
-        <x-input class="tdAmount" type="number" title="预付款" :value="inPut.tdAmountCopy1" text-align="right"
-                 placeholder="请填写预付款" v-model="inPut.tdAmountCopy1" v-show="hasAdvance"></x-input>
-        <r-date title="预付到期日" :value="inPut.prepaymentDueDate" v-model="inPut.prepaymentDueDate" v-show="hasAdvance"></r-date>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -41,24 +33,8 @@
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1}"
                    v-for="(item, index) in matterList" :key='index'>
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(item,index)">
+                             @click.native="delClick(item,index)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <div class='matter-more'>
-                      <span class='unit'>属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
-                      <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span>安全库存: {{item.safeStock || 0}}</span>
-                      <span>待下单: {{item.qtyBal || 0}}</span>
-                      <span>起订量: {{item.moq || 0}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription || '无'}}</span>
-                      <span v-show="item.purchaseDay">采购需求日: {{item.purchaseDay}}</span>
-                    </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
                       <div class='mater_price'>
@@ -94,65 +70,13 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
-                           get-list-method="getInventory7501" ref="matter" :isShowCode="false">
-            <template slot="attribute" slot-scope="{item}">
-              <div class="mater_classify">
-                <div>
-                  <span>加工属性: {{item.processing}}</span>
-                  <span>单位: {{item.measureUnit}}</span>
-                  <span>物料大类: {{item.inventoryType}}</span>
-                  <span>物料子类: {{item.inventorySubclass || '无'}}</span>
-                </div>
-                <div>
-                  <span>主计倍数: {{item.invSubUnitMulti || 0}}</span>
-                  <span>辅助计量: {{item.invSubUnitName || '无'}}</span>
-                  <span>辅助计量说明: {{item.invSubUnitComment || '无'}}</span>
-                </div>
-              </div>
-            </template>
-            <template slot="storage" slot-scope="{item}">
-              <div class="mater_material">
-                <div>
-                  <span>安全库存: {{item.safeStock || 0}}</span>
-                  <span>最小起订量: {{item.moq || 0}}</span>
-                  <span>数量: {{item.qty || 0}}</span>
-                </div>
-                <div>
-                  <span>下单截止日: {{item.shippingTime | dateFormat('YYYY-MM-DD') || "无"}}</span>
-                  <span>采购提前期: {{item.leadTime || "无"}}</span>
-                  <span>到货截止日: {{item.processingStartDate | dateFormat('YYYY-MM-DD') || "无"}}</span>
-                </div>
-                <div>
-                  <span>待下单: {{item.qtyBal || 0}}</span>
-                </div>
-              </div>
-            </template>
+                           :config="matterPopConfig" :requestApi="requestApi" ref="matter">
           </pop-matter-list>
 
         </div>
          <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
-          <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <div>
-              <span>安全库存: {{modifyMatter.safeStock || 0}}</span>
-            </div>
-            <div>
-              <span>待下单: {{modifyMatter.qtyBal || 0}}</span>
-              <span>起订量: {{modifyMatter.moq || 0}}</span>
-            </div>
-          </template>
-          <template slot="date" slot-scope="{modifyMatter}">
-            <cell title="采购提前期" :value="modifyMatter.leadTime" disabled></cell>
-            <cell title="下单截止日" :value="modifyMatter.shippingTime" disabled></cell>
-            <datetime v-model="modifyMatter.purchaseDay"
-                      placeholder="请选择" >
-              <template slot="title">
-                <span class="required">采购需求日</span>
-              </template>
-            </datetime>
-            <cell title="到货截止日" :value="modifyMatter.processingStartDate" disabled></cell>
-          </template>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false" :config="matterEditConfig">
         </pop-matter>
         <!--备注-->
          <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -190,10 +114,11 @@ import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, subm
 // mixins 引入
 import common from 'components/mixins/applyCommon'
 // 组件引入
-import PopMatterList from 'components/Popup/PopMatterList'
+import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopDealerList from 'components/Popup/PopDealerList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import RNumber from 'components/RNumber'
 import RPicker from 'components/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
@@ -205,7 +130,7 @@ const DRAFT_KEY = 'CGDD_DATA';
 export default {
   components: {
     XTextarea, RNumber, Datetime, RDate, XInput, Cell,
-    PopMatterList, PopDealerList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo
+    PopMatterList, PopDealerList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo, DealerOtherPart
   },
   data () {
     return {
@@ -272,6 +197,8 @@ export default {
     selDealer (val) {
       this.dealerInfo = JSON.parse(val)[0];
       // this.dealer.dealerDebitContactInformation = this.dealerInfo.dealerMobilePhone;
+      this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
+      this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
       this.dealer.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
     },
     // 选中联系人
@@ -289,13 +216,11 @@ export default {
       sels.map(item => {
         let defaultTime = item.processingStartDate ? dateFormat(item.processingStartDate, 'YYYY-MM-DD') : '';
         let defaultTdQty = item.qtyBal < item.qty ? item.qty : item.qtyBal;
-        // let {tdQty = defaultTdQty, price = item.price, taxRate = 0.16, processingStartDate = defaultTime} = this.numMap[item.inventoryCode] || {};
-        // item.tdQty = tdQty;
-        // item.price = price;
-        // item.taxRate = taxRate;
         item.tdQty = item.tdQty || defaultTdQty;
+        item.price = item.price || ''
         item.taxRate = item.taxRate || 0.16;
-        item.shippingTime = dateFormat(item.shippingTime, 'YYYY-MM-DD')
+        item.shippingTime = dateFormat(item.shippingTime, 'YYYY-MM-DD');
+        item.tdLeadTime = item.leadTime;
         item.processingStartDate = item.processingStartDate || defaultTime;
         item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
         item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
@@ -355,10 +280,6 @@ export default {
     },
     // TODO 新增更多物料
     addMatter () {
-      // for (let item of this.matterList) {
-      //   // 存储已输入的价格
-      //   this.numMap[item.inventoryCode] = {...item};
-      // }
       this.showMaterielPop = !this.showMaterielPop;
     },
     // 提价订单

@@ -298,9 +298,20 @@ export let transferTask = (data = {}) => {
     }
   })
 };
+// 获取提交页面表单配置
 export let getFormConfig = (viewId = '') => {
   return $flyio.ajax({
     url: `/H_roleplay-si/mobile/formView/${viewId}`
+  })
+  
+}
+// 获取提交页面表单配置
+export let getFormViews = (listId = '') => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/list/getFormViews',
+    data: {
+      listId,
+    }
   })
   
 }

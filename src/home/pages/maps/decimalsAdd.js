@@ -94,14 +94,14 @@ export function accDiv(arg1, arg2) {
     var t1 = 0, t2 = 0, r1, r2;
     try {
       let arr1 = arg1.toString().split(".");
-      r1 = arr1[1] && arr1[1].length || 0;
+      t1 = arr1[1] && arr1[1].length || 0;
     }
     catch (e) {
       console.error(e)
     }
     try {
       let arr2 = arg2.toString().split(".");
-      r2 = arr2[1] && arr2[1].length;
+      t2 = arr2[1] && arr2[1].length || 0;
     }
     catch (e) {
       console.error(e)

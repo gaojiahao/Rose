@@ -14,15 +14,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
-              <div class="title">出库单列表</div>
-              <div class="required">请选择出库单</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>出库单列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -30,15 +30,15 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">出库单</span>
+                  <span class="order_title">{{orderListTitle}}</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index, item, key)">
+                               @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
                     <template slot-scope="{item}" slot="info">
                       <!-- 物料属性和单位 -->
-                      <div class='matter-more'>
+                      <!-- <div class='matter-more'>
                         <span class='unit'>属性: {{item.processing}}</span>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
@@ -47,7 +47,7 @@
                       <div class="mater_more">
                         <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
                         <span>待开票数量: {{item.qtyBal}}</span>
-                      </div>
+                      </div> -->
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
@@ -83,23 +83,23 @@
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="dealerParams"
-                           get-list-method="getBillingApplication" @sel-matter="selMatter" :filter-list="filterList"
-                           :default-value="matterList" ref="matter">
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams" :config="matterPopConfig" 
+                           :requestApi="requestApi" :orderTitle="orderListTitle"
+                           @sel-matter="selMatter" :filter-list="filterList" :default-value="matterList" ref="matter">
             <!-- 抬头 插槽 -->
-            <template slot="titleName" slot-scope="props">
+            <!-- <template slot="titleName" slot-scope="props">
               <span class="order-title">出库单</span>
-            </template>
+            </template> -->
             <!-- 基本属性 插槽 -->
-            <template slot="attribute" slot-scope="{item}">
+            <!-- <template slot="attribute" slot-scope="{item}">
               <div class="mater_classify">
                 <span class="type">单位: {{item.measureUnit}}</span>
                 <span class="type">辅助计量: {{item.invSubUnitName}}</span>
                 <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
               </div>
-            </template>
+            </template> -->
             <!-- 余额、单价等 插槽 -->
-            <template slot="storage" slot-scope="{item}">
+            <!-- <template slot="storage" slot-scope="{item}">
               <div class="mater_material">
                 <span>待开票数量: {{item.qtyBal}}</span>
                 <span>主计倍数: {{item.invSubUnitMulti}}</span>
@@ -107,24 +107,12 @@
               <div>
                 单价: ￥{{item.price | numberComma}}
               </div>
-            </template>
+            </template> -->
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true">
-          <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <div>
-              <span class="unit">单位: {{modifyMatter.measureUnit || "无"}}</span>
-              <span>辅助计量: {{modifyMatter.invSubUnitName || "无"}}</span>
-              <span>辅助计量说明: {{modifyMatter.invSubUnitComment}}</span>
-            </div>
-            <div>待开票数量: {{modifyMatter.qtyBal}}</div>
-          </template>
-          <!-- 输入框title -->
-          <template slot="qtyName">
-            <span class='required'>本次开票数量</span>
-          </template>
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true" :config="matterEditConfig">
         </pop-matter>
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
           <x-textarea v-model="formData.biComment" placeholder="备注"></x-textarea>
@@ -174,7 +162,7 @@
   import RNumber from 'components/RNumber'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopInvoiceList from 'components/Popup/invoice/PopInvoiceList'
-  import PopMatterList from 'components/Popup/PopMatterList'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopMatter from 'components/apply/commonPart/MatterPop'
@@ -213,7 +201,7 @@
         matterList: [],
         dealerInfo: {}, //客户信息
         contactInfo: {}, // 联系人信息
-        dealerParams: {
+        matterParams: {
           dealerCode: ''
         },
         formData: {
@@ -226,7 +214,7 @@
       // 选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
+        this.matterParams.dealerCode = this.dealerInfo.dealerCode;
       },
       // TODO 选中联系人
       selContact(item) {
@@ -557,7 +545,7 @@
             dealerMobilePhone: formData.dealerCreditContactInformation,//电话
           };
           // 物料列表请求参数
-          this.dealerParams = {
+          this.matterParams = {
             dealerCode: this.dealerInfo.dealerCode,
           };
           this.$loading.hide();
@@ -592,7 +580,7 @@
           }
         }
         this.contactInfo = draft.contactInfo;
-        this.dealerParams.dealerCode = this.dealerInfo.dealerCode;
+        this.matterParams.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },
