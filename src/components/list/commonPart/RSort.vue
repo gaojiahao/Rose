@@ -23,9 +23,9 @@
               <div class="process-wrapper">
                 <div class="filter_title">{{filtersList.biProcessStatus.alias}}</div>
                 <div class="process_status">
-                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,'biProcessStatus')}"
+                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item, 'biProcessStatus')}"
                   v-for="(item, index) in filtersList.biProcessStatus.value" :key="index"
-                  @click="selProcee(item,'biProcessStatus',index)">
+                  @click="selProcee(item, 'biProcessStatus', index)">
                     <div class="status_content">{{item}}</div>
                   </div>
                 </div>
@@ -34,26 +34,34 @@
             <!-- 时间 -->
             <div class="time-filter-container vux-1px-b">
               <div class="filter_title">时间段</div>
+              <div class="specific_time">
+                <div class="each_specific_time" 
+                     :class="{'active vux-1px': SpecTimeKey === key}"
+                     @click="pickSpecTime(key)"
+                     v-for="(item, key) in specificTimeList" :key="key">
+                  <div class="time_content">{{item}}</div>
+                </div>
+              </div>
               <div class="time_filter">
-                <div class="each_time" :class="{'active vux-1px' : timeFilter.startDate}" @click="getStart">
-                  {{timeFilter.startDate || '开始日期'}}
+                <div class="each_time" :class="{'active vux-1px' : tmpTimeFilter.startDate}" @click="getStart">
+                  {{tmpTimeFilter.startDate || '开始日期'}}
                 </div>
                 <span class="symbol"></span>
-                <div class="each_time" :class="{'active vux-1px' : timeFilter.endDate}" @click="getEnd">
-                  {{timeFilter.endDate || '结束日期'}}
+                <div class="each_time" :class="{'active vux-1px' : tmpTimeFilter.endDate}" @click="getEnd">
+                  {{tmpTimeFilter.endDate || '结束日期'}}
                 </div>
               </div>
             </div>
-            <div class="process-status-container vux-1px-b" v-for="(val,key,index) in filtersList" :key="index" v-if="val.alias !== '流程状态' && val.value.length">
+            <div class="process-status-container vux-1px-b" v-for="(val, key, index) in filtersList" :key="index" v-if="val.alias !== '流程状态' && val.value.length">
               <div class="process-wrapper">
                 <div class="filter_title " @click="val.showAll = !val.showAll">
                   <span>{{val.alias}}</span>
                   <span class="arrow icon-filter-down" :class="{'icon-filter-up' : val.showAll}"></span>
                 </div>
                 <div class="process_status">
-                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item,key)}"
+                  <div class="each_status"  :class="{'active vux-1px' : showSelIcon(item, key)}"
                   v-for="(item, index) in val.value" :key="index"
-                  @click="selProcee(item,key)" v-show="index < 3 || val.showAll">
+                  @click="selProcee(item, key)" v-show="index < 3 || val.showAll">
                     <div class="status_content">{{item}}</div>
                   </div>
                 </div>
@@ -104,17 +112,23 @@ export default {
       toDay: '',
       preDate: '',
       property: '', // 被选中的字段
+      SpecTimeKey: '',
+      lastFilter: {}, // 上次的过滤条件，用于判断列表是否需要刷新
       fieldVlaue: {}, // 被选中的流程状态
-      showFilter: false,  // 是否展示筛选
-      timeFilter: {
+      filtersList:{},
+      timeFilter: { // 时间栏
         startDate: '',
         endDate: '',
       },
-      lastFilter: {}, //上次的过滤条件，用于判断列表是否需要刷新
+      tmpTimeFilter: {  // 临时时间栏 用于 用户自主选择时间段
+        startDate: '',
+        endDate: '',
+      },
       scrollOptions: {
         click: true,
       },
-      filtersList:{},
+      showFilter: false,  // 是否展示筛选
+      specificTimeList: ['今日', '昨日', '本周'],
     }
   },
   methods: {
@@ -167,8 +181,19 @@ export default {
         })
       }
     },
-    // TODO 匹配相同项的索引
-    showSelIcon(sItem,key) {
+    // 筛选确定
+    filterConfirm() {
+      this.showFilter = false;
+    },
+    // 重置筛选
+    filterReset() {
+      this.fieldVlaue = {};
+      this.SpecTimeKey = '';
+      this.timeFilter = Object.assign({}, this.$data.timeFilter, this.$options.data().timeFilter);
+      this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, this.$options.data().tmpTimeFilter);
+    },    
+    // 匹配相同项的索引
+    showSelIcon(sItem, key) {
       if(this.fieldVlaue[key]){
         return this.fieldVlaue[key].value.findIndex(item => item === sItem) !== -1;
       }
@@ -194,44 +219,80 @@ export default {
           alias: this.filtersList[key].alias,
           value: [sItem]
         }
-        this.$set(this.fieldVlaue,key,{...obj})
+        this.$set(this.fieldVlaue, key, {...obj})
       }
     },
-    // 起始日期
+    // 选择 '今日' / '昨日' / '本周'
+    pickSpecTime(key) {
+      // 消除选中状态
+      if(this.SpecTimeKey === key) {
+        this.SpecTimeKey = '';
+        this.timeFilter = Object.assign({}, this.$data.timeFilter, this.$options.data().timeFilter);
+        return;
+      }
+      // 选中状态 并清空 时间栏 数据
+      this.SpecTimeKey = key;
+      this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, this.$options.data().tmpTimeFilter);
+      if(key < 2) {
+        // 获取 今日 / 昨日
+        let whichDay = ['toDay', 'preDate'];
+        this.pickDate(whichDay[key]);
+      }
+      else {
+        // 获取 本周时间
+        let now = new Date(), 
+            Day = now.getDate(),
+            Month = now.getMonth(), 
+            Year = now.getFullYear(), 
+            DayOfWeek = now.getDay();
+        let timePeriods = {
+          startDate: dateFormat(new Date(Year, Month, Day - DayOfWeek), 'YYYY-MM-DD'),
+          endDate: dateFormat(new Date(Year, Month, Day + (6 - DayOfWeek)), 'YYYY-MM-DD')
+        }
+        this.pickDate('', timePeriods);
+      }
+    },
+    pickDate(date = '', timePeriods = {}) {
+      if(date) {
+        this.timeFilter.startDate = this.timeFilter.endDate = this[date];
+      }
+      else {
+        this.timeFilter = {...timePeriods};
+      }
+    },
+    // 起始日期 (最远日期为 今日)
     getStart() {
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
-        value: this.timeFilter.startDate,
-        // endDate: this.preDate,
+        value: this.tmpTimeFilter.startDate,
+        endDate: this.toDay,
         onConfirm: (val) => {
+          if(this.SpecTimeKey !== '') {
+            this.SpecTimeKey = '';
+            this.timeFilter.endDate = '';
+          }
           this.timeFilter.startDate = val;
+          this.tmpTimeFilter.startDate = val;
         }
       })
     },
-    // 截止日期
+    // 截止日期 (最近日期为 今日)
     getEnd() {
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
-        value: this.timeFilter.endDate,
-        // endDate: this.toDay,
+        value: this.tmpTimeFilter.endDate,
+        startDate: this.timeFilter.startDate ? this.toDay : '',
         onConfirm: (val) => {
+          if(this.SpecTimeKey !== '') {
+            this.SpecTimeKey = '';
+            this.timeFilter.startDate = '';
+          } 
           this.timeFilter.endDate = val;
+          this.tmpTimeFilter.endDate = val;
         }
       })
-    },
-    // 筛选确定
-    filterConfirm() {
-      this.showFilter = false;
-    },
-    // 重置筛选
-    filterReset() {
-      this.timeFilter = {
-        startDate: '',
-        endDate: ''
-      }
-      this.fieldVlaue = {}
     },
     // 请求过滤字段
     getFilterFields(){
@@ -259,10 +320,9 @@ export default {
   },
   created(){
     let { listId } = this.$route.params;
-    this.toDay = dateFormat(new Date(),'YYYY-MM-DD');
-    this.preDate = dateFormat(new Date(new Date().getTime() - 24*60*60*1000), 'YYYY-MM-DD');
+    this.toDay = dateFormat(new Date(), 'YYYY-MM-DD');
+    this.preDate = dateFormat(new Date(new Date().getTime() - 24 * 60 * 60 * 1000), 'YYYY-MM-DD');
     this.getFilterFields()
-
   }
 }
 </script>
@@ -355,6 +415,7 @@ export default {
         transform: rotate(-180deg);
       }
     }
+
   }
   .process-status-container {
     .process-wrapper {
@@ -387,7 +448,7 @@ export default {
     }
   }
   .time-filter-container {
-    padding: .18rem .39rem .22rem .24rem;
+    padding: .18rem .23rem .22rem .24rem;
     .time_filter {
       display: flex;
       align-items: center;
@@ -409,6 +470,31 @@ export default {
         background: #d9d9d9;
         margin: .15rem .1rem;
       }
+    }
+    .specific_time {
+      overflow: hidden;
+      display: flex;
+      flex-flow: wrap;
+      .each_specific_time {
+        width: .7rem;
+        color: #333;
+        height: .36rem;
+        text-align: center;
+        line-height: .36rem;
+        background: #F4F4F4;
+        border-radius: .04rem;
+        box-sizing: border-box;
+        margin: 0 .16rem .14rem 0;
+        &.active {
+          @extend .active
+        }        
+        .time_content {
+          overflow: hidden;
+          padding: 0 .05rem;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }    
     }
   }
   .handle-part {
