@@ -143,7 +143,7 @@
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :validate-map="validateMap" :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true" :config="matterEditConfig">
           <!-- <template slot="date" slot-scope="{modifyMatter}">
             <datetime v-model="modifyMatter.dateActivation"
@@ -219,25 +219,6 @@ export default {
       listId: '525bee48-d2d4-11e8-b8ca-0279b2c6a380',
       showMatterPop: false,
       showMaterielPop: false, // 是否显示物料的popup
-        // matterPop组件 必填项
-      validateMap: [
-        {
-          key: 'tdQty',
-          message: '请填写数量'
-        },
-        {
-          key: 'price',
-          message: '请填写含税单价'
-        },
-        {
-          key: 'dateActivation',
-          message: '请选择交付开始日'
-        },
-        {
-          key: 'executionDate',
-          message: '请选择交付截止日'
-        }          
-      ],
       transMode: [], // 结算方式 数组
       matterList: [], // 物料列表
       logisticsTerm: [], // 物流条款 数组
@@ -251,13 +232,6 @@ export default {
       matterParams: { // 请求物料的参数
         // processing: '成品,商品,服务',
       }, 
-      viewId: '764cafb5-1ac3-4c6c-9297-33ac0e6a9263',
-      dealerConfig: [],
-      matterConifg: [],
-      matterPopConfig: [], // 物料列表pop配置
-      orderTitle: '', // 物料列表订单的title
-      matterEditConfig: {}, // 物料编辑的pop
-      requestApi: '', // 请求物料的接口
     }
   },
   computed: {
@@ -664,7 +638,6 @@ export default {
     },
   },
   created() {
-    this.getFormConfig()
     let data = sessionStorage.getItem(DRAFT_KEY);
     if (data) {
       let draft = JSON.parse(data);

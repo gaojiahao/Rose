@@ -49,7 +49,7 @@
                   <div class="withoutColor">
                     <div class="mater_classify">
                       <span class="type" v-for="(fItem,fIndex) in config" :key="fIndex">
-                        {{fItem.v}}: {{item[fItem.k]}}
+                        {{fItem.v}}: {{item[fItem.k] || "无"}}
                       </span>
                     </div>
                   </div>
@@ -287,7 +287,6 @@
           filter: JSON.stringify(filter),
           ...this.params,
         }
-        console.log(data)
         return requestData({
           url: this.requestApi,
           data

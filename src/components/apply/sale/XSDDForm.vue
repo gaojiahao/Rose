@@ -156,7 +156,7 @@
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :validate-map="validateMap" :show-pop="showMatterPop" @sel-confirm='selConfirm'
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true" :config="matterEditConfig">
           <!-- <template slot="qtyBal" slot-scope="{modifyMatter}">
             <div>
@@ -252,20 +252,6 @@
             name: '合同号',
             value: 'transCode',
           }
-        ],
-        validateMap: [
-          {
-            key: 'tdQty',
-            message: '请填写数量'
-          },
-          {
-            key: 'price',
-            message: '请填写单价'
-          },
-          {
-            key: 'promDeliTime',
-            message: '请选择预期交货日'
-          }         
         ],        
         showMatterPop: false,
         showMaterielPop: false, // 是否显示物料的popup
@@ -279,13 +265,6 @@
         orderList: {},
         modifyKey: null,
         contactInfo: {},
-        viewId: '58b8e704-b589-4480-8abb-5a85d6c28ea7',
-        dealerConfig: [],
-        matterConifg: [],
-        matterPopConfig: [], // 物料列表pop配置
-        orderTitle: '', // 物料列表订单的title
-        matterEditConfig: {}, // 物料编辑的pop
-        requestApi: '', // 请求物料的接口
       }
     },
     directives: {
@@ -745,7 +724,6 @@
       },
     },
     created() {
-      this.getFormConfig()
       let data = sessionStorage.getItem(DRAFT_KEY);
       if (data) {
         let draft = JSON.parse(data);

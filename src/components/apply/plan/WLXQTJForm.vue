@@ -11,15 +11,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
-              <div class="title">订单列表</div>
-              <div class="required">请选择订单</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>订单列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -27,19 +27,13 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                 v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">计划号</span>
+                  <span class="order_title">{{orderListTitle}}</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index, key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item, key)">
+                               @click.native="delClick(index,item, key)" :config="matterEditConfig.property">
                     <template slot-scope="{item}" slot="info">
-                      <!-- 物料属性和单位 -->
-                      <div class='mater_more'>
-                        <span>大类: {{item.inventoryType || '无'}}</span>
-                        <span>单位: {{item.measureUnit}}</span>
-                        <span>余额: {{item.qtyBal}}</span>
-                      </div>
                       <div class="mater_other" v-show="item.tdQty">
                         <span class="matter-remain">
                           减少数量: {{item.tdQty}}
@@ -70,7 +64,11 @@
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
           <!-- 订单popup -->
-          <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
+          <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder" :default-value="matterList" 
+                           :params="matterParams"  :config="matterPopConfig" :requestApi="requestApi" 
+                           :order-title="matterPopOrderTitle" ref="matter" >
+          </pop-matter-list>
+          <!-- <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
                                :default-value="orderList" ref="order">
             <template slot="qtyStock" slot-scope="{item}">
               <div>
@@ -82,7 +80,7 @@
                 <div class="mater-balance">余额: {{item.qtyBal}}</div>
               </div>
             </template>
-          </pop-order-xqtj-list>
+          </pop-order-xqtj-list> -->
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -90,20 +88,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class="mg_auto">
-              <cell title="余额" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal"></cell>
-              <x-input title="减少数量" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)"  @on-focus="getFocus($event)" placeholder="请输入">
-                <template slot="label">
-                  <span class='required'>减少数量
-                  </span>
-                </template>
-              </x-input>
-            </group>
-          </template>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
         </pop-matter>
       </div>
     </div>
@@ -139,6 +125,7 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopOrderXqtjList from 'components/Popup/PopOrderXQTJList'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
   const DRAFT_KEY = 'XQTJ_DATA';
 
   export default {
@@ -146,7 +133,7 @@
     mixins: [applyCommon],
     components: {
       Icon, Cell, Group,XTextarea,
-      XInput, PopMatter, PopOrderXqtjList,RPicker, PopBaseinfo
+      XInput, PopMatter, PopOrderXqtjList,RPicker, PopBaseinfo, PopMatterList
     },
     data() {
       return {
@@ -277,7 +264,7 @@
                   let delArr = this.orderList[OItem.transCode];
                   let delIndex = this.findIndex(delArr, OItem);
                   if (delIndex >= 0) {
-                    this.$refs.order.delSelItem(delArr[delIndex]);
+                    this.$refs.matter.delSelItem(delArr[delIndex]);
                     delArr.splice(delIndex, 1);
                   }
                   if (!delArr.length) {

@@ -1,4 +1,4 @@
-import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData} from 'service/commonService'
+import {commitTask, getBaseInfoData, getProcess, getProcessStatus, getFormConfig, requestData, getFormViews} from 'service/commonService'
 import {getListId, isMyflow, getSaleQuotePrice,} from 'service/detailService'
 import {getAppDetail} from 'service/appSettingService'
 import {numberComma,} from 'vux'
@@ -43,7 +43,15 @@ export default {
       handlerDefault: {}, // 经办人默认信息
       listId: '',
       taxRate: 0.16, // 税率
-      businessKey: '', // 应用前缀
+      businessKey: '', // 应用前缀,
+      viewId: '',
+      dealerConfig: [],
+      matterPopConfig: [], // 物料列表pop配置
+      orderListTitle: '', // 物料列表订单的title
+      matterEditConfig: {}, // 物料编辑的pop
+      requestApi: '', // 请求物料的接口
+      matterParams: {},
+      matterPopOrderTitle: '', // 物料列表pop订单title
     }
   },
   components: {
@@ -365,17 +373,30 @@ export default {
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
     },
+    // 请求应用的viewId
+    getFormViews() {
+      getFormViews(this.listId).then(data => {
+        for(let item of data){
+          if(item.viewType === 'submit'){
+            this.viewId = item.uniqueId;
+            this.getFormConfig();
+            break;
+          }
+        }
+      })
+    },
     // 请求配置
     getFormConfig(){
       getFormConfig(this.viewId).then(({config = []}) => {
         console.log(config)
         let dealerConfig = [];
         let matterConfig = [];
+        // 从请求回来的配置中获取往来的配置
         config.forEach(item => {
           if(item.name === 'kh' || item.name === 'inPut'){
             dealerConfig = dealerConfig.concat(item.items)
           }
-          if(item.name === 'order'){
+          if(item.name === 'order' || item.name === 'outPut'){
             matterConfig = item.items;
           }
         })
@@ -384,42 +405,76 @@ export default {
           if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
             let url = item.dataSource.data.url;
             let params = item.dataSource.data.params;
-            let key = Object.keys(params)[0];
-            let data = {};
-            data[key] = params[key].value;
-            requestData({url,data}).then(data => {
+            let keys = Object.keys(params);
+            let requestParams = {
+              url,
+            }
+            if(keys.length){
+              let data = {};
+              keys.forEach(key => {
+                data[key] = params[key].value;
+              })
+              requestParams.data = data;
+            }
+            requestData(requestParams).then(data => {
               item.rometeData = data.tableContent
             })
           }
         })
         this.dealerConfig = dealerConfig;
+        // 处理物料配置
         let eidtMatterPopConfig = {
           property: [],
           editPart: []
-        }
-        let eidtMatterPop = []
-        // 处理物料配置
+        };
+        let eidtMatterPop = [];
         matterConfig.forEach((item,index) => {
           if(item.dataSource && item.dataSource.type === 'remoteData') {
-            this.requestApi = item.dataSource.data.url;
-            let params = item.dataSource.data.params;
-            let data = {}
-            let keys = Object.keys(params);
-            keys.forEach(item => {
-              this.matterParams[item] = params[item].type === 'text' ? params[item].value : '';
-            })
+            // 物料或者订单请求
+            if(item.editorType === 'r2Selector') {
+              this.orderListTitle = item.text === '物料名称' ? '物料' : item.text;
+              this.requestApi = item.dataSource.data.url;
+              let params = item.dataSource.data.params;
+              let keys = Object.keys(params);
+              if(keys.length){
+                keys.forEach(item => {
+                  this.matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+                })
+              }
+            }
+            // 物料信息里有下拉选择的字段
+            else if(item.editorType === 'r2Combo') {
+              let url = item.dataSource.data.url,
+                  params = item.dataSource.data.params,
+                  keys = Object.keys(params),
+                  requestParams = {url}
+              if(keys.length){
+                let data = {};
+                keys.forEach(key => {
+                  data[key] = params[key].value;
+                })
+                requestParams.data = data;
+              }
+              requestData(requestParams).then(({tableContent = []}) => {
+                let arr = [];
+                tableContent.forEach(item => {
+                  arr.push(item.name)
+                })
+                item.remoteData = [arr];
+              })
+            }
           }
           // 组合matterPop配置
           // matterPop需要隐藏的物料的字段
           if(item.editorType === 'r2Selector'){
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
-            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification');
+            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode');
             let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
             // 循环删除要隐藏的字段
             hiddenField.forEach(hItem => {
               matterPopField.forEach((item,index) => {
                 if(item.k === 'transCode'){
-                  this.orderTitle = item.v;
+                  this.matterPopOrderTitle = item.v;
                 }
                 if(item.k === hItem) {
                   matterPopField.splice(index, 1)
@@ -428,15 +483,27 @@ export default {
                 }
               })
             })
-            console.log(matterPopField)
             this.matterPopConfig = matterPopField;
           }
           // 组合物料编辑的matterPop的配置
           if(!item.hidden){
             if(item.dataSource && item.dataSource.type === 'formData'){
+              if(typeof(item.dataSource.data.valueField) === 'string') {
+                let arr = item.dataSource.data.valueField.replace(/\[|]/g, '').split(/\"/);
+                let valueField = [];
+                arr.forEach(item => {
+                  if(item) {
+                    valueField.push(item)
+                  }
+                })
+                item.dataSource.data.valueField = valueField;
+                
+              }
               item.showFieldCode = item.dataSource.data.valueField[1];
             }
-            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.showFieldCode !== 'inventoryName' && item.showFieldCode !== 'inventoryCode' && item.showFieldCode !== 'specification'){
+
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.text !== '物料名称' 
+              && item.text !== '物料编码' && item.text !== '规格'){
               eidtMatterPop.push(item);
             }
           }
@@ -444,7 +511,13 @@ export default {
         // console.log(eidtMatterPop);
         // 将配置拆分为属性和可编辑的部分
         eidtMatterPop.length && eidtMatterPop.forEach((item,index) => {
+          //物料信息里面有数量
           if(item.fieldCode === 'tdQty'){
+            eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
+            eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
+          }
+          // 物料信息里面没有数量但是有下拉选择的属性
+          else if(item.editorType === 'r2Combo'){
             eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
             eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
           }
@@ -466,6 +539,7 @@ export default {
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
     // 请求页面的数据
     (async () => {
+      this.getFormViews(); 
       this.getProcess();
       if(!transCode){
         this.getBaseInfoData();

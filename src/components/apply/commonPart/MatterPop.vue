@@ -68,9 +68,11 @@
             <div v-for="(eItem,eIndex) in config.editPart" :key="eIndex">
               <div v-if="!eItem.readOnly">
                 <x-input class="vux-1px-b" :title="eItem.text" type="number"  v-model.number='modifyMatter[eItem.fieldCode]' text-align="right"
-                  placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)" v-if="eItem.editorType === 'r2Numberfield'">
+                        placeholder="请输入" v-if="eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield'"
+                        @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])" 
+                        @on-focus="getFocus($event)" >
                   <template slot="label" v-if="!eItem.allowBlank">
-                    <span class='required'>{{eItem.text}}</span>
+                    <span class='required'>{{eItem.text}}</span> 
                   </template>
                 </x-input>
                 <datetime class="vux-1px-b" :title="eItem.text" :start-date="modifyMatter[eItem.fieldCode]" :end-date="modifyMatter[eItem.fieldCode]"
@@ -79,6 +81,19 @@
                     <span class='required'>{{eItem.text}}</span>
                   </template>
                 </datetime>
+                <popup-picker :data='eItem.remoteData' v-model="modifyMatter[eItem.fieldCode]" :popup-style="pickerStyle" 
+                              placeholder="请选择" v-if="eItem.editorType === 'r2Combo'">
+                  <template slot="title" v-if="!eItem.allowBlank">
+                    <span class='required'>{{eItem.text}}
+                    </span>
+                  </template>
+                </popup-picker>
+                <x-input :title="eItem.text" v-model='modifyMatter[eItem.fieldCode]' text-align="right" placeholder="请输入"
+                          v-if="eItem.editorType === 'r2Textfield'">
+                  <template slot="label" v-if="!eItem.allowBlank">
+                    <span>{{eItem.text}}</span>
+                  </template>
+                </x-input>
               </div>
               <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode]" v-else></cell>
             </div>
@@ -152,7 +167,7 @@
 
 <script>
 // vux组件引入
-import { Cell, Group, Popup, XInput, Datetime, numberComma } from 'vux'
+import { Cell, Group, Popup, XInput, Datetime, PopupPicker, numberComma } from 'vux'
 //组件引入
 import RScroll from 'components/RScroll'
 import { toFixed } from '@/plugins/calc'
@@ -208,7 +223,7 @@ export default {
     }
   },
   components: {
-    Cell, Group, Popup, XInput, Datetime, RScroll
+    Cell, Group, Popup, XInput, Datetime, RScroll, PopupPicker
   },
   watch: {
     showPop: {
@@ -223,6 +238,7 @@ export default {
       scrollOptions: { // 滚动配置
         click: true,
       },
+      pickerStyle: { zIndex: 550 },
     }
   },
   methods: {
@@ -252,10 +268,12 @@ export default {
     //确认修改
     confirm(){
       let warn = '';
-      this.validateMap.length && this.validateMap.every(item => {
-        if (!this.modifyMatter[item.key]) {
-          warn = item.message;
-          return false
+      this.config.editPart.every(item => {
+        if(!item.allowBlank){
+          if((Array.isArray(this.modifyMatter[item.fieldCode]) && !this.modifyMatter[item.fieldCode].length) || !this.modifyMatter[item.fieldCode]){
+            warn = item.text + '不能为空';
+            return false
+          }
         }
         return true
       });
@@ -277,15 +295,12 @@ export default {
       return url
     },
     // TODO 检查金额，取正数、保留两位小数
-    checkAmt(item){
+    checkAmt(item, key, val){
       let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock} = item;
-      // 金额
-      if (price) {
-        item.price = Math.abs(toFixed(price));
-      }
+      item[key] = Math.abs(toFixed(val));
       // 数量
       if (tdQty && this.isCheckStock) {
-        item.tdQty = Math.abs(toFixed(tdQty));
+        // item.tdQty = Math.abs(toFixed(tdQty));
         // qtyStockBal为销售出库的库存，数量不允许大于余额
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;

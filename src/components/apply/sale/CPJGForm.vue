@@ -27,10 +27,9 @@
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                   v-for="(item, index) in matterList" :key='index'>
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                              @click.native="delClick(index,item)">
+                              @click.native="delClick(index,item)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <div class="mater_more">
+                    <!-- <div class="mater_more">
                       <div>
                         <span class='unit'>单位: {{item.measureUnit}}</span>
                         <span class='mater_color' v-show="item.drDealerLabel">客户类型: {{item.drDealerLabel}}</span>
@@ -39,8 +38,7 @@
                         <span class='mater_color' v-show="item.qtyOnline">数量上线: {{item.qtyOnline}}</span>
                         <span class='mater_color' v-show="item.qtyDownline">数量下线: {{item.qtyDownline}}</span>
                       </div>
-                    </div>
-                    <!-- 物料数量和价格 -->
+                    </div> -->
                     <div class='mater_other'>
                       <div>
                         <span v-if="item.price" class="price">
@@ -75,52 +73,12 @@
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" get-list-method="getProductPriceAllInventory"
-                           :default-value="matterList" ref="matter"></pop-matter-list>
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" 
+                           :requestApi="requestApi" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :validate-map="validateMap" :show-pop="showMatterPop" @sel-confirm='selConfirm'
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class="mg_auto">
-              <popup-picker :data='dealerTypeList' v-model="modifyMatter.PopDealerLabel" :popup-style="pickerStyle" @on-change="onChange($event,modifyMatter)">
-                <template slot="title">
-                  <span class='required'>客户类型
-                  </span>
-                </template>
-              </popup-picker>
-              <x-input type="number"  v-model.number='modifyMatter.qtyDownline' text-align="right"
-                      @on-blur="checkAmt(modifyMatter.qtyDownline, 'qtyDownline', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>数量下线
-                  </span>
-                </template>
-              </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.qtyOnline' text-align="right"
-                      @on-blur="checkAmt(modifyMatter.qtyOnline, 'qtyOnline', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>数量上线
-                  </span>
-                </template>
-              </x-input>
-            </group>
-            <group class="mg_auto">
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter.price, 'price', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>标准价格
-                  </span>
-                </template>
-              </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.specialReservePrice' text-align="right"
-                      @on-blur="checkAmt(modifyMatter.specialReservePrice, 'specialReservePrice', modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>特批底价
-                  </span>
-                </template>
-              </x-input>
-            </group>
-          </template>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -156,7 +114,7 @@ import { submitAndCalc, saveAndStartWf, getDictByType, saveAndCommitTask } from 
 import ApplyCommon from 'pageMixins/applyCommon'
 // 组件引入
 import RPicker from 'components/RPicker'
-import PopMatterList from 'components/Popup/PopMatterList'
+import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import UploadFile from 'components/upload/UploadFile'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
@@ -165,7 +123,16 @@ const DRAFT_KEY = 'CPJG_DATA';
 export default {
   data() {
     return {
-      pickerStyle: { zIndex: 550 },
+      transCode: '',
+      currentType: '',
+      formData: {
+        biId: '',
+        biComment: '',
+        biProcessStatus: ''
+      },
+      priceMap: {},
+      matterList: [], // 物料列表
+      showMaterielPop: false, // 是否显示物料的popup
       validateMap: [
         {
           key: 'drDealerLabel',
@@ -188,19 +155,6 @@ export default {
           message: '请填写特批底价'
         }
       ],
-      transCode: '',
-      currentType: '',
-      formData: {
-        biId: '',
-        biComment: '',
-        biProcessStatus: ''
-      },
-      priceMap: {},
-      matterList: [], // 物料列表
-      dealerTypeList: [],
-      showPrice: false,
-      showDealerPop: false,
-      showMaterielPop: false, // 是否显示物料的popup
     }
   },
   components: {
@@ -209,22 +163,6 @@ export default {
   },
   mixins: [ApplyCommon],
   methods: {
-    checkAmt(val, key, modifyMatter) {
-      modifyMatter[key] = Math.abs(toFixed(val));
-    },
-    onChange(e, modifyMatter){
-      modifyMatter.drDealerLabel = e[0];
-    },
-    // 获取 客户类型
-    initRequest () {
-      return getDictByType('dealerRelLabel').then(({ tableContent }) => {
-        let arr = [];
-        tableContent.forEach(item => {
-          arr.push(item.name)
-        })
-        this.dealerTypeList.push(arr);
-      })
-    },
     // 滑动删除
     delClick (index, sItem) {
       let arr = this.selItems;
@@ -274,7 +212,6 @@ export default {
           qtyOnline: item.qtyOnline,  // 数量上线
           qtyDownline: item.qtyDownline,  // 数量下线
           drDealerLabel: item.drDealerLabel,  // 客户类型
-          PopDealerLabel: item.PopDealerLabel,  //
           specialReservePrice: item.specialReservePrice,
         };
       });
@@ -289,8 +226,7 @@ export default {
         item.qtyOnline = defaultValue.qtyOnline || '';
         item.qtyDownline = defaultValue.qtyDownline || '';
         item.specialReservePrice = defaultValue.specialReservePrice || '';
-        item.PopDealerLabel = defaultValue.PopDealerLabel || []
-        item.drDealerLabel = defaultValue.drDealerLabel || ''
+        item.drDealerLabel = defaultValue.drDealerLabel || [];
       });
       this.priceMap = {};
       this.matterList = [...sels];
@@ -313,14 +249,14 @@ export default {
       if (!warn) {
         this.matterList.every(item => {
           this.validateMap.every(vItem => {
-            if (!item[vItem.key]) {
+            if ((Array.isArray(item[vItem.key]) && !item[vItem.key].length) || !item[vItem.key]) {
               warn = vItem.message;
             }
             return !warn
           });
           let mItem = {
             transObjCode: item.inventoryCode,
-            drDealerLabel: item.drDealerLabel,
+            drDealerLabel: item.drDealerLabel[0],
             qtyDownline: item.qtyDownline,
             qtyOnline: item.qtyOnline,
             price: item.price,
