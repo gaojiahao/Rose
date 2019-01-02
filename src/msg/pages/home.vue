@@ -1,32 +1,34 @@
 <template>
   <div class="inPage">
     <r-tab :data="tabList" :active-index="activeIndex" @on-click="onTabClick" mode="3"></r-tab>
-    <template v-if="listData">
-      <r-scroll class="wrapper" :class="{'other-wrapper' :  activeIndex != 0}"
-                :options="scrollOptions" :has-next="hasNext" :no-data="false"
-                @on-pulling-up="onPullingUp" ref="bScroll">
-        <div class="when_null" v-if="isNull">{{noDataText}}</div>
-        <div class="msg_list" v-else>
-          <template v-if="activeIndex === 0">
-            <todo-item :name="key" :item="value" v-for='(value, key) in listData'
-                       :no-border="value.noBorder" @click.native="goMsglist(value, key)"
-                       :key='key'></todo-item>
-          </template>
-          <template v-else-if="activeIndex === 1 || activeIndex === 2">
-            <comment-item :item="item" v-for="(item, index) in commentList"
-                          :no-border="index === commentList.length - 1" @click.native="goDetail(item, index)"
-                          @on-popover-click="onPopoverClick" :key="index" ref="commentItem">
-            </comment-item>
-          </template>
+    <div class="swiper-container notice-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" v-for="(slide, key, idx) in noticeData">
+          <r-scroll class="wrapper" :options="scrollOptions" :has-next="slide.hasNext" :no-data="false"
+                    @on-pulling-up="onPullingUp" ref="bScroll">
+            <div class="when_null" v-if="isNull">{{noDataText}}</div>
+            <div class="msg_list" v-else>
+              <template v-if="idx === 0">
+                <todo-item :name="key" :item="value" v-for='(value, key) in slide.listData'
+                           :no-border="value.noBorder" @click.native="goMsglist(value, key)"
+                           :key='key'></todo-item>
+              </template>
+              <template v-else-if="idx === 1 || idx === 2">
+                <comment-item :item="item" v-for="(item, index) in slide.listData"
+                              :no-border="index === slide.listData.length - 1" @click.native="goDetail(item, index)"
+                              @on-popover-click="onPopoverClick" :key="index" ref="commentItem">
+                </comment-item>
+              </template>
+            </div>
+          </r-scroll>
         </div>
-      </r-scroll>
-    </template>
-    <!--<router-view></router-view>-->
+      </div>
+    </div>
   </div>
 </template>
 <script>
   // vux组件引入
-  import {Badge, Tab, TabItem} from 'vux'
+  import {Badge} from 'vux'
   // 映射表 引入
   import Apps from '@/home/pages/apps/bizApp/maps/Apps'
   // 请求 引入
@@ -39,10 +41,15 @@
   /* 引入微信相关 */
   import {register} from 'plugins/wx'
 
+  const BASE_PARAMS = {
+    page: 1,
+    limit: 10,
+    hasNext: true,
+    listData: [],
+  };
   export default {
     data() {
       return {
-        listData: {},
         isNull: false,
         tabList: [
           {name: '待办', status: 'todo'},
@@ -50,14 +57,18 @@
           {name: '点赞', status: 'praise'},
         ],
         activeIndex: 0,
-        commentList: [],
         scrollOptions: {
+          bounce: {top: false},
           pullUpLoad: true,
         },
-        page: 1,
-        limit: 10,
-        hasNext: true,
         isClickDetail: false,
+        pageSwiper: null,
+        noticeData: {
+          todo: {...BASE_PARAMS, listData: {}},
+          comment: {...BASE_PARAMS},
+          praise: {...BASE_PARAMS},
+        },
+        isMovingSwiper: false, // swiper是否滑动中，防止滑动时跳转到详情页
       }
     },
     computed: {
@@ -66,18 +77,26 @@
         let list = ['暂无待办消息', '暂无评论消息', '暂无点赞消息'];
         return list[this.activeIndex]
       },
+      // 当前滑块
+      currentItem() {
+        let {status} = this.tabList[this.activeIndex];
+        return this.noticeData[status];
+      },
+      // 当前滚动容器
+      currentScroll() {
+        return this.$refs.bScroll[this.activeIndex]
+      },
     },
     components: {
-      Badge, RScroll, TodoItem, CommentItem, Tab, TabItem, RTab,
+      Badge, RScroll, TodoItem, CommentItem, RTab,
     },
     methods: {
       // TODO tab切换
       onTabClick({index}) {
-        let list = [this.getList, this.getComment, this.getPraise];
         this.activeIndex = index;
-        this.$refs.bScroll.scrollTo(0, 0);
+        this.currentScroll.scrollTo(0, 0);
         this.resetCondition();
-        list[this.activeIndex]();
+        this.pageSwiper.slideTo(index);
       },
       // TODO 获取应用icon
       getDefaultIcon(item) {
@@ -89,16 +108,18 @@
       },
       // TODO 重置条件
       resetCondition() {
-        this.page = 1;
-        this.commentList = [];
-        this.listData = {};
-        this.hasNext = true;
+        let {status} = this.tabList[this.activeIndex];
+        let data = {...BASE_PARAMS};
+        if (!this.activeIndex) {
+          data.listData = {};
+        }
+        this.noticeData[status] = data;
       },
       //获取应用消息数据
       getList() {
         return getMsgList().then(({dataCount = 0, tableContent = []}) => {
           this.$event.$emit('badgeNum', dataCount);
-          this.hasNext = false;
+          this.currentItem.hasNext = false;
           if (!tableContent.length) {
             // 没有数据的时候
             this.isNull = true;
@@ -128,18 +149,23 @@
           if (values.length) {
             values[values.length - 1].noBorder = true;
           }
-          this.listData = listData;
+          this.currentItem.listData = listData;
           this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
+            this.currentScroll.finishPullUp();
           })
         })
       },
       // 前往应用消息列表
       goMsglist(item, name) {
+        let {status} = this.tabList[this.activeIndex];
+        // 判断是否在滑动swiper中
+        if (this.isMovingSwiper) {
+          return
+        }
         // 高亮点击的应用
         item.visited = true;
         this.isClickDetail = true;
-        this.$set(this.listData, name, {...item});
+        this.$set(this.noticeData[status].listData, name, {...item});
         // 等待动画结束后跳转
         setTimeout(() => {
           this.$router.push({
@@ -153,19 +179,21 @@
       },
       // TODO 获取通知，默认取评论
       getNotice(noticeType = 'comment') {
+        let {page, limit} = this.currentItem;
         let filter = [{
           property: 'type',
           operator: 'eq',
           value: noticeType
         }];
         return getNotice({
-          page: this.page,
-          limit: this.limit,
+          page,
+          limit,
           filter: JSON.stringify(filter)
         }).then(data => {
           let {dataCount = 0, tableContent = []} = data;
+          let {page, limit} = this.currentItem;
           this.isNull = !tableContent.length;
-          this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
+          this.currentItem.hasNext = dataCount > (page - 1) * limit + tableContent.length;
           for (let item of tableContent) {
             let content = JSON.parse(item.content);
             item.comment = content.content; // 评论内容
@@ -184,22 +212,24 @@
               };
             }
           }
-          this.commentList = this.page === 1 ? tableContent : [...this.commentList, ...tableContent];
+          this.currentItem.listData = this.page === 1 ? tableContent : [...this.currentItem.listData, ...tableContent];
           this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
+            this.currentScroll.finishPullUp();
           });
           return data
         })
       },
       // TODO 获取点赞列表
       getNoticeByPraise() {
+        let {page, limit} = this.currentItem;
         return getNoticeByPraise({
-          page: this.page,
-          limit: this.limit,
+          page,
+          limit,
         }).then(data => {
           let {total = 0, praiseNoticeList = []} = data;
+          let {page, limit} = this.currentItem;
           this.isNull = !praiseNoticeList.length;
-          this.hasNext = total > (this.page - 1) * this.limit + praiseNoticeList.length;
+          this.currentItem.hasNext = total > (page - 1) * limit + praiseNoticeList.length;
           for (let item of praiseNoticeList) {
             let content = JSON.parse(item.content);
             item.comment = '赞了这条评论';
@@ -215,9 +245,9 @@
             // list为应用，instance为实例
             item.other = content.type === 'list' ? `@应用详情` : `@实例编码：${content.relationKey}`;
           }
-          this.commentList = this.page === 1 ? praiseNoticeList : [...this.commentList, ...praiseNoticeList];
+          this.currentItem.listData = this.page === 1 ? praiseNoticeList : [...this.currentItem.listData, ...praiseNoticeList];
           this.$nextTick(() => {
-            this.$refs.bScroll.finishPullUp();
+            this.currentScroll.finishPullUp();
           });
           return data
         })
@@ -241,6 +271,11 @@
           transCode: RELATION_KEY,
         };
         let path = `/detail/${fileId}/${listId}`;
+        let {status} = this.tabList[this.activeIndex];
+        // 判断是否在滑动swiper中
+        if (this.isMovingSwiper) {
+          return
+        }
         if (commentType === 'list') {
           path = `/appDetail/${listId}`;
           query = {};
@@ -248,7 +283,7 @@
         // 高亮点击的应用
         item.visited = true;
         this.isClickDetail = true;
-        this.$set(this.commentList, index, {...item});
+        this.$set(this.noticeData[status].listData, index, {...item});
         // 等待动画结束后跳转
         setTimeout(() => {
           this.$router.push({path, query,})
@@ -256,7 +291,7 @@
       },
       // TODO 上拉加载
       onPullingUp() {
-        this.page++;
+        this.currentItem.page++;
         if (this.activeIndex === 1) {
           this.getNotice();
         } else if (this.activeIndex === 2) {
@@ -265,42 +300,73 @@
       },
       // TODO 改变访问状态
       changeVisitedStatus() {
+        let tmp = [];
         if (this.activeIndex === 0) {
-          let tmp = {...this.listData};
+          tmp = {...this.currentItem.listData};
           Object.values(tmp).forEach(item => {
             item.visited = false;
           });
-          setTimeout(() => {
-            this.listData = tmp;
-          }, 200);
         } else {
-          let tmp = [...this.commentList];
+          tmp = [...this.currentItem.listData];
           tmp.forEach(item => {
             item.visited = false;
           });
-          setTimeout(() => {
-            this.commentList = tmp;
-          }, 200);
         }
+        setTimeout(() => {
+          this.currentItem.listData = tmp;
+        }, 200);
         this.isClickDetail = false;
       },
       // TODO popover点击事件
-      onPopoverClick(){
+      onPopoverClick() {
         let $commentItem = this.$refs.commentItem || [];
         $commentItem.forEach(comment => {
           comment.hidePopover();
         });
       },
+      // TODO 初始化swiper
+      initSwiper() {
+        this.$nextTick(() => {
+          this.pageSwiper = new this.Swiper('.notice-container', {
+            touchAngle: 30,
+            on: {
+              slideChangeTransitionStart: () => {
+                let index = this.pageSwiper.activeIndex;
+                let list = [this.getList, this.getComment, this.getPraise];
+                this.activeIndex = index;
+                this.isMovingSwiper = true;
+                // 已有数据则不重新请求
+                if (Object.keys(this.currentItem.listData).length) {
+                  return
+                }
+                this.resetCondition();
+                list[this.activeIndex]();
+              },
+              slideChangeTransitionEnd: () => {
+                this.isMovingSwiper = false;
+              }
+            },
+          });
+        })
+      },
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
       if (path === '/home') {
+        this.activeIndex = 0;
+        this.noticeData = {
+          todo: {...BASE_PARAMS, listData: {}},
+          comment: {...BASE_PARAMS},
+          praise: {...BASE_PARAMS},
+        };
+        this.pageSwiper.slideTo(0);
         from.meta.reload = true;
       }
       next();
     },
     created() {
       this.$loading.show();
+      this.initSwiper();
       this.getList().then(() => {
         this.$loading.hide();
       });
@@ -310,8 +376,6 @@
       register();
       // 是否需要重新加载数据
       if (reload) {
-        this.listData = {};
-        this.activeIndex = 0;
         this.$loading.show();
         this.getList().then(() => {
           this.$loading.hide();
@@ -328,13 +392,14 @@
 <style lang='scss' scoped>
   .inPage {
     overflow: hidden;
+    .notice-container {
+      width: 100%;
+      height: calc(100% - .99rem);
+    }
     .wrapper {
       width: 100%;
+      height: 100%;
       overflow: hidden;
-      height: calc(100% - .99rem);
-      &.other-wrapper {
-        /*background: #EEE;*/
-      }
     }
     /deep/ .scroll-wrapper {
       position: relative;
