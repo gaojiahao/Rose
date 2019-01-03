@@ -5,7 +5,7 @@
         <!-- 搜索栏 -->
         <searchIcon @search='searchList'></searchIcon>
         <div class="filter_part">
-          <tab :line-width='2' default-color='#757575' active-color='#2c2727'>
+          <tab :line-width='2' default-color='#333' active-color='#3296FA'>
             <tab-item v-for="(item, index) in listStatus" :key="index" :selected="index === activeIndex"
                       @on-item-click="tabClick(item, index)">{{item.name}}
             </tab-item>
@@ -15,21 +15,24 @@
       <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class="client_ads vux-1px-b" :class="{visited: item.visited}" v-for="(item, index) in listData"
-             :key="index" @click='goDetail(item, index)'>
-          <div class="job_info ">
-            <div class="job_name">{{item.name}}
-              <span class="job_status" :class="item.borderClass">{{item.changeStatus}}</span>
+        <div class="list-item-wrapper" :class="{visited: item.visited, 'vux-1px-b': index !== listData.length - 1}"
+             v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
+          <img class="list_item_img" :src="item.jobPic" alt="job-img" @error="getDefaultImg(item)">
+          <div class="list_info_wrapper">
+            <div class="list_detail">
+              <div class="list_name">{{item.name}}</div>
+              <div class="list_detail_item">
+                <span class="list_detail_title">职位类型：</span>
+                <span class="list_detail_value">{{item.changeType}}</span>
+              </div>
             </div>
-            <div class="job_type">{{item.changeType}}</div>
+            <div class="list_status" :class="item.statusClass">{{item.status}}</div>
+            <i class="icon-right"></i>
           </div>
-          <span class="iconfont icon-bianji" @click.stop="goEditJob(item, index)" v-if="action.update"></span>
         </div>
       </r-scroll>
     </div>
-    <div class=" vux-1px-t btn" v-if="action.add">
-      <div class="cfm_btn" @click="goEdit">新增</div>
-    </div>
+    <add-btn :action="action" :goEdit="goEdit"></add-btn>
   </div>
 </template>
 
@@ -88,7 +91,10 @@
         }).then(({dataCount = 0, tableContent = []}) => {
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           tableContent.forEach(item => {
+            let status = ['', '使用中', '未使用', '草稿'];
+            item.status = status[item.status] || '停用';
             this.setStatus(item);
+            item.jobPic = item.jobPic ? item.jobPic : this.getDefaultImg();
             switch (item.type) {
               case 'Y':
                 item.changeType = '营销类';
@@ -106,24 +112,6 @@
                 item.changeType = '管理类';
                 break;
 
-            }
-            switch (item.status) {
-              case 1:
-                item.changeStatus = '使用中';
-                item.borderClass = "using"
-                break;
-              case 2:
-                item.changeStatus = '未使用';
-                item.borderClass = "no_use"
-                break;
-              case 3:
-                item.changeStatus = '草稿';
-                item.borderClass = "draft"
-                break;
-              case -1:
-                item.changeStatus = '停用';
-                item.borderClass = "stop_use"
-                break;
             }
           });
           this.listData = this.page === 1 ? tableContent : this.listData.concat(tableContent);
@@ -183,7 +171,7 @@
         this.goNextPage(item, index, '/fillform')
       },
       // tab切换
-      tabClick (item, index) {
+      tabClick(item, index) {
         this.activeIndex = index;
         this.activeTab = item.status;
         this.activeName = item.name === '全部' ? '' : item.name;
@@ -191,83 +179,106 @@
         this.getList();
       },
       // 新增
-      goEdit () {
-      let { name, childId} = this.$route.query,
-          { fileId, listId } = this.$route.params;
-      this.$router.push({
-        path: `/fillform/${fileId}/${listId}`,
-        query: { name, childId, jobType: this.activeName}
-      })
-    },
+      goEdit() {
+        let {name, childId} = this.$route.query,
+          {fileId, listId} = this.$route.params;
+        this.$router.push({
+          path: `/fillform/${fileId}/${listId}`,
+          query: {name, childId, jobType: this.activeName}
+        })
+      },
+      // TODO 设置状态的class
+      setStatus(item) {
+        switch (item.status) {
+          case '使用中':
+            item.statusClass = 'duty_done_c';
+            break;
+          default:
+            item.statusClass = 'duty_fall_c';
+        }
+      },
+      // TODO 获取默认图片
+      getDefaultImg(item, gender) {
+        let url = require('assets/default/job.png');
+        if (item) {
+          item.jobPic = url;
+        }
+        return url
+      },
     }
   }
 </script>
 
 <style lang="scss" scoped>
   @import "./../../scss/bizList.scss";
+  @import '~@/scss/color';
 
-  .client_ads {
-    position: relative;
-    padding: .06rem .4rem .06rem .08rem;
+  .list-item-wrapper {
+    display: flex;
+    padding: .15rem .33rem .15rem .15rem;
+    width: 100%;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
     transition: background-color 200ms linear;
+    box-sizing: border-box;
+    box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
     &.visited {
       background-color: $list_visited;
     }
-    // 编辑
-    .icon-bianji {
-      right: 0;
-      top: 50%;
-      width: .35rem;
-      display: block;
-      font-size: .24rem;
-      text-align: center;
-      position: absolute;
-      transform: translate(0, -50%);
+    .duty_done_c {
+      color: #333;
     }
-    // 公司信息
-    .job_info {
-      font-size: .14rem;
-      .job_name {
-        color: #111;
-        font-weight: bold;
-        .job_status {
-          color: #757575;
-          font-size: 0.11rem;
-          margin-left: 0.02rem;
-          font-weight: normal;
-          padding: 0 0.03rem;
-        }
-        //使用中
-        // .using{
-        //   color:#1296db;
-        //   border-color: #1296db;
-        // }
-        // //未使用
-        // .no_use{
-        //   color:#1afa29;
-        //   border-color: #1afa29;
-        // }
-        // //停用
-        // .stop_use{
-        //   color:#d81e06;
-        //   border-color:#d81e06;
-        // }
-        // //草稿
-        // .draft{
-        //   color:#757575;
-        // }
-      }
-      .job_type {
-        color: #5077aa;
-      }
+    .duty_fall_c {
+      color: #999;
     }
-    .edit_part {
-      top: 0;
-      right: 0;
+
+    .list_item_img {
       width: .3rem;
-      height: 100%;
+      height: .3rem;
+      border-radius: 50%;
+    }
+
+    .list_info_wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: .2rem;
+    }
+    .list_detail {
+      line-height: .12rem;
+      .list_name {
+        line-height: .14rem;
+        font-size: .16rem;
+        font-weight: 600;
+      }
+      .list_detail_item {
+        margin-top: .12rem;
+        font-size: .12rem;
+      }
+      .list_detail_title {
+        color: #999;
+      }
+      .list_detail_value {
+        color: #3296FA;
+        font-size: .14rem;
+      }
+    }
+    .list_status {
+      line-height: .12rem;
+      font-size: .12rem;
+    }
+    .icon-right {
       position: absolute;
-      background: #4F90F9;
+      top: 50%;
+      right: -.1rem;
+      z-index: 1;
+      display: inline-block;
+      width: .08rem;
+      height: .14rem;
+      transform: translate(100%, -50%);
     }
   }
 
