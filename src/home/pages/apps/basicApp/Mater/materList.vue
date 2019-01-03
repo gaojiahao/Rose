@@ -21,7 +21,7 @@
             <div class="matter_name">{{item.inventoryName}}</div>
             <div class="matter_info_main">
               <span class="matter_main_item">编码：{{item.inventoryCode}}</span>
-              <span class="matter_main_item">规格：{{item.specification || '无'}}</span>
+              <span class="matter_main_item specification">规格：{{item.specification || '无'}}</span>
             </div>
             <div class="matter_detail">
               <div class="matter_info_item">
@@ -336,6 +336,12 @@
 <style lang='scss' scoped>
   @import '~@/scss/color';
 
+  %ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   /* 没有新增 */
   .no-add {
     .content {
@@ -401,14 +407,19 @@
         display: flex;
       }
       .matter_main_item {
+        @extend %ellipsis;
         margin-top: .12rem;
         padding: .04rem .05rem;
+        max-width: 1.2rem;
         line-height: .12rem;
         background-color: #FAECE7;
         color: #FA7138;
         font-size: .12rem;
         & + .matter_main_item {
           margin-left: .08rem;
+        }
+        &.specification {
+          max-width: .85rem;
         }
       }
 

@@ -468,6 +468,7 @@
       }
       .basic_detail_value {
         flex: 1;
+        line-height: .16rem;
       }
     }
 
