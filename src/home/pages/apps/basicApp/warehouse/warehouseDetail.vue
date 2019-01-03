@@ -235,6 +235,15 @@ export default {
     border-color: #e8e8e8;
   }
 
+  .childPage {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    z-index: 5;
+    background: #fff;
+  }
+
   .detail_content {
     height: 100%;
     overflow-y: auto;

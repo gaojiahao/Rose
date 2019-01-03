@@ -1,6 +1,6 @@
 <template>
   <div class='sort-part vux-1px-b'>
-    <div class='each-sort' :class="{'active' : property === SItem.key}" v-for="(SItem, SIndex) in data" :key="SIndex"
+    <div class='each-sort' :class="{'active vux-1px-b' : property === SItem.key}" v-for="(SItem, SIndex) in data" :key="SIndex"
          @click="sortClick(SItem, SIndex)">
       <div class='sort_name'>{{SItem.name}}</div>
       <div class='arrow' v-if="SItem.key">
@@ -97,7 +97,6 @@ export default {
           { name: '综合', key: '' },
           { name: '交易号', key: 'transCode' },
           { name: '修改时间', key: 'modTime' },
-          // { name: '流程状态', key: 'processSort' }
         ]
       }
     },
@@ -189,8 +188,12 @@ export default {
     filterReset() {
       this.fieldVlaue = {};
       this.SpecTimeKey = '';
-      this.timeFilter = Object.assign({}, this.$data.timeFilter, this.$options.data().timeFilter);
-      this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, this.$options.data().tmpTimeFilter);
+      this.timeFilter = Object.assign({}, this.$data.timeFilter, 
+        this.$options.data().timeFilter
+      );
+      this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, 
+        this.$options.data().tmpTimeFilter
+      );
     },    
     // 匹配相同项的索引
     showSelIcon(sItem, key) {
@@ -227,12 +230,16 @@ export default {
       // 消除选中状态
       if(this.SpecTimeKey === key) {
         this.SpecTimeKey = '';
-        this.timeFilter = Object.assign({}, this.$data.timeFilter, this.$options.data().timeFilter);
+        this.timeFilter = Object.assign({}, this.$data.timeFilter, 
+          this.$options.data().timeFilter
+        );
         return;
       }
       // 选中状态 并清空 时间栏 数据
       this.SpecTimeKey = key;
-      this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, this.$options.data().tmpTimeFilter);
+      this.tmpTimeFilter = Object.assign({}, this.$data.tmpTimeFilter, 
+        this.$options.data().tmpTimeFilter
+      );
       if(key < 2) {
         // 获取 今日 / 昨日
         let whichDay = ['toDay', 'preDate'];
@@ -262,35 +269,52 @@ export default {
     },
     // 起始日期 (最远日期为 今日)
     getStart() {
+      let time = this.timeFilter,
+          tmpTime = this.tmpTimeFilter;
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
-        value: this.tmpTimeFilter.startDate,
+        clearText: "重新选择",
+        value: tmpTime.startDate,
         endDate: this.toDay,
+        onClear: (val) => {
+          time.startDate = tmpTime.startDate = '';
+        },
         onConfirm: (val) => {
+          // 当 '今日' / '昨日' 等按钮处于点亮 但用户想自定义时间 此处重置按钮
           if(this.SpecTimeKey !== '') {
-            this.SpecTimeKey = '';
-            this.timeFilter.endDate = '';
+            this.SpecTimeKey = time.endDate = '';
           }
-          this.timeFilter.startDate = val;
-          this.tmpTimeFilter.startDate = val;
+          // 用户先选择了截止日期 如果日期早于起始日期 则清除
+          if(time.endDate) {
+            let endDate = new Date(Date.parse(time.endDate.replace(/-/g, "/"))),
+                startDate = new Date(Date.parse(val.replace(/-/g, "/")));
+            if(startDate - endDate > 0) {
+              time.endDate = tmpTime.endDate = '';
+            }
+          }
+          time.startDate = tmpTime.startDate = val;
         }
       })
     },
     // 截止日期 (最近日期为 今日)
     getEnd() {
+      let time = this.timeFilter,
+          tmpTime = this.tmpTimeFilter;
       this.$vux.datetime.show({
         cancelText: '取消',
         confirmText: '确定',
-        value: this.tmpTimeFilter.endDate,
-        startDate: this.timeFilter.startDate ? this.toDay : '',
+        clearText: "重新选择",
+        value: tmpTime.endDate,
+        startDate: tmpTime.startDate ? this.toDay : '',
+        onClear: (val) => {
+          time.endDate = tmpTime.endDate = '';
+        },
         onConfirm: (val) => {
           if(this.SpecTimeKey !== '') {
-            this.SpecTimeKey = '';
-            this.timeFilter.startDate = '';
+            this.SpecTimeKey = time.startDate = '';
           } 
-          this.timeFilter.endDate = val;
-          this.tmpTimeFilter.endDate = val;
+          time.endDate = tmpTime.endDate = val;
         }
       })
     },
@@ -352,12 +376,18 @@ export default {
   padding: 0 .2rem;
   justify-content: space-between;
   .each-sort {
-    padding: .08rem .05rem .14rem;
     color: #333;
     display: flex;
     font-size: .14rem;
     line-height: 0.14rem;
     box-sizing: border-box;
+    padding: .08rem .05rem .14rem;
+    &.active {
+      color: #3296FA;
+    }
+    &.vux-1px-b:after {
+      border-bottom: .06rem solid #3296FA;
+    }
     .arrow {
       height: 100%;
       position: relative;
@@ -376,7 +406,6 @@ export default {
         left: .04rem;
       }
     }
-
   }
   .filter-part {
     @extend .each-sort;

@@ -279,7 +279,7 @@ export default {
       // 时间过滤
       if(this.timeFilter.startDate || this.timeFilter.endDate) {
         let obj = {
-          property: "crtTime",
+          property: "modTime",
           operator: "date",
           startDate: this.timeFilter.startDate,
           endDate: this.timeFilter.endDate,
@@ -422,7 +422,7 @@ export default {
       if(!this.sort.length){
         this.sort = [
           {
-            property: 'crtTime',
+            property: 'modTime',
             direction: 'DESC'
           }
         ]
