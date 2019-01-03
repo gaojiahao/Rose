@@ -222,7 +222,6 @@
       display: flex;
       justify-content: space-between;
       .list_name {
-        margin-top: .06rem;
         line-height: .14rem;
         font-size: .14rem;
         font-weight: 600;

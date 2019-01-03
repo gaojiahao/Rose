@@ -254,6 +254,7 @@
     .list_header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       .list_header_left {
         display: flex;
         align-items: center;
