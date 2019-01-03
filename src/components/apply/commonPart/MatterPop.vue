@@ -31,7 +31,14 @@
               </div>
               <div class="mater_more">
                 <span v-for="(item,index) in config.property">
-                  {{item.text}}: {{modifyMatter[item.showFieldCode] || "无"}}
+                  {{item.text}}: 
+                  <span v-if="item.showFieldCode">
+                    {{modifyMatter[item.showFieldCode] != null && modifyMatter[item.showFieldCode] !== ""  ?  modifyMatter[item.showFieldCode] : "无"}}
+                  </span>
+                  <span v-else>
+                   {{modifyMatter[item.fieldCode] != null && modifyMatter[item.fieldCode] !== ""  ?  modifyMatter[item.fieldCode] : "无"}}
+                  </span>
+                  
                 </span>
               </div>
               <!-- 设施 -->
@@ -68,7 +75,7 @@
             <div v-for="(eItem,eIndex) in config.editPart" :key="eIndex">
               <div v-if="!eItem.readOnly">
                 <x-input class="vux-1px-b" :title="eItem.text" type="number"  v-model.number='modifyMatter[eItem.fieldCode]' text-align="right"
-                        placeholder="请输入" v-if="eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield'"
+                        placeholder="请输入" v-if="eItem.editorType === 'r2Numberfield' || eItem.editorType === 'r2Percentfield' || eItem.editorType === 'r2Permilfield'"
                         @on-blur="checkAmt(modifyMatter, eItem.fieldCode, modifyMatter[eItem.fieldCode])" 
                         @on-focus="getFocus($event)" >
                   <template slot="label" v-if="!eItem.allowBlank">
@@ -95,7 +102,7 @@
                   </template>
                 </x-input>
               </div>
-              <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode]" v-else></cell>
+              <cell class="vux-1px-b" disabled :title="eItem.text" :value="modifyMatter[eItem.fieldCode] || modifyMatter[eItem.showFieldCode]" v-else></cell>
             </div>
             
           </group>
@@ -167,11 +174,11 @@
 
 <script>
 // vux组件引入
-import { Cell, Group, Popup, XInput, Datetime, PopupPicker, numberComma } from 'vux'
+import { Cell, Group, Popup, XInput, Datetime, PopupPicker, numberComma, dateFormat} from 'vux'
 //组件引入
 import RScroll from 'components/RScroll'
 import { toFixed } from '@/plugins/calc'
-import { accMul } from '@/home/pages/maps/decimalsAdd'
+import { accAdd, accMul } from '@/home/pages/maps/decimalsAdd'
 export default {
   name: 'MatterPop',
   filters: { 
@@ -230,6 +237,15 @@ export default {
       handler(val) {
         this.show = val;
       }
+    },
+    // 监听用于根据（生产日期+保质期天数）计算有效期
+    modifyMatter: {
+      handler(val) {
+        let productionDate = new Date(val.productionDate).getTime(),
+            day = 24 * 3600 * 1000;
+        val.validUntil = productionDate ? dateFormat(productionDate + accMul(val.keepingDays, day), 'YYYY-MM-DD') : '';
+      },
+      deep: true
     }
   },
   data(){

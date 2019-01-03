@@ -393,12 +393,18 @@ export default {
         let matterConfig = [];
         // 从请求回来的配置中获取往来的配置
         config.forEach(item => {
-          if(item.name === 'kh' || item.name === 'inPut'){
-            dealerConfig = dealerConfig.concat(item.items)
+          if(!item.isMultiple) {
+            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt') {
+              dealerConfig = dealerConfig.concat(item.items)
+            }
           }
-          if(item.name === 'order' || item.name === 'outPut'){
-            matterConfig = item.items;
+          else{
+            if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+              matterConfig = item.items;
+            }
           }
+          
+          
         })
         // 处理往来配置里面的接口请求
         dealerConfig.forEach(item => {
@@ -417,7 +423,7 @@ export default {
               requestParams.data = data;
             }
             requestData(requestParams).then(data => {
-              item.rometeData = data.tableContent
+              this.$set(item, 'remoteData', data.tableContent)
             })
           }
         })
@@ -432,14 +438,31 @@ export default {
           if(item.dataSource && item.dataSource.type === 'remoteData') {
             // 物料或者订单请求
             if(item.editorType === 'r2Selector') {
-              this.orderListTitle = item.text === '物料名称' ? '物料' : item.text;
+              if(item.text === '物料名称' || item.text === '物料编码'){
+                this.orderListTitle = '物料'
+              }
+              else if(item.text === '设施名称') {
+                this.orderListTitle = '设施'
+              }
+              else{
+                this.orderListTitle = item.text;
+              }
               this.requestApi = item.dataSource.data.url;
               let params = item.dataSource.data.params;
               let keys = Object.keys(params);
               if(keys.length){
+                let matterParams = {};
                 keys.forEach(item => {
-                  this.matterParams[item] = params[item].type === 'text' ? params[item].value : '';
+                  // 处理销售出库默认选中成品仓
+                  if(item === 'whCode' && this.warehouse.warehouseCode) {
+                    matterParams[item] = this.warehouse.warehouseCode;
+                    return 
+                  }
+                  matterParams[item] = params[item].type === 'text' ? params[item].value : '';
                 })
+                this.matterParams = {
+                  ...matterParams
+                }
               }
             }
             // 物料信息里有下拉选择的字段
@@ -468,7 +491,7 @@ export default {
           // matterPop需要隐藏的物料的字段
           if(item.editorType === 'r2Selector'){
             let hiddenField = JSON.parse(JSON.stringify(item.dataSource.data.hFields));
-            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode');
+            hiddenField.unshift('transCode','inventoryName', 'inventoryCode', 'specification','invName','matCode','facilityName', 'facilityCode', 'facilitySpecification')
             let matterPopField = JSON.parse(JSON.stringify(item.proertyContext.dataSourceCols));
             // 循环删除要隐藏的字段
             hiddenField.forEach(hItem => {
@@ -501,26 +524,28 @@ export default {
               }
               item.showFieldCode = item.dataSource.data.valueField[1];
             }
-
-            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.text !== '物料名称' 
-              && item.text !== '物料编码' && item.text !== '规格'){
+            if(item.valueField !== "transCode" && item.valueField !== 'inventoryName' && item.valueField !== 'facilityName' 
+                && item.text !== '物料名称' && item.text !== '物料编码' && item.text !== '规格' && item.text !== '产品规格'
+                && item.showFieldCode !== 'facilityName' && item.showFieldCode !== 'facilityCode' 
+                && item.showFieldCode !== 'facilitySpecification'){
               eidtMatterPop.push(item);
             }
+            
           }
         })
-        // console.log(eidtMatterPop);
+        console.log(eidtMatterPop);
         // 将配置拆分为属性和可编辑的部分
         eidtMatterPop.length && eidtMatterPop.forEach((item,index) => {
           //物料信息里面有数量
-          if(item.fieldCode === 'tdQty'){
+          if(item.fieldCode === 'tdQty' || item.fieldCode === 'qualityQty' || item.editorType === 'r2Combo'){
             eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
             eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
           }
-          // 物料信息里面没有数量但是有下拉选择的属性
-          else if(item.editorType === 'r2Combo'){
-            eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
-            eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
-          }
+          // // 物料信息里面没有数量但是有下拉选择的属性
+          // else if(item.editorType === 'r2Combo'){
+          //   eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
+          //   eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
+          // }
           
         })
         // console.log(eidtMatterPopConfig)

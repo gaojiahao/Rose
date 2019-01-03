@@ -10,23 +10,21 @@
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商"
                          dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
-                           v-model="dealerInfo.paymentTerm" isRequired></pop-single-select>
-        <cell class="pament-days" title="账期天数" :value="dealerInfo.pamentDays"></cell>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">申请号列表</div>
-              <div class="required">请选择申请号</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>申请号列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -34,27 +32,13 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">申请号</span>
+                  <span class="order_title">{{orderListTitle}}</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index,key)" :show-delete="matterModifyClass"
-                             @click.native="delClick(item,index)">
+                             @click.native="delClick(item,index)" :config="matterEditConfig.property">
                     <template slot="info" slot-scope="{item}">
-                      <!-- 物料属性和单位 -->
-                      <div class="mater_more">
-                        <div>
-                          <span class="processing">属性:{{item.processing}}</span>
-                          <span class='unit'>单位:{{item.measureUnit}}</span>
-                          <span class='mater_color'>颜色:{{item.inventoryColor || '无'}}</span>
-                          <span>税率:{{item.taxRate}}</span>
-                        </div>
-                        <div>
-                          <span>待下单: {{item.qtyBal}}</span>
-                          <!-- <span v-show="item.processingStartDate">计划需求日:{{item.processingStartDate}}</span>
-                          <span v-show="item.purchaseDay">采购需求日:{{item.purchaseDay}}</span> -->
-                        </div>
-                      </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
@@ -90,51 +74,13 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" get-list-method="getLowValueConsumPurchaseOrder"
-                           :filter-list="filterList" ref="matter">
-            <template slot="titleName" slot-scope="{item}">
-              <span class="order-title">申请号</span>
-            </template>
-            <template slot="storage" slot-scope="{item}">
-              <div class="mater_material">
-                <span class="spec">待下单: {{item.qtyBal}}</span>
-                <span class="spec">单价: ￥{{item.price}}</span>
-              </div>
-            </template>
+                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" 
+                           :orderTitle="matterPopOrderTitle" :filter-list="filterList" ref="matter">
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false">
-          <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span v-show="modifyMatter.qtyBal">待下单: {{modifyMatter.qtyBal}}</span>
-          </template>
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class='mg_auto'>
-              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-                      placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <slot name="qtyName">
-                    <span class='required'>数量</span>
-                  </slot>
-                </template>
-              </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>单价
-                  </span>
-                </template>
-              </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.taxRate' text-align="right"
-                @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>税率
-                  </span>
-                </template>
-              </x-input>
-            </group>
-          </template>
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-check-stock="false" :config="matterEditConfig">
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -173,9 +119,10 @@
   // mixins 引入
   import common from 'components/mixins/applyCommon'
   // 组件引入
-  import PopMatterList from 'components/Popup/PopMatterList'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
+  import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import RNumber from 'components/RNumber'
   import RPicker from 'components/RPicker'
@@ -189,7 +136,7 @@
     components: {
       XTextarea, RNumber, Datetime, XInput, Group,
       PopMatterList, PopDealerList, PopSingleSelect, PopMatter, RPicker, PopBaseinfo,
-      Cell,
+      Cell, DealerOtherPart,
     },
     data() {
       return {
@@ -208,7 +155,6 @@
         transMode: [], // 结算方式
         matterList: [], // 物料列表
         orderList: {}, // 订单列表
-        showTransPop: false, // 是否显示结算方式的popup
         showMaterielPop: false, // 是否显示物料的popup
         showDealerPop: false, // 是否显示供应商的popup
         filterList: [
@@ -275,15 +221,14 @@
       }
     },
     methods: {
-      // 获取结算方式
-      getPaymentTerm() {
-        return getDictByType('paymentTerm').then(({tableContent}) => {
-          this.transMode = tableContent;
-        })
-      },
       // 选中的供应商
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
+        this.dealerInfo = {
+          ...this.dealerInfo,
+          daysOfAccount: this.dealerInfo.pamentDays,
+          crDealerPaymentTerm: this.dealerInfo.paymentTerm,
+        }
       },
       // 选中联系人
       selContact(val) {

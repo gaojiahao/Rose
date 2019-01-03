@@ -9,21 +9,20 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
                          :default-contact="contactInfo" dealer-label-name="设施供应商" dealerTitle="供应商"></pop-dealer-list>
-
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="showOrderPop = !showOrderPop">
-              <div class="title">订单号列表</div>
-              <div class="required">请选择订单号</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>订单号列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -31,24 +30,13 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">订单号</span>
+                  <span class="order_title">{{orderListTitle}}</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
                   <matter-item :item="item" @on-modify="modifyMatter(item,index,key)" :show-delete="matterModifyClass"
-                               @click.native="delClick(index,item)" :class="{'vux-1px-b' : index < oItem.length-1}">
+                               @click.native="delClick(index,item)" :config="matterEditConfig.property">
                     <template slot="info" slot-scope="{item}">
-                      <div class="mater_more">
-                        <span class='unit'>类型: {{item.facilityType || '无'}}</span>
-                        <span class="unit">大类: {{item.facilityBigType}}</span>
-                        <span class='unit'>单位: {{item.facilityUnit || '无'}}</span>
-                      </div>
-                      <div class="mater_more">
-                        <span v-show="item.taxRate">税率: {{item.taxRate}}</span>
-                        <span class='unit'>订单总数: {{item.qty}}</span>
-                        <span class='qty'>已验收数: {{item.purchased}}</span>
-                        <span class='qty'>待验收数: {{item.qtyBal}}</span>
-                      </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
@@ -82,8 +70,11 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-
-          <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :filter-list="filterList"
+          <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :config="matterPopConfig" :requestApi="requestApi" 
+                            :filter-list="filterList" :params="matterParams" :default-value="matterList" 
+                            :orderTitle="matterPopOrderTitle" ref="matter">                   
+          </pop-matter-list>
+          <!-- <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :filter-list="filterList"
                              :default-value="matterList" request="2" :params="facilityParams" ref="matter">
             <template slot-scope="{item}" slot="storage">
               <div class="mater_classify">
@@ -93,30 +84,11 @@
                 <span>单价: ￥{{item.price}}</span>
               </div>
             </template>
-          </pop-facility-list>
+          </pop-facility-list> -->
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide">
-          <template slot="qtyBal" slot-scope="{modifyMatter}">
-            <span>订单总数: {{modifyMatter.qty}}</span>
-            <span>已验收数: {{modifyMatter.purchased}}</span>
-            <span>待验收数: {{modifyMatter.qtyBal}}</span>
-          </template>
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class='mg_auto'>
-              <x-input title="本次验收" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <slot name="qtyName">
-                    <span class='required'>本次验收</span>
-                  </slot>
-                </template>
-              </x-input>
-              <cell title="单价" :value="modifyMatter.price | numberComma(3)" disabled></cell>
-              <cell title="税率" :value="modifyMatter.taxRate" disabled></cell>
-            </group>
-          </template>
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
         </pop-matter>
 
         <!--备注-->
@@ -166,6 +138,8 @@
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
+  import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import RNumber from 'components/RNumber'
   import RPicker from 'components/RPicker'
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
@@ -230,7 +204,7 @@
     components: {
       XInput, RNumber, XTextarea, Group, Cell,
       PopMatter, RPicker, PopDealerList,
-      PopBaseinfo, PopFacilityList
+      PopBaseinfo, PopFacilityList, PopMatterList, DealerOtherPart
     },
     computed: {
       // 合计金额
@@ -271,22 +245,16 @@
           ...val,
         };
       },
-      // 获取 结算方式
-      getPaymentTerm() {
-        return getDictByType('paymentTerm').then(({tableContent}) => {
-          this.transMode = tableContent;
-        })
-      },
       // TODO 选中的供应商
       selDealer(val) {
         let [sel] = JSON.parse(val);
         this.dealerInfo = {
           ...sel,
         };
-        this.matterList = [];
-        this.orderList = {};
-        this.facilityParams = {
-          dealerCode: sel.dealerCode,
+        if(this.matterParams.dealerCode != null) {
+          this.matterParams.dealerCode = this.dealerInfo.dealerCode
+          this.matterList = [];
+          this.orderList = {};
         }
       },
       // TODO 选择联系人

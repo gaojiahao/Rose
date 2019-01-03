@@ -11,15 +11,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -28,17 +28,8 @@
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                    v-for="(item, index) in matterList" :key='index'>
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(index,item)">
+                             @click.native="delClick(index,item)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <div class="mater_more">
-                      <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class="processing" v-show="item.tdAmount">估计金额: {{item.tdAmount}}</span>
-                    </div>
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
                       <div class='mater_price'>
@@ -79,30 +70,13 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :params="matterParams" :default-value="matterList" ref="matter">
-            <template slot="storage" slot-scope="{item}">
-              <div class="mater_material">
-                <span class="spec">安全库存: {{item.safeStock}}</span>
-              </div>
-            </template>
+                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           ref="matter">
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :is-show-amount="false">
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class='mg_auto'>
-              <x-input title="本次申请" type="number" v-model.number='modifyMatter.tdQty' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>本次申请</span>
-                </template>
-              </x-input>
-              <x-input title="估计价格" type="number" v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)"></x-input>
-              <cell title="估计金额" :value="modifyMatter.tdAmount | numberComma(3)" disabled></cell>
-            </group>
-          </template>
+        <pop-matter :modify-matter='consumables' :show-pop="showMatterPop" @sel-confirm='selConfirm'
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -142,7 +116,7 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RPicker from 'components/RPicker'
-  import PopMatterList from 'components/Popup/PopMatterList'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopDealerList from 'components/Popup/PopDealerList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
@@ -167,9 +141,6 @@
           biComment: '',
         },
         priceMap: {},
-        matterParams: {
-          processing: '低值易耗品'
-        },
         consumables: {},
         checkFieldList: [
           {

@@ -11,15 +11,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showFacilityPop = !showFacilityPop">
-              <div class="title">设施列表</div>
-              <div class="required">请选择设施</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>设施列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -27,15 +27,8 @@
               <div class="each_mater" :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                   v-for="(item, index) in matterList" :key='index'>
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                              @click.native="delClick(index,item)">
+                              @click.native="delClick(index,item)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                      <!-- 物料属性和单位 -->
-                      <div class="mater_more">
-                        <span class="processing">大类: {{item.facilityBigType}}</span>
-                        <span class='mater_color'>子类: {{item.facilitySubclass || '无'}}</span>
-                        <span class='unit'>单位: {{item.facilityUnit}}</span>
-                        <span>设施类型: {{item.facilityType}}</span>
-                      </div>
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
@@ -47,13 +40,12 @@
                         </div>
                       </div>
                     </template>
-                  <template slot="edit" slot-scope="{item}">
-                    <div class='mater_other' @click="modifyMatter(item,index)" v-if="!item.price && !matterModifyClass">
-                      <div class="edit-tips">
-                        <span class="tips-word">点击进行填写</span>
+                    <template slot="editPart" slot-scope="{item}">
+                      <div class="edit-part vux-1px-l" @click="modifyMatter(item, index)"
+                           v-show="(item.price && item.tdQty) &&!matterModifyClass">
+                        <span class='iconfont icon-bianji1'></span>
                       </div>
-                    </div>
-                  </template>
+                    </template>
                 </matter-item>
                 <div class='delete_icon' @click="delClick(index,item)" v-if='matterModifyClass'>
                   <x-icon type="ios-checkmark" size="20" class="checked" v-show="showSelIcon(item)"></x-icon>
@@ -69,33 +61,16 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <pop-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :judgeKeys="['facilityCode']"
+          <pop-matter-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :config="matterPopConfig" :requestApi="requestApi" 
+                            :params="matterParams" :default-value="matterList" :filter-list="filterList" ref="matter">                   
+          </pop-matter-list>
+          <!-- <pop-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :judgeKeys="['facilityCode']"
                              :default-value="matterList" :params="matterParams" ref="matter">
-          </pop-facility-list>
+          </pop-facility-list> -->
         </div>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm' :validateMap="checkFieldList"
-                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :isShowAmount="false">
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class='mg_auto'>
-              <x-input type="number"  v-model.number='modifyMatter.tdQty' text-align="right"
-                      placeholder="请输入" @on-blur="checkAmt(modifyMatter)" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <slot name="qtyName">
-                    <span class='required'>本次申请</span>
-                  </slot>
-                </template>
-              </x-input>
-              <x-input type="number"  v-model.number='modifyMatter.price' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <template slot="label">
-                  <span class='required'>估计价格
-                  </span>
-                </template>
-              </x-input>
-              <cell title="估计金额" :value="modifyMatter.tdAmount | numberComma(3)" disabled></cell>
-            </group>
-          </template>
+        <pop-matter :modify-matter='facility' :show-pop="showMatterPop" @sel-confirm='selConfirm' 
+                    v-model='showMatterPop' :btn-is-hide="btnIsHide" :config="matterEditConfig">
         </pop-matter>
 
         <!--备注-->
@@ -139,6 +114,7 @@
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import RNumber from 'components/RNumber'
   import RPicker from 'components/RPicker'
@@ -161,9 +137,6 @@
         },
         numMap: {}, // 用于记录订单物料的数量
         showFacilityPop: false,
-        matterParams: { // 物料列表的请求参数
-          facilityType: '工程物资,固定资产'
-        },
         showMatterPop: false,
         selItems: [],
         facility: {},
@@ -176,13 +149,22 @@
             key: 'price',
             message: '请填写估计价格'
           },
-        ]
+        ],
+        filterList: [
+          {
+            name: '设施名称',
+            value: 'facilityName',
+          }, {
+            name: '设施编码',
+            value: 'facilityCode',
+          }
+        ],
       }
     },
     mixins: [applyCommon],
     components: {
       XTextarea, Datetime, RNumber, Cell, XInput, Group,
-      PopMatter, RPicker, PopBaseinfo, PopFacilityList,
+      PopMatter, RPicker, PopBaseinfo, PopFacilityList, PopMatterList
     },
     computed: {
       // 合计金额

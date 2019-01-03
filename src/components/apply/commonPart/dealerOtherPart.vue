@@ -2,27 +2,30 @@
   <div class="dealer-other-part" v-if="config.length">
     <div v-for="(item,index) in config" :key="index">
       <!-- 结算方式, 物流条款 -->
-      <pop-single-select :title="item.fieldLabel" :data="item.rometeData" :value="dealerInfo[item.fieldCode]" v-model="dealerInfo[item.fieldCode]" 
+      <pop-single-select :title="item.fieldLabel" :data="item.remoteData" :value="dealerInfo[item.fieldCode]" v-model="dealerInfo[item.fieldCode]" 
                         :isRequired="!item.allowBlank" v-if="!item.hiddenInRun && item.xtype === 'r2Combo' "></pop-single-select>
-      <div class="mg_auto">
-        <div class="cell-item" v-if="!item.hiddenInRun && item.xtype === 'r2Numberfield'">
+      <div class="mg_auto" v-if="!item.hiddenInRun">
+        <div class="cell-item" v-if="item.readOnly">
           <div class="title">{{item.fieldLabel}}</div>
           <div class="mode">
-            <span class="mode_content">{{dealerInfo[item.fieldCode]|| "无"}}</span>
+            <span class="mode_content">{{dealerInfo[item.fieldCode] || "无"}}</span>
           </div>
         </div>
-        <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
-                v-model.number='dealerInfo[item.fieldCode]' @on-blur="checkAmt(dealerInfo)" v-if="!item.hiddenInRun && item.xtype === 'r2Permilfield'">
+        <div v-else>
+          <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
+                v-model.number='dealerInfo[item.fieldCode]' @on-blur="checkAmt(dealerInfo)" v-if="item.xtype === 'r2Permilfield'">
           <span slot="label">{{item.fieldLabel}}</span>
-        </x-input>
-        <x-input class="cell-item" text-align='right' placeholder='请填写'
-                v-model.number='dealerInfo[item.fieldCode]' v-if="!item.hiddenInRun && item.xtype === 'r2Textfield'">
-          <span slot="label">{{item.fieldLabel}}</span>
-        </x-input>
-        <datetime class="cell-item" :title="item.fieldLabel" v-model="dealerInfo[item.fieldCode]" placeholder="请选择" 
-                  v-if="!item.hiddenInRun && item.xtype === 'r2Datefield'">
-          <span slot="title">{{item.fieldLabel}}</span>
-        </datetime>
+          </x-input>
+          <x-input class="cell-item" text-align='right' placeholder='请填写'
+                  v-model.number='dealerInfo[item.fieldCode]' v-if="item.xtype === 'r2Textfield'">
+            <span slot="label">{{item.fieldLabel}}</span>
+          </x-input>
+          <datetime class="cell-item" :title="item.fieldLabel" v-model="dealerInfo[item.fieldCode]" placeholder="请选择" 
+                    v-if="item.xtype === 'r2Datefield'">
+            <span slot="title">{{item.fieldLabel}}</span>
+          </datetime>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -55,7 +58,7 @@ export default {
   },
   data(){
     return{
-
+      
     }
   },
   components: {
@@ -75,9 +78,14 @@ export default {
           }
         })
       },
-      deep: true
-      
-    }
+      deep: true  
+    },
+    // dealerConfig: {
+    //   handler(val) {
+    //     this.config = val;
+    //   },
+    //   deep: true
+    // }
   },
   methods: {
     checkAmt(item) {
