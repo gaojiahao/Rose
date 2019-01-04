@@ -93,7 +93,7 @@
 
   .instance-item-wrapper {
     color: #333;
-    padding: .15rem .1rem;
+    padding: .15rem;
     background: #fff;
     border-radius: 4px;
     margin: .1rem;
@@ -110,7 +110,7 @@
       justify-content: space-between;
       .instance_code {
         position: relative;
-        left: -.1rem;
+        left: -.15rem;
         padding-left: .14rem;
         line-height: .12rem;
         font-size: .12rem;

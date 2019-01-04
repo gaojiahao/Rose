@@ -60,15 +60,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!Object.keys(orderList).length">
             <div @click="getMatter" class='no-matter'>
-              <div class="title">物料列表</div>
-              <div class="required">请选择物料</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="required">请选择{{orderListTitle}}</div>
               <span class="iconfont icon-youjiantou r_arrow"></span>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -76,7 +76,7 @@
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
                 <div class="order_code" v-if='oItem.length'>
-                  <span class="order_title">销售合同号</span>
+                  <span class="order_title">{{orderListTitle}}</span>
                   <span class="order_num">{{key}}</span>
                 </div>
                 <div :class="{mater_delete : matterModifyClass}" v-for="(item, index) in oItem" :key="index">
@@ -136,7 +136,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams" :config="matterPopConfig"
-                           :requestApi="requestApi" @sel-matter="selMatter" :filter-list="filterList" :orderTitle="orderTitle"
+                           :requestApi="requestApi" @sel-matter="selMatter" :filter-list="filterList" :order-title="matterPopOrderTitle"
                            :default-value="matterList" ref="matter">
             <!-- <template slot="titleName" slot-scope="props">
               <span class="order-title">销售合同号</span>
@@ -261,7 +261,6 @@
         numMap: {}, // 用于记录订单物料的数量和价格
         formData: {},
         dealerInfo: {},
-        matterParams: {}, // 请求物料的参数
         orderList: {},
         modifyKey: null,
         contactInfo: {},
@@ -312,9 +311,9 @@
         this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
         this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
-        this.matterParams = {
-          dealerCode: this.dealerInfo.dealerCode,
-        };
+        if(this.matterParams.dealerCode){
+          this.matterParams.dealerCode = this.dealerInfo.dealerCode;
+        }
         this.matterList = [];
         this.orderList = {};
       },
@@ -702,9 +701,9 @@
             dealerMobilePhone: formData.dealerDebitContactInformation,//电话
           };
           // 物料列表请求参数
-          this.matterParams = {
-            dealerCode: this.dealerInfo.dealerCode,
-          };
+          if(this.matterParams.dealerCode) {
+            this.matterParams.dealerCode = this.dealerInfo.dealerCode;
+          }
           this.$loading.hide();
         })
       },
@@ -737,9 +736,9 @@
           }
         }
         // 物料列表请求参数
-        this.matterParams = {
-          dealerCode: this.dealerInfo.dealerCode,
-        };
+        if(this.matterParams.dealerCode){
+          this.matterParams.dealerCode = this.dealerInfo.dealerCode;
+        }
         sessionStorage.removeItem(DRAFT_KEY);
       }
     }

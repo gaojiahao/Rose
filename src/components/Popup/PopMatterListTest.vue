@@ -10,7 +10,7 @@
                   :no-data="!hasNext && !matterList.length" @on-pulling-up="onPullingUp" ref="bScroll">
           <div class="each_mater box_sd" v-for="(item, index) in matterList" :key='index'
                @click.stop="selThis(item, index)">
-            <div class="order-code" v-if="item.transCode && !item.transCode.includes(',') && isShowCode">
+            <div class="order-code" v-if="item.transCode && !item.transCode.includes(',')">
               <!-- <slot name='titleName'>
                 <span class="order-title">单号</span>
               </slot> -->
@@ -24,7 +24,7 @@
               <div class="mater_main ">
                 <!-- 物料名称 -->
                 <div class="mater_name">
-                  {{item.inventoryName}}
+                  {{item.inventoryName || item.facilityName}}
                 </div>
                 <!-- 物料基本信息 -->
                 <div class="mater_info">
@@ -34,14 +34,14 @@
                     <div class="ForInline" style="display:inline-block">
                       <div class="mater_code">
                         <span class="title">编码</span>
-                        <span class="num">{{item.inventoryCode}}</span>
+                        <span class="num">{{item.inventoryCode || item.facilityCode}}</span>
                       </div>
                     </div>
                     <!-- 物料规格 -->
                     <div class="ForInline" style="display:inline-block">
                       <div class="mater_spec">
                         <span class="title">规格</span>
-                        <span class="num">{{item.specification || '无'}}</span>
+                        <span class="num">{{item.specification || item.facilitySpecification || '无'}}</span>
                       </div>
                     </div>
                   </div>
@@ -49,7 +49,7 @@
                   <div class="withoutColor">
                     <div class="mater_classify">
                       <span class="type" v-for="(fItem,fIndex) in config" :key="fIndex">
-                        {{fItem.v}}: {{item[fItem.k] || "无"}}
+                        {{fItem.v}}: {{item[fItem.k] != null && item[fItem.k] !== "" ? item[fItem.k] : "无" }}
                       </span>
                     </div>
                   </div>
@@ -79,7 +79,7 @@
   import MSearch from 'components/search'
 
   export default {
-    name: "PopMatterList",
+    name: "PopMatterListTest",
     props: {
       show: {
         type: Boolean,
@@ -92,26 +92,12 @@
           return []
         }
       },
-      // 用于请求的key名，用于区分不同的接口
-      getListMethod: {
-        type: String,
-        default: 'getMatList'
-      },
       // 请求的传参，本地库存调拨请求数据时会传入
       params: {
         type: Object,
         default() {
           return {}
         }
-      },
-      // 以属性查询物料的数据
-      processing: {
-        type: String,
-        default: '成品,商品,服务'
-      },
-      isShowCode: {
-        type: Boolean,
-        default: true
       },
       // 是否检验可用库存，是，当库存为零，该物料不能被选中
       isShowStock: {
@@ -184,7 +170,7 @@
         }
       },
       params: {
-        handler() {
+        handler(val) {
           this.resetCondition();
           // 参数改变，重新请求接口
           this.requestData();
@@ -221,10 +207,20 @@
               isSameOrderCode = true;
           if(item.orderCode) {
             isSameOrderCode = item.orderCode === sItem.orderCode;
-            return isSameOrderCode && item.inventoryCode === sItem.inventoryCode
+            if(item.inventoryCode){
+              return isSameOrderCode && item.inventoryCode === sItem.inventoryCode
+            }
+            else if(item.facilityCode){
+              return isSameOrderCode && item.facilityCode === sItem.facilityCode
+            }
           }
           isSameTransCode = item.transCode === sItem.transCode;
-          return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+          if(item.inventoryCode){
+            return isSameTransCode && item.inventoryCode === sItem.inventoryCode
+          }
+          else if(item.facilityCode){
+            return isSameTransCode && item.facilityCode === sItem.facilityCode
+          }
         });
       },
       // TODO 判断是否展示选中图标
@@ -242,6 +238,7 @@
         }
         let arr = this.tmpItems;
         let delIndex = this.findIndex(arr, sItem);
+        // console.log(this.findIndex(this.tmpItems, sItem))
         // 若存在重复的 则清除
         if (delIndex !== -1) {
           arr.splice(delIndex, 1);

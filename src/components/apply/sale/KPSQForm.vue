@@ -84,7 +84,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams" :config="matterPopConfig" 
-                           :requestApi="requestApi" :orderTitle="orderListTitle"
+                           :requestApi="requestApi" :orderTitle="matterPopOrderTitle"
                            @sel-matter="selMatter" :filter-list="filterList" :default-value="matterList" ref="matter">
             <!-- 抬头 插槽 -->
             <!-- <template slot="titleName" slot-scope="props">

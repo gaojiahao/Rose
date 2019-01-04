@@ -23,7 +23,14 @@
       </div>
       <div class="matter-more">
         <span class="unit" v-for="(cItem,cIndex) in config" :key="cIndex">
-          {{cItem.text}}: {{item[cItem.showFieldCode] || "无"}}
+          {{cItem.text}}: 
+          <span v-if="cItem.showFieldCode">
+            {{item[cItem.showFieldCode] != null &&  item[cItem.showFieldCode] !== "" ? item[cItem.showFieldCode] : "无"}}
+          </span>
+          <span v-else>
+            {{item[cItem.fieldCode] != null &&  item[cItem.fieldCode] !== "" ? item[cItem.fieldCode] : "无"}}
+          </span>
+          
         </span>
       </div>
       <slot name="info" :item="item">

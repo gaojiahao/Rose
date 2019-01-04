@@ -70,12 +70,12 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList" 
-                           :params="matterParams"  :config="matterPopConfig" :requestApi="requestApi" ref="matter">
+                           :params="matterParams"  :config="matterPopConfig" :requestApi="requestApi" :order-title="matterPopOrderTitle" ref="matter">
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' 
-                    :btn-is-hide="btnIsHide" :order-title="matterPopOrderTitle" :config="matterEditConfig">
+                    :btn-is-hide="btnIsHide"  :config="matterEditConfig">
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">

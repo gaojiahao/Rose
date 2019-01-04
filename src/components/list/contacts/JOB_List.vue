@@ -17,12 +17,12 @@
                 ref="bScroll">
         <div class="list-item-wrapper" :class="{visited: item.visited, 'vux-1px-b': index !== listData.length - 1}"
              v-for="(item, index) in listData" :key="index" @click='goDetail(item, index)'>
-          <img class="list_item_img" :src="item.jobPic" alt="job-img" @error="getDefaultImg(item)">
+          <i class="icon-job"></i>
           <div class="list_info_wrapper">
             <div class="list_detail">
               <div class="list_name">{{item.name}}</div>
               <div class="list_detail_item">
-                <span class="list_detail_title">职位类型：</span>
+                <span class="list_detail_title">职位类型: </span>
                 <span class="list_detail_value">{{item.changeType}}</span>
               </div>
             </div>
@@ -94,7 +94,6 @@
             let status = ['', '使用中', '未使用', '草稿'];
             item.status = status[item.status] || '停用';
             this.setStatus(item);
-            item.jobPic = item.jobPic ? item.jobPic : this.getDefaultImg();
             switch (item.type) {
               case 'Y':
                 item.changeType = '营销类';
@@ -197,14 +196,6 @@
             item.statusClass = 'duty_fall_c';
         }
       },
-      // TODO 获取默认图片
-      getDefaultImg(item, gender) {
-        let url = require('assets/default/job.png');
-        if (item) {
-          item.jobPic = url;
-        }
-        return url
-      },
     }
   }
 </script>
@@ -212,6 +203,21 @@
 <style lang="scss" scoped>
   @import "./../../scss/bizList.scss";
   @import '~@/scss/color';
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
+
+  .content {
+    height: calc(100% - .78rem);
+    overflow: auto;
+    .list_wrapper {
+      height: calc(100% - .96rem);
+    }
+  }
 
   .list-item-wrapper {
     display: flex;
@@ -222,7 +228,6 @@
     color: #333;
     transition: background-color 200ms linear;
     box-sizing: border-box;
-    box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
     &.visited {
       background-color: $list_visited;
     }
@@ -233,7 +238,8 @@
       color: #999;
     }
 
-    .list_item_img {
+    .icon-job {
+      display: inline-block;
       width: .3rem;
       height: .3rem;
       border-radius: 50%;
