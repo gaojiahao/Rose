@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="instance-detail vux-1px-t">
-            <div class="instance_detail_item" v-for="(detail, index) in item.detailItem">
+            <div class="instance_detail_item" v-for="(detail, index) in item.detailItem" :key="index">
               <div class="instance_detail_code">入库单号: {{detail.transMatchedCode}}</div>
               <div class="instance_detail_amt_wrapper">
                 <div class="instance_detail_amt_item">
