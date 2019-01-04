@@ -52,6 +52,7 @@ export default {
       matterParams: {}, // 请求物料的接口，参数
       matterPopOrderTitle: '', // 物料列表pop订单title,
       dealerParams: {}, // 请求往来数据的接口和参数
+      otherConfig: []
     }
   },
   components: {
@@ -385,56 +386,76 @@ export default {
         }
       })
     },
+    // 处理配置中数据请求
+    handlerParams(item){
+      let url = item.dataSource.data.url;
+      let params = item.dataSource.data.params;
+      let keys = Object.keys(params);
+      let requestParams = {
+        url,
+      }
+      if(keys.length){
+        let data = {};
+        keys.forEach(key => {
+          data[key] = params[key].value;
+        })
+        requestParams.data = data;
+      }
+      return requestParams
+    },
     // 请求配置
     getFormConfig(){
       getFormConfig(this.viewId).then(({config = []}) => {
         console.log(config)
-        let dealerConfig = [];
-        let matterConfig = [];
-        // 从请求回来的配置中获取往来的配置
+        let dealerConfig = [], matterConfig = [], otherConfig = [];
+        // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
           if(!item.isMultiple) {
             if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = dealerConfig.concat(item.items)
+            }
+            if(item.name === 'ck'){
+              otherConfig = item.items;
             }
           }
           else{
             if(item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
               matterConfig = item.items;
             }
-          }
-          
-          
+          }  
         })
         // 处理往来配置里面的接口请求
         dealerConfig.forEach(item => {
-          function handlerParams(item) {
-            let url = item.dataSource.data.url;
-            let params = item.dataSource.data.params;
-            let keys = Object.keys(params);
-            let requestParams = {
-              url,
-            }
-            if(keys.length){
-              let data = {};
-              keys.forEach(key => {
-                data[key] = params[key].value;
-              })
-              requestParams.data = data;
-            }
-            return requestParams
-          }
-          //处理请求往来数据的接口
-          if(item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
-            this.dealerParams = handlerParams(item);
+          // function handlerParams(item) {
+          //   let url = item.dataSource.data.url;
+          //   let params = item.dataSource.data.params;
+          //   let keys = Object.keys(params);
+          //   let requestParams = {
+          //     url,
+          //   }
+          //   if(keys.length){
+          //     let data = {};
+          //     keys.forEach(key => {
+          //       data[key] = params[key].value;
+          //     })
+          //     requestParams.data = data;
+          //   }
+          //   return requestParams
+          // }
+          if(!item.hiddenInRun){
+            //处理请求往来数据的接口
+            if(item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
+              this.dealerParams = this.handlerParams(item);
 
+            }
+            // 处理请求物流，结算方式的接口
+            if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+              requestData(this.handlerParams(item)).then(data => {
+                this.$set(item, 'remoteData', data.tableContent)
+              })
+            }
           }
-          // 处理请求物流，结算方式的接口
-          if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-            requestData(handlerParams(item)).then(data => {
-              this.$set(item, 'remoteData', data.tableContent)
-            })
-          }
+          
         })
         this.dealerConfig = dealerConfig;
         // 处理物料配置
@@ -468,6 +489,10 @@ export default {
                   // 处理销售出库默认选中成品仓
                   if(item === 'whCode' && this.warehouse.warehouseCode) {
                     matterParams[item] = this.warehouse.warehouseCode;
+                    return 
+                  }
+                  if(item === 'dealerCode' && this.dealerInfo.dealerCode){
+                    matterParams[item] = this.dealerInfo.dealerCode;
                     return 
                   }
                   matterParams[item] = params[item].type === 'text' ? params[item].value : '';
@@ -552,15 +577,22 @@ export default {
             eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
             eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
           }
-          // // 物料信息里面没有数量但是有下拉选择的属性
-          // else if(item.editorType === 'r2Combo'){
-          //   eidtMatterPopConfig.property = eidtMatterPop.slice(0, index);
-          //   eidtMatterPopConfig.editPart = eidtMatterPop.slice(index)
-          // }
           
         })
-        // console.log(eidtMatterPopConfig)
         this.matterEditConfig = eidtMatterPopConfig;
+        // 处理其他信息的配置
+        let other = [];
+        otherConfig.forEach(item => {
+          if(!item.hiddenInRun){
+            if(item.xtype === 'r2MultiSelector' && item.dataSource && item.dataSource.type === 'remoteData'){
+              requestData(this.handlerParams(item)).then(data => {
+                this.$set(item, 'remoteData', data.tableContent)
+              })
+            }
+            other.push(item)
+          }
+        })
+        this.otherConfig = other;
       })
     }
     
