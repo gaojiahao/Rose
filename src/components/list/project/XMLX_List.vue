@@ -13,7 +13,7 @@
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
              :class="{visited: item.visited}" :key="index">
-          <div class="instance_main">
+          <div class="instance-main">
             <div class="instance-header">
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
@@ -149,7 +149,7 @@
     &.visited {
       background-color: $list_visited;
     }
-    .instance_main {
+    .instance-main {
       padding: .15rem;
     }
     .instance-header {

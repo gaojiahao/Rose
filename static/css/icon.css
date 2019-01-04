@@ -134,3 +134,18 @@
   background: url('~assets/iconfont/female.png');
   background-size: cover;
 }
+
+.icon-job{
+  background: url('~assets/iconfont/job.png');
+  background-size: cover;
+}
+
+.icon-send{
+  background: url('~assets/iconfont/send.png');
+  background-size: cover;
+}
+
+.icon-light{
+  background: url('~assets/iconfont/light.png');
+  background-size: cover;
+}

@@ -25,11 +25,11 @@
             </div>
             <div class="list_detail">
               <div class="list_detail_item">
-                <span class="list_detail_title">简称：</span>
+                <span class="list_detail_title">简称: </span>
                 <span class="list_detail_value">{{item.groupShortName}}</span>
               </div>
               <div class="list_detail_item">
-                <span class="list_detail_title">公司类型：</span>
+                <span class="list_detail_title">公司类型: </span>
                 <span class="list_detail_value">{{item.companyType}}</span>
               </div>
             </div>
@@ -185,6 +185,21 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
+
+  .content {
+    height: calc(100% - .78rem);
+    overflow: auto;
+    .list_wrapper {
+      height: calc(100% - .96rem);
+    }
   }
 
   .list-item-wrapper {

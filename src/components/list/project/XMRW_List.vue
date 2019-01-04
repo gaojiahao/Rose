@@ -8,12 +8,12 @@
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
              :class="{visited: item.visited}" :key="index">
-          <div class="instance_main">
+          <div class="instance-main">
             <div class="instance-header">
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
@@ -146,7 +146,7 @@
     &.visited {
       background-color: $list_visited;
     }
-    .instance_main {
+    .instance-main {
       padding: .15rem .15rem 0;
     }
     .instance-header {

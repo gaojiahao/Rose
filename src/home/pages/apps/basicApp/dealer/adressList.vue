@@ -25,11 +25,11 @@
               <div class="basic-detail">
                 <div class="basic_name">{{item.dealerName}}</div>
                 <div class="basic_detail_item">
-                  <span class="basic_detail_title">详细地址：</span>
+                  <span class="basic_detail_title">详细地址:</span>
                   <span class="basic_detail_value">{{item.detailAddress}}</span>
                 </div>
                 <div class="basic_detail_item">
-                  <span class="basic_detail_title">关系标签：</span>
+                  <span class="basic_detail_title">关系标签:</span>
                   <span>{{item.dealerLabelName}}</span>
                 </div>
               </div>
@@ -457,18 +457,18 @@
       .basic_detail_item {
         display: flex;
         margin-top: .12rem;
-        line-height: .12rem;
+        line-height: .16rem;
         font-size: .12rem;
         & + .basic_detail_item {
           margin-top: .08rem;
         }
       }
       .basic_detail_title {
+        margin-right: .06rem;
         color: #999;
       }
       .basic_detail_value {
         flex: 1;
-        line-height: .16rem;
       }
     }
 
