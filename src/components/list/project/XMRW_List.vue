@@ -8,21 +8,21 @@
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
              :class="{visited: item.visited}" :key="index">
-          <div class="instance_main">
+          <div class="instance-main">
             <div class="instance-header">
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
-              <div class="project_name">项目名称：{{item.projectName_project}}</div>
+              <div class="project_name" :class="{'time-to-wrap': item.projectName_project.length > 15}">项目名称：{{item.projectName_project}}</div>
               <div class="project_manager">
                 <span class="project_manager_title">标准工时：</span>
-                <span class="project_manager_value">{{item.planTime}}</span>
+                <span class="project_manager_value">{{item.planTime || 0}}</span>
               </div>
             </div>
             <div class="instance-task-container">
@@ -33,11 +33,11 @@
                   <div class="task_info">
                     <div class="task_info_item">
                       <span class="task_info_title">预算成本：</span>
-                      <span class="task_info_amt">￥{{task.budgetCapital_project | numberComma}}</span>
+                      <span class="task_info_amt">￥{{task.budgetCapital_project || 0 | numberComma}}</span>
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">周期天数：</span>
-                      <span class="task_info_day">{{task.planCycleDays}}天</span>
+                      <span class="task_info_day">{{task.planCycleDays || 0}}天</span>
                     </div>
                   </div>
                   <div class="task_info">
@@ -58,7 +58,7 @@
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
@@ -131,154 +131,88 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
-  @import '~@/scss/color';
-
-  .instance-item-wrapper {
-    margin: .1rem;
-    width: calc(100% - .2rem);
-    border-radius: 4px;
-    background-color: #fff;
-    color: #333;
-    transition: background-color 200ms linear;
-    box-sizing: border-box;
-    box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
-    &.visited {
-      background-color: $list_visited;
+@import './project.scss';
+.instance-item-wrapper {
+  .instance-main {
+    padding: .15rem .15rem 0;
+  }
+  .instance-project-container {
+    display: flex;
+    align-items: center;
+    margin-top: .25rem;
+    .project_name {
+      line-height: .12rem;
+      font-size: .12rem;
+      &.time-to-wrap {
+        flex: 1;
+        line-height: .16rem;
+      }
     }
-    .instance_main {
-      padding: .15rem .15rem 0;
-    }
-    .instance-header {
+    .project_manager {
       display: flex;
-      justify-content: space-between;
-      .instance_code {
-        position: relative;
-        left: -.15rem;
-        padding-left: .14rem;
-        line-height: .12rem;
-        font-size: .12rem;
-        &:before {
-          width: .08rem;
-          border-left: .08rem solid #3296FA;
-        }
-      }
-      .instance_status {
-        font-size: .12rem;
-        line-height: .12rem;
-      }
+      margin-left: .1rem;
+      line-height: .12rem;
+      font-size: .12rem;
     }
-    .duty_done_c {
-      color: #3296FA;
-    }
-    .duty_doing_c {
-      color: #333;
-    }
-    .duty_fall_c {
+    .project_manager_title {
       color: #999;
     }
-
-    .instance-project-container {
-      display: flex;
-      align-items: center;
-      margin-top: .25rem;
-      .project_name {
-        line-height: .12rem;
-        font-size: .12rem;
-      }
-      .project_manager {
-        display: flex;
-        margin-left: .1rem;
-        line-height: .12rem;
-        font-size: .12rem;
-      }
-      .project_manager_title {
-        color: #999;
-      }
-      .project_manager_value {
-        color: #696969;
-      }
+    .project_manager_value {
+      color: #696969;
     }
-
-    .instance-task-container {
-      margin-top: .2rem;
-      .instance_task_item {
-        display: flex;
-        & + .instance_task_item {
-          margin-top: .15rem;
-        }
-        &:last-child {
-          .task-detail {
-            &:after {
-              display: none;
-            }
+  }
+  .instance-task-container {
+    margin-top: .2rem;
+    .instance_task_item {
+      display: flex;
+      & + .instance_task_item {
+        margin-top: .15rem;
+      }
+      &:last-child {
+        .task-detail {
+          &:after {
+            display: none;
           }
         }
       }
-      .icon {
-        display: inline-block;
-        width: .5rem;
-        height: .5rem;
-      }
-      .task-detail {
-        flex: 1;
-        margin-left: .1rem;
-        padding-bottom: .15rem;
-      }
-      .task_name {
-        line-height: .12rem;
-        font-size: .14rem;
-      }
-      .task_info {
-        display: flex;
-        margin-top: .12rem;
-        line-height: .12rem;
-        font-size: .12rem;
-        & + .task_info {
-          margin-top: .08rem;
-        }
-      }
-      .task_info_item {
-        & + .task_info_item {
-          margin-left: .1rem;
-        }
-      }
-      .task_info_title {
-        color: #999;
-      }
-      .task_info_amt {
-        color: #FA7138;
-      }
-      .task_info_day {
-        color: #696969;
+    }
+    .icon {
+      display: inline-block;
+      width: .5rem;
+      height: .5rem;
+    }
+    .task-detail {
+      flex: 1;
+      margin-left: .1rem;
+      padding-bottom: .15rem;
+    }
+    .task_name {
+      font-size: .14rem;
+      line-height: .18rem;
+    }
+    .task_info {
+      display: flex;
+      margin-top: .12rem;
+      line-height: .12rem;
+      font-size: .12rem;
+      & + .task_info {
+        margin-top: .08rem;
       }
     }
-
-    .instance-bottom {
-      padding: .15rem;
-      line-height: .14rem;
-      font-size: .12rem;
-      .instance-bottom-wrapper {
-        display: flex;
-        align-items: center;
-        padding: .07rem .1rem;
-        background-color: #f7f7f7;
-        border-radius: .2rem;
+    .task_info_item {
+      & + .task_info_item {
+        margin-left: .1rem;
       }
-      .instance_bottom_item {
-        display: flex;
-        align-items: center;
-        color: #999;
-      }
-      .instance_handler {
-        margin-right: .3rem;
-      }
-      .icon {
-        display: inline-block;
-        margin-right: .05rem;
-        width: .16rem;
-        height: .16rem;
-      }
+    }
+    .task_info_title {
+      color: #999;
+    }
+    .task_info_amt {
+      color: #FA7138;
+    }
+    .task_info_day {
+      color: #696969;
     }
   }
+}
 </style>

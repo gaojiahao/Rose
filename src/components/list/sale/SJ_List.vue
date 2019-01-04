@@ -44,7 +44,7 @@
             </div>
             <div class="instance_bottom_item instance_mod_time">
               <i class="icon icon-mod-time"></i>
-              <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+              <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@
 
   .instance-item-wrapper {
     color: #333;
-    padding: .15rem .1rem;
+    padding: .15rem;
     background: #fff;
     border-radius: 4px;
     margin: .1rem;
@@ -110,7 +110,7 @@
       justify-content: space-between;
       .instance_code {
         position: relative;
-        left: -.1rem;
+        left: -.15rem;
         padding-left: .14rem;
         line-height: .12rem;
         font-size: .12rem;
@@ -207,7 +207,7 @@
         color: #999;
       }
       .instance_handler {
-        margin-right: .3rem;
+        margin-right: .15rem;
       }
       .icon {
         display: inline-block;

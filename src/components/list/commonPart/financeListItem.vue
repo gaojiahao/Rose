@@ -3,11 +3,8 @@
     <!-- 订单编码, 总金额 -->
     <div class="order-top vux-1px-b">
       <div class="order_code">
-        <div class="code"> 
-          <span class='icon-code'></span>
-          <span>{{item.transCode}}</span>
-        </div>
-        <div class="status" :class="item.statusClass">{{item.biStatus}}</div>
+        <span class="code vux-1px-l">{{item.transCode}}</span>
+        <span class="status" :class="item.statusClass">{{item.biStatus}}</span>
       </div>
       <div class="order_amount" v-show="isHasCount">
         <p class="amount">总支付￥{{item.count | toFixed | numberComma(3)}}</p>
@@ -46,7 +43,7 @@
       </div>
       <div class="creator modTime">
         <span class="icon icon-mod-time"></span>
-        <span>修改时间：{{item.modTime | dateFormat("YYYY-MM-DD")}}</span>
+        <span>修改时间：{{item.modTime | dateFormat("YYYY-MM-DD HH:mm")}}</span>
       </div>
     </div>
 
@@ -104,21 +101,22 @@
     }
     // 订单编码，报销或者借款合计
     .order-top {
-      padding: 0 .18rem 0 .12rem;
+      padding: 0 .15rem;
       line-height: .14rem;
       .order_code {
-        padding-bottom: .15rem;
-        display: flex;
-        justify-content: space-between;
         color: #333;  
+        display: flex;
+        padding-bottom: .15rem;
+        justify-content: space-between;
         .code {
-          display: flex;
-          align-items: center;
-          font-size: .14rem;
-          .icon-code {
-            width: .14rem;
-            height: .14rem;
-            margin-right: .05rem;
+          position: relative;
+          left: -.15rem;
+          padding-left: .14rem;
+          line-height: .12rem;
+          font-size: .12rem;
+          &:before {
+            width: .08rem;
+            border-left: .08rem solid #3296FA;
           }
         }
         .duty_done_c {
@@ -231,7 +229,7 @@
         align-items: center;
       }
       .modTime {
-        margin-left: .26rem;
+        margin-left: .15rem;
       }
 
     }

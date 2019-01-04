@@ -28,7 +28,7 @@
             </div>
           </div>
           <div class="instance-detail vux-1px-t">
-            <div class="instance_detail_item" v-for="(detail, index) in item.detailItem">
+            <div class="instance_detail_item" v-for="(detail, index) in item.detailItem" :key="index">
               <div class="instance_detail_code">协议号: {{detail.transMatchedCode}}</div>
               <div class="instance_detail_amt_wrapper">
                 <div class="instance_detail_amt_item">
@@ -52,7 +52,7 @@
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
@@ -240,7 +240,7 @@
         color: #999;
       }
       .instance_handler {
-        margin-right: .3rem;
+        margin-right: .15rem;
       }
       .icon {
         display: inline-block;

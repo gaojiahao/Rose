@@ -31,11 +31,11 @@
             </div>
             <div class="list_detail">
               <div class="list_detail_item">
-                <span class="list_detail_title">手机：</span>
+                <span class="list_detail_title">手机: </span>
                 <span class="list_detail_value">{{item.mobile}}</span>
               </div>
               <div class="list_detail_item">
-                <span class="list_detail_title">工号：</span>
+                <span class="list_detail_title">工号: </span>
                 <span class="list_detail_value">{{item.userCode}}</span>
               </div>
             </div>
@@ -204,6 +204,21 @@
 <style lang='scss' scoped>
   @import './../../scss/bizList';
   @import '~@/scss/color';
+
+  /* 没有新增 */
+  .no-add {
+    .content {
+      height: 100%;
+    }
+  }
+
+  .content {
+    height: calc(100% - .78rem);
+    overflow: auto;
+    .list_wrapper {
+      height: calc(100% - .96rem);
+    }
+  }
 
   .list-item-wrapper {
     display: flex;

@@ -8,27 +8,29 @@
           <r-sort @on-sort="onSortList" @on-filter="onFilter" :view-id="listViewID" ref="sort"></r-sort>
         </div>
       </div>
-      <r-scroll class="list_wrapper has-sort" :options="scrollOptions" :has-next="hasNext"
+      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
         <div class="instance-item-wrapper" v-for="(item, index) in listData" @click="goDetail(item, index)"
              :class="{visited: item.visited}" :key="index">
-          <div class="instance_main">
+          <div class="instance-main">
             <div class="instance-header">
               <span class="instance_code vux-1px-l">{{item.transCode}}</span>
               <span class="instance_status" :class="item.statusClass">{{item.biStatus}}</span>
             </div>
             <div class="instance-project-container">
-              <div class="project_name">{{item.projectName_project}}</div>
-              <div class="project_manager">
-                <span class="project_manager_title">项目经理：</span>
-                <span class="project_manager_value">{{item.projectManager_project}}</span>
+              <div class="project_name" :class="{'time-to-wrap': item.projectName_project.length > 12}">{{item.projectName_project}}</div>
+              <div>
+                <div class="project_manager">
+                  <span class="project_manager_title">项目经理：</span>
+                  <span class="project_manager_value">{{item.projectManager_project}}</span>
+                </div>
               </div>
             </div>
             <div class="instance-task-container">
               <div class="instance_task_item" v-for="(task, tIndex) in item.detailItem" :key="tIndex">
                 <i class="icon" :class="[getTaskIcon(tIndex)]"></i>
-                <div class="task-detail vux-1px-b">
+                <div class="task-detail vux-1px-b" :class="{'when-is-long': task.taskName.length > 18}">
                   <div class="task_name">{{task.taskName}}</div>
                   <div class="task_info">
                     <div class="task_info_item">
@@ -37,7 +39,7 @@
                     </div>
                     <div class="task_info_item">
                       <span class="task_info_title">周期天数：</span>
-                      <span class="task_info_day">{{task.planCycleDays}}天</span>
+                      <span class="task_info_day">{{task.planCycleDays || 0}}天</span>
                     </div>
                   </div>
                 </div>
@@ -52,14 +54,11 @@
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
         </div>
-
-        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        noCount @click.native="goDetail(item, index)"></just-word-item>-->
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>
@@ -122,151 +121,90 @@
 </script>
 
 <style lang='scss' scoped>
-  @import './../../scss/bizList';
-  @import '~@/scss/color';
-
-  .instance-item-wrapper {
-    margin: .1rem;
-    width: calc(100% - .2rem);
-    border-radius: 4px;
-    background-color: #fff;
-    color: #333;
-    transition: background-color 200ms linear;
-    box-sizing: border-box;
-    box-shadow: 0 2px 10px 0 rgba(228, 228, 232, 0.5);
-    &.visited {
-      background-color: $list_visited;
+@import './project.scss';
+.instance-item-wrapper {
+  .instance-main {
+    padding: .15rem .15rem 0;
+  }
+  .instance-project-container {
+    display: flex;
+    align-items: center;
+    margin-top: .25rem;
+    .project_name {
+      font-weight: 600;
+      font-size: .18rem;
+      line-height: .22rem;
+      &.time-to-wrap {
+        flex: 1;
+      }
     }
-    .instance_main {
-      padding: .15rem .15rem 0;
-    }
-    .instance-header {
+    .project_manager {
       display: flex;
-      justify-content: space-between;
-      .instance_code {
-        position: relative;
-        left: -.15rem;
-        padding-left: .14rem;
-        line-height: .12rem;
-        font-size: .12rem;
-        &:before {
-          width: .08rem;
-          border-left: .08rem solid #3296FA;
-        }
-      }
-      .instance_status {
-        font-size: .12rem;
-        line-height: .12rem;
-      }
+      margin-left: .1rem;
+      font-size: .12rem;
     }
-    .duty_done_c {
-      color: #3296FA;
-    }
-    .duty_doing_c {
-      color: #333;
-    }
-    .duty_fall_c {
+    .project_manager_title {
       color: #999;
     }
-
-    .instance-project-container {
-      display: flex;
-      align-items: center;
-      margin-top: .25rem;
-      .project_name {
-        line-height: .12rem;
-        font-size: .18rem;
-        font-weight: 600;
-      }
-      .project_manager {
-        display: flex;
-        margin-left: .1rem;
-        font-size: .12rem;
-      }
-      .project_manager_title {
-        color: #999;
-      }
-      .project_manager_value {
-        color: #696969;
-      }
+    .project_manager_value {
+      color: #696969;
     }
-
-    .instance-task-container {
-      margin-top: .2rem;
-      .instance_task_item {
-        display: flex;
-        & + .instance_task_item {
-          margin-top: .15rem;
-        }
-        &:last-child {
-          .task-detail {
-            &:after {
-              display: none;
-            }
+  }
+  .instance-task-container {
+    margin-top: .2rem;
+    .instance_task_item {
+      display: flex;
+      & + .instance_task_item {
+        margin-top: .15rem;
+      }
+      &:last-child {
+        .task-detail {
+          &:after {
+            display: none;
           }
         }
       }
-      .icon {
-        display: inline-block;
-        width: .5rem;
-        height: .5rem;
-      }
-      .task-detail {
-        flex: 1;
-        margin-left: .1rem;
-        padding: .07rem 0 .23rem;
-      }
+    }
+    .icon {
+      display: inline-block;
+      width: .5rem;
+      height: .5rem;
+    }
+    .task-detail {
+      flex: 1;
+      margin-left: .1rem;
+      padding: .07rem 0 .23rem;
+    }
+    .task_name {
+      font-size: .14rem;
+      line-height: .12rem;
+    }
+    .when-is-long {
+      padding-top: unset;
       .task_name {
-        line-height: .12rem;
-        font-size: .14rem;
-      }
-      .task_info {
-        display: flex;
-        margin-top: .1rem;
-        line-height: .12rem;
-        font-size: .12rem;
-      }
-      .task_info_item {
-        & + .task_info_item {
-          margin-left: .1rem;
-        }
-      }
-      .task_info_title {
-        color: #999;
-      }
-      .task_info_amt {
-        color: #FA7138;
-      }
-      .task_info_day {
-        color: #696969;
+        line-height: .18rem;
       }
     }
-
-    .instance-bottom {
-      padding: .15rem;
-      line-height: .14rem;
+    .task_info {
+      display: flex;
+      margin-top: .1rem;
+      line-height: .12rem;
       font-size: .12rem;
-      .instance-bottom-wrapper {
-        display: flex;
-        align-items: center;
-        padding: .07rem .1rem;
-        background-color: #f7f7f7;
-        border-radius: .2rem;
+    }
+    .task_info_item {
+      & + .task_info_item {
+        margin-left: .1rem;
       }
-      .instance_bottom_item {
-        display: flex;
-        align-items: center;
-        color: #999;
-      }
-      .instance_handler {
-        margin-right: .3rem;
-      }
-      .icon {
-        display: inline-block;
-        margin-right: .05rem;
-        width: .16rem;
-        height: .16rem;
-      }
+    }
+    .task_info_title {
+      color: #999;
+    }
+    .task_info_amt {
+      color: #FA7138;
+    }
+    .task_info_day {
+      color: #696969;
     }
   }
+}
 </style>

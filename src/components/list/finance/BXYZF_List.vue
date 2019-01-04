@@ -17,7 +17,6 @@
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>  
   </div>
-  </div>
 </template>
 
 <script>

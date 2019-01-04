@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="instance-detail vux-1px-t">
-            <div class="instance_detail_item" v-for="(detail, index) in item.detailItem">
+            <div class="instance_detail_item" v-for="(detail, index) in item.detailItem" :key="index">
               <div class="instance_detail_code">入库单号: {{detail.transMatchedCode}}</div>
               <div class="instance_detail_amt_wrapper">
                 <div class="instance_detail_amt_item">
@@ -53,28 +53,11 @@
               </div>
               <div class="instance_bottom_item instance_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD')}}</span>
+                <span>修改时间：{{item.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
         </div>
-
-        <!--<just-word-item :item="item" v-for="(item, index) in listData" :key="index"
-                        @click.native="goDetail(item, index)">
-          <template slot="list-item" slot-scope="{item}">
-            <div class="each-slot-item" v-for="(val, index) in item.detailItem" :key="index">
-              <div class="top-content">入库单号: {{val.transMatchedCode}}</div>
-              <div class="main-content">
-                <div class="info_part">
-                  本次申请: ￥{{val.applicationAmount | numberComma}}
-                </div>
-                <div class="info_part different_type">
-                  本次支付: ￥{{val.tdAmount | numberComma}}
-                </div>
-              </div>
-            </div>
-          </template>
-        </just-word-item>-->
       </r-scroll>
     </div>
     <add-btn :action="action" :goEdit="goEdit"></add-btn>
@@ -246,7 +229,7 @@
         color: #999;
       }
       .instance_handler {
-        margin-right: .3rem;
+        margin-right: .15rem;
       }
       .icon {
         display: inline-block;
