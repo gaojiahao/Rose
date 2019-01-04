@@ -21,7 +21,6 @@
             <div class="instance-project-container">
               <div class="project_name" :class="{'time-to-wrap': item.projectName_project.length > 12}">{{item.projectName_project}}</div>
               <div>
-                <!-- <div class="instance_process_status">{{item.biProcessStatus || '暂无流程'}}</div> -->
                 <div class="project_manager">
                   <span class="project_manager_title">项目经理：</span>
                   <span class="project_manager_value">{{item.projectManager_project}}</span>
@@ -124,7 +123,7 @@
 <style lang='scss' scoped>
 @import './project.scss';
 .instance-item-wrapper {
-  .instance_main {
+  .instance-main {
     padding: .15rem .15rem 0;
   }
   .instance-project-container {
