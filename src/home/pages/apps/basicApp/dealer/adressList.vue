@@ -43,7 +43,7 @@
               </div>
               <div class="basic_bottom_item basic_mod_time">
                 <i class="icon icon-mod-time"></i>
-                <span>创建时间：{{item.crtTime | dateFormat('YYYY-MM-DD')}}</span>
+                <span>创建时间：{{item.crtTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
               </div>
             </div>
           </div>
@@ -474,7 +474,7 @@
 
     .basic-bottom {
       margin-top: .15rem;
-      padding: .15rem;
+      padding: .15rem .1rem;
       line-height: .14rem;
       font-size: .12rem;
       &:before {
@@ -483,10 +483,12 @@
       }
       .basic-bottom-wrapper {
         display: flex;
+        justify-content: center;
         align-items: center;
         padding: .07rem .1rem;
         background-color: #f7f7f7;
         border-radius: .2rem;
+        white-space: nowrap;
       }
       .basic_bottom_item {
         display: flex;
@@ -494,7 +496,7 @@
         color: #999;
       }
       .basic_handler {
-        margin-right: .3rem;
+        margin-right: .15rem;
       }
       .icon {
         display: inline-block;

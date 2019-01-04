@@ -124,7 +124,7 @@
 <style lang='scss' scoped>
 @import './project.scss';
 .instance-item-wrapper {
-  .instance_main {
+  .instance-main {
     padding: .15rem .15rem 0;
   }
   .instance-project-container {
@@ -185,7 +185,7 @@
       .task_name {
         line-height: .18rem;
       }
-    }    
+    }
     .task_info {
       display: flex;
       margin-top: .1rem;

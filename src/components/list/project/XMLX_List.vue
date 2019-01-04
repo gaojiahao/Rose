@@ -134,7 +134,7 @@
 <style lang='scss' scoped>
 @import './project.scss';
 .instance-item-wrapper {
-  .instance_main {
+  .instance-main {
     padding: .15rem;
   }
   .instance-project-type {

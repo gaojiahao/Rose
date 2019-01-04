@@ -133,7 +133,7 @@
 <style lang='scss' scoped>
 @import './project.scss';
 .instance-item-wrapper {
-  .instance_main {
+  .instance-main {
     padding: .15rem .15rem 0;
   }
   .instance-project-container {
