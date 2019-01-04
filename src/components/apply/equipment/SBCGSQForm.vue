@@ -61,8 +61,8 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <pop-matter-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :config="matterPopConfig" :requestApi="requestApi" 
-                            :params="matterParams" :default-value="matterList" :filter-list="filterList" ref="matter">                   
+          <pop-matter-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :config="matterPopConfig" 
+                           :matter-params="matterParams" :default-value="matterList" :filter-list="filterList" ref="matter">                   
           </pop-matter-list>
           <!-- <pop-facility-list :show="showFacilityPop" v-model="showFacilityPop" @sel-matter="selMatter" :judgeKeys="['facilityCode']"
                              :default-value="matterList" :params="matterParams" ref="matter">

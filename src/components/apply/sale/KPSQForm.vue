@@ -7,7 +7,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo"
+        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" :dealer-params="dealerParams"
                          @sel-dealer="selDealer" @sel-contact="selContact"></pop-dealer-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
@@ -37,17 +37,6 @@
                   <matter-item :item="item" @on-modify="modifyMatter(item, index, key)" :show-delete="matterModifyClass"
                                @click.native="delClick(index, item, key)" :config="matterEditConfig.property">
                     <template slot-scope="{item}" slot="info">
-                      <!-- 物料属性和单位 -->
-                      <!-- <div class='matter-more'>
-                        <span class='unit'>属性: {{item.processing}}</span>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
-                        <span class='mater_color' v-if="item.taxRate">税率: {{item.taxRate}}</span>
-                      </div>
-                      <div class="mater_more">
-                        <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
-                        <span>待开票数量: {{item.qtyBal}}</span>
-                      </div> -->
                       <!-- 物料数量和价格 -->
                       <div class='mater_other' v-if="item.price && item.tdQty">
                         <div class='mater_price'>
@@ -83,31 +72,9 @@
             <span class="add_more" v-if="matterList.length" @click="addMatter">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :params="matterParams" :config="matterPopConfig" 
-                           :requestApi="requestApi" :orderTitle="matterPopOrderTitle"
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" :config="matterPopConfig" 
+                           :matter-params="matterParams" :orderTitle="matterPopOrderTitle"
                            @sel-matter="selMatter" :filter-list="filterList" :default-value="matterList" ref="matter">
-            <!-- 抬头 插槽 -->
-            <!-- <template slot="titleName" slot-scope="props">
-              <span class="order-title">出库单</span>
-            </template> -->
-            <!-- 基本属性 插槽 -->
-            <!-- <template slot="attribute" slot-scope="{item}">
-              <div class="mater_classify">
-                <span class="type">单位: {{item.measureUnit}}</span>
-                <span class="type">辅助计量: {{item.invSubUnitName}}</span>
-                <span class="type">辅助计量说明: {{item.invSubUnitComment}}</span>
-              </div>
-            </template> -->
-            <!-- 余额、单价等 插槽 -->
-            <!-- <template slot="storage" slot-scope="{item}">
-              <div class="mater_material">
-                <span>待开票数量: {{item.qtyBal}}</span>
-                <span>主计倍数: {{item.invSubUnitMulti}}</span>
-              </div>
-              <div>
-                单价: ￥{{item.price | numberComma}}
-              </div>
-            </template> -->
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
@@ -160,7 +127,7 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RNumber from 'components/RNumber'
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopInvoiceList from 'components/Popup/invoice/PopInvoiceList'
   import PopMatterList from 'components/Popup/PopMatterListTest'
   import RPicker from 'components/RPicker'
@@ -195,15 +162,11 @@
             value: 'transCode',
           }
         ],
-        listId: 'ebd2225c-9354-4df9-bded-8631e3cac4ac',
         numMap: {},
         orderList: {},
         matterList: [],
         dealerInfo: {}, //客户信息
         contactInfo: {}, // 联系人信息
-        matterParams: {
-          dealerCode: ''
-        },
         formData: {
           biProcessStatus: '',
           biComment: ''
@@ -214,7 +177,12 @@
       // 选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        this.matterParams.dealerCode = this.dealerInfo.dealerCode;
+        if(this.matterParams.data.dealerCode != null) {
+          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
+          this.matterList = [];
+          this.orderList = {}
+        }
+        
       },
       // TODO 选中联系人
       selContact(item) {
@@ -545,9 +513,7 @@
             dealerMobilePhone: formData.dealerCreditContactInformation,//电话
           };
           // 物料列表请求参数
-          this.matterParams = {
-            dealerCode: this.dealerInfo.dealerCode,
-          };
+          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode,
           this.$loading.hide();
         })
       },
@@ -580,7 +546,7 @@
           }
         }
         this.contactInfo = draft.contactInfo;
-        this.matterParams.dealerCode = this.dealerInfo.dealerCode;
+        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
       }
     },

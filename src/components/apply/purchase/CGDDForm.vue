@@ -7,8 +7,8 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商"
-                          dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" 
+                          dealerTitle="供应商" @sel-contact="selContact" :dealer-params="dealerParams"></pop-dealer-list>
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
@@ -70,7 +70,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList"
-                           :config="matterPopConfig" :requestApi="requestApi" ref="matter">
+                           :config="matterPopConfig" :matter-params="matterParams" ref="matter">
           </pop-matter-list>
 
         </div>
@@ -115,7 +115,7 @@ import { getBaseInfoData, saveAndStartWf, saveAndCommitTask, getDictByType, subm
 import common from 'components/mixins/applyCommon'
 // 组件引入
 import PopMatterList from 'components/Popup/PopMatterListTest'
-import PopDealerList from 'components/Popup/PopDealerList'
+import PopDealerList from 'components/Popup/PopDealerListTest'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
 import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
@@ -134,9 +134,7 @@ export default {
   },
   data () {
     return {
-      listId: 'dd4d228d-fc01-4038-bf17-df54d8d06eb9',
       taxRate: 0.16, // 税率
-      numMap: {},
       dealer: {}, // 往来信息
       formData: { // 表单提交内容
         creator: '',
@@ -179,20 +177,7 @@ export default {
   filters: {
     dateFormat,
   },
-  computed:{
-    // 是否含预收
-    hasAdvance() {
-      let { paymentTerm } = this.dealerInfo;
-      return paymentTerm && paymentTerm.includes('预收');
-    },
-  },
   methods: {
-    // 获取结算方式
-    getPaymentTerm () {
-      return getDictByType('paymentTerm').then(({ tableContent }) => {
-        this.transMode = tableContent;
-      })
-    },
     // 选中的供应商
     selDealer (val) {
       this.dealerInfo = JSON.parse(val)[0];

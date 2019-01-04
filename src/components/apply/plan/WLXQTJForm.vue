@@ -65,7 +65,7 @@
           </div>
           <!-- 订单popup -->
           <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder" :default-value="matterList" 
-                           :params="matterParams"  :config="matterPopConfig" :requestApi="requestApi" 
+                           :config="matterPopConfig" :matter-params="matterParams"
                            :order-title="matterPopOrderTitle" ref="matter" >
           </pop-matter-list>
           <!-- <pop-order-xqtj-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder"
@@ -137,7 +137,6 @@
     },
     data() {
       return {
-        listId: '7532f8ea-caf3-4fc4-97f6-b5aad7bcf6a0',
         orderList: {},                                  // 订单列表
         showOrderPop: false,                         // 是否显示物料的popup
         formData: {

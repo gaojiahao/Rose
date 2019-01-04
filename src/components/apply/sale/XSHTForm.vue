@@ -7,69 +7,9 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contact"></pop-dealer-list>
-        <div v-for="(item,index) in dealerConfig" :key="index">
-          <!-- 结算方式, 物流条款 -->
-          <pop-single-select title="结算方式" :data="item.rometeData" :value="dealerInfo[item.fieldCode]"
-                            v-model="dealerInfo[item.fieldCode]" v-if="!item.hiddenInRun && item.xtype === 'r2Combo' "></pop-single-select>
-          <div class="mg_auto no_top">
-            <div class="cell-item" v-if="!item.hiddenInRun && item.xtype === 'r2Numberfield'">
-              <div class="title">{{item.fieldLabel}}</div>
-              <div class="mode">
-                <span class="mode_content">{{dealerInfo[item.fieldCode]|| "无"}}</span>
-              </div>
-            </div>
-            <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
-                    v-model.number='dealerInfo[item.fieldCode]' @on-blur="checkAmt(dealerInfo)" v-if="!item.hiddenInRun && item.xtype === 'r2Permilfield'">
-              <span slot="label">{{item.fieldLabel}}</span>
-            </x-input>
-            <datetime class="cell-item" :title="item.fieldLabel" v-model="dealerInfo[item.fieldCode]" placeholder="请选择" 
-                      v-if="!item.hiddenInRun && item.xtype === 'r2Datefield'">
-              <span slot="title" class="title">{{item.fieldLabel}}</span>
-            </datetime>
-          </div>
-        </div>
-        <!-- 结算方式 -->
-        <!-- <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
-                           v-model="dealerInfo.paymentTerm"></pop-single-select> -->
-        <!-- 物流条款 -->
-        <!-- <pop-single-select title="物流条款" :data="logisticsTerm" :value="dealerInfo.dealerLogisticsTerms"
-                           v-model="dealerInfo.dealerLogisticsTerms"></pop-single-select> -->
-        <!-- 有效期至 -->
-        <!-- <div class="mg_auto no_top">
-          <div class="cell-item">
-            <div class="title">账期天数</div>
-            <div class="mode">
-              <span class="mode_content">{{dealerInfo.pamentDays || "无"}}</span>
-            </div>
-          </div>
-        </div>
-        <div class="mg_auto no_top">
-          <div class="cell-item">
-            <div class="title required">合同总金额</div>
-            <div class="mode">
-              <span class="mode_content">￥{{thenTotalAmntBal | numberComma}}</span>
-            </div>
-          </div>
-          <div class="cell-item" @click="dateSelect('validUntil')">
-            <div class="title required">合同到期日</div>
-            <div class="mode">
-              <span class="mode_content">{{dealerInfo.validUntil || '请选择'}}</span>
-              <span class="iconfont icon-shenglve"></span>
-            </div>
-          </div>
-          <x-input title="预收款" class="cell-item" type="number" text-align='right' placeholder='请填写'
-                   v-model.number='dealerInfo.tdAmountCopy1' v-show="hasAdvance" @on-blur="checkAmt(dealerInfo)">
-          </x-input>
-          <div class="cell-item" @click="dateSelect('advancePaymentDueDate')" v-show="hasAdvance">
-            <div class="title">预收到期日</div>
-            <div class="mode">
-              <span class="mode_content">{{dealerInfo.advancePaymentDueDate || '请选择'}}</span>
-              <span class="iconfont icon-shenglve"></span>
-            </div>
-          </div>        
-        </div> -->
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -94,17 +34,6 @@
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
                              @click.native="delClick(item,index)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                    <!-- 物料属性和单位 -->
-                    <!-- <div class="mater_more">
-                      <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='unit'>辅助计量: {{item.assMeasureUnit}}</span>
-                      <span class='unit'>辅助计量说明: {{item.assMeasureDescription}}</span>
-                    </div>
-                    <div class="mater_more">
-                      <span class="processing" v-show="item.dateActivation">交付开始日: {{item.dateActivation}}</span>
-                      <span class='unit' v-show="item.executionDate">交付截止日: {{item.executionDate}}</span>
-                    </div> -->
                     <!-- 物料数量和价格 -->
                     <div class='mater_other' v-if="item.price && item.tdQty">
                       <div class='mater_price'>
@@ -138,27 +67,13 @@
             <span class="add_more" v-if="matterList.length" @click="showMaterielPop = !showMaterielPop">新增更多物料</span>
           </div>
           <!-- 物料popup -->
-          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" :requestApi="requestApi"
-                           :default-value="matterList" :params="matterParams"
+          <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" 
+                           :matter-params="matterParams" :default-value="matterList" 
                            ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'
                     v-model='showMatterPop' :btn-is-hide="btnIsHide" :show-date-time="true" :config="matterEditConfig">
-          <!-- <template slot="date" slot-scope="{modifyMatter}">
-            <datetime v-model="modifyMatter.dateActivation"
-                      :end-date="modifyMatter.executionDate || dealerInfo.validUntil" placeholder="请选择">
-              <template slot="title">
-                <span class="required">交付开始日</span>
-              </template>
-            </datetime>
-            <datetime v-model="modifyMatter.executionDate" :start-date="modifyMatter.dateActivation"
-                      :end-date="dealerInfo.validUntil" placeholder="请选择">
-              <template slot="title">
-                <span class="required">交付截止日</span>
-              </template>
-            </datetime>
-          </template> -->
         </pop-matter>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -204,9 +119,10 @@ import common from 'components/mixins/applyCommon'
 // 组件引入
 import RNumber from 'components/RNumber'
 import PopMatterList from 'components/Popup/PopMatterListTest'
-import PopDealerList from 'components/Popup/PopDealerList'
+import PopDealerList from 'components/Popup/PopDealerListTest'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
 import PopMatter from 'components/apply/commonPart/MatterPop'
+import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
 import RPicker from 'components/RPicker'
 import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
 // 方法引入
@@ -229,9 +145,6 @@ export default {
         validUntil: '',
         advancePaymentDueDate: '',
       },
-      matterParams: { // 请求物料的参数
-        // processing: '成品,商品,服务',
-      }, 
     }
   },
   computed: {
@@ -245,35 +158,11 @@ export default {
       });
       return toFixed(total);
     },
-    // 是否含预收
-    hasAdvance() {
-      let { paymentTerm } = this.dealerInfo;
-      return paymentTerm && paymentTerm.includes('预收');
-    }
-  },
-  watch: {
-    dealerInfo: {
-      handler(val){
-        let { drDealerPaymentTerm } = this.dealerInfo;          
-        this.dealerConfig.forEach(item => {
-          if(item.fieldLabel === '预收款' || item.fieldLabel === '预收到期日'){
-            if(drDealerPaymentTerm && drDealerPaymentTerm.includes('预收')) {
-              item.hiddenInRun = false
-              return
-            }
-            item.hiddenInRun = true
-          }
-        })
-      },
-      deep: true
-      
-    }
-
   },
   components: {
     XInput, XTextarea, Group, Cell, Popup,
     PopMatter, RNumber, PopMatterList, PopDealerList,
-    PopSingleSelect, Datetime, RPicker, PopBaseinfo
+    PopSingleSelect, Datetime, RPicker, PopBaseinfo, DealerOtherPart
   },
   mixins: [common],
   filters: {
@@ -290,27 +179,20 @@ export default {
       this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
       this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
       this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
-      this.matterParams = {
-        ...this.matterParams,
-        drDealerCode: this.dealerInfo.dealerCode,
-      };
-      this.matterList = [];
+      if(this.matterParams.data.drDealerCode){
+        this.matterParams.data.drDealerCode = this.dealerInfo.dealerCode;
+        this.matterList = [];
+
+      }
+      // this.matterParams = {
+      //   ...this.matterParams,
+      //   drDealerCode: this.dealerInfo.dealerCode,
+      // };
+      // this.matterList = [];
     },
     selContact(val) {
       this.contact = {...val};
     },
-    // 获取 结算方式
-    // getPaymentTerm() {
-    //   return getDictByType('paymentTerm').then(({tableContent}) => {
-    //     this.transMode = tableContent;
-    //   })
-    // },
-    // 获取 物流条款
-    // getLogisticsTerms() {
-    //   return getDictByType('dealerLogisticsTerms').then(({tableContent}) => {
-    //     this.logisticsTerm = tableContent;
-    //   })
-    // },
     // TODO 展示时间选择器
     dateSelect(key = '') {
       this.$vux.datetime.show({

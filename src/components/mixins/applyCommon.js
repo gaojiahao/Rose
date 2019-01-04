@@ -49,9 +49,9 @@ export default {
       matterPopConfig: [], // 物料列表pop配置
       orderListTitle: '', // 物料列表订单的title
       matterEditConfig: {}, // 物料编辑的pop
-      requestApi: '', // 请求物料的接口
-      matterParams: {},
-      matterPopOrderTitle: '', // 物料列表pop订单title
+      matterParams: {}, // 请求物料的接口，参数
+      matterPopOrderTitle: '', // 物料列表pop订单title,
+      dealerParams: {}, // 请求往来数据的接口和参数
     }
   },
   components: {
@@ -394,7 +394,7 @@ export default {
         // 从请求回来的配置中获取往来的配置
         config.forEach(item => {
           if(!item.isMultiple) {
-            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt') {
+            if(item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
               dealerConfig = dealerConfig.concat(item.items)
             }
           }
@@ -408,7 +408,7 @@ export default {
         })
         // 处理往来配置里面的接口请求
         dealerConfig.forEach(item => {
-          if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+          function handlerParams(item) {
             let url = item.dataSource.data.url;
             let params = item.dataSource.data.params;
             let keys = Object.keys(params);
@@ -422,7 +422,16 @@ export default {
               })
               requestParams.data = data;
             }
-            requestData(requestParams).then(data => {
+            return requestParams
+          }
+          //处理请求往来数据的接口
+          if(item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
+            this.dealerParams = handlerParams(item);
+
+          }
+          // 处理请求物流，结算方式的接口
+          if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+            requestData(handlerParams(item)).then(data => {
               this.$set(item, 'remoteData', data.tableContent)
             })
           }
@@ -447,9 +456,12 @@ export default {
               else{
                 this.orderListTitle = item.text;
               }
-              this.requestApi = item.dataSource.data.url;
+              let url = item.dataSource.data.url;
               let params = item.dataSource.data.params;
               let keys = Object.keys(params);
+              let requestParams = {
+                url,
+              }
               if(keys.length){
                 let matterParams = {};
                 keys.forEach(item => {
@@ -460,10 +472,9 @@ export default {
                   }
                   matterParams[item] = params[item].type === 'text' ? params[item].value : '';
                 })
-                this.matterParams = {
-                  ...matterParams
-                }
+                requestParams.data = matterParams;
               }
+              this.matterParams = requestParams
             }
             // 物料信息里有下拉选择的字段
             else if(item.editorType === 'r2Combo') {

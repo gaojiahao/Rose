@@ -7,7 +7,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" @sel-dealer="selDealer"
+        <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" @sel-dealer="selDealer" :dealer-params="dealerParams"
                          @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
@@ -76,7 +76,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selOrder" 
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            :orderTitle="matterPopOrderTitle" ref="matter">
           </pop-matter-list>
           <!-- <pop-order-list :show="showOrderPop" :params="orderParams" v-model="showOrderPop" @sel-matter="selOrder"
@@ -178,7 +178,7 @@
   // 组件引入
   import RAction from 'components/RAction'
   import RNumber from 'components/RNumber'
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopOrderList from 'components/Popup/PopOrderList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -267,8 +267,8 @@
           drDealerLogisticsTerms: sel.dealerLogisticsTerms,
         };
         this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        if(this.matterParams.dealerCode != null) {
-          this.matterParams.dealerCode = this.dealerInfo.dealerCode
+        if(this.matterParams.data.dealerCode != null) {
+          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};
         }
@@ -279,8 +279,8 @@
       // TODO 选中仓库
       selWarehouse(val) {
         this.warehouse = JSON.parse(val);
-        if(this.matterParams.whCode != null) {
-          this.matterParams.whCode =this.warehouse.warehouseCode;
+        if(this.matterParams.data.whCode != null) {
+          this.matterParams.data.whCode = this.warehouse.warehouseCode;
           this.matterList = [];
           this.orderList = {};
         }

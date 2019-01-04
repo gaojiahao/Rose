@@ -312,7 +312,7 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
-      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock} = item;
+      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock, qtyBalance} = item;
       item[key] = Math.abs(toFixed(val));
       // 数量
       if (tdQty && this.isCheckStock) {
@@ -320,13 +320,17 @@ export default {
         // qtyStockBal为销售出库的库存，数量不允许大于余额
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
           item.tdQty = qtyBal;
-        } else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
+        } 
+        else if (qtyStockBal && tdQty > qtyStockBal) { // 数量不允许大于库存
           item.tdQty = qtyStockBal;
         }
         //qtyStock为物料领料，数量不允许大于库存
         else if(qtyStock && tdQty > qtyStock){
           console.log(qtyStock);
           item.tdQty = qtyStock;
+        }
+        else if(qtyBalance && tdQty > qtyBalance){
+          item.tdQty = qtyBalance;
         }
       }
       //税率

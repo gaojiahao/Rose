@@ -65,7 +65,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            ref="matter"></pop-matter-list>
         </div>
         <!--备注-->
@@ -121,14 +121,12 @@ export default {
   },
   data() {
     return {
-      listId: '4d9a7f8f-9a88-47b6-a1f4-3faed6423615',
       matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
       transCode: '',
       formData: {
         biComment: '',
       },
-      numMap: {},
       warehouse: {},
       warehouseIn: null,
       matter: {},
@@ -191,15 +189,10 @@ export default {
     // TODO 选中出库仓库
     selWarehouseOut (val) {
       this.warehouse = JSON.parse(val);
-      if(this.matterParams.whCode != null) {
-        this.matterParams.whCode = this.warehouse.warehouseCode;
+      if(this.matterParams.data.whCode != null) {
+        this.matterParams.data.whCode = this.warehouse.warehouseCode;
         this.matterList = [];
       }
-      // this.warehouseParams = {
-      //   ...this.warehouseParams,
-      //   whCode: this.warehouse.warehouseCode,
-      // };
-      // this.matterList = [];
     },
     // TODO 选中入库仓库
     selWarehouseIn (val) {
@@ -222,7 +215,6 @@ export default {
       sels.forEach(item => {
         item.tdQty = item.tdQty || '';
       });
-      this.numMap = {};
       this.matterList = [...sels];
     },
     // TODO 获取默认图片

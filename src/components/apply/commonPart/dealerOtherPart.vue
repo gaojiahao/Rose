@@ -5,13 +5,13 @@
       <pop-single-select :title="item.fieldLabel" :data="item.remoteData" :value="dealerInfo[item.fieldCode]" v-model="dealerInfo[item.fieldCode]" 
                         :isRequired="!item.allowBlank" v-if="!item.hiddenInRun && item.xtype === 'r2Combo' "></pop-single-select>
       <div class="mg_auto" v-if="!item.hiddenInRun">
-        <div class="cell-item" v-if="item.readOnly">
+        <div class="cell-item" v-if="item.readOnly && item.fieldCode !== 'projectType_project'">
           <div class="title">{{item.fieldLabel}}</div>
           <div class="mode">
             <span class="mode_content">{{dealerInfo[item.fieldCode] || "无"}}</span>
           </div>
         </div>
-        <div v-else>
+        <div v-else-if="!item.readOnly">
           <x-input class="cell-item" type="number" text-align='right' placeholder='请填写'
                 v-model.number='dealerInfo[item.fieldCode]' @on-blur="checkAmt(dealerInfo)" v-if="item.xtype === 'r2Permilfield'">
           <span slot="label">{{item.fieldLabel}}</span>

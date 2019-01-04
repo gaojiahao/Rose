@@ -59,7 +59,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            ref="matter">
           </pop-matter-list>
         </div>
@@ -126,9 +126,6 @@ export default {
       },
       numMap: {},
       warehouse: {},
-      // warehouseParams: {
-      //   whCode: '',
-      // },
       matter:{},
       showMatterPop :false,
       modifyIndex:null,
@@ -197,8 +194,8 @@ export default {
     // TODO 选中入库仓库
     selWarehouseIn (val) {
       this.warehouse = JSON.parse(val);
-      if(this.matterParams.whCode != null) {
-        this.matterParams.whCode = this.warehouse.warehouseCode;
+      if(this.matterParams.data.whCode != null) {
+        this.matterParams.data.whCode = this.warehouse.warehouseCode;
         this.matterList = [];
       }
     },

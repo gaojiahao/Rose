@@ -7,7 +7,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 出库仓库-->
-        <pop-warehouse-list title="出库仓库" :default-value="warehouseOut" @sel-item="selWarehouseOut"
+        <pop-warehouse-list title="出库仓库" :default-value="warehouse" @sel-item="selWarehouseOut"
                             get-list-method="getWareHouseType" :params="warehouseOutParams"
                             isRequired></pop-warehouse-list>
 
@@ -20,15 +20,15 @@
           <!-- 没有选择物料 -->
           <template v-if="!matterList.length">
             <div @click="showMaterielPop = !showMaterielPop">
-              <div class="title">物料列表</div>
-              <div class="tips">请选择物料</div>
+              <div class="title">{{orderListTitle}}列表</div>
+              <div class="tips">请选择{{orderListTitle}}</div>
               <i class="iconfont icon-youjiantou r_arrow"></i>
             </div>
           </template>
           <!-- 已经选择了物料 -->
           <template v-else>
             <div class="title" @click="showDelete">
-              <div>物料列表</div>
+              <div>{{orderListTitle}}列表</div>
               <div class='edit' v-if='!matterModifyClass'>编辑</div>
               <div class='finished' v-else>完成</div>
             </div>
@@ -37,18 +37,12 @@
                    :class="{mater_delete : matterModifyClass,'vux-1px-b' : index < matterList.length-1 }"
                    v-for="(item, index) in matterList" :key="index">
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
-                             @click.native="delClick(index, item)">
+                             @click.native="delClick(index, item)" :config="matterEditConfig.property">
                   <template slot-scope="{item}" slot="info">
-                    <!--单位，属性，颜色-->
-                    <div class="mater_more">
-                      <span class="processing">属性: {{item.processing}}</span>
-                      <span class='unit'>单位: {{item.measureUnit}}</span>
-                      <span class='mater_color'>颜色: {{item.inventoryColor || '无'}}</span>
-                    </div>
                     <!-- 物料数量和价格 -->
                     <div class="mater_other" v-show="item.tdQty">
                       <span class="matter-remain">
-                        <span class="symbol">库存数量: </span>{{item.qtyBal}}
+                        <!-- <span class="symbol">库存数量: </span>{{item.qtyBal}} -->
                         <span class="symbol">入库数量: </span>{{item.tdQty}}
                       </span>
                     </div>
@@ -75,8 +69,8 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" get-list-method="getEtcPutInStorage" :params="matterParams"
-                           ref="matter"></pop-matter-list>
+                           :default-value="matterList" :params="matterParams" :config="matterPopConfig" :requestApi="requestApi"
+                           :orderTitle="matterPopOrderTitle" ref="matter"></pop-matter-list>
         </div>
         <!--备注-->
         <div class='comment vux-1px-t' :class="{no_margin : !matterList.length}">
@@ -84,19 +78,8 @@
         </div>
         <upload-file @on-upload="onUploadFile" :default-value="attachment" :biReferenceId="biReferenceId"></upload-file>
         <!--物料编辑pop-->
-        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' :validateMap="checkFieldList"
-                    :btn-is-hide="btnIsHide" :is-show-amount="false">
-          <template slot="modify" slot-scope="{modifyMatter}">
-            <group class="mg_auto">
-              <cell title="可用库存数" text-align='right' placeholder='请填写' :value="modifyMatter.qtyBal" disabled>
-              </cell>
-              <x-input title="入库数量" type="number" v-model='modifyMatter.tdQty' text-align="right"
-                      @on-blur="checkAmt(modifyMatter)" placeholder="请输入" @on-focus="getFocus($event)">
-                <span class='required' slot="label">入库数量</span>
-              </x-input>
-              
-            </group>
-          </template>
+        <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm' v-model='showMatterPop' 
+                    :btn-is-hide="btnIsHide" :config="matterEditConfig">
         </pop-matter>
       </div>
     </div>
@@ -127,7 +110,7 @@
   import ApplyCommon from 'pageMixins/applyCommon'
   // 组件引入
   import RNumber from 'components/RNumber'
-  import PopMatterList from 'components/Popup/PopMatterList'
+  import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import RPicker from 'components/RPicker'
@@ -151,7 +134,7 @@
           biComment: '',
         },
         numMap: {},
-        warehouseOut: null,
+        warehouse: {},
         warehouseIn: {
           warehouseName:'待检仓',
           warehouseCode: 'QC0001',
@@ -224,13 +207,11 @@
       },
       // TODO 选中出库仓库
       selWarehouseOut(val) {
-        this.warehouseOut = JSON.parse(val);
-        this.matterParams = {
-          // ...this.matterParams,
-          calcRelCode: '1406',
-          whCode: this.warehouseOut.warehouseCode,
-        };
-        this.matterList = [];
+        this.warehouse = JSON.parse(val);
+        if(this.matterParams.data.whCode != null){
+          this.matterParams.data.whCode = this.warehouse.warehouseCode;
+          this.matterList = [];
+        }
       },
       // TODO 选中入库仓库
       selWarehouseIn(val) {
@@ -270,7 +251,7 @@
           dataSet = [];
         let validateMap = [
           {
-            key: 'warehouseOut',
+            key: 'warehouse',
             message: '出库仓库'
           },
         ];
@@ -322,10 +303,10 @@
               ...this.formData,
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
-              containerOutWarehouseManager: this.warehouseOut.containerOutWarehouseManager || null, // 出库管理员
+              containerOutWarehouseManager: this.warehouse.containerOutWarehouseManager || null, // 出库管理员
               containerInWarehouseManager: this.warehouseIn.containerInWarehouseManager || null, // 入库管理员
               inPut: {
-                containerCodeOut: this.warehouseOut.warehouseCode,
+                containerCodeOut: this.warehouse.warehouseCode,
                 containerCode: this.warehouseIn.warehouseCode,
                 dataSet
               }
@@ -410,7 +391,7 @@
             warehouseAddress: inPut.warehouseAddress_containerCode,
           };
           // 出库
-          this.warehouseOut = {
+          this.warehouse = {
             warehouseCode: inPut.containerCodeOut,
             warehouseName: inPut.warehouseName_containerCodeOut,
             warehouseType: inPut.warehouseType_containerCodeOut,
@@ -421,7 +402,7 @@
           };
           this.matterParams = {
             ...this.matterParams,
-            whCode: this.warehouseOut.warehouseCode,
+            whCode: this.warehouse.warehouseCode,
           };
           this.handlerDefault = {
             handler: formData.handler,
@@ -453,7 +434,7 @@
         return {
           [DRAFT_KEY]: {
             matter: this.matterList,
-            warehouseOut: this.warehouseOut,
+            warehouse: this.warehouse,
             warehouseIn: this.warehouseIn,
             formData: this.formData,
           }
@@ -465,12 +446,12 @@
       if (data) {
         let draft = JSON.parse(data);
         this.matterList = draft.matter;
-        this.warehouseOut = draft.warehouseOut;
+        this.warehouse = draft.warehouse;
         this.warehouseIn = draft.warehouseIn;
         this.formData = draft.formData;
         this.matterParams = {
           ...this.matterParams,
-          whCode: this.warehouseOut.warehouseCode,
+          whCode: this.warehouse.warehouseCode,
         };
         sessionStorage.removeItem(DRAFT_KEY);
       }

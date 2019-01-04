@@ -70,7 +70,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            ref="matter">
           </pop-matter-list>
         </div>
@@ -117,7 +117,7 @@
   // 组件引入
   import RPicker from 'components/RPicker'
   import PopMatterList from 'components/Popup/PopMatterListTest'
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import UploadFile from 'components/upload/UploadFile'

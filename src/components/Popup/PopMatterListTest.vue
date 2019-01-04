@@ -92,13 +92,6 @@
           return []
         }
       },
-      // 请求的传参，本地库存调拨请求数据时会传入
-      params: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
       // 是否检验可用库存，是，当库存为零，该物料不能被选中
       isShowStock: {
         type: Boolean,
@@ -125,15 +118,17 @@
           return []
         }
       },
-      // 请求的接口
-      requestApi: {
-        type: String,
-        default: ''
-      },
       // 物料订单号的title
       orderTitle: {
         type: String,
         default: '单号'
+      },
+      // 请求的接口,参数
+      matterParams: {
+        type: Object,
+        default() {
+          return {}
+        }
       }
     },
     components: {
@@ -169,18 +164,13 @@
           this.setDefaultValue();
         }
       },
-      params: {
+      matterParams: {
         handler(val) {
           this.resetCondition();
           // 参数改变，重新请求接口
           this.requestData();
         },
         deep: true
-      },
-      requestApi: {
-        handler(val){
-          this.requestData();
-        }
       }
     },
     methods: {
@@ -282,10 +272,10 @@
           page: this.page,
           start: (this.page - 1) * this.limit,
           filter: JSON.stringify(filter),
-          ...this.params,
+          ...this.matterParams.data,
         }
         return requestData({
-          url: this.requestApi,
+          url: this.matterParams.url,
           data
         }).then(this.dataHandler);
       },
@@ -340,8 +330,6 @@
     },
     created() {
       this.setDefaultValue();
-      // 请求物料
-      // this.requestData()
     }
   }
 </script>

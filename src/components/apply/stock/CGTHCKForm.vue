@@ -7,7 +7,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" dealer-label-name="原厂供应商,经销供应商"
+        <pop-dealer-list  @sel-dealer="selDealer" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                           dealerTitle="供应商" @sel-contact="selContact" :defaultContact="contactInfo"></pop-dealer-list>
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
@@ -76,7 +76,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :filterList="filterList"
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            :orderTitle="matterPopOrderTitle" isShowStock ref="matter">
           </pop-matter-list>
         </div>
@@ -121,7 +121,7 @@ import { saveAndStartWf, getBaseInfoData, saveAndCommitTask, commitTask, getDict
 // mixins 引入
 import applyCommon from 'components/mixins/applyCommon'
 // 组件引入
-import PopDealerList from 'components/Popup/PopDealerList'
+import PopDealerList from 'components/Popup/PopDealerListTest'
 import PopMatterList from 'components/Popup/PopMatterListTest'
 import PopWarehouseList from 'components/Popup/PopWarehouseList'
 import PopSingleSelect from 'components/Popup/PopSingleSelect'
@@ -138,11 +138,8 @@ const DRAFT_KEY = 'CGTHCK_DATA';
 export default {
   data () {
     return {
-      listId: '482b7468-06eb-40c7-842a-f7ea6edb1c37',
-      srhInpTx: '', // 搜索框内容
       orderList: {},
       matterList: [], // 订单列表
-      transMode: ['现付', '预付', '账期', '票据'], // 结算方式
       showDealerPop: false, // 是否显示供应商的popup
       dealerInfo: {}, // 供应商客户信息
       formData: {
@@ -152,7 +149,6 @@ export default {
       submitSuccess: false, // 是否提交成功
       showWarehousePop: false,
       warehouse: {}, // 选中仓库属性
-      numMap: {}, // 用于记录订单物料的数量
       transCode: '',
       biReferenceId: '',
       actions: [],
@@ -202,8 +198,8 @@ export default {
       let [sel] = JSON.parse(val);
       this.dealerInfo = sel;
       this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-      if(this.matterParams.dealerCode != null) {
-        this.matterParams.dealerCode = this.dealerInfo.dealerCode
+      if(this.matterParams.data.dealerCode != null) {
+        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
         this.matterList = [];
         this.orderList = {};
       }
@@ -215,8 +211,8 @@ export default {
     // TODO 选中仓库
     selWarehouse (val) {
       this.warehouse = JSON.parse(val);
-      if(this.matterParams.whCode != null) {
-        this.matterParams.whCode =this.warehouse.warehouseCode;
+      if(this.matterParams.data.whCode != null) {
+        this.matterParams.data.whCode =this.warehouse.warehouseCode;
         this.matterList = [];
         this.orderList = {};
       }
@@ -238,7 +234,6 @@ export default {
         }
         orderList[item.transCode].push(item);
       });
-      this.numMap = {};
       this.matterList = sels;
       this.orderList = orderList;
     },

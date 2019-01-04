@@ -61,7 +61,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList" 
-                           :params="matterParams" :order-title="matterPopOrderTitle"  :config="matterPopConfig" :requestApi="requestApi"
+                           :matter-params="matterParams" :order-title="matterPopOrderTitle" :config="matterPopConfig"
                            ref="matter">
           </pop-matter-list>
         </div>
@@ -119,10 +119,8 @@
     },
     data() {
       return {
-        listId: '4099b5aa-1468-4b81-85a5-75079e291977',
         matterList: [],                                  // 物料列表
         showMaterielPop: false,                         // 是否显示物料的popup
-        count: 0,   // 总价
         formData: {
           creator: '',
           modifer: '',
@@ -132,9 +130,6 @@
         applyComment: '',
         numMap: {},
         taxRate: 0, // 税率
-        matterParams: {
-          processing: '半成品'
-        },
         checkFieldList: [
           {
             key: 'tdQty',

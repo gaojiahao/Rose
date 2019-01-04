@@ -7,7 +7,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
+        <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contact"></pop-dealer-list>
         <!--物流，结算，其他信息-->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
@@ -70,7 +70,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList" 
-                           :params="matterParams"  :config="matterPopConfig" :requestApi="requestApi" :order-title="matterPopOrderTitle" ref="matter">
+                          :matter-params="matterParams"  :config="matterPopConfig" :order-title="matterPopOrderTitle" ref="matter">
           </pop-matter-list>
         </div>
         <!--物料编辑pop-->
@@ -122,7 +122,7 @@
   // 组件引入
   import RNumber from 'components/RNumber'
   import PopMatterList from 'components/Popup/PopMatterListTest'
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopMatter from 'components/apply/commonPart/MatterPop'
@@ -136,14 +136,10 @@
   export default {
     data() {
       return {
-        listId: 'a8281547-d2d3-11e8-b8ca-0279b2c6a380',
         showMatterPop: false,
         showMaterielPop: false, // 是否显示物料的popup
-        transMode: [], // 结算方式 数组
         matterList: [], // 物料列表
-        logisticsTerm: [], // 物流条款 数组
         dealer: {},
-        numMap: {}, // 用于记录订单物料的数量和价格
         contact: {},
         formData: {},
         dealerInfo: {},
@@ -206,7 +202,6 @@
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
         });
-        this.numMap = {};
         this.matterList = sels;
       },
       //选择默认图片

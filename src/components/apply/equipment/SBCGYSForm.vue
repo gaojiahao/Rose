@@ -8,7 +8,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :default-contact="contactInfo" dealer-label-name="设施供应商" dealerTitle="供应商"></pop-dealer-list>
+                         :default-contact="contactInfo" :dealer-params="dealerParams" dealerTitle="供应商"></pop-dealer-list>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -70,8 +70,8 @@
             <span class="symbol" v-if='btnInfo.isMyTask === 1 && btnInfo.actions.indexOf("stop")>=0'>或</span>
             <span class="add_more" @click="addOrder">新增更多物料</span>
           </div>
-          <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :config="matterPopConfig" :requestApi="requestApi" 
-                            :filter-list="filterList" :params="matterParams" :default-value="matterList" 
+          <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :config="matterPopConfig"
+                            :filter-list="filterList" :matter-params="matterParams" :default-value="matterList" 
                             :orderTitle="matterPopOrderTitle" ref="matter">                   
           </pop-matter-list>
           <!-- <pop-facility-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :filter-list="filterList"
@@ -135,7 +135,7 @@
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopFacilityList from 'components/Popup/equipment/PopFacilityList'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import PopMatterList from 'components/Popup/PopMatterListTest'
@@ -251,8 +251,8 @@
         this.dealerInfo = {
           ...sel,
         };
-        if(this.matterParams.dealerCode != null) {
-          this.matterParams.dealerCode = this.dealerInfo.dealerCode
+        if(this.matterParams.data.dealerCode != null) {
+          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};
         }

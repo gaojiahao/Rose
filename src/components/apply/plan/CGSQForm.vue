@@ -70,7 +70,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :default-value="matterList" 
-                           :config="matterPopConfig" :requestApi="requestApi" :order-title="matterPopOrderTitle" :filter-list="filterList"
+                           :config="matterPopConfig" :matter-params="matterParams" :order-title="matterPopOrderTitle" :filter-list="filterList"
                           ref="matter">
           </pop-matter-list>
         </div>
@@ -129,7 +129,6 @@ const DRAFT_KEY = 'CGSQ_DATA';
 export default {
   data () {
     return {
-      listId: '43ccbc27-bbb5-4cfb-997b-6d3823f1c03e',
       orderList: {},
       matterList: [], // 物料列表
       showMaterielPop: false, // 是否显示物料的popup
@@ -137,8 +136,6 @@ export default {
         biId: '',
         biComment: ''
       },
-      applyComment: '',
-      numMap: {},
       modifyKey: '',
       filterList: [
         {
@@ -205,7 +202,6 @@ export default {
         }
         orderList[item.transCode].push(item);
       })
-      this.numMap = {};
       this.matterList = sels;
       this.orderList = orderList;
     },
@@ -298,10 +294,6 @@ export default {
     },
     // 新增物料
     addMatter () {
-      for (let item of this.matterList) {
-        // 存储已输入的价格
-        this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
-      }
       this.showMaterielPop = !this.showMaterielPop;
     },
     // 检查金额，取正数、保留两位小数
@@ -415,7 +407,6 @@ export default {
         transCode: this.transCode
       }).then( (data)=>{
         this.listId = data.listId;
-        this.applyComment = data.biComment;
         this.biReferenceId = data.biReferenceId;
         this.attachment = data.attachment;
         let {formData} = data;

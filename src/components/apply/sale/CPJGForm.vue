@@ -29,16 +29,6 @@
                 <matter-item :item="item" @on-modify="modifyMatter(item,index)" :show-delete="matterModifyClass"
                               @click.native="delClick(index,item)" :config="matterEditConfig.property">
                   <template slot="info" slot-scope="{item}">
-                    <!-- <div class="mater_more">
-                      <div>
-                        <span class='unit'>单位: {{item.measureUnit}}</span>
-                        <span class='mater_color' v-show="item.drDealerLabel">客户类型: {{item.drDealerLabel}}</span>
-                      </div>
-                      <div>
-                        <span class='mater_color' v-show="item.qtyOnline">数量上线: {{item.qtyOnline}}</span>
-                        <span class='mater_color' v-show="item.qtyDownline">数量下线: {{item.qtyDownline}}</span>
-                      </div>
-                    </div> -->
                     <div class='mater_other'>
                       <div>
                         <span v-if="item.price" class="price">
@@ -74,7 +64,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter" :config="matterPopConfig" 
-                           :requestApi="requestApi" :default-value="matterList" ref="matter"></pop-matter-list>
+                           :matter-params="matterParams" :default-value="matterList" ref="matter"></pop-matter-list>
         </div>
         <!--物料编辑pop-->
         <pop-matter :modify-matter='matter' :show-pop="showMatterPop" @sel-confirm='selConfirm'

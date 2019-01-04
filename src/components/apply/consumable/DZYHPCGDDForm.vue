@@ -7,7 +7,7 @@
         <r-picker title="流程状态" :data="currentStage" mode="3" placeholder="请选择流程状态" :hasBorder="false"
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
-        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" dealer-label-name="原厂供应商,经销供应商"
+        <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo" :defaultContact="contact" :dealer-params="dealerParams"
                          dealerTitle="供应商" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
@@ -74,7 +74,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showMaterielPop" v-model="showMaterielPop" @sel-matter="selMatter"
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" 
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            :orderTitle="matterPopOrderTitle" :filter-list="filterList" ref="matter">
           </pop-matter-list>
         </div>
@@ -120,7 +120,7 @@
   import common from 'components/mixins/applyCommon'
   // 组件引入
   import PopMatterList from 'components/Popup/PopMatterListTest'
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
   import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopMatter from 'components/apply/commonPart/MatterPop'

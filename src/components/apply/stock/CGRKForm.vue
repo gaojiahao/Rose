@@ -8,7 +8,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         dealerTitle="供应商" :default-contact="contactInfo" dealer-label-name="原厂供应商,经销供应商"></pop-dealer-list>
+                         dealerTitle="供应商" :default-contact="contactInfo" :dealer-params="dealerParams"></pop-dealer-list>
         <!--结算方式-->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!-- 仓库-->
@@ -77,7 +77,7 @@
           </div>
           <!-- 物料popup -->
           <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter" :default-value="matterList" 
-                           :filter-list="filterList" :params="matterParams" :config="matterPopConfig" :requestApi="requestApi"
+                           :filter-list="filterList" :params="matterParams" :config="matterPopConfig" :matter-params="matterParams"
                            :orderTitle="matterPopOrderTitle" ref="matter">
           </pop-matter-list>
         </div>
@@ -130,7 +130,7 @@
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopOrderList from 'components/Popup/PopOrderList'
   import PopWarehouseList from 'components/Popup/PopWarehouseList'
@@ -151,12 +151,9 @@
     name: 'ApplyCGRKForm',
     data() {
       return {
-        listId: '1c5896d8-1500-4569-b0c5-6b596d03fb9b',
-        srhInpTx: '', // 搜索框内容
         orderList: {},
         matterList: [], // 订单列表
         DealerPaymentTerm: '现付', // 结算方式
-        transMode: ['现付', '预付', '账期', '票据'], // 结算方式
         showDealerPop: false, // 是否显示供应商的popup
         dealerInfo: {}, // 供应商客户信息
         contactInfo: {},
@@ -173,7 +170,6 @@
           warehouseType: '一般部门仓'
         }, // 选中仓库属性
         taxRate: 0.16, // 税率
-        numMap: {}, // 用于记录订单物料的数量
         transCode: '',
         formViewUniqueId: 'fed81800-4c34-44a9-b517-c3fd9f2ab57d', // 修改时的UniqueId
         biReferenceId: '',
@@ -229,12 +225,6 @@
       PopSingleSelect, PopMatter, RPicker, PopBaseinfo, DealerOtherPart
     },
     methods: {
-      // 获取 结算方式
-      // getPaymentTerm() {
-      //   return getDictByType('paymentTerm').then(({tableContent}) => {
-      //     this.transMode = tableContent;
-      //   })
-      // },
       // TODO 选中的供应商
       selDealer(val) {
         let [sel] = JSON.parse(val);
@@ -246,8 +236,8 @@
           accountExpirationDate: accountExpirationDate,
           drDealerPaymentTerm: sel.paymentTerm
         };
-        if(this.matterParams.dealerCode != null) {
-          this.matterParams.dealerCode = this.dealerInfo.dealerCode
+        if(this.matterParams.data.dealerCode != null) {
+          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};
         }
@@ -274,16 +264,6 @@
         console.log(sels);
         let orderList = {};
         sels.forEach(item => {
-          // let key = `${item.transCode}_${item.inventoryCode}`;
-          // let {
-          //   tdQty = item.qtyBal, price = item.price, taxRate = 0.16,
-          //   productionDate = '',
-          //   validUntil = '',
-          // } = this.numMap[key] || {};
-
-          // if (price.length) {
-          //   item.price = price;
-          // }
           item.tdQty = item.tdQty || item.qtyBal;
           item.qualityQty = item.qualityQty || item.qtyBal;
           item.taxRate = item.taxRate || 0.16;
@@ -298,7 +278,6 @@
           // this.getMoreUnit(item);
           orderList[item.transCode].push(item);
         });
-        this.numMap = {};
         this.matterList = sels;
         this.orderList = orderList;
       },
@@ -386,12 +365,6 @@
       },
       // TODO 新增更多订单
       addOrder() {
-        // for (let items of Object.values(this.orderList)) {
-        //   for (let item of items) {
-        //     // 存储已输入的价格
-        //     this.numMap[`${item.transCode}_${item.inventoryCode}`] = {...item};
-        //   }
-        // }
         this.showOrderPop = !this.showOrderPop;
       },
       // 计算有效期
@@ -757,7 +730,7 @@
         this.formData = draft.formData;
         this.contactInfo = draft.contactInfo;
         this.crDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        this.matterParams.dealerCode = this.dealerInfo.dealerCode;
+        this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
         sessionStorage.removeItem(DRAFT_KEY);
       }
 

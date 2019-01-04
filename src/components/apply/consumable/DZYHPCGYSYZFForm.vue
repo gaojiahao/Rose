@@ -8,7 +8,7 @@
                   v-model="formData.biProcessStatus"></r-picker>
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
-                         :default-contact="contactInfo" dealer-label-name="原厂供应商,经销供应商" dealerTitle="供应商"></pop-dealer-list>
+                         :default-contact="contactInfo" :dealer-params="dealerParams" dealerTitle="供应商"></pop-dealer-list>
         <!-- 结算方式 -->
         <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
@@ -81,7 +81,7 @@
           </div>
 
           <pop-matter-list :show="showOrderPop" v-model="showOrderPop" @sel-matter="selMatter"
-                           :default-value="matterList" :config="matterPopConfig" :requestApi="requestApi" :params="matterParams"
+                           :default-value="matterList" :config="matterPopConfig" :matter-params="matterParams"
                            :orderTitle="matterPopOrderTitle"
                            :filter-list="filterList" ref="matter">
           </pop-matter-list>
@@ -142,7 +142,7 @@
   // mixins 引入
   import applyCommon from 'components/mixins/applyCommon'
   // 组件引入
-  import PopDealerList from 'components/Popup/PopDealerList'
+  import PopDealerList from 'components/Popup/PopDealerListTest'
   import PopMatterList from 'components/Popup/PopMatterListTest'
   import PopOrderList from 'components/Popup/PopOrderList'
   import PopSingleSelect from 'components/Popup/PopSingleSelect'
@@ -265,10 +265,9 @@
           ...this.formData,
           ...val,
         };
-        this.matterParams = {
-          ...this.matterParams,
-          groupId: val.handlerUnit,
-        };
+        if(this.matterParams.data.groupId != null){
+          this.matterParams.data.groupId = val.handlerUnit;
+        }
       },
       // TODO 选中的供应商
       selDealer(val) {
@@ -282,8 +281,8 @@
           crDealerPaymentTerm: sel.paymentTerm,
           daysOfAccount: sel.pamentDays
         };
-        if(this.matterParams.dealerCode != null) {
-          this.matterParams.dealerCode = this.dealerInfo.dealerCode
+        if(this.matterParams.data.dealerCode != null) {
+          this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};
         }
