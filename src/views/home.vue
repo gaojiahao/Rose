@@ -24,15 +24,15 @@
           <div class="dashboard-part">
             <div class="each-dashboard least-num">
               <div class="dashboard_title">本月目标</div>
-              <div class="dashboard_count">{{saleStatus.currMonthTarget || 0}}</div>
+              <div class="dashboard_count">{{saleStatus.currMonthTarget || 0 | toFixed}}</div>
             </div>
             <div class="each-dashboard when-today">
               <div class="dashboard_title">当日完成</div>
-              <div class="dashboard_count">{{ProductCount.todayCoverNum || 0}}</div>
+              <div class="dashboard_count">{{ProductCount.todayCoverNum || 0 | toFixed}}</div>
             </div>
             <div class="each-dashboard when-month">
               <div class="dashboard_title">当月完成</div>
-              <div class="dashboard_count">{{ProductCount.monthCoverNum || 0}}</div>
+              <div class="dashboard_count">{{ProductCount.monthCoverNum || 0 | toFixed}}</div>
             </div>
           </div>
           <div class="place-holder"></div>
@@ -46,7 +46,7 @@
             <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
           </div>
           <h2 class="tech_bottom">
-            <div>v2.0.4</div>
+            <div>v2.0.5</div>
             <div>
               Powered by <span class="cp_name">Refordom</span>
             </div>

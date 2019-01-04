@@ -101,7 +101,7 @@
       </div>
       <popup-project-list :show="showProjectPopup" :default-value="arr"
                           @on-sel="selProject" v-model="showProjectPopup" ref="projectPopup"></popup-project-list>
-      <x-button id="count_button" :gradients="btnStatus==true?['#B99763', '#E7D0A2']:['#ddd','#ddd']"
+      <x-button id="count_button" :gradients="btnStatus ? ['#B99763', '#E7D0A2'] : ['#ddd','#ddd']"
                 @click.native="goCount">
         进入合计
       </x-button>

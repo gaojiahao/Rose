@@ -33,7 +33,7 @@
 
     <x-button
       id="submit_button"
-      :gradients="['#B99763', '#E7D0A2']"
+      :gradients="btnStatus ? ['#B99763', '#E7D0A2'] : ['#ddd','#ddd']"
       @click.native="sendOrder"
     >
       确定提交
@@ -75,6 +75,7 @@
     },
     data() {
       return {
+        btnStatus: true,
         projectList: [], // 项目类产品展示item
         finalList: [], // 最终合计展示的item
         projectAmt: "", // 项目类产品合计金额
@@ -90,25 +91,22 @@
       numberComma
     },
     methods: {
-      /*
-           * 提交数据
-           */
-
+      // 提交数据
       sendOrder() {
-        let that = this;
+        if (!this.btnStatus) return;
         this.$vux.confirm.show({
           title: "温馨提示",
           content: "请确认提交数据是否正确？",
           confirmText: "我已确认",
           cancelText: "再去看看",
-          onConfirm() {
-            saleRepotService.subAmount(querystring.stringify(that.childInfo)).then(data => {
+          onConfirm: () => {
+            saleRepotService.subAmount(querystring.stringify(this.childInfo)).then(data => {
               if (data.success) {
-                that.$vux.alert.show({
+                this.$vux.alert.show({
                   title: "提示",
                   content: data.message,
                   onHide() {
-                    that.$router.replace("/Home");
+                    this.$router.replace("/Home");
                     localStorage.removeItem("saleReportInfo");
                     localStorage.removeItem("HELP_BASIC_INFO");
                     localStorage.removeItem("HELP_FORM_INFO");
@@ -120,15 +118,15 @@
           }
         });
       },
-      //获取数据
+      // 获取数据
       info() {
         let projectAmt = 0, // 项目类产品金额
-          aClassAmt = 0, // A类金额
-          bClassAmt = 0, // B类金额
-          list4_num = 0, // 最终合计 数量
-          totalNum1 = 0, // 最终合计 套数
-          listSalesAmt = [],
-          bClassList = [];
+            aClassAmt = 0, // A类金额
+            bClassAmt = 0, // B类金额
+            list4_num = 0, // 最终合计 数量
+            totalNum1 = 0, // 最终合计 套数
+            listSalesAmt = [],
+            bClassList = [];
 
         //从缓存中拿到上个页面提交的数据
         let jsonData = JSON.parse(this.childInfo.jsonData);
@@ -208,13 +206,29 @@
             value: baseinfoExt.varchar13,
           },
         ]
-      }
+      },
+    // 判断时间是否有超过20:00
+    isTwoZero() {
+      saleRepotService.getModelData().then(res => {
+        if (res.submitAllow === 1) {
+          this.btnStatus = true;
+        } 
+        else {
+          this.btnStatus = false;
+          this.$vux.alert.show({
+            title: "提示",
+            content: "每日提交截止时间为20:00"
+          });
+        }
+      });
+    },
     },
     mounted() {
       this.childInfo = JSON.parse(
         localStorage.getItem("saleReportInfo")
       ).saleReportRemark;
       this.info();
+      this.isTwoZero();
     }
   };
 </script>

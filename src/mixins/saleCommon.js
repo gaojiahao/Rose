@@ -222,7 +222,8 @@ export default {
       saleRepotService.getModelData().then(res => {
         if (res.submitAllow === 1) {
           this.btnStatus = true;
-        } else if (res.submitAllow === 0) {
+        } 
+        else {
           this.btnStatus = false;
           this.$vux.alert.show({
             title: "提示",
