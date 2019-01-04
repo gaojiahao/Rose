@@ -3,10 +3,13 @@
     <r-tab :data="tabList" :active-index="activeIndex" @on-click="onTabClick" mode="3"></r-tab>
     <div class="swiper-container notice-container">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="(slide, key, idx) in noticeData">
+        <div class="swiper-slide" v-for="(slide, key, idx) in noticeData" :key="key">
           <r-scroll class="wrapper" :options="scrollOptions" :has-next="slide.hasNext" :no-data="false"
                     @on-pulling-up="onPullingUp" ref="bScroll">
-            <div class="when_null" v-if="isNull">{{noDataText}}</div>
+            <div class="when_null" v-if="slide.isNull">
+              <img class="no_data" :class="[`no_data_${key}`]" :src="require(`assets/noData/${key}.png`)" alt="no-data">
+              <div class="text">{{noDataText}}</div>
+            </div>
             <div class="msg_list" v-else>
               <template v-if="idx === 0">
                 <todo-item :name="key" :item="value" v-for='(value, key) in slide.listData'
@@ -45,12 +48,12 @@
     page: 1,
     limit: 10,
     hasNext: true,
+    isNull: false,
     listData: [],
   };
   export default {
     data() {
       return {
-        isNull: false,
         tabList: [
           {name: '待办', status: 'todo'},
           {name: '评论', status: 'comment'},
@@ -122,12 +125,12 @@
           this.currentItem.hasNext = false;
           if (!tableContent.length) {
             // 没有数据的时候
-            this.isNull = true;
+            this.currentItem.isNull = true;
             return;
           }
           let listData = {};
+          this.currentItem.isNull = false;
           tableContent.forEach(item => {
-            this.isNull = false;
             // app图标处理
             item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
             // 只针对已经移动化的应用做消息的显示
@@ -192,7 +195,7 @@
         }).then(data => {
           let {dataCount = 0, tableContent = []} = data;
           let {page, limit} = this.currentItem;
-          this.isNull = !tableContent.length;
+          this.currentItem.isNull = !tableContent.length;
           this.currentItem.hasNext = dataCount > (page - 1) * limit + tableContent.length;
           for (let item of tableContent) {
             let content = JSON.parse(item.content);
@@ -228,7 +231,7 @@
         }).then(data => {
           let {total = 0, praiseNoticeList = []} = data;
           let {page, limit} = this.currentItem;
-          this.isNull = !praiseNoticeList.length;
+          this.currentItem.isNull = !praiseNoticeList.length;
           this.currentItem.hasNext = total > (page - 1) * limit + praiseNoticeList.length;
           for (let item of praiseNoticeList) {
             let content = JSON.parse(item.content);
@@ -333,6 +336,7 @@
               slideChangeTransitionStart: () => {
                 let index = this.pageSwiper.activeIndex;
                 let list = [this.getList, this.getComment, this.getPraise];
+                let {status} = this.tabList[index];
                 this.activeIndex = index;
                 this.isMovingSwiper = true;
                 // 已有数据则不重新请求
@@ -406,14 +410,33 @@
       min-height: 100%;
     }
     .when_null {
+      position: absolute;
       top: 50%;
       width: 100%;
-      font-size: .24rem;
-      color: #c8c8c8;
-      font-weight: bold;
+      line-height: .2rem;
+      color: #999;
       text-align: center;
-      position: absolute;
+      font-size: 0;
       transform: translate(0, -50%);
+      .no_data {
+        vertical-align: top;
+      }
+      .no_data_todo {
+        width: .72rem;
+        height: .66rem;
+      }
+      .no_data_comment {
+        width: .7rem;
+        height: .69rem;
+      }
+      .no_data_praise {
+        width: .75rem;
+        height: .71rem;
+      }
+      .text {
+        margin-top: .14rem;
+        font-size: .14rem;
+      }
     }
     .msg_list {
       // background: #F6F6F6;
