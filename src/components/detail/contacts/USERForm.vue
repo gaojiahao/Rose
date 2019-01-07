@@ -83,15 +83,15 @@
       // 编辑
       goEdit(){
         let { name } = this.$route.query,
-            { fileId, listId } = this.$route.params;
+            { folder, fileName } = this.$route.params;
         this.$router.push({
-          path: `/fillForm/${fileId}/${listId}`,
+          path: `/fillForm/${folder}/${fileName}`,
           query: { name, colId: this.colId }
         })
       },
       // TODO 获取应用详情
       getAppDetail() {
-        let {listId = ''} = this.$route.params;
+        let {listId = ''} = this.$route.query;
         return getAppDetail(listId).then(([data = {}]) => {
           let {action} = data;
           this.action = action;

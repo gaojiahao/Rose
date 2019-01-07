@@ -116,9 +116,9 @@
       // TODO 创建并关联
       goRelation(item) {
         let {uniqueId} = this.$route.query;
-        let {parentNav: fileId, listId, transName} = item;
+        let {parentNav: folder, file, transName} = item;
         this.$router.push({
-          path: `/fillform/${fileId}/${listId}`,
+          path: `/fillform/${folder}/${fileName}`,
           query: {
             name: transName,
             uniqueId,

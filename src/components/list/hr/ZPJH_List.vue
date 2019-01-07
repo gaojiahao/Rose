@@ -90,13 +90,13 @@
         // 交易号、应用名称等
         let { transCode } = item,
             { name } = this.$route.query,
-            { fileId, listId } = this.$route.params;
+            { folder, fileName } = this.$route.params;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
         this.$set(this.listData, index, {...item});
         // 新的路由地址
-        let newPath = `${path}/${fileId}/${listId}`;
+        let newPath = `${path}/${folder}/${fileName}`;
         // 等待动画结束后跳转
         setTimeout(() => {
           this.clickVisited = false;

@@ -215,8 +215,8 @@ export default {
       }).then(data => {
         let relatedApply = data.relevantItems;
         relatedApply.forEach(item => {
-          let { fileId, listId } = this.$route.params;
-          if (Apps[fileId][listId]) {
+          let { folder, fileName } = this.$route.params;
+          if (fileName) {
             this.HasValRealted = true;
             // if (item.itemCount > 0) {
             //   this.HasValRealted = true;

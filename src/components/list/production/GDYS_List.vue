@@ -57,10 +57,10 @@
         this.popShow = true;
       },
       selTask(val) {
-        let { name, childId } = this.$route.query,
-            { fileId, listId } = this.$route.params;
+        let { name } = this.$route.query,
+            { folder, fileName } = this.$route.params;
         this.$router.push({
-          path: `/fillform/${fileId}/${listId}`,
+          path: `/fillform/${folder}/${fileName}`,
           query: {
             name,
             childId,

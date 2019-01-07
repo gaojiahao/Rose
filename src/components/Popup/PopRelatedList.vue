@@ -187,9 +187,9 @@ export default {
     //跳转详情
     goDetail(item){
       this.showPop = false;
-      let { fileId, listId } = this.idInfo;
+      let { folder, file } = this.idInfo;
       this.$router.push({
-        path: `/detail/${fileId}/${listId}`,
+        path: `/detail/${folder}/${fileName}`,
         query: {
           name: item.transTypeName,
           transCode: item.transCode,

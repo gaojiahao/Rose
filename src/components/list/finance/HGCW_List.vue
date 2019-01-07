@@ -32,9 +32,9 @@ export default {
   },
   methods: {
     goDetail(item) {
-      let { fileId, listId } = this.$route.params;
+      let { folder, fileName } = this.$route.params;
       this.$router.push({
-        path: `/detail/${fileId}/${listId}`,
+        path: `/detail/${folder}/${fileName}`,
         query: {
           code: item.code,
           name: item.title

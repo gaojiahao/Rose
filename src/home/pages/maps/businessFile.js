@@ -7,9 +7,6 @@ export default {
   '7dab9bd1-f51d-4b09-afc0-3d5c732ca219': 'plan',
 
   // <生产类应用>
-  // 'fb200d08-4289-44dc-81e1-1fddec997c5e': {
-  //   'f6e7047d-29df-46bd-a9ef-c342e0bfda31': 'production'
-  // },
   'fb200d08-4289-44dc-81e1-1fddec997c5e': 'production',
   
   // < 产品类应用 >

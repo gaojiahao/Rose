@@ -273,7 +273,7 @@
           name: listName,
           transCode: RELATION_KEY,
         };
-        let path = `/detail/${fileId}/${listId}`;
+        let path = `/detail/${folder}/${fileName}`;
         let {status} = this.tabList[this.activeIndex];
         // 判断是否在滑动swiper中
         if (this.isMovingSwiper) {

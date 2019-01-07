@@ -95,14 +95,14 @@
         }, 200)
       },
       // 编辑
-      EditCompany(item, index) {
-        let {fileId, listId} = this.$route.params;
-        this.RouterChange(item, index, `/fillForm/${fileId}/${listId}`);
-      },
+      // EditCompany(item, index) {
+      //   let {folder, fileName} = this.$route.params;
+      //   this.RouterChange(item, index, `/fillForm/${folder}/${fileName}`);
+      // },
       // 前往详情
       goDetail(item, index) {
-        let {fileId, listId} = this.$route.params;
-        this.RouterChange(item, index, `/detail/${fileId}/${listId}`);
+        let {folder, fileName} = this.$route.params;
+        this.RouterChange(item, index, `/detail/${folder}/${fileName}`);
       },
       getList(noReset = false) {
         let filter = [];

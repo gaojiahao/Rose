@@ -75,10 +75,10 @@ export default {
     // TODO 跳转到编辑页面
     goEdit() {
       // 交易号、应用名称等
-      let { fileId, listId } = this.$route.params,
+      let { folder, fileName } = this.$route.params,
           { name } = this.$route.query;
       this.$router.push({
-        path: `/fillform/${fileId}/${listId}`,
+        path: `/fillform/${folder}/${fileName}`,
         query: {
           name, 
           transCode: this.transCode

@@ -121,9 +121,9 @@
               value,
               callback: () => {
                 let { childId } = this.$route.query,
-                    {fileId, listId} = this.$route.params;
+                    {folder, fileName} = this.$route.params;
                 this.$router.replace({
-                  path: `/fillform/${fileId}/${listId}`,
+                  path: `/fillform/${folder}/${fileName}`,
                   query: {
                     childId,
                     name: this.name,

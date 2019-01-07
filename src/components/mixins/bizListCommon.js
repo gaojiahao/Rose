@@ -79,13 +79,11 @@ export default {
   },
   methods: {
     goDetail (item, index) {
-      if (this.clickVisited) {
-        return
-      }
+      if (this.clickVisited) return;
       // 交易号、应用名称等
       let { transCode } = item,
-          { name, childId } = this.$route.query,
-          { fileId, listId } = this.$route.params;
+          { name } = this.$route.query,
+          { folder, fileName } = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
       item.visited = true;
@@ -100,20 +98,16 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${fileId}/${listId}`;
+              path = `/fillform/${folder}/${fileName}`;
             } else {
-              path = `/detail/${fileId}/${listId}`;
+              path = `/detail/${folder}/${fileName}`;
             }
           } else {
-            path = `/detail/${fileId}/${listId}`;
+            path = `/detail/${folder}/${fileName}`;
           }
           this.$router.push({
             path,
-            query: {
-              name,
-              childId,
-              transCode
-            }
+            query: { name, transCode }
           })
         };
         let calcTime = Date.now() - start;
@@ -133,11 +127,11 @@ export default {
       })
     },
     goEdit () {
-      let { name, childId} = this.$route.query,
-          { fileId, listId } = this.$route.params;
+      let { name} = this.$route.query,
+          { folder, fileName } = this.$route.params;
       this.$router.push({
-        path: `/fillform/${fileId}/${listId}`,
-        query: { name, childId}
+        path: `/fillform/${folder}/${fileName}`,
+        query: { name }
       })
     },
     // TODO 重置列表条件
@@ -434,7 +428,7 @@ export default {
     },
     // TODO 获取应用详情
     getAppDetail() {
-      let {listId = ''} = this.$route.params;
+      let {listId = ''} = this.$route.query;
       return getAppDetail(listId).then(([data = {}]) => {
         let {action} = data;
         this.action = action;
@@ -460,8 +454,8 @@ export default {
      * 此处是判断——跳转至详情页还是提交页面
      * */
     this.$loading.show();
-    let { name, childId, transCode } = this.$route.query,
-        { fileId, listId } = this.$route.params;
+    let { name, transCode } = this.$route.query,
+        { folder, fileName } = this.$route.params;
     // 当路由当中包含transCode
     if(transCode) {
       isMyflow({transCode}).then(({tableContent}) => {
@@ -469,19 +463,18 @@ export default {
         if (tableContent.length > 0) {
           let {isMyTask, nodeName} = tableContent[0];
           if (isMyTask === 1 && nodeName === '重新提交') {
-            path = `/fillform/${fileId}/${listId}`;
+            path = `/fillform/${folder}/${fileName}`;
           } else {
-            path = `/detail/${fileId}/${listId}`;
+            path = `/detail/${folder}/${fileName}`;
           }
         } else {
-          path = `/detail/${fileId}/${listId}`;
+          path = `/detail/${folder}/${fileName}`;
         }
         this.$router.replace({
-          path, query: {name, childId, transCode}
+          path, query: {name, transCode}
         })
       })
     }
-    return;
   },
   created() {
     register(); // 注册wx-js-sdk

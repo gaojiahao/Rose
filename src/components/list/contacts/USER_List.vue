@@ -91,10 +91,10 @@
         }
         // 交易号、应用名称等
         let {colId} = item,
-          {name} = this.$route.query,
-          {fileId, listId} = this.$route.params;
+            {name, listId} = this.$route.query,
+            {folder, fileName} = this.$route.params;
         // 新的路由地址
-        let newPath = `${path}/${fileId}/${listId}`;
+        let newPath = `${path}/${folder}/${fileName}`;
         // 高亮 点击过的数据
         this.clickVisited = true;
         item.visited = true;
@@ -104,7 +104,11 @@
           this.clickVisited = false;
           this.$router.push({
             path: newPath,
-            query: {name, colId}
+            query: {
+              name, 
+              colId,
+              listId
+            }
           })
         }, 200)
       },
@@ -112,10 +116,10 @@
       goDetail(item, index) {
         this.pathChange(item, index, `/detail`);
       },
-      // TODO 跳转到编辑
-      goUserEdit(item, index) {
-        this.pathChange(item, index, `/fillform`);
-      },
+      // // TODO 跳转到编辑
+      // goUserEdit(item, index) {
+      //   this.pathChange(item, index, `/fillform`);
+      // },
       // TODO 获取用户列表
       getList(noReset = false) {
         let filter = [];

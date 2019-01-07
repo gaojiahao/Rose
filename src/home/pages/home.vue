@@ -72,13 +72,11 @@ export default {
       this.$router.push({path: `${basicMap[item]}`})
     },
     // 前往列表
-    goList(listId, name, file, childId){
+    goList(folder, fileName, name, listId){
+      // console.log('fileName:', fileName); 
       this.$router.push({
-        path: `/list/${file}/${listId}`, 
-        query: { 
-          name,
-          childId
-        }
+        path: `/list/${folder}/${fileName}`, 
+        query: { name, listId }
       })
     },
     goAppDetail(listId){
@@ -162,57 +160,51 @@ export default {
       // 获取首页应用列表
       await homeService.getMeau().then( res => {
         let BUSobj = this.BUSobj;
-        let childObj = {};
         for(let val of res){
-          // 获取应用
-          if(Apps[val.id]){
-            // 对象里动态生成数组
-            BUSobj[val.text] = [];
-            for(let item of val.children){
-              // 基础对象
-              if(basicMap[item.listId]){
-                // 图片处理
-                item.icon = item.icon 
-                  ? `/dist/${item.icon}`
-                  : ''
-                this.BasicApps.push(item);
-              }
-              // 业务应用
-              if(Apps[val.id][item.listId]){
-                // 获取 应用类型ID 对应相应文件夹
-                item.fileID = val.id;
-                item.icon = item.icon
-                  ? `/dist/${item.icon}`
-                  : this.getDefaultIcon();
-                // 归类到相应的小数组
-                BUSobj[val.text].push(item);
-              }
-              // 如果业务应用底下存在分类
-              if(Apps[val.id][item.id]){
-                for(let child of item.children) {
-                  if(Apps[val.id][item.id][child.listId]) {
-                    child.fileID = val.id;
-                    child.icon = child.icon
-                    ? `/dist/${child.icon}`
+          BUSobj[val.text] = [];
+          for(let item of val.children) {
+            // 基础对象应用 单独处理
+            if(basicMap[item.listId]){
+              // 图片处理
+              item.icon = item.icon 
+                ? `/dist/${item.icon}`
+                : ''
+              this.BasicApps.push(item);
+            }
+            if(item.packagePath) {
+              // 获取 应用类型ID 对应相应文件夹
+              item.fileID = val.id;
+              item.icon = item.icon 
+                ? `/dist/${item.icon}` 
+                : this.getDefaultIcon();
+              // 归类到相应的小数组
+              BUSobj[val.text].push(item);
+            }
+            // 如果应用里面 存在分类
+            if(item.children) {
+              for(let childItem of item.children) {
+                if(childItem.packagePath) {
+                  childItem.fileID = val.id;
+                  childItem.icon = childItem.icon
+                    ? `/dist/${childItem.icon}`
                     : this.getDefaultIcon();
-                    if(!BUSobj[val.text][item.text]) {
-                      this.$set(BUSobj[val.text], item.text, {childId: item.id, childName: item.text, childList: [child]})
-                    }
-                    else {
-                      BUSobj[val.text][item.text].childList.push(child)
-                    }
+                  if(!BUSobj[val.text][item.text]) {
+                    this.$set(BUSobj[val.text], item.text, {childId: item.id, childName: item.text, childList: [childItem]})
+                  }
+                  else {
+                    BUSobj[val.text][item.text].childList.push(childItem)
                   }
                 }
               }
             }
-            this.BusApps.push({
-              id: val.id,
-              name: val.text,
-              appList: {...BUSobj[val.text]}
-            })
-            this.$loading.hide();
           }
-    
+          this.BusApps.push({
+            id: val.id,
+            name: val.text,
+            folder: val.folder,
+            appList: {...BUSobj[val.text]}
+          })
+          this.$loading.hide();
         }
       })
       // 获取 头像姓名

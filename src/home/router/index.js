@@ -51,20 +51,20 @@ export default [
     meta:{title:'相关实例'}
   },
   {
-    path:'/list/:fileId/:listId',
+    path:'/list/:folder/:fileName',
     name:'LIST',
     component:LIST,
     meta:{ title:'列表', keepAlive: true},
   },
 
   {
-    path:'/fillform/:fileId/:listId',
+    path:'/fillform/:folder/:fileName',
     name:'FILLFORM',
     component:FILLFORM,
     meta:{ title:'填写新内容' }
   },
   {
-    path:'/detail/:fileId/:listId',
+    path:'/detail/:folder/:fileName',
     name:'DETAIL',
     component:DETAIL,
     meta:{ title:'订单详情', keepAlive: true}

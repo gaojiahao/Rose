@@ -148,13 +148,13 @@
         }
         // 交易号、应用名称等
         let {name} = this.$route.query,
-          {fileId, listId} = this.$route.params;
+            {folder, fileName} = this.$route.params;
         // 高亮点击的列表
         this.clickVisited = true;
         item.visited = true;
         this.$set(this.listData, index, {...item});
         // 新的路由地址
-        let newPath = `${path}/${fileId}/${listId}`;
+        let newPath = `${path}/${folder}/${fileName}`;
         setTimeout(() => {
           this.clickVisited = false;
           this.$router.push({
@@ -166,9 +166,9 @@
       goDetail(item, index) {
         this.goNextPage(item, index, '/detail')
       },
-      goEditJob(item, index) {
-        this.goNextPage(item, index, '/fillform')
-      },
+      // goEditJob(item, index) {
+      //   this.goNextPage(item, index, '/fillform')
+      // },
       // tab切换
       tabClick(item, index) {
         this.activeIndex = index;
@@ -179,11 +179,11 @@
       },
       // 新增
       goEdit() {
-        let {name, childId} = this.$route.query,
-          {fileId, listId} = this.$route.params;
+        let {name} = this.$route.query,
+          {folder, fileName} = this.$route.params;
         this.$router.push({
-          path: `/fillform/${fileId}/${listId}`,
-          query: {name, childId, jobType: this.activeName}
+          path: `/fillform/${folder}/${fileName}`,
+          query: {name, jobType: this.activeName}
         })
       },
       // TODO 设置状态的class

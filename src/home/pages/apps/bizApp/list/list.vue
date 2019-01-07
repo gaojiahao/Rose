@@ -15,7 +15,7 @@ import AppsFile from '@/home/pages/maps/businessFile'
 export default {
   data(){
     return {
-      fileId :'',
+      folder :'',
       currentComponent : '',
       isrefresh : false,
     }
@@ -23,21 +23,13 @@ export default {
   created(){
     
     /*
-    * AppsFile[fileId] => 应用类型文件夹
-    * Apps[fileId][listId] => 应用名称.vue 
+    * AppsFile[folder] => 应用类型文件夹
+    * Apps[folder][fileName] => 应用名称.vue 
     * childId => 分类id （不一定存在）
     */    
-    let { fileId, listId } = this.$route.params,
-        { childId } = this.$route.query;
-    this.fileId = fileId;
-    if(fileId){
-      if(childId) {
-        this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}_List.vue`).default;
-      }
-      else {
-        this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
-      }
-    }
+    let { folder, fileName } = this.$route.params;
+    this.folder = folder;
+    this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
   },
   beforeRouteEnter (to, from, next) {
     let { name, transCode } = to.query;
@@ -65,21 +57,15 @@ export default {
       }
     })  
     if (reload) {
-      let { fileId, listId } = this.$route.params,
-          { childId } = this.$route.query;
+      let { folder, fileName } = this.$route.params;
       this.$loading.show();
-      if (fileId) {
+      if (folder) {
         // 在提交页面提交成功时进入该判断
-        if (this.fileId === fileId && this.currentComponent) {
+        if (this.folder === folder && this.currentComponent) {
           this.$refs.list.reloadData();
         }
-        this.fileId = fileId;
-        if(childId) {
-          this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}_List.vue`).default;
-        }
-        else {
-          this.currentComponent = require(`components/list/${AppsFile[fileId]}/${Apps[fileId][listId]}_List.vue`).default;
-        }
+        this.folder = folder;
+        this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
       }
       this.$route.meta.reload = false;
     }

@@ -137,18 +137,12 @@ export default {
     },
     // TODO 初始化页面
     initPage(){
-      // this.$loading.show();
       let { childId, transCode } = this.$route.query,
-        { fileId, listId } = this.$route.params;
+          { folder, fileName } = this.$route.params;
       this.hasComment = !!transCode;
       this.transCode = transCode;
       try {
-        if(childId) {
-          this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][childId][listId]}Form.vue`).default;
-        }
-        else {
-          this.currentComponent = require(`components/detail/${AppsFile[fileId]}/${Apps[fileId][listId]}Form.vue`).default;
-        }
+        this.currentComponent = require(`components/detail/${folder}/${fileName}Form.vue`).default;
         // 监听详情页传回来的 ‘评论’
         this.$event.$on('commentCount', (val) => {
           this.commentCount = val;
