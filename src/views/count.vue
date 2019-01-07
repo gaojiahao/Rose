@@ -105,7 +105,7 @@
                 this.$vux.alert.show({
                   title: "提示",
                   content: data.message,
-                  onHide() {
+                  onHide: () => {
                     this.$router.replace("/Home");
                     localStorage.removeItem("saleReportInfo");
                     localStorage.removeItem("HELP_BASIC_INFO");

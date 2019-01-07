@@ -46,7 +46,7 @@
             <div class="each-select" @click.stop="goAchievement" v-if="showLookSales">销售业绩查看</div>
           </div>
           <h2 class="tech_bottom">
-            <div>v2.0.5</div>
+            <div>v2.0.6</div>
             <div>
               Powered by <span class="cp_name">Refordom</span>
             </div>
