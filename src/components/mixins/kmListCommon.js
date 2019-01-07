@@ -8,7 +8,7 @@ export default {
   data() {
     return {
       // 列表scroll参数
-      page: 1, 
+      page: 1,
       limit: 20,
       hasNext: true,
       scrollOptions: {
@@ -17,7 +17,7 @@ export default {
         pullUpLoad: true,
       },
       // 流水scroll
-      flowPage: 1, 
+      flowPage: 1,
       flowLimit: 20,
       FlowHasNext: true,
       FlowScrollOptions: {
@@ -78,9 +78,11 @@ export default {
         account_code: this.uniqueId,
         device_type : 'phone'
       }).then(({data = []})=>{
+        let [first = {}] = data;
         this.listView = data;
-        this.calc_rel_code = data[0].calc_rel_code;
-        this.view_id = data[0].view_id;
+        this.activeTab = first.view_name;
+        this.calc_rel_code = first.calc_rel_code;
+        this.view_id = first.view_id;
       })
     },
     //显示流水详情
@@ -160,6 +162,12 @@ export default {
         calc_rel_code: this.calc_rel_code,
         start: (this.page - 1) * this.limit,
       }).then(({ data = [], total = 0 }) => {
+        let bankMap = {
+          '交通银行': require('assets/iconfont/bank/bank_jt.png'),
+          '建设银行': require('assets/iconfont/bank/bank_js.png'),
+          '中国银行': require('assets/iconfont/bank/bank_zg.png'),
+          '招商银行': require('assets/iconfont/bank/bank_zs.png'),
+        };
         this.hasNext = total > (this.page - 1) * this.limit + data.length;
         data.forEach( item => {
           item.status = false;
@@ -169,11 +177,16 @@ export default {
                 item.flowIconClass = 'iconfont icon-shangjiantou';
                 item.flowWordClass = 'cashIn';
                 break;
-              case '流出': 
+              case '流出':
                 item.flowIconClass = 'iconfont icon-xiajiantou-copy';
                 item.flowWordClass = 'cashOut';
                 break;
             }
+          }
+          if (this.activeTab.includes('资金账户余额')) {
+            item.icon = bankMap[item.bank];
+          } else if (this.activeTab.includes('现金流计划表')) {
+            item.appIcon = `/dist/${item.appIcon}`;
           }
         })
         this.listData = this.page === 1 ? data : this.listData.concat(data);
@@ -202,6 +215,7 @@ export default {
         }
         this.$loading.hide();
       }).catch(e => {
+        console.log(e)
         this.resetScroll();
       })
     },
@@ -228,8 +242,8 @@ export default {
     //流水scroll上拉加载
     onPullingUpFlow() {
       this.flowPage++;
-      this.getFlowData()        
-    },  
+      this.getFlowData()
+    },
     //获取上次存储的列表总数量
     getSession() {
       return new Promise( resolve => {
