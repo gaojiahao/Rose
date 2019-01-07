@@ -19,7 +19,17 @@
           </div>
         </div>
       </div>
-      <div class='each_property vux-1px-b'>
+      <div class='each_property vux-1px-b' v-for="(item,index) in warehouseConfig" :key="index">
+        <template v-if="item.fieldCode === 'warehouseProvince'">
+          <label>省市区:</label>
+          <div class='property_val'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</div>
+        </template>
+        <template v-else>
+          <label>{{item.fieldLabel}}:</label>
+          <div class='property_val'>{{warehouse[item.fieldCode] || "无"}}</div>
+        </template>
+      </div>
+      <!-- <div class='each_property vux-1px-b'>
         <label>仓库关系类型:</label>
         <div class='property_val'>{{warehouse.warehouseType}}</div>
       </div>
@@ -30,7 +40,7 @@
       <div class='each_property vux-1px-b'>
         <label>仓库状态:</label>
         <div class='property_val'>{{warehouse.warehouseStatus}}</div>
-      </div>
+      </div> -->
       <div class='each_property vux-1px-b'>
         <label>创建者:</label>
         <div class='property_val'>{{baseinfo.creatorName}}</div>
@@ -53,7 +63,7 @@
 <script>
 import { dateFormat } from 'vux'
 import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
-import {getObjDealerByLabelName} from 'service/commonService.js'
+import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/commonService.js'
 import { setTimeout } from 'timers';
 export default {
   filters: {
@@ -124,7 +134,9 @@ export default {
         '渠道商仓': 'channel',
         '个人仓': 'staff',
         '一般部门仓': 'group',
-      }
+      },
+      warehouseConfig: [], // 仓库基本信息的配置
+
     }
   },
   methods: {
@@ -218,13 +230,100 @@ export default {
           break;
       }
     },
+    // 请求应用的viewId
+    getFormViews() {
+      return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
+        for(let item of data){
+          if(item.viewType === 'view'){
+            this.getFormConfig(item.uniqueId);
+            break;
+          }
+        }
+      })
+    },
+    // 获取表单配置
+    getFormConfig(viewId){
+      getFormConfig(viewId).then(({config = []}) => {
+        console.log(config);
+        let warehouseConfig = [], warehouseMultipleConfig = [];
+        config.forEach(item => {
+          if(!item.isMultiple) {
+            warehouseConfig = JSON.parse(JSON.stringify(item.items));
+          }
+          else{
+            warehouseMultipleConfig.push(item)
+          }
+        })
+        // 仓库基本信息配置的处理
+        warehouseConfig.forEach(item =>{
+          // 默认显示员工，（渠道商，组织等隐藏）
+          if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+            || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+            item.hiddenInRun = true
+          }
+          if(!item.hiddenInRun){
+            //下拉框的数据请求
+            if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
+              if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
+                let url = item.dataSource.data.url;
+                let params = item.dataSource.data.params;
+                let keys = Object.keys(params);
+                let requestParams = {
+                  url,
+                }
+                if(keys.length){
+                  let data = {};
+                  keys.forEach(key => {
+                    if(params[key].value.length){
+
+                    }
+                    data[key] = params[key].value;
+                  })
+                  requestParams.data = data;
+                }
+                // console.log(requestParams);
+                requestData(requestParams).then(data => {
+                  if(data.tableContent){
+                    data.tableContent.forEach(item => {
+                      item.value = item.name;
+                    })
+                    if(item.fieldCode === 'warehouseType'){
+                      if(!this.$route.query.transCode){
+                        this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : data.tableContent[0].value;
+                      }
+                    }
+                    this.$set(item, 'remoteData', data.tableContent)
+                  }
+                  else{
+                    data.forEach(item => {
+                      item.value = item.name;
+                    })
+                    this.$set(item, 'remoteData', data)
+                  }
+                  
+                })
+              }
+            }
+            // 在渲染的配置中添加字段
+            if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
+              && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
+              this.warehouseConfig.push(item);
+            }
+          }
+        })
+        this.$loading.hide()
+      })
+    },
   },
   created() {
     this.$loading.show()
     let query = this.$route.query;
     if (query.transCode) {
       this.transCode = query.transCode;
-      this.findData();
+      (async() => {
+        await this.getFormViews();
+        await this.findData();
+      })()
     }
   }
 }
