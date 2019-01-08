@@ -265,15 +265,12 @@
       },
       // TODO 进入详情
       goDetail(item, index) {
-        let {commentType = '', listId = '', listName = '', RELATION_KEY = ''} = item;
-        let fileId = item.typeId,
-          childId = item.childId;
+        let {listId, folder, packagePath, listName, RELATION_KEY, commentType } = item;
         let query = {
-          childId,
           name: listName,
           transCode: RELATION_KEY,
         };
-        let path = `/detail/${folder}/${fileName}`;
+        let path = `/detail/${folder}/${packagePath}`;
         let {status} = this.tabList[this.activeIndex];
         // 判断是否在滑动swiper中
         if (this.isMovingSwiper) {

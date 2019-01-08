@@ -6,7 +6,7 @@
     <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
                 :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp" @on-pulling-down="onPullingDown"
                 ref="bScroll">
-        <div class='each_task' v-for='(item,index) in listData' :key='index' @click='goDetail(item,index)'>
+        <div class='each_task' v-for='(item, index) in listData' :key='index' @click='goDetail(item, index)'>
           <div class="todo_msg" :class="{visited: item.visited}">
             <div class="msg_top">
               <!-- 表单状态 及 编码 -->
@@ -35,9 +35,9 @@
                 <div class="handle_result">
                   <span>操作动作:</span>
                   <span class="result"
-                  :class='{reject_c : item.lastNode.status === "同意" ||
-                  item.lastNode.status === "提交"  }'>
-                  {{item.lastNode.status}}
+                        :class='{reject_c : item.lastNode.status === "同意" ||
+                        item.lastNode.status === "提交"  }'>
+                    {{item.lastNode.status}}
                   </span>
                 </div>
               </div>
@@ -85,15 +85,12 @@ export default {
   },
   methods:{
     goDetail(item, index){
-      // 获取 listID
-      let { listId, title } = item;
+      let { title, folder, packagePath } = item;
+      let start = Date.now();
       // 高亮 点击过的模块
       item.visited = true;
       this.$set(this.listData, index, {...item});
-      let start = Date.now();
       const TRANSITION_TIME = 200; // 动画时间
-      let fileId = item.typeId, 
-          childId = item.childId;
       //判断是否是重新提交，如果是，跳转到创建订单页面
       isMyflow({transCode : item.businessKey}).then(({tableContent}) => {
         let jump = () => {
@@ -101,15 +98,14 @@ export default {
           if (tableContent.length > 0) {
             let {isMyTask, nodeName} = tableContent[0];
             if (isMyTask === 1 && nodeName === '重新提交') {
-              path = `/fillform/${fileId}/${item.listId}`;
+              path = `/fillform/${folder}/${packagePath}`;
             } else {
-              path = `/detail/${fileId}/${item.listId}`;
+              path = `/detail/${folder}/${packagePath}`;
             }
           } else {
-            path = `/detail/${fileId}/${item.listId}`;
+            path = `/detail/${folder}/${packagePath}`;
           }
           let query = {
-            childId,
             name: title,
             transCode : item.businessKey,
           }
@@ -148,39 +144,39 @@ export default {
     },
     //获取销售订单数据
     getList(noReset = false) {
-        let filter = {
-          title : this.title,
-          businessKey: this.serachVal,
-          crtName: this.serachVal
-        };
-        return getAllMsgList({
-          limit: this.limit,
-          page: this.page,
-          filter: JSON.stringify(filter),
-        }).then(({total = 0, tasks = [], success = true}) => {
-          tasks.forEach(item => {
-            item.status = "待处理"
-            item.transCode = item.businessKey;
-          });
-          this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
-          this.listData = this.page === 1 ? tasks : [...this.listData, ...tasks];
-          if (!noReset) {
-            this.$nextTick(() => {
-              this.resetScroll();
-            })
-          }
-        }).catch(e => {
-          this.resetScroll();
-        })
-      },
-      // TODO 获取默认图片
-      getDefaultImg(item) {
-        let url = require('assets/avatar.png');
-        if (item) {
-          item.inventoryPic = url;
+      let filter = {
+        title : this.title,
+        businessKey: this.serachVal,
+        crtName: this.serachVal
+      };
+      return getAllMsgList({
+        limit: this.limit,
+        page: this.page,
+        filter: JSON.stringify(filter),
+      }).then(({total = 0, tasks = [], success = true}) => {
+        tasks.forEach(item => {
+          item.status = "待处理"
+          item.transCode = item.businessKey;
+        });
+        this.hasNext = total > (this.page - 1) * this.limit + tasks.length;
+        this.listData = this.page === 1 ? tasks : [...this.listData, ...tasks];
+        if (!noReset) {
+          this.$nextTick(() => {
+            this.resetScroll();
+          })
         }
-        return url
-      },
+      }).catch(e => {
+        this.resetScroll();
+      })
+    },
+    // TODO 获取默认图片
+    getDefaultImg(item) {
+      let url = require('assets/avatar.png');
+      if (item) {
+        item.inventoryPic = url;
+      }
+      return url
+    },
     // TODO 重置下拉刷新、上拉加载的状态
     resetScroll() {
       this.$refs.bScroll.finishPullDown();
