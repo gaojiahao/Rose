@@ -1,5 +1,5 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages">
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
@@ -10,11 +10,6 @@
             {{item.view_name}}
           </div>
         </div>
-        <!--<tab :line-width='0' default-color='#333' active-color='#3296FA'>
-          <tab-item v-for="(item, index) in listView" :key="index" :selected="index === activeIndex"
-                    @on-item-click="tabClick(item, index)">{{item.view_name}}
-          </tab-item>
-        </tab>-->
       </div>
       <div class="swiper-container list-container">
         <div class="swiper-wrapper">
@@ -42,10 +37,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="classification-split">
-                    <div class="half_circle half_circle_left"></div>
-                    <div class="half_circle half_circle_right"></div>
-                  </div>
+                  <div class="classification-split"></div>
                   <div class="bank-info">
                     <div class="bank_detail">
                       <div class="bank">
@@ -103,8 +95,6 @@
               <template v-else-if="key === 'view_140'">
                 <div class="schedule-item-wrapper" v-for='(item, index) in slide.listData' :key='index'
                      @click="getFlow(item)">
-                  <div class="half_circle half_circle_left"></div>
-                  <div class="half_circle half_circle_right"></div>
                   <div class="schedule-main">
                     <img class="schedule_img" :src="item.appIcon" alt="app-icon">
                     <div class="schedule_info">
@@ -123,8 +113,7 @@
                       </div>
                       <div class="schedule_info_item">
                         <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate | dateFormat('YYYY-MM-DD')
-                        ||
-                        '无'}}
+                        || '无'}}
                       </div>
                     </div>
                   </div>
@@ -321,7 +310,6 @@
         this.currentScroll.scrollTo(0, 0);
         this.resetCondition();
         this.listSwiper.slideTo(index);
-        // this.getList();
       },
       //获取列表视图
       getClassfiy() {
@@ -532,26 +520,13 @@
   /* 资金账户余额 */
   .bank-item-wrapper {
     position: relative;
-    margin: 0 .13rem .1rem;
+    margin: .1rem .13rem;
     padding: .2rem .31rem .28rem .38rem;
     width: calc(100% - .26rem);
     background: url(~assets/bg/bg-bank.png) no-repeat;
     background-size: 100% 100%;
     color: #fff;
     box-sizing: border-box;
-    &:first-child {
-      &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: -.15rem;
-        width: .06rem;
-        height: 1.5rem;
-        background: url(~assets/swiper-tips.png) no-repeat;
-        background-size: 100% 100%;
-        transform: translate(0, -50%);
-      }
-    }
     &.bg2 {
       background-image: url(~assets/bg/bg-bank2.png);
     }
@@ -671,41 +646,6 @@
       margin: .17rem 0 .12rem;
       height: 1px;
       border-top: 1px dashed #DEDFE6;
-      .half_circle {
-        position: absolute;
-        top: 50%;
-        z-index: 1;
-        width: .2rem;
-        height: .2rem;
-        border-radius: 50%;
-        transform: translate(0, -50%);
-        /*background: radial-gradient(circle, #fbfbfb 10px, #fff);*/
-        box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, .1);
-        /* 做半圆 */
-        &.half_circle_left {
-          left: -.25rem;
-          &:before {
-            left: 0;
-            background: linear-gradient(to left, rgb(250, 250, 250), #fff);
-          }
-        }
-        /* 右半圆 */
-        &.half_circle_right {
-          right: -.25rem;
-          &:before {
-            right: 0;
-            background: linear-gradient(to right, rgb(250, 250, 250), #fff);
-          }
-        }
-        &:before {
-          content: '';
-          position: absolute;
-          top: 0;
-          z-index: 3;
-          width: .1rem;
-          height: .2rem;
-        }
-      }
     }
 
     .bank-info {
@@ -785,41 +725,6 @@
     color: #333;
     box-sizing: border-box;
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
-
-    .half_circle {
-      position: absolute;
-      top: .9rem;
-      z-index: 1;
-      width: .2rem;
-      height: .2rem;
-      border-radius: 50%;
-      transform: translate(0, -50%);
-      box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, .1);
-      /* 做半圆 */
-      &.half_circle_left {
-        left: -.1rem;
-        &:before {
-          left: 0;
-          background: linear-gradient(to left, rgb(250, 250, 250), #fff);
-        }
-      }
-      /* 右半圆 */
-      &.half_circle_right {
-        right: -.1rem;
-        &:before {
-          right: 0;
-          background: linear-gradient(to right, rgb(250, 250, 250), #fff);
-        }
-      }
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        z-index: 3;
-        width: .1rem;
-        height: .2rem;
-      }
-    }
 
     .schedule-main {
       display: flex;
