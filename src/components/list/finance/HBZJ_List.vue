@@ -4,9 +4,9 @@
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search='searchList'></searchIcon>
-        <div class="tab-container">
+        <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
-               @click="tabClick(item, index)">
+               @click="tabClick(item, index)" ref="tabs">
             {{item.view_name}}
           </div>
         </div>
@@ -450,6 +450,7 @@
                 this.activeTab = tab.view_name;
                 this.calc_rel_code = tab.calc_rel_code;
                 this.view_id = tab.view_id;
+                this.scrollToShow(index);
                 // 已有数据则不重新请求
                 if (this.currentItem.listData.length) {
                   return
@@ -460,6 +461,13 @@
             },
           });
         })
+      },
+      // TODO 滑动显示完整名字
+      scrollToShow(index) {
+        let $container = this.$refs.tabContainer;
+        let paddingLeft = parseFloat(getComputedStyle($container).paddingLeft);
+        let $activate = this.$refs.tabs[index];
+        $container.scrollLeft = $activate.offsetLeft - paddingLeft;
       },
     },
     filters: {toFixed},
