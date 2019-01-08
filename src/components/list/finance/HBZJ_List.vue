@@ -1,330 +1,174 @@
 <template>
-  <div class="pages" ref='list'>
+  <div class="pages">
     <div class='content'>
       <div class="list_top">
         <!-- 搜索栏 -->
         <searchIcon @search='searchList'></searchIcon>
-        <!--<div class="tab-container">
+        <div class="tab-container" ref="tabContainer">
           <div class="tab-item" :class="{active: index === activeIndex}" v-for="(item, index) in listView"
-               @click="tabClick(item, index)">
+               @click="tabClick(item, index)" ref="tabs">
             {{item.view_name}}
           </div>
-        </div>-->
-        <div class="filter_part">
-          <tab :line-width='0' default-color='#333' active-color='#3296FA'>
-            <tab-item v-for="(item, index) in listView" :key="index" :selected="index === activeIndex"
-                      @on-item-click="tabClick(item, index)">{{item.view_name}}
-            </tab-item>
-          </tab>
         </div>
       </div>
-      <!--<div class="swiper-container list-container">
+      <div class="swiper-container list-container">
         <div class="swiper-wrapper">
-          <r-scroll class="swiper-slide list_wrapper" :options="scrollOptions" :has-next="hasNext"
-                    :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
-                    @on-pulling-down="onPullingDown"
-                    ref="bScroll">
-            &lt;!&ndash; 现金流分类识别 专属dom结构 &ndash;&gt;
-            <template v-if="activeTab.includes('现金流分类')">
-              <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
-                <div class="classification-header-wrapper">
-                  <img class="classification_img" :src="item.AppIcon" alt="app-icon">
-                  <div class="classification_app">
-                    <div class="app_top">
-                      <div class="app_name">{{item.appTitle}}</div>
-                      <div class="app_flow" :class="item.flowWordClass">
-                        {{item.cashInOrOut}}<i :class="item.flowIconClass"></i>
+          <div class="swiper-slide" v-for="(slide, key) in listMap" :key="key">
+            <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="slide.hasNext"
+                      :no-data="!slide.hasNext && !slide.listData.length" @on-pulling-up="onPullingUp"
+                      @on-pulling-down="onPullingDown" ref="bScroll">
+              <!-- 现金流分类识别 -->
+              <template v-if="key === 'view_49'">
+                <div class="classification-item-wrapper" v-for='(item, index) in slide.listData' :key='index'>
+                  <div class="classification-header-wrapper">
+                    <img class="classification_img" :src="item.AppIcon" alt="app-icon">
+                    <div class="classification_app">
+                      <div class="app_top">
+                        <div class="app_name">{{item.appTitle}}</div>
+                        <div class="app_flow" :class="item.flowWordClass">
+                          {{item.cashInOrOut}}<i :class="item.flowIconClass"></i>
+                        </div>
+                      </div>
+                      <div class="classification_detail_item">
+                        <span class="classification_detail_title">实例编码：</span>{{item.transCode}}
+                      </div>
+                      <div class="classification_detail_item">
+                        <span class="classification_detail_title">往来名称：</span>{{item.dealerName || '无'}}
                       </div>
                     </div>
-                    <div class="classification_detail_item">
-                      <span class="classification_detail_title">实例编码：</span>{{item.transCode}}
+                  </div>
+                  <div class="classification-split"></div>
+                  <div class="bank-info">
+                    <div class="bank_detail">
+                      <div class="bank">
+                        <span class="title">开户银行: </span>{{item.bank || '暂无银行信息'}}
+                      </div>
+                      <div class="bank_account">
+                        <span class="title">银行账号: </span>{{item.account || '无'}}
+                      </div>
                     </div>
-                    <div class="classification_detail_item">
-                      <span class="classification_detail_title">往来名称：</span>{{item.dealerName || '无'}}
+                    <div class="bank_amt_wrapper">
+                      <!-- 付款：crAmt，收款：drAmt -->
+                      <div class="bank_amt"><span class="symbol">￥</span>{{item.crAmnt || item.drAmnt | numberComma}}
+                      </div>
+                      <div class="text">总{{item.transName}}({{item.fundCurrency}})</div>
                     </div>
                   </div>
-                </div>
-                <div class="classification-split"></div>
-                <div class="bank-info">
-                  <div class="bank_detail">
-                    <div class="bank">
-                      <span class="title">开户银行: </span>{{item.bank || '暂无银行信息'}}
+                  <div class="bank-name">{{item.fundName}}</div>
+                  <div class="flow-info">
+                    <div class="flow_info_item">
+                      <div class="flow_account_item">
+                        <span class="title">账户编码：</span>{{item.cashCode}}
+                      </div>
+                      <div class="flow_account_item flow_account_sub">
+                        <span class="title">账户大类：</span>{{item.accountSub}}
+                      </div>
                     </div>
-                    <div class="bank_account">
-                      <span class="title">银行账号: </span>{{item.account || '无'}}
+                    <div class="flow_info_item">
+                      <span class="title">现金流类型：</span>{{item.cashType}}
                     </div>
-                  </div>
-                  <div class="bank_amt_wrapper">
-                    &lt;!&ndash; 付款：crAmt，收款：drAmt &ndash;&gt;
-                    <div class="bank_amt"><span class="symbol">￥</span>{{item.crAmnt || item.drAmnt | numberComma}}</div>
-                    <div class="text">总{{item.transName}}({{item.fundCurrency}})</div>
-                  </div>
-                </div>
-                <div class="bank-name">{{item.fundName}}</div>
-                <div class="flow-info">
-                  <div class="flow_info_item">
-                    <div class="flow_account_item">
-                      <span class="title">账户编码：</span>{{item.cashCode}}
-                    </div>
-                    <div class="flow_account_item flow_account_sub">
-                      <span class="title">账户大类：</span>{{item.accountSub}}
-                    </div>
-                  </div>
-                  <div class="flow_info_item">
-                    <span class="title">现金流类型：</span>{{item.cashType}}
-                  </div>
-                  <div class="flow_info_item">
-                    <span class="title">现金流项目：</span>{{item.cashFlow}}
-                  </div>
-                </div>
-              </div>
-            </template>
-            &lt;!&ndash; 资金账户余额 &ndash;&gt;
-            <template v-else-if="activeTab.includes('资金账户余额')">
-              <div class="bank-item-wrapper" :class="{bg2: index % 3 === 2, bg3: index % 3 === 0}"
-                   v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-                <div class="bank-header-wrapper">
-                  <img class="bank_icon" :src="item.icon" alt="bank-icon">
-                  <div class="bank_info">
-                    <div class="bank">{{item.bank}}</div>
-                    <div class="bank_name">{{item.fundName}}</div>
-                  </div>
-                  <div class="bank_code">{{item.cashCode}}</div>
-                </div>
-                <div class="bank-balance-wrapper">
-                  <div class="bank-balance">{{item.amountBalance | numberComma}}</div>
-                  <div class="text">余额</div>
-                </div>
-              </div>
-            </template>
-            &lt;!&ndash; 现金流计划表 &ndash;&gt;
-            <template v-else-if="activeTab.includes('现金流计划表')">
-              <div class="schedule-item-wrapper" v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-                <div class="schedule-main">
-                  <img class="schedule_img" :src="item.appIcon" alt="app-icon">
-                  <div class="schedule_info">
-                    <div class="app_name">{{item.appTitle}}</div>
-                    <div class="schedule_info_item">
-                      <span class="schedule_info_title">实例编码：</span>{{item.transCode}}
-                    </div>
-                    <div class="schedule_info_item">
-                      <span class="schedule_info_title">往来编码：</span>{{item.dealerCode}}
-                    </div>
-                    <div class="schedule_info_item">
-                      <span class="schedule_info_title">关系标签：</span>{{item.crDealerLabel}}
-                    </div>
-                    <div class="schedule_info_item">
-                      <span class="schedule_info_title">往来名称：</span>{{item.dealerName}}
-                    </div>
-                    <div class="schedule_info_item">
-                      <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate | dateFormat('YYYY-MM-DD') ||
-                      '无'}}
+                    <div class="flow_info_item">
+                      <span class="title">现金流项目：</span>{{item.cashFlow}}
                     </div>
                   </div>
                 </div>
-                <div class="schedule-split"></div>
-                <div class="schedule-bottom">
-                  <div class="schedule_bottom_item">
-                    <div class="schedule_bottom_value">{{item.paymentSurplusDays || 0}}</div>
-                    <div class="schedule_bottom_title">剩余天数</div>
-                  </div>
-                  <div class="schedule_bottom_item">
-                    <div class="schedule_bottom_value">{{item.transName}}</div>
-                    <div class="schedule_bottom_title">计划类型</div>
-                  </div>
-                  <div class="schedule_bottom_item amt">
-                    <div class="schedule_bottom_value">
-                      <span class="symbol">￥</span>{{item.amntBalance | numberComma}}
+              </template>
+              <!-- 资金账户余额 -->
+              <template v-else-if="key === 'view_48'">
+                <div class="bank-item-wrapper" :class="{bg2: index % 3 === 2, bg3: index % 3 === 0}"
+                     v-for='(item, index) in slide.listData' :key='index' @click="getFlow(item)">
+                  <div class="bank-header-wrapper">
+                    <img class="bank_icon" :src="item.icon" alt="bank-icon">
+                    <div class="bank_info">
+                      <div class="bank">{{item.bank}}</div>
+                      <div class="bank_name">{{item.fundName}}</div>
                     </div>
-                    <div class="schedule_bottom_title">金额</div>
+                    <div class="bank_code">{{item.cashCode}}</div>
+                  </div>
+                  <div class="bank-balance-wrapper">
+                    <div class="bank-balance">{{item.amountBalance | numberComma}}</div>
+                    <div class="text">余额</div>
                   </div>
                 </div>
-              </div>
-            </template>
-            &lt;!&ndash; 其他视图  &ndash;&gt;
-            <template v-else>
-              <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-                <div class="duty_top">
-                  <div class="basic_info">
-                  <span class="warehouse warehouse_name">
-                    &lt;!&ndash; 账户编码 &ndash;&gt;
-                    账户编码
-                  </span>
-                    &lt;!&ndash; 编码 &ndash;&gt;
-                    <span class="warehouse warehouse_code">{{item.cashCode}}</span>
+              </template>
+              <!-- 现金流计划表 -->
+              <template v-else-if="key === 'view_140'">
+                <div class="schedule-item-wrapper" v-for='(item, index) in slide.listData' :key='index'
+                     @click="getFlow(item)">
+                  <div class="schedule-main">
+                    <img class="schedule_img" :src="item.appIcon" alt="app-icon">
+                    <div class="schedule_info">
+                      <div class="app_name">{{item.appTitle}}</div>
+                      <div class="schedule_info_item">
+                        <span class="schedule_info_title">实例编码：</span>{{item.transCode}}
+                      </div>
+                      <div class="schedule_info_item">
+                        <span class="schedule_info_title">往来编码：</span>{{item.dealerCode}}
+                      </div>
+                      <div class="schedule_info_item">
+                        <span class="schedule_info_title">关系标签：</span>{{item.crDealerLabel}}
+                      </div>
+                      <div class="schedule_info_item">
+                        <span class="schedule_info_title">往来名称：</span>{{item.dealerName}}
+                      </div>
+                      <div class="schedule_info_item">
+                        <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate | dateFormat('YYYY-MM-DD')
+                        || '无'}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="schedule-split"></div>
+                  <div class="schedule-bottom">
+                    <div class="schedule_bottom_item">
+                      <div class="schedule_bottom_value">{{item.paymentSurplusDays || 0}}</div>
+                      <div class="schedule_bottom_title">剩余天数</div>
+                    </div>
+                    <div class="schedule_bottom_item">
+                      <div class="schedule_bottom_value">{{item.transName}}</div>
+                      <div class="schedule_bottom_title">计划类型</div>
+                    </div>
+                    <div class="schedule_bottom_item amt">
+                      <div class="schedule_bottom_value">
+                        <span class="symbol">￥</span>{{item.amntBalance | numberComma}}
+                      </div>
+                      <div class="schedule_bottom_title">金额</div>
+                    </div>
                   </div>
                 </div>
-                &lt;!&ndash; 资金账户名称 &ndash;&gt;
-                <div class='matter'>
-                  <div class='matter_name'>{{item.fundName}}</div>
-                </div>
-                <div class='duty_btm vux-1px-t'>
-                  &lt;!&ndash; 开户银行 &ndash;&gt;
-                  <div class="ware_type">
-                    {{item.bank || '暂无银行信息'}}
-                  </div>
-                  &lt;!&ndash; 余额 &ndash;&gt;
-                  <div class="balance" v-if="item.amountBalance !== ''">
-                    <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma}}
-                  </div>
-                </div>
-              </div>
-            </template>
-          </r-scroll>
-        </div>
-      </div>-->
-
-      <r-scroll class="list_wrapper" :options="scrollOptions" :has-next="hasNext"
-                :no-data="!hasNext && !listData.length" @on-pulling-up="onPullingUp"
-                @on-pulling-down="onPullingDown"
-                ref="bScroll">
-        <!-- 现金流分类识别 专属dom结构 -->
-        <template v-if="activeTab.includes('现金流分类')">
-          <div class="classification-item-wrapper" v-for='(item, index) in listData' :key='index'>
-            <div class="classification-header-wrapper">
-              <img class="classification_img" :src="item.AppIcon" alt="app-icon">
-              <div class="classification_app">
-                <div class="app_top">
-                  <div class="app_name">{{item.appTitle}}</div>
-                  <div class="app_flow" :class="item.flowWordClass">
-                    {{item.cashInOrOut}}<i :class="item.flowIconClass"></i>
-                  </div>
-                </div>
-                <div class="classification_detail_item">
-                  <span class="classification_detail_title">实例编码：</span>{{item.transCode}}
-                </div>
-                <div class="classification_detail_item">
-                  <span class="classification_detail_title">往来名称：</span>{{item.dealerName || '无'}}
-                </div>
-              </div>
-            </div>
-            <div class="classification-split"></div>
-            <div class="bank-info">
-              <div class="bank_detail">
-                <div class="bank">
-                  <span class="title">开户银行: </span>{{item.bank || '暂无银行信息'}}
-                </div>
-                <div class="bank_account">
-                  <span class="title">银行账号: </span>{{item.account || '无'}}
-                </div>
-              </div>
-              <div class="bank_amt_wrapper">
-                <!-- 付款：crAmt，收款：drAmt -->
-                <div class="bank_amt"><span class="symbol">￥</span>{{item.crAmnt || item.drAmnt | numberComma}}</div>
-                <div class="text">总{{item.transName}}({{item.fundCurrency}})</div>
-              </div>
-            </div>
-            <div class="bank-name">{{item.fundName}}</div>
-            <div class="flow-info">
-              <div class="flow_info_item">
-                <div class="flow_account_item">
-                  <span class="title">账户编码：</span>{{item.cashCode}}
-                </div>
-                <div class="flow_account_item flow_account_sub">
-                  <span class="title">账户大类：</span>{{item.accountSub}}
-                </div>
-              </div>
-              <div class="flow_info_item">
-                <span class="title">现金流类型：</span>{{item.cashType}}
-              </div>
-              <div class="flow_info_item">
-                <span class="title">现金流项目：</span>{{item.cashFlow}}
-              </div>
-            </div>
-          </div>
-        </template>
-        <!-- 资金账户余额 -->
-        <template v-else-if="activeTab.includes('资金账户余额')">
-          <div class="bank-item-wrapper" :class="{bg2: index % 3 === 2, bg3: index % 3 === 0}"
-               v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-            <div class="bank-header-wrapper">
-              <img class="bank_icon" :src="item.icon" alt="bank-icon">
-              <div class="bank_info">
-                <div class="bank">{{item.bank}}</div>
-                <div class="bank_name">{{item.fundName}}</div>
-              </div>
-              <div class="bank_code">{{item.cashCode}}</div>
-            </div>
-            <div class="bank-balance-wrapper">
-              <div class="bank-balance">{{item.amountBalance | numberComma}}</div>
-              <div class="text">余额</div>
-            </div>
-          </div>
-        </template>
-        <!-- 现金流计划表 -->
-        <template v-else-if="activeTab.includes('现金流计划表')">
-          <div class="schedule-item-wrapper" v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-            <div class="schedule-main">
-              <img class="schedule_img" :src="item.appIcon" alt="app-icon">
-              <div class="schedule_info">
-                <div class="app_name">{{item.appTitle}}</div>
-                <div class="schedule_info_item">
-                  <span class="schedule_info_title">实例编码：</span>{{item.transCode}}
-                </div>
-                <div class="schedule_info_item">
-                  <span class="schedule_info_title">往来编码：</span>{{item.dealerCode}}
-                </div>
-                <div class="schedule_info_item">
-                  <span class="schedule_info_title">关系标签：</span>{{item.crDealerLabel}}
-                </div>
-                <div class="schedule_info_item">
-                  <span class="schedule_info_title">往来名称：</span>{{item.dealerName}}
-                </div>
-                <div class="schedule_info_item">
-                  <span class="schedule_info_title">到账截止日期：</span>{{item.draftDueDate | dateFormat('YYYY-MM-DD') ||
-                  '无'}}
-                </div>
-              </div>
-            </div>
-            <div class="schedule-split"></div>
-            <div class="schedule-bottom">
-              <div class="schedule_bottom_item">
-                <div class="schedule_bottom_value">{{item.paymentSurplusDays || 0}}</div>
-                <div class="schedule_bottom_title">剩余天数</div>
-              </div>
-              <div class="schedule_bottom_item">
-                <div class="schedule_bottom_value">{{item.transName}}</div>
-                <div class="schedule_bottom_title">计划类型</div>
-              </div>
-              <div class="schedule_bottom_item amt">
-                <div class="schedule_bottom_value">
-                  <span class="symbol">￥</span>{{item.amntBalance | numberComma}}
-                </div>
-                <div class="schedule_bottom_title">金额</div>
-              </div>
-            </div>
-          </div>
-        </template>
-        <!-- 其他视图  -->
-        <template v-else>
-          <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
-            <div class="duty_top">
-              <div class="basic_info">
+              </template>
+              <!-- 其他视图  -->
+              <template v-else>
+                <div class='each_duty' v-for='(item, index) in listData' :key='index' @click="getFlow(item)">
+                  <div class="duty_top">
+                    <div class="basic_info">
                   <span class="warehouse warehouse_name">
                     <!-- 账户编码 -->
                     账户编码
                   </span>
-                <!-- 编码 -->
-                <span class="warehouse warehouse_code">{{item.cashCode}}</span>
-              </div>
-            </div>
-            <!-- 资金账户名称 -->
-            <div class='matter'>
-              <div class='matter_name'>{{item.fundName}}</div>
-            </div>
-            <div class='duty_btm vux-1px-t'>
-              <!-- 开户银行 -->
-              <div class="ware_type">
-                {{item.bank || '暂无银行信息'}}
-              </div>
-              <!-- 余额 -->
-              <div class="balance" v-if="item.amountBalance !== ''">
-                <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma}}
-              </div>
-            </div>
+                      <!-- 编码 -->
+                      <span class="warehouse warehouse_code">{{item.cashCode}}</span>
+                    </div>
+                  </div>
+                  <!-- 资金账户名称 -->
+                  <div class='matter'>
+                    <div class='matter_name'>{{item.fundName}}</div>
+                  </div>
+                  <div class='duty_btm vux-1px-t'>
+                    <!-- 开户银行 -->
+                    <div class="ware_type">
+                      {{item.bank || '暂无银行信息'}}
+                    </div>
+                    <!-- 余额 -->
+                    <div class="balance" v-if="item.amountBalance !== ''">
+                      <span class="symbol">余额: ￥</span>{{item.amountBalance | numberComma}}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </r-scroll>
           </div>
-        </template>
-      </r-scroll>
+        </div>
+      </div>
 
       <!-- 展开状态 -->
       <div v-transfer-dom>
@@ -417,8 +261,15 @@
 
 <script>
   import listCommon from 'pageMixins/kmListCommon'
+  import {getListClassfiy, getViewList} from 'service/kmService'
   import {toFixed} from '@/plugins/calc'
 
+  const BASE_PARAMS = {
+    page: 1,
+    limit: 20,
+    hasNext: true,
+    listData: [],
+  };
   export default {
     data() {
       return {
@@ -427,40 +278,201 @@
         filterArr: [
           {"operator": "like", "value": "", "property": "cashCode"}
         ],
+        listMap: {},
       }
+    },
+    computed: {
+      // 当前滑块
+      currentItem() {
+        let {view_id} = this.listView[this.activeIndex];
+        return this.listMap[view_id];
+      },
+      // 当前滚动容器
+      currentScroll() {
+        return this.$refs.bScroll[this.activeIndex]
+      },
     },
     mixins: [listCommon],
     methods: {
+      // TODO 重置列表条件
+      resetCondition() {
+        let {view_id} = this.listView[this.activeIndex];
+        this.listMap[view_id] = {...BASE_PARAMS};
+        this.currentScroll.scrollTo(0, 0);
+        this.currentScroll.resetPullDown();
+      },
+      ///tab切换
+      tabClick(val, index) {
+        this.activeIndex = index;
+        this.activeTab = val.view_name;
+        this.calc_rel_code = val.calc_rel_code;
+        this.view_id = val.view_id;
+        this.currentScroll.scrollTo(0, 0);
+        this.resetCondition();
+        this.listSwiper.slideTo(index);
+      },
+      //获取列表视图
+      getClassfiy() {
+        return getListClassfiy({
+          account_code: this.uniqueId,
+          device_type: 'phone'
+        }).then(({data = []}) => {
+          let [first = {}] = data;
+          let listMap = {};
+          data.forEach(item => {
+            listMap[item.view_id] = {...BASE_PARAMS};
+          });
+          this.listMap = listMap;
+          this.listView = data;
+          this.activeTab = first.view_name;
+          this.calc_rel_code = first.calc_rel_code;
+          this.view_id = first.view_id;
+          this.$nextTick(() => {
+            this.listSwiper.update();
+          })
+        })
+      },
+      //获取列表数据
+      getListData(noReset = false) {
+        let {page, limit} = this.currentItem;
+        return getViewList({
+          user_code: 1,
+          page: page,
+          limit: limit,
+          view_scope: 'data',
+          device_type: 'phone',
+          view_id: this.view_id,
+          filter: this.serachVal,
+          calc_rel_code: this.calc_rel_code,
+          start: (page - 1) * limit,
+        }).then(({data = [], total = 0}) => {
+          let bankMap = {
+            '交通银行': require('assets/iconfont/bank/bank_jt.png'),
+            '建设银行': require('assets/iconfont/bank/bank_js.png'),
+            '中国银行': require('assets/iconfont/bank/bank_zg.png'),
+            '招商银行': require('assets/iconfont/bank/bank_zs.png'),
+          };
+          this.currentItem.hasNext = total > (page - 1) * limit + data.length;
+          data.forEach(item => {
+            item.status = false;
+            if (item.cashInOrOut) {
+              switch (item.cashInOrOut) {
+                case '流入':
+                  item.flowIconClass = 'iconfont icon-shangjiantou';
+                  item.flowWordClass = 'cashIn';
+                  break;
+                case '流出':
+                  item.flowIconClass = 'iconfont icon-xiajiantou-copy';
+                  item.flowWordClass = 'cashOut';
+                  break;
+              }
+            }
+            if (this.activeTab.includes('资金账户余额')) {
+              item.icon = bankMap[item.bank];
+            } else if (this.activeTab.includes('现金流计划表')) {
+              item.appIcon = `/dist/${item.appIcon}`;
+            }
+          });
+          this.listData = page === 1 ? data : this.listData.concat(data);
+          this.currentItem.listData = page === 1 ? data : [...this.currentItem.listData, ...data];
+          if (!noReset) {
+            this.$nextTick(() => {
+              this.resetScroll();
+            })
+          }
+          // 判断最近有无新增数据
+          let text = '';
+          if (noReset && this.activeIndex === 0) {
+            if (this.total) {
+              text = total - this.total === 0 ? '暂无新数据' : text = `新增${total - this.total}条数据`;
+              this.$vux.toast.show({
+                text: text,
+                position: 'top',
+                width: '50%',
+                type: "text",
+                time: 700
+              })
+            }
+          }
+          //列表总数据缓存
+          if (this.activeIndex === 0 && page === 1) {
+            sessionStorage.setItem(this.applyCode, total);
+          }
+          this.$loading.hide();
+        }).catch(e => {
+          this.resetScroll();
+        })
+      },
+      //根据视图获取订单数据
+      async getList(noReset = false) {
+        await this.getView();
+        await this.getListData(noReset);
+      },
+      // TODO 重置下拉刷新、上拉加载的状态
+      resetScroll() {
+        this.currentScroll.finishPullDown();
+        this.currentScroll.finishPullUp();
+      },
+      // TODO 上拉加载
+      onPullingUp() {
+        this.currentItem.page++;
+        this.getListData();
+      },
+      // TODO 下拉刷新
+      onPullingDown() {
+        this.currentItem.page = 1;
+        this.getData(true);
+      },
+      async getData(noReset) {
+        await this.getSession();
+        if (noReset) {
+          await this.getList(true).then(() => {
+            this.$nextTick(() => {
+              this.currentScroll.finishPullDown().then(() => {
+                this.currentScroll.finishPullUp();
+              });
+            })
+          });
+          return
+        }
+        await this.getList();
+      },
       // TODO 初始化swiper
       initSwiper() {
         this.$nextTick(() => {
-          this.pageSwiper = new this.Swiper('.list-container', {
+          this.listSwiper = new this.Swiper('.list-container', {
             touchAngle: 30,
             on: {
               slideChangeTransitionStart: () => {
-                /*let index = this.pageSwiper.activeIndex;
-                let list = [this.getList, this.getComment, this.getPraise];
-                let {status} = this.tabList[index];
+                let index = this.listSwiper.activeIndex;
+                let tab = this.listView[index];
                 this.activeIndex = index;
-                this.isMovingSwiper = true;
+                this.activeTab = tab.view_name;
+                this.calc_rel_code = tab.calc_rel_code;
+                this.view_id = tab.view_id;
+                this.scrollToShow(index);
                 // 已有数据则不重新请求
-                if (Object.keys(this.currentItem.listData).length) {
+                if (this.currentItem.listData.length) {
                   return
                 }
                 this.resetCondition();
-                list[this.activeIndex]();*/
+                this.getListData();
               },
-              slideChangeTransitionEnd: () => {
-                // this.isMovingSwiper = false;
-              }
             },
           });
         })
       },
+      // TODO 滑动显示完整名字
+      scrollToShow(index) {
+        let $container = this.$refs.tabContainer;
+        let paddingLeft = parseFloat(getComputedStyle($container).paddingLeft);
+        let $activate = this.$refs.tabs[index];
+        $container.scrollLeft = $activate.offsetLeft - paddingLeft;
+      },
     },
     filters: {toFixed},
     created() {
-      // this.initSwiper();
+      this.initSwiper();
     }
   }
 </script>
@@ -477,17 +489,12 @@
     }
   }
 
-  /*.list-container {
+  .list-container {
     height: calc(100% - .96rem);
     .list_wrapper {
       height: 100%;
       background-color: #fff;
     }
-  }*/
-
-  .list_wrapper {
-    height: calc(100% - .98rem);
-    background-color: #fff;
   }
 
   .tab-container {
@@ -520,7 +527,8 @@
 
   /* 资金账户余额 */
   .bank-item-wrapper {
-    margin: 0 .13rem .1rem;
+    position: relative;
+    margin: .1rem .13rem;
     padding: .2rem .31rem .28rem .38rem;
     width: calc(100% - .26rem);
     background: url(~assets/bg/bg-bank.png) no-repeat;
@@ -646,25 +654,6 @@
       margin: .17rem 0 .12rem;
       height: 1px;
       border-top: 1px dashed #DEDFE6;
-      &:before, &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        z-index: 1;
-        width: .1rem;
-        height: .2rem;
-        background-color: transparent;
-        transform: translate(0, -50%);
-        /*box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, 0.1);*/
-      }
-      &:before {
-        left: -.15rem;
-        border-radius: 0 .1rem .1rem 0;
-      }
-      &:after {
-        right: -.15rem;
-        border-radius: .1rem 0 0 .1rem;
-      }
     }
 
     .bank-info {
@@ -736,6 +725,7 @@
 
   /* 现金流计划表 */
   .schedule-item-wrapper {
+    position: relative;
     margin: .1rem;
     padding: .2rem .15rem;
     width: calc(100% - .2rem);
@@ -743,6 +733,7 @@
     color: #333;
     box-sizing: border-box;
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+
     .schedule-main {
       display: flex;
       .schedule_img {
