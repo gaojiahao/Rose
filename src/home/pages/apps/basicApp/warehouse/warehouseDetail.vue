@@ -262,48 +262,6 @@ export default {
             item.hiddenInRun = true
           }
           if(!item.hiddenInRun){
-            //下拉框的数据请求
-            if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
-              if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-                let url = item.dataSource.data.url;
-                let params = item.dataSource.data.params;
-                let keys = Object.keys(params);
-                let requestParams = {
-                  url,
-                }
-                if(keys.length){
-                  let data = {};
-                  keys.forEach(key => {
-                    if(params[key].value.length){
-
-                    }
-                    data[key] = params[key].value;
-                  })
-                  requestParams.data = data;
-                }
-                // console.log(requestParams);
-                requestData(requestParams).then(data => {
-                  if(data.tableContent){
-                    data.tableContent.forEach(item => {
-                      item.value = item.name;
-                    })
-                    if(item.fieldCode === 'warehouseType'){
-                      if(!this.$route.query.transCode){
-                        this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : data.tableContent[0].value;
-                      }
-                    }
-                    this.$set(item, 'remoteData', data.tableContent)
-                  }
-                  else{
-                    data.forEach(item => {
-                      item.value = item.name;
-                    })
-                    this.$set(item, 'remoteData', data)
-                  }
-                  
-                })
-              }
-            }
             // 在渲染的配置中添加字段
             if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
               && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){

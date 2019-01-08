@@ -15,7 +15,7 @@
           </div>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
-        <div v-for="(item,index) in warehouseConfig" :key="index">
+        <div v-for="(item, index) in warehouseConfig" :key="index">
           <div v-if="item.fieldCode !== 'staffDealerCode' && item.fieldCode !== 'warehouseProvince'">
             <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]"
                   @on-change="warehouseTypeChange" v-model="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]" :required='!item.allowBlank' 

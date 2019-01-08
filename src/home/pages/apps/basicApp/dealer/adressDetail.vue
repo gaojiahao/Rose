@@ -1,6 +1,6 @@
 <template>
   <div class='childPage'>
-    <div class='detail_content'>
+    <r-scroll class='detail_content' ref="bScroll">
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
           <div class='each_property vux-1px-b'>
@@ -19,35 +19,17 @@
           </div>
         </div>
       </div>
-      <div class='each_property vux-1px-b'>
-        <label>往来关系标签:</label>
-        <div class='property_val'>{{dealer.dealerLabelName}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>省市区:</label>
-        <div class='property_val'>
-           {{dealer.province}}{{dealer.city}}{{dealer.county}}
-        </div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>详细地址:</label>
-        <div class='property_val'>{{dealer.address}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>固定电话:</label>
-        <div class='property_val'>{{dealer.dealerPhone}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>手机:</label>
-        <div class='property_val'>{{dealer.dealerMobilePhone}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>电子邮件:</label>
-        <div class='property_val'>{{dealer.dealerMail}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>往来状态:</label>
-        <div class='property_val'>{{dealer.dealerStatus}}</div>
+      <div class='each_property vux-1px-b' v-for="(item, index) in dealerConfig" :key="index">
+        <template v-if="item.fieldCode === 'province'">
+          <label>省市区:</label>
+          <div class='property_val'>
+            {{dealer.province}}{{dealer.city}}{{dealer.county}}
+          </div>
+        </template>
+        <template v-else>
+          <label>{{item.fieldLabel}}:</label>
+          <div class='property_val'>{{dealer[item.fieldCode]}}</div>
+        </template>
       </div>
       <div class='each_property vux-1px-b'>
         <label>创建者:</label>
@@ -65,12 +47,15 @@
         <label>修改时间:</label>
         <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
       </div>
-    </div>
+    </r-scroll>
+    
   </div>
 </template>
 <script>
 import { dateFormat } from 'vux'
 import dealerService from 'service/dealerService.js'
+import { getFormConfig, getFormViews } from 'service/commonService.js'
+import RScroll from 'components/RScroll'
 export default {
   filters: {
     dateFormat
@@ -81,8 +66,12 @@ export default {
       MatPic: '', // 图片地址
       imgFileObj: {}, // 上传的图片对象
       dealer : {},
-      baseinfo :{}
+      baseinfo :{},
+      dealerConfig: []
     }
+  },
+  components: {
+    RScroll
   },
   methods: {
     //往来信息
@@ -122,7 +111,6 @@ export default {
           return item.attacthment === this.dealer.dealerPic
         });
         this.imgFileObj = imgFileObj;
-        this.$loading.hide();
       }).catch(e=>{
         this.$loading.hide();
         this.$vux.alert.show({
@@ -134,13 +122,51 @@ export default {
     getDefaultImg() {
         this.MatPic = require('assets/contact_default02.png');
     },
+    // 请求应用的viewId
+    getFormViews() {
+      return getFormViews('c0375170-d537-4f23-8ed0-a79cf75f5b04').then(data => {
+        for(let item of data){
+          if(item.viewType === 'view'){
+            this.getFormConfig(item.uniqueId);
+            break;
+          }
+        }
+      })
+    },
+    // 获取表单配置
+    getFormConfig(viewId){
+      getFormConfig(viewId).then(({config = []}) => {
+        console.log(config);
+        let dealerConfig = [];
+        config.forEach(item => {
+          if(!item.isMultiple) {
+            dealerConfig = JSON.parse(JSON.stringify(item.items));
+          }
+        })
+        // 仓库基本信息配置的处理
+        dealerConfig.forEach(item =>{
+          if(!item.hiddenInRun){
+            // 在渲染的配置中添加字段
+            if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
+              && item.fieldCode !== 'city' && item.fieldCode !== 'county'){
+              this.dealerConfig.push(item);
+            }
+          }
+        })
+      })
+    },
   },
   created() {
     this.$loading.show()
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
-        this.findData()
+      (async() => {
+        await this.getFormViews();
+        await this.findData();
+        this.$loading.hide()
+
+      })()
     }
   }
 }
@@ -152,7 +178,7 @@ export default {
   }
   .detail_content {
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
     div {
       border: none;
       outline: none;

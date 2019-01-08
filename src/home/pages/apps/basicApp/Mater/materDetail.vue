@@ -22,7 +22,10 @@
       <div class="d_main">
         <div class='title vux-1px-b'>基本信息</div>
         <div class='content'>
-          <form-cell cellTitle="物料大类" :cellContent="inventory.inventoryType" :showTopBorder="false"></form-cell>
+          <form-cell v-for="(item, index) in matterConfig" :key="index"
+            :cellTitle="item.fieldLabel" :cellContent="inventory[item.fieldCode]" :showTopBorder="index === 0 ? false : true">
+          </form-cell>
+          <!-- <form-cell cellTitle="物料大类" :cellContent="inventory.inventoryType" :showTopBorder="false"></form-cell>
           <form-cell cellTitle="物料子类" :cellContent="inventory.inventorySubclass"></form-cell>
           <form-cell cellTitle="规格" :cellContent="inventory.specification"></form-cell>
           <form-cell cellTitle="加工属性" :cellContent="inventory.processing"></form-cell>
@@ -36,11 +39,19 @@
           <form-cell :cellTitle="leadTimeTitle" :cellContent="inventory.leadTime" v-if="leadTimeTitle"></form-cell>
           <form-cell cellTitle="工序名称" :cellContent="inventory.procedureName"></form-cell>
           <form-cell cellTitle="工序编码" :cellContent="inventory.procedureCode"></form-cell>
-          <form-cell cellTitle="起订量" :cellContent="inventory.moq"></form-cell>
+          <form-cell cellTitle="起订量" :cellContent="inventory.moq"></form-cell> -->
         </div>
       </div>
       <!-- 辅计单位-->
-      <div class="d_main" v-show="invMoreUnit.length">
+      <div class="d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" key="cIndex">
+        <div class='title vux-1px-b'>{{cItem.title}}</div>
+        <div class='content' :class="{'show_border' : index > 0}" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+          <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
+                v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
+          </form-cell>
+        </div>
+      </div>
+      <!-- <div class="d_main" v-show="invMoreUnit.length">
         <div class='title vux-1px-b'>辅计单位</div>
         <div class='content' :class="{'show_border' : index>0}" v-for="(item,index) in invMoreUnit" :key="index">
           <form-cell cellTitle='辅计单位' :cellContent="item.invSubUnitName" :showTopBorder=false></form-cell>
@@ -74,7 +85,7 @@
           <form-cell cellTitle='供应商编码' :cellContent="item.productDealerCode"></form-cell>
           <form-cell cellTitle='说明' :cellContent="item.productComment"></form-cell>
         </div>
-      </div>
+      </div> -->
     </div>
     <!-- 修改按钮 -->
     <div class="btn vux-1px-t" v-if="action.update">
@@ -87,6 +98,7 @@
 import { AlertModule, dateFormat } from 'vux';
 import { findData } from 'service/materService'
 import { getAppDetail } from 'service/appSettingService'
+import { getFormConfig, getFormViews } from 'service/commonService.js'
 import FormCell from 'components/detail/commonPart/FormCell'
 export default {
   name: 'materDetail',
@@ -104,6 +116,9 @@ export default {
       invDealerRel: [],
       invCustomerRel: [],
       action: {}, // 表单允许的操作
+      matterConfig: [],
+      matterDuplicateConfig: [], // 物料重复项的配置
+      formData: {}
     }
   },
   computed: {
@@ -137,6 +152,7 @@ export default {
     // TODO 获取物料详情
     findData() {
       return findData(this.transCode).then(({formData}) => {
+        this.formData = formData;
         let {inventory = {}} = formData;
         let status = ['', '使用中', '未使用', '草稿'],
           statusClass = ['', 'inUse', 'unUse'];
@@ -176,6 +192,61 @@ export default {
         this.action = action;
       })
     },
+    // 请求应用的viewId
+    getFormViews() {
+      return getFormViews(this.listId).then(data => {
+        for(let item of data){
+          if(item.viewType === 'view'){
+            this.getFormConfig(item.uniqueId);
+            break;
+          }
+        }
+      })
+    },
+    // 获取表单配置
+    getFormConfig(viewId){
+      getFormConfig(viewId).then(({config = []}) => {
+        console.log(config);
+        let matterConfig = [], matterDuplicateConfig = [];
+        config.forEach(item => {
+          if(!item.isMultiple) {
+            matterConfig = JSON.parse(JSON.stringify(item.items));
+          }
+          else{
+            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
+              matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+            }
+          }
+        })
+        // 仓库基本信息配置的处理
+        matterConfig.forEach(item =>{
+          if(!item.hiddenInRun){
+            // 在渲染的配置中添加字段
+            if(item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'
+              && item.fieldCode !== 'inventoryStatus'){
+              this.matterConfig.push(item);
+            }
+          }
+        })
+        matterDuplicateConfig.forEach(item => {
+          switch(item.name){
+            case 'invMoreUnit':
+              item.title = '辅助计量';
+              break;
+            case 'invNetWeight':
+              item.title = '净含量';
+              break;
+            case 'invDealerRel':
+              item.title = '客户';
+              break;
+            case 'invCustomerRel':
+              item.title = '供应商';
+              break;
+          }
+        })
+        this.matterDuplicateConfig = matterDuplicateConfig;
+      })
+    },
   },
   created() {
     (async () => {
@@ -183,6 +254,7 @@ export default {
       let {transCode = ''} = this.$route.query;
       this.transCode = transCode;
       await this.getAppDetail();
+      await this.getFormViews();
       this.findData();
     })()
   }

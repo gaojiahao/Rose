@@ -14,7 +14,26 @@
           </group>
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
-        <group gutter="0">
+        <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
+          <template v-if="item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector'">
+            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="item.fieldCode === 'inventoryStatus'? inventoryStatus: inventory[item.fieldCode]" 
+                      v-model="item.fieldCode === 'inventoryStatus'? inventoryStatus: inventory[item.fieldCode]"
+                      :required="!item.allowBlank" mode="4"></r-picker>
+          </template>
+          <template v-else-if="item.xtype === 'r2Numberfield'">
+            <x-input :title="item.fieldLabel" type="number" text-align='right' placeholder='请填写'
+                   v-model.number='inventory[item.fieldCode]' class="vux-1px-b"></x-input>
+          </template>
+          <template v-else-if="item.xtype === 'r2Textfield'">
+            <x-input :title="item.fieldLabel" text-align='right' placeholder='请填写'
+                   v-model.number='inventory[item.fieldCode]' class="vux-1px-b"></x-input>
+          </template>
+          <template v-else-if="item.xtype === 'r2Selector'">
+            <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-b"></pop-procedure-list>
+          </template>
+
+        </div>
+        <!-- <group gutter="0">
           <r-picker title="加工属性" :data="matNatureList" :value="inventory.processing" v-model="inventory.processing"
                     :hasBorder='false' :required="true" mode="4" @on-change="natureChange"></r-picker>
         </group> 
@@ -33,25 +52,54 @@
           <cell title="临保天数" :value="nearKeepingDays"></cell>
           <x-input title="安全库存" type="number" text-align='right' placeholder='请填写'
                    v-model.number='inventory.safeStock'></x-input>
-        </group>
-        <group gutter="10">
+        </group> -->
+        <!-- <group gutter="10"> -->
           <!-- 工艺路线 -->
-          <pop-technics-list class="vux-1px-b" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
-          <!-- <x-input :title="leadTimeTitle" type="number" text-align='right' placeholder='请填写'
-                   v-model.number='inventory.leadTime' v-show="leadTimeTitle"></x-input> -->
+          <!-- <pop-technics-list class="vux-1px-b" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list> -->
+          
           <!-- 工艺名称 -->
-          <pop-procedure-list @sel-item="selProcedure" :default-value="inventory"></pop-procedure-list>
+          <!-- <pop-procedure-list @sel-item="selProcedure" :default-value="inventory"></pop-procedure-list>
           <cell title="工序编码" :value="inventory.procedureCode"></cell>
           <r-picker title="单位:" :data="measureList" :value="inventory.measureUnit" :required="true"
                     mode="4" v-model="inventory.measureUnit" has-border-top></r-picker>
           <r-picker title="物料状态:" :required="true" :data="statusList" :value="inventoryStatus"
                     mode="4" :has-border="false" v-model="inventoryStatus"></r-picker>
           <x-input title="起订量" type="number" text-align='right' placeholder='请填写'
-                   v-model.number='inventory.moq'></x-input>
-        </group>
+                   v-model.number='inventory.moq'></x-input> -->
+        <!-- </group> -->
+        <!-- 重复项 -->
+        <div v-for="(item, index) in matterDuplicateConfig" :key="`${item.name}+${index}`">
+          <div class="duplicate-item-no-select" v-if="!matterDuplicateData[item.name].length">
+            <span class="title">{{item.title}}</span>
+            <span class="add" @click="addMoreUnit(item)">新增</span>
+          </div>
+          <group class="duplicate-item" :title="item.title" v-else>
+            <div v-for="(sItem, sIndex) in matterDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < matterDuplicateData[item.name].length-1}">
+              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="sItem[dItem.fieldCode] != null">
+                <template v-if="!dItem.hidden">
+                  <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                          mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
+                          v-if="dItem.editorType === 'r2Combo'"></r-picker>
+                    <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
+                            @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
+                      <span class="required" slot="label" v-show="!dItem.allowBlank">{{dItem.text}}</span>
+                    </x-input>
+                    <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
+                            v-if="dItem.editorType === 'r2Textfield'"></x-input>
+                </template>
+              </div>
 
+            </div>
+          </group>
+          <div class="add_more" v-show="matterDuplicateData[item.name].length">
+            您还需要添加新的{{item.title}}?请点击
+            <span class='add' @click="addMoreUnit(item)">新增</span>
+            <em v-show="matterDuplicateData[item.name].length > 1">或</em>
+            <span class='delete' @click="deleteMoreUnit(item)" v-show="matterDuplicateData[item.name].length > 1">删除</span>
+          </div> 
+        </div>
         <!-- 辅助计量 -->
-        <div class="duplicate-item-no-select" v-if="!invMoreUnit.length">
+        <!-- <div class="duplicate-item-no-select" v-if="!invMoreUnit.length">
           <span class="title">辅计单位</span>
           <span class="add" @click="addMoreUnit">新增</span>
         </div>
@@ -71,10 +119,10 @@
           <span class='add' @click="addMoreUnit">新增</span>
           <em v-show="invMoreUnit.length>0">或</em>
           <span class='delete' @click="deleteMoreUnit" v-show="invMoreUnit.length>0">删除</span>
-        </div>
+        </div> -->
 
         <!-- 净含量 -->
-        <div class="duplicate-item-no-select" v-if="!invNetWeight.length">
+        <!-- <div class="duplicate-item-no-select" v-if="!invNetWeight.length">
           <span class="title">净含量</span>
           <span class="add" @click="addNetWeight">新增</span>
         </div>
@@ -97,10 +145,10 @@
           <span class='add' @click="addNetWeight">新增</span>
           <em v-show="invNetWeight.length>0">或</em>
           <span class='delete' @click="deleteNetWeight" v-show="invNetWeight.length>0">删除</span>
-        </div>
+        </div> -->
 
         <!-- 客户 -->
-        <div v-show="inventory.processing === '成品'">
+        <!-- <div v-show="inventory.processing === '成品'">
           <div class="duplicate-item-no-select" v-if="!invDealerRel.length">
             <span class="title">客户</span>
             <span class="add" @click="addDealerRel">新增</span>
@@ -124,10 +172,10 @@
             <em v-show="invDealerRel.length>0">或</em>
             <span class='delete' @click="deleteDealerRel" v-show="invDealerRel.length>0">删除</span>
           </div>
-        </div>
+        </div> -->
 
         <!-- 供应商 -->
-        <div v-show="inventory.processing === '原料'">
+        <!-- <div v-show="inventory.processing === '原料'">
           <div class="duplicate-item-no-select" v-if="!invCustomerRel.length">
             <span class="title">供应商</span>
             <span class="add" @click="addCustomerRel">新增</span>
@@ -149,7 +197,7 @@
             <em v-show="invCustomerRel.length>0">或</em>
             <span class='delete' @click="deleteCustomerRel" v-show="invCustomerRel.length>0">删除</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </r-scroll>
     <div class='btn vux-1px-t'>
@@ -166,12 +214,8 @@
   import PopProcedureList from 'components/popup/matter/PopProcedureList'
   import PopDealerList from 'components/Popup/PopDealerList'
   import common from 'mixins/common'
-  import {
-    save,
-    update,
-    findData,
-  } from 'service/materService';
-  import {getBaseInfoDataBase, getDictByType, getDictByValue,} from 'service/commonService';
+  import {save, update,findData,} from 'service/materService';
+  import {getBaseInfoDataBase, getDictByType, getDictByValue, getFormConfig, requestData, getFormViews} from 'service/commonService';
   import {toFixed} from '@/plugins/calc'
 
   export default {
@@ -228,11 +272,11 @@
         imgFile: null,
         codeReadOnly: false, // 物料编码是否只读
         submitSuccess: false, // 是否提交成功
-        processing: [], // 加工属性
-        inventoryType: [], // 材料大类
-        inventorySubclass: [], // 材料子类
+        // processing: [], // 加工属性
+        // inventoryType: [], // 材料大类
+        // inventorySubclass: [], // 材料子类
         measureUnit: [], // 单位
-        inventoryStatus: '', // 物料状态
+        inventoryStatus: '使用中', // 物料状态
         inventoryTypeDisabled: false,
         inventorySubclassDisabled: false,
         scrollOptions: {
@@ -242,6 +286,9 @@
         invCustomerRel: [], // 供应商
         currentDealerIndex: 0, // 当前点击的客户项索引
         currentCustomerIndex: 0, // 当前点击的供应商项索引
+        matterConfig: [], // 物料基本信息配置
+        matterDuplicateConfig: [], // 物料重复项的配置
+        matterDuplicateData: {}, // 物料重复项数据
       }
     },
     computed: {
@@ -278,6 +325,117 @@
           return ''
         }
       },
+      inventoryProcessing() {
+        return this.inventory.processing
+      },
+      inventoryType() {
+        return this.inventory.inventoryType
+      },
+      MoreUnit() {
+        return this.matterDuplicateData.invMoreUnit
+      }
+    },
+    watch: {
+      // 监听物料属性变化，改变获取方式，物料大类的数据
+      inventoryProcessing(val) {
+        if (this.hasDefault) {
+          return
+        }
+        let TypeParentId = '';
+        for(let item of this.matterConfig) {
+          if(item.fieldCode === 'processing'){
+            for(let sItem of item.remoteData) {
+              if(sItem.name === val){
+                TypeParentId = sItem.id;
+                break
+              }
+            }
+          }
+          // 获取方式
+          if(item.fieldCode === 'multipleAccess') {
+            item.requestParams.data.sType = this.inventory.processing;
+            requestData(item.requestParams).then(({tableContent = []}) => {
+              if(tableContent.length){
+                tableContent.forEach(dItem => {
+                  dItem.name = dItem.sName;
+                  dItem.value = dItem.sName;
+                })
+                this.inventory.multipleAccess = tableContent[0].name;
+              }
+              else{
+                this.inventory.multipleAccess = '';
+              }
+              item.remoteData = tableContent;
+            })
+          }
+          // 物料大类
+          if(item.fieldCode === 'inventoryType') {
+            item.requestParams.data.parentId = TypeParentId;
+            requestData(item.requestParams).then(data => {
+              if(data.length) {
+                data.forEach(dItem => {
+                  dItem.originValue = dItem.value;
+                  dItem.value = dItem.name;
+                })
+                this.inventory.inventoryType = data[0].name;
+              }
+              else{
+                this.inventory.inventoryType = '';
+              }
+              item.remoteData = data;
+            })
+          }
+        }
+      },
+      // 监听物料大类变化，改变物料子类的数据
+      inventoryType(val) {
+        if (this.hasDefault) {
+          return
+        }
+        let subTypeParentId = '';
+        for(let item of this.matterConfig) {
+          if(item.fieldCode === 'inventoryType'){
+            for(let sItem of item.remoteData) {
+              if(sItem.name === val){
+                subTypeParentId = sItem.id;
+                break;
+              }
+            }
+          }
+          // 物料子类
+          if(item.fieldCode === 'inventorySubclass') {
+            item.requestParams.data.parentId = subTypeParentId;
+            requestData(item.requestParams).then(data => {
+              if(data.length){
+                data.forEach(dItem => {
+                  dItem.originValue = dItem.value;
+                  dItem.value = dItem.name;
+                })
+                this.inventory.inventorySubclass = data[0].name;
+              }
+              else{
+                this.inventory.inventorySubclass = '';
+              }
+              item.remoteData = data;
+            })
+            break
+          }
+        }
+      },
+      MoreUnit: {
+        handler(val){
+          if(val && val.length){
+            val.forEach(item => {
+              if(item.invSubUnitName && item.invSubUnitMulti){
+                item.comment = `${item.invSubUnitMulti}/${item.invSubUnitName}`;
+                return
+              }
+              item.comment = item.invSubUnitName || item.invSubUnitMulti;
+            })
+          }
+        },
+        deep: true
+      }
     },
     directives: {
       TransferDom
@@ -301,37 +459,6 @@
       onUpload(val) {
         console.log(val);
         this.inventory.inventoryPic = val.src;
-      },
-      // TODO 加工属性切换
-      natureChange(val) {
-        if (this.hasDefault) {
-          return
-        }
-        this.getBig().then(data => {
-          let [defaultSelect = {}] = data;
-          this.inventory.inventoryType = defaultSelect.name;
-        });
-      },
-      // TODO 材料大类切换
-      bigChange(val) {
-        if (this.hasDefault) {
-          return
-        }
-        this.getSml(val).then(data => {
-          let [defaultSelect = {}] = data;
-          this.inventory.inventorySubclass = defaultSelect.name;
-        });
-      },
-      getStatus() {
-        return getDictByType('objStatus').then(data => {
-          //仓库分类无值，请求
-          let {tableContent} = data;
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.name;
-            item.value = item.name;
-          });
-          this.statusList = tableContent;
-        })
       },
       checkAmt(item) {
         let {invSubUnitMulti, invCompQty} = item;
@@ -387,61 +514,83 @@
           }
           return true;
         });
+        // 校验重复项
+        if(!warn && Object.keys(this.matterDuplicateData).length){
+          Object.keys(this.matterDuplicateData).forEach(item => {
+            if(this.matterDuplicateData[item].length <= 0){
+              return false
+            }
+            this.matterDuplicateConfig.forEach(dItem => {
+              if(dItem.name === item){
+                dItem.items.forEach(cItem => {
+                  if(!cItem.hidden){
+                    this.matterDuplicateData[item].forEach(sItem => {
+                      if(!cItem.allowBlank && !sItem[cItem.fieldCode]){
+                        warn  = `${cItem.text}不能为空`;
+                        return false
+                      }
+                    })
+                  }
+                })  
+              }
+            })
+          })
+        }
         // 校验辅助计量
-        if (!warn && this.invMoreUnit.length) {
-          let validateMap = [
-            {
-              key: 'invSubUnitName',
-              message: '辅计单位'
-            }, {
-              key: 'invSubUnitMulti',
-              message: '单位倍数'
-            },
-          ];
-          warn = this.validateData(this.invMoreUnit, validateMap);
-        }
+        // if (!warn && this.invMoreUnit.length) {
+        //   let validateMap = [
+        //     {
+        //       key: 'invSubUnitName',
+        //       message: '辅计单位'
+        //     }, {
+        //       key: 'invSubUnitMulti',
+        //       message: '单位倍数'
+        //     },
+        //   ];
+        //   warn = this.validateData(this.invMoreUnit, validateMap);
+        // }
         // 校验净含量
-        if (!warn && this.invNetWeight.length) {
-          let validateMap = [
-            {
-              key: 'invCompName',
-              message: '净含量名称'
-            }, {
-              key: 'invCompUnit',
-              message: '净含量单位'
-            }, {
-              key: 'invCompQty',
-              message: '净含量数量'
-            },
-          ];
-          warn = this.validateData(this.invNetWeight, validateMap);
-        }
+        // if (!warn && this.invNetWeight.length) {
+        //   let validateMap = [
+        //     {
+        //       key: 'invCompName',
+        //       message: '净含量名称'
+        //     }, {
+        //       key: 'invCompUnit',
+        //       message: '净含量单位'
+        //     }, {
+        //       key: 'invCompQty',
+        //       message: '净含量数量'
+        //     },
+        //   ];
+        //   warn = this.validateData(this.invNetWeight, validateMap);
+        // }
         // 校验客户
-        if (!warn && hasDealer) {
-          let validateMap = [
-            {
-              key: 'productDealerName',
-              message: '客户名称'
-            }, {
-              key: 'clientInventoryCode',
-              message: '客户成品编码'
-            },
-          ];
-          warn = this.validateData(this.invDealerRel, validateMap);
-        }
+        // if (!warn && hasDealer) {
+        //   let validateMap = [
+        //     {
+        //       key: 'productDealerName',
+        //       message: '客户名称'
+        //     }, {
+        //       key: 'clientInventoryCode',
+        //       message: '客户成品编码'
+        //     },
+        //   ];
+        //   warn = this.validateData(this.invDealerRel, validateMap);
+        // }
         // 校验供应商
-        if (!warn && hasCustomer) {
-          let validateMap = [
-            {
-              key: 'productDealerName',
-              message: '供应商名称'
-            }, {
-              key: 'productDealerCode',
-              message: '供应商编码'
-            },
-          ];
-          warn = this.validateData(this.invCustomerRel, validateMap);
-        }
+        // if (!warn && hasCustomer) {
+        //   let validateMap = [
+        //     {
+        //       key: 'productDealerName',
+        //       message: '供应商名称'
+        //     }, {
+        //       key: 'productDealerCode',
+        //       message: '供应商编码'
+        //     },
+        //   ];
+        //   warn = this.validateData(this.invCustomerRel, validateMap);
+        // }
 
         if (warn) {
           this.$vux.alert.show({
@@ -458,25 +607,30 @@
             leadTime: this.leadTimeTitle ? this.inventory.leadTime : '',
           },
         };
-
-        if (this.invMoreUnit.length) {
-          formData.invMoreUnit = this.invMoreUnit
-        }
-        if (this.invNetWeight.length) {
-          formData.invNetWeight = this.invNetWeight
-        }
-        if (hasDealer) {
-          formData.invDealerRel = this.invDealerRel
-        }
-        if (hasCustomer) {
-          formData.invCustomerRel = this.invCustomerRel
-        }
+        this.matterDuplicateConfig.forEach(item => {
+          if(this.matterDuplicateData[item.name].length){
+            formData[item.name] = this.matterDuplicateData[item.name]
+          }
+        })
+        // if (this.invMoreUnit.length) {
+        //   formData.invMoreUnit = this.invMoreUnit
+        // }
+        // if (this.invNetWeight.length) {
+        //   formData.invNetWeight = this.invNetWeight
+        // }
+        // if (hasDealer) {
+        //   formData.invDealerRel = this.invDealerRel
+        // }
+        // if (hasCustomer) {
+        //   formData.invCustomerRel = this.invCustomerRel
+        // }
 
         let submitData = {
           listId: this.listId,
           // biReferenceId: this.biReferenceId,
           formData: formData,
         };
+        console.log(submitData)
 
         // 修改
         if (this.transCode) {
@@ -556,59 +710,6 @@
           this.imgFileObj = imgFileObj;
         });
       },
-      // TODO 获取加工属性列表
-      getNature() {
-        return getDictByType('processing').then(data => {
-          let {tableContent} = data;
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.value;
-            item.value = item.name;
-          });
-          this.matNatureList = tableContent;
-          return tableContent
-        }).catch(e => {
-          this.matNatureList = [];
-          this.inventory.processing = '';
-        })
-      },
-      // TODO 获取材料大类
-      getBig() {
-        let [selected = {}] = this.matNatureList.filter(item => {
-          return item.name === this.inventory.processing
-        });
-        return getDictByValue(selected.originValue).then(data => {
-          let {tableContent} = data;
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.value;
-            item.value = item.name;
-          });
-          this.inventoryTypeDisabled = !tableContent.length;
-          this.matBigList = tableContent;
-          return tableContent
-        }).catch(e => {
-          this.matBigList = [];
-          this.inventory.inventoryType = '';
-        })
-      },
-      // TODO 获取材料子类
-      getSml() {
-        let [selected = {}] = this.matBigList.filter(item => {
-          return item.name === this.inventory.inventoryType
-        });
-        return getDictByValue(selected.originValue).then(data => {
-          let {tableContent} = data;
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.value;
-            item.value = item.name;
-          });
-          this.inventorySubclassDisabled = !tableContent.length;
-          this.matSmlList = tableContent;
-          return tableContent
-        }).catch(e => {
-          this.matSmlList = [];
-          this.inventory.inventorySubclass = '';
-        })
-      },
       // TODO 获取单位列表
       getMeasure() {
         return getDictByType('measureUnit').then(data => {
@@ -639,16 +740,27 @@
         this.MatPic = require('assets/wl_default03.png');
       },
       // TODO 新增辅助计量
-      addMoreUnit() {
-        this.invMoreUnit.push({
-          invSubUnitName: '', // 辅计单位
-          invSubUnitMulti: '', // 单位倍数
-          comment: '', // 辅计说明
+      addMoreUnit(item) {
+        // this.invMoreUnit.push({
+        //   invSubUnitName: '', // 辅计单位
+        //   invSubUnitMulti: '', // 单位倍数
+        //   comment: '', // 辅计说明
+        // })
+        
+        let obj = {};
+        item.items.forEach(item => {
+          if(!item.hidden){
+            obj[item.fieldCode] = ''
+          }
         })
+        this.matterDuplicateData[item.name].push(obj);
+        console.log(this.matterDuplicateData[item.name]);
+
       },
       // TODO 删除辅助计量
-      deleteMoreUnit() {
-        this.invMoreUnit.pop();
+      deleteMoreUnit(item) {
+        // this.invMoreUnit.pop();
+        this.matterDuplicateData[item.name].pop()
       },
       // TODO 新增净含量
       addNetWeight() {
@@ -707,14 +819,6 @@
         });
         return warn;
       },
-      // TODO 选择工艺路线名称
-      selTechnics(val) {
-        this.inventory = {
-          ...this.inventory,
-          technicsName: val.technicsName,
-          technicsCode: val.technicsCode,
-        };
-      },
       // TODO 选择工序名称
       selProcedure(val) {
         this.inventory = {
@@ -723,7 +827,6 @@
           procedureCode: val.procedureCode,
         };
       },
-
       // TODO 选中客户
       selDealer(val) {
         let idx = this.currentDealerIndex;
@@ -755,6 +858,141 @@
       customerClick(index) {
         this.currentCustomerIndex = index;
       },
+      handlerParams(item) {
+        let url = item.dataSource.data.url;
+        let params = item.dataSource.data.params;
+        let keys = Object.keys(params);
+        let requestParams = {
+          url,
+        }
+        if(keys.length){
+          let data = {};
+          keys.forEach(key => {
+            data[key] = params[key].type === 'text' ? params[key].value : '';
+          })
+          requestParams.data = data;
+        }
+        return requestParams
+      },
+      // 请求应用的viewId
+      getFormViews() {
+        return getFormViews(this.listId).then(data => {
+          for(let item of data){
+            if(item.viewType === 'submit'){
+              this.viewId = item.uniqueId;
+              this.getFormConfig();
+              break;
+            }
+          }
+        })
+      },
+      // 获取表单配置
+      getFormConfig(){
+        getFormConfig(this.viewId).then(({config = []}) => {
+          console.log(config);
+          let matterConfig = [], matterDuplicateConfig = [];
+          config.forEach(item => {
+            if(!item.isMultiple) {
+              matterConfig = JSON.parse(JSON.stringify(item.items));
+            }
+            else{
+              if(!item.hiddenInRun && item.xtype !== 'r2Fileupload' && item.name === 'invMoreUnit'){
+                matterDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+              }
+            }
+          })
+          // 物料基本信息配置的处理
+          matterConfig.forEach(item =>{
+            if(!item.hiddenInRun){
+              //下拉框的数据请求
+              if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
+                let url = item.dataSource.data.url;
+                let params = item.dataSource.data.params;
+                let keys = Object.keys(params);
+                let requestParams = {
+                  url,
+                }
+                if(keys.length){
+                  let data = {};
+                  keys.forEach(key => {
+                    data[key] = params[key].type === 'text' ? params[key].value : '';
+                  })
+                  requestParams.data = data;
+                }
+                item.requestParams = requestParams;
+                requestData(requestParams).then(data => {
+                  if(data.tableContent){
+                    data.tableContent.forEach(item => {
+                      if(item.technicsName) {
+                        item.value = item.technicsName;
+                        item.name = item.technicsName;
+                        return
+                      }
+                      item.value = item.name;
+                    })
+                    if(item.fieldCode === 'processing'){
+                      if(!this.$route.query.transCode){
+                        this.inventory.processing  = this.$route.query.matterType ? this.$route.query.matterType : '';
+                      }
+                    }
+                    this.$set(item, 'remoteData', data.tableContent)
+                  }
+                  else{
+                    data.forEach(item => {
+                      item.value = item.name;
+                    })
+                    this.$set(item, 'remoteData', data)
+                  }
+                  
+                })
+              }
+              // 在渲染的配置中添加字段
+              if(item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'){
+                this.matterConfig.push(item);
+              }
+            }
+          })
+          matterDuplicateConfig.forEach(item => {
+            switch(item.name){
+              case 'invMoreUnit':
+                item.title = '辅助计量';
+                break;
+              case 'invNetWeight':
+                item.title = '净含量';
+                break;
+              case 'invDealerRel':
+                item.title = '客户';
+                break;
+              case 'invCustomerRel':
+                item.title = '供应商';
+                break;
+            }
+            item.items.forEach((sItem, sIndex) => {
+              if(!sItem.hidden){
+                if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+                  requestData(this.handlerParams(sItem)).then((data) => {
+                    if(data.tableContent){
+                      data.tableContent.forEach(item => {
+                        item.value = item.name;
+                      })
+                      this.$set(sItem, 'remoteData', data.tableContent)
+                    }
+                    else{
+                      data.forEach(item => {
+                        item.value = item.name;
+                      })
+                      this.$set(sItem, 'remoteData', data)
+                    }
+                  })
+                }
+              }
+            })
+            this.$set(this.matterDuplicateData, item.name, [])
+          })
+          this.matterDuplicateConfig = matterDuplicateConfig;
+          this.$loading.hide()
+        })
+      },
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
@@ -772,30 +1010,16 @@
       // 有transCode即回写页面
       if (transCode) {
         (async () => {
+          await this.getFormViews()
           await this.findData();
-          await this.getNature();
-          await this.getBig();
-          requestPromise.push(this.getSml());
-          requestPromise.push(this.getMeasure());
-          requestPromise.push(this.getStatus());
           this.hasDefault = false;
           this.codeReadOnly = true;
-          Promise.all(requestPromise).then(() => {
-            this.$loading.hide();
-          })
+          this.$loading.hide();
         })();
         return
       }
-      requestPromise.push(this.getNature().then(data => {
-        let [defaultSelect = {}] = data;
-        this.inventory.processing = this.$route.query.matterType ? this.$route.query.matterType : defaultSelect.name;
-      }));
-      requestPromise.push(this.getMeasure());
-      requestPromise.push(this.getBaseInfoData());
-      requestPromise.push(this.getStatus());
-      Promise.all(requestPromise).then(() => {
-        this.$loading.hide();
-      })
+      this.getFormViews();
+      this.getBaseInfoData();
     },
     beforeRouteEnter(to, from, next) {
       // 修改title
@@ -830,6 +1054,9 @@
     background-color: #f8f8f8;
     overflow: hidden;
     position: relative;
+    /deep/ .weui-cell{
+      padding: 0.1rem;
+    }
     /deep/ .weui-cells {
       font-size: .16rem;
       margin-top: .1rem;
@@ -858,6 +1085,9 @@
       .mater_property {
         flex: 1;
       }
+    }
+    .each-info{
+      background: #fff;
     }
     /* 上传图片容器 */
     .upload-image-container {

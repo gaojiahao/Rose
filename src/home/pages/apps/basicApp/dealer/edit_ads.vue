@@ -1,6 +1,7 @@
 <template>
   <div class='childPage'>
-    <div class='content'>
+    <r-scroll :options="scrollOptions" class="content" ref="bScroll">
+      <div>
       <div class='mater_baseinfo vux-1px-b'>
         <div class='mater_property'>
           <div class='each_property vux-1px-b '>
@@ -14,7 +15,46 @@
         </div>
         <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <div class='each_property vux-1px-b' @click="DealerPop">
+      <div v-for="(item, index) in dealerConfig" :key="index">
+        <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province'">
+          <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
+            <label>{{item.fieldLabel}}</label>
+            <input type='text' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
+            <icon type="warn" class='warn' v-if='item.warn'></icon>
+          </div>
+          <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Numberfield'">
+            <label>{{item.fieldLabel}}</label>
+            <input type='number' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
+            <icon type="warn" class='warn' v-if='item.warn'></icon>
+          </div>
+          <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" 
+                v-model="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" v-if="item.xtype === 'r2Combo'"></r-picker>
+        </template>
+        <!-- 省市区 -->
+        <template v-else-if="item.fieldCode === 'province'">
+          <div class='each_property vux-1px-b' @click="showAddress = true">
+            <label>省市区:</label>
+            <div class='picker'>
+                <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
+                <span class='iconfont icon-gengduo'></span>
+            </div>
+            <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
+                      :show.sync="showAddress" v-show="false"></x-address>
+          </div>
+        </template>
+        <!-- 往来类型 -->
+        <template v-else>
+          <div class='each_property vux-1px-b' @click="DealerPop">
+            <label>往来类型</label>
+            <div class='picker'>
+                <span class='mater_nature'>{{dealer.dealerLabelName}}</span>
+                <span class='iconfont icon-gengduo'></span>
+            </div>
+          </div>
+        </template>
+
+      </div>
+      <!-- <div class='each_property vux-1px-b' @click="DealerPop">
         <label>往来类型</label>
         <div class='picker'>
             <span class='mater_nature'>{{dealer.dealerLabelName}}</span>
@@ -50,8 +90,10 @@
         <icon type="warn" class='warn' v-if='EmailWarn'></icon>
       </div>
       <r-picker title="往来状态:" :data="statusList" :value="dealerStatus" 
-                v-model="dealerStatus"></r-picker>
+                v-model="dealerStatus"></r-picker> -->
     </div>
+    </r-scroll>
+    
     <!--往来类型的列表-->
     <div v-transfer-dom>
       <popup v-model="pickerStatus" position="bottom" height="50%" class="trade_pop_part"  @on-show="onShow">
@@ -83,7 +125,7 @@
 </template>
 <script>
 import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data,Icon } from 'vux';
-import { getBaseInfoDataBase,getDictByType } from 'service/commonService.js';
+import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService.js';
 import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
@@ -142,6 +184,7 @@ export default {
       scrollOptions : {
         click : true
       },
+      dealerConfig: []
     }
   },
   computed: {
@@ -248,32 +291,51 @@ export default {
       })
 
     },
+    // 校验字段
+    check(item){
+      if(item.fieldCode === 'dealerPhone') {
+        item.warn = this.checkPhone()
+      }
+      else if(item.fieldCode === 'dealerMobilePhone') {
+        item.warn = this.checkMobile()
+      }
+      else if(item.fieldCode === 'dealerMail') {
+        console.log('进入')
+        item.warn = this.checkEmail()
+      }
+    },
     //校验固定电话号
     checkPhone(){
       let reg = /^0\d{2,3}-\d{7,8}$/;
       if(this.dealer.dealerPhone.length>0 && !reg.test(this.dealer.dealerPhone)){
         this.PhoneWarn = true;
-        return
       }
-      this.PhoneWarn = false;
+      else{
+        this.PhoneWarn = false;
+      }
+      return this.PhoneWarn;
     },
     //校验手机号
     checkMobile(){
       let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
       if(this.dealer.dealerMobilePhone.length>0 && !reg.test(this.dealer.dealerMobilePhone)){
         this.MobileWarn = true;
-        return
       }
-      this.MobileWarn = false;
+      else{
+        this.MobileWarn = false;
+      }
+      return this.MobileWarn
     },
     //校验邮箱
     checkEmail(){
       let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
       if(this.dealer.dealerMail.length>0 && !reg.test(this.dealer.dealerMail)){
         this.EmailWarn = true;
-        return
       }
-      this.EmailWarn = false;
+      else{
+        this.EmailWarn = false;
+      }
+      return this.EmailWarn
     },
     //往来信息
     findData() {
@@ -448,41 +510,124 @@ export default {
         }
         this.submit();
       }
-    }
+    },
+    // 请求应用的viewId
+    getFormViews() {
+      return getFormViews('c0375170-d537-4f23-8ed0-a79cf75f5b04').then(data => {
+        for(let item of data){
+          if(item.viewType === 'submit'){
+            this.viewId = item.uniqueId;
+            this.getFormConfig();
+            break;
+          }
+        }
+      })
+    },
+    // 获取表单配置
+    getFormConfig(){
+      getFormConfig(this.viewId).then(({config = []}) => {
+        console.log(config);
+        let dealerConfig = [];
+        config.forEach(item => {
+          if(!item.isMultiple) {
+            dealerConfig = JSON.parse(JSON.stringify(item.items));
+          }
+        })
+        // 仓库基本信息配置的处理
+        dealerConfig.forEach(item =>{
+          if(!item.hiddenInRun){
+            //下拉框的数据请求
+            if(item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county' &&  item.fieldCode !=='dealerLabelName'){
+              if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
+                let url = item.dataSource.data.url;
+                let params = item.dataSource.data.params;
+                let keys = Object.keys(params);
+                let requestParams = {
+                  url,
+                }
+                if(keys.length){
+                  let data = {};
+                  keys.forEach(key => {
+                    if(params[key].value.length){
+
+                    }
+                    data[key] = params[key].value;
+                  })
+                  requestParams.data = data;
+                }
+                // console.log(requestParams);
+                requestData(requestParams).then(data => {
+                  if(data.tableContent){
+                    data.tableContent.forEach(item => {
+                      item.value = item.name;
+                    })
+                    if(item.fieldCode === 'dealerLabelName'){
+                      if(!this.$route.query.transCode){
+                        this.dealer.dealerLabelName  = this.$route.query.dealerType ? this.$route.query.dealerType : data.tableContent[0].value;
+                      }
+                    }
+                    this.$set(item, 'remoteData', data.tableContent)
+                  }
+                  else{
+                    data.forEach(item => {
+                      item.value = item.name;
+                    })
+                    this.$set(item, 'remoteData', data)
+                  }
+                  
+                })
+              }
+            }
+            // 在渲染的配置中添加字段
+            if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
+              && item.fieldCode !== 'city' && item.fieldCode !== 'county'){
+              this.dealerConfig.push(item);
+            }
+          }
+        })
+        this.$loading.hide()
+      })
+    },
   },
   created() {
     this.$loading.show();
     let query = this.$route.query;
     if(query.transCode){
       this.transCode = query.transCode;
-      this.findData();
-      this.getStatus();
-      this.getDealer().then(()=>{
-        this.$loading.hide();
-      });
-      
+      (async () => {
+        await this.getFormViews()
+        await this.findData();
+        this.getDealer()
+      })();
+      return 
     }
-    else{
-        this.getDealer().then(data => {
-          this.$loading.hide();
-          let [defaultSelect = {}] = data;
-          if(this.$route.query.pickVal){
-            this.dealer.dealerLabelName = this.$route.query.pickVal;
-            this.pickerStatus = false;
-          }else{//新增往来，默认选中地址栏中的往来类型
-            this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : defaultSelect.name;           
-          }
-        });
-      //获取当前用户信息
-      getBaseInfoDataBase().then(data => {
-        this.baseinfo = {
-          ...this.baseinfo,
-          ...data,
-          activeTime: this.changeDate(new Date(), true),
-        }
-      });
-      this.getStatus();
-    }
+    this.getFormViews()
+    this.getDealer().then(data => {
+      let [defaultSelect = {}] = data;
+      if(this.$route.query.pickVal){
+        this.dealer.dealerLabelName = this.$route.query.pickVal;
+        this.pickerStatus = false;
+      }
+      else{//新增往来，默认选中地址栏中的往来类型
+        this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : defaultSelect.name;           
+      }
+    });
+    //获取当前用户信息
+    getBaseInfoDataBase().then(data => {
+      this.baseinfo = {
+        ...this.baseinfo,
+        ...data,
+        activeTime: this.changeDate(new Date(), true),
+      }
+    })    
+  },
+  mounted() {
+    this.$nextTick(() =>{
+      if(this.$refs.bScroll){
+        this.$refs.bScroll.refresh()
+      }
+    })
+
   },
   beforeRouteEnter (to, from, next) {
     // 修改title
@@ -513,9 +658,10 @@ export default {
   }
   .content {
     height: 90%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: auto;
+    // overflow-y: auto;
+    // overflow-x: hidden;
+    overflow: hidden;
+    // -webkit-overflow-scrolling: auto;
     input {
       border: none;
       outline: none;
