@@ -57,6 +57,15 @@
         <label>修改时间:</label>
         <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
       </div>
+      <!-- 辅计单位-->
+      <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" key="cIndex" v-if="cItem.show">
+        <div class='title vux-1px-b'>{{cItem.title}}</div>
+        <div class='content' :class="{'show_border' : index > 0}" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+          <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
+                v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+          </form-cell>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -64,7 +73,7 @@
 import { dateFormat } from 'vux'
 import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
 import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/commonService.js'
-import { setTimeout } from 'timers';
+import FormCell from 'components/detail/commonPart/FormCell'
 export default {
   filters: {
     dateFormat
@@ -135,14 +144,28 @@ export default {
         '个人仓': 'staff',
         '一般部门仓': 'group',
       },
-      warehouseConfig: [], // 仓库基本信息的配置
+      warehouseConfig: [], // 仓库基本信息的配置,
+      warehouseDuplicateConfig: [], // 物料重复项的配置
+      formData: {},
+      viewId: ''
 
     }
+  },
+  components: {
+    FormCell
   },
   methods: {
     //仓库信息
     findData() {
       return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        this.formData = formData;
+        this.warehouseDuplicateConfig.forEach(item => {
+          if(this.formData[item.name] && !this.formData[item.name].length){
+            item.show = false;
+            return
+          }
+          item.show = true;
+        })
         let {baseinfo = {}, warehouse = {}} = formData;
         switch (warehouse.warehouseStatus) {
           case 1:
@@ -235,23 +258,25 @@ export default {
       return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
         for(let item of data){
           if(item.viewType === 'view'){
-            this.getFormConfig(item.uniqueId);
+            this.viewId = item.uniqueId
             break;
           }
         }
       })
     },
     // 获取表单配置
-    getFormConfig(viewId){
-      getFormConfig(viewId).then(({config = []}) => {
-        console.log(config);
+    getFormConfig(){
+      getFormConfig(this.viewId).then(({config = []}) => {
+        // console.log(config);
         let warehouseConfig = [], warehouseMultipleConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
             warehouseConfig = JSON.parse(JSON.stringify(item.items));
           }
           else{
-            warehouseMultipleConfig.push(item)
+            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload'){
+              warehouseMultipleConfig.push(JSON.parse(JSON.stringify(item)))
+            }
           }
         })
         // 仓库基本信息配置的处理
@@ -269,6 +294,20 @@ export default {
             }
           }
         })
+        warehouseMultipleConfig.forEach(item => {
+          switch(item.name){
+            case 'warehouseRel':
+              item.title = '库位';
+              break;
+          }
+          item.items.forEach((sItem, sIndex) => {
+            if(sItem.hidden){
+              item.items.splice(sIndex, 1);
+              sIndex --;
+            }
+          })
+        })
+        this.warehouseDuplicateConfig = warehouseMultipleConfig;
         this.$loading.hide()
       })
     },
@@ -280,6 +319,7 @@ export default {
       this.transCode = query.transCode;
       (async() => {
         await this.getFormViews();
+        await this.getFormConfig()
         await this.findData();
       })()
     }
@@ -298,7 +338,7 @@ export default {
     height: 100%;
     bottom: 0;
     z-index: 5;
-    background: #fff;
+    background: #f8f8f8;
   }
 
   .detail_content {
@@ -352,6 +392,7 @@ export default {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
       position: relative;
+      background: #fff;
       label {
         color: #6d6d6d;
         font-size: 0.12rem;
@@ -397,47 +438,24 @@ export default {
 
       }
     }
-  }
+    .d_main {
+      margin-top: 0.1rem;
+      background: #fff;
+      padding: 0 0.1rem;
+      .title {
+        color: #111;
+        background: #fff;
+        font-size: .16rem;
+        padding: .06rem 0;
+        font-weight: bold;
+      }
+      .content {
 
-  //确认框
-  .popup_header {
-    display: flex;
-    justify-content: space-between;
-    height: 44px;
-    line-height: 44px;
-    font-size: 16px;
-    background-color: #fbf9fe;
-    padding: 0 15px;
-    .cancel {
-      color: #828282;
-    }
-    .confirm {
-      color: #FF9900;
+        &.show_border {
+          border-bottom: .03rem solid #e8e8e8;
+        }
+      }
 
-    }
-  }
-
-  // 确定
-  .btn {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 10%;
-    position: fixed;
-    background: #fff;
-    .cfm_btn {
-      top: 50%;
-      left: 50%;
-      width: 2.8rem;
-      color: #fff;
-      height: .44rem;
-      line-height: .44rem;
-      position: absolute;
-      text-align: center;
-      background: #5077aa;
-      border-radius: .4rem;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 5px #5077aa;
     }
   }
 

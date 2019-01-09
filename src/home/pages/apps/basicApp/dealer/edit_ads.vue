@@ -184,7 +184,10 @@ export default {
       scrollOptions : {
         click : true
       },
-      dealerConfig: []
+      dealerConfig: [],
+      dealerDuplicateConfig: [], // 往来重复项的配置
+      dealerDuplicateData: {}, // 往来重复项数据,
+      viewId: ''
     }
   },
   computed: {
@@ -517,7 +520,6 @@ export default {
         for(let item of data){
           if(item.viewType === 'submit'){
             this.viewId = item.uniqueId;
-            this.getFormConfig();
             break;
           }
         }
@@ -526,11 +528,16 @@ export default {
     // 获取表单配置
     getFormConfig(){
       getFormConfig(this.viewId).then(({config = []}) => {
-        console.log(config);
-        let dealerConfig = [];
+        // console.log(config);
+        let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
             dealerConfig = JSON.parse(JSON.stringify(item.items));
+          }
+          else{
+            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload'){
+              dealerDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+            }
           }
         })
         // 仓库基本信息配置的处理
@@ -585,6 +592,43 @@ export default {
             }
           }
         })
+        dealerDuplicateConfig.forEach(item => {
+          switch(item.name){
+            case 'deliveryAddresses':
+              item.title = '地址';
+              break;
+            case 'dealerCertificateRel':
+              item.title = '证件';
+              break;
+          }
+          let arr = []
+          item.items.forEach((sItem, sIndex) => {
+            if(!sItem.hidden){
+              if(item.fieldCode !== 'deliveryCity' && item.fieldCode !== 'deliveryCounty'){
+                if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+                  requestData(this.handlerParams(sItem)).then((data) => {
+                    if(data.tableContent){
+                      data.tableContent.forEach(item => {
+                        item.value = item.name;
+                      })
+                      this.$set(sItem, 'remoteData', data.tableContent)
+                    }
+                    else{
+                      data.forEach(item => {
+                        item.value = item.name;
+                      })
+                      this.$set(sItem, 'remoteData', data)
+                    }
+                  })
+                }
+                arr.push(sItem)
+              }  
+            }
+          })
+          item.items = arr;
+          this.$set(this.dealerDuplicateData, item.name, [])
+        })
+        this.dealerDuplicateConfig = dealerDuplicateConfig;
         this.$loading.hide()
       })
     },
@@ -601,7 +645,11 @@ export default {
       })();
       return 
     }
-    this.getFormViews()
+    (async() => {
+      await this.getFormViews()
+      await this.getFormConfig()
+
+    })()
     this.getDealer().then(data => {
       let [defaultSelect = {}] = data;
       if(this.$route.query.pickVal){

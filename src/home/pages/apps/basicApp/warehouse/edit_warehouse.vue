@@ -2,63 +2,85 @@
   <div class='pages'>
     <r-scroll class='content' :options="scrollOptions">
       <div class='mater_baseinfo vux-1px-b'>
-          <div class='mater_property'>
-            <div class='each_property vux-1px-b'>
-              <label class='required'>仓库编码:</label>
-              <input type='text' v-model="warehouse.warehouseCode" class='property_val'
-                    :class='{readonly :transCode!==""}' :readonly='transCode!==""'/>
-            </div>
-            <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
-              <label class='required'>仓库名称:</label>
-              <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
-            </div>
+        <div class='mater_property'>
+          <div class='each_property vux-1px-b'>
+            <label class='required'>仓库编码:</label>
+            <input type='text' v-model="warehouse.warehouseCode" class='property_val'
+                  :class='{readonly :transCode!==""}' :readonly='transCode!==""'/>
           </div>
-          <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
-        </div>
-        <div v-for="(item, index) in warehouseConfig" :key="index">
-          <div v-if="item.fieldCode !== 'staffDealerCode' && item.fieldCode !== 'warehouseProvince'">
-            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]"
-                  @on-change="warehouseTypeChange" v-model="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]" :required='!item.allowBlank' 
-                  v-if="item.xtype === 'r2Combo'" class="r-picker">
-            </r-picker>
-            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
-              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}:</label>
-              <input type='text' v-model="warehouse[item.fieldCode]" class='property_val'/>
-            </div>
+          <div class='each_property required' :class="transCode != ''?'edit_bor_btm':''">
+            <label class='required'>仓库名称:</label>
+            <input type='text' v-model="warehouse.warehouseName" class='property_val'/>
           </div>
-          <template v-else-if="item.fieldCode === 'warehouseProvince'">
-            <div class='each_property vux-1px-b' @click="showAddress = true">
-              <label>省市区:</label>
-              <div class='picker'>
-                  <span class='mater_nature'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
-                  <span class='iconfont icon-gengduo'></span>
-              </div>
-              <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
-                        :show.sync="showAddress" v-show="false"></x-address>
-            </div>
-          </template>
-          <template v-else>
-            <div class='each_property vux-1px-b' @click="showPop = true" v-show="typeSub !== 'noMatched'">
-              <label>{{typeSubMap[typeSub].title}}</label>
-              <div class='picker'>
-                  <span class='mater_nature'>{{typeSubMap[typeSub].value}}</span>
-                  <span class='iconfont icon-gengduo'></span>
-              </div>
-            </div>
-          </template>
         </div>
-      <!-- <r-picker title="仓库类型:" :data="AccountRelType" :value="warehouse.warehouseType"
-                @on-change="warehouseTypeChange" v-model="warehouse.warehouseType" :required='true'>
-      </r-picker>
-      <div class='each_property vux-1px-b' @click="showPop = true">
-        <label>{{typeSubMap[typeSub].title}}</label>
-        <div class='picker'>
-            <span class='mater_nature'>{{typeSubMap[typeSub].value}}</span>
-            <span class='iconfont icon-gengduo'></span>
-        </div>
+        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <r-picker title="仓库状态:" :data="statusType" :value="warehouseStatus"
-                 v-model="warehouseStatus"></r-picker> -->
+      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info">
+        <div v-if="item.fieldCode !== 'staffDealerCode' && item.fieldCode !== 'warehouseProvince'">
+          <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]"
+                 v-model="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]" :required='!item.allowBlank' 
+                v-if="item.xtype === 'r2Combo'" class="r-picker">
+          </r-picker>
+          <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
+            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}:</label>
+            <input type='text' v-model="warehouse[item.fieldCode]" class='property_val'/>
+          </div>
+        </div>
+        <template v-else-if="item.fieldCode === 'warehouseProvince'">
+          <div class='each_property vux-1px-b' @click="showAddress = true">
+            <label>省市区:</label>
+            <div class='picker'>
+                <span class='mater_nature'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
+                <span class='iconfont icon-gengduo'></span>
+            </div>
+            <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
+                      :show.sync="showAddress" v-show="false"></x-address>
+          </div>
+        </template>
+        <template v-else>
+          <div class='each_property vux-1px-b' @click="showPop = true" v-show="typeSub !== 'noMatched'">
+            <label>{{typeSubMap[typeSub].title}}</label>
+            <div class='picker'>
+                <span class='mater_nature'>{{typeSubMap[typeSub].value}}</span>
+                <span class='iconfont icon-gengduo'></span>
+            </div>
+          </div>
+        </template>
+      </div>
+      <!-- 重复项 -->
+      <div v-for="(item, index) in warehouseDuplicateConfig" :key="`${item.name}+${index}`">
+        <div class="duplicate-item-no-select" v-if="warehouseDuplicateData[item.name] && !warehouseDuplicateData[item.name].length">
+          <span class="title">{{item.title}}</span>
+          <span class="add" @click="addMoreUnit(item)">新增</span>
+        </div>
+        <group class="duplicate-item" :title="item.title" v-else-if="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
+          <div v-for="(sItem, sIndex) in warehouseDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < warehouseDuplicateData[item.name].length-1}">
+            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="sItem[dItem.fieldCode] != null">
+              <template v-if="!dItem.readOnly">
+                <r-picker class="duplicate-picker vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                        mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
+                        v-if="dItem.editorType === 'r2Combo' || dItem.editorType === 'r2Selector'"></r-picker>
+                  <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
+                          @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
+                    <span class="required" slot="label" v-show="!dItem.allowBlank">{{dItem.text}}</span>
+                  </x-input>
+                  <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
+                          v-if="dItem.editorType === 'r2Textfield'"></x-input>
+              </template>
+              <template v-else>
+                <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]"></cell>
+              </template>
+            </div>
+
+          </div>
+        </group>
+        <div class="add_more" v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
+          您还需要添加新的{{item.title}}?请点击
+          <span class='add' @click="addMoreUnit(item)">新增</span>
+          <em v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length > 1">或</em>
+          <span class='delete' @click="deleteMoreUnit(item)" v-show="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length > 1">删除</span>
+        </div> 
+      </div>
     </r-scroll>
     <!--员工，组织，客户等的pop-->
     <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
@@ -79,7 +101,6 @@
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
   import PopWarelabeList from 'components/Popup/PopWarelabelList'
-import warehouseDetailVue from './warehouseDetail.vue';
   export default {
     data() {
       return {
@@ -90,7 +111,6 @@ import warehouseDetailVue from './warehouseDetail.vue';
         imgFileObj: {}, // 上传的图片对象
         biReferenceId: '',
         MatPic: '', // 图片地址
-        AccountRelType: [],
         AccountAddress: [],
         baseinfo: {},
         warehouse: {
@@ -173,6 +193,8 @@ import warehouseDetailVue from './warehouseDetail.vue';
           '一般部门仓': 'group',
         },
         warehouseConfig: [], // 仓库基本信息的配置
+        warehouseDuplicateConfig: [], // 物料重复项的配置
+        warehouseDuplicateData: {}, // 物料重复项数据,
         currentGroup:'',
         statusType:[],//仓库状态列表
         warehouseStatus : '使用中',
@@ -180,11 +202,15 @@ import warehouseDetailVue from './warehouseDetail.vue';
         scrollOptions: {
           click: true,
         },
+        viewId: ''
       }
     },
     computed:{
       warehouseType(){
         return this.warehouse.warehouseType
+      },
+      warehouseRel() {
+        return this.warehouseDuplicateData.warehouseRel
       }
     },
     directives: {
@@ -202,9 +228,41 @@ import warehouseDetailVue from './warehouseDetail.vue';
         this.typeSubMap[this.typeSub].list = [];
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
         if(this.typeSub === 'noMatched') {
+          if(this.warehouseType === '库位')
+          delete this.warehouseDuplicateData.warehouseRel
           return
         }
+        this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
         this.getTypeSubList();
+      },
+      // 监听库位数组变化，选择库位名称后，自动带出库位编码
+      warehouseRel: {
+        handler(val) {
+          val && val.length && val.forEach(item => {
+            if(item.childWarehouseName){
+              for(let cItem of this.warehouseDuplicateConfig){
+                if(cItem.name === 'warehouseRel') {
+                  for(let sItem of cItem.items){
+                    if(sItem.fieldCode === 'childWarehouseName'){
+                      for(let dItem of sItem.remoteData){
+                        if(dItem.warehosueName === item.childWarehouseName){
+                          item.childWarehouseCode = dItem.warehouseCode;
+                          break
+                        }
+                      }
+                      break;
+                    }
+                  }
+                  break;
+                }
+                break
+              }
+            }
+            
+          })
+
+        },
+        deep: true
       }
     },
     methods: {
@@ -212,39 +270,14 @@ import warehouseDetailVue from './warehouseDetail.vue';
       onUpload(val){
         this.warehouse.warehousePic = val.src;
       },
-      //获取仓库类型
-      getwarehouse() {
-        //获取仓库关系标签
-        return getDictByType('warehouseRelType').then(data => {
-          //仓库分类无值，请求
-          let {tableContent} = data;
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.value;
-            item.value = item.name;
-          });
-          this.AccountRelType = tableContent;
-          //新增是默认选中对应的关系标签
-          if(!this.$route.query.transCode){
-            this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : tableContent[0].name;
-          }
-          this.$loading.hide();
-        })
-      },
-      //获取仓库状态
-      getStatus(){
-        return getDictByType('objStatus').then(data => {
-          //仓库分类无值，请求
-          let {tableContent} = data;
-          tableContent && tableContent.forEach(item => {
-            item.originValue = item.name;
-            item.value = item.name;
-          });
-          this.statusType = tableContent;
-        })
-      },
       //查询仓库信息
       findData() {
         return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+          this.warehouseDuplicateConfig.forEach(key => {
+            if(formData[key.name].length){
+              this.warehouseDuplicateData[key.name] = formData[key.name];
+            }
+          })
           let {baseinfo = {}, warehouse = {}} = formData;
           switch (warehouse.warehouseStatus) {
             case 1:
@@ -292,7 +325,6 @@ import warehouseDetailVue from './warehouseDetail.vue';
       getAddress() {
         if(this.AccountAddress.length>0){
           this.warehouse.warehouseProvince = this.AccountAddress[0];
-          // this.$set(this.warehouse, 'province', this.AccountAddress[0])
           this.warehouse.warehouseDistrict = this.AccountAddress[2]
           if(this.AccountAddress[1] === '市辖区'){
             this.warehouse.warehouseCity = '';
@@ -300,11 +332,18 @@ import warehouseDetailVue from './warehouseDetail.vue';
           };
           this.warehouse.warehouseCity = this.AccountAddress[1];
         }
-        // if (this.AccountAddress.length > 0) {
-        //   this.warehouse.province = this.AccountAddress[0];
-        //   this.warehouse.city = this.AccountAddress[1];
-        //   this.warehouse.county = this.AccountAddress[2]
-        // }
+      },
+      // TODO 新增重复项
+      addMoreUnit(item) {
+        let obj = {};
+        item.items.forEach(item => {
+            obj[item.fieldCode] = ''
+        })
+        this.warehouseDuplicateData[item.name].push(obj);
+      },
+      // TODO 删除重复项
+      deleteMoreUnit(item) {
+        this.warehouseDuplicateData[item.name].pop()
       },
       //提交
       submit() {
@@ -354,6 +393,11 @@ import warehouseDetailVue from './warehouseDetail.vue';
                 break;
               }
             }
+            this.warehouseDuplicateConfig.length && this.warehouseDuplicateConfig.forEach(item => {
+              if(this.warehouseDuplicateData[item.name].length){
+                submitData.formData[item.name] = this.warehouseDuplicateData[item.name]
+              }
+            })
             operation(submitData).then((data = {}) => {
               let {success = false, message = '提交失败'} = data;
               if (success) {
@@ -398,6 +442,26 @@ import warehouseDetailVue from './warehouseDetail.vue';
           }
           return true
         });
+        // 校验重复项
+        if(!warn && Object.keys(this.warehouseDuplicateData).length){
+          Object.keys(this.warehouseDuplicateData).forEach(item => {
+            if(this.warehouseDuplicateData[item].length <= 0){
+              return false
+            }
+            this.warehouseDuplicateConfig.forEach(dItem => {
+              if(dItem.name === item){
+                dItem.items.forEach(cItem => {               
+                  this.warehouseDuplicateData[item].forEach(sItem => {
+                    if(!cItem.allowBlank && !sItem[cItem.fieldCode]){
+                      warn  = `${cItem.text}不能为空`;
+                      return false
+                    }
+                  })
+                })  
+              }
+            })
+          })
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn
@@ -408,19 +472,6 @@ import warehouseDetailVue from './warehouseDetail.vue';
       },
       selGroup(val){
         this.typeSubMap[this.typeSub].value = val;
-      },
-      warehouseTypeChange(val) {
-        // if(this.warehouse.warehouseType){
-        //   // 清空之前的选中值
-        //   this.typeSubMap[this.typeSub].value = '';
-        //   this.typeSubMap[this.typeSub].list = [];
-        //   this.typeSub = this.typeToSubMap[val] || 'noMatched';
-        //   if(this.typeSub === 'noMatched') {
-        //     return
-        //   }
-        //   this.getTypeSubList();
-        // }
-        
       },
       // TODO 获取仓库类型关联子项下拉列表
       getTypeSubList(val) {
@@ -477,13 +528,28 @@ import warehouseDetailVue from './warehouseDetail.vue';
             break;
         }
       },
+      handlerParams(item) {
+        let url = item.dataSource.data.url;
+        let params = item.dataSource.data.params;
+        let keys = Object.keys(params);
+        let requestParams = {
+          url,
+        }
+        if(keys.length){
+          let data = {};
+          keys.forEach(key => {
+            data[key] = params[key].type === 'text' ? params[key].value : '';
+          })
+          requestParams.data = data;
+        }
+        return requestParams
+      },
       // 请求应用的viewId
       getFormViews() {
         return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
           for(let item of data){
             if(item.viewType === 'submit'){
               this.viewId = item.uniqueId;
-              this.getFormConfig();
               break;
             }
           }
@@ -492,14 +558,16 @@ import warehouseDetailVue from './warehouseDetail.vue';
       // 获取表单配置
       getFormConfig(){
         getFormConfig(this.viewId).then(({config = []}) => {
-          console.log(config);
+          // console.log(config);
           let warehouseConfig = [], warehouseMultipleConfig = [];
           config.forEach(item => {
             if(!item.isMultiple) {
               warehouseConfig = JSON.parse(JSON.stringify(item.items));
             }
-            else{
-              warehouseMultipleConfig.push(item)
+            else{             
+              if(!item.hiddenInRun && item.xtype !== 'r2Fileupload'){
+                warehouseMultipleConfig.push(JSON.parse(JSON.stringify(item)))
+              }
             }
           })
           // 仓库基本信息配置的处理
@@ -513,24 +581,7 @@ import warehouseDetailVue from './warehouseDetail.vue';
               //下拉框的数据请求
               if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
                 if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-                  let url = item.dataSource.data.url;
-                  let params = item.dataSource.data.params;
-                  let keys = Object.keys(params);
-                  let requestParams = {
-                    url,
-                  }
-                  if(keys.length){
-                    let data = {};
-                    keys.forEach(key => {
-                      if(params[key].value.length){
-
-                      }
-                      data[key] = params[key].value;
-                    })
-                    requestParams.data = data;
-                  }
-                  // console.log(requestParams);
-                  requestData(requestParams).then(data => {
+                  requestData(this.handlerParams(item)).then(data => {
                     if(data.tableContent){
                       data.tableContent.forEach(item => {
                         item.value = item.name;
@@ -559,19 +610,47 @@ import warehouseDetailVue from './warehouseDetail.vue';
               }
             }
           })
+          // 仓库重复项
+          warehouseMultipleConfig.forEach(item => {
+            switch(item.name){
+              case 'warehouseRel':
+                item.title = '库位';
+                break;
+            }
+            let arr = []
+            item.items.forEach((sItem, sIndex) => {
+              if(!sItem.hidden){
+                if((sItem.editorType === 'r2Combo' || sItem.editorType === 'r2Selector') && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+                  requestData(this.handlerParams(sItem)).then((data) => {
+                    if(data.tableContent){
+                      data.tableContent.forEach(item => {
+                        if(item.warehosueName){
+                          item.value = item.warehosueName;
+                          item.name = item.warehosueName;
+                          return
+                        }
+                        item.value = item.name;
+                      })
+                      this.$set(sItem, 'remoteData', data.tableContent)
+                    }
+                    else{
+                      data.forEach(item => {
+                        item.value = item.name;
+                      })
+                      this.$set(sItem, 'remoteData', data)
+                    }
+                  })
+                }
+                arr.push(sItem)
+              }
+            })
+            item.items = arr;
+            this.$set(this.warehouseDuplicateData, item.name, [])
+          })
+          this.warehouseDuplicateConfig = warehouseMultipleConfig;
           this.$loading.hide()
         })
       },
-      addMoreUnit(item){
-        let obj = {}
-        item.items.forEach(sItem => {
-          if(!sItem.hidden){
-            obj[sItem.fieldCode] = ''
-          }
-          
-        })
-        this.warehouseRelData[item.name].push(obj)
-      }
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
@@ -588,28 +667,27 @@ import warehouseDetailVue from './warehouseDetail.vue';
         this.transCode = query.transCode;
         (async () => {
           await this.getFormViews()
-          await this.findData();
-          // await this.getwarehouse();
-          // this.getStatus();
+          await this.getFormConfig()
+          await this.findData()
           this.hasDefault = false;
         })();
         return
       }
-      this.getFormViews();
-      //获取当前用户信息
-      getBaseInfoDataBase().then(data => {
-        this.baseinfo = {
-          ...this.baseinfo,
-          ...data
-        }
-      });
+      (async() => {
+        getBaseInfoDataBase().then(data => {
+          this.baseinfo = {
+            ...this.baseinfo,
+            ...data
+          }
+        });
+        await this.getFormViews();
+        await this.getFormConfig();
+      })()
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
           this.$refs.bScroll.refresh();
         }
       })
-      // this.getwarehouse();
-      // this.getStatus();
     },
     beforeRouteEnter (to, from, next) {
       // 修改title
@@ -631,7 +709,7 @@ import warehouseDetailVue from './warehouseDetail.vue';
 
   .content {
     height: 90%;
-    background-color: #fff;
+    background-color: #f8f8f8;
     overflow: hidden;
     position: relative;
     /deep/ .weui-cells {
@@ -662,17 +740,18 @@ import warehouseDetailVue from './warehouseDetail.vue';
     .mater_baseinfo {
       display: flex;
       align-items: flex-end;
-      // background-color: #fff;
       .mater_property {
         flex: 1;
       }
     }
-
+    .each-info{
+      background-color: #fff;
+    }
     .each_property {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
       position: relative;
-      // background-color: #fff;
+       background-color: #fff;
       label {
         color: #6d6d6d;
         font-size: 0.12rem;
@@ -713,6 +792,9 @@ import warehouseDetailVue from './warehouseDetail.vue';
         .iconfont {
           font-size: 0.24rem;
         }
+        .title{
+          font-size: .12rem;
+        }
       }
       .vux-cell-box {
         position: absolute;
@@ -740,17 +822,6 @@ import warehouseDetailVue from './warehouseDetail.vue';
       height: 1.2rem;
     }
   }
-
-  .edit_r_picker {
-    padding: 0;
-    .vux-1px-b {
-      padding: 0 0.08rem !important;
-      &:after {
-        border-bottom: none;
-      }
-    }
-  }
-
   //确认框
   .popup_header {
     display: flex;
@@ -768,12 +839,9 @@ import warehouseDetailVue from './warehouseDetail.vue';
 
     }
   }
-  .each-duplicate{
-    // border-top: 0.1rem solid #f8f8f8;
-  }
    /* 重复项 */
     .duplicate-item {
-      margin-top: 0.1rem;
+      margin-top: .1rem;
       background-color: #fff;
       overflow: hidden;
       .has_border {
@@ -783,18 +851,11 @@ import warehouseDetailVue from './warehouseDetail.vue';
         /*padding-left: 0;*/
         font-size: .12rem;
       }
-      // /deep/ .weui-cell__hd {
-      //   font-size: .16rem;
-      // }
-      // /deep/ .weui-cells {
-      //   &:before, &:after {
-      //     display: none;
-      //   }
-      // }
-      /deep/ .weui-cell {
-        &:before {
-          display: block;
-        }
+      /deep/ .weui-cells {
+        font-size: .16rem;
+      }
+      /deep/ .weui-cell:first-child:before {
+        display: block;
       }
     }
     .duplicate-item-no-select {

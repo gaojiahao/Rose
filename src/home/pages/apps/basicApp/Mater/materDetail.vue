@@ -25,25 +25,10 @@
           <form-cell v-for="(item, index) in matterConfig" :key="index"
             :cellTitle="item.fieldLabel" :cellContent="inventory[item.fieldCode]" :showTopBorder="index === 0 ? false : true">
           </form-cell>
-          <!-- <form-cell cellTitle="物料大类" :cellContent="inventory.inventoryType" :showTopBorder="false"></form-cell>
-          <form-cell cellTitle="物料子类" :cellContent="inventory.inventorySubclass"></form-cell>
-          <form-cell cellTitle="规格" :cellContent="inventory.specification"></form-cell>
-          <form-cell cellTitle="加工属性" :cellContent="inventory.processing"></form-cell>
-          <form-cell cellTitle="材质" :cellContent="inventory.material"></form-cell>
-          <form-cell cellTitle="颜色" :cellContent="inventory.inventoryColor"></form-cell>
-          <form-cell cellTitle="单位" :cellContent="inventory.measureUnit"></form-cell>
-          <form-cell cellTitle="保质期天数" :cellContent="inventory.keepingDays"></form-cell>
-          <form-cell cellTitle="临保天数" :cellContent="inventory.nearKeepingDays"></form-cell>
-          <form-cell cellTitle="安全库存" :cellContent="inventory.safeStock"></form-cell>
-          <form-cell cellTitle="工艺路线名称" :cellContent="inventory.technicsName"></form-cell>
-          <form-cell :cellTitle="leadTimeTitle" :cellContent="inventory.leadTime" v-if="leadTimeTitle"></form-cell>
-          <form-cell cellTitle="工序名称" :cellContent="inventory.procedureName"></form-cell>
-          <form-cell cellTitle="工序编码" :cellContent="inventory.procedureCode"></form-cell>
-          <form-cell cellTitle="起订量" :cellContent="inventory.moq"></form-cell> -->
         </div>
       </div>
       <!-- 辅计单位-->
-      <div class="d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" key="cIndex">
+      <div class="d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" key="cIndex" v-if="cItem.show">
         <div class='title vux-1px-b'>{{cItem.title}}</div>
         <div class='content' :class="{'show_border' : index > 0}" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
           <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
@@ -51,41 +36,6 @@
           </form-cell>
         </div>
       </div>
-      <!-- <div class="d_main" v-show="invMoreUnit.length">
-        <div class='title vux-1px-b'>辅计单位</div>
-        <div class='content' :class="{'show_border' : index>0}" v-for="(item,index) in invMoreUnit" :key="index">
-          <form-cell cellTitle='辅计单位' :cellContent="item.invSubUnitName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='单位倍数' :cellContent="item.invSubUnitMulti"></form-cell>
-          <form-cell cellTitle='辅计说明' :cellContent="item.comment"></form-cell>
-        </div>
-      </div>
-      <div class="d_main" v-show="invNetWeight.length">
-        <div class='title vux-1px-b'>净含量</div>
-        <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invNetWeight" :key="index">
-          <form-cell cellTitle='净含量名称' :cellContent="item.invCompName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='单位' :cellContent="item.invCompUnit"></form-cell>
-          <form-cell cellTitle='净含量数量' :cellContent="item.invCompQty"></form-cell>
-          <form-cell cellTitle='净含量说明说明' :cellContent="item.comment"></form-cell>
-        </div>
-      </div>
-      <div class="d_main" v-show="invDealerRel.length">
-        <div class='title vux-1px-b'>客户</div>
-        <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invDealerRel" :key="index">
-          <form-cell cellTitle='客户名称' :cellContent="item.productDealerName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='客户编码' :cellContent="item.productDealerCode"></form-cell>
-          <form-cell cellTitle='客户成品编码' :cellContent="item.clientInventoryCode"></form-cell>
-          <form-cell cellTitle='客户成品名称' :cellContent="item.clientInventoryName"></form-cell>
-          <form-cell cellTitle='说明' :cellContent="item.productComment"></form-cell>
-        </div>
-      </div>
-      <div class="d_main" v-show="invCustomerRel.length">
-        <div class='title vux-1px-b'>供应商</div>
-        <div class='content' :class="{'hide_border' : index<1}" v-for="(item,index) in invCustomerRel" :key="index">
-          <form-cell cellTitle='供应商名称' :cellContent="item.productDealerName" :showTopBorder=false></form-cell>
-          <form-cell cellTitle='供应商编码' :cellContent="item.productDealerCode"></form-cell>
-          <form-cell cellTitle='说明' :cellContent="item.productComment"></form-cell>
-        </div>
-      </div> -->
     </div>
     <!-- 修改按钮 -->
     <div class="btn vux-1px-t" v-if="action.update">
@@ -153,6 +103,13 @@ export default {
     findData() {
       return findData(this.transCode).then(({formData}) => {
         this.formData = formData;
+        this.matterDuplicateConfig.forEach(item => {
+          if(this.formData[item.name] && !this.formData[item.name].length){
+            item.show = false;
+            return
+          }
+          item.show = true;
+        })
         let {inventory = {}} = formData;
         let status = ['', '使用中', '未使用', '草稿'],
           statusClass = ['', 'inUse', 'unUse'];
