@@ -2,11 +2,11 @@
   <!-- 工作流 -->
   <div class="work-flow-container" v-if="fullWorkFlow.length" @click="goWorkFlowFull">
     <div class="work-flow-header">
-      <span>工作流</span>
+      <span class="work_flow_title vux-1px-l">工作流</span>
       <span class="check_more">
-        查看更多<i class="icon-right"></i>
+        更多<i class="icon-right"></i>
       </span>
-      
+
     </div>
     <div class="work-flow-status-wrapper">
       <i class="icon-flow-time"></i>
@@ -129,9 +129,9 @@
   }
 
   .work-flow-container {
-    margin: .1rem 0;
-    padding: .15rem .25rem;
-    width: 100%;
+    margin: .1rem;
+    padding: .15rem;
+    width: calc(100% - .2rem);
     background-color: #fff;
     color: #333;
     box-sizing: border-box;
@@ -140,6 +140,16 @@
       font-size: .16rem;
       line-height: .14rem;
       justify-content: space-between;
+      .work_flow_title {
+        line-height: .16rem;
+        font-size: 16px;
+        font-weight: 600;
+        &:before {
+          left: -.15rem;
+          width: .08rem;
+          border-left: .08rem solid #3296FA;
+        }
+      }
       .check_more {
         color: #999;
         display: flex;

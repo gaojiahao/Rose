@@ -149,3 +149,23 @@
   background: url('~assets/iconfont/light.png');
   background-size: cover;
 }
+
+.icon-project{
+  background: url('~assets/iconfont/project2.png');
+  background-size: cover;
+}
+
+.icon-type{
+  background: url('~assets/iconfont/type.png');
+  background-size: cover;
+}
+
+.icon-dealer2{
+  background: url('~assets/iconfont/dealer2.png');
+  background-size: cover;
+}
+
+.icon-address{
+  background: url('~assets/iconfont/address.png');
+  background-size: cover;
+}
