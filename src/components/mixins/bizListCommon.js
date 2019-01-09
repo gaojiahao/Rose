@@ -127,11 +127,11 @@ export default {
       })
     },
     goEdit () {
-      let { name} = this.$route.query,
+      let { name, listId } = this.$route.query,
           { folder, fileName } = this.$route.params;
       this.$router.push({
         path: `/fillform/${folder}/${fileName}`,
-        query: { name }
+        query: { name, listId }
       })
     },
     // TODO 重置列表条件

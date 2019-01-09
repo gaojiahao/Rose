@@ -599,8 +599,7 @@ export default {
   },
   created() {
     register(); // 注册wx-js-sdk
-    let { name, transCode, relationKey } = this.$route.query,
-        { listId } = this.$route.params;
+    let { name, listId, transCode, relationKey } = this.$route.query;
     this.listId = listId;
     // 获取本地保存的当前的主体
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
