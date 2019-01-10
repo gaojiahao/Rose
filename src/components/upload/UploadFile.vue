@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-file-container" :class="{'no-upload': noUpload}" :style="containStyle"
+  <div class="upload-file-container" :class="{'no-upload': noUpload, 'vux-1px-t': noUpload}" :style="containStyle"
        v-if="(noUpload && defaultValue.length) || !noUpload">
     <p class="title" :style="titleStyle">附件</p>
     <div class="upload-file-list">
@@ -135,7 +135,7 @@
         return type
       },
       // TODO 获取预览图片链接
-      getImgUrl(item){
+      getImgUrl(item) {
         return `${location.origin}/H_roleplay-si/ds/download?url=${item.attacthment}`
       },
       // TODO 放大图片预览
@@ -193,15 +193,30 @@
 <style scoped lang="scss">
   .upload-file-container {
     width: 95%;
-    z-index: -20;
     margin: .1rem auto;
     background: #fff;
     position: relative;
     padding: .06rem .1rem;
     box-sizing: border-box;
     &.no-upload {
+      margin: 0;
+      padding: .24rem .15rem .15rem;
+      width: 100%;
+      &:before {
+        border-color: #ECEDEC;
+      }
+      .title {
+        line-height: .14rem;
+        color: #333;
+        font-size: .14rem;
+      }
+      .upload-file-list {
+        padding: 0;
+      }
       .upload-file-item {
-        margin: 0 .08rem .08rem 0;
+        margin: .15rem .1rem 0 0;
+        width: .78rem;
+        height: .78rem;
       }
     }
     .title {

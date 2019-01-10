@@ -37,7 +37,7 @@
         flex: 1;
       }
     }
-  
+
     .each_property {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
@@ -102,7 +102,7 @@
         &:not(:first-child):before{
           border:none;
         }
-  
+
       }
     }
   }
@@ -265,11 +265,27 @@
     }
   }
   .comment-part {
-    width: 100%;
-    margin: .1rem 0;
-    padding: 0 .08rem;
-    background: #fff;
+    margin: .1rem .1rem .19rem;
+    width: calc(100% - .2rem);
+    background-color: #fff;
+    color: #333;
+    overflow: hidden;
     box-sizing: border-box;
+    .comment-container {
+      display: flex;
+      margin: .12rem 0 .15rem;
+      padding: 0 .15rem;
+      line-height: .16rem;
+      color: #999;
+      font-size: .12rem;
+    }
+    .comment_title {
+      color: #999;
+    }
+    .comment_value {
+      flex: 1;
+      color: #696969;
+    }
   }
 }
 .l_size_name {
@@ -349,7 +365,7 @@
             // 每个物料的索引
             .whiNum {
               color: #fff;
-              
+
               padding: 0 .02rem;
               font-size: .1rem;
               display: inline-block;
@@ -369,7 +385,7 @@
               font-size: 0;
               // 物料编码
               .mater_code {
-                
+
                 margin-right: .06rem;
                 .title,
                 .num {
@@ -461,7 +477,7 @@
                 }
               }
             }
-            
+
             // 费用报销
             .mater_reimb {
               // 金额
@@ -519,7 +535,7 @@
     padding: .06rem .1rem;
     .title {
       font-weight: bold;
-    }    
+    }
   }
 }
 // 表格
@@ -538,7 +554,7 @@
     .iconfont {
       font-size: .14rem;
     }
-    
+
   }
   .main_content {
     padding: 0 .1rem;
@@ -559,7 +575,7 @@
     font-weight: bold;
   }
   .price_title {
-    color: #111;    
+    color: #111;
     font-weight: bold;
   }
   .symbol {
@@ -603,7 +619,7 @@
         font-weight: bold;
       }
       .content {
-        
+
       }
     }
   }

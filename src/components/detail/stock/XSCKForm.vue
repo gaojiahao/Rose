@@ -7,24 +7,20 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目 -->
-      <project-part :project-info="orderInfo.outPut"></project-part>
       <!-- 用户地址和基本信息-->
-      <div >
-        <contact-part :contact-info="dealerInfo" :hasClass='false'>
-          <template slot="other">
-            <div class="other">
-              <span class="title">账期天数: </span>
-              <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
-            </div>
-            <div class="other">
-              <span class="title">账期到期日: </span>
-              <span class="mode">{{dealerInfo.accountExpirationDate || '暂无'}}</span>
-            </div>
-          </template>
-        </contact-part>
-        <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
-      </div>
+      <contact-part :contact-info="dealerInfo" :hasClass='false'>
+        <template slot="other">
+          <div class="other">
+            <span class="title">账期天数: </span>
+            <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
+          </div>
+          <div class="other">
+            <span class="title">账期到期日: </span>
+            <span class="mode">{{dealerInfo.accountExpirationDate || '暂无'}}</span>
+          </div>
+        </template>
+      </contact-part>
+      <warehouse-content :warehouse-out="warehouse"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>

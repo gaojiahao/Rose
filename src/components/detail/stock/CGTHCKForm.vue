@@ -10,15 +10,13 @@
       <!-- 项目 -->
       <project-part :project-info="orderInfo.outPut"></project-part>
       <!-- 用户地址和基本信息-->
-      <div >
-        <contact-part :contact-info="dealerInfo" :hasClass='false' :logistics="false" :payment="false"></contact-part>
-        <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
-      </div>
+      <contact-part :contact-info="dealerInfo" :hasClass='false' :logistics="false" :payment="false"></contact-part>
+      <warehouse-content :warehouse-out="warehouse"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
+       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
                      :taxAmount="taxAmount" :count="count">
           <template slot="orderTitle" slot-scope="props">
             <span class="order_title">订单号</span>

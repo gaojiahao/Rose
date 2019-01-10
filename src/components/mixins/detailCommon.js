@@ -1,7 +1,7 @@
 import {getWorkFlow, currentUser, getListId, isMyflow, getAppExampleDetails} from 'service/detailService'
-import { getPCCommentList, isSubscribeByRelationKey } from 'service/commentService'
+import {getPCCommentList, isSubscribeByRelationKey} from 'service/commentService'
 import {getAppDetail} from 'service/appSettingService'
-import {saveAndCommitTask} from 'service/commonService'
+import {saveAndCommitTask, getFormConfig} from 'service/commonService'
 import {numberComma} from 'vux'
 // 组件引入
 import BasicInfo from 'components/detail/commonPart/BasicInfo'
@@ -15,7 +15,7 @@ import {accAdd} from '@/home/pages/maps/decimalsAdd.js'
 import {toFixed} from '@/plugins/calc'
 /* 引入微信相关 */
 import {register} from 'plugins/wx'
-import { shareContent } from 'plugins/wx/api'
+import {shareContent} from 'plugins/wx/api'
 
 export default {
   components: {
@@ -41,18 +41,19 @@ export default {
       HasValRealted: false,//相关实例是否有值为0
       orderInfo: {}, // 表单内容
       uploadStyle: { //附件容器样式
-        width :'100%',
-        padding : '0.06rem 0.08rem'
+        width: '100%',
+        padding: '0.06rem 0.08rem'
       },
       uploadTitleStyle: {
-        fontSize : '0.16rem',
-        fontWeight : 'bold',
-        color : '#111'
+        fontSize: '0.16rem',
+        fontWeight: 'bold',
+        color: '#111'
       },
       attachment: [],
       orderList: '',
       action: {}, // 表单允许的操作
       currentWL: {}, // 当前工作流
+      dealerConfig: [],
     }
   },
   computed: {
@@ -215,7 +216,7 @@ export default {
       }).then(data => {
         let relatedApply = data.relevantItems;
         relatedApply.forEach(item => {
-          let { folder, fileName } = this.$route.params;
+          let {folder, fileName} = this.$route.params;
           if (fileName) {
             this.HasValRealted = true;
             // if (item.itemCount > 0) {
@@ -236,13 +237,13 @@ export default {
     },
     // TODO 是否已经关注该订单
     isSubscribeByRelationKey() {
-      isSubscribeByRelationKey(this.transCode).then( data =>{
+      isSubscribeByRelationKey(this.transCode).then(data => {
         // this.isConcern = data;
-        this.$emit('is-subscribe',data)
+        this.$emit('is-subscribe', data)
       })
     },
     async loadPage() {
-      let { transCode, name } = this.$route.query;
+      let {transCode, name} = this.$route.query;
       if (!transCode) {
         this.$vux.alert.show({
           content: '抱歉，交易号有误，请尝试刷新之后再次进入'
@@ -260,6 +261,7 @@ export default {
       await this.getAppExampleDetails();
       // 获取表单表单详情
       await this.getOrderList(transCode);
+      await this.getFormConfig();
       await this.getCommentList();
       await this.isSubscribeByRelationKey()
       this.$loading.hide();
@@ -270,7 +272,7 @@ export default {
         let shareInfo = {
           title: `点击查看${name}详情`,
           desc: `点击查看${name}详情，哈哈哈哈`,
-          imgUrl : 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=888178039,2627708353&fm=26&gp=0.jpg'
+          imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=888178039,2627708353&fm=26&gp=0.jpg'
           // imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542258659397&di=ce722db1d3d4d79259a2b6cd4de9879b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01851855f282cf6ac7251df8d15ea0.png%401280w_1l_2o_100sh.png'
           // imgUrl: `http://${document.domain}/dist/resources/images/icon/goods-sales-contract.jpg`
         }
@@ -286,11 +288,11 @@ export default {
       })
     },
     // TODO 输入框获取焦点，内容选中
-    getFocus(e){
+    getFocus(e) {
       event.currentTarget.select();
     },
     // TODO 审批
-    saveData(formData = {},wfPara = {}) {
+    saveData(formData = {}, wfPara = {}) {
       this.$vux.confirm.prompt('', {
         title: '审批意见',
         onConfirm: (value) => {
@@ -329,6 +331,70 @@ export default {
           });
         }
       });
+    },
+    // TODO 请求配置
+    getFormConfig() {
+      return getFormConfig(this.formViewUniqueId).then(({config = []}) => {
+        console.log(config)
+        let dealerConfig = [], matterConfig = [], otherConfig = [];
+        let dealerFilter = ['dealerName_dealerDebit', 'drDealerLabel', 'address_dealerDebit', 'dealerDebitContactPersonName', 'dealerDebitContactInformation'];
+        let matterFilter = ['transMatchedCode', 'inventoryName_transObjCode', 'inventoryCode_transObjCode', 'tdProcessing', 'specification_transObjCode'];
+        let contactInfo = this.contactInfo;
+        // 从请求回来的配置中拆分往来，物料，其他段落的配置
+        config.forEach(item => {
+          if (!item.isMultiple) {
+            if (item.name === 'kh' || item.name === 'inPut' || item.name === 'baseinfoExt' || item.name === 'gys') {
+              dealerConfig = dealerConfig.concat(item.items)
+            }
+            if (item.name === 'ck') {
+              otherConfig = item.items;
+            }
+          } else {
+            if (item.name === 'order' || item.name === 'outPut' || item.name === 'inPut') {
+              matterConfig = item.items;
+            }
+          }
+        })
+        this.judgeDealerConfig && this.judgeDealerConfig(dealerConfig);
+        // 处理往来配置里面的接口请求
+        dealerConfig = dealerConfig.reduce((arr, item) => {
+          if (!item.hiddenInRun && !dealerFilter.includes(item.fieldCode)) {
+            item.fieldValue = contactInfo[item.fieldCode];
+            arr.push(item);
+          }
+          return arr;
+        }, []);
+        console.log(dealerConfig)
+        this.dealerConfig = dealerConfig;
+        matterConfig = matterConfig.reduce((arr, item) => {
+          if (!item.hidden) {
+            arr.push(item);
+          }
+          return arr
+        }, []);
+        if (Object.values(this.orderList).length) {
+          let orderList = Object.values(this.orderList).reduce((arr, item) => {
+            return [...arr, ...item]
+          }, []);
+          console.log(orderList)
+        } else if (this.matterList.length) {
+
+        }
+        // this.matterConfig = matterConfig;
+        // 处理其他信息的配置
+        /*let other = [];
+        otherConfig.forEach(item => {
+          if(!item.hiddenInRun){
+            if(item.xtype === 'r2MultiSelector' && item.dataSource && item.dataSource.type === 'remoteData'){
+              requestData(this.handlerParams(item)).then(data => {
+                this.$set(item, 'remoteData', data.tableContent)
+              })
+            }
+            other.push(item)
+          }
+        })
+        this.otherConfig = other;*/
+      })
     },
   },
   created() {

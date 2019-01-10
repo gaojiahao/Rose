@@ -25,7 +25,13 @@
       </div>
     </div>
     <div class="contact-other vux-1px-t">
-      <div class="contact_other_wrapper">
+      <div class="contact_other_wrapper" v-for="item in configs">
+        <div class="contact_other_item">
+          <span class="contact_other_title">{{item.fieldLabel}}：</span>
+          <span class="contact_other_value">{{item.fieldValue || '暂无'}}</span>
+        </div>
+      </div>
+      <!--<div class="contact_other_wrapper">
         <div class="contact_other_item">
           <span class="contact_other_title">物流条款：</span>
           <span class="contact_other_value">{{contactInfo.logistics}}</span>
@@ -40,7 +46,7 @@
           <span class="contact_other_title">账单到期日：</span>
           <span class="contact_other_value">{{contactInfo.advancePaymentDueDate | dateFormat('YYYY-MM-DD HH:mm') || '暂无'}}</span>
         </div>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
@@ -51,38 +57,21 @@
   export default {
     name: "contactPart",
     props: {
-      //外层div是否有contacts_part
-      hasClass: {
-        type: Boolean,
-        default: true
-      },
       contactInfo: {
         type: Object,
         default() {
           return {}
         }
       },
-      // 是否展示付款方式
-      payment: {
-        type: Boolean,
-        default: true
-      },
-      // 是否展示物流条款
-      logistics: {
-        type: Boolean,
-        default: true
-      },
-      //是否展示有限期
-      validUntil: {
-        type: Boolean,
-        default: false
-
+      configs: {
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     data() {
-      return {
-        showAllContact: false,
-      }
+      return {}
     },
     computed: {
       address() {

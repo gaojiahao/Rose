@@ -169,3 +169,13 @@
   background: url('~assets/iconfont/address.png');
   background-size: cover;
 }
+
+.icon-more{
+  background: url('~assets/iconfont/more.png');
+  background-size: cover;
+}
+
+.icon-close{
+  background: url('~assets/iconfont/close.png');
+  background-size: cover;
+}

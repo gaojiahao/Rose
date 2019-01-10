@@ -11,12 +11,10 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
         <!-- 往来联系部分 交易基本信息-->
-      <div >
-        <contact-part :contact-info="dealerInfo" :logistics="false"></contact-part>
-        <warehouse-content class="vux-1px-t" :warehouse="warehouse"></warehouse-content>
-      </div>
+      <contact-part :contact-info="dealerInfo" :logistics="false"></contact-part>
+      <warehouse-content :warehouse="warehouse"></warehouse-content>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount" 
+      <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
                    :taxAmount="taxAmount" :count="count">
          <template slot="matterOther" slot-scope="{item}">
            <div class='mater_other'>

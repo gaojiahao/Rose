@@ -129,7 +129,7 @@
   }
 
   .work-flow-container {
-    margin: .1rem;
+    margin: .1rem .1rem 0;
     padding: .15rem;
     width: calc(100% - .2rem);
     background-color: #fff;

@@ -8,12 +8,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <div class="warehouse_part">
-        <!-- 出库-->
-        <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
-        <!-- 入库 -->
-        <warehouse-content :warehouse="warehouseIn"></warehouse-content>
-      </div>
+      <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
                   :is-my-task="isMyTask"
@@ -67,7 +62,8 @@
         orderInfo: {},
         warehouseIn: {}, // 入库仓库详情
         warehouseOut: {}, // 出库仓库详情
-        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513'
+        formViewUniqueId: 'a8c58e16-48f5-454e-98d8-4f8f9066e513',
+        warehouses: [], // 仓库信息
       }
     },
     mixins: [detailCommon],
@@ -113,6 +109,7 @@
           }
           // 入库
           this.warehouseIn = {
+            type: 'in',
             warehouseCode: inPut.containerCode,
             warehouseName: `${inPut.warehouseName_containerCode}`,
             warehouseAction: '入库',
@@ -125,6 +122,7 @@
           };
           // 出库
           this.warehouseOut = {
+            type: 'out',
             warehouseCode: inPut.containerCodeOut,
             warehouseName: `${inPut.warehouseName_containerCodeOut}`,
             warehouseAction: '出库',
@@ -135,6 +133,7 @@
             warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: inPut.warehouseAddress_containerCodeOut,
           };
+          // this.warehouses = [warehouseOut, warehouseIn];
           this.orderInfo = data.formData;
           this.workFlowInfoHandler();
         })

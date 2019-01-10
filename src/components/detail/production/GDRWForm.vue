@@ -7,12 +7,10 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <div  v-show="warehouse.warehouseName">
-        <warehouse-content :warehouse="warehouse"></warehouse-content>
-      </div>  
+      <warehouse-content :warehouse="warehouse" v-show="warehouse.warehouseName"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                :no-status="orderInfo.biStatus"></work-flow> 
+                :no-status="orderInfo.biStatus"></work-flow>
       <div class="form_content">
         <div class="form_title">
           <span class="iconfont icon-mingxi1"></span>
@@ -96,7 +94,7 @@ export default {
         this.workInfo = order.dataSet;
         this.warehouse = {
           ...this.warehouse,
-          warehouseName: order.warehouseName_containerCode, 
+          warehouseName: order.warehouseName_containerCode,
           warehouseType: order.warehouseType_containerCode,
           warehouseAddress: order.warehouseAddress_containerCode,
         }
