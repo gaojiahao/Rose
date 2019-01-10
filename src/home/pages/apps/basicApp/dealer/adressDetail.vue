@@ -47,6 +47,14 @@
         <label>修改时间:</label>
         <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
       </div>
+      <div class="d_main" v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
+        <div class='title vux-1px-b'>{{cItem.title}}</div>
+        <div class='content' :class="{'show_border' : index < formData[cItem.name].length-1 }" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+          <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
+                v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
+          </form-cell>
+        </div>
+      </div>
     </r-scroll>
     
   </div>
@@ -56,6 +64,7 @@ import { dateFormat } from 'vux'
 import dealerService from 'service/dealerService.js'
 import { getFormConfig, getFormViews } from 'service/commonService.js'
 import RScroll from 'components/RScroll'
+import FormCell from 'components/detail/commonPart/FormCell'
 export default {
   filters: {
     dateFormat
@@ -67,16 +76,26 @@ export default {
       imgFileObj: {}, // 上传的图片对象
       dealer : {},
       baseinfo :{},
-      dealerConfig: []
+      dealerConfig: [], // 基本信息配置
+      dealerDuplicateConfig: [], // 重复项配置
+      formData: {}
     }
   },
   components: {
-    RScroll
+    RScroll, FormCell
   },
   methods: {
     //往来信息
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        this.formData = formData;
+        this.dealerDuplicateConfig.forEach(item => {
+          if(this.formData[item.name] && !this.formData[item.name].length){
+            item.show = false;
+            return
+          }
+          item.show = true;
+        })
         let {baseinfo = {}, dealer = {}} = formData;
         switch (dealer.dealerStatus) {
           case "1":
@@ -137,13 +156,16 @@ export default {
     getFormConfig(viewId){
       getFormConfig(viewId).then(({config = []}) => {
         console.log(config);
-        let dealerConfig = [];
+        let dealerConfig = [],dealerDuplicateConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
             dealerConfig = JSON.parse(JSON.stringify(item.items));
           }
+          else{
+            dealerDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
+          }
         })
-        // 仓库基本信息配置的处理
+        //往来基本信息配置的处理
         dealerConfig.forEach(item =>{
           if(!item.hiddenInRun){
             // 在渲染的配置中添加字段
@@ -153,6 +175,17 @@ export default {
             }
           }
         })
+        dealerDuplicateConfig.forEach(item => {
+          switch(item.name){
+            case 'dealerCertificateRel':
+              item.title = '证件';
+              break;
+            case 'deliveryAddresses':
+              item.title = '地址';
+              break;
+          }
+        })
+        this.dealerDuplicateConfig = dealerDuplicateConfig;
       })
     },
   },
@@ -179,6 +212,7 @@ export default {
   .detail_content {
     height: 100%;
     overflow: hidden;
+    background: #f8f8f8;
     div {
       border: none;
       outline: none;
@@ -186,6 +220,7 @@ export default {
     .mater_baseinfo {
       display: flex;
       align-items: flex-end;
+      background: #fff;
       .mater_property {
         flex: 1;
       }
@@ -227,6 +262,7 @@ export default {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
       position: relative;
+      background: #fff;
       label {
         color: #6d6d6d;
         font-size: 0.12rem;
@@ -272,6 +308,25 @@ export default {
 
       }
     }
+  }
+  .d_main {
+    margin-top: 0.1rem;
+    background: #fff;
+    padding: 0 0.1rem;
+    .title {
+      color: #111;
+      background: #fff;
+      font-size: .16rem;
+      padding: .06rem 0;
+      font-weight: bold;
+    }
+    .content {
+
+      &.show_border {
+        border-bottom: .03rem solid #e8e8e8;
+      }
+    }
+
   }
   //确认框
   .popup_header {

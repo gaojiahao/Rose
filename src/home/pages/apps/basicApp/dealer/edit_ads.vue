@@ -2,98 +2,98 @@
   <div class='childPage'>
     <r-scroll :options="scrollOptions" class="content" ref="bScroll">
       <div>
-      <div class='mater_baseinfo vux-1px-b'>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b '>
-            <label class='required'>往来编码:</label>
-            <input type='text' v-model="dealer.dealerCode" class='property_val' :class='{readonly : transCode!==""}' :readonly ='transCode!==""'/>
-          </div>
-          <div class='each_property required'>
-            <label class='required'>往来名称:</label>
-            <input type='text' v-model="dealer.dealerName" class='property_val'/>
-          </div>
-        </div>
-        <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
-      </div>
-      <div v-for="(item, index) in dealerConfig" :key="index">
-        <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province'">
-          <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
-            <label>{{item.fieldLabel}}</label>
-            <input type='text' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
-            <icon type="warn" class='warn' v-if='item.warn'></icon>
-          </div>
-          <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Numberfield'">
-            <label>{{item.fieldLabel}}</label>
-            <input type='number' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
-            <icon type="warn" class='warn' v-if='item.warn'></icon>
-          </div>
-          <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" 
-                v-model="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" v-if="item.xtype === 'r2Combo'"></r-picker>
-        </template>
-        <!-- 省市区 -->
-        <template v-else-if="item.fieldCode === 'province'">
-          <div class='each_property vux-1px-b' @click="showAddress = true">
-            <label>省市区:</label>
-            <div class='picker'>
-                <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
-                <span class='iconfont icon-gengduo'></span>
+        <div class='mater_baseinfo vux-1px-b'>
+          <div class='mater_property'>
+            <div class='each_property vux-1px-b '>
+              <label class='required'>往来编码:</label>
+              <input type='text' v-model="dealer.dealerCode" class='property_val' :class='{readonly : transCode!==""}' :readonly ='transCode!==""'/>
             </div>
-            <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
-                      :show.sync="showAddress" v-show="false"></x-address>
-          </div>
-        </template>
-        <!-- 往来类型 -->
-        <template v-else>
-          <div class='each_property vux-1px-b' @click="DealerPop">
-            <label>往来类型</label>
-            <div class='picker'>
-                <span class='mater_nature'>{{dealer.dealerLabelName}}</span>
-                <span class='iconfont icon-gengduo'></span>
+            <div class='each_property required'>
+              <label class='required'>往来名称:</label>
+              <input type='text' v-model="dealer.dealerName" class='property_val'/>
             </div>
           </div>
-        </template>
-
-      </div>
-      <!-- <div class='each_property vux-1px-b' @click="DealerPop">
-        <label>往来类型</label>
-        <div class='picker'>
-            <span class='mater_nature'>{{dealer.dealerLabelName}}</span>
-            <span class='iconfont icon-gengduo'></span>
+          <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
+        </div>
+        <div v-for="(item, index) in dealerConfig" :key="index">
+          <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province'">
+            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
+              <label>{{item.fieldLabel}}</label>
+              <input type='text' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
+              <icon type="warn" class='warn' v-if='item.warn'></icon>
+            </div>
+            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Numberfield'">
+              <label>{{item.fieldLabel}}</label>
+              <input type='number' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
+              <icon type="warn" class='warn' v-if='item.warn'></icon>
+            </div>
+            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" 
+                  v-model="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" v-if="item.xtype === 'r2Combo'"></r-picker>
+          </template>
+          <!-- 省市区 -->
+          <template v-else-if="item.fieldCode === 'province'">
+            <div class='each_property vux-1px-b' @click="showAddress = true">
+              <label>省市区:</label>
+              <div class='picker'>
+                  <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
+                  <span class='iconfont icon-gengduo'></span>
+              </div>
+              <x-address title="省市区:"  :list="addressData" @on-hide='getAddress()' @on-shadow-change='changeAddress' :value="cAccountAddress"
+                        :show.sync="showAddress" v-show="false"></x-address>
+            </div>
+          </template>
+          <!-- 往来类型 -->
+          <template v-else>
+            <div class='each_property vux-1px-b' @click="DealerPop">
+              <label class="required">{{item.fieldLabel}}</label>
+              <div class='picker'>
+                  <span class='mater_nature'>{{dealer[item.fieldCode]}}</span>
+                  <span class='iconfont icon-gengduo'></span>
+              </div>
+            </div>
+          </template>
+        </div>
+        <!-- 重复项 -->
+        <div v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`" v-if="!item.isHidden">
+          <div class="duplicate-item-no-select" v-if="!dealerDuplicateData[item.name].length">
+            <span class="title">{{item.title}}</span>
+            <span class="add" @click="addMoreUnit(item)">新增</span>
+          </div>
+          <group class="duplicate-item" :title="item.title" v-else>
+            <div v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < dealerDuplicateData[item.name].length-1}">
+              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="sItem[dItem.fieldCode] != null">
+                <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                        mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" @on-change="onChange($event, index, dItem, sItem)"
+                        v-if="dItem.editorType === 'r2Combo'"></r-picker>
+                <x-input type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
+                        v-if="dItem.editorType === 'r2Numberfield'">
+                  <template slot="label">
+                    <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
+                  </template>
+                </x-input>
+                <x-input text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
+                         v-if="dItem.editorType === 'r2Textfield'">
+                  <template slot="label">
+                    <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
+                  </template>
+                </x-input>
+                <datetime  v-model='sItem[dItem.fieldCode]' v-if="dItem.editorType === 'r2Datefield'">
+                  <template slot="title">
+                    <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
+                  </template>
+                </datetime>
+              </div>
+            </div>
+          </group>
+          <div class="add_more" v-show="dealerDuplicateData[item.name].length">
+            您还需要添加新的{{item.title}}?请点击
+            <span class='add' @click="addMoreUnit(item)">新增</span>
+            <em v-show="dealerDuplicateData[item.name].length > 1">或</em>
+            <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
+          </div> 
         </div>
       </div>
-      <div class='each_property vux-1px-b' @click="showAddress = true">
-        <label>省市区:</label>
-        <div class='picker'>
-            <span class='mater_nature'>{{dealer.province}}{{dealer.city}}{{dealer.county}}</span>
-            <span class='iconfont icon-gengduo'></span>
-        </div>
-        <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
-                   :show.sync="showAddress" v-show="false"></x-address>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>详细地址:</label>
-        <input type='text' v-model="dealer.address" class='property_val'/>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>固定电话:</label>
-        <input type='text' v-model="dealer.dealerPhone" class='property_val' @blur="checkPhone"/>
-        <icon type="warn" class='warn' v-if='PhoneWarn'></icon>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>手机:</label>
-        <input type='number' v-model="dealer.dealerMobilePhone" class='property_val' @blur="checkMobile"/>
-        <icon type="warn" class='warn' v-if='MobileWarn'></icon>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>电子邮件:</label>
-        <input type='text' v-model="dealer.dealerMail" class='property_val' @blur='checkEmail'/>
-        <icon type="warn" class='warn' v-if='EmailWarn'></icon>
-      </div>
-      <r-picker title="往来状态:" :data="statusList" :value="dealerStatus" 
-                v-model="dealerStatus"></r-picker> -->
-    </div>
     </r-scroll>
-    
     <!--往来类型的列表-->
     <div v-transfer-dom>
       <popup v-model="pickerStatus" position="bottom" height="50%" class="trade_pop_part"  @on-show="onShow">
@@ -104,7 +104,6 @@
               <div class='checked' v-show='showSelIcon(item)'>
                 <x-icon type="ios-checkmark-empty" size="30"></x-icon>
               </div>
-
             </div>
           </r-scroll>
         </div>
@@ -124,30 +123,34 @@
   </div>
 </template>
 <script>
-import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data,Icon } from 'vux';
+import { TransferDom, Picker, Popup, Group,XAddress, ChinaAddressV4Data, Icon, XInput, Datetime } from 'vux';
 import { getBaseInfoDataBase,getDictByType, getFormConfig, requestData, getFormViews } from 'service/commonService.js';
 import dealerService from 'service/dealerService.js'
 import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
+import { rejects } from 'assert';
+import { resolve } from 'path';
 
 export default {
   data() {
     return {
-      addressData : ChinaAddressV4Data,
-      transCode  : '',
+      addressData: ChinaAddressV4Data,
+      transCode: '',
       picShow: false,
       imgFileObj: {}, // 上传的图片对象
       MatPic: '', // 图片地址
-      AccountRelType : [], //往来类型数据
-      AccountAddress : [], //省市区数据
-      pickerStatus:false, //往来类型pop
-      showAddress: false,//地址pop
-      dealerType:[], //选好的往来类型列表
-      PhoneWarn : false, //固定电话校验提示
-      MobileWarn : false, //手机检验提示
-      EmailWarn :false, //邮箱校验提示
+      AccountRelType: [], // 往来类型数据
+      cAccountAddress: [], // 往来基本信息的省市区数据
+      dAccountAddress: [], // 往来重复项的省市区数据
+      pickerStatus:false, // 往来类型pop
+      showAddress: false, // 地址pop
+      dealerType: [], // 选好的往来类型列表
+      PhoneWarn: false, // 固定电话校验提示
+      MobileWarn: false, // 手机检验提示
+      EmailWarn: false, // 邮箱校验提示
+      codeWarn: false, // 邮政编码提示
       baseinfo: {
         handler: '', // 经办人ID
         handlerName: '', // 经办人
@@ -187,13 +190,38 @@ export default {
       dealerConfig: [],
       dealerDuplicateConfig: [], // 往来重复项的配置
       dealerDuplicateData: {}, // 往来重复项数据,
-      viewId: ''
+      viewId: '',
     }
   },
   computed: {
     // 提交按钮是否可点击
     disabledSubmit(){
-      return this.PhoneWarn || this.MobileWarn || this.EmailWarn;
+      return this.PhoneWarn || this.MobileWarn || this.EmailWarn || this.codeWarn;
+    },
+    dealerLabelName() {
+      return this.dealer.dealerLabelName
+    }
+    
+  },
+  watch: {
+    dealerLabelName(val){
+      // 根据往来类型绝的哪个重复项显示
+      let dealerLabelName = this.dealer.dealerLabelName;
+      this.dealerDuplicateConfig.forEach(item => {
+        if(item.name === 'deliveryAddresses'){
+          item.isHidden = false;
+          if(!dealerLabelName || (!dealerLabelName.includes('客户') && !dealerLabelName.includes('供应商') && !dealerLabelName.includes('加工商') 
+            && !dealerLabelName.includes('渠道商') && !dealerLabelName.includes('服务商'))) {
+            item.isHidden = true
+          }
+        }
+        if(item.name === 'dealerCertificateRel'){
+          item.isHidden = false;
+          if(!dealerLabelName || (!dealerLabelName.includes('生产商') && !dealerLabelName.includes('经销供应商'))) {
+            item.isHidden = true
+          }
+        } 
+      })
     }
   },
   directives: {
@@ -209,6 +237,8 @@ export default {
     Icon,
     RScroll,
     UploadImage,
+    XInput,
+    Datetime
   },
   methods: {
     // TODO 上传图片成功触发
@@ -239,23 +269,16 @@ export default {
       this.pickerStatus = true;
       this.dealerType = [];
       let arr = this.dealer.dealerLabelName.split(',');
-      arr.forEach(item=>{
-        let obj = {
-          name :item
-        }
-        this.dealerType.push(obj);
-      })
-    },
-    getStatus(){
-      return getDictByType('objStatus').then(data => {
-        //仓库分类无值，请求
-        let {tableContent} = data;
-        tableContent && tableContent.forEach(item => {
-          item.originValue = item.name;
-          item.value = item.name;
-        });
-        this.statusList = tableContent;
-      })
+      if(this.dealer.dealerLabelName.length){
+        arr.forEach(item=>{
+          let obj = {
+            name :item
+          }
+          this.dealerType.push(obj);
+        })
+        
+      }
+     
     },
     onShow() {
       this.$nextTick(() => {
@@ -292,10 +315,9 @@ export default {
         }
         this.dealer.dealerLabelName += item.name
       })
-
     },
     // 校验字段
-    check(item){
+    check(item, sItem){
       if(item.fieldCode === 'dealerPhone') {
         item.warn = this.checkPhone()
       }
@@ -303,7 +325,6 @@ export default {
         item.warn = this.checkMobile()
       }
       else if(item.fieldCode === 'dealerMail') {
-        console.log('进入')
         item.warn = this.checkEmail()
       }
     },
@@ -340,9 +361,26 @@ export default {
       }
       return this.EmailWarn
     },
+    // 校验邮政编码
+    checkCode(item){
+      let reg =  /^[1-9][0-9]{5}$/;
+      if(item.postalCode.length>0 && !reg.test(item.postalCode)){
+        this.codeWarn = true;
+      }
+      else{
+        this.codeWarn = false;
+      }
+      return this.codeWarn
+
+    },
     //往来信息
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        this.dealerDuplicateConfig.forEach(item => {
+          if(formData[item.name].length){
+            this.dealerDuplicateData[item.name] = formData[item.name];
+          }
+        })
         let {baseinfo = {}, dealer = {}} = formData;
         switch (dealer.dealerStatus) {
             case '1':
@@ -371,7 +409,7 @@ export default {
         let [imgFileObj = {}] = attachment.filter(item => {
           return item.attacthment === this.dealer.dealerPic
         });
-        this.AccountAddress = [this.dealer.province,this.dealer.city,this.dealer.county];
+        this.cAccountAddress = [this.dealer.province,this.dealer.city,this.dealer.county];
         this.imgFileObj = imgFileObj;
       });
     },
@@ -392,6 +430,77 @@ export default {
           return
         };
         this.dealer.city = this.AccountAddress[1];
+      }
+    },
+    // 选择省市区
+    onChange(val, index, dItem, sItem){
+      // 选择省，更新市，区数据
+      if(dItem.fieldCode === 'deliveryProvince'){
+        let cParentId = '', dParentId = '';
+        for(let item of this.dealerDuplicateConfig[index].items) {
+          if(item.fieldCode === 'deliveryProvince'){
+            for(let rItem of item.remoteData){
+              if(rItem.name === val){
+                cParentId = rItem.id;
+                break
+              }
+            }
+          }
+          if(item.fieldCode === 'deliveryCity') {
+            item.requestParams.data.parentId = cParentId;
+            requestData(item.requestParams).then(data => {
+              if(data.tableContent){
+                if(data.tableContent.length){
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.value = dItem.name
+                  })
+                  sItem.deliveryCity = data.tableContent[0].name;
+                  dParentId = data.tableContent[0].originValue
+                }
+                else{
+                  sItem.deliveryCity = ''
+                }
+                item.remoteData = data.tableContent  
+              }
+            })
+            break
+          }
+        }
+      }
+      else if(dItem.fieldCode === 'deliveryCity'){
+        let dParentId = '';
+        for(let item of this.dealerDuplicateConfig[index].items) {
+          if(item.fieldCode === 'deliveryCity'){
+            for(let rItem of item.remoteData){
+              if(rItem.name === val){
+                dParentId = rItem.originValue;
+                break
+              }
+            }
+          }
+          if(item.fieldCode === 'deliveryCounty') {
+            item.requestParams.data.parentId = dParentId;
+            requestData(item.requestParams).then(data => {
+              if(data.tableContent){
+                if(data.tableContent.length){
+                  data.tableContent.forEach(dItem => {
+                    dItem.originValue = dItem.value;
+                    dItem.value = dItem.name
+                  })
+                  sItem.deliveryCounty = data.tableContent[0].name;
+                }
+                else{
+                  sItem.deliveryCounty = ''
+                }
+                item.remoteData = data.tableContent  
+              }
+            })
+            break
+          }
+          
+        }
+
       }
     },
     //提交
@@ -429,6 +538,11 @@ export default {
               dealer: this.dealer
             }
           };
+          this.dealerDuplicateConfig.forEach(item => {
+            if(this.dealerDuplicateData[item.name].length){
+              submitData.formData[item.name] = this.dealerDuplicateData[item.name]
+            }
+          })
           if(this.transCode){
             dealerService.update(submitData).then( data => {
               if(data.success){
@@ -505,6 +619,28 @@ export default {
         if (!warn && this.EmailWarn) {
           warn = '邮件格式不正确'
         }
+        // 校验重复项
+        if(!warn && Object.keys(this.dealerDuplicateData).length){
+          Object.keys(this.dealerDuplicateData).forEach(item => {
+            if(this.dealerDuplicateData[item].length <= 0){
+              return false
+            }
+            this.dealerDuplicateConfig.forEach(dItem => {
+              if(dItem.name === item){
+                dItem.items.forEach(cItem => {
+                  if(!cItem.hidden){
+                    this.dealerDuplicateData[item].forEach(sItem => {
+                      if(!cItem.allowBlank && !sItem[cItem.fieldCode]){
+                        warn  = `${cItem.text}不能为空`;
+                        return false
+                      }
+                    })
+                  }
+                })  
+              }
+            })
+          })
+        }
         if (warn) {
           this.$vux.alert.show({
             content: warn
@@ -513,6 +649,36 @@ export default {
         }
         this.submit();
       }
+    },
+    // TODO 新增重复项
+    addMoreUnit(item) {
+      let obj = {};
+      item.items.forEach(item => {
+        if(!item.hidden){
+          obj[item.fieldCode] = ''
+        }
+      })
+      this.dealerDuplicateData[item.name].push(obj);
+    },
+    // TODO 删除重复项
+    deleteMoreUnit(item) {
+      this.dealerDuplicateData[item.name].pop()
+    },
+    handlerParams(item) {
+      let url = item.dataSource.data.url;
+      let params = item.dataSource.data.params;
+      let keys = Object.keys(params);
+      let requestParams = {
+        url,
+      }
+      if(keys.length){
+        let data = {};
+        keys.forEach(key => {
+          data[key] = params[key].type === 'text' ? params[key].value : '';
+        })
+        requestParams.data = data;
+      }
+      return requestParams
     },
     // 请求应用的viewId
     getFormViews() {
@@ -528,14 +694,14 @@ export default {
     // 获取表单配置
     getFormConfig(){
       getFormConfig(this.viewId).then(({config = []}) => {
-        // console.log(config);
+        console.log(config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
             dealerConfig = JSON.parse(JSON.stringify(item.items));
           }
           else{
-            if(!item.hiddenInRun && item.xtype !== 'r2Fileupload'){
+            if(item.xtype !== 'r2Fileupload'){
               dealerDuplicateConfig.push(JSON.parse(JSON.stringify(item)))
             }
           }
@@ -546,33 +712,12 @@ export default {
             //下拉框的数据请求
             if(item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county' &&  item.fieldCode !=='dealerLabelName'){
               if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
-                let url = item.dataSource.data.url;
-                let params = item.dataSource.data.params;
-                let keys = Object.keys(params);
-                let requestParams = {
-                  url,
-                }
-                if(keys.length){
-                  let data = {};
-                  keys.forEach(key => {
-                    if(params[key].value.length){
-
-                    }
-                    data[key] = params[key].value;
-                  })
-                  requestParams.data = data;
-                }
-                // console.log(requestParams);
-                requestData(requestParams).then(data => {
+                requestData(this.handlerParams(item)).then(data => {
                   if(data.tableContent){
                     data.tableContent.forEach(item => {
                       item.value = item.name;
                     })
-                    if(item.fieldCode === 'dealerLabelName'){
-                      if(!this.$route.query.transCode){
-                        this.dealer.dealerLabelName  = this.$route.query.dealerType ? this.$route.query.dealerType : data.tableContent[0].value;
-                      }
-                    }
+
                     this.$set(item, 'remoteData', data.tableContent)
                   }
                   else{
@@ -592,7 +737,9 @@ export default {
             }
           }
         })
+        // 处理重复项配置
         dealerDuplicateConfig.forEach(item => {
+          // 给每个重复项添加标题
           switch(item.name){
             case 'deliveryAddresses':
               item.title = '地址';
@@ -604,25 +751,25 @@ export default {
           let arr = []
           item.items.forEach((sItem, sIndex) => {
             if(!sItem.hidden){
-              if(item.fieldCode !== 'deliveryCity' && item.fieldCode !== 'deliveryCounty'){
-                if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
-                  requestData(this.handlerParams(sItem)).then((data) => {
-                    if(data.tableContent){
-                      data.tableContent.forEach(item => {
-                        item.value = item.name;
-                      })
-                      this.$set(sItem, 'remoteData', data.tableContent)
-                    }
-                    else{
-                      data.forEach(item => {
-                        item.value = item.name;
-                      })
-                      this.$set(sItem, 'remoteData', data)
-                    }
-                  })
-                }
-                arr.push(sItem)
-              }  
+              // 数据请求
+              if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
+                sItem.requestParams = this.handlerParams(sItem);
+                requestData(this.handlerParams(sItem)).then((data) => {
+                  if(data.tableContent){
+                    data.tableContent.forEach(item => {
+                      item.value = item.name;
+                    })
+                    this.$set(sItem, 'remoteData', data.tableContent)
+                  }
+                  else{
+                    data.forEach(item => {
+                      item.value = item.name;
+                    })
+                    this.$set(sItem, 'remoteData', data)
+                  }
+                })
+              }
+              arr.push(sItem)
             }
           })
           item.items = arr;
@@ -640,6 +787,7 @@ export default {
       this.transCode = query.transCode;
       (async () => {
         await this.getFormViews()
+        await this.getFormConfig()
         await this.findData();
         this.getDealer()
       })();
@@ -648,18 +796,18 @@ export default {
     (async() => {
       await this.getFormViews()
       await this.getFormConfig()
+      this.getDealer().then(data => {
+        let [defaultSelect = {}] = data;
+        if(this.$route.query.pickVal){
+          this.dealer.dealerLabelName = this.$route.query.pickVal;
+          this.pickerStatus = false;
+        }
+        else{//新增往来，默认选中地址栏中的往来类型
+          this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : '';           
+        }
+      });
 
     })()
-    this.getDealer().then(data => {
-      let [defaultSelect = {}] = data;
-      if(this.$route.query.pickVal){
-        this.dealer.dealerLabelName = this.$route.query.pickVal;
-        this.pickerStatus = false;
-      }
-      else{//新增往来，默认选中地址栏中的往来类型
-        this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : defaultSelect.name;           
-      }
-    });
     //获取当前用户信息
     getBaseInfoDataBase().then(data => {
       this.baseinfo = {
@@ -704,11 +852,19 @@ export default {
     fill: #5077aa;
     vertical-align: middle;
   }
+  .r-picker{
+    background: #fff;
+  }
+  .required{
+    color:#5077aa;
+    font-weight: bold;
+  }
   .content {
     height: 90%;
     // overflow-y: auto;
     // overflow-x: hidden;
     overflow: hidden;
+    background: #f8f8f8;
     // -webkit-overflow-scrolling: auto;
     input {
       border: none;
@@ -726,6 +882,7 @@ export default {
       min-height: .5rem;
       padding: 0.05rem 0.08rem;
       position: relative;
+      background: #fff;
       label {
         color: #6d6d6d;
         font-size: 0.12rem;
@@ -794,7 +951,72 @@ export default {
       height: 1.2rem;
     }
   }
-
+  /* 重复项 */
+    .duplicate-item {
+      margin-top: 0.1rem;
+      background-color: #fff;
+      overflow: hidden;
+      .has_border {
+        border-bottom: .03rem solid #e8e8e8;
+      }
+      /deep/ .weui-cells__title {
+        /*padding-left: 0;*/
+        font-size: .12rem;
+      }
+      // /deep/ .weui-cell__hd {
+      //   font-size: .16rem;
+      // }
+      // /deep/ .weui-cells {
+      //   &:before, &:after {
+      //     display: none;
+      //   }
+      // }
+      /deep/ .weui-cell {
+        padding: .1rem;
+        &:before {
+          display: block;
+          left: .1rem;
+        }
+      }
+    }
+    .duplicate-item-no-select {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: .1rem;
+      padding: .1rem .2rem .1rem .1rem;
+      background-color: #fff;
+      font-size: .16rem;
+      .add {
+        padding: .01rem .06rem;
+        border-radius: .12rem;
+        background: #5077aa;
+        color: #fff;
+        font-size: .12rem;
+      }
+    }
+    .add_more {
+      width: 100%;
+      text-align: center;
+      font-size: 0.12rem;
+      padding: 0.1rem 0;
+      color: #757575;
+      span {
+        margin: 0 5px;
+        color: #fff;
+        padding: .01rem .06rem;
+        border-radius: .12rem;
+      }
+      .add {
+        background: #5077aa;
+      }
+      .delete {
+        background: red;
+      }
+      em {
+        font-style: normal;
+      }
+    }
   // 提交
   .btn {
     left: 0;

@@ -425,28 +425,12 @@ export default {
           }  
         })
         // 处理往来配置里面的接口请求
+        let blankDealerConfig = []
         dealerConfig.forEach(item => {
-          // function handlerParams(item) {
-          //   let url = item.dataSource.data.url;
-          //   let params = item.dataSource.data.params;
-          //   let keys = Object.keys(params);
-          //   let requestParams = {
-          //     url,
-          //   }
-          //   if(keys.length){
-          //     let data = {};
-          //     keys.forEach(key => {
-          //       data[key] = params[key].value;
-          //     })
-          //     requestParams.data = data;
-          //   }
-          //   return requestParams
-          // }
           if(!item.hiddenInRun){
             //处理请求往来数据的接口
             if(item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
               this.dealerParams = this.handlerParams(item);
-
             }
             // 处理请求物流，结算方式的接口
             if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
@@ -454,10 +438,17 @@ export default {
                 this.$set(item, 'remoteData', data.tableContent)
               })
             }
+            // 过滤往来编码，关系便签，地址，联系人，电话
+            if(item.fieldCode !== 'dealerDebit' && item.fieldCode !== 'drDealerLabel' && item.fieldCode !== 'address_dealerDebit' 
+              && item.fieldCode !== 'dealerDebitContactPersonName' && item.fieldCode !== 'dealerDebitContactInformation'
+              && item.fieldCode !== 'dealerCodeCredit' && item.fieldCode !== 'crDealerLabel' && item.fieldCode !== 'address_dealerCodeCredit'
+              && item.fieldCode !== 'dealerCreditContactPersonName' && item.fieldCode !== 'dealerCreditContactInformation'){
+              blankDealerConfig.push(item)
+            }
           }
           
         })
-        this.dealerConfig = dealerConfig;
+        this.dealerConfig = blankDealerConfig;
         // 处理物料配置
         let eidtMatterPopConfig = {
           property: [],

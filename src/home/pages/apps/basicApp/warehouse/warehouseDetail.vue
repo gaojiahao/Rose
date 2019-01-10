@@ -58,9 +58,9 @@
         <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
       </div>
       <!-- 辅计单位-->
-      <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" key="cIndex" v-if="cItem.show">
+      <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
         <div class='title vux-1px-b'>{{cItem.title}}</div>
-        <div class='content' :class="{'show_border' : index > 0}" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+        <div class='content' :class="{'show_border' : index < formData[cItem.name].length-1}" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
           <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
                 v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
           </form-cell>
