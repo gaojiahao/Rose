@@ -1,79 +1,68 @@
 <template>
   <div class='childPage'>
-    <div class='detail_content'>
-      <div class='mater_baseinfo vux-1px-b'>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label>仓库编码:</label>
-            <div class='property_val'>{{warehouse.warehouseCode}}</div>
+    <r-scroll class='detail_content' ref="bScroll">
+      <div class="warehouse_baseinfo has_margin">
+        <div class="baseInfo_top">
+          <div class="baseinfo_part">
+            <img :src='MatPic' @error="getDefaultImg"/>
+            <div class="warehouse_name">
+              <p class="name">{{warehouse.warehouseName}}</p>
+              <p class="code">仓库编码：<span class="symbol"></span>{{warehouse.warehouseCode}}</p>
+            </div>
           </div>
-          <div class='each_property'>
-            <label>仓库名称:</label>
-            <div class='property_val'>{{warehouse.warehouseName}}</div>
-          </div>
+          <span class="warehouse_status vux-1px" :class="{'no_use' : warehouse.warehouseStatus !== '使用中'}">{{warehouse.warehouseStatus}}</span>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <div class='add_icon'>
-            <label for="file"></label>
-            <img :src='MatPic' class='upload' @error="getDefaultImg"/>
-          </div>
+        <div class="baseinfo_address">
+          <span class="icon-address"></span>
+          <span class="address" v-if="warehouse.warehouseProvince || warehouse.warehouseCity || warehouse.warehouseDistrict || warehouse.warehouseAddress">
+            {{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}{{warehouse.warehouseAddress}}
+          </span>
+          <span class="address" v-else>暂无地址</span>
         </div>
       </div>
-      <div class='each_property vux-1px-b' v-for="(item,index) in warehouseConfig" :key="index">
-        <template v-if="item.fieldCode === 'warehouseProvince'">
-          <label>省市区:</label>
-          <div class='property_val'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</div>
-        </template>
-        <template v-else>
+      <div class="warehouse_other has_margin">
+        <div class="each_property" :class="{'vux-1px-b': index < warehouseConfig.length-1 }" v-for="(item,index) in warehouseConfig" :key="index">
           <label>{{item.fieldLabel}}:</label>
           <div class='property_val'>{{warehouse[item.fieldCode] || "无"}}</div>
-        </template>
-      </div>
-      <!-- <div class='each_property vux-1px-b'>
-        <label>仓库关系类型:</label>
-        <div class='property_val'>{{warehouse.warehouseType}}</div>
-      </div>
-      <div class='each_property vux-1px-b' v-if="typeSubMap[typeSub].title">
-        <label>{{typeSubMap[typeSub].title}}:</label>
-        <div class='property_val'>{{typeSubMap[typeSub].value}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>仓库状态:</label>
-        <div class='property_val'>{{warehouse.warehouseStatus}}</div>
-      </div> -->
-      <div class='each_property vux-1px-b'>
-        <label>创建者:</label>
-        <div class='property_val'>{{baseinfo.creatorName}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>创建时间:</label>
-        <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
-      </div>
-      <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
-        <label>修改者:</label>
-        <div class='property_val'>{{baseinfo.modiferName}}</div>
-      </div>
-      <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
-        <label>修改时间:</label>
-        <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
-      </div>
-      <!-- 辅计单位-->
-      <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-        <div class='title vux-1px-b'>{{cItem.title}}</div>
-        <div class='content' :class="{'show_border' : index < formData[cItem.name].length-1}" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-          <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
-                v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
-          </form-cell>
         </div>
       </div>
-    </div>
+      <div class="common_style">
+        <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
+          <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
+          <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+            <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+              <label>{{sItem.text}}:</label>
+              <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="creator">
+        <div class='each_property vux-1px-b'>
+          <label>创建者:</label>
+          <div class='property_val'>{{baseinfo.creatorName}}</div>
+        </div>
+        <div class='each_property vux-1px-b'>
+          <label>创建时间:</label>
+          <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+          <label>修改者:</label>
+          <div class='property_val'>{{baseinfo.modiferName}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+          <label>修改时间:</label>
+          <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+        </div>
+      </div>
+    </r-scroll>
   </div>
 </template>
 <script>
 import { dateFormat } from 'vux'
 import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
 import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/commonService.js'
-import FormCell from 'components/detail/commonPart/FormCell'
+import RScroll from 'components/RScroll'
 export default {
   filters: {
     dateFormat
@@ -152,7 +141,7 @@ export default {
     }
   },
   components: {
-    FormCell
+    RScroll
   },
   methods: {
     //仓库信息
@@ -190,12 +179,6 @@ export default {
         } else {
           this.getDefaultImg()
         }
-
-        for (let key in this.warehouse) {
-          if (this.warehouse[key] == '') {
-            this.warehouse[key] = '无'
-          }
-        }
         // 展示员工、客户、加工商、渠道商列表
         this.typeSub = this.typeToSubMap[this.warehouse.warehouseType] || 'noMatched';
         if(this.typeSub === 'noMatched') {
@@ -219,7 +202,7 @@ export default {
     },
     // TODO 获取默认图片
     getDefaultImg() {
-      this.MatPic = require('assets/ck_default.png');
+      this.MatPic = require('assets/default/warehouse.png');
     },
     // TODO 获取仓库类型关联子项下拉列表
     getTypeSubList() {
@@ -289,7 +272,8 @@ export default {
           if(!item.hiddenInRun){
             // 在渲染的配置中添加字段
             if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
-              && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
+              && item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'
+              && item.fieldCode !== 'warehouseAddress' && item.fieldCode !== 'warehouseStatus'){
               this.warehouseConfig.push(item);
             }
           }
@@ -338,110 +322,106 @@ export default {
     height: 100%;
     bottom: 0;
     z-index: 5;
-    background: #f8f8f8;
+    background: #F6F6F6;
   }
 
   .detail_content {
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
+    color: #696969;
+    font-size: .14rem;
     div {
       border: none;
       outline: none;
     }
-    .mater_baseinfo {
-      display: flex;
-      align-items: flex-end;
-      .mater_property {
-        flex: 1;
-      }
-      .mater_pic {
-        .add_icon {
-          position: relative;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
+    .common_style{
+      margin-bottom: .1rem;
+      background: #fff;
+      padding: 0 .15rem;
+    }
+    .warehouse_baseinfo {
+      @extend .common_style;
+      padding: .12rem .15rem .18rem;
+      // 仓库名，编码，图片，状态
+      .baseInfo_top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .baseinfo_part {
+          display: flex;
+          align-items: center;
+          img {
+            width: .6rem;
+            height: .6rem;
+            border-radius: .04rem;
+            margin-right: .12rem;
           }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
+          .warehouse_name {
+            .name{
+              font-size: .16rem;
+              line-height: .16rem;
+              font-weight: bold;
+              color: #333;
             }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
+            .code {
+              margin-top: .12rem;
+              line-height: .14rem;
+              .symbol {
+                color: #333;
+              }
             }
           }
-
         }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
+        .warehouse_status {
+          font-size: .12rem;
+          line-height: .22rem;
+          color: #FA7138;
+          padding: 0 .05rem;
+          &.vux-1px::before {
+            border-color: #FA7138;
+            border-radius: .04rem;
+          }
+          &.no_use{
+            color: #999;
+            &.vux-1px::before {
+              border-color: #999;
+            }
+          }
+        }
+      }
+      // 地址
+      .baseinfo_address {
+        margin-top: .1rem;
+        display: flex;
+        align-items: flex-start;
+        .icon-address {
+          width: .16rem;
+          height: .16rem;
+          margin: .02rem .08rem 0 0;
+        }
+        .address{
+          flex: 1;
+          display: block;
+          line-height: .2rem;
         }
       }
     }
     .each_property {
-      min-height: .5rem;
-      padding: 0.05rem 0.08rem;
-      position: relative;
-      background: #fff;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        height: 0.2rem;
-        line-height: 0.2rem;
-      }
+      height: .5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
+        color: #333;
       }
-      .picker {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .mater_nature {
-          font-size: 0.16rem;
-          line-height: 0.2rem;
-        }
-        .iconfont {
-          font-size: 0.24rem;
-        }
-      }
-      .vux-cell-box {
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 0.05rem 0.08rem;
-        width: 100%;
-        box-sizing: border-box;
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        label {
-          height: 0.58rem;
-        }
-        .vux-cell-primary {
-          display: none;
-        }
-        &:not(:first-child):before {
-          border: none;
-        }
-
-      }
+    }
+    .warehouse_other {
+      @extend .common_style;
     }
     .d_main {
       margin-top: 0.1rem;
       background: #fff;
-      padding: 0 0.1rem;
+      // padding: 0 0.1rem;
       .title {
         color: #111;
         background: #fff;
@@ -456,6 +436,11 @@ export default {
         }
       }
 
+    }
+    //创建者
+    .creator {
+      @extend .common_style;
+      margin-bottom: 0;
     }
   }
 

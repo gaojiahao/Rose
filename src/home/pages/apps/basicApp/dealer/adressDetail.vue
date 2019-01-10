@@ -1,62 +1,61 @@
 <template>
   <div class='childPage'>
     <r-scroll class='detail_content' ref="bScroll">
-      <div class='mater_baseinfo vux-1px-b'>
-        <div class='mater_property'>
-          <div class='each_property vux-1px-b'>
-            <label>往来编码:</label>
-            <div class='property_val'>{{dealer.dealerCode}}</div>
+      <div class="dealer_baseinfo has_margin">
+        <div class="baseInfo_top">
+          <div class="baseinfo_part">
+            <img :src='MatPic' @error="getDefaultImg"/>
+            <div class="dealer_name">
+              <p class="name">{{dealer.dealerName}}</p>
+              <p class="code">往来编码：<span class="symbol"></span>{{dealer.dealerCode}}</p>
+            </div>
           </div>
-          <div class='each_property'>
-            <label>往来名称:</label>
-            <div class='property_val'>{{dealer.dealerName}}</div>
-          </div>
+          <span class="dealer_status vux-1px" :class="{'no_use' : dealer.dealerStatus !== '使用中'}">{{dealer.dealerStatus}}</span>
         </div>
-        <div class='mater_pic vux-1px-l'>
-          <div class='add_icon'>
-            <label for="file"></label>
-            <img :src='MatPic' class='upload' @error="getDefaultImg"/>
-          </div>
+        <div class="baseinfo_address">
+          <span class="icon-address"></span>
+          <span class="address" v-if="dealer.province || dealer.city || dealer.county || dealer.address">
+            {{dealer.province}}{{dealer.city}}{{dealer.county}}{{dealer.address}}
+          </span>
+          <span class="address" v-else>暂无地址</span>
         </div>
       </div>
-      <div class='each_property vux-1px-b' v-for="(item, index) in dealerConfig" :key="index">
-        <template v-if="item.fieldCode === 'province'">
-          <label>省市区:</label>
-          <div class='property_val'>
-            {{dealer.province}}{{dealer.city}}{{dealer.county}}
-          </div>
-        </template>
-        <template v-else>
+      <div class="dealer_other">
+        <div class="each_property" :class="{'vux-1px-b': index < dealerConfig.length-1 }" v-for="(item,index) in dealerConfig" :key="index">
           <label>{{item.fieldLabel}}:</label>
-          <div class='property_val'>{{dealer[item.fieldCode]}}</div>
-        </template>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>创建者:</label>
-        <div class='property_val'>{{baseinfo.creatorName}}</div>
-      </div>
-      <div class='each_property vux-1px-b'>
-        <label>创建时间:</label>
-        <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
-      </div>
-      <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
-        <label>修改者:</label>
-        <div class='property_val'>{{baseinfo.modiferName}}</div>
-      </div>
-      <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
-        <label>修改时间:</label>
-        <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
-      </div>
-      <div class="d_main" v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-        <div class='title vux-1px-b'>{{cItem.title}}</div>
-        <div class='content' :class="{'show_border' : index < formData[cItem.name].length-1 }" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-          <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]" :showTopBorder="sIndex > 0" 
-                v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
-          </form-cell>
+          <div class='property_val'>{{dealer[item.fieldCode] || "无"}}</div>
         </div>
       </div>
-    </r-scroll>
-    
+      <!-- <div class="common_style"> -->
+        <div class="d_main common_style" v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
+          <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
+          <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+            <div class="each_property vux-1px-b" v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+              <label>{{sItem.text}}:</label>
+              <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
+            </div>
+          </div>
+        </div>
+      <!-- </div> -->
+      <div class="creator">
+        <div class='each_property vux-1px-b'>
+          <label>创建者:</label>
+          <div class='property_val'>{{baseinfo.creatorName}}</div>
+        </div>
+        <div class='each_property vux-1px-b'>
+          <label>创建时间:</label>
+          <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+          <label>修改者:</label>
+          <div class='property_val'>{{baseinfo.modiferName}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+          <label>修改时间:</label>
+          <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+        </div>
+      </div>
+    </r-scroll>  
   </div>
 </template>
 <script>
@@ -139,7 +138,7 @@ export default {
     },
     // TODO 获取默认图片
     getDefaultImg() {
-        this.MatPic = require('assets/contact_default02.png');
+      this.MatPic = require('assets/default/dealer.png');
     },
     // 请求应用的viewId
     getFormViews() {
@@ -170,7 +169,8 @@ export default {
           if(!item.hiddenInRun){
             // 在渲染的配置中添加字段
             if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
-              && item.fieldCode !== 'city' && item.fieldCode !== 'county'){
+              && item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county'
+              && item.fieldCode !== 'address' && item.fieldCode !== 'dealerStatus' ){
               this.dealerConfig.push(item);
             }
           }
@@ -213,106 +213,107 @@ export default {
     height: 100%;
     overflow: hidden;
     background: #f8f8f8;
+    color: #696969;
+    font-size: .14rem;
     div {
       border: none;
       outline: none;
     }
-    .mater_baseinfo {
-      display: flex;
-      align-items: flex-end;
+    .common_style{
+      margin-bottom: .1rem;
       background: #fff;
-      .mater_property {
-        flex: 1;
-      }
-      .mater_pic {
-        .add_icon {
-          position: relative;
-          label {
-            display: block;
-            width: 1.2rem;
-            height: 1.2rem;
+      padding: 0 .15rem;
+    }
+    .dealer_baseinfo {
+      @extend .common_style;
+      padding: .12rem .15rem .18rem;
+      // 仓库名，编码，图片，状态
+      .baseInfo_top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        .baseinfo_part {
+          display: flex;
+          align-items: flex-start;
+          img {
+            width: .6rem;
+            height: .6rem;
+            border-radius: .04rem;
+            margin-right: .12rem;
           }
-          .upload {
-            width: 1.2rem;
-            height: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -999;
-            span {
-              display: block;
-              text-align: center;
+          .dealer_name {
+            margin-top: .02rem;
+            .name{
+              font-size: .16rem;
+              line-height: .16rem;
+              font-weight: bold;
+              color: #333;
             }
-            .iconfont {
-              font-size: 0.24rem;
-              margin-top: 0.24rem;
+            .code {
+              margin-top: .12rem;
+              line-height: .14rem;
+              .symbol {
+                color: #333;
+              }
+            }
+          }
+        }
+        .dealer_status {
+          font-size: .12rem;
+          line-height: .22rem;
+          color: #FA7138;
+          padding: 0 .05rem;
+          &.vux-1px::before {
+            border-color: #FA7138;
+            border-radius: .04rem;
+          }
+          &.no_use{
+            color: #999;
+            &.vux-1px::before {
+              border-color: #999;
             }
           }
 
         }
-
-        .pic {
-          width: 1.2rem;
-          height: 1.2rem;
-          border: 0;
+      }
+      // 地址
+      .baseinfo_address {
+        margin-top: .1rem;
+        display: flex;
+        align-items: flex-start;
+        .icon-address {
+          width: .16rem;
+          height: .16rem;
+          margin: .02rem .08rem 0 0;
+        }
+        .address{
+          flex: 1;
+          display: block;
+          line-height: .2rem;
         }
       }
     }
     .each_property {
-      min-height: .5rem;
-      padding: 0.05rem 0.08rem;
-      position: relative;
-      background: #fff;
-      label {
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        display: block;
-        height:0.2rem;
-        line-height: 0.2rem;
-      }
+      height: .5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       .property_val {
-        display: block;
-        font-size: 0.16rem;
-        line-height: 0.24rem;
+        color: #333;
       }
-      .picker {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .mater_nature {
-          font-size: 0.16rem;
-          line-height: 0.2rem;
-        }
-        .iconfont {
-          font-size: 0.24rem;
-        }
-      }
-      .vux-cell-box{
-        position: absolute;
-        left:0;
-        top:0;
-        padding: 0.05rem 0.08rem;
-        width:100%;
-        box-sizing: border-box;
-        color: #6d6d6d;
-        font-size: 0.12rem;
-        label{
-          height:0.58rem;
-        }
-        .vux-cell-primary{
-          display: none;
-        }
-        &:not(:first-child):before{
-          border:none;
-        }
-
-      }
+    }
+    .dealer_other {
+      @extend .common_style;
+    }
+    //创建者
+    .creator {
+      @extend .common_style;
+      margin-bottom: 0;
     }
   }
   .d_main {
-    margin-top: 0.1rem;
-    background: #fff;
-    padding: 0 0.1rem;
+    // margin-top: 0.1rem;
+    // background: #fff;
     .title {
       color: #111;
       background: #fff;

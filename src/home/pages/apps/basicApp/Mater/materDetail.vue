@@ -1,8 +1,53 @@
 <template>
   <div class="childPage" :class="{'no-edit': !action.update}">
-    <div class="main_content">
+    <r-scroll class="main_content" ref="bScroll">
+      <div class="inventory_baseinfo has_margin">
+        <div class="baseInfo_top">
+          <div class="baseinfo_part">
+            <img :src='inventory.inventoryPic' @error="getDefaultImg"/>
+            <div class="inventory_name">
+              <p class="name">{{inventory.inventoryName}}</p>
+              <p class="code">物料编码：<span class="symbol"></span>{{inventory.inventoryCode}}</p>
+            </div>
+          </div>
+          <span class="inventory_status vux-1px" :class="{'no_use' : inventory.status !== '使用中'}">{{inventory.status}}</span>
+        </div>
+      </div>
+      <div class="inventory_other has_margin">
+        <div class="each_property" :class="{'vux-1px-b': index < matterConfig.length-1 }" v-for="(item,index) in matterConfig" :key="index">
+          <label>{{item.fieldLabel}}:</label>
+          <div class='property_val'>{{inventory[item.fieldCode] || "无"}}</div>
+        </div>
+      </div>
+      <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
+        <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
+        <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
+          <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+            <label>{{sItem.text}}:</label>
+            <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="creator">
+        <div class='each_property vux-1px-b'>
+          <label>创建者:</label>
+          <div class='property_val'>{{baseinfo.creatorName}}</div>
+        </div>
+        <div class='each_property vux-1px-b'>
+          <label>创建时间:</label>
+          <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
+          <label>修改者:</label>
+          <div class='property_val'>{{baseinfo.modiferName}}</div>
+        </div>
+        <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
+          <label>修改时间:</label>
+          <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+        </div>
+      </div>
       <!-- 物料图片展示区域 -->
-      <div class="d_top">
+      <!-- <div class="d_top">
         <div class="mater_info">
           <img class="avatar" :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
           <span class="mater_name">{{inventory.inventoryName}}</span>
@@ -17,26 +62,26 @@
         <form-cell cellTitle="创建时间" :cellContent="baseinfo.crtTime | dateFormat"></form-cell>
         <form-cell v-if="baseinfo.modiferName" cellTitle="修改者" :cellContent="baseinfo.modiferName"></form-cell>
         <form-cell v-if="baseinfo.modTime" cellTitle="修改时间" :cellContent="baseinfo.modTime | dateFormat"></form-cell>
-      </div>
+      </div> -->
       <!-- 物料基本信息展示区域 -->
-      <div class="d_main">
+      <!-- <div class="d_main">
         <div class='title vux-1px-b'>基本信息</div>
         <div class='content'>
           <form-cell v-for="(item, index) in matterConfig" :key="index"
             :cellTitle="item.fieldLabel" :cellContent="inventory[item.fieldCode]" :showTopBorder="index === 0 ? false : true">
           </form-cell>
         </div>
-      </div>
+      </div> -->
       <!-- 辅计单位-->
-      <div class="d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
+      <!-- <div class="d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
         <div class='title vux-1px-b'>{{cItem.title}}</div>
         <div class='content' :class="{'show_border' : index < formData[cItem.name].length-1 }" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
           <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]"  :showTopBorder="sIndex > 0"
                 v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
           </form-cell>
         </div>
-      </div>
-    </div>
+      </div> -->
+    </r-scroll>
     <!-- 修改按钮 -->
     <div class="btn vux-1px-t" v-if="action.update">
       <div class="cfm_btn" @click="goEdit">修改</div>
@@ -49,7 +94,7 @@ import { AlertModule, dateFormat } from 'vux';
 import { findData } from 'service/materService'
 import { getAppDetail } from 'service/appSettingService'
 import { getFormConfig, getFormViews } from 'service/commonService.js'
-import FormCell from 'components/detail/commonPart/FormCell'
+import RScroll from 'components/RScroll'
 export default {
   name: 'materDetail',
   filters: {
@@ -87,7 +132,7 @@ export default {
     },
   },
   components: {
-    FormCell,
+    RScroll,
   },
   methods: {
     // TODO 跳转到修改页面
@@ -225,10 +270,13 @@ export default {
     }
   }
   .main_content {
-    background-color: #f8f8f8;
-    overflow: auto;
+    background-color: #F6F6F6;
+    overflow: hidden;
     height: 90%;
-    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+    padding-bottom: .1rem;
+    color: #696969;
+    font-size: .14rem;
   }
 
   // 下划线
@@ -240,70 +288,100 @@ export default {
   .vux-1px-r:after {
     border-color: #e8e8e8;
   }
-
-  // 顶部
-  .d_top {
-    display: flex;
-    height: 1.6rem;
-    line-height: .24rem;
-    background: #FFF;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    .mater_info {
+  .common_style {
+    margin-bottom: .1rem;
+    background: #fff;
+    padding: 0 .15rem;
+  }
+  .inventory_baseinfo {
+    @extend .common_style;
+    padding: .12rem .15rem .18rem;
+    // 仓库名，编码，图片，状态
+    .baseInfo_top {
       display: flex;
-      align-items: center;
-      flex-direction: column;
-      .avatar {
-        width: .8rem;
-        height: .8rem;
-        margin: .1rem 0;
-      }
-      .mater_name {
-        font-size: .18rem;
-        font-weight: bold;
-      }
-      .mater_status_part {
-        font-size: 0;
-        .mater_status,
-        .mater_code {
-          font-size: .12rem;
-          font-weight: bold;
-          border-radius: .1rem;
-          padding: .01rem .04rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      .baseinfo_part {
+        display: flex;
+        align-items: flex-start;
+        img {
+          width: .6rem;
+          height: .6rem;
+          border-radius: .04rem;
+          margin-right: .12rem;
         }
-        .mater_status {
-          color: #FFF;
-          background: #474a56;
-          margin: 0 .08rem;
-          &.inUse {
-            background: #53d397;
+        .inventory_name {
+          margin-top: .02rem;
+          .name{
+            font-size: .16rem;
+            line-height: .16rem;
+            font-weight: bold;
+            color: #333;
           }
-          &.unUse {
-            background: #c7b198;
+          .code {
+            margin-top: .12rem;
+            line-height: .14rem;
+            .symbol {
+              color: #333;
+            }
           }
         }
-        .mater_code {
-          color: #333;
-          background: #b1cbfa;
-          &.shortTerm {
-            color: #FFF;
-            background: #5c636e;
+      }
+      .inventory_status {
+        font-size: .12rem;
+        line-height: .22rem;
+        color: #FA7138;
+        padding: 0 .05rem;
+        &.vux-1px::before {
+          border-color: #FA7138;
+          border-radius: .04rem;
+        }
+        &.no_use{
+          color: #999;
+          &.vux-1px::before {
+            border-color: #999;
           }
-          &.longTerm {
+        }
 
-          }
-        }
       }
     }
-
+    // 地址
+    .baseinfo_address {
+      margin-top: .1rem;
+      display: flex;
+      align-items: flex-start;
+      .icon-address {
+        width: .16rem;
+        height: .16rem;
+        margin: .02rem .08rem 0 0;
+      }
+      .address{
+        flex: 1;
+        display: block;
+        line-height: .2rem;
+      }
+    }
   }
-
+  .each_property {
+    height: .5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .property_val {
+      color: #333;
+    }
+  }
+  .inventory_other {
+    @extend .common_style;
+  }
+  .creator {
+    @extend .common_style;
+    margin-bottom: 0;
+  }
   // 中部
   .d_main {
     margin-top: 0.1rem;
     background: #fff;
-    padding: 0 0.1rem;
     .title {
       color: #111;
       background: #fff;
