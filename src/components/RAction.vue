@@ -1,11 +1,11 @@
 <template>
   <!-- 审批操作 -->
-  <div class='handle_wrapper vux-1px-t'>
-    <div class="handle_btn" v-if="!!actions.length">
-      <span class="reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
-      <span class="reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
-      <span class="agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
-      <span class="transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
+  <div class='handle_wrapper vux-1px-t' v-if="!!actions.length">
+    <div class="handle_btn">
+      <span class="btn_item reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
+      <span class="btn_item reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
+      <span class="btn_item agree" @click="agree" v-if="actions.includes('agreement')">同意</span>
+      <span class="btn_item transfer" @click="transfer" v-if="actions.includes('transfer')">转办</span>
     </div>
     <pop-user-list :show="showUserList" :default-value="selectedUser" @sel-item="selUser"
                    v-model="showUserList" v-if="actions.includes('transfer')"></pop-user-list>
@@ -120,8 +120,8 @@
               successMsg: '撤回成功',
               value,
               callback: () => {
-                let { childId } = this.$route.query,
-                    {folder, fileName} = this.$route.params;
+                let {childId} = this.$route.query,
+                  {folder, fileName} = this.$route.params;
                 this.$router.replace({
                   path: `/fillform/${folder}/${fileName}`,
                   query: {
@@ -225,46 +225,42 @@
   @import '~@/scss/color.scss';
 
   .handle_wrapper {
-    background: #FFF;
+    margin: .1rem 0 .24rem;
     overflow: hidden;
     // 审批操作
     .handle_btn {
       display: flex;
+      justify-content: flex-end;
       width: 100%;
-      height: .4rem;
-      margin: .2rem 0;
-      padding: 0 .2rem;
-      line-height: .4rem;
+      padding: 0 .1rem;
+      line-height: .12rem;
+      color: #333;
       text-align: center;
-
-      justify-content: center;
+      font-size: .12rem;
       box-sizing: border-box;
-      span {
-        margin-right: .2rem;
+      .btn_item {
         display: inline-block;
-        width: 1.4rem;
-        color: #fff;
+        padding: .08rem .28rem;
+        border: 1px solid #9c9c9c;
+        background-color: #fff;
         text-align: center;
-        border-radius: .24rem;
-        &:last-child {
-          margin-right: 0;
+        white-space: nowrap;
+        border-radius: .04rem;
+        & + .btn_item {
+          margin-left: .1rem;
         }
       }
       // 拒绝
       .reject {
-        /*margin-right: .2rem;*/
-        background: #ea5455;
-        box-shadow: 0 2px 5px #ea5455;
       }
       // 同意
       .agree {
-        background: #5077aa;
-        box-shadow: 0 2px 5px #5077aa;
+        border-color: $main_color;
+        background: $main_color;
+        color: #fff;
       }
       /* 转办 */
       .transfer {
-        background-color: #ccc;
-        box-shadow: 0 2px 5px #ccc;
       }
     }
   }

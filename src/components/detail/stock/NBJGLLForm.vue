@@ -8,12 +8,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 仓库信息 -->
-      <div class="warehouse_part">
-        <!-- 出库-->
-        <warehouse-content class="vux-1px-b" :warehouse="warehouseOut"></warehouse-content>
-        <!-- 入库 -->
-        <warehouse-content :warehouse="warehouseIn"></warehouse-content>
-      </div>
+      <warehouse-content :warehouse="warehouseIn"  :warehouse-out="warehouseOut"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
                   :is-my-task="isMyTask"

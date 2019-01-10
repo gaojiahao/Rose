@@ -8,30 +8,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="contactInfo">
-        <template slot="other">
-          <div class="other">
-            <span class="title">账期天数: </span>
-            <span class="mode">{{contactInfo.daysOfAccount}}</span>
-          </div>
-          <div class="other">
-            <span class="title">合同总金额: </span>
-            <span class="mode">￥{{contactInfo.thenTotalAmntBal | toFixed | numberComma}}</span>
-          </div>
-          <div class="other">
-            <span class="title">合同到期日: </span>
-            <span class="mode">{{contactInfo.validUntil}}</span>
-          </div>
-          <div class="other" v-show="contactInfo.payment.includes('预收')">
-            <span class="title">预收款: </span>
-            <span class="mode">￥{{contactInfo.tdAmountCopy1 | toFixed | numberComma}}</span>
-          </div>
-          <div class="other" v-show="contactInfo.payment.includes('预收')">
-            <span class="title">预收到期日: </span>
-            <span class="mode">{{contactInfo.advancePaymentDueDate || "无"}}</span>
-          </div>
-        </template>
-      </contact-part>
+      <contact-part :contact-info="contactInfo" :configs="dealerConfig"></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -69,7 +46,12 @@
       </matter-list>
       <!-- 金额明细 -->
       <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
+        <div class="comment-container">
+          <span class="comment_title">备注：</span>
+          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
+        </div>
+        <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
       <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
                    :title-style="uploadTitleStyle"></upload-file>
@@ -149,6 +131,9 @@
           this.attachment = data.attachment;
           this.orderInfo = formData;
           this.contactInfo = {
+            ...order,
+            ...contract,
+            ...formData,
             creatorName: order.dealerDebitContactPersonName, // 客户名
             dealerName: order.dealerName_dealerDebit, // 公司名
             dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
@@ -159,13 +144,13 @@
             city: order.city_dealerDebit, // 城市
             county: order.county_dealerDebit, // 地区
             address: order.address_dealerDebit, // 详细地址
-            payment: order.drDealerPaymentTerm, // 付款方式,
-            logistics: formData.drDealerLogisticsTerms, //物流条款
-            validUntil: inPut.validUntil, // 合同到期日
-            thenTotalAmntBal: contract.thenTotalAmntBal, // 合同总金额
-            tdAmountCopy1: contract.tdAmountCopy1, // 预收款
-            advancePaymentDueDate: contract.advancePaymentDueDate, // 预收到期日
-            daysOfAccount: inPut.daysOfAccount
+            // payment: order.drDealerPaymentTerm, // 付款方式,
+            // logistics: formData.drDealerLogisticsTerms, //物流条款
+            // validUntil: inPut.validUntil, // 合同到期日
+            // thenTotalAmntBal: contract.thenTotalAmntBal, // 合同总金额
+            // tdAmountCopy1: contract.tdAmountCopy1, // 预收款
+            // advancePaymentDueDate: contract.advancePaymentDueDate, // 预收到期日
+            // daysOfAccount: inPut.daysOfAccount
           };
           this.workFlowInfoHandler();
         })

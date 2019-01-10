@@ -13,29 +13,33 @@
         <div class="basic_status">{{orderInfo.biStatus}}</div>
       </div>
       <div class="basic_detail">
-        <div class="basic_detail_left">
+        <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
             <span class="basic_detail_title">经办人:</span>
             <span class="basic_detail_value">{{orderInfo.handlerName}}</span>
           </div>
           <div class="basic_detail_item">
-            <span class="basic_detail_title">创建人:</span>
-            <span class="basic_detail_value">{{orderInfo.creatorName}}</span>
-          </div>
-          <div class="basic_detail_item">
-            <span class="basic_detail_title">经办主体:</span>
-            <span class="basic_detail_value">{{orderInfo.handlerEntityName}}</span>
-          </div>
-        </div>
-        <div class="basic_detail_right">
-          <div class="basic_detail_item">
             <span class="basic_detail_title">经办组织:</span>
             <span class="basic_detail_value">{{orderInfo.handlerUnitName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">创建人:</span>
+            <span class="basic_detail_value">{{orderInfo.creatorName}}</span>
           </div>
           <div class="basic_detail_item">
             <span class="basic_detail_title">经办职位:</span>
             <span class="basic_detail_value">{{orderInfo.handlerRoleName}}</span>
           </div>
+        </div>
+        <div class="basic_detail_wrapper handler_entity">
+          <div class="basic_detail_item">
+            <span class="basic_detail_title">经办主体:</span>
+            <span class="basic_detail_value">{{orderInfo.handlerEntityName}}</span>
+          </div>
+        </div>
+        <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
             <span class="basic_detail_title">修改时间:</span>
             <span class="basic_detail_value">{{orderInfo.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
@@ -152,20 +156,23 @@
       }
 
       .basic_detail {
-        display: flex;
         margin-top: .24rem;
         line-height: .14rem;
         font-size: .14rem;
       }
-      .basic_detail_left {
-        flex: 2;
-      }
-      .basic_detail_right {
-        flex: 3;
+      .basic_detail_wrapper {
+        display: flex;
+        margin-top: .12rem;
+        &.handler_entity {
+          margin-top: .16rem;
+        }
       }
       .basic_detail_item {
+        flex: 2;
         display: flex;
-        margin-top: .1rem;
+        &:last-child {
+          flex: 3;
+        }
       }
       .basic_detail_title {
         color: #999;
@@ -173,7 +180,6 @@
       .basic_detail_value {
         flex: 1;
         margin-left: .05rem;
-        line-height: .16rem;
       }
     }
 

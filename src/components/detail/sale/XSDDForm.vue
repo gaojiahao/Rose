@@ -1,193 +1,194 @@
 <template>
   <div class="detail_wrapper">
-      <div class="basicPart" v-if='orderInfo && orderInfo.order'>
-        <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
-          <span>其他应用里存在与本条相关联的数据，快去看看</span>
-          <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
-        </div> -->
-        <!-- 经办信息 （订单、主体等） -->
-        <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-        <!-- 往来联系部分 交易基本信息-->
-        <contact-part :contact-info="contactInfo">
-          <template slot="other">
-            <div class="other">
-              <span class="title">账期天数: </span>
-              <span class="mode">{{contactInfo.pamentDays || '暂无'}}</span>
+    <div class="basicPart" v-if='orderInfo && orderInfo.order'>
+      <!-- <div class='related_tips' v-if='HasValRealted' @click="getSwiper">
+        <span>其他应用里存在与本条相关联的数据，快去看看</span>
+        <x-icon class="r_arw" type="ios-arrow-forward" size="16"></x-icon>
+      </div> -->
+      <!-- 经办信息 （订单、主体等） -->
+      <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
+      <!-- 往来联系部分 交易基本信息-->
+      <contact-part :contact-info="contactInfo" :configs="dealerConfig"></contact-part>
+      <!-- 工作流 -->
+      <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
+      <!-- 物料列表 -->
+      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
+        <template slot="orderTitle" slot-scope="props">
+          <span class="order_title">销售合同号：</span>
+        </template>
+        <template slot="matterOther" slot-scope="{item}">
+          <div class='mater_other'>
+            <div class="mater_attribute">
+              <span>属性: {{item.tdProcessing || '无'}}</span>
+              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
+              <span>合同数量: {{item.thenTotalQtyBal}}</span>
+              <span>已下单: {{item.thenLockQty}}</span>
+              <span>待下单: {{item.thenQtyBal}}</span>
             </div>
-            <div class="other" v-if="hasAdvance">
-              <span class="title">预收款: </span>
-              <span class="mode">￥{{contactInfo.tdAmountCopy1 | numberComma}}</span>
+            <div class="mater_attribute">
+              <span>交付开始日: {{item.dateActivation}}</span>
+              <span>预期交货日: {{item.promDeliTime}}</span>
             </div>
-            <div class="other" v-if="hasAdvance">
-              <span class="title">预收到期日: </span>
-              <span class="mode">{{contactInfo.advancePaymentDueDate || '暂无'}}</span>
+            <div class="mater_attribute">
+              <span>交付截止日: {{item.executionDate}}</span>
             </div>
-          </template>
-        </contact-part>
-        <!-- 工作流 -->
-        <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow>
-        <!-- 物料列表 -->
-        <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
-          <template slot="orderTitle" slot-scope="props">
-             <span class="order_title">销售合同号</span>
-          </template>
-          <template slot="matterOther" slot-scope="{item}">
-            <div class='mater_other'>
-              <div class="mater_attribute">
-                <span>属性: {{item.tdProcessing || '无'}}</span>
-                <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-                <span>合同数量: {{item.thenTotalQtyBal}}</span>
-                <span>已下单: {{item.thenLockQty}}</span>
-                <span>待下单: {{item.thenQtyBal}}</span>
-              </div>
-              <div class="mater_attribute">
-                <span>交付开始日: {{item.dateActivation}}</span>
-                <span>预期交货日: {{item.promDeliTime}}</span>
-              </div>
-              <div class="mater_attribute">
-                <span>交付截止日: {{item.executionDate}}</span>
-              </div>
-              <div class='mater_num'>
-                <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                <span class="num">本次下单: {{item.tdQty | toFixed}}</span>
-              </div>
-              <div class='mater_price'>
-                <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-                <span class="num"
-                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                      v-if="item.taxRate">
+            <div class='mater_num'>
+              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
+              <span class="num">本次下单: {{item.tdQty | toFixed}}</span>
+            </div>
+            <div class='mater_price'>
+              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
+              <span class="num"
+                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
+                    v-if="item.taxRate">
                   [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
                 </span>
-              </div>
             </div>
-          </template>
-        </matter-list>
-        <!-- 备注 -->
-        <div class="comment-part">
-          <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+          </div>
+        </template>
+      </matter-list>
+      <!-- 备注 -->
+      <div class="comment-part">
+        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
+        <div class="comment-container">
+          <span class="comment_title">备注：</span>
+          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
         </div>
-        <!-- 上传附件 -->
-        <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
-        <!-- 审批操作 -->
-        <r-action :code="transCode" :task-id="taskId" :actions="actions"
-                  :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+        <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
+      <!-- 上传附件 -->
+      <!--<upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>-->
+      <!-- 审批操作 -->
+      <r-action :code="transCode" :task-id="taskId" :actions="actions"
+                :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
+    </div>
   </div>
 </template>
 
 <script>
-// 请求 引入
-import { getSOList, } from 'service/detailService'
-// mixins 引入
-import common from 'components/mixins/detailCommon'
-// 组件 引入
-import RAction from 'components/RAction'
-import workFlow from 'components/workFlow'
-import contactPart from 'components/detail/commonPart/ContactPart'
-import PriceTotal from 'components/detail/commonPart/PriceTotal'
-import MatterList from 'components/detail/commonPart/MatterList'
-//公共方法引入
-import {accAdd,accMul} from '@/home/pages/maps/decimalsAdd.js'
-import {toFixed} from '@/plugins/calc'
-export default {
-  data(){
-    return{
-      count : 0,          // 金额合计
-      orderInfo: {},      // 表单内容
-      formViewUniqueId : '',
-      contactInfo: {}, // 客户、付款方式、物流条款的值
-      orderList: {},
-    }
-  },
-  computed: {
-    // 是否含预收
-    hasAdvance() {
-      let { payment } = this.contactInfo;
-      return payment && payment.includes('预收')
-    }
-  },
-  components:{
-    workFlow, RAction,contactPart,PriceTotal,MatterList
-  },
-  mixins: [common],
-  methods:{
-    //选择默认图片
-    getDefaultImg(item) {
-      let url = require('assets/wl_default03.png');
-      if (item) {
-        item.inventoryPic = url;
+  // 请求 引入
+  import {getSOList,} from 'service/detailService'
+  // mixins 引入
+  import common from 'components/mixins/detailCommon'
+  // 组件 引入
+  import RAction from 'components/RAction'
+  import workFlow from 'components/workFlow'
+  import contactPart from 'components/detail/commonPart/ContactPart'
+  import PriceTotal from 'components/detail/commonPart/PriceTotal'
+  import MatterList from 'components/detail/commonPart/MatterList'
+  //公共方法引入
+  import {accAdd, accMul} from '@/home/pages/maps/decimalsAdd.js'
+  import {toFixed} from '@/plugins/calc'
+
+  export default {
+    data() {
+      return {
+        count: 0,          // 金额合计
+        orderInfo: {},      // 表单内容
+        formViewUniqueId: '',
+        contactInfo: {}, // 客户、付款方式、物流条款的值
+        orderList: {},
       }
-      return url
     },
-    // 获取详情
-    getOrderList(transCode = ''){
-      return getSOList({
-        formViewUniqueId : this.formViewUniqueId,
-        transCode
-      }).then(data => {
-        this.submitInfo  = JSON.parse(JSON.stringify(data));
-        // http200时提示报错信息
-        if(data.success === false){
-          this.$vux.alert.show({
-            content: '抱歉，数据有误，暂无法查看',
-              onHide:()=>{
-              this.$router.back();
-            }
-          })
-          return;
+    computed: {
+      // 是否含预收
+      hasAdvance() {
+        let {payment} = this.contactInfo;
+        return payment && payment.includes('预收')
+      }
+    },
+    components: {
+      workFlow, RAction, contactPart, PriceTotal, MatterList
+    },
+    mixins: [common],
+    methods: {
+      //选择默认图片
+      getDefaultImg(item) {
+        let url = require('assets/wl_default03.png');
+        if (item) {
+          item.inventoryPic = url;
         }
-        let orderList = {};
-        let {inPut = {}} = data.formData;
-        let [dealerInfo = {}] = inPut.dataSet;
-        // 获取合计
-        let { dataSet } = data.formData.order;
-        for(let item of dataSet){
-          this.count = accAdd(this.count,item.tdAmount);
-          item.inventoryPic = item.inventoryPic_transObjCode
-            ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
-            : this.getDefaultImg();
-          if (!orderList[item.transMatchedCode]) {
-            orderList[item.transMatchedCode] = [];
+        return url
+      },
+      // 获取详情
+      getOrderList(transCode = '') {
+        return getSOList({
+          formViewUniqueId: this.formViewUniqueId,
+          transCode
+        }).then(data => {
+          this.submitInfo = JSON.parse(JSON.stringify(data));
+          // http200时提示报错信息
+          if (data.success === false) {
+            this.$vux.alert.show({
+              content: '抱歉，数据有误，暂无法查看',
+              onHide: () => {
+                this.$router.back();
+              }
+            })
+            return;
           }
-          orderList[item.transMatchedCode].push(item);
-        }
-        this.orderList = orderList;
-        this.attachment = data.attachment;
-        this.orderInfo = data.formData;
+          let orderList = {};
+          let {attachment = [], formData = {}} = data;
+          let {inPut = {}} = formData;
+          let [dealerInfo = {}] = inPut.dataSet;
+          // 获取合计
+          let {dataSet} = formData.order;
+          for (let item of dataSet) {
+            this.count = accAdd(this.count, item.tdAmount);
+            item.inventoryPic = item.inventoryPic_transObjCode
+              ? `/H_roleplay-si/ds/download?url=${item.inventoryPic_transObjCode}&width=400&height=400`
+              : this.getDefaultImg();
+            if (!orderList[item.transMatchedCode]) {
+              orderList[item.transMatchedCode] = [];
+            }
+            orderList[item.transMatchedCode].push(item);
+          }
+          this.orderList = orderList;
+          this.attachment = attachment;
+          this.orderInfo = formData;
+          this.contactInfo = {
+            ...dealerInfo,
+            ...formData,
+          };
+          this.getcontactInfo();
+          this.workFlowInfoHandler();
+        })
+      },
+      // TODO 生成contactInfo对象
+      getcontactInfo(key = 'order') {
+        let orderInfo = this.orderInfo;
+        let order = orderInfo[key];
         this.contactInfo = {
-          tdAmountCopy1: dealerInfo.tdAmountCopy1,
-          advancePaymentDueDate: dealerInfo.advancePaymentDueDate,
+          ...this.contactInfo,
+          ...order,
+          creatorName: order.dealerDebitContactPersonName, // 客户名
+          dealerName: order.dealerName_dealerDebit, // 公司名
+          dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
+          dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
+          dealerCode: order.dealerDebit, // 客户编码
+          dealerLabelName: order.drDealerLabel, // 关系标签
+          province: order.province_dealerDebit, // 省份
+          city: order.city_dealerDebit, // 城市
+          county: order.county_dealerDebit, // 地区
+          address: order.address_dealerDebit, // 详细地址
         };
-        this.getcontactInfo();
-        this.workFlowInfoHandler();
-      })
-    },
-    // TODO 生成contactInfo对象
-    getcontactInfo(key = 'order') {
-      let orderInfo = this.orderInfo;
-      let order = orderInfo[key];
-      this.contactInfo = {
-        ...this.contactInfo,
-        creatorName: order.dealerDebitContactPersonName, // 客户名
-        dealerName: order.dealerName_dealerDebit, // 公司名
-        dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
-        dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
-        dealerCode: order.dealerDebit, // 客户编码
-        dealerLabelName: order.drDealerLabel, // 关系标签
-        province: order.province_dealerDebit, // 省份
-        city: order.city_dealerDebit, // 城市
-        county: order.county_dealerDebit, // 地区
-        address: order.address_dealerDebit, // 详细地址
-        payment: order.drDealerPaymentTerm, // 付款方式,
-        logistics : orderInfo.drDealerLogisticsTerms, //物料方式
-        pamentDays: order.daysOfAccount,
-      };
-    },
+      },
+      // TODO 判断往来是否展示预收款和预收到期日
+      judgeDealerConfig(configs) {
+        let flag = this.contactInfo.drDealerPaymentTerm.includes('预收');
+        let showList = ['advancePaymentDueDate', 'tdAmountCopy1'];
+        configs.forEach(item => {
+          // 判断是否为预收，是预收则展示预收款和预收到期日
+          if (flag && showList.includes(item.fieldCode)) {
+            item.hiddenInRun = false;
+          }
+        })
+      },
+    }
   }
-}
 </script>
 
 <style lang='scss' scoped>
-@import './../../scss/bizDetail';
+  @import './../../scss/bizDetail';
 </style>
