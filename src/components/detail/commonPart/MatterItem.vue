@@ -75,43 +75,38 @@
             <span class="matter_item_value">{{item.transObjCode || item.facilityObjCode || '无'}}</span>
           </div>
         </div>
-        <div class="matter_info_item">
+        <div class="matter_info_item" @click="clickMore">
           <div class="matter_detail">
             <span class="matter_item_title">其他：</span>
             <span class="matter_item_value">含税税金</span>
           </div>
           <i class="icon-more"></i>
         </div>
-        <div class="matter_info_item">
-          <span class="matter_no_tax">￥{{item.noTaxAmount | toFixed | numberComma}}</span>
-          <span class="matter_qty">x{{item.tdQty | toFixed}}</span>
+        <div class="matter_info_item" v-if="(item.noTaxAmount || item.noTaxAmount === 0) || item.tdQty">
+          <span class="matter_no_tax" v-if="(item.noTaxAmount || item.noTaxAmount === 0)">￥{{item.noTaxAmount | toFixed | numberComma}}</span>
+          <span class="matter_qty" v-if="item.tdQty">x{{item.tdQty | toFixed}}</span>
         </div>
-        <div class="matter_info_item">
+        <div class="matter_info_item" v-if="item.taxAmount">
           <span class="matter_tax">（含税费￥{{item.taxAmount | toFixed | numberComma}}）</span>
-          <span class="matter_total_wrapper">
+          <span class="matter_total_wrapper" v-if="item.tdAmount">
             合计：<span class="matter_total"><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
           </span>
         </div>
       </div>
     </div>
     <div class="matter-more-wrapper">
-      <div class="matter-more">
+      <div class="matter-more" @click="clickMore">
         <span>查看更多商品</span>
         <i class="icon-filter-down"></i>
       </div>
-    </div>
-
-    <div v-transfer-dom>
-      <popup height="80%" v-model="showPop">
-        111
-      </popup>
     </div>
   </div>
 </template>
 
 <script>
-  import {numberComma, Popup} from 'vux'
+  import {numberComma} from 'vux'
   import {toFixed} from '@/plugins/calc'
+  import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
 
   export default {
     name: "MatterItem",
@@ -123,13 +118,13 @@
         }
       },
     },
+    components: {
+      PopMatterDetail,
+    },
     data() {
       return {
-        showPop: false,
+        showPop: true,
       }
-    },
-    components: {
-      Popup,
     },
     methods: {
       //选择默认图片
@@ -140,6 +135,10 @@
         }
         return url
       },
+      // TODO 点击查看更多
+      clickMore() {
+        this.$emit('on-show-more', this.item);
+      },
     },
     filters: {
       numberComma,
@@ -149,157 +148,6 @@
 </script>
 
 <style scoped lang="scss">
-  /*.vux-1px-b:after {
-    border-color: #e8e8e8;
-  }
-
-  // 每个物料
-  .matter_item {
-    display: flex;
-    position: relative;
-    padding: .08rem 0;
-    box-sizing: border-box;
-    // 物料图片
-    .mater_img {
-      display: inline-block;
-      margin-top: .04rem;
-      width: .75rem;
-      height: .75rem;
-      > img {
-        width: 100%;
-        max-height: 100%;
-        border-radius: .04rem;
-      }
-    }
-    // 物料主体
-    .mater_main {
-      flex: 1;
-      margin-left: .1rem;
-      display: inline-block;
-      box-sizing: border-box;
-    }
-    // 物料名称
-    .mater_name {
-      color: #111;
-      overflow: hidden;
-      font-size: .14rem;
-      font-weight: bold;
-      max-height: .46rem;
-      display: -webkit-box;
-      word-break: break-all;
-      -webkit-line-clamp: 2;
-      text-overflow: ellipsis;
-      -webkit-box-orient: vertical;
-    }
-    // 物料信息
-    .mater_info {
-      color: #4a4a48;
-      font-size: .12rem;
-      // margin-top: .02rem;
-      // font-size: 0;
-      // 物料编码和规格
-      .info-item {
-
-        margin-right: .06rem;
-        .title, .num {
-          font-size: .1rem;
-          padding: .01rem .04rem;
-        }
-        .title {
-          color: #fff;
-          background: #3f72af;
-          border-top-left-radius: .12rem;
-          border-bottom-left-radius: .12rem;
-        }
-        .num {
-          color: #111;
-          max-width: .9rem;
-          overflow: hidden;
-          white-space: nowrap;
-          background: #dbe2ef;
-          text-overflow: ellipsis;
-          border-top-right-radius: .12rem;
-          border-bottom-right-radius: .12rem;
-        }
-        // 规格
-        &.mater_spec {
-          .title {
-            background: #537791;
-          }
-          .num {
-            color: #fff;
-            max-width: .6rem;
-            background: #ff7f50;
-          }
-        }
-      }
-    }
-    //物料价格，数量
-    .mater_other {
-      margin-top: .02rem;
-      // 类型
-      .mater_spec {
-        font-size: .14rem;
-      }
-      // 一般金额
-      .mater_price {
-        color: #ea5455;
-        font-weight: bold;
-        font-size: .16rem;
-        line-height: 0.2rem;
-        margin-top: .04rem;
-        display: inline-block;
-        .symbol {
-          font-size: .12rem;
-        }
-        .num {
-          font-size: .1rem;
-          color: #757575;
-        }
-      }
-      // 单价 数量 税率 等
-      .mater_attribute {
-        color: #3f72af;
-        font-size: 0.1rem;
-        word-break: keep-all;
-        span {
-          padding: 0 .04rem;
-          border-radius: .04rem;
-          background: #deecfc;
-        }
-        .num {
-          margin-right: 0.04rem;
-        }
-      }
-    }
-    .mater_other {
-      .mater_left {
-        color: #757575;
-        font-size: .1rem;
-        .units {
-          margin-right: .04rem;
-        }
-      }
-      .mater_num {
-        .num {
-          color: #111;
-          font-size: .12rem;
-          font-weight: bold;
-
-        }
-        .symbol {
-          color: #757575;
-        }
-        .num + .num {
-          margin-left: .04rem;
-        }
-        .units {
-          font-size: .1rem;
-        }
-      }
-    }
-  }*/
-
   .matter-item-container {
     padding: .15rem;
     color: #333;

@@ -24,29 +24,13 @@
         </div>
       </div>
     </div>
-    <div class="contact-other vux-1px-t">
+    <div class="contact-other vux-1px-t" v-if="configs.length">
       <div class="contact_other_wrapper" v-for="item in configs">
         <div class="contact_other_item">
           <span class="contact_other_title">{{item.fieldLabel}}：</span>
           <span class="contact_other_value">{{item.fieldValue || '暂无'}}</span>
         </div>
       </div>
-      <!--<div class="contact_other_wrapper">
-        <div class="contact_other_item">
-          <span class="contact_other_title">物流条款：</span>
-          <span class="contact_other_value">{{contactInfo.logistics}}</span>
-        </div>
-        <div class="contact_other_item">
-          <span class="contact_other_title">账期天数：</span>
-          <span class="contact_other_value">{{contactInfo.pamentDays || 0}}天</span>
-        </div>
-      </div>
-      <div class="contact_other_wrapper">
-        <div class="contact_other_item">
-          <span class="contact_other_title">账单到期日：</span>
-          <span class="contact_other_value">{{contactInfo.advancePaymentDueDate | dateFormat('YYYY-MM-DD HH:mm') || '暂无'}}</span>
-        </div>
-      </div>-->
     </div>
   </div>
 </template>
@@ -152,7 +136,9 @@
       }
       .contact_other_wrapper {
         display: flex;
-        margin-top: .12rem;
+        & + .contact_other_wrapper {
+          margin-top: .12rem;
+        }
       }
       .contact_other_item {
         flex: 1;

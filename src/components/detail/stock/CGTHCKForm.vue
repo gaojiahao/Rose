@@ -7,46 +7,30 @@
       </div> -->
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
-      <!-- 项目 -->
-      <project-part :project-info="orderInfo.outPut"></project-part>
       <!-- 用户地址和基本信息-->
-      <contact-part :contact-info="dealerInfo" :hasClass='false' :logistics="false" :payment="false"></contact-part>
+      <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
       <warehouse-content :warehouse-out="warehouse"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-       <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
-                     :taxAmount="taxAmount" :count="count">
+       <matter-list :order-list='orderList' @on-show-more="onShowMore">
           <template slot="orderTitle" slot-scope="props">
-            <span class="order_title">订单号</span>
-          </template>
-          <template slot="matterOther" slot-scope="{item}">
-            <div class='mater_other'>
-              <div class='mater_attribute'>
-                <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-                <span>退货数量: {{item.tdQty | toFixed}}</span>
-                <span>税率: {{item.taxRate}}</span>
-              </div>
-              <div class="mater_num">
-                <span class="num">可退货数量: {{item.thenQtyBal}}</span>
-                <span class="num">可用库存: {{item.thenQtyStock}}</span>
-              </div>
-              <div class='mater_price'>
-                <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-                <span class="num"
-                      :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                      v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                </span>
-              </div>
-            </div>
+            <span class="order_title">订单号：</span>
           </template>
        </matter-list>
+      <!-- 备注 -->
       <div class="comment-part">
-        <form-cell :isTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
+        <div class="comment-container">
+          <span class="comment_title">备注：</span>
+          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
+        </div>
+        <!-- 附件 -->
+        <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -159,8 +143,6 @@ export default {
           city: outPut.city_dealerDebit, // 城市
           county: outPut.county_dealerDebit, // 地区
           address: outPut.address_dealerDebit, // 详细地址
-          payment: outPut.drDealerPaymentTerm, // 付款方式
-          logistics: formData.drDealerLogisticsTerms,//物流方式
         };
         this.warehouse = {
           warehouseCode: outPut.containerCodeOut,
@@ -171,7 +153,10 @@ export default {
           warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
           warehouseAddress: outPut.warehouseAddress_containerCodeOut,
         };
-        this.orderInfo = formData;
+        this.orderInfo = {
+          ...formData,
+          ...outPut,
+        };
         this.workFlowInfoHandler();
       })
     }
@@ -181,26 +166,4 @@ export default {
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
-  .xsck-detail-container {
-    // 所属订单
-    .order_code {
-      display: flex;
-      color: #fff;
-      font-size: .12rem;
-      font-weight: bold;
-      > span {
-        display: inline-block;
-        padding: 0 .04rem;
-      }
-      .order_title {
-        background: #1160aa;
-      }
-      // 订单号
-      .order_num {
-        background: #9bb4da;
-        border-top-right-radius: .08rem;
-      }
-    }
-  }
 </style>

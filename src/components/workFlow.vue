@@ -10,7 +10,9 @@
     </div>
     <div class="work-flow-status-wrapper">
       <i class="icon-flow-time"></i>
-      <span>工作流已到{{currentStatus.nodeName}}，当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span></span>
+      <span class="work-flow-text">
+        工作流已到{{currentStatus.nodeName}}，当前状态：<span :class="[statusClass]">{{workFlowInfo.biStatus}}</span>
+      </span>
     </div>
     <div class="work-flow-time">{{currentStatus.startTime}}</div>
     <!-- <div class="work-flow-more" >
@@ -165,9 +167,9 @@
     /* 已生效、草稿为#333 */
     .work-flow-status-wrapper {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       margin-top: .15rem;
-      line-height: .14rem;
+      line-height: .16rem;
       font-size: .14rem;
       /* 进行中 */
       .doing {
@@ -181,6 +183,9 @@
     .icon-flow-time {
       @extend %icon;
       margin-right: .1rem;
+    }
+    .work-flow-text {
+      flex: 1;
     }
     .work-flow-time {
       margin-left: .26rem;

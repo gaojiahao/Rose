@@ -8,7 +8,7 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分-->
-      <contact-part :contact-info="contactInfo" :logistics="false" :payment="false"></contact-part>
+      <contact-part :contact-info="contactInfo" :configs="dealerConfig"></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
@@ -27,42 +27,23 @@
         </div>
       </div>
       <!-- 物料列表 -->
-      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
+      <matter-list :order-list="orderList" @on-show-more="onShowMore">
         <template slot="orderTitle" slot-scope="props">
-          <span class="order_title">入库单号</span>
-        </template>
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class="mater_attribute">
-              <span>入库日期: {{item.purchaseDay}}</span>
-            </div>
-            <div class='mater_attribute'>
-              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>本次收票数量: {{item.tdQty | toFixed}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-            </div>
-            <div class="mater_num">
-              <span class="num">入库数量: {{item.thenTotalQtyBal}}</span>
-              <span class="num">已收票数量: {{item.thenLockQty}}</span>
-              <span class="num">待收票数量: {{item.thenQtyBal}}</span>
-            </div>
-            <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-              <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                    v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                </span>
-            </div>
-          </div>
+          <span class="order_title">入库单号：</span>
         </template>
       </matter-list>
       <!-- 备注 -->
       <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
+        <div class="comment-container">
+          <span class="comment_title">备注：</span>
+          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
+        </div>
+        <!-- 附件 -->
+        <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -124,9 +105,10 @@
             });
             return;
           }
-          this.attachment = data.attachment;
+          let {attachment = [], formData = {}} = data;
+          let {order = {}} = formData;
           // 获取合计
-          let {dataSet} = data.formData.order;
+          let {dataSet} = formData.order;
           let count = 0;
           let orderList = {};
           for (let item of dataSet) {
@@ -140,28 +122,37 @@
             this.orderList = orderList;
             orderList[item.transMatchedCode].push(item);
           }
+
+          this.contactInfo = {
+            dealerName: order.dealerName_dealerCodeCredit, // 公司名
+            dealerMobilePhone: formData.dealerCreditContactInformation, // 手机
+            dealerContactPersonName: formData.dealerCreditContactPersonName,
+            dealerCode: order.dealerCodeCredit, // 客户编码
+            province: order.province_dealerCodeCreditt, // 省份
+            city: order.city_dealerCodeCreditt, // 城市
+            county: order.county_dealerCodeCredit, // 地区
+            address: order.address_dealerCodeCredit, // 详细地址
+          };
+          this.attachment = attachment;
           this.count = count;
-          data.formData.invoiceDate = dateFormat(data.formData.invoiceDate, 'YYYY-MM-DD');
-          this.orderInfo = data.formData;
-          this.getcontactInfo();
+          formData.invoiceDate = dateFormat(formData.invoiceDate, 'YYYY-MM-DD');
+          this.orderInfo = {
+            ...formData,
+            ...order,
+          };
           this.workFlowInfoHandler();
         })
       },
-      // TODO 生成contactInfo对象
-      getcontactInfo(key = 'order') {
-        let orderInfo = this.orderInfo;
-        let order = orderInfo[key];
-        this.contactInfo = {
-          ...this.contactInfo,
-          dealerName: order.dealerName_dealerCodeCredit, // 公司名
-          dealerMobilePhone: orderInfo.dealerCreditContactInformation, // 手机
-          dealerContactPersonName: orderInfo.dealerCreditContactPersonName,
-          dealerCode: order.dealerCodeCredit, // 客户编码
-          province: order.province_dealerCodeCreditt, // 省份
-          city: order.city_dealerCodeCreditt, // 城市
-          county: order.county_dealerCodeCredit, // 地区
-          address: order.address_dealerCodeCredit, // 详细地址
-        };
+      // TODO 判断往来是否展示预收款和预收到期日
+      judgeDealerConfig(configs) {
+        let flag = this.orderInfo.crDealerPaymentTerm.includes('账期');
+        let showList = ['pamentDays_dealerCodeCredit'];
+        configs.forEach(item => {
+          // 判断是否为账期，是账期则展示账期天数
+          if (showList.includes(item.fieldCode)) {
+            item.hiddenInRun = !flag;
+          }
+        })
       },
     }
   }

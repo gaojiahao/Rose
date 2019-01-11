@@ -8,46 +8,24 @@
       <!-- 经办信息 （订单、主体等） -->
       <basic-info :work-flow-info="workFlowInfo" :order-info="orderInfo"></basic-info>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="contactInfo">
-        <div class="other" slot="other">
-          <span class="title">日期期间: </span>
-          <span class="mode">{{orderInfo.duringDate || '暂无'}}</span>
-        </div>
-      </contact-part>
+      <contact-part :contact-info="contactInfo" :configs="dealerConfig"></contact-part>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderInfo.order.dataSet' :noTaxAmount="noTaxAmount"
-                   :taxAmount="taxAmount" :count="count">
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class='mater_attribute'>
-              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>数量: {{item.tdQty | toFixed}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-            </div>
-            <div class="mater_attribute" v-if="item.promDeliTime">
-              <span>预期交货日: {{item.promDeliTime}}</span>
-            </div>
-            <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-              <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                    v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                </span>
-            </div>
-          </div>
-        </template>
-      </matter-list>
+      <matter-list :matter-list='matterList' @on-show-more="onShowMore"></matter-list>
       <!-- 备注 -->
       <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
+        <div class="comment-container">
+          <span class="comment_title">备注：</span>
+          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
+        </div>
+        <!-- 附件 -->
+        <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
-      <!-- 上传附件 -->
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -109,8 +87,10 @@
             })
             return;
           }
+          let {formData = {}, attachment = []} = data;
+          let {order} = formData;
           // 获取合计
-          let {dataSet} = data.formData.order;
+          let {dataSet} = order;
           for (let val of dataSet) {
             // val.noTaxAmount = accMul(val.price, val.tdQty);
             // val.taxAmount = accMul(val.noTaxAmount, val.taxRate);
@@ -120,30 +100,29 @@
               ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
               : this.getDefaultImg();
           }
-          this.attachment = data.attachment;
-          this.orderInfo = data.formData;
-          this.getcontactInfo()
+
+          this.contactInfo = {
+            creatorName: order.dealerDebitContactPersonName, // 客户名
+            dealerName: order.dealerName_dealerDebit, // 公司名
+            dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
+            dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
+            dealerCode: order.dealerDebit, // 客户编码
+            dealerLabelName: order.drDealerLabel, // 关系标签
+            province: order.province_dealerDebit, // 省份
+            city: order.city_dealerDebit, // 城市
+            county: order.county_dealerDebit, // 地区
+            address: order.address_dealerDebit, // 详细地址
+            payment: order.drDealerPaymentTerm, // 付款方式,
+            logistics: formData.drDealerLogisticsTerms, //物料方式
+          };
+          this.matterList = order.dataSet;
+          this.attachment = attachment;
+          this.orderInfo = {
+            ...formData,
+            ...order,
+          };
           this.workFlowInfoHandler();
         })
-      },
-      // TODO 生成contactInfo对象
-      getcontactInfo(key = 'order') {
-        let orderInfo = this.orderInfo;
-        let order = orderInfo[key];
-        this.contactInfo = {
-          creatorName: order.dealerDebitContactPersonName, // 客户名
-          dealerName: order.dealerName_dealerDebit, // 公司名
-          dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
-          dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
-          dealerCode: order.dealerDebit, // 客户编码
-          dealerLabelName: order.drDealerLabel, // 关系标签
-          province: order.province_dealerDebit, // 省份
-          city: order.city_dealerDebit, // 城市
-          county: order.county_dealerDebit, // 地区
-          address: order.address_dealerDebit, // 详细地址
-          payment: order.drDealerPaymentTerm, // 付款方式,
-          logistics: orderInfo.drDealerLogisticsTerms, //物料方式
-        };
       },
     }
   }
@@ -151,22 +130,4 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-
-  .xsddyc-detail-container {
-    /deep/ .contacts_part {
-      .other_content {
-        padding-bottom: 0;
-      }
-    }
-    .other {
-      padding-bottom: .06rem;
-      .title {
-        font-weight: bold;
-        font-size: .14rem;
-      }
-      .mode {
-        color: #454545;
-      }
-    }
-  }
 </style>
