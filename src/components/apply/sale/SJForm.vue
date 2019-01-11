@@ -16,35 +16,83 @@
               <div class="userInp_mode">
                 <div class="title">商机明细</div>
                 <group class="SJ_group" @group-title-margin-top="0">
+                  <div v-for="(item, index) in otherConfig" :key="index">
+                    <!-- 输入框，文字 -->
+                    <template v-if="item.xtype === 'r2Textfield'">
+                        <x-input text-align='right' v-model="formData[item.fieldCode]"
+                            placeholder='请填写' class="vux-1px-b">
+                          <template slot="label">
+                            <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                          </template>
+                        </x-input>
+                    </template>
+                     <!-- 输入框，数字 -->
+                    <template v-if="item.xtype === 'r2Permilfield'">
+                        <x-input type="number" text-align='right' v-model.number="formData[item.fieldCode]"
+                            placeholder='请填写' class="vux-1px-b" @blur="checkAmt">
+                          <template slot="label">
+                            <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                          </template>
+                        </x-input>
+                    </template>
+                    <!-- 下拉框 -->
+                    <template v-if="item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector'">
+                      <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
+                                     v-model="formData.salesPerson" v-if="item.fieldCode === 'salesPerson'"></pop-salesman-list>
+                      <popup-picker  :data="item.remoteData" v-model="formData[item.fieldCode]"
+                                  placeholder="请选择" :columns="1" class="vux-1px-t" v-else>
+                        <template slot="title">
+                          <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                        </template>
+                      </popup-picker>
+                    </template>
+                    <!-- 文本框 -->
+                    <template v-if="item.xtype === 'r2TextArea'">
+                      <x-textarea v-model="formData[item.fieldCode]" :max="200" class="vux-1px-b">
+                        <template slot="label">
+                          <span :class="{required : !item.allowBlank}" style="margin-right: .1rem;">{{item.fieldLabel}}</span>
+                        </template>
+                      </x-textarea>
+                    </template>
+                    <!-- 日期 -->
+                    <template v-if="item.xtype === 'r2Datefield'">
+                     <datetime v-model="formData[item.fieldCode]">
+                       <template slot="title">
+                          <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                        </template>
+                     </datetime>
+                    </template>
+
+                  </div>
                   <!-- 商机标题 -->
-                  <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
+                  <!-- <x-input title="商机标题" text-align='right' v-model="formData.opportunityTitle"
                            placeholder='请填写'>
                     <template slot="label">
                       <span class='required'>商机标题
                       </span>
                     </template>
-                  </x-input>
+                  </x-input> -->
                   <!-- 预期销售额 -->
-                  <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
+                  <!-- <x-input title="预期销售额" type="number" text-align='right' placeholder='请填写'
                            @on-blur="checkAmt" v-model.number="formData.tdAmount">
                     <template slot="label">
                       <span class='required'>预期销售额
                       </span>
                     </template>
-                  </x-input>
+                  </x-input> -->
                   <!-- 当前阶段 -->
                   <!-- <popup-radio title="流程状态" placeholder='请选择' :options="currentStage" v-model="formData.biProcessStatus">
                   </popup-radio> -->
                   <!-- 有效期 -->
-                  <datetime v-model="formData.validUntil" placeholder='请选择日期' title="有效期至"></datetime>
+                  <!-- <datetime v-model="formData.validUntil" placeholder='请选择日期' title="有效期至"></datetime> -->
                   <!-- 销售人员popup, 销售渠道popup -->
-                  <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
+                  <!-- <pop-salesman-list title="销售人员" dealer-label-name="员工" :value="formData.salesPerson"
                                      v-model="formData.salesPerson"></pop-salesman-list>
                   <pop-salesman-list title="销售渠道" dealer-label-name="渠道商" :value="formData.salesChannels"
                                      v-model="formData.salesChannels"></pop-salesman-list>
                   <popup-picker title="分类标签" :data="currentType" v-model="categoryLabels"
                                 placeholder="请选择" ></popup-picker>
-                  <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea>
+                  <x-textarea title="商机内容" v-model="formData.comment" :max="200"></x-textarea> -->
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
               </div>
@@ -102,7 +150,7 @@
           biProcessStatus: '', // 与PC端一致
           validUntil: '',
           salesPerson: '', // 销售人员
-          salesChannels: '', // 销售渠道
+          salesChannels: [], // 销售渠道
           categoryLabels: [],
           biComment: ''
         },
@@ -154,6 +202,17 @@
           warn = '请选择客户';
         }
         if (!warn) {
+          this.otherConfig.every(item => {
+            if (!item.allowBlank && !this.formData[item.fieldCode]) {
+              warn = item.message;
+              return false;
+            }
+            else if (!item.allowBlank && this.formData[item.fieldCode] < 0) {
+              warn = '抱歉，销售额不允许为负数';
+              return false;
+            }
+            return true
+          })
           validateMap.every(item => {
             if (!this.formData[item.key]) {
               warn = item.message;
@@ -179,10 +238,12 @@
           onConfirm: () => {
             this.$HandleLoad.show();
             let operation = saveAndStartWf;
-            this.formData.categoryLabels = this.categoryLabels[0];
+            // this.formData.categoryLabels = this.categoryLabels[0];
             let formData = {
               creator: this.formData.handler,
               ...this.formData,
+              salesChannels: this.formData.salesChannels, // 销售渠道
+              categoryLabels: this.formData.categoryLabels,
               modifer: this.formData.handler,
               handlerEntity: this.entity.dealerName,
             };
@@ -272,6 +333,8 @@
             biComment: formData.biComment,
             biId: formData.biId,
             biProcessStatus: formData.biProcessStatus,
+            categoryLabels: [formData.categoryLabels],
+            salesChannels: [formData.salesChannels],
             creator: formData.creator,
             modifer: formData.modifer,
             validUntil: dateFormat(formData.validUntil, 'YYYY-MM-DD'),
@@ -337,14 +400,14 @@
   .sj-apply-container {
     .SJ_group {
 
-      /deep/ > .vux-label {
+      /deep/ .vux-label {
         color: #5077aa;
         font-weight: bold;
       }
-      /deep/ > .vux-no-group-title {
+      /deep/ .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/> .weui-cells {
+      /deep/ .weui-cells {
         font-size: .16rem;
         .vux-tap-active {
           .vux-label {
@@ -353,21 +416,20 @@
           }
         }
         &:after {
-          border-bottom: none;
+          // border-bottom: none;
         }
       }
       .vux-cell-box {
         &:before{
           left: 0;
         }
-        /deep/ >.weui-cell {
+        /deep/ .weui-cell {
           padding: 10px 0;
         }
       }
     }
     .weui-cell {
       padding: 10px 0;
-
       &:before {
         left: 0;
       }

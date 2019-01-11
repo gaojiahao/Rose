@@ -15,8 +15,8 @@
         </div>
         <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info">
-        <div v-if="item.fieldCode !== 'staffDealerCode' && item.fieldCode !== 'warehouseProvince'">
+      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info" v-if="!item.hiddenInRun">
+        <div v-if="item.fieldCode !== 'warehouseProvince'" >
           <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]"
                  v-model="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]" :required='!item.allowBlank' 
                 v-if="item.xtype === 'r2Combo'" class="r-picker">
@@ -37,15 +37,15 @@
                       :show.sync="showAddress" v-show="false"></x-address>
           </div>
         </template>
-        <template v-else>
+        <!-- <template v-else>
           <div class='each_property vux-1px-b' @click="showPop = true" v-show="typeSub !== 'noMatched'">
-            <label>{{typeSubMap[typeSub].title}}</label>
+            <label>{{item.fieldLabel}}</label>
             <div class='picker'>
-                <span class='mater_nature'>{{typeSubMap[typeSub].value}}</span>
+                <span class='mater_nature'>{{warehouse[item.fieldCode]}}</span>
                 <span class='iconfont icon-gengduo'></span>
             </div>
           </div>
-        </template>
+        </template> -->
       </div>
       <!-- 重复项 -->
       <div v-for="(item, index) in warehouseDuplicateConfig" :key="`${item.name}+${index}`">
@@ -83,9 +83,9 @@
       </div>
     </r-scroll>
     <!--员工，组织，客户等的pop-->
-    <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
+    <!-- <pop-warelabe-list :show="showPop" :data="typeSubMap[typeSub].list" v-model="showPop"
                         :defaultValue="typeSubMap[typeSub].value" @sel-group="selGroup" @list-search="getTypeSubList">
-    </pop-warelabe-list>
+    </pop-warelabe-list> -->
     <div class='vux-1px-t btn '>
       <div class="cfm_btn" @click="save">{{this.transCode ? '保存' : '提交'}}</div>
     </div>
@@ -101,6 +101,7 @@
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
   import PopWarelabeList from 'components/Popup/PopWarelabelList'
+import { resolve } from 'path';
   export default {
     data() {
       return {
@@ -181,16 +182,24 @@
             list: [],
           },
         },
-        typeSub: 'group',
+        // typeSub: 'group',
+        typeSub: 'groupCode',
         typeSubValue: '',
         typeToSubMap: {
-          '配送中心仓': 'group',
-          '加工商仓': 'processors',
-          '加工车间仓': 'group',
-          '客户仓': 'customer',
-          '渠道商仓': 'channel',
-          '个人仓': 'staff',
-          '一般部门仓': 'group',
+          // '配送中心仓': 'group',
+          // '加工商仓': 'processors',
+          // '加工车间仓': 'group',
+          // '客户仓': 'customer',
+          // '渠道商仓': 'channel',
+          // '个人仓': 'staff',
+          // '一般部门仓': 'group',
+          '配送中心仓': 'groupCode',
+          '加工商仓': 'processorsDealerCode',
+          '加工车间仓': 'groupCode',
+          '客户仓': 'customerDealerCode',
+          '渠道商仓': 'channelDealerCode',
+          '个人仓': 'staffDealerCode',
+          '一般部门仓': 'groupCode',
         },
         warehouseConfig: [], // 仓库基本信息的配置
         warehouseDuplicateConfig: [], // 物料重复项的配置
@@ -224,21 +233,32 @@
     },
     watch: {
       warehouseType(val){
-        console.log(this.hasDefault)
         if (this.hasDefault) {
           return
         }
         // 清空之前的选中值
-        this.typeSubMap[this.typeSub].value = '';
-        this.typeSubMap[this.typeSub].list = [];
+        // this.typeSubMap[this.typeSub].value = '';
+        // this.typeSubMap[this.typeSub].list = [];
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
+        for(let item of this.warehouseConfig){
+          if(item.fieldCode === this.typeSub){
+            item.hiddenInRun = false;
+          }
+          else{
+            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+                item.hiddenInRun = true
+              }
+            
+          }
+        }
         if(this.typeSub === 'noMatched') {
           if(this.warehouseType === '库位')
           delete this.warehouseDuplicateData.warehouseRel
           return
         }
         this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
-        this.getTypeSubList();
+        // this.getTypeSubList();
       },
       // 监听库位数组变化，选择库位名称后，自动带出库位编码
       warehouseRel: {
@@ -479,6 +499,7 @@
         this.submit()
       },
       selGroup(val){
+        this.warehouse[this.typeSub] = val;
         this.typeSubMap[this.typeSub].value = val;
       },
       // TODO 获取仓库类型关联子项下拉列表
@@ -536,9 +557,10 @@
             break;
         }
       },
-      handlerParams(item) {
-        let url = item.dataSource.data.url;
-        let params = item.dataSource.data.params;
+      // 处理配置中的接口请求
+      handlerParams(sItem) {
+        let url = sItem.dataSource.data.url;
+        let params = sItem.dataSource.data.params;
         let keys = Object.keys(params);
         let requestParams = {
           url,
@@ -550,23 +572,41 @@
           })
           requestParams.data = data;
         }
-        return requestParams
+        requestData(requestParams).then((data) => {
+          if(data.tableContent){
+            data.tableContent.forEach(item => {
+              item.name = item[sItem.displayField];
+              item.value = item[sItem.displayField];
+            })
+            this.$set(sItem, 'remoteData', data.tableContent)
+          }
+          else{
+            data.forEach(item => {
+              item.name = item[sItem.displayField];
+              item.value = item[sItem.displayField];
+            })
+            this.$set(sItem, 'remoteData', data)
+          }
+        })
       },
       // 请求应用的viewId
       getFormViews() {
         return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
           for(let item of data){
+            if(this.transCode && item.viewType === 'revise'){
+              this.viewId = item.uniqueId;
+              return
+            }
             if(item.viewType === 'submit'){
               this.viewId = item.uniqueId;
-              break;
             }
           }
         })
       },
       // 获取表单配置
       getFormConfig(){
-        getFormConfig(this.viewId).then(({config = []}) => {
-          // console.log(config);
+        return getFormConfig(this.viewId).then(({config = []}) => {
+          console.log(config);
           let warehouseConfig = [], warehouseMultipleConfig = [];
           config.forEach(item => {
             if(!item.isMultiple) {
@@ -580,35 +620,14 @@
           })
           // 仓库基本信息配置的处理
           warehouseConfig.forEach(item =>{
-            // 默认显示员工，（渠道商，组织等隐藏）
-            if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-              item.hiddenInRun = true
-            }
             if(!item.hiddenInRun){
               //下拉框的数据请求
               if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
                 if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-                  requestData(this.handlerParams(item)).then(data => {
-                    if(data.tableContent){
-                      data.tableContent.forEach(item => {
-                        item.value = item.name;
-                      })
-                      if(item.fieldCode === 'warehouseType'){
-                        if(!this.$route.query.transCode){
-                          this.warehouse.warehouseType  = this.$route.query.warehouseType ? this.$route.query.warehouseType : data.tableContent[0].value;
-                        }
-                      }
-                      this.$set(item, 'remoteData', data.tableContent)
-                    }
-                    else{
-                      data.forEach(item => {
-                        item.value = item.name;
-                      })
-                      this.$set(item, 'remoteData', data)
-                    }
-                    
-                  })
+                   this.handlerParams(item)
+                }
+                else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+                  this.$set(item, 'remoteData', item.dataSource.data)
                 }
               }
               // 在渲染的配置中添加字段
@@ -616,6 +635,11 @@
                 && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
                 this.warehouseConfig.push(item);
               }
+            }
+            // 默认显示员工，（渠道商，组织等隐藏）
+            if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+              item.hiddenInRun = true
             }
           })
           // 仓库重复项
@@ -629,25 +653,7 @@
             item.items.forEach((sItem, sIndex) => {
               if(!sItem.hidden){
                 if((sItem.editorType === 'r2Combo' || sItem.editorType === 'r2Selector') && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
-                  requestData(this.handlerParams(sItem)).then((data) => {
-                    if(data.tableContent){
-                      data.tableContent.forEach(item => {
-                        if(item.warehosueName){
-                          item.value = item.warehosueName;
-                          item.name = item.warehosueName;
-                          return
-                        }
-                        item.value = item.name;
-                      })
-                      this.$set(sItem, 'remoteData', data.tableContent)
-                    }
-                    else{
-                      data.forEach(item => {
-                        item.value = item.name;
-                      })
-                      this.$set(sItem, 'remoteData', data)
-                    }
-                  })
+                  this.handlerParams(sItem)
                 }
                 arr.push(sItem)
               }

@@ -478,7 +478,7 @@ export default {
   },
   created() {
     register(); // 注册wx-js-sdk
-    this.applyCode = this.$route.params.code;
+    this.applyCode = this.$route.query.listId;
     let { name, transCode } = this.$route.query;
     this.getAppDetail();
     this.getData(false).then(() => {

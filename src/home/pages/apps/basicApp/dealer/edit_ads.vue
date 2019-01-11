@@ -664,9 +664,9 @@ export default {
     deleteMoreUnit(item) {
       this.dealerDuplicateData[item.name].pop()
     },
-    handlerParams(item) {
-      let url = item.dataSource.data.url;
-      let params = item.dataSource.data.params;
+    handlerParams(sItem) {
+      let url = sItem.dataSource.data.url;
+      let params = sItem.dataSource.data.params;
       let keys = Object.keys(params);
       let requestParams = {
         url,
@@ -678,22 +678,42 @@ export default {
         })
         requestParams.data = data;
       }
-      return requestParams
+      sItem.requestParams = requestParams;
+      requestData(requestParams).then((data) => {
+        if(data.tableContent){
+          data.tableContent.forEach(item => {
+            item.name = item[sItem.displayField];
+            item.value = item[sItem.displayField];
+          })
+          this.$set(sItem, 'remoteData', data.tableContent)
+        }
+        else{
+          data.forEach(item => {
+            item.name = item[sItem.displayField];
+            item.value = item[sItem.displayField];
+          })
+          this.$set(sItem, 'remoteData', data)
+        }
+      })
+      // return requestParams
     },
     // 请求应用的viewId
     getFormViews() {
       return getFormViews('c0375170-d537-4f23-8ed0-a79cf75f5b04').then(data => {
         for(let item of data){
+          if(this.transCode && item.viewType === 'revise'){
+            this.viewId = item.uniqueId;
+            return
+          }
           if(item.viewType === 'submit'){
             this.viewId = item.uniqueId;
-            break;
           }
         }
       })
     },
     // 获取表单配置
     getFormConfig(){
-      getFormConfig(this.viewId).then(({config = []}) => {
+      return getFormConfig(this.viewId).then(({config = []}) => {
         console.log(config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
@@ -712,22 +732,7 @@ export default {
             //下拉框的数据请求
             if(item.fieldCode !== 'province' && item.fieldCode !== 'city' && item.fieldCode !== 'county' &&  item.fieldCode !=='dealerLabelName'){
               if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
-                requestData(this.handlerParams(item)).then(data => {
-                  if(data.tableContent){
-                    data.tableContent.forEach(item => {
-                      item.value = item.name;
-                    })
-
-                    this.$set(item, 'remoteData', data.tableContent)
-                  }
-                  else{
-                    data.forEach(item => {
-                      item.value = item.name;
-                    })
-                    this.$set(item, 'remoteData', data)
-                  }
-                  
-                })
+                this.handlerParams(item)
               }
             }
             // 在渲染的配置中添加字段
@@ -753,21 +758,7 @@ export default {
             if(!sItem.hidden){
               // 数据请求
               if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
-                sItem.requestParams = this.handlerParams(sItem);
-                requestData(this.handlerParams(sItem)).then((data) => {
-                  if(data.tableContent){
-                    data.tableContent.forEach(item => {
-                      item.value = item.name;
-                    })
-                    this.$set(sItem, 'remoteData', data.tableContent)
-                  }
-                  else{
-                    data.forEach(item => {
-                      item.value = item.name;
-                    })
-                    this.$set(sItem, 'remoteData', data)
-                  }
-                })
+                this.handlerParams(sItem)
               }
               arr.push(sItem)
             }

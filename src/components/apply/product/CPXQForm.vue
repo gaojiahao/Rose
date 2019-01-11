@@ -14,7 +14,39 @@
               <div class="userInp_mode">
                 <div class="title">需求信息</div>
                 <group class="XQ_group" @group-title-margin-top="0">
-                  <x-input title="标题" text-align='right' v-model="formData.demandTitle"
+                  <div v-for="(item, index) in otherConfig" :key="index">
+                    <template v-if="item.xtype === 'r2Textfield'">
+                        <x-input text-align='right' v-model="formData[item.fieldCode]"
+                            placeholder='请填写' class="vux-1px-b">
+                          <template slot="label">
+                            <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                          </template>
+                        </x-input>
+                    </template>
+                    <template v-if="item.xtype === 'r2Combo'">
+                      <popup-picker  :data="item.remoteData" v-model="formData[item.fieldCode]"
+                                  placeholder="请选择" :columns="1">
+                        <template slot="title">
+                          <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                        </template>
+                      </popup-picker>
+                    </template>
+                    <template v-if="item.xtype === 'r2TextArea'">
+                      <x-textarea v-model="formData[item.fieldCode]" :max="200" class="vux-1px-b">
+                        <template slot="label">
+                          <span :class="{required : !item.allowBlank}" style="display: block; width: 3em;">{{item.fieldLabel}}</span>
+                        </template>
+                      </x-textarea>
+                    </template>
+                    <template v-if="item.xtype === 'r2Datefield'">
+                     <datetime v-model="formData[item.fieldCode]">
+                       <template slot="title">
+                          <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                        </template>
+                     </datetime>
+                    </template>
+                 </div>
+                  <!-- <x-input title="标题" text-align='right' v-model="formData.demandTitle"
                            placeholder='请填写'>
                     <template slot="label">
                       <span class='required'>标题
@@ -25,7 +57,7 @@
                     <template slot="label">
                       <label class="required" style="width: 3em; display: block;">描述</label>
                     </template>
-                  </x-textarea>
+                  </x-textarea> -->
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
               </div>
@@ -43,7 +75,7 @@
 
 <script>
   // vux 引入
-  import { Group, Popup, XInput, XTextarea } from 'vux'
+  import { Group, Popup, XInput, XTextarea, Datetime } from 'vux'
   import RPicker from 'components/RPicker';
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import PopDealerList from 'components/Popup/PopDealerList'
@@ -78,7 +110,7 @@
     },
     mixins: [ApplyCommon],
     components: {
-      Group, XInput, XTextarea,
+      Group, XInput, XTextarea, Datetime ,
       RPicker, PopBaseinfo, PopDealerList
     },
     methods: {
@@ -103,13 +135,16 @@
           }
         }
         let warn = '';
-        !warn && Object.entries(requiredMap).every(([key, msg]) => {
-          if (!this.formData[key]) {
-            warn = `${msg}不能为空`;
-            return false;
+        if(!this.dealerInfo.dealerCode){
+          warn = '请选择客户'
+        }
+        !warn && this.otherConfig.every(item => {
+          if(!item.allowBlank && (!this.formData[item.fieldCode] || !this.formData[item.fieldCode].length)) {
+              warn = `${item.fieldLabel}不能为空`;
+              return false;
           }
           return true;
-        });
+        })
         if (warn) {
           this.$vux.alert.show({
             content: warn,

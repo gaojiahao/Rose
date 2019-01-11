@@ -283,7 +283,7 @@
           if(item.fieldCode === 'inventorySubclass') {
             Object.keys(item.requestParams.data).forEach(key => {
               if(key === 'parentId') {
-                item.requestParams.data[key] = TypeParentId
+                item.requestParams.data[key] = subTypeParentId
               }
               else if(key === 'value') {
                 item.requestParams.data[key] = value
@@ -601,7 +601,30 @@
           })
           requestParams.data = data;
         }
-        return requestParams
+        item.requestParams = requestParams;
+        requestData(requestParams).then(data => {
+          if(data.tableContent){
+            data.tableContent.forEach(dItem => {
+              dItem.value = dItem[item.displayField];
+              dItem.name = dItem[item.displayField];
+            })
+            if(item.fieldCode === 'processing'){
+              if(!this.$route.query.transCode){
+                this.inventory.processing  = this.$route.query.matterType ? this.$route.query.matterType : '';
+              }
+            }
+            this.$set(item, 'remoteData', data.tableContent)
+          }
+          else{
+            data.forEach(dItem => {
+              dItem.value = dItem[item.displayField];
+              dItem.name = dItem[item.displayField];
+            })
+            this.$set(item, 'remoteData', data)
+          }
+          
+        })
+        // return requestParams
       },
       // 请求应用的viewId
       getFormViews() {
@@ -619,7 +642,7 @@
       },
       // 获取表单配置
       getFormConfig(){
-        getFormConfig(this.viewId).then(({config = []}) => {
+        return getFormConfig(this.viewId).then(({config = []}) => {
           // console.log(config);
           let matterConfig = [], matterDuplicateConfig = [];
           config.forEach(item => {
@@ -637,32 +660,7 @@
             if(!item.hiddenInRun){
               //下拉框的数据请求
               if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
-                item.requestParams = this.handlerParams(item);
-                requestData(this.handlerParams(item)).then(data => {
-                  if(data.tableContent){
-                    data.tableContent.forEach(item => {
-                      if(item.technicsName) {
-                        item.value = item.technicsName;
-                        item.name = item.technicsName;
-                        return
-                      }
-                      item.value = item.name;
-                    })
-                    if(item.fieldCode === 'processing'){
-                      if(!this.$route.query.transCode){
-                        this.inventory.processing  = this.$route.query.matterType ? this.$route.query.matterType : '';
-                      }
-                    }
-                    this.$set(item, 'remoteData', data.tableContent)
-                  }
-                  else{
-                    data.forEach(item => {
-                      item.value = item.name;
-                    })
-                    this.$set(item, 'remoteData', data)
-                  }
-                  
-                })
+                this.handlerParams(item)
               }
               // 在渲染的配置中添加字段
               if(item.fieldCode !== 'inventoryCode' && item.fieldCode !== 'inventoryName' && item.fieldCode !== 'inventoryPic'){
@@ -688,20 +686,7 @@
             item.items.forEach((sItem, sIndex) => {
               if(!sItem.hidden){
                 if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
-                  requestData(this.handlerParams(sItem)).then((data) => {
-                    if(data.tableContent){
-                      data.tableContent.forEach(item => {
-                        item.value = item.name;
-                      })
-                      this.$set(sItem, 'remoteData', data.tableContent)
-                    }
-                    else{
-                      data.forEach(item => {
-                        item.value = item.name;
-                      })
-                      this.$set(sItem, 'remoteData', data)
-                    }
-                  })
+                  this.handlerParams(sItem)
                 }
               }
             })
@@ -739,8 +724,9 @@
       (async() => {
         this.getBaseInfoData();
         await this.getFormViews();
-        await this.getFormConfig();
-        this.$loading.hide();
+        await this.getFormConfig().then(() =>{
+          this.$loading.hide();
+        });
       })() 
     },
     beforeRouteEnter(to, from, next) {
