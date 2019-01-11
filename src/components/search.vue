@@ -2,7 +2,7 @@
   <div class='search'>
     <form class="search_part" :class="{'has-filter': filterList.length}" action=""
           @submit.prevent="searchMat(srhInpTx)">
-      <i class="icon-search serach_icon"></i>
+      <i class="icon icon-search"></i>
       <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
             @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
       <div class="pop_cfm" v-if='isFill'
@@ -149,7 +149,7 @@
         color: #fc3c3c;
       }
       // 搜索icon
-      .serach_icon {
+      .icon {
         top: 50%;
         z-index: 1;
         left: .25rem;
@@ -162,7 +162,6 @@
       // 清除icon
       .clear_icon {
         top: 50%;
-        z-index: 100;
         right: .64rem;
         width: .18rem;
         height: .18rem;
