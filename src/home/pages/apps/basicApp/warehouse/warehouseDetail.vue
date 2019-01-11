@@ -44,7 +44,7 @@
         </div>
         <div class='each_property vux-1px-b'>
           <label>创建时间:</label>
-          <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+          <div class='property_val'>{{baseinfo.crtTime | changeDate(true)}}</div>
         </div>
         <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
           <label>修改者:</label>
@@ -52,7 +52,7 @@
         </div>
         <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
           <label>修改时间:</label>
-          <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+          <div class='property_val'>{{baseinfo.modTime | changeDate(true)}}</div>
         </div>
       </div>
     </r-scroll>
@@ -68,7 +68,20 @@ import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 
 import RScroll from 'components/RScroll'
 export default {
   filters: {
-    dateFormat
+    dateFormat,
+    changeDate(d, hasSecond = false) {
+      if (!d) {
+        return '';
+      }
+      if (typeof d === 'string') {
+        d = d.replace(/-/g, '/').replace(/\..*/g, '');
+      }
+      let fmt = 'YYYY-MM-DD';
+      if (hasSecond) {
+        fmt = 'YYYY-MM-DD HH:mm:ss';
+      }
+      return dateFormat(d, fmt)
+    },
   },
   data() {
     return {

@@ -35,7 +35,7 @@
         </div>
         <div class='each_property vux-1px-b'>
           <label>创建时间:</label>
-          <div class='property_val'>{{baseinfo.crtTime | dateFormat}}</div>
+          <div class='property_val'>{{baseinfo.crtTime | changeDate(true)}}</div>
         </div>
         <div class='each_property vux-1px-b' v-if="baseinfo.modiferName">
           <label>修改者:</label>
@@ -43,44 +43,9 @@
         </div>
         <div class='each_property vux-1px-b' v-if="baseinfo.modTime">
           <label>修改时间:</label>
-          <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
+          <div class='property_val'>{{baseinfo.modTime | changeDate(true)}}</div>
         </div>
       </div>
-      <!-- 物料图片展示区域 -->
-      <!-- <div class="d_top">
-        <div class="mater_info">
-          <img class="avatar" :src="inventory.inventoryPic" alt="materImg" @error="getDefaultImg">
-          <span class="mater_name">{{inventory.inventoryName}}</span>
-          <div class="mater_status_part">
-            <span class="mater_code">{{inventory.inventoryCode}}</span>
-            <span class="mater_status" :class="inventory.statusClass">{{inventory.status}}</span>
-          </div>
-        </div>
-      </div>
-      <div class="d_main">
-        <form-cell cellTitle="创建者" :cellContent="baseinfo.creatorName" :showTopBorder="false"></form-cell>
-        <form-cell cellTitle="创建时间" :cellContent="baseinfo.crtTime | dateFormat"></form-cell>
-        <form-cell v-if="baseinfo.modiferName" cellTitle="修改者" :cellContent="baseinfo.modiferName"></form-cell>
-        <form-cell v-if="baseinfo.modTime" cellTitle="修改时间" :cellContent="baseinfo.modTime | dateFormat"></form-cell>
-      </div> -->
-      <!-- 物料基本信息展示区域 -->
-      <!-- <div class="d_main">
-        <div class='title vux-1px-b'>基本信息</div>
-        <div class='content'>
-          <form-cell v-for="(item, index) in matterConfig" :key="index"
-            :cellTitle="item.fieldLabel" :cellContent="inventory[item.fieldCode]" :showTopBorder="index === 0 ? false : true">
-          </form-cell>
-        </div>
-      </div> -->
-      <!-- 辅计单位-->
-      <!-- <div class="d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-        <div class='title vux-1px-b'>{{cItem.title}}</div>
-        <div class='content' :class="{'show_border' : index < formData[cItem.name].length-1 }" v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-          <form-cell :cellTitle='sItem.text' :cellContent="item[sItem.fieldCode]"  :showTopBorder="sIndex > 0"
-                v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
-          </form-cell>
-        </div>
-      </div> -->
     </r-scroll>
     <!-- 修改按钮 -->
     <div class="modify_icon" @click="goEdit">
@@ -98,7 +63,20 @@ import RScroll from 'components/RScroll'
 export default {
   name: 'materDetail',
   filters: {
-    dateFormat
+    dateFormat,
+    changeDate(d, hasSecond = false) {
+      if (!d) {
+        return '';
+      }
+      if (typeof d === 'string') {
+        d = d.replace(/-/g, '/').replace(/\..*/g, '');
+      }
+      let fmt = 'YYYY-MM-DD';
+      if (hasSecond) {
+        fmt = 'YYYY-MM-DD HH:mm:ss';
+      }
+      return dateFormat(d, fmt)
+    },
   },
   data() {
     return {

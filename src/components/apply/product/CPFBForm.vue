@@ -14,20 +14,31 @@
               <div class="userInp_mode">
                 <div class="title">发布信息</div>
                 <group class="CP_group" @group-title-margin-top="0">
-                  <x-input title="标题" text-align='right' v-model="formData.launchTitle"
-                           placeholder='请填写'>
-                    <template slot="label">
-                      <span class='required'>标题
-                      </span>
-                    </template>
-                  </x-input>
-                  <popup-picker title="类型" :data="launchTypeList" v-model="selectedType"
-                                placeholder="请选择" @on-change='isSelectType'>
-                    <template slot="title">
-                      <span class="required">类型</span>
-                    </template>
-                  </popup-picker>
-                  <x-textarea title="描述" v-model="formData.launchDescribe" :max="200"></x-textarea>
+                 <div v-for="(item, index) in otherConfig" :key="index">
+                   <template v-if="item.xtype === 'r2Textfield'">
+                      <x-input text-align='right' v-model="formData[item.fieldCode]"
+                           placeholder='请填写' class="vux-1px-b">
+                        <template slot="label">
+                          <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                        </template>
+                      </x-input>
+                   </template>
+                   <template v-if="item.xtype === 'r2Combo'">
+                     <popup-picker  :data="item.remoteData" v-model="formData[item.fieldCode]"
+                                placeholder="请选择" :columns="1">
+                      <template slot="title">
+                        <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+                      </template>
+                    </popup-picker>
+                   </template>
+                   <template v-if="item.xtype === 'r2TextArea'">
+                     <x-textarea v-model="formData[item.fieldCode]" :max="200" class="vux-1px-b">
+                       <template slot="label">
+                          <span :class="{required : !item.allowBlank}" style="display: block; width: 3em;">{{item.fieldLabel}}</span>
+                        </template>
+                     </x-textarea>
+                   </template>
+                 </div>
                   <x-textarea title="备注" v-model="formData.biComment" :max="100"></x-textarea>
                 </group>
               </div>
@@ -70,15 +81,12 @@
         formData: {
           biId: '',
           biComment: '', // 备注
-          launchType: '', // 类型
+          launchType: [], // 类型
           launchTitle: '', // 标题
           launchDescribe: '', // 描述
           biProcessStatus: '', // 流程状态
         },
         biReferenceId: '',
-        typeList: [],
-        selectedType: [],
-        launchTypeList: [],
         dealerInfo: {},
         contactInfo: {},
         uploadStyle : {},
@@ -99,10 +107,6 @@
         this.dealerInfo = JSON.parse(val)[0];
         this.formData.launchDealerCode = this.dealerInfo.dealerCode;
       },
-      // 选择类型
-      isSelectType(val) {
-        this.formData.launchType = val[0];
-      },
       // 提交/修改物料
       save() {
         let requiredMap = {
@@ -117,13 +121,23 @@
           }
         }
         let warn = '';
-        !warn && Object.entries(requiredMap).every(([key, msg]) => {
-          if (!this.formData[key]) {
-            warn = `${msg}不能为空`;
-            return false;
+        if(!this.dealerInfo.dealerCode){
+          warn = '请选择客户'
+        }
+        !warn && this.otherConfig.every(item => {
+          if(!item.allowBlank && (!this.formData[item.fieldCode] || !this.formData[item.fieldCode].length)) {
+              warn = `${item.fieldLabel}不能为空`;
+              return false;
           }
           return true;
-        });
+        })
+        // !warn && Object.entries(requiredMap).every(([key, msg]) => {
+        //   if (!this.formData[key]) {
+        //     warn = `${msg}不能为空`;
+        //     return false;
+        //   }
+        //   return true;
+        // });
         if (warn) {
           this.$vux.alert.show({
             content: warn,
@@ -155,7 +169,8 @@
                 handlerEntity: this.entity.dealerName,
                 ...formData,
                 ...dealerInfo,
-                ...contactInfo
+                ...contactInfo,
+                launchType: formData.launchType[0]
               }),
               wfPara: JSON.stringify({
                 [this.processCode]: {
@@ -164,7 +179,6 @@
                 }
               }),
             };
-
             if (this.transCode) {
               operation = this.processCode.length ? saveAndCommitTask : updateData;
               submitData.biReferenceId = this.biReferenceId;
@@ -222,16 +236,6 @@
           this.$loading.hide();
         })
       },
-      // 请求产品类型
-      getProductType() {
-        return getDictByType('productRelease').then(({tableContent = []}) => {
-          let TypeList = [];
-          for(let item of tableContent) {
-            TypeList.push(item.name);
-          }
-          this.launchTypeList.push(TypeList);
-        })
-      },
       // 是否保存草稿
       hasDraftData() {
         let draftList = ['biProcessStatus', 'launchTitle', 'launchDescribe', 'launchType'];
@@ -250,7 +254,6 @@
               formData: this.formData,
               dealerInfo: this.dealerInfo,
               contactInfo: this.contactInfo,
-              selectedType: this.selectedType
             }
           };
         }
@@ -262,10 +265,8 @@
         this.formData = JSON.parse(data).formData;
         this.dealerInfo = JSON.parse(data).dealerInfo;
         this.contactInfo = JSON.parse(data).contactInfo;
-        this.selectedType = JSON.parse(data).selectedType;
         sessionStorage.removeItem(DRAFT_KEY);
       }
-      this.getProductType();
     },
   }
 </script>
@@ -277,14 +278,14 @@
   }
   .cpfb-apply-container {
     .CP_group {
-      /deep/ > .vux-label {
+      /deep/  .vux-label {
         color: #5077aa;
         font-weight: bold;
       }
-      /deep/ > .vux-no-group-title {
+      /deep/ .vux-no-group-title {
         margin-top: 0.08rem;
       }
-      /deep/> .weui-cells {
+      /deep/ .weui-cells {
         font-size: .16rem;
         .vux-tap-active {
           .vux-label {
@@ -300,7 +301,7 @@
         &:before{
           left: 0;
         }
-        /deep/ >.weui-cell {
+        /deep/ .weui-cell {
           padding: 10px 0;
         }
       }

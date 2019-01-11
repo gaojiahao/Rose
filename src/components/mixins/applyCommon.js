@@ -560,7 +560,7 @@ export default {
             
           }
         })
-        console.log(eidtMatterPop);
+        // console.log(eidtMatterPop);
         // 将配置拆分为属性和可编辑的部分
         eidtMatterPop.length && eidtMatterPop.forEach((item,index) => {
           //物料信息里面有数量
@@ -575,9 +575,15 @@ export default {
         let other = [];
         otherConfig.forEach(item => {
           if(!item.hiddenInRun){
-            if(item.xtype === 'r2MultiSelector' && item.dataSource && item.dataSource.type === 'remoteData'){
+            if((item.xtype === 'r2MultiSelector' || item.xtype === 'r2Combo') && item.dataSource && item.dataSource.type === 'remoteData'){
               requestData(this.handlerParams(item)).then(data => {
-                this.$set(item, 'remoteData', data.tableContent)
+                if(data.tableContent){
+                  data.tableContent.forEach(item => {
+                    item.originValue = item.value;
+                    item.value = item.name;
+                  })
+                  this.$set(item, 'remoteData', data.tableContent)
+                }  
               })
             }
             other.push(item)
