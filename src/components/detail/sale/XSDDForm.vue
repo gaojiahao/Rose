@@ -13,39 +13,9 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :order-list="orderList" :noTaxAmount="noTaxAmount" :taxAmount="taxAmount" :count="count">
+      <matter-list :order-list="orderList" @on-show-more="onShowMore">
         <template slot="orderTitle" slot-scope="props">
           <span class="order_title">销售合同号：</span>
-        </template>
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class="mater_attribute">
-              <span>属性: {{item.tdProcessing || '无'}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-              <span>合同数量: {{item.thenTotalQtyBal}}</span>
-              <span>已下单: {{item.thenLockQty}}</span>
-              <span>待下单: {{item.thenQtyBal}}</span>
-            </div>
-            <div class="mater_attribute">
-              <span>交付开始日: {{item.dateActivation}}</span>
-              <span>预期交货日: {{item.promDeliTime}}</span>
-            </div>
-            <div class="mater_attribute">
-              <span>交付截止日: {{item.executionDate}}</span>
-            </div>
-            <div class='mater_num'>
-              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class="num">本次下单: {{item.tdQty | toFixed}}</span>
-            </div>
-            <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-              <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                    v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                </span>
-            </div>
-          </div>
         </template>
       </matter-list>
       <!-- 备注 -->
@@ -55,10 +25,11 @@
           <span class="comment_title">备注：</span>
           <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
         </div>
+        <!-- 附件 -->
         <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
-      <!-- 上传附件 -->
-      <!--<upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>-->
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -130,7 +101,7 @@
           }
           let orderList = {};
           let {attachment = [], formData = {}} = data;
-          let {inPut = {}} = formData;
+          let {inPut = {}, order = {}} = formData;
           let [dealerInfo = {}] = inPut.dataSet;
           // 获取合计
           let {dataSet} = formData.order;
@@ -146,42 +117,34 @@
           }
           this.orderList = orderList;
           this.attachment = attachment;
-          this.orderInfo = formData;
-          this.contactInfo = {
+          this.orderInfo = {
             ...dealerInfo,
             ...formData,
+            ...order,
           };
-          this.getcontactInfo();
+          this.contactInfo = {
+            creatorName: order.dealerDebitContactPersonName, // 客户名
+            dealerName: order.dealerName_dealerDebit, // 公司名
+            dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
+            dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
+            dealerCode: order.dealerDebit, // 客户编码
+            dealerLabelName: order.drDealerLabel, // 关系标签
+            province: order.province_dealerDebit, // 省份
+            city: order.city_dealerDebit, // 城市
+            county: order.county_dealerDebit, // 地区
+            address: order.address_dealerDebit, // 详细地址
+          };
           this.workFlowInfoHandler();
         })
       },
-      // TODO 生成contactInfo对象
-      getcontactInfo(key = 'order') {
-        let orderInfo = this.orderInfo;
-        let order = orderInfo[key];
-        this.contactInfo = {
-          ...this.contactInfo,
-          ...order,
-          creatorName: order.dealerDebitContactPersonName, // 客户名
-          dealerName: order.dealerName_dealerDebit, // 公司名
-          dealerMobilePhone: orderInfo.dealerDebitContactInformation, // 手机
-          dealerContactPersonName: orderInfo.dealerDebitContactPersonName, // 联系人
-          dealerCode: order.dealerDebit, // 客户编码
-          dealerLabelName: order.drDealerLabel, // 关系标签
-          province: order.province_dealerDebit, // 省份
-          city: order.city_dealerDebit, // 城市
-          county: order.county_dealerDebit, // 地区
-          address: order.address_dealerDebit, // 详细地址
-        };
-      },
       // TODO 判断往来是否展示预收款和预收到期日
       judgeDealerConfig(configs) {
-        let flag = this.contactInfo.drDealerPaymentTerm.includes('预收');
+        let flag = this.orderInfo.drDealerPaymentTerm.includes('预收');
         let showList = ['advancePaymentDueDate', 'tdAmountCopy1'];
         configs.forEach(item => {
           // 判断是否为预收，是预收则展示预收款和预收到期日
-          if (flag && showList.includes(item.fieldCode)) {
-            item.hiddenInRun = false;
+          if (showList.includes(item.fieldCode)) {
+            item.hiddenInRun = !flag;
           }
         })
       },

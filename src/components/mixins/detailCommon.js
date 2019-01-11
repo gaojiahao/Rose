@@ -8,6 +8,8 @@ import BasicInfo from 'components/detail/commonPart/BasicInfo'
 import FormCell from 'components/detail/commonPart/FormCell'
 import UploadFile from 'components/upload/UploadFile'
 import MatterList from 'components/detail/commonPart/MatterList'
+import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
+import PriceTotal from 'components/detail/commonPart/PriceTotal'
 // 映射表 引入
 import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
@@ -19,7 +21,7 @@ import {shareContent} from 'plugins/wx/api'
 
 export default {
   components: {
-    FormCell, BasicInfo, UploadFile, MatterList
+    FormCell, BasicInfo, UploadFile, MatterList, PopMatterDetail, PriceTotal,
   },
   data() {
     return {
@@ -54,6 +56,9 @@ export default {
       action: {}, // 表单允许的操作
       currentWL: {}, // 当前工作流
       dealerConfig: [],
+      matterDetail: {}, // 选中物料的详细信息
+      showMatterDetail: false, // 是否展示物料详情弹窗
+      matterList: [],
     }
   },
   computed: {
@@ -63,6 +68,8 @@ export default {
       this.orderInfo.order.dataSet.forEach(item => {
         total = accAdd(total, item.noTaxAmount);
       });
+      console.log('-------------------')
+      console.log(total)
       return total;
     },
     // 税金
@@ -335,11 +342,33 @@ export default {
     // TODO 请求配置
     getFormConfig() {
       return getFormConfig(this.formViewUniqueId).then(({config = []}) => {
-        console.log(config)
+        // console.log(config)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
-        let dealerFilter = ['dealerName_dealerDebit', 'drDealerLabel', 'address_dealerDebit', 'dealerDebitContactPersonName', 'dealerDebitContactInformation'];
-        let matterFilter = ['transMatchedCode', 'inventoryName_transObjCode', 'inventoryCode_transObjCode', 'tdProcessing', 'specification_transObjCode'];
-        let contactInfo = this.contactInfo;
+        let dealerFilter = [
+          'dealerName_dealerDebit',
+          'drDealerLabel',
+          'address_dealerDebit',
+          'dealerDebitContactPersonName',
+          'dealerDebitContactInformation',
+          'project',
+          'projectType_project',
+          'dealerName_dealerCodeCredit',
+          'dealerCodeCredit',
+          'crDealerLabel',
+          'address_dealerCodeCredit',
+          'dealerCreditContactPersonName',
+          'dealerCreditContactInformation',
+        ];
+        let matterFilter = [
+          'inventoryName_transObjCode',
+          'transObjCode',
+          'tdProcessing',
+          'specification_transObjCode',
+          'inventoryName_outPutMatCode',
+          'outPutMatCode',
+          'specification_outPutMatCode',
+        ];
+        let orderInfo = this.orderInfo;
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
         config.forEach(item => {
           if (!item.isMultiple) {
@@ -359,15 +388,21 @@ export default {
         // 处理往来配置里面的接口请求
         dealerConfig = dealerConfig.reduce((arr, item) => {
           if (!item.hiddenInRun && !dealerFilter.includes(item.fieldCode)) {
-            item.fieldValue = contactInfo[item.fieldCode];
+            item.fieldValue = orderInfo[item.fieldCode];
             arr.push(item);
           }
           return arr;
         }, []);
+        console.log('---------------dealerConfig------------------')
         console.log(dealerConfig)
+        console.log('---------------dealerConfig end------------------')
         this.dealerConfig = dealerConfig;
+
+        console.log('---------------matterConfig------------------')
+        console.log(matterConfig)
+        console.log('---------------matterConfig end------------------')
         matterConfig = matterConfig.reduce((arr, item) => {
-          if (!item.hidden) {
+          if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
             arr.push(item);
           }
           return arr
@@ -377,8 +412,9 @@ export default {
             return [...arr, ...item]
           }, []);
           console.log(orderList)
+          this.setMatterConfig(orderList, matterConfig);
         } else if (this.matterList.length) {
-
+          this.setMatterConfig(this.matterList, matterConfig);
         }
         // this.matterConfig = matterConfig;
         // 处理其他信息的配置
@@ -395,6 +431,33 @@ export default {
         })
         this.otherConfig = other;*/
       })
+    },
+    // TODO 设置物料的动态渲染部分
+    setMatterConfig(arr, matterConfig) {
+      arr.forEach(matter => {
+        let others = [];
+        let dates = [];
+        let matterComment = {};
+        matterConfig.forEach(item => {
+          item.value = matter[item.fieldCode] || '无';
+          if (item.editorType === 'r2Datefield') {
+            dates.push(item);
+          } else if (item.fieldCode === 'comment') {
+            matterComment = item;
+          } else {
+            others.push(item);
+          }
+        });
+        this.$set(matter, 'others', JSON.parse(JSON.stringify(others)));
+        this.$set(matter, 'dates', JSON.parse(JSON.stringify(dates)));
+        this.$set(matter, 'matterComment', JSON.parse(JSON.stringify(matterComment)));
+      });
+    },
+    // TODO 查看更多
+    onShowMore(item) {
+      console.log(item)
+      this.matterDetail = item;
+      this.showMatterDetail = true;
     },
   },
   created() {

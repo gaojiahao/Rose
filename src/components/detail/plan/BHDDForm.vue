@@ -11,23 +11,19 @@
         <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
         <!-- 物料列表 -->
-        <matter-list :matter-list="orderInfo.order.dataSet">
-          <template slot="matterOther" slot-scope="{item}">
-            <div class='mater_other'>
-              <div class='mater_attribute'>
-                <span>单位: {{item.measureUnit_transObjCode}}</span>
-                <span>预期完工日: {{item.promDeliTime || "无"}}</span>
-              </div>
-              <div class="mater_num">
-                <span class='num'>数量: {{item.tdQty}}</span>
-              </div>
-            </div>
-          </template>
-        </matter-list>
+        <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
+        <!-- 备注 -->
         <div class="comment-part">
-          <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+          <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
+          <div class="comment-container">
+            <span class="comment_title">备注：</span>
+            <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
+          </div>
+          <!-- 附件 -->
+          <upload-file :default-value="attachment" no-upload></upload-file>
         </div>
-        <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+        <!-- 物料详情 -->
+        <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
         <!-- 审批操作 -->
         <r-action :code="transCode" :task-id="taskId" :actions="actions"
                   :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -91,14 +87,11 @@ export default {
         // 获取合计
         let { dataSet } = data.formData.order;
         for(let val of dataSet){
-          val.noTaxAmount = accMul(val.price,val.tdQty);
-          val.taxAmount = accMul(val.noTaxAmount,val.taxRate);
-          val.tdAmount = accAdd(val.noTaxAmount,val.taxAmount);
-          this.count = accAdd(this.count,val.tdAmount);
           val.inventoryPic = val.inventoryPic_transObjCode
             ? `/H_roleplay-si/ds/download?url=${val.inventoryPic_transObjCode}&width=400&height=400`
             : this.getDefaultImg();
         }
+        this.matterList = data.formData.order.dataSet;
         this.orderInfo = data.formData;
         this.getcontactInfo()
         this.workFlowInfoHandler();

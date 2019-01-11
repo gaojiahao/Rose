@@ -14,7 +14,6 @@
         <i class="iconfont icon-shanchu" @click="deleteFile(item)" v-if="!noUpload"></i>
       </div>
       <div class="upload-file-item" v-if="!noUpload" @click="chooseImage">
-        <label class="upload-file-add"></label>
         <div class="icon_container">
           <span class="iconfont icon-fujian"></span>
         </div>
@@ -254,18 +253,6 @@
     .upload-file {
       display: none;
     }
-    .upload-file-add {
-      width: .6rem;
-      height: .6rem;
-      display: block;
-      position: relative;
-      box-sizing: border-box;
-      border-radius: 0.05rem;
-      border: 1px solid #ccc;
-      .add_text {
-        font-size: 0.12rem;
-      }
-    }
     .icon_container {
       background: #fff;
       width: 100%;
@@ -273,12 +260,13 @@
       position: absolute;
       left: 0;
       top: 0;
-      z-index: -10;
       display: flex;
       align-items: center;
       flex-direction: column;
       justify-content: center;
       align-content: center;
+      border-radius: 0.05rem;
+      border: 1px solid #ccc;
       .icon-fujian {
         color: #c5c5c5;
         font-size: .18rem;

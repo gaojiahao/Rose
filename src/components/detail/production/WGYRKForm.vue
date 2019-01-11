@@ -11,32 +11,21 @@
       <warehouse-content :warehouse="warehouseIn" :warehouse-out="warehouseOut"></warehouse-content>
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName"
-                  :is-my-task="isMyTask"
-                  :no-status="orderInfo.biStatus"></work-flow>
+                 :is-my-task="isMyTask"
+                 :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.inPut.dataSet">
-        <!-- 调拨数量 -->
-         <template slot="matterOther" slot-scope="{item}">
-            <div class='mater_other'>
-              <div class="mater_attribute">
-                <span>属性: {{item.tdProcessing}}</span>
-                <span>单位: {{item.measureUnit_transObjCode}}</span>
-              </div>
-              <div class="mater_num">
-                <span class="num">
-                  入库数量: {{item.tdQty | toFixed}}
-                </span>
-                <span class="units">
-                  [可用库存数: {{item.thenQtyStock | toFixed}}]
-                </span>
-              </div>
-            </div>
-         </template>
-      </matter-list>
+      <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
+      <!-- 备注 -->
       <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
+        <div class="comment-container">
+          <span class="comment_title">备注：</span>
+          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
+        </div>
+        <!-- 附件 -->
+        <upload-file :default-value="attachment" no-upload></upload-file>
       </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -98,8 +87,9 @@
             });
             return;
           }
-          this.attachment = data.attachment
-          let {inPut = {}} = data.formData;
+
+          let {formData = {}, attachment = []} = data;
+          let {inPut = {}} = formData;
           let {dataSet} = inPut;
           for (let val of dataSet) {
             val.inventoryPic = val.inventoryPic_transObjCode
@@ -130,7 +120,9 @@
             warehouseDistrict: inPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: inPut.warehouseAddress_containerCodeOut,
           };
-          this.orderInfo = data.formData;
+          this.attachment = attachment
+          this.matterList = inPut.dataSet;
+          this.orderInfo = formData;
           this.workFlowInfoHandler();
         })
       },
@@ -141,6 +133,7 @@
 </script>
 <style lang='scss' scoped>
   @import '../../scss/bizDetail';
+
   .mater_other {
     .mater_left {
       color: #757575;
