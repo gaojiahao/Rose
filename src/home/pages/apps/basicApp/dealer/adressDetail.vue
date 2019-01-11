@@ -130,11 +130,11 @@ export default {
         this.hasDefault = true;
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.dealer = {...this.dealer, ...dealer,};
-        for(let key in this.dealer){
-          if(this.dealer[key] == ''){
-            this.dealer[key] = '无'
-          }
-        }
+        // for(let key in this.dealer){
+        //   if(this.dealer[key] == ''){
+        //     this.dealer[key] = '无'
+        //   }
+        // }
         this.biReferenceId = this.dealer.referenceId;
         if (this.dealer.dealerPic) {
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
