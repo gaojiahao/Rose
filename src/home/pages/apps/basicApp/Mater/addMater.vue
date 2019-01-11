@@ -26,7 +26,7 @@
           </template>
           <template v-else-if="item.xtype === 'r2Textfield'">
             <x-input :title="item.fieldLabel" text-align='right' placeholder='请填写'
-                   v-model.number='inventory[item.fieldCode]' class="vux-1px-b"></x-input>
+                   v-model='inventory[item.fieldCode]' class="vux-1px-b"></x-input>
           </template>
           <template v-else-if="item.xtype === 'r2Selector'">
             <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-b"></pop-procedure-list>
@@ -48,12 +48,12 @@
                   <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
                           mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
                           v-if="dItem.editorType === 'r2Combo'"></r-picker>
-                    <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
-                            @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
-                      <span class="required" slot="label" v-show="!dItem.allowBlank">{{dItem.text}}</span>
-                    </x-input>
-                    <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                            v-if="dItem.editorType === 'r2Textfield'"></x-input>
+                  <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
+                          @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
+                    <span class="required" slot="label" v-show="!dItem.allowBlank">{{dItem.text}}</span>
+                  </x-input>
+                  <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
+                          v-if="dItem.editorType === 'r2Textfield'"></x-input>
                 </template>
               </div>
 
@@ -188,7 +188,7 @@
       }
     },
     watch: {
-      // 监听物料属性变化，改变获取方式，物料大类的数据
+      // 当物料属性改变时，重新请求获取方式，物料大类的数据，赋初始值
       inventoryProcessing(val) {
         if (this.hasDefault) {
           return
@@ -207,7 +207,6 @@
           // 获取方式
           if(item.fieldCode === 'multipleAccess') {
             item.requestParams.data.sType = this.inventory.processing;
-            console.log("")
             requestData(item.requestParams).then(({tableContent = []}) => {
               if(tableContent.length){
                 tableContent.forEach(dItem => {
@@ -522,8 +521,10 @@
               this.inventoryStatus = '停用';
               break;
           }
+          console.log(inventory)
           this.baseinfo = {...this.baseinfo, ...baseinfo,};
           this.inventory = {...this.inventory, ...inventory,};
+          let TypeParentId = '', typeValue = '', subTypeParentId = '', subValue = '';
           // this.biReferenceId = this.inventory.referenceId;
           if (this.inventory.inventoryPic) {
             this.picShow = true;
@@ -606,10 +607,12 @@
       getFormViews() {
         return getFormViews(this.listId).then(data => {
           for(let item of data){
+            if(this.transCode && item.viewType === 'revise'){
+              this.viewId = item.uniqueId;
+              return
+            }
             if(item.viewType === 'submit'){
               this.viewId = item.uniqueId;
-              // this.getFormConfig();
-              break;
             }
           }
         })
