@@ -202,7 +202,8 @@
         scrollOptions: {
           click: true,
         },
-        viewId: ''
+        viewId: '',
+        hasDefault: false, // 判断是否为回写
       }
     },
     computed:{
@@ -223,6 +224,10 @@
     },
     watch: {
       warehouseType(val){
+        console.log(this.hasDefault)
+        if (this.hasDefault) {
+          return
+        }
         // 清空之前的选中值
         this.typeSubMap[this.typeSub].value = '';
         this.typeSubMap[this.typeSub].list = [];
@@ -238,6 +243,9 @@
       // 监听库位数组变化，选择库位名称后，自动带出库位编码
       warehouseRel: {
         handler(val) {
+          if (this.hasDefault) {
+            return
+          }
           val && val.length && val.forEach(item => {
             if(item.childWarehouseName){
               for(let cItem of this.warehouseDuplicateConfig){
@@ -260,7 +268,6 @@
             }
             
           })
-
         },
         deep: true
       }
@@ -279,6 +286,7 @@
             }
           })
           let {baseinfo = {}, warehouse = {}} = formData;
+          this.hasDefault = true;
           switch (warehouse.warehouseStatus) {
             case 1:
               this.warehouseStatus = '使用中';
@@ -665,6 +673,7 @@
       let query = this.$route.query;
       if (query.transCode) {
         this.transCode = query.transCode;
+        this.isClearData = false;
         (async () => {
           await this.getFormViews()
           await this.getFormConfig()

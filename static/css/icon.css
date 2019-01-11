@@ -179,3 +179,8 @@
   background: url('~assets/iconfont/close.png');
   background-size: cover;
 }
+
+.icon-edit{
+  background: url('~assets/iconfont/icon_edit.png');
+  background-size: cover;
+}

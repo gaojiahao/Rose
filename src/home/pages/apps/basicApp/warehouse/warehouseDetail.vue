@@ -56,6 +56,9 @@
         </div>
       </div>
     </r-scroll>
+    <div class="modify_icon" @click="goEdit">
+      <span class="icon-edit"></span>
+    </div>  
   </div>
 </template>
 <script>
@@ -236,6 +239,15 @@ export default {
           break;
       }
     },
+    // TODO 跳转到修改页面
+    goEdit() {
+      this.$router.push({
+        path: '/warehouse/edit_warehouse',
+        query: {
+          transCode: this.transCode
+        }
+      })
+    },
     // 请求应用的viewId
     getFormViews() {
       return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
@@ -324,7 +336,20 @@ export default {
     z-index: 5;
     background: #F6F6F6;
   }
-
+  // 修改按钮
+  .modify_icon {
+    position: absolute;
+    right: .15rem;
+    bottom: 10%;
+    width: .3rem;
+    height: .3rem;
+    z-index: 100;
+    span{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
   .detail_content {
     height: 100%;
     overflow: hidden;

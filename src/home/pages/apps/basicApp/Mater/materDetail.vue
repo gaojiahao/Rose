@@ -22,7 +22,7 @@
       <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
         <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
         <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-          <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+          <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
             <label>{{sItem.text}}:</label>
             <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
           </div>
@@ -83,8 +83,8 @@
       </div> -->
     </r-scroll>
     <!-- 修改按钮 -->
-    <div class="btn vux-1px-t" v-if="action.update">
-      <div class="cfm_btn" @click="goEdit">修改</div>
+    <div class="modify_icon" @click="goEdit">
+      <span class="icon-edit"></span>
     </div>
   </div>
 </template>
@@ -244,7 +244,7 @@ export default {
             case 'invCustomerRel':
               item.title = '供应商';
               break;
-          }
+          } 
         })
         this.matterDuplicateConfig = matterDuplicateConfig;
       })
@@ -272,13 +272,24 @@ export default {
   .main_content {
     background-color: #F6F6F6;
     overflow: hidden;
-    height: 90%;
-    box-sizing: border-box;
-    padding-bottom: .1rem;
+    height: 100%;
     color: #696969;
     font-size: .14rem;
   }
-
+  // 修改按钮
+  .modify_icon {
+    position: absolute;
+    right: .15rem;
+    bottom: 10%;
+    width: .3rem;
+    height: .3rem;
+    z-index: 100;
+    span{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
   // 下划线
   .vux-1px-b:after {
     border-color: #e8e8e8;

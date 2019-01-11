@@ -55,7 +55,10 @@
           <div class='property_val'>{{baseinfo.modTime | dateFormat}}</div>
         </div>
       </div>
-    </r-scroll>  
+    </r-scroll>
+    <div class="modify_icon" @click="goEdit">
+      <span class="icon-edit"></span>
+    </div>  
   </div>
 </template>
 <script>
@@ -140,6 +143,15 @@ export default {
     getDefaultImg() {
       this.MatPic = require('assets/default/dealer.png');
     },
+    // TODO 跳转到修改页面
+    goEdit() {
+      this.$router.push({
+        path: '/adress/edit_ads',
+        query: {
+          transCode: this.transCode
+        }
+      })
+    },
     // 请求应用的viewId
     getFormViews() {
       return getFormViews('c0375170-d537-4f23-8ed0-a79cf75f5b04').then(data => {
@@ -208,6 +220,20 @@ export default {
   .vux-1px-l:before,
   .vux-1px-b:after {
     border-color: #e8e8e8;
+  }
+  // 修改按钮
+  .modify_icon {
+    position: absolute;
+    right: .15rem;
+    bottom: 10%;
+    width: .3rem;
+    height: .3rem;
+    z-index: 100;
+    span{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   }
   .detail_content {
     height: 100%;
