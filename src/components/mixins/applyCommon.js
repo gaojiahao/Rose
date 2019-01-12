@@ -374,38 +374,21 @@ export default {
       item.taxAmount = toFixed(accMul(item.noTaxAmount, taxRate));
       item.tdAmount = toFixed(accAdd(item.noTaxAmount, item.taxAmount));
     },
-    // 请求应用的viewId
-    getFormViews() {
-      getFormViews(this.listId).then(data => {
+    // 获取表单配置基本信息
+    async getFormViewInfo() {
+      // 请求 表单uniqueId 
+      await getFormViews(this.listId).then(data => {
         for(let item of data){
-          if(item.viewType === 'submit'){
+          if(this.transCode && item.viewType === 'revise'){
             this.viewId = item.uniqueId;
-            this.getFormConfig();
-            break;
+          }
+          else if(!this.transCode && item.viewType === 'submit'){
+            this.viewId = item.uniqueId;
           }
         }
       })
-    },
-    // 处理配置中数据请求
-    handlerParams(item){
-      let url = item.dataSource.data.url;
-      let params = item.dataSource.data.params;
-      let keys = Object.keys(params);
-      let requestParams = {
-        url,
-      }
-      if(keys.length){
-        let data = {};
-        keys.forEach(key => {
-          data[key] = params[key].value;
-        })
-        requestParams.data = data;
-      }
-      return requestParams
-    },
-    // 请求配置
-    getFormConfig(){
-      getFormConfig(this.viewId).then(({config = []}) => {
+      // 根据uniqueId 请求表单配置
+      await getFormConfig(this.viewId).then(({config = []}) => {
         console.log(config)
         let dealerConfig = [], matterConfig = [], otherConfig = [];
         // 从请求回来的配置中拆分往来，物料，其他段落的配置
@@ -428,7 +411,7 @@ export default {
         let blankDealerConfig = []
         dealerConfig.forEach(item => {
           if(!item.hiddenInRun){
-            //处理请求往来数据的接口
+            // 处理请求往来数据的接口
             if(item.xtype === 'r2Selector' && item.dataSource && item.dataSource.type === 'remoteData' && item.fieldCode !== 'project') {
               this.dealerParams = this.handlerParams(item);
             }
@@ -438,6 +421,9 @@ export default {
                 this.$set(item, 'remoteData', data.tableContent)
               })
             }
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
             // 过滤往来编码，关系便签，地址，联系人，电话
             if(item.fieldCode !== 'dealerDebit' && item.fieldCode !== 'drDealerLabel' && item.fieldCode !== 'address_dealerDebit' 
               && item.fieldCode !== 'dealerDebitContactPersonName' && item.fieldCode !== 'dealerDebitContactInformation'
@@ -446,7 +432,7 @@ export default {
               blankDealerConfig.push(item)
             }
           }
-          if(item.hiddenInRun && item.r2Bind.hidden) {
+          if(item.hiddenInRun && item.r2Bind && item.r2Bind.hidden) {
             blankDealerConfig.push(item);
           }
           
@@ -589,24 +575,44 @@ export default {
                 }  
               })
             }
+            else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+              this.$set(item, 'remoteData', item.dataSource.data)
+            }
             other.push(item)
           }
         })
         this.otherConfig = other;
       })
+    },
+    // 处理配置中数据请求
+    handlerParams(item){
+      let url = item.dataSource.data.url;
+      let params = item.dataSource.data.params;
+      let keys = Object.keys(params);
+      let requestParams = {
+        url,
+      }
+      if(keys.length){
+        let data = {};
+        keys.forEach(key => {
+          data[key] = params[key].value;
+        })
+        requestParams.data = data;
+      }
+      return requestParams
     }
-    
   },
   created() {
     register(); // 注册wx-js-sdk
     let { name, listId, transCode, relationKey } = this.$route.query;
+    if(transCode) this.transCode = transCode;
     this.listId = listId;
     // 获取本地保存的当前的主体
     let data = sessionStorage.getItem('ROSE_LOGIN_TOKEN');
     if(data) this.entity.dealerName = JSON.parse(data).entityId;
     // 请求页面的数据
     (async () => {
-      this.getFormViews(); 
+      await this.getFormViewInfo();
       this.getProcess();
       if(!transCode){
         this.getBaseInfoData();
@@ -618,7 +624,6 @@ export default {
       this.getLogisticsTerms && this.getLogisticsTerms(); //提交页面 物流条款 请求
       if (transCode) {
         this.isResubmit = true;
-        this.transCode = transCode;
         await this.getListId(transCode);
         await this.getUniqueId(transCode);
         this.getFormData && await this.getFormData();

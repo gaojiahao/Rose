@@ -9,6 +9,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo"
                          @sel-dealer="selDealer" @sel-contact="selContact" :dealer-params="dealerParams"></pop-dealer-list>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
         <!--发票信息-->
         <div class="materiel_list">
           <div class="title">发票信息</div>
@@ -138,6 +139,7 @@
   import PopBaseinfo from 'components/apply/commonPart/BaseinfoPop'
   import RNumber from 'components/RNumber'
   import PopMatterList from 'components/Popup/PopMatterListTest'
+  import DealerOtherPart from 'components/apply/commonPart/dealerOtherPart'
   import PopMatter from 'components/apply/commonPart/MatterPop'
   import OpButton from 'components/apply/commonPart/OpButton'
   // 方法引入
@@ -150,7 +152,7 @@
     components: {
       Cell, Group, XInput,
       Datetime, XTextarea, PopDealerList, PopupPicker, RPicker, PopBaseinfo,
-      RNumber, PopMatterList, PopMatter, OpButton,
+      RNumber, PopMatterList, PopMatter, OpButton, DealerOtherPart
     },
     data() {
       return {

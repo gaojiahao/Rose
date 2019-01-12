@@ -14,9 +14,9 @@
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
       <matter-list :order-list="orderList" @on-show-more="onShowMore">
-        <template slot="orderTitle" slot-scope="props">
+        <!-- <template slot="orderTitle" slot-scope="props">
           <span class="order_title">销售合同号：</span>
-        </template>
+        </template> -->
       </matter-list>
       <!-- 备注 -->
       <div class="comment-part">
