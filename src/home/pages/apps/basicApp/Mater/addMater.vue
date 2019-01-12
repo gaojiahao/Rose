@@ -65,7 +65,7 @@
             <div v-for="(sItem, sIndex) in matterDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < matterDuplicateData[item.name].length-1}">
               <div v-for="(dItem,dIndex) in item.items"  :key="dIndex">
                 <!-- 可编辑的字段 -->
-                <template v-if="sItem[dItem.fieldCode] != null && !dItem.readOnly">
+                <template v-if="!dItem.readOnly">
                   <!-- 下拉框 -->
                   <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
                           mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
@@ -92,7 +92,7 @@
                   </datetime>
                 </template>
                 <!--不可编辑的字段 -->
-                <template  v-else-if="sItem[dItem.fieldCode] != null && dItem.readOnly">
+                <template  v-else>
                   <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]" disabled></cell>
                 </template>
               </div>

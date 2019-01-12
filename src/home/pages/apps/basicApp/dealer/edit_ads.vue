@@ -59,15 +59,15 @@
           </template>
         </div>
         <!-- 重复项 -->
-        <div v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`" v-if="!item.isHidden">
-          <div class="duplicate-item-no-select" v-if="!dealerDuplicateData[item.name].length">
-            <span class="title">{{item.title}}</span>
-            <span class="add" @click="addMoreUnit(item)">新增</span>
-          </div>
-          <group class="duplicate-item" :title="item.title" v-else>
-            <div v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < dealerDuplicateData[item.name].length-1}">
-              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" >
-                <template v-if="sItem[dItem.fieldCode] != null">
+        <div v-for="(item, index) in dealerDuplicateConfig" :key="`${item.name}+${index}`">
+          <template v-if="!item.isHidden">
+            <div class="duplicate-item-no-select" v-if="!dealerDuplicateData[item.name].length">
+              <span class="title">{{item.title}}</span>
+              <span class="add" @click="addMoreUnit(item)">新增</span>
+            </div>
+            <group class="duplicate-item" :title="item.title" v-else>
+              <div v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < dealerDuplicateData[item.name].length-1}">
+                <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" >
                   <!-- 下拉框 -->
                   <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
                           mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" 
@@ -95,16 +95,16 @@
                       <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
                     </template>
                   </datetime>
-                </template>
+                </div>
               </div>
-            </div>
-          </group>
-          <div class="add_more" v-show="dealerDuplicateData[item.name].length">
-            您还需要添加新的{{item.title}}?请点击
-            <span class='add' @click="addMoreUnit(item)">新增</span>
-            <em v-show="dealerDuplicateData[item.name].length > 1">或</em>
-            <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
-          </div> 
+            </group>
+            <div class="add_more" v-show="dealerDuplicateData[item.name].length">
+              您还需要添加新的{{item.title}}?请点击
+              <span class='add' @click="addMoreUnit(item)">新增</span>
+              <em v-show="dealerDuplicateData[item.name].length > 1">或</em>
+              <span class='delete' @click="deleteMoreUnit(item)" v-show="dealerDuplicateData[item.name].length > 1">删除</span>
+            </div> 
+          </template>
         </div>
       </div>
     </r-scroll>
