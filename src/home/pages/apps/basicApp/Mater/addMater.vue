@@ -204,7 +204,7 @@
               }
             }
           }
-          // 获取方式
+          // 重新请求获取方式的数据
           if(item.fieldCode === 'multipleAccess') {
             item.requestParams.data.sType = this.inventory.processing;
             requestData(item.requestParams).then(({tableContent = []}) => {
@@ -221,7 +221,7 @@
               item.remoteData = tableContent;
             })
           }
-          // 物料大类
+          // 重新请求物料大类的数据
           if(item.fieldCode === 'inventoryType') {
             Object.keys(item.requestParams.data).forEach(key => {
               if(key === 'parentId') {
@@ -279,7 +279,7 @@
               }
             }
           }
-          // 物料子类
+          // 重新请求物料子类的数据
           if(item.fieldCode === 'inventorySubclass') {
             Object.keys(item.requestParams.data).forEach(key => {
               if(key === 'parentId') {
@@ -587,6 +587,7 @@
           procedureCode: val.procedureCode,
         };
       },
+      // 处理配置中的接口请求
       handlerParams(item) {
         let url = item.dataSource.data.url;
         let params = item.dataSource.data.params;
@@ -624,7 +625,6 @@
           }
           
         })
-        // return requestParams
       },
       // 请求应用的viewId
       getFormViews() {

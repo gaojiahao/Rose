@@ -664,6 +664,7 @@ export default {
     deleteMoreUnit(item) {
       this.dealerDuplicateData[item.name].pop()
     },
+    // 处理配置中的接口请求
     handlerParams(sItem) {
       let url = sItem.dataSource.data.url;
       let params = sItem.dataSource.data.params;
@@ -695,7 +696,6 @@ export default {
           this.$set(sItem, 'remoteData', data)
         }
       })
-      // return requestParams
     },
     // 请求应用的viewId
     getFormViews() {

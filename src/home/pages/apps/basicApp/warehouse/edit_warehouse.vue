@@ -319,7 +319,7 @@ import { resolve } from 'path';
               break;
             case -1:
               this.warehouseStatus = '停用';
-              break;
+              break
           }
           this.baseinfo = baseinfo;
           this.warehouse = warehouse;
@@ -332,14 +332,6 @@ import { resolve } from 'path';
             this.getDefaultImg()
           }
           this.AccountAddress = [this.warehouse.warehouseProvince, this.warehouse.warehouseCity, this.warehouse.warehouseDistrict]
-          for (let item of Object.values(this.typeSubMap)) {
-            let code = this.warehouse[item.key];
-            if (code) {
-              item.code = code;
-              // this.warehouse[item.key] = null;
-              break;
-            }
-          }
         });
       },
       // TODO 获取默认图片

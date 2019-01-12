@@ -446,6 +446,9 @@ export default {
               blankDealerConfig.push(item)
             }
           }
+          if(item.hiddenInRun && item.r2Bind.hidden) {
+            blankDealerConfig.push(item);
+          }
           
         })
         this.dealerConfig = blankDealerConfig;

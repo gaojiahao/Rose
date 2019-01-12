@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="warehouse_other has_margin">
-        <div class="each_property" :class="{'vux-1px-b': index < warehouseConfig.length-1 }" v-for="(item,index) in warehouseConfig" :key="index">
+        <div class="each_property" :class="{'vux-1px-b': index < warehouseConfig.length-1 }" v-for="(item,index) in warehouseConfig" :key="index" v-if="!item.hiddenInRun">
           <label>{{item.fieldLabel}}:</label>
           <div class='property_val'>{{warehouse[item.fieldCode] || "无"}}</div>
         </div>
@@ -141,13 +141,20 @@ export default {
       },
       typeSub: 'group',
       typeToSubMap: {
-        '配送中心仓': 'group',
-        '加工商仓': 'processors',
-        '加工车间仓': 'group',
-        '客户仓': 'customer',
-        '渠道商仓': 'channel',
-        '个人仓': 'staff',
-        '一般部门仓': 'group',
+        // '配送中心仓': 'group',
+        // '加工商仓': 'processors',
+        // '加工车间仓': 'group',
+        // '客户仓': 'customer',
+        // '渠道商仓': 'channel',
+        // '个人仓': 'staff',
+        // '一般部门仓': 'group',
+        '配送中心仓': 'groupCode',
+        '加工商仓': 'processorsDealerCode',
+        '加工车间仓': 'groupCode',
+        '客户仓': 'customerDealerCode',
+        '渠道商仓': 'channelDealerCode',
+        '个人仓': 'staffDealerCode',
+        '一般部门仓': 'groupCode',
       },
       warehouseConfig: [], // 仓库基本信息的配置,
       warehouseDuplicateConfig: [], // 物料重复项的配置
@@ -189,23 +196,24 @@ export default {
         this.hasDefault = true;
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.warehouse = {...this.warehouse, ...warehouse,};
+        this.typeSub = this.typeToSubMap[this.warehouse.warehouseType]
+        for(let item of this.warehouseConfig){
+          if(item.fieldCode === this.typeSub){
+            item.hiddenInRun = false;
+          }
+          else{
+            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+                item.hiddenInRun = true
+              }
+            
+          }
+        }
         // 设置图片
         if (this.warehouse.warehousePic) {
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
         } else {
           this.getDefaultImg()
-        }
-        // 展示员工、客户、加工商、渠道商列表
-        this.typeSub = this.typeToSubMap[this.warehouse.warehouseType] || 'noMatched';
-        if(this.typeSub === 'noMatched') {
-          return
-        }
-        for (let item of Object.values(this.typeSubMap)) {
-          if (this.warehouse[item.key]) {
-            item.code = this.warehouse[item.key];
-            this.getTypeSubList();
-            break;
-          }
         }
         this.biReferenceId = this.warehouse.referenceId;
         this.$loading.hide();
@@ -219,38 +227,6 @@ export default {
     // TODO 获取默认图片
     getDefaultImg() {
       this.MatPic = require('assets/default/warehouse.png');
-    },
-    // TODO 获取仓库类型关联子项下拉列表
-    getTypeSubList() {
-      switch (this.typeSub) {
-        // 请求组织列表
-        case 'group':
-          return getDepartMentWage().then(({tableContent = []}) => {
-            for(let item of tableContent) {
-              if(item.GROUP_CODE === this.typeSubMap[this.typeSub].code) {
-                this.typeSubMap[this.typeSub].value = item.GROUP_NAME;
-                break;
-              }
-            }
-          });
-        // 请求员工、客户、加工商、渠道商列表
-        case 'staff':
-        case 'customer':
-        case 'processors':
-        case 'channel':
-          return getObjDealerByLabelName({
-            dealerLabelName: this.typeSubMap[this.typeSub].dealerLabelName
-          }).then(({tableContent = []}) => {
-            for(let item of tableContent) {
-              if(item.dealerCode === this.typeSubMap[this.typeSub].code) {
-                this.typeSubMap[this.typeSub].value = item.dealerName;
-                break;
-              }
-            }
-          });
-        default:
-          break;
-      }
     },
     // TODO 跳转到修改页面
     goEdit() {
@@ -290,10 +266,10 @@ export default {
         // 仓库基本信息配置的处理
         warehouseConfig.forEach(item =>{
           // 默认显示员工，（渠道商，组织等隐藏）
-          if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-            || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-            item.hiddenInRun = true
-          }
+          // if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+          //   || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+          //   item.hiddenInRun = true
+          // }
           if(!item.hiddenInRun){
             // 在渲染的配置中添加字段
             if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
