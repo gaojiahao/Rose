@@ -21,14 +21,15 @@
         </div>
       </div>
       <div class="warehouse_other has_margin">
-        <div class="each_property" :class="{'vux-1px-b': index < warehouseConfig.length-1 }" v-for="(item,index) in warehouseConfig" :key="index" v-if="!item.hiddenInRun">
-          <label>{{item.fieldLabel}}:</label>
-          <div class='property_val'>{{warehouse[item.fieldCode] || "无"}}</div>
+        <div v-for="(item, index) in warehouseConfig" :key="index">
+          <div class="each_property" :class="{'vux-1px-b': index < warehouseConfig.length-1 }" v-if="!item.hiddenInRun">
+            <label>{{item.fieldLabel}}:</label>
+            <div class='property_val'>{{warehouse[item.fieldCode] || "无"}}</div>
+          </div>
         </div>
       </div>
       <div class="common_style">
         <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-          <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
           <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
             <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
               <label>{{sItem.text}}:</label>
@@ -237,9 +238,9 @@ export default {
         }
       })
     },
-    // 请求应用的viewId
-    getFormViews() {
-      return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
+    // 
+    async getFormViewInfo() {
+      await getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
         for(let item of data){
           if(item.viewType === 'view'){
             this.viewId = item.uniqueId
@@ -247,11 +248,7 @@ export default {
           }
         }
       })
-    },
-    // 获取表单配置
-    getFormConfig(){
-      getFormConfig(this.viewId).then(({config = []}) => {
-        // console.log(config);
+      await getFormConfig(this.viewId).then(({config = []}) => {
         let warehouseConfig = [], warehouseMultipleConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
@@ -266,10 +263,6 @@ export default {
         // 仓库基本信息配置的处理
         warehouseConfig.forEach(item =>{
           // 默认显示员工，（渠道商，组织等隐藏）
-          // if(item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-          //   || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-          //   item.hiddenInRun = true
-          // }
           if(!item.hiddenInRun){
             // 在渲染的配置中添加字段
             if(item.fieldCode !== 'warehouseCode' && item.fieldCode !== 'warehouseName' && item.fieldCode !== 'warehousePic'
@@ -303,8 +296,7 @@ export default {
     if (query.transCode) {
       this.transCode = query.transCode;
       (async() => {
-        await this.getFormViews();
-        await this.getFormConfig()
+        await this.getFormViewInfo();
         await this.findData();
       })()
     }
