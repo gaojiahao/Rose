@@ -734,6 +734,9 @@ export default {
               if((item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.dataSource && item.dataSource.type === 'remoteData' ) {
                 this.handlerParams(item)
               }
+              else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
+                this.$set(item, 'remoteData', item.dataSource.data)
+              }
             }
             // 在渲染的配置中添加字段
             if(item.fieldCode !== 'dealerCode' && item.fieldCode !== 'dealerName' && item.fieldCode !== 'dealerPic'
