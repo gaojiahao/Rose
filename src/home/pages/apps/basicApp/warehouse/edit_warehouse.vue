@@ -128,7 +128,6 @@
   import common from 'mixins/common.js'
   import UploadImage from 'components/UploadImage'
   import PopWarelabeList from 'components/Popup/PopWarelabelList'
-import { resolve } from 'path';
   export default {
     data() {
       return {

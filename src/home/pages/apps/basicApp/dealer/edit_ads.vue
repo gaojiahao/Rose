@@ -144,8 +144,6 @@ import RPicker from 'components/RPicker';
 import common from 'mixins/common.js'
 import RScroll from 'components/RScroll'
 import UploadImage from 'components/UploadImage'
-import { rejects } from 'assert';
-import { resolve } from 'path';
 
 export default {
   data() {
