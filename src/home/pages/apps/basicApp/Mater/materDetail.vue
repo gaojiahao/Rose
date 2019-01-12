@@ -21,8 +21,8 @@
       </div>
       <div class="common_style d_main" v-for="(cItem, cIndex) in matterDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
         <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
-        <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-          <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex" v-if="!sItem.hidden">
+        <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
+          <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
             <label>{{sItem.text}}:</label>
             <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
           </div>
@@ -81,6 +81,7 @@ export default {
   data() {
     return {
       listId: '78a798f8-0f3a-4646-aa8b-d5bb1fada28c',
+      uniqueId : '',
       baseinfo: {},
       transCode: '',
       inventory: {},
@@ -172,20 +173,19 @@ export default {
         this.action = action;
       })
     },
-    // 请求应用的viewId
-    getFormViews() {
-      return getFormViews(this.listId).then(data => {
+    // 请求表单配置的基本信息
+    async getFormViewsInfo() {
+      // 根据listId 请求 uniqueId
+      await getFormViews(this.listId).then(data => {
         for(let item of data){
           if(item.viewType === 'view'){
-            this.getFormConfig(item.uniqueId);
+            this.uniqueId = item.uniqueId
             break;
           }
         }
       })
-    },
-    // 获取表单配置
-    getFormConfig(viewId){
-      getFormConfig(viewId).then(({config = []}) => {
+      // uniqueId 请求 表单配置
+      await getFormConfig(this.uniqueId).then(({config = []}) => {
         console.log(config);
         let matterConfig = [], matterDuplicateConfig = [];
         config.forEach(item => {
@@ -223,10 +223,17 @@ export default {
               item.title = '供应商';
               break;
           } 
+          let arr = [];
+          item.items.forEach(sItem =>{
+            if(!sItem.hidden){
+              arr.push(sItem)
+            }
+          })
+          item.items = arr;
         })
         this.matterDuplicateConfig = matterDuplicateConfig;
       })
-    },
+    }
   },
   created() {
     (async () => {
@@ -234,7 +241,7 @@ export default {
       let {transCode = ''} = this.$route.query;
       this.transCode = transCode;
       await this.getAppDetail();
-      await this.getFormViews();
+      await this.getFormViewsInfo();
       this.findData();
     })()
   }

@@ -16,7 +16,7 @@
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
         <div v-for="(item, index) in dealerConfig" :key="index">
-          <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province'">
+          <template v-if="item.fieldCode !== 'dealerLabelName' && item.fieldCode !== 'province' && item.fieldCode !== 'dealerStatus'" >
             <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
               <label>{{item.fieldLabel}}</label>
               <input type='text' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
@@ -27,8 +27,13 @@
               <input type='number' v-model="dealer[item.fieldCode]" class='property_val' @blur="check(item)"/>
               <icon type="warn" class='warn' v-if='item.warn'></icon>
             </div>
-            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" 
-                  v-model="item.fieldCode === 'dealerStatus' ? dealerStatus : dealer[item.fieldCode]" v-if="item.xtype === 'r2Combo'"></r-picker>
+            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="dealer[item.fieldCode]" 
+                  v-model="dealer[item.fieldCode]" :required="!item.allowBlank" v-if="item.xtype === 'r2Combo'"></r-picker>
+          </template>
+          <!--往来状态 -->
+          <template v-else-if="item.fieldCode === 'dealerStatus'">
+            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="dealerStatus" 
+                  v-model="dealerStatus" :required="!item.allowBlank"></r-picker>
           </template>
           <!-- 省市区 -->
           <template v-else-if="item.fieldCode === 'province'">
@@ -61,27 +66,36 @@
           </div>
           <group class="duplicate-item" :title="item.title" v-else>
             <div v-for="(sItem, sIndex) in dealerDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < dealerDuplicateData[item.name].length-1}">
-              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="sItem[dItem.fieldCode] != null">
-                <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
-                        mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" @on-change="onChange($event, index, dItem, sItem)"
-                        v-if="dItem.editorType === 'r2Combo'"></r-picker>
-                <x-input type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
-                        v-if="dItem.editorType === 'r2Numberfield'">
-                  <template slot="label">
-                    <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
-                  </template>
-                </x-input>
-                <x-input text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                         v-if="dItem.editorType === 'r2Textfield'">
-                  <template slot="label">
-                    <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
-                  </template>
-                </x-input>
-                <datetime  v-model='sItem[dItem.fieldCode]' v-if="dItem.editorType === 'r2Datefield'">
-                  <template slot="title">
-                    <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
-                  </template>
-                </datetime>
+              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" >
+                <template v-if="sItem[dItem.fieldCode] != null">
+                  <!-- 下拉框 -->
+                  <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
+                          mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank" 
+                          @on-change="onChange($event, index, dItem, sItem)"
+                          v-if="dItem.editorType === 'r2Combo'">
+                  
+                  </r-picker>
+                  <!-- 输入框（数字） -->
+                  <x-input type="number" text-align='right' placeholder='请填写' v-model.numer='sItem[dItem.fieldCode]'
+                          v-if="dItem.editorType === 'r2Numberfield'">
+                    <template slot="label">
+                      <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template>
+                  </x-input>
+                  <!-- 输入框（文字） -->
+                  <x-input text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
+                          v-if="dItem.editorType === 'r2Textfield'">
+                    <template slot="label">
+                      <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template>
+                  </x-input>
+                  <!-- 日期 -->
+                  <datetime  v-model='sItem[dItem.fieldCode]' v-if="dItem.editorType === 'r2Datefield'">
+                    <template slot="title">
+                      <span :class="{'required' : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template>
+                  </datetime>
+                </template>
               </div>
             </div>
           </group>
@@ -136,6 +150,7 @@ import { resolve } from 'path';
 export default {
   data() {
     return {
+      listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
       addressData: ChinaAddressV4Data,
       transCode: '',
       picShow: false,
@@ -190,7 +205,7 @@ export default {
       dealerConfig: [],
       dealerDuplicateConfig: [], // 往来重复项的配置
       dealerDuplicateData: {}, // 往来重复项数据,
-      viewId: '',
+      uniqueId: '',
     }
   },
   computed: {
@@ -697,23 +712,21 @@ export default {
         }
       })
     },
-    // 请求应用的viewId
-    getFormViews() {
-      return getFormViews('c0375170-d537-4f23-8ed0-a79cf75f5b04').then(data => {
+    // 请求表单配置的基本信息
+    async getFormViewsInfo(){
+      // 根据listId 请求表单的 uniqueId
+      await getFormViews(this.listId).then(data => {
         for(let item of data){
           if(this.transCode && item.viewType === 'revise'){
-            this.viewId = item.uniqueId;
-            return
+            this.uniqueId = item.uniqueId;
           }
-          if(item.viewType === 'submit'){
-            this.viewId = item.uniqueId;
+          else if(!this.transCode && item.viewType === 'submit'){
+            this.uniqueId = item.uniqueId;
           }
         }
       })
-    },
-    // 获取表单配置
-    getFormConfig(){
-      return getFormConfig(this.viewId).then(({config = []}) => {
+      // 根据uniqueId 请求表单的配置
+      await getFormConfig(this.uniqueId).then(({config = []}) => {
         console.log(config);
         let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
@@ -770,9 +783,9 @@ export default {
           this.$set(this.dealerDuplicateData, item.name, [])
         })
         this.dealerDuplicateConfig = dealerDuplicateConfig;
-        this.$loading.hide()
+        if(!this.transCode) this.$loading.hide()
       })
-    },
+    }
   },
   created() {
     this.$loading.show();
@@ -780,28 +793,25 @@ export default {
     if(query.transCode){
       this.transCode = query.transCode;
       (async () => {
-        await this.getFormViews()
-        await this.getFormConfig()
-        await this.findData();
+        await this.getFormViewsInfo()
+        await this.findData().then(() =>{
+          this.$loading.hide()
+        });
         this.getDealer()
       })();
       return 
     }
-    (async() => {
-      await this.getFormViews()
-      await this.getFormConfig()
-      this.getDealer().then(data => {
-        let [defaultSelect = {}] = data;
-        if(this.$route.query.pickVal){
-          this.dealer.dealerLabelName = this.$route.query.pickVal;
-          this.pickerStatus = false;
-        }
-        else{//新增往来，默认选中地址栏中的往来类型
-          this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : '';           
-        }
-      });
-
-    })()
+    this.getFormViewsInfo();
+    this.getDealer().then(data => {
+      let [defaultSelect = {}] = data;
+      if(this.$route.query.pickVal){
+        this.dealer.dealerLabelName = this.$route.query.pickVal;
+        this.pickerStatus = false;
+      }
+      else{//新增往来，默认选中地址栏中的往来类型
+        this.dealer.dealerLabelName = this.$route.query.dealerType ? this.$route.query.dealerType : '';           
+      }
+    });
     //获取当前用户信息
     getBaseInfoDataBase().then(data => {
       this.baseinfo = {

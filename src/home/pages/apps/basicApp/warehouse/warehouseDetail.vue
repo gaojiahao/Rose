@@ -220,12 +220,13 @@ export default {
               item.title = '库位';
               break;
           }
-          item.items.forEach((sItem, sIndex) => {
-            if(sItem.hidden){
-              item.items.splice(sIndex, 1);
-              sIndex --;
+          let arr = [];
+          item.items.forEach(sItem =>{
+            if(!sItem.hidden){
+              arr.push(sItem)
             }
           })
+          item.items = arr;
         })
         this.warehouseDuplicateConfig = warehouseMultipleConfig;
       })
@@ -289,6 +290,7 @@ export default {
           this.getDefaultImg()
         }
         this.biReferenceId = this.warehouse.referenceId;
+        this.$loading.hide();  
       });
       // 获取组织并将id转换成对应的中文名
       await this.getDepart();
@@ -301,8 +303,7 @@ export default {
       this.transCode = query.transCode;
       (async() => {
         await this.getFormViewInfo();
-        await this.findData();
-        this.$loading.hide();      
+        await this.findData();    
       })()
     }
   }

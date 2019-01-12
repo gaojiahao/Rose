@@ -15,19 +15,39 @@
           <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
         </div>
         <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
+          <!-- 下拉框 -->
           <template v-if="(item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode'">
             <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="item.fieldCode === 'inventoryStatus'? inventoryStatus: inventory[item.fieldCode]" 
                       v-model="item.fieldCode === 'inventoryStatus'? inventoryStatus: inventory[item.fieldCode]"
                       :required="!item.allowBlank" mode="4"></r-picker>
           </template>
+          <!-- 输入框（数字） -->
           <template v-else-if="item.xtype === 'r2Numberfield'">
-            <x-input :title="item.fieldLabel" type="number" text-align='right' placeholder='请填写'
-                   v-model.number='inventory[item.fieldCode]' class="vux-1px-b"></x-input>
+            <x-input type="number" text-align='right' placeholder='请填写'
+                   v-model.number='inventory[item.fieldCode]' class="vux-1px-b">
+              <template slot="label">
+                <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+              </template> 
+            </x-input>
           </template>
+          <!-- 输入框（文字） -->
           <template v-else-if="item.xtype === 'r2Textfield'">
             <x-input :title="item.fieldLabel" text-align='right' placeholder='请填写'
-                   v-model='inventory[item.fieldCode]' class="vux-1px-b"></x-input>
+                   v-model='inventory[item.fieldCode]' class="vux-1px-b">
+              <template slot="label">
+                <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+              </template> 
+            </x-input>
           </template>
+          <!-- 日期 -->
+          <template v-else-if="item.xtype === 'r2Datefield'">
+            <datetime placeholder="请填写" v-model="inventory[item.fieldCode]">
+              <template slot="title">
+                <span :class="{required : !item.allowBlank}">{{item.fieldLabel}}</span>
+              </template>
+            </datetime>
+          </template>
+          <!-- pop组件 -->
           <template v-else-if="item.xtype === 'r2Selector'">
             <pop-procedure-list @sel-item="selProcedure" :default-value="inventory" class="vux-1px-b"></pop-procedure-list>
           </template>
@@ -43,17 +63,37 @@
           </div>
           <group class="duplicate-item" :title="item.title" v-else>
             <div v-for="(sItem, sIndex) in matterDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < matterDuplicateData[item.name].length-1}">
-              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="sItem[dItem.fieldCode] != null">
-                <template v-if="!dItem.hidden">
+              <div v-for="(dItem,dIndex) in item.items"  :key="dIndex">
+                <!-- 可编辑的字段 -->
+                <template v-if="sItem[dItem.fieldCode] != null && !dItem.readOnly">
+                  <!-- 下拉框 -->
                   <r-picker class="vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
                           mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
                           v-if="dItem.editorType === 'r2Combo'"></r-picker>
-                  <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
+                  <!-- 输入框（数字） -->
+                  <x-input type="number" text-align='right' placeholder='请填写' v-model.number='sItem[dItem.fieldCode]'
                           @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
-                    <span class="required" slot="label" v-show="!dItem.allowBlank">{{dItem.text}}</span>
+                    <template slot="label">
+                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template> 
                   </x-input>
+                  <!-- 输入框（文字） -->
                   <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                          v-if="dItem.editorType === 'r2Textfield'"></x-input>
+                          v-if="dItem.editorType === 'r2Textfield'">
+                    <template slot="label">
+                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template>
+                  </x-input>
+                  <!-- 日期 -->
+                  <datetime placeholder="请填写" v-model="sItem[dItem.fieldCode]" v-if="dItem.editorType === 'r2Datefield'">
+                    <template slot="title">
+                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template>
+                  </datetime>
+                </template>
+                <!--不可编辑的字段 -->
+                <template  v-else-if="sItem[dItem.fieldCode] != null && dItem.readOnly">
+                  <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]" disabled></cell>
                 </template>
               </div>
 
@@ -74,7 +114,7 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Popup, Group, XInput, PopupPicker, Cell,} from 'vux';
+  import {TransferDom, Popup, Group, XInput, PopupPicker, Cell, Datetime } from 'vux';
   import RPicker from 'components/RPicker';
   import UploadImage from 'components/UploadImage'
   import RScroll from 'components/RScroll'
@@ -140,7 +180,7 @@
         matterConfig: [], // 物料基本信息配置
         matterDuplicateConfig: [], // 物料重复项的配置
         matterDuplicateData: {}, // 物料重复项数据,
-        viewId: ''
+        uniqueId: ''
       }
     },
     computed: {
@@ -341,17 +381,9 @@
     },
     mixins: [common],
     components: {
-      Popup,
-      Group,
-      RPicker,
-      UploadImage,
-      XInput,
-      PopupPicker,
-      RScroll,
-      Cell,
-      PopTechnicsList,
-      PopProcedureList,
-      PopDealerList,
+      Popup, Group, RPicker, UploadImage, XInput, PopupPicker,
+      RScroll, Cell, PopTechnicsList, PopProcedureList, PopDealerList,
+      Datetime 
     },
     methods: {
       // TODO 上传图片成功触发
@@ -626,23 +658,20 @@
           
         })
       },
-      // 请求应用的viewId
-      getFormViews() {
-        return getFormViews(this.listId).then(data => {
+      async getFormViewsInfo(){
+        // 根据listId 请求表单的 uniqueId
+        await getFormViews(this.listId).then(data => {
           for(let item of data){
             if(this.transCode && item.viewType === 'revise'){
-              this.viewId = item.uniqueId;
-              return
+              this.uniqueId = item.uniqueId;
             }
-            if(item.viewType === 'submit'){
-              this.viewId = item.uniqueId;
+            else if(!this.transCode && item.viewType === 'submit'){
+              this.uniqueId = item.uniqueId;
             }
           }
         })
-      },
-      // 获取表单配置
-      getFormConfig(){
-        return getFormConfig(this.viewId).then(({config = []}) => {
+        // 根据uniqueId 请求表单的配置
+        await getFormConfig(this.uniqueId).then(({config = []}) => {
           // console.log(config);
           let matterConfig = [], matterDuplicateConfig = [];
           config.forEach(item => {
@@ -686,17 +715,22 @@
                 item.title = '供应商';
                 break;
             }
+            let arr = []
             item.items.forEach((sItem, sIndex) => {
               if(!sItem.hidden){
                 if(sItem.editorType === 'r2Combo' && sItem.dataSource && sItem.dataSource.type === 'remoteData') {
                   this.handlerParams(sItem)
                 }
+                arr.push(sItem)
               }
             })
+            item.items = arr;
             this.$set(this.matterDuplicateData, item.name, [])
           })
           this.matterDuplicateConfig = matterDuplicateConfig;
+          if(!this.transCode) this.$loading.hide();
         })
+
       },
     },
     beforeRouteLeave(to, from, next) {
@@ -715,22 +749,18 @@
       // 有transCode即回写页面
       if (transCode) {
         (async () => {
-          await this.getFormViews()
-          await this.getFormConfig();
-          await this.findData();
+          await this.getFormViewsInfo()
+          await this.findData().then(() =>{
+            this.$loading.hide()
+          });
           this.hasDefault = false;
           this.codeReadOnly = true;
-          this.$loading.hide();
         })();
         return
       }
-      (async() => {
-        this.getBaseInfoData();
-        await this.getFormViews();
-        await this.getFormConfig().then(() =>{
-          this.$loading.hide();
-        });
-      })() 
+      this.getFormViewsInfo()
+      this.getBaseInfoData();
+      
     },
     beforeRouteEnter(to, from, next) {
       // 修改title

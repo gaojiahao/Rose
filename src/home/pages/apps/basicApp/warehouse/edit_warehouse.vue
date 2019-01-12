@@ -15,27 +15,39 @@
         </div>
         <upload-image :src="MatPic" @on-upload="onUpload" @on-error="getDefaultImg"></upload-image>
       </div>
-      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info" v-if="!item.hiddenInRun">
-        <div v-if="item.fieldCode !== 'warehouseProvince'" >
-          <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]"
-                 v-model="item.fieldCode === 'warehouseStatus'? warehouseStatus : warehouse[item.fieldCode]" :required='!item.allowBlank' 
-                v-if="item.xtype === 'r2Combo'" class="r-picker">
-          </r-picker>
-          <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
-            <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}:</label>
-            <input type='text' v-model="warehouse[item.fieldCode]" class='property_val'/>
-          </div>
-        </div>
-        <template v-else-if="item.fieldCode === 'warehouseProvince'">
-          <div class='each_property vux-1px-b' @click="showAddress = true">
-            <label>省市区:</label>
-            <div class='picker'>
-                <span class='mater_nature'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
-                <span class='iconfont icon-gengduo'></span>
+      <div v-for="(item, index) in warehouseConfig" :key="index" class="each-info">
+        <template  v-if="!item.hiddenInRun">
+          <!-- 下拉框 -->
+          <div v-if="item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseStatus'" >
+            <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="warehouse[item.fieldCode]"
+                      v-model="warehouse[item.fieldCode]" :required='!item.allowBlank' 
+                      v-if="item.xtype === 'r2Combo'">
+            </r-picker>
+            <!-- 文本框 -->
+            <div class='each_property vux-1px-b' v-if="item.xtype === 'r2Textfield'">
+              <label :class="{required: !item.allowBlank}">{{item.fieldLabel}}:</label>
+              <input type='text' v-model="warehouse[item.fieldCode]" class='property_val'/>
             </div>
-            <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
-                      :show.sync="showAddress" v-show="false"></x-address>
           </div>
+          <!-- 仓库状态 -->
+          <template v-else-if="item.fieldCode === 'warehouseStatus'">
+             <r-picker :title="`${item.fieldLabel}:`" :data="item.remoteData" :value="warehouseStatus"
+                  v-model="warehouseStatus" :required='!item.allowBlank' 
+                  v-if="item.xtype === 'r2Combo'">
+            </r-picker>
+          </template>
+          <!-- 省市区 -->
+          <template v-else-if="item.fieldCode === 'warehouseProvince'">
+            <div class='each_property vux-1px-b' @click="showAddress = true">
+              <label>省市区:</label>
+              <div class='picker'>
+                  <span class='mater_nature'>{{warehouse.warehouseProvince}}{{warehouse.warehouseCity}}{{warehouse.warehouseDistrict}}</span>
+                  <span class='iconfont icon-gengduo'></span>
+              </div>
+              <x-address title="省市区:"  :list="addressData" @on-hide='getAddress($event)' @on-shadow-change='changeAddress' :value="AccountAddress"
+                        :show.sync="showAddress" v-show="false"></x-address>
+            </div>
+          </template>
         </template>
         <!-- <template v-else>
           <div class='each_property vux-1px-b' @click="showPop = true" v-show="typeSub !== 'noMatched'">
@@ -55,20 +67,35 @@
         </div>
         <group class="duplicate-item" :title="item.title" v-else-if="warehouseDuplicateData[item.name] && warehouseDuplicateData[item.name].length">
           <div v-for="(sItem, sIndex) in warehouseDuplicateData[item.name]" :key="sIndex" :class="{'has_border': sIndex < warehouseDuplicateData[item.name].length-1}">
-            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="sItem[dItem.fieldCode] != null">
-              <template v-if="!dItem.readOnly">
+            <div v-for="(dItem,dIndex) in item.items"  :key="dIndex" v-if="">
+              <template v-if="sItem[dItem.fieldCode] != null && !dItem.readOnly">
+                <!-- 下拉框 -->
                 <r-picker class="duplicate-picker vux-1px-t" :title="dItem.text" :data="dItem.remoteData" :value="sItem[dItem.fieldCode]"
                         mode="4" :has-border="false" v-model="sItem[dItem.fieldCode]" :required="!dItem.allowBlank"
-                        v-if="dItem.editorType === 'r2Combo' || dItem.editorType === 'r2Selector'"></r-picker>
-                  <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]'
-                          @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
-                    <span class="required" slot="label" v-show="!dItem.allowBlank">{{dItem.text}}</span>
-                  </x-input>
-                  <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
-                          v-if="dItem.editorType === 'r2Textfield'"></x-input>
+                        v-if="dItem.editorType === 'r2Combo' || dItem.editorType === 'r2Selector'">
+                </r-picker>
+                <!-- 输入框（数字） -->
+                <x-input :title="dItem.text" type="number" text-align='right' placeholder='请填写' v-model.number='sItem[dItem.fieldCode]'
+                        @on-blur="checkAmt(sItem)" v-if="dItem.editorType === 'r2Numberfield'">
+                  <template slot="label">
+                    <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
+                  </template> 
+                </x-input>
+                <!-- 输入框（文字） -->
+                <x-input :title="dItem.text" text-align='right' placeholder='请填写' v-model='sItem[dItem.fieldCode]' 
+                        v-if="dItem.editorType === 'r2Textfield'">
+                  <template slot="label">
+                      <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
+                    </template>
+                </x-input>
+                <datetime placeholder="请填写" v-model="sItem[dItem.fieldCode]" v-if="dItem.editorType === 'r2Datefield'">
+                  <template slot="title">
+                    <span :class="{required : !dItem.allowBlank}">{{dItem.text}}</span>
+                  </template>
+                </datetime>
               </template>
-              <template v-else>
-                <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]"></cell>
+              <template v-else-if="sItem[dItem.fieldCode] != null && dItem.readOnly">
+                <cell class="vux-1px-t" :title="dItem.text" :value="sItem[dItem.fieldCode]" disabled></cell>
               </template>
             </div>
 
@@ -92,7 +119,7 @@
   </div>
 </template>
 <script>
-  import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon, Cell} from 'vux';
+  import {TransferDom, Picker, Popup, Group, XAddress, ChinaAddressV4Data, Icon, Cell, Datetime} from 'vux';
   import {getBaseInfoDataBase, getFormConfig, requestData, getFormViews} from 'service/commonService.js';
   import {save, update, getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
   import {getDictByType, getObjDealerByLabelName} from 'service/commonService.js'
@@ -105,6 +132,7 @@ import { resolve } from 'path';
   export default {
     data() {
       return {
+        listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
         addressData : ChinaAddressV4Data,
         transCode: '',
         picShow: false,
@@ -132,67 +160,9 @@ import { resolve } from 'path';
           warehouseStatus: '', //仓库状态
         },
         submitSuccess: false, // 是否提交成功
-        typeSubMap: { // 仓库类型相关二级列表
-          staff: {
-            title: '员工',
-            dealerLabelName: '员工',
-            key: 'staffDealerCode',
-            value: '',
-            code: '',
-            list: [], // 员工列表
-          },
-          group: {
-            title: '组织',
-            dealerLabelName: '',
-            key: 'groupCode',
-            value: '',
-            code: '',
-            list: [], // 组织列表
-          },
-          customer: {
-            title: '客户',
-            dealerLabelName: '客户',
-            key: 'customerDealerCode',
-            value: '',
-            code: '',
-            list: [], // 客户列表
-          },
-          processors: {
-            title: '加工商',
-            dealerLabelName: '加工商',
-            key: 'processorsDealerCode',
-            value: '',
-            code: '',
-            list: [], // 加工商列表
-          },
-          channel: {
-            title: '渠道商',
-            dealerLabelName: '渠道商',
-            key: 'channelDealerCode',
-            value: '',
-            code: '',
-            list: [], // 渠道商列表
-          },
-          noMatched: {
-            title: '',
-            dealerLabelName: '',
-            key: '',
-            value: '',
-            code: '',
-            list: [],
-          },
-        },
-        // typeSub: 'group',
         typeSub: 'groupCode',
         typeSubValue: '',
         typeToSubMap: {
-          // '配送中心仓': 'group',
-          // '加工商仓': 'processors',
-          // '加工车间仓': 'group',
-          // '客户仓': 'customer',
-          // '渠道商仓': 'channel',
-          // '个人仓': 'staff',
-          // '一般部门仓': 'group',
           '配送中心仓': 'groupCode',
           '加工商仓': 'processorsDealerCode',
           '加工车间仓': 'groupCode',
@@ -211,7 +181,7 @@ import { resolve } from 'path';
         scrollOptions: {
           click: true,
         },
-        viewId: '',
+        uniqueId: '',
         hasDefault: false, // 判断是否为回写
       }
     },
@@ -229,16 +199,10 @@ import { resolve } from 'path';
     mixins: [common],
     components: {
       Picker, Popup, Group, RPicker, XAddress, Icon,
-      UploadImage, PopWarelabeList, RScroll, Cell
+      UploadImage, PopWarelabeList, RScroll, Cell, Datetime
     },
     watch: {
       warehouseType(val){
-        if (this.hasDefault) {
-          return
-        }
-        // 清空之前的选中值
-        // this.typeSubMap[this.typeSub].value = '';
-        // this.typeSubMap[this.typeSub].list = [];
         this.typeSub = this.typeToSubMap[val] || 'noMatched';
         for(let item of this.warehouseConfig){
           if(item.fieldCode === this.typeSub){
@@ -252,13 +216,12 @@ import { resolve } from 'path';
             
           }
         }
-        if(this.typeSub === 'noMatched') {
-          if(this.warehouseType === '库位')
+        if(this.warehouseType === '库位'){
           delete this.warehouseDuplicateData.warehouseRel
-          return
         }
-        this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
-        // this.getTypeSubList();
+        else if(this.warehouseType !== '库位' && !this.warehouseDuplicateData.warehouseRel){
+          this.$set(this.warehouseDuplicateData, 'warehouseRel', [])
+        }
       },
       // 监听库位数组变化，选择库位名称后，自动带出库位编码
       warehouseRel: {
@@ -395,7 +358,7 @@ import { resolve } from 'path';
             }
             let operation = save;
             let submitData = {
-              listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
+              listId: this.listId,
               formData: {
                 baseinfo: this.baseinfo,
                 warehouse: this.warehouse
@@ -404,17 +367,9 @@ import { resolve } from 'path';
             if (this.transCode) {
               operation = update;
             }
-            for (let item of Object.values(this.typeSubMap)) {
-              if (item.value) {
-                let [sel = {}] = item.list.filter(lItem => {
-                  return item.value === lItem.value
-                });
-                this.warehouse[item.key] = sel.code;
-                break;
-              }
-            }
+            // 在提交数组中添加重复项字段
             this.warehouseDuplicateConfig.length && this.warehouseDuplicateConfig.forEach(item => {
-              if(this.warehouseDuplicateData[item.name].length){
+              if(this.warehouseDuplicateData[item.name] && this.warehouseDuplicateData[item.name].length){
                 submitData.formData[item.name] = this.warehouseDuplicateData[item.name]
               }
             })
@@ -494,61 +449,6 @@ import { resolve } from 'path';
         this.warehouse[this.typeSub] = val;
         this.typeSubMap[this.typeSub].value = val;
       },
-      // TODO 获取仓库类型关联子项下拉列表
-      getTypeSubList(val) {
-        let filter = [];
-        if(val){
-          filter = [
-            {
-              operator: 'like',
-              value: val,
-              property: 'GROUP_NAME'
-            }
-          ];
-        }
-        let currentTypeSub = this.typeSubMap[this.typeSub]; // 当前仓库类型关联子项对象
-        switch (this.typeSub) {
-          // 请求组织列表
-          case 'group':
-            return getDepartMentWage({filter: JSON.stringify(filter)}).then(({tableContent = []}) => {
-              tableContent.forEach(item => {
-                item.name = item.GROUP_NAME;
-                item.value = item.GROUP_NAME;
-                item.code = item.GROUP_CODE;
-                if (item.code === currentTypeSub.code) {
-                  this.typeSubMap[this.typeSub].value = item.value;
-                }
-              });
-              this.typeSubMap[this.typeSub].list = tableContent;
-              this.typeSubMap[this.typeSub].code = '';
-            });
-          // 请求员工、客户、加工商、渠道商列表
-          case 'staff':
-          case 'customer':
-          case 'processors':
-          case 'channel':
-            if(val){
-              filter[0].property = 'dealerName';
-            }
-            return getObjDealerByLabelName({
-              dealerLabelName: currentTypeSub.dealerLabelName,
-              filter: JSON.stringify(filter)
-            }).then(({tableContent = []}) => {
-              tableContent.forEach(item => {
-                item.name = item.dealerName;
-                item.value = item.dealerName;
-                item.code = item.dealerCode;
-                if (item.code === currentTypeSub.code) {
-                  this.typeSubMap[this.typeSub].value = item.value;
-                }
-              });
-              this.typeSubMap[this.typeSub].code = '';
-              this.typeSubMap[this.typeSub].list = tableContent;
-            });
-          default:
-            break;
-        }
-      },
       // 处理配置中的接口请求
       handlerParams(sItem) {
         let url = sItem.dataSource.data.url;
@@ -581,23 +481,20 @@ import { resolve } from 'path';
           }
         })
       },
-      // 请求应用的viewId
-      getFormViews() {
-        return getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
+      async getFormViewsInfo(){
+        // 根据listId 请求表单的uniqueId
+        await getFormViews(this.listId).then(data => {
           for(let item of data){
             if(this.transCode && item.viewType === 'revise'){
-              this.viewId = item.uniqueId;
-              return
+              this.uniqueId = item.uniqueId;
             }
-            if(item.viewType === 'submit'){
-              this.viewId = item.uniqueId;
+            else if(!this.transCode && item.viewType === 'submit'){
+              this.uniqueId = item.uniqueId;
             }
           }
         })
-      },
-      // 获取表单配置
-      getFormConfig(){
-        return getFormConfig(this.viewId).then(({config = []}) => {
+        // 根据uniqueId 请求表单的配置
+        await getFormConfig(this.uniqueId).then(({config = []}) => {
           console.log(config);
           let warehouseConfig = [], warehouseMultipleConfig = [];
           config.forEach(item => {
@@ -616,7 +513,7 @@ import { resolve } from 'path';
               //下拉框的数据请求
               if(item.fieldCode !== 'warehouseProvince' && item.fieldCode !== 'warehouseCity' && item.fieldCode !== 'warehouseDistrict'){
                 if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'remoteData') {
-                   this.handlerParams(item)
+                    this.handlerParams(item)
                 }
                 else if(item.xtype === 'r2Combo' && item.dataSource && item.dataSource.type === 'staticData'){
                   this.$set(item, 'remoteData', item.dataSource.data)
@@ -654,9 +551,9 @@ import { resolve } from 'path';
             this.$set(this.warehouseDuplicateData, item.name, [])
           })
           this.warehouseDuplicateConfig = warehouseMultipleConfig;
-          this.$loading.hide()
+          if(!this.transCode) this.$loading.hide()
         })
-      },
+      }
     },
     beforeRouteLeave(to, from, next) {
       let {path} = to;
@@ -673,23 +570,21 @@ import { resolve } from 'path';
         this.transCode = query.transCode;
         this.isClearData = false;
         (async () => {
-          await this.getFormViews()
-          await this.getFormConfig()
-          await this.findData()
+          await this.getFormViewsInfo()
+          await this.findData().then(() =>{
+            this.$loading.hide()
+          })
           this.hasDefault = false;
         })();
         return
       }
-      (async() => {
-        getBaseInfoDataBase().then(data => {
-          this.baseinfo = {
-            ...this.baseinfo,
-            ...data
-          }
-        });
-        await this.getFormViews();
-        await this.getFormConfig();
-      })()
+      this.getFormViewsInfo()
+      getBaseInfoDataBase().then(data => {
+        this.baseinfo = {
+          ...this.baseinfo,
+          ...data
+        }
+      });
       this.$nextTick(() => {
         if (this.$refs.bScroll) {
           this.$refs.bScroll.refresh();
