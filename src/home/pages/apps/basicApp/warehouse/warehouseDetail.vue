@@ -29,11 +29,15 @@
         </div>
       </div>
       <div class="common_style">
-        <div class="d_main" v-for="(cItem, cIndex) in warehouseDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-          <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-            <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
-              <label>{{sItem.text}}:</label>
-              <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
+        <div v-for="(cItem, cIndex) in warehouseDuplicateConfig" :key="`${cIndex}${cItem.name}`">
+          <div class="d_main" v-if="cItem.show">
+            <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
+              <div>
+                <div class="each_property vux-1px-b"  v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+                  <label>{{sItem.text}}:</label>
+                  <div class='property_val'>{{item[sItem.fieldCode] || "无"}}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -64,7 +68,7 @@
 </template>
 <script>
 import { dateFormat } from 'vux'
-import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService.js'
+import {getwarehouseInfo, getDepartMentWage} from 'service/warehouseService'
 import {getObjDealerByLabelName, getFormConfig, requestData, getFormViews} from 'service/commonService.js'
 import RScroll from 'components/RScroll'
 export default {
@@ -86,10 +90,17 @@ export default {
   },
   data() {
     return {
-      transCode: '',
-      MatPic: '', // 图片地址
-      warehouse: {},
-      baseinfo: {},
+      typeSub: 'group',
+      listId: '64a41c48-4e8d-4709-bd01-5d60ad6bc625',
+      typeToSubMap: {
+        '配送中心仓': 'groupCode',
+        '加工商仓': 'processorsDealerCode',
+        '加工车间仓': 'groupCode',
+        '客户仓': 'customerDealerCode',
+        '渠道商仓': 'channelDealerCode',
+        '个人仓': 'staffDealerCode',
+        '一般部门仓': 'groupCode',
+      },
       typeSubMap: { // 仓库类型相关二级列表
         staff: {
           title: '员工',
@@ -140,91 +151,20 @@ export default {
           list: [],
         },
       },
-      typeSub: 'group',
-      typeToSubMap: {
-        // '配送中心仓': 'group',
-        // '加工商仓': 'processors',
-        // '加工车间仓': 'group',
-        // '客户仓': 'customer',
-        // '渠道商仓': 'channel',
-        // '个人仓': 'staff',
-        // '一般部门仓': 'group',
-        '配送中心仓': 'groupCode',
-        '加工商仓': 'processorsDealerCode',
-        '加工车间仓': 'groupCode',
-        '客户仓': 'customerDealerCode',
-        '渠道商仓': 'channelDealerCode',
-        '个人仓': 'staffDealerCode',
-        '一般部门仓': 'groupCode',
-      },
+      viewId: '',
+      MatPic: '', // 图片地址
+      transCode: '',
+      baseinfo: {},
+      formData: {},
+      warehouse: {},
       warehouseConfig: [], // 仓库基本信息的配置,
       warehouseDuplicateConfig: [], // 物料重复项的配置
-      formData: {},
-      viewId: ''
-
     }
   },
   components: {
     RScroll
   },
   methods: {
-    //仓库信息
-    findData() {
-      return getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
-        this.formData = formData;
-        this.warehouseDuplicateConfig.forEach(item => {
-          if(this.formData[item.name] && !this.formData[item.name].length){
-            item.show = false;
-            return
-          }
-          item.show = true;
-        })
-        let {baseinfo = {}, warehouse = {}} = formData;
-        switch (warehouse.warehouseStatus) {
-          case 1:
-            warehouse.warehouseStatus = '使用中';
-            break;
-          case 2:
-            warehouse.warehouseStatus = '未使用';
-            break;
-          case 0:
-            warehouse.warehouseStatus = '草稿';
-            break;
-          case -1:
-            warehouse.warehouseStatus = '停用';
-            break;
-        }
-        this.hasDefault = true;
-        this.baseinfo = {...this.baseinfo, ...baseinfo,};
-        this.warehouse = {...this.warehouse, ...warehouse,};
-        this.typeSub = this.typeToSubMap[this.warehouse.warehouseType]
-        for(let item of this.warehouseConfig){
-          if(item.fieldCode === this.typeSub){
-            item.hiddenInRun = false;
-          }
-          else{
-            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
-              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
-                item.hiddenInRun = true
-              }
-            
-          }
-        }
-        // 设置图片
-        if (this.warehouse.warehousePic) {
-          this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
-        } else {
-          this.getDefaultImg()
-        }
-        this.biReferenceId = this.warehouse.referenceId;
-        this.$loading.hide();
-      }).catch(e => {
-        this.$loading.hide();
-        this.$vux.alert.show({
-          content: e.message
-        })
-      });
-    },
     // TODO 获取默认图片
     getDefaultImg() {
       this.MatPic = require('assets/default/warehouse.png');
@@ -238,9 +178,10 @@ export default {
         }
       })
     },
-    // 
+    // 获取 表单基本信息
     async getFormViewInfo() {
-      await getFormViews('64a41c48-4e8d-4709-bd01-5d60ad6bc625').then(data => {
+      // 获取表单uniqueId
+      await getFormViews(this.listId).then(data => {
         for(let item of data){
           if(item.viewType === 'view'){
             this.viewId = item.uniqueId
@@ -248,6 +189,7 @@ export default {
           }
         }
       })
+      // 获取表单配置
       await getFormConfig(this.viewId).then(({config = []}) => {
         let warehouseConfig = [], warehouseMultipleConfig = [];
         config.forEach(item => {
@@ -286,9 +228,71 @@ export default {
           })
         })
         this.warehouseDuplicateConfig = warehouseMultipleConfig;
-        this.$loading.hide()
       })
     },
+    // 获取组织并将id转换成对应的中文名
+    getDepart() {
+      return getDepartMentWage().then(({ tableContent }) => {
+        for(let item of tableContent) {
+          if(item['GROUP_CODE'] === this.warehouse['groupCode']) {
+            this.$set(this.warehouse, 'groupCode', item.GROUP_NAME)
+          }
+        }
+      })
+    },
+    //仓库信息
+    async findData() {
+      await getwarehouseInfo(this.transCode).then(({formData = {}, attachment = []}) => {
+        this.formData = formData;
+        this.warehouseDuplicateConfig.forEach(item => {
+          if(this.formData[item.name] && !this.formData[item.name].length){
+            item.show = false;
+            return
+          }
+          item.show = true;
+        })
+        let {baseinfo = {}, warehouse = {}} = formData;
+        switch (warehouse.warehouseStatus) {
+          case 1:
+            warehouse.warehouseStatus = '使用中';
+            break;
+          case 2:
+            warehouse.warehouseStatus = '未使用';
+            break;
+          case 0:
+            warehouse.warehouseStatus = '草稿';
+            break;
+          case -1:
+            warehouse.warehouseStatus = '停用';
+            break;
+        }
+        this.hasDefault = true;
+        this.baseinfo = baseinfo;  
+        this.warehouse = warehouse;      
+        this.typeSub = this.typeToSubMap[this.warehouse.warehouseType]
+        for(let item of this.warehouseConfig){
+          if(item.fieldCode === this.typeSub){
+            item.hiddenInRun = false;
+          }
+          else{
+            if(item.fieldCode === 'staffDealerCode' || item.fieldCode === 'groupCode' || item.fieldCode === 'customerDealerCode' || item.fieldCode === 'customerDealerCode' 
+              || item.fieldCode === 'processorsDealerCode' || item.fieldCode === 'channelDealerCode'){
+                item.hiddenInRun = true
+              }
+            
+          }
+        }
+        // 设置图片
+        if (this.warehouse.warehousePic) {
+          this.MatPic = `/H_roleplay-si/ds/download?url=${this.warehouse.warehousePic}&width=400&height=400`;
+        } else {
+          this.getDefaultImg()
+        }
+        this.biReferenceId = this.warehouse.referenceId;
+      });
+      // 获取组织并将id转换成对应的中文名
+      await this.getDepart();
+    }
   },
   created() {
     this.$loading.show()
@@ -298,6 +302,7 @@ export default {
       (async() => {
         await this.getFormViewInfo();
         await this.findData();
+        this.$loading.hide();      
       })()
     }
   }
