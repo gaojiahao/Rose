@@ -28,14 +28,14 @@
           </div>
           <i class="icon-more"></i>
         </div>
-        <div class="matter_info_item" v-if="hasData('noTaxAmount') || hasData('tdQty')">
+        <div class="matter_info_item matter_price_top" v-if="hasData('noTaxAmount') || hasData('tdQty')">
           <span class="matter_no_tax" v-if="hasData('noTaxAmount')">￥{{item.noTaxAmount | toFixed | numberComma}}</span>
           <span class="matter_qty" v-if="item.tdQty">x{{item.tdQty | toFixed}}</span>
         </div>
-        <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 7}"
-             v-if="hasData('taxAmount') || hasData('tdAmount')">
+        <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 6}"
+             v-if="hasData('taxAmount') || item.tdAmount">
           <span class="matter_tax" v-if="hasData('taxAmount')">（含税费￥{{item.taxAmount | toFixed | numberComma}}）</span>
-          <span class="matter_total_wrapper" v-if="hasData('tdAmount')">
+          <span class="matter_total_wrapper" v-if="item.tdAmount">
             合计：<span class="matter_total"><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
           </span>
         </div>
@@ -135,10 +135,13 @@
       /* 合计金额过多时 */
       &.spillover {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: flex-end;
         .matter_total_wrapper {
           margin-top: .08rem;
         }
+      }
+      &.matter_price_top {
+        margin-top: .16rem;
       }
     }
     .matter_detail {
@@ -153,7 +156,6 @@
       height: .04rem;
     }
     .matter_no_tax {
-      margin-top: .1rem;
       font-size: .14rem;
       font-weight: bold;
     }
