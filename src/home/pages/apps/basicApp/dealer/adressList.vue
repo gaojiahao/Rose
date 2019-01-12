@@ -25,11 +25,11 @@
               <div class="basic-detail">
                 <div class="basic_name">{{item.dealerName}}</div>
                 <div class="basic_detail_item">
-                  <span class="basic_detail_title">详细地址:</span>
+                  <span class="basic_detail_title">地址:</span>
                   <span class="basic_detail_value">{{item.detailAddress}}</span>
                 </div>
                 <div class="basic_detail_item">
-                  <span class="basic_detail_title">关系标签:</span>
+                  <span class="basic_detail_title">类型:</span>
                   <span>{{item.dealerLabelName}}</span>
                 </div>
               </div>

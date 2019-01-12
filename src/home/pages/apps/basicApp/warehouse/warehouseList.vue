@@ -27,11 +27,11 @@
               <div class="basic-detail">
                 <div class="basic_name">{{item.warehouseName}}</div>
                 <div class="basic_detail_item" v-if="item.detailAddress">
-                  <span class="basic_detail_title">详细地址:</span>
+                  <span class="basic_detail_title">地址:</span>
                   <span class="basic_detail_value">{{item.detailAddress}}</span>
                 </div>
                 <div class="basic_detail_item">
-                  <span class="basic_detail_title">仓库类型:</span>
+                  <span class="basic_detail_title">类型:</span>
                   <span class="basic_detail_value">{{item.warehouseType}}</span>
                 </div>
               </div>
