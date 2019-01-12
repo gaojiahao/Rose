@@ -189,7 +189,7 @@
               property_1: 'inventoryCode',
               operator_1: 'like',
               value_1: this.srhInpTx,
-              property_1: 'inventoryName',
+              property_2: 'inventoryName',
               operator_1: 'like',
               value_2: this.srhInpTx,
             }

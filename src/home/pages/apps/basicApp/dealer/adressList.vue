@@ -161,6 +161,12 @@
             {
               operator: 'like',
               value: this.srhInpTx,
+              property: 'dealerCode',
+              attendedOperation: 'or'
+            },
+            {
+              operator: 'like',
+              value: this.srhInpTx,
               property: 'dealerName'
             }
           ];
