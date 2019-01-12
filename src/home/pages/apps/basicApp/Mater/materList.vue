@@ -4,7 +4,7 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-        <r-search @search="searchMat"></r-search>
+        <r-search @search="searchMat" :placeHolder='placeHolder'></r-search>
         <tab :line-width='2' default-color='#333' active-color='#3296FA'>
           <tab-item v-for="(item, index) in matNature" :key="index" :selected="index === activeIndex"
                     @on-item-click="tabClick(item, index)">{{item.name}}
@@ -89,6 +89,7 @@
           {name: '客供原料'},
           {name: '服务'},
         ],
+        placeHolder: '名称/编码',
         activeTab: '',
         activeIndex: 0,
         matterList: [],

@@ -4,7 +4,7 @@
           @submit.prevent="searchMat(srhInpTx)">
       <i class="icon icon-search"></i>
       <input ref="searchInp" class="srh_inp" type="search" autocomplete="off"
-            @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
+            :placeholder="placeHolder" @input='getValue($event)' :value='srhInpTx' @focus="isShowDrop = true">
       <div class="pop_cfm" v-if='isFill'
            :class='{ pop_cancel : !srhInpTx.length }'
            @click="searchMat(srhInpTx)">{{srhInpTx.length>0 ? '搜索' : '返回'}}
@@ -38,6 +38,10 @@
           return []
         }
       },
+      placeHolder: {
+        type: String,
+        default: ''
+      }
     },
     watch: {
       isShowDrop: {
