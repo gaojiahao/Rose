@@ -4,7 +4,7 @@
       <!-- 顶部区域 -->
       <div class="app_top">
         <!-- 搜索栏 -->
-        <search-icon @search='searchList'></search-icon>
+        <search-icon @search='searchList' :placeHolder='placeHolder'></search-icon>
         <tab :line-width='2' default-color='#333' active-color='#3296FA'>
           <tab-item v-for="(item, index) in warehouseClassfiy" :key="index" :selected="index === activeIndex"
                     @on-item-click="tabClick(item, index)">{{item.name}}
@@ -75,6 +75,7 @@
         tabSelect: '全部',
         activeIndex: 0,
         warehouseClassfiy: [{name: '全部'}, {name: '个人仓'}, {name: '加工车间仓'}, {name: '一般部门仓'}, {name: '客户仓'}, {name: '加工商仓'}],
+        placeHolder: '名称/编码',
         page: 1,
         limit: 20,
         id: 2129,

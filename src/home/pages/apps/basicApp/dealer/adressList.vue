@@ -3,7 +3,7 @@
     <div class="content">
       <!-- 顶部区域 -->
       <div class="app_top">
-        <searchIcon @search='searchList'></searchIcon>
+        <searchIcon @search='searchList' :placeHolder='placeHolder'></searchIcon>
         <tab :line-width='2' default-color='#333' active-color='#3296FA'>
           <tab-item v-for="(item, index) in dealerClassfiy" :key="index" :selected="index === activeIndex"
                     @on-item-click="tabClick(item, index)">{{item.title}}
@@ -67,25 +67,26 @@
   export default {
     data() {
       return {
-        listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
-        dealerList: [],
-        srhInpTx: '',
-        activeIndex: 0,
-        tabItem: '全部',//选中的tab
-        dealerClassfiy: [],
-        uniqueId: "7f01c808-d338-4711-8c99-319337078cc1",
         page: 1,
         limit: 20,
-        id: '',
+        tabItem: '全部',  // 选中的tab
+        activeIndex: 0,
+        placeHolder: '名称/编码',
+        listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
+        uniqueId: "7f01c808-d338-4711-8c99-319337078cc1",
+        total: null,
         hasNext: true,
+        clickVisited: false, // 判断是否点击过其它列表项
         scrollOptions: {
           click: true,
           pullDownRefresh: true,
           pullUpLoad: true,
         },
-        total: null,
-        clickVisited: false, // 判断是否点击过其它列表项
+        id: '',
         action: {}, // 表单允许的操作
+        srhInpTx: '',
+        dealerList: [],
+        dealerClassfiy: [],
       }
     },
     components: {
@@ -130,13 +131,7 @@
           if (!item.transCode && path === '/adress/edit_ads' && this.tabItem !== '全部') {
             query.dealerType = this.tabItem;
           }
-          this.$router.push({
-            path,
-            // query: {
-            //   transCode: item.transCode
-            // }
-            query
-          });
+          this.$router.push({ path, query });
         }, 200);
       },
       // 编辑地址
@@ -190,7 +185,6 @@
             })
           })
           await dealerService.getDealerList(this.id, data).then(({dataCount = 0, tableContent = []}) => {
-            //console.log(this.total);
             //判断最近有无新增数据
             let text = '';
             if (noReset && this.activeIndex === 0) {
