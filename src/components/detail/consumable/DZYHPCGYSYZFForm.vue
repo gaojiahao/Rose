@@ -10,60 +10,9 @@
       <!-- 工作流 -->
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
-      <!-- 往来联系部分 交易基本信息-->
-      <!--<div >
-        <contact-part :contact-info="dealerInfo" :logistics="false">
-          <div class="other" slot="other">
-            <span class="title">账期天数: </span>
-            <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
-          </div>
-        </contact-part>
-      </div>-->
-      <contact-part class="contacts_part" :contact-info="dealerInfo" :logistics="false">
-        <template slot="other">
-          <div class="other">
-            <span class="title">账期天数: </span>
-            <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
-          </div>
-          <div class="other">
-            <span class="title">账期到期日: </span>
-            <span class="mode">{{dealerInfo.accountExpirationDate || '暂无'}}</span>
-          </div>
-        </template>
-      </contact-part>
+      <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
-                   :taxAmount="taxAmount" :count="count">
-        <template slot="orderTitle" slot-scope="props">
-          <span class="order_title">采购订单号</span>
-        </template>
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class='mater_attribute'>
-              <span v-if="item.productionDate">生产日期: {{item.productionDate}}</span>
-              <span v-if="item.validUntil">有效日期: {{item.validUntil}}</span>
-            </div>
-            <div class='mater_attribute'>
-              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>数量: {{item.tdQty | toFixed}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-            </div>
-            <div class="mater_num">
-              <span class="num">订单总数: {{item.thenTotalQtyBal}}</span>
-              <span class="num">已入库: {{item.thenLockQty}}</span>
-              <span class="num">待验收: {{item.thenQtyBal}}</span>
-            </div>
-            <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-              <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                    v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                </span>
-            </div>
-          </div>
-        </template>
-      </matter-list>
+      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
       <pop-cash-list :default-value="cashInfo" @sel-item="selCash" request="3" :params="cashParams"
                      v-if="isCashier" required>
         <template slot="other">
@@ -87,11 +36,11 @@
           </div>
         </div>
       </div>
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <!-- 备注 -->
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions" :agree-handler="agreeHandler"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -108,7 +57,6 @@
   import RAction from 'components/RAction'
   import workFlow from 'components/workFlow'
   import contactPart from 'components/detail/commonPart/ContactPart'
-  import PriceTotal from 'components/detail/commonPart/PriceTotal'
   import MatterList from 'components/detail/commonPart/MatterList'
   import MatterItem from 'components/detail/commonPart/MatterItem'
   import FormCell from 'components/detail/commonPart/FormCell'
@@ -161,7 +109,7 @@
     },
     mixins: [detailCommon],
     components: {
-      workFlow, RAction, PriceTotal, contactPart, MatterList, MatterItem, FormCell, PopCashList
+      workFlow, RAction, contactPart, MatterList, MatterItem, FormCell, PopCashList
     },
     methods: {
       //选择默认图片
@@ -225,7 +173,10 @@
             accountExpirationDate: inPut.accountExpirationDate,
           };
           this.cashInfo = cashInfo;
-          this.orderInfo = formData;
+          this.orderInfo = {
+            ...formData,
+            ...inPut,
+          };
           this.workFlowInfoHandler();
         })
       },
@@ -288,7 +239,7 @@
               thenAmntBalCopy1: cashInfo.thenAmntBal,
               tdAmountCopy1: cashInfo.tdAmountCopy1,
               tdIdCopy1: cashInfo.tdIdCopy1,
-            }] 
+            }]
           }
           console.log(formData);
           this.saveData(formData);
@@ -309,46 +260,5 @@
 
 <style lang='scss' scoped>
   @import './../../scss/bizDetail';
-  .detail_wrapper {
-    .pop_dealer_list {
-      width: 100%;
-    }
-  }
-  .dzyhpcgysyzf-detail-container {
-    .basicPart {
-      /deep/ .other_content {
-        padding-bottom: 0;
-      }
-    }
-    .other {
-      padding-bottom: .06rem;
-      font-size: .14rem;
-      .title {
-        font-weight: bold;
-      }
-      .mode {
-        color: #454545;
-      }
-    }
-  }
-
-  .order_code {
-    display: flex;
-    color: #fff;
-    font-size: .12rem;
-    font-weight: bold;
-    > span {
-      display: inline-block;
-      padding: 0 .04rem;
-    }
-    .order_title {
-      background: #1160aa;
-    }
-    // 订单号
-    .order_num {
-      background: #9bb4da;
-      border-top-right-radius: .08rem;
-    }
-  }
 </style>
 

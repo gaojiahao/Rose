@@ -78,7 +78,7 @@
     background-color: #fff;
     color: #333;
     .contact-main {
-      padding: .15rem .15rem .24rem;
+      padding: .15rem .15rem .2rem;
       width: 100%;
       box-sizing: border-box;
       .contact_header {
@@ -117,6 +117,7 @@
       }
       .icon {
         display: inline-block;
+        margin-top: .03rem;
         width: .16rem;
         height: .16rem;
       }
@@ -130,15 +131,17 @@
     }
 
     .contact-other {
-      padding: .24rem .15rem .15rem;
+      display: flex;
+      flex-wrap: wrap;
+      padding: .12rem .15rem .15rem;
       &:before {
         border-color: #e8e8e8;
       }
       .contact_other_wrapper {
         display: flex;
-        & + .contact_other_wrapper {
-          margin-top: .12rem;
-        }
+        margin-top: .12rem;
+        margin-right: .2rem;
+        min-width: calc(50% - 0.2rem);
       }
       .contact_other_item {
         flex: 1;

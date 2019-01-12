@@ -54,10 +54,7 @@
       <div class="bom_list">
         <bom-list :boms="UniqueBom"></bom-list>
       </div>
-      <div class="comment-part">
-        <form-cell cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <!--原料bom列表-->
       <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
         <template slot="bom-left" slot-scope="{bom}">

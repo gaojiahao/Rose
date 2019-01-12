@@ -30,10 +30,7 @@
           <form-cell cellTitle='工艺路线编码' :cellContent="item.proFlowCode || '无'"></form-cell>
         </div>
       </div>
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

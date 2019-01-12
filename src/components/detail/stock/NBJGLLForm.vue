@@ -14,24 +14,11 @@
                   :is-my-task="isMyTask"
                   :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list="orderInfo.outPut.dataSet" :order-remarks="orderInfo.biComment">
-        <!-- 调拨数量 -->
-        <div class="mater_other" slot="matterOther" slot-scope="{item}">
-          <div class="mater_attribute">
-            <span>单位: {{item.measureUnit_outPutMatCode}}</span>
-            <span>待领料: {{item.thenQtyBal}}</span>
-          </div>
-          <div class="mater_num">
-            <span class="num">
-              本次领料: {{item.tdQty | toFixed}}
-            </span>
-            <span class="units">
-              [库存数量: {{item.thenQtyStock | toFixed}}]
-            </span>
-          </div>
-        </div>
-      </matter-list>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <matter-list :matter-list="matterList" @on-show-more="onShowMore"></matter-list>
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -92,9 +79,10 @@
             });
             return;
           }
-          let {outPut = {}} = data.formData;
+          let {attachment = [], formData = {}} = data;
+          let {outPut = {}} = formData;
           let {dataSet} = outPut;
-          this.attachment = data.attachment;
+          this.attachment = attachment;
           for (let val of dataSet) {
             val.inventoryName_transObjCode = val.inventoryName_outPutMatCode;
             val.transObjCode = val.outPutMatCode;
@@ -127,7 +115,10 @@
             warehouseDistrict: outPut.warehouseDistrict_containerCodeOut,
             warehouseAddress: outPut.warehouseAddress_containerCodeOut,
           };
-          this.orderInfo = data.formData;
+          this.matterList = dataSet;
+          this.orderInfo = {
+            ...formData,
+          };
           this.workFlowInfoHandler();
         })
       },

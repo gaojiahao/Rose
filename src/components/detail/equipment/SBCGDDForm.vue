@@ -11,48 +11,13 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 往来联系部分 交易基本信息-->
-      <contact-part :contact-info="dealerInfo" :logistics="false">
-        <template slot="other">
-          <div class="other">
-            <span class="title">账期天数: </span>
-            <span class="mode">{{dealerInfo.pamentDays || '暂无'}}</span>
-          </div>
-        </template>
-      </contact-part>
+      <contact-part :contact-info="dealerInfo" :configs="dealerConfig"></contact-part>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList' :noTaxAmount="noTaxAmount"
-                   :taxAmount="taxAmount" :count="count">
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class='mater_attribute'>
-              <span>类型: {{item.facilityType}}</span>
-              <span>大类: {{item.facilityBigType_facilityObjCode}}</span>
-              <span>子类: {{item.facilitySubclass_facilityObjCode}}</span>
-            </div>
-            <div class='mater_attribute'>
-              <span>单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span>数量: {{item.tdQty | toFixed}}</span>
-              <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-            </div>
-            <div class='mater_attribute'>
-              <span>待下单: {{item.thenQtyBal | toFixed}}</span>
-            </div>
-            <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-              <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                    v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-                </span>
-            </div>
-          </div>
-        </template>
-      </matter-list>
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -145,10 +110,11 @@
             city: order.city_dealerDebit, // 城市
             county: order.county_dealerDebit, // 地区
             address: order.address_dealerDebit, // 详细地址
-            payment: order.drDealerPaymentTerm,//结算方式
-            pamentDays: order.daysOfAccount,// 账期天数
           };
-          this.orderInfo = formData;
+          this.orderInfo = {
+            ...formData,
+            ...order,
+          };
           this.workFlowInfoHandler();
         })
       },

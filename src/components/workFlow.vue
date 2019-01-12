@@ -29,14 +29,6 @@
 
   export default {
     props: {
-      noStatus: {
-        type: String,
-        require: true
-      },
-      crtTime: {
-        type: String,
-        require: true
-      },
       // 完整工作流
       fullWorkFlow: {
         type: Array,

@@ -12,32 +12,7 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList'>
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class="mater_attribute">
-              <span>加工属性: {{item.tdProcessing}}</span>
-              <span>单位: {{item.measureUnit_transObjCode}}</span>
-              <span>计划完工日期: {{item.shippingTime}}</span>
-            </div>
-            <div class="mater_attribute">
-              <span>订单数量: {{item.thenTotalQtyBal | toFixed}}</span>
-              <span>车间仓库存: {{item.thenQtyStock | toFixed}}</span>
-              <span>已入库数量: {{item.thenLockQty | toFixed}}</span>
-            </div>
-            <div class="mater_attribute">
-              <span>制造费用: ￥{{item.skinFee | toFixed | numberComma}}</span>
-              <span>工价: ￥{{item.wages | toFixed | numberComma}}</span>
-              <span class="num">不合格数: {{item.differenceNum | toFixed}}</span>
-            </div>
-            <div class="mater_num">
-              <span class="num">本次质检: {{item.qualityQty | toFixed}}</span>
-              <span class="num">合格数: {{item.tdQty | toFixed}}</span>
-              <span class="units">[待入库数量: {{item.thenQtyBal | toFixed}}]</span>
-            </div>
-          </div>
-        </template>
-      </matter-list>
+      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
       <!-- bom合计 -->
       <div class="bom_list">
         <bom-list :boms="bomList">
@@ -49,14 +24,12 @@
           </template>
         </bom-list>
       </div>
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
       <!--原料bom列表-->
       <!-- <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
       </bom-pop> -->
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

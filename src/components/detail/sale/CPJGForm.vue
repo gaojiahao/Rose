@@ -15,14 +15,7 @@
       <!-- 物料详情 -->
       <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 备注 -->
-      <div class="comment-part">
-        <div class="comment-container">
-          <span class="comment_title">备注：</span>
-          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
-        </div>
-        <!-- 附件 -->
-        <upload-file :default-value="attachment" no-upload></upload-file>
-      </div>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

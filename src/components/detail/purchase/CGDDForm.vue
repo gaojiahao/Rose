@@ -15,15 +15,8 @@
       <!-- 物料列表 -->
       <matter-list :matter-list='matterList' @on-show-more="onShowMore"></matter-list>
       <!-- 备注 -->
-      <div class="comment-part">
-        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
-        <div class="comment-container">
-          <span class="comment_title">备注：</span>
-          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
-        </div>
-        <!-- 附件 -->
-        <upload-file :default-value="attachment" no-upload></upload-file>
-      </div>
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
       <!-- 物料详情 -->
       <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
@@ -87,9 +80,11 @@
             return;
           }
           let {formData = {}, attachment = []} = data;
-          let {order = {}} = formData;
+          let {order = {}, inPut = {}} = formData;
           // 获取合计
-          let {dataSet} = order;
+          let {dataSet = []} = order;
+          let {dataSet: inputDataSet = []} = inPut;
+          let [contactInfo = {}] = inputDataSet;
           for (let val of dataSet) {
             this.count = accAdd(this.count, val.tdAmount);
             val.inventoryPic = val.inventoryPic_transObjCode
@@ -99,23 +94,35 @@
 
           this.contactInfo = {
             creatorName: formData.dealerDebitContactPersonName, // 客户名
-            dealerName: order.dataSet[0].dealerName_dealerDebit, // 公司名
+            dealerName: contactInfo.dealerName_dealerDebit, // 公司名
             dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
             dealerContactPersonName: formData.dealerDebitContactPersonName, // 联系人
-            dealerCode: order.dataSet[0].dealerDebit, // 客户编码
-            dealerLabelName: order.dataSet[0].drDealerLabel, // 关系标签
-            province: order.dataSet[0].province_dealerDebit, // 省份
-            city: order.dataSet[0].city_dealerDebit, // 城市
-            county: order.dataSet[0].county_dealerDebit, // 地区
-            address: order.dataSet[0].address_dealerDebit, // 详细地址
+            dealerCode: contactInfo.dealerDebit, // 客户编码
+            dealerLabelName: contactInfo.drDealerLabel, // 关系标签
+            province: contactInfo.province_dealerDebit, // 省份
+            city: contactInfo.city_dealerDebit, // 城市
+            county: contactInfo.county_dealerDebit, // 地区
+            address: contactInfo.address_dealerDebit, // 详细地址
           };
-          this.matterList = order.dataSet
+          this.matterList = dataSet;
           this.attachment = attachment;
           this.orderInfo = {
             ...formData,
             ...order,
+            ...contactInfo,
           };
           this.workFlowInfoHandler();
+        })
+      },
+      // TODO 判断往来是否展示预收款和预收到期日
+      judgeDealerConfig(configs) {
+        let flag = this.orderInfo.drDealerPaymentTerm.includes('预收');
+        let showList = ['prepaymentDueDate', 'tdAmountCopy1'];
+        configs.forEach(item => {
+          // 判断是否为预收，是预收则展示预收款和预收到期日
+          if (showList.includes(item.fieldCode)) {
+            item.hiddenInRun = !flag;
+          }
         })
       },
     },

@@ -11,33 +11,10 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderList' listTitle='设施列表'
-                   :count="count">
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class='mater_attribute'>
-              <span>类型: {{item.facilityType}}</span>
-              <span>单位: {{item.facilityUnit_facilityObjCode || '无'}}</span>
-              <span>大类: {{item.facilityBigType_facilityObjCode}}</span>
-              <span>子类: {{item.facilitySubclass_facilityObjCode || '无'}}</span>
-            </div>
-            <div class='mater_num'>
-              <span class="num">估计价格: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class="num">本次申请: {{item.tdQty | toFixed}}</span>
-            </div>
-            <div class='mater_price'>
-              <span>
-                <span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}
-              </span>
-            </div>
-          </div>
-        </template>
-      </matter-list>
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <matter-list :matter-list='orderList' @on-show-more="onShowMore"></matter-list>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

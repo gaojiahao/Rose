@@ -12,35 +12,17 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :order-list='orderList'>
-         <template slot="matterOther" slot-scope="{item}">
-           <div class='mater_other'>
-              <div class="mater_attribute">
-                <span>单位: {{item.measureUnit_transObjCode}}</span>
-                <span>可用库存: {{item.thenQtyStock}}</span>
-              </div>
-             <div class="mater_num">
-                <span class="num">
-                  本次完工入库: {{item.tdQty | toFixed}}
-                </span>
-                <span class="units">
-                  [待验收余额: {{item.thenQtyBal | toFixed}}]
-                </span>
-              </div>
-           </div>
-         </template>
-      </matter-list>
+      <matter-list :order-list='orderList' :order-title="orderTitle" @on-show-more="onShowMore"></matter-list>
       <!-- bom合计 -->
       <!-- <div class="bom_list">
         <bom-list :boms="UniqueBom"></bom-list>
       </div> -->
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="orderInfo.biComment || '无'"></form-cell>
-      </div>
       <!--原料bom列表-->
       <!-- <bom-pop :show="bomPopShow" :bomInfo="bom" v-model="bomPopShow" class="bom_pop" :is-edit="false">
       </bom-pop> -->
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>

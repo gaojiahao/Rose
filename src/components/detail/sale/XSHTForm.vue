@@ -13,48 +13,12 @@
       <work-flow :work-flow-info="workFlowInfo" :full-work-flow="fullWL" :userName="userName" :is-my-task="isMyTask"
                  :no-status="orderInfo.biStatus"></work-flow>
       <!-- 物料列表 -->
-      <matter-list :matter-list='orderInfo.order.dataSet' :noTaxAmount="noTaxAmount"
-                   :taxAmount="taxAmount" :count="count">
-        <template slot="matterOther" slot-scope="{item}">
-          <div class='mater_other'>
-            <div class='mater_attribute'>
-              <span>单位: {{item.measureUnit_transObjCode}}</span>
-              <span>辅助计量: {{item.assMeasureUnit}}</span>
-              <span>辅助计量说明: {{item.assMeasureDescription}} </span>
-            </div>
-            <div class="mater_num">
-              <div>
-                <span class="num">交付开始日: {{item.dateActivation}}</span>
-                <span class="num">交付截止日: {{item.executionDate}}</span>
-              </div>
-              <div>
-                <span class="num">单价: ￥{{item.price | toFixed | numberComma}}</span>
-                <span class="num">数量: {{item.tdQty | toFixed}}</span>
-                <span class="num">包装数量: {{item.assistQty | toFixed}}</span>
-              </div>
-            </div>
-            <div class='mater_price'>
-              <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
-              <span class="num"
-                    :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                    v-if="item.taxRate">
-                  [金额: ￥{{item.noTaxAmount | toFixed | numberComma}} + 税金: ￥{{item.taxAmount | toFixed | numberComma}}]
-                </span>
-            </div>
-          </div>
-        </template>
-      </matter-list>
+      <matter-list :matter-list='matterList' @on-show-more="onShowMore"></matter-list>
       <!-- 金额明细 -->
-      <div class="comment-part">
-        <price-total :amt="noTaxAmount" :tax-amt="taxAmount" :count="count" v-if="count"></price-total>
-        <div class="comment-container">
-          <span class="comment_title">备注：</span>
-          <span class="comment_value">{{orderInfo.biComment || '无'}}</span>
-        </div>
-        <upload-file :default-value="attachment" no-upload></upload-file>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle"
-                   :title-style="uploadTitleStyle"></upload-file>
+      <other-part :other-info="orderInfo" :amt="noTaxAmount" :tax-amt="taxAmount" :count="count"
+                  :attachment="attachment"></other-part>
+      <!-- 物料详情 -->
+      <pop-matter-detail :show="showMatterDetail" :item="matterDetail" v-model="showMatterDetail"></pop-matter-detail>
       <!-- 审批操作 -->
       <r-action :code="transCode" :task-id="taskId" :actions="actions"
                 :name="$route.query.name" @on-submit-success="submitSuccessCallback"></r-action>
@@ -129,11 +93,13 @@
               : this.getDefaultImg();
           }
           this.attachment = data.attachment;
-          this.orderInfo = formData;
-          this.contactInfo = {
+          this.matterList = dataSet;
+          this.orderInfo = {
+            ...formData,
             ...order,
             ...contract,
-            ...formData,
+          };
+          this.contactInfo = {
             creatorName: order.dealerDebitContactPersonName, // 客户名
             dealerName: order.dealerName_dealerDebit, // 公司名
             dealerMobilePhone: formData.dealerDebitContactInformation, // 手机
@@ -144,13 +110,6 @@
             city: order.city_dealerDebit, // 城市
             county: order.county_dealerDebit, // 地区
             address: order.address_dealerDebit, // 详细地址
-            // payment: order.drDealerPaymentTerm, // 付款方式,
-            // logistics: formData.drDealerLogisticsTerms, //物流条款
-            // validUntil: inPut.validUntil, // 合同到期日
-            // thenTotalAmntBal: contract.thenTotalAmntBal, // 合同总金额
-            // tdAmountCopy1: contract.tdAmountCopy1, // 预收款
-            // advancePaymentDueDate: contract.advancePaymentDueDate, // 预收到期日
-            // daysOfAccount: inPut.daysOfAccount
           };
           this.workFlowInfoHandler();
         })

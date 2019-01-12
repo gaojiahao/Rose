@@ -264,29 +264,6 @@
       stroke: #EA9843;
     }
   }
-  .comment-part {
-    margin: .1rem .1rem .19rem;
-    width: calc(100% - .2rem);
-    background-color: #fff;
-    color: #333;
-    overflow: hidden;
-    box-sizing: border-box;
-    .comment-container {
-      display: flex;
-      margin: .12rem 0 .15rem;
-      padding: 0 .15rem;
-      line-height: .16rem;
-      color: #999;
-      font-size: .12rem;
-    }
-    .comment_title {
-      color: #999;
-    }
-    .comment_value {
-      flex: 1;
-      color: #696969;
-    }
-  }
 }
 .l_size_name {
   color: #111;

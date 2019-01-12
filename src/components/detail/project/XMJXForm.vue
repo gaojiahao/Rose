@@ -36,10 +36,7 @@
                      :cellContent="numberComma(item.difference)" :showTopBorder="false"></form-cell>
         </div>
       </div>
-      <div class="comment-part">
-        <form-cell :showTopBorder="false" cellTitle='备注' :cellContent="comment.biComment || '无'"></form-cell>
-      </div>
-      <upload-file :default-value="attachment" no-upload :contain-style="uploadStyle" :title-style="uploadTitleStyle"></upload-file>
+      <other-part :other-info="orderInfo" :attachment="attachment"></other-part>
 
     </div>
   </div>

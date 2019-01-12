@@ -1,57 +1,4 @@
 <template>
-  <!--<div class="matter_item">
-    <div class="mater_img">
-      <img :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
-    </div>
-    <div class="mater_main">
-      &lt;!&ndash; 物料名称 &ndash;&gt;
-      <div class="mater_name">
-        {{item.inventoryName_transObjCode || item.facilityName_facilityObjCode || '该物料未获取到名称，请检查物料信息。'}}
-      </div>
-      &lt;!&ndash; 物料基本信息 &ndash;&gt;
-      <div class="mater_info">
-        &lt;!&ndash; 物料编码 &ndash;&gt;
-        <span class="info-item">
-          编码: {{item.transObjCode || item.facilityObjCode || '无'}}
-        </span>
-        &lt;!&ndash; 物料规格 &ndash;&gt;
-        <span class="info-item">
-          规格: {{item.specification_transObjCode || item.specification_outPutMatCode || item.facilitySpecification_facilityObjCode || '无'}}
-        </span>
-      </div>
-      <slot name="other" :item="item">
-        &lt;!&ndash; 物料数量和价格 默认视图 如果父组件编写则此内容会被覆盖&ndash;&gt;
-        <div class='mater_other'>
-          <div class='mater_num' v-if='item.tdQty'>
-            <span v-if="isReturnMatter">
-              <span class="num">退货单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class='num'>退货数量: {{item.tdQty | toFixed}}</span>
-            </span>
-            <span v-else>
-              <span class="num">单价: ￥{{item.price | toFixed | numberComma(3)}}</span>
-              <span class='num'>数量: {{item.tdQty | toFixed}}</span>
-            </span>
-            <span v-show='item.taxRate'>税率: {{item.taxRate}}</span>
-          </div>
-          <div class='mater_other' v-if="item.priceType || item.priceType === ''">
-            <div class='mater_price'>
-              <span class="symbol">￥</span>{{item.price | toFixed |numberComma(3)}}
-              <span class="num">[类型: {{item.priceType || '无'}}]</span>
-            </div>
-          </div>
-          <div class='mater_price' v-else>
-            <span><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma(3)}}</span>
-            <span class="num"
-                  :style="{display:(item.tdAmount && item.tdAmount.toString().length >= 5 ? 'block' : '')}"
-                  v-if="item.taxRate">
-              [金额: ￥{{item.noTaxAmount | toFixed | numberComma(3)}} + 税金: ￥{{item.taxAmount | toFixed | numberComma(3)}}]
-            </span>
-          </div>
-        </div>
-      </slot>
-    </div>
-  </div>-->
-
   <div class="matter-item-container">
     <div class="matter-main">
       <img class="matter_img" :src="item.inventoryPic" alt="mater_img" @error="getMatterDefault(item)">
@@ -77,8 +24,7 @@
         </div>
         <div class="matter_info_item" @click="clickMore">
           <div class="matter_detail">
-            <span class="matter_item_title">其他：</span>
-            <span class="matter_item_value">含税税金</span>
+            <span class="matter_item_title">其他</span>
           </div>
           <i class="icon-more"></i>
         </div>
@@ -86,18 +32,12 @@
           <span class="matter_no_tax" v-if="(item.noTaxAmount || item.noTaxAmount === 0)">￥{{item.noTaxAmount | toFixed | numberComma}}</span>
           <span class="matter_qty" v-if="item.tdQty">x{{item.tdQty | toFixed}}</span>
         </div>
-        <div class="matter_info_item" v-if="item.taxAmount">
+        <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 7}" v-if="item.taxAmount">
           <span class="matter_tax">（含税费￥{{item.taxAmount | toFixed | numberComma}}）</span>
           <span class="matter_total_wrapper" v-if="item.tdAmount">
             合计：<span class="matter_total"><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
           </span>
         </div>
-      </div>
-    </div>
-    <div class="matter-more-wrapper">
-      <div class="matter-more" @click="clickMore">
-        <span>查看更多商品</span>
-        <i class="icon-filter-down"></i>
       </div>
     </div>
   </div>
@@ -186,6 +126,14 @@
           }
         }
       }
+      /* 合计金额过多时 */
+      &.spillover {
+        flex-direction: column;
+        align-items: flex-start;
+        .matter_total_wrapper {
+          margin-top: .08rem;
+        }
+      }
     }
     .matter_detail {
       display: flex;
@@ -221,27 +169,6 @@
     }
     .symbol {
       font-size: .12rem;
-    }
-
-    .matter-more-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-top: .24rem;
-      .matter-more {
-        display: flex;
-        align-items: center;
-        padding: .1rem .15rem;
-        line-height: .14rem;
-        border: 1px solid rgba(151, 151, 151, 1);
-        border-radius: .17rem;
-        font-size: .14rem;
-      }
-      .icon-filter-down {
-        display: inline-block;
-        margin-left: .05rem;
-        width: .11rem;
-        height: .05rem;
-      }
     }
   }
 </style>

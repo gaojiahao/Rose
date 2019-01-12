@@ -10,6 +10,7 @@ import UploadFile from 'components/upload/UploadFile'
 import MatterList from 'components/detail/commonPart/MatterList'
 import PopMatterDetail from 'components/Popup/matter/PopMatterDetail'
 import PriceTotal from 'components/detail/commonPart/PriceTotal'
+import OtherPart from 'components/detail/commonPart/OtherPart'
 // 映射表 引入
 import Apps from '@/home/pages/maps/businessApp'
 //公共方法引入
@@ -21,7 +22,7 @@ import {shareContent} from 'plugins/wx/api'
 
 export default {
   components: {
-    FormCell, BasicInfo, UploadFile, MatterList, PopMatterDetail, PriceTotal,
+    FormCell, BasicInfo, UploadFile, MatterList, PopMatterDetail, PriceTotal, OtherPart,
   },
   data() {
     return {
@@ -59,6 +60,7 @@ export default {
       matterDetail: {}, // 选中物料的详细信息
       showMatterDetail: false, // 是否展示物料详情弹窗
       matterList: [],
+      orderTitle: '所属订单', // 物料交易号名称
     }
   },
   computed: {
@@ -68,8 +70,6 @@ export default {
       this.orderInfo.order.dataSet.forEach(item => {
         total = accAdd(total, item.noTaxAmount);
       });
-      console.log('-------------------')
-      console.log(total)
       return total;
     },
     // 税金
@@ -393,15 +393,18 @@ export default {
           }
           return arr;
         }, []);
-        console.log('---------------dealerConfig------------------')
+        /*console.log('---------------dealerConfig------------------')
         console.log(dealerConfig)
-        console.log('---------------dealerConfig end------------------')
+        console.log('---------------dealerConfig end------------------')*/
         this.dealerConfig = dealerConfig;
 
-        console.log('---------------matterConfig------------------')
+        /*console.log('---------------matterConfig------------------')
         console.log(matterConfig)
-        console.log('---------------matterConfig end------------------')
+        console.log('---------------matterConfig end------------------')*/
         matterConfig = matterConfig.reduce((arr, item) => {
+          if (item.fieldCode === 'transMatchedCode') {
+            this.orderTitle = item.text;
+          }
           if (!item.hidden && !matterFilter.includes(item.fieldCode)) {
             arr.push(item);
           }
@@ -411,7 +414,6 @@ export default {
           let orderList = Object.values(this.orderList).reduce((arr, item) => {
             return [...arr, ...item]
           }, []);
-          console.log(orderList)
           this.setMatterConfig(orderList, matterConfig);
         } else if (this.matterList.length) {
           this.setMatterConfig(this.matterList, matterConfig);
@@ -439,7 +441,7 @@ export default {
         let dates = [];
         let matterComment = {};
         matterConfig.forEach(item => {
-          item.value = matter[item.fieldCode] || '无';
+          item.value = item.editorType === 'r2Numberfield' ? numberComma(matter[item.fieldCode]) || '0' : matter[item.fieldCode] || '无';
           if (item.editorType === 'r2Datefield') {
             dates.push(item);
           } else if (item.fieldCode === 'comment') {
@@ -455,7 +457,6 @@ export default {
     },
     // TODO 查看更多
     onShowMore(item) {
-      console.log(item)
       this.matterDetail = item;
       this.showMatterDetail = true;
     },
