@@ -26,18 +26,19 @@
           <div class='property_val'>{{dealer[item.fieldCode] || "无"}}</div>
         </div>
       </div>
-      <!-- <div class="common_style"> -->
-        <div class="d_main common_style" v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`" v-if="cItem.show">
-          <!-- <div class='title vux-1px-b'>{{cItem.title}}</div> -->
-          <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index" v-if="formData[cItem.name].length">
-            <div class="each_property vux-1px-b" v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
-              <label>{{sItem.text}}:</label>
-              <div class='property_val' v-if="sItem.editorType === 'r2Datefield'">{{item[sItem.fieldCode] | changeDate}}</div>
-              <div class='property_val'v-else>{{item[sItem.fieldCode] || "无"}}</div>
-            </div>
+      <div v-for="(cItem, cIndex) in dealerDuplicateConfig" :key="`${cIndex}${cItem.name}`">
+        <div class="d_main common_style" v-if="cItem.show">
+          <div class='content' v-for="(item, index) in formData[cItem.name]" :key="index">
+              <div v-for="(sItem, sIndex) in cItem.items" :key="sIndex">
+                <div class="each_property vux-1px-b" v-if="!sItem.hidden">
+                  <label>{{sItem.text}}:</label>
+                  <div class='property_val' v-if="sItem.editorType === 'r2Datefield'">{{item[sItem.fieldCode] | changeDate}}</div>
+                  <div class='property_val' v-else>{{item[sItem.fieldCode] || "无"}}</div>
+                </div>
+              </div>
           </div>
         </div>
-      <!-- </div> -->
+      </div>
       <div class="creator">
         <div class='each_property vux-1px-b'>
           <label>创建者:</label>
@@ -87,14 +88,16 @@ export default {
   },
   data() {
     return {
-      transCode  : '',
+      listId: 'c0375170-d537-4f23-8ed0-a79cf75f5b04',
       MatPic: '', // 图片地址
-      imgFileObj: {}, // 上传的图片对象
+      uniqueId: '',
+      transCode: '',
       dealer : {},
       baseinfo :{},
+      formData: {},
+      imgFileObj: {}, // 上传的图片对象
       dealerConfig: [], // 基本信息配置
       dealerDuplicateConfig: [], // 重复项配置
-      formData: {}
     }
   },
   components: {
@@ -105,6 +108,7 @@ export default {
     findData() {
       return dealerService.getDealerInfo(this.transCode).then(({formData = {}, attachment = []}) => {
         this.formData = formData;
+        // console.log('dpc:', this.dealerDuplicateConfig);
         this.dealerDuplicateConfig.forEach(item => {
           if(this.formData[item.name] && !this.formData[item.name].length){
             item.show = false;
@@ -130,11 +134,6 @@ export default {
         this.hasDefault = true;
         this.baseinfo = {...this.baseinfo, ...baseinfo,};
         this.dealer = {...this.dealer, ...dealer,};
-        // for(let key in this.dealer){
-        //   if(this.dealer[key] == ''){
-        //     this.dealer[key] = '无'
-        //   }
-        // }
         this.biReferenceId = this.dealer.referenceId;
         if (this.dealer.dealerPic) {
           this.MatPic = `/H_roleplay-si/ds/download?url=${this.dealer.dealerPic}&width=400&height=400`;
@@ -166,22 +165,20 @@ export default {
         }
       })
     },
-    // 请求应用的viewId
-    getFormViews() {
-      return getFormViews('c0375170-d537-4f23-8ed0-a79cf75f5b04').then(data => {
+    // 请求表单配置基本信息
+    async getFormViewInfo() {
+      // 请求表单uniqueId
+      await getFormViews(this.listId).then(data => {
         for(let item of data){
           if(item.viewType === 'view'){
-            this.getFormConfig(item.uniqueId);
+            this.uniqueId = item.uniqueId;
             break;
           }
         }
       })
-    },
-    // 获取表单配置
-    getFormConfig(viewId){
-      getFormConfig(viewId).then(({config = []}) => {
-        console.log(config);
-        let dealerConfig = [],dealerDuplicateConfig = [];
+      // 请求
+      await getFormConfig(this.uniqueId).then(({config = []}) => {
+        let dealerConfig = [], dealerDuplicateConfig = [];
         config.forEach(item => {
           if(!item.isMultiple) {
             dealerConfig = JSON.parse(JSON.stringify(item.items));
@@ -201,19 +198,10 @@ export default {
             }
           }
         })
-        dealerDuplicateConfig.forEach(item => {
-          switch(item.name){
-            case 'dealerCertificateRel':
-              item.title = '证件';
-              break;
-            case 'deliveryAddresses':
-              item.title = '地址';
-              break;
-          }
-        })
         this.dealerDuplicateConfig = dealerDuplicateConfig;
       })
-    },
+
+    }
   },
   created() {
     this.$loading.show()
@@ -221,10 +209,9 @@ export default {
     if(query.transCode){
       this.transCode = query.transCode;
       (async() => {
-        await this.getFormViews();
+        await this.getFormViewInfo();
         await this.findData();
         this.$loading.hide()
-
       })()
     }
   }

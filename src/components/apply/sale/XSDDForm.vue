@@ -30,7 +30,7 @@
             <div class="mater_list">
               <div class="each_mater" :class="{'vux-1px-b' : index < (Object.keys(orderList).length-1)}"
                    v-for="(oItem, key, index) in orderList" :key="key">
-                <div class="order_code" v-if='oItem.length'>
+                <div class="order_code" v-if='oItem.length && key !==  "noCode"'>
                   <span class="order_title">{{orderListTitle}}</span>
                   <span class="order_num">{{key}}</span>
                 </div>
@@ -215,12 +215,6 @@
       },
       // 选择物料，显示物料pop
       getMatter() {
-        if (!this.dealerInfo.dealerCode) {
-          this.$vux.alert.show({
-            content: '请选择客户'
-          })
-          return
-        }
         this.showMaterielPop = !this.showMaterielPop;
       },
       checkAmt(item) {
@@ -235,6 +229,7 @@
       // TODO 选中物料项
       selMatter(val) {
         let sels = JSON.parse(val);
+        console.log('sels:', sels);
         let orderList = {};
         sels.forEach(item => {
           let key = `${item.transCode}_${item.inventoryCode}`;
@@ -244,7 +239,8 @@
             taxRate = this.taxRate,
             promDeliTime = '',
           } = this.numMap[key] || {};
-          item.tdQty = tdQty;
+          item.tdQty = tdQty || '';
+          item.price = price || ''
           item.assMeasureUnit = item.assMeasureUnit || item.invSubUnitName || null; // 辅助计量
           item.assMeasureScale = item.assMeasureScale || item.invSubUnitMulti || null; // 与单位倍数
           item.assMeasureDescription =  item.assMeasureDescription || item.invSubUnitComment || null; // 辅助计量说明
@@ -255,13 +251,20 @@
           item.promDeliTime = promDeliTime;
           item.dateActivation = dateFormat(item.dateActivation, 'YYYY-MM-DD');
           item.executionDate = dateFormat(item.executionDate, 'YYYY-MM-DD');
+          // 如果有销售合同号
           if(item.transCode){
             if (!orderList[item.transCode]) {
               orderList[item.transCode] = [];
             }
             orderList[item.transCode].push(item);
           }
-          
+          else {
+            if(!orderList['noCode']) {
+              orderList['noCode'] = []
+            }
+            orderList['noCode'].push(item);
+
+          }
         });
         this.numMap = {};
         this.matterList = sels;
@@ -311,16 +314,32 @@
             });
             this.selItems.forEach(SItem => {
               newArr.forEach(OItem => {
-                if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
-                  let delArr = this.orderList[OItem.transCode];
-                  let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
-                  if (delIndex >= 0) {
-                    this.$refs.matter.delSelItem(delArr[delIndex]);
-                    delArr.splice(delIndex, 1);
+                if(SItem.transCode){
+                  if (OItem.inventoryCode === SItem.inventoryCode && OItem.transCode === SItem.transCode) {
+                    let delArr = this.orderList[OItem.transCode];
+                    let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                    if (delIndex >= 0) {
+                      this.$refs.matter.delSelItem(delArr[delIndex]);
+                      delArr.splice(delIndex, 1);
+                    }
+                    if (!delArr.length) {
+                      delete this.orderList[OItem.transCode];
+                    }
                   }
-                  if (!delArr.length) {
-                    delete this.orderList[OItem.transCode];
+                }
+                else{
+                  if (OItem.inventoryCode === SItem.inventoryCode) {
+                    let delArr = this.orderList['noCode'];
+                    let delIndex = delArr.findIndex(item => item.inventoryCode === OItem.inventoryCode);
+                    if (delIndex >= 0) {
+                      this.$refs.matter.delSelItem(delArr[delIndex]);
+                      delArr.splice(delIndex, 1);
+                    }
+                    if (!delArr.length) {
+                      delete this.orderList['noCode'];
+                    }
                   }
+
                 }
               });
               this.matterList.forEach((item, index) => {
@@ -358,19 +377,24 @@
       },
       // 提价订单
       submitOrder() {
-        if (!this.dealerInfo.dealerName) {
-          this.$vux.alert.show({
-            content: '请选择客户'
-          })
+        let warn = '', dataSet = [];
+        for(let item of this.dealerConfig){
+          if(!item.hiddenInRun && !item.allowBlank){
+            if(item.fieldCode === 'dealerName_dealerDebit' && !this.dealerInfo.dealerName){
+              warn = '请选择客户';
+              break
+            }
+            else if(item.fieldCode !== 'dealerName_dealerDebit' && !this.dealerInfo[item.fieldCode]){
+              warn = `${item.fieldLabel}不能为空`;
+              break
+            }
+            
+          }
         }
-        else if (!Object.keys(this.orderList).length) {
-          this.$vux.alert.show({
-            content: '请选择物料'
-          })
+        if (!warn && !Object.keys(this.orderList).length) {
+          warn =  '请选择物料'
         }
-        else {
-          let warn = '',
-            dataSet = [];
+        if(!warn){
           for (let items of Object.values(this.orderList)) {
             for (let item of items) {
               if (!item.tdQty) {
@@ -417,74 +441,77 @@
               dataSet.push(obj);
             }
           }
-          if (warn) {
-            this.$vux.alert.show({
-              content: warn
-            })
-            return
-          }
-          this.$vux.confirm.show({
-            content: '确认提交?',
-            // 确定回调
-            onConfirm: () => {
-              this.$HandleLoad.show();
-              let operation = saveAndStartWf; // 默认有工作流
-              let wfPara = {
-                [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
+        }
+        if (warn) {
+          this.$vux.alert.show({
+            content: warn
+          })
+          return
+        }
+        this.$vux.confirm.show({
+          content: '确认提交?',
+          // 确定回调
+          onConfirm: () => {
+            this.$HandleLoad.show();
+            let operation = saveAndStartWf; // 默认有工作流
+            let wfPara = {
+              [this.processCode]: {businessKey: this.businessKey, createdBy: ""}
+            }
+            if (this.isResubmit) {
+              wfPara = {
+                businessKey: this.transCode,
+                createdBy: this.formData.handler,
+                transCode: this.transCode,
+                result: 3,
+                taskId: this.taskId,
+                comment: ""
               }
-              if (this.isResubmit) {
-                wfPara = {
-                  businessKey: this.transCode,
-                  createdBy: this.formData.handler,
-                  transCode: this.transCode,
-                  result: 3,
-                  taskId: this.taskId,
-                  comment: ""
-                }
-              }
-              let submitData = {
-                listId: this.listId,
-                biComment: this.formData.biComment,
-                formData: JSON.stringify({
-                  ...this.formData,
-                  handlerEntity: this.entity.dealerName,
-                  dealerDebitContactPersonName: this.contactInfo.dealerName || '',
-                  dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '',
-                  drDealerLogisticsTerms: this.dealerInfo.dealerLogisticsTerms,
-                  order: {
+            }
+            let submitData = {
+              listId: this.listId,
+              biComment: this.formData.biComment,
+              formData: JSON.stringify({
+                ...this.formData,
+                handlerEntity: this.entity.dealerName,
+                dealerDebitContactPersonName: this.contactInfo.dealerName || '',
+                dealerDebitContactInformation: this.contactInfo.dealerMobilePhone || '',
+                drDealerLogisticsTerms: this.dealerInfo.drDealerLogisticsTerms,
+                order: {
+                  dealerDebit: this.dealerInfo.dealerCode,
+                  drDealerLabel: this.dealerInfo.dealerLabelName,
+                  drDealerPaymentTerm: this.dealerInfo.paymentTerm,
+                  daysOfAccount: this.dealerInfo.pamentDays,
+                  dataSet
+                },
+                inPut: {
+                  dataSet: [{
                     dealerDebit: this.dealerInfo.dealerCode,
                     drDealerLabel: this.dealerInfo.dealerLabelName,
-                    drDealerPaymentTerm: this.dealerInfo.paymentTerm,
-                    daysOfAccount: this.dealerInfo.pamentDays,
-                    dataSet
-                  },
-                  inPut: {
-                    dataSet: [{
-                      dealerDebit: this.dealerInfo.dealerCode,
-                      drDealerLabel: this.dealerInfo.dealerLabelName,
-                      tdAmountCopy1: this.dealerInfo.tdAmountCopy1,
-                      advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate,
-                    }]
-                  },
-                }),
-                wfPara: JSON.stringify(wfPara)
-              }
-              if (this.isResubmit) { // 重新提交
-                operation = saveAndCommitTask;
-                submitData.biReferenceId = this.biReferenceId;
-              }
-              if (!this.processCode.length) { // 无工作流
-                operation = submitAndCalc;
-                delete submitData.wfPara;
-                delete submitData.biReferenceId;
-              }
-              if (this.biReferenceId) {
-                submitData.biReferenceId = this.biReferenceId
-              }
-              this.saveData(operation, submitData);
+                    tdAmountCopy1: this.dealerInfo.tdAmountCopy1,
+                    advancePaymentDueDate: this.dealerInfo.advancePaymentDueDate,
+                    customerOrderNumber: this.dealerInfo.customerOrderNumber,
+                    orderDate: this.dealerInfo.orderDate
+                  }]
+                },
+              }),
+              wfPara: JSON.stringify(wfPara)
             }
-          })
-        }
+            if (this.isResubmit) { // 重新提交
+              operation = saveAndCommitTask;
+              submitData.biReferenceId = this.biReferenceId;
+            }
+            if (!this.processCode.length) { // 无工作流
+              operation = submitAndCalc;
+              delete submitData.wfPara;
+              delete submitData.biReferenceId;
+            }
+            if (this.biReferenceId) {
+              submitData.biReferenceId = this.biReferenceId
+            }
+            this.saveData(operation, submitData);
+          }
+        })
+        
       },
       // 获取订单信息用于重新提交
       getFormData() {
@@ -518,10 +545,18 @@
               invSubUnitMulti: item.assMeasureScale,
             };
             this.matterList.push(item);
-            if (!orderList[item.transCode]) {
-              orderList[item.transCode] = [];
+            if(item.transCode){
+              if (!orderList[item.transCode]) {
+                orderList[item.transCode] = [];
+              }
+              orderList[item.transCode].push(item);
             }
-            orderList[item.transCode].push(item);
+            else{
+              if(!orderList.noCode) {
+                orderList.noCode = [];
+              }
+              orderList.noCode.push(item);
+            }
           });
           this.handlerDefault = {
             handler: formData.handler,
@@ -542,22 +577,20 @@
             creator: formData.creator,
             modifer: formData.modifer,
           }
-          let dealer = formData.order.dataSet[0]
+          let dealer = formData.inPut.dataSet[0]
           // 客户信息展示
           this.dealerInfo = {
-            dealerMobilePhone: formData.dealerDebitContactInformation,
+            ...dealer,
             dealerCode: dealer.dealerDebit,
             dealerLabelName: dealer.drDealerLabel,
-            dealerName: formData.order.dealerName_dealerDebit,
-            province: formData.order.province_dealerDebit,
-            city: formData.order.city_dealerDebit,
-            county: formData.order.county_dealerDebit,
-            address: formData.order.address_dealerDebit,
-            paymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
-            dealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
-            pamentDays: formData.order.daysOfAccount,
-            tdAmountCopy1: dealer.tdAmountCopy1,
-            advancePaymentDueDate: dealer.advancePaymentDueDate,
+            dealerName: dealer.dealerName_dealerDebit,
+            province: dealer.province_dealerDebit,
+            city: dealer.city_dealerDebit,
+            county: dealer.county_dealerDebit,
+            address: dealer.address_dealerDebit,
+            drDealerPaymentTerm: formData.order.drDealerPaymentTerm, // 结算方式
+            drDealerLogisticsTerms: formData.drDealerLogisticsTerms, //物流条件
+            daysOfAccount: formData.order.daysOfAccount,
           };
           // 订单信息
           this.contactInfo = {
