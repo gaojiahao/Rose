@@ -24,31 +24,9 @@
               <span class="matter_main_item specification">规格：{{item.specification || '无'}}</span>
             </div>
             <div class="matter_detail">
-              <div class="matter_info_item">
-                <span class="matter_info_title">大类:</span>
-                <span>{{item.inventoryType || '无'}}</span>
-              </div>
-              <div class="matter_info_item">
-                <span class="matter_info_title">子类:</span>
-                <span>{{item.inventorySubclass || '无'}}</span>
-              </div>
-              <div class="matter_info_item">
-                <span class="matter_info_title">单位:</span>
-                <span>{{item.measureUnit || '无'}}</span>
-              </div>
-            </div>
-            <div class="matter_detail">
-              <div class="matter_info_item">
-                <span class="matter_info_title">属性:</span>
-                <span>{{item.processing || '无'}}</span>
-              </div>
-              <div class="matter_info_item">
-                <span class="matter_info_title">颜色:</span>
-                <span>{{item.inventoryColor || '无'}}</span>
-              </div>
-              <div class="matter_info_item">
-                <span class="matter_info_title">材质:</span>
-                <span>{{item.material || '无'}}</span>
+              <div class="matter_info_item" v-for="field in item.fields">
+                <span class="matter_info_title">{{field.alias}}:</span>
+                <span>{{field.fieldValue || '无'}}</span>
               </div>
             </div>
           </div>
@@ -62,7 +40,7 @@
 
 <script>
   import {Tab, Icon, TabItem,} from 'vux'
-  import {getList, getDictByType} from 'service/commonService'
+  import {getList, getDictByType, getListViewById} from 'service/commonService'
   import {getMatList} from 'service/materService'
   import {getAppDetail} from 'service/appSettingService'
   import RScroll from 'components/RScroll'
@@ -104,6 +82,7 @@
         total: null,
         clickVisited: false, // 判断是否点击过其它列表项
         action: {}, // 表单允许的操作
+        listFields: [],
       }
     },
     methods: {
@@ -209,6 +188,7 @@
           //判断最近有无新增数据
           //console.log(this.total);
           let text = '';
+          let listFields = this.listFields;
           if (noReset && this.activeIndex === 0) {
             if (this.total) {
               text = dataCount - this.total === 0 ? '暂无新数据' : `新增${dataCount - this.total}条数据`;
@@ -229,6 +209,12 @@
             item.inventoryPic = item.inventoryPic
               ? `/H_roleplay-si/ds/download?url=${item.inventoryPic}&width=400&height=400`
               : this.getDefaultImg();
+            item.fields = listFields.map(field => {
+              return {
+                ...field,
+                fieldValue: item[field.fieldCode],
+              }
+            });
           });
           this.hasNext = dataCount > (this.page - 1) * this.limit + tableContent.length;
           this.matterList = this.page === 1 ? tableContent : [...this.matterList, ...tableContent];
@@ -302,6 +288,20 @@
           this.action = action;
         })
       },
+      // TODO 获取列表展示字段
+      getListViewById() {
+        return getListViewById('eae9040e-bcb3-4ab9-bef6-639041b1d21b').then(([data = {}]) => {
+          let content = JSON.parse(data.content || '{}');
+          let {fields = []} = content;
+          let showFieldList = [
+            'inventoryType',
+            'inventorySubclass',
+            'measureUnit',
+            'processing',
+          ];
+          this.listFields = fields.filter(item => showFieldList.includes(item.fieldCode));
+        })
+      },
     },
     watch: {
       $route: {
@@ -326,6 +326,7 @@
       (async () => {
         await this.getAppDetail();
         await this.getSession();
+        await this.getListViewById();
         await this.getDictByType().then(() => {
           this.getMatList();
         });
@@ -426,15 +427,13 @@
 
       /* 其他属性 */
       .matter_detail {
-        margin-top: .08rem;
         display: flex;
+        flex-wrap: wrap;
       }
       .matter_info_item {
+        margin: .08rem .12rem 0 0;
         line-height: .12rem;
         font-size: .12rem;
-        & + .matter_info_item {
-          margin-left: .12rem;
-        }
       }
       .matter_info_title {
         color: #999;
