@@ -408,7 +408,11 @@ export default {
           }  
         })
         // 处理往来配置里面的接口请求
-        let blankDealerConfig = []
+        let blankDealerConfig = [],
+            dealerFilter = [
+              'dealerDebit', 'drDealerLabel', 'address_dealerDebit', 'dealerDebitContactPersonName' ,'dealerDebitContactInformation',
+              'dealerCodeCredit', 'crDealerLabel', 'address_dealerCodeCredit', 'dealerCreditContactPersonName', 'dealerCreditContactInformation'
+            ];
         dealerConfig.forEach(item => {
           if(!item.hiddenInRun){
             // 处理请求往来数据的接口
@@ -425,10 +429,7 @@ export default {
               this.$set(item, 'remoteData', item.dataSource.data)
             }
             // 过滤往来编码，关系便签，地址，联系人，电话
-            if(item.fieldCode !== 'dealerDebit' && item.fieldCode !== 'drDealerLabel' && item.fieldCode !== 'address_dealerDebit' 
-              && item.fieldCode !== 'dealerDebitContactPersonName' && item.fieldCode !== 'dealerDebitContactInformation'
-              && item.fieldCode !== 'dealerCodeCredit' && item.fieldCode !== 'crDealerLabel' && item.fieldCode !== 'address_dealerCodeCredit'
-              && item.fieldCode !== 'dealerCreditContactPersonName' && item.fieldCode !== 'dealerCreditContactInformation'){
+            if(!dealerFilter.includes(item.fieldCode)){
               blankDealerConfig.push(item)
             }
           }
