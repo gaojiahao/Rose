@@ -16,10 +16,9 @@
         </div>
         <div v-for="(item, index) in matterConfig" :key="index" class="each-info">
           <!-- 下拉框 -->
-          <template v-if="(item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode'">
-            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="item.fieldCode === 'inventoryStatus'? inventoryStatus: inventory[item.fieldCode]" 
-                      v-model="item.fieldCode === 'inventoryStatus'? inventoryStatus: inventory[item.fieldCode]"
-                      :required="!item.allowBlank" mode="4"></r-picker>
+          <template v-if="(item.xtype === 'r2Combo' || item.xtype === 'r2MultiSelector') && item.fieldCode !== 'technicsCode' && item.fieldCode !== 'inventoryStatus'">
+            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="inventory[item.fieldCode]" 
+                      v-model="inventory[item.fieldCode]" :required="!item.allowBlank" mode="4"></r-picker>
           </template>
           <!-- 输入框（数字） -->
           <template v-else-if="item.xtype === 'r2Numberfield'">
@@ -53,6 +52,10 @@
           </template>
           <template v-else-if="item.fieldCode === 'technicsCode'">
             <pop-technics-list class="vux-1px-b" @sel-item="selTechnics" :default-value="inventory"></pop-technics-list>
+          </template>
+          <template v-else-if="item.fieldCode === 'inventoryStatus'">
+            <r-picker :title="item.fieldLabel" :data="item.remoteData" :value="inventoryStatus" 
+                      v-model="inventoryStatus" :required="!item.allowBlank" mode="4"></r-picker>
           </template>
         </div>
         <!-- 重复项 -->
