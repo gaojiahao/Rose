@@ -10,7 +10,7 @@
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contact"></pop-dealer-list>
         <!--物流，结算，其他信息-->
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->

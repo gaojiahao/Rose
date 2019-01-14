@@ -10,7 +10,7 @@
         <pop-dealer-list @sel-dealer="selDealer" :defaultValue="dealerInfo"  :dealer-params="dealerParams"
                          dealerTitle="供应商" :default-contact="contactInfo" @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- <pop-single-select title="结算方式" :data="transMode" :value="dealerInfo.paymentTerm"
                            v-model="dealerInfo.paymentTerm"></pop-single-select>
         <div class="other_info">

@@ -10,7 +10,7 @@
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo" @sel-dealer="selDealer" :dealer-params="dealerParams"
                          @sel-contact="selContact"></pop-dealer-list>
         <!-- 结算方式 -->
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 仓库-->
         <pop-warehouse-list isRequired :default-value="warehouse" @sel-item="selWarehouse"></pop-warehouse-list>
         <!-- 物料列表 -->
@@ -267,7 +267,7 @@
           drDealerLogisticsTerms: sel.dealerLogisticsTerms,
         };
         this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
-        if(this.matterParams.data.dealerCode != null) {
+        if(this.matterParams.data && this.matterParams.data.dealerCode != null) {
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};

@@ -10,7 +10,7 @@
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo"
                          dealerTitle="供应商" :default-contact="contactInfo" :dealer-params="dealerParams"></pop-dealer-list>
         <!--结算方式-->
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 仓库-->
         <pop-warehouse-list isRequired title="入库仓库" :default-value="warehouse"
                             @sel-item="selWarehouse"></pop-warehouse-list>
@@ -176,9 +176,6 @@
         actions: [],
         taskId: '',
         showOrderPop: false,
-        matterParams: { // 物料列表的请求参数
-          dealerCode: ''
-        },
         tmpItems: {}, // 选中的订单
         matter: {},
         showMatterPop: false,
@@ -236,7 +233,7 @@
           accountExpirationDate: accountExpirationDate,
           drDealerPaymentTerm: sel.paymentTerm
         };
-        if(this.matterParams.data.dealerCode != null) {
+        if(this.matterParams.data && this.matterParams.data.dealerCode != null) {
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode
           this.matterList = [];
           this.orderList = {};

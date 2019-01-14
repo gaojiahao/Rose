@@ -9,7 +9,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list :defaultValue="dealerInfo" :default-contact="contactInfo"
                          @sel-dealer="selDealer" @sel-contact="selContact" :dealer-params="dealerParams"></pop-dealer-list>
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!--发票信息-->
         <div class="materiel_list">
           <div class="title">发票信息</div>
@@ -211,7 +211,7 @@
       // 选中的客户
       selDealer(val) {
         this.dealerInfo = JSON.parse(val)[0];
-        if(this.matterParams.data.dealerCode != null){
+        if(this.matterParams.data && this.matterParams.data.dealerCode != null){
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
           this.matterList = [];
           this.orderList = {};

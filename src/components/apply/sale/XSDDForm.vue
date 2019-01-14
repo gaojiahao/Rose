@@ -9,7 +9,7 @@
         <!-- 用户地址和基本信息-->
         <pop-dealer-list @sel-dealer="selDealer" @sel-contact="selContact" :defaultValue="dealerInfo" :dealer-params="dealerParams"
                          :defaultContact="contactInfo"></pop-dealer-list>
-        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo"></dealer-other-part>
+        <dealer-other-part :dealer-config="dealerConfig" :dealer-info="dealerInfo" v-model="dealerInfo"></dealer-other-part>
         <!-- 物料列表 -->
         <div class="materiel_list">
           <!-- 没有选择物料 -->
@@ -184,7 +184,7 @@
         this.dealerInfo.drDealerPaymentTerm = this.dealerInfo.paymentTerm;
         this.dealerInfo.daysOfAccount= this.dealerInfo.pamentDays;
         this.dealerInfo.drDealerLogisticsTerms = this.dealerInfo.dealerLogisticsTerms;
-        if(this.matterParams.data.dealerCode != null){
+        if(this.matterParams.data && this.matterParams.data.dealerCode != null){
           this.matterParams.data.dealerCode = this.dealerInfo.dealerCode;
           this.matterList = [];
           this.orderList = {};
