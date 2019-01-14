@@ -303,7 +303,7 @@ export let getFormConfig = (viewId = '') => {
   return $flyio.ajax({
     url: `/H_roleplay-si/mobile/formView/${viewId}`
   })
-  
+
 }
 // 获取提交页面表单配置
 export let getFormViews = (listId = '') => {
@@ -313,7 +313,7 @@ export let getFormViews = (listId = '') => {
       listId,
     }
   })
-  
+
 }
 export let requestData = ({url = '', data = {}}) => {
   return $flyio.ajax({
@@ -321,6 +321,18 @@ export let requestData = ({url = '', data = {}}) => {
     data
   })
 }
+
+// TODO 获取列表配置
+export let getListViewById = (uniqueId) => {
+  return $flyio.ajax({
+    url: '/H_roleplay-si/ds/list/getListViewById',
+    data: {
+      _dc: Date.now(),
+      uniqueId,
+    }
+  })
+}
+
 export default {
   getList,
   upload,
