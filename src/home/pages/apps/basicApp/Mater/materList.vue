@@ -299,7 +299,7 @@
             'measureUnit',
             'processing',
           ];
-          this.listFields = fields.filter(item => showFieldList.includes(item.fieldCode));
+          this.listFields = fields.filter(item => !item.isHidden && showFieldList.includes(item.fieldCode));
         })
       },
     },
