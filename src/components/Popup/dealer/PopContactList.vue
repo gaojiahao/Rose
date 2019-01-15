@@ -101,11 +101,15 @@
     },
     watch: {
       dealerInfo: {
-        handler() {
-          this.resetCondition();
-          this.getContact();
-        },
-        immediate: true,
+        handler(oldVal, newVal) {
+          let oldId = oldVal.id || '',
+              newId = newVal.id || '';
+          // 匹配当前选择的往来id 如果不一致则重新发起请求
+          if(oldId !== newId) {
+            this.resetCondition();
+            this.getContact();
+          }
+        }
       },
       defaultValue: {
         handler() {
