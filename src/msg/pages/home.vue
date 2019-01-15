@@ -119,15 +119,9 @@ export default {
     //获取应用消息数据
     getList() {
       return getMsgList().then(({dataCount = 0, tableContent = []}) => {
+        let listData = {};
         this.$event.$emit('badgeNum', dataCount);
         this.currentItem.hasNext = false;
-        if (!tableContent.length) {
-          // 没有数据的时候
-          this.currentItem.isNull = true;
-          return;
-        }
-        let listData = {};
-        this.currentItem.isNull = false;
         tableContent.forEach(item => {
           // app图标处理
           item.pic = item.icon ? `/dist/${item.icon}` : this.getDefaultIcon();
@@ -145,6 +139,10 @@ export default {
             }
           }
         });
+        if(!Object.getOwnPropertyNames(listData).length) {
+          this.currentItem.isNull = true;
+          return;
+        }
         let values = Object.values(listData);
         // 设置最后一项不展示边框
         if (values.length) {
