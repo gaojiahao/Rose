@@ -42,7 +42,7 @@
         <div class="basic_detail_wrapper">
           <div class="basic_detail_item">
             <span class="basic_detail_title">修改时间:</span>
-            <span class="basic_detail_value">{{orderInfo.modTime | dateFormat('YYYY-MM-DD HH:mm')}}</span>
+            <span class="basic_detail_value">{{orderInfo.modTime | dateFormat }}</span>
           </div>
         </div>
       </div>

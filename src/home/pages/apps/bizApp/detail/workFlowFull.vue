@@ -7,7 +7,7 @@
              :class="[item.statusClass, {is_my_node: item.isMyNode}]" :key="index">
           <div class="work_flow_time">
             <span>{{item.startTime | dateFormat('YYYY-MM-DD')}}</span>
-            <span class="hour">{{item.startTime | dateFormat('HH:mm')}}</span>
+            <span class="hour">{{item.startTime | dateFormat('HH:mm:ss')}}</span>
           </div>
           <div class="work_flow_info">
             <img :src="item.photoUrl" alt="avatar" class="avatar" @error="getDefaultIcon(item)">
@@ -17,7 +17,7 @@
                   <div class="node_name">{{item.nodeName}}</div>
                   <div class="node_user">{{item.userName}}</div>
                 </div>
-                <div class="node_status">{{item.statusText}}</div>
+                <div class="node_status">{{item.status || item.statusText}}</div>
               </div>
               <div class="work_flow_remark">备注：{{item.message || '无'}}</div>
             </div>
