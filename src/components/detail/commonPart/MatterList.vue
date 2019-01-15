@@ -101,13 +101,12 @@
 </script>
 <style scoped lang="scss">
   .materiel_ct_list {
-    position: relative;
-    margin: 0 .1rem;
-    /*padding: 0 .15rem;*/
-    width: calc(100% - .2rem);
-    background-color: #fff;
     color: #333;
+    margin: .1rem;
+    position: relative;
     box-sizing: border-box;
+    background-color: #fff;
+    width: calc(100% - .2rem);
     .title {
       color: #111;
       font-weight: bold;

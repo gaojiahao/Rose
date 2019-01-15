@@ -1,6 +1,6 @@
 <template>
   <!-- 审批操作 -->
-  <div class='handle_wrapper vux-1px-t' v-if="!!actions.length">
+  <div class='handle_wrapper' v-if="!!actions.length">
     <div class="handle_btn">
       <span class="btn_item reject" @click="revoke" v-if="actions.includes('revoke')">撤回</span>
       <span class="btn_item reject" @click="reject" v-if="actions.includes('disagree')">拒绝</span>
@@ -120,12 +120,12 @@
               successMsg: '撤回成功',
               value,
               callback: () => {
-                let {childId} = this.$route.query,
-                  {folder, fileName} = this.$route.params;
+                let { listId } = this.$route.query,
+                    { folder, fileName } = this.$route.params;
                 this.$router.replace({
                   path: `/fillform/${folder}/${fileName}`,
                   query: {
-                    childId,
+                    listId,
                     name: this.name,
                     transCode: this.code,
                   },

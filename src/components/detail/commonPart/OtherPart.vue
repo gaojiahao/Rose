@@ -57,19 +57,19 @@
 
 <style scoped lang="scss">
   .other-part-container {
-    margin: .1rem .1rem 0;
-    width: calc(100% - .2rem);
-    background-color: #fff;
     color: #333;
     overflow: hidden;
+    margin: .1rem .1rem;
     box-sizing: border-box;
+    background-color: #fff;
+    width: calc(100% - .2rem);
     .comment-container {
+      color: #999;
       display: flex;
-      margin: .12rem 0 .15rem;
+      font-size: .12rem;
       padding: 0 .15rem;
       line-height: .16rem;
-      color: #999;
-      font-size: .12rem;
+      margin: .12rem 0 .15rem;
     }
     .comment_title {
       color: #999;

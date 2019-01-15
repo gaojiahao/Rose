@@ -143,7 +143,7 @@ export default {
       .list_wrapper{
         height: 100%;
       }
-      //应用基本嘻嘻
+      //应用基本
       .app_top{
         width: 90%;
         margin: 0 auto;

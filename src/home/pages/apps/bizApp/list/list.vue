@@ -21,15 +21,25 @@ export default {
     }
   },
   created(){
-    
     /*
-    * AppsFile[folder] => 应用类型文件夹
-    * Apps[folder][fileName] => 应用名称.vue 
-    * childId => 分类id （不一定存在）
+    * folder => 应用类型文件夹
+    * fileName => 应用名称.vue 
     */    
+    this.$loading.show();
     let { folder, fileName } = this.$route.params;
     this.folder = folder;
-    this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
+    try {
+      this.currentComponent = require(`components/list/${folder}/${fileName}_List.vue`).default;
+    }
+    catch(e) {
+      console.log(e);
+      this.$vux.alert.show({
+        content: '抱歉，无法支持该应用的查看',
+        onHide: () => {
+          this.$router.go(-1);
+        }
+      });
+    }
   },
   beforeRouteEnter (to, from, next) {
     let { name, transCode } = to.query;

@@ -85,7 +85,7 @@ export default {
   },
   methods:{
     goDetail(item, index){
-      let { title, folder, packagePath } = item;
+      let { title, listId, folder, packagePath } = item;
       let start = Date.now();
       // 高亮 点击过的模块
       item.visited = true;
@@ -106,6 +106,7 @@ export default {
             path = `/detail/${folder}/${packagePath}`;
           }
           let query = {
+            listId,
             name: title,
             transCode : item.businessKey,
           }

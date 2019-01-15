@@ -82,7 +82,7 @@ export default {
       if (this.clickVisited) return;
       // 交易号、应用名称等
       let { transCode } = item,
-          { name } = this.$route.query,
+          { name, listId } = this.$route.query,
           { folder, fileName } = this.$route.params;
       // 高亮点击的列表
       this.clickVisited = true;
@@ -107,7 +107,7 @@ export default {
           }
           this.$router.push({
             path,
-            query: { name, transCode }
+            query: { name, listId, transCode }
           })
         };
         let calcTime = Date.now() - start;
@@ -454,8 +454,8 @@ export default {
      * 此处是判断——跳转至详情页还是提交页面
      * */
     this.$loading.show();
-    let { name, transCode } = this.$route.query,
-        { folder, fileName } = this.$route.params;
+    let { folder, fileName } = this.$route.params,
+        { name, listId, transCode } = this.$route.query;
     // 当路由当中包含transCode
     if(transCode) {
       isMyflow({transCode}).then(({tableContent}) => {
@@ -471,7 +471,7 @@ export default {
           path = `/detail/${folder}/${fileName}`;
         }
         this.$router.replace({
-          path, query: {name, transCode}
+          path, query: {name, listId, transCode}
         })
       })
     }
