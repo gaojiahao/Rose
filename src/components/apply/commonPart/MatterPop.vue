@@ -286,10 +286,10 @@ export default {
     },
     // TODO 检查金额，取正数、保留两位小数
     checkAmt(item, key, val){
-      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock, qtyBalance, qtyDownline, qtyOnline} = item;
+      let {price, tdQty, taxRate, qtyBal, qtyStockBal,qtyStock, qtyBalance, qtyDownline, qtyOnline, assistQty} = item;
       item[key] = Math.abs(toFixed(val));
       // 数量
-      if (tdQty && this.isCheckStock) {
+      if (key === 'tdQty' && tdQty && this.isCheckStock) {
         // item.tdQty = Math.abs(toFixed(tdQty));
         // qtyStockBal为销售出库的库存，数量不允许大于余额
         if (!qtyStockBal && !qtyStock && qtyBal && tdQty > qtyBal) {
@@ -307,16 +307,18 @@ export default {
           item.tdQty = qtyBalance;
         }
         else if(qtyOnline && qtyDownline){
-          if(tdQty > qtyOnline){
-            item.tdQty = qtyOnline
+          if(assistQty >= qtyDownline && assistQty <= qtyOnline){
+            item.price = item.otherField.price;
+            item.taxRate = item.otherField.taxRate;
+            item.dealerInventoryName = item.otherField.dealerInventoryName;
+            item.dealerInventoryCode = item.otherField.dealerInventoryCode;
           }
-          else if(tdQty < qtyDownline){
-            item.tdQty = qtyDownline
-          }
-          item.price = item.otherField.price;
-          item.taxRate = item.otherField.taxRate;
-          item.dealerInventoryName = item.otherField.dealerInventoryName;
-          item.dealerInventoryCode = item.otherField.dealerInventoryCode;
+          else{
+            item.price = '';
+            item.taxRate = 0.16;
+            item.dealerInventoryName = '';
+            item.dealerInventoryCode = '';
+          } 
         }
       }
       //税率
