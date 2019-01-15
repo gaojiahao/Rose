@@ -34,7 +34,7 @@
         </div>
         <div class="matter_info_item" :class="{spillover: `${item.tdAmount}`.length > 6}"
              v-if="hasData('taxAmount') || item.tdAmount">
-          <span class="matter_tax" v-if="hasData('taxAmount')">（税金￥{{item.taxAmount | toFixed | numberComma}}）</span>
+          <span class="matter_tax" v-if="hasData('taxAmount')">税金￥{{item.taxAmount | toFixed | numberComma}}</span>
           <span class="matter_total_wrapper" v-if="item.tdAmount">
             合计：<span class="matter_total"><span class="symbol">￥</span>{{item.tdAmount | toFixed | numberComma}}</span>
           </span>
@@ -122,7 +122,7 @@
       line-height: .12rem;
       font-size: .12rem;
       & + .matter_info_item {
-        margin-top: .08rem;
+        margin-top: .12rem;
       }
       &.flex-start {
         justify-content: flex-start;
@@ -134,10 +134,10 @@
       }
       /* 合计金额过多时 */
       &.spillover {
-        flex-direction: column;
         align-items: flex-end;
-        .matter_total_wrapper {
-          margin-top: .08rem;
+        flex-direction: column-reverse;
+        .matter_tax {
+          margin-top: .04rem;
         }
       }
       &.matter_price_top {
